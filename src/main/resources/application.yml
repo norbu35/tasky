@@ -10,10 +10,16 @@ management:
     health:
       probes:
         enabled: true
+    prometheus:
+      access: read_only
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 tasky:
   api:
