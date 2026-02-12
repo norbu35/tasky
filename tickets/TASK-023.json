@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-023",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-BOOK-01",
+    "REQ-BOOK-02",
+    "REQ-TASK-02"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-023-01",
+      "type": "functional",
+      "statement": "Tasker can apply only to open tasks.",
+      "test_ids": [
+        "TID-TASK-023-API-APPLY-OPEN-TASK"
+      ]
+    },
+    {
+      "id": "AC-TASK-023-02",
+      "type": "functional",
+      "statement": "Customer can list applicants and accept exactly one.",
+      "test_ids": [
+        "TID-TASK-023-API-APPLICANT-LIST"
+      ]
+    },
+    {
+      "id": "AC-TASK-023-03",
+      "type": "functional",
+      "statement": "Accept action creates booking in `PENDING_PAYMENT`.",
+      "test_ids": [
+        "TID-TASK-023-API-ACCEPT-CREATES-BOOKING"
+      ]
+    }
+  ]
+}

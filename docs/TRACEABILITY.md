@@ -6,12 +6,12 @@ This matrix is the backlog-generation control document that links every PRD requ
 2. OpenAPI contract surface
 3. Planned atomic backlog ticket(s)
 
-Coverage target for backlog generation baseline: 39/39 PRD requirement IDs mapped.
+Coverage target for backlog generation baseline: 43/43 PRD requirement IDs mapped.
 
 ## Requirement Mapping
 | Requirement ID | Requirement Summary | Architecture Module(s) | API Contract Surface | Planned Ticket(s) |
 |---|---|---|---|---|
-| REQ-AUTH-01 | Phone + OTP login/signup | `identity` | `POST /auth/otp/request`, `POST /auth/otp/verify` | `TASK-010` |
+| REQ-AUTH-01 | Phone + OTP login/signup | `identity` | `POST /auth/otp/request`, `POST /auth/otp/verify` | `TASK-010`, `TASK-011` |
 | REQ-AUTH-02 | Prevent duplicate accounts by phone | `identity` | `POST /auth/otp/verify` (with unique phone constraint) | `TASK-010` |
 | REQ-AUTH-03 | Issue secure JWT session token | `identity` | `POST /auth/otp/verify`, `POST /auth/token/refresh` | `TASK-010` |
 | REQ-AUTH-04 | Tasker role activation before verification completion | `identity` | `POST /users/me/role/tasker`, `POST /verification/submit`, `GET /verification/status`, `GET /admin/verifications/pending`, `POST /admin/verifications/{id}/approve`, `POST /admin/verifications/{id}/reject` | `TASK-012`, `TASK-013` |
@@ -42,14 +42,18 @@ Coverage target for backlog generation baseline: 39/39 PRD requirement IDs mappe
 | REQ-MSG-02 | Persisted history available to both parties and admin | `communication`, `support` | `GET /conversations/{id}/messages`, `GET /admin/disputes`, `GET /disputes/{id}` | `TASK-042`, `TASK-041` |
 | REQ-ADMIN-01 | Admin search users by phone | `support`, `identity` | `GET /admin/users` | `TASK-045` |
 | REQ-ADMIN-02 | Admin dispute manager with resolve actions | `support`, `wallet`, `communication` | `GET /admin/disputes`, `POST /admin/disputes/{id}/resolve`, `GET /disputes/{id}` | `TASK-041` |
-| REQ-ADMIN-03 | Admin ban user (login blocked) | `support`, `identity` | `POST /admin/users/{id}/ban`, `POST /admin/users/{id}/unban` | `TASK-045` |
-| NFR-SEC-01 | Encrypt PII at rest | cross-cutting (`identity`, `wallet`, storage security) | Affects all PII endpoints; strongest impact on verification, users, admin views | `TASK-060` |
+| REQ-ADMIN-03 | Admin ban user (login blocked) | `support`, `identity` | `POST /admin/users/{id}/ban`, `POST /admin/users/{id}/unban` | `TASK-004`, `TASK-045` |
+| REQ-UI-01 | Web must use `shadcn/ui` primitives as base component library | `frontend-web` | Web UI implementation policy (component source path: `apps/web/src/components/ui`) | `TASK-070` |
+| REQ-UI-02 | Mobile must implement native equivalents aligned to shared design tokens/states | `frontend-mobile` | Mobile component parity policy (token adapter + component layer) | `TASK-071` |
+| NFR-SEC-01 | Encrypt PII at rest | cross-cutting (`identity`, `wallet`, storage security) | Affects all PII endpoints; strongest impact on verification, users, admin views | `TASK-004`, `TASK-060` |
 | NFR-PERF-01 | Open task feed under 1s on 4G | `marketplace` | `GET /tasks` | `TASK-063` |
 | NFR-LOC-01 | Mongolian Cyrillic handling and display | cross-cutting (`identity`, `marketplace`, `communication`, clients) | Request/response localization via `Accept-Language`; all user-facing endpoints | `TASK-061` |
 | NFR-LEGAL-01 | Liability disclaimer required in booking/payment flow | `wallet`, `marketplace` | `POST /payments/bookings/{id}/initiate` (requires disclaimer acceptance flag) | `TASK-064` |
-| NFR-RELI-01 | Idempotent payment webhooks with retry handling | `wallet` | `POST /payments/qpay/callback` | `TASK-031` |
+| NFR-RELI-01 | Idempotent payment webhooks with retry handling | `wallet` | `POST /payments/qpay/callback` | `TASK-001`, `TASK-003`, `TASK-031` |
 | NFR-RELI-02 | Mobile read-only offline cache of My Tasks | `marketplace`, `communication` | `GET /tasks`, `GET /bookings`, `GET /bookings/{id}` (mobile cache consumer) | `TASK-062` |
-| NFR-API-01 | Cursor-based pagination for list endpoints | cross-cutting (`marketplace`, `wallet`, `communication`, `support`) | `GET /tasks`, `GET /bookings`, `GET /wallet/transactions`, `GET /conversations`, `GET /conversations/{id}/messages`, `GET /users/{id}/reviews`, `GET /admin/users`, `GET /admin/disputes`, `GET /admin/payouts/pending`, `GET /admin/verifications/pending`, `GET /admin/categories`, `GET /categories` | `TASK-065` |
+| NFR-API-01 | Cursor-based pagination for list endpoints | cross-cutting (`marketplace`, `wallet`, `communication`, `support`) | `GET /tasks`, `GET /bookings`, `GET /wallet/transactions`, `GET /conversations`, `GET /conversations/{id}/messages`, `GET /users/{id}/reviews`, `GET /admin/users`, `GET /admin/disputes`, `GET /admin/payouts/pending`, `GET /admin/verifications/pending`, `GET /admin/categories`, `GET /categories` | `TASK-002`, `TASK-065` |
+| NFR-UI-01 | Shared design token source of truth across web and mobile | cross-cutting (`frontend-web`, `frontend-mobile`) | Shared token package and platform adapters | `TASK-070`, `TASK-071` |
+| NFR-UI-02 | Web accessibility baseline (keyboard + WCAG 2.1 AA contrast) | `frontend-web` | Web component/screen quality gate | `TASK-072` |
 
 ## Coverage Gate
 This document is valid for backlog generation only when:

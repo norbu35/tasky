@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-045",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-ADMIN-01",
+    "REQ-ADMIN-03"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-045-01",
+      "type": "functional",
+      "statement": "Admin can search users by phone.",
+      "test_ids": [
+        "TID-TASK-045-API-ADMIN-USER-SEARCH"
+      ]
+    },
+    {
+      "id": "AC-TASK-045-02",
+      "type": "functional",
+      "statement": "Ban/unban endpoints mutate user status with audit trail.",
+      "test_ids": [
+        "TID-TASK-045-API-ADMIN-BAN-UNBAN"
+      ]
+    },
+    {
+      "id": "AC-TASK-045-03",
+      "type": "security",
+      "statement": "Banned users are blocked across authenticated APIs.",
+      "test_ids": [
+        "TID-TASK-045-SEC-BAN-ENFORCEMENT"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-045-SEC-BAN-ENFORCEMENT"
+      ]
+    }
+  ]
+}

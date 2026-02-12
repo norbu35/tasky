@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-065",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-API-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-065-01",
+      "type": "functional",
+      "statement": "All list endpoints return common envelope with `cursor.next` and `cursor.has_more`.",
+      "test_ids": [
+        "TID-TASK-065-API-CURSOR-ENVELOPE"
+      ]
+    },
+    {
+      "id": "AC-TASK-065-02",
+      "type": "functional",
+      "statement": "Cursor pagination is deterministic under stable sort order.",
+      "test_ids": [
+        "TID-TASK-065-API-CURSOR-DETERMINISM"
+      ]
+    },
+    {
+      "id": "AC-TASK-065-03",
+      "type": "functional",
+      "statement": "Contract and integration tests cover each list endpoint.",
+      "test_ids": [
+        "TID-TASK-065-CONTRACT-LIST-ENDPOINTS"
+      ]
+    }
+  ]
+}

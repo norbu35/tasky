@@ -138,6 +138,10 @@ To build Mongolia's first **trust-centric** domestic service marketplace. Unlike
     *   Action: "Release to Tasker" (Full/Partial).
 *   **REQ-ADMIN-03**: Admin MUST be able to "Ban User" (prevents login).
 
+### 3.9 Frontend Design System
+*   **REQ-UI-01**: Web UI MUST be implemented using `shadcn/ui` primitives as the base component library. New web screens and features MUST compose from those primitives rather than introducing additional UI component frameworks.
+*   **REQ-UI-02**: Mobile UI MUST implement platform-native component equivalents that follow the same design tokens, naming semantics, states, and interaction behavior defined by the web design system.
+
 ---
 
 ## 4. Non-Functional Requirements
@@ -149,6 +153,8 @@ To build Mongolia's first **trust-centric** domestic service marketplace. Unlike
 *   **NFR-RELI-01**: Payment status updates (Webhooks) MUST be idempotent and handle retries.
 *   **NFR-RELI-02**: Mobile app MUST provide read-only local cache of "My Tasks" for offline viewing.
 *   **NFR-API-01**: All list endpoints MUST support cursor-based pagination.
+*   **NFR-UI-01**: Web and Mobile MUST consume a shared design token source of truth (color, spacing, typography, radius, elevation, motion), with platform-specific adapters as needed.
+*   **NFR-UI-02**: All new web UI flows MUST support keyboard navigation and meet WCAG 2.1 AA contrast requirements.
 
 ---
 

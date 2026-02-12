@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-021",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-TASK-01",
+    "REQ-TASK-04"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-021-01",
+      "type": "functional",
+      "statement": "Task creation validates required fields and max 3 photo keys.",
+      "test_ids": [
+        "TID-TASK-021-API-TASK-CREATE"
+      ]
+    },
+    {
+      "id": "AC-TASK-021-02",
+      "type": "functional",
+      "statement": "Task photo upload URL endpoints return constrained signed URLs.",
+      "test_ids": [
+        "TID-TASK-021-API-TASK-PHOTO-UPLOAD"
+      ]
+    },
+    {
+      "id": "AC-TASK-021-03",
+      "type": "functional",
+      "statement": "Cancel endpoint transitions task to `CANCELLED` with guards.",
+      "test_ids": [
+        "TID-TASK-021-API-TASK-CANCEL"
+      ]
+    }
+  ]
+}

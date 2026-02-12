@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-003",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-RELI-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-003-01",
+      "type": "functional",
+      "statement": "All API requests emit correlation ID in logs.",
+      "test_ids": [
+        "TID-TASK-003-BE-CORRELATION-ID"
+      ]
+    },
+    {
+      "id": "AC-TASK-003-02",
+      "type": "functional",
+      "statement": "Error responses include trace ID.",
+      "test_ids": [
+        "TID-TASK-003-BE-ERROR-TRACE-ID"
+      ]
+    },
+    {
+      "id": "AC-TASK-003-03",
+      "type": "performance",
+      "statement": "Prometheus metrics endpoint includes request latency metrics.",
+      "test_ids": [
+        "TID-TASK-003-BE-CORRELATION-ID"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-013",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-AUTH-04",
+    "REQ-SAFE-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-013-01",
+      "type": "functional",
+      "statement": "Admin can list pending verifications.",
+      "test_ids": [
+        "TID-TASK-013-API-ADMIN-VERIFICATION-LIST",
+        "TID-TASK-013-API-ADMIN-VERIFICATION-REJECT"
+      ]
+    },
+    {
+      "id": "AC-TASK-013-02",
+      "type": "functional",
+      "statement": "Admin approve/reject transitions user verification status correctly.",
+      "test_ids": [
+        "TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE"
+      ]
+    }
+  ]
+}

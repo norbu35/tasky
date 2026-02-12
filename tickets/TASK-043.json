@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-043",
+  "risk_level": "medium",
+  "req_ids": [
+    "REQ-MSG-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-043-01",
+      "type": "security",
+      "statement": "Authenticated clients can subscribe/send to authorized conversation channels.",
+      "test_ids": [
+        "TID-TASK-043-WS-SUBSCRIBE-AUTHZ"
+      ]
+    },
+    {
+      "id": "AC-TASK-043-02",
+      "type": "functional",
+      "statement": "Messages delivered in real-time and persisted once.",
+      "test_ids": [
+        "TID-TASK-043-WS-REALTIME-DELIVERY"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-020",
+  "risk_level": "medium",
+  "req_ids": [
+    "REQ-TASK-05"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-020-01",
+      "type": "functional",
+      "statement": "Public endpoint returns only active categories.",
+      "test_ids": [
+        "TID-TASK-020-API-CATEGORIES-PUBLIC"
+      ]
+    },
+    {
+      "id": "AC-TASK-020-02",
+      "type": "functional",
+      "statement": "Admin can create/update/deactivate categories.",
+      "test_ids": [
+        "TID-TASK-020-API-CATEGORIES-ADMIN-CRUD"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-071",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-UI-01",
+    "REQ-UI-02"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-071-01",
+      "type": "functional",
+      "statement": "Mobile consumes shared design tokens through a platform adapter.",
+      "test_ids": [
+        "TID-TASK-071-MOBILE-TOKEN-ADAPTER"
+      ]
+    },
+    {
+      "id": "AC-TASK-071-02",
+      "type": "functional",
+      "statement": "Core components (Button, Input, FormField, Modal/Sheet, Toast) have mobile equivalents with matching state semantics.",
+      "test_ids": [
+        "TID-TASK-071-MOBILE-COMPONENT-PARITY-BASE"
+      ]
+    },
+    {
+      "id": "AC-TASK-071-03",
+      "type": "functional",
+      "statement": "Parity matrix is documented and linked from architecture docs.",
+      "test_ids": [
+        "TID-TASK-071-MOBILE-STATE-SEMANTIC-PARITY"
+      ]
+    }
+  ]
+}

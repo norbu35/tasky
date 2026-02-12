@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-031",
+  "risk_level": "high",
+  "req_ids": [
+    "NFR-RELI-01",
+    "REQ-BOOK-03",
+    "REQ-BOOK-05",
+    "REQ-PAY-01",
+    "REQ-TASK-02"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-031-01",
+      "type": "functional",
+      "statement": "Initiation endpoint creates provider payment intent with traceable reference.",
+      "test_ids": [
+        "TID-TASK-031-API-QPAY-INITIATE"
+      ]
+    },
+    {
+      "id": "AC-TASK-031-02",
+      "type": "reliability",
+      "statement": "Callback endpoint is idempotent and signature-validated.",
+      "test_ids": [
+        "TID-TASK-031-SEC-QPAY-SIGNATURE"
+      ]
+    },
+    {
+      "id": "AC-TASK-031-03",
+      "type": "functional",
+      "statement": "Successful callback sets booking `PAID` and task `ASSIGNED` exactly once.",
+      "test_ids": [
+        "TID-TASK-031-RELI-CALLBACK-IDEMPOTENT"
+      ]
+    }
+  ]
+}

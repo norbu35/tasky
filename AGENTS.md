@@ -81,6 +81,12 @@ If principles conflict, follow the higher-priority principle from Section 1 and 
 2. Local address model must use Pin-drop (Lat/Long) + Mandatory Text Description (formal addresses are secondary).
 3. Currency, date/time, and phone formats must match local expectations.
 
+### Frontend Design System Governance
+1. Web UI primitives MUST use `shadcn/ui` as the base component system.
+2. Mobile MUST use platform-native components driven by the same shared design tokens and state semantics used by web.
+3. Additional web component frameworks are forbidden unless approved by ADR.
+4. UI changes are not complete without accessibility evidence (keyboard behavior and contrast checks for web flows touched).
+
 ### External Provider Strategy (Decision Gates, Not Assumptions)
 1. Candidate providers:
    1. Payments: QPay (MVP), SocialPay/Cards (Post-MVP)
@@ -112,12 +118,12 @@ If principles conflict, follow the higher-priority principle from Section 1 and 
 1. React 18+
 2. TypeScript
 3. Vite
-4. Shared design system and API SDK consumption
+4. `shadcn/ui`-based component system and shared API SDK consumption
 
 ### Mobile Client
 1. React Native (Expo, unless native modules force bare workflow)
 2. TypeScript
-3. Shared API SDK consumption
+3. Shared API SDK and design token consumption
 4. Graceful error handling for connectivity loss (Marketplace requires connection)
 
 ### Cross-Cutting Technical Standards
@@ -199,7 +205,7 @@ A work item is done only when code, tests, observability, rollback plan, and rel
 ## 8. Delivery Model and Program Controls
 
 ### Delivery Strategy
-1. Build in vertical slices: auth, profile, task posting, matching, booking, payment, ratings, disputes.
+1. Build in vertical slices: auth, profile, task posting, matching, booking, payment, ratings, disputes, and cross-platform design system.
 2. Each slice must ship with tests, telemetry, and operational readiness.
 3. Prefer short milestones with demoable outcomes over long speculative branches.
 
@@ -244,6 +250,7 @@ Production release requires:
 1. All public endpoints must have OpenAPI documentation.
 2. Complex logic must include rationale comments that explain why.
 3. Any architectural change must include an ADR update.
+4. UI-impacting tickets must document component parity and token usage in ticket acceptance criteria.
 
 ### Non-Negotiables
 1. Never bypass quality gates to meet a date.

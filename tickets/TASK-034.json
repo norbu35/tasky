@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-034",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-04",
+    "REQ-PAY-05",
+    "REQ-PAY-06"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-034-01",
+      "type": "functional",
+      "statement": "Tasker can request payout only up to available balance.",
+      "test_ids": [
+        "TID-TASK-034-API-PAYOUT-REQUEST"
+      ]
+    },
+    {
+      "id": "AC-TASK-034-02",
+      "type": "functional",
+      "statement": "Admin can list/process pending payouts.",
+      "test_ids": [
+        "TID-TASK-034-API-ADMIN-PAYOUT-PROCESS"
+      ]
+    },
+    {
+      "id": "AC-TASK-034-03",
+      "type": "functional",
+      "statement": "Processing enforces Tue/Fri schedule policy and writes ledger entries.",
+      "test_ids": [
+        "TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE"
+      ]
+    }
+  ]
+}

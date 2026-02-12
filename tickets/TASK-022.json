@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-022",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-TASK-03",
+    "REQ-TASK-05"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-022-01",
+      "type": "functional",
+      "statement": "Feed returns only `OPEN` tasks.",
+      "test_ids": [
+        "TID-TASK-022-API-TASK-LIST-OPEN",
+        "TID-TASK-022-API-TASK-LIST-CURSOR"
+      ]
+    },
+    {
+      "id": "AC-TASK-022-02",
+      "type": "functional",
+      "statement": "Category/distance filters work with cursor pagination.",
+      "test_ids": [
+        "TID-TASK-022-API-TASK-LIST-FILTERS"
+      ]
+    },
+    {
+      "id": "AC-TASK-022-03",
+      "type": "functional",
+      "statement": "Exact address is hidden in public feed; approximate location exposed.",
+      "test_ids": [
+        "TID-TASK-022-API-TASK-LIST-PRIVACY"
+      ]
+    }
+  ]
+}

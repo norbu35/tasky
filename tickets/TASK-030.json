@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-030",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-BOOK-03",
+    "REQ-BOOK-05"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-030-01",
+      "type": "functional",
+      "statement": "Booking entity enforces allowed transitions only.",
+      "test_ids": [
+        "TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE"
+      ]
+    },
+    {
+      "id": "AC-TASK-030-02",
+      "type": "functional",
+      "statement": "Booking details/list endpoints reflect consistent status.",
+      "test_ids": [
+        "TID-TASK-030-API-BOOKING-READS"
+      ]
+    }
+  ]
+}

@@ -17,12 +17,12 @@ Rules:
 ## Ticket Index
 | Ticket | Slice | Risk | PRD/NFR Coverage | Depends On |
 |---|---|---|---|---|
-| TASK-001 | Platform bootstrap hardening | low | foundation | - |
-| TASK-002 | OpenAPI + SDK CI pipeline | medium | NFR-API-01 (enabler) | TASK-001 |
-| TASK-003 | Observability baseline | medium | reliability enabler | TASK-001 |
+| TASK-001 | Platform bootstrap hardening | low | NFR-RELI-01 | - |
+| TASK-002 | OpenAPI + SDK CI pipeline | medium | NFR-API-01 | TASK-001 |
+| TASK-003 | Observability baseline | medium | NFR-RELI-01 | TASK-001 |
 | TASK-004 | Security baseline (RBAC, banned check, rate limit) | high | REQ-ADMIN-03, NFR-SEC-01 | TASK-001 |
 | TASK-010 | OTP auth + token lifecycle | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03 | TASK-001, TASK-004 |
-| TASK-011 | Profile + avatar upload | medium | identity/profile scope | TASK-010 |
+| TASK-011 | Profile + avatar upload | medium | REQ-AUTH-01 | TASK-010 |
 | TASK-012 | Tasker role activation + verification submit/status | high | REQ-AUTH-04, REQ-SAFE-01 | TASK-010, TASK-011 |
 | TASK-013 | Admin verification queue + approve/reject | high | REQ-SAFE-01, REQ-AUTH-04 | TASK-012 |
 | TASK-020 | Categories public/admin management | medium | REQ-TASK-05 | TASK-001 |
@@ -46,6 +46,9 @@ Rules:
 | TASK-063 | Open task feed performance tuning + perf tests | high | NFR-PERF-01 | TASK-022 |
 | TASK-064 | Liability disclaimer gate before payment initiation | high | NFR-LEGAL-01 | TASK-030 |
 | TASK-065 | Cursor pagination consistency across list APIs | medium | NFR-API-01 | TASK-002 |
+| TASK-070 | Web design system foundation (`shadcn/ui`) | medium | REQ-UI-01, NFR-UI-01 | TASK-002 |
+| TASK-071 | Mobile token adapter + component parity baseline | medium | REQ-UI-02, NFR-UI-01 | TASK-070 |
+| TASK-072 | Cross-platform UI parity and web accessibility gate | medium | NFR-UI-02 | TASK-070, TASK-071 |
 
 ## Ticket Definitions
 
@@ -353,6 +356,39 @@ Rules:
   - `TID-TASK-065-API-CURSOR-ENVELOPE`
   - `TID-TASK-065-API-CURSOR-DETERMINISM`
   - `TID-TASK-065-CONTRACT-LIST-ENDPOINTS`
+
+### TASK-070 Web Design System Foundation (`shadcn/ui`)
+- Objective: Establish web UI base components on `shadcn/ui` and shared tokens.
+- Acceptance criteria:
+  1. `shadcn/ui` is initialized and base primitives exist under `apps/web/src/components/ui`.
+  2. Web theme tokens are defined in a shared token source and consumed by Tailwind/theme variables.
+  3. At least one feature screen is migrated to use `shadcn/ui` primitives only.
+- Required tests:
+  - `TID-TASK-070-WEB-SHADCN-PRIMITIVES`
+  - `TID-TASK-070-WEB-TOKEN-BINDING`
+  - `TID-TASK-070-WEB-COMPONENT-USAGE-COMPLIANCE`
+
+### TASK-071 Mobile Token Adapter + Component Parity Baseline
+- Objective: Build mobile-native component layer aligned with shared web tokens and behaviors.
+- Acceptance criteria:
+  1. Mobile consumes shared design tokens through a platform adapter.
+  2. Core components (Button, Input, FormField, Modal/Sheet, Toast) have mobile equivalents with matching state semantics.
+  3. Parity matrix is documented and linked from architecture docs.
+- Required tests:
+  - `TID-TASK-071-MOBILE-TOKEN-ADAPTER`
+  - `TID-TASK-071-MOBILE-COMPONENT-PARITY-BASE`
+  - `TID-TASK-071-MOBILE-STATE-SEMANTIC-PARITY`
+
+### TASK-072 Cross-Platform UI Parity and Web Accessibility Gate
+- Objective: Enforce ongoing visual/behavior parity and accessibility quality gates.
+- Acceptance criteria:
+  1. Web UI flows touched by changes pass keyboard navigation checks.
+  2. Web UI flows touched by changes meet WCAG 2.1 AA contrast.
+  3. Cross-platform parity checks validate token usage and expected component state behavior.
+- Required tests:
+  - `TID-TASK-072-WEB-A11Y-KEYBOARD`
+  - `TID-TASK-072-WEB-A11Y-CONTRAST-AA`
+  - `TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK`
 
 ## Backlog Completion Criteria
 Backlog generation is complete when:

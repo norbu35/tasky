@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-070",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-UI-01",
+    "REQ-UI-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-070-01",
+      "type": "functional",
+      "statement": "`shadcn/ui` is initialized and base primitives exist under `apps/web/src/components/ui`.",
+      "test_ids": [
+        "TID-TASK-070-WEB-SHADCN-PRIMITIVES"
+      ]
+    },
+    {
+      "id": "AC-TASK-070-02",
+      "type": "functional",
+      "statement": "Web theme tokens are defined in a shared token source and consumed by Tailwind/theme variables.",
+      "test_ids": [
+        "TID-TASK-070-WEB-TOKEN-BINDING"
+      ]
+    },
+    {
+      "id": "AC-TASK-070-03",
+      "type": "functional",
+      "statement": "At least one feature screen is migrated to use `shadcn/ui` primitives only.",
+      "test_ids": [
+        "TID-TASK-070-WEB-COMPONENT-USAGE-COMPLIANCE"
+      ]
+    }
+  ]
+}

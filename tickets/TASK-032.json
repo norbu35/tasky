@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-032",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-BOOK-04",
+    "REQ-BOOK-06"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-032-01",
+      "type": "functional",
+      "statement": "Customer late-cancel applies fee policy and beneficiary logic.",
+      "test_ids": [
+        "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE"
+      ]
+    },
+    {
+      "id": "AC-TASK-032-02",
+      "type": "functional",
+      "statement": "Tasker cancellation reopens task and records strike.",
+      "test_ids": [
+        "TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE"
+      ]
+    },
+    {
+      "id": "AC-TASK-032-03",
+      "type": "functional",
+      "statement": "Three strikes in 30 days triggers 7-day suspension.",
+      "test_ids": [
+        "TID-TASK-032-DOMAIN-STRIKE-SUSPENSION"
+      ]
+    }
+  ]
+}

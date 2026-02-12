@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-044",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-NOTIF-01",
+    "REQ-NOTIF-02"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-044-01",
+      "type": "functional",
+      "statement": "Device register/unregister endpoints manage notification targets.",
+      "test_ids": [
+        "TID-TASK-044-API-DEVICE-REGISTER"
+      ]
+    },
+    {
+      "id": "AC-TASK-044-02",
+      "type": "functional",
+      "statement": "Push notifications emitted for required events.",
+      "test_ids": [
+        "TID-TASK-044-DOMAIN-PUSH-EVENTS"
+      ]
+    },
+    {
+      "id": "AC-TASK-044-03",
+      "type": "functional",
+      "statement": "SMS fallback sent for hired/booking-confirmed events when app inactive.",
+      "test_ids": [
+        "TID-TASK-044-DOMAIN-SMS-FALLBACK"
+      ]
+    }
+  ]
+}

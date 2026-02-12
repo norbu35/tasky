@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-062",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-RELI-02"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-062-01",
+      "type": "functional",
+      "statement": "Mobile persists last successful My Tasks payload locally.",
+      "test_ids": [
+        "TID-TASK-062-MOBILE-CACHE-PERSIST"
+      ]
+    },
+    {
+      "id": "AC-TASK-062-02",
+      "type": "reliability",
+      "statement": "Offline mode renders cached data with stale indicator.",
+      "test_ids": [
+        "TID-TASK-062-MOBILE-OFFLINE-READ"
+      ]
+    },
+    {
+      "id": "AC-TASK-062-03",
+      "type": "reliability",
+      "statement": "Offline mode blocks mutating actions.",
+      "test_ids": [
+        "TID-TASK-062-MOBILE-OFFLINE-MUTATION-BLOCK"
+      ]
+    }
+  ]
+}

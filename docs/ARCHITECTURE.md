@@ -43,8 +43,8 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 *   **Auth**: Spring Security + JWT (Stateless)
 
 ### 3.2 Frontend Stack
-*   **Web**: React 18, Vite, TailwindCSS, TanStack Query.
-*   **Mobile**: React Native (Expo), NativeWind, React Navigation.
+*   **Web**: React 18, Vite, TailwindCSS, TanStack Query, `shadcn/ui` (built on Radix primitives).
+*   **Mobile**: React Native (Expo), NativeWind, React Navigation, token-driven native component library (no direct `shadcn` runtime usage).
 *   **API Client**: TypeScript SDK generated from OpenAPI.
 
 ### 3.3 Infrastructure Services (AWS & Containers)
@@ -61,6 +61,21 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
     *   **Engine**: PostGIS running in the Postgres container.
     *   **Indexing**: GiST index on `tasks.location_point` is mandatory.
     *   **Query**: Use `ST_DWithin` for radius searches (e.g., "Tasks within 5km").
+
+### 3.4 Frontend Design System Architecture
+*   **Component Source of Truth (Web)**:
+    *   Base primitives are generated/managed via `shadcn/ui` in `apps/web/src/components/ui`.
+    *   Product-level components are composed from those primitives in feature folders.
+    *   Additional third-party UI frameworks (MUI, Ant, Chakra, etc.) are forbidden for web runtime components.
+*   **Token Source of Truth (Cross-Platform)**:
+    *   Canonical design tokens live in a shared package (recommended: `packages/design-tokens`).
+    *   Web consumes tokens via Tailwind/theme variables.
+    *   Mobile consumes the same tokens through a React Native adapter layer.
+*   **Parity Contract (Web <-> Mobile)**:
+    *   Each shared UX pattern (Button, Input, Select, Modal/Sheet, Toast, Form Field, Empty State) has a parity record defining states, spacing, typography, and interaction behavior.
+    *   Mobile keeps native rendering patterns while matching token values and state semantics.
+*   **Accessibility Baseline**:
+    *   Web components must preserve Radix/shadcn accessibility defaults and satisfy keyboard navigation + WCAG AA contrast.
 
 ---
 

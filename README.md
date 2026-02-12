@@ -7,6 +7,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 - `docs/`: PRD, architecture, API contract, quality contracts
 - `docs/TRACEABILITY.md`: PRD requirement to architecture/API/ticket mapping
 - `docs/BACKLOG_MVP.md`: atomic MVP ticket backlog with acceptance and test IDs
+- `docs/FRONTEND_DESIGN_PLAN.md`: shadcn/web + mobile parity execution plan
 - `src/`: Spring Boot backend source
 - `apps/web`: React web client scaffold
 - `apps/mobile`: React Native (Expo) mobile scaffold

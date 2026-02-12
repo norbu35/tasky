@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-041",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-ADMIN-02",
+    "REQ-MSG-02",
+    "REQ-SAFE-03"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-041-01",
+      "type": "functional",
+      "statement": "Dispute can be raised only for eligible booking states/window.",
+      "test_ids": [
+        "TID-TASK-041-API-DISPUTE-RAISE"
+      ]
+    },
+    {
+      "id": "AC-TASK-041-02",
+      "type": "functional",
+      "statement": "Active dispute pauses payout eligibility.",
+      "test_ids": [
+        "TID-TASK-041-DOMAIN-PAYOUT-HOLD"
+      ]
+    },
+    {
+      "id": "AC-TASK-041-03",
+      "type": "functional",
+      "statement": "Admin resolution supports refund/release outcomes with audit trail.",
+      "test_ids": [
+        "TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE"
+      ]
+    }
+  ]
+}
