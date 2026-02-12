@@ -40,3 +40,8 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-12T19:32:13Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.task000.json` |
 | 2026-02-12T19:34:13Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |
 | 2026-02-12T19:45:20Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |
+| 2026-02-12T20:17:20Z | local | Codex | TASK-001 | agent/TASK-001-platform-bootstrap | 19067aad51eae1fe87ef0fd141540fb6f0698758 | low | FAIL | 3/6 | NFR-RELI-01 | `artifacts/self-verify.task001.json` |
+| 2026-02-12T20:18:17Z | local | Codex | TASK-001 | agent/TASK-001-platform-bootstrap | 19067aad51eae1fe87ef0fd141540fb6f0698758 | low | FAIL | 3/6 | NFR-RELI-01 | `artifacts/self-verify.task001.json` |
+| 2026-02-12T20:19:17Z | local | Codex | TASK-001 | agent/TASK-001-platform-bootstrap | 19067aad51eae1fe87ef0fd141540fb6f0698758 | low | FAIL | 5/6 | NFR-RELI-01 | `artifacts/self-verify.task001.json` |
+| 2026-02-12T20:20:32Z | local | Codex | TASK-001 | agent/TASK-001-platform-bootstrap | 19067aad51eae1fe87ef0fd141540fb6f0698758 | low | PASS | 6/6 | NFR-RELI-01 | `artifacts/self-verify.task001.json` |
+| 2026-02-12T20:22:07Z | local | Codex | TASK-002 | agent/TASK-002-openapi-sdk-gates | 19067aad51eae1fe87ef0fd141540fb6f0698758 | medium | PASS | 9/9 | NFR-API-01 | `artifacts/self-verify.task002.json` |

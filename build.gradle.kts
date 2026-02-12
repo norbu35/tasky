@@ -140,6 +140,10 @@ checkstyle {
 // Test
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "failed", "skipped")
+        showStandardStreams = true
+    }
     finalizedBy(tasks.jacocoTestReport)
 }
 

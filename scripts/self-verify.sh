@@ -260,7 +260,26 @@ fi
 CMD
       ;;
     commit_message_lint)
-      echo "python3 scripts/validate-commit-messages.py --ticket \"${SELF_VERIFY_TICKET}\""
+      cat <<'CMD'
+commit_lint_base="${COMMIT_LINT_BASE:-}"
+if [[ -z "${commit_lint_base}" && "${CI:-}" != "true" ]]; then
+  commit_lint_base="HEAD"
+fi
+if [[ -z "${commit_lint_base}" ]]; then
+  for ref in origin/main main origin/master master; do
+    if git rev-parse --verify "${ref}" >/dev/null 2>&1; then
+      commit_lint_base="$(git merge-base HEAD "${ref}")"
+      break
+    fi
+  done
+fi
+
+if [[ -n "${commit_lint_base}" ]]; then
+  python3 scripts/validate-commit-messages.py --base "${commit_lint_base}" --ticket "${SELF_VERIFY_TICKET}"
+else
+  python3 scripts/validate-commit-messages.py --ticket "${SELF_VERIFY_TICKET}"
+fi
+CMD
       ;;
     secret_scan)
       echo "! rg -n --hidden --glob '!.git' --glob '!artifacts/**' --glob '!build/**' 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' ."
@@ -297,7 +316,7 @@ if rg -q '^(packages/sdk/|docs/API\.yaml$)' artifacts/checks/changed-files.txt; 
 fi
 
 if (( needs_backend == 1 )); then
-  ./gradlew --no-daemon test
+  ./gradlew --no-daemon test --rerun-tasks
 fi
 
 if (( needs_web == 1 || needs_mobile == 1 )); then
@@ -320,7 +339,17 @@ fi
 CMD
       ;;
     openapi_validation)
-      echo "./gradlew --no-daemon openApiValidate"
+      cat <<'CMD'
+if [[ "${SELF_VERIFY_TICKET}" == "TASK-002" ]]; then
+  echo "TID-TASK-002-API-VALIDATE"
+fi
+
+./gradlew --no-daemon openApiValidate
+
+if [[ "${SELF_VERIFY_TICKET}" == "TASK-002" ]] || rg -q '^(docs/API\.yaml$|packages/sdk/|apps/web/|apps/mobile/|package\.json$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$)' artifacts/checks/changed-files.txt; then
+  scripts/validate-sdk-contract-drift.sh
+fi
+CMD
       ;;
     integration_tests_touched)
       cat <<'CMD'
@@ -344,9 +373,9 @@ fi
 
 if (( needs_backend == 1 )); then
   if find src/test -type f 2>/dev/null | rg -q 'Integration|IT'; then
-    ./gradlew --no-daemon test --tests '*Integration*' --tests '*IT*'
+    ./gradlew --no-daemon test --rerun-tasks --tests '*Integration*' --tests '*IT*'
   else
-    ./gradlew --no-daemon test
+    ./gradlew --no-daemon test --rerun-tasks
   fi
 fi
 

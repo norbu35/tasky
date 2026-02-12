@@ -1908,7 +1908,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Task"];
+                    "application/json": components["schemas"]["Task"] | components["schemas"]["PublicTask"];
                 };
             };
             401: components["responses"]["Unauthorized"];
