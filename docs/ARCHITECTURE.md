@@ -74,6 +74,7 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 *   **Parity Contract (Web <-> Mobile)**:
     *   Each shared UX pattern (Button, Input, Select, Modal/Sheet, Toast, Form Field, Empty State) has a parity record defining states, spacing, typography, and interaction behavior.
     *   Mobile keeps native rendering patterns while matching token values and state semantics.
+    *   Canonical parity baseline table: `docs/UI_PARITY_MATRIX.md`.
 *   **Accessibility Baseline**:
     *   Web components must preserve Radix/shadcn accessibility defaults and satisfy keyboard navigation + WCAG AA contrast.
 

@@ -47,3 +47,4 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-12T20:22:07Z | local | Codex | TASK-002 | agent/TASK-002-openapi-sdk-gates | 19067aad51eae1fe87ef0fd141540fb6f0698758 | medium | PASS | 9/9 | NFR-API-01 | `artifacts/self-verify.task002.json` |
 | 2026-02-12T21:00:30Z | local | Codex | TASK-003 | agent/TASK-003-observability-baseline | 192d823e567edd78fc23176fe5638b6ff8aa6b54 | medium | PASS | 9/9 | NFR-RELI-01 | `artifacts/self-verify.task003.json` |
 | 2026-02-12T21:08:11Z | local | Codex | TASK-070 | agent/TASK-070-web-design-system-foundation | 1c8affa48f909849e13db4a0948aff62156cde7a | medium | PASS | 9/9 | NFR-UI-01,REQ-UI-01 | `artifacts/self-verify.task070.json` |
+| 2026-02-12T21:14:50Z | local | Codex | TASK-071 | agent/TASK-071-mobile-token-parity-baseline | 514fa90ed953c86d9be8701232ecd4c2c189b65d | medium | PASS | 9/9 | NFR-UI-01,REQ-UI-02 | `artifacts/self-verify.task071.json` |
