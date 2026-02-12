@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Tasky",
+    "slug": "tasky",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "tasky",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"]
+  }
+}

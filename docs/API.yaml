@@ -1,0 +1,2672 @@
+openapi: 3.0.3
+info:
+  title: Tasky API
+  description: |
+    REST API for Tasky — Mongolia's most trusted domestic service marketplace.
+
+    ## Authentication
+    All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
+    Obtain tokens via the OTP login flow (`/auth/otp/*`).
+
+    ## Pagination
+    All list endpoints use **cursor-based pagination**.
+    Pass `cursor` (opaque string) and `limit` (default 20, max 100) as query parameters.
+    Responses wrap results in `{ data: [], cursor: { next, has_more } }`.
+
+    ## Errors
+    All errors return a standard JSON body: `{ code, message, trace_id }`.
+
+    ## Currency
+    All monetary amounts are integers in MNT (Mongolian Tugrik).
+
+    ## Idempotency
+    Payment and critical state-changing endpoints require an `Idempotency-Key` header.
+  version: 1.0.0
+  contact:
+    name: Tasky Engineering
+servers:
+  - url: /api/v1
+    description: API v1
+
+tags:
+  - name: Auth
+    description: OTP login and token management
+  - name: Users
+    description: User profile management
+  - name: Verification
+    description: Tasker identity verification
+  - name: Categories
+    description: Service categories
+  - name: Tasks
+    description: Task posting and discovery
+  - name: Applications
+    description: Tasker applications to tasks
+  - name: Bookings
+    description: Booking lifecycle
+  - name: Payments
+    description: QPay payment integration
+  - name: Wallet
+    description: Tasker wallet and payouts
+  - name: Reviews
+    description: Post-completion reviews
+  - name: Disputes
+    description: Booking disputes
+  - name: Conversations
+    description: In-app messaging (REST fallback)
+  - name: Notifications
+    description: Push notification device management
+  - name: Admin
+    description: Admin operations
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CursorParam:
+      name: cursor
+      in: query
+      description: Opaque cursor for pagination. Pass the `next` value from a previous response.
+      schema:
+        type: string
+    LimitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return (default 20, max 100).
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    PathId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKeyHeader:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Unique key to ensure idempotent handling of critical state-changing requests.
+
+  schemas:
+    # ─── Common ───────────────────────────────────────────────
+    Error:
+      type: object
+      required: [code, message, trace_id]
+      properties:
+        code:
+          type: string
+          example: TASK_ALREADY_BOOKED
+        message:
+          type: string
+          example: This task has already been assigned to another tasker.
+        trace_id:
+          type: string
+          example: abc-123-def
+
+    CursorPagination:
+      type: object
+      required: [next, has_more]
+      properties:
+        next:
+          type: string
+          nullable: true
+          description: Opaque cursor to fetch the next page. Null if no more results.
+          example: eyJpZCI6MTAwfQ==
+        has_more:
+          type: boolean
+          example: true
+
+    PresignedUrlResponse:
+      type: object
+      required: [upload_url, storage_key]
+      properties:
+        upload_url:
+          type: string
+          format: uri
+          description: Presigned URL to upload the file directly to S3/MinIO.
+        storage_key:
+          type: string
+          description: Storage key to reference this file in subsequent API calls.
+          example: uploads/avatars/550e8400-e29b-41d4-a716-446655440000.jpg
+
+    # ─── Identity ─────────────────────────────────────────────
+    User:
+      type: object
+      required: [id, phone, role, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        phone:
+          type: string
+          example: "+97699001122"
+        role:
+          type: string
+          enum: [CUSTOMER, TASKER, ADMIN]
+        status:
+          type: string
+          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+        created_at:
+          type: string
+          format: date-time
+
+    Profile:
+      type: object
+      required: [id, phone, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        phone:
+          type: string
+          example: "+97699001122"
+        role:
+          type: string
+          enum: [CUSTOMER, TASKER, ADMIN]
+        status:
+          type: string
+          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+        full_name:
+          type: string
+          example: Бат-Эрдэнэ
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        rating_avg:
+          type: number
+          format: double
+          example: 4.7
+        completed_tasks:
+          type: integer
+          example: 12
+        is_pro:
+          type: boolean
+          description: Auto-assigned when completed_tasks > 5 AND rating_avg > 4.5.
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Verification ─────────────────────────────────────────
+    VerificationStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [NOT_SUBMITTED, PENDING, APPROVED, REJECTED]
+        admin_notes:
+          type: string
+          nullable: true
+          description: Reason for rejection (visible to user).
+        submitted_at:
+          type: string
+          format: date-time
+          nullable: true
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    VerificationDetail:
+      type: object
+      required: [id, user_id, status, submitted_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        user_phone:
+          type: string
+        user_name:
+          type: string
+        id_card_front_url:
+          type: string
+          format: uri
+        id_card_back_url:
+          type: string
+          format: uri
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+        admin_notes:
+          type: string
+          nullable: true
+        submitted_at:
+          type: string
+          format: date-time
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # ─── Categories ───────────────────────────────────────────
+    Category:
+      type: object
+      required: [id, name, name_mn, icon_url, is_active, sort_order]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Cleaning
+        name_mn:
+          type: string
+          example: Цэвэрлэгээ
+        icon_url:
+          type: string
+          format: uri
+        is_active:
+          type: boolean
+        sort_order:
+          type: integer
+
+    # ─── Tasks ────────────────────────────────────────────────
+    PublicTask:
+      type: object
+      required: [id, category, customer, description, budget, approximate_location, status, scheduled_at, photo_urls, application_count, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          $ref: '#/components/schemas/Category'
+        customer:
+          type: object
+          required: [id, full_name, avatar_url, rating_avg]
+          properties:
+            id:
+              type: string
+              format: uuid
+            full_name:
+              type: string
+            avatar_url:
+              type: string
+              format: uri
+              nullable: true
+            rating_avg:
+              type: number
+              format: double
+        description:
+          type: string
+        budget:
+          type: integer
+          description: Fixed budget in MNT.
+          example: 50000
+        approximate_location:
+          type: string
+          description: Fuzzed location (district/khoroo level). Exact address hidden until booking.
+          example: Хан-Уул дүүрэг, 15-р хороо
+        approximate_lat:
+          type: number
+          format: double
+          description: Approximate latitude (fuzzed to ~500m).
+        approximate_lng:
+          type: number
+          format: double
+          description: Approximate longitude (fuzzed to ~500m).
+        status:
+          type: string
+          enum: [OPEN]
+        scheduled_at:
+          type: string
+          format: date-time
+        photo_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 3
+        application_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    Task:
+      type: object
+      required: [id, category_id, description, budget, location_lat, location_lng, location_text, status, scheduled_at, photos, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+        category:
+          $ref: '#/components/schemas/Category'
+        customer_id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        budget:
+          type: integer
+          description: Fixed budget in MNT.
+          example: 50000
+        location_lat:
+          type: number
+          format: double
+        location_lng:
+          type: number
+          format: double
+        location_text:
+          type: string
+          description: Exact address (visible only to task owner and booked tasker).
+          example: Энхтайваны өргөн чөлөө 5-р байр, 301 тоот
+        status:
+          type: string
+          enum: [OPEN, ASSIGNED, COMPLETED, CANCELLED]
+        scheduled_at:
+          type: string
+          format: date-time
+        photos:
+          type: array
+          items:
+            type: object
+            properties:
+              storage_key:
+                type: string
+              url:
+                type: string
+                format: uri
+              sort_order:
+                type: integer
+          maxItems: 3
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateTaskRequest:
+      type: object
+      required: [category_id, description, budget, location_lat, location_lng, location_text, scheduled_at]
+      properties:
+        category_id:
+          type: string
+          format: uuid
+        description:
+          type: string
+          minLength: 10
+          maxLength: 2000
+        budget:
+          type: integer
+          minimum: 5000
+          description: Fixed budget in MNT. Minimum 5,000 MNT.
+        location_lat:
+          type: number
+          format: double
+        location_lng:
+          type: number
+          format: double
+        location_text:
+          type: string
+          minLength: 5
+          maxLength: 500
+          description: Human-readable address description.
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Must be in the future.
+        photo_keys:
+          type: array
+          items:
+            type: string
+          maxItems: 3
+          description: Storage keys from presigned upload.
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          minLength: 10
+          maxLength: 2000
+        budget:
+          type: integer
+          minimum: 5000
+        location_lat:
+          type: number
+          format: double
+        location_lng:
+          type: number
+          format: double
+        location_text:
+          type: string
+          minLength: 5
+          maxLength: 500
+        scheduled_at:
+          type: string
+          format: date-time
+        photo_keys:
+          type: array
+          items:
+            type: string
+          maxItems: 3
+
+    # ─── Applications ─────────────────────────────────────────
+    TaskApplication:
+      type: object
+      required: [id, task_id, tasker, message, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        task_id:
+          type: string
+          format: uuid
+        tasker:
+          type: object
+          required: [id, full_name, avatar_url, rating_avg, completed_tasks, is_pro]
+          properties:
+            id:
+              type: string
+              format: uuid
+            full_name:
+              type: string
+            avatar_url:
+              type: string
+              format: uri
+              nullable: true
+            rating_avg:
+              type: number
+              format: double
+            completed_tasks:
+              type: integer
+            is_pro:
+              type: boolean
+        message:
+          type: string
+          description: Tasker's cover message.
+        status:
+          type: string
+          enum: [PENDING, ACCEPTED, REJECTED, WITHDRAWN]
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Bookings ─────────────────────────────────────────────
+    Booking:
+      type: object
+      required: [id, task_id, tasker_id, customer_id, price, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        task_id:
+          type: string
+          format: uuid
+        task:
+          $ref: '#/components/schemas/Task'
+        tasker_id:
+          type: string
+          format: uuid
+        tasker:
+          $ref: '#/components/schemas/Profile'
+        customer_id:
+          type: string
+          format: uuid
+        customer:
+          $ref: '#/components/schemas/Profile'
+        price:
+          type: integer
+          description: Agreed price in MNT.
+        status:
+          type: string
+          enum: [PENDING_PAYMENT, PAID, COMPLETED, CANCELLED]
+        cancellation_fee:
+          type: integer
+          nullable: true
+          description: Fee charged on late cancellation (MNT). Null if not applicable.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    # ─── Wallet ───────────────────────────────────────────────
+    WalletBalance:
+      type: object
+      required: [balance, pending_payout, currency]
+      properties:
+        balance:
+          type: integer
+          description: Available balance in MNT.
+          example: 250000
+        pending_payout:
+          type: integer
+          description: Amount currently requested for payout but not yet processed.
+          example: 100000
+        currency:
+          type: string
+          example: MNT
+
+    LedgerEntry:
+      type: object
+      required: [id, amount, type, description, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          description: Signed amount in MNT. Positive = credit, negative = debit.
+        type:
+          type: string
+          enum: [DEPOSIT, FEE, PAYOUT, REFUND]
+        reference_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Related booking or payout ID.
+        description:
+          type: string
+          example: "Цэвэрлэгээ ажил #1234 — орлого"
+        created_at:
+          type: string
+          format: date-time
+
+    PayoutRequest:
+      type: object
+      required: [id, amount, bank_name, bank_account, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+          description: Payout amount in MNT.
+        bank_name:
+          type: string
+          example: Хаан банк
+        bank_account:
+          type: string
+          example: "5012345678"
+        status:
+          type: string
+          enum: [PENDING, PROCESSED, REJECTED]
+        created_at:
+          type: string
+          format: date-time
+        processed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # ─── Reviews ──────────────────────────────────────────────
+    Review:
+      type: object
+      required: [id, booking_id, reviewer_id, reviewee_id, rating, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+          format: uuid
+        reviewer_id:
+          type: string
+          format: uuid
+        reviewer:
+          $ref: '#/components/schemas/Profile'
+        reviewee_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Disputes ─────────────────────────────────────────────
+    Dispute:
+      type: object
+      required: [id, booking_id, raised_by, reason, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+          format: uuid
+        booking:
+          $ref: '#/components/schemas/Booking'
+        raised_by:
+          type: string
+          format: uuid
+        reason:
+          type: string
+        status:
+          type: string
+          enum: [OPEN, RESOLVED]
+        resolution:
+          type: string
+          enum: [REFUND_CUSTOMER, RELEASE_TASKER]
+          nullable: true
+        resolution_amount:
+          type: integer
+          nullable: true
+        resolution_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # ─── Conversations / Messages ─────────────────────────────
+    Conversation:
+      type: object
+      required: [id, task_id, customer_id, tasker_id, last_message, unread_count, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        task_id:
+          type: string
+          format: uuid
+        task_title:
+          type: string
+          description: Truncated task description for display.
+        customer_id:
+          type: string
+          format: uuid
+        customer:
+          $ref: '#/components/schemas/Profile'
+        tasker_id:
+          type: string
+          format: uuid
+        tasker:
+          $ref: '#/components/schemas/Profile'
+        last_message:
+          $ref: '#/components/schemas/Message'
+        unread_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    Message:
+      type: object
+      required: [id, conversation_id, sender_id, content, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversation_id:
+          type: string
+          format: uuid
+        sender_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid authentication token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient permissions for this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Requested resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Conflict with current resource state.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Rate limit exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+# ═══════════════════════════════════════════════════════════════
+# PATHS
+# ═══════════════════════════════════════════════════════════════
+paths:
+
+  # ─── Auth ───────────────────────────────────────────────────
+  /auth/otp/request:
+    post:
+      tags: [Auth]
+      summary: Request SMS OTP
+      description: |
+        Sends a one-time password to the given phone number.
+        Rate limited to 3 requests per hour per IP to prevent SMS pumping.
+        Creates a new user account if the phone number is not registered.
+      operationId: requestOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone:
+                  type: string
+                  description: Phone number in E.164 format.
+                  example: "+97699001122"
+      responses:
+        '200':
+          description: OTP sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message:
+                    type: string
+                    example: OTP sent to +97699****22
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/otp/verify:
+    post:
+      tags: [Auth]
+      summary: Verify OTP and authenticate
+      description: |
+        Verifies the OTP code and returns JWT tokens.
+        If this is the user's first login, a new account is created with CUSTOMER role.
+      operationId: verifyOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, code]
+              properties:
+                phone:
+                  type: string
+                  example: "+97699001122"
+                code:
+                  type: string
+                  minLength: 4
+                  maxLength: 6
+                  example: "123456"
+      responses:
+        '200':
+          description: Authentication successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, refresh_token, user]
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid or expired OTP code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/token/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      description: Exchange a valid refresh token for a new token pair.
+      operationId: refreshToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Tokens refreshed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, refresh_token]
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '401':
+          description: Invalid or expired refresh token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Users ──────────────────────────────────────────────────
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      description: Returns the full profile of the authenticated user.
+      operationId: getMyProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      tags: [Users]
+      summary: Update current user profile
+      description: Updates profile fields for the authenticated user.
+      operationId: updateMyProfile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                avatar_url:
+                  type: string
+                  format: uri
+                  nullable: true
+      responses:
+        '200':
+          description: Profile updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users/me/role/tasker:
+    post:
+      tags: [Users]
+      summary: Activate tasker role
+      description: |
+        Requests role transition from CUSTOMER to TASKER.
+        Verification status remains pending until admin approval.
+      operationId: activateTaskerRole
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Role updated to TASKER.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: User is already TASKER or ADMIN.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/me/avatar/upload-url:
+    post:
+      tags: [Users]
+      summary: Get presigned URL for avatar upload
+      description: |
+        Returns a presigned URL to upload an avatar image directly to S3/MinIO.
+        After uploading, use the returned `storage_key` to update the profile.
+      operationId: getAvatarUploadUrl
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content_type]
+              properties:
+                content_type:
+                  type: string
+                  description: MIME type of the file (e.g. image/jpeg, image/png).
+                  example: image/jpeg
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ─── Verification ───────────────────────────────────────────
+  /verification/upload-url:
+    post:
+      tags: [Verification]
+      summary: Get presigned URL for verification image upload
+      description: |
+        Returns a presigned URL to upload government ID images used in verification submission.
+      operationId: getVerificationUploadUrl
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content_type]
+              properties:
+                content_type:
+                  type: string
+                  description: MIME type of the verification image (e.g. image/jpeg, image/png).
+                  example: image/jpeg
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /verification/submit:
+    post:
+      tags: [Verification]
+      summary: Submit ID verification
+      description: |
+        Tasker submits government ID photos for manual verification.
+        The storage keys must reference previously uploaded files via presigned URL.
+      operationId: submitVerification
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_card_front_key, id_card_back_key]
+              properties:
+                id_card_front_key:
+                  type: string
+                  description: Storage key of the uploaded ID card front image.
+                id_card_back_key:
+                  type: string
+                  description: Storage key of the uploaded ID card back image.
+      responses:
+        '200':
+          description: Verification submitted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Verification already submitted or approved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/status:
+    get:
+      tags: [Verification]
+      summary: Check verification status
+      description: Returns the current verification status for the authenticated user.
+      operationId: getVerificationStatus
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current verification status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ─── Categories ─────────────────────────────────────────────
+  /categories:
+    get:
+      tags: [Categories]
+      summary: List active categories
+      description: Returns paginated active service categories, sorted by `sort_order`.
+      operationId: listCategories
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of active categories.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ─── Tasks ──────────────────────────────────────────────────
+  /tasks/photos/upload-url:
+    post:
+      tags: [Tasks]
+      summary: Get presigned URL for pre-create task photo upload
+      description: |
+        Returns a presigned URL to upload a task photo directly to S3/MinIO before task creation.
+        Upload keys can be submitted in `photo_keys` during `POST /tasks`.
+      operationId: getTaskPreCreatePhotoUploadUrl
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content_type]
+              properties:
+                content_type:
+                  type: string
+                  example: image/jpeg
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /tasks:
+    get:
+      tags: [Tasks]
+      summary: List open tasks
+      description: |
+        Returns a paginated list of OPEN tasks. Supports filtering by category and
+        geospatial radius search. Location data is fuzzed for privacy.
+      operationId: listTasks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          description: Filter by category ID.
+          schema:
+            type: string
+            format: uuid
+        - name: lat
+          in: query
+          description: Latitude for radius search.
+          schema:
+            type: number
+            format: double
+        - name: lng
+          in: query
+          description: Longitude for radius search.
+          schema:
+            type: number
+            format: double
+        - name: radius_km
+          in: query
+          description: Search radius in kilometers (default 10, max 50).
+          schema:
+            type: number
+            format: double
+            default: 10
+            maximum: 50
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of open tasks.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicTask'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Tasks]
+      summary: Create a new task
+      description: |
+        Creates a new task in OPEN status. Only authenticated customers can create tasks.
+        The task must have a future scheduled_at date and a valid category.
+      operationId: createTask
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: Get task details
+      description: |
+        Returns full task details. Exact location is only visible to the task owner
+        and the booked tasker. Other users see approximate location only.
+      operationId: getTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Task details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Tasks]
+      summary: Update a task
+      description: |
+        Updates a task. Only the task owner can update, and only while the task is in OPEN status.
+      operationId: updateTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Task updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Task is not in OPEN status and cannot be updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{id}/cancel:
+    post:
+      tags: [Tasks]
+      summary: Cancel a task
+      description: |
+        Cancels an OPEN task. Only the task owner can cancel.
+        If the task has an active booking, use the booking cancellation endpoint instead.
+      operationId: cancelTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Task cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Task cannot be cancelled in its current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{id}/photos/upload-url:
+    post:
+      tags: [Tasks]
+      summary: Get presigned URL for task photo upload
+      description: |
+        Returns a presigned URL to upload a task photo directly to S3/MinIO.
+        Maximum 3 photos per task.
+      operationId: getTaskPhotoUploadUrl
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content_type]
+              properties:
+                content_type:
+                  type: string
+                  example: image/jpeg
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Applications ───────────────────────────────────────────
+  /tasks/{id}/applications:
+    post:
+      tags: [Applications]
+      summary: Apply to a task
+      description: |
+        Tasker applies to an OPEN task. Only verified taskers can apply.
+        A conversation is automatically created between the customer and tasker.
+      operationId: applyToTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  description: Cover message explaining why the tasker is a good fit.
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskApplication'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: User is not a verified tasker.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Tasker already applied or task is not OPEN.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags: [Applications]
+      summary: List applications for a task
+      description: |
+        Returns paginated list of applications for a task.
+        Only the task owner can view all applications.
+      operationId: listTaskApplications
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of applications.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TaskApplication'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /tasks/{id}/applications/{applicationId}/accept:
+    post:
+      tags: [Applications]
+      summary: Accept a tasker's application
+      description: |
+        Customer accepts a tasker's application. This creates a booking in PENDING_PAYMENT status.
+        All other pending applications for this task are automatically rejected.
+        Requires Idempotency-Key header.
+      operationId: acceptApplication
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Application accepted, booking created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Application already processed or task is not OPEN.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Bookings ───────────────────────────────────────────────
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: List my bookings
+      description: |
+        Returns paginated list of bookings for the authenticated user.
+        Filter by role (as customer or tasker) and booking status.
+      operationId: listBookings
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          description: View bookings as customer or tasker.
+          schema:
+            type: string
+            enum: [customer, tasker]
+        - name: status
+          in: query
+          description: Filter by booking status.
+          schema:
+            type: string
+            enum: [PENDING_PAYMENT, PAID, COMPLETED, CANCELLED]
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of bookings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /bookings/{id}:
+    get:
+      tags: [Bookings]
+      summary: Get booking details
+      description: Returns full booking details. Only accessible by the booking's customer or tasker.
+      operationId: getBooking
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Booking details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /bookings/{id}/cancel:
+    post:
+      tags: [Bookings]
+      summary: Cancel a booking
+      description: |
+        Cancels an active booking. Cancellation policy applies:
+        - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation incurs 10% fee (min 5,000 MNT).
+        - Tasker: Full refund to customer, task reverts to OPEN. Strike recorded (3 strikes in 30 days = 7-day suspension).
+        Requires Idempotency-Key header.
+      operationId: cancelBooking
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Booking cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking cannot be cancelled in its current status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/{id}/complete:
+    post:
+      tags: [Bookings]
+      summary: Mark booking as complete
+      description: |
+        Customer marks a PAID booking as complete. This triggers:
+        - Booking status -> COMPLETED
+        - Task status -> COMPLETED
+        - Tasker wallet credited (price minus platform fee)
+        Requires Idempotency-Key header.
+      operationId: completeBooking
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Booking completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not in PAID status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Payments ───────────────────────────────────────────────
+  /payments/bookings/{id}/initiate:
+    post:
+      tags: [Payments]
+      summary: Initiate QPay payment for a booking
+      description: |
+        Generates a QPay payment link and QR code for the booking.
+        The booking must be in PENDING_PAYMENT status.
+        Requires Idempotency-Key header.
+        Requires explicit liability disclaimer acceptance.
+      operationId: initiatePayment
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [liability_disclaimer_accepted]
+              properties:
+                liability_disclaimer_accepted:
+                  type: boolean
+                  description: Must be `true` to initiate payment.
+                  enum: [true]
+      responses:
+        '200':
+          description: Payment link generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [payment_url, qr_code]
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    description: QPay deeplink URL for app-to-app payment.
+                  qr_code:
+                    type: string
+                    description: Base64-encoded QR code image for scanning.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not in PENDING_PAYMENT status or payment already initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /payments/qpay/callback:
+    post:
+      tags: [Payments]
+      summary: QPay payment webhook callback
+      security: []
+      description: |
+        Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
+        On successful payment: booking status -> PAID, task status -> ASSIGNED.
+        Must be idempotent (handle duplicate callbacks gracefully).
+      operationId: qpayCallback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: QPay callback payload. Schema defined by QPay integration.
+              properties:
+                payment_id:
+                  type: string
+                object_id:
+                  type: string
+                  description: Booking ID passed during payment initiation.
+                amount:
+                  type: integer
+                status:
+                  type: string
+                signature:
+                  type: string
+                  description: HMAC signature for verification.
+      responses:
+        '200':
+          description: Callback processed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+        '400':
+          description: Invalid callback payload or signature.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Wallet ─────────────────────────────────────────────────
+  /wallet:
+    get:
+      tags: [Wallet]
+      summary: Get wallet balance
+      description: Returns the current wallet balance and pending payout amount for the authenticated user.
+      operationId: getWalletBalance
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Wallet balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletBalance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /wallet/transactions:
+    get:
+      tags: [Wallet]
+      summary: List wallet transactions
+      description: Returns paginated transaction history for the authenticated user's wallet.
+      operationId: listWalletTransactions
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated transaction history.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LedgerEntry'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /wallet/payouts:
+    post:
+      tags: [Wallet]
+      summary: Request payout
+      description: |
+        Tasker requests a payout from their wallet balance to a bank account.
+        Payouts are processed by admin on Tuesdays and Fridays.
+        Requires Idempotency-Key header.
+      operationId: requestPayout
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, bank_name, bank_account]
+              properties:
+                amount:
+                  type: integer
+                  minimum: 10000
+                  description: Payout amount in MNT. Minimum 10,000 MNT.
+                bank_name:
+                  type: string
+                  example: Хаан банк
+                bank_account:
+                  type: string
+                  example: "5012345678"
+      responses:
+        '201':
+          description: Payout request created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutRequest'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Insufficient balance or existing pending payout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Reviews ────────────────────────────────────────────────
+  /bookings/{id}/reviews:
+    post:
+      tags: [Reviews]
+      summary: Submit a review
+      description: |
+        Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
+        Each party can only submit one review per booking.
+      operationId: submitReview
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating]
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                  maxLength: 1000
+                  nullable: true
+      responses:
+        '201':
+          description: Review submitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Review already submitted for this booking or booking is not COMPLETED.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{id}/reviews:
+    get:
+      tags: [Reviews]
+      summary: Get reviews for a user
+      description: Returns paginated reviews received by a user.
+      operationId: getUserReviews
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated reviews.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Disputes ───────────────────────────────────────────────
+  /bookings/{id}/disputes:
+    post:
+      tags: [Disputes]
+      summary: Raise a dispute
+      description: |
+        Raise a dispute on a booking that is PAID (in progress) or COMPLETED (within 24 hours).
+        Raising a dispute pauses any pending payout to the tasker.
+        Requires Idempotency-Key header.
+      operationId: raiseDispute
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  minLength: 10
+                  maxLength: 2000
+      responses:
+        '201':
+          description: Dispute raised.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Dispute already raised or booking status/timing does not allow disputes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /disputes/{id}:
+    get:
+      tags: [Disputes]
+      summary: Get dispute details
+      description: Returns dispute details. Accessible by the dispute raiser, the other booking party, and admins.
+      operationId: getDispute
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Conversations ──────────────────────────────────────────
+  /conversations:
+    get:
+      tags: [Conversations]
+      summary: List my conversations
+      description: Returns paginated list of conversations for the authenticated user, ordered by last message.
+      operationId: listConversations
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated conversations.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /conversations/{id}/messages:
+    get:
+      tags: [Conversations]
+      summary: Get messages in a conversation
+      description: |
+        Returns paginated messages in a conversation, ordered by most recent first.
+        Only accessible by conversation participants and admins (for dispute resolution).
+      operationId: listMessages
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated messages.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags: [Conversations]
+      summary: Send a message (REST fallback)
+      description: |
+        Sends a message in a conversation. This is the REST fallback for clients that
+        cannot maintain a WebSocket connection. For real-time messaging, use the STOMP
+        WebSocket endpoint: SEND /app/conversations/{id}/messages.
+      operationId: sendMessage
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 2000
+      responses:
+        '201':
+          description: Message sent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Notifications ──────────────────────────────────────────
+  /notifications/devices:
+    post:
+      tags: [Notifications]
+      summary: Register push notification device
+      description: Registers a device token for push notifications. Overwrites existing token for the same device.
+      operationId: registerDevice
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, platform]
+              properties:
+                token:
+                  type: string
+                  description: FCM or Expo push token.
+                platform:
+                  type: string
+                  enum: [IOS, ANDROID, WEB]
+      responses:
+        '200':
+          description: Device registered.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Device registered successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /notifications/devices/{token}:
+    delete:
+      tags: [Notifications]
+      summary: Unregister push notification device
+      description: Removes a device token. Typically called on logout.
+      operationId: unregisterDevice
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Device unregistered.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── Admin ──────────────────────────────────────────────────
+  /admin/users:
+    get:
+      tags: [Admin]
+      summary: Search users
+      description: Search users by phone number. Admin only.
+      operationId: adminSearchUsers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: phone
+          in: query
+          description: Phone number to search for (partial match supported).
+          schema:
+            type: string
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of users.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/users/{id}/ban:
+    post:
+      tags: [Admin]
+      summary: Ban a user
+      description: |
+        Bans a user, preventing them from logging in even with a valid JWT.
+        Active bookings are not automatically cancelled.
+      operationId: adminBanUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+      responses:
+        '200':
+          description: User banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: User is already banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users/{id}/unban:
+    post:
+      tags: [Admin]
+      summary: Unban a user
+      description: Removes the ban on a user, restoring their access.
+      operationId: adminUnbanUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: User unbanned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: User is not banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/verifications/pending:
+    get:
+      tags: [Admin]
+      summary: List pending verifications
+      description: Returns paginated list of verification submissions awaiting admin review.
+      operationId: adminListPendingVerifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of pending verifications.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VerificationDetail'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/verifications/{id}/approve:
+    post:
+      tags: [Admin]
+      summary: Approve verification
+      description: Approves a tasker's identity verification. User status changes to VERIFIED.
+      operationId: adminApproveVerification
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Verification approved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Verification is not in PENDING status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/verifications/{id}/reject:
+    post:
+      tags: [Admin]
+      summary: Reject verification
+      description: Rejects a tasker's identity verification with a reason. Tasker can resubmit.
+      operationId: adminRejectVerification
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+                  description: Reason for rejection, visible to the tasker.
+      responses:
+        '200':
+          description: Verification rejected.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Verification is not in PENDING status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/disputes:
+    get:
+      tags: [Admin]
+      summary: List open disputes
+      description: Returns paginated list of open disputes for admin resolution.
+      operationId: adminListDisputes
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of open disputes.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Dispute'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/disputes/{id}/resolve:
+    post:
+      tags: [Admin]
+      summary: Resolve a dispute
+      description: |
+        Admin resolves a dispute by either refunding the customer or releasing funds to the tasker.
+        Partial amounts are supported.
+        Requires Idempotency-Key header.
+      operationId: adminResolveDispute
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolution, amount]
+              properties:
+                resolution:
+                  type: string
+                  enum: [REFUND_CUSTOMER, RELEASE_TASKER]
+                amount:
+                  type: integer
+                  minimum: 0
+                  description: Amount in MNT to refund or release. Can be partial.
+                notes:
+                  type: string
+                  maxLength: 2000
+                  description: Admin notes on the resolution decision.
+      responses:
+        '200':
+          description: Dispute resolved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispute'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Dispute is already resolved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/payouts/pending:
+    get:
+      tags: [Admin]
+      summary: List pending payouts
+      description: Returns paginated list of payout requests awaiting admin processing.
+      operationId: adminListPendingPayouts
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of pending payouts.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PayoutRequest'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/payouts/{id}/process:
+    post:
+      tags: [Admin]
+      summary: Mark payout as processed
+      description: |
+        Admin marks a payout request as processed after completing the bank transfer.
+        This debits the tasker's wallet and creates a ledger entry.
+        Requires Idempotency-Key header.
+      operationId: adminProcessPayout
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Payout processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Payout is not in PENDING status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/categories:
+    get:
+      tags: [Admin]
+      summary: List all categories
+      description: Returns paginated categories including inactive ones. Admin only.
+      operationId: adminListCategories
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of all categories.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, cursor]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    post:
+      tags: [Admin]
+      summary: Create a category
+      description: Creates a new service category.
+      operationId: adminCreateCategory
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, name_mn, icon_url, sort_order]
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: Cleaning
+                name_mn:
+                  type: string
+                  minLength: 1
+                  example: Цэвэрлэгээ
+                icon_url:
+                  type: string
+                  format: uri
+                sort_order:
+                  type: integer
+      responses:
+        '201':
+          description: Category created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/categories/{id}:
+    put:
+      tags: [Admin]
+      summary: Update a category
+      description: Updates an existing category. Can activate, deactivate, rename, or reorder.
+      operationId: adminUpdateCategory
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                name_mn:
+                  type: string
+                  minLength: 1
+                icon_url:
+                  type: string
+                  format: uri
+                is_active:
+                  type: boolean
+                sort_order:
+                  type: integer
+      responses:
+        '200':
+          description: Category updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
