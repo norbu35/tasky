@@ -32,3 +32,11 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-12T18:19:23Z | local | Codex | TASK-211 | main | NO_HEAD | medium | PASS | 7/7 | REQ-TASK-01,NFR-API-01 | `artifacts/self-verify.medium.json` |
 | 2026-02-12T18:33:01Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | NO_HEAD | low | PASS | 4/4 | REQ-AUTH-01 | `artifacts/self-verify.json` |
 | 2026-02-12T18:34:23Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | NO_HEAD | high | PASS | 11/11 | REQ-AUTH-01,NFR-RELI-01 | `artifacts/self-verify.json` |
+| 2026-02-12T18:50:45Z | local | Codex | TASK-999 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 11/11 | REQ-AUTH-01 | `artifacts/self-verify.tmp.json` |
+| 2026-02-12T19:05:17Z | local | Codex | TASK-1000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 11/11 | REQ-AUTH-01,NFR-API-01 | `artifacts/self-verify.tmp2.json` |
+| 2026-02-12T19:07:01Z | local | Codex | TASK-1001 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 11/11 | REQ-AUTH-01,NFR-API-01 | `artifacts/self-verify.tmp3.json` |
+| 2026-02-12T19:26:59Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | FAIL | 12/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.task000.json` |
+| 2026-02-12T19:28:51Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.task000.json` |
+| 2026-02-12T19:32:13Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.task000.json` |
+| 2026-02-12T19:34:13Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |
+| 2026-02-12T19:45:20Z | local | Codex | TASK-000 | agent/TASK-000-bootstrap | ef971b8ca4bd57d9eee694b95ae3fe9bdca500b1 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |

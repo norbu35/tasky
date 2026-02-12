@@ -8,8 +8,11 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "lint": "echo 'No web lint configured yet.'",
-    "test": "echo 'No web tests configured yet.'"
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\" \"*.ts\"",
+    "test": "pnpm run test:unit",
+    "test:unit": "vitest run --reporter verbose",
+    "test:e2e:smoke": "pnpm run build && playwright install chromium && playwright test --grep @smoke --project=chromium",
+    "test:e2e": "pnpm run build && playwright install chromium && playwright test"
   },
   "dependencies": {
     "@tasky/sdk": "workspace:*",
@@ -17,10 +20,21 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.51.1",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.2.0",
+    "@types/node": "22.13.9",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "4.5.0",
+    "@typescript-eslint/eslint-plugin": "8.25.0",
+    "@typescript-eslint/parser": "8.25.0",
+    "eslint": "8.57.1",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.19",
     "typescript": "5.9.2",
-    "vite": "5.4.14"
+    "vite": "5.4.14",
+    "vitest": "3.0.7",
+    "jsdom": "26.0.0"
   }
 }

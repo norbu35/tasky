@@ -1,0 +1,5 @@
+appId: mn.tasky.mobile
+---
+- launchApp
+- assertVisible: "Tasky Mobile"
+- assertVisible: "Expo scaffold is ready."

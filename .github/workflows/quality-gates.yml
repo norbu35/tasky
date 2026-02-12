@@ -5,6 +5,80 @@ on:
   workflow_dispatch:
 
 jobs:
+  frontend-quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run workspace typecheck
+        run: pnpm -r typecheck
+
+      - name: Run workspace tests
+        run: pnpm -r test
+
+  dependency-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency review (PR only)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+      - name: Filesystem vulnerability scan (dependencies + misconfig + secrets)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
+  container-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build container image
+        run: docker build -t tasky-server:ci .
+
+      - name: Scan container image for vulnerabilities
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: tasky-server:ci
+          format: table
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
   self-verify:
     runs-on: ubuntu-latest
     permissions:
@@ -20,6 +94,20 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
@@ -49,6 +137,7 @@ jobs:
           echo "ticket=$(jq -r '.ticket' artifacts/self-verify.json)" >> "$GITHUB_OUTPUT"
           echo "risk=$(jq -r '.risk_level' artifacts/self-verify.json)" >> "$GITHUB_OUTPUT"
           echo "req=$(jq -r '.req_ids | join(",")' artifacts/self-verify.json)" >> "$GITHUB_OUTPUT"
+          echo "ticket_spec=$(jq -r '.ticket_spec_path' artifacts/self-verify.json)" >> "$GITHUB_OUTPUT"
 
       - name: Install semgrep (high risk only)
         if: steps.meta.outputs.risk == 'high'
@@ -76,6 +165,7 @@ jobs:
             --ticket "${{ steps.meta.outputs.ticket }}" \
             --risk "${{ steps.meta.outputs.risk }}" \
             --req "${{ steps.meta.outputs.req }}" \
+            --ticket-spec "${{ steps.meta.outputs.ticket_spec }}" \
             --out artifacts/self-verify.ci.json
 
       - name: Validate CI self-verify artifact

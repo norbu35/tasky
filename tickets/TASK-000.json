@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-000",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-AUTH-01",
+    "NFR-RELI-01",
+    "NFR-API-01"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-000-01",
+      "type": "functional",
+      "statement": "Web shell renders successfully with typed SDK contract wiring.",
+      "test_ids": [
+        "TID-TASK-000-WEB-UNIT",
+        "TID-TASK-000-WEB-E2E-SMOKE"
+      ]
+    },
+    {
+      "id": "AC-TASK-000-02",
+      "type": "functional",
+      "statement": "Mobile shell renders successfully with typed SDK contract wiring.",
+      "test_ids": [
+        "TID-TASK-000-MOBILE-UNIT"
+      ]
+    }
+  ]
+}

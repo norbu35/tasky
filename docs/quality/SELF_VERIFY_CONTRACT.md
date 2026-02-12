@@ -19,6 +19,7 @@ scripts/self-verify.sh \
   --ticket <TICKET-ID> \
   --risk <low|medium|high> \
   --req <REQ-IDS-CSV> \
+  [--ticket-spec <path>] \
   [--base <git-ref>] \
   [--out <path>]
 ```
@@ -27,29 +28,34 @@ scripts/self-verify.sh \
 1. `--ticket` required. Pattern: `^[A-Z][A-Z0-9_]*-[0-9]+$`
 2. `--risk` required. Values: `low`, `medium`, `high`
 3. `--req` required. CSV list of PRD requirement IDs (for example `REQ-AUTH-01,REQ-TASK-02`)
-4. `--base` optional. Git ref used for changed-file diff. Default: `HEAD`
-5. `--out` optional. Default: `artifacts/self-verify.json`
-6. Bootstrap behavior: if repository has no `HEAD`, script must use empty-tree diff mode and set `git_context.head_sha` to `NO_HEAD`.
+4. `--ticket-spec` optional. Default: `tickets/<TICKET-ID>.json`
+5. `--base` optional. Git ref used for changed-file diff. Default: `HEAD`
+6. `--out` optional. Default: `artifacts/self-verify.json`
+7. Bootstrap behavior: if repository has no `HEAD`, script must use empty-tree diff mode and set `git_context.head_sha` to `NO_HEAD`.
 
 ## Check ID Registry (Canonical)
 1. `format_lint`
 2. `commit_message_lint`
 3. `secret_scan`
-4. `changed_module_tests`
-5. `openapi_validation`
-6. `integration_tests_touched`
-7. `coverage_gate_touched`
-8. `full_test_suite`
-9. `sast_dependency_scan`
-10. `migration_safety`
-11. `performance_smoke`
+4. `ticket_spec_validation`
+5. `changed_module_tests`
+6. `openapi_validation`
+7. `integration_tests_touched`
+8. `coverage_gate_touched`
+9. `full_test_suite`
+10. `sast_dependency_scan`
+11. `migration_safety`
+12. `performance_smoke`
+13. `ac_coverage_gate`
 
 ## Required Check Sets By Risk
 1. Low:
    1. `format_lint`
    2. `commit_message_lint`
    3. `secret_scan`
-   4. `changed_module_tests`
+   4. `ticket_spec_validation`
+   5. `changed_module_tests`
+   6. `ac_coverage_gate`
 2. Medium:
    1. All low checks
    2. `openapi_validation`
@@ -64,9 +70,14 @@ scripts/self-verify.sh \
 
 ## Execution Contract
 1. The script MUST resolve changed files from Git and include them in the artifact.
-2. The script MUST execute every required check for the selected risk level.
-3. Java build/test checks MUST run via `./gradlew --no-daemon` (never system `gradle`).
-4. For each check, the script MUST record:
+2. The script MUST execute all required fast checks first: `format_lint`, `commit_message_lint`, `secret_scan`, `openapi_validation` (when required by risk).
+3. If fast checks pass, the script MUST execute the remaining required checks for the selected risk level.
+4. If any required fast check fails, the script MUST NOT run expensive checks. Instead, each remaining required check MUST be recorded as `FAIL` with:
+   1. `exit_code: 1`
+   2. A blocked reason in evidence/error fields
+   3. The original command string preserved in `command`
+5. Java build/test checks MUST run via `./gradlew --no-daemon` (never system `gradle`).
+6. For each check, the script MUST record:
    1. Check ID
    2. Command string
    3. Start/end timestamp
@@ -74,18 +85,29 @@ scripts/self-verify.sh \
    5. Exit code
    6. Status (`PASS`, `FAIL`, `SKIP`)
    7. Evidence summary and artifact paths
-5. Required checks MUST NOT be `SKIP`.
-6. `overall_status` MUST be:
+7. Required checks MUST NOT be `SKIP`.
+8. `overall_status` MUST be:
    1. `PASS` only when all required checks pass
    2. `FAIL` otherwise
-7. Before exit, the script MUST validate output JSON against `docs/quality/self-verify.schema.json`.
-8. After artifact validation, the script MUST append an entry to `docs/agent/WORK_LOG.md`.
+9. Before exit, the script MUST validate output JSON against `docs/quality/self-verify.schema.json`.
+10. After artifact validation, the script MUST append an entry to `docs/agent/WORK_LOG.md`.
+11. Frontend integration:
+   1. `format_lint` MUST include workspace lint/typecheck when frontend or SDK paths are touched.
+   2. `changed_module_tests` MUST run web/mobile unit tests for touched frontend modules.
+   3. `integration_tests_touched` MUST run web/mobile E2E smoke tests for touched frontend modules.
+   4. `full_test_suite` MUST run full frontend unit + E2E suites when frontend-impacting files are touched.
+12. Ticket and AC coverage integration:
+   1. `ticket_spec_validation` MUST validate `tickets/<TICKET-ID>.json` structure, branch naming (`agent/<ticket>-<slug>`), and REQ/risk alignment.
+   2. `ac_coverage_gate` MUST fail if any acceptance criterion lacks test evidence in executed logs.
+   3. The artifact MUST include `ticket_spec_path`, `acceptance_criteria`, `ac_test_mapping`, and `ac_coverage_summary`.
+   4. Test commands MUST emit test titles to stdout (for example `vitest --reporter verbose`) so `TID-*` evidence is discoverable in logs.
 
 ## Deterministic Performance Rules
-1. Run fast checks first: `format_lint`, `commit_message_lint`, `secret_scan`, `openapi_validation`.
+1. Run fast checks first: `format_lint`, `commit_message_lint`, `secret_scan`, `ticket_spec_validation`, `openapi_validation`.
 2. Only run expensive checks if fast checks pass.
-3. Run independent checks in parallel where safe.
-4. Keep command set stable to ensure reproducible results across local and CI.
+3. If fast checks fail, fail closed by marking remaining required checks as blocked `FAIL`.
+4. Run independent checks in parallel where safe at the CI workflow level.
+5. Keep command set stable to ensure reproducible results across local and CI.
 
 ## Exit Code Contract
 1. `0`: all required checks passed

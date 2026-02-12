@@ -10,10 +10,14 @@
     "generated_at",
     "ticket",
     "risk_level",
+    "ticket_spec_path",
     "req_ids",
     "files_changed",
     "required_check_ids",
     "checks",
+    "acceptance_criteria",
+    "ac_test_mapping",
+    "ac_coverage_summary",
     "overall_status",
     "known_risks",
     "assumptions",
@@ -42,6 +46,10 @@
         "medium",
         "high"
       ]
+    },
+    "ticket_spec_path": {
+      "type": "string",
+      "minLength": 1
     },
     "req_ids": {
       "type": "array",
@@ -75,6 +83,23 @@
       "items": {
         "$ref": "#/$defs/checkResult"
       }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/acceptanceCriterion"
+      }
+    },
+    "ac_test_mapping": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/acMapping"
+      }
+    },
+    "ac_coverage_summary": {
+      "$ref": "#/$defs/acCoverageSummary"
     },
     "overall_status": {
       "type": "string",
@@ -117,6 +142,7 @@
         "format_lint",
         "commit_message_lint",
         "secret_scan",
+        "ticket_spec_validation",
         "changed_module_tests",
         "openapi_validation",
         "integration_tests_touched",
@@ -124,7 +150,8 @@
         "full_test_suite",
         "sast_dependency_scan",
         "migration_safety",
-        "performance_smoke"
+        "performance_smoke",
+        "ac_coverage_gate"
       ]
     },
     "checkResult": {
@@ -269,6 +296,138 @@
         }
       ]
     },
+    "acceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "statement",
+        "test_ids",
+        "negative_test_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^AC-[A-Z0-9_-]+-[0-9]+$"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^TID-[A-Z0-9_-]+$"
+          }
+        },
+        "negative_test_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^TID-[A-Z0-9_-]+$"
+          }
+        }
+      }
+    },
+    "acMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ac_id",
+        "test_ids",
+        "covered_test_ids",
+        "uncovered_test_ids",
+        "status"
+      ],
+      "properties": {
+        "ac_id": {
+          "type": "string",
+          "pattern": "^AC-[A-Z0-9_-]+-[0-9]+$"
+        },
+        "test_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^TID-[A-Z0-9_-]+$"
+          }
+        },
+        "covered_test_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^TID-[A-Z0-9_-]+$"
+          }
+        },
+        "uncovered_test_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^TID-[A-Z0-9_-]+$"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        }
+      }
+    },
+    "acCoverageSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_ac",
+        "mapped_ac",
+        "fully_covered_ac",
+        "total_test_ids",
+        "covered_test_ids",
+        "pass",
+        "failures"
+      ],
+      "properties": {
+        "total_ac": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mapped_ac": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fully_covered_ac": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_test_ids": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "covered_test_ids": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pass": {
+          "type": "boolean"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
     "selfCritique": {
       "type": "object",
       "additionalProperties": false,
@@ -391,7 +550,9 @@
               "format_lint",
               "commit_message_lint",
               "secret_scan",
-              "changed_module_tests"
+              "ticket_spec_validation",
+              "changed_module_tests",
+              "ac_coverage_gate"
             ]
           },
           "checks": {
@@ -443,7 +604,33 @@
                   ],
                   "properties": {
                     "id": {
+                      "const": "ticket_spec_validation"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
                       "const": "changed_module_tests"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "const": "ac_coverage_gate"
                     }
                   }
                 }
@@ -471,10 +658,12 @@
               "format_lint",
               "commit_message_lint",
               "secret_scan",
+              "ticket_spec_validation",
               "changed_module_tests",
               "openapi_validation",
               "integration_tests_touched",
-              "coverage_gate_touched"
+              "coverage_gate_touched",
+              "ac_coverage_gate"
             ]
           },
           "checks": {
@@ -514,6 +703,19 @@
                   "properties": {
                     "id": {
                       "const": "secret_scan"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "const": "ticket_spec_validation"
                     }
                   }
                 }
@@ -569,6 +771,19 @@
                     }
                   }
                 }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "const": "ac_coverage_gate"
+                    }
+                  }
+                }
               }
             ]
           }
@@ -593,6 +808,7 @@
               "format_lint",
               "commit_message_lint",
               "secret_scan",
+              "ticket_spec_validation",
               "changed_module_tests",
               "openapi_validation",
               "integration_tests_touched",
@@ -600,7 +816,8 @@
               "full_test_suite",
               "sast_dependency_scan",
               "migration_safety",
-              "performance_smoke"
+              "performance_smoke",
+              "ac_coverage_gate"
             ]
           },
           "checks": {
@@ -640,6 +857,19 @@
                   "properties": {
                     "id": {
                       "const": "secret_scan"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "const": "ticket_spec_validation"
                     }
                   }
                 }
@@ -744,6 +974,19 @@
                   "properties": {
                     "id": {
                       "const": "performance_smoke"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "const": "ac_coverage_gate"
                     }
                   }
                 }

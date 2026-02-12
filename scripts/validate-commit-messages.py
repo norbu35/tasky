@@ -9,6 +9,7 @@ from typing import List
 ALLOWED_TYPES = ("feat", "fix", "refactor", "test", "docs", "chore", "perf", "security")
 SUBJECT_RE = re.compile(rf"^({'|'.join(ALLOWED_TYPES)})\([^)]+\): .+")
 RISK_RE = re.compile(r"^Risk:\s*(low|medium|high)\s*$", re.MULTILINE)
+TICKET_RE = re.compile(r"^Ticket:\s*([A-Z][A-Z0-9_]*-[0-9]+)\s*$", re.MULTILINE)
 REQUIRED_BODY_FIELDS = ("Ticket:", "Spec:", "API:", "Tests:", "Risk:")
 
 
@@ -45,7 +46,7 @@ def collect_commits(base_ref: str | None, head_ref: str) -> List[str]:
     return [result.stdout.strip()]
 
 
-def validate_message(sha: str, message: str) -> List[str]:
+def validate_message(sha: str, message: str, expected_ticket: str | None) -> List[str]:
     errors: List[str] = []
     lines = message.splitlines()
     if not lines:
@@ -63,6 +64,14 @@ def validate_message(sha: str, message: str) -> List[str]:
             errors.append(f"{sha}: missing required body field '{field}'")
     if "Risk:" in body and not RISK_RE.search(body):
         errors.append(f"{sha}: Risk field must be one of low|medium|high")
+
+    ticket_match = TICKET_RE.search(body)
+    if "Ticket:" in body and not ticket_match:
+        errors.append(f"{sha}: Ticket field must match pattern <ABC-123>")
+    if expected_ticket and ticket_match and ticket_match.group(1) != expected_ticket:
+        errors.append(
+            f"{sha}: Ticket field '{ticket_match.group(1)}' does not match expected ticket '{expected_ticket}'."
+        )
     return errors
 
 
@@ -72,6 +81,11 @@ def main() -> int:
     )
     parser.add_argument("--base", default=None, help="Optional base ref for commit range linting.")
     parser.add_argument("--head", default="HEAD", help="Head ref to lint. Default: HEAD")
+    parser.add_argument(
+        "--ticket",
+        default=None,
+        help="Optional ticket ID. If provided, every commit must declare the same Ticket field.",
+    )
     args = parser.parse_args()
 
     base_ref = args.base or os.environ.get("COMMIT_LINT_BASE")
@@ -88,7 +102,7 @@ def main() -> int:
         if message_res.returncode != 0:
             failures.append(f"{sha}: unable to read commit message")
             continue
-        failures.extend(validate_message(sha, message_res.stdout))
+        failures.extend(validate_message(sha, message_res.stdout, args.ticket))
 
     if failures:
         print("Commit message lint failed:", file=sys.stderr)

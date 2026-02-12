@@ -1280,7 +1280,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                oneOf:
+                  - $ref: '#/components/schemas/Task'
+                  - $ref: '#/components/schemas/PublicTask'
+                description: |
+                  Returns role-scoped task details.
+                  - Owners and booked taskers receive full `Task` (exact location fields populated).
+                  - Other authorized users receive redacted `PublicTask` (approximate location only).
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

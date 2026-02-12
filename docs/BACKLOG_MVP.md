@@ -1,0 +1,361 @@
+# MVP Backlog (Atomic, Testable, Gate-Ready)
+
+## Scope
+This backlog is derived from:
+1. `docs/PRD.md`
+2. `docs/ARCHITECTURE.md`
+3. `docs/API.yaml`
+4. `docs/TRACEABILITY.md`
+
+Rules:
+1. Each ticket is atomic and independently verifiable.
+2. Each ticket has explicit PRD/NFR references.
+3. Each ticket must be implemented on `agent/<ticket>-<slug>`.
+4. Each ticket must include `tickets/<TICKET-ID>.json` before implementation.
+5. Each ticket must pass risk-tier self-verification before merge.
+
+## Ticket Index
+| Ticket | Slice | Risk | PRD/NFR Coverage | Depends On |
+|---|---|---|---|---|
+| TASK-001 | Platform bootstrap hardening | low | foundation | - |
+| TASK-002 | OpenAPI + SDK CI pipeline | medium | NFR-API-01 (enabler) | TASK-001 |
+| TASK-003 | Observability baseline | medium | reliability enabler | TASK-001 |
+| TASK-004 | Security baseline (RBAC, banned check, rate limit) | high | REQ-ADMIN-03, NFR-SEC-01 | TASK-001 |
+| TASK-010 | OTP auth + token lifecycle | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03 | TASK-001, TASK-004 |
+| TASK-011 | Profile + avatar upload | medium | identity/profile scope | TASK-010 |
+| TASK-012 | Tasker role activation + verification submit/status | high | REQ-AUTH-04, REQ-SAFE-01 | TASK-010, TASK-011 |
+| TASK-013 | Admin verification queue + approve/reject | high | REQ-SAFE-01, REQ-AUTH-04 | TASK-012 |
+| TASK-020 | Categories public/admin management | medium | REQ-TASK-05 | TASK-001 |
+| TASK-021 | Task CRUD + task photo upload | high | REQ-TASK-01, REQ-TASK-04 | TASK-020 |
+| TASK-022 | Open task feed filters + privacy + pagination | high | REQ-TASK-03, REQ-TASK-05, NFR-API-01, NFR-PERF-01 | TASK-021, TASK-065 |
+| TASK-023 | Task applications + accept | high | REQ-BOOK-01, REQ-BOOK-02, REQ-TASK-02 | TASK-021 |
+| TASK-030 | Booking aggregate + status guardrails | high | REQ-BOOK-03, REQ-BOOK-05 | TASK-023 |
+| TASK-031 | QPay initiate + callback idempotency | high | REQ-PAY-01, REQ-BOOK-03, NFR-RELI-01 | TASK-030, TASK-064 |
+| TASK-032 | Cancellation policy + strike logic | high | REQ-BOOK-04, REQ-BOOK-06 | TASK-030 |
+| TASK-033 | Completion settlement + wallet credit + fee | high | REQ-PAY-02, REQ-PAY-03, REQ-TASK-02, REQ-BOOK-05 | TASK-030, TASK-031 |
+| TASK-034 | Payout request + admin processing + schedule | high | REQ-PAY-04, REQ-PAY-05, REQ-PAY-06 | TASK-033 |
+| TASK-040 | Reviews + rating rollup + pro badge | medium | REQ-SAFE-02, REQ-SAFE-04 | TASK-033 |
+| TASK-041 | Dispute lifecycle + payout hold + admin resolve | high | REQ-SAFE-03, REQ-ADMIN-02, REQ-MSG-02 | TASK-033, TASK-042 |
+| TASK-042 | Conversations + REST messaging persistence | high | REQ-MSG-01, REQ-MSG-02 | TASK-023 |
+| TASK-043 | Real-time messaging (STOMP) | medium | REQ-MSG-01 | TASK-042 |
+| TASK-044 | Push + SMS fallback notification orchestration | high | REQ-NOTIF-01, REQ-NOTIF-02 | TASK-023, TASK-031, TASK-033 |
+| TASK-045 | Admin user search + ban/unban enforcement | high | REQ-ADMIN-01, REQ-ADMIN-03 | TASK-004, TASK-010 |
+| TASK-060 | PII encryption + secure storage controls | high | NFR-SEC-01 | TASK-004 |
+| TASK-061 | Localization baseline (mn default) | medium | NFR-LOC-01 | TASK-002 |
+| TASK-062 | Mobile offline read-only cache for My Tasks | medium | NFR-RELI-02 | TASK-022, TASK-030 |
+| TASK-063 | Open task feed performance tuning + perf tests | high | NFR-PERF-01 | TASK-022 |
+| TASK-064 | Liability disclaimer gate before payment initiation | high | NFR-LEGAL-01 | TASK-030 |
+| TASK-065 | Cursor pagination consistency across list APIs | medium | NFR-API-01 | TASK-002 |
+
+## Ticket Definitions
+
+### TASK-001 Platform Bootstrap Hardening
+- Objective: Establish deterministic local runtime and health/version contract.
+- Acceptance criteria:
+  1. `docker compose` boots Postgres + PostGIS + MinIO successfully.
+  2. Backend exposes `/actuator/health` and `/api/v1/system/version`.
+  3. `./gradlew --no-daemon check` runs in clean clone.
+- Required tests:
+  - `TID-TASK-001-BE-HEALTH-CHECK`
+  - `TID-TASK-001-ENV-DOCKER-UP`
+
+### TASK-002 OpenAPI + SDK CI Pipeline
+- Objective: Make API contract authoritative and SDK generation reproducible.
+- Acceptance criteria:
+  1. `docs/API.yaml` validates in local and CI.
+  2. SDK generation command produces typed client consumed by web and mobile.
+  3. Contract drift fails CI.
+- Required tests:
+  - `TID-TASK-002-API-VALIDATE`
+  - `TID-TASK-002-SDK-GENERATE`
+  - `TID-TASK-002-CI-CONTRACT-DRIFT`
+
+### TASK-003 Observability Baseline
+- Objective: Add structured logs, trace/correlation ID propagation, and core metrics.
+- Acceptance criteria:
+  1. All API requests emit correlation ID in logs.
+  2. Error responses include trace ID.
+  3. Prometheus metrics endpoint includes request latency metrics.
+- Required tests:
+  - `TID-TASK-003-BE-CORRELATION-ID`
+  - `TID-TASK-003-BE-ERROR-TRACE-ID`
+
+### TASK-004 Security Baseline (RBAC + Banned User + Rate Limit)
+- Objective: Establish minimum security boundary for all subsequent slices.
+- Acceptance criteria:
+  1. Route-level RBAC enforced for user/tasker/admin scopes.
+  2. Banned users are denied even with valid JWT.
+  3. OTP endpoints are rate-limited and brute-force protected.
+- Required tests:
+  - `TID-TASK-004-SEC-RBAC-GUARD`
+  - `TID-TASK-004-SEC-BANNED-USER-BLOCK`
+  - `TID-TASK-004-SEC-OTP-RATE-LIMIT`
+
+### TASK-010 OTP Auth + Token Lifecycle
+- Objective: Implement identity bootstrap via phone OTP and JWT refresh.
+- Acceptance criteria:
+  1. OTP request/verify flow creates or authenticates user.
+  2. Duplicate phone registration does not create duplicate users.
+  3. Refresh endpoint rotates/returns valid access token.
+- Required tests:
+  - `TID-TASK-010-API-OTP-REQUEST`
+  - `TID-TASK-010-API-OTP-VERIFY-SUCCESS`
+  - `TID-TASK-010-API-PHONE-UNIQUE`
+  - `TID-TASK-010-API-TOKEN-REFRESH`
+
+### TASK-011 Profile + Avatar Upload
+- Objective: Complete core profile management and avatar upload flow.
+- Acceptance criteria:
+  1. `GET/PUT /users/me` supports profile retrieval/update.
+  2. Avatar presigned upload endpoint returns constrained upload URL and storage key.
+- Required tests:
+  - `TID-TASK-011-API-PROFILE-GET-PUT`
+  - `TID-TASK-011-API-AVATAR-UPLOAD-URL`
+
+### TASK-012 Tasker Activation + Verification Submit/Status
+- Objective: Support role transition and verification submission lifecycle.
+- Acceptance criteria:
+  1. User can activate tasker role while verification is pending.
+  2. Verification upload/submit/status flow persists and returns correct state.
+- Required tests:
+  - `TID-TASK-012-API-TASKER-ACTIVATE`
+  - `TID-TASK-012-API-VERIFICATION-SUBMIT`
+  - `TID-TASK-012-API-VERIFICATION-STATUS`
+
+### TASK-013 Admin Verification Review
+- Objective: Enable manual approval/rejection workflow for taskers.
+- Acceptance criteria:
+  1. Admin can list pending verifications.
+  2. Admin approve/reject transitions user verification status correctly.
+- Required tests:
+  - `TID-TASK-013-API-ADMIN-VERIFICATION-LIST`
+  - `TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE`
+  - `TID-TASK-013-API-ADMIN-VERIFICATION-REJECT`
+
+### TASK-020 Category Management
+- Objective: Implement category lifecycle for marketplace taxonomy.
+- Acceptance criteria:
+  1. Public endpoint returns only active categories.
+  2. Admin can create/update/deactivate categories.
+- Required tests:
+  - `TID-TASK-020-API-CATEGORIES-PUBLIC`
+  - `TID-TASK-020-API-CATEGORIES-ADMIN-CRUD`
+
+### TASK-021 Task CRUD + Photos
+- Objective: Implement task create/update/cancel and photo key workflows.
+- Acceptance criteria:
+  1. Task creation validates required fields and max 3 photo keys.
+  2. Task photo upload URL endpoints return constrained signed URLs.
+  3. Cancel endpoint transitions task to `CANCELLED` with guards.
+- Required tests:
+  - `TID-TASK-021-API-TASK-CREATE`
+  - `TID-TASK-021-API-TASK-PHOTO-UPLOAD`
+  - `TID-TASK-021-API-TASK-CANCEL`
+
+### TASK-022 Open Task Feed (Filters + Privacy + Pagination)
+- Objective: Deliver queryable task feed aligned with location/privacy rules.
+- Acceptance criteria:
+  1. Feed returns only `OPEN` tasks.
+  2. Category/distance filters work with cursor pagination.
+  3. Exact address is hidden in public feed; approximate location exposed.
+- Required tests:
+  - `TID-TASK-022-API-TASK-LIST-OPEN`
+  - `TID-TASK-022-API-TASK-LIST-FILTERS`
+  - `TID-TASK-022-API-TASK-LIST-PRIVACY`
+  - `TID-TASK-022-API-TASK-LIST-CURSOR`
+
+### TASK-023 Applications + Accept
+- Objective: Implement demand/supply matching handshake.
+- Acceptance criteria:
+  1. Tasker can apply only to open tasks.
+  2. Customer can list applicants and accept exactly one.
+  3. Accept action creates booking in `PENDING_PAYMENT`.
+- Required tests:
+  - `TID-TASK-023-API-APPLY-OPEN-TASK`
+  - `TID-TASK-023-API-APPLICANT-LIST`
+  - `TID-TASK-023-API-ACCEPT-CREATES-BOOKING`
+
+### TASK-030 Booking Aggregate + State Guardrails
+- Objective: Enforce valid booking state transitions and invariants.
+- Acceptance criteria:
+  1. Booking entity enforces allowed transitions only.
+  2. Booking details/list endpoints reflect consistent status.
+- Required tests:
+  - `TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE`
+  - `TID-TASK-030-API-BOOKING-READS`
+
+### TASK-031 QPay Initiate + Callback Idempotency
+- Objective: Secure payment initiation and callback transitions.
+- Acceptance criteria:
+  1. Initiation endpoint creates provider payment intent with traceable reference.
+  2. Callback endpoint is idempotent and signature-validated.
+  3. Successful callback sets booking `PAID` and task `ASSIGNED` exactly once.
+- Required tests:
+  - `TID-TASK-031-API-QPAY-INITIATE`
+  - `TID-TASK-031-SEC-QPAY-SIGNATURE`
+  - `TID-TASK-031-RELI-CALLBACK-IDEMPOTENT`
+
+### TASK-032 Cancellation + Strike Policy
+- Objective: Implement cancellation economics and tasker accountability.
+- Acceptance criteria:
+  1. Customer late-cancel applies fee policy and beneficiary logic.
+  2. Tasker cancellation reopens task and records strike.
+  3. Three strikes in 30 days triggers 7-day suspension.
+- Required tests:
+  - `TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE`
+  - `TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE`
+  - `TID-TASK-032-DOMAIN-STRIKE-SUSPENSION`
+
+### TASK-033 Completion Settlement + Wallet Credit/Fee
+- Objective: Move paid booking to completion and settle wallet balances.
+- Acceptance criteria:
+  1. Completion credits tasker wallet with fee deduction.
+  2. Ledger entries are immutable and auditable.
+  3. Booking/task status transitions are consistent.
+- Required tests:
+  - `TID-TASK-033-DOMAIN-WALLET-CREDIT`
+  - `TID-TASK-033-DOMAIN-FEE-DEDUCTION`
+  - `TID-TASK-033-API-BOOKING-COMPLETE`
+
+### TASK-034 Payout Request + Processing Schedule
+- Objective: Support payout request and admin settlement cycle.
+- Acceptance criteria:
+  1. Tasker can request payout only up to available balance.
+  2. Admin can list/process pending payouts.
+  3. Processing enforces Tue/Fri schedule policy and writes ledger entries.
+- Required tests:
+  - `TID-TASK-034-API-PAYOUT-REQUEST`
+  - `TID-TASK-034-API-ADMIN-PAYOUT-PROCESS`
+  - `TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE`
+
+### TASK-040 Reviews + Pro Badge
+- Objective: Build trust score loop for completed work.
+- Acceptance criteria:
+  1. Reviews allowed only on completed bookings by booking participants.
+  2. User review listing is paginated and consistent.
+  3. Pro badge assignment follows completed-count and rating thresholds.
+- Required tests:
+  - `TID-TASK-040-API-REVIEW-SUBMIT`
+  - `TID-TASK-040-API-REVIEW-LIST`
+  - `TID-TASK-040-DOMAIN-PRO-BADGE`
+
+### TASK-041 Disputes + Admin Resolution + Payout Hold
+- Objective: Implement dispute handling and payout protection path.
+- Acceptance criteria:
+  1. Dispute can be raised only for eligible booking states/window.
+  2. Active dispute pauses payout eligibility.
+  3. Admin resolution supports refund/release outcomes with audit trail.
+- Required tests:
+  - `TID-TASK-041-API-DISPUTE-RAISE`
+  - `TID-TASK-041-DOMAIN-PAYOUT-HOLD`
+  - `TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE`
+
+### TASK-042 Conversations + REST Messaging Persistence
+- Objective: Persisted messaging baseline with access control.
+- Acceptance criteria:
+  1. Conversations are created when tasker applies.
+  2. Message send/list endpoints enforce participant access.
+  3. Message history persists and is retrievable.
+- Required tests:
+  - `TID-TASK-042-API-CONVERSATION-LIST`
+  - `TID-TASK-042-API-MESSAGE-SEND`
+  - `TID-TASK-042-API-MESSAGE-LIST`
+
+### TASK-043 Real-Time Messaging (STOMP)
+- Objective: Enable low-latency conversation updates.
+- Acceptance criteria:
+  1. Authenticated clients can subscribe/send to authorized conversation channels.
+  2. Messages delivered in real-time and persisted once.
+- Required tests:
+  - `TID-TASK-043-WS-SUBSCRIBE-AUTHZ`
+  - `TID-TASK-043-WS-REALTIME-DELIVERY`
+
+### TASK-044 Notifications (Push + SMS Fallback)
+- Objective: Deliver event notifications for matching and booking milestones.
+- Acceptance criteria:
+  1. Device register/unregister endpoints manage notification targets.
+  2. Push notifications emitted for required events.
+  3. SMS fallback sent for hired/booking-confirmed events when app inactive.
+- Required tests:
+  - `TID-TASK-044-API-DEVICE-REGISTER`
+  - `TID-TASK-044-DOMAIN-PUSH-EVENTS`
+  - `TID-TASK-044-DOMAIN-SMS-FALLBACK`
+
+### TASK-045 Admin User Search + Ban/Unban Enforcement
+- Objective: Deliver minimum moderation capabilities.
+- Acceptance criteria:
+  1. Admin can search users by phone.
+  2. Ban/unban endpoints mutate user status with audit trail.
+  3. Banned users are blocked across authenticated APIs.
+- Required tests:
+  - `TID-TASK-045-API-ADMIN-USER-SEARCH`
+  - `TID-TASK-045-API-ADMIN-BAN-UNBAN`
+  - `TID-TASK-045-SEC-BAN-ENFORCEMENT`
+
+### TASK-060 PII Encryption + Secure Storage Controls
+- Objective: Enforce encryption and secure handling for PII and ID assets.
+- Acceptance criteria:
+  1. Sensitive columns/fields are encrypted at rest.
+  2. ID assets remain private and are accessible only via short-lived signed URLs.
+  3. Production PII access is auditable.
+- Required tests:
+  - `TID-TASK-060-SEC-PII-ENCRYPTION`
+  - `TID-TASK-060-SEC-ID-ASSET-PRIVATE`
+
+### TASK-061 Localization Baseline (mn default)
+- Objective: Ensure Mongolian-first UX and backend localization.
+- Acceptance criteria:
+  1. Backend resolves localized error/template messages by locale with `mn` fallback.
+  2. Web and mobile apps load `mn` as default locale.
+  3. Cyrillic input/rendering is validated in critical flows.
+- Required tests:
+  - `TID-TASK-061-BE-LOCALE-RESOLUTION`
+  - `TID-TASK-061-WEB-MN-DEFAULT`
+  - `TID-TASK-061-MOBILE-MN-DEFAULT`
+
+### TASK-062 Mobile Offline Read-Only Cache
+- Objective: Provide resilient read-only view of My Tasks while offline.
+- Acceptance criteria:
+  1. Mobile persists last successful My Tasks payload locally.
+  2. Offline mode renders cached data with stale indicator.
+  3. Offline mode blocks mutating actions.
+- Required tests:
+  - `TID-TASK-062-MOBILE-CACHE-PERSIST`
+  - `TID-TASK-062-MOBILE-OFFLINE-READ`
+  - `TID-TASK-062-MOBILE-OFFLINE-MUTATION-BLOCK`
+
+### TASK-063 Open Task Feed Performance (<1s)
+- Objective: Meet feed latency target under representative load.
+- Acceptance criteria:
+  1. Feed query plan uses appropriate indexes (including geospatial).
+  2. p95 latency for `GET /tasks` remains under target in perf smoke profile.
+  3. Regression budget enforced in CI performance smoke.
+- Required tests:
+  - `TID-TASK-063-PERF-TASK-FEED-P95`
+  - `TID-TASK-063-PERF-INDEX-PLAN`
+
+### TASK-064 Liability Disclaimer Enforcement
+- Objective: Enforce legal acceptance before payment initiation.
+- Acceptance criteria:
+  1. Payment initiation rejects requests without `liability_disclaimer_accepted=true`.
+  2. Acceptance is captured in auditable booking/payment metadata.
+- Required tests:
+  - `TID-TASK-064-API-DISCLAIMER-REQUIRED`
+  - `TID-TASK-064-AUDIT-DISCLAIMER-RECORDED`
+
+### TASK-065 Cursor Pagination Consistency
+- Objective: Standardize and validate cursor pagination across list APIs.
+- Acceptance criteria:
+  1. All list endpoints return common envelope with `cursor.next` and `cursor.has_more`.
+  2. Cursor pagination is deterministic under stable sort order.
+  3. Contract and integration tests cover each list endpoint.
+- Required tests:
+  - `TID-TASK-065-API-CURSOR-ENVELOPE`
+  - `TID-TASK-065-API-CURSOR-DETERMINISM`
+  - `TID-TASK-065-CONTRACT-LIST-ENDPOINTS`
+
+## Backlog Completion Criteria
+Backlog generation is complete when:
+1. Every ticket above has a `tickets/<TICKET-ID>.json` spec with AC + test IDs.
+2. Ticket dependencies are acyclic for planned sprint slices.
+3. Each ticket includes risk level and mapped REQ/NFR IDs matching `docs/TRACEABILITY.md`.

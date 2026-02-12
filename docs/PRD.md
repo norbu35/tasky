@@ -3,7 +3,7 @@
 ## 1. Introduction
 **Product Name:** Tasky  
 **Version:** 1.0 (MVP)  
-**Status:** Draft  
+**Status:** Approved (Scope Baseline Locked)  
 **Authors:** Product Lead  
 **Date:** 2026-02-12  
 
@@ -47,6 +47,13 @@ To build Mongolia's first **trust-centric** domestic service marketplace. Unlike
 4.  Time to first match
 5.  Dispute rate and resolution time
 6.  Net promoter score or equivalent trust metric
+
+### 1.5 Baseline Lock Rule
+1.  This PRD version (`1.0`) is the backlog generation baseline.
+2.  Scope changes after backlog generation require:
+    *   Change rationale and impact summary (scope, timeline, risk)
+    *   Traceability updates to REQ/NFR IDs
+    *   ADR entry when architecture or quality gates are affected
 
 ---
 

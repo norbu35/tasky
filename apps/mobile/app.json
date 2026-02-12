@@ -5,6 +5,12 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "tasky",
+    "ios": {
+      "bundleIdentifier": "mn.tasky.mobile"
+    },
+    "android": {
+      "package": "mn.tasky.mobile"
+    },
     "userInterfaceStyle": "light",
     "assetBundlePatterns": ["**/*"]
   }

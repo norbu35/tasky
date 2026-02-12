@@ -290,7 +290,9 @@ Production release requires:
    1. Format and lint
    2. Commit message lint
    3. Secret scan
-   4. Changed-module tests
+   4. Ticket spec validation
+   5. Changed-module tests
+   6. Acceptance criteria coverage gate
 2. Medium risk checks:
    1. All low risk checks
    2. OpenAPI contract validation
@@ -317,6 +319,11 @@ Production release requires:
 4. Contract-breaking API changes require version bump and migration guidance.
 5. Preferred merge strategy is squash merge to keep `main` history readable.
 6. CI MUST infer risk from changed files and block PRs if declared risk is lower than inferred risk.
+7. CI required jobs for merge:
+   1. Self-verification parity gate
+   2. Web/mobile workspace typecheck and tests
+   3. Dependency vulnerability scan
+   4. Container image vulnerability scan
 
 ### 10.6 Performance Rules for Fast Delivery
 1. CI jobs MUST run in parallel where possible.
@@ -338,12 +345,13 @@ Production release requires:
    3. REQ IDs covered
    4. Files changed
    5. Checks executed
-   6. Pass/fail status
-   7. Known risks and assumptions
+   6. Acceptance criteria and test mapping evidence
+   7. Pass/fail status
+   8. Known risks and assumptions
 3. Required checks by risk:
-   1. Low: lint, commit message lint, secret scan, changed-module tests
+   1. Low: lint, commit message lint, secret scan, ticket spec validation, changed-module tests, AC coverage gate
    2. Medium: low plus integration tests plus OpenAPI validation
-   3. High: medium plus full test suite plus security scan plus migration safety verification
+   3. High: medium plus full test suite plus security scan plus migration safety verification and performance smoke
 4. The agent MUST run a self-critique and record:
    1. What requirement is most likely to break?
    2. What security or abuse path is impacted?
@@ -364,14 +372,20 @@ Production release requires:
 1. Canonical contract path: `docs/quality/SELF_VERIFY_CONTRACT.md`.
 2. Canonical runner path: `scripts/self-verify.sh`.
 3. Minimum CLI contract:
-   1. `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--base <git-ref>] [--out <path>]`
+   1. `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--out <path>]`
 4. Mandatory script behavior:
    1. Resolve changed files from Git.
       If repository has no `HEAD`, use the empty tree base and set `git_context.head_sha` to `NO_HEAD`.
    2. Select required checks from risk level.
-   3. Execute checks and capture command, duration, exit code, and status.
-   4. Produce `artifacts/self-verify.json`.
-   5. Validate artifact against `docs/quality/self-verify.schema.json` before exiting.
+   3. Execute required fast checks first (`format_lint`, `commit_message_lint`, `secret_scan`, `openapi_validation` when required).
+   4. If fast checks pass, execute remaining required checks.
+   5. If a fast check fails, do not run expensive checks; record each remaining required check as blocked `FAIL` with command and reason.
+   6. Capture command, duration, exit code, and status for every required check entry.
+   7. Validate ticket spec and branch-ticket consistency before running expensive checks.
+   8. Validate acceptance-criteria coverage using executed test logs.
+      Test runners must emit test titles so `TID-*` identifiers are visible in logs.
+   9. Produce `artifacts/self-verify.json`.
+   10. Validate artifact against `docs/quality/self-verify.schema.json` before exiting.
 5. Mandatory exit codes:
    1. `0`: all required checks passed
    2. `1`: one or more required checks failed

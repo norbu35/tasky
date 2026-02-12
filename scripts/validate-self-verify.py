@@ -10,10 +10,14 @@ ALLOWED_TOP_LEVEL = {
     "generated_at",
     "ticket",
     "risk_level",
+    "ticket_spec_path",
     "req_ids",
     "files_changed",
     "required_check_ids",
     "checks",
+    "acceptance_criteria",
+    "ac_test_mapping",
+    "ac_coverage_summary",
     "overall_status",
     "known_risks",
     "assumptions",
@@ -27,6 +31,7 @@ ALLOWED_CHECK_IDS = {
     "format_lint",
     "commit_message_lint",
     "secret_scan",
+    "ticket_spec_validation",
     "changed_module_tests",
     "openapi_validation",
     "integration_tests_touched",
@@ -35,6 +40,7 @@ ALLOWED_CHECK_IDS = {
     "sast_dependency_scan",
     "migration_safety",
     "performance_smoke",
+    "ac_coverage_gate",
 }
 
 REQUIRED_BY_RISK = {
@@ -42,21 +48,26 @@ REQUIRED_BY_RISK = {
         "format_lint",
         "commit_message_lint",
         "secret_scan",
+        "ticket_spec_validation",
         "changed_module_tests",
+        "ac_coverage_gate",
     ],
     "medium": [
         "format_lint",
         "commit_message_lint",
         "secret_scan",
+        "ticket_spec_validation",
         "changed_module_tests",
         "openapi_validation",
         "integration_tests_touched",
         "coverage_gate_touched",
+        "ac_coverage_gate",
     ],
     "high": [
         "format_lint",
         "commit_message_lint",
         "secret_scan",
+        "ticket_spec_validation",
         "changed_module_tests",
         "openapi_validation",
         "integration_tests_touched",
@@ -65,12 +76,15 @@ REQUIRED_BY_RISK = {
         "sast_dependency_scan",
         "migration_safety",
         "performance_smoke",
+        "ac_coverage_gate",
     ],
 }
 
 TICKET_RE = re.compile(r"^[A-Z][A-Z0-9_]*-[0-9]+$")
 REQ_RE = re.compile(r"^(REQ|NFR)-[A-Z]+-[0-9]+$")
 HEAD_SHA_RE = re.compile(r"^[a-f0-9]{7,40}$")
+AC_ID_RE = re.compile(r"^AC-[A-Z0-9_-]+-[0-9]+$")
+TEST_ID_RE = re.compile(r"^TID-[A-Z0-9_-]+$")
 
 
 def err(errors: list[str], message: str) -> None:
@@ -103,6 +117,10 @@ def validate(artifact: dict, errors: list[str]) -> None:
         err(errors, "risk_level must be one of low|medium|high.")
         return
 
+    ticket_spec_path = artifact.get("ticket_spec_path")
+    if not is_non_empty_string(ticket_spec_path):
+        err(errors, "ticket_spec_path must be a non-empty string.")
+
     req_ids = artifact.get("req_ids")
     if not (isinstance(req_ids, list) and req_ids):
         err(errors, "req_ids must be a non-empty list.")
@@ -114,6 +132,53 @@ def validate(artifact: dict, errors: list[str]) -> None:
     files_changed = artifact.get("files_changed")
     if not (isinstance(files_changed, list) and files_changed):
         err(errors, "files_changed must be a non-empty list.")
+
+    acceptance_criteria = artifact.get("acceptance_criteria")
+    if not (isinstance(acceptance_criteria, list) and acceptance_criteria):
+        err(errors, "acceptance_criteria must be a non-empty list.")
+        acceptance_criteria = []
+    ac_ids: set[str] = set()
+    criterion_by_id: dict[str, dict] = {}
+    for idx, criterion in enumerate(acceptance_criteria):
+        prefix = f"acceptance_criteria[{idx}]"
+        if not isinstance(criterion, dict):
+            err(errors, f"{prefix} must be an object.")
+            continue
+        required_fields = {"id", "type", "statement", "test_ids", "negative_test_ids"}
+        unknown = set(criterion.keys()) - required_fields
+        if unknown:
+            err(errors, f"{prefix} unknown fields: {sorted(unknown)}")
+        missing = required_fields - set(criterion.keys())
+        if missing:
+            err(errors, f"{prefix} missing fields: {sorted(missing)}")
+            continue
+        ac_id = criterion.get("id")
+        if not (isinstance(ac_id, str) and AC_ID_RE.match(ac_id)):
+            err(errors, f"{prefix}.id has invalid format: {ac_id}")
+            continue
+        if ac_id in ac_ids:
+            err(errors, f"Duplicate acceptance criteria id: {ac_id}")
+            continue
+        ac_ids.add(ac_id)
+        criterion_by_id[ac_id] = criterion
+        if not is_non_empty_string(criterion.get("type")):
+            err(errors, f"{prefix}.type must be non-empty string.")
+        if not is_non_empty_string(criterion.get("statement")):
+            err(errors, f"{prefix}.statement must be non-empty string.")
+        test_ids = criterion.get("test_ids")
+        if not (isinstance(test_ids, list) and test_ids):
+            err(errors, f"{prefix}.test_ids must be non-empty array.")
+        else:
+            for test_id in test_ids:
+                if not (isinstance(test_id, str) and TEST_ID_RE.match(test_id)):
+                    err(errors, f"{prefix}.test_ids contains invalid id: {test_id}")
+        negative_test_ids = criterion.get("negative_test_ids")
+        if not isinstance(negative_test_ids, list):
+            err(errors, f"{prefix}.negative_test_ids must be an array.")
+        else:
+            for test_id in negative_test_ids:
+                if not (isinstance(test_id, str) and TEST_ID_RE.match(test_id)):
+                    err(errors, f"{prefix}.negative_test_ids contains invalid id: {test_id}")
 
     expected_required = REQUIRED_BY_RISK[risk]
     required_ids = artifact.get("required_check_ids")
@@ -217,6 +282,108 @@ def validate(artifact: dict, errors: list[str]) -> None:
             err(errors, f"Required check {req_check} must set required=true.")
         if check.get("status") not in {"PASS", "FAIL"}:
             err(errors, f"Required check {req_check} must be PASS or FAIL.")
+
+    ac_test_mapping = artifact.get("ac_test_mapping")
+    if not isinstance(ac_test_mapping, list):
+        err(errors, "ac_test_mapping must be an array.")
+        ac_test_mapping = []
+    mapping_by_ac: dict[str, dict] = {}
+    for idx, mapping in enumerate(ac_test_mapping):
+        prefix = f"ac_test_mapping[{idx}]"
+        if not isinstance(mapping, dict):
+            err(errors, f"{prefix} must be an object.")
+            continue
+        required_fields = {
+            "ac_id",
+            "test_ids",
+            "covered_test_ids",
+            "uncovered_test_ids",
+            "status",
+        }
+        unknown = set(mapping.keys()) - required_fields
+        if unknown:
+            err(errors, f"{prefix} unknown fields: {sorted(unknown)}")
+        missing = required_fields - set(mapping.keys())
+        if missing:
+            err(errors, f"{prefix} missing fields: {sorted(missing)}")
+            continue
+        ac_id = mapping.get("ac_id")
+        if not (isinstance(ac_id, str) and AC_ID_RE.match(ac_id)):
+            err(errors, f"{prefix}.ac_id is invalid: {ac_id}")
+            continue
+        if ac_id in mapping_by_ac:
+            err(errors, f"Duplicate ac_test_mapping ac_id: {ac_id}")
+            continue
+        mapping_by_ac[ac_id] = mapping
+        for field in ("test_ids", "covered_test_ids", "uncovered_test_ids"):
+            value = mapping.get(field)
+            if not isinstance(value, list):
+                err(errors, f"{prefix}.{field} must be an array.")
+                continue
+            for test_id in value:
+                if not (isinstance(test_id, str) and TEST_ID_RE.match(test_id)):
+                    err(errors, f"{prefix}.{field} has invalid test id: {test_id}")
+        if mapping.get("status") not in {"PASS", "FAIL"}:
+            err(errors, f"{prefix}.status must be PASS or FAIL.")
+
+    for ac_id in ac_ids:
+        if ac_id not in mapping_by_ac:
+            err(errors, f"Missing ac_test_mapping entry for acceptance criterion: {ac_id}")
+
+    ac_summary = artifact.get("ac_coverage_summary")
+    if not isinstance(ac_summary, dict):
+        err(errors, "ac_coverage_summary must be an object.")
+        ac_summary = {}
+    else:
+        required_fields = {
+            "total_ac",
+            "mapped_ac",
+            "fully_covered_ac",
+            "total_test_ids",
+            "covered_test_ids",
+            "pass",
+            "failures",
+        }
+        unknown = set(ac_summary.keys()) - required_fields
+        if unknown:
+            err(errors, f"ac_coverage_summary unknown fields: {sorted(unknown)}")
+        missing = required_fields - set(ac_summary.keys())
+        if missing:
+            err(errors, f"ac_coverage_summary missing fields: {sorted(missing)}")
+        for key in (
+            "total_ac",
+            "mapped_ac",
+            "fully_covered_ac",
+            "total_test_ids",
+            "covered_test_ids",
+        ):
+            value = ac_summary.get(key)
+            if not isinstance(value, int) or value < 0:
+                err(errors, f"ac_coverage_summary.{key} must be integer >= 0.")
+        if not isinstance(ac_summary.get("pass"), bool):
+            err(errors, "ac_coverage_summary.pass must be boolean.")
+        failures = ac_summary.get("failures")
+        if not isinstance(failures, list):
+            err(errors, "ac_coverage_summary.failures must be an array.")
+        else:
+            for item in failures:
+                if not is_non_empty_string(item):
+                    err(errors, "ac_coverage_summary.failures entries must be non-empty strings.")
+
+        if isinstance(ac_summary.get("total_ac"), int) and ac_summary.get("total_ac") != len(ac_ids):
+            err(errors, "ac_coverage_summary.total_ac must match acceptance_criteria length.")
+        if isinstance(ac_summary.get("mapped_ac"), int) and ac_summary.get("mapped_ac") != len(mapping_by_ac):
+            err(errors, "ac_coverage_summary.mapped_ac must match ac_test_mapping length.")
+
+    ac_gate = check_by_id.get("ac_coverage_gate")
+    if ac_gate is None:
+        err(errors, "Missing required ac_coverage_gate check result.")
+    else:
+        summary_pass = ac_summary.get("pass") if isinstance(ac_summary, dict) else None
+        if ac_gate.get("status") == "PASS" and summary_pass is not True:
+            err(errors, "ac_coverage_gate is PASS but ac_coverage_summary.pass is not true.")
+        if ac_gate.get("status") == "FAIL" and summary_pass is True:
+            err(errors, "ac_coverage_gate is FAIL but ac_coverage_summary.pass is true.")
 
     overall_status = artifact.get("overall_status")
     if overall_status not in {"PASS", "FAIL"}:

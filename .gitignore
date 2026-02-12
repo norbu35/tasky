@@ -21,6 +21,9 @@ packages/*/node_modules/
 apps/*/dist/
 packages/*/dist/
 .expo/
+apps/*/coverage/
+apps/*/playwright-report/
+apps/*/test-results/
 
 # Local env overrides
 .env

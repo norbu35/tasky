@@ -5,6 +5,8 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 ## Repository Layout
 - `AGENTS.md`: governing policy for delivery, quality, and security gates
 - `docs/`: PRD, architecture, API contract, quality contracts
+- `docs/TRACEABILITY.md`: PRD requirement to architecture/API/ticket mapping
+- `docs/BACKLOG_MVP.md`: atomic MVP ticket backlog with acceptance and test IDs
 - `src/`: Spring Boot backend source
 - `apps/web`: React web client scaffold
 - `apps/mobile`: React Native (Expo) mobile scaffold
@@ -45,6 +47,11 @@ scripts/self-verify.sh \
   --out artifacts/self-verify.json
 ```
 
+Validate requirement coverage before sprint planning:
+```bash
+scripts/validate-traceability.py
+```
+
 High-risk verification runs:
 - SAST (`semgrep`)
 - migration checks
@@ -71,4 +78,22 @@ pnpm --filter @tasky/web dev
 Run mobile app:
 ```bash
 pnpm --filter @tasky/mobile start
+```
+
+## Frontend Testing Stack
+- Web unit/component: Vitest + React Testing Library
+- Web E2E: Playwright
+- Mobile unit/component: Jest (jest-expo) + React Native Testing Library
+- Mobile E2E: Maestro flows (enabled when `TASKY_RUN_MAESTRO=true`; otherwise component-test fallback is used)
+
+Run web tests:
+```bash
+pnpm --filter @tasky/web test:unit
+pnpm --filter @tasky/web test:e2e:smoke
+```
+
+Run mobile tests:
+```bash
+pnpm --filter @tasky/mobile test:unit
+pnpm --filter @tasky/mobile test:e2e:smoke
 ```
