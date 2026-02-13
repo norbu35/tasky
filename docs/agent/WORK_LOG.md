@@ -97,3 +97,5 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T19:56:36Z | local | Codex | TASK-045 | agent/TASK-045-dispute-evidence | f93a9e273e78945d514f35233aa529b092238f92 | high | PASS | 13/13 | REQ-ADMIN-01,REQ-ADMIN-03 | `artifacts/self-verify.json` |
 | 2026-02-13T20:00:58Z | local | Codex | TASK-060 | agent/TASK-060-task-stats | d8617584e75a7f0ce1135f71d244aa6861116552 | high | FAIL | 12/13 | NFR-SEC-01 | `artifacts/self-verify.json` |
 | 2026-02-13T20:05:31Z | local | Codex | TASK-060 | agent/TASK-060-task-stats | d8617584e75a7f0ce1135f71d244aa6861116552 | high | FAIL | 12/13 | NFR-SEC-01 | `artifacts/self-verify.json` |
+| 2026-02-13T20:14:38Z | local | Codex | TASK-061 | agent/TASK-061-user-analytics | 580f129e2dc4b097544909b000f23bda35307112 | medium | FAIL | 8/9 | NFR-LOC-01 | `artifacts/self-verify.json` |
+| 2026-02-13T20:16:37Z | local | Codex | TASK-061 | agent/TASK-061-user-analytics | 580f129e2dc4b097544909b000f23bda35307112 | medium | PASS | 9/9 | NFR-LOC-01 | `artifacts/self-verify.json` |
