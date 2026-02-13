@@ -5,8 +5,11 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,22 +18,33 @@ import org.springframework.util.StringUtils;
 @Service
 public class JwtTokenService {
 
+    private static final String TOKEN_TYPE_CLAIM = "token_type";
+    private static final String ACCESS_TOKEN_TYPE = "access";
+    private static final String REFRESH_TOKEN_TYPE = "refresh";
+
     private final SecretKey signingKey;
+    private final long accessTokenTtlSeconds;
+    private final long refreshTokenTtlSeconds;
 
     public JwtTokenService(
         @Value("${tasky.security.jwt-secret:tasky-dev-signing-secret-key-with-minimum-32-bytes}")
-        String jwtSecret
+        String jwtSecret,
+        @Value("${tasky.security.access-token-ttl-seconds:900}") long accessTokenTtlSeconds,
+        @Value("${tasky.security.refresh-token-ttl-seconds:1209600}") long refreshTokenTtlSeconds
     ) {
         this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        this.accessTokenTtlSeconds = accessTokenTtlSeconds;
+        this.refreshTokenTtlSeconds = refreshTokenTtlSeconds;
     }
 
     public Optional<JwtPrincipal> parse(String token) {
         try {
-            Claims claims = Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+            Claims claims = parseClaims(token);
+
+            String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+            if (StringUtils.hasText(tokenType) && !ACCESS_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
+                return Optional.empty();
+            }
 
             String userId = claims.getSubject();
             String role = claims.get("role", String.class);
@@ -54,5 +68,73 @@ public class JwtTokenService {
         } catch (JwtException | IllegalArgumentException ex) {
             return Optional.empty();
         }
+    }
+
+    public String issueAccessToken(JwtPrincipal principal) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+            .subject(principal.userId())
+            .claim("role", principal.role())
+            .claim("status", principal.status())
+            .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(now.plusSeconds(accessTokenTtlSeconds)))
+            .signWith(signingKey, Jwts.SIG.HS256)
+            .compact();
+    }
+
+    public RefreshToken issueRefreshToken(String userId) {
+        Instant now = Instant.now();
+        Instant expiresAt = now.plusSeconds(refreshTokenTtlSeconds);
+        String tokenId = UUID.randomUUID().toString();
+
+        String token = Jwts.builder()
+            .subject(userId)
+            .id(tokenId)
+            .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(expiresAt))
+            .signWith(signingKey, Jwts.SIG.HS256)
+            .compact();
+
+        return new RefreshToken(token, tokenId, expiresAt);
+    }
+
+    public Optional<ParsedRefreshToken> parseRefreshToken(String token) {
+        try {
+            Claims claims = parseClaims(token);
+            String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+            if (!REFRESH_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
+                return Optional.empty();
+            }
+
+            String userId = claims.getSubject();
+            String tokenId = claims.getId();
+            Date expiration = claims.getExpiration();
+
+            if (!StringUtils.hasText(userId) || !StringUtils.hasText(tokenId) || expiration == null) {
+                return Optional.empty();
+            }
+
+            return Optional.of(
+                new ParsedRefreshToken(userId, tokenId, expiration.toInstant())
+            );
+        } catch (JwtException | IllegalArgumentException ex) {
+            return Optional.empty();
+        }
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+            .verifyWith(signingKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+
+    public record RefreshToken(String token, String tokenId, Instant expiresAt) {
+    }
+
+    public record ParsedRefreshToken(String userId, String tokenId, Instant expiresAt) {
     }
 }

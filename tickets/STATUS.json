@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-02-13T13:06:50Z",
+  "updated_at": "2026-02-13T13:34:50Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -39,10 +39,11 @@
       "completed_at": "2026-02-13T12:39:18Z"
     },
     "TASK-010": {
-      "status": "in_progress",
+      "status": "done",
       "agent": "Codex",
       "branch": "agent/TASK-010-otp-token-lifecycle",
-      "claimed_at": "2026-02-13T13:06:50Z"
+      "claimed_at": "2026-02-13T13:06:50Z",
+      "completed_at": "2026-02-13T13:34:50Z"
     },
     "TASK-011": {
       "status": "pending"

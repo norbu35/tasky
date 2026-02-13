@@ -24,5 +24,10 @@ management:
 tasky:
   api:
     version: v1
+  auth:
+    otp-code: ${TASKY_OTP_CODE:123456}
+    otp-ttl-seconds: ${TASKY_OTP_TTL_SECONDS:300}
   security:
     jwt-secret: ${TASKY_JWT_SECRET:tasky-dev-signing-secret-key-with-minimum-32-bytes}
+    access-token-ttl-seconds: ${TASKY_ACCESS_TOKEN_TTL_SECONDS:900}
+    refresh-token-ttl-seconds: ${TASKY_REFRESH_TOKEN_TTL_SECONDS:1209600}
