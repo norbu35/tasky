@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-02-13T10:00:00Z",
+  "updated_at": "2026-02-13T12:30:21Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -31,32 +31,84 @@
       "claimed_at": "2026-02-12T20:30:00Z",
       "completed_at": "2026-02-12T21:00:00Z"
     },
-    "TASK-004": { "status": "pending" },
-    "TASK-010": { "status": "pending" },
-    "TASK-011": { "status": "pending" },
-    "TASK-012": { "status": "pending" },
-    "TASK-013": { "status": "pending" },
-    "TASK-020": { "status": "pending" },
-    "TASK-021": { "status": "pending" },
-    "TASK-022": { "status": "pending" },
-    "TASK-023": { "status": "pending" },
-    "TASK-030": { "status": "pending" },
-    "TASK-031": { "status": "pending" },
-    "TASK-032": { "status": "pending" },
-    "TASK-033": { "status": "pending" },
-    "TASK-034": { "status": "pending" },
-    "TASK-040": { "status": "pending" },
-    "TASK-041": { "status": "pending" },
-    "TASK-042": { "status": "pending" },
-    "TASK-043": { "status": "pending" },
-    "TASK-044": { "status": "pending" },
-    "TASK-045": { "status": "pending" },
-    "TASK-060": { "status": "pending" },
-    "TASK-061": { "status": "pending" },
-    "TASK-062": { "status": "pending" },
-    "TASK-063": { "status": "pending" },
-    "TASK-064": { "status": "pending" },
-    "TASK-065": { "status": "pending" },
+    "TASK-004": {
+      "status": "pending"
+    },
+    "TASK-010": {
+      "status": "pending"
+    },
+    "TASK-011": {
+      "status": "pending"
+    },
+    "TASK-012": {
+      "status": "pending"
+    },
+    "TASK-013": {
+      "status": "pending"
+    },
+    "TASK-020": {
+      "status": "pending"
+    },
+    "TASK-021": {
+      "status": "pending"
+    },
+    "TASK-022": {
+      "status": "pending"
+    },
+    "TASK-023": {
+      "status": "pending"
+    },
+    "TASK-030": {
+      "status": "pending"
+    },
+    "TASK-031": {
+      "status": "pending"
+    },
+    "TASK-032": {
+      "status": "pending"
+    },
+    "TASK-033": {
+      "status": "pending"
+    },
+    "TASK-034": {
+      "status": "pending"
+    },
+    "TASK-040": {
+      "status": "pending"
+    },
+    "TASK-041": {
+      "status": "pending"
+    },
+    "TASK-042": {
+      "status": "pending"
+    },
+    "TASK-043": {
+      "status": "pending"
+    },
+    "TASK-044": {
+      "status": "pending"
+    },
+    "TASK-045": {
+      "status": "pending"
+    },
+    "TASK-060": {
+      "status": "pending"
+    },
+    "TASK-061": {
+      "status": "pending"
+    },
+    "TASK-062": {
+      "status": "pending"
+    },
+    "TASK-063": {
+      "status": "pending"
+    },
+    "TASK-064": {
+      "status": "pending"
+    },
+    "TASK-065": {
+      "status": "pending"
+    },
     "TASK-070": {
       "status": "done",
       "agent": "Codex",
@@ -72,15 +124,22 @@
       "completed_at": "2026-02-12T21:14:00Z"
     },
     "TASK-072": {
-      "status": "in_progress",
-      "agent": "Codex",
-      "branch": "agent/TASK-072-cross-platform-parity-accessibility",
-      "claimed_at": "2026-02-12T21:14:00Z"
+      "status": "pending"
     },
-    "TASK-080": { "status": "pending" },
-    "TASK-081": { "status": "pending" },
-    "TASK-082": { "status": "pending" },
-    "TASK-083": { "status": "pending" },
-    "TASK-090": { "status": "pending" }
+    "TASK-080": {
+      "status": "pending"
+    },
+    "TASK-081": {
+      "status": "pending"
+    },
+    "TASK-082": {
+      "status": "pending"
+    },
+    "TASK-083": {
+      "status": "pending"
+    },
+    "TASK-090": {
+      "status": "pending"
+    }
   }
 }
