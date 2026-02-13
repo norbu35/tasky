@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import mn.tasky.auth.AuthService;
+import mn.tasky.common.api.CursorPagination;
+import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +44,12 @@ public class AdminVerificationController {
             .map(this::toDetailBody)
             .toList();
 
-        return ResponseEntity.ok(Map.of(
-            "data", data,
-            "cursor", Map.of()
-        ));
+        return ResponseEntity.ok(
+            new PagedResponse<>(
+                data,
+                new CursorPagination(null, false)
+            )
+        );
     }
 
     @PostMapping("/{id}/approve")

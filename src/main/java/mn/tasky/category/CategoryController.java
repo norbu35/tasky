@@ -12,6 +12,8 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.common.api.CursorPagination;
+import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -108,9 +110,9 @@ public class CategoryController {
                 : categoryService.listActiveCategories(cursor, limit);
 
             return ResponseEntity.ok(
-                new CategoryListResponse(
+                new PagedResponse<>(
                     page.data().stream().map(this::toCategoryResponse).toList(),
-                    new CursorResponse(page.nextCursor(), page.hasMore())
+                    new CursorPagination(page.nextCursor(), page.hasMore())
                 )
             );
         } catch (IllegalArgumentException exception) {
@@ -194,19 +196,6 @@ public class CategoryController {
         boolean isActive,
         @JsonProperty("sort_order")
         int sortOrder
-    ) {
-    }
-
-    public record CategoryListResponse(
-        List<CategoryResponse> data,
-        CursorResponse cursor
-    ) {
-    }
-
-    public record CursorResponse(
-        String next,
-        @JsonProperty("has_more")
-        boolean hasMore
     ) {
     }
 }

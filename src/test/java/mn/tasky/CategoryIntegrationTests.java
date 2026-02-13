@@ -173,6 +173,53 @@ class CategoryIntegrationTests {
         assertThat(response.getBody()).containsEntry("code", "CATEGORY_NOT_FOUND");
     }
 
+    @Test
+    @DisplayName("TID-TASK-065-API-CURSOR-ENVELOPE common envelope and determinism")
+    void commonPaginationEnvelopeAndDeterminism() {
+        String adminToken = tokenFor("ADMIN", "ACTIVE");
+        String customerToken = tokenFor("CUSTOMER", "ACTIVE");
+
+        // Seed many categories
+        for (int i = 0; i < 15; i++) {
+            postWithAuth(
+                "/api/v1/admin/categories",
+                adminToken,
+                Map.of(
+                    "name", "Batch " + i,
+                    "name_mn", "Багц " + i,
+                    "icon_url", "https://cdn.tasky.local/icons/batch.png",
+                    "sort_order", 500 + i
+                )
+            );
+        }
+
+        // Fetch first page
+        ResponseEntity<Map> firstPage = getWithAuth(
+            "/api/v1/categories?limit=5",
+            customerToken
+        );
+        assertThat(firstPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(firstPage.getBody()).containsKey("cursor");
+        Map<String, Object> firstCursor = (Map<String, Object>) firstPage.getBody().get("cursor");
+        assertThat(firstCursor).containsKeys("next", "has_more");
+        assertThat(firstCursor.get("has_more")).isEqualTo(true);
+        String nextCursor = String.valueOf(firstCursor.get("next"));
+
+        // Fetch second page
+        ResponseEntity<Map> secondPage = getWithAuth(
+            "/api/v1/categories?limit=5&cursor=" + nextCursor,
+            customerToken
+        );
+        assertThat(secondPage.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> firstData = (List<Map<String, Object>>) firstPage.getBody().get("data");
+        List<Map<String, Object>> secondData = (List<Map<String, Object>>) secondPage.getBody().get("data");
+
+        // Ensure no overlap (determinism and stable sort)
+        List<String> firstIds = firstData.stream().map(i -> String.valueOf(i.get("id"))).toList();
+        List<String> secondIds = secondData.stream().map(i -> String.valueOf(i.get("id"))).toList();
+        assertThat(firstIds).doesNotContainAnyElementsOf(secondIds);
+    }
+
     private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, Object> body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
