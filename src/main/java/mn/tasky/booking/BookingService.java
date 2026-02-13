@@ -25,11 +25,30 @@ public class BookingService {
             price,
             "PENDING_PAYMENT",
             null,
+            false,
             now,
             now
         );
         bookingsById.put(booking.id(), booking);
         return booking;
+    }
+
+    public Optional<BookingState> recordDisclaimerAcceptance(String bookingId) {
+        BookingState updated = bookingsById.computeIfPresent(bookingId, (ignored, current) ->
+            new BookingState(
+                current.id(),
+                current.taskId(),
+                current.taskerId(),
+                current.customerId(),
+                current.price(),
+                current.status(),
+                current.cancellationFee(),
+                true,
+                current.createdAt(),
+                Instant.now()
+            )
+        );
+        return Optional.ofNullable(updated);
     }
 
     public Optional<BookingState> getBooking(String id) {
@@ -89,6 +108,7 @@ public class BookingService {
             current.price(),
             newStatus,
             current.cancellationFee(),
+            current.liabilityDisclaimerAccepted(),
             current.createdAt(),
             Instant.now()
         );
@@ -104,6 +124,7 @@ public class BookingService {
         int price,
         String status,
         Integer cancellationFee,
+        boolean liabilityDisclaimerAccepted,
         Instant createdAt,
         Instant updatedAt
     ) {
