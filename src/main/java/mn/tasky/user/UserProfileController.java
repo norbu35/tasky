@@ -59,6 +59,28 @@ public class UserProfileController {
             .orElseGet(() -> unauthorizedResponse(request));
     }
 
+    @PostMapping("/me/role/tasker")
+    public ResponseEntity<?> activateTaskerRole(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        HttpServletRequest request
+    ) {
+        return authService.activateTaskerRole(principal.userId())
+            .<ResponseEntity<?>>map(result -> ResponseEntity.ok(
+                Map.of(
+                    "access_token", result.accessToken(),
+                    "refresh_token", result.refreshToken(),
+                    "user", result.user()
+                )
+            ))
+            .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                    "code", "ROLE_ALREADY_ASSIGNED",
+                    "message", "User is already TASKER or ADMIN.",
+                    "trace_id", resolveTraceId(request)
+                )
+            ));
+    }
+
     @PostMapping("/me/avatar/upload-url")
     public ResponseEntity<?> getAvatarUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
