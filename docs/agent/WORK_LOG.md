@@ -90,3 +90,5 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T18:51:29Z | local | Codex | TASK-034 | agent/TASK-034-payout-management | 26bea41436f9a48d179dd2f027b868bee84d88cb | high | PASS | 13/13 | REQ-PAY-04,REQ-PAY-05,REQ-PAY-06 | `artifacts/self-verify.json` |
 | 2026-02-13T18:52:51Z | local | Codex | TASK-034 | agent/TASK-034-payout-management | 26bea41436f9a48d179dd2f027b868bee84d88cb | high | PASS | 13/13 | REQ-PAY-04,REQ-PAY-05,REQ-PAY-06 | `artifacts/self-verify.json` |
 | 2026-02-13T19:10:51Z | local | Codex | TASK-040 | main | ead03fdd3c5d100b2f7fa61259c8a7812453ff6b | medium | FAIL | 4/9 | REQ-SAFE-02,REQ-SAFE-04 | `artifacts/self-verify.json` |
+| 2026-02-13T19:25:22Z | local | Codex | TASK-041 | agent/TASK-041-dispute-resolution | 730c3b8cfd0e1c6c4d88c7d967155ff12daca0c3 | high | FAIL | 12/13 | REQ-ADMIN-02,REQ-MSG-02,REQ-SAFE-03 | `artifacts/self-verify.json` |
+| 2026-02-13T19:27:12Z | local | Codex | TASK-041 | agent/TASK-041-dispute-resolution | 730c3b8cfd0e1c6c4d88c7d967155ff12daca0c3 | high | PASS | 13/13 | REQ-ADMIN-02,REQ-MSG-02,REQ-SAFE-03 | `artifacts/self-verify.json` |

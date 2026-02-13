@@ -46,7 +46,7 @@ class DisputeIntegrationTests {
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
-    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE and HOLD funds")
+    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE and HOLD funds (TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE)")
     void disputeLifecycle() {
         AuthContext customer = authenticate("cust-disp");
         AuthContext tasker = authenticate("tasker-disp");
@@ -120,6 +120,30 @@ class DisputeIntegrationTests {
         // Verify funds released
         long balanceReleased = walletService.getBalance(tasker.userId()).balance();
         assertThat(balanceReleased).isEqualTo(9000);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-041-DOMAIN-PAYOUT-HOLD active dispute pauses payout eligibility")
+    void payoutEligibilityDuringDispute() {
+        AuthContext customer = authenticate("cust-p");
+        AuthContext tasker = authenticate("task-p");
+
+        BookingService.BookingState booking = bookingService.createBooking("task-p", tasker.userId(), customer.userId(), 100000);
+        bookingService.transitionToPaid(booking.id());
+        postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+
+        // Balance is 90,000
+        assertThat(walletService.getBalance(tasker.userId()).balance()).isEqualTo(90000);
+
+        // Raise dispute
+        postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+
+        // Balance should be 0 (90,000 held)
+        assertThat(walletService.getBalance(tasker.userId()).balance()).isEqualTo(0);
+
+        // Try request payout - should fail
+        ResponseEntity<Map> payoutRes = postWithAuth("/api/v1/wallet/payouts", tokenFor("TASKER", "ACTIVE", tasker.userId()), Map.of("amount", 10000));
+        assertThat(payoutRes.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     private AuthContext authenticate(String seed) {
