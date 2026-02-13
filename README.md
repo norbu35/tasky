@@ -47,6 +47,7 @@ scripts/agent-flow.sh status
 scripts/agent-flow.sh start --agent my-agent --slug bootstrap
 scripts/agent-flow.sh verify --ticket TASK-001
 scripts/agent-flow.sh complete --ticket TASK-001
+scripts/agent-flow.sh merge --ticket TASK-001
 ```
 
 Generate local verification artifact:

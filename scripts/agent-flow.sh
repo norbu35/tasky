@@ -8,6 +8,7 @@ Usage:
   scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--dry-run]
   scripts/agent-flow.sh verify --ticket <TICKET-ID> [--ticket-spec <path>] [--risk <low|medium|high>] [--req <REQ-CSV>] [--base <git-ref>] [--out <path>] [--only <check-id>]
   scripts/agent-flow.sh complete --ticket <TICKET-ID> [--agent <name>] [--artifact <path>]
+  scripts/agent-flow.sh merge --ticket <TICKET-ID> [--main-branch <main|master>] [--source-branch <agent-branch>] [--no-push]
   scripts/agent-flow.sh doctor
 
 Commands:
@@ -15,6 +16,7 @@ Commands:
   start     Resume own in-progress ticket or claim a new one (default: isolated worktree).
   verify    Run self-verification using ticket metadata defaults.
   complete  Mark claimed ticket done after optional artifact validation.
+  merge     Merge a completed ticket branch from its worktree into main.
   doctor    Check environment for required tools.
 USAGE
 }
@@ -76,6 +78,14 @@ branch_worktree_paths() {
   git worktree list --porcelain | awk -v branch_ref="${branch_ref}" '
     $1=="worktree" { wt=$2 }
     $1=="branch" && $2==branch_ref { print wt }
+  '
+}
+
+find_worktree_for_branch() {
+  local branch_ref="refs/heads/$1"
+  git worktree list --porcelain | awk -v branch_ref="${branch_ref}" '
+    $1=="worktree" { wt=$2 }
+    $1=="branch" && $2==branch_ref { print wt; exit }
   '
 }
 
@@ -142,6 +152,8 @@ case "${command}" in
 
     resume_mode=false
     claimed_branch=""
+    normalized_agent_name="$(echo "${agent_name}" | tr '[:upper:]' '[:lower:]')"
+    effective_in_progress_json="$(scripts/ticket-status.sh --format json --filter in_progress)"
 
     if [[ -z "${ticket_id}" ]]; then
       owned_in_progress=()
@@ -150,9 +162,8 @@ case "${command}" in
           owned_in_progress+=("${owned_ticket}")
         fi
       done < <(
-        jq -r --arg agent "${agent_name}" \
-          '.tickets | to_entries[] | select(.value.status == "in_progress" and .value.agent == $agent) | .key' \
-          "${status_file}"
+        printf '%s\n' "${effective_in_progress_json}" | jq -r --arg agent "${normalized_agent_name}" \
+          '.[] | select((.agent // "" | ascii_downcase) == $agent) | .ticket'
       )
 
       if [[ ${#owned_in_progress[@]} -eq 1 ]]; then
@@ -175,9 +186,17 @@ case "${command}" in
     ticket_status="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].status // "missing"' "${status_file}")"
     ticket_agent="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].agent // ""' "${status_file}")"
     ticket_branch="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].branch // ""' "${status_file}")"
+    effective_claim="$(printf '%s\n' "${effective_in_progress_json}" | jq -c --arg tid "${ticket_id}" '.[] | select(.ticket == $tid)' | head -n 1 || true)"
+
+    if [[ -n "${effective_claim}" ]]; then
+      ticket_status="in_progress"
+      ticket_agent="$(echo "${effective_claim}" | jq -r '.agent // ""')"
+      ticket_branch="$(echo "${effective_claim}" | jq -r '.branch // ""')"
+    fi
 
     if [[ "${ticket_status}" == "in_progress" ]]; then
-      if [[ "${ticket_agent}" == "${agent_name}" ]]; then
+      normalized_ticket_agent="$(echo "${ticket_agent}" | tr '[:upper:]' '[:lower:]')"
+      if [[ "${normalized_ticket_agent}" == "${normalized_agent_name}" ]]; then
         resume_mode=true
       else
         echo "Ticket ${ticket_id} is already in progress by '${ticket_agent}' on branch '${ticket_branch}'." >&2
@@ -271,6 +290,12 @@ case "${command}" in
       if [[ -d "${worktree_path}" ]]; then
         echo "Target worktree path already exists and is not registered as a git worktree: ${worktree_path}" >&2
         exit 1
+      fi
+
+      if [[ "${resume_mode}" == true ]] && ! git show-ref --verify --quiet "refs/heads/${target_branch}"; then
+        if git show-ref --verify --quiet "refs/remotes/origin/${target_branch}"; then
+          git branch --track "${target_branch}" "origin/${target_branch}" >/dev/null
+        fi
       fi
 
       if git show-ref --verify --quiet "refs/heads/${target_branch}"; then
@@ -390,6 +415,105 @@ case "${command}" in
       cmd+=(--agent "${agent_name}")
     fi
     exec "${cmd[@]}"
+    ;;
+  merge)
+    require_cmd git
+    require_cmd jq
+
+    ticket_id=""
+    main_branch="main"
+    source_branch=""
+    push_after_merge=true
+
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --ticket) ticket_id="${2:-}"; shift 2 ;;
+        --main-branch) main_branch="${2:-}"; shift 2 ;;
+        --source-branch) source_branch="${2:-}"; shift 2 ;;
+        --no-push) push_after_merge=false; shift ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown argument for merge: $1" >&2; exit 2 ;;
+      esac
+    done
+
+    if [[ -z "${ticket_id}" ]]; then
+      echo "Missing required --ticket for merge." >&2
+      exit 2
+    fi
+    if [[ ! "${ticket_id}" =~ ^[A-Z][A-Z0-9_]*-[0-9]+$ ]]; then
+      echo "Invalid --ticket format: ${ticket_id}" >&2
+      exit 1
+    fi
+    if [[ -z "${source_branch}" ]]; then
+      current_branch="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+      if [[ "${current_branch}" =~ ^agent/${ticket_id}- ]]; then
+        source_branch="${current_branch}"
+      else
+        source_branch="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].branch // empty' tickets/STATUS.json)"
+        if [[ -z "${source_branch}" ]]; then
+          source_branch="$(git for-each-ref --format='%(refname:short)' "refs/heads/agent/${ticket_id}-*" | head -n 1 || true)"
+        fi
+        if [[ -z "${source_branch}" ]]; then
+          remote_candidate="$(git for-each-ref --format='%(refname:short)' "refs/remotes/origin/agent/${ticket_id}-*" | head -n 1 || true)"
+          source_branch="${remote_candidate#origin/}"
+        fi
+      fi
+    fi
+
+    if [[ -z "${source_branch}" ]]; then
+      echo "Unable to resolve source branch for ${ticket_id}. Use --source-branch." >&2
+      exit 1
+    fi
+    if [[ ! "${source_branch}" =~ ^agent/${ticket_id}- ]]; then
+      echo "Source branch '${source_branch}' must match agent/${ticket_id}-<slug>." >&2
+      exit 1
+    fi
+
+    if ! git show-ref --verify --quiet "refs/heads/${source_branch}"; then
+      if git show-ref --verify --quiet "refs/remotes/origin/${source_branch}"; then
+        git branch --track "${source_branch}" "origin/${source_branch}" >/dev/null
+      else
+        echo "Source branch '${source_branch}' not found locally or on origin." >&2
+        exit 1
+      fi
+    fi
+
+    ticket_status_on_source="$(git show "${source_branch}:tickets/STATUS.json" | jq -r --arg tid "${ticket_id}" '.tickets[$tid].status // "missing"')"
+    if [[ "${ticket_status_on_source}" != "done" ]]; then
+      echo "Ticket ${ticket_id} is '${ticket_status_on_source}' on ${source_branch}. Run complete before merge." >&2
+      exit 1
+    fi
+
+    main_worktree="$(find_worktree_for_branch "${main_branch}")"
+    if [[ -z "${main_worktree}" ]]; then
+      echo "Branch '${main_branch}' is not checked out in any worktree." >&2
+      echo "Check out ${main_branch} in a worktree, then retry merge." >&2
+      exit 1
+    fi
+
+    main_current_branch="$(git -C "${main_worktree}" symbolic-ref --short HEAD 2>/dev/null || true)"
+    if [[ "${main_current_branch}" != "${main_branch}" ]]; then
+      echo "Main worktree '${main_worktree}' is on '${main_current_branch}', expected '${main_branch}'." >&2
+      exit 1
+    fi
+
+    if ! git -C "${main_worktree}" diff --quiet || ! git -C "${main_worktree}" diff --cached --quiet; then
+      echo "Main worktree has tracked-file changes. Commit/stash them before merge." >&2
+      exit 1
+    fi
+
+    git -C "${main_worktree}" fetch origin "${main_branch}" >/dev/null
+    if git show-ref --verify --quiet "refs/remotes/origin/${source_branch}"; then
+      git -C "${main_worktree}" fetch origin "${source_branch}" >/dev/null
+    fi
+    git -C "${main_worktree}" pull --ff-only origin "${main_branch}" >/dev/null
+    git -C "${main_worktree}" merge --ff-only "${source_branch}" >/dev/null
+
+    if [[ "${push_after_merge}" == true ]]; then
+      git -C "${main_worktree}" push origin "${main_branch}" >/dev/null
+    fi
+
+    echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge}"
     ;;
   doctor)
     check_env

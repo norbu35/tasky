@@ -10,7 +10,8 @@ set -euo pipefail
 # Behavior:
 #   1. Reads tickets/STATUS.json from repository state.
 #   2. Reads ticket specs to resolve dependency graph.
-#   3. Finds the next ticket whose deps are all "done" and status is "pending".
+#   3. Finds the next ticket whose deps are all "done" and status is "pending",
+#      excluding effective in-progress claims discovered on agent branches.
 #      (Or claims a specific ticket if --ticket is provided.)
 #   4. Validates branch context and sets status to "in_progress".
 #   5. Commits and pushes tickets/STATUS.json as the atomic lock.
@@ -112,7 +113,9 @@ fi
 # ── Resolve dependency graph ────────────────────────────────────────────────
 
 find_next_ticket() {
-  python3 - "${STATUS_FILE}" "${TICKETS_DIR}" "${target_ticket}" <<'PYTHON'
+  local effective_in_progress_json
+  effective_in_progress_json="$(scripts/ticket-status.sh --format json --filter in_progress)"
+  python3 - "${STATUS_FILE}" "${TICKETS_DIR}" "${target_ticket}" "${effective_in_progress_json}" <<'PYTHON'
 import json
 import sys
 from pathlib import Path
@@ -120,9 +123,22 @@ from pathlib import Path
 status_path = Path(sys.argv[1])
 tickets_dir = Path(sys.argv[2])
 target = sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] else None
+effective_in_progress_raw = sys.argv[4] if len(sys.argv) > 4 else "[]"
 
 status_data = json.loads(status_path.read_text())
 tickets = status_data.get("tickets", {})
+try:
+    effective_in_progress_list = json.loads(effective_in_progress_raw)
+except json.JSONDecodeError:
+    effective_in_progress_list = []
+
+effective_claims = {}
+for claim in effective_in_progress_list:
+    if not isinstance(claim, dict):
+        continue
+    tid = claim.get("ticket")
+    if isinstance(tid, str) and tid:
+        effective_claims[tid] = claim
 
 # Build dependency map from ticket specs
 deps_map = {}
@@ -137,7 +153,12 @@ for ticket_id in tickets:
 done_tickets = {tid for tid, info in tickets.items()
                 if isinstance(info, dict) and info.get("status") == "done"}
 
+def claim_for(ticket_id):
+    return effective_claims.get(ticket_id)
+
 def is_available(ticket_id):
+    if claim_for(ticket_id):
+        return False
     info = tickets.get(ticket_id, {})
     if not isinstance(info, dict):
         return False
@@ -147,9 +168,16 @@ def is_available(ticket_id):
     return all(d in done_tickets for d in deps)
 
 if target:
-    if is_available(target):
-        print(target)
-    else:
+    claim = claim_for(target)
+    if claim:
+        claim_agent = claim.get("agent", "?")
+        claim_branch = claim.get("branch", "?")
+        print(
+            f"UNAVAILABLE:{target}:status=in_progress:agent={claim_agent}:branch={claim_branch}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    if not is_available(target):
         info = tickets.get(target, {})
         st = info.get("status", "unknown") if isinstance(info, dict) else "unknown"
         deps = deps_map.get(target, [])
@@ -159,6 +187,7 @@ if target:
         elif blocked_by:
             print(f"UNAVAILABLE:{target}:blocked_by={','.join(blocked_by)}", file=sys.stderr)
         sys.exit(1)
+    print(target)
 else:
     # Sort by ticket number for deterministic ordering
     import re
@@ -171,11 +200,11 @@ else:
     if available:
         print(available[0])
     else:
-        in_progress = [tid for tid, info in tickets.items()
-                       if isinstance(info, dict) and info.get("status") == "in_progress"]
+        in_progress = sorted(effective_claims.keys(), key=ticket_sort_key)
         pending_blocked = [tid for tid in tickets
                            if isinstance(tickets[tid], dict)
                            and tickets[tid].get("status") == "pending"
+                           and claim_for(tid) is None
                            and not is_available(tid)]
         print(f"NO_AVAILABLE_TICKET:in_progress={len(in_progress)},pending_blocked={len(pending_blocked)}", file=sys.stderr)
         sys.exit(1)
