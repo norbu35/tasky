@@ -99,6 +99,27 @@ public class TaskService {
         return Optional.ofNullable(tasksById.get(id));
     }
 
+    public Optional<TaskState> transitionToAssigned(String taskId) {
+        TaskState updated = tasksById.computeIfPresent(taskId, (ignored, current) ->
+            new TaskState(
+                current.id(),
+                current.customerId(),
+                current.categoryId(),
+                current.description(),
+                current.budget(),
+                current.locationLat(),
+                current.locationLng(),
+                current.locationText(),
+                "ASSIGNED",
+                current.scheduledAt(),
+                current.photoKeys(),
+                current.createdAt(),
+                Instant.now()
+            )
+        );
+        return Optional.ofNullable(updated);
+    }
+
     public TaskPage listTasks(
         String categoryId,
         Double lat,

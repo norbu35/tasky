@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.UUID;
@@ -26,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
     private final BookingService bookingService;
+    private final PaymentService paymentService;
 
-    public PaymentController(BookingService bookingService) {
+    public PaymentController(BookingService bookingService, PaymentService paymentService) {
         this.bookingService = bookingService;
+        this.paymentService = paymentService;
     }
 
     @PostMapping("/bookings/{id}/initiate")
@@ -52,11 +55,11 @@ public class PaymentController {
                 }
 
                 bookingService.recordDisclaimerAcceptance(id);
+                PaymentService.PaymentIntent intent = paymentService.initiatePayment(id);
 
-                // Placeholder for actual provider integration (TASK-031)
                 return ResponseEntity.ok(Map.of(
-                    "payment_url", "https://qpay.mn/pay/" + UUID.randomUUID(),
-                    "qr_code", "BASE64_QR_CODE_PLACEHOLDER"
+                    "payment_url", intent.paymentUrl(),
+                    "qr_code", intent.qrCode()
                 ));
             })
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -66,6 +69,30 @@ public class PaymentController {
                     "trace_id", resolveTraceId(request)
                 )
             ));
+    }
+
+    @PostMapping("/qpay/callback")
+    public ResponseEntity<?> qpayCallback(
+        @Valid @RequestBody QpayCallbackBody body,
+        HttpServletRequest request
+    ) {
+        boolean success = paymentService.processCallback(
+            body.paymentId(),
+            body.status(),
+            body.signature()
+        );
+
+        if (success) {
+            return ResponseEntity.ok(Map.of("status", "ok"));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            Map.of(
+                "code", "INVALID_CALLBACK",
+                "message", "Payment could not be processed.",
+                "trace_id", resolveTraceId(request)
+            )
+        );
     }
 
     private String resolveTraceId(HttpServletRequest request) {
@@ -81,6 +108,19 @@ public class PaymentController {
         @NotNull
         @AssertTrue(message = "Liability disclaimer must be accepted to initiate payment.")
         Boolean liabilityDisclaimerAccepted
+    ) {
+    }
+
+    public record QpayCallbackBody(
+        @JsonProperty("payment_id")
+        @NotBlank
+        String paymentId,
+        @JsonProperty("status")
+        @NotBlank
+        String status,
+        @JsonProperty("signature")
+        @NotBlank
+        String signature
     ) {
     }
 }
