@@ -287,10 +287,17 @@ Claimed-At: $(now_iso)"
   git pull --rebase 2>/dev/null || true
 
   # Re-read status and re-select (someone else may have taken our ticket)
+  original_ticket="${selected_ticket}"
   selected_ticket="$(find_next_ticket)" || {
     echo "No ticket available after pull." >&2
     exit 1
   }
+  if [[ "${selected_ticket}" != "${original_ticket}" ]]; then
+    echo "Re-selection picked a different ticket: ${selected_ticket} (was ${original_ticket})." >&2
+    echo "Branch '${branch_name}' cannot be reused for a different ticket." >&2
+    echo "Restart with: scripts/agent-flow.sh start --agent ${agent_name} --ticket ${selected_ticket} --slug <slug>" >&2
+    exit 1
+  fi
   echo "Re-selected ticket: ${selected_ticket}" >&2
   retry=$((retry + 1))
 done

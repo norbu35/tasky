@@ -82,5 +82,32 @@ Use direct scripts only for debugging or CI internals:
 3. `scripts/self-verify.sh`
 4. `scripts/complete-ticket.sh`
 
+## Merge Conflict Resolution
+When `scripts/agent-flow.sh merge` detects that the source branch has diverged from `main`, it automatically rebases the source branch. If the rebase produces conflicts:
+
+1. The merge command aborts the rebase and exits with an error.
+2. Navigate to the source branch worktree (printed by the `start` command).
+3. Run the rebase manually:
+   ```bash
+   cd <source-worktree>
+   git rebase main
+   ```
+4. Resolve each conflict, then `git add` the resolved files and `git rebase --continue`.
+5. After successful rebase, re-run:
+   ```bash
+   scripts/agent-flow.sh merge --ticket <TICKET-ID>
+   ```
+6. If conflicts are unresolvable, abort the rebase and escalate to a human:
+   ```bash
+   git rebase --abort
+   ```
+
+## Finish Subcommand
+The `finish` subcommand combines `verify` and `complete` into a single step:
+```bash
+scripts/agent-flow.sh finish --ticket TASK-020
+```
+This runs self-verification first. If verification passes, it automatically marks the ticket as done. If verification fails, the ticket is not completed and the verify exit code is returned.
+
 ## Compatibility Docs
 `CLAUDE.md` is compatibility-only and must not define independent workflow or policy.

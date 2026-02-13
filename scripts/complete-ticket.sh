@@ -96,7 +96,7 @@ if [[ "${current_status}" == "missing" ]]; then
 fi
 
 if [[ "${current_status}" == "done" ]]; then
-  echo "Ticket ${ticket} is already done." >&2
+  echo "WARNING: Ticket ${ticket} is already done. No action taken." >&2
   exit 0
 fi
 

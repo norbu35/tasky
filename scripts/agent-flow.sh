@@ -8,6 +8,7 @@ Usage:
   scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--auto-claim] [--dry-run]
   scripts/agent-flow.sh verify --ticket <TICKET-ID> [--ticket-spec <path>] [--risk <low|medium|high>] [--req <REQ-CSV>] [--base <git-ref>] [--out <path>] [--only <check-id>]
   scripts/agent-flow.sh complete --ticket <TICKET-ID> [--agent <name>] [--artifact <path>]
+  scripts/agent-flow.sh finish --ticket <TICKET-ID> [--agent <name>] [--artifact <path>] [verify-opts...]
   scripts/agent-flow.sh merge --ticket <TICKET-ID> [--main-branch <main|master>] [--source-branch <agent-branch>] [--no-push] [--no-cleanup]
   scripts/agent-flow.sh doctor
 
@@ -16,6 +17,7 @@ Commands:
   start     Resume own in-progress ticket; explicit --ticket required for new claim unless --auto-claim is set.
   verify    Run self-verification using ticket metadata defaults.
   complete  Mark claimed ticket done after optional artifact validation.
+  finish    Run verify then complete in one step (verify + complete).
   merge     Merge a completed ticket branch from its worktree into main, then clean local source branch/worktree.
   doctor    Check environment for required tools.
 USAGE
@@ -155,7 +157,10 @@ case "${command}" in
     resume_mode=false
     claimed_branch=""
     normalized_agent_name="$(echo "${agent_name}" | tr '[:upper:]' '[:lower:]')"
-    effective_in_progress_json="$(scripts/ticket-status.sh --format json --filter in_progress)"
+    # Cache full ticket-status JSON to avoid redundant scans of remote agent branches
+    cached_status_json="$(scripts/ticket-status.sh --format json)"
+    effective_in_progress_json="$(printf '%s\n' "${cached_status_json}" | jq -c '.in_progress')"
+    effective_available_json="$(printf '%s\n' "${cached_status_json}" | jq -c '.available')"
 
     if [[ -z "${ticket_id}" ]]; then
       owned_in_progress=()
@@ -177,9 +182,9 @@ case "${command}" in
         exit 1
       else
         if [[ "${auto_claim}" == true ]]; then
-          ticket_id="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+          ticket_id="$(printf '%s\n' "${effective_available_json}" | jq -r '.[0].ticket // empty')"
         else
-          next_ticket="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+          next_ticket="$(printf '%s\n' "${effective_available_json}" | jq -r '.[0].ticket // empty')"
           echo "No resumable ticket found for agent '${agent_name}'." >&2
           echo "Explicit --ticket is required before claiming new work." >&2
           if [[ -n "${next_ticket}" ]]; then
@@ -404,7 +409,8 @@ case "${command}" in
       cmd+=(--only "${only_check}")
     fi
 
-    exec "${cmd[@]}"
+    "${cmd[@]}"
+    exit $?
     ;;
   complete)
     ticket_id=""
@@ -431,6 +437,47 @@ case "${command}" in
       cmd+=(--agent "${agent_name}")
     fi
     exec "${cmd[@]}"
+    ;;
+  finish)
+    require_cmd jq
+
+    ticket_id=""
+    agent_name=""
+    artifact_path="artifacts/self-verify.json"
+    verify_args=()
+
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --ticket) ticket_id="${2:-}"; shift 2 ;;
+        --agent) agent_name="${2:-}"; shift 2 ;;
+        --artifact) artifact_path="${2:-}"; shift 2 ;;
+        --ticket-spec|--risk|--req|--base|--out|--only)
+          verify_args+=("$1" "${2:-}"); shift 2 ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown argument for finish: $1" >&2; exit 2 ;;
+      esac
+    done
+
+    if [[ -z "${ticket_id}" ]]; then
+      echo "Missing required --ticket for finish." >&2
+      exit 2
+    fi
+
+    # Run verify
+    verify_cmd=("${BASH_SOURCE[0]}" verify --ticket "${ticket_id}" "${verify_args[@]+"${verify_args[@]}"}")
+    "${verify_cmd[@]}"
+    verify_rc=$?
+    if [[ ${verify_rc} -ne 0 ]]; then
+      echo "Verify failed (exit ${verify_rc}). Skipping complete." >&2
+      exit ${verify_rc}
+    fi
+
+    # Run complete
+    complete_cmd=("${BASH_SOURCE[0]}" complete --ticket "${ticket_id}" --artifact "${artifact_path}")
+    if [[ -n "${agent_name}" ]]; then
+      complete_cmd+=(--agent "${agent_name}")
+    fi
+    exec "${complete_cmd[@]}"
     ;;
   merge)
     require_cmd git
@@ -525,6 +572,31 @@ case "${command}" in
       git -C "${main_worktree}" fetch origin "${source_branch}" >/dev/null
     fi
     git -C "${main_worktree}" pull --ff-only origin "${main_branch}" >/dev/null
+
+    # Rebase source branch onto main if it has diverged (needed for parallel agent merges)
+    if ! git merge-base --is-ancestor "${main_branch}" "${source_branch}"; then
+      echo "Source branch '${source_branch}' has diverged from '${main_branch}'. Rebasing..." >&2
+      source_worktree="$(find_worktree_for_branch "${source_branch}")"
+      tmp_worktree_created=false
+      if [[ -z "${source_worktree}" ]]; then
+        source_worktree="$(mktemp -d "${repo_root}/.worktrees/tmp-rebase-XXXXXX")"
+        git worktree add "${source_worktree}" "${source_branch}" >/dev/null
+        tmp_worktree_created=true
+      fi
+      if ! git -C "${source_worktree}" rebase "${main_branch}" >/dev/null 2>&1; then
+        git -C "${source_worktree}" rebase --abort 2>/dev/null || true
+        if [[ "${tmp_worktree_created}" == true ]]; then
+          git worktree remove "${source_worktree}" --force 2>/dev/null || true
+        fi
+        echo "Rebase of '${source_branch}' onto '${main_branch}' failed due to conflicts." >&2
+        echo "Resolve conflicts in the source worktree and re-run merge." >&2
+        exit 1
+      fi
+      if [[ "${tmp_worktree_created}" == true ]]; then
+        git worktree remove "${source_worktree}" --force 2>/dev/null || true
+      fi
+    fi
+
     git -C "${main_worktree}" merge --ff-only "${source_branch}" >/dev/null
 
     if [[ "${push_after_merge}" == true ]]; then
@@ -563,6 +635,17 @@ case "${command}" in
         fi
       else
         cleanup_notes+=("branch_absent=${source_branch}")
+      fi
+
+      # Clean up remote branch
+      if git ls-remote --exit-code origin "refs/heads/${source_branch}" >/dev/null 2>&1; then
+        if git push origin --delete "${source_branch}" 2>/dev/null; then
+          cleanup_notes+=("remote_branch_deleted=${source_branch}")
+        else
+          cleanup_notes+=("remote_branch_delete_failed=${source_branch}")
+        fi
+      else
+        cleanup_notes+=("remote_branch_absent=${source_branch}")
       fi
     fi
 

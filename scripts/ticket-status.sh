@@ -16,12 +16,14 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/ticket-status.sh [--format table|json] [--filter pending|in_progress|done|available|all]
+  scripts/ticket-status.sh [--format table|json] [--filter pending|in_progress|done|available|all] [--stale-hours N]
 
 Options:
-  --format  Output format: "table" (default) or "json"
-  --filter  Filter tickets by status. "available" = pending with all deps done.
-            Default: "all" (shows summary + available tickets)
+  --format       Output format: "table" (default) or "json"
+  --filter       Filter tickets by status. "available" = pending with all deps done.
+                 Default: "all" (shows summary + available tickets)
+  --stale-hours  Mark in_progress tickets as stale if claimed more than N hours ago.
+                 Default: disabled (no staleness check).
 
 This is the FIRST command a new agent should run before starting work.
 USAGE
@@ -29,11 +31,13 @@ USAGE
 
 format="table"
 filter="all"
+stale_hours=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --format) format="${2:-}"; shift 2 ;;
     --filter) filter="${2:-}"; shift 2 ;;
+    --stale-hours) stale_hours="${2:-}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; usage; exit 2 ;;
   esac
@@ -61,17 +65,20 @@ fi
 
 # ── Full analysis via Python ─────────────────────────────────────────────────
 
-python3 - "${STATUS_FILE}" "${TICKETS_DIR}" "${format}" "${filter}" <<'PYTHON'
+python3 - "${STATUS_FILE}" "${TICKETS_DIR}" "${format}" "${filter}" "${stale_hours}" <<'PYTHON'
 import json
 import re
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 status_path = Path(sys.argv[1])
 tickets_dir = Path(sys.argv[2])
 output_format = sys.argv[3]
 output_filter = sys.argv[4]
+stale_hours_str = sys.argv[5] if len(sys.argv) > 5 else ""
+stale_hours = float(stale_hours_str) if stale_hours_str else None
 
 status_data = json.loads(status_path.read_text())
 tickets = status_data.get("tickets", {})
@@ -267,6 +274,24 @@ def is_available(tid):
 def blocked_by(tid):
     return [d for d in deps_map.get(tid, []) if d not in done_tickets]
 
+def hours_since(ts_str):
+    """Return hours elapsed since an ISO timestamp, or None if unparseable."""
+    if not ts_str or not ISO_TS_RE.fullmatch(ts_str):
+        return None
+    try:
+        dt = datetime.strptime(ts_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - dt).total_seconds() / 3600.0
+    except (ValueError, OverflowError):
+        return None
+
+def is_stale(tid):
+    if stale_hours is None:
+        return False
+    info = effective_tickets.get(tid, {})
+    claimed_at = info.get("claimed_at", "")
+    h = hours_since(claimed_at)
+    return h is not None and h > stale_hours
+
 def sort_key(tid):
     m = re.search(r'(\d+)$', tid)
     return int(m.group(1)) if m else 0
@@ -307,6 +332,7 @@ if output_format == "json":
             "branch": effective_tickets[t].get("branch", "?"),
             "claimed_at": effective_tickets[t].get("claimed_at", "?"),
             "source": effective_tickets[t].get("source_ref", "status_file"),
+            **({"stale": True} if is_stale(t) else {}),
         } for t in in_progress_list],
         "available": [{
             "ticket": t,
@@ -355,7 +381,8 @@ if output_filter in ("all", "in_progress"):
         print(f"  {'-'*11}  {'-'*15}  {'-'*44}  {'-'*20}")
         for t in in_progress_list:
             info = effective_tickets[t]
-            print(f"  {t:<12} {info.get('agent','?'):<16} {info.get('branch','?'):<45} {info.get('claimed_at','?')}")
+            stale_marker = " [STALE]" if is_stale(t) else ""
+            print(f"  {t:<12} {info.get('agent','?'):<16} {info.get('branch','?'):<45} {info.get('claimed_at','?')}{stale_marker}")
 
 if output_filter in ("all", "available"):
     if available_list:

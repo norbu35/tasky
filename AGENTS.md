@@ -428,12 +428,13 @@ Canonical operational checklist: `docs/agent/RUNBOOK.md`.
 3. `done`: Implementation complete, self-verification passed, PR merged (or equivalent).
 
 ### 11.3 Coordination Scripts
-1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete|merge` workflow.
+1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete|finish|merge` workflow.
 2. **Status check**: `scripts/ticket-status.sh` — displays current state, available tickets, blocked tickets, and next recommended ticket.
 3. **Start+Claim**: `scripts/agent-flow.sh start --agent <name> [--ticket <ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--auto-claim]` — resumes existing in-progress work or claims a selected ticket (default workspace is `isolated`).
 4. **Claim (internal/debug)**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
 5. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
-6. **Merge to Main**: `scripts/agent-flow.sh merge --ticket <ID> [--main-branch <main|master>]` — merges the completed worktree branch into `main` as the final step.
+6. **Finish (verify+complete)**: `scripts/agent-flow.sh finish --ticket <ID>` — runs verify then complete in one step.
+7. **Merge to Main**: `scripts/agent-flow.sh merge --ticket <ID> [--main-branch <main|master>]` — merges the completed worktree branch into `main` as the final step. Includes automatic rebase when the source branch has diverged from `main`.
 
 ### 11.4 Agent Startup Protocol (MANDATORY)
 Every agent MUST follow this sequence when starting a new work session:
@@ -467,7 +468,12 @@ Every agent MUST follow this sequence when starting a new work session:
    ```bash
    scripts/agent-flow.sh complete --ticket <TICKET-ID>
    ```
+   **Preferred alternative**: Use `finish` to combine steps 7 and 8 in a single command:
+   ```bash
+   scripts/agent-flow.sh finish --ticket <TICKET-ID>
+   ```
 9. **Merge to Main**: As the final step, merge the completed task branch into `main`.
+   If another agent has merged first and `main` has advanced, the merge command automatically rebases the source branch before fast-forwarding.
    ```bash
    scripts/agent-flow.sh merge --ticket <TICKET-ID>
    ```
@@ -503,6 +509,9 @@ scripts/agent-flow.sh verify --ticket TASK-020
 
 # 5. After done: mark ticket complete
 scripts/agent-flow.sh complete --ticket TASK-020
+
+# 4+5 combined: verify then complete in one step
+scripts/agent-flow.sh finish --ticket TASK-020
 
 # 6. Finalize by merging into main
 scripts/agent-flow.sh merge --ticket TASK-020
