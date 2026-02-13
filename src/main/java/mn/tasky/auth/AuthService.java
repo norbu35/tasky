@@ -51,6 +51,7 @@ public class AuthService {
     private final ConcurrentHashMap<String, VerificationRequest> verificationsById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> verificationIdByUserId = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, List<Instant>> strikesByUserId = new ConcurrentHashMap<>();
+    private final List<AuditLogEntry> auditLog = new ArrayList<>();
 
     public AuthService(
         JwtTokenService jwtTokenService,
@@ -387,6 +388,35 @@ public class AuthService {
         }
     }
 
+    public List<UserProfile> searchUsersByPhone(String phonePart) {
+        return usersById.values().stream()
+            .filter(u -> cryptoService.decrypt(u.phone()).contains(phonePart))
+            .map(u -> toProfile(u, profileByUserId.getOrDefault(u.id(), UserProfileState.defaultState())))
+            .toList();
+    }
+
+    public boolean banUser(String adminId, String userId, String reason) {
+        AuthUser user = usersById.get(userId);
+        if (user == null) return false;
+
+        AuthUser banned = new AuthUser(user.id(), user.phone(), user.role(), "BANNED", user.createdAt());
+        usersById.put(userId, banned);
+        
+        auditLog.add(new AuditLogEntry(UUID.randomUUID().toString(), adminId, "BAN_USER", userId, reason, Instant.now()));
+        return true;
+    }
+
+    public boolean unbanUser(String adminId, String userId, String reason) {
+        AuthUser user = usersById.get(userId);
+        if (user == null) return false;
+
+        AuthUser unbanned = new AuthUser(user.id(), user.phone(), user.role(), "ACTIVE", user.createdAt());
+        usersById.put(userId, unbanned);
+        
+        auditLog.add(new AuditLogEntry(UUID.randomUUID().toString(), adminId, "UNBAN_USER", userId, reason, Instant.now()));
+        return true;
+    }
+
     public Optional<PresignedUpload> createAvatarUploadUrl(String userId, String contentType) {
         AuthUser user = usersById.get(userId);
         if (user == null) {
@@ -555,6 +585,15 @@ public class AuthService {
 
     private record RefreshSession(String userId, Instant expiresAt) {
     }
+
+    public record AuditLogEntry(
+        String id,
+        String adminId,
+        String action,
+        String targetId,
+        String reason,
+        Instant createdAt
+    ) {}
 
     private record UserProfileState(
         String fullName,
