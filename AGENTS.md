@@ -428,11 +428,12 @@ Canonical operational checklist: `docs/agent/RUNBOOK.md`.
 3. `done`: Implementation complete, self-verification passed, PR merged (or equivalent).
 
 ### 11.3 Coordination Scripts
-1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete` workflow.
+1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete|merge` workflow.
 2. **Status check**: `scripts/ticket-status.sh` — displays current state, available tickets, blocked tickets, and next recommended ticket.
 3. **Start+Claim**: `scripts/agent-flow.sh start --agent <name> [--ticket <ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>]` — creates branch/workspace and atomically claims (default workspace is `isolated`).
 4. **Claim (internal/debug)**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
 5. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
+6. **Merge to Main**: `scripts/agent-flow.sh merge --ticket <ID> [--main-branch <main|master>]` — merges the completed worktree branch into `main` as the final step.
 
 ### 11.4 Agent Startup Protocol (MANDATORY)
 Every agent MUST follow this sequence when starting a new work session:
@@ -462,9 +463,13 @@ Every agent MUST follow this sequence when starting a new work session:
    ```bash
    scripts/agent-flow.sh verify --ticket <TICKET-ID>
    ```
-8. **Complete**: After successful self-verification and merge, mark the ticket done.
+8. **Complete**: After successful self-verification, mark the ticket done.
    ```bash
    scripts/agent-flow.sh complete --ticket <TICKET-ID>
+   ```
+9. **Merge to Main**: As the final step, merge the completed task branch into `main`.
+   ```bash
+   scripts/agent-flow.sh merge --ticket <TICKET-ID>
    ```
 
 ### 11.5 Parallel Execution Rules
@@ -498,6 +503,9 @@ scripts/agent-flow.sh verify --ticket TASK-020
 
 # 5. After done: mark ticket complete
 scripts/agent-flow.sh complete --ticket TASK-020
+
+# 6. Finalize by merging into main
+scripts/agent-flow.sh merge --ticket TASK-020
 ```
 
 ### 11.8 Workspace Utilization Model (Local Parallelism)
