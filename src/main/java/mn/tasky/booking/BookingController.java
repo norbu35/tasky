@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.analytics.AnalyticsService;
 import mn.tasky.auth.AuthService;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
@@ -35,19 +36,22 @@ public class BookingController {
     private final AuthService authService;
     private final WalletService walletService;
     private final NotificationService notificationService;
+    private final AnalyticsService analyticsService;
 
     public BookingController(
         BookingService bookingService,
         TaskService taskService,
         AuthService authService,
         WalletService walletService,
-        NotificationService notificationService
+        NotificationService notificationService,
+        AnalyticsService analyticsService
     ) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.authService = authService;
         this.walletService = walletService;
         this.notificationService = notificationService;
+        this.analyticsService = analyticsService;
     }
 
     @GetMapping
@@ -170,6 +174,7 @@ public class BookingController {
             walletService.creditTaskCompletion(booking.taskerId(), booking.id(), booking.price(), 0.10);
             
             notificationService.sendPush(booking.taskerId(), "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
+            analyticsService.track("BOOKING_COMPLETED", principal.userId(), Map.of("booking_id", booking.id(), "tasker_id", booking.taskerId()));
 
             return ResponseEntity.ok(toBookingResponse(result.booking()));
         }

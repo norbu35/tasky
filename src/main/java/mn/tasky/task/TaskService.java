@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import mn.tasky.auth.AuthService;
 import mn.tasky.booking.BookingService;
+import mn.tasky.analytics.AnalyticsService;
 import mn.tasky.category.CategoryService;
 import mn.tasky.messaging.MessagingService;
 import mn.tasky.notification.NotificationService;
@@ -33,6 +34,7 @@ public class TaskService {
     private final BookingService bookingService;
     private final MessagingService messagingService;
     private final NotificationService notificationService;
+    private final AnalyticsService analyticsService;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
@@ -48,6 +50,7 @@ public class TaskService {
         BookingService bookingService,
         MessagingService messagingService,
         NotificationService notificationService,
+        AnalyticsService analyticsService,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
         @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds
@@ -57,6 +60,7 @@ public class TaskService {
         this.bookingService = bookingService;
         this.messagingService = messagingService;
         this.notificationService = notificationService;
+        this.analyticsService = analyticsService;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
@@ -100,6 +104,7 @@ public class TaskService {
         );
 
         tasksById.put(id, task);
+        analyticsService.track("TASK_POSTED", customerId, Map.of("task_id", id, "category_id", command.categoryId()));
         return TaskCreateResult.success(task);
     }
 
@@ -321,6 +326,7 @@ public class TaskService {
 
             messagingService.startConversation(taskId, taskerId, task.customerId());
             notificationService.sendPush(task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
+            analyticsService.track("APPLICATION_SUBMITTED", taskerId, Map.of("task_id", taskId, "application_id", application.id()));
 
             return TaskApplyResult.success(application);
         }
@@ -395,6 +401,7 @@ public class TaskService {
 
             messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
             notificationService.sendPush(selected.taskerId(), "You are hired!", "Your application has been accepted.", "HIRED");
+            analyticsService.track("TASKER_ACCEPTED", customerId, Map.of("task_id", task.id(), "tasker_id", selected.taskerId(), "application_id", applicationId));
 
             return TaskAcceptResult.success(booking);
         }

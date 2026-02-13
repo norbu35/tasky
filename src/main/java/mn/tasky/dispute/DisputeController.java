@@ -3,6 +3,7 @@ package mn.tasky.dispute;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import mn.tasky.analytics.AnalyticsService;
 import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DisputeController {
 
     private final DisputeService disputeService;
+    private final AnalyticsService analyticsService;
 
-    public DisputeController(DisputeService disputeService) {
+    public DisputeController(DisputeService disputeService, AnalyticsService analyticsService) {
         this.disputeService = disputeService;
+        this.analyticsService = analyticsService;
     }
 
     @PostMapping
@@ -36,6 +39,9 @@ public class DisputeController {
                 default -> ResponseEntity.internalServerError().build();
             };
         }
+        
+        analyticsService.track("DISPUTE_RAISED", principal.userId(), Map.of("booking_id", body.bookingId(), "dispute_id", result.dispute().id()));
+        
         return ResponseEntity.status(201).body(toDisputeResponse(result.dispute()));
     }
 
