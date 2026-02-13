@@ -76,3 +76,5 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T15:06:53Z | local | Codex | TASK-000 | agent/TASK-000-merge-cleanup-local-git | b4c4e876978e0c9cd68965fcd2dadc2dd6e47cc6 | high | FAIL | 10/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |
 | 2026-02-13T15:07:39Z | local | Codex | TASK-001 | agent/TASK-001-merge-cleanup-local-git | b4c4e876978e0c9cd68965fcd2dadc2dd6e47cc6 | low | FAIL | 5/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
 | 2026-02-13T15:10:27Z | local | Codex | TASK-002 | agent/TASK-002-merge-cleanup-local-git | 7e1c3699be505ea2e7eaea4e9ba9e83f368065ae | medium | PASS | 9/9 | NFR-API-01 | `artifacts/self-verify.json` |
+| 2026-02-13T16:17:11Z | local | Codex | TASK-020 | agent/TASK-020-categories | 7fb1377ac861e62646b758fe1782ad2e56247e83 | medium | FAIL | 8/9 | REQ-TASK-05 | `artifacts/self-verify.json` |
+| 2026-02-13T16:18:47Z | local | Codex | TASK-020 | agent/TASK-020-categories | 7fb1377ac861e62646b758fe1782ad2e56247e83 | medium | PASS | 9/9 | REQ-TASK-05 | `artifacts/self-verify.json` |
