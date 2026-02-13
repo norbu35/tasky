@@ -90,3 +90,7 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T18:51:29Z | local | Codex | TASK-034 | agent/TASK-034-payout-management | 26bea41436f9a48d179dd2f027b868bee84d88cb | high | PASS | 13/13 | REQ-PAY-04,REQ-PAY-05,REQ-PAY-06 | `artifacts/self-verify.json` |
 | 2026-02-13T18:52:51Z | local | Codex | TASK-034 | agent/TASK-034-payout-management | 26bea41436f9a48d179dd2f027b868bee84d88cb | high | PASS | 13/13 | REQ-PAY-04,REQ-PAY-05,REQ-PAY-06 | `artifacts/self-verify.json` |
 | 2026-02-13T19:10:51Z | local | Codex | TASK-040 | main | ead03fdd3c5d100b2f7fa61259c8a7812453ff6b | medium | FAIL | 4/9 | REQ-SAFE-02,REQ-SAFE-04 | `artifacts/self-verify.json` |
+| 2026-02-13T19:14:59Z | local | Codex | TASK-042 | agent/TASK-042-safety-fraud | 3cdb76aa9ede1fc915fa8ebaa799b01794c4f749 | high | FAIL | 12/13 | REQ-MSG-01,REQ-MSG-02 | `artifacts/self-verify.json` |
+| 2026-02-13T19:17:09Z | local | Codex | TASK-042 | agent/TASK-042-safety-fraud | 3cdb76aa9ede1fc915fa8ebaa799b01794c4f749 | high | FAIL | 12/13 | REQ-MSG-01,REQ-MSG-02 | `artifacts/self-verify.json` |
+| 2026-02-13T19:18:58Z | local | Codex | TASK-042 | agent/TASK-042-safety-fraud | 3cdb76aa9ede1fc915fa8ebaa799b01794c4f749 | high | FAIL | 12/13 | REQ-MSG-01,REQ-MSG-02 | `artifacts/self-verify.json` |
+| 2026-02-13T19:20:54Z | local | Codex | TASK-042 | agent/TASK-042-safety-fraud | 3cdb76aa9ede1fc915fa8ebaa799b01794c4f749 | high | PASS | 13/13 | REQ-MSG-01,REQ-MSG-02 | `artifacts/self-verify.json` |

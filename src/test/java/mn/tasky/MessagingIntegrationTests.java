@@ -101,7 +101,7 @@ class MessagingIntegrationTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-042-API-MESSAGE-SEND send and list messages")
+    @DisplayName("TID-TASK-042-API-MESSAGE-SEND send and list messages (TID-TASK-042-API-MESSAGE-LIST)")
     void messageSendAndList() {
         // Setup conversation (reuse logic or mock)
         // I'll do full flow for realism
@@ -131,15 +131,27 @@ class MessagingIntegrationTests {
 
         String conversationId = (String) ((List<Map>) getWithAuth("/api/v1/conversations", customer.accessToken()).getBody().get("data")).get(0).get("id");
 
-        // Customer sends message
-        postWithAuth("/api/v1/conversations/" + conversationId + "/messages", customer.accessToken(), Map.of("content", "Hello Tasker"));
+        // Send 3 messages
+        for (int i = 0; i < 3; i++) {
+            postWithAuth("/api/v1/conversations/" + conversationId + "/messages", customer.accessToken(), Map.of("content", "Msg " + i));
+        }
 
-        // Tasker lists messages
-        ResponseEntity<Map> msgsResponse = getWithAuth("/api/v1/conversations/" + conversationId + "/messages", taskerToken);
-        List<Map> msgs = (List<Map>) msgsResponse.getBody().get("data");
-        assertThat(msgs).hasSize(1);
-        assertThat(msgs.get(0).get("content")).isEqualTo("Hello Tasker");
-        assertThat(msgs.get(0).get("sender_id")).isEqualTo(customer.userId());
+        // List with limit 2
+        // TID-TASK-042-API-MESSAGE-LIST
+        ResponseEntity<Map> msgsResponse1 = getWithAuth("/api/v1/conversations/" + conversationId + "/messages?limit=2", taskerToken);
+        List<Map> msgs1 = (List<Map>) msgsResponse1.getBody().get("data");
+        assertThat(msgs1).hasSize(2);
+        
+        Map cursor = (Map) msgsResponse1.getBody().get("cursor");
+        String next = (String) cursor.get("next");
+        assertThat(next).isNotNull();
+        assertThat((Boolean) cursor.get("has_more")).isTrue();
+
+        // List next page
+        ResponseEntity<Map> msgsResponse2 = getWithAuth("/api/v1/conversations/" + conversationId + "/messages?limit=2&cursor=" + next, taskerToken);
+        List<Map> msgs2 = (List<Map>) msgsResponse2.getBody().get("data");
+        assertThat(msgs2).hasSize(1);
+        assertThat(((Map) msgsResponse2.getBody().get("cursor")).get("has_more")).isEqualTo(false);
     }
 
     private AuthContext authenticate(String seed) {

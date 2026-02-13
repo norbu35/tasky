@@ -67,7 +67,7 @@ public class MessagingService {
         return Optional.of(message);
     }
 
-    public List<Message> listMessages(String userId, String conversationId) {
+    public List<Message> listMessages(String userId, String conversationId, String cursor, int limit) {
         Conversation conversation = conversationsById.get(conversationId);
         if (conversation == null) {
             throw new IllegalArgumentException("Conversation not found");
@@ -78,7 +78,11 @@ public class MessagingService {
         }
 
         List<Message> messages = messagesByConversationId.getOrDefault(conversationId, List.of());
-        return new ArrayList<>(messages); // Return copy? Or assume immutable read access usually.
+        return messages.stream()
+            .filter(m -> cursor == null || m.id().compareTo(cursor) > 0)
+            .sorted(Comparator.comparing(Message::id))
+            .limit(limit)
+            .toList();
     }
 
     public record Conversation(

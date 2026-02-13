@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,15 +48,21 @@ public class MessagingController {
     @GetMapping("/{id}/messages")
     public ResponseEntity<?> listMessages(
             @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id) {
+            @PathVariable String id,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "50") int limit) {
         try {
-            List<MessagingService.Message> messages = messagingService.listMessages(principal.userId(), id);
+            List<MessagingService.Message> messages = messagingService.listMessages(principal.userId(), id, cursor, limit);
             List<Map<String, Object>> data = messages.stream()
                 .map(this::toMessageResponse)
                 .toList();
-            return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(null, false)));
+            
+            String nextCursor = messages.isEmpty() ? null : messages.get(messages.size() - 1).id();
+            boolean hasMore = messages.size() == limit;
+
+            return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(nextCursor, hasMore)));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage())); // Or 404 depending on error
+            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         }
     }
 
