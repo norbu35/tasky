@@ -82,22 +82,35 @@ class ReviewIntegrationTests {
         AuthContext customer = authenticate("customer-2");
         AuthContext tasker = authenticate("tasker-2");
 
-        BookingService.BookingState booking = bookingService.createBooking("task-1", tasker.userId(), customer.userId(), 10000);
-        bookingService.transitionToPaid(booking.id());
-        bookingService.completeBooking(customer.userId(), booking.id());
+        for (int i = 0; i < 3; i++) {
+            BookingService.BookingState booking = bookingService.createBooking("task-" + i, tasker.userId(), customer.userId(), 10000);
+            bookingService.transitionToPaid(booking.id());
+            bookingService.completeBooking(customer.userId(), booking.id());
 
-        postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
-            "booking_id", booking.id(),
-            "rating", 5,
-            "comment", "Great!"
-        ));
+            postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
+                "booking_id", booking.id(),
+                "rating", 5,
+                "comment", "Comment " + i
+            ));
+        }
 
-        ResponseEntity<Map> listResponse = getWithAuth("/api/v1/reviews?user_id=" + tasker.userId(), customer.accessToken());
-        assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Map> data = (List<Map>) listResponse.getBody().get("data");
-        assertThat(data).hasSize(1);
-        assertThat(data.get(0).get("comment")).isEqualTo("Great!");
-        assertThat(data.get(0).get("target_user_id")).isEqualTo(tasker.userId());
+        // List with limit 2
+        ResponseEntity<Map> listResponse1 = getWithAuth("/api/v1/reviews?user_id=" + tasker.userId() + "&limit=2", customer.accessToken());
+        assertThat(listResponse1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map> data1 = (List<Map>) listResponse1.getBody().get("data");
+        assertThat(data1).hasSize(2);
+        
+        Map pagination = (Map) listResponse1.getBody().get("cursor");
+        String nextCursor = (String) pagination.get("next");
+        assertThat(nextCursor).isNotNull();
+        assertThat((Boolean) pagination.get("has_more")).isEqualTo(true);
+
+        // List next page
+        ResponseEntity<Map> listResponse2 = getWithAuth("/api/v1/reviews?user_id=" + tasker.userId() + "&limit=2&cursor=" + nextCursor, customer.accessToken());
+        assertThat(listResponse2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map> data2 = (List<Map>) listResponse2.getBody().get("data");
+        assertThat(data2).hasSize(1);
+        assertThat(((Map) listResponse2.getBody().get("cursor")).get("has_more")).isEqualTo(false);
     }
 
     @Test

@@ -80,10 +80,12 @@ public class ReviewService {
         return new ReviewSubmitResult(review, null);
     }
 
-    public List<Review> listReviews(String userId) {
+    public List<Review> listReviews(String userId, String cursor, int limit) {
         return reviewsById.values().stream()
             .filter(r -> r.targetUserId().equals(userId))
-            .sorted(Comparator.comparing(Review::createdAt).reversed())
+            .filter(r -> cursor == null || r.id().compareTo(cursor) > 0)
+            .sorted(Comparator.comparing(Review::id))
+            .limit(limit)
             .toList();
     }
 

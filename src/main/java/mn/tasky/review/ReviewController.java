@@ -52,17 +52,24 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listReviews(@RequestParam(name = "user_id") String userId) {
-        List<ReviewService.Review> reviews = reviewService.listReviews(userId);
+    public ResponseEntity<?> listReviews(
+            @RequestParam(name = "user_id") String userId,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "20") int limit) {
+        
+        List<ReviewService.Review> reviews = reviewService.listReviews(userId, cursor, limit);
         
         List<Map<String, Object>> data = reviews.stream()
             .map(this::toReviewResponse)
             .toList();
 
+        String nextCursor = reviews.isEmpty() ? null : reviews.get(reviews.size() - 1).id();
+        boolean hasMore = reviews.size() == limit;
+
         return ResponseEntity.ok(
             new PagedResponse<>(
                 data,
-                new CursorPagination(null, false)
+                new CursorPagination(nextCursor, hasMore)
             )
         );
     }
