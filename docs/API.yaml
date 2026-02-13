@@ -988,6 +988,7 @@ paths:
       summary: Get presigned URL for avatar upload
       description: |
         Returns a presigned URL to upload an avatar image directly to S3/MinIO.
+        URLs are constrained to image/jpeg, image/png, and image/webp with a 5MB max size.
         After uploading, use the returned `storage_key` to update the profile.
       operationId: getAvatarUploadUrl
       security:
@@ -1002,7 +1003,8 @@ paths:
               properties:
                 content_type:
                   type: string
-                  description: MIME type of the file (e.g. image/jpeg, image/png).
+                  description: MIME type of the file.
+                  enum: [image/jpeg, image/png, image/webp]
                   example: image/jpeg
       responses:
         '200':

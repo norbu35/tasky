@@ -9,6 +9,7 @@ set -euo pipefail
 #
 # Behavior:
 #   1. Validates the ticket is currently "in_progress".
+#      Effective in-progress claims found on agent branches are authoritative.
 #   2. Validates claimed branch ownership and optional self-verify artifact.
 #   3. Sets status to "done" with completion timestamp.
 #   4. Commits and pushes STATUS.json.
@@ -99,12 +100,23 @@ if [[ "${current_status}" == "done" ]]; then
   exit 0
 fi
 
+effective_claim="$(scripts/ticket-status.sh --format json --filter in_progress | jq -c --arg tid "${ticket}" '.[] | select(.ticket == $tid)' | head -n 1 || true)"
+claimed_agent=""
+claimed_branch=""
+if [[ -n "${effective_claim}" ]]; then
+  current_status="in_progress"
+  claimed_agent="$(printf '%s\n' "${effective_claim}" | jq -r '.agent // "unknown"')"
+  claimed_branch="$(printf '%s\n' "${effective_claim}" | jq -r '.branch // "unknown"')"
+else
+  claimed_agent="$(jq -r --arg tid "${ticket}" '.tickets[$tid].agent // "unknown"' "${STATUS_FILE}")"
+  claimed_branch="$(jq -r --arg tid "${ticket}" '.tickets[$tid].branch // "unknown"' "${STATUS_FILE}")"
+fi
+
 if [[ "${current_status}" != "in_progress" ]]; then
   echo "Ticket ${ticket} has status '${current_status}', expected 'in_progress'." >&2
   exit 1
 fi
 
-claimed_branch="$(jq -r --arg tid "${ticket}" '.tickets[$tid].branch // "unknown"' "${STATUS_FILE}")"
 if [[ "${claimed_branch}" != "${current_branch}" ]]; then
   echo "Branch mismatch. Ticket ${ticket} is claimed on '${claimed_branch}', current branch is '${current_branch}'." >&2
   exit 1
@@ -130,7 +142,7 @@ fi
 # ── Resolve agent name from current claim if not provided ────────────────────
 
 if [[ -z "${agent_name}" ]]; then
-  agent_name="$(jq -r --arg tid "${ticket}" '.tickets[$tid].agent // "unknown"' "${STATUS_FILE}")"
+  agent_name="${claimed_agent}"
 fi
 
 # ── Mark as done ─────────────────────────────────────────────────────────────

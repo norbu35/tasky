@@ -124,6 +124,7 @@ export interface paths {
         /**
          * Get presigned URL for avatar upload
          * @description Returns a presigned URL to upload an avatar image directly to S3/MinIO.
+         *     URLs are constrained to image/jpeg, image/png, and image/webp with a 5MB max size.
          *     After uploading, use the returned `storage_key` to update the profile.
          */
         post: operations["getAvatarUploadUrl"];
@@ -1654,10 +1655,11 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * @description MIME type of the file (e.g. image/jpeg, image/png).
+                     * @description MIME type of the file.
                      * @example image/jpeg
+                     * @enum {string}
                      */
-                    content_type: string;
+                    content_type: "image/jpeg" | "image/png" | "image/webp";
                 };
             };
         };
