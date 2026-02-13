@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.AuthService;
+import mn.tasky.booking.BookingService;
 import mn.tasky.category.CategoryService;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
@@ -374,7 +375,7 @@ public class TaskController {
         return response;
     }
 
-    private Map<String, Object> toBookingResponse(TaskService.BookingState booking) {
+    private Map<String, Object> toBookingResponse(BookingService.BookingState booking) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", booking.id());
         response.put("task_id", booking.taskId());

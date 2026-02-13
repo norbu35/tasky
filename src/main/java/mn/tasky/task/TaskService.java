@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import mn.tasky.auth.AuthService;
+import mn.tasky.booking.BookingService;
 import mn.tasky.category.CategoryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,25 +28,27 @@ public class TaskService {
 
     private final AuthService authService;
     private final CategoryService categoryService;
+    private final BookingService bookingService;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
 
     private final ConcurrentHashMap<String, TaskState> tasksById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, TaskApplicationState> applicationsById = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, BookingState> bookingsById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> acceptedApplicationByTaskId = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Object> taskLocks = new ConcurrentHashMap<>();
 
     public TaskService(
         AuthService authService,
         CategoryService categoryService,
+        BookingService bookingService,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
         @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds
     ) {
         this.authService = authService;
         this.categoryService = categoryService;
+        this.bookingService = bookingService;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
@@ -308,18 +311,12 @@ public class TaskService {
             }
             acceptedApplicationByTaskId.put(taskId, selected.id());
 
-            Instant now = Instant.now();
-            BookingState booking = new BookingState(
-                UUID.randomUUID().toString(),
+            BookingService.BookingState booking = bookingService.createBooking(
                 task.id(),
                 selected.taskerId(),
                 task.customerId(),
-                task.budget(),
-                "PENDING_PAYMENT",
-                now,
-                now
+                task.budget()
             );
-            bookingsById.put(booking.id(), booking);
             return TaskAcceptResult.success(booking);
         }
     }
@@ -427,18 +424,6 @@ public class TaskService {
     ) {
     }
 
-    public record BookingState(
-        String id,
-        String taskId,
-        String taskerId,
-        String customerId,
-        int price,
-        String status,
-        Instant createdAt,
-        Instant updatedAt
-    ) {
-    }
-
     public record TaskCreateResult(TaskState task, String errorCode, String errorMessage) {
         public static final String INVALID_CATEGORY = "INVALID_CATEGORY";
         public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
@@ -502,13 +487,13 @@ public class TaskService {
         }
     }
 
-    public record TaskAcceptResult(BookingState booking, String errorCode) {
+    public record TaskAcceptResult(BookingService.BookingState booking, String errorCode) {
         public static final String NOT_FOUND = "NOT_FOUND";
         public static final String FORBIDDEN = "FORBIDDEN";
         public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
         public static final String CONFLICT = "CONFLICT";
 
-        public static TaskAcceptResult success(BookingState booking) {
+        public static TaskAcceptResult success(BookingService.BookingState booking) {
             return new TaskAcceptResult(booking, null);
         }
 

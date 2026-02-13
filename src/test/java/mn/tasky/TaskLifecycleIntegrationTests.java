@@ -318,6 +318,40 @@ class TaskLifecycleIntegrationTests {
         assertThat(acceptResponse.getBody().get("tasker_id")).isEqualTo(tasker.userId());
     }
 
+    @Test
+    @DisplayName("TID-TASK-030-API-BOOKING-READS list and details reflect consistent status")
+    void bookingReadEndpoints() {
+        AuthContext customer = authenticate("120");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        // Tasker applies and customer accepts
+        AuthContext tasker = authenticate("121");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "Test app"));
+        
+        ResponseEntity<Map> appsResponse = getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken());
+        String appId = ((List<Map>) appsResponse.getBody().get("data")).get(0).get("id").toString();
+        
+        ResponseEntity<Map> acceptResponse = postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            null
+        );
+        String bookingId = acceptResponse.getBody().get("id").toString();
+
+        // Check list bookings
+        ResponseEntity<Map> listResponse = getWithAuth("/api/v1/bookings?role=customer", customer.accessToken());
+        assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> bookings = (List<Map<String, Object>>) listResponse.getBody().get("data");
+        assertThat(bookings).anySatisfy(b -> assertThat(b.get("id")).isEqualTo(bookingId));
+
+        // Check booking details
+        ResponseEntity<Map> detailsResponse = getWithAuth("/api/v1/bookings/" + bookingId, customer.accessToken());
+        assertThat(detailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(detailsResponse.getBody().get("status")).isEqualTo("PENDING_PAYMENT");
+    }
+
     // --- Helpers ---
 
     private String createTask(String token, String categoryId) {
