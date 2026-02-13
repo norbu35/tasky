@@ -73,3 +73,5 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T14:41:56Z | local | Codex | TASK-011 | agent/TASK-011-profile | 933a4cbd87170fb93619a2cce4d3b19fcfae7a7e | medium | PASS | 9/9 | REQ-AUTH-01 | `artifacts/self-verify.json` |
 | 2026-02-13T14:43:44Z | local | Codex | TASK-011 | agent/TASK-011-profile | 933a4cbd87170fb93619a2cce4d3b19fcfae7a7e | medium | PASS | 9/9 | REQ-AUTH-01 | `artifacts/self-verify.json` |
 | 2026-02-13T14:49:35Z | local | Codex | TASK-011 | agent/TASK-011-profile | 9289e84648914070dcd74a0b7e29c6c64ea945e0 | medium | PASS | 9/9 | REQ-AUTH-01 | `artifacts/self-verify.json` |
+| 2026-02-13T15:06:53Z | local | Codex | TASK-000 | agent/TASK-000-merge-cleanup-local-git | b4c4e876978e0c9cd68965fcd2dadc2dd6e47cc6 | high | FAIL | 10/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.json` |
+| 2026-02-13T15:07:39Z | local | Codex | TASK-001 | agent/TASK-001-merge-cleanup-local-git | b4c4e876978e0c9cd68965fcd2dadc2dd6e47cc6 | low | FAIL | 5/6 | NFR-RELI-01 | `artifacts/self-verify.json` |

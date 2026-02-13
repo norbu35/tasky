@@ -40,6 +40,7 @@ scripts/agent-flow.sh merge --ticket TASK-020
 8. `verify` resolves `risk_level` and `req_ids` from `tickets/<TICKET-ID>.json` unless overridden.
 9. `complete` validates the self-verify artifact and enforces branch ownership consistency.
 10. `merge` requires ticket status `done` on the source branch, then fast-forwards `main` from the main worktree and pushes.
+11. `merge` cleans local source worktree and local source branch by default after a successful merge (`--no-cleanup` opt-out).
 
 ## Parallel Agent Workspace Model
 1. One agent process maps to one isolated worktree.

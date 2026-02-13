@@ -8,7 +8,7 @@ Usage:
   scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--dry-run]
   scripts/agent-flow.sh verify --ticket <TICKET-ID> [--ticket-spec <path>] [--risk <low|medium|high>] [--req <REQ-CSV>] [--base <git-ref>] [--out <path>] [--only <check-id>]
   scripts/agent-flow.sh complete --ticket <TICKET-ID> [--agent <name>] [--artifact <path>]
-  scripts/agent-flow.sh merge --ticket <TICKET-ID> [--main-branch <main|master>] [--source-branch <agent-branch>] [--no-push]
+  scripts/agent-flow.sh merge --ticket <TICKET-ID> [--main-branch <main|master>] [--source-branch <agent-branch>] [--no-push] [--no-cleanup]
   scripts/agent-flow.sh doctor
 
 Commands:
@@ -16,7 +16,7 @@ Commands:
   start     Resume own in-progress ticket or claim a new one (default: isolated worktree).
   verify    Run self-verification using ticket metadata defaults.
   complete  Mark claimed ticket done after optional artifact validation.
-  merge     Merge a completed ticket branch from its worktree into main.
+  merge     Merge a completed ticket branch from its worktree into main, then clean local source branch/worktree.
   doctor    Check environment for required tools.
 USAGE
 }
@@ -424,6 +424,7 @@ case "${command}" in
     main_branch="main"
     source_branch=""
     push_after_merge=true
+    cleanup_after_merge=true
 
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -431,6 +432,7 @@ case "${command}" in
         --main-branch) main_branch="${2:-}"; shift 2 ;;
         --source-branch) source_branch="${2:-}"; shift 2 ;;
         --no-push) push_after_merge=false; shift ;;
+        --no-cleanup) cleanup_after_merge=false; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown argument for merge: $1" >&2; exit 2 ;;
       esac
@@ -513,7 +515,46 @@ case "${command}" in
       git -C "${main_worktree}" push origin "${main_branch}" >/dev/null
     fi
 
-    echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge}"
+    cleanup_source_worktree="$(find_worktree_for_branch "${source_branch}")"
+    cleanup_status="disabled"
+    cleanup_notes=()
+
+    if [[ "${cleanup_after_merge}" == true ]]; then
+      cleanup_status="ok"
+
+      if [[ -n "${cleanup_source_worktree}" && "${cleanup_source_worktree}" != "${main_worktree}" ]]; then
+        if [[ "$(pwd -P)" == "${cleanup_source_worktree}"* ]]; then
+          cd "${main_worktree}"
+        fi
+        if git worktree remove "${cleanup_source_worktree}" --force >/dev/null 2>&1; then
+          cleanup_notes+=("worktree_removed=${cleanup_source_worktree}")
+        else
+          cleanup_status="failed"
+          cleanup_notes+=("worktree_remove_failed=${cleanup_source_worktree}")
+        fi
+      elif [[ -n "${cleanup_source_worktree}" ]]; then
+        cleanup_notes+=("worktree_kept=${cleanup_source_worktree}")
+      else
+        cleanup_notes+=("worktree_absent")
+      fi
+
+      if git show-ref --verify --quiet "refs/heads/${source_branch}"; then
+        if git update-ref -d "refs/heads/${source_branch}" >/dev/null 2>&1; then
+          cleanup_notes+=("branch_deleted=${source_branch}")
+        else
+          cleanup_status="failed"
+          cleanup_notes+=("branch_delete_failed=${source_branch}")
+        fi
+      else
+        cleanup_notes+=("branch_absent=${source_branch}")
+      fi
+    fi
+
+    echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge} cleanup=${cleanup_status} details=$(IFS=,; echo "${cleanup_notes[*]}")"
+    if [[ "${cleanup_status}" == "failed" ]]; then
+      echo "Local cleanup failed after merge. Resolve remaining worktree/branch references and retry cleanup." >&2
+      exit 1
+    fi
     ;;
   doctor)
     check_env
