@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import mn.tasky.auth.AuthService;
 import mn.tasky.booking.BookingService;
 import mn.tasky.category.CategoryService;
+import mn.tasky.messaging.MessagingService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,7 @@ public class TaskService {
     private final AuthService authService;
     private final CategoryService categoryService;
     private final BookingService bookingService;
+    private final MessagingService messagingService;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
@@ -42,6 +44,7 @@ public class TaskService {
         AuthService authService,
         CategoryService categoryService,
         BookingService bookingService,
+        MessagingService messagingService,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
         @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds
@@ -49,6 +52,7 @@ public class TaskService {
         this.authService = authService;
         this.categoryService = categoryService;
         this.bookingService = bookingService;
+        this.messagingService = messagingService;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
@@ -310,6 +314,9 @@ public class TaskService {
                 Instant.now()
             );
             applicationsById.put(application.id(), application);
+
+            messagingService.startConversation(taskId, taskerId, task.customerId());
+
             return TaskApplyResult.success(application);
         }
     }
@@ -380,6 +387,9 @@ public class TaskService {
                 task.customerId(),
                 task.budget()
             );
+
+            messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
+
             return TaskAcceptResult.success(booking);
         }
     }

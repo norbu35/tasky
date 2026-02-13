@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import mn.tasky.auth.AuthService;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookingService {
 
+    private final AuthService authService;
     private final ConcurrentHashMap<String, BookingState> bookingsById = new ConcurrentHashMap<>();
+
+    public BookingService(AuthService authService) {
+        this.authService = authService;
+    }
 
     public BookingState createBooking(String taskId, String taskerId, String customerId, int price) {
         Instant now = Instant.now();
@@ -79,7 +85,11 @@ public class BookingService {
         if (booking == null) return BookingTransitionResult.NOT_FOUND_RESULT;
         if (!booking.customerId().equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
         
-        return transition(bookingId, "COMPLETED", List.of("PAID"));
+        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("PAID"));
+        if (result.isSuccess()) {
+            authService.updateUserStats(booking.taskerId(), 0, true);
+        }
+        return result;
     }
 
     public BookingTransitionResult cancelBooking(String userId, String bookingId, Instant scheduledAt) {

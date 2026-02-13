@@ -13,11 +13,17 @@ import org.springframework.stereotype.Service;
 public class WalletService {
 
     private final ConcurrentHashMap<String, Long> balancesByUserId = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long> heldBalancesByUserId = new ConcurrentHashMap<>();
     private final CopyOnWriteArrayList<LedgerEntry> ledger = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<String, PayoutRequest> payoutsById = new ConcurrentHashMap<>();
 
     public WalletBalance getBalance(String userId) {
         long balance = balancesByUserId.getOrDefault(userId, 0L);
-        return new WalletBalance(balance, 0L, "MNT");
+        long pendingPayout = payoutsById.values().stream()
+            .filter(p -> p.userId().equals(userId) && "PENDING".equals(p.status()))
+            .mapToLong(PayoutRequest::amount)
+            .sum();
+        return new WalletBalance(balance, pendingPayout, "MNT");
     }
 
     public List<LedgerEntry> listTransactions(String userId) {
@@ -65,6 +71,75 @@ public class WalletService {
         ledger.add(feeEntry);
     }
 
+    public void holdFunds(String userId, int amount, String referenceId, String description) {
+        balancesByUserId.compute(userId, (id, current) -> {
+            long currentVal = current == null ? 0L : current;
+            if (currentVal < amount) throw new IllegalArgumentException("Insufficient balance to hold");
+            return currentVal - amount;
+        });
+        heldBalancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
+        
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(), userId, -amount, "HOLD", referenceId, description, Instant.now()
+        ));
+    }
+
+    public void releaseFunds(String userId, int amount, String referenceId, String description) {
+        heldBalancesByUserId.compute(userId, (id, current) -> {
+            long currentVal = current == null ? 0L : current;
+            if (currentVal < amount) throw new IllegalArgumentException("Insufficient held balance to release");
+            return currentVal - amount;
+        });
+        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
+        
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(), userId, amount, "RELEASE", referenceId, description, Instant.now()
+        ));
+    }
+
+    public void confiscateFunds(String userId, int amount, String referenceId, String description) {
+        heldBalancesByUserId.compute(userId, (id, current) -> {
+            long currentVal = current == null ? 0L : current;
+            if (currentVal < amount) throw new IllegalArgumentException("Insufficient held balance to confiscate");
+            return currentVal - amount;
+        });
+        
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(), userId, -amount, "CONFISCATE", referenceId, description, Instant.now()
+        ));
+    }
+
+    public String requestPayout(String userId, int amount) {
+        balancesByUserId.compute(userId, (id, current) -> {
+            long currentVal = current == null ? 0L : current;
+            if (currentVal < amount) throw new IllegalArgumentException("Insufficient balance for payout");
+            return currentVal - amount;
+        });
+
+        String payoutId = UUID.randomUUID().toString();
+        PayoutRequest request = new PayoutRequest(payoutId, userId, amount, "PENDING", Instant.now());
+        payoutsById.put(payoutId, request);
+        return payoutId;
+    }
+
+    public List<PayoutRequest> listPendingPayouts() {
+        return payoutsById.values().stream()
+            .filter(p -> "PENDING".equals(p.status()))
+            .toList();
+    }
+
+    public void processPayout(String payoutId) {
+        PayoutRequest p = payoutsById.get(payoutId);
+        if (p == null) throw new IllegalArgumentException("Payout not found");
+        if (!"PENDING".equals(p.status())) throw new IllegalArgumentException("Payout already processed");
+
+        payoutsById.put(payoutId, new PayoutRequest(p.id(), p.userId(), p.amount(), "PROCESSED", p.createdAt()));
+        
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(), p.userId(), -p.amount(), "PAYOUT", p.id(), "Payout processed", Instant.now()
+        ));
+    }
+
     public record WalletBalance(long balance, long pendingPayout, String currency) {
     }
 
@@ -78,4 +153,12 @@ public class WalletService {
         Instant createdAt
     ) {
     }
+
+    public record PayoutRequest(
+        String id,
+        String userId,
+        int amount,
+        String status,
+        Instant createdAt
+    ) {}
 }

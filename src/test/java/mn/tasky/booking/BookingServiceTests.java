@@ -5,12 +5,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import mn.tasky.auth.AuthService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class BookingServiceTests {
 
-    private final BookingService bookingService = new BookingService();
+    private AuthService authService;
+    private BookingService bookingService;
+
+    @BeforeEach
+    void setUp() {
+        authService = Mockito.mock(AuthService.class);
+        bookingService = new BookingService(authService);
+    }
 
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE valid transitions")

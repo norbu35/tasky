@@ -9,6 +9,8 @@ import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +32,20 @@ public class WalletController {
             "pending_payout", balance.pendingPayout(),
             "currency", balance.currency()
         ));
+    }
+
+    @PostMapping("/payouts")
+    public ResponseEntity<?> requestPayout(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @RequestBody PayoutRequest body) {
+        try {
+            String payoutId = walletService.requestPayout(principal.userId(), body.amount());
+            return ResponseEntity.ok(Map.of("id", payoutId, "status", "PENDING"));
+        } catch (IllegalArgumentException e) {
+            String msg = e.getMessage();
+            if ("Insufficient balance for payout".equals(msg)) msg = "Insufficient balance";
+            return ResponseEntity.badRequest().body(Map.of("error", msg));
+        }
     }
 
     @GetMapping("/transactions")
@@ -58,4 +74,6 @@ public class WalletController {
         response.put("created_at", entry.createdAt().toString());
         return response;
     }
+
+    public record PayoutRequest(int amount) {}
 }
