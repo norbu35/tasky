@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TaskLifecycleIntegrationTests {
 
     @LocalServerPort
@@ -158,6 +158,103 @@ class TaskLifecycleIntegrationTests {
             "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
         ));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-LIST-OPEN public feed returns only OPEN tasks")
+    void publicFeedReturnsOnlyOpenTasks() {
+        AuthContext customer = authenticate("100");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
+        // Create one OPEN task
+        postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", categoryId,
+            "description", "Description for OPEN task.",
+            "budget", 50000,
+            "location_lat", 47.9, "location_lng", 106.9,
+            "location_text", "Location",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+
+        // Create and CANCEL another task
+        ResponseEntity<Map> cancelledResponse = postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", categoryId,
+            "description", "Description for CANCELLED task.",
+            "budget", 50000,
+            "location_lat", 47.9, "location_lng", 106.9,
+            "location_text", "Location",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+        postWithAuth("/api/v1/tasks/" + cancelledResponse.getBody().get("id") + "/cancel", customer.accessToken(), null);
+
+        // Fetch feed
+        ResponseEntity<Map> feed = getWithAuth("/api/v1/tasks", customer.accessToken());
+        List<Map<String, Object>> data = (List<Map<String, Object>>) feed.getBody().get("data");
+
+        assertThat(data).isNotEmpty();
+        assertThat(data).allSatisfy(task -> assertThat(task.get("status")).isEqualTo("OPEN"));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-LIST-FILTERS category and distance filters")
+    void feedFilters() {
+        AuthContext customer = authenticate("101");
+        String category1 = getFirstCategoryId(customer.accessToken());
+        
+        // Task in Category 1 at Location A
+        postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", category1,
+            "description", "Task in category 1 at loc A.",
+            "budget", 50000,
+            "location_lat", 47.91, "location_lng", 106.91,
+            "location_text", "Loc A",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+
+        // Task in Category 1 far away (Location B)
+        postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", category1,
+            "description", "Task far away.",
+            "budget", 50000,
+            "location_lat", 48.5, "location_lng", 107.5,
+            "location_text", "Loc B",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+
+        // Filter by category
+        ResponseEntity<Map> categoryFilter = getWithAuth("/api/v1/tasks?category=" + category1, customer.accessToken());
+        List<Map<String, Object>> catData = (List<Map<String, Object>>) categoryFilter.getBody().get("data");
+        assertThat(catData).allSatisfy(task -> assertThat(((Map)task.get("category")).get("id")).isEqualTo(category1));
+
+        // Filter by distance (within 20km of Loc A)
+        ResponseEntity<Map> distanceFilter = getWithAuth("/api/v1/tasks?lat=47.9&lng=106.9&radius_km=20", customer.accessToken());
+        List<Map<String, Object>> distData = (List<Map<String, Object>>) distanceFilter.getBody().get("data");
+        assertThat(distData).hasSize(1);
+        assertThat(distData.get(0).get("description")).isEqualTo("Task in category 1 at loc A.");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-LIST-PRIVACY exact address hidden")
+    void feedPrivacy() {
+        AuthContext customer = authenticate("102");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
+        postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", categoryId,
+            "description", "Privacy test task.",
+            "budget", 50000,
+            "location_lat", 47.9, "location_lng", 106.9,
+            "location_text", "Secret Address 123",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+
+        ResponseEntity<Map> feed = getWithAuth("/api/v1/tasks", customer.accessToken());
+        List<Map<String, Object>> data = (List<Map<String, Object>>) feed.getBody().get("data");
+
+        Map<String, Object> task = data.get(0);
+        assertThat(task).doesNotContainKey("location_text");
+        assertThat(task).containsKey("approximate_location");
+        assertThat(task).containsKeys("approximate_lat", "approximate_lng");
     }
 
     // --- Helpers ---

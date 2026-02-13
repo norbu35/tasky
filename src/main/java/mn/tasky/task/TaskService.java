@@ -3,6 +3,7 @@ package mn.tasky.task;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -84,6 +85,76 @@ public class TaskService {
 
     public Optional<TaskState> getTask(String id) {
         return Optional.ofNullable(tasksById.get(id));
+    }
+
+    public TaskPage listTasks(
+        String categoryId,
+        Double lat,
+        Double lng,
+        Double radiusKm,
+        String cursor,
+        int limit
+    ) {
+        List<TaskState> filtered = tasksById.values().stream()
+            .filter(task -> "OPEN".equals(task.status()))
+            .filter(task -> categoryId == null || task.categoryId().equals(categoryId))
+            .filter(task -> isWithinDistance(task, lat, lng, radiusKm))
+            .sorted(Comparator.comparing(TaskState::createdAt).reversed()
+                .thenComparing(TaskState::id))
+            .toList();
+
+        int offset = decodeOffset(cursor);
+        if (offset > filtered.size()) {
+            return new TaskPage(List.of(), null, false);
+        }
+
+        int endIndex = Math.min(offset + limit, filtered.size());
+        List<TaskState> pageData = filtered.subList(offset, endIndex);
+        boolean hasMore = endIndex < filtered.size();
+        String nextCursor = hasMore ? encodeOffset(endIndex) : null;
+
+        return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
+    }
+
+    private boolean isWithinDistance(TaskState task, Double lat, Double lng, Double radiusKm) {
+        if (lat == null || lng == null || radiusKm == null) {
+            return true;
+        }
+
+        double distance = calculateDistance(lat, lng, task.locationLat(), task.locationLng());
+        return distance <= radiusKm;
+    }
+
+    private double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+        double earthRadius = 6371; // km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadius * c;
+    }
+
+    private int decodeOffset(String cursor) {
+        if (!StringUtils.hasText(cursor)) {
+            return 0;
+        }
+        try {
+            String decoded = new String(
+                java.util.Base64.getUrlDecoder().decode(cursor),
+                StandardCharsets.UTF_8
+            );
+            return Integer.parseInt(decoded);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private String encodeOffset(int offset) {
+        return java.util.Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(Integer.toString(offset).getBytes(StandardCharsets.UTF_8));
     }
 
     public TaskCancelResult cancelTask(String customerId, String taskId) {
@@ -225,5 +296,8 @@ public class TaskService {
     }
 
     public record PresignedUpload(String uploadUrl, String storageKey) {
+    }
+
+    public record TaskPage(List<TaskState> data, String nextCursor, boolean hasMore) {
     }
 }
