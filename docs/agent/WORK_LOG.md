@@ -52,3 +52,4 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T09:34:46Z | local | Codex | TASK-072 | agent/TASK-072-cross-platform-parity-accessibility | 9ae7535af9a73682f9d33edd8dc6899807a39dd4 | medium | FAIL | 8/9 | NFR-UI-02 | `artifacts/self-verify.task072.json` |
 | 2026-02-13T09:35:11Z | local | Codex | TASK-071 | agent/TASK-072-cross-platform-parity-accessibility | 9ae7535af9a73682f9d33edd8dc6899807a39dd4 | medium | FAIL | 4/9 | NFR-UI-01,REQ-UI-02 | `artifacts/self-verify.task071.branchcheck.json` |
 | 2026-02-13T11:33:53Z | local | Codex | TASK-000 | agent/TASK-072-cross-platform-parity-accessibility | 9ae7535af9a73682f9d33edd8dc6899807a39dd4 | low | FAIL | 3/6 | REQ-AUTH-01 | `artifacts/self-verify.json` |
+| 2026-02-13T12:38:27Z | local | Codex | TASK-004 | agent/TASK-004-security-baseline | cd89f9b183c2027da4f0c22fb1b31c1539ce9bfe | high | PASS | 13/13 | NFR-SEC-01,REQ-ADMIN-03 | `artifacts/self-verify.task004.json` |

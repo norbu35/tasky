@@ -193,16 +193,21 @@ if [[ ${#files_changed[@]} -eq 0 ]]; then
   files_changed=("NO_FILE_CHANGE_DETECTED")
 fi
 
-mapfile -t required_checks < <(jq -r --arg risk "${risk}" '.required_by_risk[$risk][]?' "${risk_policy_path}")
+required_checks=()
+while IFS= read -r required_check_id; do
+  if [[ -n "${required_check_id}" ]]; then
+    required_checks+=("${required_check_id}")
+  fi
+done < <(jq -r --arg risk "${risk}" '.required_by_risk[$risk][]?' "${risk_policy_path}")
 if [[ ${#required_checks[@]} -eq 0 ]]; then
   echo "No required checks defined for risk '${risk}' in ${risk_policy_path}." >&2
   exit 4
 fi
 
-declare -A fast_check_map=()
+fast_check_ids=()
 while IFS= read -r fast_check_id; do
   if [[ -n "${fast_check_id}" ]]; then
-    fast_check_map["${fast_check_id}"]=1
+    fast_check_ids+=("${fast_check_id}")
   fi
 done < <(jq -r '.fast_checks[]?' "${risk_policy_path}")
 
@@ -539,7 +544,13 @@ run_check() {
 
 is_fast_check() {
   local check_id="$1"
-  [[ -n "${fast_check_map[${check_id}]:-}" ]]
+  local fast_id
+  for fast_id in "${fast_check_ids[@]}"; do
+    if [[ "${fast_id}" == "${check_id}" ]]; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 record_blocked_check() {

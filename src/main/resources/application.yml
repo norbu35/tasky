@@ -24,3 +24,5 @@ management:
 tasky:
   api:
     version: v1
+  security:
+    jwt-secret: ${TASKY_JWT_SECRET:tasky-dev-signing-secret-key-with-minimum-32-bytes}
