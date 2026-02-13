@@ -6,6 +6,13 @@ import { mobileTheme } from "../src/design/tokenAdapter";
 import { designTokens } from "../../../packages/design-tokens/tokens";
 
 describe("App", () => {
+  it("TID-TASK-000-MOBILE-UNIT renders the mobile shell with SDK wiring baseline", () => {
+    render(<App />);
+    expect(screen.getByText("Tasky Mobile Intake")).toBeTruthy();
+    expect(screen.getByText(/Shared token adapter active:/)).toBeTruthy();
+    expect(screen.getByText(/Native parity components are ready/)).toBeTruthy();
+  });
+
   it("TID-TASK-071-MOBILE-TOKEN-ADAPTER consumes shared design tokens via adapter", () => {
     expect(mobileTheme.colors.background).toBe(designTokens.colors.background.hex);
     expect(mobileTheme.colors.primary).toBe(designTokens.colors.primary.hex);

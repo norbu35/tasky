@@ -166,10 +166,67 @@ if git rev-parse --verify HEAD >/dev/null 2>&1; then
   head_sha="$(git rev-parse --short=40 HEAD)"
 else
   head_sha="NO_HEAD"
-  if [[ "${base_ref}" == "HEAD" ]]; then
-    base_ref="EMPTY_TREE"
-  fi
 fi
+
+resolve_base_ref() {
+  if [[ "${head_sha}" == "NO_HEAD" ]]; then
+    echo "NO_HEAD"
+    return
+  fi
+
+  if [[ "${base_ref}" != "HEAD" ]]; then
+    echo "${base_ref}"
+    return
+  fi
+
+  if [[ -f "${ticket_spec_path}" && -f "tickets/STATUS.json" ]]; then
+    local dep_id
+    local dep_branch
+    local dep_merge_base
+    local dep_base=""
+    while IFS= read -r dep_id; do
+      if [[ -z "${dep_id}" ]]; then
+        continue
+      fi
+      dep_branch="$(jq -r --arg tid "${dep_id}" '.tickets[$tid].branch // empty' tickets/STATUS.json)"
+      if [[ -z "${dep_branch}" ]]; then
+        continue
+      fi
+      if ! git rev-parse --verify "${dep_branch}" >/dev/null 2>&1; then
+        continue
+      fi
+      dep_merge_base="$(git merge-base HEAD "${dep_branch}" 2>/dev/null || true)"
+      if [[ -n "${dep_merge_base}" ]]; then
+        dep_base="${dep_merge_base}"
+      fi
+    done < <(jq -r '.depends_on[]?' "${ticket_spec_path}")
+    if [[ -n "${dep_base}" ]]; then
+      echo "${dep_base}"
+      return
+    fi
+  fi
+
+  local ref
+  local merge_base
+  for ref in origin/main main origin/master master; do
+    if git rev-parse --verify "${ref}" >/dev/null 2>&1; then
+      merge_base="$(git merge-base HEAD "${ref}" 2>/dev/null || true)"
+      if [[ -n "${merge_base}" ]]; then
+        echo "${merge_base}"
+        return
+      fi
+    fi
+  done
+
+  if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+    echo "HEAD~1"
+    return
+  fi
+
+  echo "HEAD"
+}
+
+base_ref="$(resolve_base_ref)"
 
 export SELF_VERIFY_TICKET="${ticket}"
 export SELF_VERIFY_RISK="${risk}"
@@ -184,6 +241,9 @@ while IFS= read -r changed_file; do
   fi
 done < <(
   {
+    if [[ "${head_sha}" != "NO_HEAD" && "${base_ref}" != "HEAD" ]]; then
+      git diff --name-only "${base_ref}...HEAD" 2>/dev/null || true
+    fi
     git diff --name-only 2>/dev/null || true
     git diff --name-only --cached 2>/dev/null || true
     git ls-files --others --exclude-standard 2>/dev/null || true

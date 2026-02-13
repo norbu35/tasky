@@ -6,6 +6,14 @@ import { Input } from "./components/ui/input";
 import { App } from "./App";
 
 describe("App", () => {
+  it("TID-TASK-000-WEB-UNIT renders the web shell with SDK wiring baseline", () => {
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Post A Domestic Task" })).toBeInTheDocument();
+    expect(screen.getByText(/OpenAPI SDK binding loaded:/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Category")).toBeInTheDocument();
+  });
+
   it("TID-TASK-070-WEB-SHADCN-PRIMITIVES initializes shadcn primitives under components/ui", () => {
     render(
       <div>
