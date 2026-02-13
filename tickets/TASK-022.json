@@ -3,8 +3,14 @@
   "ticket": "TASK-022",
   "risk_level": "high",
   "req_ids": [
+    "NFR-API-01",
+    "NFR-PERF-01",
     "REQ-TASK-03",
     "REQ-TASK-05"
+  ],
+  "depends_on": [
+    "TASK-021",
+    "TASK-065"
   ],
   "acceptance_criteria": [
     {
@@ -12,8 +18,7 @@
       "type": "functional",
       "statement": "Feed returns only `OPEN` tasks.",
       "test_ids": [
-        "TID-TASK-022-API-TASK-LIST-OPEN",
-        "TID-TASK-022-API-TASK-LIST-CURSOR"
+        "TID-TASK-022-API-TASK-LIST-OPEN"
       ]
     },
     {
@@ -30,6 +35,14 @@
       "statement": "Exact address is hidden in public feed; approximate location exposed.",
       "test_ids": [
         "TID-TASK-022-API-TASK-LIST-PRIVACY"
+      ]
+    },
+    {
+      "id": "AC-TASK-022-04",
+      "type": "functional",
+      "statement": "Cursor pagination returns deterministic results with correct next cursor and has_more flag.",
+      "test_ids": [
+        "TID-TASK-022-API-TASK-LIST-CURSOR"
       ]
     }
   ]

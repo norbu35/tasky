@@ -6,6 +6,9 @@
     "NFR-SEC-01",
     "REQ-ADMIN-03"
   ],
+  "depends_on": [
+    "TASK-001"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-004-01",

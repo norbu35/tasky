@@ -153,6 +153,7 @@ To build Mongolia's first **trust-centric** domestic service marketplace. Unlike
 *   **NFR-RELI-01**: Payment status updates (Webhooks) MUST be idempotent and handle retries.
 *   **NFR-RELI-02**: Mobile app MUST provide read-only local cache of "My Tasks" for offline viewing.
 *   **NFR-API-01**: All list endpoints MUST support cursor-based pagination.
+*   **NFR-OBS-01**: System MUST emit product analytics events for MVP funnel milestones (task posted, application submitted, tasker accepted, payment initiated, payment confirmed, booking completed, dispute raised) with locale and platform dimensions.
 *   **NFR-UI-01**: Web and Mobile MUST consume a shared design token source of truth (color, spacing, typography, radius, elevation, motion), with platform-specific adapters as needed.
 *   **NFR-UI-02**: All new web UI flows MUST support keyboard navigation and meet WCAG 2.1 AA contrast requirements.
 

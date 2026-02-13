@@ -199,6 +199,7 @@ A work item is done only when code, tests, observability, rollback plan, and rel
 1. Metrics, logs, and traces are required for all critical user flows.
 2. Alerts must map to user impact, not only infrastructure signals.
 3. Each release must include dashboard and alert updates if behavior changed.
+4. MVP funnel analytics events must be emitted for task-post, application, accept, payment, completion, and dispute milestones.
 
 ---
 
@@ -370,16 +371,17 @@ Production release requires:
 
 ### 10.9 Canonical Self-Verify Artifact Schema
 1. Canonical schema path: `docs/quality/self-verify.schema.json`.
-2. The artifact `artifacts/self-verify.json` MUST validate against this schema.
-3. Unknown or undocumented fields are forbidden. Agents MUST use schema version `1.0.0`.
-4. Required check IDs and required check sets per risk level are defined by the schema and enforced in CI.
-5. Bootstrap exception: if repository has no commits yet, `git_context.head_sha` MUST be `NO_HEAD`.
+2. Canonical risk-check registry path: `docs/quality/risk-checks.json`.
+3. The artifact `artifacts/self-verify.json` MUST validate against this schema.
+4. Unknown or undocumented fields are forbidden. Agents MUST use schema version `1.0.0`.
+5. Required check IDs and required check sets per risk level are defined by the risk-check registry and enforced in CI.
+6. Bootstrap exception: if repository has no commits yet, `git_context.head_sha` MUST be `NO_HEAD`.
 
 ### 10.10 Self-Verify Script Contract
 1. Canonical contract path: `docs/quality/SELF_VERIFY_CONTRACT.md`.
 2. Canonical runner path: `scripts/self-verify.sh`.
 3. Minimum CLI contract:
-   1. `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--out <path>]`
+   1. `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--only <check-id>] [--out <path>]`
 4. Mandatory script behavior:
    1. Resolve changed files from Git.
       If repository has no `HEAD`, use the empty tree base and set `git_context.head_sha` to `NO_HEAD`.
@@ -406,3 +408,90 @@ Production release requires:
 3. The log is append-only; entries are never edited or deleted except by documented corrective ADR.
 4. Each entry MUST include timestamp, context (`local|ci|manual`), ticket, branch, risk, overall status, check pass count, and artifact path.
 5. If work log append fails, self-verification is considered failed due to traceability gap.
+
+---
+
+## 11. Multi-Agent Task Coordination
+
+*This section governs parallel agent execution. Multiple agents MAY work on different tickets simultaneously, provided they follow this coordination protocol.*
+Canonical operational checklist: `docs/agent/RUNBOOK.md`.
+
+### 11.1 Coordination File
+1. Canonical path: `tickets/STATUS.json`.
+2. This file is the single source of truth for ticket assignment and progress.
+3. It MUST be committed to the repository and pushed to the remote.
+4. Git commit + push acts as the atomic lock for claiming tickets.
+
+### 11.2 Ticket Statuses
+1. `pending`: Not started. No agent is working on it.
+2. `in_progress`: Claimed by an agent. The `agent`, `branch`, and `claimed_at` fields identify the owner.
+3. `done`: Implementation complete, self-verification passed, PR merged (or equivalent).
+
+### 11.3 Coordination Scripts
+1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete` workflow.
+2. **Status check**: `scripts/ticket-status.sh` — displays current state, available tickets, blocked tickets, and next recommended ticket.
+3. **Claim**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
+4. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
+
+### 11.4 Agent Startup Protocol (MANDATORY)
+Every agent MUST follow this sequence when starting a new work session:
+
+1. **Orient**: Run `scripts/agent-flow.sh status` to see the current state.
+   ```bash
+   scripts/agent-flow.sh status
+   ```
+2. **Select**: Identify the next available ticket. A ticket is "available" when:
+   - Its status is `pending` in `tickets/STATUS.json`.
+   - ALL tickets listed in its `depends_on` (from `tickets/<TICKET>.json`) have status `done`.
+3. **Branch**: Create the implementation branch in the required format.
+   ```bash
+   git checkout -b agent/<TICKET-ID>-<slug>
+   ```
+4. **Claim**: Claim the ticket after branch creation.
+   ```bash
+   scripts/claim-ticket.sh --agent <your-agent-name> --ticket <TICKET-ID> --branch "$(git branch --show-current)"
+   ```
+   Or use the canonical wrapper:
+   ```bash
+   scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug>
+   ```
+5. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
+6. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
+   Preferred wrapper:
+   ```bash
+   scripts/agent-flow.sh verify --ticket <TICKET-ID>
+   ```
+7. **Complete**: After successful self-verification and merge, mark the ticket done.
+   ```bash
+   scripts/agent-flow.sh complete --ticket <TICKET-ID>
+   ```
+
+### 11.5 Parallel Execution Rules
+1. Two agents MUST NOT claim the same ticket. The `claim-ticket.sh` script enforces this via git push atomicity.
+2. If a push fails during claim (race condition), the script pulls, re-evaluates available tickets, and retries automatically (up to 3 attempts).
+3. Agents SHOULD prefer the lowest-numbered available ticket for deterministic ordering, unless a specific ticket is strategically better.
+4. An agent MUST NOT start work on a ticket whose dependencies are not all `done`. The claim script enforces this.
+5. Multiple agents MAY work in parallel on independent tickets (e.g., TASK-004 and TASK-020 can run simultaneously since they share no dependencies beyond done tickets).
+
+### 11.6 Stale Claim Recovery
+1. If an agent crashes or abandons work, its ticket remains `in_progress` indefinitely.
+2. A human or admin agent MAY reset a stale claim by editing `tickets/STATUS.json` to set the ticket back to `pending` (removing `agent`, `branch`, and `claimed_at` fields).
+3. Before resetting, verify the agent's branch does not contain valuable partial work.
+
+### 11.7 Quick Reference for New Agents
+```
+# 1. See what's happening
+scripts/agent-flow.sh status
+
+# 2. Start next available ticket
+scripts/agent-flow.sh start --agent my-agent-name --slug my-work
+
+# 3. Start a specific ticket
+scripts/agent-flow.sh start --agent my-agent-name --ticket TASK-020 --slug categories
+
+# 4. Run verification using ticket metadata defaults
+scripts/agent-flow.sh verify --ticket TASK-020
+
+# 5. After done: mark ticket complete
+scripts/agent-flow.sh complete --ticket TASK-020
+```

@@ -5,6 +5,9 @@
   "req_ids": [
     "NFR-SEC-01"
   ],
+  "depends_on": [
+    "TASK-004"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-060-01",
@@ -27,7 +30,7 @@
       "type": "functional",
       "statement": "Production PII access is auditable.",
       "test_ids": [
-        "TID-TASK-060-SEC-PII-ENCRYPTION"
+        "TID-TASK-060-SEC-PII-AUDIT-ACCESS"
       ]
     }
   ]

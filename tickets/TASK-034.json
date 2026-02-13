@@ -7,6 +7,9 @@
     "REQ-PAY-05",
     "REQ-PAY-06"
   ],
+  "depends_on": [
+    "TASK-033"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-034-01",

@@ -9,6 +9,7 @@
     "ticket",
     "risk_level",
     "req_ids",
+    "depends_on",
     "acceptance_criteria"
   ],
   "properties": {
@@ -31,6 +32,14 @@
       "items": {
         "type": "string",
         "pattern": "^(REQ|NFR)-[A-Z]+-[0-9]+$"
+      }
+    },
+    "depends_on": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*-[0-9]+$"
       }
     },
     "acceptance_criteria": {

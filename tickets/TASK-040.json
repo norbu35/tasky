@@ -6,6 +6,9 @@
     "REQ-SAFE-02",
     "REQ-SAFE-04"
   ],
+  "depends_on": [
+    "TASK-033"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-040-01",

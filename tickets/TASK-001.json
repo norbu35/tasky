@@ -5,13 +5,14 @@
   "req_ids": [
     "NFR-RELI-01"
   ],
+  "depends_on": [],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-001-01",
       "type": "functional",
       "statement": "`docker compose` boots Postgres + PostGIS + MinIO successfully.",
       "test_ids": [
-        "TID-TASK-001-BE-HEALTH-CHECK"
+        "TID-TASK-001-ENV-DOCKER-UP"
       ]
     },
     {
@@ -19,7 +20,7 @@
       "type": "functional",
       "statement": "Backend exposes `/actuator/health` and `/api/v1/system/version`.",
       "test_ids": [
-        "TID-TASK-001-ENV-DOCKER-UP"
+        "TID-TASK-001-BE-HEALTH-CHECK"
       ]
     },
     {
@@ -27,7 +28,7 @@
       "type": "functional",
       "statement": "`./gradlew --no-daemon check` runs in clean clone.",
       "test_ids": [
-        "TID-TASK-001-BE-HEALTH-CHECK"
+        "TID-TASK-001-BE-GRADLE-CHECK"
       ]
     }
   ]

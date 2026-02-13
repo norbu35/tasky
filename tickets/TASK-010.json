@@ -7,14 +7,17 @@
     "REQ-AUTH-02",
     "REQ-AUTH-03"
   ],
+  "depends_on": [
+    "TASK-001",
+    "TASK-004"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-010-01",
       "type": "security",
       "statement": "OTP request/verify flow creates or authenticates user.",
       "test_ids": [
-        "TID-TASK-010-API-OTP-REQUEST",
-        "TID-TASK-010-API-TOKEN-REFRESH"
+        "TID-TASK-010-API-OTP-REQUEST"
       ],
       "negative_test_ids": [
         "TID-TASK-010-API-OTP-REQUEST"
@@ -23,7 +26,7 @@
     {
       "id": "AC-TASK-010-02",
       "type": "functional",
-      "statement": "Duplicate phone registration does not create duplicate users.",
+      "statement": "OTP verify succeeds and returns valid session for authenticated user.",
       "test_ids": [
         "TID-TASK-010-API-OTP-VERIFY-SUCCESS"
       ]
@@ -31,9 +34,17 @@
     {
       "id": "AC-TASK-010-03",
       "type": "functional",
-      "statement": "Refresh endpoint rotates/returns valid access token.",
+      "statement": "Duplicate phone registration does not create duplicate users.",
       "test_ids": [
         "TID-TASK-010-API-PHONE-UNIQUE"
+      ]
+    },
+    {
+      "id": "AC-TASK-010-04",
+      "type": "functional",
+      "statement": "Refresh endpoint rotates/returns valid access token.",
+      "test_ids": [
+        "TID-TASK-010-API-TOKEN-REFRESH"
       ]
     }
   ]

@@ -7,6 +7,7 @@
     "NFR-RELI-01",
     "NFR-API-01"
   ],
+  "depends_on": [],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-000-01",

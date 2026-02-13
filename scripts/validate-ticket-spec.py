@@ -11,6 +11,10 @@ AC_RE = re.compile(r"^AC-[A-Z0-9_-]+-[0-9]+$")
 TEST_ID_RE = re.compile(r"^TID-[A-Z0-9_-]+$")
 ALLOWED_RISKS = {"low", "medium", "high"}
 SECURITY_TYPES = {"security", "abuse"}
+INDEX_ROW_RE = re.compile(
+    r"^\|\s*(TASK-[0-9]{3})\s*\|\s*[^|]+\|\s*(?:low|medium|high)\s*\|\s*[^|]+\|\s*([^|]+)\|",
+    re.IGNORECASE,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,6 +28,11 @@ def parse_args() -> argparse.Namespace:
         "--schema",
         default="docs/quality/ticket.spec.schema.json",
         help="Schema path for syntax presence check",
+    )
+    parser.add_argument(
+        "--backlog",
+        default="docs/BACKLOG_MVP.md",
+        help="Backlog path used for dependency contract validation",
     )
     parser.add_argument("--out", required=True, help="Output path for normalized spec JSON")
     return parser.parse_args()
@@ -63,17 +72,40 @@ def validate_branch(ticket: str, branch: str) -> list[str]:
     return errors
 
 
+def parse_backlog_dependencies(backlog_path: Path) -> dict[str, list[str]]:
+    if not backlog_path.is_file():
+        return {}
+    mapping: dict[str, list[str]] = {}
+    for line in backlog_path.read_text(encoding="utf-8").splitlines():
+        match = INDEX_ROW_RE.match(line)
+        if not match:
+            continue
+        ticket = match.group(1)
+        deps_col = match.group(2).strip()
+        deps = [item.strip() for item in deps_col.split(",") if item.strip() and item.strip() != "-"]
+        mapping[ticket] = deps
+    return mapping
+
+
 def validate_ticket_spec(
     payload: dict,
     ticket: str,
     risk: str,
     req_ids_expected: list[str],
     branch: str,
+    expected_dependencies: list[str] | None,
 ) -> tuple[list[str], dict]:
     errors: list[str] = []
     normalized: dict = {}
 
-    required_top = {"schema_version", "ticket", "risk_level", "req_ids", "acceptance_criteria"}
+    required_top = {
+        "schema_version",
+        "ticket",
+        "risk_level",
+        "req_ids",
+        "depends_on",
+        "acceptance_criteria",
+    }
     unknown_top = set(payload.keys()) - required_top
     if unknown_top:
         errors.append(f"Unknown top-level fields: {sorted(unknown_top)}")
@@ -112,9 +144,36 @@ def validate_ticket_spec(
         if req_id not in seen_req:
             seen_req.add(req_id)
             dedup_req_ids.append(req_id)
-    if dedup_req_ids != req_ids_expected:
+    if set(dedup_req_ids) != set(req_ids_expected):
         errors.append(
             f"req_ids mismatch with self-verify args. spec={dedup_req_ids} runtime={req_ids_expected}"
+        )
+
+    depends_on_raw = payload.get("depends_on")
+    if depends_on_raw is None:
+        errors.append("depends_on must be present (use [] when no dependencies).")
+        depends_on_raw = []
+    if not isinstance(depends_on_raw, list):
+        errors.append("depends_on must be an array.")
+        depends_on_raw = []
+
+    dedup_depends_on: list[str] = []
+    seen_depends: set[str] = set()
+    for dep in depends_on_raw:
+        if not isinstance(dep, str) or not TICKET_RE.match(dep):
+            errors.append(f"Invalid depends_on ticket reference: {dep}")
+            continue
+        if dep == ticket:
+            errors.append("depends_on cannot include the ticket itself.")
+            continue
+        if dep not in seen_depends:
+            seen_depends.add(dep)
+            dedup_depends_on.append(dep)
+
+    if expected_dependencies is not None and dedup_depends_on != expected_dependencies:
+        errors.append(
+            "depends_on mismatch with backlog index contract. "
+            f"spec={dedup_depends_on} backlog={expected_dependencies}"
         )
 
     acceptance_criteria = payload.get("acceptance_criteria")
@@ -214,6 +273,7 @@ def validate_ticket_spec(
         "ticket": ticket,
         "risk_level": risk,
         "req_ids": dedup_req_ids,
+        "depends_on": dedup_depends_on,
         "acceptance_criteria": normalized_criteria,
     }
     return errors, normalized
@@ -223,6 +283,7 @@ def main() -> int:
     args = parse_args()
     spec_path = Path(args.spec)
     schema_path = Path(args.schema)
+    backlog_path = Path(args.backlog)
     out_path = Path(args.out)
 
     if not spec_path.is_file():
@@ -248,12 +309,15 @@ def main() -> int:
         return 1
 
     req_ids_expected = parse_req_csv(args.req)
+    dependencies_by_ticket = parse_backlog_dependencies(backlog_path)
+    expected_dependencies = dependencies_by_ticket.get(args.ticket)
     errors, normalized = validate_ticket_spec(
         payload=payload,
         ticket=args.ticket,
         risk=args.risk,
         req_ids_expected=req_ids_expected,
         branch=args.branch,
+        expected_dependencies=expected_dependencies,
     )
     if errors:
         print("Ticket spec validation failed:", file=sys.stderr)

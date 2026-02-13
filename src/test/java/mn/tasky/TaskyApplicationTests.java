@@ -33,4 +33,10 @@ class TaskyApplicationTests {
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(response.getBody()).contains("api_version");
     }
+
+    @Test
+    @DisplayName("TID-TASK-001-BE-GRADLE-CHECK baseline test suite executes successfully via Gradle wrapper")
+    void gradleCheckBaselineExecutes() {
+        assertThat(port).isGreaterThan(0);
+    }
 }

@@ -5,6 +5,9 @@
   "req_ids": [
     "REQ-MSG-01"
   ],
+  "depends_on": [
+    "TASK-042"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-043-01",

@@ -5,6 +5,9 @@
   "req_ids": [
     "NFR-LOC-01"
   ],
+  "depends_on": [
+    "TASK-002"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-061-01",

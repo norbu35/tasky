@@ -4,6 +4,9 @@ Every implementation ticket must have a machine-readable spec at:
 
 `tickets/<TICKET-ID>.json`
 
+Preferred operational wrapper:
+`scripts/agent-flow.sh verify --ticket <TICKET-ID>`
+
 These specs are mandatory for `scripts/self-verify.sh` and are validated by:
 
 - `scripts/validate-ticket-spec.py`

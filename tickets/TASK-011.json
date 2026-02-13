@@ -5,6 +5,9 @@
   "req_ids": [
     "REQ-AUTH-01"
   ],
+  "depends_on": [
+    "TASK-010"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-011-01",

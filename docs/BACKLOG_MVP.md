@@ -17,6 +17,7 @@ Rules:
 ## Ticket Index
 | Ticket | Slice | Risk | PRD/NFR Coverage | Depends On |
 |---|---|---|---|---|
+| TASK-000 | Project scaffold + workspace bootstrap | high | REQ-AUTH-01, NFR-RELI-01, NFR-API-01 | - |
 | TASK-001 | Platform bootstrap hardening | low | NFR-RELI-01 | - |
 | TASK-002 | OpenAPI + SDK CI pipeline | medium | NFR-API-01 | TASK-001 |
 | TASK-003 | Observability baseline | medium | NFR-RELI-01 | TASK-001 |
@@ -30,7 +31,7 @@ Rules:
 | TASK-022 | Open task feed filters + privacy + pagination | high | REQ-TASK-03, REQ-TASK-05, NFR-API-01, NFR-PERF-01 | TASK-021, TASK-065 |
 | TASK-023 | Task applications + accept | high | REQ-BOOK-01, REQ-BOOK-02, REQ-TASK-02 | TASK-021 |
 | TASK-030 | Booking aggregate + status guardrails | high | REQ-BOOK-03, REQ-BOOK-05 | TASK-023 |
-| TASK-031 | QPay initiate + callback idempotency | high | REQ-PAY-01, REQ-BOOK-03, NFR-RELI-01 | TASK-030, TASK-064 |
+| TASK-031 | QPay initiate + callback idempotency | high | REQ-PAY-01, REQ-BOOK-03, REQ-BOOK-05, REQ-TASK-02, NFR-RELI-01 | TASK-030, TASK-064 |
 | TASK-032 | Cancellation policy + strike logic | high | REQ-BOOK-04, REQ-BOOK-06 | TASK-030 |
 | TASK-033 | Completion settlement + wallet credit + fee | high | REQ-PAY-02, REQ-PAY-03, REQ-TASK-02, REQ-BOOK-05 | TASK-030, TASK-031 |
 | TASK-034 | Payout request + admin processing + schedule | high | REQ-PAY-04, REQ-PAY-05, REQ-PAY-06 | TASK-033 |
@@ -49,8 +50,23 @@ Rules:
 | TASK-070 | Web design system foundation (`shadcn/ui`) | medium | REQ-UI-01, NFR-UI-01 | TASK-002 |
 | TASK-071 | Mobile token adapter + component parity baseline | medium | REQ-UI-02, NFR-UI-01 | TASK-070 |
 | TASK-072 | Cross-platform UI parity and web accessibility gate | medium | NFR-UI-02 | TASK-070, TASK-071 |
+| TASK-080 | Web customer/tasker MVP flow integration | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03, REQ-TASK-01, REQ-TASK-03, REQ-BOOK-01, REQ-BOOK-02 | TASK-010, TASK-011, TASK-021, TASK-022, TASK-023, TASK-061, TASK-070 |
+| TASK-081 | Web booking/payment/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-PAY-01, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-031, TASK-032, TASK-033, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-064, TASK-070 |
+| TASK-082 | Mobile customer/tasker MVP flow integration | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03, REQ-TASK-01, REQ-TASK-03, REQ-BOOK-01, REQ-BOOK-02 | TASK-010, TASK-011, TASK-021, TASK-022, TASK-023, TASK-061, TASK-071 |
+| TASK-083 | Mobile booking/payment/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-PAY-01, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-031, TASK-032, TASK-033, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-062, TASK-064, TASK-071 |
+| TASK-090 | Product analytics and KPI instrumentation | medium | NFR-OBS-01 | TASK-003, TASK-080, TASK-081, TASK-082, TASK-083 |
 
 ## Ticket Definitions
+
+### TASK-000 Project Scaffold + Workspace Bootstrap
+- Objective: Establish monorepo workspace, frontend shells, SDK contract wiring, and autonomous agent tooling.
+- Acceptance criteria:
+  1. Web shell renders successfully with typed SDK contract wiring.
+  2. Mobile shell renders successfully with typed SDK contract wiring.
+- Required tests:
+  - `TID-TASK-000-WEB-UNIT`
+  - `TID-TASK-000-WEB-E2E-SMOKE`
+  - `TID-TASK-000-MOBILE-UNIT`
 
 ### TASK-001 Platform Bootstrap Hardening
 - Objective: Establish deterministic local runtime and health/version contract.
@@ -61,6 +77,7 @@ Rules:
 - Required tests:
   - `TID-TASK-001-BE-HEALTH-CHECK`
   - `TID-TASK-001-ENV-DOCKER-UP`
+  - `TID-TASK-001-BE-GRADLE-CHECK`
 
 ### TASK-002 OpenAPI + SDK CI Pipeline
 - Objective: Make API contract authoritative and SDK generation reproducible.
@@ -82,6 +99,7 @@ Rules:
 - Required tests:
   - `TID-TASK-003-BE-CORRELATION-ID`
   - `TID-TASK-003-BE-ERROR-TRACE-ID`
+  - `TID-TASK-003-BE-PROMETHEUS-METRICS`
 
 ### TASK-004 Security Baseline (RBAC + Banned User + Rate Limit)
 - Objective: Establish minimum security boundary for all subsequent slices.
@@ -304,6 +322,7 @@ Rules:
 - Required tests:
   - `TID-TASK-060-SEC-PII-ENCRYPTION`
   - `TID-TASK-060-SEC-ID-ASSET-PRIVATE`
+  - `TID-TASK-060-SEC-PII-AUDIT-ACCESS`
 
 ### TASK-061 Localization Baseline (mn default)
 - Objective: Ensure Mongolian-first UX and backend localization.
@@ -336,6 +355,7 @@ Rules:
 - Required tests:
   - `TID-TASK-063-PERF-TASK-FEED-P95`
   - `TID-TASK-063-PERF-INDEX-PLAN`
+  - `TID-TASK-063-PERF-CI-REGRESSION-BUDGET`
 
 ### TASK-064 Liability Disclaimer Enforcement
 - Objective: Enforce legal acceptance before payment initiation.
@@ -390,8 +410,63 @@ Rules:
   - `TID-TASK-072-WEB-A11Y-CONTRAST-AA`
   - `TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK`
 
+### TASK-080 Web Customer/Tasker MVP Flow Integration
+- Objective: Ensure the web client can execute end-to-end MVP flows against production contracts.
+- Acceptance criteria:
+  1. Web supports OTP login/signup and profile setup/update with avatar upload.
+  2. Customer can create task, browse task feed with filters/privacy behavior, and tasker can apply.
+  3. Route guards enforce auth state, role-specific access, and banned-user UX handling.
+- Required tests:
+  - `TID-TASK-080-WEB-AUTH-OTP-FLOW`
+  - `TID-TASK-080-WEB-TASK-APPLICATION-FLOW`
+  - `TID-TASK-080-WEB-AUTHZ-GUARDS`
+
+### TASK-081 Web Booking/Payment/Safety MVP Flow Integration
+- Objective: Deliver complete web booking lifecycle behavior including trust and communication touchpoints.
+- Acceptance criteria:
+  1. Customer can accept applicant, acknowledge liability disclaimer, and initiate payment flow.
+  2. Booking status transitions, cancellation outcomes, completion, review, and dispute actions are usable from web.
+  3. Messaging and notification surfaces for booking milestones are integrated in web UX.
+- Required tests:
+  - `TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW`
+  - `TID-TASK-081-WEB-BOOKING-SAFETY-FLOW`
+  - `TID-TASK-081-WEB-MSG-NOTIF-INTEGRATION`
+
+### TASK-082 Mobile Customer/Tasker MVP Flow Integration
+- Objective: Ensure mobile supports end-to-end task posting/discovery/application user journeys.
+- Acceptance criteria:
+  1. Mobile supports OTP login/signup and profile setup/update with avatar upload.
+  2. Customer can create task and tasker can discover/filter/apply to eligible open tasks.
+  3. Mobile route/access handling enforces auth state, role gating, and banned-user behavior.
+- Required tests:
+  - `TID-TASK-082-MOBILE-AUTH-OTP-FLOW`
+  - `TID-TASK-082-MOBILE-TASK-APPLICATION-FLOW`
+  - `TID-TASK-082-MOBILE-AUTHZ-GUARDS`
+
+### TASK-083 Mobile Booking/Payment/Safety MVP Flow Integration
+- Objective: Deliver complete mobile booking lifecycle behavior including trust and communication touchpoints.
+- Acceptance criteria:
+  1. Mobile allows applicant acceptance, disclaimer acknowledgment, and payment initiation flow.
+  2. Booking transitions, cancellation policies, completion, reviews, and disputes are usable from mobile.
+  3. Messaging and booking notification touchpoints are integrated and testable in mobile flows.
+- Required tests:
+  - `TID-TASK-083-MOBILE-BOOKING-PAYMENT-FLOW`
+  - `TID-TASK-083-MOBILE-BOOKING-SAFETY-FLOW`
+  - `TID-TASK-083-MOBILE-MSG-NOTIF-INTEGRATION`
+
+### TASK-090 Product Analytics and KPI Instrumentation
+- Objective: Add deterministic instrumentation to measure MVP funnel health and trust outcomes.
+- Acceptance criteria:
+  1. Backend emits canonical analytics events for funnel milestones with correlation IDs and booking/task references.
+  2. Web and mobile emit aligned client events with `platform`, `locale`, and actor role dimensions.
+  3. KPI validation queries or reports can compute conversion, fulfillment, and dispute rate from emitted events.
+- Required tests:
+  - `TID-TASK-090-OBS-EVENT-EMISSION`
+  - `TID-TASK-090-OBS-CLIENT-EVENTS`
+  - `TID-TASK-090-OBS-KPI-VALIDATION`
+
 ## Backlog Completion Criteria
 Backlog generation is complete when:
-1. Every ticket above has a `tickets/<TICKET-ID>.json` spec with AC + test IDs.
+1. Every ticket above has a `tickets/<TICKET-ID>.json` spec with AC + test IDs + `depends_on`.
 2. Ticket dependencies are acyclic for planned sprint slices.
 3. Each ticket includes risk level and mapped REQ/NFR IDs matching `docs/TRACEABILITY.md`.

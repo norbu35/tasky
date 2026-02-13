@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 RISK_ROW_RE = re.compile(
-    r"^\|\s*(TASK-[0-9]{3})\s*\|\s*[^|]+\|\s*(low|medium|high)\s*\|\s*([^|]+)\|",
+    r"^\|\s*(TASK-[0-9]{3})\s*\|\s*[^|]+\|\s*(low|medium|high)\s*\|\s*([^|]+)\|\s*([^|]+)\|",
     re.IGNORECASE,
 )
 HEADING_RE = re.compile(r"^###\s+(TASK-[0-9]{3})\b")
@@ -29,9 +29,12 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_risk_and_coverage(backlog_text: str) -> tuple[dict[str, str], dict[str, list[str]]]:
+def parse_risk_coverage_and_dependencies(
+    backlog_text: str,
+) -> tuple[dict[str, str], dict[str, list[str]], dict[str, list[str]]]:
     risks: dict[str, str] = {}
     coverage_ids: dict[str, list[str]] = {}
+    dependencies: dict[str, list[str]] = {}
     for line in backlog_text.splitlines():
         m = RISK_ROW_RE.match(line)
         if not m:
@@ -39,10 +42,17 @@ def parse_risk_and_coverage(backlog_text: str) -> tuple[dict[str, str], dict[str
         ticket = m.group(1)
         risk = m.group(2).lower()
         coverage_col = m.group(3)
+        depends_col = m.group(4).strip()
         req_ids = sorted(set(REQ_ID_RE.findall(coverage_col)))
+        depends_on = [
+            dep.strip()
+            for dep in depends_col.split(",")
+            if dep.strip() and dep.strip() != "-"
+        ]
         risks[ticket] = risk
         coverage_ids[ticket] = req_ids
-    return risks, coverage_ids
+        dependencies[ticket] = depends_on
+    return risks, coverage_ids, dependencies
 
 
 def parse_sections(backlog_text: str) -> dict[str, dict[str, list[str]]]:
@@ -139,17 +149,12 @@ def map_tests_to_ac(acceptance: list[str], tests: list[str], ticket: str) -> lis
     if not tests:
         tests = [f"TID-{ticket}-AUTO-DEFAULT"]
 
-    mapped: list[list[str]] = [[] for _ in acceptance]
-
-    # Ensure each AC has at least one test ID.
-    for i in range(len(acceptance)):
-        mapped[i].append(tests[i % len(tests)])
-
-    # Ensure all declared tests are represented at least once.
-    assigned = {tid for bucket in mapped for tid in bucket}
-    missing = [tid for tid in tests if tid not in assigned]
-    if missing:
-        mapped[0].extend(missing)
+    mapped: list[list[str]] = []
+    for idx, _ in enumerate(acceptance, start=1):
+        if idx <= len(tests):
+            mapped.append([tests[idx - 1]])
+        else:
+            mapped.append([f"TID-{ticket}-AUTO-AC-{idx:02d}"])
 
     # Deduplicate while preserving order.
     deduped: list[list[str]] = []
@@ -164,7 +169,14 @@ def map_tests_to_ac(acceptance: list[str], tests: list[str], ticket: str) -> lis
     return deduped
 
 
-def build_spec(ticket: str, risk: str, req_ids: list[str], acceptance: list[str], tests: list[str]) -> dict:
+def build_spec(
+    ticket: str,
+    risk: str,
+    req_ids: list[str],
+    depends_on: list[str],
+    acceptance: list[str],
+    tests: list[str],
+) -> dict:
     mapped_tests = map_tests_to_ac(acceptance, tests, ticket)
 
     ac_items: list[dict] = []
@@ -191,6 +203,7 @@ def build_spec(ticket: str, risk: str, req_ids: list[str], acceptance: list[str]
         "ticket": ticket,
         "risk_level": risk,
         "req_ids": req_ids,
+        "depends_on": depends_on,
         "acceptance_criteria": ac_items,
     }
 
@@ -204,7 +217,7 @@ def main() -> int:
     backlog_text = backlog_path.read_text(encoding="utf-8")
     trace_text = trace_path.read_text(encoding="utf-8")
 
-    risks, coverage_ids = parse_risk_and_coverage(backlog_text)
+    risks, coverage_ids, dependencies = parse_risk_coverage_and_dependencies(backlog_text)
     sections = parse_sections(backlog_text)
     reqs_by_ticket = parse_traceability(trace_text)
 
@@ -230,7 +243,15 @@ def main() -> int:
         if not tests:
             raise ValueError(f"No required tests found for {ticket}")
 
-        spec = build_spec(ticket=ticket, risk=risk, req_ids=req_ids, acceptance=acceptance, tests=tests)
+        depends_on = dependencies.get(ticket, [])
+        spec = build_spec(
+            ticket=ticket,
+            risk=risk,
+            req_ids=req_ids,
+            depends_on=depends_on,
+            acceptance=acceptance,
+            tests=tests,
+        )
         out_path = out_dir / f"{ticket}.json"
 
         if out_path.exists() and not args.overwrite:

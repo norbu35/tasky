@@ -4,6 +4,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 
 ## Repository Layout
 - `AGENTS.md`: governing policy for delivery, quality, and security gates
+- `docs/agent/RUNBOOK.md`: canonical agent operational workflow
 - `docs/`: PRD, architecture, API contract, quality contracts
 - `docs/TRACEABILITY.md`: PRD requirement to architecture/API/ticket mapping
 - `docs/BACKLOG_MVP.md`: atomic MVP ticket backlog with acceptance and test IDs
@@ -12,6 +13,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 - `apps/web`: React web client scaffold
 - `apps/mobile`: React Native (Expo) mobile scaffold
 - `packages/sdk`: shared TypeScript SDK scaffold (generated from OpenAPI)
+- `packages/design-tokens`: shared cross-platform design token source
 - `scripts/`: verification and workflow tooling
 
 ## Prerequisites
@@ -39,6 +41,14 @@ curl http://127.0.0.1:8080/api/v1/system/version
 ```
 
 ## Verification Workflow
+Agent entrypoint (recommended):
+```bash
+scripts/agent-flow.sh status
+scripts/agent-flow.sh start --agent my-agent --slug bootstrap
+scripts/agent-flow.sh verify --ticket TASK-001
+scripts/agent-flow.sh complete --ticket TASK-001
+```
+
 Generate local verification artifact:
 ```bash
 scripts/self-verify.sh \
@@ -51,6 +61,8 @@ scripts/self-verify.sh \
 Validate requirement coverage before sprint planning:
 ```bash
 scripts/validate-traceability.py
+scripts/validate-backlog.py
+scripts/validate-ticket-specs.py
 ```
 
 High-risk verification runs:

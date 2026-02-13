@@ -6,6 +6,11 @@
     "REQ-NOTIF-01",
     "REQ-NOTIF-02"
   ],
+  "depends_on": [
+    "TASK-023",
+    "TASK-031",
+    "TASK-033"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-044-01",

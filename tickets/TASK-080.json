@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-080",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-AUTH-01",
+    "REQ-AUTH-02",
+    "REQ-AUTH-03",
+    "REQ-BOOK-01",
+    "REQ-BOOK-02",
+    "REQ-TASK-01",
+    "REQ-TASK-03"
+  ],
+  "depends_on": [
+    "TASK-010",
+    "TASK-011",
+    "TASK-021",
+    "TASK-022",
+    "TASK-023",
+    "TASK-061",
+    "TASK-070"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-080-01",
+      "type": "functional",
+      "statement": "Web supports OTP login/signup and profile setup/update with avatar upload.",
+      "test_ids": [
+        "TID-TASK-080-WEB-AUTH-OTP-FLOW"
+      ]
+    },
+    {
+      "id": "AC-TASK-080-02",
+      "type": "functional",
+      "statement": "Customer can create task, browse task feed with filters/privacy behavior, and tasker can apply.",
+      "test_ids": [
+        "TID-TASK-080-WEB-TASK-APPLICATION-FLOW"
+      ]
+    },
+    {
+      "id": "AC-TASK-080-03",
+      "type": "security",
+      "statement": "Route guards enforce auth state, role-specific access, and banned-user UX handling.",
+      "test_ids": [
+        "TID-TASK-080-WEB-AUTHZ-GUARDS"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-080-WEB-AUTHZ-GUARDS"
+      ]
+    }
+  ]
+}

@@ -6,6 +6,9 @@
     "REQ-TASK-01",
     "REQ-TASK-04"
   ],
+  "depends_on": [
+    "TASK-020"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-021-01",

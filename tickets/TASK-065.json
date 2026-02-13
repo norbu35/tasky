@@ -5,6 +5,9 @@
   "req_ids": [
     "NFR-API-01"
   ],
+  "depends_on": [
+    "TASK-002"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-065-01",

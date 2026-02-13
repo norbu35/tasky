@@ -5,6 +5,9 @@
   "req_ids": [
     "NFR-LEGAL-01"
   ],
+  "depends_on": [
+    "TASK-030"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-064-01",

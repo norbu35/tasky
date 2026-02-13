@@ -27,64 +27,12 @@ ALLOWED_TOP_LEVEL = {
     "agent",
 }
 
-ALLOWED_CHECK_IDS = {
-    "format_lint",
-    "commit_message_lint",
-    "secret_scan",
-    "ticket_spec_validation",
-    "changed_module_tests",
-    "openapi_validation",
-    "integration_tests_touched",
-    "coverage_gate_touched",
-    "full_test_suite",
-    "sast_dependency_scan",
-    "migration_safety",
-    "performance_smoke",
-    "ac_coverage_gate",
-}
-
-REQUIRED_BY_RISK = {
-    "low": [
-        "format_lint",
-        "commit_message_lint",
-        "secret_scan",
-        "ticket_spec_validation",
-        "changed_module_tests",
-        "ac_coverage_gate",
-    ],
-    "medium": [
-        "format_lint",
-        "commit_message_lint",
-        "secret_scan",
-        "ticket_spec_validation",
-        "changed_module_tests",
-        "openapi_validation",
-        "integration_tests_touched",
-        "coverage_gate_touched",
-        "ac_coverage_gate",
-    ],
-    "high": [
-        "format_lint",
-        "commit_message_lint",
-        "secret_scan",
-        "ticket_spec_validation",
-        "changed_module_tests",
-        "openapi_validation",
-        "integration_tests_touched",
-        "coverage_gate_touched",
-        "full_test_suite",
-        "sast_dependency_scan",
-        "migration_safety",
-        "performance_smoke",
-        "ac_coverage_gate",
-    ],
-}
-
 TICKET_RE = re.compile(r"^[A-Z][A-Z0-9_]*-[0-9]+$")
 REQ_RE = re.compile(r"^(REQ|NFR)-[A-Z]+-[0-9]+$")
 HEAD_SHA_RE = re.compile(r"^[a-f0-9]{7,40}$")
 AC_ID_RE = re.compile(r"^AC-[A-Z0-9_-]+-[0-9]+$")
 TEST_ID_RE = re.compile(r"^TID-[A-Z0-9_-]+$")
+RISK_POLICY_PATH = Path("docs/quality/risk-checks.json")
 
 
 def err(errors: list[str], message: str) -> None:
@@ -95,7 +43,31 @@ def is_non_empty_string(value: object) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
-def validate(artifact: dict, errors: list[str]) -> None:
+def load_risk_policy(path: Path) -> tuple[set[str], dict[str, list[str]]]:
+    if not path.is_file():
+        raise FileNotFoundError(f"Risk policy not found: {path}")
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    check_ids = payload.get("check_ids")
+    required_by_risk = payload.get("required_by_risk")
+    if not isinstance(check_ids, list) or not all(isinstance(item, str) for item in check_ids):
+        raise ValueError("risk-checks.json must define string array 'check_ids'.")
+    if not isinstance(required_by_risk, dict):
+        raise ValueError("risk-checks.json must define object 'required_by_risk'.")
+    for risk in ("low", "medium", "high"):
+        values = required_by_risk.get(risk)
+        if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
+            raise ValueError(f"risk-checks.json missing or invalid required_by_risk.{risk}")
+
+    return set(check_ids), required_by_risk
+
+
+def validate(
+    artifact: dict,
+    errors: list[str],
+    allowed_check_ids: set[str],
+    required_by_risk: dict[str, list[str]],
+) -> None:
     unknown_top = set(artifact.keys()) - ALLOWED_TOP_LEVEL
     if unknown_top:
         err(errors, f"Unknown top-level fields: {sorted(unknown_top)}")
@@ -113,7 +85,7 @@ def validate(artifact: dict, errors: list[str]) -> None:
         err(errors, "ticket format is invalid.")
 
     risk = artifact.get("risk_level")
-    if risk not in REQUIRED_BY_RISK:
+    if risk not in required_by_risk:
         err(errors, "risk_level must be one of low|medium|high.")
         return
 
@@ -180,7 +152,7 @@ def validate(artifact: dict, errors: list[str]) -> None:
                 if not (isinstance(test_id, str) and TEST_ID_RE.match(test_id)):
                     err(errors, f"{prefix}.negative_test_ids contains invalid id: {test_id}")
 
-    expected_required = REQUIRED_BY_RISK[risk]
+    expected_required = required_by_risk[risk]
     required_ids = artifact.get("required_check_ids")
     if required_ids != expected_required:
         err(
@@ -235,7 +207,7 @@ def validate(artifact: dict, errors: list[str]) -> None:
             continue
 
         check_id = check["id"]
-        if check_id not in ALLOWED_CHECK_IDS:
+        if check_id not in allowed_check_ids:
             err(errors, f"{prefix}.id is not in allowed registry: {check_id}")
         if check_id in check_by_id:
             err(errors, f"Duplicate check id detected: {check_id}")
@@ -491,8 +463,14 @@ def main() -> int:
         print(f"Failed to parse schema JSON: {exc}", file=sys.stderr)
         return 1
 
+    try:
+        allowed_check_ids, required_by_risk = load_risk_policy(RISK_POLICY_PATH)
+    except Exception as exc:
+        print(f"Failed to load risk check policy: {exc}", file=sys.stderr)
+        return 1
+
     errors: list[str] = []
-    validate(artifact, errors)
+    validate(artifact, errors, allowed_check_ids, required_by_risk)
     if errors:
         print("Self-verify artifact validation errors:", file=sys.stderr)
         for item in errors:

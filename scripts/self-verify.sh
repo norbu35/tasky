@@ -10,6 +10,7 @@ Usage:
     --req <REQ-IDS-CSV> \
     [--ticket-spec <path>] \
     [--base <git-ref>] \
+    [--only <check-id>] \
     [--out <path>]
 
 Exit codes:
@@ -45,6 +46,7 @@ risk=""
 req_csv=""
 ticket_spec_path=""
 base_ref="HEAD"
+only_check=""
 out_path="artifacts/self-verify.json"
 
 while [[ $# -gt 0 ]]; do
@@ -67,6 +69,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --base)
       base_ref="${2:-}"
+      shift 2
+      ;;
+    --only)
+      only_check="${2:-}"
       shift 2
       ;;
     --out)
@@ -115,6 +121,12 @@ require_cmd rg
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "${repo_root}"
+
+risk_policy_path="docs/quality/risk-checks.json"
+if [[ ! -f "${risk_policy_path}" ]]; then
+  echo "Missing risk check policy: ${risk_policy_path}" >&2
+  exit 4
+fi
 
 if [[ ! -f "./gradlew" ]]; then
   echo "Missing Gradle wrapper at ./gradlew. Use the wrapper, not system Gradle." >&2
@@ -181,49 +193,39 @@ if [[ ${#files_changed[@]} -eq 0 ]]; then
   files_changed=("NO_FILE_CHANGE_DETECTED")
 fi
 
-required_checks=()
-case "${risk}" in
-  low)
-    required_checks=(
-      "format_lint"
-      "commit_message_lint"
-      "secret_scan"
-      "ticket_spec_validation"
-      "changed_module_tests"
-      "ac_coverage_gate"
-    )
-    ;;
-  medium)
-    required_checks=(
-      "format_lint"
-      "commit_message_lint"
-      "secret_scan"
-      "ticket_spec_validation"
-      "changed_module_tests"
-      "openapi_validation"
-      "integration_tests_touched"
-      "coverage_gate_touched"
-      "ac_coverage_gate"
-    )
-    ;;
-  high)
-    required_checks=(
-      "format_lint"
-      "commit_message_lint"
-      "secret_scan"
-      "ticket_spec_validation"
-      "changed_module_tests"
-      "openapi_validation"
-      "integration_tests_touched"
-      "coverage_gate_touched"
-      "full_test_suite"
-      "sast_dependency_scan"
-      "migration_safety"
-      "performance_smoke"
-      "ac_coverage_gate"
-    )
-    ;;
-esac
+mapfile -t required_checks < <(jq -r --arg risk "${risk}" '.required_by_risk[$risk][]?' "${risk_policy_path}")
+if [[ ${#required_checks[@]} -eq 0 ]]; then
+  echo "No required checks defined for risk '${risk}' in ${risk_policy_path}." >&2
+  exit 4
+fi
+
+declare -A fast_check_map=()
+while IFS= read -r fast_check_id; do
+  if [[ -n "${fast_check_id}" ]]; then
+    fast_check_map["${fast_check_id}"]=1
+  fi
+done < <(jq -r '.fast_checks[]?' "${risk_policy_path}")
+
+if [[ -n "${only_check}" ]]; then
+  filtered_checks=()
+  found=0
+  for rc in "${required_checks[@]}"; do
+    if [[ "${rc}" == "${only_check}" ]]; then
+      filtered_checks+=("${rc}")
+      found=1
+    fi
+  done
+  
+  if [[ ${found} -eq 0 ]]; then
+    # Allow running a specific check even if it wouldn't imply full success.
+    # This is useful for debugging specific checks that might not be in the 'required' set for the given risk
+    # (though arguably they should be, or the risk is wrong).
+    # But for flexibility, we allow it.
+    required_checks=("${only_check}")
+  else
+    required_checks=("${filtered_checks[@]}")
+  fi
+fi
 
 check_title() {
   case "$1" in
@@ -451,6 +453,7 @@ CMD
 
 mkdir -p "$(dirname "${out_path}")"
 mkdir -p artifacts/checks
+rm -f artifacts/checks/*.log artifacts/checks/ac-coverage.json artifacts/checks/ticket-spec.normalized.json
 printf '%s\n' "${files_changed[@]}" > artifacts/checks/changed-files.txt
 
 checks_json='[]'
@@ -536,14 +539,7 @@ run_check() {
 
 is_fast_check() {
   local check_id="$1"
-  case "${check_id}" in
-    format_lint|commit_message_lint|secret_scan|ticket_spec_validation|openapi_validation)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  [[ -n "${fast_check_map[${check_id}]:-}" ]]
 }
 
 record_blocked_check() {
@@ -599,22 +595,28 @@ for check_id in "${required_checks[@]}"; do
 done
 
 fast_failure_id=""
-for check_id in "${fast_checks[@]}"; do
-  if ! run_check "${check_id}"; then
-    if [[ -z "${fast_failure_id}" ]]; then
-      fast_failure_id="${check_id}"
+if [[ ${#fast_checks[@]} -gt 0 ]]; then
+  for check_id in "${fast_checks[@]}"; do
+    if ! run_check "${check_id}"; then
+      if [[ -z "${fast_failure_id}" ]]; then
+        fast_failure_id="${check_id}"
+      fi
     fi
-  fi
-done
+  done
+fi
 
 if [[ -n "${fast_failure_id}" ]]; then
-  for check_id in "${slow_checks[@]}"; do
-    record_blocked_check "${check_id}" "${fast_failure_id}"
-  done
+  if [[ ${#slow_checks[@]} -gt 0 ]]; then
+    for check_id in "${slow_checks[@]}"; do
+      record_blocked_check "${check_id}" "${fast_failure_id}"
+    done
+  fi
 else
-  for check_id in "${slow_checks[@]}"; do
-    run_check "${check_id}" || true
-  done
+  if [[ ${#slow_checks[@]} -gt 0 ]]; then
+    for check_id in "${slow_checks[@]}"; do
+      run_check "${check_id}" || true
+    done
+  fi
 fi
 
 req_ids_json="$(printf '%s\n' "${req_ids[@]}" | jq -R . | jq -s .)"
@@ -623,14 +625,16 @@ required_checks_json="$(printf '%s\n' "${required_checks[@]}" | jq -R . | jq -s 
 known_risks_json="$(jq -n '["Automated checks reduce but do not eliminate risk; human review remains mandatory."]')"
 assumptions_json="$(jq -n '["Checks executed in local development environment with available tooling."]')"
 proof_test="$(jq -r '([.[] | select(.status=="PASS") | .id][0] // "NO_PROOF_TEST_AVAILABLE")' <<< "${checks_json}")"
+ticket_spec_validation_status="$(jq -r '([.[] | select(.id=="ticket_spec_validation") | .status][0] // "MISSING")' <<< "${checks_json}")"
+ac_coverage_gate_status="$(jq -r '([.[] | select(.id=="ac_coverage_gate") | .status][0] // "MISSING")' <<< "${checks_json}")"
 acceptance_criteria_json='[]'
 ac_test_mapping_json='[]'
 ac_coverage_summary_json='{"total_ac":0,"mapped_ac":0,"fully_covered_ac":0,"total_test_ids":0,"covered_test_ids":0,"pass":false,"failures":["ac_coverage_gate artifact missing"]}'
-if [[ -f artifacts/checks/ac-coverage.json ]]; then
+if [[ "${ac_coverage_gate_status}" == "PASS" && -f artifacts/checks/ac-coverage.json ]]; then
   acceptance_criteria_json="$(jq '.acceptance_criteria' artifacts/checks/ac-coverage.json)"
   ac_test_mapping_json="$(jq '.ac_test_mapping' artifacts/checks/ac-coverage.json)"
   ac_coverage_summary_json="$(jq '.ac_coverage_summary' artifacts/checks/ac-coverage.json)"
-elif [[ -f artifacts/checks/ticket-spec.normalized.json ]]; then
+elif [[ "${ticket_spec_validation_status}" == "PASS" && -f artifacts/checks/ticket-spec.normalized.json ]]; then
   acceptance_criteria_json="$(jq '.acceptance_criteria' artifacts/checks/ticket-spec.normalized.json)"
   ac_test_mapping_json="$(jq '[.acceptance_criteria[] | {ac_id: .id, test_ids: .test_ids, covered_test_ids: [], uncovered_test_ids: .test_ids, status: "FAIL"}]' artifacts/checks/ticket-spec.normalized.json)"
   ac_coverage_summary_json="$(jq -n \
@@ -717,6 +721,15 @@ artifact_json="$(jq -n \
   }')"
 
 echo "${artifact_json}" > "${out_path}"
+
+if [[ -n "${only_check}" ]]; then
+  echo "Partial verification (--only ${only_check}) complete."
+  echo "Skipping strict schema validation and work log append."
+  if [[ "${overall_status}" == "FAIL" ]]; then
+    exit 1
+  fi
+  exit 0
+fi
 
 if ! python3 scripts/validate-self-verify.py "${out_path}" "docs/quality/self-verify.schema.json"; then
   echo "Self-verify artifact validation failed." >&2

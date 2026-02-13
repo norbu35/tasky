@@ -28,8 +28,8 @@ class ObservabilityIntegrationTests {
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
-    @DisplayName("TID-TASK-003-BE-CORRELATION-ID correlation id is logged and prometheus exposes request latency metrics")
-    void correlationIdLoggedAndMetricsExposed(CapturedOutput output) {
+    @DisplayName("TID-TASK-003-BE-CORRELATION-ID correlation id is logged and propagated")
+    void correlationIdLoggedAndPropagated(CapturedOutput output) {
         String correlationId = "task-003-correlation-id";
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Correlation-Id", correlationId);
@@ -44,13 +44,21 @@ class ObservabilityIntegrationTests {
         assertThat(versionResponse.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(versionResponse.getHeaders().getFirst("X-Correlation-Id")).isEqualTo(correlationId);
         assertThat(versionResponse.getHeaders().getFirst("X-Trace-Id")).isNotBlank();
+        assertThat(output).contains("correlation_id=" + correlationId);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-003-BE-PROMETHEUS-METRICS prometheus endpoint exposes request latency metrics")
+    void prometheusEndpointExposesHttpLatencyMetrics() {
+        ResponseEntity<String> versionResponse =
+            restTemplate.getForEntity("http://localhost:" + port + "/api/v1/system/version", String.class);
+        assertThat(versionResponse.getStatusCode().is2xxSuccessful()).isTrue();
 
         ResponseEntity<String> metricsResponse =
             restTemplate.getForEntity("http://localhost:" + port + "/actuator/prometheus", String.class);
 
         assertThat(metricsResponse.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(metricsResponse.getBody()).contains("http_server_requests_seconds");
-        assertThat(output).contains("correlation_id=" + correlationId);
     }
 
     @Test

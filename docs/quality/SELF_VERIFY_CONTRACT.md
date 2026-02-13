@@ -4,14 +4,18 @@
 Define one deterministic interface for pre-commit and pre-push self-verification.  
 All agents MUST use this contract to generate `artifacts/self-verify.json`.
 
+Operational wrapper:
+`scripts/agent-flow.sh verify --ticket <TICKET-ID>` resolves `risk` and `req` from ticket spec and calls this CLI.
+
 ## Canonical Paths
 1. Script: `scripts/self-verify.sh`
 2. Artifact output: `artifacts/self-verify.json` (default)
 3. JSON schema: `docs/quality/self-verify.schema.json`
-4. CI parity reference artifact: `artifacts/self-verify.json` committed in the PR branch
-5. Validator script: `scripts/validate-self-verify.py`
-6. Agent work log: `docs/agent/WORK_LOG.md`
-7. Agent work logger: `scripts/agent-log.sh`
+4. Risk-check registry: `docs/quality/risk-checks.json`
+5. CI parity reference artifact: `artifacts/self-verify.json` committed in the PR branch
+6. Validator script: `scripts/validate-self-verify.py`
+7. Agent work log: `docs/agent/WORK_LOG.md`
+8. Agent work logger: `scripts/agent-log.sh`
 
 ## CLI Contract
 ```bash
@@ -97,10 +101,11 @@ scripts/self-verify.sh \
    3. `integration_tests_touched` MUST run web/mobile E2E smoke tests for touched frontend modules.
    4. `full_test_suite` MUST run full frontend unit + E2E suites when frontend-impacting files are touched.
 12. Ticket and AC coverage integration:
-   1. `ticket_spec_validation` MUST validate `tickets/<TICKET-ID>.json` structure, branch naming (`agent/<ticket>-<slug>`), and REQ/risk alignment.
+   1. `ticket_spec_validation` MUST validate `tickets/<TICKET-ID>.json` structure, branch naming (`agent/<ticket>-<slug>`), REQ/risk alignment, and `depends_on` alignment with `docs/BACKLOG_MVP.md`.
    2. `ac_coverage_gate` MUST fail if any acceptance criterion lacks test evidence in executed logs.
    3. The artifact MUST include `ticket_spec_path`, `acceptance_criteria`, `ac_test_mapping`, and `ac_coverage_summary`.
    4. Test commands MUST emit test titles to stdout (for example `vitest --reporter verbose`) so `TID-*` evidence is discoverable in logs.
+   5. The run MUST clear stale AC/ticket-normalized artifacts before checks so only current-run evidence can shape `ac_coverage_summary`.
 
 ## Deterministic Performance Rules
 1. Run fast checks first: `format_lint`, `commit_message_lint`, `secret_scan`, `ticket_spec_validation`, `openapi_validation`.

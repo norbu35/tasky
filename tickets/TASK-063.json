@@ -5,13 +5,16 @@
   "req_ids": [
     "NFR-PERF-01"
   ],
+  "depends_on": [
+    "TASK-022"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-063-01",
       "type": "performance",
       "statement": "Feed query plan uses appropriate indexes (including geospatial).",
       "test_ids": [
-        "TID-TASK-063-PERF-TASK-FEED-P95"
+        "TID-TASK-063-PERF-INDEX-PLAN"
       ]
     },
     {
@@ -19,7 +22,7 @@
       "type": "performance",
       "statement": "p95 latency for `GET /tasks` remains under target in perf smoke profile.",
       "test_ids": [
-        "TID-TASK-063-PERF-INDEX-PLAN"
+        "TID-TASK-063-PERF-TASK-FEED-P95"
       ]
     },
     {
@@ -27,7 +30,7 @@
       "type": "performance",
       "statement": "Regression budget enforced in CI performance smoke.",
       "test_ids": [
-        "TID-TASK-063-PERF-TASK-FEED-P95"
+        "TID-TASK-063-PERF-CI-REGRESSION-BUDGET"
       ]
     }
   ]

@@ -6,22 +6,33 @@
     "REQ-AUTH-04",
     "REQ-SAFE-01"
   ],
+  "depends_on": [
+    "TASK-010",
+    "TASK-011"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-012-01",
       "type": "functional",
       "statement": "User can activate tasker role while verification is pending.",
       "test_ids": [
-        "TID-TASK-012-API-TASKER-ACTIVATE",
-        "TID-TASK-012-API-VERIFICATION-STATUS"
+        "TID-TASK-012-API-TASKER-ACTIVATE"
       ]
     },
     {
       "id": "AC-TASK-012-02",
       "type": "functional",
-      "statement": "Verification upload/submit/status flow persists and returns correct state.",
+      "statement": "Verification upload and submit flow persists verification request.",
       "test_ids": [
         "TID-TASK-012-API-VERIFICATION-SUBMIT"
+      ]
+    },
+    {
+      "id": "AC-TASK-012-03",
+      "type": "functional",
+      "statement": "Verification status endpoint returns correct current verification state.",
+      "test_ids": [
+        "TID-TASK-012-API-VERIFICATION-STATUS"
       ]
     }
   ]

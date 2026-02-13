@@ -6,6 +6,9 @@
     "REQ-BOOK-03",
     "REQ-BOOK-05"
   ],
+  "depends_on": [
+    "TASK-023"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-030-01",

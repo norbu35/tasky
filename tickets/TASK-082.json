@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-082",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-AUTH-01",
+    "REQ-AUTH-02",
+    "REQ-AUTH-03",
+    "REQ-BOOK-01",
+    "REQ-BOOK-02",
+    "REQ-TASK-01",
+    "REQ-TASK-03"
+  ],
+  "depends_on": [
+    "TASK-010",
+    "TASK-011",
+    "TASK-021",
+    "TASK-022",
+    "TASK-023",
+    "TASK-061",
+    "TASK-071"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-082-01",
+      "type": "functional",
+      "statement": "Mobile supports OTP login/signup and profile setup/update with avatar upload.",
+      "test_ids": [
+        "TID-TASK-082-MOBILE-AUTH-OTP-FLOW"
+      ]
+    },
+    {
+      "id": "AC-TASK-082-02",
+      "type": "functional",
+      "statement": "Customer can create task and tasker can discover/filter/apply to eligible open tasks.",
+      "test_ids": [
+        "TID-TASK-082-MOBILE-TASK-APPLICATION-FLOW"
+      ]
+    },
+    {
+      "id": "AC-TASK-082-03",
+      "type": "security",
+      "statement": "Mobile route/access handling enforces auth state, role gating, and banned-user behavior.",
+      "test_ids": [
+        "TID-TASK-082-MOBILE-AUTHZ-GUARDS"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-082-MOBILE-AUTHZ-GUARDS"
+      ]
+    }
+  ]
+}

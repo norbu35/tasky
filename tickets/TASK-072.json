@@ -5,6 +5,10 @@
   "req_ids": [
     "NFR-UI-02"
   ],
+  "depends_on": [
+    "TASK-070",
+    "TASK-071"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-072-01",

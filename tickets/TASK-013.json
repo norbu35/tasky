@@ -6,22 +6,32 @@
     "REQ-AUTH-04",
     "REQ-SAFE-01"
   ],
+  "depends_on": [
+    "TASK-012"
+  ],
   "acceptance_criteria": [
     {
       "id": "AC-TASK-013-01",
       "type": "functional",
       "statement": "Admin can list pending verifications.",
       "test_ids": [
-        "TID-TASK-013-API-ADMIN-VERIFICATION-LIST",
-        "TID-TASK-013-API-ADMIN-VERIFICATION-REJECT"
+        "TID-TASK-013-API-ADMIN-VERIFICATION-LIST"
       ]
     },
     {
       "id": "AC-TASK-013-02",
       "type": "functional",
-      "statement": "Admin approve/reject transitions user verification status correctly.",
+      "statement": "Admin approve transitions user verification status to approved.",
       "test_ids": [
         "TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE"
+      ]
+    },
+    {
+      "id": "AC-TASK-013-03",
+      "type": "functional",
+      "statement": "Admin reject transitions user verification status to rejected.",
+      "test_ids": [
+        "TID-TASK-013-API-ADMIN-VERIFICATION-REJECT"
       ]
     }
   ]
