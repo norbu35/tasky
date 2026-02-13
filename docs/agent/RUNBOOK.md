@@ -33,8 +33,9 @@ scripts/agent-flow.sh complete --ticket TASK-020
 4. `start` creates/switches `agent/<TICKET-ID>-<slug>` before claim when claiming new work.
 5. `start` defaults to `--workspace isolated` and creates/uses a git worktree at `.worktrees/<agent>/<TICKET-ID>` to allow concurrent local agents without branch collisions.
 6. Claiming remains atomic through `tickets/STATUS.json` commit + push.
-7. `verify` resolves `risk_level` and `req_ids` from `tickets/<TICKET-ID>.json` unless overridden.
-8. `complete` validates the self-verify artifact and enforces branch ownership consistency.
+7. `status`/`start`/`claim-ticket`/`complete-ticket` treat in-progress claims found on `agent/*` branches as authoritative, preventing duplicate starts when local `main` is stale.
+8. `verify` resolves `risk_level` and `req_ids` from `tickets/<TICKET-ID>.json` unless overridden.
+9. `complete` validates the self-verify artifact and enforces branch ownership consistency.
 
 ## Parallel Agent Workspace Model
 1. One agent process maps to one isolated worktree.

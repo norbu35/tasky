@@ -7,7 +7,8 @@ set -euo pipefail
 # Usage:
 #   scripts/ticket-status.sh [--format table|json] [--filter pending|in_progress|done|available]
 #
-# "available" means: status=pending AND all depends_on are done.
+# "available" means: effective status=pending AND all depends_on are done.
+# Effective status overlays in-progress claims discovered on agent branches.
 #
 # This is the FIRST command a new agent should run to understand what to do.
 ##############################################################################
@@ -63,6 +64,7 @@ fi
 python3 - "${STATUS_FILE}" "${TICKETS_DIR}" "${format}" "${filter}" <<'PYTHON'
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -74,6 +76,75 @@ output_filter = sys.argv[4]
 status_data = json.loads(status_path.read_text())
 tickets = status_data.get("tickets", {})
 updated_at = status_data.get("updated_at", "unknown")
+
+ISO_TS_RE = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z")
+
+def normalize_ts(value):
+    if isinstance(value, str) and ISO_TS_RE.fullmatch(value):
+        return value
+    return ""
+
+def normalized_agent(value):
+    return str(value or "").strip().lower()
+
+def discover_branch_claims():
+    claims = []
+    try:
+        refs_result = subprocess.run(
+            [
+                "git",
+                "for-each-ref",
+                "--format=%(refname:short)",
+                "refs/heads/agent",
+                "refs/remotes/origin/agent",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        return claims
+
+    refs = []
+    for ref in refs_result.stdout.splitlines():
+        ref = ref.strip()
+        if not ref:
+            continue
+        if ref.startswith("origin/HEAD"):
+            continue
+        refs.append(ref)
+
+    for ref in refs:
+        show = subprocess.run(
+            ["git", "show", f"{ref}:tickets/STATUS.json"],
+            capture_output=True,
+            text=True,
+        )
+        if show.returncode != 0:
+            continue
+        try:
+            ref_status = json.loads(show.stdout)
+        except json.JSONDecodeError:
+            continue
+        ref_tickets = ref_status.get("tickets", {})
+        for tid, info in ref_tickets.items():
+            if not isinstance(info, dict):
+                continue
+            if info.get("status") != "in_progress":
+                continue
+            branch = str(info.get("branch", "") or "")
+            if not branch.startswith("agent/"):
+                continue
+            claims.append(
+                {
+                    "ticket": tid,
+                    "agent": str(info.get("agent", "?") or "?"),
+                    "branch": branch,
+                    "claimed_at": str(info.get("claimed_at", "") or ""),
+                    "source_ref": ref,
+                }
+            )
+    return claims
 
 # Build dependency map
 deps_map = {}
@@ -88,11 +159,107 @@ for ticket_id in tickets:
         deps_map[ticket_id] = []
         risk_map[ticket_id] = "?"
 
-done_tickets = {tid for tid, info in tickets.items()
-                if isinstance(info, dict) and info.get("status") == "done"}
+effective_tickets = {
+    tid: (dict(info) if isinstance(info, dict) else {"status": "unknown"})
+    for tid, info in tickets.items()
+}
+conflicts = []
+
+for claim in discover_branch_claims():
+    tid = claim["ticket"]
+    if tid not in effective_tickets:
+        continue
+    current = effective_tickets.get(tid, {})
+    if not isinstance(current, dict):
+        current = {"status": "unknown"}
+
+    current_status = current.get("status")
+    if current_status == "done":
+        continue
+
+    current_agent = str(current.get("agent", "") or "")
+    current_branch = str(current.get("branch", "") or "")
+    current_claimed_at = normalize_ts(current.get("claimed_at", ""))
+    claim_claimed_at = normalize_ts(claim.get("claimed_at", ""))
+
+    if current_status != "in_progress":
+        merged = dict(current)
+        merged.update(
+            {
+                "status": "in_progress",
+                "agent": claim["agent"],
+                "branch": claim["branch"],
+                "claimed_at": claim.get("claimed_at", ""),
+                "source_ref": claim.get("source_ref", ""),
+            }
+        )
+        effective_tickets[tid] = merged
+        continue
+
+    same_owner = (
+        normalized_agent(current_agent) == normalized_agent(claim["agent"])
+        and current_branch == claim["branch"]
+    )
+    if same_owner:
+        if claim_claimed_at and claim_claimed_at > current_claimed_at:
+            merged = dict(current)
+            merged.update(
+                {
+                    "agent": claim["agent"],
+                    "branch": claim["branch"],
+                    "claimed_at": claim.get("claimed_at", ""),
+                    "source_ref": claim.get("source_ref", ""),
+                }
+            )
+            effective_tickets[tid] = merged
+        continue
+
+    # Conflicting in-progress claims across branches: prefer the most recent claim.
+    take_claim = False
+    if claim_claimed_at and current_claimed_at:
+        take_claim = claim_claimed_at >= current_claimed_at
+    elif claim_claimed_at and not current_claimed_at:
+        take_claim = True
+
+    if take_claim:
+        merged = dict(current)
+        merged.update(
+            {
+                "agent": claim["agent"],
+                "branch": claim["branch"],
+                "claimed_at": claim.get("claimed_at", ""),
+                "source_ref": claim.get("source_ref", ""),
+            }
+        )
+        effective_tickets[tid] = merged
+        chosen_agent = claim["agent"]
+        chosen_branch = claim["branch"]
+        other_agent = current_agent
+        other_branch = current_branch
+    else:
+        chosen_agent = current_agent
+        chosen_branch = current_branch
+        other_agent = claim["agent"]
+        other_branch = claim["branch"]
+
+    conflicts.append(
+        {
+            "ticket": tid,
+            "chosen_agent": chosen_agent,
+            "chosen_branch": chosen_branch,
+            "other_agent": other_agent,
+            "other_branch": other_branch,
+        }
+    )
+
+done_tickets = {
+    tid
+    for tid, info in effective_tickets.items()
+    if isinstance(info, dict) and info.get("status") == "done"
+}
 
 def is_available(tid):
-    info = tickets.get(tid, {})
+    info = effective_tickets.get(tid, {})
     if not isinstance(info, dict) or info.get("status") != "pending":
         return False
     return all(d in done_tickets for d in deps_map.get(tid, []))
@@ -107,12 +274,20 @@ def sort_key(tid):
 all_sorted = sorted(tickets.keys(), key=sort_key)
 
 # Categorize
-done_list = [t for t in all_sorted if isinstance(tickets[t], dict) and tickets[t].get("status") == "done"]
-in_progress_list = [t for t in all_sorted if isinstance(tickets[t], dict) and tickets[t].get("status") == "in_progress"]
+done_list = [
+    t
+    for t in all_sorted
+    if isinstance(effective_tickets[t], dict) and effective_tickets[t].get("status") == "done"
+]
+in_progress_list = [
+    t
+    for t in all_sorted
+    if isinstance(effective_tickets[t], dict) and effective_tickets[t].get("status") == "in_progress"
+]
 available_list = [t for t in all_sorted if is_available(t)]
 pending_blocked_list = [t for t in all_sorted
-                        if isinstance(tickets[t], dict)
-                        and tickets[t].get("status") == "pending"
+                        if isinstance(effective_tickets[t], dict)
+                        and effective_tickets[t].get("status") == "pending"
                         and not is_available(t)]
 
 if output_format == "json":
@@ -128,9 +303,10 @@ if output_format == "json":
         "done": done_list,
         "in_progress": [{
             "ticket": t,
-            "agent": tickets[t].get("agent", "?"),
-            "branch": tickets[t].get("branch", "?"),
-            "claimed_at": tickets[t].get("claimed_at", "?"),
+            "agent": effective_tickets[t].get("agent", "?"),
+            "branch": effective_tickets[t].get("branch", "?"),
+            "claimed_at": effective_tickets[t].get("claimed_at", "?"),
+            "source": effective_tickets[t].get("source_ref", "status_file"),
         } for t in in_progress_list],
         "available": [{
             "ticket": t,
@@ -141,6 +317,7 @@ if output_format == "json":
             "ticket": t,
             "blocked_by": blocked_by(t),
         } for t in pending_blocked_list],
+        "branch_claim_conflicts": conflicts,
     }
 
     if output_filter == "done":
@@ -177,7 +354,7 @@ if output_filter in ("all", "in_progress"):
         print(f"  {'Ticket':<12} {'Agent':<16} {'Branch':<45} {'Since'}")
         print(f"  {'-'*11}  {'-'*15}  {'-'*44}  {'-'*20}")
         for t in in_progress_list:
-            info = tickets[t]
+            info = effective_tickets[t]
             print(f"  {t:<12} {info.get('agent','?'):<16} {info.get('branch','?'):<45} {info.get('claimed_at','?')}")
 
 if output_filter in ("all", "available"):
@@ -208,6 +385,14 @@ if output_filter in ("all", "done"):
         for i in range(0, len(done_list), done_per_line):
             chunk = done_list[i:i+done_per_line]
             print(f"  {', '.join(chunk)}")
+
+if output_filter == "all" and conflicts:
+    print("\nWARNING: conflicting in-progress claims detected:")
+    for c in conflicts:
+        print(
+            f"  {c['ticket']}: chose {c['chosen_agent']} ({c['chosen_branch']}),"
+            f" ignored {c['other_agent']} ({c['other_branch']})"
+        )
 
 print()
 

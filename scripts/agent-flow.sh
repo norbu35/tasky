@@ -142,6 +142,8 @@ case "${command}" in
 
     resume_mode=false
     claimed_branch=""
+    normalized_agent_name="$(echo "${agent_name}" | tr '[:upper:]' '[:lower:]')"
+    effective_in_progress_json="$(scripts/ticket-status.sh --format json --filter in_progress)"
 
     if [[ -z "${ticket_id}" ]]; then
       owned_in_progress=()
@@ -150,9 +152,8 @@ case "${command}" in
           owned_in_progress+=("${owned_ticket}")
         fi
       done < <(
-        jq -r --arg agent "${agent_name}" \
-          '.tickets | to_entries[] | select(.value.status == "in_progress" and .value.agent == $agent) | .key' \
-          "${status_file}"
+        printf '%s\n' "${effective_in_progress_json}" | jq -r --arg agent "${normalized_agent_name}" \
+          '.[] | select((.agent // "" | ascii_downcase) == $agent) | .ticket'
       )
 
       if [[ ${#owned_in_progress[@]} -eq 1 ]]; then
@@ -175,9 +176,17 @@ case "${command}" in
     ticket_status="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].status // "missing"' "${status_file}")"
     ticket_agent="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].agent // ""' "${status_file}")"
     ticket_branch="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].branch // ""' "${status_file}")"
+    effective_claim="$(printf '%s\n' "${effective_in_progress_json}" | jq -c --arg tid "${ticket_id}" '.[] | select(.ticket == $tid)' | head -n 1 || true)"
+
+    if [[ -n "${effective_claim}" ]]; then
+      ticket_status="in_progress"
+      ticket_agent="$(echo "${effective_claim}" | jq -r '.agent // ""')"
+      ticket_branch="$(echo "${effective_claim}" | jq -r '.branch // ""')"
+    fi
 
     if [[ "${ticket_status}" == "in_progress" ]]; then
-      if [[ "${ticket_agent}" == "${agent_name}" ]]; then
+      normalized_ticket_agent="$(echo "${ticket_agent}" | tr '[:upper:]' '[:lower:]')"
+      if [[ "${normalized_ticket_agent}" == "${normalized_agent_name}" ]]; then
         resume_mode=true
       else
         echo "Ticket ${ticket_id} is already in progress by '${ticket_agent}' on branch '${ticket_branch}'." >&2
@@ -271,6 +280,12 @@ case "${command}" in
       if [[ -d "${worktree_path}" ]]; then
         echo "Target worktree path already exists and is not registered as a git worktree: ${worktree_path}" >&2
         exit 1
+      fi
+
+      if [[ "${resume_mode}" == true ]] && ! git show-ref --verify --quiet "refs/heads/${target_branch}"; then
+        if git show-ref --verify --quiet "refs/remotes/origin/${target_branch}"; then
+          git branch --track "${target_branch}" "origin/${target_branch}" >/dev/null
+        fi
       fi
 
       if git show-ref --verify --quiet "refs/heads/${target_branch}"; then
