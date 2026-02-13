@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-02-13T16:57:20Z",
+  "updated_at": "2026-02-13T18:25:59Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -120,7 +120,10 @@
       "completed_at": "2026-02-13T16:57:20Z"
     },
     "TASK-034": {
-      "status": "pending"
+      "status": "in_progress",
+      "agent": "Gemini",
+      "branch": "agent/TASK-034-payout-management",
+      "claimed_at": "2026-02-13T18:25:59Z"
     },
     "TASK-040": {
       "status": "pending"
