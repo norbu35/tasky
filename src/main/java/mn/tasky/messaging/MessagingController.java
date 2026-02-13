@@ -6,6 +6,8 @@ import java.util.Map;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,14 @@ public class MessagingController {
 
     public MessagingController(MessagingService messagingService) {
         this.messagingService = messagingService;
+    }
+
+    @MessageMapping("/conversations/{id}/messages")
+    public void sendMessageRealtime(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @DestinationVariable String id,
+            MessageRequest body) {
+        messagingService.sendMessage(principal.userId(), id, body.content());
     }
 
     @GetMapping

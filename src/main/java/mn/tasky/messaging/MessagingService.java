@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MessagingService {
 
+    private final SimpMessagingTemplate messagingTemplate;
     private final ConcurrentHashMap<String, Conversation> conversationsById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, List<Message>> messagesByConversationId = new ConcurrentHashMap<>();
+
+    public MessagingService(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     public String startConversation(String taskId, String taskerId, String customerId) {
         // Check if exists
@@ -64,6 +70,10 @@ public class MessagingService {
         );
 
         messagesByConversationId.computeIfAbsent(conversationId, k -> new ArrayList<>()).add(message);
+        
+        // Deliver in real-time
+        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
+        
         return Optional.of(message);
     }
 

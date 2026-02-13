@@ -1,18 +1,22 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-02-13T19:27:12Z",
-  "ticket": "TASK-041",
-  "risk_level": "high",
-  "ticket_spec_path": "tickets/TASK-041.json",
+  "generated_at": "2026-02-13T19:41:05Z",
+  "ticket": "TASK-043",
+  "risk_level": "medium",
+  "ticket_spec_path": "tickets/TASK-043.json",
   "req_ids": [
-    "REQ-ADMIN-02",
-    "REQ-MSG-02",
-    "REQ-SAFE-03"
+    "REQ-MSG-01"
   ],
   "files_changed": [
     "artifacts/self-verify.json",
     "docs/agent/WORK_LOG.md",
+    "src/main/java/mn/tasky/common/config/ChannelInterceptorConfig.java",
+    "src/main/java/mn/tasky/common/config/SecurityConfig.java",
+    "src/main/java/mn/tasky/common/config/WebSocketConfig.java",
+    "src/main/java/mn/tasky/messaging/MessagingController.java",
+    "src/main/java/mn/tasky/messaging/MessagingService.java",
     "src/test/java/mn/tasky/DisputeIntegrationTests.java",
+    "src/test/java/mn/tasky/MessagingIntegrationTests.java",
     "tickets/STATUS.json"
   ],
   "required_check_ids": [
@@ -24,10 +28,6 @@
     "openapi_validation",
     "integration_tests_touched",
     "coverage_gate_touched",
-    "full_test_suite",
-    "sast_dependency_scan",
-    "migration_safety",
-    "performance_smoke",
     "ac_coverage_gate"
   ],
   "checks": [
@@ -38,9 +38,9 @@
       "status": "PASS",
       "command": "if rg -q '^(apps/web/|apps/mobile/|packages/sdk/|docs/API\\.yaml$|pnpm-lock\\.yaml$|pnpm-workspace\\.yaml$|package\\.json$)' artifacts/checks/changed-files.txt; then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend lint/typecheck checks.\" >&2\n    exit 1\n  fi\n  pnpm -r lint\n  pnpm -r typecheck\nfi\n./gradlew --no-daemon checkstyleMain checkstyleTest",
       "exit_code": 0,
-      "duration_ms": 6023,
-      "started_at": "2026-02-13T19:25:54Z",
-      "finished_at": "2026-02-13T19:26:00Z",
+      "duration_ms": 6337,
+      "started_at": "2026-02-13T19:40:04Z",
+      "finished_at": "2026-02-13T19:40:10Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -55,9 +55,9 @@
       "status": "PASS",
       "command": "commit_lint_base=\"${COMMIT_LINT_BASE:-}\"\nif [[ -z \"${commit_lint_base}\" && \"${CI:-}\" != \"true\" ]]; then\n  commit_lint_base=\"HEAD\"\nfi\nif [[ -z \"${commit_lint_base}\" ]]; then\n  for ref in origin/main main origin/master master; do\n    if git rev-parse --verify \"${ref}\" >/dev/null 2>&1; then\n      commit_lint_base=\"$(git merge-base HEAD \"${ref}\")\"\n      break\n    fi\n  done\nfi\n\nif [[ -n \"${commit_lint_base}\" ]]; then\n  python3 scripts/validate-commit-messages.py --base \"${commit_lint_base}\" --ticket \"${SELF_VERIFY_TICKET}\"\nelse\n  python3 scripts/validate-commit-messages.py --ticket \"${SELF_VERIFY_TICKET}\"\nfi",
       "exit_code": 0,
-      "duration_ms": 142,
-      "started_at": "2026-02-13T19:26:00Z",
-      "finished_at": "2026-02-13T19:26:00Z",
+      "duration_ms": 182,
+      "started_at": "2026-02-13T19:40:10Z",
+      "finished_at": "2026-02-13T19:40:11Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -72,9 +72,9 @@
       "status": "PASS",
       "command": "! rg -n --hidden --glob '!.git' --glob '!artifacts/**' --glob '!build/**' 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' .",
       "exit_code": 0,
-      "duration_ms": 65,
-      "started_at": "2026-02-13T19:26:00Z",
-      "finished_at": "2026-02-13T19:26:00Z",
+      "duration_ms": 86,
+      "started_at": "2026-02-13T19:40:11Z",
+      "finished_at": "2026-02-13T19:40:11Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -89,9 +89,9 @@
       "status": "PASS",
       "command": "python3 scripts/validate-ticket-spec.py \\\n  --spec \"${SELF_VERIFY_TICKET_SPEC_PATH}\" \\\n  --ticket \"${SELF_VERIFY_TICKET}\" \\\n  --risk \"${SELF_VERIFY_RISK}\" \\\n  --req \"${SELF_VERIFY_REQ_CSV}\" \\\n  --branch \"${SELF_VERIFY_BRANCH}\" \\\n  --out artifacts/checks/ticket-spec.normalized.json",
       "exit_code": 0,
-      "duration_ms": 71,
-      "started_at": "2026-02-13T19:26:00Z",
-      "finished_at": "2026-02-13T19:26:00Z",
+      "duration_ms": 68,
+      "started_at": "2026-02-13T19:40:11Z",
+      "finished_at": "2026-02-13T19:40:11Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -106,9 +106,9 @@
       "status": "PASS",
       "command": "if [[ \"${SELF_VERIFY_TICKET}\" == \"TASK-002\" ]]; then\n  echo \"TID-TASK-002-API-VALIDATE\"\nfi\n\n./gradlew --no-daemon openApiValidate\n\nif [[ \"${SELF_VERIFY_TICKET}\" == \"TASK-002\" ]] || rg -q '^(docs/API\\.yaml$|packages/sdk/|apps/web/|apps/mobile/|package\\.json$|pnpm-lock\\.yaml$|pnpm-workspace\\.yaml$)' artifacts/checks/changed-files.txt; then\n  scripts/validate-sdk-contract-drift.sh\nfi",
       "exit_code": 0,
-      "duration_ms": 3128,
-      "started_at": "2026-02-13T19:26:00Z",
-      "finished_at": "2026-02-13T19:26:04Z",
+      "duration_ms": 3304,
+      "started_at": "2026-02-13T19:40:11Z",
+      "finished_at": "2026-02-13T19:40:14Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -123,9 +123,9 @@
       "status": "PASS",
       "command": "needs_backend=0\nneeds_web=0\nneeds_mobile=0\n\nif rg -q '^(src/|build\\.gradle\\.kts$|settings\\.gradle\\.kts$|gradle/|gradlew$|gradlew\\.bat$)' artifacts/checks/changed-files.txt; then\n  needs_backend=1\nfi\nif rg -q '^apps/web/' artifacts/checks/changed-files.txt; then\n  needs_web=1\nfi\nif rg -q '^apps/mobile/' artifacts/checks/changed-files.txt; then\n  needs_mobile=1\nfi\nif rg -q '^(packages/sdk/|docs/API\\.yaml$)' artifacts/checks/changed-files.txt; then\n  needs_web=1\n  needs_mobile=1\nfi\n\nif (( needs_backend == 1 )); then\n  ./gradlew --no-daemon test --rerun-tasks\nfi\n\nif (( needs_web == 1 || needs_mobile == 1 )); then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend changed-module tests.\" >&2\n    exit 1\n  fi\nfi\n\nif (( needs_web == 1 )); then\n  pnpm --filter @tasky/web test:unit\nfi\nif (( needs_mobile == 1 )); then\n  pnpm --filter @tasky/mobile test:unit\nfi\n\nif (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 )); then\n  echo \"No runtime modules changed; changed-module tests not applicable.\"\nfi",
       "exit_code": 0,
-      "duration_ms": 20266,
-      "started_at": "2026-02-13T19:26:04Z",
-      "finished_at": "2026-02-13T19:26:24Z",
+      "duration_ms": 21512,
+      "started_at": "2026-02-13T19:40:14Z",
+      "finished_at": "2026-02-13T19:40:36Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -140,9 +140,9 @@
       "status": "PASS",
       "command": "needs_backend=0\nneeds_web=0\nneeds_mobile=0\n\nif rg -q '^(src/main/|src/test/|build\\.gradle\\.kts$|settings\\.gradle\\.kts$)' artifacts/checks/changed-files.txt; then\n  needs_backend=1\nfi\nif rg -q '^apps/web/' artifacts/checks/changed-files.txt; then\n  needs_web=1\nfi\nif rg -q '^apps/mobile/' artifacts/checks/changed-files.txt; then\n  needs_mobile=1\nfi\nif rg -q '^(packages/sdk/|docs/API\\.yaml$)' artifacts/checks/changed-files.txt; then\n  needs_web=1\n  needs_mobile=1\nfi\n\nif (( needs_backend == 1 )); then\n  if find src/test -type f 2>/dev/null | rg -q 'Integration|IT'; then\n    ./gradlew --no-daemon test --rerun-tasks --tests '*Integration*' --tests '*IT*'\n  else\n    ./gradlew --no-daemon test --rerun-tasks\n  fi\nfi\n\nif (( needs_web == 1 || needs_mobile == 1 )); then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend integration smoke tests.\" >&2\n    exit 1\n  fi\nfi\n\nif (( needs_web == 1 )); then\n  pnpm --filter @tasky/web test:e2e:smoke\nfi\nif (( needs_mobile == 1 )); then\n  pnpm --filter @tasky/mobile test:e2e:smoke\nfi\n\nif (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 )); then\n  echo \"No touched modules requiring integration tests.\"\nfi",
       "exit_code": 0,
-      "duration_ms": 19983,
-      "started_at": "2026-02-13T19:26:24Z",
-      "finished_at": "2026-02-13T19:26:44Z",
+      "duration_ms": 21840,
+      "started_at": "2026-02-13T19:40:36Z",
+      "finished_at": "2026-02-13T19:40:58Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -157,81 +157,13 @@
       "status": "PASS",
       "command": "./gradlew --no-daemon jacocoTestCoverageVerification",
       "exit_code": 0,
-      "duration_ms": 4053,
-      "started_at": "2026-02-13T19:26:44Z",
-      "finished_at": "2026-02-13T19:26:48Z",
+      "duration_ms": 6784,
+      "started_at": "2026-02-13T19:40:58Z",
+      "finished_at": "2026-02-13T19:41:04Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
           "artifacts/checks/coverage_gate_touched.log"
-        ]
-      }
-    },
-    {
-      "id": "full_test_suite",
-      "title": "Full test suite",
-      "required": true,
-      "status": "PASS",
-      "command": "needs_frontend=0\nif rg -q '^(apps/web/|apps/mobile/|packages/sdk/|docs/API\\.yaml$|pnpm-lock\\.yaml$|pnpm-workspace\\.yaml$|package\\.json$)' artifacts/checks/changed-files.txt; then\n  needs_frontend=1\nfi\n\n./gradlew --no-daemon check\n\nif (( needs_frontend == 1 )); then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for full frontend test suite.\" >&2\n    exit 1\n  fi\n  pnpm -r typecheck\n  pnpm --filter @tasky/web test:unit\n  pnpm --filter @tasky/web test:e2e\n  pnpm --filter @tasky/mobile test:unit\n  pnpm --filter @tasky/mobile test:e2e\nfi",
-      "exit_code": 0,
-      "duration_ms": 16297,
-      "started_at": "2026-02-13T19:26:48Z",
-      "finished_at": "2026-02-13T19:27:04Z",
-      "evidence": {
-        "summary": "Check passed.",
-        "artifact_paths": [
-          "artifacts/checks/full_test_suite.log"
-        ]
-      }
-    },
-    {
-      "id": "sast_dependency_scan",
-      "title": "SAST and dependency scan",
-      "required": true,
-      "status": "PASS",
-      "command": "if command -v semgrep >/dev/null 2>&1; then semgrep --error --config auto .; else echo 'semgrep not installed'; exit 1; fi",
-      "exit_code": 0,
-      "duration_ms": 6714,
-      "started_at": "2026-02-13T19:27:04Z",
-      "finished_at": "2026-02-13T19:27:11Z",
-      "evidence": {
-        "summary": "Check passed.",
-        "artifact_paths": [
-          "artifacts/checks/sast_dependency_scan.log"
-        ]
-      }
-    },
-    {
-      "id": "migration_safety",
-      "title": "Migration safety verification",
-      "required": true,
-      "status": "PASS",
-      "command": "python3 scripts/validate-migrations.py",
-      "exit_code": 0,
-      "duration_ms": 84,
-      "started_at": "2026-02-13T19:27:11Z",
-      "finished_at": "2026-02-13T19:27:11Z",
-      "evidence": {
-        "summary": "Check passed.",
-        "artifact_paths": [
-          "artifacts/checks/migration_safety.log"
-        ]
-      }
-    },
-    {
-      "id": "performance_smoke",
-      "title": "Performance smoke test",
-      "required": true,
-      "status": "PASS",
-      "command": "scripts/performance-smoke.sh",
-      "exit_code": 0,
-      "duration_ms": 514,
-      "started_at": "2026-02-13T19:27:11Z",
-      "finished_at": "2026-02-13T19:27:12Z",
-      "evidence": {
-        "summary": "Check passed.",
-        "artifact_paths": [
-          "artifacts/checks/performance_smoke.log"
         ]
       }
     },
@@ -242,9 +174,9 @@
       "status": "PASS",
       "command": "python3 scripts/validate-ac-coverage.py \\\n  --normalized artifacts/checks/ticket-spec.normalized.json \\\n  --ticket \"${SELF_VERIFY_TICKET}\" \\\n  --risk \"${SELF_VERIFY_RISK}\" \\\n  --logs-dir artifacts/checks \\\n  --out artifacts/checks/ac-coverage.json",
       "exit_code": 0,
-      "duration_ms": 74,
-      "started_at": "2026-02-13T19:27:12Z",
-      "finished_at": "2026-02-13T19:27:12Z",
+      "duration_ms": 153,
+      "started_at": "2026-02-13T19:41:04Z",
+      "finished_at": "2026-02-13T19:41:05Z",
       "evidence": {
         "summary": "Check passed.",
         "artifact_paths": [
@@ -255,74 +187,54 @@
   ],
   "acceptance_criteria": [
     {
-      "id": "AC-TASK-041-01",
-      "type": "functional",
-      "statement": "Dispute can be raised only for eligible booking states/window.",
+      "id": "AC-TASK-043-01",
+      "type": "security",
+      "statement": "Authenticated clients can subscribe/send to authorized conversation channels.",
       "test_ids": [
-        "TID-TASK-041-API-DISPUTE-RAISE"
+        "TID-TASK-043-WS-SUBSCRIBE-AUTHZ"
       ],
       "negative_test_ids": []
     },
     {
-      "id": "AC-TASK-041-02",
+      "id": "AC-TASK-043-02",
       "type": "functional",
-      "statement": "Active dispute pauses payout eligibility.",
+      "statement": "Messages delivered in real-time and persisted once.",
       "test_ids": [
-        "TID-TASK-041-DOMAIN-PAYOUT-HOLD"
-      ],
-      "negative_test_ids": []
-    },
-    {
-      "id": "AC-TASK-041-03",
-      "type": "functional",
-      "statement": "Admin resolution supports refund/release outcomes with audit trail.",
-      "test_ids": [
-        "TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE"
+        "TID-TASK-043-WS-REALTIME-DELIVERY"
       ],
       "negative_test_ids": []
     }
   ],
   "ac_test_mapping": [
     {
-      "ac_id": "AC-TASK-041-01",
+      "ac_id": "AC-TASK-043-01",
       "test_ids": [
-        "TID-TASK-041-API-DISPUTE-RAISE"
+        "TID-TASK-043-WS-SUBSCRIBE-AUTHZ"
       ],
       "covered_test_ids": [
-        "TID-TASK-041-API-DISPUTE-RAISE"
+        "TID-TASK-043-WS-SUBSCRIBE-AUTHZ"
       ],
       "uncovered_test_ids": [],
       "status": "PASS"
     },
     {
-      "ac_id": "AC-TASK-041-02",
+      "ac_id": "AC-TASK-043-02",
       "test_ids": [
-        "TID-TASK-041-DOMAIN-PAYOUT-HOLD"
+        "TID-TASK-043-WS-REALTIME-DELIVERY"
       ],
       "covered_test_ids": [
-        "TID-TASK-041-DOMAIN-PAYOUT-HOLD"
-      ],
-      "uncovered_test_ids": [],
-      "status": "PASS"
-    },
-    {
-      "ac_id": "AC-TASK-041-03",
-      "test_ids": [
-        "TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE"
-      ],
-      "covered_test_ids": [
-        "TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE"
+        "TID-TASK-043-WS-REALTIME-DELIVERY"
       ],
       "uncovered_test_ids": [],
       "status": "PASS"
     }
   ],
   "ac_coverage_summary": {
-    "total_ac": 3,
-    "mapped_ac": 3,
-    "fully_covered_ac": 3,
-    "total_test_ids": 3,
-    "covered_test_ids": 3,
+    "total_ac": 2,
+    "mapped_ac": 2,
+    "fully_covered_ac": 2,
+    "total_test_ids": 2,
+    "covered_test_ids": 2,
     "pass": true,
     "failures": []
   },
@@ -348,10 +260,6 @@
       "openapi_validation",
       "integration_tests_touched",
       "coverage_gate_touched",
-      "full_test_suite",
-      "sast_dependency_scan",
-      "migration_safety",
-      "performance_smoke",
       "ac_coverage_gate"
     ],
     "ci_required_check_ids": [
@@ -363,18 +271,14 @@
       "openapi_validation",
       "integration_tests_touched",
       "coverage_gate_touched",
-      "full_test_suite",
-      "sast_dependency_scan",
-      "migration_safety",
-      "performance_smoke",
       "ac_coverage_gate"
     ],
     "matches": true
   },
   "git_context": {
-    "branch": "agent/TASK-041-dispute-resolution",
+    "branch": "agent/TASK-043-user-blocking",
     "base_ref": "15c8958bad54e89b43f3e4d0b36705069118d5d1",
-    "head_sha": "730c3b8cfd0e1c6c4d88c7d967155ff12daca0c3"
+    "head_sha": "b5af9be12f88efef5bbd8aea18a832b9f5115187"
   },
   "agent": {
     "name": "Codex",

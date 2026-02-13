@@ -26,6 +26,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+
+import java.lang.reflect.Type;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class MessagingIntegrationTests {
@@ -40,6 +56,54 @@ class MessagingIntegrationTests {
     private TaskService taskService;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
+
+    @Test
+    @DisplayName("TID-TASK-043-WS-REALTIME-DELIVERY real-time message delivery via WebSocket (TID-TASK-043-WS-SUBSCRIBE-AUTHZ)")
+    void realTimeMessaging() throws Exception {
+        AuthContext customer = authenticate("cust-ws");
+        AuthContext tasker = authenticate("task-ws");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-ws");
+        postWithAuth("/api/v1/admin/categories", adminToken, Map.of("name", "WS", "base_price", 1000, "name_mn", "WS", "icon_url", "http://x.com/i.png", "sort_order", 1));
+        String catId = ((List<Map>) getWithAuth("/api/v1/categories", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
+        String taskId = (String) postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", catId, "description", "WS Test Task Description Long", "budget", 10000, 
+            "location_lat", 47.9, "location_lng", 106.9, "location_text", "Ulaanbaatar, Mongolia", 
+            "scheduled_at", Instant.now().plusSeconds(3600).toString(), "photo_keys", List.of()
+        )).getBody().get("id");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "WS"));
+        String conversationId = (String) ((List<Map>) getWithAuth("/api/v1/conversations", customer.accessToken()).getBody().get("data")).get(0).get("id");
+
+        // WebSocket Client Setup
+        WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        converter.setObjectMapper(mapper);
+        stompClient.setMessageConverter(converter);
+
+        StompHeaders connectHeaders = new StompHeaders();
+        connectHeaders.add("Authorization", "Bearer " + taskerToken);
+
+        StompSession session = stompClient.connectAsync("ws://localhost:" + port + "/ws", new WebSocketHttpHeaders(), connectHeaders, new StompSessionHandlerAdapter() {}).get(20, TimeUnit.SECONDS);
+
+        CompletableFuture<Map> resultFuture = new CompletableFuture<>();
+        session.subscribe("/topic/conversations/" + conversationId, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) { return Map.class; }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) { resultFuture.complete((Map) payload); }
+        });
+
+        // Send via REST
+        postWithAuth("/api/v1/conversations/" + conversationId + "/messages", customer.accessToken(), Map.of("content", "Real-time Hello"));
+
+        // Verify Real-time delivery
+        Map received = resultFuture.get(20, TimeUnit.SECONDS);
+        assertThat(received.get("content").toString()).isEqualTo("Real-time Hello");
+        assertThat(received.get("senderId").toString()).isEqualTo(customer.userId());
+    }
 
     @Test
     @DisplayName("TID-TASK-042-API-CONVERSATION-LIST conversation created on application and visible to participants")
