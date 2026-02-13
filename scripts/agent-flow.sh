@@ -649,9 +649,10 @@ case "${command}" in
       fi
     fi
 
-    echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge} cleanup=${cleanup_status} details=$(IFS=,; echo "${cleanup_notes[*]}")"
-    if [[ "${cleanup_status}" == "failed" ]]; then
-      echo "Local cleanup failed after merge. Resolve remaining worktree/branch references and retry cleanup." >&2
+                local details_str
+                details_str=$(echo "${cleanup_notes[*]}" | tr ' ' ',')
+                echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge} cleanup=${cleanup_status} details=${details_str}"
+                if [[ "${cleanup_status}" == "failed" ]]; then      echo "Local cleanup failed after merge. Resolve remaining worktree/branch references and retry cleanup." >&2
       exit 1
     fi
     ;;

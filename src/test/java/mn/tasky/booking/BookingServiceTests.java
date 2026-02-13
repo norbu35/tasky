@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import mn.tasky.auth.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,6 +69,58 @@ class BookingServiceTests {
         BookingService.BookingState booking2 = bookingService.createBooking("task-2", "tasker-2", "customer-2", 50000);
         BookingService.BookingTransitionResult forbiddenResult = bookingService.cancelBooking("random-user", booking2.id(), Instant.now().plus(10, ChronoUnit.HOURS));
         assertThat(forbiddenResult.errorCode()).isEqualTo(BookingService.BookingTransitionResult.FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-API-BOOKING-READS list bookings with filters")
+    void listBookings() {
+        bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
+        bookingService.createBooking("task-2", "tasker-2", "customer-1", 60000);
+        bookingService.createBooking("task-3", "tasker-1", "customer-2", 70000);
+
+        // Filter by customer
+        assertThat(bookingService.listBookings("customer-1", "customer", null)).hasSize(2);
+        // Filter by tasker
+        assertThat(bookingService.listBookings("tasker-1", "tasker", null)).hasSize(2);
+        // Filter by other (both)
+        assertThat(bookingService.listBookings("tasker-1", "any", null)).hasSize(2);
+        // Filter by status
+        assertThat(bookingService.listBookings("customer-1", "customer", "PAID")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE complete booking errors")
+    void completeBookingErrors() {
+        BookingService.BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
+        
+        // Not found
+        assertThat(bookingService.completeBooking("c1", "missing").errorCode()).isEqualTo("NOT_FOUND");
+        // Forbidden
+        assertThat(bookingService.completeBooking("stranger", booking.id()).errorCode()).isEqualTo("FORBIDDEN");
+        // Invalid transition
+        assertThat(bookingService.completeBooking("c1", booking.id()).errorCode()).isEqualTo("INVALID_TRANSITION");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL tasker can cancel without fee")
+    void taskerCancel() {
+        BookingService.BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100000);
+        BookingService.BookingTransitionResult res = bookingService.cancelBooking("tr1", booking.id(), Instant.now().plus(1, ChronoUnit.HOURS));
+        assertThat(res.isSuccess()).isTrue();
+        assertThat(res.booking().cancellationFee()).isNull();
+    }
+
+    @Test
+    @DisplayName("TID-TASK-064-payment-disclaimer record disclaimer acceptance")
+    void disclaimerAcceptance() {
+        BookingService.BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
+        assertThat(booking.liabilityDisclaimerAccepted()).isFalse();
+
+        Optional<BookingService.BookingState> updated = bookingService.recordDisclaimerAcceptance(booking.id());
+        assertThat(updated).isPresent();
+        assertThat(updated.get().liabilityDisclaimerAccepted()).isTrue();
+
+        assertThat(bookingService.recordDisclaimerAcceptance("missing")).isEmpty();
     }
 
     @Test

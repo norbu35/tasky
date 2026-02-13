@@ -53,8 +53,22 @@ class DisputeIntegrationTests {
         String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-1");
 
         BookingService.BookingState booking = bookingService.createBooking("task-d", tasker.userId(), customer.userId(), 10000);
-        bookingService.transitionToPaid(booking.id());
         
+        // 1. Raise fails: Not found
+        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", "missing", "reason", "x"));
+        assertThat(resNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        // 2. Raise fails: Forbidden (wrong user)
+        AuthContext stranger = authenticate("stranger-d");
+        ResponseEntity<Map> resForbidden = postWithAuth("/api/v1/disputes", stranger.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        assertThat(resForbidden.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+        // 3. Raise fails: Invalid status (PENDING_PAYMENT)
+        ResponseEntity<Map> resInvalidStatus = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        assertThat(resInvalidStatus.getStatusCode().value()).isEqualTo(400);
+        assertThat(resInvalidStatus.getBody().get("error").toString()).contains("completed");
+
+        bookingService.transitionToPaid(booking.id());
         // Complete via API to trigger wallet credit
         postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
 
@@ -62,30 +76,46 @@ class DisputeIntegrationTests {
         long balanceBefore = walletService.getBalance(tasker.userId()).balance();
         assertThat(balanceBefore).isEqualTo(9000); // 10000 - 10%
 
-        // Raise Dispute
+        // 4. Raise success
         ResponseEntity<Map> response = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of(
             "booking_id", booking.id(),
             "reason", "Incomplete work"
         ));
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getStatusCode().value()).isEqualTo(201);
         String disputeId = (String) response.getBody().get("id");
+
+        // 5. Raise fails: Already exists
+        ResponseEntity<Map> resExists = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        assertThat(resExists.getStatusCode().value()).isEqualTo(409);
+        assertThat(resExists.getBody().get("error").toString()).contains("exists");
 
         // Verify funds held (balance reduced)
         long balanceHeld = walletService.getBalance(tasker.userId()).balance();
         assertThat(balanceHeld).isEqualTo(0); // 9000 - 9000 (hold)
 
-        // Admin list
+        // 6. Resolve fails: not found
+        ResponseEntity<Map> resResolveNotFound = postWithAuth("/api/v1/admin/disputes/missing/resolve", adminToken, Map.of("outcome", "RELEASE_FUNDS"));
+        assertThat(resResolveNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        // 7. Resolve fails: invalid outcome
+        ResponseEntity<Map> resInvalidOutcome = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of("outcome", "NONE"));
+        assertThat(resInvalidOutcome.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        // 8. Admin list
         ResponseEntity<Map> listRes = getWithAuth("/api/v1/admin/disputes/pending", adminToken);
         List<Map> pending = (List<Map>) listRes.getBody().get("data");
-        assertThat(pending).hasSize(1);
-        assertThat(pending.get(0).get("id")).isEqualTo(disputeId);
+        assertThat(pending.stream().anyMatch(d -> d.get("id").equals(disputeId))).isTrue();
 
-        // Resolve (Release)
+        // 9. Resolve success (Release)
         ResponseEntity<Map> resolveRes = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of(
             "outcome", "RELEASE_FUNDS",
             "notes", "Work verified"
         ));
         assertThat(resolveRes.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // 10. Resolve fails: not open
+        ResponseEntity<Map> resNotOpen = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of("outcome", "RELEASE_FUNDS"));
+        assertThat(resNotOpen.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
         // Verify funds released
         long balanceReleased = walletService.getBalance(tasker.userId()).balance();

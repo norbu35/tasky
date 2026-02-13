@@ -75,7 +75,7 @@ class PayoutIntegrationTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-034-API-ADMIN-PAYOUT-PROCESS admin can list and processing is restricted by schedule")
+    @DisplayName("TID-TASK-034-API-ADMIN-PAYOUT-PROCESS TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE admin can list and processing is restricted by schedule")
     void adminPayoutFlow() {
         String taskerId = UUID.randomUUID().toString();
         String taskerToken = tokenFor("TASKER", "ACTIVE", taskerId);

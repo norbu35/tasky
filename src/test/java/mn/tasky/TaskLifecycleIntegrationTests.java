@@ -451,6 +451,78 @@ class TaskLifecycleIntegrationTests {
         });
     }
 
+    @Test
+    @DisplayName("TID-TASK-023-API-APPLY-OPEN-TASK apply failure paths")
+    void applyFailures() {
+        AuthContext customer = authenticate("160");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("161");
+        postWithAuth("/api/v1/users/me/role/tasker", tasker.accessToken(), null);
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+
+        // 1. Task missing
+        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/tasks/missing/applications", taskerToken, Map.of("message", "x"));
+        assertThat(resNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        // 2. Already accepted (prepare by accepting)
+        AuthContext tasker2 = authenticate("162");
+        postWithAuth("/api/v1/users/me/role/tasker", tasker2.accessToken(), null);
+        String tasker2Token = tokenFor("TASKER", "ACTIVE", tasker2.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", tasker2Token, Map.of("message", "Pick me"));
+        String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+
+        ResponseEntity<Map> resInvalidStatus = postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "too late"));
+        assertThat(resInvalidStatus.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-023-API-APPLICANT-LIST accept failure paths")
+    void acceptFailures() {
+        AuthContext customer = authenticate("170");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("171");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "Pick me"));
+        String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
+
+        // 1. Task missing
+        assertThat(postWithAuth("/api/v1/tasks/missing/applications/" + appId + "/accept", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        // 2. Forbidden (wrong customer)
+        AuthContext customer2 = authenticate("172");
+        assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer2.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        // 3. Application missing
+        assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/applications/missing/accept", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-CANCEL cancel failure paths")
+    void cancelFailures() {
+        AuthContext customer = authenticate("180");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        // 1. Not found
+        assertThat(postWithAuth("/api/v1/tasks/missing/cancel", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        // 2. Forbidden
+        AuthContext stranger = authenticate("181");
+        assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/cancel", stranger.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-PHOTO-UPLOAD photo upload failure paths")
+    void photoUploadFailures() {
+        AuthContext customer = authenticate("190");
+        // Invalid content type
+        assertThat(postWithAuth("/api/v1/tasks/photos/upload-url", customer.accessToken(), Map.of("content_type", "application/pdf")).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        // Missing task for post-create
+        assertThat(postWithAuth("/api/v1/tasks/missing/photos/upload-url", customer.accessToken(), Map.of("content_type", "image/png")).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
     private String getBookingIdForTask(String taskId, String customerToken) {
         ResponseEntity<Map> response = getWithAuth("/api/v1/bookings?role=customer", customerToken);
         List<Map<String, Object>> bookings = (List<Map<String, Object>>) response.getBody().get("data");

@@ -43,6 +43,9 @@ public class AdminDisputeController {
         
         var result = disputeService.resolveDispute(principal.userId(), id, body.outcome(), body.notes());
         if (!result.isSuccess()) {
+            if ("NOT_FOUND".equals(result.error())) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.badRequest().body(Map.of("error", result.error()));
         }
         return ResponseEntity.ok(toDisputeResponse(result.dispute()));
