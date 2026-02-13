@@ -405,6 +405,52 @@ class TaskLifecycleIntegrationTests {
         assertThat(profile.status()).isEqualTo("SUSPENDED");
     }
 
+    @Test
+    @DisplayName("TID-TASK-033-DOMAIN-WALLET-CREDIT completion credits tasker wallet")
+    void walletCreditOnCompletion() {
+        AuthContext customer = authenticate("150");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("151");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "I can do this!"));
+        
+        String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+        
+        String bookingId = getBookingIdForTask(taskId, customer.accessToken());
+
+        // Simulate payment (back-door)
+        post("/api/v1/payments/qpay/callback", Map.of(
+            "payment_id", UUID.randomUUID().toString(), // Not linked correctly in test, but I'll fix PaymentService to allow back-door for tests or just use service
+            "status", "PAID",
+            "signature", "VALID_SIG"
+        ));
+        // Wait, the callback needs a valid paymentId linked to bookingId.
+        // I'll use PaymentService to initiate first.
+        ResponseEntity<Map> initResponse = postWithAuth("/api/v1/payments/bookings/" + bookingId + "/initiate", customer.accessToken(), Map.of("liability_disclaimer_accepted", true));
+        String paymentUrl = initResponse.getBody().get("payment_url").toString();
+        String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
+        post("/api/v1/payments/qpay/callback", Map.of("payment_id", paymentId, "status", "PAID", "signature", "VALID_SIG"));
+
+        // Complete booking
+        ResponseEntity<Map> completeResponse = postWithAuth("/api/v1/bookings/" + bookingId + "/complete", customer.accessToken(), null);
+        assertThat(completeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // Check wallet
+        ResponseEntity<Map> walletResponse = getWithAuth("/api/v1/wallet", taskerToken);
+        assertThat(walletResponse.getBody().get("balance")).isEqualTo(63000); // 70,000 - 10% (7,000)
+        
+        // Check ledger
+        ResponseEntity<Map> ledgerResponse = getWithAuth("/api/v1/wallet/transactions", taskerToken);
+        List<Map> txs = (List<Map>) ledgerResponse.getBody().get("data");
+        assertThat(txs).anySatisfy(tx -> {
+            assertThat(tx.get("type")).isEqualTo("DEPOSIT");
+            assertThat(tx.get("amount")).isEqualTo(63000);
+        });
+    }
+
     private String getBookingIdForTask(String taskId, String customerToken) {
         ResponseEntity<Map> response = getWithAuth("/api/v1/bookings?role=customer", customerToken);
         List<Map<String, Object>> bookings = (List<Map<String, Object>>) response.getBody().get("data");
