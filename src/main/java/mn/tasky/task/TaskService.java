@@ -15,6 +15,7 @@ import mn.tasky.auth.AuthService;
 import mn.tasky.booking.BookingService;
 import mn.tasky.category.CategoryService;
 import mn.tasky.messaging.MessagingService;
+import mn.tasky.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ public class TaskService {
     private final CategoryService categoryService;
     private final BookingService bookingService;
     private final MessagingService messagingService;
+    private final NotificationService notificationService;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
@@ -45,6 +47,7 @@ public class TaskService {
         CategoryService categoryService,
         BookingService bookingService,
         MessagingService messagingService,
+        NotificationService notificationService,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
         @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds
@@ -53,6 +56,7 @@ public class TaskService {
         this.categoryService = categoryService;
         this.bookingService = bookingService;
         this.messagingService = messagingService;
+        this.notificationService = notificationService;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
@@ -316,6 +320,7 @@ public class TaskService {
             applicationsById.put(application.id(), application);
 
             messagingService.startConversation(taskId, taskerId, task.customerId());
+            notificationService.sendPush(task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
 
             return TaskApplyResult.success(application);
         }
@@ -389,6 +394,7 @@ public class TaskService {
             );
 
             messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
+            notificationService.sendPush(selected.taskerId(), "You are hired!", "Your application has been accepted.", "HIRED");
 
             return TaskAcceptResult.success(booking);
         }

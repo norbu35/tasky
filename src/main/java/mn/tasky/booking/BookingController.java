@@ -11,6 +11,7 @@ import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.notification.NotificationService;
 import mn.tasky.task.TaskService;
 import mn.tasky.wallet.WalletService;
 import org.springframework.http.HttpStatus;
@@ -33,17 +34,20 @@ public class BookingController {
     private final TaskService taskService;
     private final AuthService authService;
     private final WalletService walletService;
+    private final NotificationService notificationService;
 
     public BookingController(
         BookingService bookingService,
         TaskService taskService,
         AuthService authService,
-        WalletService walletService
+        WalletService walletService,
+        NotificationService notificationService
     ) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.authService = authService;
         this.walletService = walletService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -165,6 +169,8 @@ public class BookingController {
             // Credit tasker wallet minus platform fee (10%)
             walletService.creditTaskCompletion(booking.taskerId(), booking.id(), booking.price(), 0.10);
             
+            notificationService.sendPush(booking.taskerId(), "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
+
             return ResponseEntity.ok(toBookingResponse(result.booking()));
         }
 

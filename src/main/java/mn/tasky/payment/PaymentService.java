@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import mn.tasky.booking.BookingService;
+import mn.tasky.notification.NotificationService;
 import mn.tasky.task.TaskService;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,15 @@ public class PaymentService {
 
     private final BookingService bookingService;
     private final TaskService taskService;
+    private final NotificationService notificationService;
 
     // Maps payment_id to booking_id
     private final ConcurrentHashMap<String, String> bookingByPaymentId = new ConcurrentHashMap<>();
 
-    public PaymentService(BookingService bookingService, TaskService taskService) {
+    public PaymentService(BookingService bookingService, TaskService taskService, NotificationService notificationService) {
         this.bookingService = bookingService;
         this.taskService = taskService;
+        this.notificationService = notificationService;
     }
 
     public PaymentIntent initiatePayment(String bookingId) {
@@ -56,6 +59,9 @@ public class PaymentService {
         if ("PENDING_PAYMENT".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
             taskService.transitionToAssigned(booking.taskId());
+            
+            notificationService.sendPush(booking.taskerId(), "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
+            notificationService.sendPush(booking.customerId(), "Booking Confirmed", "Your payment for booking #" + bookingId + " was successful.", "BOOKING_CONFIRMED");
         }
 
         return true;
