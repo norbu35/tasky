@@ -430,8 +430,9 @@ Canonical operational checklist: `docs/agent/RUNBOOK.md`.
 ### 11.3 Coordination Scripts
 1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete` workflow.
 2. **Status check**: `scripts/ticket-status.sh` — displays current state, available tickets, blocked tickets, and next recommended ticket.
-3. **Claim**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
-4. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
+3. **Start+Claim**: `scripts/agent-flow.sh start --agent <name> [--ticket <ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>]` — creates branch/workspace and atomically claims (default workspace is `isolated`).
+4. **Claim (internal/debug)**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
+5. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
 
 ### 11.4 Agent Startup Protocol (MANDATORY)
 Every agent MUST follow this sequence when starting a new work session:
@@ -443,25 +444,25 @@ Every agent MUST follow this sequence when starting a new work session:
 2. **Select**: Identify the next available ticket. A ticket is "available" when:
    - Its status is `pending` in `tickets/STATUS.json`.
    - ALL tickets listed in its `depends_on` (from `tickets/<TICKET>.json`) have status `done`.
-3. **Branch**: Create the implementation branch in the required format.
-   ```bash
-   git checkout -b agent/<TICKET-ID>-<slug>
-   ```
-4. **Claim**: Claim the ticket after branch creation.
-   ```bash
-   scripts/claim-ticket.sh --agent <your-agent-name> --ticket <TICKET-ID> --branch "$(git branch --show-current)"
-   ```
-   Or use the canonical wrapper:
+3. **Resume-or-Claim**: `start` is deterministic:
+   - If this agent already owns exactly one `in_progress` ticket, `start` MUST resume that ticket.
+   - If this agent owns none, `start` MUST claim the next available `pending` ticket (or the explicitly requested ticket).
+   - If this agent owns multiple `in_progress` tickets, `start` MUST fail and require explicit `--ticket`.
+4. **Workspace**: Use isolated workspaces for concurrent local agents.
    ```bash
    scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug>
    ```
-5. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
-6. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
+5. **Fallback (single-agent only)**: Shared workspace mode is allowed when no other local agent is running.
+   ```bash
+   scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug> --workspace shared
+   ```
+6. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
+7. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
    Preferred wrapper:
    ```bash
    scripts/agent-flow.sh verify --ticket <TICKET-ID>
    ```
-7. **Complete**: After successful self-verification and merge, mark the ticket done.
+8. **Complete**: After successful self-verification and merge, mark the ticket done.
    ```bash
    scripts/agent-flow.sh complete --ticket <TICKET-ID>
    ```
@@ -472,6 +473,9 @@ Every agent MUST follow this sequence when starting a new work session:
 3. Agents SHOULD prefer the lowest-numbered available ticket for deterministic ordering, unless a specific ticket is strategically better.
 4. An agent MUST NOT start work on a ticket whose dependencies are not all `done`. The claim script enforces this.
 5. Multiple agents MAY work in parallel on independent tickets (e.g., TASK-004 and TASK-020 can run simultaneously since they share no dependencies beyond done tickets).
+6. Simultaneous local agents MUST use isolated workspaces (`git worktree`) to avoid branch and file collisions in a single checkout.
+7. One local workspace maps to one active ticket branch.
+8. `start --ticket <ID>` MUST fail if `<ID>` is `in_progress` and owned by a different agent.
 
 ### 11.6 Stale Claim Recovery
 1. If an agent crashes or abandons work, its ticket remains `in_progress` indefinitely.
@@ -495,3 +499,14 @@ scripts/agent-flow.sh verify --ticket TASK-020
 # 5. After done: mark ticket complete
 scripts/agent-flow.sh complete --ticket TASK-020
 ```
+
+### 11.8 Workspace Utilization Model (Local Parallelism)
+1. Default isolated workspace root is `.worktrees`.
+2. Deterministic path format: `.worktrees/<agent>/<TICKET-ID>`.
+3. `start` (default isolated workspace) MUST:
+   1. Resolve ticket
+   2. Create/switch branch `agent/<ticket>-<slug>`
+   3. Create/reuse isolated worktree path
+   4. Claim ticket from inside that worktree
+4. Agent output MUST include the resolved worktree path so the process can continue implementation in the correct workspace.
+5. Shared workspace mode MUST be treated as single-agent fallback only.

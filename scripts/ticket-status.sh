@@ -214,6 +214,6 @@ print()
 if output_filter == "all" and available_list:
     next_ticket = available_list[0]
     print(f"NEXT RECOMMENDED: {next_ticket} (risk: {risk_map.get(next_ticket, '?')})")
-    print(f"  Start with: scripts/agent-flow.sh start --agent <your-name> --ticket {next_ticket} --slug <slug>")
+    print(f"  Start with: scripts/agent-flow.sh start --agent <your-name> --ticket {next_ticket} --slug <slug> --workspace isolated")
     print()
 PYTHON

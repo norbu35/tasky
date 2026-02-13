@@ -5,15 +5,17 @@ usage() {
   cat <<'USAGE'
 Usage:
   scripts/agent-flow.sh status [--format table|json] [--filter pending|in_progress|done|available|all]
-  scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--dry-run]
+  scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--dry-run]
   scripts/agent-flow.sh verify --ticket <TICKET-ID> [--ticket-spec <path>] [--risk <low|medium|high>] [--req <REQ-CSV>] [--base <git-ref>] [--out <path>] [--only <check-id>]
   scripts/agent-flow.sh complete --ticket <TICKET-ID> [--agent <name>] [--artifact <path>]
+  scripts/agent-flow.sh doctor
 
 Commands:
   status    Show ticket coordination status.
-  start     Create/switch to implementation branch, then claim ticket.
+  start     Resume own in-progress ticket or claim a new one (default: isolated worktree).
   verify    Run self-verification using ticket metadata defaults.
   complete  Mark claimed ticket done after optional artifact validation.
+  doctor    Check environment for required tools.
 USAGE
 }
 
@@ -23,6 +25,58 @@ require_cmd() {
     echo "Missing required command: ${cmd}" >&2
     exit 2
   fi
+}
+
+check_env() {
+  local missing=0
+  local tools=("git" "jq" "python3" "rg" "pnpm" "java" "docker")
+  echo "Checking environment tools..."
+  for tool in "${tools[@]}"; do
+    if command -v "${tool}" >/dev/null 2>&1; then
+      echo "  [PASS] ${tool}: $(command -v "${tool}")"
+    else
+      echo "  [FAIL] ${tool} is missing"
+      missing=$((missing + 1))
+    fi
+  done
+
+  if [[ ! -x "./gradlew" ]]; then
+    echo "  [FAIL] ./gradlew is missing or not executable"
+    missing=$((missing + 1))
+  else
+    echo "  [PASS] ./gradlew: found"
+  fi
+
+  if [[ ${missing} -gt 0 ]]; then
+    echo "Environment check failed with ${missing} errors."
+    return 1
+  fi
+  echo "Environment is healthy."
+  return 0
+}
+
+sanitize_for_path() {
+  local raw="${1:-agent}"
+  local safe
+  safe="$(echo "${raw}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g')"
+  safe="$(echo "${safe}" | sed 's/--*/-/g; s/^-//; s/-$//')"
+  if [[ -z "${safe}" ]]; then
+    safe="agent"
+  fi
+  echo "${safe}"
+}
+
+worktree_exists() {
+  local target_path="$1"
+  git worktree list --porcelain | awk '/^worktree / {print $2}' | grep -Fxq "${target_path}"
+}
+
+branch_worktree_paths() {
+  local branch_ref="refs/heads/$1"
+  git worktree list --porcelain | awk -v branch_ref="${branch_ref}" '
+    $1=="worktree" { wt=$2 }
+    $1=="branch" && $2==branch_ref { print wt }
+  '
 }
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
@@ -48,6 +102,8 @@ case "${command}" in
     agent_name=""
     ticket_id=""
     slug="work"
+    workspace_mode="isolated"
+    worktree_root=".worktrees"
     dry_run=false
 
     while [[ $# -gt 0 ]]; do
@@ -55,6 +111,8 @@ case "${command}" in
         --agent) agent_name="${2:-}"; shift 2 ;;
         --ticket) ticket_id="${2:-}"; shift 2 ;;
         --slug) slug="${2:-}"; shift 2 ;;
+        --workspace) workspace_mode="${2:-}"; shift 2 ;;
+        --worktree-root) worktree_root="${2:-}"; shift 2 ;;
         --dry-run) dry_run=true; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown argument for start: $1" >&2; exit 2 ;;
@@ -66,8 +124,47 @@ case "${command}" in
       exit 2
     fi
 
+    if [[ ! "${slug}" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+      echo "Invalid --slug. Use lowercase letters, digits, and dashes." >&2
+      exit 1
+    fi
+
+    if [[ "${workspace_mode}" != "shared" && "${workspace_mode}" != "isolated" ]]; then
+      echo "Invalid --workspace. Use shared or isolated." >&2
+      exit 1
+    fi
+
+    status_file="tickets/STATUS.json"
+    if [[ ! -f "${status_file}" ]]; then
+      echo "Status file not found: ${status_file}" >&2
+      exit 1
+    fi
+
+    resume_mode=false
+    claimed_branch=""
+
     if [[ -z "${ticket_id}" ]]; then
-      ticket_id="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+      owned_in_progress=()
+      while IFS= read -r owned_ticket; do
+        if [[ -n "${owned_ticket}" ]]; then
+          owned_in_progress+=("${owned_ticket}")
+        fi
+      done < <(
+        jq -r --arg agent "${agent_name}" \
+          '.tickets | to_entries[] | select(.value.status == "in_progress" and .value.agent == $agent) | .key' \
+          "${status_file}"
+      )
+
+      if [[ ${#owned_in_progress[@]} -eq 1 ]]; then
+        ticket_id="${owned_in_progress[0]}"
+        resume_mode=true
+      elif [[ ${#owned_in_progress[@]} -gt 1 ]]; then
+        echo "Agent '${agent_name}' has multiple in-progress tickets: ${owned_in_progress[*]}" >&2
+        echo "Specify --ticket to resume one explicitly." >&2
+        exit 1
+      else
+        ticket_id="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+      fi
     fi
 
     if [[ ! "${ticket_id}" =~ ^[A-Z][A-Z0-9_]*-[0-9]+$ ]]; then
@@ -75,31 +172,134 @@ case "${command}" in
       exit 1
     fi
 
-    if [[ ! "${slug}" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
-      echo "Invalid --slug. Use lowercase letters, digits, and dashes." >&2
+    ticket_status="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].status // "missing"' "${status_file}")"
+    ticket_agent="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].agent // ""' "${status_file}")"
+    ticket_branch="$(jq -r --arg tid "${ticket_id}" '.tickets[$tid].branch // ""' "${status_file}")"
+
+    if [[ "${ticket_status}" == "in_progress" ]]; then
+      if [[ "${ticket_agent}" == "${agent_name}" ]]; then
+        resume_mode=true
+      else
+        echo "Ticket ${ticket_id} is already in progress by '${ticket_agent}' on branch '${ticket_branch}'." >&2
+        echo "Pick another available ticket." >&2
+        exit 1
+      fi
+    elif [[ "${ticket_status}" == "done" ]]; then
+      echo "Ticket ${ticket_id} is already done." >&2
+      exit 1
+    elif [[ "${ticket_status}" == "missing" ]]; then
+      echo "Ticket ${ticket_id} not found in ${status_file}." >&2
+      exit 1
+    elif [[ "${ticket_status}" != "pending" ]]; then
+      echo "Ticket ${ticket_id} has unsupported status '${ticket_status}'." >&2
       exit 1
     fi
 
-    target_branch="agent/${ticket_id}-${slug}"
+    if [[ "${resume_mode}" == true ]]; then
+      claimed_branch="${ticket_branch}"
+      if [[ -z "${claimed_branch}" ]]; then
+        echo "Ticket ${ticket_id} is in_progress but branch is missing in ${status_file}." >&2
+        exit 1
+      fi
+      if [[ ! "${claimed_branch}" =~ ^agent/${ticket_id}- ]]; then
+        echo "Claimed branch '${claimed_branch}' does not match ticket '${ticket_id}'." >&2
+        exit 1
+      fi
+      target_branch="${claimed_branch}"
+    else
+      target_branch="agent/${ticket_id}-${slug}"
+    fi
+
+    worktree_path=""
+    if [[ "${workspace_mode}" == "isolated" ]]; then
+      safe_agent="$(sanitize_for_path "${agent_name}")"
+      default_worktree_path="${worktree_root%/}/${safe_agent}/${ticket_id}"
+      if [[ "${default_worktree_path}" != /* ]]; then
+        default_worktree_path="${repo_root}/${default_worktree_path}"
+      fi
+      worktree_path="${default_worktree_path}"
+      existing_branch_worktree="$(branch_worktree_paths "${target_branch}" | head -n 1 || true)"
+      if [[ -n "${existing_branch_worktree}" ]]; then
+        worktree_path="${existing_branch_worktree}"
+      fi
+    fi
 
     if [[ "${dry_run}" == true ]]; then
       echo "ticket=${ticket_id}"
       echo "branch=${target_branch}"
-      scripts/claim-ticket.sh --agent "${agent_name}" --ticket "${ticket_id}" --branch "${target_branch}" --dry-run >/dev/null
+      echo "workspace=${workspace_mode}"
+      echo "action=$([[ "${resume_mode}" == true ]] && echo "resume" || echo "claim")"
+      if [[ "${workspace_mode}" == "isolated" ]]; then
+        echo "worktree=${worktree_path}"
+      fi
+      if [[ "${resume_mode}" == false ]]; then
+        scripts/claim-ticket.sh --agent "${agent_name}" --ticket "${ticket_id}" --branch "${target_branch}" --dry-run >/dev/null
+      fi
       exit 0
     fi
 
-    current_branch="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
-    if [[ "${current_branch}" != "${target_branch}" ]]; then
+    if [[ "${workspace_mode}" == "shared" ]]; then
+      current_branch="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+      if [[ "${current_branch}" != "${target_branch}" ]]; then
+        if git show-ref --verify --quiet "refs/heads/${target_branch}"; then
+          git checkout "${target_branch}" >/dev/null
+        else
+          git checkout -b "${target_branch}" >/dev/null
+        fi
+      fi
+
+      if [[ "${resume_mode}" == true ]]; then
+        echo "resumed ticket=${ticket_id} branch=${target_branch} workspace=shared"
+        exit 0
+      fi
+
+      claimed="$(scripts/claim-ticket.sh --agent "${agent_name}" --ticket "${ticket_id}" --branch "${target_branch}")"
+      echo "started ticket=${claimed} branch=${target_branch} workspace=shared"
+      exit 0
+    fi
+
+    mkdir -p "$(dirname "${worktree_path}")"
+
+    if worktree_exists "${worktree_path}"; then
+      current_wt_branch="$(git -C "${worktree_path}" symbolic-ref --short HEAD 2>/dev/null || true)"
+      if [[ "${current_wt_branch}" != "${target_branch}" ]]; then
+        echo "Worktree already exists at '${worktree_path}' but is on branch '${current_wt_branch}'." >&2
+        echo "Use a different --worktree-root or clean the existing worktree." >&2
+        exit 1
+      fi
+    else
+      if [[ -d "${worktree_path}" ]]; then
+        echo "Target worktree path already exists and is not registered as a git worktree: ${worktree_path}" >&2
+        exit 1
+      fi
+
       if git show-ref --verify --quiet "refs/heads/${target_branch}"; then
-        git checkout "${target_branch}" >/dev/null
+        existing_branch_worktree="$(branch_worktree_paths "${target_branch}" | head -n 1 || true)"
+        if [[ -n "${existing_branch_worktree}" && "${existing_branch_worktree}" != "${worktree_path}" ]]; then
+          echo "Branch '${target_branch}' is already checked out in worktree '${existing_branch_worktree}'." >&2
+          echo "Use a different ticket slug or remove the existing worktree first." >&2
+          exit 1
+        fi
+        git worktree add "${worktree_path}" "${target_branch}" >/dev/null
       else
-        git checkout -b "${target_branch}" >/dev/null
+        if [[ "${resume_mode}" == true ]]; then
+          echo "Cannot resume ${ticket_id}: branch '${target_branch}' is missing locally." >&2
+          exit 1
+        fi
+        git worktree add -b "${target_branch}" "${worktree_path}" >/dev/null
       fi
     fi
 
-    claimed="$(scripts/claim-ticket.sh --agent "${agent_name}" --ticket "${ticket_id}" --branch "${target_branch}")"
-    echo "started ticket=${claimed} branch=${target_branch}"
+    if [[ "${resume_mode}" == true ]]; then
+      echo "resumed ticket=${ticket_id} branch=${target_branch} workspace=isolated worktree=${worktree_path}"
+      exit 0
+    fi
+
+    claimed="$(
+      cd "${worktree_path}"
+      scripts/claim-ticket.sh --agent "${agent_name}" --ticket "${ticket_id}" --branch "${target_branch}"
+    )"
+    echo "started ticket=${claimed} branch=${target_branch} workspace=isolated worktree=${worktree_path}"
     ;;
   verify)
     require_cmd jq
@@ -190,6 +390,9 @@ case "${command}" in
       cmd+=(--agent "${agent_name}")
     fi
     exec "${cmd[@]}"
+    ;;
+  doctor)
+    check_env
     ;;
   -h|--help)
     usage

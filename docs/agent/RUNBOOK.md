@@ -11,7 +11,7 @@ Use `scripts/agent-flow.sh` for all day-to-day task execution.
 # inspect queue
 scripts/agent-flow.sh status
 
-# start next available ticket on a new branch
+# start next available ticket (defaults to isolated workspace)
 scripts/agent-flow.sh start --agent <agent-name> --slug <short-slug>
 
 # or start a specific ticket
@@ -25,10 +25,49 @@ scripts/agent-flow.sh complete --ticket TASK-020
 ```
 
 ## Command Contracts
-1. `start` creates or switches to `agent/<TICKET-ID>-<slug>` before claiming.
-2. `start` claims only when branch and ticket prefix match.
-3. `verify` resolves `risk_level` and `req_ids` from `tickets/<TICKET-ID>.json` unless overridden.
-4. `complete` validates the self-verify artifact and enforces branch ownership consistency.
+1. `start` is resume-first:
+   - If the same agent already owns one `in_progress` ticket, it resumes that ticket.
+   - If none, it claims the next available ticket (or requested `--ticket`).
+2. `start` fails if the agent owns multiple `in_progress` tickets and `--ticket` is not provided.
+3. `start --ticket <ID>` fails when `<ID>` is already `in_progress` for a different agent.
+4. `start` creates/switches `agent/<TICKET-ID>-<slug>` before claim when claiming new work.
+5. `start` defaults to `--workspace isolated` and creates/uses a git worktree at `.worktrees/<agent>/<TICKET-ID>` to allow concurrent local agents without branch collisions.
+6. Claiming remains atomic through `tickets/STATUS.json` commit + push.
+7. `verify` resolves `risk_level` and `req_ids` from `tickets/<TICKET-ID>.json` unless overridden.
+8. `complete` validates the self-verify artifact and enforces branch ownership consistency.
+
+## Parallel Agent Workspace Model
+1. One agent process maps to one isolated worktree.
+2. The primary repository root is used for orchestration, status visibility, and shared scripts.
+3. Runtime coding, tests, and commits happen inside each agent's worktree path.
+4. Worktree naming is deterministic by agent and ticket, so agents can resume interrupted work safely.
+
+Example:
+```bash
+# Agent A
+scripts/agent-flow.sh start --agent codex-a --ticket TASK-011 --slug profile --workspace isolated
+
+# Agent B
+scripts/agent-flow.sh start --agent codex-b --ticket TASK-020 --slug categories --workspace isolated
+
+# each agent then works in its own worktree printed by the start command
+```
+
+## Task Pickup Rules
+1. Source of truth is `tickets/STATUS.json` plus `tickets/<TASK>.json` dependency metadata.
+2. A task is `available` only when status is `pending` and all `depends_on` tickets are `done`.
+3. `start` automatically resumes the caller agent's existing `in_progress` ticket before claiming new work.
+4. If no resume candidate exists and no ticket is specified, agents claim the lowest-numbered available ticket for deterministic scheduling.
+5. If a race occurs, claim retries after pull/rebase and re-selection.
+6. Agents should only override auto-pick with `--ticket` for strategic reasons (priority, specialization, incident response).
+
+## Shared Workspace Fallback
+Use shared mode only when a single local agent is active:
+```bash
+scripts/agent-flow.sh start --agent <agent-name> --ticket TASK-020 --slug categories --workspace shared
+```
+
+Shared mode is not safe for simultaneous local agents because branch checkout state is global in one working tree.
 
 ## Direct Script Use
 Use direct scripts only for debugging or CI internals:
