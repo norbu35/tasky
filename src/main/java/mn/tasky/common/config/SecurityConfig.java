@@ -51,6 +51,7 @@ public class SecurityConfig {
                     "/api/v1/auth/token/refresh"
                 ).permitAll()
                 .requestMatchers("/api/v1/security/customer/**").hasRole("CUSTOMER")
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks").hasRole("CUSTOMER")
                 .requestMatchers("/api/v1/security/tasker/**").hasRole("TASKER")
                 .requestMatchers("/api/v1/security/admin/**", "/api/v1/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

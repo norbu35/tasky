@@ -60,6 +60,10 @@ public class CategoryService {
         return Optional.ofNullable(updated);
     }
 
+    public Optional<CategoryState> getCategory(String id) {
+        return Optional.ofNullable(categoriesById.get(id));
+    }
+
     private CategoryPage listCategories(boolean includeInactive, String cursor, int limit) {
         List<CategoryState> sorted = categoriesById.values().stream()
             .filter(category -> includeInactive || category.isActive())
