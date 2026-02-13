@@ -67,7 +67,10 @@
       "completed_at": "2026-02-13T16:19:49Z"
     },
     "TASK-020": {
-      "status": "pending"
+      "status": "in_progress",
+      "agent": "Codex",
+      "branch": "agent/TASK-020-categories",
+      "claimed_at": "2026-02-13T16:09:55Z"
     },
     "TASK-021": {
       "status": "pending"
