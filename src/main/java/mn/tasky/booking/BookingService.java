@@ -82,14 +82,38 @@ public class BookingService {
         return transition(bookingId, "COMPLETED", List.of("PAID"));
     }
 
-    public BookingTransitionResult cancelBooking(String userId, String bookingId) {
+    public BookingTransitionResult cancelBooking(String userId, String bookingId, Instant scheduledAt) {
         BookingState booking = bookingsById.get(bookingId);
         if (booking == null) return BookingTransitionResult.NOT_FOUND_RESULT;
-        if (!booking.customerId().equals(userId) && !booking.taskerId().equals(userId)) {
+        
+        boolean isCustomer = booking.customerId().equals(userId);
+        boolean isTasker = booking.taskerId().equals(userId);
+        if (!isCustomer && !isTasker) {
             return BookingTransitionResult.FORBIDDEN_RESULT;
         }
 
-        return transition(bookingId, "CANCELLED", List.of("PENDING_PAYMENT", "PAID"));
+        Integer fee = null;
+        if (isCustomer) {
+            // Free cancellation > 4 hours before scheduled_at. 
+            // Late cancellation incurs 10% fee (min 5,000 MNT).
+            Instant fourHoursBefore = scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS);
+            if (Instant.now().isAfter(fourHoursBefore)) {
+                fee = (int) Math.max(5000, booking.price() * 0.1);
+            }
+        }
+
+        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("PENDING_PAYMENT", "PAID"));
+        if (result.isSuccess() && fee != null) {
+            BookingState current = result.booking();
+            BookingState withFee = new BookingState(
+                current.id(), current.taskId(), current.taskerId(), current.customerId(),
+                current.price(), current.status(), fee, current.liabilityDisclaimerAccepted(),
+                current.createdAt(), Instant.now()
+            );
+            bookingsById.put(bookingId, withFee);
+            return BookingTransitionResult.success(withFee);
+        }
+        return result;
     }
 
     private BookingTransitionResult transition(String bookingId, String newStatus, List<String> allowedFrom) {

@@ -3,6 +3,7 @@ package mn.tasky.auth;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +48,7 @@ public class AuthService {
     private final ConcurrentHashMap<String, RefreshSession> refreshSessionsByTokenId = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, VerificationRequest> verificationsById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> verificationIdByUserId = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<Instant>> strikesByUserId = new ConcurrentHashMap<>();
 
     public AuthService(
         JwtTokenService jwtTokenService,
@@ -310,6 +312,26 @@ public class AuthService {
         verificationsById.put(verificationId, rejected);
 
         return Optional.of(toVerificationDetail(rejected));
+    }
+
+    public void addStrike(String userId) {
+        List<Instant> strikes = strikesByUserId.computeIfAbsent(userId, k -> new ArrayList<>());
+        strikes.add(Instant.now());
+
+        // Count strikes in last 30 days
+        Instant thirtyDaysAgo = Instant.now().minus(30, ChronoUnit.DAYS);
+        long recentStrikes = strikes.stream()
+            .filter(s -> s.isAfter(thirtyDaysAgo))
+            .count();
+
+        if (recentStrikes >= 3) {
+            AuthUser user = usersById.get(userId);
+            if (user != null) {
+                AuthUser suspended = new AuthUser(user.id(), user.phone(), user.role(), "SUSPENDED", user.createdAt());
+                usersById.put(suspended.id(), suspended);
+                usersByPhone.put(suspended.phone(), suspended);
+            }
+        }
     }
 
     public Optional<PresignedUpload> createAvatarUploadUrl(String userId, String contentType) {

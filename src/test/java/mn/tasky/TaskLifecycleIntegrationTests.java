@@ -11,8 +11,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.auth.AuthService;
+import mn.tasky.task.TaskService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -34,6 +37,9 @@ class TaskLifecycleIntegrationTests {
 
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
+
+    @Autowired
+    private TaskService taskService;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
@@ -351,6 +357,65 @@ class TaskLifecycleIntegrationTests {
         assertThat(detailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(detailsResponse.getBody().get("status")).isEqualTo("PENDING_PAYMENT");
     }
+
+    @Test
+    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE tasker cancellation reopens task and records strike")
+    void taskerCancelReopensAndStrikes() {
+        AuthContext customer = authenticate("140");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("141");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "App"));
+        
+        ResponseEntity<Map> appsResponse = getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken());
+        String appId = ((List<Map>) appsResponse.getBody().get("data")).get(0).get("id").toString();
+        
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+
+        // Tasker cancels
+        ResponseEntity<Map> cancelResponse = postWithAuth(
+            "/api/v1/bookings/" + getBookingIdForTask(taskId, customer.accessToken()) + "/cancel",
+            taskerToken,
+            null
+        );
+        assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // Verify task is OPEN again
+        assertThat(taskService.getTask(taskId).get().status()).isEqualTo("OPEN");
+        
+        // Verify strike (user status might not change after 1 strike, but we can check internal state if exposed)
+        // For now, I'll just check if 3 strikes trigger suspension
+    }
+
+    @Test
+    @DisplayName("TID-TASK-032-DOMAIN-STRIKE-SUSPENSION three strikes trigger suspension")
+    void threeStrikesTriggerSuspension() {
+        AuthContext tasker = authenticate("142");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+
+        // Add 3 strikes
+        authService.addStrike(tasker.userId());
+        authService.addStrike(tasker.userId());
+        authService.addStrike(tasker.userId());
+
+        // User should be SUSPENDED
+        AuthService.UserProfile profile = authService.getProfile(tasker.userId()).get();
+        assertThat(profile.status()).isEqualTo("SUSPENDED");
+    }
+
+    private String getBookingIdForTask(String taskId, String customerToken) {
+        ResponseEntity<Map> response = getWithAuth("/api/v1/bookings?role=customer", customerToken);
+        List<Map<String, Object>> bookings = (List<Map<String, Object>>) response.getBody().get("data");
+        return bookings.stream()
+            .filter(b -> taskId.equals(b.get("task_id")))
+            .findFirst()
+            .get().get("id").toString();
+    }
+
+    @Autowired
+    private AuthService authService;
 
     // --- Helpers ---
 

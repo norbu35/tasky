@@ -120,6 +120,27 @@ public class TaskService {
         return Optional.ofNullable(updated);
     }
 
+    public Optional<TaskState> reopenTask(String taskId) {
+        TaskState updated = tasksById.computeIfPresent(taskId, (ignored, current) ->
+            new TaskState(
+                current.id(),
+                current.customerId(),
+                current.categoryId(),
+                current.description(),
+                current.budget(),
+                current.locationLat(),
+                current.locationLng(),
+                current.locationText(),
+                "OPEN",
+                current.scheduledAt(),
+                current.photoKeys(),
+                current.createdAt(),
+                Instant.now()
+            )
+        );
+        return Optional.ofNullable(updated);
+    }
+
     public TaskPage listTasks(
         String categoryId,
         Double lat,
