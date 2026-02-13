@@ -430,7 +430,7 @@ Canonical operational checklist: `docs/agent/RUNBOOK.md`.
 ### 11.3 Coordination Scripts
 1. **Canonical entrypoint**: `scripts/agent-flow.sh` — unified `status|start|verify|complete|merge` workflow.
 2. **Status check**: `scripts/ticket-status.sh` — displays current state, available tickets, blocked tickets, and next recommended ticket.
-3. **Start+Claim**: `scripts/agent-flow.sh start --agent <name> [--ticket <ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>]` — creates branch/workspace and atomically claims (default workspace is `isolated`).
+3. **Start+Claim**: `scripts/agent-flow.sh start --agent <name> [--ticket <ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--auto-claim]` — resumes existing in-progress work or claims a selected ticket (default workspace is `isolated`).
 4. **Claim (internal/debug)**: `scripts/claim-ticket.sh --agent <name> [--ticket <ID>] [--branch <branch>]` — atomically claims a ticket.
 5. **Complete**: `scripts/complete-ticket.sh --ticket <ID> [--artifact <path>]` — marks a ticket as done.
 6. **Merge to Main**: `scripts/agent-flow.sh merge --ticket <ID> [--main-branch <main|master>]` — merges the completed worktree branch into `main` as the final step.
@@ -447,7 +447,7 @@ Every agent MUST follow this sequence when starting a new work session:
    - ALL tickets listed in its `depends_on` (from `tickets/<TICKET>.json`) have status `done`.
 3. **Resume-or-Claim**: `start` is deterministic:
    - If this agent already owns exactly one `in_progress` ticket, `start` MUST resume that ticket.
-   - If this agent owns none, `start` MUST claim the next available `pending` ticket (or the explicitly requested ticket).
+   - If this agent owns none, `start` MUST require explicit `--ticket` for new claims (or `--auto-claim` to pick the next available ticket).
    - If this agent owns multiple `in_progress` tickets, `start` MUST fail and require explicit `--ticket`.
 4. **Workspace**: Use isolated workspaces for concurrent local agents.
    ```bash
@@ -492,11 +492,11 @@ Every agent MUST follow this sequence when starting a new work session:
 # 1. See what's happening
 scripts/agent-flow.sh status
 
-# 2. Start next available ticket
-scripts/agent-flow.sh start --agent my-agent-name --slug my-work
+# 2. Start a specific ticket
+scripts/agent-flow.sh start --agent my-agent-name --ticket TASK-020 --slug my-work
 
-# 3. Start a specific ticket
-scripts/agent-flow.sh start --agent my-agent-name --ticket TASK-020 --slug categories
+# 3. Optional: auto-claim next available ticket
+scripts/agent-flow.sh start --agent my-agent-name --slug my-work --auto-claim
 
 # 4. Run verification using ticket metadata defaults
 scripts/agent-flow.sh verify --ticket TASK-020

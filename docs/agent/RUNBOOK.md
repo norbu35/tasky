@@ -11,11 +11,11 @@ Use `scripts/agent-flow.sh` for all day-to-day task execution.
 # inspect queue
 scripts/agent-flow.sh status
 
-# start next available ticket (defaults to isolated workspace)
-scripts/agent-flow.sh start --agent <agent-name> --slug <short-slug>
+# start a specific ticket (defaults to isolated workspace)
+scripts/agent-flow.sh start --agent <agent-name> --ticket TASK-020 --slug <short-slug>
 
-# or start a specific ticket
-scripts/agent-flow.sh start --agent <agent-name> --ticket TASK-020 --slug categories
+# optional: auto-claim next available when no --ticket is provided
+scripts/agent-flow.sh start --agent <agent-name> --slug <short-slug> --auto-claim
 
 # run required self-verification using ticket spec metadata defaults
 scripts/agent-flow.sh verify --ticket TASK-020
@@ -30,7 +30,7 @@ scripts/agent-flow.sh merge --ticket TASK-020
 ## Command Contracts
 1. `start` is resume-first:
    - If the same agent already owns one `in_progress` ticket, it resumes that ticket.
-   - If none, it claims the next available ticket (or requested `--ticket`).
+   - If none, `--ticket` is required to claim new work (or use `--auto-claim` to opt into next-available auto-pick).
 2. `start` fails if the agent owns multiple `in_progress` tickets and `--ticket` is not provided.
 3. `start --ticket <ID>` fails when `<ID>` is already `in_progress` for a different agent.
 4. `start` creates/switches `agent/<TICKET-ID>-<slug>` before claim when claiming new work.
@@ -63,9 +63,9 @@ scripts/agent-flow.sh start --agent codex-b --ticket TASK-020 --slug categories 
 1. Source of truth is `tickets/STATUS.json` plus `tickets/<TASK>.json` dependency metadata.
 2. A task is `available` only when status is `pending` and all `depends_on` tickets are `done`.
 3. `start` automatically resumes the caller agent's existing `in_progress` ticket before claiming new work.
-4. If no resume candidate exists and no ticket is specified, agents claim the lowest-numbered available ticket for deterministic scheduling.
+4. If no resume candidate exists, agents should claim by explicit `--ticket <ID>`.
 5. If a race occurs, claim retries after pull/rebase and re-selection.
-6. Agents should only override auto-pick with `--ticket` for strategic reasons (priority, specialization, incident response).
+6. `--auto-claim` is available for deterministic lowest-numbered auto-pick when explicit selection is not needed.
 
 ## Shared Workspace Fallback
 Use shared mode only when a single local agent is active:

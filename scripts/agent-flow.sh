@@ -5,7 +5,7 @@ usage() {
   cat <<'USAGE'
 Usage:
   scripts/agent-flow.sh status [--format table|json] [--filter pending|in_progress|done|available|all]
-  scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--dry-run]
+  scripts/agent-flow.sh start --agent <name> [--ticket <TICKET-ID>] [--slug <slug>] [--workspace shared|isolated] [--worktree-root <path>] [--auto-claim] [--dry-run]
   scripts/agent-flow.sh verify --ticket <TICKET-ID> [--ticket-spec <path>] [--risk <low|medium|high>] [--req <REQ-CSV>] [--base <git-ref>] [--out <path>] [--only <check-id>]
   scripts/agent-flow.sh complete --ticket <TICKET-ID> [--agent <name>] [--artifact <path>]
   scripts/agent-flow.sh merge --ticket <TICKET-ID> [--main-branch <main|master>] [--source-branch <agent-branch>] [--no-push] [--no-cleanup]
@@ -13,7 +13,7 @@ Usage:
 
 Commands:
   status    Show ticket coordination status.
-  start     Resume own in-progress ticket or claim a new one (default: isolated worktree).
+  start     Resume own in-progress ticket; explicit --ticket required for new claim unless --auto-claim is set.
   verify    Run self-verification using ticket metadata defaults.
   complete  Mark claimed ticket done after optional artifact validation.
   merge     Merge a completed ticket branch from its worktree into main, then clean local source branch/worktree.
@@ -114,6 +114,7 @@ case "${command}" in
     slug="work"
     workspace_mode="isolated"
     worktree_root=".worktrees"
+    auto_claim=false
     dry_run=false
 
     while [[ $# -gt 0 ]]; do
@@ -123,6 +124,7 @@ case "${command}" in
         --slug) slug="${2:-}"; shift 2 ;;
         --workspace) workspace_mode="${2:-}"; shift 2 ;;
         --worktree-root) worktree_root="${2:-}"; shift 2 ;;
+        --auto-claim) auto_claim=true; shift ;;
         --dry-run) dry_run=true; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown argument for start: $1" >&2; exit 2 ;;
@@ -174,7 +176,21 @@ case "${command}" in
         echo "Specify --ticket to resume one explicitly." >&2
         exit 1
       else
-        ticket_id="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+        if [[ "${auto_claim}" == true ]]; then
+          ticket_id="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+        else
+          next_ticket="$(scripts/ticket-status.sh --format json --filter available | jq -r '.[0].ticket // empty')"
+          echo "No resumable ticket found for agent '${agent_name}'." >&2
+          echo "Explicit --ticket is required before claiming new work." >&2
+          if [[ -n "${next_ticket}" ]]; then
+            echo "Next recommended ticket: ${next_ticket}" >&2
+            echo "Run: scripts/agent-flow.sh start --agent ${agent_name} --ticket ${next_ticket} --slug <slug> --workspace ${workspace_mode}" >&2
+            echo "Use --auto-claim to restore previous auto-pick behavior." >&2
+          else
+            echo "No available tickets are ready to claim." >&2
+          fi
+          exit 1
+        fi
       fi
     fi
 
