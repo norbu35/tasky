@@ -369,6 +369,10 @@ public class AuthService {
         });
     }
 
+    public List<AuditLogEntry> getAuditLog() {
+        return List.copyOf(auditLog);
+    }
+
     public void addStrike(String userId) {
         List<Instant> strikes = strikesByUserId.computeIfAbsent(userId, k -> new ArrayList<>());
         strikes.add(Instant.now());
