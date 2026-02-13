@@ -67,3 +67,4 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T12:57:45Z | local | Codex | TASK-000 | agent/TASK-000-audit | 7a1a9b2729953980eb25522b81fa2d3cb694ecb4 | high | FAIL | 12/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.TASK-000.audit.json` |
 | 2026-02-13T13:02:59Z | local | Codex | TASK-000 | agent/TASK-000-audit | 7a1a9b2729953980eb25522b81fa2d3cb694ecb4 | high | PASS | 13/13 | REQ-AUTH-01,NFR-RELI-01,NFR-API-01 | `artifacts/self-verify.TASK-000.audit.json` |
 | 2026-02-13T13:33:45Z | local | Codex | TASK-010 | agent/TASK-010-otp-token-lifecycle | 752f752c485d915728814c177d71c0bb163c007b | high | PASS | 13/13 | REQ-AUTH-01,REQ-AUTH-02,REQ-AUTH-03 | `artifacts/self-verify.json` |
+| 2026-02-13T13:36:21Z | local | Codex | TASK-010 | agent/TASK-010-otp-token-lifecycle | 071ddef2b19445a4e9b69e9f0e071b029cb10287 | high | PASS | 13/13 | REQ-AUTH-01,REQ-AUTH-02,REQ-AUTH-03 | `artifacts/self-verify.json` |
