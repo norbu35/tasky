@@ -2,13 +2,18 @@ package mn.tasky;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -26,6 +31,9 @@ class TaskLifecycleIntegrationTests {
 
     @LocalServerPort
     private int port;
+
+    @Value("${tasky.security.jwt-secret}")
+    private String jwtSecret;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
@@ -257,7 +265,84 @@ class TaskLifecycleIntegrationTests {
         assertThat(task).containsKeys("approximate_lat", "approximate_lng");
     }
 
+    @Test
+    @DisplayName("TID-TASK-023-API-APPLY-OPEN-TASK tasker can apply to an open task")
+    void taskerCanApplyToTask() {
+        AuthContext customer = authenticate("110");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("111");
+        postWithAuth("/api/v1/users/me/role/tasker", tasker.accessToken(), null);
+        // Refresh token to get TASKER role
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+
+        ResponseEntity<Map> response = postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications",
+            taskerToken,
+            Map.of("message", "I can do this job!")
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody().get("status")).isEqualTo("PENDING");
+        assertThat(response.getBody().get("message")).isEqualTo("I can do this job!");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-023-API-APPLICANT-LIST customer can list applicants and accept one")
+    void customerCanAcceptApplicant() {
+        AuthContext customer = authenticate("112");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        // Tasker applies
+        AuthContext tasker = authenticate("113");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "Pick me!"));
+
+        // Customer lists applicants
+        ResponseEntity<Map> listResponse = getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken());
+        assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> apps = (List<Map<String, Object>>) listResponse.getBody().get("data");
+        assertThat(apps).hasSize(1);
+        String appId = apps.get(0).get("id").toString();
+
+        // Customer accepts
+        ResponseEntity<Map> acceptResponse = postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            null
+        );
+        assertThat(acceptResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(acceptResponse.getBody().get("status")).isEqualTo("PENDING_PAYMENT");
+        assertThat(acceptResponse.getBody().get("tasker_id")).isEqualTo(tasker.userId());
+    }
+
     // --- Helpers ---
+
+    private String createTask(String token, String categoryId) {
+        ResponseEntity<Map> response = postWithAuth("/api/v1/tasks", token, Map.of(
+            "category_id", categoryId,
+            "description", "Description for a task that will have applications.",
+            "budget", 70000,
+            "location_lat", 47.9, "location_lng", 106.9,
+            "location_text", "Ulaanbaatar",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+        return response.getBody().get("id").toString();
+    }
+
+    private String tokenFor(String role, String status, String userId) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+            .subject(userId)
+            .claim("role", role)
+            .claim("status", status)
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(now.plusSeconds(3600)))
+            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+            .compact();
+    }
 
     private AuthContext authenticate(String prefix) {
         String phone = uniquePhone(prefix);

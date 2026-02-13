@@ -178,6 +178,142 @@ public class TaskController {
         };
     }
 
+    @PostMapping("/{id}/applications")
+    public ResponseEntity<?> applyToTask(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @Valid @RequestBody ApplyTaskBody body,
+        HttpServletRequest request
+    ) {
+        TaskService.TaskApplyResult result = taskService.applyToTask(
+            principal.userId(),
+            principal.role(),
+            id,
+            body.message()
+        );
+
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(toApplicationResponse(result.application()));
+        }
+
+        return switch (result.errorCode()) {
+            case TaskService.TaskApplyResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                    "code", "NOT_FOUND",
+                    "message", "Task not found.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskApplyResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                Map.of(
+                    "code", "FORBIDDEN",
+                    "message", "Only verified taskers can apply to tasks.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskApplyResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                    "code", "TASK_NOT_OPEN",
+                    "message", "Task is not open for applications.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskApplyResult.DUPLICATE_APPLICATION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                    "code", "ALREADY_APPLIED",
+                    "message", "You have already applied to this task.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        };
+    }
+
+    @GetMapping("/{id}/applications")
+    public ResponseEntity<?> listTaskApplications(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        HttpServletRequest request
+    ) {
+        TaskService.TaskApplicationsListResult result = taskService.listTaskApplications(principal.userId(), id);
+
+        if (result.isSuccess()) {
+            List<Map<String, Object>> data = result.applications().stream()
+                .map(this::toApplicationResponse)
+                .toList();
+            return ResponseEntity.ok(
+                new PagedResponse<>(
+                    data,
+                    new CursorPagination(null, false)
+                )
+            );
+        }
+
+        return switch (result.errorCode()) {
+            case TaskService.TaskApplicationsListResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                    "code", "NOT_FOUND",
+                    "message", "Task not found.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskApplicationsListResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                Map.of(
+                    "code", "FORBIDDEN",
+                    "message", "Only the task owner can view applications.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        };
+    }
+
+    @PostMapping("/{id}/applications/{applicationId}/accept")
+    public ResponseEntity<?> acceptApplication(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @PathVariable String applicationId,
+        HttpServletRequest request
+    ) {
+        TaskService.TaskAcceptResult result = taskService.acceptApplication(principal.userId(), id, applicationId);
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(toBookingResponse(result.booking()));
+        }
+
+        return switch (result.errorCode()) {
+            case TaskService.TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                    "code", "NOT_FOUND",
+                    "message", "Task or application not found.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                Map.of(
+                    "code", "FORBIDDEN",
+                    "message", "Only the task owner can accept applications.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                    "code", "TASK_NOT_OPEN",
+                    "message", "Task is no longer open.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskService.TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                    "code", "CONFLICT",
+                    "message", "Application already processed or task assigned.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        };
+    }
+
     @PostMapping("/{id}/photos/upload-url")
     public ResponseEntity<?> getPostCreateUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
@@ -218,6 +354,37 @@ public class TaskController {
         }
 
         return getPreCreateUploadUrl(principal, body, request);
+    }
+
+    private Map<String, Object> toApplicationResponse(TaskService.TaskApplicationState app) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", app.id());
+        response.put("task_id", app.taskId());
+        response.put("tasker", Map.of(
+            "id", app.taskerId(),
+            "full_name", app.taskerFullName(),
+            "avatar_url", app.taskerAvatarUrl() != null ? app.taskerAvatarUrl() : "",
+            "rating_avg", app.taskerRatingAvg(),
+            "completed_tasks", app.taskerCompletedTasks(),
+            "is_pro", app.taskerIsPro()
+        ));
+        response.put("message", app.message());
+        response.put("status", app.status());
+        response.put("created_at", app.createdAt().toString());
+        return response;
+    }
+
+    private Map<String, Object> toBookingResponse(TaskService.BookingState booking) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", booking.id());
+        response.put("task_id", booking.taskId());
+        response.put("tasker_id", booking.taskerId());
+        response.put("customer_id", booking.customerId());
+        response.put("price", booking.price());
+        response.put("status", booking.status());
+        response.put("created_at", booking.createdAt().toString());
+        response.put("updated_at", booking.updatedAt().toString());
+        return response;
     }
 
     private Map<String, Object> toPublicTaskResponse(TaskService.TaskState task) {
@@ -290,6 +457,13 @@ public class TaskController {
             flags = Pattern.Flag.CASE_INSENSITIVE
         )
         String contentType
+    ) {
+    }
+
+    public record ApplyTaskBody(
+        @NotBlank
+        @Size(min = 1, max = 500)
+        String message
     ) {
     }
 

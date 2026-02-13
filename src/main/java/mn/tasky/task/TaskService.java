@@ -3,6 +3,7 @@ package mn.tasky.task;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import mn.tasky.auth.AuthService;
 import mn.tasky.category.CategoryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,19 +25,26 @@ public class TaskService {
         "image/png", "png"
     );
 
+    private final AuthService authService;
     private final CategoryService categoryService;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
 
     private final ConcurrentHashMap<String, TaskState> tasksById = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, TaskApplicationState> applicationsById = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, BookingState> bookingsById = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String> acceptedApplicationByTaskId = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> taskLocks = new ConcurrentHashMap<>();
 
     public TaskService(
+        AuthService authService,
         CategoryService categoryService,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
         @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds
     ) {
+        this.authService = authService;
         this.categoryService = categoryService;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
@@ -191,6 +200,130 @@ public class TaskService {
         return TaskCancelResult.success(cancelled);
     }
 
+    public TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message) {
+        TaskState task = tasksById.get(taskId);
+        if (task == null) {
+            return TaskApplyResult.NOT_FOUND_RESULT;
+        }
+
+        if (!"TASKER".equals(taskerRole) || task.customerId().equals(taskerId)) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
+
+        if (!"OPEN".equals(task.status()) || acceptedApplicationByTaskId.containsKey(taskId)) {
+            return TaskApplyResult.TASK_NOT_OPEN_RESULT;
+        }
+
+        Optional<AuthService.UserProfile> profileOpt = authService.getProfile(taskerId);
+        if (profileOpt.isEmpty()) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
+        AuthService.UserProfile profile = profileOpt.get();
+
+        synchronized (lockForTask(taskId)) {
+            boolean duplicate = applicationsById.values().stream()
+                .anyMatch(application ->
+                    taskId.equals(application.taskId()) &&
+                        taskerId.equals(application.taskerId())
+                );
+            if (duplicate) {
+                return TaskApplyResult.DUPLICATE_APPLICATION_RESULT;
+            }
+
+            TaskApplicationState application = new TaskApplicationState(
+                UUID.randomUUID().toString(),
+                taskId,
+                taskerId,
+                profile.fullName(),
+                profile.avatarUrl(),
+                profile.ratingAvg(),
+                profile.completedTasks(),
+                profile.isPro(),
+                message,
+                "PENDING",
+                Instant.now()
+            );
+            applicationsById.put(application.id(), application);
+            return TaskApplyResult.success(application);
+        }
+    }
+
+    public TaskApplicationsListResult listTaskApplications(String userId, String taskId) {
+        TaskState task = tasksById.get(taskId);
+        if (task == null) {
+            return TaskApplicationsListResult.NOT_FOUND_RESULT;
+        }
+
+        if (!task.customerId().equals(userId)) {
+            return TaskApplicationsListResult.FORBIDDEN_RESULT;
+        }
+
+        List<TaskApplicationState> applications = new ArrayList<>();
+        for (TaskApplicationState application : applicationsById.values()) {
+            if (taskId.equals(application.taskId())) {
+                applications.add(application);
+            }
+        }
+        applications.sort(Comparator.comparing(TaskApplicationState::createdAt));
+
+        return TaskApplicationsListResult.success(List.copyOf(applications));
+    }
+
+    public TaskAcceptResult acceptApplication(String customerId, String taskId, String applicationId) {
+        TaskState task = tasksById.get(taskId);
+        if (task == null) {
+            return TaskAcceptResult.NOT_FOUND_RESULT;
+        }
+
+        if (!task.customerId().equals(customerId)) {
+            return TaskAcceptResult.FORBIDDEN_RESULT;
+        }
+
+        if (!"OPEN".equals(task.status())) {
+            return TaskAcceptResult.TASK_NOT_OPEN_RESULT;
+        }
+
+        synchronized (lockForTask(taskId)) {
+            if (acceptedApplicationByTaskId.containsKey(taskId)) {
+                return TaskAcceptResult.CONFLICT_RESULT;
+            }
+
+            TaskApplicationState selected = applicationsById.get(applicationId);
+            if (selected == null || !taskId.equals(selected.taskId())) {
+                return TaskAcceptResult.NOT_FOUND_RESULT;
+            }
+            if (!"PENDING".equals(selected.status())) {
+                return TaskAcceptResult.CONFLICT_RESULT;
+            }
+
+            applicationsById.put(selected.id(), withStatus(selected, "ACCEPTED"));
+            for (TaskApplicationState current : applicationsById.values()) {
+                if (
+                    taskId.equals(current.taskId()) &&
+                        !"PENDING".equals(current.status()) == false &&
+                        !current.id().equals(selected.id())
+                ) {
+                    applicationsById.put(current.id(), withStatus(current, "REJECTED"));
+                }
+            }
+            acceptedApplicationByTaskId.put(taskId, selected.id());
+
+            Instant now = Instant.now();
+            BookingState booking = new BookingState(
+                UUID.randomUUID().toString(),
+                task.id(),
+                selected.taskerId(),
+                task.customerId(),
+                task.budget(),
+                "PENDING_PAYMENT",
+                now,
+                now
+            );
+            bookingsById.put(booking.id(), booking);
+            return TaskAcceptResult.success(booking);
+        }
+    }
+
     public Optional<PresignedUpload> createPhotoUploadUrl(String contentType) {
         String normalizedContentType = contentType.toLowerCase(Locale.ROOT);
         String extension = PHOTO_EXTENSION_BY_CONTENT_TYPE.get(normalizedContentType);
@@ -230,6 +363,26 @@ public class TaskService {
             ttlSeconds;
     }
 
+    private Object lockForTask(String taskId) {
+        return taskLocks.computeIfAbsent(taskId, ignored -> new Object());
+    }
+
+    private TaskApplicationState withStatus(TaskApplicationState application, String status) {
+        return new TaskApplicationState(
+            application.id(),
+            application.taskId(),
+            application.taskerId(),
+            application.taskerFullName(),
+            application.taskerAvatarUrl(),
+            application.taskerRatingAvg(),
+            application.taskerCompletedTasks(),
+            application.taskerIsPro(),
+            application.message(),
+            status,
+            application.createdAt()
+        );
+    }
+
     public record CreateTask(
         String categoryId,
         String description,
@@ -259,6 +412,33 @@ public class TaskService {
     ) {
     }
 
+    public record TaskApplicationState(
+        String id,
+        String taskId,
+        String taskerId,
+        String taskerFullName,
+        String taskerAvatarUrl,
+        double taskerRatingAvg,
+        int taskerCompletedTasks,
+        boolean taskerIsPro,
+        String message,
+        String status,
+        Instant createdAt
+    ) {
+    }
+
+    public record BookingState(
+        String id,
+        String taskId,
+        String taskerId,
+        String customerId,
+        int price,
+        String status,
+        Instant createdAt,
+        Instant updatedAt
+    ) {
+    }
+
     public record TaskCreateResult(TaskState task, String errorCode, String errorMessage) {
         public static final String INVALID_CATEGORY = "INVALID_CATEGORY";
         public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
@@ -275,6 +455,74 @@ public class TaskService {
         public boolean isSuccess() {
             return task != null;
         }
+    }
+
+    public record TaskApplyResult(TaskApplicationState application, String errorCode) {
+        public static final String NOT_FOUND = "NOT_FOUND";
+        public static final String FORBIDDEN = "FORBIDDEN";
+        public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
+        public static final String DUPLICATE_APPLICATION = "DUPLICATE_APPLICATION";
+
+        public static TaskApplyResult success(TaskApplicationState application) {
+            return new TaskApplyResult(application, null);
+        }
+
+        public static final TaskApplyResult NOT_FOUND_RESULT = new TaskApplyResult(null, NOT_FOUND);
+        public static final TaskApplyResult FORBIDDEN_RESULT = new TaskApplyResult(null, FORBIDDEN);
+        public static final TaskApplyResult TASK_NOT_OPEN_RESULT = new TaskApplyResult(null, TASK_NOT_OPEN);
+        public static final TaskApplyResult DUPLICATE_APPLICATION_RESULT = new TaskApplyResult(
+            null,
+            DUPLICATE_APPLICATION
+        );
+
+        public boolean isSuccess() {
+            return application != null;
+        }
+    }
+
+    public record TaskApplicationsListResult(List<TaskApplicationState> applications, String errorCode) {
+        public static final String NOT_FOUND = "NOT_FOUND";
+        public static final String FORBIDDEN = "FORBIDDEN";
+
+        public static TaskApplicationsListResult success(List<TaskApplicationState> applications) {
+            return new TaskApplicationsListResult(applications, null);
+        }
+
+        public static final TaskApplicationsListResult NOT_FOUND_RESULT = new TaskApplicationsListResult(
+            null,
+            NOT_FOUND
+        );
+        public static final TaskApplicationsListResult FORBIDDEN_RESULT = new TaskApplicationsListResult(
+            null,
+            FORBIDDEN
+        );
+
+        public boolean isSuccess() {
+            return applications != null;
+        }
+    }
+
+    public record TaskAcceptResult(BookingState booking, String errorCode) {
+        public static final String NOT_FOUND = "NOT_FOUND";
+        public static final String FORBIDDEN = "FORBIDDEN";
+        public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
+        public static final String CONFLICT = "CONFLICT";
+
+        public static TaskAcceptResult success(BookingState booking) {
+            return new TaskAcceptResult(booking, null);
+        }
+
+        public static final TaskAcceptResult NOT_FOUND_RESULT = new TaskAcceptResult(null, NOT_FOUND);
+        public static final TaskAcceptResult FORBIDDEN_RESULT = new TaskAcceptResult(null, FORBIDDEN);
+        public static final TaskAcceptResult TASK_NOT_OPEN_RESULT = new TaskAcceptResult(null, TASK_NOT_OPEN);
+        public static final TaskAcceptResult CONFLICT_RESULT = new TaskAcceptResult(null, CONFLICT);
+
+        public boolean isSuccess() {
+            return booking != null;
+        }
+    }
+
+    public record TaskPage(List<TaskState> data, String nextCursor, boolean hasMore) {
     }
 
     public record TaskCancelResult(TaskState task, String errorCode) {
@@ -296,8 +544,5 @@ public class TaskService {
     }
 
     public record PresignedUpload(String uploadUrl, String storageKey) {
-    }
-
-    public record TaskPage(List<TaskState> data, String nextCursor, boolean hasMore) {
     }
 }
