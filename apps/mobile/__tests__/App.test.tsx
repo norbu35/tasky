@@ -1,44 +1,34 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import { designTokens } from "../../../packages/design-tokens/tokens";
+import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react-native";
+import {designTokens} from "../../../packages/design-tokens/tokens";
 import AuthScreen from "../src/app/(auth)/index";
 import IndexScreen from "../src/app/index";
 import BookingsScreen from "../src/app/(tabs)/bookings";
 import TabsLayout from "../src/app/(tabs)/_layout";
 import FeedScreen from "../src/app/(tabs)/index";
 import ProfileScreen from "../src/app/(tabs)/profile";
-import { Button, FormField, Input, Toast } from "../src/components/ui";
-import { mobileTheme } from "../src/design/tokenAdapter";
-import { LoginForm } from "../src/features/auth/components/LoginForm";
+import {Button, FormField, Input, Toast} from "../src/components/ui";
+import {mobileTheme} from "../src/design/tokenAdapter";
+import {LoginForm} from "../src/features/auth/components/LoginForm";
+import {useRequestOtp, useVerifyOtp} from "../src/features/auth/hooks/useAuth";
+import {useBookings} from "../src/features/bookings/hooks/useBookings";
+import {useMyProfile, useSignOut, useUpdateProfile} from "../src/features/profile/hooks/useProfile";
+import {useTasks} from "../src/features/tasks/hooks/useTasks";
+import {createMemoryClientAnalyticsTracker, resolveClientLocale} from "../src/lib/clientAnalytics";
 import {
-  useRequestOtp,
-  useVerifyOtp
-} from "../src/features/auth/hooks/useAuth";
-import { useBookings } from "../src/features/bookings/hooks/useBookings";
-import {
-  useMyProfile,
-  useSignOut,
-  useUpdateProfile
-} from "../src/features/profile/hooks/useProfile";
-import { useTasks } from "../src/features/tasks/hooks/useTasks";
-import {
-  createMemoryClientAnalyticsTracker,
-  resolveClientLocale
-} from "../src/lib/clientAnalytics";
-import {
-  ApiError,
-  createMobileApiClient,
-  type AuthTokens,
-  type Booking,
-  type Message,
-  type Profile,
-  type PublicTask,
-  type User
+    ApiError,
+    type AuthTokens,
+    type Booking,
+    createMobileApiClient,
+    type Message,
+    type Profile,
+    type PublicTask,
+    type User
 } from "../src/lib/mobileApiClient";
-import { useAuthStore } from "../src/store/authStore";
-import { parseError } from "../src/utils/errorHandling";
-import { isRestricted } from "../src/utils/routeGuard";
+import {useAuthStore} from "../src/store/authStore";
+import {parseError} from "../src/utils/errorHandling";
+import {isRestricted} from "../src/utils/routeGuard";
 
 jest.mock("expo-router", () => {
   const React = require("react");

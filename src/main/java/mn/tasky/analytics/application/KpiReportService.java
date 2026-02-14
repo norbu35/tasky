@@ -1,10 +1,11 @@
 package mn.tasky.analytics.application;
 
+import mn.tasky.analytics.domain.KpiReport;
+import org.springframework.stereotype.Service;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import mn.tasky.analytics.domain.KpiReport;
-import org.springframework.stereotype.Service;
 
 @Service
 public class KpiReportService {

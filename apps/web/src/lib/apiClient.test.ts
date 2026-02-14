@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { HttpApiClient } from "./apiClient";
+import {afterEach, describe, expect, it, vi} from "vitest";
+import {HttpApiClient} from "./apiClient";
 
 const phone = "+12025550123";
 

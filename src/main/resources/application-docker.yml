@@ -1,0 +1,3 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://pgbouncer:6432/${POSTGRES_DB:tasky}

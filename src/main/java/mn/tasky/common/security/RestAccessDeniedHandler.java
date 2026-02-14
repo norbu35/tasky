@@ -1,13 +1,13 @@
 package mn.tasky.common.security;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
@@ -23,7 +23,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         HttpServletRequest request,
         HttpServletResponse response,
         AccessDeniedException accessDeniedException
-    ) throws IOException, ServletException {
+    ) throws IOException {
         responseWriter.write(
             request,
             response,

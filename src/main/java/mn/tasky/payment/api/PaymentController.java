@@ -6,8 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
@@ -16,11 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -42,6 +39,16 @@ public class PaymentController {
         @Valid @RequestBody InitiatePaymentBody body,
         HttpServletRequest request
     ) {
+        if (!Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                    "code", "DISCLAIMER_REQUIRED",
+                    "message", "Liability disclaimer must be accepted to initiate payment.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+        }
+
         return bookingService.getBooking(id)
             .filter(b -> b.customerId().equals(principal.userId()))
             .<ResponseEntity<?>>map(booking -> {

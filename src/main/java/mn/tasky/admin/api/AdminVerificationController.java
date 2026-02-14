@@ -5,23 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/admin/verifications")
@@ -39,7 +35,7 @@ public class AdminVerificationController {
         @RequestParam(value = "limit", defaultValue = "20") int limit
     ) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
-        List<AuthService.VerificationDetail> pending = authService.listPendingVerifications(clampedLimit);
+        List<VerificationDetail> pending = authService.listPendingVerifications(clampedLimit);
         List<VerificationDetailBody> data = pending.stream()
             .map(this::toDetailBody)
             .toList();
@@ -96,7 +92,7 @@ public class AdminVerificationController {
             ));
     }
 
-    private VerificationDetailBody toDetailBody(AuthService.VerificationDetail detail) {
+    private VerificationDetailBody toDetailBody(VerificationDetail detail) {
         return new VerificationDetailBody(
             detail.id(),
             detail.userId(),

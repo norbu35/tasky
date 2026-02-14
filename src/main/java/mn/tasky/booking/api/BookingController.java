@@ -1,36 +1,35 @@
 package mn.tasky.booking.api;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
+import mn.tasky.task.dto.TaskState;
 import mn.tasky.wallet.application.WalletService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/bookings")
 @Validated
 public class BookingController {
+
+    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
 
     private final BookingService bookingService;
     private final TaskService taskService;
@@ -61,7 +60,7 @@ public class BookingController {
         @RequestParam(required = false) String role,
         @RequestParam(required = false) String status
     ) {
-        List<BookingService.BookingState> bookings = bookingService.listBookings(
+        List<BookingState> bookings = bookingService.listBookings(
             principal.userId(),
             role,
             status
@@ -103,7 +102,7 @@ public class BookingController {
         @PathVariable String id,
         HttpServletRequest request
     ) {
-        Optional<BookingService.BookingState> bookingOpt = bookingService.getBooking(id);
+        Optional<BookingState> bookingOpt = bookingService.getBooking(id);
         if (bookingOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
@@ -114,13 +113,13 @@ public class BookingController {
             );
         }
 
-        BookingService.BookingState booking = bookingOpt.get();
-        Optional<TaskService.TaskState> taskOpt = taskService.getTask(booking.taskId());
+        BookingState booking = bookingOpt.get();
+        Optional<TaskState> taskOpt = taskService.getTask(booking.taskId());
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        BookingService.BookingTransitionResult result = bookingService.cancelBooking(
+        BookingTransitionResult result = bookingService.cancelBooking(
             principal.userId(), id, taskOpt.get().scheduledAt()
         );
 
@@ -154,28 +153,30 @@ public class BookingController {
 
             if (booking.taskerId().equals(principal.userId())) {
                 // Tasker cancelled: reopen task and record strike
-                taskService.reopenTask(booking.taskId());
+                if (taskService.reopenTask(booking.taskId()).isEmpty()) {
+                    log.warn("Task not found when reopening after cancellation: bookingId={} taskId={}", booking.id(), booking.taskId());
+                }
                 authService.addStrike(principal.userId());
             }
             return ResponseEntity.ok(toBookingResponse(result.booking()));
         }
 
         return switch (result.errorCode()) {
-            case BookingService.BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Booking not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case BookingService.BookingTransitionResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case BookingTransitionResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "You do not have permission to cancel this booking.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case BookingService.BookingTransitionResult.INVALID_TRANSITION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case BookingTransitionResult.INVALID_TRANSITION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "INVALID_STATUS",
                     "message", "Booking cannot be cancelled in its current status.",
@@ -192,12 +193,14 @@ public class BookingController {
         @PathVariable String id,
         HttpServletRequest request
     ) {
-        BookingService.BookingTransitionResult result = bookingService.completeBooking(principal.userId(), id);
+        BookingTransitionResult result = bookingService.completeBooking(principal.userId(), id);
 
         if (result.isSuccess()) {
-            BookingService.BookingState booking = result.booking();
+            BookingState booking = result.booking();
             // Update task status to COMPLETED
-            taskService.transitionToCompleted(booking.taskId());
+            if (taskService.transitionToCompleted(booking.taskId()).isEmpty()) {
+                log.warn("Task not found when completing booking: bookingId={} taskId={}", booking.id(), booking.taskId());
+            }
             // Credit tasker wallet minus platform fee (10%)
             walletService.creditTaskCompletion(booking.taskerId(), booking.id(), booking.price(), 0.10);
             
@@ -216,21 +219,21 @@ public class BookingController {
         }
 
         return switch (result.errorCode()) {
-            case BookingService.BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Booking not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case BookingService.BookingTransitionResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case BookingTransitionResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "Only the customer can complete this booking.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case BookingService.BookingTransitionResult.INVALID_TRANSITION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case BookingTransitionResult.INVALID_TRANSITION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "INVALID_STATUS",
                     "message", "Booking must be PAID to be completed.",
@@ -241,7 +244,7 @@ public class BookingController {
         };
     }
 
-    private Map<String, Object> toBookingResponse(BookingService.BookingState booking) {
+    private Map<String, Object> toBookingResponse(BookingState booking) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", booking.id());
         response.put("task_id", booking.taskId());

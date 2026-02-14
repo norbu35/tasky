@@ -1,14 +1,15 @@
 package mn.tasky.category.application;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import mn.tasky.category.dto.CategoryPage;
+import mn.tasky.category.dto.CategoryState;
+import mn.tasky.category.dto.CreateCategory;
+import mn.tasky.category.dto.UpdateCategory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CategoryService {
@@ -118,30 +119,5 @@ public class CategoryService {
             sortOrder
         );
         categoriesById.put(seeded.id(), seeded);
-    }
-
-    public record CreateCategory(String name, String nameMn, String iconUrl, int sortOrder) {
-    }
-
-    public record UpdateCategory(
-        String name,
-        String nameMn,
-        String iconUrl,
-        Boolean isActive,
-        Integer sortOrder
-    ) {
-    }
-
-    public record CategoryState(
-        String id,
-        String name,
-        String nameMn,
-        String iconUrl,
-        boolean isActive,
-        int sortOrder
-    ) {
-    }
-
-    public record CategoryPage(List<CategoryState> data, String nextCursor, boolean hasMore) {
     }
 }

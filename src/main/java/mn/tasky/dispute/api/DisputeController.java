@@ -1,18 +1,20 @@
 package mn.tasky.dispute.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.dispute.application.DisputeService;
+import mn.tasky.dispute.dto.Dispute;
+import mn.tasky.dispute.dto.DisputeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/disputes")
@@ -54,7 +56,7 @@ public class DisputeController {
         return ResponseEntity.status(201).body(toDisputeResponse(result.dispute()));
     }
 
-    private Map<String, Object> toDisputeResponse(DisputeService.Dispute d) {
+    private Map<String, Object> toDisputeResponse(Dispute d) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", d.id());
         res.put("booking_id", d.bookingId());
@@ -63,6 +65,4 @@ public class DisputeController {
         res.put("created_at", d.createdAt().toString());
         return res;
     }
-
-    public record DisputeRequest(@JsonProperty("booking_id") String bookingId, String reason) {}
 }

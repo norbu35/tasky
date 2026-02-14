@@ -1,25 +1,25 @@
 package mn.tasky.task.application;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.booking.application.BookingService;
 import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
+import mn.tasky.category.dto.CategoryState;
+import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.task.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TaskService {
@@ -67,7 +67,7 @@ public class TaskService {
     }
 
     public TaskCreateResult createTask(String customerId, CreateTask command) {
-        Optional<CategoryService.CategoryState> category = categoryService.getCategory(command.categoryId());
+        Optional<CategoryState> category = categoryService.getCategory(command.categoryId());
         if (category.isEmpty() || !category.get().isActive()) {
             return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY, "Category not found or inactive.");
         }
@@ -300,11 +300,11 @@ public class TaskService {
             return TaskApplyResult.TASK_NOT_OPEN_RESULT;
         }
 
-        Optional<AuthService.UserProfile> profileOpt = authService.getProfile(taskerId);
+        Optional<UserProfile> profileOpt = authService.getProfile(taskerId);
         if (profileOpt.isEmpty()) {
             return TaskApplyResult.FORBIDDEN_RESULT;
         }
-        AuthService.UserProfile profile = profileOpt.get();
+        UserProfile profile = profileOpt.get();
 
         synchronized (lockForTask(taskId)) {
             boolean duplicate = applicationsById.values().stream()
@@ -331,14 +331,15 @@ public class TaskService {
             );
             applicationsById.put(application.id(), application);
 
-            messagingService.startConversation(taskId, taskerId, task.customerId());
+            String conversationId = messagingService.startConversation(taskId, taskerId, task.customerId());
             notificationService.sendPush(task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
             analyticsService.track(
                 AnalyticsService.EVENT_APPLICATION_SUBMITTED,
                 taskerId,
                 Map.of(
                     AnalyticsService.PROPERTY_TASK_ID, taskId,
-                    "application_id", application.id()
+                    "application_id", application.id(),
+                    "conversation_id", conversationId
                 )
             );
 
@@ -398,7 +399,7 @@ public class TaskService {
             for (TaskApplicationState current : applicationsById.values()) {
                 if (
                     taskId.equals(current.taskId()) &&
-                        !"PENDING".equals(current.status()) == false &&
+                        "PENDING".equals(current.status()) &&
                         !current.id().equals(selected.id())
                 ) {
                     applicationsById.put(current.id(), withStatus(current, "REJECTED"));
@@ -406,14 +407,14 @@ public class TaskService {
             }
             acceptedApplicationByTaskId.put(taskId, selected.id());
 
-            BookingService.BookingState booking = bookingService.createBooking(
+            BookingState booking = bookingService.createBooking(
                 task.id(),
                 selected.taskerId(),
                 task.customerId(),
                 task.budget()
             );
 
-            messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
+            String conversationId = messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
             notificationService.sendPush(selected.taskerId(), "You are hired!", "Your application has been accepted.", "HIRED");
             analyticsService.track(
                 AnalyticsService.EVENT_TASKER_ACCEPTED,
@@ -422,7 +423,8 @@ public class TaskService {
                     AnalyticsService.PROPERTY_TASK_ID, task.id(),
                     AnalyticsService.PROPERTY_BOOKING_ID, booking.id(),
                     "tasker_id", selected.taskerId(),
-                    "application_id", applicationId
+                    "application_id", applicationId,
+                    "conversation_id", conversationId
                 )
             );
 
@@ -430,7 +432,7 @@ public class TaskService {
         }
     }
 
-    public Optional<PresignedUpload> createPhotoUploadUrl(String contentType) {
+    public Optional<PresignedUpload> createPhotoUploadUrl(String userId, String contentType) {
         String normalizedContentType = contentType.toLowerCase(Locale.ROOT);
         String extension = PHOTO_EXTENSION_BY_CONTENT_TYPE.get(normalizedContentType);
         if (!StringUtils.hasText(extension)) {
@@ -438,6 +440,8 @@ public class TaskService {
         }
 
         String storageKey = "uploads/tasks/" +
+            userId +
+            "/" +
             UUID.randomUUID() +
             "." +
             extension;
@@ -487,156 +491,5 @@ public class TaskService {
             status,
             application.createdAt()
         );
-    }
-
-    public record CreateTask(
-        String categoryId,
-        String description,
-        int budget,
-        double locationLat,
-        double locationLng,
-        String locationText,
-        String scheduledAt,
-        List<String> photoKeys
-    ) {
-    }
-
-    public record TaskState(
-        String id,
-        String customerId,
-        String categoryId,
-        String description,
-        int budget,
-        double locationLat,
-        double locationLng,
-        String locationText,
-        String status,
-        Instant scheduledAt,
-        List<String> photoKeys,
-        Instant createdAt,
-        Instant updatedAt
-    ) {
-    }
-
-    public record TaskApplicationState(
-        String id,
-        String taskId,
-        String taskerId,
-        String taskerFullName,
-        String taskerAvatarUrl,
-        double taskerRatingAvg,
-        int taskerCompletedTasks,
-        boolean taskerIsPro,
-        String message,
-        String status,
-        Instant createdAt
-    ) {
-    }
-
-    public record TaskCreateResult(TaskState task, String errorCode, String errorMessage) {
-        public static final String INVALID_CATEGORY = "INVALID_CATEGORY";
-        public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
-        public static final String INVALID_SCHEDULE = "INVALID_SCHEDULE";
-
-        public static TaskCreateResult success(TaskState task) {
-            return new TaskCreateResult(task, null, null);
-        }
-
-        public static TaskCreateResult error(String code, String message) {
-            return new TaskCreateResult(null, code, message);
-        }
-
-        public boolean isSuccess() {
-            return task != null;
-        }
-    }
-
-    public record TaskApplyResult(TaskApplicationState application, String errorCode) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-        public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
-        public static final String DUPLICATE_APPLICATION = "DUPLICATE_APPLICATION";
-
-        public static TaskApplyResult success(TaskApplicationState application) {
-            return new TaskApplyResult(application, null);
-        }
-
-        public static final TaskApplyResult NOT_FOUND_RESULT = new TaskApplyResult(null, NOT_FOUND);
-        public static final TaskApplyResult FORBIDDEN_RESULT = new TaskApplyResult(null, FORBIDDEN);
-        public static final TaskApplyResult TASK_NOT_OPEN_RESULT = new TaskApplyResult(null, TASK_NOT_OPEN);
-        public static final TaskApplyResult DUPLICATE_APPLICATION_RESULT = new TaskApplyResult(
-            null,
-            DUPLICATE_APPLICATION
-        );
-
-        public boolean isSuccess() {
-            return application != null;
-        }
-    }
-
-    public record TaskApplicationsListResult(List<TaskApplicationState> applications, String errorCode) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-
-        public static TaskApplicationsListResult success(List<TaskApplicationState> applications) {
-            return new TaskApplicationsListResult(applications, null);
-        }
-
-        public static final TaskApplicationsListResult NOT_FOUND_RESULT = new TaskApplicationsListResult(
-            null,
-            NOT_FOUND
-        );
-        public static final TaskApplicationsListResult FORBIDDEN_RESULT = new TaskApplicationsListResult(
-            null,
-            FORBIDDEN
-        );
-
-        public boolean isSuccess() {
-            return applications != null;
-        }
-    }
-
-    public record TaskAcceptResult(BookingService.BookingState booking, String errorCode) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-        public static final String TASK_NOT_OPEN = "TASK_NOT_OPEN";
-        public static final String CONFLICT = "CONFLICT";
-
-        public static TaskAcceptResult success(BookingService.BookingState booking) {
-            return new TaskAcceptResult(booking, null);
-        }
-
-        public static final TaskAcceptResult NOT_FOUND_RESULT = new TaskAcceptResult(null, NOT_FOUND);
-        public static final TaskAcceptResult FORBIDDEN_RESULT = new TaskAcceptResult(null, FORBIDDEN);
-        public static final TaskAcceptResult TASK_NOT_OPEN_RESULT = new TaskAcceptResult(null, TASK_NOT_OPEN);
-        public static final TaskAcceptResult CONFLICT_RESULT = new TaskAcceptResult(null, CONFLICT);
-
-        public boolean isSuccess() {
-            return booking != null;
-        }
-    }
-
-    public record TaskPage(List<TaskState> data, String nextCursor, boolean hasMore) {
-    }
-
-    public record TaskCancelResult(TaskState task, String errorCode) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-        public static final String INVALID_STATUS = "INVALID_STATUS";
-
-        public static TaskCancelResult success(TaskState task) {
-            return new TaskCancelResult(task, null);
-        }
-
-        public static final TaskCancelResult NOT_FOUND_RESULT = new TaskCancelResult(null, NOT_FOUND);
-        public static final TaskCancelResult FORBIDDEN_RESULT = new TaskCancelResult(null, FORBIDDEN);
-        public static final TaskCancelResult INVALID_STATUS_RESULT = new TaskCancelResult(null, INVALID_STATUS);
-
-        public boolean isSuccess() {
-            return task != null;
-        }
-    }
-
-    public record PresignedUpload(String uploadUrl, String storageKey) {
     }
 }

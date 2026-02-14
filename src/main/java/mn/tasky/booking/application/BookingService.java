@@ -1,5 +1,10 @@
 package mn.tasky.booking.application;
 
+import mn.tasky.auth.application.AuthService;
+import mn.tasky.booking.dto.BookingState;
+import mn.tasky.booking.dto.BookingTransitionResult;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -7,10 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.common.api.CursorPagination;
-import mn.tasky.common.api.PagedResponse;
-import org.springframework.stereotype.Service;
 
 @Service
 public class BookingService {
@@ -153,37 +154,5 @@ public class BookingService {
 
         BookingTransitionResult resolved = result.get();
         return resolved != null ? resolved : BookingTransitionResult.NOT_FOUND_RESULT;
-    }
-
-    public record BookingState(
-        String id,
-        String taskId,
-        String taskerId,
-        String customerId,
-        int price,
-        String status,
-        Integer cancellationFee,
-        boolean liabilityDisclaimerAccepted,
-        Instant createdAt,
-        Instant updatedAt
-    ) {
-    }
-
-    public record BookingTransitionResult(BookingState booking, String errorCode) {
-        public static final String NOT_FOUND = "NOT_FOUND";
-        public static final String FORBIDDEN = "FORBIDDEN";
-        public static final String INVALID_TRANSITION = "INVALID_TRANSITION";
-
-        public static BookingTransitionResult success(BookingState booking) {
-            return new BookingTransitionResult(booking, null);
-        }
-
-        public static final BookingTransitionResult NOT_FOUND_RESULT = new BookingTransitionResult(null, NOT_FOUND);
-        public static final BookingTransitionResult FORBIDDEN_RESULT = new BookingTransitionResult(null, FORBIDDEN);
-        public static final BookingTransitionResult INVALID_TRANSITION_RESULT = new BookingTransitionResult(null, INVALID_TRANSITION);
-
-        public boolean isSuccess() {
-            return booking != null;
-        }
     }
 }

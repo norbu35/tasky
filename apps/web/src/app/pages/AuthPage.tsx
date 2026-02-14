@@ -1,19 +1,12 @@
-import type { paths } from "@tasky/sdk";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { useAppContext } from "../context/AppContext";
-import { parseError } from "../utils/errorHandling";
+import type {paths} from "@tasky/sdk";
+import {useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {Button} from "../../components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
+import {Input} from "../../components/ui/input";
+import {Label} from "../../components/ui/label";
+import {useAppContext} from "../context/AppContext";
+import {parseError} from "../utils/errorHandling";
 
 type DevRole = "CUSTOMER" | "TASKER" | "ADMIN";
 
@@ -36,8 +29,7 @@ export function AuthPage() {
   const returnPath =
     typeof location.state === "object" &&
     location.state !== null &&
-    "from" in location.state &&
-    typeof (location.state as { from?: string }).from === "string"
+    "from" in location.state
       ? (location.state as { from: string }).from
       : "/profile";
 

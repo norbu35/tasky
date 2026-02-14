@@ -1,13 +1,10 @@
 package mn.tasky.auth.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
+import mn.tasky.auth.dto.RefreshTokenBody;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth/token")
@@ -67,12 +67,5 @@ public class TokenController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
-    }
-
-    public record RefreshTokenBody(
-        @JsonProperty("refresh_token")
-        @NotBlank
-        String refreshToken
-    ) {
     }
 }

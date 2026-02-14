@@ -1,20 +1,18 @@
 package mn.tasky.review.api;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.review.application.ReviewService;
+import mn.tasky.review.dto.Review;
+import mn.tasky.review.dto.ReviewRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/reviews")
@@ -58,24 +56,21 @@ public class ReviewController {
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") int limit) {
         
-        List<ReviewService.Review> reviews = reviewService.listReviews(userId, cursor, limit);
+        List<Review> reviews = reviewService.listReviews(userId, cursor, limit);
         
         List<Map<String, Object>> data = reviews.stream()
             .map(this::toReviewResponse)
             .toList();
 
-        String nextCursor = reviews.isEmpty() ? null : reviews.get(reviews.size() - 1).id();
-        boolean hasMore = reviews.size() == limit;
-
         return ResponseEntity.ok(
             new PagedResponse<>(
                 data,
-                new CursorPagination(nextCursor, hasMore)
+                CursorPagination.from(reviews, limit, Review::id)
             )
         );
     }
 
-    private Map<String, Object> toReviewResponse(ReviewService.Review review) {
+    private Map<String, Object> toReviewResponse(Review review) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", review.id());
         res.put("booking_id", review.bookingId());
@@ -86,10 +81,4 @@ public class ReviewController {
         res.put("created_at", review.createdAt().toString());
         return res;
     }
-
-    public record ReviewRequest(
-        @com.fasterxml.jackson.annotation.JsonProperty("booking_id") String bookingId, 
-        int rating, 
-        String comment
-    ) {}
 }

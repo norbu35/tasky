@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import { mobileTheme } from "../../design/tokenAdapter";
+import {StyleSheet, Text, View} from "react-native";
+import {mobileTheme} from "../../design/tokenAdapter";
 
 type Variant = "info" | "success" | "error";
 

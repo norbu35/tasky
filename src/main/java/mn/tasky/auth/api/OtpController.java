@@ -2,12 +2,10 @@ package mn.tasky.auth.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
+import mn.tasky.auth.dto.OtpRequestBody;
+import mn.tasky.auth.dto.OtpVerifyBody;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth/otp")
@@ -78,22 +79,5 @@ public class OtpController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
-    }
-
-    public record OtpRequestBody(
-        @NotBlank
-        @Pattern(regexp = "^\\+[1-9][0-9]{7,14}$")
-        String phone
-    ) {
-    }
-
-    public record OtpVerifyBody(
-        @NotBlank
-        @Pattern(regexp = "^\\+[1-9][0-9]{7,14}$")
-        String phone,
-        @NotBlank
-        @Pattern(regexp = "^[0-9]{4,6}$")
-        String code
-    ) {
     }
 }

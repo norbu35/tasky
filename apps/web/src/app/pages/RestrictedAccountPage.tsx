@@ -1,12 +1,6 @@
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "../../components/ui/card";
-import { useAppContext } from "../context/AppContext";
+import {Button} from "../../components/ui/button";
+import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
+import {useAppContext} from "../context/AppContext";
 
 export function RestrictedAccountPage() {
   const { profile, signOut } = useAppContext();

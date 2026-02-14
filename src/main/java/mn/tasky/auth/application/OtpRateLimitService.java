@@ -1,11 +1,12 @@
 package mn.tasky.auth.application;
 
+import mn.tasky.auth.RateLimitExceededException;
+import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
-import mn.tasky.auth.RateLimitExceededException;
-import org.springframework.stereotype.Service;
 
 @Service
 public class OtpRateLimitService {

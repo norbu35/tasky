@@ -1,15 +1,11 @@
-import { BrowserRouter, MemoryRouter } from "react-router-dom";
+import {BrowserRouter, MemoryRouter} from "react-router-dom";
+import {type ApiClient, type AuthTokens, createApiClient} from "../lib/apiClient";
 import {
-  createApiClient,
-  type ApiClient,
-  type AuthTokens
-} from "../lib/apiClient";
-import {
-  createConsoleClientAnalyticsTracker,
-  resolveClientLocale,
-  type ClientAnalyticsTracker
+    type ClientAnalyticsTracker,
+    createConsoleClientAnalyticsTracker,
+    resolveClientLocale
 } from "../lib/clientAnalytics";
-import { AppShell } from "./AppShell";
+import {AppShell} from "./AppShell";
 
 export interface AppProps {
   apiClient?: ApiClient;

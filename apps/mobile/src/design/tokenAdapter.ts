@@ -1,4 +1,4 @@
-import { designTokens } from "../../../../packages/design-tokens/tokens";
+import {designTokens} from "../../../../packages/design-tokens/tokens";
 
 export const mobileTheme = {
   colors: {

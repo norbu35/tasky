@@ -1,40 +1,25 @@
 package mn.tasky.task.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
-import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.task.application.TaskService;
+import mn.tasky.task.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -66,7 +51,7 @@ public class TaskController {
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit
     ) {
-        TaskService.TaskPage page = taskService.listTasks(category, lat, lng, radiusKm, cursor, limit);
+        TaskPage page = taskService.listTasks(category, lat, lng, radiusKm, cursor, limit);
 
         List<Map<String, Object>> data = page.data().stream()
             .map(this::toPublicTaskResponse)
@@ -86,7 +71,7 @@ public class TaskController {
         @Valid @RequestBody UploadUrlBody body,
         HttpServletRequest request
     ) {
-        return taskService.createPhotoUploadUrl(body.contentType())
+        return taskService.createPhotoUploadUrl(principal.userId(), body.contentType())
             .<ResponseEntity<?>>map(upload -> ResponseEntity.ok(
                 Map.of(
                     "upload_url", upload.uploadUrl(),
@@ -118,9 +103,9 @@ public class TaskController {
             );
         }
 
-        TaskService.TaskCreateResult result = taskService.createTask(
+        TaskCreateResult result = taskService.createTask(
             principal.userId(),
-            new TaskService.CreateTask(
+            new CreateTask(
                 body.categoryId(),
                 body.description(),
                 body.budget(),
@@ -151,28 +136,28 @@ public class TaskController {
         @PathVariable String id,
         HttpServletRequest request
     ) {
-        TaskService.TaskCancelResult result = taskService.cancelTask(principal.userId(), id);
+        TaskCancelResult result = taskService.cancelTask(principal.userId(), id);
 
         if (result.isSuccess()) {
             return ResponseEntity.ok(toTaskResponse(result.task()));
         }
 
         return switch (result.errorCode()) {
-            case TaskService.TaskCancelResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case TaskCancelResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Task not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskCancelResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case TaskCancelResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "You do not have permission to cancel this task.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskCancelResult.INVALID_STATUS -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case TaskCancelResult.INVALID_STATUS -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "INVALID_STATUS",
                     "message", "Task cannot be cancelled in its current status.",
@@ -190,7 +175,7 @@ public class TaskController {
         @Valid @RequestBody ApplyTaskBody body,
         HttpServletRequest request
     ) {
-        TaskService.TaskApplyResult result = taskService.applyToTask(
+        TaskApplyResult result = taskService.applyToTask(
             principal.userId(),
             principal.role(),
             id,
@@ -202,28 +187,28 @@ public class TaskController {
         }
 
         return switch (result.errorCode()) {
-            case TaskService.TaskApplyResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case TaskApplyResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Task not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskApplyResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case TaskApplyResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "Only verified taskers can apply to tasks.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskApplyResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case TaskApplyResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "TASK_NOT_OPEN",
                     "message", "Task is not open for applications.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskApplyResult.DUPLICATE_APPLICATION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case TaskApplyResult.DUPLICATE_APPLICATION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "ALREADY_APPLIED",
                     "message", "You have already applied to this task.",
@@ -240,7 +225,7 @@ public class TaskController {
         @PathVariable String id,
         HttpServletRequest request
     ) {
-        TaskService.TaskApplicationsListResult result = taskService.listTaskApplications(principal.userId(), id);
+        TaskApplicationsListResult result = taskService.listTaskApplications(principal.userId(), id);
 
         if (result.isSuccess()) {
             List<Map<String, Object>> data = result.applications().stream()
@@ -255,14 +240,14 @@ public class TaskController {
         }
 
         return switch (result.errorCode()) {
-            case TaskService.TaskApplicationsListResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case TaskApplicationsListResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Task not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskApplicationsListResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case TaskApplicationsListResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "Only the task owner can view applications.",
@@ -280,35 +265,35 @@ public class TaskController {
         @PathVariable String applicationId,
         HttpServletRequest request
     ) {
-        TaskService.TaskAcceptResult result = taskService.acceptApplication(principal.userId(), id, applicationId);
+        TaskAcceptResult result = taskService.acceptApplication(principal.userId(), id, applicationId);
 
         if (result.isSuccess()) {
             return ResponseEntity.ok(toBookingResponse(result.booking()));
         }
 
         return switch (result.errorCode()) {
-            case TaskService.TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
                     "code", "NOT_FOUND",
                     "message", "Task or application not found.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            case TaskAcceptResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
                     "code", "FORBIDDEN",
                     "message", "Only the task owner can accept applications.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case TaskAcceptResult.TASK_NOT_OPEN -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "TASK_NOT_OPEN",
                     "message", "Task is no longer open.",
                     "trace_id", resolveTraceId(request)
                 )
             );
-            case TaskService.TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT).body(
+            case TaskAcceptResult.CONFLICT -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "CONFLICT",
                     "message", "Application already processed or task assigned.",
@@ -326,7 +311,7 @@ public class TaskController {
         @Valid @RequestBody UploadUrlBody body,
         HttpServletRequest request
     ) {
-        Optional<TaskService.TaskState> taskOpt = taskService.getTask(id);
+        Optional<TaskState> taskOpt = taskService.getTask(id);
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 Map.of(
@@ -337,7 +322,7 @@ public class TaskController {
             );
         }
 
-        TaskService.TaskState task = taskOpt.get();
+        TaskState task = taskOpt.get();
         if (!task.customerId().equals(principal.userId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                 Map.of(
@@ -361,7 +346,7 @@ public class TaskController {
         return getPreCreateUploadUrl(principal, body, request);
     }
 
-    private Map<String, Object> toApplicationResponse(TaskService.TaskApplicationState app) {
+    private Map<String, Object> toApplicationResponse(TaskApplicationState app) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", app.id());
         response.put("task_id", app.taskId());
@@ -379,7 +364,7 @@ public class TaskController {
         return response;
     }
 
-    private Map<String, Object> toBookingResponse(BookingService.BookingState booking) {
+    private Map<String, Object> toBookingResponse(BookingState booking) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", booking.id());
         response.put("task_id", booking.taskId());
@@ -392,7 +377,7 @@ public class TaskController {
         return response;
     }
 
-    private Map<String, Object> toPublicTaskResponse(TaskService.TaskState task) {
+    private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
         double[] fuzzedLocation = fuzzCoordinates(task.id(), task.locationLat(), task.locationLng());
         response.put("id", task.id());
@@ -446,7 +431,7 @@ public class TaskController {
         return Math.round(value * 100.0d) / 100.0d;
     }
 
-    private Map<String, Object> toTaskResponse(TaskService.TaskState task) {
+    private Map<String, Object> toTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", task.id());
         response.put("category_id", task.categoryId());
@@ -470,58 +455,5 @@ public class TaskController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
-    }
-
-    public record UploadUrlBody(
-        @JsonProperty("content_type")
-        @NotBlank
-        @Pattern(
-            regexp = "^(image/jpeg|image/png)$",
-            flags = Pattern.Flag.CASE_INSENSITIVE
-        )
-        String contentType
-    ) {
-    }
-
-    public record ApplyTaskBody(
-        @NotBlank
-        @Size(min = 1, max = 500)
-        String message
-    ) {
-    }
-
-    public record CreateTaskBody(
-        @JsonProperty("category_id")
-        @NotBlank
-        String categoryId,
-
-        @NotBlank
-        @Size(min = 10, max = 2000)
-        String description,
-
-        @Min(5000)
-        int budget,
-
-        @JsonProperty("location_lat")
-        @NotNull
-        double locationLat,
-
-        @JsonProperty("location_lng")
-        @NotNull
-        double locationLng,
-
-        @JsonProperty("location_text")
-        @NotBlank
-        @Size(min = 5, max = 500)
-        String locationText,
-
-        @JsonProperty("scheduled_at")
-        @NotBlank
-        String scheduledAt,
-
-        @JsonProperty("photo_keys")
-        @Size(max = 3)
-        List<String> photoKeys
-    ) {
     }
 }

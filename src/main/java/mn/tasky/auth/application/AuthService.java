@@ -1,20 +1,8 @@
 package mn.tasky.auth.application;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
 import jakarta.annotation.PostConstruct;
+import mn.tasky.auth.dto.*;
+import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
@@ -22,6 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AuthService {
@@ -422,7 +419,7 @@ public class AuthService {
             
             if (rating > 0) {
                 if (baseline.ratingAvg() == 0.0) {
-                    newRating = (double) rating;
+                    newRating = rating;
                 } else {
                     // In the test, it's 6 tasks and 5.0 avg.
                     // Let's use a simpler formula that matches the test expectations.
@@ -691,15 +688,6 @@ public class AuthService {
     private record RefreshSession(String userId, Instant expiresAt) {
     }
 
-    public record AuditLogEntry(
-        String id,
-        String adminId,
-        String action,
-        String targetId,
-        String reason,
-        Instant createdAt
-    ) {}
-
     private record UserProfileState(
         String fullName,
         String avatarUrl,
@@ -722,67 +710,5 @@ public class AuthService {
         String adminNotes,
         Instant reviewedAt
     ) {
-    }
-
-    public record AuthSession(String accessToken, String refreshToken, Map<String, String> user) {
-    }
-
-    public record AuthTokens(String accessToken, String refreshToken) {
-    }
-
-    public record ProfileUpdate(String fullName, String avatarUrl) {
-    }
-
-    public record UserProfile(
-        String id,
-        String phone,
-        String role,
-        String status,
-        String fullName,
-        String avatarUrl,
-        double ratingAvg,
-        int completedTasks,
-        boolean isPro,
-        String createdAt
-    ) {
-    }
-
-    public record PresignedUpload(String uploadUrl, String storageKey) {
-    }
-
-    public record RoleActivationResult(
-        String accessToken,
-        String refreshToken,
-        Map<String, String> user
-    ) {
-    }
-
-    public record VerificationStatusResponse(
-        String status,
-        String adminNotes,
-        String submittedAt,
-        String reviewedAt
-    ) {
-    }
-
-    public record VerificationDetail(
-        String id,
-        String userId,
-        String userPhone,
-        String userName,
-        String idCardFrontUrl,
-        String idCardBackUrl,
-        String status,
-        String adminNotes,
-        String submittedAt,
-        String reviewedAt
-    ) {
-    }
-
-    public record VerificationSubmitResult(String outcome, VerificationStatusResponse statusResponse) {
-        public static final String USER_NOT_FOUND = "USER_NOT_FOUND";
-        public static final String NOT_TASKER = "NOT_TASKER";
-        public static final String CONFLICT = "CONFLICT";
-        public static final String SUCCESS = "SUCCESS";
     }
 }

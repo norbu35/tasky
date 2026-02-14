@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
-import { router } from 'expo-router';
+import {useMutation} from '@tanstack/react-query';
+import {useAuthStore} from '../../../store/authStore';
+import {createMobileApiClient} from '../../../lib/mobileApiClient';
+import {router} from 'expo-router';
 
 const api = createMobileApiClient();
 
@@ -19,8 +19,7 @@ export function useVerifyOtp() {
 
   return useMutation({
     mutationFn: async ({ phone, code }: { phone: string; code: string }) => {
-      const session = await api.verifyOtp(phone, code);
-      return session;
+      return await api.verifyOtp(phone, code);
     },
     onSuccess: async (session) => {
       setSession(session);

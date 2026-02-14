@@ -1,20 +1,18 @@
 package mn.tasky.admin.api;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import mn.tasky.admin.dto.ResolveRequest;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.dispute.application.DisputeService;
+import mn.tasky.dispute.dto.Dispute;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/disputes")
@@ -28,7 +26,7 @@ public class AdminDisputeController {
 
     @GetMapping("/pending")
     public ResponseEntity<?> listPending() {
-        List<DisputeService.Dispute> pending = disputeService.listPendingDisputes();
+        List<Dispute> pending = disputeService.listPendingDisputes();
         List<Map<String, Object>> data = pending.stream()
             .map(this::toDisputeResponse)
             .toList();
@@ -51,7 +49,7 @@ public class AdminDisputeController {
         return ResponseEntity.ok(toDisputeResponse(result.dispute()));
     }
 
-    private Map<String, Object> toDisputeResponse(DisputeService.Dispute d) {
+    private Map<String, Object> toDisputeResponse(Dispute d) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", d.id());
         res.put("booking_id", d.bookingId());
@@ -60,6 +58,4 @@ public class AdminDisputeController {
         res.put("created_at", d.createdAt().toString());
         return res;
     }
-
-    public record ResolveRequest(String outcome, String notes) {}
 }

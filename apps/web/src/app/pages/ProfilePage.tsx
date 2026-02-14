@@ -1,18 +1,11 @@
-import { useEffect, useState } from "react";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { useAppContext } from "../context/AppContext";
-import { ScreenFrame } from "../layout/ScreenFrame";
-import { parseError } from "../utils/errorHandling";
+import {useEffect, useState} from "react";
+import {Button} from "../../components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
+import {Input} from "../../components/ui/input";
+import {Label} from "../../components/ui/label";
+import {useAppContext} from "../context/AppContext";
+import {ScreenFrame} from "../layout/ScreenFrame";
+import {parseError} from "../utils/errorHandling";
 
 export function ProfilePage() {
   const {

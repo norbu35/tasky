@@ -1,22 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import type {
-  Conversation,
-  Message
-} from "../../lib/apiClient";
-import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
-import { useAppContext } from "../context/AppContext";
-import { ScreenFrame } from "../layout/ScreenFrame";
-import { parseError } from "../utils/errorHandling";
+import {useCallback, useEffect, useState} from "react";
+import type {Conversation, Message} from "../../lib/apiClient";
+import {Button} from "../../components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../../components/ui/card";
+import {Input} from "../../components/ui/input";
+import {Label} from "../../components/ui/label";
+import {Textarea} from "../../components/ui/textarea";
+import {useAppContext} from "../context/AppContext";
+import {ScreenFrame} from "../layout/ScreenFrame";
+import {parseError} from "../utils/errorHandling";
 
 export function MessagingNotificationsPage() {
   const { apiClient, session } = useAppContext();

@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { mobileTheme } from "../../design/tokenAdapter";
+import type {ReactNode} from "react";
+import {Pressable, StyleSheet, Text, View} from "react-native";
+import {mobileTheme} from "../../design/tokenAdapter";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
 

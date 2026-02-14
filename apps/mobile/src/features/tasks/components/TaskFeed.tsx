@@ -1,5 +1,5 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { useTasks } from '../hooks/useTasks';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {useTasks} from '../hooks/useTasks';
 
 export function TaskFeed() {
   const { data, isLoading } = useTasks();

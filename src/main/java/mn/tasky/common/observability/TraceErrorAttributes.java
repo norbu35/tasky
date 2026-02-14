@@ -1,12 +1,13 @@
 package mn.tasky.common.observability;
 
-import java.util.Map;
-import java.util.UUID;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class TraceErrorAttributes extends DefaultErrorAttributes {

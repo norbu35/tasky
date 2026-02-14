@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../../store/authStore';
-import { createMobileApiClient } from '../../../lib/mobileApiClient';
+import {useQuery} from '@tanstack/react-query';
+import {useAuthStore} from '../../../store/authStore';
+import {createMobileApiClient} from '../../../lib/mobileApiClient';
 
 const api = createMobileApiClient();
 

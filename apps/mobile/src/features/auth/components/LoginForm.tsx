@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button, Input, FormField } from '../../../components/ui';
-import { useRequestOtp, useVerifyOtp } from '../hooks/useAuth';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {Button, FormField, Input} from '../../../components/ui';
+import {useRequestOtp, useVerifyOtp} from '../hooks/useAuth';
 
 export function LoginForm() {
   const [phone, setPhone] = useState('+976');

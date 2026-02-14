@@ -1,22 +1,22 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
-import { App } from "./App";
-import { createMemoryClientAnalyticsTracker } from "./lib/clientAnalytics";
+import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {Button} from "./components/ui/button";
+import {Input} from "./components/ui/input";
+import {App} from "./App";
+import {createMemoryClientAnalyticsTracker} from "./lib/clientAnalytics";
 import type {
-  ApiClient,
-  AuthTokens,
-  Booking,
-  Category,
-  Conversation,
-  Dispute,
-  Message,
-  Profile,
-  Review,
-  Task,
-  User
+    ApiClient,
+    AuthTokens,
+    Booking,
+    Category,
+    Conversation,
+    Dispute,
+    Message,
+    Profile,
+    Review,
+    Task,
+    User
 } from "./lib/apiClient";
 
 function localDateTimeInput(hoursAhead: number): string {

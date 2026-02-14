@@ -1,6 +1,6 @@
-import { NavLink } from "react-router-dom";
-import { Button } from "../../components/ui/button";
-import { useAppContext } from "../context/AppContext";
+import {NavLink} from "react-router-dom";
+import {Button} from "../../components/ui/button";
+import {useAppContext} from "../context/AppContext";
 
 export function Header() {
   const { profile, signOut } = useAppContext();

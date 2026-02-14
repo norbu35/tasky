@@ -1,26 +1,23 @@
 package mn.tasky.user.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dto.ProfileUpdate;
+import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.user.dto.AvatarUploadUrlBody;
+import mn.tasky.user.dto.ProfileResponse;
+import mn.tasky.user.dto.UpdateProfileBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -49,7 +46,7 @@ public class UserProfileController {
         @Valid @RequestBody UpdateProfileBody body,
         HttpServletRequest request
     ) {
-        AuthService.ProfileUpdate update = new AuthService.ProfileUpdate(
+        ProfileUpdate update = new ProfileUpdate(
             body.fullName(),
             body.avatarUrl()
         );
@@ -97,7 +94,7 @@ public class UserProfileController {
             .orElseGet(() -> unauthorizedResponse(request));
     }
 
-    private ProfileResponse toProfileResponse(AuthService.UserProfile profile) {
+    private ProfileResponse toProfileResponse(UserProfile profile) {
         return new ProfileResponse(
             profile.id(),
             profile.phone(),
@@ -128,48 +125,5 @@ public class UserProfileController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
-    }
-
-    public record UpdateProfileBody(
-        @JsonProperty("full_name")
-        @Size(min = 1, max = 100)
-        @Pattern(regexp = ".*\\S.*")
-        String fullName,
-        @JsonProperty("avatar_url")
-        @Size(max = 512)
-        @Pattern(regexp = "^(https?://\\S+|uploads/\\S+)$")
-        String avatarUrl
-    ) {
-    }
-
-    public record AvatarUploadUrlBody(
-        @JsonProperty("content_type")
-        @NotBlank
-        @Pattern(
-            regexp = "^(image/jpeg|image/png|image/webp)$",
-            flags = Pattern.Flag.CASE_INSENSITIVE
-        )
-        String contentType
-    ) {
-    }
-
-    public record ProfileResponse(
-        String id,
-        String phone,
-        String role,
-        String status,
-        @JsonProperty("full_name")
-        String fullName,
-        @JsonProperty("avatar_url")
-        String avatarUrl,
-        @JsonProperty("rating_avg")
-        double ratingAvg,
-        @JsonProperty("completed_tasks")
-        int completedTasks,
-        @JsonProperty("is_pro")
-        boolean isPro,
-        @JsonProperty("created_at")
-        String createdAt
-    ) {
     }
 }

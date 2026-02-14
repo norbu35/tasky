@@ -1,0 +1,7 @@
+spring:
+  flyway:
+    clean-disabled: false
+
+tasky:
+  dev-auth:
+    enabled: true

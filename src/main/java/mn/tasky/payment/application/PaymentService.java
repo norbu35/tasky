@@ -1,17 +1,8 @@
 package mn.tasky.payment.application;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dto.BookingState;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
 import org.slf4j.Logger;
@@ -19,6 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class PaymentService {
@@ -57,7 +55,7 @@ public class PaymentService {
         String paymentId = UUID.randomUUID().toString();
         bookingByPaymentId.put(paymentId, bookingId);
         
-        Optional<BookingService.BookingState> booking = bookingService.getBooking(bookingId);
+        Optional<BookingState> booking = bookingService.getBooking(bookingId);
         booking.ifPresent(b -> analyticsService.track(
             AnalyticsService.EVENT_PAYMENT_INITIATED,
             b.customerId(),
@@ -90,7 +88,7 @@ public class PaymentService {
             return false;
         }
 
-        Optional<BookingService.BookingState> bookingOpt = bookingService.getBooking(bookingId);
+        Optional<BookingState> bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
             return false;
         }
@@ -99,10 +97,12 @@ public class PaymentService {
             return true;
         }
 
-        BookingService.BookingState booking = bookingOpt.get();
+        BookingState booking = bookingOpt.get();
         if ("PENDING_PAYMENT".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
-            taskService.transitionToAssigned(booking.taskId());
+            if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
+                log.warn("Task not found when assigning after payment: bookingId={} taskId={}", bookingId, booking.taskId());
+            }
             
             notificationService.sendPush(booking.taskerId(), "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
             notificationService.sendPush(booking.customerId(), "Booking Confirmed", "Your payment for booking #" + bookingId + " was successful.", "BOOKING_CONFIRMED");

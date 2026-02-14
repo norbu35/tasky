@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import {expect, test} from "@playwright/test";
 
 test("@smoke TID-TASK-000-WEB-E2E-SMOKE renders Tasky web shell", async ({ page }) => {
   await page.goto("/");

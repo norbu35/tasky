@@ -1,13 +1,16 @@
 package mn.tasky.dispute.application;
 
+import mn.tasky.booking.application.BookingService;
+import mn.tasky.dispute.dto.Dispute;
+import mn.tasky.dispute.dto.DisputeRaiseResult;
+import mn.tasky.dispute.dto.DisputeResolutionResult;
+import mn.tasky.wallet.application.WalletService;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import mn.tasky.booking.application.BookingService;
-import mn.tasky.wallet.application.WalletService;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DisputeService {
@@ -49,6 +52,8 @@ public class DisputeService {
             reason,
             "OPEN",
             null,
+            null,
+            null,
             Instant.now(),
             null
         );
@@ -76,7 +81,11 @@ public class DisputeService {
             return DisputeResolutionResult.error("NOT_OPEN");
         }
 
-        var booking = bookingService.getBooking(dispute.bookingId()).get();
+        var bookingOpt = bookingService.getBooking(dispute.bookingId());
+        if (bookingOpt.isEmpty()) {
+            return DisputeResolutionResult.error("BOOKING_NOT_FOUND");
+        }
+        var booking = bookingOpt.get();
         int taskerShare = (int) (booking.price() * 0.9);
 
         String newStatus;
@@ -92,33 +101,10 @@ public class DisputeService {
 
         Dispute resolved = new Dispute(
             dispute.id(), dispute.bookingId(), dispute.raiserId(), dispute.reason(),
-            newStatus, outcome, dispute.createdAt(), Instant.now()
+            newStatus, outcome, adminId, resolutionNotes, dispute.createdAt(), Instant.now()
         );
         disputesById.put(disputeId, resolved);
 
         return DisputeResolutionResult.success(resolved);
-    }
-
-    public record Dispute(
-        String id,
-        String bookingId,
-        String raiserId,
-        String reason,
-        String status,
-        String outcome,
-        Instant createdAt,
-        Instant resolvedAt
-    ) {}
-
-    public record DisputeRaiseResult(Dispute dispute, String error) {
-        public static DisputeRaiseResult success(Dispute d) { return new DisputeRaiseResult(d, null); }
-        public static DisputeRaiseResult error(String e) { return new DisputeRaiseResult(null, e); }
-        public boolean isSuccess() { return dispute != null; }
-    }
-
-    public record DisputeResolutionResult(Dispute dispute, String error) {
-        public static DisputeResolutionResult success(Dispute d) { return new DisputeResolutionResult(d, null); }
-        public static DisputeResolutionResult error(String e) { return new DisputeResolutionResult(null, e); }
-        public boolean isSuccess() { return dispute != null; }
     }
 }

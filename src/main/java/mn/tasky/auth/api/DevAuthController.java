@@ -1,10 +1,9 @@
 package mn.tasky.auth.api;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import java.util.Map;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dto.AuthSession;
+import mn.tasky.auth.dto.DevLoginRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/dev")
@@ -27,7 +28,7 @@ public class DevAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> devLogin(@Valid @RequestBody DevLoginRequest body) {
-        AuthService.AuthSession session = authService.devLogin(body.phone(), body.role());
+        AuthSession session = authService.devLogin(body.phone(), body.role());
         return ResponseEntity.ok(
             Map.of(
                 "access_token", session.accessToken(),
@@ -35,15 +36,5 @@ public class DevAuthController {
                 "user", session.user()
             )
         );
-    }
-
-    public record DevLoginRequest(
-        @NotBlank
-        @Pattern(regexp = "^\\+[1-9][0-9]{7,14}$")
-        String phone,
-        @NotBlank
-        @Pattern(regexp = "^(CUSTOMER|TASKER|ADMIN)$")
-        String role
-    ) {
     }
 }

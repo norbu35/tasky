@@ -1,13 +1,16 @@
 package mn.tasky.review.application;
 
+import mn.tasky.auth.application.AuthService;
+import mn.tasky.booking.application.BookingService;
+import mn.tasky.review.dto.Review;
+import mn.tasky.review.dto.ReviewSubmitResult;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import mn.tasky.auth.application.AuthService;
-import mn.tasky.booking.application.BookingService;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ReviewService {
@@ -87,21 +90,5 @@ public class ReviewService {
             .sorted(Comparator.comparing(Review::id))
             .limit(limit)
             .toList();
-    }
-
-    public record Review(
-        String id,
-        String bookingId,
-        String authorId,
-        String targetUserId,
-        int rating,
-        String comment,
-        Instant createdAt
-    ) {}
-
-    public record ReviewSubmitResult(Review review, String error) {
-        public boolean isSuccess() {
-            return review != null;
-        }
     }
 }

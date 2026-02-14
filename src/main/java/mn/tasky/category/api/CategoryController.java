@@ -1,32 +1,22 @@
 package mn.tasky.category.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import mn.tasky.category.application.CategoryService;
+import mn.tasky.category.dto.*;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -61,8 +51,8 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> createCategory(
         @Valid @RequestBody CreateCategoryBody body
     ) {
-        CategoryService.CategoryState created = categoryService.createCategory(
-            new CategoryService.CreateCategory(
+        CategoryState created = categoryService.createCategory(
+            new CreateCategory(
                 body.name(),
                 body.nameMn(),
                 body.iconUrl(),
@@ -81,7 +71,7 @@ public class CategoryController {
     ) {
         return categoryService.updateCategory(
             id,
-            new CategoryService.UpdateCategory(
+            new UpdateCategory(
                 body.name(),
                 body.nameMn(),
                 body.iconUrl(),
@@ -106,7 +96,7 @@ public class CategoryController {
         HttpServletRequest request
     ) {
         try {
-            CategoryService.CategoryPage page = includeInactive
+            CategoryPage page = includeInactive
                 ? categoryService.listAllCategories(cursor, limit)
                 : categoryService.listActiveCategories(cursor, limit);
 
@@ -127,15 +117,19 @@ public class CategoryController {
         }
     }
 
-    private CategoryResponse toCategoryResponse(CategoryService.CategoryState category) {
+    private CategoryResponse toCategoryResponse(CategoryState category) {
         return new CategoryResponse(
             category.id(),
-            category.name(),
-            category.nameMn(),
-            category.iconUrl(),
+            sanitize(category.name()),
+            sanitize(category.nameMn()),
+            sanitize(category.iconUrl()),
             category.isActive(),
             category.sortOrder()
         );
+    }
+
+    private String sanitize(String value) {
+        return value == null ? null : HtmlUtils.htmlEscape(value);
     }
 
     private String resolveTraceId(HttpServletRequest request) {
@@ -144,59 +138,5 @@ public class CategoryController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
-    }
-
-    public record CreateCategoryBody(
-        @NotBlank
-        @Size(max = 120)
-        String name,
-        @JsonProperty("name_mn")
-        @NotBlank
-        @Size(max = 120)
-        String nameMn,
-        @JsonProperty("icon_url")
-        @NotBlank
-        @Size(max = 512)
-        @Pattern(regexp = "^https?://\\S+$")
-        String iconUrl,
-        @JsonProperty("sort_order")
-        @NotNull
-        @Min(0)
-        Integer sortOrder
-    ) {
-    }
-
-    public record UpdateCategoryBody(
-        @Size(min = 1, max = 120)
-        @Pattern(regexp = ".*\\S.*")
-        String name,
-        @JsonProperty("name_mn")
-        @Size(min = 1, max = 120)
-        @Pattern(regexp = ".*\\S.*")
-        String nameMn,
-        @JsonProperty("icon_url")
-        @Size(max = 512)
-        @Pattern(regexp = "^https?://\\S+$")
-        String iconUrl,
-        @JsonProperty("is_active")
-        Boolean isActive,
-        @JsonProperty("sort_order")
-        @Min(0)
-        Integer sortOrder
-    ) {
-    }
-
-    public record CategoryResponse(
-        String id,
-        String name,
-        @JsonProperty("name_mn")
-        String nameMn,
-        @JsonProperty("icon_url")
-        String iconUrl,
-        @JsonProperty("is_active")
-        boolean isActive,
-        @JsonProperty("sort_order")
-        int sortOrder
-    ) {
     }
 }
