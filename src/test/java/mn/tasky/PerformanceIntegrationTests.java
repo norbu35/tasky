@@ -3,7 +3,7 @@ package mn.tasky;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
-import mn.tasky.task.TaskService;
+import mn.tasky.task.application.TaskService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
