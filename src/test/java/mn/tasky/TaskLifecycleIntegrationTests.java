@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.auth.AuthService;
 import mn.tasky.task.TaskService;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +39,9 @@ class TaskLifecycleIntegrationTests {
 
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
+
+    @Value("${tasky.qpay.webhook-secret}")
+    private String qpayWebhookSecret;
 
     @Autowired
     private TaskService taskService;
@@ -207,6 +212,37 @@ class TaskLifecycleIntegrationTests {
 
         assertThat(data).isNotEmpty();
         assertThat(data).allSatisfy(task -> assertThat(task.get("status")).isEqualTo("OPEN"));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-LIST-LOCATION public feed returns fuzzed coordinates")
+    void publicFeedReturnsFuzzedCoordinates() {
+        AuthContext customer = authenticate("102");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
+        double exactLat = 47.9188;
+        double exactLng = 106.9176;
+        String taskId = (String) postWithAuth("/api/v1/tasks", customer.accessToken(), Map.of(
+            "category_id", categoryId,
+            "description", "Description for coordinate fuzzing task.",
+            "budget", 50000,
+            "location_lat", exactLat,
+            "location_lng", exactLng,
+            "location_text", "Location",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        )).getBody().get("id");
+
+        ResponseEntity<Map> feed = getWithAuth("/api/v1/tasks", customer.accessToken());
+        List<Map<String, Object>> data = (List<Map<String, Object>>) feed.getBody().get("data");
+        Map<String, Object> task = data.stream()
+            .filter(item -> taskId.equals(item.get("id")))
+            .findFirst()
+            .orElseThrow();
+
+        double approximateLat = ((Number) task.get("approximate_lat")).doubleValue();
+        double approximateLng = ((Number) task.get("approximate_lng")).doubleValue();
+        assertThat(approximateLat).isNotEqualTo(exactLat);
+        assertThat(approximateLng).isNotEqualTo(exactLng);
     }
 
     @Test
@@ -421,18 +457,15 @@ class TaskLifecycleIntegrationTests {
         
         String bookingId = getBookingIdForTask(taskId, customer.accessToken());
 
-        // Simulate payment (back-door)
-        post("/api/v1/payments/qpay/callback", Map.of(
-            "payment_id", UUID.randomUUID().toString(), // Not linked correctly in test, but I'll fix PaymentService to allow back-door for tests or just use service
-            "status", "PAID",
-            "signature", "VALID_SIG"
-        ));
-        // Wait, the callback needs a valid paymentId linked to bookingId.
-        // I'll use PaymentService to initiate first.
+        // Initiate payment to get a real payment reference.
         ResponseEntity<Map> initResponse = postWithAuth("/api/v1/payments/bookings/" + bookingId + "/initiate", customer.accessToken(), Map.of("liability_disclaimer_accepted", true));
         String paymentUrl = initResponse.getBody().get("payment_url").toString();
         String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
-        post("/api/v1/payments/qpay/callback", Map.of("payment_id", paymentId, "status", "PAID", "signature", "VALID_SIG"));
+        post("/api/v1/payments/qpay/callback", Map.of(
+            "payment_id", paymentId,
+            "status", "PAID",
+            "signature", signatureFor(paymentId, "PAID")
+        ));
 
         // Complete booking
         ResponseEntity<Map> completeResponse = postWithAuth("/api/v1/bookings/" + bookingId + "/complete", customer.accessToken(), null);
@@ -638,6 +671,22 @@ class TaskLifecycleIntegrationTests {
     private String uniquePhone(String prefix) {
         // Deterministic unique phone based on prefix for simplicity in this test
         return "+976" + prefix + "000000";
+    }
+
+    private String signatureFor(String paymentId, String status) {
+        String payload = paymentId + "|" + status;
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(signature.length * 2);
+            for (byte b : signature) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private record AuthContext(String accessToken, String userId, String phone) {

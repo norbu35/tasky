@@ -1,5 +1,7 @@
 package mn.tasky.wallet;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +10,7 @@ import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/wallet")
+@Validated
 public class WalletController {
 
     private final WalletService walletService;
@@ -37,7 +41,7 @@ public class WalletController {
     @PostMapping("/payouts")
     public ResponseEntity<?> requestPayout(
             @AuthenticationPrincipal JwtPrincipal principal,
-            @RequestBody PayoutRequest body) {
+            @Valid @RequestBody PayoutRequest body) {
         try {
             String payoutId = walletService.requestPayout(principal.userId(), body.amount());
             return ResponseEntity.ok(Map.of("id", payoutId, "status", "PENDING"));
@@ -75,5 +79,5 @@ public class WalletController {
         return response;
     }
 
-    public record PayoutRequest(int amount) {}
+    public record PayoutRequest(@Positive int amount) {}
 }

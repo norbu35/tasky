@@ -1,0 +1,29 @@
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    prometheus:
+      access: read_only
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+tasky:
+  auth:
+    otp-test-code: "123456"
+  security:
+    jwt-secret: "test-jwt-signing-secret-should-be-at-least-32-bytes"
+    encryption-key: "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY="
+    blind-index-key: "test-blind-index-secret-should-be-at-least-32-bytes"
+  qpay:
+    webhook-secret: "test-qpay-webhook-secret-should-be-at-least-32-bytes"
+  cors:
+    allowed-origins: "http://localhost:5173"
+  websocket:
+    allowed-origins: "http://localhost:5173"

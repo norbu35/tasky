@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
@@ -27,14 +28,24 @@ public class JwtTokenService {
     private final long refreshTokenTtlSeconds;
 
     public JwtTokenService(
-        @Value("${tasky.security.jwt-secret:tasky-dev-signing-secret-key-with-minimum-32-bytes}")
+        @Value("${tasky.security.jwt-secret}")
         String jwtSecret,
         @Value("${tasky.security.access-token-ttl-seconds:900}") long accessTokenTtlSeconds,
         @Value("${tasky.security.refresh-token-ttl-seconds:1209600}") long refreshTokenTtlSeconds
     ) {
+        if (!StringUtils.hasText(jwtSecret)) {
+            throw new IllegalStateException("tasky.security.jwt-secret must be configured.");
+        }
         this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         this.accessTokenTtlSeconds = accessTokenTtlSeconds;
         this.refreshTokenTtlSeconds = refreshTokenTtlSeconds;
+    }
+
+    @PostConstruct
+    void validateSigningKeyStrength() {
+        if (signingKey.getEncoded().length < 32) {
+            throw new IllegalStateException("JWT secret must be at least 32 bytes.");
+        }
     }
 
     public Optional<JwtPrincipal> parse(String token) {

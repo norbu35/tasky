@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import mn.tasky.auth.AuthService;
 import mn.tasky.booking.BookingService;
@@ -38,6 +39,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/tasks")
 @Validated
 public class TaskController {
+
+    private static final double MAX_PUBLIC_OFFSET_METERS = 500.0d;
 
     private final TaskService taskService;
     private final CategoryService categoryService;
@@ -390,6 +393,7 @@ public class TaskController {
 
     private Map<String, Object> toPublicTaskResponse(TaskService.TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
+        double[] fuzzedLocation = fuzzCoordinates(task.id(), task.locationLat(), task.locationLng());
         response.put("id", task.id());
 
         categoryService.getCategory(task.categoryId()).ifPresent(cat ->
@@ -413,8 +417,8 @@ public class TaskController {
         response.put("description", task.description());
         response.put("budget", task.budget());
         response.put("approximate_location", "Ulaanbaatar, Mongolia (Fuzzed)");
-        response.put("approximate_lat", task.locationLat());
-        response.put("approximate_lng", task.locationLng());
+        response.put("approximate_lat", fuzzedLocation[0]);
+        response.put("approximate_lng", fuzzedLocation[1]);
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
         response.put("photo_urls", task.photoKeys()); // Should be URLs but for now keys
@@ -422,6 +426,23 @@ public class TaskController {
         response.put("created_at", task.createdAt().toString());
 
         return response;
+    }
+
+    private double[] fuzzCoordinates(String seed, double lat, double lng) {
+        Random random = new Random(seed.hashCode());
+        double angle = random.nextDouble() * Math.PI * 2;
+        double distanceMeters = random.nextDouble() * MAX_PUBLIC_OFFSET_METERS;
+        double latOffset = (distanceMeters * Math.cos(angle)) / 111_320.0d;
+        double lngOffset = (distanceMeters * Math.sin(angle)) /
+            (111_320.0d * Math.max(0.1d, Math.cos(Math.toRadians(lat))));
+
+        double fuzzedLat = roundToTwoDecimals(lat + latOffset);
+        double fuzzedLng = roundToTwoDecimals(lng + lngOffset);
+        return new double[] {fuzzedLat, fuzzedLng};
+    }
+
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0d) / 100.0d;
     }
 
     private Map<String, Object> toTaskResponse(TaskService.TaskState task) {

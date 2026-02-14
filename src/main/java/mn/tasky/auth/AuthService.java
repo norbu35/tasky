@@ -11,10 +11,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import jakarta.annotation.PostConstruct;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -34,14 +38,17 @@ public class AuthService {
 
     private final JwtTokenService jwtTokenService;
     private final CryptoService cryptoService;
+    private final SmsService smsService;
+    private final Environment environment;
     private final long otpTtlSeconds;
-    private final String staticOtpCode;
+    private final String otpTestCode;
     private final String avatarUploadBaseUrl;
     private final long avatarMaxBytes;
     private final long avatarUploadUrlTtlSeconds;
     private final String verificationUploadBaseUrl;
     private final long verificationMaxBytes;
     private final long verificationUploadUrlTtlSeconds;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     private final ConcurrentHashMap<String, AuthUser> usersById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, AuthUser> usersByPhoneIndex = new ConcurrentHashMap<>();
@@ -56,8 +63,10 @@ public class AuthService {
     public AuthService(
         JwtTokenService jwtTokenService,
         CryptoService cryptoService,
+        SmsService smsService,
+        Environment environment,
         @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
-        @Value("${tasky.auth.otp-code:123456}") String staticOtpCode,
+        @Value("${tasky.auth.otp-test-code:}") String otpTestCode,
         @Value("${tasky.storage.avatar-upload-base-url:https://upload.tasky.local}") String avatarUploadBaseUrl,
         @Value("${tasky.storage.avatar-max-bytes:5242880}") long avatarMaxBytes,
         @Value("${tasky.storage.avatar-upload-url-ttl-seconds:900}") long avatarUploadUrlTtlSeconds,
@@ -67,8 +76,10 @@ public class AuthService {
     ) {
         this.jwtTokenService = jwtTokenService;
         this.cryptoService = cryptoService;
+        this.smsService = smsService;
+        this.environment = environment;
         this.otpTtlSeconds = otpTtlSeconds;
-        this.staticOtpCode = staticOtpCode;
+        this.otpTestCode = otpTestCode;
         this.avatarUploadBaseUrl = avatarUploadBaseUrl;
         this.avatarMaxBytes = avatarMaxBytes;
         this.avatarUploadUrlTtlSeconds = avatarUploadUrlTtlSeconds;
@@ -77,14 +88,34 @@ public class AuthService {
         this.verificationUploadUrlTtlSeconds = verificationUploadUrlTtlSeconds;
     }
 
+    @PostConstruct
+    void validateOtpConfiguration() {
+        boolean productionProfile = false;
+        for (String profile : environment.getActiveProfiles()) {
+            if ("prod".equalsIgnoreCase(profile) || "production".equalsIgnoreCase(profile)) {
+                productionProfile = true;
+                break;
+            }
+        }
+
+        if (productionProfile && StringUtils.hasText(otpTestCode)) {
+            throw new IllegalStateException("tasky.auth.otp-test-code must not be set in production.");
+        }
+        if (productionProfile && !smsService.isProductionReady()) {
+            throw new IllegalStateException("A production-ready SMS provider must be configured in production.");
+        }
+    }
+
     public String requestOtp(String rawPhone) {
         String phone = normalizePhone(rawPhone);
         ensureUser(phone);
+        String otpCode = generateOtpCode();
 
         otpChallengesByPhone.put(
             phone,
-            new OtpChallenge(staticOtpCode, Instant.now().plusSeconds(otpTtlSeconds))
+            new OtpChallenge(otpCode, Instant.now().plusSeconds(otpTtlSeconds), 0)
         );
+        smsService.sendOtp(phone, otpCode);
 
         return maskPhone(phone);
     }
@@ -97,15 +128,25 @@ public class AuthService {
         }
 
         if (challenge.expiresAt().isBefore(Instant.now())) {
-            otpChallengesByPhone.remove(phone);
+            otpChallengesByPhone.remove(phone, challenge);
             return Optional.empty();
         }
 
-        if (!challenge.code().equals(code)) {
+        if (!constantTimeEquals(challenge.code(), code)) {
+            int attempts = challenge.attempts() + 1;
+            if (attempts >= 3) {
+                otpChallengesByPhone.remove(phone, challenge);
+            } else {
+                otpChallengesByPhone.replace(
+                    phone,
+                    challenge,
+                    new OtpChallenge(challenge.code(), challenge.expiresAt(), attempts)
+                );
+            }
             return Optional.empty();
         }
 
-        otpChallengesByPhone.remove(phone);
+        otpChallengesByPhone.remove(phone, challenge);
         AuthUser user = ensureUser(phone);
         return Optional.of(issueSession(user));
     }
@@ -151,6 +192,9 @@ public class AuthService {
 
         AuthUser user = usersById.get(parsed.userId());
         if (user == null) {
+            return Optional.empty();
+        }
+        if ("BANNED".equals(user.status()) || "SUSPENDED".equals(user.status())) {
             return Optional.empty();
         }
 
@@ -495,6 +539,23 @@ public class AuthService {
         return StringUtils.trimAllWhitespace(phone);
     }
 
+    private String generateOtpCode() {
+        if (StringUtils.hasText(otpTestCode)) {
+            return otpTestCode;
+        }
+        return String.format(Locale.ROOT, "%06d", secureRandom.nextInt(1_000_000));
+    }
+
+    private boolean constantTimeEquals(String left, String right) {
+        if (left == null || right == null) {
+            return false;
+        }
+        return MessageDigest.isEqual(
+            left.getBytes(StandardCharsets.UTF_8),
+            right.getBytes(StandardCharsets.UTF_8)
+        );
+    }
+
     private String buildUploadUrl(String storageKey, String contentType) {
         return buildPresignedUploadUrl(
             avatarUploadBaseUrl, storageKey, contentType,
@@ -592,7 +653,7 @@ public class AuthService {
         public Instant createdAt() { return createdAt; }
     }
 
-    private record OtpChallenge(String code, Instant expiresAt) {
+    private record OtpChallenge(String code, Instant expiresAt, int attempts) {
     }
 
     private record RefreshSession(String userId, Instant expiresAt) {

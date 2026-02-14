@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import mn.tasky.auth.AuthService;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
@@ -77,7 +78,7 @@ public class BookingService {
     }
 
     public BookingTransitionResult transitionToPaid(String bookingId) {
-        return transition(bookingId, "PAID", List.of("PENDING_PAYMENT"));
+        return transition(bookingId, "PAID", List.of("PENDING_PAYMENT"), null);
     }
 
     public BookingTransitionResult completeBooking(String userId, String bookingId) {
@@ -85,7 +86,7 @@ public class BookingService {
         if (booking == null) return BookingTransitionResult.NOT_FOUND_RESULT;
         if (!booking.customerId().equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
         
-        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("PAID"));
+        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("PAID"), null);
         if (result.isSuccess()) {
             authService.updateUserStats(booking.taskerId(), 0, true);
         }
@@ -112,42 +113,46 @@ public class BookingService {
             }
         }
 
-        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("PENDING_PAYMENT", "PAID"));
-        if (result.isSuccess() && fee != null) {
-            BookingState current = result.booking();
-            BookingState withFee = new BookingState(
-                current.id(), current.taskId(), current.taskerId(), current.customerId(),
-                current.price(), current.status(), fee, current.liabilityDisclaimerAccepted(),
-                current.createdAt(), Instant.now()
-            );
-            bookingsById.put(bookingId, withFee);
-            return BookingTransitionResult.success(withFee);
-        }
-        return result;
+        return transition(bookingId, "CANCELLED", List.of("PENDING_PAYMENT", "PAID"), fee);
     }
 
-    private BookingTransitionResult transition(String bookingId, String newStatus, List<String> allowedFrom) {
-        BookingState current = bookingsById.get(bookingId);
-        if (current == null) return BookingTransitionResult.NOT_FOUND_RESULT;
+    private BookingTransitionResult transition(
+        String bookingId,
+        String newStatus,
+        List<String> allowedFrom,
+        Integer cancellationFeeOverride
+    ) {
+        AtomicReference<BookingTransitionResult> result = new AtomicReference<>();
 
-        if (!allowedFrom.contains(current.status())) {
-            return BookingTransitionResult.INVALID_TRANSITION_RESULT;
-        }
+        bookingsById.compute(bookingId, (ignored, current) -> {
+            if (current == null) {
+                result.set(BookingTransitionResult.NOT_FOUND_RESULT);
+                return null;
+            }
 
-        BookingState updated = new BookingState(
-            current.id(),
-            current.taskId(),
-            current.taskerId(),
-            current.customerId(),
-            current.price(),
-            newStatus,
-            current.cancellationFee(),
-            current.liabilityDisclaimerAccepted(),
-            current.createdAt(),
-            Instant.now()
-        );
-        bookingsById.put(bookingId, updated);
-        return BookingTransitionResult.success(updated);
+            if (!allowedFrom.contains(current.status())) {
+                result.set(BookingTransitionResult.INVALID_TRANSITION_RESULT);
+                return current;
+            }
+
+            BookingState updated = new BookingState(
+                current.id(),
+                current.taskId(),
+                current.taskerId(),
+                current.customerId(),
+                current.price(),
+                newStatus,
+                cancellationFeeOverride != null ? cancellationFeeOverride : current.cancellationFee(),
+                current.liabilityDisclaimerAccepted(),
+                current.createdAt(),
+                Instant.now()
+            );
+            result.set(BookingTransitionResult.success(updated));
+            return updated;
+        });
+
+        BookingTransitionResult resolved = result.get();
+        return resolved != null ? resolved : BookingTransitionResult.NOT_FOUND_RESULT;
     }
 
     public record BookingState(

@@ -1,15 +1,17 @@
 package mn.tasky.common.security;
 
+import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class CryptoService {
@@ -17,12 +19,38 @@ public class CryptoService {
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 128;
+    private static final String BLIND_INDEX_ALGORITHM = "HmacSHA256";
 
     private final SecretKey secretKey;
+    private final SecretKey blindIndexKey;
 
-    public CryptoService(@Value("${tasky.security.encryption-key}") String base64Key) {
+    public CryptoService(
+        @Value("${tasky.security.encryption-key}") String base64Key,
+        @Value("${tasky.security.blind-index-key}") String blindIndexKey
+    ) {
+        if (!StringUtils.hasText(base64Key)) {
+            throw new IllegalStateException("tasky.security.encryption-key must be configured.");
+        }
+        if (!StringUtils.hasText(blindIndexKey)) {
+            throw new IllegalStateException("tasky.security.blind-index-key must be configured.");
+        }
+
         byte[] decodedKey = Base64.getDecoder().decode(base64Key);
         this.secretKey = new SecretKeySpec(decodedKey, "AES");
+        this.blindIndexKey = new SecretKeySpec(
+            blindIndexKey.getBytes(StandardCharsets.UTF_8),
+            BLIND_INDEX_ALGORITHM
+        );
+    }
+
+    @PostConstruct
+    void validateKeys() {
+        if (secretKey.getEncoded().length != 32) {
+            throw new IllegalStateException("Encryption key must decode to exactly 32 bytes for AES-256.");
+        }
+        if (blindIndexKey.getEncoded().length < 32) {
+            throw new IllegalStateException("Blind index key must be at least 32 bytes.");
+        }
     }
 
     public String encrypt(String plaintext) {
@@ -65,8 +93,9 @@ public class CryptoService {
     public String blindIndex(String input) {
         if (input == null) return null;
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            Mac mac = Mac.getInstance(BLIND_INDEX_ALGORITHM);
+            mac.init(blindIndexKey);
+            byte[] hash = mac.doFinal(input.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
             throw new RuntimeException("Hashing failed", e);

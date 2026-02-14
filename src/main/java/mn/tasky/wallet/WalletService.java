@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,6 +17,7 @@ public class WalletService {
     private final ConcurrentHashMap<String, Long> heldBalancesByUserId = new ConcurrentHashMap<>();
     private final CopyOnWriteArrayList<LedgerEntry> ledger = new CopyOnWriteArrayList<>();
     private final ConcurrentHashMap<String, PayoutRequest> payoutsById = new ConcurrentHashMap<>();
+    private final Set<String> creditedBookingIds = ConcurrentHashMap.newKeySet();
 
     public WalletBalance getBalance(String userId) {
         long balance = balancesByUserId.getOrDefault(userId, 0L);
@@ -38,6 +40,10 @@ public class WalletService {
     }
 
     public void creditTaskCompletion(String taskerId, String bookingId, int totalAmount, double feePercent) {
+        if (!creditedBookingIds.add(bookingId)) {
+            return;
+        }
+
         int feeAmount = (int) Math.round(totalAmount * feePercent);
         int creditAmount = totalAmount - feeAmount;
 
@@ -110,6 +116,10 @@ public class WalletService {
     }
 
     public String requestPayout(String userId, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Payout amount must be greater than zero");
+        }
+
         balancesByUserId.compute(userId, (id, current) -> {
             long currentVal = current == null ? 0L : current;
             if (currentVal < amount) throw new IllegalArgumentException("Insufficient balance for payout");
@@ -137,6 +147,38 @@ public class WalletService {
         
         ledger.add(new LedgerEntry(
             UUID.randomUUID().toString(), p.userId(), -p.amount(), "PAYOUT", p.id(), "Payout processed", Instant.now()
+        ));
+    }
+
+    public void creditRefund(String userId, int amount, String bookingId, String description) {
+        if (amount <= 0) {
+            return;
+        }
+        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(),
+            userId,
+            amount,
+            "REFUND",
+            bookingId,
+            description,
+            Instant.now()
+        ));
+    }
+
+    public void creditCancellationFee(String userId, int amount, String bookingId) {
+        if (amount <= 0) {
+            return;
+        }
+        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
+        ledger.add(new LedgerEntry(
+            UUID.randomUUID().toString(),
+            userId,
+            amount,
+            "REFUND",
+            bookingId,
+            "Late cancellation fee for booking #" + bookingId,
+            Instant.now()
         ));
     }
 

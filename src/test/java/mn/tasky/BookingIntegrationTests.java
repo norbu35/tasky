@@ -2,6 +2,8 @@ package mn.tasky;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import mn.tasky.booking.BookingService;
@@ -104,7 +106,47 @@ class BookingIntegrationTests {
         assertThat(postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", stranger.accessToken(), null).getStatusCode().value()).isEqualTo(403);
     }
 
+    @Test
+    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL-REFUND tasker cancellation refunds full amount to customer")
+    void taskerCancellationRefundsCustomer() {
+        AuthContext customer = authenticate("rc1");
+        AuthContext tasker = authenticate("rc2");
+
+        String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.DAYS));
+        BookingService.BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+        bookingService.transitionToPaid(booking.id());
+
+        ResponseEntity<Map> cancelResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", tasker.accessToken(), null);
+        assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Map> customerWallet = getWithAuth("/api/v1/wallet", customer.accessToken());
+        assertThat(((Number) customerWallet.getBody().get("balance")).intValue()).isEqualTo(50000);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE late customer cancellation splits refund and fee")
+    void customerLateCancellationAppliesFee() {
+        AuthContext customer = authenticate("rc3");
+        AuthContext tasker = authenticate("rc4");
+
+        String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.HOURS));
+        BookingService.BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+        bookingService.transitionToPaid(booking.id());
+
+        ResponseEntity<Map> cancelResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
+        assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Map> customerWallet = getWithAuth("/api/v1/wallet", customer.accessToken());
+        ResponseEntity<Map> taskerWallet = getWithAuth("/api/v1/wallet", tasker.accessToken());
+        assertThat(((Number) customerWallet.getBody().get("balance")).intValue()).isEqualTo(45000);
+        assertThat(((Number) taskerWallet.getBody().get("balance")).intValue()).isEqualTo(5000);
+    }
+
     private String createTask(String token) {
+        return createTaskAt(token, Instant.now().plus(1, ChronoUnit.DAYS));
+    }
+
+    private String createTaskAt(String token, Instant scheduledAt) {
         String catId = ((List<Map>) getWithAuth("/api/v1/categories", token).getBody().get("data")).get(0).get("id").toString();
         ResponseEntity<Map> res = postWithAuth("/api/v1/tasks", token, Map.of(
             "category_id", catId,
@@ -112,7 +154,7 @@ class BookingIntegrationTests {
             "budget", 50000,
             "location_lat", 47.9, "location_lng", 106.9,
             "location_text", "Ulaanbaatar",
-            "scheduled_at", java.time.Instant.now().plus(1, java.time.temporal.ChronoUnit.DAYS).toString()
+            "scheduled_at", scheduledAt.toString()
         ));
         return res.getBody().get("id").toString();
     }

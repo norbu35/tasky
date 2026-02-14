@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import java.util.UUID;
+import mn.tasky.auth.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -21,6 +23,9 @@ class OtpAuthIntegrationTests {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private AuthService authService;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
@@ -128,6 +133,50 @@ class OtpAuthIntegrationTests {
             Map.of("refresh_token", secondRefreshToken)
         );
         assertThat(rotatedRefreshResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-010-API-OTP-VERIFY-ATTEMPTS challenge invalidates after 3 failed attempts")
+    void otpChallengeInvalidatesAfterFailedAttempts() {
+        String phone = uniquePhone("65");
+        post("/api/v1/auth/otp/request", Map.of("phone", phone));
+
+        for (int i = 0; i < 3; i++) {
+            ResponseEntity<Map> failed = post(
+                "/api/v1/auth/otp/verify",
+                Map.of("phone", phone, "code", "000000")
+            );
+            assertThat(failed.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        }
+
+        ResponseEntity<Map> rejectedCorrectCode = post(
+            "/api/v1/auth/otp/verify",
+            Map.of("phone", phone, "code", "123456")
+        );
+        assertThat(rejectedCorrectCode.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-010-API-TOKEN-REFRESH-BANNED banned user cannot refresh")
+    void bannedUserCannotRefreshToken() {
+        String phone = uniquePhone("64");
+
+        post("/api/v1/auth/otp/request", Map.of("phone", phone));
+        ResponseEntity<Map> verify = post(
+            "/api/v1/auth/otp/verify",
+            Map.of("phone", phone, "code", "123456")
+        );
+        String refreshToken = String.valueOf(verify.getBody().get("refresh_token"));
+        Map<String, Object> user = (Map<String, Object>) verify.getBody().get("user");
+        String userId = String.valueOf(user.get("id"));
+
+        authService.banUser("admin-test", userId, "security-test");
+
+        ResponseEntity<Map> refreshResponse = post(
+            "/api/v1/auth/token/refresh",
+            Map.of("refresh_token", refreshToken)
+        );
+        assertThat(refreshResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     private ResponseEntity<Map> post(String path, Map<String, String> body) {

@@ -11,11 +11,14 @@ public class OtpRateLimitService {
 
     private static final Duration OTP_REQUEST_WINDOW = Duration.ofHours(1);
     private static final Duration OTP_VERIFY_WINDOW = Duration.ofMinutes(15);
+    private static final Duration REFRESH_WINDOW = Duration.ofMinutes(1);
 
     private static final int OTP_REQUEST_LIMIT_PER_PHONE = 3;
     private static final int OTP_REQUEST_LIMIT_PER_IP = 10;
     private static final int OTP_VERIFY_LIMIT_PER_PHONE = 5;
     private static final int OTP_VERIFY_LIMIT_PER_IP = 20;
+    private static final int REFRESH_LIMIT_PER_TOKEN = 10;
+    private static final int REFRESH_LIMIT_PER_IP = 30;
 
     private final ConcurrentHashMap<String, Deque<Long>> attemptsByKey = new ConcurrentHashMap<>();
 
@@ -46,6 +49,22 @@ public class OtpRateLimitService {
             OTP_VERIFY_LIMIT_PER_IP,
             OTP_VERIFY_WINDOW,
             "OTP_VERIFY_RATE_LIMITED"
+        );
+    }
+
+    public void assertRefreshAllowed(String refreshToken, String clientIp) {
+        String tokenKey = Integer.toHexString(refreshToken.hashCode());
+        enforce(
+            "refresh-token:" + tokenKey,
+            REFRESH_LIMIT_PER_TOKEN,
+            REFRESH_WINDOW,
+            "TOKEN_REFRESH_RATE_LIMITED"
+        );
+        enforce(
+            "refresh-ip:" + clientIp,
+            REFRESH_LIMIT_PER_IP,
+            REFRESH_WINDOW,
+            "TOKEN_REFRESH_RATE_LIMITED"
         );
     }
 

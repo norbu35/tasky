@@ -124,6 +124,33 @@ public class BookingController {
         );
 
         if (result.isSuccess()) {
+            if ("PAID".equals(booking.status())) {
+                if (booking.taskerId().equals(principal.userId())) {
+                    walletService.creditRefund(
+                        booking.customerId(),
+                        booking.price(),
+                        booking.id(),
+                        "Full refund for booking #" + booking.id() + " due to tasker cancellation"
+                    );
+                } else {
+                    int fee = result.booking().cancellationFee() != null ? result.booking().cancellationFee() : 0;
+                    fee = Math.min(booking.price(), Math.max(0, fee));
+                    int refundable = booking.price() - fee;
+
+                    walletService.creditRefund(
+                        booking.customerId(),
+                        refundable,
+                        booking.id(),
+                        "Refund for cancelled booking #" + booking.id()
+                    );
+                    walletService.creditCancellationFee(
+                        booking.taskerId(),
+                        fee,
+                        booking.id()
+                    );
+                }
+            }
+
             if (booking.taskerId().equals(principal.userId())) {
                 // Tasker cancelled: reopen task and record strike
                 taskService.reopenTask(booking.taskId());

@@ -82,13 +82,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             .currentUserStatus(principal.userId())
             .orElse(principal.status());
 
-        if ("BANNED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             responseWriter.write(
                 request,
                 response,
                 HttpStatus.FORBIDDEN.value(),
                 "USER_BANNED",
-                "This account has been banned."
+                "This account is suspended or banned."
             );
             return;
         }

@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TokenController {
 
     private final AuthService authService;
+    private final OtpRateLimitService otpRateLimitService;
 
-    public TokenController(AuthService authService) {
+    public TokenController(AuthService authService, OtpRateLimitService otpRateLimitService) {
         this.authService = authService;
+        this.otpRateLimitService = otpRateLimitService;
     }
 
     @PostMapping("/refresh")
@@ -31,6 +33,8 @@ public class TokenController {
         @Valid @RequestBody RefreshTokenBody body,
         HttpServletRequest request
     ) {
+        otpRateLimitService.assertRefreshAllowed(body.refreshToken(), resolveClientIp(request));
+
         return authService.refreshToken(body.refreshToken())
             .map(tokens -> ResponseEntity.ok(
                 Map.of(
@@ -45,6 +49,14 @@ public class TokenController {
                     "trace_id", resolveTraceId(request)
                 )
             ));
+    }
+
+    private String resolveClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 
     private String resolveTraceId(HttpServletRequest request) {

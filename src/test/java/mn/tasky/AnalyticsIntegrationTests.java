@@ -2,14 +2,18 @@ package mn.tasky;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.AnalyticsService;
 import mn.tasky.analytics.KpiReport;
 import mn.tasky.analytics.KpiReportService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -31,6 +35,12 @@ class AnalyticsIntegrationTests {
 
     @Autowired
     private KpiReportService kpiReportService;
+
+    @Value("${tasky.security.jwt-secret}")
+    private String jwtSecret;
+
+    @Value("${tasky.qpay.webhook-secret}")
+    private String qpayWebhookSecret;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
@@ -63,7 +73,11 @@ class AnalyticsIntegrationTests {
         String paymentId = payRes.getBody().get("payment_url").toString().substring("https://qpay.mn/pay/".length());
 
         // 5. Confirm Payment
-        post("/api/v1/payments/qpay/callback", Map.of("payment_id", paymentId, "status", "PAID", "signature", "VALID_SIG"));
+        post("/api/v1/payments/qpay/callback", Map.of(
+            "payment_id", paymentId,
+            "status", "PAID",
+            "signature", signatureFor(paymentId, "PAID")
+        ));
 
         // 6. Complete
         postWithAuth("/api/v1/bookings/" + bookingId + "/complete", customer.accessToken(), null);
@@ -188,8 +202,24 @@ class AnalyticsIntegrationTests {
             .claim("status", status)
             .issuedAt(new java.util.Date())
             .expiration(new java.util.Date(System.currentTimeMillis() + 3600000))
-            .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor("tasky-dev-signing-secret-key-with-minimum-32-bytes".getBytes(java.nio.charset.StandardCharsets.UTF_8)))
+            .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
             .compact();
+    }
+
+    private String signatureFor(String paymentId, String status) {
+        String payload = paymentId + "|" + status;
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(signature.length * 2);
+            for (byte b : signature) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ResponseEntity<Map> post(String path, Object body) {

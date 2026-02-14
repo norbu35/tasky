@@ -2,17 +2,21 @@ package mn.tasky;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.booking.BookingService;
 import mn.tasky.task.TaskService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -30,6 +34,9 @@ class PaymentIntegrationTests {
 
     @LocalServerPort
     private int port;
+
+    @Value("${tasky.qpay.webhook-secret}")
+    private String qpayWebhookSecret;
 
     @Autowired
     private BookingService bookingService;
@@ -84,7 +91,7 @@ class PaymentIntegrationTests {
         Map<String, String> callbackBody = Map.of(
             "payment_id", paymentId,
             "status", "PAID",
-            "signature", "VALID_SIG"
+            "signature", signatureFor(paymentId, "PAID")
         );
         ResponseEntity<Map> callbackResponse = post("/api/v1/payments/qpay/callback", callbackBody);
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -96,6 +103,26 @@ class PaymentIntegrationTests {
         // Duplicate callback (Idempotency)
         ResponseEntity<Map> secondCallback = post("/api/v1/payments/qpay/callback", callbackBody);
         assertThat(secondCallback.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-031-API-QPAY-CALLBACK-SIGNATURE invalid callback signature is rejected")
+    void qpayCallbackRejectsInvalidSignature() {
+        AuthContext customer = authenticate("134");
+        BookingService.BookingState booking = bookingService.createBooking("task-2", "tasker-2", customer.userId(), 50000);
+        ResponseEntity<Map> initResponse = postWithAuth(
+            "/api/v1/payments/bookings/" + booking.id() + "/initiate",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        );
+        String paymentUrl = initResponse.getBody().get("payment_url").toString();
+        String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
+
+        ResponseEntity<Map> callbackResponse = post(
+            "/api/v1/payments/qpay/callback",
+            Map.of("payment_id", paymentId, "status", "PAID", "signature", "invalid")
+        );
+        assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     // --- Helpers ---
@@ -145,6 +172,22 @@ class PaymentIntegrationTests {
 
     private String url(String path) {
         return "http://localhost:" + port + path;
+    }
+
+    private String signatureFor(String paymentId, String status) {
+        String payload = paymentId + "|" + status;
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(signature.length * 2);
+            for (byte b : signature) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private record AuthContext(String accessToken, String userId) {

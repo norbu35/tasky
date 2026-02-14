@@ -75,6 +75,34 @@ class PayoutIntegrationTests {
     }
 
     @Test
+    @DisplayName("TID-TASK-034-API-PAYOUT-REQUEST amount must be positive")
+    void payoutRejectsNonPositiveAmount() {
+        String taskerId = UUID.randomUUID().toString();
+        String taskerToken = tokenFor("TASKER", "ACTIVE", taskerId);
+
+        walletService.creditTaskCompletion(taskerId, "booking-2", 10000, 0.1);
+
+        ResponseEntity<Map> zeroAmount = postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", 0));
+        assertThat(zeroAmount.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        ResponseEntity<Map> negativeAmount = postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", -1));
+        assertThat(negativeAmount.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-034-DOMAIN-WALLET-DEDUP duplicate booking completion credit is ignored")
+    void duplicateBookingCreditIsIgnored() {
+        String taskerId = UUID.randomUUID().toString();
+        String taskerToken = tokenFor("TASKER", "ACTIVE", taskerId);
+
+        walletService.creditTaskCompletion(taskerId, "booking-dedup", 10000, 0.1);
+        walletService.creditTaskCompletion(taskerId, "booking-dedup", 10000, 0.1);
+
+        ResponseEntity<Map> balanceResponse = getWithAuth("/api/v1/wallet", taskerToken);
+        assertThat(((Number) balanceResponse.getBody().get("balance")).intValue()).isEqualTo(9000);
+    }
+
+    @Test
     @DisplayName("TID-TASK-034-API-ADMIN-PAYOUT-PROCESS TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE admin can list and processing is restricted by schedule")
     void adminPayoutFlow() {
         String taskerId = UUID.randomUUID().toString();

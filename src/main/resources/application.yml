@@ -29,13 +29,20 @@ tasky:
   api:
     version: v1
   auth:
-    otp-code: ${TASKY_OTP_CODE:123456}
     otp-ttl-seconds: ${TASKY_OTP_TTL_SECONDS:300}
+    otp-test-code: ${TASKY_OTP_TEST_CODE:}
   security:
-    jwt-secret: ${TASKY_JWT_SECRET:tasky-dev-signing-secret-key-with-minimum-32-bytes}
-    encryption-key: ${TASKY_ENCRYPTION_KEY:MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=} # base64 for "12345678901234567890123456789012" (32 bytes)
+    jwt-secret: ${TASKY_JWT_SECRET}
+    encryption-key: ${TASKY_ENCRYPTION_KEY}
+    blind-index-key: ${TASKY_BLIND_INDEX_KEY}
     access-token-ttl-seconds: ${TASKY_ACCESS_TOKEN_TTL_SECONDS:900}
     refresh-token-ttl-seconds: ${TASKY_REFRESH_TOKEN_TTL_SECONDS:1209600}
+  qpay:
+    webhook-secret: ${TASKY_QPAY_WEBHOOK_SECRET}
+  cors:
+    allowed-origins: ${TASKY_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  websocket:
+    allowed-origins: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS:http://localhost:5173}
   storage:
     verification-upload-base-url: ${TASKY_VERIFICATION_UPLOAD_BASE_URL:https://upload.tasky.local}
     verification-max-bytes: ${TASKY_VERIFICATION_MAX_BYTES:10485760}
