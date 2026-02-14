@@ -77,7 +77,8 @@ function buildApiClientMock(): ApiClient {
     listMessages: vi.fn(),
     sendMessage: vi.fn(),
     registerDevice: vi.fn(),
-    unregisterDevice: vi.fn()
+    unregisterDevice: vi.fn(),
+    devLogin: vi.fn()
   };
 }
 

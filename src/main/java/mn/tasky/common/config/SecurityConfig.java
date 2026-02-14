@@ -59,6 +59,7 @@ public class SecurityConfig {
                     "/api/v1/auth/otp/request",
                     "/api/v1/auth/otp/verify",
                     "/api/v1/auth/token/refresh",
+                    "/api/v1/auth/dev/login",
                     "/api/v1/payments/qpay/callback",
                     "/ws/**"
                 ).permitAll()

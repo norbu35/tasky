@@ -15,8 +15,13 @@ import { Label } from "../../components/ui/label";
 import { useAppContext } from "../context/AppContext";
 import { parseError } from "../utils/errorHandling";
 
+type DevRole = "CUSTOMER" | "TASKER" | "ADMIN";
+
 export function AuthPage() {
   const contractLoaded: boolean = typeof ({} as paths) === "object";
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
+  const isLocalHost = host === "localhost" || host === "127.0.0.1";
+  const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === "true" || isLocalHost;
   const { apiClient, setSession, setProfile, refreshProfile } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,6 +60,28 @@ export function AuthPage() {
     setErrorMessage(null);
     try {
       const session = await apiClient.verifyOtp(phone.trim(), code.trim());
+      setSession(session);
+      setProfile(null);
+      await refreshProfile();
+      navigate(returnPath, { replace: true });
+    } catch (error) {
+      setErrorMessage(parseError(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDevLogin = async (role: DevRole): Promise<void> => {
+    setLoading(true);
+    setErrorMessage(null);
+    try {
+      const devPhone =
+        role === "ADMIN"
+          ? "+97600000000"
+          : role === "TASKER"
+            ? "+97611111111"
+            : "+97622222222";
+      const session = await apiClient.devLogin(devPhone, role);
       setSession(session);
       setProfile(null);
       await refreshProfile();
@@ -114,6 +141,27 @@ export function AuthPage() {
               Verify OTP
             </Button>
           </CardFooter>
+          {devAuthEnabled ? (
+            <>
+              <CardHeader className="pt-0">
+                <CardTitle className="text-lg">Developer quick login</CardTitle>
+                <CardDescription>
+                  Use local role shortcuts to bypass SMS OTP while testing app flows.
+                </CardDescription>
+              </CardHeader>
+              <CardFooter className="justify-start gap-3">
+                <Button disabled={loading} variant="secondary" onClick={() => handleDevLogin("CUSTOMER")}>
+                  Login as Customer
+                </Button>
+                <Button disabled={loading} variant="ghost" onClick={() => handleDevLogin("TASKER")}>
+                  Login as Tasker
+                </Button>
+                <Button disabled={loading} variant="ghost" onClick={() => handleDevLogin("ADMIN")}>
+                  Login as Admin
+                </Button>
+              </CardFooter>
+            </>
+          ) : null}
         </Card>
       </section>
     </main>

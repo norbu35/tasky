@@ -238,7 +238,8 @@ function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClient {
       content: "Status update"
     }),
     registerDevice: vi.fn().mockResolvedValue("Device registered."),
-    unregisterDevice: vi.fn().mockResolvedValue(undefined)
+    unregisterDevice: vi.fn().mockResolvedValue(undefined),
+    devLogin: vi.fn().mockResolvedValue(baseSession)
   };
 
   return { ...mock, ...overrides };

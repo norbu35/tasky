@@ -107,6 +107,7 @@ export interface ApiClient {
     payload: { token: string; platform: "IOS" | "ANDROID" | "WEB" }
   ): Promise<string>;
   unregisterDevice(accessToken: string, token: string): Promise<void>;
+  devLogin(phone: string, role: "CUSTOMER" | "TASKER" | "ADMIN"): Promise<AuthTokens>;
 }
 
 export class ApiError extends Error {
@@ -501,6 +502,20 @@ export class HttpApiClient implements ApiClient {
 
   unregisterDevice(accessToken: string, token: string): Promise<void> {
     return this.requestVoid(`/notifications/devices/${encodeURIComponent(token)}`, { method: "DELETE" }, accessToken);
+  }
+
+  devLogin(phone: string, role: "CUSTOMER" | "TASKER" | "ADMIN"): Promise<AuthTokens> {
+    return this.requestJson<{ access_token: string; refresh_token: string; user: User }>(
+      "/auth/dev/login",
+      {
+        method: "POST",
+        body: JSON.stringify({ phone, role })
+      }
+    ).then((response) => ({
+      accessToken: response.access_token,
+      refreshToken: response.refresh_token,
+      user: response.user
+    }));
   }
 }
 

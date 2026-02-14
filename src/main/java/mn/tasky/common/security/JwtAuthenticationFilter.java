@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/api/v1/system/version",
         "/api/v1/auth/otp/request",
         "/api/v1/auth/otp/verify",
-        "/api/v1/auth/token/refresh"
+        "/api/v1/auth/token/refresh",
+        "/api/v1/auth/dev/login"
     );
 
     private final JwtTokenService jwtTokenService;

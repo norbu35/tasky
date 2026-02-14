@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.security.MessageDigest;
@@ -26,6 +27,7 @@ import org.springframework.util.StringUtils;
 public class AuthService {
 
     private static final String DEFAULT_PROFILE_NAME = "Tasky User";
+    private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE = Map.of(
         "image/jpeg", "jpg",
         "image/png", "png",
@@ -40,6 +42,7 @@ public class AuthService {
     private final CryptoService cryptoService;
     private final SmsService smsService;
     private final Environment environment;
+    private final boolean devAuthEnabled;
     private final long otpTtlSeconds;
     private final String otpTestCode;
     private final String avatarUploadBaseUrl;
@@ -65,6 +68,7 @@ public class AuthService {
         CryptoService cryptoService,
         SmsService smsService,
         Environment environment,
+        @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
         @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
         @Value("${tasky.auth.otp-test-code:}") String otpTestCode,
         @Value("${tasky.storage.avatar-upload-base-url:https://upload.tasky.local}") String avatarUploadBaseUrl,
@@ -78,6 +82,7 @@ public class AuthService {
         this.cryptoService = cryptoService;
         this.smsService = smsService;
         this.environment = environment;
+        this.devAuthEnabled = devAuthEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
         this.otpTestCode = otpTestCode;
         this.avatarUploadBaseUrl = avatarUploadBaseUrl;
@@ -103,6 +108,9 @@ public class AuthService {
         }
         if (productionProfile && !smsService.isProductionReady()) {
             throw new IllegalStateException("A production-ready SMS provider must be configured in production.");
+        }
+        if (productionProfile && devAuthEnabled) {
+            throw new IllegalStateException("tasky.dev-auth.enabled must be false in production.");
         }
     }
 
@@ -149,6 +157,30 @@ public class AuthService {
         otpChallengesByPhone.remove(phone, challenge);
         AuthUser user = ensureUser(phone);
         return Optional.of(issueSession(user));
+    }
+
+    public AuthSession devLogin(String rawPhone, String role) {
+        String phone = normalizePhone(rawPhone);
+        String normalizedRole = role == null ? "CUSTOMER" : role.trim().toUpperCase(Locale.ROOT);
+        if (!SUPPORTED_ROLES.contains(normalizedRole)) {
+            throw new IllegalArgumentException("Unsupported role: " + normalizedRole);
+        }
+
+        AuthUser user = ensureUser(phone);
+        if (!normalizedRole.equals(user.role())) {
+            AuthUser elevated = new AuthUser(
+                user.id(),
+                user.phone(),
+                normalizedRole,
+                user.status(),
+                user.createdAt()
+            );
+            usersById.put(elevated.id(), elevated);
+            usersByPhoneIndex.put(cryptoService.blindIndex(phone), elevated);
+            user = elevated;
+        }
+
+        return issueSession(user);
     }
 
     private AuthUser ensureUser(String phone) {
