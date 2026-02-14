@@ -106,3 +106,4 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-14T05:26:36Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | bcf2281d03a6fabbb9e98e39c6b55f1784f3ca60 | medium | FAIL | 4/9 | NFR-UI-02 | `artifacts/self-verify.json` |
 | 2026-02-14T05:27:32Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | bcf2281d03a6fabbb9e98e39c6b55f1784f3ca60 | medium | PASS | 9/9 | NFR-UI-02 | `artifacts/self-verify.json` |
 | 2026-02-14T05:30:10Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | 4c6a8876e68153eabb4ea03875b1ca1d635d0673 | medium | PASS | 9/9 | NFR-UI-02 | `artifacts/self-verify.json` |
+| 2026-02-14T06:54:10Z | local | Codex | TASK-080 | agent/TASK-080-web-mvp-flow | 50aeb27d6507ecc9df183be7f1891f17b137f084 | high | PASS | 13/13 | REQ-AUTH-01,REQ-AUTH-02,REQ-AUTH-03,REQ-BOOK-01,REQ-BOOK-02,REQ-TASK-01,REQ-TASK-03 | `artifacts/self-verify.json` |

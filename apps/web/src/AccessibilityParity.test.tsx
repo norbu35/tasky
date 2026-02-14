@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { designTokens } from "../../../packages/design-tokens/tokens";
 import { App } from "./App";
+import type { ApiClient } from "./lib/apiClient";
 
 function hexToRgb(hexColor: string): [number, number, number] {
   const clean = hexColor.replace("#", "");
@@ -28,22 +29,68 @@ function contrastRatio(foreground: string, background: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-describe("Accessibility and parity gates", () => {
-  it("TID-TASK-072-WEB-A11Y-KEYBOARD keeps key controls focusable for keyboard navigation", () => {
-    render(<App />);
-    const categoryInput = screen.getByLabelText("Category");
-    const budgetInput = screen.getByLabelText("Budget (MNT)");
-    const saveDraftButton = screen.getByRole("button", { name: "Save Draft" });
-    const continueButton = screen.getByRole("button", { name: "Continue" });
+function buildApiClientMock(): ApiClient {
+  return {
+    requestOtp: vi.fn().mockResolvedValue("OTP sent"),
+    verifyOtp: vi.fn().mockResolvedValue({
+      accessToken: "access",
+      refreshToken: "refresh",
+      user: {
+        id: "user-1",
+        phone: "+97699001122",
+        role: "CUSTOMER",
+        status: "PENDING",
+        created_at: "2026-02-14T00:00:00Z"
+      }
+    }),
+    getMyProfile: vi.fn().mockResolvedValue({
+      id: "user-1",
+      phone: "+97699001122",
+      role: "CUSTOMER",
+      status: "PENDING",
+      full_name: "User",
+      avatar_url: null,
+      rating_avg: 0,
+      completed_tasks: 0,
+      is_pro: false,
+      created_at: "2026-02-14T00:00:00Z"
+    }),
+    updateMyProfile: vi.fn(),
+    getAvatarUploadUrl: vi.fn(),
+    activateTaskerRole: vi.fn(),
+    listCategories: vi.fn(),
+    createTask: vi.fn(),
+    listTasks: vi.fn(),
+    applyToTask: vi.fn(),
+    listTaskApplications: vi.fn()
+  };
+}
 
-    categoryInput.focus();
-    expect(categoryInput).toHaveFocus();
-    budgetInput.focus();
-    expect(budgetInput).toHaveFocus();
-    saveDraftButton.focus();
-    expect(saveDraftButton).toHaveFocus();
-    continueButton.focus();
-    expect(continueButton).toHaveFocus();
+describe("Accessibility and parity gates", () => {
+  it("TID-TASK-072-WEB-A11Y-KEYBOARD keeps key controls focusable for keyboard navigation", async () => {
+    render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
+
+    const phoneInput = screen.getByLabelText("Phone number");
+    const requestButton = screen.getByRole("button", { name: "Request OTP" });
+
+    phoneInput.focus();
+    expect(phoneInput).toHaveFocus();
+
+    requestButton.focus();
+    expect(requestButton).toHaveFocus();
+
+    fireEvent.click(requestButton);
+
+    const codeInput = await screen.findByLabelText("OTP code");
+    const verifyButton = screen.getByRole("button", { name: "Verify OTP" });
+
+    codeInput.focus();
+    expect(codeInput).toHaveFocus();
+
+    fireEvent.change(codeInput, { target: { value: "123456" } });
+
+    verifyButton.focus();
+    expect(verifyButton).toHaveFocus();
   });
 
   it("TID-TASK-072-WEB-A11Y-CONTRAST-AA enforces WCAG AA contrast for core token pairs", () => {
