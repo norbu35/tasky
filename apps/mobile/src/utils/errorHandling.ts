@@ -1,4 +1,4 @@
-import { ApiError } from "../../lib/mobileApiClient";
+import { ApiError } from "../lib/mobileApiClient";
 
 export function parseError(error: unknown): string {
   if (error instanceof ApiError) {
