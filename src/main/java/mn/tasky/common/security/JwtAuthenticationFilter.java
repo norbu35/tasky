@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import mn.tasky.auth.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,13 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final JsonSecurityResponseWriter responseWriter;
+    private final AuthService authService;
 
     public JwtAuthenticationFilter(
         JwtTokenService jwtTokenService,
-        JsonSecurityResponseWriter responseWriter
+        JsonSecurityResponseWriter responseWriter,
+        AuthService authService
     ) {
         this.jwtTokenService = jwtTokenService;
         this.responseWriter = responseWriter;
+        this.authService = authService;
     }
 
     @Override
@@ -74,7 +78,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if ("BANNED".equals(principal.status())) {
+        String effectiveStatus = authService
+            .currentUserStatus(principal.userId())
+            .orElse(principal.status());
+
+        if ("BANNED".equals(effectiveStatus)) {
             responseWriter.write(
                 request,
                 response,

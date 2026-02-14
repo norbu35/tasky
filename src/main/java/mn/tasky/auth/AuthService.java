@@ -421,6 +421,14 @@ public class AuthService {
         return true;
     }
 
+    public Optional<String> currentUserStatus(String userId) {
+        AuthUser user = usersById.get(userId);
+        if (user == null) {
+            return Optional.empty();
+        }
+        return Optional.of(user.status());
+    }
+
     public Optional<PresignedUpload> createAvatarUploadUrl(String userId, String contentType) {
         AuthUser user = usersById.get(userId);
         if (user == null) {
