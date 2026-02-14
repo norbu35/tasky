@@ -7,13 +7,26 @@ import {
   ApiError,
   createMobileApiClient,
   type AuthTokens,
+  type Booking,
+  type Conversation,
+  type Dispute,
+  type Message,
   type MobileApiClient,
   type Profile,
   type PublicTask,
+  type Review,
   type Task
 } from "./src/lib/mobileApiClient";
 
-type MobileRoute = "auth" | "profile" | "customer" | "tasker" | "restricted";
+type MobileRoute =
+  | "auth"
+  | "profile"
+  | "customer"
+  | "tasker"
+  | "payment"
+  | "safety"
+  | "communication"
+  | "restricted";
 type ToastVariant = "info" | "success" | "error";
 
 type AppProps = {
@@ -39,6 +52,10 @@ function isRestricted(profile: Profile | null): boolean {
 
 function toFutureIso(hoursAhead: number): string {
   return new Date(Date.now() + hoursAhead * 60 * 60 * 1000).toISOString();
+}
+
+function createIdempotencyKey(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
 }
 
 export default function App({
@@ -77,6 +94,34 @@ export default function App({
   const [filterRadiusKm, setFilterRadiusKm] = useState("10");
   const [tasks, setTasks] = useState<PublicTask[]>([]);
   const [applyDrafts, setApplyDrafts] = useState<Record<string, string>>({});
+
+  const [acceptTaskId, setAcceptTaskId] = useState("");
+  const [acceptApplicationId, setAcceptApplicationId] = useState("");
+  const [paymentBookingId, setPaymentBookingId] = useState("");
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+  const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
+  const [paymentUrl, setPaymentUrl] = useState("");
+  const [paymentQr, setPaymentQr] = useState("");
+
+  const [safetyBookingId, setSafetyBookingId] = useState("");
+  const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
+  const [bookingRoleFilter, setBookingRoleFilter] = useState<"" | "customer" | "tasker">("customer");
+  const [bookingStatusFilter, setBookingStatusFilter] = useState<
+    "" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED"
+  >("");
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [reviewRating, setReviewRating] = useState("5");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewUserId, setReviewUserId] = useState("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [activeDispute, setActiveDispute] = useState<Dispute | null>(null);
+
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageDraft, setMessageDraft] = useState("");
+  const [deviceToken, setDeviceToken] = useState("");
 
   useEffect(() => {
     if (!session) {
@@ -117,7 +162,7 @@ export default function App({
     if (!session && route !== "auth") {
       return "Authentication required";
     }
-    if (route === "customer" && profile?.role !== "CUSTOMER") {
+    if ((route === "customer" || route === "payment") && profile?.role !== "CUSTOMER") {
       return "Customer route is blocked for your role.";
     }
     if (route === "tasker" && profile?.role !== "TASKER") {
@@ -309,6 +354,319 @@ export default function App({
     }
   };
 
+  const acceptApplication = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    if (!acceptTaskId.trim() || !acceptApplicationId.trim()) {
+      showToast("Task ID and application ID are required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const booking = await apiClient.acceptApplication(
+        session.accessToken,
+        acceptTaskId.trim(),
+        acceptApplicationId.trim(),
+        createIdempotencyKey("accept")
+      );
+      setAcceptedBooking(booking);
+      setPaymentBookingId(booking.id);
+      showToast(`Booking created: ${booking.id}`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const initiatePayment = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    const bookingId = paymentBookingId.trim() || acceptedBooking?.id;
+    if (!bookingId) {
+      showToast("Booking ID is required for payment.", "error");
+      return;
+    }
+    if (!disclaimerAccepted) {
+      showToast("Liability disclaimer must be accepted.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const payment = await apiClient.initiatePayment(
+        session.accessToken,
+        bookingId,
+        createIdempotencyKey("payment")
+      );
+      setPaymentUrl(payment.paymentUrl);
+      setPaymentQr(payment.qrCode);
+      showToast("Payment initiated.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const listBookingsSafety = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await apiClient.listBookings(session.accessToken, {
+        role: bookingRoleFilter || undefined,
+        status: bookingStatusFilter || undefined
+      });
+      setBookings(response.data);
+      showToast(`Loaded ${response.data.length} bookings.`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadSafetyBooking = async (): Promise<void> => {
+    if (!session || !safetyBookingId.trim()) {
+      showToast("Booking ID is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const booking = await apiClient.getBooking(session.accessToken, safetyBookingId.trim());
+      setActiveBooking(booking);
+      setReviewUserId(booking.tasker_id);
+      showToast("Booking loaded.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const cancelSafetyBooking = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      showToast("Load booking first.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const booking = await apiClient.cancelBooking(
+        session.accessToken,
+        activeBooking.id,
+        createIdempotencyKey("cancel")
+      );
+      setActiveBooking(booking);
+      showToast("Booking cancelled.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const completeSafetyBooking = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      showToast("Load booking first.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const booking = await apiClient.completeBooking(
+        session.accessToken,
+        activeBooking.id,
+        createIdempotencyKey("complete")
+      );
+      setActiveBooking(booking);
+      showToast("Booking completed.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitSafetyReview = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      showToast("Load booking first.", "error");
+      return;
+    }
+    const rating = Number(reviewRating);
+    if (Number.isNaN(rating) || rating < 1 || rating > 5) {
+      showToast("Review rating must be between 1 and 5.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      await apiClient.submitReview(session.accessToken, activeBooking.id, {
+        rating,
+        comment: reviewComment.trim() || null
+      });
+      showToast("Review submitted.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadSafetyReviews = async (): Promise<void> => {
+    if (!session || !reviewUserId.trim()) {
+      showToast("Review user ID is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await apiClient.getUserReviews(session.accessToken, reviewUserId.trim());
+      setReviews(response.data);
+      showToast(`Loaded ${response.data.length} reviews.`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const raiseSafetyDispute = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      showToast("Load booking first.", "error");
+      return;
+    }
+    if (disputeReason.trim().length < 10) {
+      showToast("Dispute reason must be at least 10 characters.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const dispute = await apiClient.raiseDispute(
+        session.accessToken,
+        activeBooking.id,
+        disputeReason.trim(),
+        createIdempotencyKey("dispute")
+      );
+      setActiveDispute(dispute);
+      showToast(`Dispute raised: ${dispute.id}`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const refreshSafetyDispute = async (): Promise<void> => {
+    if (!session || !activeDispute) {
+      return;
+    }
+    setBusy(true);
+    try {
+      const dispute = await apiClient.getDispute(session.accessToken, activeDispute.id);
+      setActiveDispute(dispute);
+      showToast(`Dispute status: ${dispute.status}`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadConversations = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await apiClient.listConversations(session.accessToken);
+      setConversations(response.data);
+      setActiveConversationId(response.data[0]?.id ?? "");
+      showToast(`Loaded ${response.data.length} conversations.`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadConversationMessages = async (): Promise<void> => {
+    if (!session || !activeConversationId.trim()) {
+      showToast("Conversation ID is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await apiClient.listMessages(session.accessToken, activeConversationId.trim());
+      setMessages(response.data);
+      showToast(`Loaded ${response.data.length} messages.`, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const sendConversationMessage = async (): Promise<void> => {
+    if (!session || !activeConversationId.trim()) {
+      showToast("Conversation ID is required.", "error");
+      return;
+    }
+    if (messageDraft.trim().length === 0) {
+      showToast("Message content is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const sent = await apiClient.sendMessage(
+        session.accessToken,
+        activeConversationId.trim(),
+        messageDraft.trim()
+      );
+      setMessages((previous) => [sent, ...previous]);
+      setMessageDraft("");
+      showToast("Message sent.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const registerPushDevice = async (): Promise<void> => {
+    if (!session || !deviceToken.trim()) {
+      showToast("Device token is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const message = await apiClient.registerDevice(session.accessToken, {
+        token: deviceToken.trim(),
+        platform: "WEB"
+      });
+      showToast(message, "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const unregisterPushDevice = async (): Promise<void> => {
+    if (!session || !deviceToken.trim()) {
+      showToast("Device token is required.", "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      await apiClient.unregisterDevice(session.accessToken, deviceToken.trim());
+      showToast("Device unregistered.", "success");
+    } catch (error) {
+      showToast(parseError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const renderAuth = () => (
     <View style={styles.panel}>
       <Text style={styles.sectionTitle}>OTP sign-in</Text>
@@ -375,6 +733,11 @@ export default function App({
       <View style={styles.rowActions}>
         <Button label="Customer flow" variant="ghost" onPress={() => setRoute("customer")} />
         <Button label="Tasker flow" variant="ghost" onPress={() => setRoute("tasker")} />
+      </View>
+      <View style={styles.rowActions}>
+        <Button label="Booking payment" variant="ghost" onPress={() => setRoute("payment")} />
+        <Button label="Booking safety" variant="ghost" onPress={() => setRoute("safety")} />
+        <Button label="Messaging" variant="ghost" onPress={() => setRoute("communication")} />
       </View>
       {profile?.role === "CUSTOMER" ? (
         <Button label="Activate tasker role" variant="secondary" onPress={() => void activateTaskerRole()} />
@@ -499,6 +862,186 @@ export default function App({
     </View>
   );
 
+  const renderPayment = () => (
+    <View style={styles.panel}>
+      <Text style={styles.sectionTitle}>Booking payment</Text>
+      <View style={styles.rowActions}>
+        <Button label="Back to profile" variant="ghost" onPress={() => setRoute("profile")} />
+      </View>
+      <FormField label="Task ID">
+        <Input
+          accessibilityLabel="Accept task ID input"
+          value={acceptTaskId}
+          onChangeText={setAcceptTaskId}
+          placeholder="task-uuid"
+        />
+      </FormField>
+      <FormField label="Application ID">
+        <Input
+          accessibilityLabel="Accept application ID input"
+          value={acceptApplicationId}
+          onChangeText={setAcceptApplicationId}
+          placeholder="application-uuid"
+        />
+      </FormField>
+      <Button label="Accept application" onPress={() => void acceptApplication()} loading={busy} />
+      <FormField label="Booking ID">
+        <Input
+          accessibilityLabel="Payment booking ID input"
+          value={paymentBookingId}
+          onChangeText={setPaymentBookingId}
+          placeholder="booking-uuid"
+        />
+      </FormField>
+      <Button
+        label={disclaimerAccepted ? "Disclaimer acknowledged" : "Acknowledge disclaimer"}
+        variant="secondary"
+        onPress={() => setDisclaimerAccepted((previous) => !previous)}
+      />
+      <Button
+        label="Initiate payment"
+        onPress={() => void initiatePayment()}
+        disabled={!disclaimerAccepted}
+        loading={busy}
+      />
+      {acceptedBooking ? <Text style={styles.metaText}>Booking status: {acceptedBooking.status}</Text> : null}
+      {paymentUrl ? <Text style={styles.metaText}>Payment URL: {paymentUrl}</Text> : null}
+      {paymentQr ? <Text style={styles.metaText}>QR payload: {paymentQr}</Text> : null}
+    </View>
+  );
+
+  const renderSafety = () => (
+    <View style={styles.panel}>
+      <Text style={styles.sectionTitle}>Booking safety</Text>
+      <View style={styles.rowActions}>
+        <Button label="Back to profile" variant="ghost" onPress={() => setRoute("profile")} />
+      </View>
+      <FormField label="Booking role filter">
+        <Input
+          accessibilityLabel="Booking role filter input"
+          value={bookingRoleFilter}
+          onChangeText={(value) => setBookingRoleFilter((value as "customer" | "tasker") || "customer")}
+          placeholder="customer | tasker"
+        />
+      </FormField>
+      <FormField label="Booking status filter">
+        <Input
+          accessibilityLabel="Booking status filter input"
+          value={bookingStatusFilter}
+          onChangeText={(value) =>
+            setBookingStatusFilter(
+              (value as "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED") || ""
+            )
+          }
+          placeholder="PENDING_PAYMENT | PAID | COMPLETED | CANCELLED"
+        />
+      </FormField>
+      <Button label="List bookings" variant="secondary" onPress={() => void listBookingsSafety()} loading={busy} />
+      <FormField label="Booking ID">
+        <Input
+          accessibilityLabel="Safety booking ID input"
+          value={safetyBookingId}
+          onChangeText={setSafetyBookingId}
+          placeholder="booking-uuid"
+        />
+      </FormField>
+      <View style={styles.rowActions}>
+        <Button label="Load booking" variant="secondary" onPress={() => void loadSafetyBooking()} loading={busy} />
+        <Button label="Cancel booking" onPress={() => void cancelSafetyBooking()} loading={busy} />
+        <Button label="Complete booking" onPress={() => void completeSafetyBooking()} loading={busy} />
+      </View>
+      {activeBooking ? (
+        <Text style={styles.metaText}>Current booking status: {activeBooking.status}</Text>
+      ) : null}
+      <FormField label="Review rating">
+        <Input
+          accessibilityLabel="Review rating input"
+          value={reviewRating}
+          onChangeText={setReviewRating}
+          keyboardType="numeric"
+          placeholder="1-5"
+        />
+      </FormField>
+      <FormField label="Review comment">
+        <Input
+          accessibilityLabel="Review comment input"
+          value={reviewComment}
+          onChangeText={setReviewComment}
+          placeholder="Review details"
+        />
+      </FormField>
+      <View style={styles.rowActions}>
+        <Button label="Submit review" onPress={() => void submitSafetyReview()} loading={busy} />
+      </View>
+      <FormField label="Review user ID">
+        <Input
+          accessibilityLabel="Review user ID input"
+          value={reviewUserId}
+          onChangeText={setReviewUserId}
+          placeholder="user-uuid"
+        />
+      </FormField>
+      <Button label="Load reviews" variant="secondary" onPress={() => void loadSafetyReviews()} loading={busy} />
+      <FormField label="Dispute reason">
+        <Input
+          accessibilityLabel="Dispute reason input"
+          value={disputeReason}
+          onChangeText={setDisputeReason}
+          placeholder="Describe dispute reason"
+        />
+      </FormField>
+      <View style={styles.rowActions}>
+        <Button label="Raise dispute" onPress={() => void raiseSafetyDispute()} loading={busy} />
+        <Button label="Refresh dispute" variant="secondary" onPress={() => void refreshSafetyDispute()} loading={busy} />
+      </View>
+      {activeDispute ? <Text style={styles.metaText}>Dispute status: {activeDispute.status}</Text> : null}
+      {bookings.length > 0 ? <Text style={styles.metaText}>Bookings loaded: {bookings.length}</Text> : null}
+      {reviews.length > 0 ? <Text style={styles.metaText}>Reviews loaded: {reviews.length}</Text> : null}
+    </View>
+  );
+
+  const renderCommunication = () => (
+    <View style={styles.panel}>
+      <Text style={styles.sectionTitle}>Messaging and notifications</Text>
+      <View style={styles.rowActions}>
+        <Button label="Back to profile" variant="ghost" onPress={() => setRoute("profile")} />
+      </View>
+      <Button label="Load conversations" variant="secondary" onPress={() => void loadConversations()} loading={busy} />
+      <FormField label="Conversation ID">
+        <Input
+          accessibilityLabel="Conversation ID input"
+          value={activeConversationId}
+          onChangeText={setActiveConversationId}
+          placeholder="conversation-uuid"
+        />
+      </FormField>
+      <Button label="Load messages" variant="secondary" onPress={() => void loadConversationMessages()} loading={busy} />
+      <FormField label="Message content">
+        <Input
+          accessibilityLabel="Message content input"
+          value={messageDraft}
+          onChangeText={setMessageDraft}
+          placeholder="Booking update message"
+        />
+      </FormField>
+      <Button label="Send message" onPress={() => void sendConversationMessage()} loading={busy} />
+      <FormField label="Device token">
+        <Input
+          accessibilityLabel="Device token input"
+          value={deviceToken}
+          onChangeText={setDeviceToken}
+          placeholder="ExponentPushToken[...]"
+        />
+      </FormField>
+      <View style={styles.rowActions}>
+        <Button label="Register device" onPress={() => void registerPushDevice()} loading={busy} />
+        <Button label="Unregister device" variant="secondary" onPress={() => void unregisterPushDevice()} loading={busy} />
+      </View>
+      {conversations.length > 0 ? <Text style={styles.metaText}>Conversations: {conversations.length}</Text> : null}
+      {messages.length > 0 ? <Text style={styles.metaText}>Messages: {messages.length}</Text> : null}
+    </View>
+  );
+
   const renderRestricted = () => (
     <View style={styles.panel}>
       <Text style={styles.sectionTitle}>Account restricted</Text>
@@ -535,7 +1078,16 @@ export default function App({
     if (route === "customer") {
       return renderCustomer();
     }
-    return renderTasker();
+    if (route === "tasker") {
+      return renderTasker();
+    }
+    if (route === "payment") {
+      return renderPayment();
+    }
+    if (route === "safety") {
+      return renderSafety();
+    }
+    return renderCommunication();
   })();
 
   return (
