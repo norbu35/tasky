@@ -119,11 +119,29 @@ export class ApiError extends Error {
   }
 }
 
+const API_PATH_PREFIX = "/api/v1";
+
+function normalizeBaseUrl(rawBaseUrl: string): string {
+  const parsed = new URL(rawBaseUrl.trim());
+  const normalizedPath = parsed.pathname.replace(/\/+$/, "");
+  parsed.pathname =
+    normalizedPath === "" || normalizedPath === "/" ? API_PATH_PREFIX : normalizedPath;
+  return parsed.toString();
+}
+
+function resolveApiUrl(baseUrl: string, path: string): URL {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  const relativePath = path.startsWith("/") ? path.slice(1) : path;
+  return new URL(relativePath, normalizedBase);
+}
+
 function buildBaseUrl(): string {
   const configured = import.meta.env.VITE_API_BASE_URL;
-  return typeof configured === "string" && configured.trim().length > 0
-    ? configured
-    : "http://localhost:8080";
+  const rawBaseUrl =
+    typeof configured === "string" && configured.trim().length > 0
+      ? configured
+      : "http://localhost:8080";
+  return normalizeBaseUrl(rawBaseUrl);
 }
 
 async function readErrorMessage(response: Response): Promise<string> {
@@ -145,7 +163,7 @@ export class HttpApiClient implements ApiClient {
   private readonly baseUrl: string;
 
   constructor(baseUrl = buildBaseUrl()) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = normalizeBaseUrl(baseUrl);
   }
 
   private async requestJson<T>(
@@ -160,7 +178,7 @@ export class HttpApiClient implements ApiClient {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const url = new URL(path, this.baseUrl);
+    const url = resolveApiUrl(this.baseUrl, path);
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -188,7 +206,7 @@ export class HttpApiClient implements ApiClient {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const response = await fetch(new URL(path, this.baseUrl).toString(), {
+    const response = await fetch(resolveApiUrl(this.baseUrl, path).toString(), {
       ...init,
       headers
     });

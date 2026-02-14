@@ -114,12 +114,28 @@ export class ApiError extends Error {
   }
 }
 
+const API_PATH_PREFIX = "/api/v1";
+
+function normalizeBaseUrl(rawBaseUrl: string): string {
+  const parsed = new URL(rawBaseUrl.trim());
+  const normalizedPath = parsed.pathname.replace(/\/+$/, "");
+  parsed.pathname =
+    normalizedPath === "" || normalizedPath === "/" ? API_PATH_PREFIX : normalizedPath;
+  return parsed.toString();
+}
+
+function resolveApiUrl(baseUrl: string, path: string): URL {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  const relativePath = path.startsWith("/") ? path.slice(1) : path;
+  return new URL(relativePath, normalizedBase);
+}
+
 function buildBaseUrl(): string {
   const maybeGlobal = globalThis as { __TASKY_API_BASE_URL__?: string };
   if (typeof maybeGlobal.__TASKY_API_BASE_URL__ === "string" && maybeGlobal.__TASKY_API_BASE_URL__) {
-    return maybeGlobal.__TASKY_API_BASE_URL__;
+    return normalizeBaseUrl(maybeGlobal.__TASKY_API_BASE_URL__);
   }
-  return "http://localhost:8080";
+  return normalizeBaseUrl("http://localhost:8080");
 }
 
 async function readErrorMessage(response: Response): Promise<string> {
@@ -138,7 +154,7 @@ export class HttpMobileApiClient implements MobileApiClient {
   private readonly baseUrl: string;
 
   constructor(baseUrl = buildBaseUrl()) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = normalizeBaseUrl(baseUrl);
   }
 
   private async requestJson<T>(
@@ -153,7 +169,7 @@ export class HttpMobileApiClient implements MobileApiClient {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const url = new URL(path, this.baseUrl);
+    const url = resolveApiUrl(this.baseUrl, path);
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -181,7 +197,7 @@ export class HttpMobileApiClient implements MobileApiClient {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const response = await fetch(new URL(path, this.baseUrl).toString(), {
+    const response = await fetch(resolveApiUrl(this.baseUrl, path).toString(), {
       ...init,
       headers
     });
