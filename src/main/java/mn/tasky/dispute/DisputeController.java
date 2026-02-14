@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import mn.tasky.analytics.AnalyticsService;
+import mn.tasky.booking.BookingService;
 import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,10 +19,12 @@ public class DisputeController {
 
     private final DisputeService disputeService;
     private final AnalyticsService analyticsService;
+    private final BookingService bookingService;
 
-    public DisputeController(DisputeService disputeService, AnalyticsService analyticsService) {
+    public DisputeController(DisputeService disputeService, AnalyticsService analyticsService, BookingService bookingService) {
         this.disputeService = disputeService;
         this.analyticsService = analyticsService;
+        this.bookingService = bookingService;
     }
 
     @PostMapping
@@ -40,7 +43,12 @@ public class DisputeController {
             };
         }
         
-        analyticsService.track("DISPUTE_RAISED", principal.userId(), Map.of("booking_id", body.bookingId(), "dispute_id", result.dispute().id()));
+        Map<String, Object> analyticsProperties = new LinkedHashMap<>();
+        analyticsProperties.put(AnalyticsService.PROPERTY_BOOKING_ID, body.bookingId());
+        analyticsProperties.put("dispute_id", result.dispute().id());
+        bookingService.getBooking(body.bookingId())
+            .ifPresent(booking -> analyticsProperties.put(AnalyticsService.PROPERTY_TASK_ID, booking.taskId()));
+        analyticsService.track(AnalyticsService.EVENT_DISPUTE_RAISED, principal.userId(), analyticsProperties);
         
         return ResponseEntity.status(201).body(toDisputeResponse(result.dispute()));
     }

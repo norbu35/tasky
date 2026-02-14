@@ -174,7 +174,15 @@ public class BookingController {
             walletService.creditTaskCompletion(booking.taskerId(), booking.id(), booking.price(), 0.10);
             
             notificationService.sendPush(booking.taskerId(), "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
-            analyticsService.track("BOOKING_COMPLETED", principal.userId(), Map.of("booking_id", booking.id(), "tasker_id", booking.taskerId()));
+            analyticsService.track(
+                AnalyticsService.EVENT_BOOKING_COMPLETED,
+                principal.userId(),
+                Map.of(
+                    AnalyticsService.PROPERTY_BOOKING_ID, booking.id(),
+                    AnalyticsService.PROPERTY_TASK_ID, booking.taskId(),
+                    "tasker_id", booking.taskerId()
+                )
+            );
 
             return ResponseEntity.ok(toBookingResponse(result.booking()));
         }

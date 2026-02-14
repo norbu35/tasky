@@ -46,11 +46,19 @@ import {
   type TaskApplication,
   type User
 } from "./lib/apiClient";
+import {
+  createConsoleClientAnalyticsTracker,
+  resolveClientLocale,
+  type ActorRole,
+  type ClientAnalyticsTracker,
+  type ClientEventName
+} from "./lib/clientAnalytics";
 
 type Role = "CUSTOMER" | "TASKER";
 
 type AppContextValue = {
   apiClient: ApiClient;
+  locale: string;
   session: AuthTokens | null;
   profile: Profile | null;
   profileBusy: boolean;
@@ -61,6 +69,7 @@ type AppContextValue = {
   refreshProfile: () => Promise<void>;
   updateSessionUser: (user: User) => void;
   signOut: () => void;
+  trackClientEvent: (eventName: ClientEventName, refs?: { taskId?: string; bookingId?: string }) => void;
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -491,7 +500,7 @@ function ProfilePage() {
 }
 
 function CustomerTaskPage() {
-  const { apiClient, session, setProfileError } = useAppContext();
+  const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState("");
@@ -554,6 +563,7 @@ function CustomerTaskPage() {
         scheduled_at: scheduledDate.toISOString()
       });
       setCreatedTasks((previous) => [created, ...previous]);
+      trackClientEvent("TASK_POSTED", { taskId: created.id });
       setMessage("Task created.");
     } catch (error) {
       setMessage(parseError(error));
@@ -720,7 +730,7 @@ function CustomerTaskPage() {
 }
 
 function TaskerFeedPage() {
-  const { apiClient, session, setProfileError } = useAppContext();
+  const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [filters, setFilters] = useState<{
@@ -814,6 +824,7 @@ function TaskerFeedPage() {
     try {
       await apiClient.applyToTask(session.accessToken, taskId, draft);
       setApplyDrafts((previous) => ({ ...previous, [taskId]: "" }));
+      trackClientEvent("APPLICATION_SUBMITTED", { taskId });
       setMessage("Application sent.");
     } catch (error) {
       setMessage(parseError(error));
@@ -928,7 +939,7 @@ function TaskerFeedPage() {
 }
 
 function BookingPaymentPage() {
-  const { apiClient, session } = useAppContext();
+  const { apiClient, session, trackClientEvent } = useAppContext();
   const [taskId, setTaskId] = useState("");
   const [applicationId, setApplicationId] = useState("");
   const [bookingId, setBookingId] = useState("");
@@ -961,6 +972,7 @@ function BookingPaymentPage() {
       );
       setAcceptedBooking(booking);
       setBookingId(booking.id);
+      trackClientEvent("TASKER_ACCEPTED", { taskId: taskId.trim(), bookingId: booking.id });
       setMessage(`Application accepted. Booking created: ${booking.id}`);
     } catch (error) {
       setMessage(parseError(error));
@@ -994,6 +1006,7 @@ function BookingPaymentPage() {
       );
       setPaymentUrl(payment.paymentUrl);
       setQrCode(payment.qrCode);
+      trackClientEvent("PAYMENT_INITIATED", { bookingId: bookingTarget });
       setMessage("Payment initiated.");
     } catch (error) {
       setMessage(parseError(error));
@@ -1081,7 +1094,7 @@ function BookingPaymentPage() {
 }
 
 function BookingSafetyPage() {
-  const { apiClient, session } = useAppContext();
+  const { apiClient, session, trackClientEvent } = useAppContext();
   const [bookingId, setBookingId] = useState("");
   const [roleFilter, setRoleFilter] = useState<"" | "customer" | "tasker">("customer");
   const [statusFilter, setStatusFilter] = useState<"" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED">(
@@ -1174,6 +1187,10 @@ function BookingSafetyPage() {
         createIdempotencyKey("complete")
       );
       setActiveBooking(booking);
+      trackClientEvent("BOOKING_COMPLETED", {
+        bookingId: booking.id,
+        taskId: booking.task_id
+      });
       setMessage("Booking marked complete.");
     } catch (error) {
       setMessage(parseError(error));
@@ -1245,6 +1262,10 @@ function BookingSafetyPage() {
         createIdempotencyKey("dispute")
       );
       setActiveDispute(dispute);
+      trackClientEvent("DISPUTE_RAISED", {
+        bookingId: dispute.booking_id,
+        taskId: activeBooking.task_id
+      });
       setMessage(`Dispute raised: ${dispute.id}`);
     } catch (error) {
       setMessage(parseError(error));
@@ -1764,10 +1785,14 @@ function AppRoutes() {
 
 function AppShell({
   apiClient,
-  initialSession
+  initialSession,
+  locale,
+  analyticsTracker
 }: {
   apiClient: ApiClient;
   initialSession: AuthTokens | null;
+  locale: string;
+  analyticsTracker: ClientAnalyticsTracker;
 }) {
   const [session, setSession] = useState<AuthTokens | null>(initialSession);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -1817,9 +1842,26 @@ function AppShell({
     });
   }, []);
 
+  const trackClientEvent = useCallback(
+    (eventName: ClientEventName, refs?: { taskId?: string; bookingId?: string }) => {
+      const actorRole = (profile?.role ?? session?.user?.role ?? "UNKNOWN") as ActorRole;
+      analyticsTracker({
+        event_name: eventName,
+        platform: "WEB",
+        locale,
+        actor_role: actorRole,
+        task_id: refs?.taskId,
+        booking_id: refs?.bookingId,
+        timestamp: new Date().toISOString()
+      });
+    },
+    [analyticsTracker, locale, profile?.role, session?.user?.role]
+  );
+
   const value = useMemo<AppContextValue>(
     () => ({
       apiClient,
+      locale,
       session,
       profile,
       profileBusy,
@@ -1829,10 +1871,12 @@ function AppShell({
       setProfileError,
       refreshProfile,
       updateSessionUser,
-      signOut
+      signOut,
+      trackClientEvent
     }),
     [
       apiClient,
+      locale,
       profile,
       profileBusy,
       profileError,
@@ -1840,6 +1884,7 @@ function AppShell({
       session,
       setSession,
       signOut,
+      trackClientEvent,
       updateSessionUser
     ]
   );
@@ -1855,22 +1900,42 @@ export interface AppProps {
   apiClient?: ApiClient;
   initialRoute?: string;
   initialSession?: AuthTokens | null;
+  locale?: string;
+  analyticsTracker?: ClientAnalyticsTracker;
 }
 
-export function App({ apiClient, initialRoute, initialSession = null }: AppProps) {
+export function App({
+  apiClient,
+  initialRoute,
+  initialSession = null,
+  locale,
+  analyticsTracker
+}: AppProps) {
   const resolvedApiClient = apiClient ?? createApiClient();
+  const resolvedLocale = resolveClientLocale(locale);
+  const resolvedAnalyticsTracker = analyticsTracker ?? createConsoleClientAnalyticsTracker();
 
   if (initialRoute) {
     return (
       <MemoryRouter initialEntries={[initialRoute]}>
-        <AppShell apiClient={resolvedApiClient} initialSession={initialSession} />
+        <AppShell
+          apiClient={resolvedApiClient}
+          initialSession={initialSession}
+          locale={resolvedLocale}
+          analyticsTracker={resolvedAnalyticsTracker}
+        />
       </MemoryRouter>
     );
   }
 
   return (
     <BrowserRouter>
-      <AppShell apiClient={resolvedApiClient} initialSession={initialSession} />
+      <AppShell
+        apiClient={resolvedApiClient}
+        initialSession={initialSession}
+        locale={resolvedLocale}
+        analyticsTracker={resolvedAnalyticsTracker}
+      />
     </BrowserRouter>
   );
 }

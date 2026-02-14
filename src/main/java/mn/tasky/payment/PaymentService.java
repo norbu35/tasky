@@ -33,7 +33,15 @@ public class PaymentService {
         bookingByPaymentId.put(paymentId, bookingId);
         
         Optional<BookingService.BookingState> booking = bookingService.getBooking(bookingId);
-        booking.ifPresent(b -> analyticsService.track("PAYMENT_INITIATED", b.customerId(), Map.of("booking_id", bookingId, "payment_id", paymentId)));
+        booking.ifPresent(b -> analyticsService.track(
+            AnalyticsService.EVENT_PAYMENT_INITIATED,
+            b.customerId(),
+            Map.of(
+                AnalyticsService.PROPERTY_BOOKING_ID, bookingId,
+                AnalyticsService.PROPERTY_TASK_ID, b.taskId(),
+                "payment_id", paymentId
+            )
+        ));
 
         return new PaymentIntent(
             paymentId,
@@ -69,7 +77,15 @@ public class PaymentService {
             
             notificationService.sendPush(booking.taskerId(), "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
             notificationService.sendPush(booking.customerId(), "Booking Confirmed", "Your payment for booking #" + bookingId + " was successful.", "BOOKING_CONFIRMED");
-            analyticsService.track("PAYMENT_CONFIRMED", booking.customerId(), Map.of("booking_id", bookingId, "payment_id", paymentId));
+            analyticsService.track(
+                AnalyticsService.EVENT_PAYMENT_CONFIRMED,
+                booking.customerId(),
+                Map.of(
+                    AnalyticsService.PROPERTY_BOOKING_ID, bookingId,
+                    AnalyticsService.PROPERTY_TASK_ID, booking.taskId(),
+                    "payment_id", paymentId
+                )
+            );
         }
 
         return true;

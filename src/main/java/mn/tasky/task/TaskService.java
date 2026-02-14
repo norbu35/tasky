@@ -104,7 +104,14 @@ public class TaskService {
         );
 
         tasksById.put(id, task);
-        analyticsService.track("TASK_POSTED", customerId, Map.of("task_id", id, "category_id", command.categoryId()));
+        analyticsService.track(
+            AnalyticsService.EVENT_TASK_POSTED,
+            customerId,
+            Map.of(
+                AnalyticsService.PROPERTY_TASK_ID, id,
+                "category_id", command.categoryId()
+            )
+        );
         return TaskCreateResult.success(task);
     }
 
@@ -326,7 +333,14 @@ public class TaskService {
 
             messagingService.startConversation(taskId, taskerId, task.customerId());
             notificationService.sendPush(task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
-            analyticsService.track("APPLICATION_SUBMITTED", taskerId, Map.of("task_id", taskId, "application_id", application.id()));
+            analyticsService.track(
+                AnalyticsService.EVENT_APPLICATION_SUBMITTED,
+                taskerId,
+                Map.of(
+                    AnalyticsService.PROPERTY_TASK_ID, taskId,
+                    "application_id", application.id()
+                )
+            );
 
             return TaskApplyResult.success(application);
         }
@@ -401,7 +415,16 @@ public class TaskService {
 
             messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
             notificationService.sendPush(selected.taskerId(), "You are hired!", "Your application has been accepted.", "HIRED");
-            analyticsService.track("TASKER_ACCEPTED", customerId, Map.of("task_id", task.id(), "tasker_id", selected.taskerId(), "application_id", applicationId));
+            analyticsService.track(
+                AnalyticsService.EVENT_TASKER_ACCEPTED,
+                customerId,
+                Map.of(
+                    AnalyticsService.PROPERTY_TASK_ID, task.id(),
+                    AnalyticsService.PROPERTY_BOOKING_ID, booking.id(),
+                    "tasker_id", selected.taskerId(),
+                    "application_id", applicationId
+                )
+            );
 
             return TaskAcceptResult.success(booking);
         }

@@ -4,6 +4,13 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, FormField, Input, Toast } from "./src/components/ui";
 import { mobileTheme } from "./src/design/tokenAdapter";
 import {
+  createConsoleClientAnalyticsTracker,
+  resolveClientLocale,
+  type ActorRole,
+  type ClientAnalyticsTracker,
+  type ClientEventName
+} from "./src/lib/clientAnalytics";
+import {
   ApiError,
   createMobileApiClient,
   type AuthTokens,
@@ -34,6 +41,8 @@ type AppProps = {
   initialRoute?: MobileRoute;
   initialSession?: AuthTokens | null;
   initialProfile?: Profile | null;
+  locale?: string;
+  analyticsTracker?: ClientAnalyticsTracker;
 };
 
 function parseError(error: unknown): string {
@@ -62,9 +71,12 @@ export default function App({
   apiClient = createMobileApiClient(),
   initialRoute,
   initialSession = null,
-  initialProfile = null
+  initialProfile = null,
+  locale,
+  analyticsTracker = createConsoleClientAnalyticsTracker()
 }: AppProps) {
   const typedContractLoaded: boolean = typeof ({} as paths) === "object";
+  const resolvedLocale = resolveClientLocale(locale);
 
   const [session, setSession] = useState<AuthTokens | null>(initialSession);
   const [profile, setProfile] = useState<Profile | null>(initialProfile);
@@ -174,6 +186,22 @@ export default function App({
   const showToast = (message: string, variant: ToastVariant = "info"): void => {
     setToastVariant(variant);
     setToastMessage(message);
+  };
+
+  const trackClientEvent = (
+    eventName: ClientEventName,
+    refs?: { taskId?: string; bookingId?: string }
+  ): void => {
+    const actorRole = (profile?.role ?? session?.user?.role ?? "UNKNOWN") as ActorRole;
+    analyticsTracker({
+      event_name: eventName,
+      platform: "MOBILE",
+      locale: resolvedLocale,
+      actor_role: actorRole,
+      task_id: refs?.taskId,
+      booking_id: refs?.bookingId,
+      timestamp: new Date().toISOString()
+    });
   };
 
   const signOut = (): void => {
@@ -303,6 +331,7 @@ export default function App({
         scheduled_at: toFutureIso(24)
       });
       setCreatedTask(created);
+      trackClientEvent("TASK_POSTED", { taskId: created.id });
       showToast("Task created.", "success");
     } catch (error) {
       showToast(parseError(error), "error");
@@ -346,6 +375,7 @@ export default function App({
     try {
       await apiClient.applyToTask(session.accessToken, taskId, message);
       setApplyDrafts((previous) => ({ ...previous, [taskId]: "" }));
+      trackClientEvent("APPLICATION_SUBMITTED", { taskId });
       showToast("Application submitted.", "success");
     } catch (error) {
       showToast(parseError(error), "error");
@@ -372,6 +402,10 @@ export default function App({
       );
       setAcceptedBooking(booking);
       setPaymentBookingId(booking.id);
+      trackClientEvent("TASKER_ACCEPTED", {
+        taskId: acceptTaskId.trim(),
+        bookingId: booking.id
+      });
       showToast(`Booking created: ${booking.id}`, "success");
     } catch (error) {
       showToast(parseError(error), "error");
@@ -402,6 +436,7 @@ export default function App({
       );
       setPaymentUrl(payment.paymentUrl);
       setPaymentQr(payment.qrCode);
+      trackClientEvent("PAYMENT_INITIATED", { bookingId });
       showToast("Payment initiated.", "success");
     } catch (error) {
       showToast(parseError(error), "error");
@@ -481,6 +516,10 @@ export default function App({
         createIdempotencyKey("complete")
       );
       setActiveBooking(booking);
+      trackClientEvent("BOOKING_COMPLETED", {
+        bookingId: booking.id,
+        taskId: booking.task_id
+      });
       showToast("Booking completed.", "success");
     } catch (error) {
       showToast(parseError(error), "error");
@@ -548,6 +587,10 @@ export default function App({
         createIdempotencyKey("dispute")
       );
       setActiveDispute(dispute);
+      trackClientEvent("DISPUTE_RAISED", {
+        bookingId: dispute.booking_id,
+        taskId: activeBooking.task_id
+      });
       showToast(`Dispute raised: ${dispute.id}`, "success");
     } catch (error) {
       showToast(parseError(error), "error");

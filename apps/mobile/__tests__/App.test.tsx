@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import App from "../App";
 import { mobileTheme } from "../src/design/tokenAdapter";
+import { createMemoryClientAnalyticsTracker } from "../src/lib/clientAnalytics";
 import { designTokens } from "../../../packages/design-tokens/tokens";
 import type {
   AuthTokens,
@@ -606,5 +607,112 @@ describe("App", () => {
     await waitFor(() => {
       expect(apiClient.unregisterDevice).toHaveBeenCalledWith("access-token", "ExponentPushToken[abc123]");
     });
+  });
+
+  it("TID-TASK-090-OBS-CLIENT-EVENTS emits aligned client events with platform, locale, and actor role", async () => {
+    const analytics = createMemoryClientAnalyticsTracker();
+
+    const customerApi = buildMobileApiMock({
+      createTask: jest.fn().mockResolvedValue({
+        id: "task-analytics-1",
+        category_id: "cat-cleaning",
+        customer_id: "user-1",
+        description: "Analytics task",
+        budget: 90000,
+        location_lat: 47.9184,
+        location_lng: 106.9177,
+        location_text: "Analytics location",
+        status: "OPEN",
+        scheduled_at: "2026-02-15T00:00:00Z",
+        photos: [],
+        created_at: "2026-02-14T00:00:00Z"
+      })
+    });
+
+    const customerRender = render(
+      <App
+        apiClient={customerApi}
+        initialRoute="customer"
+        initialSession={baseSession}
+        initialProfile={baseProfile}
+        locale="mn-MN"
+        analyticsTracker={analytics.track}
+      />
+    );
+
+    fireEvent.press(screen.getByRole("button", { name: "Load categories" }));
+    await waitFor(() => {
+      expect(customerApi.listCategories).toHaveBeenCalled();
+    });
+    fireEvent.changeText(screen.getByLabelText("Task description input"), "Analytics task description");
+    fireEvent.changeText(screen.getByLabelText("Address text input"), "СХД 1-р хороо");
+    fireEvent.press(screen.getByRole("button", { name: "Create task" }));
+    await waitFor(() => {
+      expect(customerApi.createTask).toHaveBeenCalled();
+    });
+
+    customerRender.unmount();
+
+    const taskerProfile: Profile = {
+      ...baseProfile,
+      role: "TASKER",
+      status: "VERIFIED",
+      full_name: "Analytics Tasker"
+    };
+    const taskerSession: AuthTokens = {
+      ...baseSession,
+      user: {
+        ...baseUser,
+        role: "TASKER",
+        status: "VERIFIED"
+      }
+    };
+    const taskerApi = buildMobileApiMock({
+      getMyProfile: jest.fn().mockResolvedValue(taskerProfile)
+    });
+
+    render(
+      <App
+        apiClient={taskerApi}
+        initialRoute="tasker"
+        initialSession={taskerSession}
+        initialProfile={taskerProfile}
+        locale="mn-MN"
+        analyticsTracker={analytics.track}
+      />
+    );
+
+    fireEvent.press(screen.getByRole("button", { name: "Load task feed" }));
+    await waitFor(() => {
+      expect(taskerApi.listTasks).toHaveBeenCalled();
+    });
+    fireEvent.changeText(
+      screen.getByLabelText("Apply message input public-task-1"),
+      "Analytics coverage task application message."
+    );
+    fireEvent.press(screen.getByRole("button", { name: "Apply to task" }));
+    await waitFor(() => {
+      expect(taskerApi.applyToTask).toHaveBeenCalled();
+    });
+
+    const events = analytics.getEvents();
+    expect(events).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          event_name: "TASK_POSTED",
+          platform: "MOBILE",
+          locale: "mn-MN",
+          actor_role: "CUSTOMER",
+          task_id: "task-analytics-1"
+        }),
+        expect.objectContaining({
+          event_name: "APPLICATION_SUBMITTED",
+          platform: "MOBILE",
+          locale: "mn-MN",
+          actor_role: "TASKER",
+          task_id: "public-task-1"
+        })
+      ])
+    );
   });
 });
