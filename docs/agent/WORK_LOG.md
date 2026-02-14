@@ -102,3 +102,6 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-02-13T20:23:11Z | local | Codex | TASK-062 | agent/TASK-062-conversion-analytics | 611025128a4abb89e9066fe07209855445a4a2ac | medium | FAIL | 4/9 | NFR-OBS-01 | `artifacts/self-verify.json` |
 | 2026-02-13T20:24:43Z | local | Codex | TASK-062 | agent/TASK-062-conversion-analytics | 611025128a4abb89e9066fe07209855445a4a2ac | medium | FAIL | 8/9 | NFR-RELI-02 | `artifacts/self-verify.json` |
 | 2026-02-13T20:26:11Z | local | Codex | TASK-062 | agent/TASK-062-conversion-analytics | 611025128a4abb89e9066fe07209855445a4a2ac | medium | PASS | 9/9 | NFR-RELI-02 | `artifacts/self-verify.json` |
+| 2026-02-14T05:25:35Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | bcf2281d03a6fabbb9e98e39c6b55f1784f3ca60 | medium | FAIL | 8/9 | NFR-UI-02 | `artifacts/self-verify.json` |
+| 2026-02-14T05:26:36Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | bcf2281d03a6fabbb9e98e39c6b55f1784f3ca60 | medium | FAIL | 4/9 | NFR-UI-02 | `artifacts/self-verify.json` |
+| 2026-02-14T05:27:32Z | local | Codex | TASK-072 | agent/TASK-072-ux-polish | bcf2281d03a6fabbb9e98e39c6b55f1784f3ca60 | medium | PASS | 9/9 | NFR-UI-02 | `artifacts/self-verify.json` |
