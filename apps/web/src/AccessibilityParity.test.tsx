@@ -62,7 +62,22 @@ function buildApiClientMock(): ApiClient {
     createTask: vi.fn(),
     listTasks: vi.fn(),
     applyToTask: vi.fn(),
-    listTaskApplications: vi.fn()
+    listTaskApplications: vi.fn(),
+    acceptApplication: vi.fn(),
+    initiatePayment: vi.fn(),
+    listBookings: vi.fn(),
+    getBooking: vi.fn(),
+    cancelBooking: vi.fn(),
+    completeBooking: vi.fn(),
+    submitReview: vi.fn(),
+    getUserReviews: vi.fn(),
+    raiseDispute: vi.fn(),
+    getDispute: vi.fn(),
+    listConversations: vi.fn(),
+    listMessages: vi.fn(),
+    sendMessage: vi.fn(),
+    registerDevice: vi.fn(),
+    unregisterDevice: vi.fn()
   };
 }
 

@@ -4,7 +4,19 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { App } from "./App";
-import type { ApiClient, AuthTokens, Category, Profile, Task, User } from "./lib/apiClient";
+import type {
+  ApiClient,
+  AuthTokens,
+  Booking,
+  Category,
+  Conversation,
+  Dispute,
+  Message,
+  Profile,
+  Review,
+  Task,
+  User
+} from "./lib/apiClient";
 
 function localDateTimeInput(hoursAhead: number): string {
   const date = new Date(Date.now() + hoursAhead * 60 * 60 * 1000);
@@ -50,6 +62,59 @@ const baseCategory: Category = {
   icon_url: "https://example.test/icon.png",
   is_active: true,
   sort_order: 1
+};
+
+const baseBooking: Booking = {
+  id: "booking-1",
+  task_id: "task-1",
+  tasker_id: "tasker-1",
+  customer_id: "customer-1",
+  price: 120000,
+  status: "PENDING_PAYMENT",
+  cancellation_fee: null,
+  created_at: "2026-02-14T00:00:00Z"
+};
+
+const baseReview: Review = {
+  id: "review-1",
+  booking_id: "booking-1",
+  reviewer_id: "customer-1",
+  reviewee_id: "tasker-1",
+  rating: 5,
+  comment: "Great work",
+  created_at: "2026-02-14T00:00:00Z"
+};
+
+const baseDispute: Dispute = {
+  id: "dispute-1",
+  booking_id: "booking-1",
+  raised_by: "customer-1",
+  reason: "Service quality issue",
+  status: "OPEN",
+  resolution: null,
+  resolution_amount: null,
+  resolution_notes: null,
+  created_at: "2026-02-14T00:00:00Z",
+  resolved_at: null
+};
+
+const baseMessage: Message = {
+  id: "msg-1",
+  conversation_id: "conv-1",
+  sender_id: "customer-1",
+  content: "Hello tasker",
+  created_at: "2026-02-14T00:00:00Z"
+};
+
+const baseConversation: Conversation = {
+  id: "conv-1",
+  task_id: "task-1",
+  task_title: "Apartment cleaning",
+  customer_id: "customer-1",
+  tasker_id: "tasker-1",
+  last_message: baseMessage,
+  unread_count: 0,
+  created_at: "2026-02-14T00:00:00Z"
 };
 
 function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClient {
@@ -132,7 +197,47 @@ function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClient {
     listTaskApplications: vi.fn().mockResolvedValue({
       data: [],
       cursor: { next: null, prev: null }
-    })
+    }),
+    acceptApplication: vi.fn().mockResolvedValue(baseBooking),
+    initiatePayment: vi.fn().mockResolvedValue({
+      paymentUrl: "https://qpay.example.test/pay/booking-1",
+      qrCode: "BASE64-QR"
+    }),
+    listBookings: vi.fn().mockResolvedValue({
+      data: [baseBooking],
+      cursor: { next: null, prev: null }
+    }),
+    getBooking: vi.fn().mockResolvedValue(baseBooking),
+    cancelBooking: vi.fn().mockResolvedValue({
+      ...baseBooking,
+      status: "CANCELLED"
+    }),
+    completeBooking: vi.fn().mockResolvedValue({
+      ...baseBooking,
+      status: "COMPLETED"
+    }),
+    submitReview: vi.fn().mockResolvedValue(baseReview),
+    getUserReviews: vi.fn().mockResolvedValue({
+      data: [baseReview],
+      cursor: { next: null, prev: null }
+    }),
+    raiseDispute: vi.fn().mockResolvedValue(baseDispute),
+    getDispute: vi.fn().mockResolvedValue(baseDispute),
+    listConversations: vi.fn().mockResolvedValue({
+      data: [baseConversation],
+      cursor: { next: null, prev: null }
+    }),
+    listMessages: vi.fn().mockResolvedValue({
+      data: [baseMessage],
+      cursor: { next: null, prev: null }
+    }),
+    sendMessage: vi.fn().mockResolvedValue({
+      ...baseMessage,
+      id: "msg-2",
+      content: "Status update"
+    }),
+    registerDevice: vi.fn().mockResolvedValue("Device registered."),
+    unregisterDevice: vi.fn().mockResolvedValue(undefined)
   };
 
   return { ...mock, ...overrides };
@@ -390,5 +495,147 @@ describe("App", () => {
     render(<App apiClient={bannedApi} initialRoute="/profile" initialSession={bannedSession} />);
 
     expect(await screen.findByRole("heading", { name: "Account restricted" })).toBeInTheDocument();
+  });
+
+  it("TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance, disclaimer, and payment initiation", async () => {
+    const apiClient = buildApiClientMock({
+      getMyProfile: vi.fn().mockResolvedValue(baseProfile),
+      acceptApplication: vi.fn().mockResolvedValue(baseBooking),
+      initiatePayment: vi.fn().mockResolvedValue({
+        paymentUrl: "https://qpay.example.test/pay/booking-1",
+        qrCode: "BASE64-QR"
+      })
+    });
+
+    render(
+      <App apiClient={apiClient} initialRoute="/customer/booking-payment" initialSession={baseSession} />
+    );
+
+    await screen.findByRole("heading", { name: "Booking acceptance and payment" });
+
+    fireEvent.change(screen.getByLabelText("Task ID"), { target: { value: "task-1" } });
+    fireEvent.change(screen.getByLabelText("Application ID"), { target: { value: "application-1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Accept application" }));
+
+    await waitFor(() => {
+      expect(apiClient.acceptApplication).toHaveBeenCalledWith(
+        "access-token",
+        "task-1",
+        "application-1",
+        expect.any(String)
+      );
+    });
+
+    fireEvent.click(screen.getByLabelText(/I acknowledge the liability disclaimer/i));
+    fireEvent.click(screen.getByRole("button", { name: "Initiate payment" }));
+
+    await waitFor(() => {
+      expect(apiClient.initiatePayment).toHaveBeenCalledWith("access-token", "booking-1", expect.any(String));
+    });
+    expect(await screen.findByText(/Payment URL:/)).toBeInTheDocument();
+  });
+
+  it("TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions", async () => {
+    const paidBooking: Booking = {
+      ...baseBooking,
+      status: "PAID"
+    };
+
+    const apiClient = buildApiClientMock({
+      getMyProfile: vi.fn().mockResolvedValue(baseProfile),
+      getBooking: vi.fn().mockResolvedValue(paidBooking),
+      cancelBooking: vi.fn().mockResolvedValue({ ...paidBooking, status: "CANCELLED" }),
+      completeBooking: vi.fn().mockResolvedValue({ ...paidBooking, status: "COMPLETED" }),
+      submitReview: vi.fn().mockResolvedValue(baseReview),
+      raiseDispute: vi.fn().mockResolvedValue(baseDispute)
+    });
+
+    render(<App apiClient={apiClient} initialRoute="/booking/safety" initialSession={baseSession} />);
+
+    await screen.findByRole("heading", { name: "Booking safety actions" });
+
+    fireEvent.click(screen.getByRole("button", { name: "List bookings" }));
+    await waitFor(() => {
+      expect(apiClient.listBookings).toHaveBeenCalled();
+    });
+
+    fireEvent.change(screen.getByLabelText("Booking ID"), { target: { value: "booking-1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Load booking" }));
+    await waitFor(() => {
+      expect(apiClient.getBooking).toHaveBeenCalledWith("access-token", "booking-1");
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel booking" }));
+    await waitFor(() => {
+      expect(apiClient.cancelBooking).toHaveBeenCalledWith("access-token", "booking-1", expect.any(String));
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Complete booking" }));
+    await waitFor(() => {
+      expect(apiClient.completeBooking).toHaveBeenCalledWith("access-token", "booking-1", expect.any(String));
+    });
+
+    fireEvent.change(screen.getByLabelText("Review comment"), { target: { value: "Reliable and careful work." } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit review" }));
+    await waitFor(() => {
+      expect(apiClient.submitReview).toHaveBeenCalledWith(
+        "access-token",
+        "booking-1",
+        expect.objectContaining({
+          rating: 5,
+          comment: "Reliable and careful work."
+        })
+      );
+    });
+
+    fireEvent.change(screen.getByLabelText("Dispute reason"), {
+      target: { value: "There was a quality issue with part of the service." }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Raise dispute" }));
+    await waitFor(() => {
+      expect(apiClient.raiseDispute).toHaveBeenCalledWith(
+        "access-token",
+        "booking-1",
+        "There was a quality issue with part of the service.",
+        expect.any(String)
+      );
+    });
+  });
+
+  it("TID-TASK-081-WEB-MSG-NOTIF-INTEGRATION supports messaging and notification device flows", async () => {
+    const apiClient = buildApiClientMock({
+      getMyProfile: vi.fn().mockResolvedValue(baseProfile)
+    });
+
+    render(<App apiClient={apiClient} initialRoute="/communication" initialSession={baseSession} />);
+
+    await screen.findByRole("heading", { name: "Messaging and notifications" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Load messages" }));
+    await waitFor(() => {
+      expect(apiClient.listMessages).toHaveBeenCalledWith("access-token", "conv-1");
+    });
+
+    fireEvent.change(screen.getByLabelText("Message content"), { target: { value: "Status update" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send message" }));
+    await waitFor(() => {
+      expect(apiClient.sendMessage).toHaveBeenCalledWith("access-token", "conv-1", "Status update");
+    });
+
+    fireEvent.change(screen.getByLabelText("Push device token"), {
+      target: { value: "ExponentPushToken[abc123]" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Register device" }));
+    await waitFor(() => {
+      expect(apiClient.registerDevice).toHaveBeenCalledWith("access-token", {
+        token: "ExponentPushToken[abc123]",
+        platform: "WEB"
+      });
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Unregister device" }));
+    await waitFor(() => {
+      expect(apiClient.unregisterDevice).toHaveBeenCalledWith("access-token", "ExponentPushToken[abc123]");
+    });
   });
 });

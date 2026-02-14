@@ -35,8 +35,13 @@ import {
   createApiClient,
   type ApiClient,
   type AuthTokens,
+  type Booking,
   type Category,
+  type Conversation,
+  type Dispute,
+  type Message,
   type Profile,
+  type Review,
   type Task,
   type TaskApplication,
   type User
@@ -82,6 +87,10 @@ function parseError(error: unknown): string {
   return "Unexpected error. Please try again.";
 }
 
+function createIdempotencyKey(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+}
+
 function Header() {
   const { profile, signOut } = useAppContext();
 
@@ -106,8 +115,17 @@ function Header() {
         <NavLink className={linkClass} to="/customer/tasks/new">
           Customer
         </NavLink>
+        <NavLink className={linkClass} to="/customer/booking-payment">
+          Payment
+        </NavLink>
+        <NavLink className={linkClass} to="/booking/safety">
+          Safety
+        </NavLink>
         <NavLink className={linkClass} to="/tasker/tasks">
           Tasker
+        </NavLink>
+        <NavLink className={linkClass} to="/communication">
+          Inbox
         </NavLink>
         <Button variant="ghost" onClick={signOut}>
           Sign out
@@ -909,6 +927,751 @@ function TaskerFeedPage() {
   );
 }
 
+function BookingPaymentPage() {
+  const { apiClient, session } = useAppContext();
+  const [taskId, setTaskId] = useState("");
+  const [applicationId, setApplicationId] = useState("");
+  const [bookingId, setBookingId] = useState("");
+  const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [working, setWorking] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const acceptApplication = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    if (!taskId.trim() || !applicationId.trim()) {
+      setMessage("Task ID and Application ID are required.");
+      return;
+    }
+
+    setWorking(true);
+    setMessage(null);
+    setPaymentUrl(null);
+    setQrCode(null);
+    try {
+      const booking = await apiClient.acceptApplication(
+        session.accessToken,
+        taskId.trim(),
+        applicationId.trim(),
+        createIdempotencyKey("accept")
+      );
+      setAcceptedBooking(booking);
+      setBookingId(booking.id);
+      setMessage(`Application accepted. Booking created: ${booking.id}`);
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const initiatePayment = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+
+    const bookingTarget = bookingId.trim() || acceptedBooking?.id;
+    if (!bookingTarget) {
+      setMessage("Booking ID is required before initiating payment.");
+      return;
+    }
+    if (!disclaimerAccepted) {
+      setMessage("Liability disclaimer must be accepted before payment.");
+      return;
+    }
+
+    setWorking(true);
+    setMessage(null);
+    try {
+      const payment = await apiClient.initiatePayment(
+        session.accessToken,
+        bookingTarget,
+        createIdempotencyKey("payment")
+      );
+      setPaymentUrl(payment.paymentUrl);
+      setQrCode(payment.qrCode);
+      setMessage("Payment initiated.");
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <ScreenFrame>
+      <Card className="border-border/70 shadow-xl shadow-foreground/5">
+        <CardHeader>
+          <CardTitle>Booking acceptance and payment</CardTitle>
+          <CardDescription>
+            Accept an applicant, acknowledge the liability disclaimer, and initiate QPay payment.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div className="grid gap-2 md:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="accept-task-id">Task ID</Label>
+              <Input
+                id="accept-task-id"
+                value={taskId}
+                onChange={(event) => setTaskId(event.target.value)}
+                placeholder="task-uuid"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="accept-application-id">Application ID</Label>
+              <Input
+                id="accept-application-id"
+                value={applicationId}
+                onChange={(event) => setApplicationId(event.target.value)}
+                placeholder="application-uuid"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button disabled={working} onClick={() => void acceptApplication()}>
+              Accept application
+            </Button>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="payment-booking-id">Booking ID</Label>
+            <Input
+              id="payment-booking-id"
+              value={bookingId}
+              onChange={(event) => setBookingId(event.target.value)}
+              placeholder="booking-uuid"
+            />
+          </div>
+          <label className="flex items-start gap-2 text-sm text-muted-foreground" htmlFor="liability-disclaimer">
+            <input
+              id="liability-disclaimer"
+              checked={disclaimerAccepted}
+              onChange={(event) => setDisclaimerAccepted(event.target.checked)}
+              type="checkbox"
+            />
+            <span>I acknowledge the liability disclaimer and want to proceed with payment.</span>
+          </label>
+          <div className="flex justify-end">
+            <Button disabled={working || !disclaimerAccepted} onClick={() => void initiatePayment()}>
+              Initiate payment
+            </Button>
+          </div>
+          {paymentUrl ? (
+            <div className="rounded-md border border-border bg-secondary/40 p-3 text-sm">
+              <p>
+                Payment URL: <span className="font-medium">{paymentUrl}</span>
+              </p>
+              <p className="mt-1 break-all text-xs text-muted-foreground">QR payload: {qrCode}</p>
+            </div>
+          ) : null}
+          {acceptedBooking ? (
+            <p className="text-sm text-muted-foreground">
+              Booking status: <span className="font-medium">{acceptedBooking.status}</span>
+            </p>
+          ) : null}
+          {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
+        </CardContent>
+      </Card>
+    </ScreenFrame>
+  );
+}
+
+function BookingSafetyPage() {
+  const { apiClient, session } = useAppContext();
+  const [bookingId, setBookingId] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"" | "customer" | "tasker">("customer");
+  const [statusFilter, setStatusFilter] = useState<"" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED">(
+    ""
+  );
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
+  const [rating, setRating] = useState("5");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewUserId, setReviewUserId] = useState("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [activeDispute, setActiveDispute] = useState<Dispute | null>(null);
+  const [working, setWorking] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const listBookings = async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const response = await apiClient.listBookings(session.accessToken, {
+        role: roleFilter || undefined,
+        status: statusFilter || undefined
+      });
+      setBookings(response.data);
+      setMessage(`Loaded ${response.data.length} booking(s).`);
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const loadBooking = async (): Promise<void> => {
+    if (!session || !bookingId.trim()) {
+      setMessage("Booking ID is required.");
+      return;
+    }
+
+    setWorking(true);
+    setMessage(null);
+    try {
+      const booking = await apiClient.getBooking(session.accessToken, bookingId.trim());
+      setActiveBooking(booking);
+      setReviewUserId(booking.tasker_id);
+      setMessage("Booking loaded.");
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const cancelBooking = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      setMessage("Load a booking first.");
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const booking = await apiClient.cancelBooking(
+        session.accessToken,
+        activeBooking.id,
+        createIdempotencyKey("cancel")
+      );
+      setActiveBooking(booking);
+      setMessage("Booking cancelled.");
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const completeBooking = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      setMessage("Load a booking first.");
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const booking = await apiClient.completeBooking(
+        session.accessToken,
+        activeBooking.id,
+        createIdempotencyKey("complete")
+      );
+      setActiveBooking(booking);
+      setMessage("Booking marked complete.");
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const submitReview = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      setMessage("Load a booking first.");
+      return;
+    }
+    const numericRating = Number(rating);
+    if (Number.isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
+      setMessage("Rating must be between 1 and 5.");
+      return;
+    }
+
+    setWorking(true);
+    setMessage(null);
+    try {
+      await apiClient.submitReview(session.accessToken, activeBooking.id, {
+        rating: numericRating,
+        comment: reviewComment.trim() || null
+      });
+      setMessage("Review submitted.");
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const loadReviews = async (): Promise<void> => {
+    if (!session || !reviewUserId.trim()) {
+      setMessage("Review user ID is required.");
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const response = await apiClient.getUserReviews(session.accessToken, reviewUserId.trim());
+      setReviews(response.data);
+      setMessage(`Loaded ${response.data.length} review(s).`);
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const raiseDispute = async (): Promise<void> => {
+    if (!session || !activeBooking) {
+      setMessage("Load a booking first.");
+      return;
+    }
+    if (disputeReason.trim().length < 10) {
+      setMessage("Dispute reason must be at least 10 characters.");
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const dispute = await apiClient.raiseDispute(
+        session.accessToken,
+        activeBooking.id,
+        disputeReason.trim(),
+        createIdempotencyKey("dispute")
+      );
+      setActiveDispute(dispute);
+      setMessage(`Dispute raised: ${dispute.id}`);
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const refreshDispute = async (): Promise<void> => {
+    if (!session || !activeDispute) {
+      return;
+    }
+    setWorking(true);
+    setMessage(null);
+    try {
+      const dispute = await apiClient.getDispute(session.accessToken, activeDispute.id);
+      setActiveDispute(dispute);
+      setMessage(`Dispute status: ${dispute.status}`);
+    } catch (error) {
+      setMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <ScreenFrame>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+        <Card className="border-border/70 shadow-xl shadow-foreground/5">
+          <CardHeader>
+            <CardTitle>Booking safety actions</CardTitle>
+            <CardDescription>
+              Track booking transitions, cancellations, completion, reviews, and disputes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="booking-role-filter">Booking role filter</Label>
+                <select
+                  id="booking-role-filter"
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  value={roleFilter}
+                  onChange={(event) => {
+                    setRoleFilter(event.target.value as "" | "customer" | "tasker");
+                  }}
+                >
+                  <option value="">All</option>
+                  <option value="customer">customer</option>
+                  <option value="tasker">tasker</option>
+                </select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="booking-status-filter">Booking status filter</Label>
+                <select
+                  id="booking-status-filter"
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  value={statusFilter}
+                  onChange={(event) => {
+                    setStatusFilter(
+                      event.target.value as "" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED"
+                    );
+                  }}
+                >
+                  <option value="">All</option>
+                  <option value="PENDING_PAYMENT">PENDING_PAYMENT</option>
+                  <option value="PAID">PAID</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button disabled={working} onClick={() => void listBookings()} variant="secondary">
+                List bookings
+              </Button>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="safety-booking-id">Booking ID</Label>
+              <Input
+                id="safety-booking-id"
+                value={bookingId}
+                onChange={(event) => setBookingId(event.target.value)}
+                placeholder="booking-uuid"
+              />
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button disabled={working} onClick={() => void loadBooking()} variant="secondary">
+                Load booking
+              </Button>
+              <Button disabled={working || !activeBooking} onClick={() => void cancelBooking()}>
+                Cancel booking
+              </Button>
+              <Button disabled={working || !activeBooking} onClick={() => void completeBooking()}>
+                Complete booking
+              </Button>
+            </div>
+            {activeBooking ? (
+              <div className="rounded-md border border-border bg-secondary/40 p-3 text-sm">
+                <p>
+                  Current booking status: <span className="font-medium">{activeBooking.status}</span>
+                </p>
+                <p className="text-muted-foreground">Booking ID: {activeBooking.id}</p>
+              </div>
+            ) : null}
+            <div className="grid gap-2 md:grid-cols-[140px_minmax(0,1fr)]">
+              <div className="grid gap-2">
+                <Label htmlFor="review-rating">Rating</Label>
+                <Input
+                  id="review-rating"
+                  inputMode="numeric"
+                  value={rating}
+                  onChange={(event) => setRating(event.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="review-comment">Review comment</Label>
+                <Textarea
+                  id="review-comment"
+                  value={reviewComment}
+                  onChange={(event) => setReviewComment(event.target.value)}
+                  placeholder="Quality, punctuality, and communication feedback."
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button disabled={working || !activeBooking} onClick={() => void submitReview()}>
+                Submit review
+              </Button>
+            </div>
+            <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <div className="grid gap-2">
+                <Label htmlFor="review-user-id">Review user ID</Label>
+                <Input
+                  id="review-user-id"
+                  value={reviewUserId}
+                  onChange={(event) => setReviewUserId(event.target.value)}
+                  placeholder="user-uuid"
+                />
+              </div>
+              <Button disabled={working} onClick={() => void loadReviews()} variant="secondary">
+                Load reviews
+              </Button>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="dispute-reason">Dispute reason</Label>
+              <Textarea
+                id="dispute-reason"
+                value={disputeReason}
+                onChange={(event) => setDisputeReason(event.target.value)}
+                placeholder="Describe what happened and what resolution you seek."
+              />
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button disabled={working || !activeBooking} onClick={() => void raiseDispute()}>
+                Raise dispute
+              </Button>
+              <Button disabled={working || !activeDispute} onClick={() => void refreshDispute()} variant="secondary">
+                Refresh dispute
+              </Button>
+            </div>
+            {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Safety snapshot</CardTitle>
+            <CardDescription>Loaded bookings, reviews, and dispute detail.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <div>
+              <p className="text-sm font-medium">Bookings</p>
+              {bookings.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No bookings loaded.</p>
+              ) : (
+                bookings.map((booking) => (
+                  <p className="text-sm text-muted-foreground" key={booking.id}>
+                    {booking.id}: {booking.status}
+                  </p>
+                ))
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-medium">Reviews</p>
+              {reviews.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No reviews loaded.</p>
+              ) : (
+                reviews.map((review) => (
+                  <p className="text-sm text-muted-foreground" key={review.id}>
+                    {review.id}: {review.rating}/5
+                  </p>
+                ))
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-medium">Dispute</p>
+              {activeDispute ? (
+                <p className="text-sm text-muted-foreground">
+                  {activeDispute.id}: {activeDispute.status}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">No dispute loaded.</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </ScreenFrame>
+  );
+}
+
+function MessagingNotificationsPage() {
+  const { apiClient, session } = useAppContext();
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversationId, setConversationId] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageDraft, setMessageDraft] = useState("");
+  const [deviceToken, setDeviceToken] = useState("");
+  const [working, setWorking] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const loadConversations = useCallback(async (): Promise<void> => {
+    if (!session) {
+      return;
+    }
+    setWorking(true);
+    setStatusMessage(null);
+    try {
+      const response = await apiClient.listConversations(session.accessToken);
+      setConversations(response.data);
+      setConversationId((previous) => previous || response.data[0]?.id || "");
+      setStatusMessage(`Loaded ${response.data.length} conversation(s).`);
+    } catch (error) {
+      setStatusMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  }, [apiClient, session]);
+
+  useEffect(() => {
+    void loadConversations();
+  }, [loadConversations]);
+
+  const loadMessages = async (): Promise<void> => {
+    if (!session || !conversationId.trim()) {
+      setStatusMessage("Conversation ID is required.");
+      return;
+    }
+    setWorking(true);
+    setStatusMessage(null);
+    try {
+      const response = await apiClient.listMessages(session.accessToken, conversationId.trim());
+      setMessages(response.data);
+      setStatusMessage(`Loaded ${response.data.length} message(s).`);
+    } catch (error) {
+      setStatusMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const sendMessage = async (): Promise<void> => {
+    if (!session || !conversationId.trim()) {
+      setStatusMessage("Conversation ID is required.");
+      return;
+    }
+    if (messageDraft.trim().length < 1) {
+      setStatusMessage("Message content is required.");
+      return;
+    }
+    setWorking(true);
+    setStatusMessage(null);
+    try {
+      const sent = await apiClient.sendMessage(session.accessToken, conversationId.trim(), messageDraft.trim());
+      setMessages((previous) => [sent, ...previous]);
+      setMessageDraft("");
+      setStatusMessage("Message sent.");
+    } catch (error) {
+      setStatusMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const registerDevice = async (): Promise<void> => {
+    if (!session || !deviceToken.trim()) {
+      setStatusMessage("Device token is required.");
+      return;
+    }
+    setWorking(true);
+    setStatusMessage(null);
+    try {
+      const result = await apiClient.registerDevice(session.accessToken, {
+        token: deviceToken.trim(),
+        platform: "WEB"
+      });
+      setStatusMessage(result);
+    } catch (error) {
+      setStatusMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const unregisterDevice = async (): Promise<void> => {
+    if (!session || !deviceToken.trim()) {
+      setStatusMessage("Device token is required.");
+      return;
+    }
+    setWorking(true);
+    setStatusMessage(null);
+    try {
+      await apiClient.unregisterDevice(session.accessToken, deviceToken.trim());
+      setStatusMessage("Device unregistered.");
+    } catch (error) {
+      setStatusMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <ScreenFrame>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <Card className="border-border/70 shadow-xl shadow-foreground/5">
+          <CardHeader>
+            <CardTitle>Messaging and notifications</CardTitle>
+            <CardDescription>
+              REST fallback messaging and push token registration for booking milestones.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <div className="grid gap-2">
+                <Label htmlFor="conversation-id">Conversation ID</Label>
+                <Input
+                  id="conversation-id"
+                  value={conversationId}
+                  onChange={(event) => setConversationId(event.target.value)}
+                  placeholder="conversation-uuid"
+                />
+              </div>
+              <Button disabled={working} onClick={() => void loadConversations()} variant="secondary">
+                Refresh conversations
+              </Button>
+            </div>
+            <div className="flex justify-end">
+              <Button disabled={working || !conversationId.trim()} onClick={() => void loadMessages()} variant="secondary">
+                Load messages
+              </Button>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="message-content">Message content</Label>
+              <Textarea
+                id="message-content"
+                value={messageDraft}
+                onChange={(event) => setMessageDraft(event.target.value)}
+                placeholder="Send a message to update booking progress."
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button disabled={working || !conversationId.trim()} onClick={() => void sendMessage()}>
+                Send message
+              </Button>
+            </div>
+            <div className="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end">
+              <div className="grid gap-2">
+                <Label htmlFor="push-device-token">Push device token</Label>
+                <Input
+                  id="push-device-token"
+                  value={deviceToken}
+                  onChange={(event) => setDeviceToken(event.target.value)}
+                  placeholder="ExponentPushToken[...] or web token"
+                />
+              </div>
+              <Button disabled={working || !deviceToken.trim()} onClick={() => void registerDevice()}>
+                Register device
+              </Button>
+              <Button
+                disabled={working || !deviceToken.trim()}
+                onClick={() => void unregisterDevice()}
+                variant="secondary"
+              >
+                Unregister device
+              </Button>
+            </div>
+            {statusMessage ? <p className="text-sm text-muted-foreground">{statusMessage}</p> : null}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Conversation snapshot</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <div>
+              <p className="text-sm font-medium">Conversations</p>
+              {conversations.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No conversations loaded.</p>
+              ) : (
+                conversations.map((conversation) => (
+                  <p className="text-sm text-muted-foreground" key={conversation.id}>
+                    {conversation.id}: {conversation.task_title ?? "Task conversation"}
+                  </p>
+                ))
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-medium">Messages</p>
+              {messages.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No messages loaded.</p>
+              ) : (
+                messages.map((message) => (
+                  <p className="text-sm text-muted-foreground" key={message.id}>
+                    {message.sender_id}: {message.content}
+                  </p>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </ScreenFrame>
+  );
+}
+
 function HomeRedirect() {
   const { session, profile } = useAppContext();
 
@@ -951,12 +1714,38 @@ function AppRoutes() {
       <Route
         element={
           <ProtectedRoute>
+            <RoleGuard role="CUSTOMER">
+              <BookingPaymentPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        }
+        path="/customer/booking-payment"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
             <RoleGuard role="TASKER">
               <TaskerFeedPage />
             </RoleGuard>
           </ProtectedRoute>
         }
         path="/tasker/tasks"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <BookingSafetyPage />
+          </ProtectedRoute>
+        }
+        path="/booking/safety"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <MessagingNotificationsPage />
+          </ProtectedRoute>
+        }
+        path="/communication"
       />
       <Route
         element={
