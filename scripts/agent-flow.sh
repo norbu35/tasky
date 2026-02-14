@@ -573,8 +573,9 @@ case "${command}" in
     fi
     git -C "${main_worktree}" pull --ff-only origin "${main_branch}" >/dev/null
 
-    # Rebase source branch onto main if it has diverged (needed for parallel agent merges)
-    if ! git merge-base --is-ancestor "${main_branch}" "${source_branch}"; then
+    # Rebase only when main and source have diverged (neither is ancestor of the other).
+    if ! git merge-base --is-ancestor "${source_branch}" "${main_branch}" \
+      && ! git merge-base --is-ancestor "${main_branch}" "${source_branch}"; then
       echo "Source branch '${source_branch}' has diverged from '${main_branch}'. Rebasing..." >&2
       source_worktree="$(find_worktree_for_branch "${source_branch}")"
       tmp_worktree_created=false
@@ -649,10 +650,10 @@ case "${command}" in
       fi
     fi
 
-                local details_str
-                details_str=$(echo "${cleanup_notes[*]}" | tr ' ' ',')
-                echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge} cleanup=${cleanup_status} details=${details_str}"
-                if [[ "${cleanup_status}" == "failed" ]]; then      echo "Local cleanup failed after merge. Resolve remaining worktree/branch references and retry cleanup." >&2
+    details_str=$(echo "${cleanup_notes[*]}" | tr ' ' ',')
+    echo "merged ticket=${ticket_id} source=${source_branch} target=${main_branch} worktree=${main_worktree} pushed=${push_after_merge} cleanup=${cleanup_status} details=${details_str}"
+    if [[ "${cleanup_status}" == "failed" ]]; then
+      echo "Local cleanup failed after merge. Resolve remaining worktree/branch references and retry cleanup." >&2
       exit 1
     fi
     ;;
