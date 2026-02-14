@@ -1,0 +1,20 @@
+export {
+  AuthSection,
+  type AuthSectionProps,
+  ProfileSection,
+  type ProfileSectionProps,
+  CustomerSection,
+  type CustomerSectionProps,
+  TaskerSection,
+  type TaskerSectionProps,
+  PaymentSection,
+  type PaymentSectionProps,
+  SafetySection,
+  type SafetySectionProps,
+  CommunicationSection,
+  type CommunicationSectionProps,
+  RestrictedSection,
+  type RestrictedSectionProps,
+  GuardSection,
+  type GuardSectionProps
+} from "./RouteSections";
