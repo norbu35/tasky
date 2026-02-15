@@ -1,15 +1,14 @@
 package mn.tasky.payment.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.payment.application.PaymentService;
+import mn.tasky.payment.dto.InitiatePaymentRequest;
+import mn.tasky.payment.dto.PaymentIntent;
+import mn.tasky.payment.dto.QpayCallbackRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,7 +35,7 @@ public class PaymentController {
     public ResponseEntity<?> initiatePayment(
         @AuthenticationPrincipal JwtPrincipal principal,
         @PathVariable String id,
-        @Valid @RequestBody InitiatePaymentBody body,
+        @Valid @RequestBody InitiatePaymentRequest body,
         HttpServletRequest request
     ) {
         if (!Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())) {
@@ -63,7 +62,7 @@ public class PaymentController {
                 }
 
                 bookingService.recordDisclaimerAcceptance(id);
-                PaymentService.PaymentIntent intent = paymentService.initiatePayment(id);
+                PaymentIntent intent = paymentService.initiatePayment(id);
 
                 return ResponseEntity.ok(Map.of(
                     "payment_url", intent.paymentUrl(),
@@ -81,7 +80,7 @@ public class PaymentController {
 
     @PostMapping("/qpay/callback")
     public ResponseEntity<?> qpayCallback(
-        @Valid @RequestBody QpayCallbackBody body,
+        @Valid @RequestBody QpayCallbackRequest body,
         HttpServletRequest request
     ) {
         boolean success = paymentService.processCallback(
@@ -111,24 +110,4 @@ public class PaymentController {
         return UUID.randomUUID().toString();
     }
 
-    public record InitiatePaymentBody(
-        @JsonProperty("liability_disclaimer_accepted")
-        @NotNull
-        @AssertTrue(message = "Liability disclaimer must be accepted to initiate payment.")
-        Boolean liabilityDisclaimerAccepted
-    ) {
-    }
-
-    public record QpayCallbackBody(
-        @JsonProperty("payment_id")
-        @NotBlank
-        String paymentId,
-        @JsonProperty("status")
-        @NotBlank
-        String status,
-        @JsonProperty("signature")
-        @NotBlank
-        String signature
-    ) {
-    }
 }

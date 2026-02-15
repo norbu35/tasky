@@ -2,6 +2,7 @@ package mn.tasky.payment.application;
 
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
@@ -147,6 +148,4 @@ public class PaymentService {
         }
     }
 
-    public record PaymentIntent(String paymentId, String paymentUrl, String qrCode) {
-    }
 }

@@ -1,6 +1,7 @@
 package mn.tasky.analytics.application;
 
 import mn.tasky.analytics.domain.KpiReport;
+import mn.tasky.analytics.dto.Event;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
@@ -20,7 +21,7 @@ public class KpiReportService {
         return buildReport(analyticsService.getEvents());
     }
 
-    KpiReport buildReport(List<AnalyticsService.Event> events) {
+    KpiReport buildReport(List<Event> events) {
         Set<String> postedTaskIds = referenceIds(
             events,
             AnalyticsService.EVENT_TASK_POSTED,
@@ -59,9 +60,9 @@ public class KpiReportService {
         );
     }
 
-    private Set<String> referenceIds(List<AnalyticsService.Event> events, String eventName, String propertyKey) {
+    private Set<String> referenceIds(List<Event> events, String eventName, String propertyKey) {
         Set<String> ids = new LinkedHashSet<>();
-        for (AnalyticsService.Event event : events) {
+        for (Event event : events) {
             if (!eventName.equals(event.name())) {
                 continue;
             }

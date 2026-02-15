@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record CreateTaskBody(
+public record CreateTaskRequest(
     @JsonProperty("category_id")
     @NotBlank
     String categoryId,

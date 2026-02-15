@@ -1,5 +1,7 @@
 package mn.tasky.notification.application;
 
+import mn.tasky.notification.dto.DeviceToken;
+import mn.tasky.notification.dto.NotificationLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -66,14 +68,4 @@ public class NotificationService {
         return List.copyOf(notificationLogs);
     }
 
-    public record DeviceToken(String token, String platform, Instant createdAt) {}
-    
-    public record NotificationLog(
-        String id,
-        String userId,
-        String type,
-        String channel,
-        String status,
-        Instant createdAt
-    ) {}
 }

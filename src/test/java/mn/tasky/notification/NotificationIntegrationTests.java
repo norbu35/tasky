@@ -1,6 +1,7 @@
 package mn.tasky.notification;
 
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.notification.dto.NotificationLog;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ class NotificationIntegrationTests {
         notificationService.sendPush(tasker.userId(), "Test", "Test Body", "HIRED");
         
         // Should trigger SMS fallback
-        List<NotificationService.NotificationLog> logs = notificationService.getLogs();
+        List<NotificationLog> logs = notificationService.getLogs();
         assertThat(logs).anySatisfy(l -> {
             assertThat(l.userId()).isEqualTo(tasker.userId());
             assertThat(l.channel()).isEqualTo("SMS");
@@ -65,7 +66,7 @@ class NotificationIntegrationTests {
         notificationService.sendPush(customer.userId(), "Job Started", "Job is starting", "JOB_STARTED");
 
         // Should be PUSH
-        List<NotificationService.NotificationLog> logs2 = notificationService.getLogs();
+        List<NotificationLog> logs2 = notificationService.getLogs();
         assertThat(logs2).anySatisfy(l -> {
             assertThat(l.userId()).isEqualTo(customer.userId());
             assertThat(l.channel()).isEqualTo("PUSH");

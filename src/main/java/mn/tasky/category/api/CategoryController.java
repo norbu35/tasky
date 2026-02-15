@@ -49,7 +49,7 @@ public class CategoryController {
 
     @PostMapping("/admin/categories")
     public ResponseEntity<CategoryResponse> createCategory(
-        @Valid @RequestBody CreateCategoryBody body
+        @Valid @RequestBody CreateCategoryRequest body
     ) {
         CategoryState created = categoryService.createCategory(
             new CreateCategory(
@@ -66,7 +66,7 @@ public class CategoryController {
     @PutMapping("/admin/categories/{id}")
     public ResponseEntity<?> updateCategory(
         @PathVariable String id,
-        @Valid @RequestBody UpdateCategoryBody body,
+        @Valid @RequestBody UpdateCategoryRequest body,
         HttpServletRequest request
     ) {
         return categoryService.updateCategory(

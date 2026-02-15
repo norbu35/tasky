@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
-import mn.tasky.auth.dto.OtpRequestBody;
-import mn.tasky.auth.dto.OtpVerifyBody;
+import mn.tasky.auth.dto.OtpRequest;
+import mn.tasky.auth.dto.OtpVerifyRequest;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class OtpController {
 
     @PostMapping("/request")
     public Map<String, String> requestOtp(
-        @Valid @RequestBody OtpRequestBody body,
+        @Valid @RequestBody OtpRequest body,
         HttpServletRequest request
     ) {
         otpRateLimitService.assertRequestAllowed(body.phone(), resolveClientIp(request));
@@ -43,7 +43,7 @@ public class OtpController {
 
     @PostMapping("/verify")
     public ResponseEntity<Map<String, Object>> verifyOtp(
-        @Valid @RequestBody OtpVerifyBody body,
+        @Valid @RequestBody OtpVerifyRequest body,
         HttpServletRequest request
     ) {
         otpRateLimitService.assertVerifyAllowed(body.phone(), resolveClientIp(request));

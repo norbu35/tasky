@@ -3,6 +3,7 @@ package mn.tasky.admin.api;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.wallet.application.WalletService;
+import mn.tasky.wallet.dto.PayoutRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class AdminPayoutController {
 
     @GetMapping("/pending")
     public ResponseEntity<?> listPendingPayouts() {
-        List<WalletService.PayoutRequest> pending = walletService.listPendingPayouts();
+        List<PayoutRequest> pending = walletService.listPendingPayouts();
         
         List<Map<String, Object>> data = pending.stream()
             .map(this::toPayoutResponse)
@@ -55,7 +56,7 @@ public class AdminPayoutController {
         }
     }
 
-    private Map<String, Object> toPayoutResponse(WalletService.PayoutRequest p) {
+    private Map<String, Object> toPayoutResponse(PayoutRequest p) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", p.id());
         res.put("user_id", p.userId());

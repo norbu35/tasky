@@ -1,5 +1,6 @@
 package mn.tasky.analytics.application;
 
+import mn.tasky.analytics.dto.Event;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +58,4 @@ public class AnalyticsService {
         return List.copyOf(events);
     }
 
-    public record Event(
-        String id,
-        String name,
-        String userId,
-        Map<String, Object> properties,
-        Instant timestamp
-    ) {}
 }

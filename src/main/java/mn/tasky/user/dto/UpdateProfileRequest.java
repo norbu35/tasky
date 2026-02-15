@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UpdateProfileBody(
+public record UpdateProfileRequest(
     @JsonProperty("full_name")
     @Size(min = 1, max = 100)
     @Pattern(regexp = ".*\\S.*")

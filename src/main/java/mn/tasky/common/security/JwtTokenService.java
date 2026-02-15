@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import mn.tasky.common.security.dto.ParsedRefreshToken;
+import mn.tasky.common.security.dto.RefreshToken;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -144,9 +146,4 @@ public class JwtTokenService {
             .getPayload();
     }
 
-    public record RefreshToken(String token, String tokenId, Instant expiresAt) {
-    }
-
-    public record ParsedRefreshToken(String userId, String tokenId, Instant expiresAt) {
-    }
 }

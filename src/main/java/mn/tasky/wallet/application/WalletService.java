@@ -1,5 +1,8 @@
 package mn.tasky.wallet.application;
 
+import mn.tasky.wallet.dto.LedgerEntry;
+import mn.tasky.wallet.dto.PayoutRequest;
+import mn.tasky.wallet.dto.WalletBalance;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -179,25 +182,4 @@ public class WalletService {
         ));
     }
 
-    public record WalletBalance(long balance, long pendingPayout, String currency) {
-    }
-
-    public record LedgerEntry(
-        String id,
-        String userId,
-        int amount,
-        String type,
-        String referenceId,
-        String description,
-        Instant createdAt
-    ) {
-    }
-
-    public record PayoutRequest(
-        String id,
-        String userId,
-        int amount,
-        String status,
-        Instant createdAt
-    ) {}
 }

@@ -1,10 +1,9 @@
 package mn.tasky.admin.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import mn.tasky.admin.dto.RejectVerificationRequest;
+import mn.tasky.admin.dto.VerificationDetailResponse;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.common.api.CursorPagination;
@@ -36,7 +35,7 @@ public class AdminVerificationController {
     ) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
         List<VerificationDetail> pending = authService.listPendingVerifications(clampedLimit);
-        List<VerificationDetailBody> data = pending.stream()
+        List<VerificationDetailResponse> data = pending.stream()
             .map(this::toDetailBody)
             .toList();
 
@@ -78,7 +77,7 @@ public class AdminVerificationController {
     @PostMapping("/{id}/reject")
     public ResponseEntity<?> reject(
         @PathVariable String id,
-        @Valid @RequestBody RejectBody body,
+        @Valid @RequestBody RejectVerificationRequest body,
         HttpServletRequest request
     ) {
         return authService.rejectVerification(id, body.reason())
@@ -92,8 +91,8 @@ public class AdminVerificationController {
             ));
     }
 
-    private VerificationDetailBody toDetailBody(VerificationDetail detail) {
-        return new VerificationDetailBody(
+    private VerificationDetailResponse toDetailBody(VerificationDetail detail) {
+        return new VerificationDetailResponse(
             detail.id(),
             detail.userId(),
             detail.userPhone(),
@@ -115,32 +114,4 @@ public class AdminVerificationController {
         return UUID.randomUUID().toString();
     }
 
-    public record RejectBody(
-        @NotBlank
-        String reason
-    ) {
-    }
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record VerificationDetailBody(
-        String id,
-        @JsonProperty("user_id")
-        String userId,
-        @JsonProperty("user_phone")
-        String userPhone,
-        @JsonProperty("user_name")
-        String userName,
-        @JsonProperty("id_card_front_url")
-        String idCardFrontUrl,
-        @JsonProperty("id_card_back_url")
-        String idCardBackUrl,
-        String status,
-        @JsonProperty("admin_notes")
-        String adminNotes,
-        @JsonProperty("submitted_at")
-        String submittedAt,
-        @JsonProperty("reviewed_at")
-        String reviewedAt
-    ) {
-    }
 }

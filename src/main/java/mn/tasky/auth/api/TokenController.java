@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
-import mn.tasky.auth.dto.RefreshTokenBody;
+import mn.tasky.auth.dto.RefreshTokenRequest;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class TokenController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshToken(
-        @Valid @RequestBody RefreshTokenBody body,
+        @Valid @RequestBody RefreshTokenRequest body,
         HttpServletRequest request
     ) {
         otpRateLimitService.assertRefreshAllowed(body.refreshToken(), resolveClientIp(request));

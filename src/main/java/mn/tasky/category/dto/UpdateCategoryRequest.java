@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UpdateCategoryBody(
+public record UpdateCategoryRequest(
     @Size(min = 1, max = 120)
     @Pattern(regexp = ".*\\S.*")
     String name,

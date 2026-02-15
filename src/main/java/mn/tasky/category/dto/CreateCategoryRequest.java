@@ -3,7 +3,7 @@ package mn.tasky.category.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 
-public record CreateCategoryBody(
+public record CreateCategoryRequest(
     @NotBlank
     @Size(max = 120)
     String name,

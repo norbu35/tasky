@@ -6,6 +6,8 @@ import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
+import mn.tasky.common.security.dto.ParsedRefreshToken;
+import mn.tasky.common.security.dto.RefreshToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AuthService {
 
-    private static final String DEFAULT_PROFILE_NAME = "Tasky User";
     private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE = Map.of(
         "image/jpeg", "jpg",
@@ -202,14 +203,14 @@ public class AuthService {
     }
 
     public Optional<AuthTokens> refreshToken(String refreshToken) {
-        Optional<JwtTokenService.ParsedRefreshToken> parsedOpt = jwtTokenService.parseRefreshToken(
+        Optional<ParsedRefreshToken> parsedOpt = jwtTokenService.parseRefreshToken(
             refreshToken
         );
         if (parsedOpt.isEmpty()) {
             return Optional.empty();
         }
 
-        JwtTokenService.ParsedRefreshToken parsed = parsedOpt.get();
+        ParsedRefreshToken parsed = parsedOpt.get();
         RefreshSession session = refreshSessionsByTokenId.remove(parsed.tokenId());
         if (session == null) {
             return Optional.empty();
@@ -528,7 +529,7 @@ public class AuthService {
     private AuthSession issueSession(AuthUser user) {
         JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), user.status());
         String accessToken = jwtTokenService.issueAccessToken(principal);
-        JwtTokenService.RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
+        RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
 
         refreshSessionsByTokenId.put(
             refreshToken.tokenId(),
@@ -660,55 +661,4 @@ public class AuthService {
         return phone.substring(0, Math.min(6, phone.length())) + "****";
     }
 
-    private static class AuthUser {
-        private final String id;
-        private final String phone;
-        private final String role;
-        private final String status;
-        private final Instant createdAt;
-
-        public AuthUser(String id, String phone, String role, String status, Instant createdAt) {
-            this.id = id;
-            this.phone = phone;
-            this.role = role;
-            this.status = status;
-            this.createdAt = createdAt;
-        }
-
-        public String id() { return id; }
-        public String phone() { return phone; }
-        public String role() { return role; }
-        public String status() { return status; }
-        public Instant createdAt() { return createdAt; }
-    }
-
-    private record OtpChallenge(String code, Instant expiresAt, int attempts) {
-    }
-
-    private record RefreshSession(String userId, Instant expiresAt) {
-    }
-
-    private record UserProfileState(
-        String fullName,
-        String avatarUrl,
-        double ratingAvg,
-        int completedTasks
-    ) {
-
-        private static UserProfileState defaultState() {
-            return new UserProfileState(DEFAULT_PROFILE_NAME, null, 0.0d, 0);
-        }
-    }
-
-    private record VerificationRequest(
-        String id,
-        String userId,
-        String idCardFrontKey,
-        String idCardBackKey,
-        String status,
-        Instant submittedAt,
-        String adminNotes,
-        Instant reviewedAt
-    ) {
-    }
 }

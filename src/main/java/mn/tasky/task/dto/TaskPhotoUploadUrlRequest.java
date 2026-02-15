@@ -1,10 +1,10 @@
-package mn.tasky.verification.dto;
+package mn.tasky.task.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record UploadUrlBody(
+public record TaskPhotoUploadUrlRequest(
     @JsonProperty("content_type")
     @NotBlank
     @Pattern(

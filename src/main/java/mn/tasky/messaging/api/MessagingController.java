@@ -4,6 +4,9 @@ import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.messaging.application.MessagingService;
+import mn.tasky.messaging.dto.Conversation;
+import mn.tasky.messaging.dto.Message;
+import mn.tasky.messaging.dto.MessageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -34,14 +37,14 @@ public class MessagingController {
 
     @GetMapping
     public ResponseEntity<?> listConversations(@AuthenticationPrincipal JwtPrincipal principal) {
-        List<MessagingService.Conversation> conversations = messagingService.listConversations(principal.userId());
+        List<Conversation> conversations = messagingService.listConversations(principal.userId());
         List<Map<String, Object>> data = conversations.stream()
             .map(this::toConversationResponse)
             .toList();
         return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(null, false)));
     }
 
-    private Map<String, Object> toConversationResponse(MessagingService.Conversation c) {
+    private Map<String, Object> toConversationResponse(Conversation c) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", c.id());
         res.put("task_id", c.taskId());
@@ -58,13 +61,13 @@ public class MessagingController {
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "50") int limit) {
         try {
-            List<MessagingService.Message> messages = messagingService.listMessages(principal.userId(), id, cursor, limit);
+            List<Message> messages = messagingService.listMessages(principal.userId(), id, cursor, limit);
             List<Map<String, Object>> data = messages.stream()
                 .map(this::toMessageResponse)
                 .toList();
 
             return ResponseEntity.ok(
-                new PagedResponse<>(data, CursorPagination.from(messages, limit, MessagingService.Message::id))
+                new PagedResponse<>(data, CursorPagination.from(messages, limit, Message::id))
             );
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
@@ -88,7 +91,7 @@ public class MessagingController {
         }
     }
 
-    private Map<String, Object> toMessageResponse(MessagingService.Message message) {
+    private Map<String, Object> toMessageResponse(Message message) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id", message.id());
         res.put("conversation_id", message.conversationId());
@@ -98,5 +101,4 @@ public class MessagingController {
         return res;
     }
 
-    public record MessageRequest(String content) {}
 }

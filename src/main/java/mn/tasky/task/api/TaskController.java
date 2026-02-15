@@ -68,7 +68,7 @@ public class TaskController {
     @PostMapping("/photos/upload-url")
     public ResponseEntity<?> getPreCreateUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody UploadUrlBody body,
+        @Valid @RequestBody TaskPhotoUploadUrlRequest body,
         HttpServletRequest request
     ) {
         return taskService.createPhotoUploadUrl(principal.userId(), body.contentType())
@@ -90,7 +90,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<?> createTask(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody CreateTaskBody body,
+        @Valid @RequestBody CreateTaskRequest body,
         HttpServletRequest request
     ) {
         if (!"CUSTOMER".equals(principal.role())) {
@@ -172,7 +172,7 @@ public class TaskController {
     public ResponseEntity<?> applyToTask(
         @AuthenticationPrincipal JwtPrincipal principal,
         @PathVariable String id,
-        @Valid @RequestBody ApplyTaskBody body,
+        @Valid @RequestBody ApplyTaskRequest body,
         HttpServletRequest request
     ) {
         TaskApplyResult result = taskService.applyToTask(
@@ -308,7 +308,7 @@ public class TaskController {
     public ResponseEntity<?> getPostCreateUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
         @PathVariable String id,
-        @Valid @RequestBody UploadUrlBody body,
+        @Valid @RequestBody TaskPhotoUploadUrlRequest body,
         HttpServletRequest request
     ) {
         Optional<TaskState> taskOpt = taskService.getTask(id);

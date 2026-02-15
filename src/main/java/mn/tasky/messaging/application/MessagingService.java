@@ -1,5 +1,7 @@
 package mn.tasky.messaging.application;
 
+import mn.tasky.messaging.dto.Conversation;
+import mn.tasky.messaging.dto.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -92,19 +94,4 @@ public class MessagingService {
             .toList();
     }
 
-    public record Conversation(
-        String id,
-        String taskId,
-        String participant1Id,
-        String participant2Id,
-        Instant createdAt
-    ) {}
-
-    public record Message(
-        String id,
-        String conversationId,
-        String senderId,
-        String content,
-        Instant sentAt
-    ) {}
 }

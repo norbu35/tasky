@@ -7,9 +7,9 @@ import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.user.dto.AvatarUploadUrlBody;
+import mn.tasky.user.dto.AvatarUploadUrlRequest;
 import mn.tasky.user.dto.ProfileResponse;
-import mn.tasky.user.dto.UpdateProfileBody;
+import mn.tasky.user.dto.UpdateProfileRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,7 +43,7 @@ public class UserProfileController {
     @PutMapping("/me")
     public ResponseEntity<?> updateMyProfile(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody UpdateProfileBody body,
+        @Valid @RequestBody UpdateProfileRequest body,
         HttpServletRequest request
     ) {
         ProfileUpdate update = new ProfileUpdate(
@@ -81,7 +81,7 @@ public class UserProfileController {
     @PostMapping("/me/avatar/upload-url")
     public ResponseEntity<?> getAvatarUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody AvatarUploadUrlBody body,
+        @Valid @RequestBody AvatarUploadUrlRequest body,
         HttpServletRequest request
     ) {
         return authService.createAvatarUploadUrl(principal.userId(), body.contentType())

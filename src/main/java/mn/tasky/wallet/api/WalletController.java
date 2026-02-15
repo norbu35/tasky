@@ -1,11 +1,13 @@
 package mn.tasky.wallet.api;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.wallet.application.WalletService;
+import mn.tasky.wallet.dto.LedgerEntry;
+import mn.tasky.wallet.dto.CreatePayoutRequest;
+import mn.tasky.wallet.dto.WalletBalance;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +30,7 @@ public class WalletController {
 
     @GetMapping
     public ResponseEntity<?> getBalance(@AuthenticationPrincipal JwtPrincipal principal) {
-        WalletService.WalletBalance balance = walletService.getBalance(principal.userId());
+        WalletBalance balance = walletService.getBalance(principal.userId());
         return ResponseEntity.ok(Map.of(
             "balance", balance.balance(),
             "pending_payout", balance.pendingPayout(),
@@ -39,7 +41,7 @@ public class WalletController {
     @PostMapping("/payouts")
     public ResponseEntity<?> requestPayout(
             @AuthenticationPrincipal JwtPrincipal principal,
-            @Valid @RequestBody PayoutRequest body) {
+            @Valid @RequestBody CreatePayoutRequest body) {
         try {
             String payoutId = walletService.requestPayout(principal.userId(), body.amount());
             return ResponseEntity.ok(Map.of("id", payoutId, "status", "PENDING"));
@@ -52,7 +54,7 @@ public class WalletController {
 
     @GetMapping("/transactions")
     public ResponseEntity<?> listTransactions(@AuthenticationPrincipal JwtPrincipal principal) {
-        List<WalletService.LedgerEntry> transactions = walletService.listTransactions(principal.userId());
+        List<LedgerEntry> transactions = walletService.listTransactions(principal.userId());
         
         List<Map<String, Object>> data = transactions.stream()
             .map(this::toLedgerResponse)
@@ -66,7 +68,7 @@ public class WalletController {
         );
     }
 
-    private Map<String, Object> toLedgerResponse(WalletService.LedgerEntry entry) {
+    private Map<String, Object> toLedgerResponse(LedgerEntry entry) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id", entry.id());
         response.put("amount", entry.amount());
@@ -77,5 +79,4 @@ public class WalletController {
         return response;
     }
 
-    public record PayoutRequest(@Positive int amount) {}
 }

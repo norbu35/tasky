@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record VerificationStatusBody(
+public record VerificationStatusApiResponse(
     String status,
     @JsonProperty("admin_notes")
     String adminNotes,

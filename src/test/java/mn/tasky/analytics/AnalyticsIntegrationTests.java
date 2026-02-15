@@ -3,6 +3,7 @@ package mn.tasky.analytics;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.analytics.application.KpiReportService;
 import mn.tasky.analytics.domain.KpiReport;
+import mn.tasky.analytics.dto.Event;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +92,9 @@ class AnalyticsIntegrationTests {
         );
 
         // Verify events
-        List<AnalyticsService.Event> events = analyticsService.getEvents();
-        Map<String, AnalyticsService.Event> latestByName = events.stream()
-            .collect(java.util.stream.Collectors.toMap(AnalyticsService.Event::name, event -> event, (first, second) -> second));
+        List<Event> events = analyticsService.getEvents();
+        Map<String, Event> latestByName = events.stream()
+            .collect(java.util.stream.Collectors.toMap(Event::name, event -> event, (first, second) -> second));
 
         List<String> expectedNames = List.of(
             AnalyticsService.EVENT_TASK_POSTED,

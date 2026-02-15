@@ -7,9 +7,9 @@ import mn.tasky.auth.dto.VerificationStatusResponse;
 import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
-import mn.tasky.verification.dto.SubmitBody;
-import mn.tasky.verification.dto.UploadUrlBody;
-import mn.tasky.verification.dto.VerificationStatusBody;
+import mn.tasky.verification.dto.VerificationSubmitRequest;
+import mn.tasky.verification.dto.VerificationUploadUrlRequest;
+import mn.tasky.verification.dto.VerificationStatusApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +33,7 @@ public class VerificationController {
     @PostMapping("/upload-url")
     public ResponseEntity<?> getUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody UploadUrlBody body,
+        @Valid @RequestBody VerificationUploadUrlRequest body,
         HttpServletRequest request
     ) {
         return authService.createVerificationUploadUrl(principal.userId(), body.contentType())
@@ -55,7 +55,7 @@ public class VerificationController {
     @PostMapping("/submit")
     public ResponseEntity<?> submitVerification(
         @AuthenticationPrincipal JwtPrincipal principal,
-        @Valid @RequestBody SubmitBody body,
+        @Valid @RequestBody VerificationSubmitRequest body,
         HttpServletRequest request
     ) {
         VerificationSubmitResult result = authService.submitVerification(
@@ -98,8 +98,8 @@ public class VerificationController {
         return ResponseEntity.ok(toStatusResponse(status));
     }
 
-    private VerificationStatusBody toStatusResponse(VerificationStatusResponse status) {
-        return new VerificationStatusBody(
+    private VerificationStatusApiResponse toStatusResponse(VerificationStatusResponse status) {
+        return new VerificationStatusApiResponse(
             status.status(),
             status.adminNotes(),
             status.submittedAt(),
