@@ -43,8 +43,8 @@ class NotificationIntegrationTests extends IntegrationTestBase {
         // 2. Unregister
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(user.accessToken());
-        ResponseEntity<Map> unregRes = restTemplate.exchange("http://localhost:" + port + "/api/v1/notifications/devices", HttpMethod.DELETE, new HttpEntity<>(Map.of("token", "token-1"), headers), Map.class);
-        assertThat(unregRes.getStatusCode().value()).isEqualTo(200);
+        ResponseEntity<Map> unregRes = restTemplate.exchange("http://localhost:" + port + "/api/v1/notifications/devices/token-1", HttpMethod.DELETE, new HttpEntity<>(headers), Map.class);
+        assertThat(unregRes.getStatusCode().value()).isEqualTo(204);
     }
 
     @Test

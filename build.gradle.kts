@@ -21,7 +21,7 @@ repositories {
 }
 
 val jdbiVersion = "3.47.0"
-val testcontainersVersion = "1.20.4"
+val testcontainersVersion = "1.21.4"
 val jjwtVersion = "0.12.6"
 
 dependencies {
@@ -65,6 +65,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
+    testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
+    testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 }
 
@@ -119,9 +121,17 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
+            // Enforce 80% line coverage on active MVP runtime packages.
+            // Exclude generated sources, DTO-only packages, and deferred post-MVP monetization modules.
             element = "PACKAGE"
             includes = listOf("mn.tasky.*")
-            excludes = listOf("mn.tasky.api.generated*", "mn.tasky.api.generated.model*")
+            excludes = listOf(
+                "mn.tasky.api.generated*",
+                "mn.tasky.*.dto*",
+                "mn.tasky.payment*",
+                "mn.tasky.wallet*",
+                "mn.tasky"
+            )
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"

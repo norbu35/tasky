@@ -37,10 +37,11 @@ public class AdminVerificationController {
 
     @GetMapping("/pending")
     public ResponseEntity<?> listPending(
+        @RequestParam(value = "cursor", required = false) String cursor,
         @RequestParam(value = "limit", defaultValue = "20") int limit
     ) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
-        List<VerificationDetail> pending = authService.listPendingVerifications(clampedLimit);
+        List<VerificationDetail> pending = authService.listPendingVerifications(cursor, clampedLimit);
         List<VerificationDetailResponse> data = pending.stream()
             .map(this::toDetailBody)
             .toList();
@@ -48,7 +49,7 @@ public class AdminVerificationController {
         return ResponseEntity.ok(
             new PagedResponse<>(
                 data,
-                new CursorPagination(null, false)
+                CursorPagination.from(data, clampedLimit, VerificationDetailResponse::id)
             )
         );
     }

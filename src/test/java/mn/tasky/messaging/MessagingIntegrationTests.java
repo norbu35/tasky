@@ -42,6 +42,8 @@ import java.util.concurrent.TimeUnit;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class MessagingIntegrationTests extends IntegrationTestBase {
 
+    private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
+
     @LocalServerPort
     private int port;
 
@@ -112,7 +114,7 @@ class MessagingIntegrationTests extends IntegrationTestBase {
         // I'll use a hack to create category or assume one exists from previous steps (but DirtiesContext clears it).
         // I'll use Admin API to create category.
         
-        String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-1");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
         postWithAuth("/api/v1/admin/categories", adminToken, Map.of(
             "name", "Test Cat", 
             "base_price", 5000,
@@ -167,7 +169,7 @@ class MessagingIntegrationTests extends IntegrationTestBase {
         // I'll do full flow for realism
         AuthContext customer = authenticate("cust-msg-2");
         AuthContext tasker = authenticate("task-msg-2");
-        String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-1");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
         postWithAuth("/api/v1/admin/categories", adminToken, Map.of(
             "name", "Cat2", 
             "base_price", 5000,

@@ -6,6 +6,7 @@ import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.task.application.TaskService;
+import mn.tasky.task.dto.TaskState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class BookingIntegrationTests extends IntegrationTestBase {
@@ -61,7 +64,8 @@ class BookingIntegrationTests extends IntegrationTestBase {
         assertThat(resStranger.getStatusCode().value()).isEqualTo(404); // Filtered out
 
         // 4. Get not found
-        ResponseEntity<Map> resMissing = getWithAuth("/api/v1/bookings/missing", customer.accessToken());
+        String missingBookingId = UUID.randomUUID().toString();
+        ResponseEntity<Map> resMissing = getWithAuth("/api/v1/bookings/" + missingBookingId, customer.accessToken());
         assertThat(resMissing.getStatusCode().value()).isEqualTo(404);
     }
 
@@ -74,19 +78,17 @@ class BookingIntegrationTests extends IntegrationTestBase {
         String taskId = createTask(customer.accessToken());
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
 
-        // 1. Complete fails: Not Paid
-        ResponseEntity<Map> resInvalid = postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
-        assertThat(resInvalid.getStatusCode().value()).isEqualTo(409);
-
-        bookingService.transitionToPaid(booking.id());
-
-        // 2. Complete fails: Forbidden (not customer)
+        // 1. Complete fails: Forbidden (not customer)
         ResponseEntity<Map> resForbidden = postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", tasker.accessToken(), null);
         assertThat(resForbidden.getStatusCode().value()).isEqualTo(403);
 
-        // 3. Complete success
+        // 2. Complete success
         ResponseEntity<Map> resSuccess = postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
         assertThat(resSuccess.getStatusCode().value()).isEqualTo(200);
+
+        // 3. Complete fails: already completed
+        ResponseEntity<Map> resInvalid = postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+        assertThat(resInvalid.getStatusCode().value()).isEqualTo(409);
     }
 
     @Test
@@ -100,46 +102,41 @@ class BookingIntegrationTests extends IntegrationTestBase {
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
 
         // 1. Cancel fails: Not found
-        assertThat(postWithAuth("/api/v1/bookings/missing/cancel", customer.accessToken(), null).getStatusCode().value()).isEqualTo(404);
+        String missingBookingId = UUID.randomUUID().toString();
+        assertThat(postWithAuth("/api/v1/bookings/" + missingBookingId + "/cancel", customer.accessToken(), null).getStatusCode().value()).isEqualTo(404);
 
         // 2. Cancel fails: Forbidden
         assertThat(postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", stranger.accessToken(), null).getStatusCode().value()).isEqualTo(403);
     }
 
     @Test
-    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL-REFUND tasker cancellation refunds full amount to customer")
-    void taskerCancellationRefundsCustomer() {
+    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE tasker cancellation reopens task")
+    void taskerCancellationReopensTask() {
         AuthContext customer = authenticate("rc1");
         AuthContext tasker = authenticate("rc2");
 
         String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.DAYS));
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
-        bookingService.transitionToPaid(booking.id());
 
         ResponseEntity<Map> cancelResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", tasker.accessToken(), null);
         assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        ResponseEntity<Map> customerWallet = getWithAuth("/api/v1/wallet", customer.accessToken());
-        assertThat(((Number) customerWallet.getBody().get("balance")).intValue()).isEqualTo(50000);
+        Optional<TaskState> taskOpt = taskService.getTask(taskId);
+        assertThat(taskOpt).isPresent();
+        assertThat(taskOpt.orElseThrow().status()).isEqualTo("OPEN");
     }
 
     @Test
-    @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE late customer cancellation splits refund and fee")
-    void customerLateCancellationAppliesFee() {
+    @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL late customer cancellation does not apply fees")
+    void customerLateCancellationNoFee() {
         AuthContext customer = authenticate("rc3");
         AuthContext tasker = authenticate("rc4");
 
         String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.HOURS));
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
-        bookingService.transitionToPaid(booking.id());
 
         ResponseEntity<Map> cancelResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
         assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        ResponseEntity<Map> customerWallet = getWithAuth("/api/v1/wallet", customer.accessToken());
-        ResponseEntity<Map> taskerWallet = getWithAuth("/api/v1/wallet", tasker.accessToken());
-        assertThat(((Number) customerWallet.getBody().get("balance")).intValue()).isEqualTo(45000);
-        assertThat(((Number) taskerWallet.getBody().get("balance")).intValue()).isEqualTo(5000);
+        assertThat(cancelResponse.getBody().get("cancellation_fee")).isNull();
     }
 
     private String createTask(String token) {

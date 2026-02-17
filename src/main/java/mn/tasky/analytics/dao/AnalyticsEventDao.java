@@ -8,17 +8,29 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(Event.class)
 public interface AnalyticsEventDao {
 
     @SqlUpdate("INSERT INTO analytics_events (id, name, user_id, properties, timestamp) "
-             + "VALUES (CAST(:id AS UUID), :name, :userId, CAST(:properties AS JSONB), :timestamp)")
-    void insert(@Bind("id") String id,
+             + "VALUES (:id, :name, :userId, CAST(:properties AS JSONB), :timestamp)")
+    void insert(@Bind("id") UUID id,
                 @Bind("name") String name,
-                @Bind("userId") String userId,
+                @Bind("userId") UUID userId,
                 @Bind("properties") String properties,
                 @Bind("timestamp") Instant timestamp);
+
+    default void insert(String id,
+                        String name,
+                        String userId,
+                        String properties,
+                        Instant timestamp) {
+        insert(required(id, "id"), name, optional(userId), properties, timestamp);
+    }
 
     @SqlQuery("SELECT id, name, user_id, properties, timestamp FROM analytics_events ORDER BY timestamp DESC")
     List<Event> findAll();

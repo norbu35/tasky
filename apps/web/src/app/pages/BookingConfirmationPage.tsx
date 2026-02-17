@@ -9,19 +9,16 @@ import {ScreenFrame} from "../layout/ScreenFrame";
 import {parseError} from "../utils/errorHandling";
 import {createIdempotencyKey} from "../utils/idempotency";
 
-export function BookingPaymentPage() {
+export function BookingConfirmationPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
   const [taskId, setTaskId] = useState("");
   const [applicationId, setApplicationId] = useState("");
-  const [bookingId, setBookingId] = useState("");
   const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
-  const [qrCode, setQrCode] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const acceptApplication = async (): Promise<void> => {
+  const confirmBooking = async (): Promise<void> => {
     if (!session) {
       return;
     }
@@ -29,56 +26,25 @@ export function BookingPaymentPage() {
       setMessage("Task ID and Application ID are required.");
       return;
     }
+    if (!disclaimerAccepted) {
+      setMessage("Liability disclaimer must be accepted before booking confirmation.");
+      return;
+    }
 
     setWorking(true);
     setMessage(null);
-    setPaymentUrl(null);
-    setQrCode(null);
     try {
       const booking = await apiClient.acceptApplication(
         session.accessToken,
         taskId.trim(),
         applicationId.trim(),
+        disclaimerAccepted,
         createIdempotencyKey("accept")
       );
       setAcceptedBooking(booking);
-      setBookingId(booking.id);
       trackClientEvent("TASKER_ACCEPTED", { taskId: taskId.trim(), bookingId: booking.id });
-      setMessage(`Application accepted. Booking created: ${booking.id}`);
-    } catch (error) {
-      setMessage(parseError(error));
-    } finally {
-      setWorking(false);
-    }
-  };
-
-  const initiatePayment = async (): Promise<void> => {
-    if (!session) {
-      return;
-    }
-
-    const bookingTarget = bookingId.trim() || acceptedBooking?.id;
-    if (!bookingTarget) {
-      setMessage("Booking ID is required before initiating payment.");
-      return;
-    }
-    if (!disclaimerAccepted) {
-      setMessage("Liability disclaimer must be accepted before payment.");
-      return;
-    }
-
-    setWorking(true);
-    setMessage(null);
-    try {
-      const payment = await apiClient.initiatePayment(
-        session.accessToken,
-        bookingTarget,
-        createIdempotencyKey("payment")
-      );
-      setPaymentUrl(payment.paymentUrl);
-      setQrCode(payment.qrCode);
-      trackClientEvent("PAYMENT_INITIATED", { bookingId: bookingTarget });
-      setMessage("Payment initiated.");
+      trackClientEvent("BOOKING_CONFIRMED", { taskId: taskId.trim(), bookingId: booking.id });
+      setMessage(`Booking confirmed: ${booking.id}`);
     } catch (error) {
       setMessage(parseError(error));
     } finally {
@@ -90,9 +56,9 @@ export function BookingPaymentPage() {
     <ScreenFrame>
       <Card className="border-border/70 shadow-xl shadow-foreground/5">
         <CardHeader>
-          <CardTitle>Booking acceptance and payment</CardTitle>
+          <CardTitle>Booking confirmation</CardTitle>
           <CardDescription>
-            Accept an applicant, acknowledge the liability disclaimer, and initiate QPay payment.
+            Accept an applicant and acknowledge the liability disclaimer to confirm booking.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -116,20 +82,6 @@ export function BookingPaymentPage() {
               />
             </div>
           </div>
-          <div className="flex justify-end">
-            <Button disabled={working} onClick={() => void acceptApplication()}>
-              Accept application
-            </Button>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="payment-booking-id">Booking ID</Label>
-            <Input
-              id="payment-booking-id"
-              value={bookingId}
-              onChange={(event) => setBookingId(event.target.value)}
-              placeholder="booking-uuid"
-            />
-          </div>
           <label className="flex items-start gap-2 text-sm text-muted-foreground" htmlFor="liability-disclaimer">
             <input
               id="liability-disclaimer"
@@ -137,21 +89,13 @@ export function BookingPaymentPage() {
               onChange={(event) => setDisclaimerAccepted(event.target.checked)}
               type="checkbox"
             />
-            <span>I acknowledge the liability disclaimer and want to proceed with payment.</span>
+            <span>I acknowledge the liability disclaimer and want to confirm this booking.</span>
           </label>
           <div className="flex justify-end">
-            <Button disabled={working || !disclaimerAccepted} onClick={() => void initiatePayment()}>
-              Initiate payment
+            <Button disabled={working || !disclaimerAccepted} onClick={() => void confirmBooking()}>
+              Confirm booking
             </Button>
           </div>
-          {paymentUrl ? (
-            <div className="rounded-md border border-border bg-secondary/40 p-3 text-sm">
-              <p>
-                Payment URL: <span className="font-medium">{paymentUrl}</span>
-              </p>
-              <p className="mt-1 break-all text-xs text-muted-foreground">QR payload: {qrCode}</p>
-            </div>
-          ) : null}
           {acceptedBooking ? (
             <p className="text-sm text-muted-foreground">
               Booking status: <span className="font-medium">{acceptedBooking.status}</span>

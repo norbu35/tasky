@@ -31,30 +31,36 @@ Rules:
 | TASK-022 | Open task feed filters + privacy + pagination | high | REQ-TASK-03, REQ-TASK-05, NFR-API-01, NFR-PERF-01 | TASK-021, TASK-065 |
 | TASK-023 | Task applications + accept | high | REQ-BOOK-01, REQ-BOOK-02, REQ-TASK-02 | TASK-021 |
 | TASK-030 | Booking aggregate + status guardrails | high | REQ-BOOK-03, REQ-BOOK-05 | TASK-023 |
-| TASK-031 | QPay initiate + callback idempotency | high | REQ-PAY-01, REQ-BOOK-03, REQ-BOOK-05, REQ-TASK-02, NFR-RELI-01 | TASK-030, TASK-064 |
+| TASK-031 | QPay initiate + callback idempotency (Post-MVP deferred) | high | REQ-PAY-01, NFR-RELI-01 | TASK-030, TASK-064 |
 | TASK-032 | Cancellation policy + strike logic | high | REQ-BOOK-04, REQ-BOOK-06 | TASK-030 |
-| TASK-033 | Completion settlement + wallet credit + fee | high | REQ-PAY-02, REQ-PAY-03, REQ-TASK-02, REQ-BOOK-05 | TASK-030, TASK-031 |
-| TASK-034 | Payout request + admin processing + schedule | high | REQ-PAY-04, REQ-PAY-05, REQ-PAY-06 | TASK-033 |
-| TASK-040 | Reviews + rating rollup + pro badge | medium | REQ-SAFE-02, REQ-SAFE-04 | TASK-033 |
-| TASK-041 | Dispute lifecycle + payout hold + admin resolve | high | REQ-SAFE-03, REQ-ADMIN-02, REQ-MSG-02 | TASK-033, TASK-042 |
+| TASK-033 | Completion settlement + wallet credit + fee (Post-MVP deferred) | high | REQ-PAY-02, REQ-PAY-03 | TASK-030, TASK-031 |
+| TASK-034 | Payout request + admin processing + schedule (Post-MVP deferred) | high | REQ-PAY-04, REQ-PAY-05, REQ-PAY-06 | TASK-033 |
+| TASK-040 | Reviews + rating rollup + pro badge | medium | REQ-SAFE-02, REQ-SAFE-04 | TASK-030 |
+| TASK-041 | Dispute lifecycle + admin resolve | high | REQ-SAFE-03, REQ-ADMIN-02, REQ-MSG-02 | TASK-030, TASK-042 |
 | TASK-042 | Conversations + REST messaging persistence | high | REQ-MSG-01, REQ-MSG-02 | TASK-023 |
 | TASK-043 | Real-time messaging (STOMP) | medium | REQ-MSG-01 | TASK-042 |
-| TASK-044 | Push + SMS fallback notification orchestration | high | REQ-NOTIF-01, REQ-NOTIF-02 | TASK-023, TASK-031, TASK-033 |
+| TASK-044 | Push + SMS fallback notification orchestration | high | REQ-NOTIF-01, REQ-NOTIF-02 | TASK-023, TASK-030, TASK-032 |
 | TASK-045 | Admin user search + ban/unban enforcement | high | REQ-ADMIN-01, REQ-ADMIN-03 | TASK-004, TASK-010 |
 | TASK-060 | PII encryption + secure storage controls | high | NFR-SEC-01 | TASK-004 |
 | TASK-061 | Localization baseline (mn default) | medium | NFR-LOC-01 | TASK-002 |
 | TASK-062 | Mobile offline read-only cache for My Tasks | medium | NFR-RELI-02 | TASK-022, TASK-030 |
 | TASK-063 | Open task feed performance tuning + perf tests | high | NFR-PERF-01 | TASK-022 |
-| TASK-064 | Liability disclaimer gate before payment initiation | high | NFR-LEGAL-01 | TASK-030 |
+| TASK-064 | Liability disclaimer gate before booking confirmation | high | NFR-LEGAL-01 | TASK-030 |
 | TASK-065 | Cursor pagination consistency across list APIs | medium | NFR-API-01 | TASK-002 |
 | TASK-070 | Web design system foundation (`shadcn/ui`) | medium | REQ-UI-01, NFR-UI-01 | TASK-002 |
 | TASK-071 | Mobile token adapter + component parity baseline | medium | REQ-UI-02, NFR-UI-01 | TASK-070 |
 | TASK-072 | Cross-platform UI parity and web accessibility gate | medium | NFR-UI-02 | TASK-070, TASK-071 |
 | TASK-080 | Web customer/tasker MVP flow integration | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03, REQ-TASK-01, REQ-TASK-03, REQ-BOOK-01, REQ-BOOK-02 | TASK-010, TASK-011, TASK-021, TASK-022, TASK-023, TASK-061, TASK-070 |
-| TASK-081 | Web booking/payment/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-PAY-01, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-031, TASK-032, TASK-033, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-064, TASK-070 |
+| TASK-081 | Web booking/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-032, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-064, TASK-070 |
 | TASK-082 | Mobile customer/tasker MVP flow integration | high | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03, REQ-TASK-01, REQ-TASK-03, REQ-BOOK-01, REQ-BOOK-02 | TASK-010, TASK-011, TASK-021, TASK-022, TASK-023, TASK-061, TASK-071 |
-| TASK-083 | Mobile booking/payment/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-PAY-01, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-031, TASK-032, TASK-033, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-062, TASK-064, TASK-071 |
+| TASK-083 | Mobile booking/safety MVP flow integration | high | REQ-BOOK-03, REQ-BOOK-04, REQ-BOOK-05, REQ-BOOK-06, REQ-SAFE-02, REQ-SAFE-03, REQ-NOTIF-01, REQ-NOTIF-02, REQ-MSG-01, NFR-LEGAL-01 | TASK-030, TASK-032, TASK-040, TASK-041, TASK-042, TASK-043, TASK-044, TASK-062, TASK-064, TASK-071 |
 | TASK-090 | Product analytics and KPI instrumentation | medium | NFR-OBS-01 | TASK-003, TASK-080, TASK-081, TASK-082, TASK-083 |
+
+### Deferred Post-MVP Monetization Tracks
+The following tickets remain defined but are not release-gating for phase-1 MVP:
+1. `TASK-031`
+2. `TASK-033`
+3. `TASK-034`
 
 ## Ticket Definitions
 
@@ -190,7 +196,7 @@ Rules:
 - Acceptance criteria:
   1. Tasker can apply only to open tasks.
   2. Customer can list applicants and accept exactly one.
-  3. Accept action creates booking in `PENDING_PAYMENT`.
+  3. Accept action creates booking in `ASSIGNED` after liability disclaimer acceptance.
 - Required tests:
   - `TID-TASK-023-API-APPLY-OPEN-TASK`
   - `TID-TASK-023-API-APPLICANT-LIST`
@@ -206,20 +212,20 @@ Rules:
   - `TID-TASK-030-API-BOOKING-READS`
 
 ### TASK-031 QPay Initiate + Callback Idempotency
-- Objective: Secure payment initiation and callback transitions.
+- Objective: Post-MVP monetization path for secure payment initiation and callback transitions.
 - Acceptance criteria:
   1. Initiation endpoint creates provider payment intent with traceable reference.
   2. Callback endpoint is idempotent and signature-validated.
-  3. Successful callback sets booking `PAID` and task `ASSIGNED` exactly once.
+  3. Successful callback applies the configured monetization transition exactly once.
 - Required tests:
   - `TID-TASK-031-API-QPAY-INITIATE`
   - `TID-TASK-031-SEC-QPAY-SIGNATURE`
   - `TID-TASK-031-RELI-CALLBACK-IDEMPOTENT`
 
 ### TASK-032 Cancellation + Strike Policy
-- Objective: Implement cancellation economics and tasker accountability.
+- Objective: Implement cancellation trust policy and tasker accountability.
 - Acceptance criteria:
-  1. Customer late-cancel applies fee policy and beneficiary logic.
+  1. Customer late-cancel records a reliability incident and audit evidence.
   2. Tasker cancellation reopens task and records strike.
   3. Three strikes in 30 days triggers 7-day suspension.
 - Required tests:
@@ -228,7 +234,7 @@ Rules:
   - `TID-TASK-032-DOMAIN-STRIKE-SUSPENSION`
 
 ### TASK-033 Completion Settlement + Wallet Credit/Fee
-- Objective: Move paid booking to completion and settle wallet balances.
+- Objective: Post-MVP monetization path to settle wallet balances after booking completion.
 - Acceptance criteria:
   1. Completion credits tasker wallet with fee deduction.
   2. Ledger entries are immutable and auditable.
@@ -239,7 +245,7 @@ Rules:
   - `TID-TASK-033-API-BOOKING-COMPLETE`
 
 ### TASK-034 Payout Request + Processing Schedule
-- Objective: Support payout request and admin settlement cycle.
+- Objective: Post-MVP monetization path for payout request and admin settlement cycle.
 - Acceptance criteria:
   1. Tasker can request payout only up to available balance.
   2. Admin can list/process pending payouts.
@@ -260,12 +266,12 @@ Rules:
   - `TID-TASK-040-API-REVIEW-LIST`
   - `TID-TASK-040-DOMAIN-PRO-BADGE`
 
-### TASK-041 Disputes + Admin Resolution + Payout Hold
-- Objective: Implement dispute handling and payout protection path.
+### TASK-041 Disputes + Admin Resolution
+- Objective: Implement dispute handling and admin resolution path.
 - Acceptance criteria:
   1. Dispute can be raised only for eligible booking states/window.
-  2. Active dispute pauses payout eligibility.
-  3. Admin resolution supports refund/release outcomes with audit trail.
+  2. Active dispute blocks booking closure actions until resolution.
+  3. Admin resolution supports customer-favor, tasker-favor, and escalation outcomes with audit trail.
 - Required tests:
   - `TID-TASK-041-API-DISPUTE-RAISE`
   - `TID-TASK-041-DOMAIN-PAYOUT-HOLD`
@@ -358,10 +364,10 @@ Rules:
   - `TID-TASK-063-PERF-CI-REGRESSION-BUDGET`
 
 ### TASK-064 Liability Disclaimer Enforcement
-- Objective: Enforce legal acceptance before payment initiation.
+- Objective: Enforce legal acceptance before booking confirmation.
 - Acceptance criteria:
-  1. Payment initiation rejects requests without `liability_disclaimer_accepted=true`.
-  2. Acceptance is captured in auditable booking/payment metadata.
+  1. Booking acceptance rejects requests without `liability_disclaimer_accepted=true`.
+  2. Acceptance is captured in auditable booking metadata.
 - Required tests:
   - `TID-TASK-064-API-DISCLAIMER-REQUIRED`
   - `TID-TASK-064-AUDIT-DISCLAIMER-RECORDED`
@@ -421,10 +427,10 @@ Rules:
   - `TID-TASK-080-WEB-TASK-APPLICATION-FLOW`
   - `TID-TASK-080-WEB-AUTHZ-GUARDS`
 
-### TASK-081 Web Booking/Payment/Safety MVP Flow Integration
+### TASK-081 Web Booking/Safety MVP Flow Integration
 - Objective: Deliver complete web booking lifecycle behavior including trust and communication touchpoints.
 - Acceptance criteria:
-  1. Customer can accept applicant, acknowledge liability disclaimer, and initiate payment flow.
+  1. Customer can accept applicant and acknowledge liability disclaimer before booking confirmation.
   2. Booking status transitions, cancellation outcomes, completion, review, and dispute actions are usable from web.
   3. Messaging and notification surfaces for booking milestones are integrated in web UX.
 - Required tests:
@@ -443,10 +449,10 @@ Rules:
   - `TID-TASK-082-MOBILE-TASK-APPLICATION-FLOW`
   - `TID-TASK-082-MOBILE-AUTHZ-GUARDS`
 
-### TASK-083 Mobile Booking/Payment/Safety MVP Flow Integration
+### TASK-083 Mobile Booking/Safety MVP Flow Integration
 - Objective: Deliver complete mobile booking lifecycle behavior including trust and communication touchpoints.
 - Acceptance criteria:
-  1. Mobile allows applicant acceptance, disclaimer acknowledgment, and payment initiation flow.
+  1. Mobile allows applicant acceptance and disclaimer acknowledgment before booking confirmation.
   2. Booking transitions, cancellation policies, completion, reviews, and disputes are usable from mobile.
   3. Messaging and booking notification touchpoints are integrated and testable in mobile flows.
 - Required tests:

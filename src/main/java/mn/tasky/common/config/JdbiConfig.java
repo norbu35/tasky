@@ -2,13 +2,16 @@ package mn.tasky.common.config;
 
 import mn.tasky.analytics.dao.AnalyticsEventDao;
 import mn.tasky.auth.dao.AuditLogDao;
+import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
 import mn.tasky.auth.dao.RefreshSessionDao;
 import mn.tasky.auth.dao.StrikeDao;
+import mn.tasky.auth.dao.SuspensionEventDao;
 import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.booking.dao.BookingDao;
+import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.messaging.dao.ConversationDao;
@@ -57,6 +60,8 @@ public class JdbiConfig {
     @Bean public VerificationDao verificationDao(Jdbi jdbi) { return jdbi.onDemand(VerificationDao.class); }
     @Bean public AuditLogDao auditLogDao(Jdbi jdbi) { return jdbi.onDemand(AuditLogDao.class); }
     @Bean public StrikeDao strikeDao(Jdbi jdbi) { return jdbi.onDemand(StrikeDao.class); }
+    @Bean public ModerationPolicyDao moderationPolicyDao(Jdbi jdbi) { return jdbi.onDemand(ModerationPolicyDao.class); }
+    @Bean public SuspensionEventDao suspensionEventDao(Jdbi jdbi) { return jdbi.onDemand(SuspensionEventDao.class); }
 
     // Category DAO
     @Bean public CategoryDao categoryDao(Jdbi jdbi) { return jdbi.onDemand(CategoryDao.class); }
@@ -68,6 +73,9 @@ public class JdbiConfig {
 
     // Booking DAO
     @Bean public BookingDao bookingDao(Jdbi jdbi) { return jdbi.onDemand(BookingDao.class); }
+    @Bean public BookingReliabilityIncidentDao bookingReliabilityIncidentDao(Jdbi jdbi) {
+        return jdbi.onDemand(BookingReliabilityIncidentDao.class);
+    }
 
     // Wallet DAOs
     @Bean public WalletDao walletDao(Jdbi jdbi) { return jdbi.onDemand(WalletDao.class); }

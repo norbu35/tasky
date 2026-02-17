@@ -12,8 +12,8 @@ CREATE TABLE users (
     id              UUID PRIMARY KEY,
     phone           TEXT NOT NULL,
     phone_blind_idx TEXT NOT NULL UNIQUE,
-    role            TEXT NOT NULL,
-    status          TEXT NOT NULL,
+    role            TEXT NOT NULL CHECK (role IN ('CUSTOMER', 'TASKER', 'ADMIN')),
+    status          TEXT NOT NULL CHECK (status IN ('PENDING', 'ACTIVE', 'VERIFIED', 'SUSPENDED', 'BANNED')),
     suspension_end_at TIMESTAMPTZ,
     created_at      TIMESTAMPTZ NOT NULL
 );
@@ -44,7 +44,7 @@ CREATE TABLE verifications (
     user_id          UUID NOT NULL REFERENCES users(id),
     id_card_front_key TEXT NOT NULL,
     id_card_back_key  TEXT NOT NULL,
-    status           TEXT NOT NULL,
+    status           TEXT NOT NULL CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')),
     submitted_at     TIMESTAMPTZ NOT NULL,
     admin_notes      TEXT,
     reviewed_at      TIMESTAMPTZ
@@ -52,9 +52,9 @@ CREATE TABLE verifications (
 
 CREATE TABLE audit_log (
     id              UUID PRIMARY KEY,
-    admin_id        TEXT,
+    admin_id        UUID,
     action          TEXT NOT NULL,
-    target_user_id  TEXT,
+    target_user_id  UUID,
     reason          TEXT,
     created_at      TIMESTAMPTZ NOT NULL
 );
@@ -89,7 +89,7 @@ CREATE TABLE tasks (
     location_lng    DOUBLE PRECISION,
     location_text   TEXT,
     location_point  GEOMETRY(Point, 4326),
-    status          TEXT NOT NULL,
+    status          TEXT NOT NULL CHECK (status IN ('OPEN', 'ASSIGNED', 'COMPLETED', 'CANCELLED')),
     scheduled_at    TIMESTAMPTZ,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL
@@ -127,7 +127,7 @@ CREATE TABLE task_applications (
     task_id     UUID NOT NULL REFERENCES tasks(id),
     tasker_id   UUID NOT NULL REFERENCES users(id),
     message     TEXT,
-    status      TEXT NOT NULL DEFAULT 'PENDING',
+    status      TEXT NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
     created_at  TIMESTAMPTZ NOT NULL,
     UNIQUE(task_id, tasker_id)
 );
@@ -142,7 +142,7 @@ CREATE TABLE bookings (
     tasker_id                       UUID NOT NULL REFERENCES users(id),
     customer_id                     UUID NOT NULL REFERENCES users(id),
     price                           INT NOT NULL,
-    status                          TEXT NOT NULL,
+    status                          TEXT NOT NULL CHECK (status IN ('ASSIGNED', 'PAID', 'COMPLETED', 'CANCELLED')),
     cancellation_fee                INT,
     liability_disclaimer_accepted   BOOLEAN NOT NULL DEFAULT false,
     created_at                      TIMESTAMPTZ NOT NULL,
@@ -162,25 +162,27 @@ CREATE TABLE wallets (
 
 CREATE TABLE ledger_entries (
     id              UUID PRIMARY KEY,
-    user_id         TEXT NOT NULL,
+    user_id         UUID REFERENCES users(id),
     amount          INT NOT NULL,
-    type            TEXT NOT NULL,
-    reference_id    TEXT,
+    type            TEXT NOT NULL CHECK (type IN ('DEPOSIT', 'FEE', 'HOLD', 'RELEASE', 'CONFISCATE', 'PAYOUT', 'REFUND')),
+    reference_id    UUID,
     description     TEXT,
-    created_at      TIMESTAMPTZ NOT NULL
+    created_at      TIMESTAMPTZ NOT NULL,
+    CHECK ((type = 'FEE' AND user_id IS NULL) OR (type <> 'FEE' AND user_id IS NOT NULL))
 );
+CREATE INDEX idx_ledger_entries_user_created_at ON ledger_entries(user_id, created_at DESC);
 
 CREATE TABLE payout_requests (
     id              UUID PRIMARY KEY,
     user_id         UUID NOT NULL REFERENCES users(id),
     amount          INT NOT NULL,
-    status          TEXT NOT NULL,
+    status          TEXT NOT NULL CHECK (status IN ('PENDING', 'PROCESSED', 'REJECTED')),
     created_at      TIMESTAMPTZ NOT NULL,
     processed_at    TIMESTAMPTZ
 );
 
 CREATE TABLE credited_bookings (
-    booking_id      TEXT PRIMARY KEY
+    booking_id      UUID PRIMARY KEY REFERENCES bookings(id)
 );
 
 -- ============================================================
@@ -230,9 +232,9 @@ CREATE TABLE disputes (
     booking_id      UUID NOT NULL REFERENCES bookings(id),
     raiser_id       UUID NOT NULL REFERENCES users(id),
     reason          TEXT NOT NULL,
-    status          TEXT NOT NULL,
-    outcome         TEXT,
-    resolved_by     TEXT,
+    status          TEXT NOT NULL CHECK (status IN ('OPEN', 'RESOLVED_TASKER', 'RESOLVED_CUSTOMER', 'ESCALATED')),
+    outcome         TEXT CHECK (outcome IS NULL OR outcome IN ('RESOLVE_TASKER', 'RESOLVE_CUSTOMER', 'ESCALATE')),
+    resolved_by     UUID,
     resolution_notes TEXT,
     created_at      TIMESTAMPTZ NOT NULL,
     resolved_at     TIMESTAMPTZ
@@ -243,7 +245,7 @@ CREATE TABLE reviews (
     booking_id      UUID NOT NULL REFERENCES bookings(id),
     author_id       UUID NOT NULL REFERENCES users(id),
     target_user_id  UUID NOT NULL REFERENCES users(id),
-    rating          INT NOT NULL,
+    rating          INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment         TEXT,
     created_at      TIMESTAMPTZ NOT NULL,
     UNIQUE(booking_id, author_id)
@@ -256,13 +258,15 @@ CREATE TABLE reviews (
 CREATE TABLE analytics_events (
     id          UUID PRIMARY KEY,
     name        TEXT NOT NULL,
-    user_id     TEXT,
+    user_id     UUID,
     properties  JSONB,
     timestamp   TIMESTAMPTZ NOT NULL
 );
+CREATE INDEX idx_analytics_events_timestamp ON analytics_events(timestamp DESC);
+CREATE INDEX idx_analytics_events_user_timestamp ON analytics_events(user_id, timestamp DESC);
 
 CREATE TABLE payment_intents (
-    payment_id  TEXT PRIMARY KEY,
-    booking_id  TEXT,
+    payment_id  UUID PRIMARY KEY,
+    booking_id  UUID REFERENCES bookings(id),
     processed   BOOLEAN NOT NULL DEFAULT false
 );

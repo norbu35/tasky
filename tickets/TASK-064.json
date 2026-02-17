@@ -3,7 +3,8 @@
   "ticket": "TASK-064",
   "risk_level": "high",
   "req_ids": [
-    "NFR-LEGAL-01"
+    "NFR-LEGAL-01",
+    "REQ-BOOK-03"
   ],
   "depends_on": [
     "TASK-030"
@@ -12,7 +13,7 @@
     {
       "id": "AC-TASK-064-01",
       "type": "functional",
-      "statement": "Payment initiation rejects requests without `liability_disclaimer_accepted=true`.",
+      "statement": "Booking acceptance rejects requests without `liability_disclaimer_accepted=true`.",
       "test_ids": [
         "TID-TASK-064-API-DISCLAIMER-REQUIRED"
       ]
@@ -20,7 +21,7 @@
     {
       "id": "AC-TASK-064-02",
       "type": "functional",
-      "statement": "Acceptance is captured in auditable booking/payment metadata.",
+      "statement": "Acceptance is captured in auditable booking metadata.",
       "test_ids": [
         "TID-TASK-064-AUDIT-DISCLAIMER-RECORDED"
       ]

@@ -14,7 +14,7 @@ This document defines the technical architecture for Tasky. It serves as the blu
 ### 2.1 High-Level Context
 Tasky acts as a trusted intermediary between **Customers** (Demand) and **Taskers** (Supply).
 *   **External Systems**:
-    *   **QPay**: Payment collection (Customer -> Tasky).
+    *   **QPay (Post-MVP)**: Payment collection (Customer -> Tasky) for deferred monetization rollout.
     *   **SMS Gateway**: OTP delivery.
     *   **Google Maps / Mapbox**: Geocoding and static maps.
     *   **Push Provider (FCM/Expo)**: Mobile notifications.
@@ -25,7 +25,7 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 **Modules:**
 1.  **`identity`**: Auth, User Profiles, KYC/Verification.
 2.  **`marketplace`**: Task Posting, Search, Booking State Machine.
-3.  **`wallet`**: Internal Ledger, QPay Integration, Payouts.
+3.  **`wallet`** *(Post-MVP Deferred)*: Internal Ledger, QPay Integration, Payouts.
 4.  **`communication`**: Notifications (Push/SMS), In-app Messaging.
 5.  **`support`**: Disputes, Moderation, Admin Tools.
 
@@ -94,9 +94,9 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 *   `task_photos`: `id`, `task_id (FK)`, `storage_key`, `sort_order`
 *   `categories`: `id`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`
 *   `task_applications`: `task_id`, `tasker_id`, `status`, `created_at`
-*   `bookings`: `id`, `task_id`, `tasker_id`, `status` (PENDING_PAYMENT, PAID, COMPLETED, CANCELLED), `price`, `payment_provider_id` (Indexed)
+*   `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED), `price`
 
-#### Wallet Module
+#### Wallet Module *(Post-MVP Deferred)*
 *   `wallets`: `user_id (PK)`, `balance_mnt`, `updated_at`
 *   `ledger_entries`: `id`, `wallet_id`, `amount`, `type` (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`, `created_at`
 *   `payout_requests`: `id`, `user_id`, `amount`, `bank_account`, `status`
@@ -118,15 +118,11 @@ The backend is a single deployable unit (`tasky-server`) organized by business d
 1.  **Task & Booking Flow** (Dual-status model):
     *   `POST /tasks` → Writes to `tasks` table (Status: OPEN).
     *   `POST /tasks/{id}/applications` → Tasker applies, creates `task_applications` record.
-    *   `POST /tasks/{id}/applications/{appId}/accept` → Customer accepts Tasker, creates `bookings` record (Status: PENDING_PAYMENT).
-    *   `POST /payments/bookings/{id}/initiate` → Generates QPay payment link/QR.
-    *   `POST /payments/qpay/callback` → Updates `bookings` (Status: PAID), updates `tasks` (Status: ASSIGNED), creates `ledger_entries` (Deposit).
-    *   `POST /bookings/{id}/complete` → Updates `bookings` (Status: COMPLETED), updates `tasks` (Status: COMPLETED), credits Tasker wallet minus platform fee.
-2.  **Payout Flow** (Processed on Tuesdays and Fridays):
-    *   **Settlement Rule**: Funds from a `COMPLETED` job are only available for payout 24 hours after completion (to allow for the Dispute window).
-    *   **Calculation**: `Available Balance = SUM(Credits older than 24h) - SUM(Pending Payouts)`.
-    *   Tasker requests payout → Creates `payout_requests`.
-    *   Admin processes on next Tue/Fri → Updates `payout_requests` → Creates `ledger_entries` (Payout) → Decrements `wallets`.
+    *   `POST /tasks/{id}/applications/{appId}/accept` → Customer accepts Tasker, confirms liability disclaimer, creates `bookings` record (Status: ASSIGNED), updates `tasks` (Status: ASSIGNED).
+    *   `POST /bookings/{id}/complete` → Updates `bookings` (Status: COMPLETED), updates `tasks` (Status: COMPLETED).
+2.  **Monetization Flow** *(Post-MVP Deferred)*:
+    *   QPay initiation + callback, wallet crediting, and payout processing are intentionally deferred from phase-1.
+    *   Wallet and payout tables remain a planned extension path, not a release dependency for MVP liquidity validation.
 
 3.  **Messaging Flow** (WebSocket + REST fallback):
     *   Conversation created when Tasker applies to a task.
@@ -169,9 +165,9 @@ Standardized error response:
 *   **Data Privacy**:
     *   **Gov IDs**: Stored in a strict **Private S3 Bucket**. API never exposes public links. Admin viewing uses short-lived Presigned GET URLs.
     *   **Location**: Exact coords in DB. API exposes `approximate_lat/lng` only for `PublicTask`.
-*   **Payment Security**:
+*   **Monetization Security (Post-MVP)**:
     *   **Callbacks**: QPay Webhook MUST verify the HMAC signature using a server-side secret key.
-    *   **Idempotency**: Enforced on all financial endpoints.
+    *   **Idempotency**: Enforced on all financial endpoints when monetization is enabled.
 *   **Input Validation**: JSR-380 (Bean Validation) on all DTOs.
 
 ### 5.4 File Upload Pattern (Presigned URLs)
@@ -214,8 +210,9 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 ## 6. Non-Functional Requirements Implementation
 
 ### 6.1 Reliability
-*   **Idempotency**: All payment endpoints and critical irreversible state-changing endpoints must accept an `Idempotency-Key` header.
-    *   Minimum scope: payment initiation, payout requests, booking cancel/complete, dispute creation/resolution, and payout processing.
+*   **Idempotency**: Critical irreversible state-changing endpoints must accept an `Idempotency-Key` header.
+    *   Minimum MVP scope: application accept, booking cancel/complete, dispute creation/resolution.
+    *   Post-MVP monetization scope: payment initiation/callback handling and payout processing.
 *   **Offline Support**: Mobile app caches active "My Tasks" locally (AsyncStorage) for read-only viewing when offline. This is limited to previously fetched data; no offline mutations are supported in MVP.
 
 ### 6.2 Observability

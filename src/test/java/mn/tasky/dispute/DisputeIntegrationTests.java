@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
-import mn.tasky.wallet.application.WalletService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class DisputeIntegrationTests extends IntegrationTestBase {
+
+    private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
 
     @LocalServerPort
     private int port;
@@ -38,62 +43,54 @@ class DisputeIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private BookingService bookingService;
-
     @Autowired
-    private WalletService walletService;
+    private BookingDao bookingDao;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
-    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE and HOLD funds (TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE)")
+    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE and resolve lifecycle (TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE)")
     void disputeLifecycle() {
         AuthContext customer = authenticate("cust-disp");
         AuthContext tasker = authenticate("tasker-disp");
-        String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-1");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
 
-        BookingState booking = bookingService.createBooking("task-d", tasker.userId(), customer.userId(), 10000);
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
         
         // 1. Raise fails: Not found
-        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", "missing", "reason", "x"));
+        String missingBookingId = UUID.randomUUID().toString();
+        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/bookings/" + missingBookingId + "/disputes", customer.accessToken(), Map.of("reason", "Missing booking reason"));
         assertThat(resNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // 2. Raise fails: Forbidden (wrong user)
         AuthContext stranger = authenticate("stranger-d");
-        ResponseEntity<Map> resForbidden = postWithAuth("/api/v1/disputes", stranger.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        ResponseEntity<Map> resForbidden = postWithAuth("/api/v1/bookings/" + booking.id() + "/disputes", stranger.accessToken(), Map.of("reason", "Forbidden dispute reason"));
         assertThat(resForbidden.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
-        // 3. Raise fails: Invalid status (PENDING_PAYMENT)
-        ResponseEntity<Map> resInvalidStatus = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        // 3. Raise fails: Invalid status (CANCELLED booking)
+        postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
+        ResponseEntity<Map> resInvalidStatus = postWithAuth("/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), Map.of("reason", "Invalid status reason"));
         assertThat(resInvalidStatus.getStatusCode().value()).isEqualTo(400);
-        assertThat(resInvalidStatus.getBody().get("error").toString()).contains("completed");
+        assertThat(resInvalidStatus.getBody().get("message").toString()).contains("ASSIGNED or COMPLETED");
 
-        bookingService.transitionToPaid(booking.id());
-        // Complete via API to trigger wallet credit
-        postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+        BookingState activeBooking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
 
-        // Verify funds credited initially
-        long balanceBefore = walletService.getBalance(tasker.userId()).balance();
-        assertThat(balanceBefore).isEqualTo(9000); // 10000 - 10%
-
-        // 4. Raise success
-        ResponseEntity<Map> response = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of(
-            "booking_id", booking.id(),
+        // 4. Raise success (tasker can now raise too)
+        ResponseEntity<Map> response = postWithAuth("/api/v1/bookings/" + activeBooking.id() + "/disputes", tasker.accessToken(), Map.of(
             "reason", "Incomplete work"
         ));
         assertThat(response.getStatusCode().value()).isEqualTo(201);
         String disputeId = (String) response.getBody().get("id");
 
         // 5. Raise fails: Already exists
-        ResponseEntity<Map> resExists = postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        ResponseEntity<Map> resExists = postWithAuth("/api/v1/bookings/" + activeBooking.id() + "/disputes", tasker.accessToken(), Map.of("reason", "Duplicate dispute"));
         assertThat(resExists.getStatusCode().value()).isEqualTo(409);
-        assertThat(resExists.getBody().get("error").toString()).contains("exists");
-
-        // Verify funds held (balance reduced)
-        long balanceHeld = walletService.getBalance(tasker.userId()).balance();
-        assertThat(balanceHeld).isEqualTo(0); // 9000 - 9000 (hold)
+        assertThat(resExists.getBody().get("message").toString()).contains("exists");
 
         // 6. Resolve fails: not found
-        ResponseEntity<Map> resResolveNotFound = postWithAuth("/api/v1/admin/disputes/missing/resolve", adminToken, Map.of("outcome", "RELEASE_FUNDS"));
+        String missingDisputeId = UUID.randomUUID().toString();
+        ResponseEntity<Map> resResolveNotFound = postWithAuth("/api/v1/admin/disputes/" + missingDisputeId + "/resolve", adminToken, Map.of("outcome", "RESOLVE_TASKER"));
         assertThat(resResolveNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // 7. Resolve fails: invalid outcome
@@ -101,48 +98,67 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         assertThat(resInvalidOutcome.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
         // 8. Admin list
-        ResponseEntity<Map> listRes = getWithAuth("/api/v1/admin/disputes/pending", adminToken);
+        ResponseEntity<Map> listRes = getWithAuth("/api/v1/admin/disputes", adminToken);
         List<Map> pending = (List<Map>) listRes.getBody().get("data");
         assertThat(pending.stream().anyMatch(d -> d.get("id").equals(disputeId))).isTrue();
 
-        // 9. Resolve success (Release)
+        ResponseEntity<Map> disputeDetail = getWithAuth("/api/v1/admin/disputes/" + disputeId, adminToken);
+        assertThat(disputeDetail.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(disputeDetail.getBody()).containsKey("dispute");
+        assertThat(disputeDetail.getBody()).containsKey("booking");
+
+        // 9. Resolve success
         ResponseEntity<Map> resolveRes = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of(
-            "outcome", "RELEASE_FUNDS",
+            "outcome", "RESOLVE_TASKER",
             "notes", "Work verified"
         ));
         assertThat(resolveRes.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // 10. Resolve fails: not open
-        ResponseEntity<Map> resNotOpen = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of("outcome", "RELEASE_FUNDS"));
+        ResponseEntity<Map> resNotOpen = postWithAuth("/api/v1/admin/disputes/" + disputeId + "/resolve", adminToken, Map.of("outcome", "RESOLVE_TASKER"));
         assertThat(resNotOpen.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
-        // Verify funds released
-        long balanceReleased = walletService.getBalance(tasker.userId()).balance();
-        assertThat(balanceReleased).isEqualTo(9000);
     }
 
     @Test
-    @DisplayName("TID-TASK-041-DOMAIN-PAYOUT-HOLD active dispute pauses payout eligibility")
-    void payoutEligibilityDuringDispute() {
+    @DisplayName("TID-TASK-041-DOMAIN-PAYOUT-HOLD active dispute blocks duplicate disputes")
+    void disputePreventsDuplicateOpenCase() {
         AuthContext customer = authenticate("cust-p");
         AuthContext tasker = authenticate("task-p");
 
-        BookingState booking = bookingService.createBooking("task-p", tasker.userId(), customer.userId(), 100000);
-        bookingService.transitionToPaid(booking.id());
-        postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
-
-        // Balance is 90,000
-        assertThat(walletService.getBalance(tasker.userId()).balance()).isEqualTo(90000);
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 100000);
 
         // Raise dispute
-        postWithAuth("/api/v1/disputes", customer.accessToken(), Map.of("booking_id", booking.id(), "reason", "x"));
+        postWithAuth("/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), Map.of("reason", "First dispute reason"));
 
-        // Balance should be 0 (90,000 held)
-        assertThat(walletService.getBalance(tasker.userId()).balance()).isEqualTo(0);
+        // Duplicate open dispute should fail
+        ResponseEntity<Map> duplicate = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/disputes",
+            customer.accessToken(),
+            Map.of("reason", "Second dispute reason")
+        );
+        assertThat(duplicate.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
 
-        // Try request payout - should fail
-        ResponseEntity<Map> payoutRes = postWithAuth("/api/v1/wallet/payouts", tokenFor("TASKER", "ACTIVE", tasker.userId()), Map.of("amount", 10000));
-        assertThat(payoutRes.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    @Test
+    @DisplayName("TID-TASK-041-DOMAIN-DISPUTE-WINDOW completed booking dispute expires after 24h")
+    void disputeWindowExpiresAfterCompletion() {
+        AuthContext customer = authenticate("cust-w1");
+        AuthContext tasker = authenticate("task-w1");
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 100000);
+
+        bookingDao.update(booking.id(), "COMPLETED", null, booking.liabilityDisclaimerAccepted(), Instant.now().minus(25, ChronoUnit.HOURS));
+
+        ResponseEntity<Map> expired = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/disputes",
+            customer.accessToken(),
+            Map.of("reason", "Payment was refused after completion")
+        );
+
+        assertThat(expired.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(expired.getBody().get("code")).isEqualTo("DISPUTE_WINDOW_EXPIRED");
     }
 
     private AuthContext authenticate(String seed) {
@@ -152,6 +168,25 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         String accessToken = (String) response.getBody().get("access_token");
         String userId = (String) ((Map) response.getBody().get("user")).get("id");
         return new AuthContext(userId, accessToken);
+    }
+
+    private String createTask(String token) {
+        String categoryId = ((List<Map>) getWithAuth("/api/v1/categories", token).getBody().get("data"))
+            .get(0)
+            .get("id")
+            .toString();
+
+        ResponseEntity<Map> response = postWithAuth("/api/v1/tasks", token, Map.of(
+            "category_id", categoryId,
+            "description", "Dispute integration task description",
+            "budget", 100000,
+            "location_lat", 47.9,
+            "location_lng", 106.9,
+            "location_text", "Ulaanbaatar",
+            "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()
+        ));
+
+        return response.getBody().get("id").toString();
     }
 
     private String tokenFor(String role, String status, String userId) {

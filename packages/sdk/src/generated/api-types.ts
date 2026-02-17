@@ -366,7 +366,8 @@ export interface paths {
         put?: never;
         /**
          * Accept a tasker's application
-         * @description Customer accepts a tasker's application. This creates a booking in PENDING_PAYMENT status.
+         * @description Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
+         *     Requires `liability_disclaimer_accepted=true`.
          *     All other pending applications for this task are automatically rejected.
          *     Requires Idempotency-Key header.
          */
@@ -430,8 +431,8 @@ export interface paths {
         /**
          * Cancel a booking
          * @description Cancels an active booking. Cancellation policy applies:
-         *     - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation incurs 10% fee (min 5,000 MNT).
-         *     - Tasker: Full refund to customer, task reverts to OPEN. Strike recorded (3 strikes in 30 days = 7-day suspension).
+         *     - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation is recorded as a reliability incident.
+         *     - Tasker: Task reverts to OPEN. Strike recorded (3 strikes in 30 days = 7-day suspension).
          *     Requires Idempotency-Key header.
          */
         post: operations["cancelBooking"];
@@ -452,10 +453,9 @@ export interface paths {
         put?: never;
         /**
          * Mark booking as complete
-         * @description Customer marks a PAID booking as complete. This triggers:
+         * @description Customer marks an ASSIGNED booking as complete. This triggers:
          *     - Booking status -> COMPLETED
          *     - Task status -> COMPLETED
-         *     - Tasker wallet credited (price minus platform fee)
          *     Requires Idempotency-Key header.
          */
         post: operations["completeBooking"];
@@ -476,8 +476,10 @@ export interface paths {
         put?: never;
         /**
          * Initiate QPay payment for a booking
-         * @description Generates a QPay payment link and QR code for the booking.
-         *     The booking must be in PENDING_PAYMENT status.
+         * @deprecated
+         * @description Post-MVP deferred endpoint. Not required for phase-1 MVP.
+         *     Generates a QPay payment link and QR code for the booking.
+         *     The booking must be in ASSIGNED status and monetization must be enabled.
          *     Requires Idempotency-Key header.
          *     Requires explicit liability disclaimer acceptance.
          */
@@ -499,8 +501,10 @@ export interface paths {
         put?: never;
         /**
          * QPay payment webhook callback
-         * @description Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
-         *     On successful payment: booking status -> PAID, task status -> ASSIGNED.
+         * @deprecated
+         * @description Post-MVP deferred endpoint. Not required for phase-1 MVP.
+         *     Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
+         *     On successful payment: booking status may be updated per monetization state machine.
          *     Must be idempotent (handle duplicate callbacks gracefully).
          */
         post: operations["qpayCallback"];
@@ -519,7 +523,8 @@ export interface paths {
         };
         /**
          * Get wallet balance
-         * @description Returns the current wallet balance and pending payout amount for the authenticated user.
+         * @deprecated
+         * @description Post-MVP deferred endpoint. Returns wallet balance and pending payout amount.
          */
         get: operations["getWalletBalance"];
         put?: never;
@@ -539,7 +544,8 @@ export interface paths {
         };
         /**
          * List wallet transactions
-         * @description Returns paginated transaction history for the authenticated user's wallet.
+         * @deprecated
+         * @description Post-MVP deferred endpoint. Returns paginated transaction history.
          */
         get: operations["listWalletTransactions"];
         put?: never;
@@ -561,7 +567,9 @@ export interface paths {
         put?: never;
         /**
          * Request payout
-         * @description Tasker requests a payout from their wallet balance to a bank account.
+         * @deprecated
+         * @description Post-MVP deferred endpoint.
+         *     Tasker requests a payout from their wallet balance to a bank account.
          *     Payouts are processed by admin on Tuesdays and Fridays.
          *     Requires Idempotency-Key header.
          */
@@ -624,8 +632,8 @@ export interface paths {
         put?: never;
         /**
          * Raise a dispute
-         * @description Raise a dispute on a booking that is PAID (in progress) or COMPLETED (within 24 hours).
-         *     Raising a dispute pauses any pending payout to the tasker.
+         * @description Raise a dispute on a booking that is ASSIGNED (in progress) or COMPLETED (within 24 hours).
+         *     Raising a dispute blocks booking closure actions until admin resolution.
          *     Requires Idempotency-Key header.
          */
         post: operations["raiseDispute"];
@@ -894,8 +902,8 @@ export interface paths {
         put?: never;
         /**
          * Resolve a dispute
-         * @description Admin resolves a dispute by either refunding the customer or releasing funds to the tasker.
-         *     Partial amounts are supported.
+         * @description Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
+         *     Post-MVP monetization may extend this endpoint with refund/release amount handling.
          *     Requires Idempotency-Key header.
          */
         post: operations["adminResolveDispute"];
@@ -914,7 +922,8 @@ export interface paths {
         };
         /**
          * List pending payouts
-         * @description Returns paginated list of payout requests awaiting admin processing.
+         * @deprecated
+         * @description Post-MVP deferred endpoint. Returns paginated pending payout requests.
          */
         get: operations["adminListPendingPayouts"];
         put?: never;
@@ -936,7 +945,9 @@ export interface paths {
         put?: never;
         /**
          * Mark payout as processed
-         * @description Admin marks a payout request as processed after completing the bank transfer.
+         * @deprecated
+         * @description Post-MVP deferred endpoint.
+         *     Admin marks a payout request as processed after completing the bank transfer.
          *     This debits the tasker's wallet and creates a ledger entry.
          *     Requires Idempotency-Key header.
          */
@@ -1253,8 +1264,8 @@ export interface components {
             /** @description Agreed price in MNT. */
             price: number;
             /** @enum {string} */
-            status: "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED";
-            /** @description Fee charged on late cancellation (MNT). Null if not applicable. */
+            status: "ASSIGNED" | "COMPLETED" | "CANCELLED";
+            /** @description Post-MVP monetization field. Null in phase-1. */
             cancellation_fee?: number | null;
             /** Format: date-time */
             created_at: string;
@@ -2119,7 +2130,17 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Must be `true` to confirm booking.
+                     * @enum {boolean}
+                     */
+                    liability_disclaimer_accepted: true;
+                };
+            };
+        };
         responses: {
             /** @description Application accepted, booking created. */
             200: {
@@ -2150,7 +2171,7 @@ export interface operations {
                 /** @description View bookings as customer or tasker. */
                 role?: "customer" | "tasker";
                 /** @description Filter by booking status. */
-                status?: "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED";
+                status?: "ASSIGNED" | "COMPLETED" | "CANCELLED";
                 /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
                 cursor?: components["parameters"]["CursorParam"];
                 /** @description Maximum number of items to return (default 20, max 100). */
@@ -2266,7 +2287,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Booking is not in PAID status. */
+            /** @description Booking is not in ASSIGNED status. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -2321,7 +2342,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
-            /** @description Booking is not in PENDING_PAYMENT status or payment already initiated. */
+            /** @description Booking is not eligible for payment initiation or payment already initiated. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -3021,9 +3042,7 @@ export interface operations {
             content: {
                 "application/json": {
                     /** @enum {string} */
-                    resolution: "REFUND_CUSTOMER" | "RELEASE_TASKER";
-                    /** @description Amount in MNT to refund or release. Can be partial. */
-                    amount: number;
+                    resolution: "RESOLVE_CUSTOMER" | "RESOLVE_TASKER" | "ESCALATE";
                     /** @description Admin notes on the resolution decision. */
                     notes?: string;
                 };

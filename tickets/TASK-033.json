@@ -3,10 +3,8 @@
   "ticket": "TASK-033",
   "risk_level": "high",
   "req_ids": [
-    "REQ-BOOK-05",
     "REQ-PAY-02",
-    "REQ-PAY-03",
-    "REQ-TASK-02"
+    "REQ-PAY-03"
   ],
   "depends_on": [
     "TASK-030",

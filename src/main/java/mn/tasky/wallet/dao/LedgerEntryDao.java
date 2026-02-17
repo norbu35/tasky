@@ -8,20 +8,38 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(LedgerEntry.class)
 public interface LedgerEntryDao {
 
     @SqlUpdate("INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, created_at) "
              + "VALUES (:id, :userId, :amount, :type, :referenceId, :description, :createdAt)")
-    void insert(@Bind("id") String id,
-                @Bind("userId") String userId,
+    void insert(@Bind("id") UUID id,
+                @Bind("userId") UUID userId,
                 @Bind("amount") int amount,
                 @Bind("type") String type,
-                @Bind("referenceId") String referenceId,
+                @Bind("referenceId") UUID referenceId,
                 @Bind("description") String description,
                 @Bind("createdAt") Instant createdAt);
 
+    default void insert(String id,
+                        String userId,
+                        int amount,
+                        String type,
+                        String referenceId,
+                        String description,
+                        Instant createdAt) {
+        insert(required(id, "id"), optional(userId), amount, type, optional(referenceId), description, createdAt);
+    }
+
     @SqlQuery("SELECT * FROM ledger_entries WHERE user_id = :userId ORDER BY created_at DESC")
-    List<LedgerEntry> findByUserId(@Bind("userId") String userId);
+    List<LedgerEntry> findByUserId(@Bind("userId") UUID userId);
+
+    default List<LedgerEntry> findByUserId(String userId) {
+        return findByUserId(required(userId, "userId"));
+    }
 }

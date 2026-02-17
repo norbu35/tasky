@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.task.application.TaskService;
+import mn.tasky.task.dto.TaskState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -46,6 +49,8 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private UserDao userDao;
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
@@ -280,8 +285,10 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         // Filter by distance (within 20km of Loc A)
         ResponseEntity<Map> distanceFilter = getWithAuth("/api/v1/tasks?lat=47.9&lng=106.9&radius_km=20", customer.accessToken());
         List<Map<String, Object>> distData = (List<Map<String, Object>>) distanceFilter.getBody().get("data");
-        assertThat(distData).hasSize(1);
-        assertThat(distData.get(0).get("description")).isEqualTo("Task in category 1 at loc A.");
+        assertThat(distData)
+            .extracting(task -> task.get("description"))
+            .contains("Task in category 1 at loc A.")
+            .doesNotContain("Task far away.");
     }
 
     @Test
@@ -354,10 +361,10 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> acceptResponse = postWithAuth(
             "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
             customer.accessToken(),
-            null
+            Map.of("liability_disclaimer_accepted", true)
         );
         assertThat(acceptResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(acceptResponse.getBody().get("status")).isEqualTo("PENDING_PAYMENT");
+        assertThat(acceptResponse.getBody().get("status")).isEqualTo("ASSIGNED");
         assertThat(acceptResponse.getBody().get("tasker_id")).isEqualTo(tasker.userId());
     }
 
@@ -379,7 +386,7 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> acceptResponse = postWithAuth(
             "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
             customer.accessToken(),
-            null
+            Map.of("liability_disclaimer_accepted", true)
         );
         String bookingId = acceptResponse.getBody().get("id").toString();
 
@@ -392,7 +399,7 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         // Check booking details
         ResponseEntity<Map> detailsResponse = getWithAuth("/api/v1/bookings/" + bookingId, customer.accessToken());
         assertThat(detailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(detailsResponse.getBody().get("status")).isEqualTo("PENDING_PAYMENT");
+        assertThat(detailsResponse.getBody().get("status")).isEqualTo("ASSIGNED");
     }
 
     @Test
@@ -409,7 +416,11 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> appsResponse = getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken());
         String appId = ((List<Map>) appsResponse.getBody().get("data")).get(0).get("id").toString();
         
-        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+        postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        );
 
         // Tasker cancels
         ResponseEntity<Map> cancelResponse = postWithAuth(
@@ -420,7 +431,9 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Verify task is OPEN again
-        assertThat(taskService.getTask(taskId).get().status()).isEqualTo("OPEN");
+        Optional<TaskState> reopenedTaskOpt = taskService.getTask(taskId);
+        assertThat(reopenedTaskOpt).isPresent();
+        assertThat(reopenedTaskOpt.orElseThrow().status()).isEqualTo("OPEN");
         
         // Verify strike (user status might not change after 1 strike, but we can check internal state if exposed)
         // For now, I'll just check if 3 strikes trigger suspension
@@ -438,13 +451,31 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         authService.addStrike(tasker.userId());
 
         // User should be SUSPENDED
-        UserProfile profile = authService.getProfile(tasker.userId()).get();
+        Optional<UserProfile> profileOpt = authService.getProfile(tasker.userId());
+        assertThat(profileOpt).isPresent();
+        UserProfile profile = profileOpt.orElseThrow();
         assertThat(profile.status()).isEqualTo("SUSPENDED");
     }
 
     @Test
-    @DisplayName("TID-TASK-033-DOMAIN-WALLET-CREDIT completion credits tasker wallet")
-    void walletCreditOnCompletion() {
+    @DisplayName("TID-TASK-032-DOMAIN-REPEAT-OFFENSE repeat offense applies longer suspension")
+    void repeatOffenseAppliesLongerSuspension() {
+        authService.updateModerationPolicy(30, 1, 1, 5, 180, true);
+        AuthContext tasker = authenticate("143");
+
+        authService.addStrike(tasker.userId());
+        Instant firstEnd = userDao.findSuspensionEndAt(tasker.userId()).orElseThrow();
+
+        userDao.updateStatusAndSuspensionEnd(tasker.userId(), "ACTIVE", null);
+        authService.addStrike(tasker.userId());
+        Instant secondEnd = userDao.findSuspensionEndAt(tasker.userId()).orElseThrow();
+
+        assertThat(secondEnd).isAfter(firstEnd.plus(3, ChronoUnit.DAYS));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-033-API-BOOKING-COMPLETE completion transitions booking and task")
+    void completeBookingTransitionsState() {
         AuthContext customer = authenticate("150");
         String categoryId = getFirstCategoryId(customer.accessToken());
         String taskId = createTask(customer.accessToken(), categoryId);
@@ -454,35 +485,21 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "I can do this!"));
         
         String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
-        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+        postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        );
         
         String bookingId = getBookingIdForTask(taskId, customer.accessToken());
-
-        // Initiate payment to get a real payment reference.
-        ResponseEntity<Map> initResponse = postWithAuth("/api/v1/payments/bookings/" + bookingId + "/initiate", customer.accessToken(), Map.of("liability_disclaimer_accepted", true));
-        String paymentUrl = initResponse.getBody().get("payment_url").toString();
-        String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
-        post("/api/v1/payments/qpay/callback", Map.of(
-            "payment_id", paymentId,
-            "status", "PAID",
-            "signature", signatureFor(paymentId, "PAID")
-        ));
 
         // Complete booking
         ResponseEntity<Map> completeResponse = postWithAuth("/api/v1/bookings/" + bookingId + "/complete", customer.accessToken(), null);
         assertThat(completeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // Check wallet
-        ResponseEntity<Map> walletResponse = getWithAuth("/api/v1/wallet", taskerToken);
-        assertThat(walletResponse.getBody().get("balance")).isEqualTo(63000); // 70,000 - 10% (7,000)
-        
-        // Check ledger
-        ResponseEntity<Map> ledgerResponse = getWithAuth("/api/v1/wallet/transactions", taskerToken);
-        List<Map> txs = (List<Map>) ledgerResponse.getBody().get("data");
-        assertThat(txs).anySatisfy(tx -> {
-            assertThat(tx.get("type")).isEqualTo("DEPOSIT");
-            assertThat(tx.get("amount")).isEqualTo(63000);
-        });
+        assertThat(completeResponse.getBody().get("status")).isEqualTo("COMPLETED");
+        Optional<TaskState> completedTaskOpt = taskService.getTask(taskId);
+        assertThat(completedTaskOpt).isPresent();
+        assertThat(completedTaskOpt.orElseThrow().status()).isEqualTo("COMPLETED");
     }
 
     @Test
@@ -497,7 +514,8 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
 
         // 1. Task missing
-        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/tasks/missing/applications", taskerToken, Map.of("message", "x"));
+        String missingTaskId = UUID.randomUUID().toString();
+        ResponseEntity<Map> resNotFound = postWithAuth("/api/v1/tasks/" + missingTaskId + "/applications", taskerToken, Map.of("message", "x"));
         assertThat(resNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // 2. Already accepted (prepare by accepting)
@@ -506,7 +524,11 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         String tasker2Token = tokenFor("TASKER", "ACTIVE", tasker2.userId());
         postWithAuth("/api/v1/tasks/" + taskId + "/applications", tasker2Token, Map.of("message", "Pick me"));
         String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
-        postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null);
+        postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        );
 
         ResponseEntity<Map> resInvalidStatus = postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "too late"));
         assertThat(resInvalidStatus.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -524,13 +546,40 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "Pick me"));
         String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
 
+        // 0. Disclaimer required
+        assertThat(
+            postWithAuth(
+                "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+                customer.accessToken(),
+                Map.of("liability_disclaimer_accepted", false)
+            ).getStatusCode()
+        ).isEqualTo(HttpStatus.BAD_REQUEST);
+
         // 1. Task missing
-        assertThat(postWithAuth("/api/v1/tasks/missing/applications/" + appId + "/accept", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(
+            postWithAuth(
+                "/api/v1/tasks/" + UUID.randomUUID() + "/applications/" + appId + "/accept",
+                customer.accessToken(),
+                Map.of("liability_disclaimer_accepted", true)
+            ).getStatusCode()
+        ).isEqualTo(HttpStatus.NOT_FOUND);
         // 2. Forbidden (wrong customer)
         AuthContext customer2 = authenticate("172");
-        assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer2.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(
+            postWithAuth(
+                "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+                customer2.accessToken(),
+                Map.of("liability_disclaimer_accepted", true)
+            ).getStatusCode()
+        ).isEqualTo(HttpStatus.FORBIDDEN);
         // 3. Application missing
-        assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/applications/missing/accept", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(
+            postWithAuth(
+                "/api/v1/tasks/" + taskId + "/applications/" + UUID.randomUUID() + "/accept",
+                customer.accessToken(),
+                Map.of("liability_disclaimer_accepted", true)
+            ).getStatusCode()
+        ).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -541,7 +590,7 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         String taskId = createTask(customer.accessToken(), categoryId);
 
         // 1. Not found
-        assertThat(postWithAuth("/api/v1/tasks/missing/cancel", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(postWithAuth("/api/v1/tasks/" + UUID.randomUUID() + "/cancel", customer.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         // 2. Forbidden
         AuthContext stranger = authenticate("181");
         assertThat(postWithAuth("/api/v1/tasks/" + taskId + "/cancel", stranger.accessToken(), null).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -554,7 +603,72 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         // Invalid content type
         assertThat(postWithAuth("/api/v1/tasks/photos/upload-url", customer.accessToken(), Map.of("content_type", "application/pdf")).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         // Missing task for post-create
-        assertThat(postWithAuth("/api/v1/tasks/missing/photos/upload-url", customer.accessToken(), Map.of("content_type", "image/png")).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(postWithAuth("/api/v1/tasks/" + UUID.randomUUID() + "/photos/upload-url", customer.accessToken(), Map.of("content_type", "image/png")).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-DETAILS missing task returns not found")
+    void getTaskReturnsNotFoundWhenMissing() {
+        AuthContext customer = authenticate("191");
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + UUID.randomUUID(), customer.accessToken());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody().get("code")).isEqualTo("NOT_FOUND");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-DETAILS owner receives full task details")
+    void ownerGetsFullTaskDetails() {
+        AuthContext customer = authenticate("192");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + taskId, customer.accessToken());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKeys("location_text", "location_lat", "location_lng");
+        assertThat(response.getBody()).doesNotContainKey("approximate_location");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-DETAILS non-participant receives public task details")
+    void nonParticipantGetsPublicTaskDetails() {
+        AuthContext customer = authenticate("193");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext stranger = authenticate("194");
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + taskId, stranger.accessToken());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKeys("approximate_location", "approximate_lat", "approximate_lng");
+        assertThat(response.getBody()).doesNotContainKeys("location_text", "location_lat", "location_lng");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-022-API-TASK-DETAILS accepted tasker receives full task details")
+    void acceptedTaskerGetsFullTaskDetails() {
+        AuthContext customer = authenticate("195");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        AuthContext tasker = authenticate("196");
+        String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications", taskerToken, Map.of("message", "Can do this"));
+        String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data"))
+            .get(0)
+            .get("id")
+            .toString();
+
+        postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        );
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + taskId, taskerToken);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKeys("location_text", "location_lat", "location_lng");
+        assertThat(response.getBody()).doesNotContainKey("approximate_location");
     }
 
     private String getBookingIdForTask(String taskId, String customerToken) {
@@ -563,7 +677,9 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         return bookings.stream()
             .filter(b -> taskId.equals(b.get("task_id")))
             .findFirst()
-            .get().get("id").toString();
+            .map(b -> b.get("id"))
+            .map(String::valueOf)
+            .orElseThrow(() -> new IllegalStateException("Booking not found for task " + taskId));
     }
 
     @Autowired

@@ -30,7 +30,7 @@
     {
       "id": "AC-TASK-023-03",
       "type": "functional",
-      "statement": "Accept action creates booking in `PENDING_PAYMENT`.",
+      "statement": "Accept action creates booking in `ASSIGNED` after liability disclaimer acceptance.",
       "test_ids": [
         "TID-TASK-023-API-ACCEPT-CREATES-BOOKING"
       ]

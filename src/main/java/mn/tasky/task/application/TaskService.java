@@ -13,6 +13,7 @@ import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskPhotoDao;
+import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
@@ -94,6 +95,12 @@ public class TaskService {
             return TaskCreateResult.error(TaskCreateResult.TOO_MANY_PHOTOS, "Maximum 3 photos allowed.");
         }
 
+        String sanitizedDescription = TextSanitizer.plainText(command.description());
+        String sanitizedLocationText = TextSanitizer.plainText(command.locationText());
+        if (!StringUtils.hasText(sanitizedDescription)) {
+            return TaskCreateResult.error(TaskCreateResult.INVALID_DESCRIPTION, "Description cannot be empty.");
+        }
+
         Instant scheduledAt;
         try {
             scheduledAt = Instant.parse(command.scheduledAt());
@@ -107,9 +114,9 @@ public class TaskService {
         String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
 
-        taskDao.insert(id, customerId, command.categoryId(), command.description(),
+        taskDao.insert(id, customerId, command.categoryId(), sanitizedDescription,
                       command.budget(), command.locationLat(), command.locationLng(),
-                      command.locationText(), "OPEN", scheduledAt, now, now);
+                      sanitizedLocationText, "OPEN", scheduledAt, now, now);
 
         // Insert photo keys
         List<String> photoKeys = List.copyOf(command.photoKeys());
@@ -117,8 +124,8 @@ public class TaskService {
             taskPhotoDao.insert(UUID.randomUUID().toString(), id, photoKeys.get(i), i);
         }
 
-        TaskState task = new TaskState(id, customerId, command.categoryId(), command.description(),
-            command.budget(), command.locationLat(), command.locationLng(), command.locationText(),
+        TaskState task = new TaskState(id, customerId, command.categoryId(), sanitizedDescription,
+            command.budget(), command.locationLat(), command.locationLng(), sanitizedLocationText,
             "OPEN", scheduledAt, photoKeys, now, now);
 
         analyticsService.track(
@@ -250,13 +257,14 @@ public class TaskService {
         }
 
         String applicationId = UUID.randomUUID().toString();
-        taskApplicationDao.insert(applicationId, taskId, taskerId, message, "PENDING", Instant.now());
+        String sanitizedMessage = TextSanitizer.plainText(message);
+        taskApplicationDao.insert(applicationId, taskId, taskerId, sanitizedMessage, "PENDING", Instant.now());
 
         TaskApplicationState application = new TaskApplicationState(
             applicationId, taskId, taskerId,
             profile.fullName(), profile.avatarUrl(), profile.ratingAvg(),
             profile.completedTasks(), profile.isPro(),
-            message, "PENDING", Instant.now()
+            sanitizedMessage, "PENDING", Instant.now()
         );
 
         String conversationId = messagingService.startConversation(taskId, taskerId, task.customerId());
@@ -289,7 +297,12 @@ public class TaskService {
         return TaskApplicationsListResult.success(List.copyOf(applications));
     }
 
-    public TaskAcceptResult acceptApplication(String customerId, String taskId, String applicationId) {
+    public TaskAcceptResult acceptApplication(
+        String customerId,
+        String taskId,
+        String applicationId,
+        boolean liabilityDisclaimerAccepted
+    ) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
@@ -302,6 +315,10 @@ public class TaskService {
 
         if (!"OPEN".equals(task.status())) {
             return TaskAcceptResult.TASK_NOT_OPEN_RESULT;
+        }
+
+        if (!liabilityDisclaimerAccepted) {
+            return TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT;
         }
 
         if (taskApplicationDao.hasAccepted(taskId)) {
@@ -324,8 +341,10 @@ public class TaskService {
             task.id(),
             selected.taskerId(),
             task.customerId(),
-            task.budget()
+            task.budget(),
+            true
         );
+        taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
 
         String conversationId = messagingService.startConversation(task.id(), selected.taskerId(), task.customerId());
         notificationService.sendPush(selected.taskerId(), "You are hired!", "Your application has been accepted.", "HIRED");
@@ -338,6 +357,16 @@ public class TaskService {
                 "tasker_id", selected.taskerId(),
                 "application_id", applicationId,
                 "conversation_id", conversationId
+            )
+        );
+        analyticsService.track(
+            AnalyticsService.EVENT_BOOKING_CONFIRMED,
+            customerId,
+            Map.of(
+                AnalyticsService.PROPERTY_TASK_ID, task.id(),
+                AnalyticsService.PROPERTY_BOOKING_ID, booking.id(),
+                "tasker_id", selected.taskerId(),
+                "application_id", applicationId
             )
         );
 

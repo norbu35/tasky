@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,8 +30,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestPropertySource(properties = "tasky.features.monetization-enabled=true")
 class PaymentIntegrationTests extends IntegrationTestBase {
 
     @LocalServerPort
@@ -51,7 +54,9 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     @DisplayName("TID-TASK-031-API-QPAY-INITIATE initiation returns traceable reference")
     void initiateQpay() {
         AuthContext customer = authenticate("132");
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", customer.userId(), 50000);
+        AuthContext tasker = authenticate("232");
+        TaskState task = createTaskForCustomer(customer, "payment-initiate");
+        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
 
         ResponseEntity<Map> response = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
@@ -67,17 +72,9 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     @DisplayName("TID-TASK-031-RELI-CALLBACK-IDEMPOTENT successful callback updates booking and task exactly once")
     void qpayCallbackLifecycle() {
         AuthContext customer = authenticate("133");
-        
-        // Fetch real category ID
-        String categoryId = getFirstCategoryId(customer.accessToken());
-        
-        // Create task and booking
-        TaskState task = taskService.createTask(customer.userId(), new CreateTask(
-            categoryId, "description", 50000, 47.0, 106.0, "text", 
-            Instant.now().plus(1, ChronoUnit.DAYS).toString(), List.of()
-        )).task();
-        
-        BookingState booking = bookingService.createBooking(task.id(), "tasker-1", customer.userId(), 50000);
+        AuthContext tasker = authenticate("233");
+        TaskState task = createTaskForCustomer(customer, "payment-callback");
+        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
 
         // Initiate to get paymentId (hidden in implementation but we can simulate)
         ResponseEntity<Map> initResponse = postWithAuth(
@@ -98,8 +95,12 @@ class PaymentIntegrationTests extends IntegrationTestBase {
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Verify statuses
-        assertThat(bookingService.getBooking(booking.id()).get().status()).isEqualTo("PAID");
-        assertThat(taskService.getTask(task.id()).get().status()).isEqualTo("ASSIGNED");
+        Optional<BookingState> bookingOpt = bookingService.getBooking(booking.id());
+        assertThat(bookingOpt).isPresent();
+        assertThat(bookingOpt.orElseThrow().status()).isEqualTo("PAID");
+        Optional<TaskState> taskOpt = taskService.getTask(task.id());
+        assertThat(taskOpt).isPresent();
+        assertThat(taskOpt.orElseThrow().status()).isEqualTo("ASSIGNED");
 
         // Duplicate callback (Idempotency)
         ResponseEntity<Map> secondCallback = post("/api/v1/payments/qpay/callback", callbackBody);
@@ -110,7 +111,9 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     @DisplayName("TID-TASK-031-API-QPAY-CALLBACK-SIGNATURE invalid callback signature is rejected")
     void qpayCallbackRejectsInvalidSignature() {
         AuthContext customer = authenticate("134");
-        BookingState booking = bookingService.createBooking("task-2", "tasker-2", customer.userId(), 50000);
+        AuthContext tasker = authenticate("234");
+        TaskState task = createTaskForCustomer(customer, "payment-invalid-signature");
+        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
         ResponseEntity<Map> initResponse = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
             customer.accessToken(),
@@ -189,6 +192,20 @@ class PaymentIntegrationTests extends IntegrationTestBase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private TaskState createTaskForCustomer(AuthContext customer, String descriptionSeed) {
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        return taskService.createTask(customer.userId(), new CreateTask(
+            categoryId,
+            "description-" + descriptionSeed,
+            50000,
+            47.0,
+            106.0,
+            "text",
+            Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+            List.of()
+        )).task();
     }
 
     private record AuthContext(String accessToken, String userId) {

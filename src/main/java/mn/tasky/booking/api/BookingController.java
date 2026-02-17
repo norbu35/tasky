@@ -13,7 +13,6 @@ import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.TaskState;
-import mn.tasky.wallet.application.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,6 @@ public class BookingController {
     private final BookingService bookingService;
     private final TaskService taskService;
     private final AuthService authService;
-    private final WalletService walletService;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
 
@@ -51,14 +49,12 @@ public class BookingController {
         BookingService bookingService,
         TaskService taskService,
         AuthService authService,
-        WalletService walletService,
         NotificationService notificationService,
         AnalyticsService analyticsService
     ) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.authService = authService;
-        this.walletService = walletService;
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
     }
@@ -67,12 +63,17 @@ public class BookingController {
     public ResponseEntity<?> listBookings(
         @AuthenticationPrincipal JwtPrincipal principal,
         @RequestParam(required = false) String role,
-        @RequestParam(required = false) String status
+        @RequestParam(required = false) String status,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "50") int limit
     ) {
+        int clampedLimit = Math.max(1, Math.min(limit, 100));
         List<BookingState> bookings = bookingService.listBookings(
             principal.userId(),
             role,
-            status
+            status,
+            cursor,
+            clampedLimit
         );
 
         List<Map<String, Object>> data = bookings.stream()
@@ -82,7 +83,7 @@ public class BookingController {
         return ResponseEntity.ok(
             new PagedResponse<>(
                 data,
-                new CursorPagination(null, false)
+                CursorPagination.from(bookings, clampedLimit, BookingState::id)
             )
         );
     }
@@ -133,33 +134,6 @@ public class BookingController {
         );
 
         if (result.isSuccess()) {
-            if ("PAID".equals(booking.status())) {
-                if (booking.taskerId().equals(principal.userId())) {
-                    walletService.creditRefund(
-                        booking.customerId(),
-                        booking.price(),
-                        booking.id(),
-                        "Full refund for booking #" + booking.id() + " due to tasker cancellation"
-                    );
-                } else {
-                    int fee = result.booking().cancellationFee() != null ? result.booking().cancellationFee() : 0;
-                    fee = Math.min(booking.price(), Math.max(0, fee));
-                    int refundable = booking.price() - fee;
-
-                    walletService.creditRefund(
-                        booking.customerId(),
-                        refundable,
-                        booking.id(),
-                        "Refund for cancelled booking #" + booking.id()
-                    );
-                    walletService.creditCancellationFee(
-                        booking.taskerId(),
-                        fee,
-                        booking.id()
-                    );
-                }
-            }
-
             if (booking.taskerId().equals(principal.userId())) {
                 // Tasker cancelled: reopen task and record strike
                 if (taskService.reopenTask(booking.taskId()).isEmpty()) {
@@ -210,8 +184,6 @@ public class BookingController {
             if (taskService.transitionToCompleted(booking.taskId()).isEmpty()) {
                 log.warn("Task not found when completing booking: bookingId={} taskId={}", booking.id(), booking.taskId());
             }
-            // Credit tasker wallet minus platform fee (10%)
-            walletService.creditTaskCompletion(booking.taskerId(), booking.id(), booking.price(), 0.10);
             
             notificationService.sendPush(booking.taskerId(), "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
             analyticsService.track(
@@ -245,7 +217,7 @@ public class BookingController {
             case BookingTransitionResult.INVALID_TRANSITION -> ResponseEntity.status(HttpStatus.CONFLICT).body(
                 Map.of(
                     "code", "INVALID_STATUS",
-                    "message", "Booking must be PAID to be completed.",
+                    "message", "Booking must be ASSIGNED to be completed.",
                     "trace_id", resolveTraceId(request)
                 )
             );

@@ -1,3 +1,10 @@
 package mn.tasky.messaging.dto;
 
-public record MessageRequest(String content) {}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record MessageRequest(
+    @NotBlank
+    @Size(max = 5000)
+    String content
+) {}

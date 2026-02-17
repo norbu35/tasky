@@ -1,5 +1,6 @@
 package mn.tasky.messaging.application;
 
+import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.messaging.dto.Conversation;
@@ -40,7 +41,11 @@ public class MessagingService {
     }
 
     public List<Conversation> listConversations(String userId) {
-        return conversationDao.findByUserId(userId);
+        return listConversations(userId, null, 50);
+    }
+
+    public List<Conversation> listConversations(String userId, String cursor, int limit) {
+        return conversationDao.findByUserId(userId, cursor, limit);
     }
 
     public Optional<Message> sendMessage(String senderId, String conversationId, String content) {
@@ -54,11 +59,16 @@ public class MessagingService {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
+        String sanitizedContent = TextSanitizer.plainText(content);
+        if (sanitizedContent == null || sanitizedContent.isBlank()) {
+            throw new IllegalArgumentException("Message content cannot be empty");
+        }
+
         Message message = new Message(
             UUID.randomUUID().toString(),
             conversationId,
             senderId,
-            content,
+            sanitizedContent,
             Instant.now()
         );
 

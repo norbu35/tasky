@@ -8,8 +8,8 @@
   ],
   "depends_on": [
     "TASK-023",
-    "TASK-031",
-    "TASK-033"
+    "TASK-030",
+    "TASK-032"
   ],
   "acceptance_criteria": [
     {

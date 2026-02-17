@@ -2,16 +2,19 @@ package mn.tasky.auth.application;
 
 import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.dao.AuditLogDao;
+import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
 import mn.tasky.auth.dao.RefreshSessionDao;
 import mn.tasky.auth.dao.StrikeDao;
+import mn.tasky.auth.dao.SuspensionEventDao;
 import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.auth.dto.AuditLogEntry;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.AuthTokens;
 import mn.tasky.auth.dto.AuthUser;
+import mn.tasky.auth.dto.ModerationPolicy;
 import mn.tasky.auth.dto.OtpChallenge;
 import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.RefreshSession;
@@ -49,6 +52,16 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    private static final ModerationPolicy DEFAULT_MODERATION_POLICY = new ModerationPolicy(
+        30,
+        3,
+        7,
+        14,
+        180,
+        true,
+        Instant.EPOCH
+    );
+
     private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE = Map.of(
         "image/jpeg", "jpg",
@@ -82,6 +95,8 @@ public class AuthService {
     private final VerificationDao verificationDao;
     private final AuditLogDao auditLogDao;
     private final StrikeDao strikeDao;
+    private final ModerationPolicyDao moderationPolicyDao;
+    private final SuspensionEventDao suspensionEventDao;
 
     public AuthService(
         JwtTokenService jwtTokenService,
@@ -95,6 +110,8 @@ public class AuthService {
         VerificationDao verificationDao,
         AuditLogDao auditLogDao,
         StrikeDao strikeDao,
+        ModerationPolicyDao moderationPolicyDao,
+        SuspensionEventDao suspensionEventDao,
         @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
         @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
         @Value("${tasky.auth.otp-test-code:}") String otpTestCode,
@@ -116,6 +133,8 @@ public class AuthService {
         this.verificationDao = verificationDao;
         this.auditLogDao = auditLogDao;
         this.strikeDao = strikeDao;
+        this.moderationPolicyDao = moderationPolicyDao;
+        this.suspensionEventDao = suspensionEventDao;
         this.devAuthEnabled = devAuthEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
         this.otpTestCode = otpTestCode;
@@ -243,11 +262,13 @@ public class AuthService {
             return Optional.empty();
         }
         AuthUser user = userOpt.get();
-        if ("BANNED".equals(user.status()) || "SUSPENDED".equals(user.status())) {
+        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             return Optional.empty();
         }
 
-        AuthSession rotated = issueSession(user);
+        AuthUser effectiveUser = new AuthUser(user.id(), user.phone(), user.role(), effectiveStatus, user.createdAt());
+        AuthSession rotated = issueSession(effectiveUser);
         return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
     }
 
@@ -260,7 +281,9 @@ public class AuthService {
         AuthUser user = userOpt.get();
         UserProfileState profile = profileDao.findByUserId(user.id())
             .orElse(UserProfileState.defaultState());
-        return Optional.of(toProfile(user, profile));
+        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        AuthUser effectiveUser = new AuthUser(user.id(), user.phone(), user.role(), effectiveStatus, user.createdAt());
+        return Optional.of(toProfile(effectiveUser, profile));
     }
 
     public Optional<UserProfile> updateProfile(String userId, ProfileUpdate update) {
@@ -339,11 +362,11 @@ public class AuthService {
         }
 
         Optional<VerificationRequest> existingOpt = verificationDao.findLatestByUserId(userId);
-        if (existingOpt.isPresent()) {
-            VerificationRequest existing = existingOpt.get();
-            if ("PENDING".equals(existing.status()) || "APPROVED".equals(existing.status())) {
-                return new VerificationSubmitResult(VerificationSubmitResult.CONFLICT, null);
-            }
+        boolean hasPendingOrApproved = existingOpt
+            .map(existing -> "PENDING".equals(existing.status()) || "APPROVED".equals(existing.status()))
+            .orElse(false);
+        if (hasPendingOrApproved) {
+            return new VerificationSubmitResult(VerificationSubmitResult.CONFLICT, null);
         }
 
         String id = UUID.randomUUID().toString();
@@ -362,7 +385,11 @@ public class AuthService {
     }
 
     public List<VerificationDetail> listPendingVerifications(int limit) {
-        List<VerificationRequest> pending = verificationDao.findPending(limit);
+        return listPendingVerifications(null, limit);
+    }
+
+    public List<VerificationDetail> listPendingVerifications(String cursor, int limit) {
+        List<VerificationRequest> pending = verificationDao.findPending(cursor, limit);
         return pending.stream().map(this::toVerificationDetail).toList();
     }
 
@@ -439,20 +466,51 @@ public class AuthService {
     }
 
     public void addStrike(String userId) {
-        strikeDao.insert(UUID.randomUUID().toString(), userId, null, Instant.now());
+        Instant now = Instant.now();
+        strikeDao.insert(UUID.randomUUID().toString(), userId, null, now);
 
-        Instant thirtyDaysAgo = Instant.now().minus(30, ChronoUnit.DAYS);
-        long recentStrikes = strikeDao.countSince(userId, thirtyDaysAgo);
+        ModerationPolicy policy = moderationPolicy();
+        Instant windowStart = now.minus(policy.strikeWindowDays(), ChronoUnit.DAYS);
+        long recentStrikes = strikeDao.countSince(userId, windowStart);
 
-        if (recentStrikes >= 3) {
-            userDao.updateStatus(userId, "SUSPENDED");
+        if (recentStrikes < policy.strikeThreshold()) {
+            return;
         }
+
+        Optional<AuthUser> userOpt = userDao.findById(userId);
+        if (userOpt.isEmpty()) {
+            return;
+        }
+        AuthUser user = userOpt.get();
+        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            return;
+        }
+
+        Instant repeatLookback = now.minus(policy.repeatOffenseWindowDays(), ChronoUnit.DAYS);
+        long priorSuspensions = suspensionEventDao.countSince(userId, repeatLookback);
+        int suspensionDays = priorSuspensions > 0 ? policy.repeatSuspensionDays() : policy.firstSuspensionDays();
+        Instant suspensionEndAt = now.plus(suspensionDays, ChronoUnit.DAYS);
+
+        userDao.updateStatusAndSuspensionEnd(userId, "SUSPENDED", suspensionEndAt);
+        suspensionEventDao.insert(
+            UUID.randomUUID().toString(),
+            userId,
+            Math.toIntExact(recentStrikes),
+            suspensionDays,
+            now,
+            null
+        );
     }
 
     public List<UserProfile> searchUsersByPhone(String phonePart) {
         return userDao.findAll().stream()
             .filter(u -> cryptoService.decrypt(u.phone()).contains(phonePart))
-            .map(u -> toProfile(u, profileDao.findByUserId(u.id()).orElse(UserProfileState.defaultState())))
+            .map(u -> {
+                String effectiveStatus = resolveUserStatus(u.id(), u.status());
+                AuthUser effectiveUser = new AuthUser(u.id(), u.phone(), u.role(), effectiveStatus, u.createdAt());
+                return toProfile(effectiveUser, profileDao.findByUserId(u.id()).orElse(UserProfileState.defaultState()));
+            })
             .toList();
     }
 
@@ -460,7 +518,7 @@ public class AuthService {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) return false;
 
-        userDao.updateStatus(userId, "BANNED");
+        userDao.updateStatusAndSuspensionEnd(userId, "BANNED", null);
         auditLogDao.insert(UUID.randomUUID().toString(), adminId, "BAN_USER", userId, reason, Instant.now());
         return true;
     }
@@ -469,13 +527,57 @@ public class AuthService {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) return false;
 
-        userDao.updateStatus(userId, "ACTIVE");
+        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
         auditLogDao.insert(UUID.randomUUID().toString(), adminId, "UNBAN_USER", userId, reason, Instant.now());
         return true;
     }
 
     public Optional<String> currentUserStatus(String userId) {
-        return userDao.findById(userId).map(AuthUser::status);
+        try {
+            UUID.fromString(userId);
+        } catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
+        return userDao.findById(userId).map(user -> resolveUserStatus(user.id(), user.status()));
+    }
+
+    public ModerationPolicy getModerationPolicy() {
+        return moderationPolicy();
+    }
+
+    public ModerationPolicy updateModerationPolicy(
+        int strikeWindowDays,
+        int strikeThreshold,
+        int firstSuspensionDays,
+        int repeatSuspensionDays,
+        int repeatOffenseWindowDays,
+        boolean autoUnsuspendEnabled
+    ) {
+        validatePolicy(strikeWindowDays, strikeThreshold, firstSuspensionDays, repeatSuspensionDays, repeatOffenseWindowDays);
+        Instant now = Instant.now();
+        int updated = moderationPolicyDao.update(
+            strikeWindowDays,
+            strikeThreshold,
+            firstSuspensionDays,
+            repeatSuspensionDays,
+            repeatOffenseWindowDays,
+            autoUnsuspendEnabled,
+            now
+        );
+        if (updated == 0) {
+            throw new IllegalStateException("Moderation policy row is missing.");
+        }
+        return moderationPolicyDao.findActive().orElse(
+            new ModerationPolicy(
+                strikeWindowDays,
+                strikeThreshold,
+                firstSuspensionDays,
+                repeatSuspensionDays,
+                repeatOffenseWindowDays,
+                autoUnsuspendEnabled,
+                now
+            )
+        );
     }
 
     public Optional<PresignedUpload> createAvatarUploadUrl(String userId, String contentType) {
@@ -502,7 +604,8 @@ public class AuthService {
     }
 
     private AuthSession issueSession(AuthUser user) {
-        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), user.status());
+        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus);
         String accessToken = jwtTokenService.issueAccessToken(principal);
         RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
 
@@ -515,10 +618,61 @@ public class AuthService {
                 "id", user.id(),
                 "phone", cryptoService.decrypt(user.phone()),
                 "role", user.role(),
-                "status", user.status(),
+                "status", effectiveStatus,
                 "created_at", user.createdAt().toString()
             )
         );
+    }
+
+    private ModerationPolicy moderationPolicy() {
+        return moderationPolicyDao.findActive().orElse(DEFAULT_MODERATION_POLICY);
+    }
+
+    private String resolveUserStatus(String userId, String currentStatus) {
+        if (!"SUSPENDED".equals(currentStatus)) {
+            return currentStatus;
+        }
+
+        ModerationPolicy policy = moderationPolicy();
+        if (!policy.autoUnsuspendEnabled()) {
+            return currentStatus;
+        }
+
+        Optional<Instant> suspensionEnd = userDao.findSuspensionEndAt(userId);
+        if (suspensionEnd.isEmpty()) {
+            return currentStatus;
+        }
+        if (suspensionEnd.get().isAfter(Instant.now())) {
+            return currentStatus;
+        }
+
+        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
+        suspensionEventDao.markUnsuspended(userId, Instant.now());
+        return "ACTIVE";
+    }
+
+    private void validatePolicy(
+        int strikeWindowDays,
+        int strikeThreshold,
+        int firstSuspensionDays,
+        int repeatSuspensionDays,
+        int repeatOffenseWindowDays
+    ) {
+        if (strikeWindowDays < 1 || strikeWindowDays > 365) {
+            throw new IllegalArgumentException("strikeWindowDays must be between 1 and 365");
+        }
+        if (strikeThreshold < 1 || strikeThreshold > 10) {
+            throw new IllegalArgumentException("strikeThreshold must be between 1 and 10");
+        }
+        if (firstSuspensionDays < 1 || firstSuspensionDays > 365) {
+            throw new IllegalArgumentException("firstSuspensionDays must be between 1 and 365");
+        }
+        if (repeatSuspensionDays < firstSuspensionDays || repeatSuspensionDays > 365) {
+            throw new IllegalArgumentException("repeatSuspensionDays must be between firstSuspensionDays and 365");
+        }
+        if (repeatOffenseWindowDays < strikeWindowDays || repeatOffenseWindowDays > 730) {
+            throw new IllegalArgumentException("repeatOffenseWindowDays must be between strikeWindowDays and 730");
+        }
     }
 
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {

@@ -26,8 +26,8 @@ export function Header() {
         <NavLink className={linkClass} to="/customer/tasks/new">
           Customer
         </NavLink>
-        <NavLink className={linkClass} to="/customer/booking-payment">
-          Payment
+        <NavLink className={linkClass} to="/customer/booking-confirmation">
+          Confirm
         </NavLink>
         <NavLink className={linkClass} to="/booking/safety">
           Safety

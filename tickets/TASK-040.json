@@ -7,7 +7,7 @@
     "REQ-SAFE-04"
   ],
   "depends_on": [
-    "TASK-033"
+    "TASK-030"
   ],
   "acceptance_criteria": [
     {

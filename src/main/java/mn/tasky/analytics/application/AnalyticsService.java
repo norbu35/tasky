@@ -23,6 +23,7 @@ public class AnalyticsService {
     public static final String EVENT_TASK_POSTED = "TASK_POSTED";
     public static final String EVENT_APPLICATION_SUBMITTED = "APPLICATION_SUBMITTED";
     public static final String EVENT_TASKER_ACCEPTED = "TASKER_ACCEPTED";
+    public static final String EVENT_BOOKING_CONFIRMED = "BOOKING_CONFIRMED";
     public static final String EVENT_PAYMENT_INITIATED = "PAYMENT_INITIATED";
     public static final String EVENT_PAYMENT_CONFIRMED = "PAYMENT_CONFIRMED";
     public static final String EVENT_BOOKING_COMPLETED = "BOOKING_COMPLETED";

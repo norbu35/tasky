@@ -3,8 +3,10 @@
   "ticket": "TASK-030",
   "risk_level": "high",
   "req_ids": [
+    "NFR-RELI-01",
     "REQ-BOOK-03",
-    "REQ-BOOK-05"
+    "REQ-BOOK-05",
+    "REQ-TASK-02"
   ],
   "depends_on": [
     "TASK-023"

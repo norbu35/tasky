@@ -349,7 +349,7 @@ fi
 CMD
       ;;
     secret_scan)
-      echo "! rg -n --hidden --glob '!.git' --glob '!artifacts/**' --glob '!build/**' 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' ."
+      echo "! rg -n --hidden --glob '!.git' --glob '!.env*' --glob '!**/.env*' --glob '!artifacts/**' --glob '!build/**' --glob '!node_modules/**' 'AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{80,}|xox[baprs]-[A-Za-z0-9-]{10,}|sk_live_[A-Za-z0-9]{16,}' ."
       ;;
     ticket_spec_validation)
       cat <<'CMD'

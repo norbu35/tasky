@@ -7,6 +7,8 @@ import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
+import mn.tasky.task.application.TaskService;
+import mn.tasky.task.dto.CreateTask;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ReviewIntegrationTests extends IntegrationTestBase {
@@ -39,6 +44,9 @@ class ReviewIntegrationTests extends IntegrationTestBase {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private TaskService taskService;
+
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
@@ -47,24 +55,27 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         AuthContext customer = authenticate("customer-1");
         AuthContext tasker = authenticate("tasker-1");
 
-        BookingState booking = bookingService.createBooking("task-1", tasker.userId(), customer.userId(), 10000);
+        BookingState booking = bookingService.createBooking(
+            createTaskForCustomer(customer, "review-submit"),
+            tasker.userId(),
+            customer.userId(),
+            10000
+        );
         
         // Try reviewing PENDING booking
-        ResponseEntity<Map> failResponse = postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
-            "booking_id", booking.id(),
+        ResponseEntity<Map> failResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
             "rating", 5,
             "comment", "Great!"
         ));
         assertThat(failResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(failResponse.getBody().get("error")).isEqualTo("Reviews allowed only on completed bookings");
+        assertThat(failResponse.getBody().get("code")).isEqualTo("BOOKING_NOT_COMPLETED");
 
         // Complete booking
         bookingService.transitionToPaid(booking.id());
         bookingService.completeBooking(customer.userId(), booking.id());
 
         // Review success
-        ResponseEntity<Map> successResponse = postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
-            "booking_id", booking.id(),
+        ResponseEntity<Map> successResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
             "rating", 5,
             "comment", "Great!"
         ));
@@ -78,19 +89,23 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("tasker-2");
 
         for (int i = 0; i < 3; i++) {
-            BookingState booking = bookingService.createBooking("task-" + i, tasker.userId(), customer.userId(), 10000);
+            BookingState booking = bookingService.createBooking(
+                createTaskForCustomer(customer, "review-list-" + i),
+                tasker.userId(),
+                customer.userId(),
+                10000
+            );
             bookingService.transitionToPaid(booking.id());
             bookingService.completeBooking(customer.userId(), booking.id());
 
-            postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
-                "booking_id", booking.id(),
+            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
                 "rating", 5,
                 "comment", "Comment " + i
             ));
         }
 
         // List with limit 2
-        ResponseEntity<Map> listResponse1 = getWithAuth("/api/v1/reviews?user_id=" + tasker.userId() + "&limit=2", customer.accessToken());
+        ResponseEntity<Map> listResponse1 = getWithAuth("/api/v1/users/" + tasker.userId() + "/reviews?limit=2", customer.accessToken());
         assertThat(listResponse1.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Map> data1 = (List<Map>) listResponse1.getBody().get("data");
         assertThat(data1).hasSize(2);
@@ -101,7 +116,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         assertThat((Boolean) pagination.get("has_more")).isEqualTo(true);
 
         // List next page
-        ResponseEntity<Map> listResponse2 = getWithAuth("/api/v1/reviews?user_id=" + tasker.userId() + "&limit=2&cursor=" + nextCursor, customer.accessToken());
+        ResponseEntity<Map> listResponse2 = getWithAuth("/api/v1/users/" + tasker.userId() + "/reviews?limit=2&cursor=" + nextCursor, customer.accessToken());
         assertThat(listResponse2.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Map> data2 = (List<Map>) listResponse2.getBody().get("data");
         assertThat(data2).hasSize(1);
@@ -115,22 +130,30 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("tasker-3");
 
         // Pre-condition: Not Pro
-        assertThat(authService.getProfile(tasker.userId()).get().isPro()).isFalse();
+        Optional<UserProfile> initialProfileOpt = authService.getProfile(tasker.userId());
+        assertThat(initialProfileOpt).isPresent();
+        assertThat(initialProfileOpt.orElseThrow().isPro()).isFalse();
 
         // 6 Completed Tasks + 5 Star Average
         for (int i = 0; i < 6; i++) {
-            BookingState booking = bookingService.createBooking("task-" + i, tasker.userId(), customer.userId(), 10000);
+            BookingState booking = bookingService.createBooking(
+                createTaskForCustomer(customer, "review-pro-" + i),
+                tasker.userId(),
+                customer.userId(),
+                10000
+            );
             bookingService.transitionToPaid(booking.id());
             bookingService.completeBooking(customer.userId(), booking.id());
             
-            postWithAuth("/api/v1/reviews", customer.accessToken(), Map.of(
-                "booking_id", booking.id(),
+            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
                 "rating", 5,
                 "comment", "Good job " + i
             ));
         }
 
-        UserProfile profile = authService.getProfile(tasker.userId()).get();
+        Optional<UserProfile> profileOpt = authService.getProfile(tasker.userId());
+        assertThat(profileOpt).isPresent();
+        UserProfile profile = profileOpt.orElseThrow();
         assertThat(profile.completedTasks()).isEqualTo(6);
         assertThat(profile.ratingAvg()).isEqualTo(5.0);
         assertThat(profile.isPro()).isTrue();
@@ -166,5 +189,26 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         headers.setBearerAuth(token);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         return restTemplate.exchange("http://localhost:" + port + path, HttpMethod.GET, entity, Map.class);
+    }
+
+    private String createTaskForCustomer(AuthContext customer, String descriptionSeed) {
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        return taskService.createTask(customer.userId(), new CreateTask(
+            categoryId,
+            "review-task-" + descriptionSeed,
+            10000,
+            47.9,
+            106.9,
+            "Ulaanbaatar",
+            Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+            List.of()
+        )).task().id();
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getFirstCategoryId(String token) {
+        ResponseEntity<Map> response = getWithAuth("/api/v1/categories", token);
+        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
+        return data.get(0).get("id").toString();
     }
 }

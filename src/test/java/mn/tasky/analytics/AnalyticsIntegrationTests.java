@@ -19,14 +19,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AnalyticsIntegrationTests extends IntegrationTestBase {
+
+    private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
+    private static final String CUSTOMER_1 = "00000000-0000-0000-0000-000000000011";
+    private static final String CUSTOMER_2 = "00000000-0000-0000-0000-000000000012";
 
     @LocalServerPort
     private int port;
@@ -40,9 +43,6 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
 
-    @Value("${tasky.qpay.webhook-secret}")
-    private String qpayWebhookSecret;
-
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
@@ -50,7 +50,7 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
     void emitsCanonicalFunnelEvents() {
         AuthContext customer = authenticate("cust-ana");
         AuthContext tasker = authenticate("task-ana");
-        String adminToken = tokenFor("ADMIN", "ACTIVE", "admin-ana");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
 
         // 1. Post Task
         postWithAuth("/api/v1/admin/categories", adminToken, Map.of("name", "Ana", "base_price", 1000, "name_mn", "Ana MN", "icon_url", "http://x.com/i.png", "sort_order", 1));
@@ -67,27 +67,20 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
 
         // 3. Accept
         String appId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId + "/applications", customer.accessToken()).getBody().get("data")).get(0).get("id").toString();
-        String bookingId = (String) postWithAuth("/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept", customer.accessToken(), null).getBody().get("id");
+        String bookingId = (String) postWithAuth(
+            "/api/v1/tasks/" + taskId + "/applications/" + appId + "/accept",
+            customer.accessToken(),
+            Map.of("liability_disclaimer_accepted", true)
+        ).getBody().get("id");
 
-        // 4. Initiate Payment
-        ResponseEntity<Map> payRes = postWithAuth("/api/v1/payments/bookings/" + bookingId + "/initiate", customer.accessToken(), Map.of("liability_disclaimer_accepted", true));
-        String paymentId = payRes.getBody().get("payment_url").toString().substring("https://qpay.mn/pay/".length());
-
-        // 5. Confirm Payment
-        post("/api/v1/payments/qpay/callback", Map.of(
-            "payment_id", paymentId,
-            "status", "PAID",
-            "signature", signatureFor(paymentId, "PAID")
-        ));
-
-        // 6. Complete
+        // 4. Complete
         postWithAuth("/api/v1/bookings/" + bookingId + "/complete", customer.accessToken(), null);
 
-        // 7. Raise dispute
+        // 5. Raise dispute
         postWithAuth(
-            "/api/v1/disputes",
+            "/api/v1/bookings/" + bookingId + "/disputes",
             customer.accessToken(),
-            Map.of("booking_id", bookingId, "reason", "Quality issue requires review.")
+            Map.of("reason", "Quality issue requires review.")
         );
 
         // Verify events
@@ -99,8 +92,7 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
             AnalyticsService.EVENT_TASK_POSTED,
             AnalyticsService.EVENT_APPLICATION_SUBMITTED,
             AnalyticsService.EVENT_TASKER_ACCEPTED,
-            AnalyticsService.EVENT_PAYMENT_INITIATED,
-            AnalyticsService.EVENT_PAYMENT_CONFIRMED,
+            AnalyticsService.EVENT_BOOKING_CONFIRMED,
             AnalyticsService.EVENT_BOOKING_COMPLETED,
             AnalyticsService.EVENT_DISPUTE_RAISED
         );
@@ -124,17 +116,17 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
     void computesKpiRatesFromEvents() {
         analyticsService.track(
             AnalyticsService.EVENT_TASK_POSTED,
-            "customer-1",
+            CUSTOMER_1,
             Map.of(AnalyticsService.PROPERTY_TASK_ID, "task-1")
         );
         analyticsService.track(
             AnalyticsService.EVENT_TASK_POSTED,
-            "customer-2",
+            CUSTOMER_2,
             Map.of(AnalyticsService.PROPERTY_TASK_ID, "task-2")
         );
         analyticsService.track(
-            AnalyticsService.EVENT_PAYMENT_CONFIRMED,
-            "customer-1",
+            AnalyticsService.EVENT_BOOKING_CONFIRMED,
+            CUSTOMER_1,
             Map.of(
                 AnalyticsService.PROPERTY_TASK_ID, "task-1",
                 AnalyticsService.PROPERTY_BOOKING_ID, "booking-1"
@@ -142,7 +134,7 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
         );
         analyticsService.track(
             AnalyticsService.EVENT_BOOKING_COMPLETED,
-            "customer-1",
+            CUSTOMER_1,
             Map.of(
                 AnalyticsService.PROPERTY_TASK_ID, "task-1",
                 AnalyticsService.PROPERTY_BOOKING_ID, "booking-1"
@@ -150,14 +142,25 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
         );
         analyticsService.track(
             AnalyticsService.EVENT_DISPUTE_RAISED,
-            "customer-1",
+            CUSTOMER_1,
             Map.of(
                 AnalyticsService.PROPERTY_TASK_ID, "task-1",
                 AnalyticsService.PROPERTY_BOOKING_ID, "booking-1"
             )
         );
 
-        KpiReport report = kpiReportService.buildReport();
+        Set<String> scopedTaskIds = Set.of("task-1", "task-2");
+        Set<String> scopedBookingIds = Set.of("booking-1");
+        List<Event> scopedEvents = analyticsService.getEvents().stream()
+            .filter(event -> {
+                Object taskId = event.properties().get(AnalyticsService.PROPERTY_TASK_ID);
+                Object bookingId = event.properties().get(AnalyticsService.PROPERTY_BOOKING_ID);
+                return (taskId != null && scopedTaskIds.contains(taskId.toString()))
+                    || (bookingId != null && scopedBookingIds.contains(bookingId.toString()));
+            })
+            .toList();
+
+        KpiReport report = kpiReportService.buildReport(scopedEvents);
 
         assertThat(report.taskPostedCount()).isEqualTo(2);
         assertThat(report.paidTaskCount()).isEqualTo(1);
@@ -205,22 +208,6 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
             .expiration(new java.util.Date(System.currentTimeMillis() + 3600000))
             .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
             .compact();
-    }
-
-    private String signatureFor(String paymentId, String status) {
-        String payload = paymentId + "|" + status;
-        try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-            byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder(signature.length * 2);
-            for (byte b : signature) {
-                builder.append(String.format("%02x", b));
-            }
-            return builder.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private ResponseEntity<Map> post(String path, Object body) {

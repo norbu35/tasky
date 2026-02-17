@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.common.api.CursorPagination;
@@ -16,6 +17,7 @@ import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.CreateTaskRequest;
 import mn.tasky.task.dto.TaskAcceptResult;
+import mn.tasky.task.dto.AcceptApplicationRequest;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
 import mn.tasky.task.dto.TaskApplyResult;
@@ -53,15 +55,18 @@ public class TaskController {
     private final TaskService taskService;
     private final CategoryService categoryService;
     private final AuthService authService;
+    private final BookingService bookingService;
 
     public TaskController(
         TaskService taskService,
         CategoryService categoryService,
-        AuthService authService
+        AuthService authService,
+        BookingService bookingService
     ) {
         this.taskService = taskService;
         this.categoryService = categoryService;
         this.authService = authService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping
@@ -85,6 +90,41 @@ public class TaskController {
                 new CursorPagination(page.nextCursor(), page.hasMore())
             )
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTask(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        HttpServletRequest request
+    ) {
+        Optional<TaskState> taskOpt = taskService.getTask(id);
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                    "code", "NOT_FOUND",
+                    "message", "Task not found.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+        }
+
+        TaskState task = taskOpt.get();
+        boolean owner = task.customerId().equals(principal.userId());
+        boolean bookedTasker = bookingService
+            .listBookings(principal.userId(), "tasker", null)
+            .stream()
+            .anyMatch(booking ->
+                booking.taskId().equals(task.id())
+                    && ("ASSIGNED".equals(booking.status())
+                        || "PAID".equals(booking.status())
+                        || "COMPLETED".equals(booking.status()))
+            );
+
+        if (owner || bookedTasker) {
+            return ResponseEntity.ok(toTaskResponse(task));
+        }
+        return ResponseEntity.ok(toPublicTaskResponse(task));
     }
 
     @PostMapping("/photos/upload-url")
@@ -285,9 +325,15 @@ public class TaskController {
         @AuthenticationPrincipal JwtPrincipal principal,
         @PathVariable String id,
         @PathVariable String applicationId,
+        @Valid @RequestBody AcceptApplicationRequest body,
         HttpServletRequest request
     ) {
-        TaskAcceptResult result = taskService.acceptApplication(principal.userId(), id, applicationId);
+        TaskAcceptResult result = taskService.acceptApplication(
+            principal.userId(),
+            id,
+            applicationId,
+            Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())
+        );
 
         if (result.isSuccess()) {
             return ResponseEntity.ok(toBookingResponse(result.booking()));
@@ -312,6 +358,13 @@ public class TaskController {
                 Map.of(
                     "code", "TASK_NOT_OPEN",
                     "message", "Task is no longer open.",
+                    "trace_id", resolveTraceId(request)
+                )
+            );
+            case TaskAcceptResult.DISCLAIMER_REQUIRED -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                    "code", "DISCLAIMER_REQUIRED",
+                    "message", "Liability disclaimer must be accepted to confirm booking.",
                     "trace_id", resolveTraceId(request)
                 )
             );
@@ -355,7 +408,8 @@ public class TaskController {
             );
         }
 
-        if (task.photoKeys().size() >= 3) {
+        List<String> existingPhotoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
+        if (existingPhotoKeys.size() >= 3) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Map.of(
                     "code", "TOO_MANY_PHOTOS",
@@ -429,7 +483,7 @@ public class TaskController {
         response.put("approximate_lng", fuzzedLocation[1]);
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
-        response.put("photo_urls", task.photoKeys()); // Should be URLs but for now keys
+        response.put("photo_urls", task.photoKeys() == null ? List.of() : task.photoKeys()); // Should be URLs but for now keys
         response.put("application_count", 0);
         response.put("created_at", task.createdAt().toString());
 

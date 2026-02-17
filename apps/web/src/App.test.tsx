@@ -71,7 +71,7 @@ const baseBooking: Booking = {
   tasker_id: "tasker-1",
   customer_id: "customer-1",
   price: 120000,
-  status: "PENDING_PAYMENT",
+  status: "ASSIGNED",
   cancellation_fee: null,
   created_at: "2026-02-14T00:00:00Z"
 };
@@ -499,55 +499,46 @@ describe("App", () => {
     expect(await screen.findByRole("heading", { name: "Account restricted" })).toBeInTheDocument();
   });
 
-  it("TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance, disclaimer, and payment initiation", async () => {
+  it("TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance and disclaimer-gated confirmation", async () => {
     const apiClient = buildApiClientMock({
       getMyProfile: vi.fn().mockResolvedValue(baseProfile),
-      acceptApplication: vi.fn().mockResolvedValue(baseBooking),
-      initiatePayment: vi.fn().mockResolvedValue({
-        paymentUrl: "https://qpay.example.test/pay/booking-1",
-        qrCode: "BASE64-QR"
-      })
+      acceptApplication: vi.fn().mockResolvedValue(baseBooking)
     });
 
     render(
-      <App apiClient={apiClient} initialRoute="/customer/booking-payment" initialSession={baseSession} />
+      <App apiClient={apiClient} initialRoute="/customer/booking-confirmation" initialSession={baseSession} />
     );
 
-    await screen.findByRole("heading", { name: "Booking acceptance and payment" });
+    await screen.findByRole("heading", { name: "Booking confirmation" });
 
     fireEvent.change(screen.getByLabelText("Task ID"), { target: { value: "task-1" } });
     fireEvent.change(screen.getByLabelText("Application ID"), { target: { value: "application-1" } });
-    fireEvent.click(screen.getByRole("button", { name: "Accept application" }));
+    fireEvent.click(screen.getByLabelText(/I acknowledge the liability disclaimer/i));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm booking" }));
 
     await waitFor(() => {
       expect(apiClient.acceptApplication).toHaveBeenCalledWith(
         "access-token",
         "task-1",
         "application-1",
+        true,
         expect.any(String)
       );
     });
-
-    fireEvent.click(screen.getByLabelText(/I acknowledge the liability disclaimer/i));
-    fireEvent.click(screen.getByRole("button", { name: "Initiate payment" }));
-
-    await waitFor(() => {
-      expect(apiClient.initiatePayment).toHaveBeenCalledWith("access-token", "booking-1", expect.any(String));
-    });
-    expect(await screen.findByText(/Payment URL:/)).toBeInTheDocument();
+    expect(await screen.findByText(/Booking confirmed:/)).toBeInTheDocument();
   });
 
   it("TID-TASK-081-WEB-BOOKING-SAFETY-FLOW supports booking transitions, review, and dispute actions", async () => {
-    const paidBooking: Booking = {
+    const activeBooking: Booking = {
       ...baseBooking,
-      status: "PAID"
+      status: "ASSIGNED"
     };
 
     const apiClient = buildApiClientMock({
       getMyProfile: vi.fn().mockResolvedValue(baseProfile),
-      getBooking: vi.fn().mockResolvedValue(paidBooking),
-      cancelBooking: vi.fn().mockResolvedValue({ ...paidBooking, status: "CANCELLED" }),
-      completeBooking: vi.fn().mockResolvedValue({ ...paidBooking, status: "COMPLETED" }),
+      getBooking: vi.fn().mockResolvedValue(activeBooking),
+      cancelBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: "CANCELLED" }),
+      completeBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: "COMPLETED" }),
       submitReview: vi.fn().mockResolvedValue(baseReview),
       raiseDispute: vi.fn().mockResolvedValue(baseDispute)
     });

@@ -21,20 +21,20 @@ public class KpiReportService {
         return buildReport(analyticsService.getEvents());
     }
 
-    KpiReport buildReport(List<Event> events) {
+    public KpiReport buildReport(List<Event> events) {
         Set<String> postedTaskIds = referenceIds(
             events,
             AnalyticsService.EVENT_TASK_POSTED,
             AnalyticsService.PROPERTY_TASK_ID
         );
-        Set<String> paidTaskIds = referenceIds(
+        Set<String> confirmedTaskIds = referenceIds(
             events,
-            AnalyticsService.EVENT_PAYMENT_CONFIRMED,
+            AnalyticsService.EVENT_BOOKING_CONFIRMED,
             AnalyticsService.PROPERTY_TASK_ID
         );
-        Set<String> paidBookingIds = referenceIds(
+        Set<String> confirmedBookingIds = referenceIds(
             events,
-            AnalyticsService.EVENT_PAYMENT_CONFIRMED,
+            AnalyticsService.EVENT_BOOKING_CONFIRMED,
             AnalyticsService.PROPERTY_BOOKING_ID
         );
         Set<String> completedBookingIds = referenceIds(
@@ -50,12 +50,12 @@ public class KpiReportService {
 
         return new KpiReport(
             postedTaskIds.size(),
-            paidTaskIds.size(),
-            paidBookingIds.size(),
+            confirmedTaskIds.size(),
+            confirmedBookingIds.size(),
             completedBookingIds.size(),
             disputedBookingIds.size(),
-            ratio(paidTaskIds.size(), postedTaskIds.size()),
-            ratio(completedBookingIds.size(), paidBookingIds.size()),
+            ratio(confirmedTaskIds.size(), postedTaskIds.size()),
+            ratio(completedBookingIds.size(), confirmedBookingIds.size()),
             ratio(disputedBookingIds.size(), completedBookingIds.size())
         );
     }

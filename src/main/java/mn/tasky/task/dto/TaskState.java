@@ -2,6 +2,7 @@ package mn.tasky.task.dto;
 
 import java.time.Instant;
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 public record TaskState(
     String id,
@@ -14,7 +15,7 @@ public record TaskState(
     String locationText,
     String status,
     Instant scheduledAt,
-    List<String> photoKeys,
+    @Nullable List<String> photoKeys,
     Instant createdAt,
     Instant updatedAt
 ) {

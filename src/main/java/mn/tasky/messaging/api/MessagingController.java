@@ -1,5 +1,8 @@
 package mn.tasky.messaging.api;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/conversations")
+@Validated
 public class MessagingController {
 
     private final MessagingService messagingService;
@@ -37,17 +42,21 @@ public class MessagingController {
     public void sendMessageRealtime(
             @AuthenticationPrincipal JwtPrincipal principal,
             @DestinationVariable String id,
-            MessageRequest body) {
+            @Valid MessageRequest body) {
         messagingService.sendMessage(principal.userId(), id, body.content());
     }
 
     @GetMapping
-    public ResponseEntity<?> listConversations(@AuthenticationPrincipal JwtPrincipal principal) {
-        List<Conversation> conversations = messagingService.listConversations(principal.userId());
+    public ResponseEntity<?> listConversations(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit
+    ) {
+        List<Conversation> conversations = messagingService.listConversations(principal.userId(), cursor, limit);
         List<Map<String, Object>> data = conversations.stream()
             .map(this::toConversationResponse)
             .toList();
-        return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(null, false)));
+        return ResponseEntity.ok(new PagedResponse<>(data, CursorPagination.from(conversations, limit, Conversation::id)));
     }
 
     private Map<String, Object> toConversationResponse(Conversation c) {
@@ -65,7 +74,7 @@ public class MessagingController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
             @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") int limit) {
+            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit) {
         try {
             List<Message> messages = messagingService.listMessages(principal.userId(), id, cursor, limit);
             List<Map<String, Object>> data = messages.stream()
@@ -76,7 +85,7 @@ public class MessagingController {
                 new PagedResponse<>(data, CursorPagination.from(messages, limit, Message::id))
             );
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", e.getMessage()));
         }
     }
 
@@ -84,7 +93,7 @@ public class MessagingController {
     public ResponseEntity<?> sendMessage(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
-            @RequestBody MessageRequest body) {
+            @Valid @RequestBody MessageRequest body) {
         
         try {
             var messageOpt = messagingService.sendMessage(principal.userId(), id, body.content());
@@ -93,7 +102,7 @@ public class MessagingController {
             }
             return ResponseEntity.status(201).body(toMessageResponse(messageOpt.get()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", e.getMessage()));
         }
     }
 

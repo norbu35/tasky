@@ -24,7 +24,7 @@ export function useUpdateProfile() {
     mutationFn: (payload: { full_name?: string; avatar_url?: string }) => 
       api.updateMyProfile(token!, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['me'] });
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
     }
   });
 }

@@ -158,7 +158,7 @@ const baseBooking: Booking = {
   tasker_id: "tasker-1",
   customer_id: "customer-1",
   price: 120000,
-  status: "PENDING_PAYMENT",
+  status: "ASSIGNED",
   cancellation_fee: null,
   created_at: "2026-02-14T00:00:00Z"
 };
@@ -342,7 +342,7 @@ describe("mobile app structure", () => {
     expect(isRestricted(baseProfile)).toBe(false);
   });
 
-  it("TID-TASK-083-MOBILE-BOOKING-PAYMENT-FLOW renders pending bookings for payment continuation", () => {
+  it("TID-TASK-083-MOBILE-BOOKING-PAYMENT-FLOW renders assigned bookings for safety actions", () => {
     mockUseBookings.mockReturnValue({
       data: {
         data: [baseBooking],
@@ -353,7 +353,7 @@ describe("mobile app structure", () => {
 
     render(<BookingsScreen />);
 
-    expect(screen.getByText("PENDING_PAYMENT")).toBeTruthy();
+    expect(screen.getByText("ASSIGNED")).toBeTruthy();
     expect(screen.getByText("Task ID: task-123...")).toBeTruthy();
   });
 
@@ -432,12 +432,12 @@ describe("mobile app structure", () => {
 
     expect(message.content).toBe("Сайн байна уу");
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(fetchMock.mock.calls[0][0]).toBe("http://localhost:8080/notifications/devices");
+    expect(fetchMock.mock.calls[0][0]).toBe("http://localhost:8080/api/v1/notifications/devices");
     expect(fetchMock.mock.calls[1][0]).toBe(
-      "http://localhost:8080/conversations/conversation-1/messages"
+      "http://localhost:8080/api/v1/conversations/conversation-1/messages"
     );
     expect(fetchMock.mock.calls[2][0]).toBe(
-      "http://localhost:8080/notifications/devices/device-token"
+      "http://localhost:8080/api/v1/notifications/devices/device-token"
     );
   });
 

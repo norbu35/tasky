@@ -14,7 +14,7 @@ export function BookingSafetyPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
   const [bookingId, setBookingId] = useState("");
   const [roleFilter, setRoleFilter] = useState<"" | "customer" | "tasker">("customer");
-  const [statusFilter, setStatusFilter] = useState<"" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED">(
+  const [statusFilter, setStatusFilter] = useState<"" | "ASSIGNED" | "COMPLETED" | "CANCELLED">(
     ""
   );
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -242,14 +242,11 @@ export function BookingSafetyPage() {
                   className="h-10 rounded-md border border-input bg-background px-3 text-sm"
                   value={statusFilter}
                   onChange={(event) => {
-                    setStatusFilter(
-                      event.target.value as "" | "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED"
-                    );
+                    setStatusFilter(event.target.value as "" | "ASSIGNED" | "COMPLETED" | "CANCELLED");
                   }}
                 >
                   <option value="">All</option>
-                  <option value="PENDING_PAYMENT">PENDING_PAYMENT</option>
-                  <option value="PAID">PAID</option>
+                  <option value="ASSIGNED">ASSIGNED</option>
                   <option value="COMPLETED">COMPLETED</option>
                   <option value="CANCELLED">CANCELLED</option>
                 </select>

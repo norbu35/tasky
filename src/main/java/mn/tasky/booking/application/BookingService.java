@@ -2,6 +2,7 @@ package mn.tasky.booking.application;
 
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.dao.BookingDao;
+import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import org.springframework.stereotype.Service;
@@ -16,18 +17,45 @@ public class BookingService {
 
     private final AuthService authService;
     private final BookingDao bookingDao;
+    private final BookingReliabilityIncidentDao bookingReliabilityIncidentDao;
 
-    public BookingService(AuthService authService, BookingDao bookingDao) {
+    public BookingService(
+        AuthService authService,
+        BookingDao bookingDao,
+        BookingReliabilityIncidentDao bookingReliabilityIncidentDao
+    ) {
         this.authService = authService;
         this.bookingDao = bookingDao;
+        this.bookingReliabilityIncidentDao = bookingReliabilityIncidentDao;
     }
 
     public BookingState createBooking(String taskId, String taskerId, String customerId, int price) {
+        return createBooking(taskId, taskerId, customerId, price, false);
+    }
+
+    public BookingState createBooking(
+        String taskId,
+        String taskerId,
+        String customerId,
+        int price,
+        boolean liabilityDisclaimerAccepted
+    ) {
         Instant now = Instant.now();
         String id = UUID.randomUUID().toString();
         BookingState booking = new BookingState(id, taskId, taskerId, customerId, price,
-            "PENDING_PAYMENT", null, false, now, now);
-        bookingDao.insert(id, taskId, taskerId, customerId, price, "PENDING_PAYMENT", null, false, now, now);
+            "ASSIGNED", null, liabilityDisclaimerAccepted, now, now);
+        bookingDao.insert(
+            id,
+            taskId,
+            taskerId,
+            customerId,
+            price,
+            "ASSIGNED",
+            null,
+            liabilityDisclaimerAccepted,
+            now,
+            now
+        );
         return booking;
     }
 
@@ -46,16 +74,20 @@ public class BookingService {
     }
 
     public List<BookingState> listBookings(String userId, String role, String status) {
+        return listBookings(userId, role, status, null, 50);
+    }
+
+    public List<BookingState> listBookings(String userId, String role, String status, String cursor, int limit) {
         if ("customer".equalsIgnoreCase(role)) {
-            return bookingDao.findByCustomerId(userId, status);
+            return bookingDao.findByCustomerId(userId, status, cursor, limit);
         } else if ("tasker".equalsIgnoreCase(role)) {
-            return bookingDao.findByTaskerId(userId, status);
+            return bookingDao.findByTaskerId(userId, status, cursor, limit);
         }
-        return bookingDao.findByParticipant(userId, status);
+        return bookingDao.findByParticipant(userId, status, cursor, limit);
     }
 
     public BookingTransitionResult transitionToPaid(String bookingId) {
-        return transition(bookingId, "PAID", List.of("PENDING_PAYMENT"), null);
+        return transition(bookingId, "PAID", List.of("ASSIGNED"), null);
     }
 
     public BookingTransitionResult completeBooking(String userId, String bookingId) {
@@ -64,7 +96,7 @@ public class BookingService {
         BookingState booking = bookingOpt.get();
         if (!booking.customerId().equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
 
-        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("PAID"), null);
+        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID"), null);
         if (result.isSuccess()) {
             authService.updateUserStats(booking.taskerId(), 0, true);
         }
@@ -82,15 +114,19 @@ public class BookingService {
             return BookingTransitionResult.FORBIDDEN_RESULT;
         }
 
-        Integer fee = null;
-        if (isCustomer) {
-            Instant fourHoursBefore = scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS);
-            if (Instant.now().isAfter(fourHoursBefore)) {
-                fee = (int) Math.max(5000, booking.price() * 0.1);
-            }
+        boolean lateCustomerCancellation = isCustomer && isLateCancellation(scheduledAt);
+        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID"), null);
+        if (result.isSuccess() && lateCustomerCancellation) {
+            bookingReliabilityIncidentDao.insert(
+                UUID.randomUUID().toString(),
+                bookingId,
+                userId,
+                "CUSTOMER_LATE_CANCEL",
+                "Customer cancelled within 4 hours of scheduled task time.",
+                Instant.now()
+            );
         }
-
-        return transition(bookingId, "CANCELLED", List.of("PENDING_PAYMENT", "PAID"), fee);
+        return result;
     }
 
     private BookingTransitionResult transition(
@@ -119,5 +155,13 @@ public class BookingService {
             current.createdAt(), now
         );
         return BookingTransitionResult.success(updated);
+    }
+
+    private boolean isLateCancellation(Instant scheduledAt) {
+        if (scheduledAt == null) {
+            return false;
+        }
+        Instant fourHoursBefore = scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS);
+        return Instant.now().isAfter(fourHoursBefore);
     }
 }

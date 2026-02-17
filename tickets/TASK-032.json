@@ -4,7 +4,9 @@
   "risk_level": "high",
   "req_ids": [
     "REQ-BOOK-04",
-    "REQ-BOOK-06"
+    "REQ-BOOK-05",
+    "REQ-BOOK-06",
+    "REQ-TASK-02"
   ],
   "depends_on": [
     "TASK-030"
@@ -13,7 +15,7 @@
     {
       "id": "AC-TASK-032-01",
       "type": "functional",
-      "statement": "Customer late-cancel applies fee policy and beneficiary logic.",
+      "statement": "Customer late-cancel records a reliability incident and audit evidence.",
       "test_ids": [
         "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE"
       ]

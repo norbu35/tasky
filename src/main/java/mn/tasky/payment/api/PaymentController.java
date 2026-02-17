@@ -9,6 +9,7 @@ import mn.tasky.payment.application.PaymentService;
 import mn.tasky.payment.dto.InitiatePaymentRequest;
 import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.payment.dto.QpayCallbackRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,10 +30,16 @@ public class PaymentController {
 
     private final BookingService bookingService;
     private final PaymentService paymentService;
+    private final boolean monetizationEnabled;
 
-    public PaymentController(BookingService bookingService, PaymentService paymentService) {
+    public PaymentController(
+        BookingService bookingService,
+        PaymentService paymentService,
+        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
+    ) {
         this.bookingService = bookingService;
         this.paymentService = paymentService;
+        this.monetizationEnabled = monetizationEnabled;
     }
 
     @PostMapping("/bookings/{id}/initiate")
@@ -42,6 +49,9 @@ public class PaymentController {
         @Valid @RequestBody InitiatePaymentRequest body,
         HttpServletRequest request
     ) {
+        if (!monetizationEnabled) {
+            return deferredResponse(request);
+        }
         if (!Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Map.of(
@@ -55,11 +65,11 @@ public class PaymentController {
         return bookingService.getBooking(id)
             .filter(b -> b.customerId().equals(principal.userId()))
             .<ResponseEntity<?>>map(booking -> {
-                if (!"PENDING_PAYMENT".equals(booking.status())) {
+                if (!"ASSIGNED".equals(booking.status())) {
                     return ResponseEntity.status(HttpStatus.CONFLICT).body(
                         Map.of(
                             "code", "INVALID_STATUS",
-                            "message", "Booking is not in PENDING_PAYMENT status.",
+                            "message", "Booking is not in ASSIGNED status.",
                             "trace_id", resolveTraceId(request)
                         )
                     );
@@ -87,6 +97,9 @@ public class PaymentController {
         @Valid @RequestBody QpayCallbackRequest body,
         HttpServletRequest request
     ) {
+        if (!monetizationEnabled) {
+            return deferredResponse(request);
+        }
         boolean success = paymentService.processCallback(
             body.paymentId(),
             body.status(),
@@ -112,6 +125,16 @@ public class PaymentController {
             return traceId.toString();
         }
         return UUID.randomUUID().toString();
+    }
+
+    private ResponseEntity<Map<String, Object>> deferredResponse(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(
+            Map.of(
+                "code", "FEATURE_DEFERRED",
+                "message", "Payments are deferred during the liquidity-first MVP phase.",
+                "trace_id", resolveTraceId(request)
+            )
+        );
     }
 
 }

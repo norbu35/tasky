@@ -2,6 +2,7 @@ package mn.tasky.review.application;
 
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.review.dto.Review;
 import mn.tasky.review.dto.ReviewSubmitResult;
@@ -54,8 +55,9 @@ public class ReviewService {
 
         String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
-        Review review = new Review(id, bookingId, authorId, targetUserId, rating, comment, now);
-        reviewDao.insert(id, bookingId, authorId, targetUserId, rating, comment, now);
+        String sanitizedComment = TextSanitizer.plainText(comment);
+        Review review = new Review(id, bookingId, authorId, targetUserId, rating, sanitizedComment, now);
+        reviewDao.insert(id, bookingId, authorId, targetUserId, rating, sanitizedComment, now);
 
         authService.updateUserStats(targetUserId, rating, false);
 

@@ -3,11 +3,7 @@
   "ticket": "TASK-031",
   "risk_level": "high",
   "req_ids": [
-    "NFR-RELI-01",
-    "REQ-BOOK-03",
-    "REQ-BOOK-05",
-    "REQ-PAY-01",
-    "REQ-TASK-02"
+    "REQ-PAY-01"
   ],
   "depends_on": [
     "TASK-030",
@@ -33,7 +29,7 @@
     {
       "id": "AC-TASK-031-03",
       "type": "functional",
-      "statement": "Successful callback sets booking `PAID` and task `ASSIGNED` exactly once.",
+      "statement": "Successful callback applies the configured monetization transition exactly once.",
       "test_ids": [
         "TID-TASK-031-RELI-CALLBACK-IDEMPOTENT"
       ]

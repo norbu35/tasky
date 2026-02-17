@@ -6,7 +6,7 @@
 - **Scope:** Full backend application (`src/main/java/mn/tasky/`)
 - **Baseline:** Commit `cbaedba` on `main`
 - **Method:** Automated static code review against PRD, AGENTS.md, and ARCHITECTURE.md requirements
-- **Status:** Partially remediated on 2026-02-14
+- **Status:** Partially remediated on 2026-02-17
 
 ## How to Use This Report
 
@@ -24,7 +24,7 @@ Each finding has a unique ID (`SEC-XXX`), severity, exact file and line referenc
 | Severity | Count | Status |
 |----------|-------|--------|
 | CRITICAL | 6 | Fixed (6/6) |
-| HIGH | 16 | Partial (9 fixed / 7 open) |
+| HIGH | 16 | Partial (13 fixed / 3 open) |
 | MEDIUM | 21 | Partial (3 fixed / 18 open) |
 | LOW | 17 | Partial (1 fixed / 16 open) |
 | INFO | 4 | Partial (1 fixed / 3 open) |
@@ -261,58 +261,49 @@ Each finding has a unique ID (`SEC-XXX`), severity, exact file and line referenc
 
 ### SEC-018: Missing Input Validation on Dispute Raise
 
-- **Status:** Open
+- **Status:** FIXED (2026-02-17)
 - **File:** `src/main/java/mn/tasky/dispute/DisputeController.java:30,58`
+- **File:** `src/main/java/mn/tasky/dispute/dto/DisputeRequest.java`
 - **Violated:** REQ-SAFE-03
-- **Description:** No `@Valid` on `@RequestBody`. `DisputeRequest` has no `@NotBlank` or `@Size` constraints. Allows null bookingId, null/unbounded reason.
-- **Fix:**
-  1. Add `@Valid` to `@RequestBody` parameter.
-  2. Add `@NotBlank` to `bookingId` and `reason`.
-  3. Add `@Size(max = 2000)` to `reason`.
-  4. Add `@Validated` to the controller class.
-- **Test:** Null reason returns 400. Reason exceeding 2000 chars returns 400.
+- **Description:** Dispute input lacked bean validation.
+- **Fix Applied:** Added `@Validated` on controller, `@Valid` on request body, and `@NotBlank` + `@Size(min=10,max=2000)` on `reason`.
+- **Validation:** `mn.tasky.dispute.DisputeIntegrationTests`
 
 ### SEC-019: Missing Input Validation on Review Submission + XSS
 
-- **Status:** Open
+- **Status:** FIXED (2026-02-17)
 - **File:** `src/main/java/mn/tasky/review/ReviewController.java:31,89-93`
+- **File:** `src/main/java/mn/tasky/review/dto/ReviewRequest.java`
+- **File:** `src/main/java/mn/tasky/review/application/ReviewService.java`
 - **Violated:** REQ-SAFE-02
-- **Description:** No `@Valid`, no constraints on `ReviewRequest`. Comment field is unbounded and returned verbatim (stored XSS risk).
-- **Fix:**
-  1. Add `@Valid` to `@RequestBody`.
-  2. Add `@NotBlank` to `bookingId`, `@Min(1) @Max(5)` to `rating`, `@NotBlank @Size(max = 2000)` to `comment`.
-  3. Strip HTML tags from comment before storage.
-  4. Add `@Validated` to the controller class.
-- **Test:** Rating of 0 or 6 returns 400. Comment with `<script>` tags has tags stripped.
+- **Description:** Review submission lacked bean validation and sanitization.
+- **Fix Applied:** Added `@Validated` and `@Valid`, constrained `rating/comment`, and sanitized comment content in the service layer before persistence.
+- **Validation:** `mn.tasky.review.ReviewIntegrationTests`
 
 ### SEC-020: Missing Input Validation on Messaging + XSS
 
-- **Status:** Open
+- **Status:** FIXED (2026-02-17)
 - **File:** `src/main/java/mn/tasky/messaging/MessagingController.java:35,83,106`
+- **File:** `src/main/java/mn/tasky/messaging/dto/MessageRequest.java`
+- **File:** `src/main/java/mn/tasky/messaging/application/MessagingService.java`
 - **Violated:** REQ-MSG-01
-- **Description:** Both REST and WebSocket message handlers accept `MessageRequest` without `@Valid`. `content` has no constraints. Stored XSS risk.
-- **Fix:**
-  1. Add `@Valid` to both REST and WebSocket handler `@RequestBody`/parameter.
-  2. Add `@NotBlank @Size(max = 5000)` to `content` in `MessageRequest`.
-  3. Strip HTML tags from content before storage/delivery.
-  4. Add `@Validated` to the controller class.
-- **Test:** Empty content returns 400. Content over 5000 chars returns 400.
+- **Description:** Messaging request validation and sanitization controls were missing.
+- **Fix Applied:** Added request validation for REST/WebSocket message entry points and sanitized content before persistence and broadcast.
+- **Validation:** `mn.tasky.messaging.MessagingIntegrationTests`
 
 ### SEC-021: Stored XSS Across All User-Generated Content
 
-- **Status:** Open
+- **Status:** FIXED (2026-02-17)
 - **Files:**
   - `src/main/java/mn/tasky/task/TaskController.java:413` (task description)
   - `src/main/java/mn/tasky/review/ReviewController.java:84` (review comment)
   - `src/main/java/mn/tasky/messaging/MessagingController.java:101` (message content)
   - `src/main/java/mn/tasky/task/TaskController.java:372` (application message)
+- **File:** `src/main/java/mn/tasky/common/validation/TextSanitizer.java`
 - **Violated:** AGENTS.md 6 (OWASP Top 10)
-- **Description:** All user text fields stored and returned verbatim. If any client renders as HTML, scripts execute.
-- **Fix:**
-  1. Create a shared `TextSanitizer` utility that strips HTML tags using a simple regex or a library like OWASP Java HTML Sanitizer.
-  2. Apply sanitization at the service layer before storing any user-generated text.
-  3. Document in API spec that all text fields are plain text, never HTML.
-- **Test:** Input `<script>alert(1)</script>` is stored/returned as `alert(1)` (tags stripped).
+- **Description:** User-generated text was persisted unsanitized.
+- **Fix Applied:** Added shared sanitizer and applied it in task, review, dispute, and messaging service write paths.
+- **Validation:** `mn.tasky.task.TaskLifecycleIntegrationTests`, `mn.tasky.review.ReviewIntegrationTests`, `mn.tasky.messaging.MessagingIntegrationTests`, `mn.tasky.dispute.DisputeIntegrationTests`
 
 ### SEC-022: Exact Location in Private Task Response Without Booking Check
 

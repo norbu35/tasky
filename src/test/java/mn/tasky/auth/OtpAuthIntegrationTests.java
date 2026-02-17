@@ -21,6 +21,8 @@ import java.util.UUID;
 
 class OtpAuthIntegrationTests extends IntegrationTestBase {
 
+    private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
+
     @LocalServerPort
     private int port;
 
@@ -170,7 +172,7 @@ class OtpAuthIntegrationTests extends IntegrationTestBase {
         Map<String, Object> user = (Map<String, Object>) verify.getBody().get("user");
         String userId = String.valueOf(user.get("id"));
 
-        authService.banUser("admin-test", userId, "security-test");
+        authService.banUser(ADMIN_ID, userId, "security-test");
 
         ResponseEntity<Map> refreshResponse = post(
             "/api/v1/auth/token/refresh",

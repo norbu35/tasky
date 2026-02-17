@@ -7,6 +7,9 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.Optional;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(UserProfileState.class)
 public interface ProfileDao {
@@ -14,18 +17,34 @@ public interface ProfileDao {
     @SqlUpdate("INSERT INTO profiles (user_id, full_name, avatar_url, rating_avg, completed_tasks) "
              + "VALUES (:userId, :fullName, NULL, 0, 0) "
              + "ON CONFLICT (user_id) DO NOTHING")
-    void ensureExists(@Bind("userId") String userId, @Bind("fullName") String fullName);
+    void ensureExists(@Bind("userId") UUID userId, @Bind("fullName") String fullName);
+
+    default void ensureExists(String userId, String fullName) {
+        ensureExists(required(userId, "userId"), fullName);
+    }
 
     @SqlQuery("SELECT full_name, avatar_url, rating_avg, completed_tasks FROM profiles WHERE user_id = :userId")
-    Optional<UserProfileState> findByUserId(@Bind("userId") String userId);
+    Optional<UserProfileState> findByUserId(@Bind("userId") UUID userId);
+
+    default Optional<UserProfileState> findByUserId(String userId) {
+        return findByUserId(required(userId, "userId"));
+    }
 
     @SqlUpdate("UPDATE profiles SET full_name = :fullName, avatar_url = :avatarUrl WHERE user_id = :userId")
-    void updateNameAndAvatar(@Bind("userId") String userId,
+    void updateNameAndAvatar(@Bind("userId") UUID userId,
                              @Bind("fullName") String fullName,
                              @Bind("avatarUrl") String avatarUrl);
 
+    default void updateNameAndAvatar(String userId, String fullName, String avatarUrl) {
+        updateNameAndAvatar(required(userId, "userId"), fullName, avatarUrl);
+    }
+
     @SqlUpdate("UPDATE profiles SET rating_avg = :ratingAvg, completed_tasks = :completedTasks WHERE user_id = :userId")
-    void updateStats(@Bind("userId") String userId,
+    void updateStats(@Bind("userId") UUID userId,
                      @Bind("ratingAvg") double ratingAvg,
                      @Bind("completedTasks") int completedTasks);
+
+    default void updateStats(String userId, double ratingAvg, int completedTasks) {
+        updateStats(required(userId, "userId"), ratingAvg, completedTasks);
+    }
 }

@@ -20,8 +20,9 @@ info:
     All monetary amounts are integers in MNT (Mongolian Tugrik).
 
     ## Idempotency
-    Payment and critical state-changing endpoints require an `Idempotency-Key` header.
-  version: 1.0.0
+    Critical state-changing endpoints require an `Idempotency-Key` header.
+    Payment and wallet endpoints are documented as post-MVP deferred surfaces.
+  version: 1.1.0
   contact:
     name: Tasky Engineering
 servers:
@@ -44,9 +45,9 @@ tags:
   - name: Bookings
     description: Booking lifecycle
   - name: Payments
-    description: QPay payment integration
+    description: QPay payment integration (Post-MVP deferred)
   - name: Wallet
-    description: Tasker wallet and payouts
+    description: Tasker wallet and payouts (Post-MVP deferred)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
@@ -196,6 +197,76 @@ components:
         created_at:
           type: string
           format: date-time
+
+    StrikePolicy:
+      type: object
+      required:
+        - strikeWindowDays
+        - strikeThreshold
+        - firstSuspensionDays
+        - repeatSuspensionDays
+        - repeatOffenseWindowDays
+        - autoUnsuspendEnabled
+        - updatedAt
+      properties:
+        strikeWindowDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        strikeThreshold:
+          type: integer
+          minimum: 1
+          maximum: 10
+        firstSuspensionDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        repeatSuspensionDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        repeatOffenseWindowDays:
+          type: integer
+          minimum: 1
+          maximum: 730
+        autoUnsuspendEnabled:
+          type: boolean
+        updatedAt:
+          type: string
+          format: date-time
+
+    StrikePolicyUpdateRequest:
+      type: object
+      required:
+        - strikeWindowDays
+        - strikeThreshold
+        - firstSuspensionDays
+        - repeatSuspensionDays
+        - repeatOffenseWindowDays
+        - autoUnsuspendEnabled
+      properties:
+        strikeWindowDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        strikeThreshold:
+          type: integer
+          minimum: 1
+          maximum: 10
+        firstSuspensionDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        repeatSuspensionDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+        repeatOffenseWindowDays:
+          type: integer
+          minimum: 1
+          maximum: 730
+        autoUnsuspendEnabled:
+          type: boolean
 
     # ─── Verification ─────────────────────────────────────────
     VerificationStatus:
@@ -528,11 +599,11 @@ components:
           description: Agreed price in MNT.
         status:
           type: string
-          enum: [PENDING_PAYMENT, PAID, COMPLETED, CANCELLED]
+          enum: [ASSIGNED, COMPLETED, CANCELLED]
         cancellation_fee:
           type: integer
           nullable: true
-          description: Fee charged on late cancellation (MNT). Null if not applicable.
+          description: Post-MVP monetization field. Null in phase-1.
         created_at:
           type: string
           format: date-time
@@ -1495,7 +1566,8 @@ paths:
       tags: [Applications]
       summary: Accept a tasker's application
       description: |
-        Customer accepts a tasker's application. This creates a booking in PENDING_PAYMENT status.
+        Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
+        Requires `liability_disclaimer_accepted=true`.
         All other pending applications for this task are automatically rejected.
         Requires Idempotency-Key header.
       operationId: acceptApplication
@@ -1510,6 +1582,18 @@ paths:
           schema:
             type: string
             format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [liability_disclaimer_accepted]
+              properties:
+                liability_disclaimer_accepted:
+                  type: boolean
+                  description: Must be `true` to confirm booking.
+                  enum: [true]
       responses:
         '200':
           description: Application accepted, booking created.
@@ -1553,7 +1637,7 @@ paths:
           description: Filter by booking status.
           schema:
             type: string
-            enum: [PENDING_PAYMENT, PAID, COMPLETED, CANCELLED]
+            enum: [ASSIGNED, COMPLETED, CANCELLED]
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -1606,8 +1690,8 @@ paths:
       summary: Cancel a booking
       description: |
         Cancels an active booking. Cancellation policy applies:
-        - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation incurs 10% fee (min 5,000 MNT).
-        - Tasker: Full refund to customer, task reverts to OPEN. Strike recorded (3 strikes in 30 days = 7-day suspension).
+        - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation is recorded as a reliability incident.
+        - Tasker: Task reverts to OPEN. Strike recorded. Suspension thresholds/durations are managed by admin moderation policy.
         Requires Idempotency-Key header.
       operationId: cancelBooking
       security:
@@ -1640,10 +1724,9 @@ paths:
       tags: [Bookings]
       summary: Mark booking as complete
       description: |
-        Customer marks a PAID booking as complete. This triggers:
+        Customer marks an ASSIGNED booking as complete. This triggers:
         - Booking status -> COMPLETED
         - Task status -> COMPLETED
-        - Tasker wallet credited (price minus platform fee)
         Requires Idempotency-Key header.
       operationId: completeBooking
       security:
@@ -1665,7 +1748,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Booking is not in PAID status.
+          description: Booking is not in ASSIGNED status.
           content:
             application/json:
               schema:
@@ -1676,9 +1759,11 @@ paths:
     post:
       tags: [Payments]
       summary: Initiate QPay payment for a booking
+      deprecated: true
       description: |
+        Post-MVP deferred endpoint. Not required for phase-1 MVP.
         Generates a QPay payment link and QR code for the booking.
-        The booking must be in PENDING_PAYMENT status.
+        The booking must be in ASSIGNED status and monetization must be enabled.
         Requires Idempotency-Key header.
         Requires explicit liability disclaimer acceptance.
       operationId: initiatePayment
@@ -1722,7 +1807,13 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Booking is not in PENDING_PAYMENT status or payment already initiated.
+          description: Booking is not eligible for payment initiation or payment already initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
           content:
             application/json:
               schema:
@@ -1732,10 +1823,12 @@ paths:
     post:
       tags: [Payments]
       summary: QPay payment webhook callback
+      deprecated: true
       security: []
       description: |
+        Post-MVP deferred endpoint. Not required for phase-1 MVP.
         Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
-        On successful payment: booking status -> PAID, task status -> ASSIGNED.
+        On successful payment: booking status may be updated per monetization state machine.
         Must be idempotent (handle duplicate callbacks gracefully).
       operationId: qpayCallback
       requestBody:
@@ -1775,13 +1868,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # ─── Wallet ─────────────────────────────────────────────────
   /wallet:
     get:
       tags: [Wallet]
       summary: Get wallet balance
-      description: Returns the current wallet balance and pending payout amount for the authenticated user.
+      deprecated: true
+      description: Post-MVP deferred endpoint. Returns wallet balance and pending payout amount.
       operationId: getWalletBalance
       security:
         - BearerAuth: []
@@ -1794,12 +1894,19 @@ paths:
                 $ref: '#/components/schemas/WalletBalance'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /wallet/transactions:
     get:
       tags: [Wallet]
       summary: List wallet transactions
-      description: Returns paginated transaction history for the authenticated user's wallet.
+      deprecated: true
+      description: Post-MVP deferred endpoint. Returns paginated transaction history.
       operationId: listWalletTransactions
       security:
         - BearerAuth: []
@@ -1823,12 +1930,20 @@ paths:
                     $ref: '#/components/schemas/CursorPagination'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /wallet/payouts:
     post:
       tags: [Wallet]
       summary: Request payout
+      deprecated: true
       description: |
+        Post-MVP deferred endpoint.
         Tasker requests a payout from their wallet balance to a bank account.
         Payouts are processed by admin on Tuesdays and Fridays.
         Requires Idempotency-Key header.
@@ -1868,6 +1983,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '409':
           description: Insufficient balance or existing pending payout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
           content:
             application/json:
               schema:
@@ -1962,8 +2083,11 @@ paths:
       tags: [Disputes]
       summary: Raise a dispute
       description: |
-        Raise a dispute on a booking that is PAID (in progress) or COMPLETED (within 24 hours).
-        Raising a dispute pauses any pending payout to the tasker.
+        Either booking party (customer or tasker) may raise a dispute.
+        Allowed states:
+        - ASSIGNED booking (in-progress)
+        - COMPLETED booking within 24 hours of completion
+        Raising a dispute blocks booking closure actions until admin resolution.
         Requires Idempotency-Key header.
       operationId: raiseDispute
       security:
@@ -2440,13 +2564,52 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
+  /admin/disputes/{id}:
+    get:
+      tags: [Admin]
+      summary: Get dispute details with evidence context
+      description: |
+        Returns full dispute details, related booking context, and recent conversation messages
+        between booking participants for moderation review.
+      operationId: adminGetDispute
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute detail payload for admin review.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dispute:
+                    $ref: '#/components/schemas/Dispute'
+                  booking:
+                    $ref: '#/components/schemas/Booking'
+                  conversation_id:
+                    type: string
+                    format: uuid
+                    nullable: true
+                  evidence_messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   /admin/disputes/{id}/resolve:
     post:
       tags: [Admin]
       summary: Resolve a dispute
       description: |
-        Admin resolves a dispute by either refunding the customer or releasing funds to the tasker.
-        Partial amounts are supported.
+        Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
+        Post-MVP monetization may extend this endpoint with refund/release amount handling.
         Requires Idempotency-Key header.
       operationId: adminResolveDispute
       security:
@@ -2460,15 +2623,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [resolution, amount]
+              required: [resolution]
               properties:
                 resolution:
                   type: string
-                  enum: [REFUND_CUSTOMER, RELEASE_TASKER]
-                amount:
-                  type: integer
-                  minimum: 0
-                  description: Amount in MNT to refund or release. Can be partial.
+                  enum: [RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE]
                 notes:
                   type: string
                   maxLength: 2000
@@ -2495,11 +2654,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /admin/moderation/strike-policy:
+    get:
+      tags: [Admin]
+      summary: Get strike and suspension policy
+      description: Returns current moderation policy used for tasker strike suspension logic.
+      operationId: adminGetStrikePolicy
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current strike policy.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrikePolicy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    put:
+      tags: [Admin]
+      summary: Update strike and suspension policy
+      description: |
+        Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
+      operationId: adminUpdateStrikePolicy
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StrikePolicyUpdateRequest'
+      responses:
+        '200':
+          description: Strike policy updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrikePolicy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /admin/payouts/pending:
     get:
       tags: [Admin]
       summary: List pending payouts
-      description: Returns paginated list of payout requests awaiting admin processing.
+      deprecated: true
+      description: Post-MVP deferred endpoint. Returns paginated pending payout requests.
       operationId: adminListPendingPayouts
       security:
         - BearerAuth: []
@@ -2525,12 +2733,20 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /admin/payouts/{id}/process:
     post:
       tags: [Admin]
       summary: Mark payout as processed
+      deprecated: true
       description: |
+        Post-MVP deferred endpoint.
         Admin marks a payout request as processed after completing the bank transfer.
         This debits the tasker's wallet and creates a ledger entry.
         Requires Idempotency-Key header.
@@ -2555,6 +2771,12 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           description: Payout is not in PENDING status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization is deferred for the current MVP phase.
           content:
             application/json:
               schema:

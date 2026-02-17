@@ -6,13 +6,11 @@
 -- The superuser (POSTGRES_USER, default: tasky) owns the database and runs
 -- Flyway migrations. The app user only gets CONNECT + DML privileges.
 
-\set app_user tasky_app
-\set app_password `echo ${TASKY_APP_PASSWORD:-tasky_app}`
-
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'tasky_app') THEN
-        EXECUTE format('CREATE ROLE tasky_app LOGIN PASSWORD %L', :'app_password');
+        -- Keep init deterministic for local Docker bootstraps.
+        EXECUTE 'CREATE ROLE tasky_app LOGIN PASSWORD ''tasky_app''';
     END IF;
 END
 $$;

@@ -1,5 +1,10 @@
 package mn.tasky.dispute.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public record DisputeRequest(@JsonProperty("booking_id") String bookingId, String reason) {}
+public record DisputeRequest(
+    @NotBlank
+    @Size(min = 10, max = 2000)
+    String reason
+) {}

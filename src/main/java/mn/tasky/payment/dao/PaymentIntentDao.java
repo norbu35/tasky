@@ -5,15 +5,39 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.util.Optional;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 public interface PaymentIntentDao {
 
     @SqlUpdate("INSERT INTO payment_intents (payment_id, booking_id, processed) VALUES (:paymentId, :bookingId, false)")
-    void insert(@Bind("paymentId") String paymentId, @Bind("bookingId") String bookingId);
+    void insert(@Bind("paymentId") UUID paymentId, @Bind("bookingId") UUID bookingId);
 
     @SqlQuery("SELECT booking_id FROM payment_intents WHERE payment_id = :paymentId")
-    Optional<String> findBookingIdByPaymentId(@Bind("paymentId") String paymentId);
+    Optional<UUID> findBookingIdByPaymentId(@Bind("paymentId") UUID paymentId);
 
     @SqlUpdate("UPDATE payment_intents SET processed = true WHERE payment_id = :paymentId AND processed = false")
-    int markProcessed(@Bind("paymentId") String paymentId);
+    int markProcessed(@Bind("paymentId") UUID paymentId);
+
+    default void insert(String paymentId, String bookingId) {
+        insert(required(paymentId, "paymentId"), required(bookingId, "bookingId"));
+    }
+
+    default Optional<String> findBookingIdByPaymentId(String paymentId) {
+        UUID paymentUuid = optional(paymentId);
+        if (paymentUuid == null) {
+            return Optional.empty();
+        }
+        return findBookingIdByPaymentId(paymentUuid).map(UUID::toString);
+    }
+
+    default int markProcessed(String paymentId) {
+        UUID paymentUuid = optional(paymentId);
+        if (paymentUuid == null) {
+            return 0;
+        }
+        return markProcessed(paymentUuid);
+    }
 }

@@ -61,7 +61,7 @@ public class WalletService {
         walletDao.addBalance(taskerId, creditAmount, now);
 
         ledgerEntryDao.insert(
-            UUID.randomUUID().toString(), "SYSTEM", feeAmount, "FEE",
+            UUID.randomUUID().toString(), null, feeAmount, "FEE",
             bookingId, "Platform fee for booking #" + bookingId, now
         );
     }

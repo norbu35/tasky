@@ -2,6 +2,7 @@ export type ClientEventName =
   | "TASK_POSTED"
   | "APPLICATION_SUBMITTED"
   | "TASKER_ACCEPTED"
+  | "BOOKING_CONFIRMED"
   | "PAYMENT_INITIATED"
   | "BOOKING_COMPLETED"
   | "DISPUTE_RAISED";
@@ -48,7 +49,7 @@ export function resolveClientLocale(explicitLocale?: string): string {
   if (typeof explicitLocale === "string" && explicitLocale.trim().length > 0) {
     return explicitLocale;
   }
-  if (typeof navigator !== "undefined" && typeof navigator.language === "string" && navigator.language.length > 0) {
+  if (typeof navigator !== "undefined" && navigator.language.length > 0) {
     return navigator.language;
   }
   return "mn-MN";

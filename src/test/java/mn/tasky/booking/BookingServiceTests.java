@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dao.BookingDao;
+import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 class BookingServiceTests {
 
@@ -34,6 +36,7 @@ class BookingServiceTests {
         store.clear();
         AuthService authService = Mockito.mock(AuthService.class);
         BookingDao bookingDao = Mockito.mock(BookingDao.class);
+        BookingReliabilityIncidentDao bookingReliabilityIncidentDao = Mockito.mock(BookingReliabilityIncidentDao.class);
 
         // Simulate insert: capture the booking into the in-memory store
         doAnswer(invocation -> {
@@ -76,7 +79,7 @@ class BookingServiceTests {
         }).when(bookingDao).update(anyString(), anyString(), any(), anyBoolean(), any(Instant.class));
 
         // Simulate listing queries
-        when(bookingDao.findByCustomerId(anyString(), any())).thenAnswer(invocation -> {
+        when(bookingDao.findByCustomerId(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
             return store.values().stream()
@@ -86,7 +89,7 @@ class BookingServiceTests {
                 .toList();
         });
 
-        when(bookingDao.findByTaskerId(anyString(), any())).thenAnswer(invocation -> {
+        when(bookingDao.findByTaskerId(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
             return store.values().stream()
@@ -96,7 +99,7 @@ class BookingServiceTests {
                 .toList();
         });
 
-        when(bookingDao.findByParticipant(anyString(), any())).thenAnswer(invocation -> {
+        when(bookingDao.findByParticipant(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
             return store.values().stream()
@@ -106,16 +109,16 @@ class BookingServiceTests {
                 .toList();
         });
 
-        bookingService = new BookingService(authService, bookingDao);
+        bookingService = new BookingService(authService, bookingDao, bookingReliabilityIncidentDao);
     }
 
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE valid transitions")
     void validTransitions() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
-        assertThat(booking.status()).isEqualTo("PENDING_PAYMENT");
+        assertThat(booking.status()).isEqualTo("ASSIGNED");
 
-        // PENDING_PAYMENT -> PAID
+        // ASSIGNED -> PAID
         BookingTransitionResult paidResult = bookingService.transitionToPaid(booking.id());
         assertThat(paidResult.isSuccess()).isTrue();
         assertThat(paidResult.booking().status()).isEqualTo("PAID");
@@ -131,14 +134,16 @@ class BookingServiceTests {
     void invalidTransitions() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
 
-        // PENDING_PAYMENT -> COMPLETED (Invalid)
+        // ASSIGNED -> COMPLETED (Valid)
         BookingTransitionResult completedResult = bookingService.completeBooking("customer-1", booking.id());
-        assertThat(completedResult.isSuccess()).isFalse();
-        assertThat(completedResult.errorCode()).isEqualTo(BookingTransitionResult.INVALID_TRANSITION);
+        assertThat(completedResult.isSuccess()).isTrue();
+        assertThat(completedResult.booking().status()).isEqualTo("COMPLETED");
+
+        BookingState secondBooking = bookingService.createBooking("task-2", "tasker-1", "customer-1", 50000);
+        bookingService.cancelBooking("customer-1", secondBooking.id(), Instant.now().plus(10, ChronoUnit.HOURS));
 
         // CANCELLED -> PAID (Invalid)
-        bookingService.cancelBooking("customer-1", booking.id(), Instant.now().plus(10, ChronoUnit.HOURS));
-        BookingTransitionResult paidResult = bookingService.transitionToPaid(booking.id());
+        BookingTransitionResult paidResult = bookingService.transitionToPaid(secondBooking.id());
         assertThat(paidResult.isSuccess()).isFalse();
     }
 
@@ -147,7 +152,7 @@ class BookingServiceTests {
     void cancellationRules() {
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
 
-        // Customer can cancel PENDING_PAYMENT
+        // Customer can cancel ASSIGNED
         BookingTransitionResult cancelResult = bookingService.cancelBooking("customer-1", booking.id(), Instant.now().plus(10, ChronoUnit.HOURS));
         assertThat(cancelResult.isSuccess()).isTrue();
 
@@ -171,7 +176,7 @@ class BookingServiceTests {
         // Filter by other (both)
         assertThat(bookingService.listBookings("tasker-1", "any", null)).hasSize(2);
         // Filter by status
-        assertThat(bookingService.listBookings("customer-1", "customer", "PAID")).isEmpty();
+        assertThat(bookingService.listBookings("customer-1", "customer", "ASSIGNED")).hasSize(2);
     }
 
     @Test
@@ -180,10 +185,11 @@ class BookingServiceTests {
         BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
 
         // Not found
-        assertThat(bookingService.completeBooking("c1", "missing").errorCode()).isEqualTo("NOT_FOUND");
+        assertThat(bookingService.completeBooking("c1", UUID.randomUUID().toString()).errorCode()).isEqualTo("NOT_FOUND");
         // Forbidden
         assertThat(bookingService.completeBooking("stranger", booking.id()).errorCode()).isEqualTo("FORBIDDEN");
-        // Invalid transition
+        // Already completed cannot transition again
+        assertThat(bookingService.completeBooking("c1", booking.id()).isSuccess()).isTrue();
         assertThat(bookingService.completeBooking("c1", booking.id()).errorCode()).isEqualTo("INVALID_TRANSITION");
     }
 
@@ -197,7 +203,7 @@ class BookingServiceTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-064-payment-disclaimer record disclaimer acceptance")
+    @DisplayName("TID-TASK-064-API-DISCLAIMER-REQUIRED record disclaimer acceptance")
     void disclaimerAcceptance() {
         BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
         assertThat(booking.liabilityDisclaimerAccepted()).isFalse();
@@ -206,19 +212,19 @@ class BookingServiceTests {
         assertThat(updated).isPresent();
         assertThat(updated.get().liabilityDisclaimerAccepted()).isTrue();
 
-        assertThat(bookingService.recordDisclaimerAcceptance("missing")).isEmpty();
+        assertThat(bookingService.recordDisclaimerAcceptance(UUID.randomUUID().toString())).isEmpty();
     }
 
     @Test
-    @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE customer late-cancel applies fee")
-    void customerLateCancelFee() {
+    @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL customer late-cancel records incident without fee")
+    void customerLateCancelNoFee() {
         // Task scheduled 1 hour from now (late)
         Instant scheduledAt = Instant.now().plus(1, ChronoUnit.HOURS);
         BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 100000);
 
         BookingTransitionResult result = bookingService.cancelBooking("customer-1", booking.id(), scheduledAt);
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.booking().cancellationFee()).isEqualTo(10000); // 10% of 100,000
+        assertThat(result.booking().cancellationFee()).isNull();
     }
 
     @Test

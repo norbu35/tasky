@@ -25,7 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/error",
         "/actuator/health",
         "/actuator/info",
-        "/actuator/prometheus",
         "/api/v1/system/version",
         "/api/v1/auth/otp/request",
         "/api/v1/auth/otp/verify",
@@ -50,9 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        if (path.startsWith("/actuator/")) {
-            return true;
-        }
         return PUBLIC_PATHS.contains(path);
     }
 

@@ -8,22 +8,47 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(Message.class)
 public interface MessageDao {
 
     @SqlUpdate("INSERT INTO messages (id, conversation_id, sender_id, content, sent_at) "
-             + "VALUES (CAST(:id AS UUID), CAST(:conversationId AS UUID), CAST(:senderId AS UUID), :content, :sentAt)")
-    void insert(@Bind("id") String id,
-                @Bind("conversationId") String conversationId,
-                @Bind("senderId") String senderId,
+             + "VALUES (:id, :conversationId, :senderId, :content, :sentAt)")
+    void insert(@Bind("id") UUID id,
+                @Bind("conversationId") UUID conversationId,
+                @Bind("senderId") UUID senderId,
                 @Bind("content") String content,
                 @Bind("sentAt") Instant sentAt);
 
-    @SqlQuery("SELECT * FROM messages WHERE conversation_id = CAST(:conversationId AS UUID) "
-            + "AND (:cursor IS NULL OR id > CAST(:cursor AS UUID)) "
+    default void insert(String id, String conversationId, String senderId, String content, Instant sentAt) {
+        insert(required(id, "id"), required(conversationId, "conversationId"), required(senderId, "senderId"), content, sentAt);
+    }
+
+    @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
             + "ORDER BY id LIMIT :limit")
-    List<Message> findByConversationId(@Bind("conversationId") String conversationId,
-                                       @Bind("cursor") String cursor,
-                                       @Bind("limit") int limit);
+    List<Message> findByConversationIdFirstPage(@Bind("conversationId") UUID conversationId,
+                                                @Bind("limit") int limit);
+
+    @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
+            + "AND id > :cursor "
+            + "ORDER BY id LIMIT :limit")
+    List<Message> findByConversationIdAfterCursor(@Bind("conversationId") UUID conversationId,
+                                                  @Bind("cursor") UUID cursor,
+                                                  @Bind("limit") int limit);
+
+    default List<Message> findByConversationId(UUID conversationId, UUID cursor, int limit) {
+        if (cursor == null) {
+            return findByConversationIdFirstPage(conversationId, limit);
+        }
+        return findByConversationIdAfterCursor(conversationId, cursor, limit);
+    }
+
+    default List<Message> findByConversationId(String conversationId, String cursor, int limit) {
+        UUID conversationUuid = required(conversationId, "conversationId");
+        return findByConversationId(conversationUuid, optional(cursor), limit);
+    }
 }

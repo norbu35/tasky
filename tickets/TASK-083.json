@@ -11,15 +11,12 @@
     "REQ-MSG-01",
     "REQ-NOTIF-01",
     "REQ-NOTIF-02",
-    "REQ-PAY-01",
     "REQ-SAFE-02",
     "REQ-SAFE-03"
   ],
   "depends_on": [
     "TASK-030",
-    "TASK-031",
     "TASK-032",
-    "TASK-033",
     "TASK-040",
     "TASK-041",
     "TASK-042",
@@ -33,7 +30,7 @@
     {
       "id": "AC-TASK-083-01",
       "type": "functional",
-      "statement": "Mobile allows applicant acceptance, disclaimer acknowledgment, and payment initiation flow.",
+      "statement": "Mobile allows applicant acceptance and disclaimer acknowledgment before booking confirmation.",
       "test_ids": [
         "TID-TASK-083-MOBILE-BOOKING-PAYMENT-FLOW"
       ]

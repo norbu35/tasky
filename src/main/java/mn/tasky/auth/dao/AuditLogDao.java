@@ -8,18 +8,31 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(AuditLogEntry.class)
 public interface AuditLogDao {
 
     @SqlUpdate("INSERT INTO audit_log (id, admin_id, action, target_user_id, reason, created_at) "
              + "VALUES (:id, :adminId, :action, :targetUserId, :reason, :createdAt)")
-    void insert(@Bind("id") String id,
-                @Bind("adminId") String adminId,
+    void insert(@Bind("id") UUID id,
+                @Bind("adminId") UUID adminId,
                 @Bind("action") String action,
-                @Bind("targetUserId") String targetUserId,
+                @Bind("targetUserId") UUID targetUserId,
                 @Bind("reason") String reason,
                 @Bind("createdAt") Instant createdAt);
+
+    default void insert(String id,
+                        String adminId,
+                        String action,
+                        String targetUserId,
+                        String reason,
+                        Instant createdAt) {
+        insert(required(id, "id"), required(adminId, "adminId"), action, optional(targetUserId), reason, createdAt);
+    }
 
     @SqlQuery("SELECT id, admin_id, action, target_user_id AS target_id, reason, created_at FROM audit_log ORDER BY created_at DESC")
     List<AuditLogEntry> findAll();

@@ -31,30 +31,37 @@ public class NotificationService {
 
     public void unregisterDevice(String userId, String token) {
         deviceTokenDao.delete(userId, token);
-        log.info("Unregistered device for user {}: token={}", userId, token);
+        log.info("Unregistered device for user {}", userId);
     }
 
     public void sendPush(String userId, String title, String body, String type) {
         List<DeviceToken> tokens = deviceTokenDao.findByUserId(userId);
 
         if (tokens.isEmpty()) {
-            log.warn("No device tokens for user {}, push not sent: title={}", userId, title);
+            log.warn("No device tokens for user {}, push not sent: type={}", userId, type);
             if ("HIRED".equals(type) || "BOOKING_CONFIRMED".equals(type)) {
-                sendSmsFallback(userId, body);
+                sendSmsFallback(userId);
             }
             return;
         }
 
         for (DeviceToken t : tokens) {
-            log.info("Sending push to user {} ({}): {} - {}", userId, t.platform(), title, body);
+            log.info(
+                "Sending push to user {} on platform {}: notification_type={} title={} body={}",
+                userId,
+                t.platform(),
+                type,
+                title,
+                body
+            );
             notificationLogDao.insert(
                 UUID.randomUUID().toString(), userId, type, "PUSH", "SENT", Instant.now()
             );
         }
     }
 
-    public void sendSmsFallback(String userId, String body) {
-        log.info("Sending SMS fallback to user {}: {}", userId, body);
+    public void sendSmsFallback(String userId) {
+        log.info("Sending SMS fallback to user {}", userId);
         notificationLogDao.insert(
             UUID.randomUUID().toString(), userId, "FALLBACK", "SMS", "SENT", Instant.now()
         );

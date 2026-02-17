@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Map;
@@ -28,10 +33,13 @@ class PerformanceIntegrationTests extends IntegrationTestBase {
     @Test
     @DisplayName("TID-TASK-063-PERF-TASK-FEED-P95 p95 latency for GET /tasks remains under target")
     void taskFeedLatency() {
+        AuthContext customer = authenticate("perf");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
         // 1. Seed data
         for (int i = 0; i < 100; i++) {
-            taskService.createTask("cust-" + i, new CreateTask(
-                "cat-1", "Description " + i, 10000, 47.9, 106.9, "Ulaanbaatar, Mongolia", 
+            taskService.createTask(customer.userId(), new CreateTask(
+                categoryId, "Description " + i, 10000, 47.9, 106.9, "Ulaanbaatar, Mongolia",
                 java.time.Instant.now().plusSeconds(3600).toString(), java.util.List.of()
             ));
         }
@@ -64,5 +72,48 @@ class PerformanceIntegrationTests extends IntegrationTestBase {
     void regressionBudgetEnforcement() {
         // Contract verification for CI regression budget
         assertThat(true).isTrue();
+    }
+
+    private AuthContext authenticate(String prefix) {
+        String phone = "+976" + String.format("%08d", Math.abs(prefix.hashCode()) % 100_000_000);
+        post("/api/v1/auth/otp/request", Map.of("phone", phone));
+        ResponseEntity<Map> verifyResponse = post(
+            "/api/v1/auth/otp/verify",
+            Map.of("phone", phone, "code", "123456")
+        );
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> user = (Map<String, Object>) verifyResponse.getBody().get("user");
+        return new AuthContext(
+            String.valueOf(verifyResponse.getBody().get("access_token")),
+            String.valueOf(user.get("id"))
+        );
+    }
+
+    private String getFirstCategoryId(String token) {
+        ResponseEntity<Map> response = getWithAuth("/api/v1/categories", token);
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> data = (java.util.List<Map<String, Object>>) response.getBody().get("data");
+        return data.get(0).get("id").toString();
+    }
+
+    private ResponseEntity<Map> post(String path, Map<String, String> body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return restTemplate.exchange(url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
+    }
+
+    private ResponseEntity<Map> getWithAuth(String path, String bearerToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        headers.setBearerAuth(bearerToken);
+        return restTemplate.exchange(url(path), HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+    }
+
+    private String url(String path) {
+        return "http://localhost:" + port + path;
+    }
+
+    private record AuthContext(String accessToken, String userId) {
     }
 }

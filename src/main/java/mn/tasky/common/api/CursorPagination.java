@@ -14,7 +14,7 @@ public record CursorPagination(
         if (items == null || items.isEmpty()) {
             return new CursorPagination(null, false);
         }
-        String next = cursorResolver.apply(items.get(items.size() - 1));
+        String next = cursorResolver.apply(items.getLast());
         boolean hasMore = items.size() == limit;
         return new CursorPagination(next, hasMore);
     }

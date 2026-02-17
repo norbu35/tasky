@@ -35,7 +35,7 @@ export interface TaskFilters {
 
 export interface BookingFilters {
   role?: "customer" | "tasker";
-  status?: "PENDING_PAYMENT" | "PAID" | "COMPLETED" | "CANCELLED";
+  status?: "ASSIGNED" | "COMPLETED" | "CANCELLED";
 }
 
 export interface MobileApiClient {
@@ -71,6 +71,7 @@ export interface MobileApiClient {
     accessToken: string,
     taskId: string,
     applicationId: string,
+    liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string
   ): Promise<Booking>;
   initiatePayment(
@@ -327,6 +328,7 @@ export class HttpMobileApiClient implements MobileApiClient {
     accessToken: string,
     taskId: string,
     applicationId: string,
+    liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string
   ): Promise<Booking> {
     return this.requestJson<Booking>(
@@ -335,7 +337,10 @@ export class HttpMobileApiClient implements MobileApiClient {
         method: "POST",
         headers: {
           "Idempotency-Key": idempotencyKey
-        }
+        },
+        body: JSON.stringify({
+          liability_disclaimer_accepted: liabilityDisclaimerAccepted
+        })
       },
       accessToken
     );

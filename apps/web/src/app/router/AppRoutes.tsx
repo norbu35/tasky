@@ -2,7 +2,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {useAppContext} from "../context/AppContext";
 import {
     AuthPage,
-    BookingPaymentPage,
+    BookingConfirmationPage,
     BookingSafetyPage,
     CustomerTaskPage,
     MessagingNotificationsPage,
@@ -56,7 +56,17 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleGuard role="CUSTOMER">
-              <BookingPaymentPage />
+              <BookingConfirmationPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        }
+        path="/customer/booking-confirmation"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleGuard role="CUSTOMER">
+              <BookingConfirmationPage />
             </RoleGuard>
           </ProtectedRoute>
         }

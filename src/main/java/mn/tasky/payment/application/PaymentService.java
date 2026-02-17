@@ -33,6 +33,7 @@ public class PaymentService {
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
     private final PaymentIntentDao paymentIntentDao;
+    private final boolean monetizationEnabled;
     private final byte[] qpayWebhookSecretBytes;
 
     public PaymentService(
@@ -41,6 +42,7 @@ public class PaymentService {
         NotificationService notificationService,
         AnalyticsService analyticsService,
         PaymentIntentDao paymentIntentDao,
+        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled,
         @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret
     ) {
         this.bookingService = bookingService;
@@ -48,13 +50,17 @@ public class PaymentService {
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.paymentIntentDao = paymentIntentDao;
-        if (!StringUtils.hasText(qpayWebhookSecret)) {
+        this.monetizationEnabled = monetizationEnabled;
+        if (monetizationEnabled && !StringUtils.hasText(qpayWebhookSecret)) {
             throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");
         }
-        this.qpayWebhookSecretBytes = qpayWebhookSecret.getBytes(StandardCharsets.UTF_8);
+        this.qpayWebhookSecretBytes = StringUtils.hasText(qpayWebhookSecret)
+            ? qpayWebhookSecret.getBytes(StandardCharsets.UTF_8)
+            : new byte[0];
     }
 
     public PaymentIntent initiatePayment(String bookingId) {
+        ensureMonetizationEnabled();
         String paymentId = UUID.randomUUID().toString();
         paymentIntentDao.insert(paymentId, bookingId);
 
@@ -77,6 +83,7 @@ public class PaymentService {
     }
 
     public boolean processCallback(String paymentId, String status, String signature) {
+        ensureMonetizationEnabled();
         if (!isValidSignature(paymentId, status, signature)) {
             log.warn("Rejected QPay callback due to invalid signature for payment {}", paymentId);
             return false;
@@ -103,7 +110,7 @@ public class PaymentService {
         }
 
         BookingState booking = bookingOpt.get();
-        if ("PENDING_PAYMENT".equals(booking.status())) {
+        if ("ASSIGNED".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
             if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
                 log.warn("Task not found when assigning after payment: bookingId={} taskId={}", bookingId, booking.taskId());
@@ -149,6 +156,12 @@ public class PaymentService {
             return builder.toString();
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to calculate QPay signature", ex);
+        }
+    }
+
+    private void ensureMonetizationEnabled() {
+        if (!monetizationEnabled) {
+            throw new IllegalStateException("Monetization is deferred.");
         }
     }
 
