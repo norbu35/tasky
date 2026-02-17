@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
@@ -76,7 +77,7 @@ class ApiExceptionHandlerTests {
     @Test
     void handleNotReadableReturnsInvalidJsonCode() {
         var response = handler.handleNotReadable(
-            new HttpMessageNotReadableException("Malformed payload"),
+            new HttpMessageNotReadableException("Malformed payload", new MockHttpInputMessage(new byte[0])),
             new MockHttpServletRequest()
         );
 

@@ -377,11 +377,9 @@ public class AuthService {
     }
 
     public VerificationStatusResponse getVerificationStatus(String userId) {
-        Optional<VerificationRequest> requestOpt = verificationDao.findLatestByUserId(userId);
-        if (requestOpt.isEmpty()) {
-            return new VerificationStatusResponse("NOT_SUBMITTED", null, null, null);
-        }
-        return toVerificationStatus(requestOpt.get());
+        return verificationDao.findLatestByUserId(userId)
+            .map(this::toVerificationStatus)
+            .orElseGet(() -> new VerificationStatusResponse("NOT_SUBMITTED", null, null, null));
     }
 
     public List<VerificationDetail> listPendingVerifications(int limit) {
@@ -398,28 +396,19 @@ public class AuthService {
     }
 
     public Optional<VerificationDetail> approveVerification(String verificationId) {
-        Optional<VerificationRequest> requestOpt = verificationDao.findById(verificationId);
-        if (requestOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        VerificationRequest request = requestOpt.get();
-        if (!"PENDING".equals(request.status())) {
-            return Optional.empty();
-        }
-
-        Instant now = Instant.now();
-        verificationDao.updateStatus(verificationId, "APPROVED", request.adminNotes(), now);
-        userDao.updateStatus(request.userId(), "VERIFIED");
-
-        VerificationRequest approved = new VerificationRequest(
-            request.id(), request.userId(), request.idCardFrontKey(), request.idCardBackKey(),
-            "APPROVED", request.submittedAt(), request.adminNotes(), now
-        );
-        return Optional.of(toVerificationDetail(approved));
+        return resolveVerification(verificationId, "APPROVED", null, true);
     }
 
     public Optional<VerificationDetail> rejectVerification(String verificationId, String reason) {
+        return resolveVerification(verificationId, "REJECTED", reason, false);
+    }
+
+    private Optional<VerificationDetail> resolveVerification(
+        String verificationId,
+        String status,
+        String notes,
+        boolean markUserVerified
+    ) {
         Optional<VerificationRequest> requestOpt = verificationDao.findById(verificationId);
         if (requestOpt.isEmpty()) {
             return Optional.empty();
@@ -430,14 +419,18 @@ public class AuthService {
             return Optional.empty();
         }
 
+        String adminNotes = notes != null ? notes : request.adminNotes();
         Instant now = Instant.now();
-        verificationDao.updateStatus(verificationId, "REJECTED", reason, now);
+        verificationDao.updateStatus(verificationId, status, adminNotes, now);
+        if (markUserVerified) {
+            userDao.updateStatus(request.userId(), "VERIFIED");
+        }
 
-        VerificationRequest rejected = new VerificationRequest(
+        VerificationRequest resolved = new VerificationRequest(
             request.id(), request.userId(), request.idCardFrontKey(), request.idCardBackKey(),
-            "REJECTED", request.submittedAt(), reason, now
+            status, request.submittedAt(), adminNotes, now
         );
-        return Optional.of(toVerificationDetail(rejected));
+        return Optional.of(toVerificationDetail(resolved));
     }
 
     public void updateUserStats(String userId, int rating, boolean incrementCompleted) {

@@ -21,6 +21,11 @@ public class LoggingSmsService implements SmsService {
         log.debug("OTP for {} is {}", phone, code);
     }
 
+    @Override
+    public boolean isProductionReady() {
+        return false;
+    }
+
     public Optional<String> latestOtpForPhone(String phone) {
         return Optional.ofNullable(latestOtpByPhone.get(phone));
     }

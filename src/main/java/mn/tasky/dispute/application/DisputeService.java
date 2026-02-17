@@ -113,14 +113,13 @@ public class DisputeService {
             return DisputeResolutionResult.error("BOOKING_NOT_FOUND");
         }
 
-        String newStatus;
-        if ("RESOLVE_TASKER".equals(outcome)) {
-            newStatus = "RESOLVED_TASKER";
-        } else if ("RESOLVE_CUSTOMER".equals(outcome)) {
-            newStatus = "RESOLVED_CUSTOMER";
-        } else if ("ESCALATE".equals(outcome)) {
-            newStatus = "ESCALATED";
-        } else {
+        String newStatus = switch (outcome) {
+            case "RESOLVE_TASKER" -> "RESOLVED_TASKER";
+            case "RESOLVE_CUSTOMER" -> "RESOLVED_CUSTOMER";
+            case "ESCALATE" -> "ESCALATED";
+            default -> null;
+        };
+        if (newStatus == null) {
             return DisputeResolutionResult.error("INVALID_OUTCOME");
         }
 

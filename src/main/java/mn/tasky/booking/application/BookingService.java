@@ -87,7 +87,7 @@ public class BookingService {
     }
 
     public BookingTransitionResult transitionToPaid(String bookingId) {
-        return transition(bookingId, "PAID", List.of("ASSIGNED"), null);
+        return transition(bookingId, "PAID", List.of("ASSIGNED"));
     }
 
     public BookingTransitionResult completeBooking(String userId, String bookingId) {
@@ -96,7 +96,7 @@ public class BookingService {
         BookingState booking = bookingOpt.get();
         if (!booking.customerId().equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
 
-        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID"), null);
+        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess()) {
             authService.updateUserStats(booking.taskerId(), 0, true);
         }
@@ -115,7 +115,7 @@ public class BookingService {
         }
 
         boolean lateCustomerCancellation = isCustomer && isLateCancellation(scheduledAt);
-        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID"), null);
+        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess() && lateCustomerCancellation) {
             bookingReliabilityIncidentDao.insert(
                 UUID.randomUUID().toString(),
@@ -132,8 +132,7 @@ public class BookingService {
     private BookingTransitionResult transition(
         String bookingId,
         String newStatus,
-        List<String> allowedFrom,
-        Integer cancellationFeeOverride
+        List<String> allowedFrom
     ) {
         Optional<BookingState> currentOpt = bookingDao.findById(bookingId);
         if (currentOpt.isEmpty()) {
@@ -146,7 +145,7 @@ public class BookingService {
         }
 
         Instant now = Instant.now();
-        Integer fee = cancellationFeeOverride != null ? cancellationFeeOverride : current.cancellationFee();
+        Integer fee = current.cancellationFee();
         bookingDao.update(bookingId, newStatus, fee, current.liabilityDisclaimerAccepted(), now);
 
         BookingState updated = new BookingState(
