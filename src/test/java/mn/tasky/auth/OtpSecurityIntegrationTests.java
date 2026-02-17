@@ -1,6 +1,9 @@
 package mn.tasky.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import mn.tasky.auth.application.LoggingSmsService;
+import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +17,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {"tasky.auth.otp-test-code="}
 )
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class OtpSecurityIntegrationTests {
+class OtpSecurityIntegrationTests extends IntegrationTestBase {
 
     @LocalServerPort
     private int port;

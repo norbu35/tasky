@@ -1,14 +1,16 @@
 package mn.tasky.analytics;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.analytics.application.KpiReportService;
 import mn.tasky.analytics.domain.KpiReport;
 import mn.tasky.analytics.dto.Event;
+import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -23,11 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class AnalyticsIntegrationTests {
+class AnalyticsIntegrationTests extends IntegrationTestBase {
 
     @LocalServerPort
     private int port;

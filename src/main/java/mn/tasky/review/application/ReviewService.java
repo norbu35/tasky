@@ -2,26 +2,26 @@ package mn.tasky.review.application;
 
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.review.dto.Review;
 import mn.tasky.review.dto.ReviewSubmitResult;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ReviewService {
 
     private final BookingService bookingService;
     private final AuthService authService;
-    private final ConcurrentHashMap<String, Review> reviewsById = new ConcurrentHashMap<>();
+    private final ReviewDao reviewDao;
 
-    public ReviewService(BookingService bookingService, AuthService authService) {
+    public ReviewService(BookingService bookingService, AuthService authService, ReviewDao reviewDao) {
         this.bookingService = bookingService;
         this.authService = authService;
+        this.reviewDao = reviewDao;
     }
 
     public ReviewSubmitResult submitReview(String authorId, String bookingId, int rating, String comment) {
@@ -29,19 +29,16 @@ public class ReviewService {
             return new ReviewSubmitResult(null, "INVALID_RATING");
         }
 
-        // 1. Verify booking
         var bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
             return new ReviewSubmitResult(null, "BOOKING_NOT_FOUND");
         }
         var booking = bookingOpt.get();
 
-        // 2. Verify completed status
         if (!"COMPLETED".equals(booking.status())) {
             return new ReviewSubmitResult(null, "BOOKING_NOT_COMPLETED");
         }
 
-        // 3. Determine target user (reviewee)
         String targetUserId;
         if (booking.customerId().equals(authorId)) {
             targetUserId = booking.taskerId();
@@ -51,44 +48,21 @@ public class ReviewService {
             return new ReviewSubmitResult(null, "NOT_PARTICIPANT");
         }
 
-        // 4. Check for existing review by author for this booking
-        boolean alreadyReviewed = reviewsById.values().stream()
-            .anyMatch(r -> r.bookingId().equals(bookingId) && r.authorId().equals(authorId));
-        if (alreadyReviewed) {
+        if (reviewDao.existsByBookingIdAndAuthorId(bookingId, authorId)) {
             return new ReviewSubmitResult(null, "ALREADY_REVIEWED");
         }
 
-        // 5. Create review
-        Review review = new Review(
-            UUID.randomUUID().toString(),
-            bookingId,
-            authorId,
-            targetUserId,
-            rating,
-            comment,
-            Instant.now()
-        );
-        reviewsById.put(review.id(), review);
+        String id = UUID.randomUUID().toString();
+        Instant now = Instant.now();
+        Review review = new Review(id, bookingId, authorId, targetUserId, rating, comment, now);
+        reviewDao.insert(id, bookingId, authorId, targetUserId, rating, comment, now);
 
-        // 6. Update user stats
-        // If author is customer, we increment tasker's completed count (only once per booking usually, 
-        // but here let's stick to the requirement: "Pro badge assignment follows completed-count". 
-        // Usually completion is recorded at booking completion time.
-        // Let's assume completed count is updated at booking completion (not here), 
-        // but rating is updated here.
-        // Wait, AuthService.updateUserStats updates both. 
-        // Let's just update rating here.
         authService.updateUserStats(targetUserId, rating, false);
 
         return new ReviewSubmitResult(review, null);
     }
 
     public List<Review> listReviews(String userId, String cursor, int limit) {
-        return reviewsById.values().stream()
-            .filter(r -> r.targetUserId().equals(userId))
-            .filter(r -> cursor == null || r.id().compareTo(cursor) > 0)
-            .sorted(Comparator.comparing(Review::id))
-            .limit(limit)
-            .toList();
+        return reviewDao.findByTargetUserId(userId, cursor, limit);
     }
 }

@@ -1,5 +1,8 @@
 package mn.tasky.analytics.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import mn.tasky.analytics.dao.AnalyticsEventDao;
 import mn.tasky.analytics.dto.Event;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.slf4j.Logger;
@@ -13,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class AnalyticsService {
@@ -30,7 +32,13 @@ public class AnalyticsService {
     public static final String PROPERTY_CORRELATION_ID = "correlation_id";
 
     private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
-    private final List<Event> events = new CopyOnWriteArrayList<>();
+    private final AnalyticsEventDao analyticsEventDao;
+    private final ObjectMapper objectMapper;
+
+    public AnalyticsService(AnalyticsEventDao analyticsEventDao, ObjectMapper objectMapper) {
+        this.analyticsEventDao = analyticsEventDao;
+        this.objectMapper = objectMapper;
+    }
 
     public void track(String eventName, String userId, Map<String, Object> properties) {
         Map<String, Object> enrichedProperties = new LinkedHashMap<>();
@@ -43,19 +51,22 @@ public class AnalyticsService {
             enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID, correlationId);
         }
 
-        Event event = new Event(
-            UUID.randomUUID().toString(),
-            eventName,
-            userId,
-            Map.copyOf(enrichedProperties),
-            Instant.now()
-        );
-        events.add(event);
-        log.info("TRACK event={} user={} props={}", eventName, userId, event.properties());
+        String id = UUID.randomUUID().toString();
+        Instant now = Instant.now();
+
+        String propertiesJson;
+        try {
+            propertiesJson = objectMapper.writeValueAsString(enrichedProperties);
+        } catch (JsonProcessingException e) {
+            propertiesJson = "{}";
+        }
+
+        analyticsEventDao.insert(id, eventName, userId, propertiesJson, now);
+        log.info("TRACK event={} user={} props={}", eventName, userId, enrichedProperties);
     }
 
     public List<Event> getEvents() {
-        return List.copyOf(events);
+        return analyticsEventDao.findAll();
     }
 
 }

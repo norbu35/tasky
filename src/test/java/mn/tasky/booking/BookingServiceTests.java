@@ -1,7 +1,16 @@
 package mn.tasky.booking;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,18 +20,93 @@ import org.mockito.Mockito;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class BookingServiceTests {
 
     private BookingService bookingService;
+    private final Map<String, BookingState> store = new HashMap<>();
 
     @BeforeEach
     void setUp() {
+        store.clear();
         AuthService authService = Mockito.mock(AuthService.class);
-        bookingService = new BookingService(authService);
+        BookingDao bookingDao = Mockito.mock(BookingDao.class);
+
+        // Simulate insert: capture the booking into the in-memory store
+        doAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            String taskId = invocation.getArgument(1);
+            String taskerId = invocation.getArgument(2);
+            String customerId = invocation.getArgument(3);
+            int price = invocation.getArgument(4);
+            String status = invocation.getArgument(5);
+            Integer cancellationFee = invocation.getArgument(6);
+            boolean disclaimer = invocation.getArgument(7);
+            Instant createdAt = invocation.getArgument(8);
+            Instant updatedAt = invocation.getArgument(9);
+            store.put(id, new BookingState(id, taskId, taskerId, customerId, price,
+                status, cancellationFee, disclaimer, createdAt, updatedAt));
+            return null;
+        }).when(bookingDao).insert(anyString(), anyString(), anyString(), anyString(),
+            anyInt(), anyString(), any(), anyBoolean(), any(Instant.class), any(Instant.class));
+
+        // Simulate findById: look up from store
+        when(bookingDao.findById(anyString())).thenAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            return Optional.ofNullable(store.get(id));
+        });
+
+        // Simulate update: modify the stored booking
+        doAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            String newStatus = invocation.getArgument(1);
+            Integer fee = invocation.getArgument(2);
+            boolean disclaimer = invocation.getArgument(3);
+            Instant updatedAt = invocation.getArgument(4);
+            BookingState existing = store.get(id);
+            if (existing != null) {
+                store.put(id, new BookingState(existing.id(), existing.taskId(), existing.taskerId(),
+                    existing.customerId(), existing.price(), newStatus, fee, disclaimer,
+                    existing.createdAt(), updatedAt));
+            }
+            return null;
+        }).when(bookingDao).update(anyString(), anyString(), any(), anyBoolean(), any(Instant.class));
+
+        // Simulate listing queries
+        when(bookingDao.findByCustomerId(anyString(), any())).thenAnswer(invocation -> {
+            String userId = invocation.getArgument(0);
+            String status = invocation.getArgument(1);
+            return store.values().stream()
+                .filter(b -> b.customerId().equals(userId))
+                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
+        });
+
+        when(bookingDao.findByTaskerId(anyString(), any())).thenAnswer(invocation -> {
+            String userId = invocation.getArgument(0);
+            String status = invocation.getArgument(1);
+            return store.values().stream()
+                .filter(b -> b.taskerId().equals(userId))
+                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
+        });
+
+        when(bookingDao.findByParticipant(anyString(), any())).thenAnswer(invocation -> {
+            String userId = invocation.getArgument(0);
+            String status = invocation.getArgument(1);
+            return store.values().stream()
+                .filter(b -> b.customerId().equals(userId) || b.taskerId().equals(userId))
+                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
+        });
+
+        bookingService = new BookingService(authService, bookingDao);
     }
 
     @Test
@@ -94,7 +178,7 @@ class BookingServiceTests {
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE complete booking errors")
     void completeBookingErrors() {
         BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
-        
+
         // Not found
         assertThat(bookingService.completeBooking("c1", "missing").errorCode()).isEqualTo("NOT_FOUND");
         // Forbidden

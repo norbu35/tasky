@@ -1,46 +1,50 @@
 package mn.tasky.wallet.application;
 
+import mn.tasky.wallet.dao.CreditedBookingDao;
+import mn.tasky.wallet.dao.LedgerEntryDao;
+import mn.tasky.wallet.dao.PayoutRequestDao;
+import mn.tasky.wallet.dao.WalletDao;
 import mn.tasky.wallet.dto.LedgerEntry;
 import mn.tasky.wallet.dto.PayoutRequest;
 import mn.tasky.wallet.dto.WalletBalance;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class WalletService {
 
-    private final ConcurrentHashMap<String, Long> balancesByUserId = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Long> heldBalancesByUserId = new ConcurrentHashMap<>();
-    private final CopyOnWriteArrayList<LedgerEntry> ledger = new CopyOnWriteArrayList<>();
-    private final ConcurrentHashMap<String, PayoutRequest> payoutsById = new ConcurrentHashMap<>();
-    private final Set<String> creditedBookingIds = ConcurrentHashMap.newKeySet();
+    private final WalletDao walletDao;
+    private final LedgerEntryDao ledgerEntryDao;
+    private final PayoutRequestDao payoutRequestDao;
+    private final CreditedBookingDao creditedBookingDao;
+
+    public WalletService(WalletDao walletDao,
+                        LedgerEntryDao ledgerEntryDao,
+                        PayoutRequestDao payoutRequestDao,
+                        CreditedBookingDao creditedBookingDao) {
+        this.walletDao = walletDao;
+        this.ledgerEntryDao = ledgerEntryDao;
+        this.payoutRequestDao = payoutRequestDao;
+        this.creditedBookingDao = creditedBookingDao;
+    }
 
     public WalletBalance getBalance(String userId) {
-        long balance = balancesByUserId.getOrDefault(userId, 0L);
-        long pendingPayout = payoutsById.values().stream()
-            .filter(p -> p.userId().equals(userId) && "PENDING".equals(p.status()))
-            .mapToLong(PayoutRequest::amount)
-            .sum();
-        return new WalletBalance(balance, pendingPayout, "MNT");
+        walletDao.ensureExists(userId, Instant.now());
+        Long balance = walletDao.getBalance(userId);
+        long pendingPayout = payoutRequestDao.sumPendingByUserId(userId);
+        return new WalletBalance(balance != null ? balance : 0L, pendingPayout, "MNT");
     }
 
     public List<LedgerEntry> listTransactions(String userId) {
-        List<LedgerEntry> entries = new ArrayList<>();
-        for (LedgerEntry entry : ledger) {
-            if (entry.userId().equals(userId)) {
-                entries.add(entry);
-            }
-        }
-        Collections.reverse(entries);
-        return entries;
+        return ledgerEntryDao.findByUserId(userId);
     }
 
     public void creditTaskCompletion(String taskerId, String bookingId, int totalAmount, double feePercent) {
-        if (!creditedBookingIds.add(bookingId)) {
+        if (creditedBookingDao.tryInsert(bookingId) == 0) {
             return;
         }
 
@@ -48,71 +52,63 @@ public class WalletService {
         int creditAmount = totalAmount - feeAmount;
 
         Instant now = Instant.now();
+        walletDao.ensureExists(taskerId, now);
 
-        // Add credit entry
-        LedgerEntry creditEntry = new LedgerEntry(
-            UUID.randomUUID().toString(),
-            taskerId,
-            creditAmount,
-            "DEPOSIT",
-            bookingId,
-            "Booking completion credit for #" + bookingId,
-            now
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), taskerId, creditAmount, "DEPOSIT",
+            bookingId, "Booking completion credit for #" + bookingId, now
         );
-        ledger.add(creditEntry);
+        walletDao.addBalance(taskerId, creditAmount, now);
 
-        // Update balance
-        balancesByUserId.compute(taskerId, (id, current) -> (current == null ? 0L : current) + creditAmount);
-        
-        // Record platform fee (auditable)
-        LedgerEntry feeEntry = new LedgerEntry(
-            UUID.randomUUID().toString(),
-            "SYSTEM",
-            feeAmount,
-            "FEE",
-            bookingId,
-            "Platform fee for booking #" + bookingId,
-            now
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), "SYSTEM", feeAmount, "FEE",
+            bookingId, "Platform fee for booking #" + bookingId, now
         );
-        ledger.add(feeEntry);
     }
 
     public void holdFunds(String userId, int amount, String referenceId, String description) {
-        balancesByUserId.compute(userId, (id, current) -> {
-            long currentVal = current == null ? 0L : current;
-            if (currentVal < amount) throw new IllegalArgumentException("Insufficient balance to hold");
-            return currentVal - amount;
-        });
-        heldBalancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
-        
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(), userId, -amount, "HOLD", referenceId, description, Instant.now()
-        ));
+        walletDao.ensureExists(userId, Instant.now());
+        Long currentBalance = walletDao.getBalance(userId);
+        if (currentBalance == null || currentBalance < amount) {
+            throw new IllegalArgumentException("Insufficient balance to hold");
+        }
+
+        Instant now = Instant.now();
+        walletDao.addBalance(userId, -amount, now);
+        walletDao.addHeldBalance(userId, amount, now);
+
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), userId, -amount, "HOLD", referenceId, description, now
+        );
     }
 
     public void releaseFunds(String userId, int amount, String referenceId, String description) {
-        heldBalancesByUserId.compute(userId, (id, current) -> {
-            long currentVal = current == null ? 0L : current;
-            if (currentVal < amount) throw new IllegalArgumentException("Insufficient held balance to release");
-            return currentVal - amount;
-        });
-        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
-        
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(), userId, amount, "RELEASE", referenceId, description, Instant.now()
-        ));
+        Long currentHeld = walletDao.getHeldBalance(userId);
+        if (currentHeld == null || currentHeld < amount) {
+            throw new IllegalArgumentException("Insufficient held balance to release");
+        }
+
+        Instant now = Instant.now();
+        walletDao.addHeldBalance(userId, -amount, now);
+        walletDao.addBalance(userId, amount, now);
+
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), userId, amount, "RELEASE", referenceId, description, now
+        );
     }
 
     public void confiscateFunds(String userId, int amount, String referenceId, String description) {
-        heldBalancesByUserId.compute(userId, (id, current) -> {
-            long currentVal = current == null ? 0L : current;
-            if (currentVal < amount) throw new IllegalArgumentException("Insufficient held balance to confiscate");
-            return currentVal - amount;
-        });
-        
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(), userId, -amount, "CONFISCATE", referenceId, description, Instant.now()
-        ));
+        Long currentHeld = walletDao.getHeldBalance(userId);
+        if (currentHeld == null || currentHeld < amount) {
+            throw new IllegalArgumentException("Insufficient held balance to confiscate");
+        }
+
+        Instant now = Instant.now();
+        walletDao.addHeldBalance(userId, -amount, now);
+
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), userId, -amount, "CONFISCATE", referenceId, description, now
+        );
     }
 
     public String requestPayout(String userId, int amount) {
@@ -120,66 +116,60 @@ public class WalletService {
             throw new IllegalArgumentException("Payout amount must be greater than zero");
         }
 
-        balancesByUserId.compute(userId, (id, current) -> {
-            long currentVal = current == null ? 0L : current;
-            if (currentVal < amount) throw new IllegalArgumentException("Insufficient balance for payout");
-            return currentVal - amount;
-        });
+        walletDao.ensureExists(userId, Instant.now());
+        Long currentBalance = walletDao.getBalance(userId);
+        if (currentBalance == null || currentBalance < amount) {
+            throw new IllegalArgumentException("Insufficient balance for payout");
+        }
+
+        walletDao.addBalance(userId, -amount, Instant.now());
 
         String payoutId = UUID.randomUUID().toString();
-        PayoutRequest request = new PayoutRequest(payoutId, userId, amount, "PENDING", Instant.now());
-        payoutsById.put(payoutId, request);
+        payoutRequestDao.insert(payoutId, userId, amount, "PENDING", Instant.now());
         return payoutId;
     }
 
     public List<PayoutRequest> listPendingPayouts() {
-        return payoutsById.values().stream()
-            .filter(p -> "PENDING".equals(p.status()))
-            .toList();
+        return payoutRequestDao.findPending();
     }
 
     public void processPayout(String payoutId) {
-        PayoutRequest p = payoutsById.get(payoutId);
-        if (p == null) throw new IllegalArgumentException("Payout not found");
+        Optional<PayoutRequest> pOpt = payoutRequestDao.findById(payoutId);
+        if (pOpt.isEmpty()) throw new IllegalArgumentException("Payout not found");
+        PayoutRequest p = pOpt.get();
         if (!"PENDING".equals(p.status())) throw new IllegalArgumentException("Payout already processed");
 
-        payoutsById.put(payoutId, new PayoutRequest(p.id(), p.userId(), p.amount(), "PROCESSED", p.createdAt()));
-        
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(), p.userId(), -p.amount(), "PAYOUT", p.id(), "Payout processed", Instant.now()
-        ));
+        Instant now = Instant.now();
+        payoutRequestDao.updateStatus(payoutId, "PROCESSED", now);
+
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), p.userId(), -p.amount(), "PAYOUT", p.id(), "Payout processed", now
+        );
     }
 
     public void creditRefund(String userId, int amount, String bookingId, String description) {
         if (amount <= 0) {
             return;
         }
-        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(),
-            userId,
-            amount,
-            "REFUND",
-            bookingId,
-            description,
-            Instant.now()
-        ));
+        walletDao.ensureExists(userId, Instant.now());
+        Instant now = Instant.now();
+        walletDao.addBalance(userId, amount, now);
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), userId, amount, "REFUND", bookingId, description, now
+        );
     }
 
     public void creditCancellationFee(String userId, int amount, String bookingId) {
         if (amount <= 0) {
             return;
         }
-        balancesByUserId.compute(userId, (id, current) -> (current == null ? 0L : current) + amount);
-        ledger.add(new LedgerEntry(
-            UUID.randomUUID().toString(),
-            userId,
-            amount,
-            "REFUND",
-            bookingId,
-            "Late cancellation fee for booking #" + bookingId,
-            Instant.now()
-        ));
+        walletDao.ensureExists(userId, Instant.now());
+        Instant now = Instant.now();
+        walletDao.addBalance(userId, amount, now);
+        ledgerEntryDao.insert(
+            UUID.randomUUID().toString(), userId, amount, "REFUND", bookingId,
+            "Late cancellation fee for booking #" + bookingId, now
+        );
     }
 
 }

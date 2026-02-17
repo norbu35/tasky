@@ -12,14 +12,36 @@ import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.task.application.TaskService;
-import mn.tasky.task.dto.*;
+import mn.tasky.task.dto.ApplyTaskRequest;
+import mn.tasky.task.dto.CreateTask;
+import mn.tasky.task.dto.CreateTaskRequest;
+import mn.tasky.task.dto.TaskAcceptResult;
+import mn.tasky.task.dto.TaskApplicationState;
+import mn.tasky.task.dto.TaskApplicationsListResult;
+import mn.tasky.task.dto.TaskApplyResult;
+import mn.tasky.task.dto.TaskCancelResult;
+import mn.tasky.task.dto.TaskCreateResult;
+import mn.tasky.task.dto.TaskPage;
+import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
+import mn.tasky.task.dto.TaskState;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tasks")

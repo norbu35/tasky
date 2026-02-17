@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tasky
+    username: tasky
+    password: tasky
+
+tasky:
+  dev-auth:
+    enabled: true
+  auth:
+    otp-test-code: "123456"
+  security:
+    jwt-secret: "dev-only-jwt-secret-not-for-production-use-replace-me-1234567890"
+    encryption-key: "xBN9U7Shl9TxpE+B4H8C68T0oPuEht0SGeyQf4o/yag="
+    blind-index-key: "dev-only-blind-index-key-not-for-production-use-replace-me-12345"
+    access-token-ttl-seconds: 3600
+    refresh-token-ttl-seconds: 2592000
+  qpay:
+    webhook-secret: "dev-only-qpay-webhook-secret-not-for-production-use-replace-me"

@@ -1,14 +1,21 @@
 package mn.tasky.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -16,10 +23,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SecurityBaselineIntegrationTests {
+class SecurityBaselineIntegrationTests extends IntegrationTestBase {
 
     @LocalServerPort
     private int port;

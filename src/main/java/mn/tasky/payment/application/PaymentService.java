@@ -2,9 +2,10 @@ package mn.tasky.payment.application;
 
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
-import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.payment.dao.PaymentIntentDao;
+import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.task.application.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,10 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PaymentService {
@@ -29,23 +32,22 @@ public class PaymentService {
     private final TaskService taskService;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
+    private final PaymentIntentDao paymentIntentDao;
     private final byte[] qpayWebhookSecretBytes;
-
-    // Maps payment_id to booking_id
-    private final ConcurrentHashMap<String, String> bookingByPaymentId = new ConcurrentHashMap<>();
-    private final Set<String> processedPaymentIds = ConcurrentHashMap.newKeySet();
 
     public PaymentService(
         BookingService bookingService,
         TaskService taskService,
         NotificationService notificationService,
         AnalyticsService analyticsService,
+        PaymentIntentDao paymentIntentDao,
         @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret
     ) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
+        this.paymentIntentDao = paymentIntentDao;
         if (!StringUtils.hasText(qpayWebhookSecret)) {
             throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");
         }
@@ -54,8 +56,8 @@ public class PaymentService {
 
     public PaymentIntent initiatePayment(String bookingId) {
         String paymentId = UUID.randomUUID().toString();
-        bookingByPaymentId.put(paymentId, bookingId);
-        
+        paymentIntentDao.insert(paymentId, bookingId);
+
         Optional<BookingState> booking = bookingService.getBooking(bookingId);
         booking.ifPresent(b -> analyticsService.track(
             AnalyticsService.EVENT_PAYMENT_INITIATED,
@@ -84,18 +86,20 @@ public class PaymentService {
             return false;
         }
 
-        String bookingId = bookingByPaymentId.get(paymentId);
-        if (bookingId == null) {
+        Optional<String> bookingIdOpt = paymentIntentDao.findBookingIdByPaymentId(paymentId);
+        if (bookingIdOpt.isEmpty()) {
             return false;
         }
+        String bookingId = bookingIdOpt.get();
 
         Optional<BookingState> bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
             return false;
         }
 
-        if (!processedPaymentIds.add(paymentId)) {
-            return true;
+        int rowsUpdated = paymentIntentDao.markProcessed(paymentId);
+        if (rowsUpdated == 0) {
+            return true; // already processed
         }
 
         BookingState booking = bookingOpt.get();
@@ -104,7 +108,7 @@ public class PaymentService {
             if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
                 log.warn("Task not found when assigning after payment: bookingId={} taskId={}", bookingId, booking.taskId());
             }
-            
+
             notificationService.sendPush(booking.taskerId(), "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
             notificationService.sendPush(booking.customerId(), "Booking Confirmed", "Your payment for booking #" + bookingId + " was successful.", "BOOKING_CONFIRMED");
             analyticsService.track(

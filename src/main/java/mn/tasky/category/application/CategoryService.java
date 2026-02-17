@@ -1,5 +1,6 @@
 package mn.tasky.category.application;
 
+import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dto.CategoryPage;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.category.dto.CreateCategory;
@@ -7,23 +8,18 @@ import mn.tasky.category.dto.UpdateCategory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CategoryService {
 
-    private static final Comparator<CategoryState> SORT_ORDER =
-        Comparator.comparingInt(CategoryState::sortOrder)
-            .thenComparing(CategoryState::name);
+    private final CategoryDao categoryDao;
 
-    private final ConcurrentHashMap<String, CategoryState> categoriesById = new ConcurrentHashMap<>();
-
-    public CategoryService() {
-        seedCategory("Cleaning", "Цэвэрлэгээ", "https://cdn.tasky.local/icons/cleaning.png", 10);
-        seedCategory("Plumbing", "Сантехник", "https://cdn.tasky.local/icons/plumbing.png", 20);
-        seedCategory("Moving", "Нүүлгэлт", "https://cdn.tasky.local/icons/moving.png", 30);
+    public CategoryService(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
     }
 
     public CategoryPage listActiveCategories(String cursor, int limit) {
@@ -43,33 +39,38 @@ public class CategoryService {
             true,
             command.sortOrder()
         );
-        categoriesById.put(created.id(), created);
+        categoryDao.insert(created.id(), created.name(), created.nameMn(),
+                          created.iconUrl(), created.isActive(), created.sortOrder());
         return created;
     }
 
     public Optional<CategoryState> updateCategory(String id, UpdateCategory command) {
-        CategoryState updated = categoriesById.computeIfPresent(id, (ignored, current) ->
-            new CategoryState(
-                current.id(),
-                command.name() != null ? command.name().trim() : current.name(),
-                command.nameMn() != null ? command.nameMn().trim() : current.nameMn(),
-                command.iconUrl() != null ? command.iconUrl().trim() : current.iconUrl(),
-                command.isActive() != null ? command.isActive() : current.isActive(),
-                command.sortOrder() != null ? command.sortOrder() : current.sortOrder()
-            )
+        Optional<CategoryState> existing = categoryDao.findById(id);
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
+        CategoryState current = existing.get();
+        CategoryState updated = new CategoryState(
+            current.id(),
+            command.name() != null ? command.name().trim() : current.name(),
+            command.nameMn() != null ? command.nameMn().trim() : current.nameMn(),
+            command.iconUrl() != null ? command.iconUrl().trim() : current.iconUrl(),
+            command.isActive() != null ? command.isActive() : current.isActive(),
+            command.sortOrder() != null ? command.sortOrder() : current.sortOrder()
         );
-        return Optional.ofNullable(updated);
+        categoryDao.update(updated.id(), updated.name(), updated.nameMn(),
+                          updated.iconUrl(), updated.isActive(), updated.sortOrder());
+        return Optional.of(updated);
     }
 
     public Optional<CategoryState> getCategory(String id) {
-        return Optional.ofNullable(categoriesById.get(id));
+        return categoryDao.findById(id);
     }
 
     private CategoryPage listCategories(boolean includeInactive, String cursor, int limit) {
-        List<CategoryState> sorted = categoriesById.values().stream()
-            .filter(category -> includeInactive || category.isActive())
-            .sorted(SORT_ORDER)
-            .toList();
+        List<CategoryState> sorted = includeInactive
+            ? categoryDao.findAll()
+            : categoryDao.findActive();
 
         int offset = decodeOffset(cursor);
         if (offset > sorted.size()) {
@@ -91,7 +92,7 @@ public class CategoryService {
         try {
             String decoded = new String(
                 Base64.getUrlDecoder().decode(cursor),
-                StandardCharsets.UTF_8
+                java.nio.charset.StandardCharsets.UTF_8
             );
             int offset = Integer.parseInt(decoded);
             if (offset < 0) {
@@ -106,18 +107,6 @@ public class CategoryService {
     private String encodeOffset(int offset) {
         return Base64.getUrlEncoder()
             .withoutPadding()
-            .encodeToString(Integer.toString(offset).getBytes(StandardCharsets.UTF_8));
-    }
-
-    private void seedCategory(String name, String nameMn, String iconUrl, int sortOrder) {
-        CategoryState seeded = new CategoryState(
-            UUID.randomUUID().toString(),
-            name,
-            nameMn,
-            iconUrl,
-            true,
-            sortOrder
-        );
-        categoriesById.put(seeded.id(), seeded);
+            .encodeToString(Integer.toString(offset).getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }

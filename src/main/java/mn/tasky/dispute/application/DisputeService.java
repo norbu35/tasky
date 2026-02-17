@@ -1,6 +1,7 @@
 package mn.tasky.dispute.application;
 
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
@@ -10,18 +11,18 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class DisputeService {
 
     private final BookingService bookingService;
     private final WalletService walletService;
-    private final ConcurrentHashMap<String, Dispute> disputesById = new ConcurrentHashMap<>();
+    private final DisputeDao disputeDao;
 
-    public DisputeService(BookingService bookingService, WalletService walletService) {
+    public DisputeService(BookingService bookingService, WalletService walletService, DisputeDao disputeDao) {
         this.bookingService = bookingService;
         this.walletService = walletService;
+        this.disputeDao = disputeDao;
     }
 
     public DisputeRaiseResult raiseDispute(String userId, String bookingId, String reason) {
@@ -39,27 +40,15 @@ public class DisputeService {
             return DisputeRaiseResult.error("INVALID_STATUS");
         }
 
-        boolean exists = disputesById.values().stream()
-            .anyMatch(d -> d.bookingId().equals(bookingId) && "OPEN".equals(d.status()));
-        if (exists) {
+        if (disputeDao.findOpenByBookingId(bookingId).isPresent()) {
             return DisputeRaiseResult.error("DISPUTE_EXISTS");
         }
 
-        Dispute dispute = new Dispute(
-            UUID.randomUUID().toString(),
-            bookingId,
-            userId,
-            reason,
-            "OPEN",
-            null,
-            null,
-            null,
-            Instant.now(),
-            null
-        );
-        disputesById.put(dispute.id(), dispute);
+        String id = UUID.randomUUID().toString();
+        Instant now = Instant.now();
+        Dispute dispute = new Dispute(id, bookingId, userId, reason, "OPEN", null, null, null, now, null);
+        disputeDao.insert(id, bookingId, userId, reason, "OPEN", null, null, null, now, null);
 
-        // Hold funds
         int taskerShare = (int) (booking.price() * 0.9);
         walletService.holdFunds(booking.taskerId(), taskerShare, dispute.id(), "Dispute raised for booking " + bookingId);
 
@@ -67,16 +56,15 @@ public class DisputeService {
     }
 
     public List<Dispute> listPendingDisputes() {
-        return disputesById.values().stream()
-            .filter(d -> "OPEN".equals(d.status()))
-            .toList();
+        return disputeDao.findPending();
     }
 
     public DisputeResolutionResult resolveDispute(String adminId, String disputeId, String outcome, String resolutionNotes) {
-        Dispute dispute = disputesById.get(disputeId);
-        if (dispute == null) {
+        var disputeOpt = disputeDao.findById(disputeId);
+        if (disputeOpt.isEmpty()) {
             return DisputeResolutionResult.error("NOT_FOUND");
         }
+        Dispute dispute = disputeOpt.get();
         if (!"OPEN".equals(dispute.status())) {
             return DisputeResolutionResult.error("NOT_OPEN");
         }
@@ -99,11 +87,13 @@ public class DisputeService {
             return DisputeResolutionResult.error("INVALID_OUTCOME");
         }
 
+        Instant now = Instant.now();
+        disputeDao.update(disputeId, newStatus, outcome, adminId, resolutionNotes, now);
+
         Dispute resolved = new Dispute(
             dispute.id(), dispute.bookingId(), dispute.raiserId(), dispute.reason(),
-            newStatus, outcome, adminId, resolutionNotes, dispute.createdAt(), Instant.now()
+            newStatus, outcome, adminId, resolutionNotes, dispute.createdAt(), now
         );
-        disputesById.put(disputeId, resolved);
 
         return DisputeResolutionResult.success(resolved);
     }
