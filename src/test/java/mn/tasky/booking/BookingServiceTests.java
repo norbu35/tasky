@@ -337,7 +337,7 @@ class BookingServiceTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-064-API-DISCLAIMER-REQUIRED record disclaimer acceptance")
+    @DisplayName("TID-TASK-064-API-DISCLAIMER-REQUIRED TID-TASK-064-AUDIT-DISCLAIMER-RECORDED record disclaimer acceptance")
     void disclaimerAcceptance() {
         BookingState booking = bookingService.createBooking("t1",
                                                             "tr1",

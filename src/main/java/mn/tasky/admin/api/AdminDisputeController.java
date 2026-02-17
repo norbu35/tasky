@@ -9,6 +9,7 @@ import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.dispute.api.DisputeResponseMapper;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.messaging.dao.ConversationDao;
@@ -68,7 +69,7 @@ public class AdminDisputeController {
         List<Dispute> pending = disputeService.listPendingDisputes(cursor,
                                                                    clampedLimit);
         List<Map<String, Object>> data = pending.stream()
-                .map(dispute -> admin(dispute))
+                .map(DisputeResponseMapper::admin)
                 .toList();
         return ResponseEntity.ok(new PagedResponse<>(data,
                                                      CursorPagination.from(pending,

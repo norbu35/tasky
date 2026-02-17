@@ -566,6 +566,63 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
+    @DisplayName("TID-TASK-022-API-TASK-LIST-CURSOR cursor pagination is deterministic with next cursor semantics")
+    @SuppressWarnings("unchecked")
+    void feedCursorPaginationDeterministic() {
+        AuthContext customer = authenticate("1020");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
+        for (int i = 0; i < 5; i++) {
+            postWithAuth("/api/v1/tasks",
+                         customer.accessToken(),
+                         Map.of(
+                                 "category_id",
+                                 categoryId,
+                                 "description",
+                                 "Cursor task " + i,
+                                 "budget",
+                                 50000 + i,
+                                 "location_lat",
+                                 47.90 + (i * 0.001),
+                                 "location_lng",
+                                 106.90 + (i * 0.001),
+                                 "location_text",
+                                 "Cursor location " + i,
+                                 "scheduled_at",
+                                 Instant.now()
+                                         .plus(1,
+                                               ChronoUnit.DAYS)
+                                         .toString()
+                         ));
+        }
+
+        ResponseEntity<Map> page1 = getWithAuth("/api/v1/tasks?limit=2",
+                                                customer.accessToken());
+        assertThat(page1.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        List<Map<String, Object>> page1Data = (List<Map<String, Object>>) page1.getBody()
+                .get("data");
+        assertThat(page1Data).hasSize(2);
+        Map<String, Object> page1Cursor = (Map<String, Object>) page1.getBody()
+                .get("cursor");
+        assertThat(page1Cursor.get("has_more")).isEqualTo(true);
+        String nextCursor = (String) page1Cursor.get("next");
+        assertThat(nextCursor).isNotBlank();
+
+        ResponseEntity<Map> page2 = getWithAuth("/api/v1/tasks?limit=2&cursor=" + nextCursor,
+                                                customer.accessToken());
+        assertThat(page2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> page2Data = (List<Map<String, Object>>) page2.getBody()
+                .get("data");
+        assertThat(page2Data).isNotEmpty();
+        assertThat(page2Data)
+                .extracting(item -> item.get("id"))
+                .doesNotContainAnyElementsOf(page1Data.stream()
+                                                  .map(item -> item.get("id"))
+                                                  .toList());
+    }
+
+    @Test
     @DisplayName("TID-TASK-022-API-TASK-LIST-PRIVACY exact address hidden")
     void feedPrivacy() {
         AuthContext customer = authenticate("102");
@@ -637,7 +694,7 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-023-API-APPLICANT-LIST customer can list applicants and accept one")
+    @DisplayName("TID-TASK-023-API-APPLICANT-LIST TID-TASK-023-API-ACCEPT-CREATES-BOOKING customer can list applicants and accept one")
     void customerCanAcceptApplicant() {
         AuthContext customer = authenticate("112");
         String categoryId = getFirstCategoryId(customer.accessToken());

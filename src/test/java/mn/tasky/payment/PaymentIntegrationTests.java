@@ -233,7 +233,7 @@ class PaymentIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-031-API-QPAY-CALLBACK-SIGNATURE invalid callback signature is rejected")
+    @DisplayName("TID-TASK-031-SEC-QPAY-SIGNATURE invalid callback signature is rejected")
     void qpayCallbackRejectsInvalidSignature() {
         AuthContext customer = authenticate("134");
         AuthContext tasker = authenticate("234");

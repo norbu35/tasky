@@ -233,7 +233,7 @@ class VerificationIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-012-API-VERIFICATION-STATUS verification status reflects full lifecycle")
+    @DisplayName("TID-TASK-012-API-VERIFICATION-STATUS TID-TASK-013-API-ADMIN-VERIFICATION-LIST TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE verification status reflects full lifecycle")
     @SuppressWarnings("unchecked")
     void verificationStatusReflectsFullLifecycle() {
         AuthContext auth = authenticate("72");
@@ -336,7 +336,7 @@ class VerificationIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-012-API-VERIFICATION-STATUS admin can reject and user can resubmit")
+    @DisplayName("TID-TASK-012-API-VERIFICATION-STATUS TID-TASK-013-API-ADMIN-VERIFICATION-REJECT admin can reject and user can resubmit")
     void adminCanRejectAndUserCanResubmit() {
         AuthContext auth = authenticate("73");
 
