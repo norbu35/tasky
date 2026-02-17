@@ -1,5 +1,8 @@
 package mn.tasky.task.dao;
 
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
+
 import mn.tasky.task.dto.TaskState;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -11,28 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 @RegisterConstructorMapper(value = TaskState.class)
 public interface TaskDao {
-
-    @SqlUpdate("INSERT INTO tasks (id, customer_id, category_id, description, budget, "
-             + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at) "
-             + "VALUES (:id, :customerId, :categoryId, :description, :budget, "
-             + ":locationLat, :locationLng, :locationText, :status, :scheduledAt, :createdAt, :updatedAt)")
-    void insert(@Bind("id") UUID id,
-                @Bind("customerId") UUID customerId,
-                @Bind("categoryId") UUID categoryId,
-                @Bind("description") String description,
-                @Bind("budget") int budget,
-                @Bind("locationLat") double locationLat,
-                @Bind("locationLng") double locationLng,
-                @Bind("locationText") String locationText,
-                @Bind("status") String status,
-                @Bind("scheduledAt") Instant scheduledAt,
-                @Bind("createdAt") Instant createdAt,
-                @Bind("updatedAt") Instant updatedAt);
 
     default void insert(String id,
                         String customerId,
@@ -47,46 +30,105 @@ public interface TaskDao {
                         Instant createdAt,
                         Instant updatedAt) {
         insert(
-            required(id, "id"),
-            required(customerId, "customerId"),
-            required(categoryId, "categoryId"),
-            description,
-            budget,
-            locationLat,
-            locationLng,
-            locationText,
-            status,
-            scheduledAt,
-            createdAt,
-            updatedAt
+                required(id,
+                         "id"),
+                required(customerId,
+                         "customerId"),
+                required(categoryId,
+                         "categoryId"),
+                description,
+                budget,
+                locationLat,
+                locationLng,
+                locationText,
+                status,
+                scheduledAt,
+                createdAt,
+                updatedAt
         );
     }
 
+    @SqlUpdate("INSERT INTO tasks (id, customer_id, category_id, description, budget, "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at) "
+            + "VALUES (:id, :customerId, :categoryId, :description, :budget, "
+            +
+            ":locationLat, :locationLng, :locationText, :status, :scheduledAt, :createdAt, " +
+            ":updatedAt)")
+    void insert(@Bind("id") UUID id,
+                @Bind("customerId") UUID customerId,
+                @Bind("categoryId") UUID categoryId,
+                @Bind("description") String description,
+                @Bind("budget") int budget,
+                @Bind("locationLat") double locationLat,
+                @Bind("locationLng") double locationLng,
+                @Bind("locationText") String locationText,
+                @Bind("status") String status,
+                @Bind("scheduledAt") Instant scheduledAt,
+                @Bind("createdAt") Instant createdAt,
+                @Bind("updatedAt") Instant updatedAt);
+
+    default Optional<TaskState> findById(String id) {
+        return findById(required(id,
+                                 "id"));
+    }
+
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
             + "FROM tasks WHERE id = :id")
     Optional<TaskState> findById(@Bind("id") UUID id);
 
-    default Optional<TaskState> findById(String id) {
-        return findById(required(id, "id"));
+    default void updateStatus(String id,
+                              String status,
+                              Instant updatedAt) {
+        updateStatus(required(id,
+                              "id"),
+                     status,
+                     updatedAt);
     }
 
     @SqlUpdate("UPDATE tasks SET status = :status, updated_at = :updatedAt WHERE id = :id")
-    void updateStatus(@Bind("id") UUID id, @Bind("status") String status, @Bind("updatedAt") Instant updatedAt);
+    void updateStatus(@Bind("id") UUID id,
+                      @Bind("status") String status,
+                      @Bind("updatedAt") Instant updatedAt);
 
-    default void updateStatus(String id, String status, Instant updatedAt) {
-        updateStatus(required(id, "id"), status, updatedAt);
+    default List<TaskState> findOpen(String categoryId,
+                                     int offset,
+                                     int limit) {
+        return findOpen(optional(categoryId),
+                        offset,
+                        limit);
+    }
+
+    default List<TaskState> findOpen(UUID categoryId,
+                                     int offset,
+                                     int limit) {
+        if (categoryId == null) {
+            return findOpenAll(offset,
+                               limit);
+        }
+        return findOpenByCategory(categoryId,
+                                  offset,
+                                  limit);
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
             + "ORDER BY created_at DESC, id "
             + "OFFSET :offset LIMIT :limit")
-    List<TaskState> findOpenAll(@Bind("offset") int offset, @Bind("limit") int limit);
+    List<TaskState> findOpenAll(@Bind("offset") int offset,
+                                @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
             + "AND category_id = :categoryId "
             + "ORDER BY created_at DESC, id "
@@ -95,21 +137,49 @@ public interface TaskDao {
                                        @Bind("offset") int offset,
                                        @Bind("limit") int limit);
 
-    default List<TaskState> findOpen(UUID categoryId, int offset, int limit) {
-        if (categoryId == null) {
-            return findOpenAll(offset, limit);
-        }
-        return findOpenByCategory(categoryId, offset, limit);
+    default List<TaskState> findOpenWithinRadius(String categoryId,
+                                                 double lat,
+                                                 double lng,
+                                                 double meters,
+                                                 int offset,
+                                                 int limit) {
+        return findOpenWithinRadius(optional(categoryId),
+                                    lat,
+                                    lng,
+                                    meters,
+                                    offset,
+                                    limit);
     }
 
-    default List<TaskState> findOpen(String categoryId, int offset, int limit) {
-        return findOpen(optional(categoryId), offset, limit);
+    default List<TaskState> findOpenWithinRadius(UUID categoryId,
+                                                 double lat,
+                                                 double lng,
+                                                 double meters,
+                                                 int offset,
+                                                 int limit) {
+        if (categoryId == null) {
+            return findOpenWithinRadiusAll(lat,
+                                           lng,
+                                           meters,
+                                           offset,
+                                           limit);
+        }
+        return findOpenWithinRadiusByCategory(categoryId,
+                                              lat,
+                                              lng,
+                                              meters,
+                                              offset,
+                                              limit);
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
-            + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :meters) "
+            +
+            "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
+            "::geography, :meters) "
             + "ORDER BY created_at DESC, id "
             + "OFFSET :offset LIMIT :limit")
     List<TaskState> findOpenWithinRadiusAll(@Bind("lat") double lat,
@@ -119,10 +189,14 @@ public interface TaskDao {
                                             @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            + "location_lat, location_lng, location_text, status, scheduled_at, created_at, updated_at "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
             + "AND category_id = :categoryId "
-            + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :meters) "
+            +
+            "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
+            "::geography, :meters) "
             + "ORDER BY created_at DESC, id "
             + "OFFSET :offset LIMIT :limit")
     List<TaskState> findOpenWithinRadiusByCategory(@Bind("categoryId") UUID categoryId,
@@ -131,25 +205,4 @@ public interface TaskDao {
                                                    @Bind("meters") double meters,
                                                    @Bind("offset") int offset,
                                                    @Bind("limit") int limit);
-
-    default List<TaskState> findOpenWithinRadius(UUID categoryId,
-                                                 double lat,
-                                                 double lng,
-                                                 double meters,
-                                                 int offset,
-                                                 int limit) {
-        if (categoryId == null) {
-            return findOpenWithinRadiusAll(lat, lng, meters, offset, limit);
-        }
-        return findOpenWithinRadiusByCategory(categoryId, lat, lng, meters, offset, limit);
-    }
-
-    default List<TaskState> findOpenWithinRadius(String categoryId,
-                                                 double lat,
-                                                 double lng,
-                                                 double meters,
-                                                 int offset,
-                                                 int limit) {
-        return findOpenWithinRadius(optional(categoryId), lat, lng, meters, offset, limit);
-    }
 }

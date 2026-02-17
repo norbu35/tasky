@@ -1,5 +1,5 @@
 module.exports = {
-  root: true,
-  extends: ["expo"],
-  ignorePatterns: [".expo", "dist", "coverage"]
+    root: true,
+    extends: ["expo"],
+    ignorePatterns: [".expo", "dist", "coverage"]
 };

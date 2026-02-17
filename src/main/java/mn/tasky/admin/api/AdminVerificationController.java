@@ -37,80 +37,76 @@ public class AdminVerificationController {
 
     @GetMapping("/pending")
     public ResponseEntity<?> listPending(
-        @RequestParam(value = "cursor", required = false) String cursor,
-        @RequestParam(value = "limit", defaultValue = "20") int limit
+            @RequestParam(value = "cursor", required = false) String cursor,
+            @RequestParam(value = "limit", defaultValue = "20") int limit
     ) {
-        int clampedLimit = Math.max(1, Math.min(limit, 100));
-        List<VerificationDetail> pending = authService.listPendingVerifications(cursor, clampedLimit);
+        int clampedLimit = Math.max(1,
+                                    Math.min(limit,
+                                             100));
+        List<VerificationDetail> pending = authService.listPendingVerifications(cursor,
+                                                                                clampedLimit);
         List<VerificationDetailResponse> data = pending.stream()
-            .map(this::toDetailBody)
-            .toList();
+                .map(this::toDetailBody)
+                .toList();
 
         return ResponseEntity.ok(
-            new PagedResponse<>(
-                data,
-                CursorPagination.from(data, clampedLimit, VerificationDetailResponse::id)
-            )
+                new PagedResponse<>(
+                        data,
+                        CursorPagination.from(data,
+                                              clampedLimit,
+                                              VerificationDetailResponse::id)
+                )
+        );
+    }
+
+    private VerificationDetailResponse toDetailBody(VerificationDetail detail) {
+        return new VerificationDetailResponse(
+                detail.id(),
+                detail.userId(),
+                detail.userPhone(),
+                detail.userName(),
+                detail.idCardFrontUrl(),
+                detail.idCardBackUrl(),
+                detail.status(),
+                detail.adminNotes(),
+                detail.submittedAt(),
+                detail.reviewedAt()
         );
     }
 
     @PostMapping("/{id}/approve")
     public ResponseEntity<?> approve(
-        @PathVariable String id,
-        HttpServletRequest request
+            @PathVariable String id,
+            HttpServletRequest request
     ) {
         return authService.approveVerification(id)
-            .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))
-            .orElseGet(() -> {
-                if (authService.verificationExists(id)) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                        Map.of(
-                            "code", "NOT_PENDING",
-                            "message", "Verification is not in PENDING status.",
-                            "trace_id", resolveTraceId(request)
-                        )
-                    );
-                }
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    Map.of(
-                        "code", "NOT_FOUND",
-                        "message", "Verification not found.",
-                        "trace_id", resolveTraceId(request)
-                    )
-                );
-            });
-    }
-
-    @PostMapping("/{id}/reject")
-    public ResponseEntity<?> reject(
-        @PathVariable String id,
-        @Valid @RequestBody RejectVerificationRequest body,
-        HttpServletRequest request
-    ) {
-        return authService.rejectVerification(id, body.reason())
-            .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                Map.of(
-                    "code", "NOT_FOUND",
-                    "message", "Verification not found or not in PENDING status.",
-                    "trace_id", resolveTraceId(request)
-                )
-            ));
-    }
-
-    private VerificationDetailResponse toDetailBody(VerificationDetail detail) {
-        return new VerificationDetailResponse(
-            detail.id(),
-            detail.userId(),
-            detail.userPhone(),
-            detail.userName(),
-            detail.idCardFrontUrl(),
-            detail.idCardBackUrl(),
-            detail.status(),
-            detail.adminNotes(),
-            detail.submittedAt(),
-            detail.reviewedAt()
-        );
+                .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))
+                .orElseGet(() -> {
+                    if (authService.verificationExists(id)) {
+                        return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body(
+                                        Map.of(
+                                                "code",
+                                                "NOT_PENDING",
+                                                "message",
+                                                "Verification is not in PENDING status.",
+                                                "trace_id",
+                                                resolveTraceId(request)
+                                        )
+                                );
+                    }
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(
+                                    Map.of(
+                                            "code",
+                                            "NOT_FOUND",
+                                            "message",
+                                            "Verification not found.",
+                                            "trace_id",
+                                            resolveTraceId(request)
+                                    )
+                            );
+                });
     }
 
     private String resolveTraceId(HttpServletRequest request) {
@@ -118,7 +114,30 @@ public class AdminVerificationController {
         if (traceId != null) {
             return traceId.toString();
         }
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID()
+                .toString();
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<?> reject(
+            @PathVariable String id,
+            @Valid @RequestBody RejectVerificationRequest body,
+            HttpServletRequest request
+    ) {
+        return authService.rejectVerification(id,
+                                              body.reason())
+                .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(
+                                Map.of(
+                                        "code",
+                                        "NOT_FOUND",
+                                        "message",
+                                        "Verification not found or not in PENDING status.",
+                                        "trace_id",
+                                        resolveTraceId(request)
+                                )
+                        ));
     }
 
 }

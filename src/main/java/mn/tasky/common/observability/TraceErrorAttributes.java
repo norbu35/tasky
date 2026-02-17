@@ -10,22 +10,26 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
-public class TraceErrorAttributes extends DefaultErrorAttributes {
+public class TraceErrorAttributes
+        extends DefaultErrorAttributes {
 
     @Override
     public Map<String, Object> getErrorAttributes(
-        WebRequest webRequest,
-        ErrorAttributeOptions options
+            WebRequest webRequest,
+            ErrorAttributeOptions options
     ) {
-        Map<String, Object> attributes = super.getErrorAttributes(webRequest, options);
+        Map<String, Object> attributes = super.getErrorAttributes(webRequest,
+                                                                  options);
         Object traceId = webRequest.getAttribute(
-            RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-            RequestAttributes.SCOPE_REQUEST
+                RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
+                RequestAttributes.SCOPE_REQUEST
         );
         if (traceId == null) {
-            traceId = UUID.randomUUID().toString();
+            traceId = UUID.randomUUID()
+                    .toString();
         }
-        attributes.put("trace_id", traceId.toString());
+        attributes.put("trace_id",
+                       traceId.toString());
         return attributes;
     }
 }

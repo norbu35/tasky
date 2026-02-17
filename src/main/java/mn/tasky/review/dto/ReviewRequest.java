@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 public record ReviewRequest(
-    @Min(1) @Max(5) int rating,
-    @Size(max = 1000) String comment
-) {}
+        @Min(1) @Max(5) int rating,
+        @Size(max = 1000) String comment
+) {
+
+}

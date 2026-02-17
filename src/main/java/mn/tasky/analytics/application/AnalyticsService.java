@@ -36,12 +36,15 @@ public class AnalyticsService {
     private final AnalyticsEventDao analyticsEventDao;
     private final ObjectMapper objectMapper;
 
-    public AnalyticsService(AnalyticsEventDao analyticsEventDao, ObjectMapper objectMapper) {
+    public AnalyticsService(AnalyticsEventDao analyticsEventDao,
+                            ObjectMapper objectMapper) {
         this.analyticsEventDao = analyticsEventDao;
-        this.objectMapper = objectMapper;
+        this.objectMapper      = objectMapper;
     }
 
-    public void track(String eventName, String userId, Map<String, Object> properties) {
+    public void track(String eventName,
+                      String userId,
+                      Map<String, Object> properties) {
         Map<String, Object> enrichedProperties = new LinkedHashMap<>();
         if (properties != null) {
             enrichedProperties.putAll(properties);
@@ -49,10 +52,12 @@ public class AnalyticsService {
 
         String correlationId = MDC.get(RequestObservabilityFilter.CORRELATION_ID_MDC_KEY);
         if (StringUtils.hasText(correlationId)) {
-            enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID, correlationId);
+            enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID,
+                                           correlationId);
         }
 
-        String id = UUID.randomUUID().toString();
+        String id = UUID.randomUUID()
+                .toString();
         Instant now = Instant.now();
 
         String propertiesJson;
@@ -62,8 +67,15 @@ public class AnalyticsService {
             propertiesJson = "{}";
         }
 
-        analyticsEventDao.insert(id, eventName, userId, propertiesJson, now);
-        log.info("TRACK event={} user={} props={}", eventName, userId, enrichedProperties);
+        analyticsEventDao.insert(id,
+                                 eventName,
+                                 userId,
+                                 propertiesJson,
+                                 now);
+        log.info("TRACK event={} user={} props={}",
+                 eventName,
+                 userId,
+                 enrichedProperties);
     }
 
     public List<Event> getEvents() {

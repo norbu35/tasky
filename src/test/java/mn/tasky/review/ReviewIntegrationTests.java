@@ -30,24 +30,20 @@ import java.util.Map;
 import java.util.Optional;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class ReviewIntegrationTests extends IntegrationTestBase {
-
-    @LocalServerPort
-    private int port;
-
-    @Value("${tasky.security.jwt-secret}")
-    private String jwtSecret;
-
-    @Autowired
-    private BookingService bookingService;
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private TaskService taskService;
+class ReviewIntegrationTests
+        extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
+    @LocalServerPort
+    private int port;
+    @Value("${tasky.security.jwt-secret}")
+    private String jwtSecret;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private TaskService taskService;
 
     @Test
     @DisplayName("TID-TASK-040-API-REVIEW-SUBMIT reviews allowed only on completed bookings")
@@ -56,30 +52,128 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("tasker-1");
 
         BookingState booking = bookingService.createBooking(
-            createTaskForCustomer(customer, "review-submit"),
-            tasker.userId(),
-            customer.userId(),
-            10000
+                createTaskForCustomer(customer,
+                                      "review-submit"),
+                tasker.userId(),
+                customer.userId(),
+                10000
         );
-        
+
         // Try reviewing PENDING booking
-        ResponseEntity<Map> failResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
-            "rating", 5,
-            "comment", "Great!"
-        ));
+        ResponseEntity<Map> failResponse =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews",
+                             customer.accessToken(),
+                             Map.of(
+                                     "rating",
+                                     5,
+                                     "comment",
+                                     "Great!"
+                             ));
         assertThat(failResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(failResponse.getBody().get("code")).isEqualTo("BOOKING_NOT_COMPLETED");
+        assertThat(failResponse.getBody()
+                           .get("code")).isEqualTo("BOOKING_NOT_COMPLETED");
 
         // Complete booking
         bookingService.transitionToPaid(booking.id());
-        bookingService.completeBooking(customer.userId(), booking.id());
+        bookingService.completeBooking(customer.userId(),
+                                       booking.id());
 
         // Review success
-        ResponseEntity<Map> successResponse = postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
-            "rating", 5,
-            "comment", "Great!"
-        ));
+        ResponseEntity<Map> successResponse =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews",
+                             customer.accessToken(),
+                             Map.of(
+                                     "rating",
+                                     5,
+                                     "comment",
+                                     "Great!"
+                             ));
         assertThat(successResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    private AuthContext authenticate(String seed) {
+        String phone = "+9769911" + String.format("%04d",
+                                                  Math.abs(seed.hashCode()) % 10000);
+
+        post("/api/v1/auth/otp/request",
+             Map.of("phone",
+                    phone));
+        ResponseEntity<Map> response = post("/api/v1/auth/otp/verify",
+                                            Map.of("phone",
+                                                   phone,
+                                                   "code",
+                                                   "123456"));
+
+        String accessToken = (String) response.getBody()
+                .get("access_token");
+        String userId = (String) ((Map) response.getBody()
+                .get("user")).get("id");
+        return new AuthContext(userId,
+                               accessToken);
+    }
+
+    private String createTaskForCustomer(AuthContext customer,
+                                         String descriptionSeed) {
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        return taskService.createTask(customer.userId(),
+                                      new CreateTask(
+                                              categoryId,
+                                              "review-task-" + descriptionSeed,
+                                              10000,
+                                              47.9,
+                                              106.9,
+                                              "Ulaanbaatar",
+                                              Instant.now()
+                                                      .plus(1,
+                                                            ChronoUnit.DAYS)
+                                                      .toString(),
+                                              List.of()
+                                      ))
+                .task()
+                .id();
+    }
+
+    private ResponseEntity<Map> postWithAuth(String path,
+                                             String token,
+                                             Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        HttpEntity<Object> entity = new HttpEntity<>(body,
+                                                     headers);
+        return restTemplate.exchange("http://localhost:" + port + path,
+                                     HttpMethod.POST,
+                                     entity,
+                                     Map.class);
+    }
+
+    private ResponseEntity<Map> post(String path,
+                                     Object body) {
+        return restTemplate.postForEntity("http://localhost:" + port + path,
+                                          body,
+                                          Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getFirstCategoryId(String token) {
+        ResponseEntity<Map> response = getWithAuth("/api/v1/categories",
+                                                   token);
+        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody()
+                .get("data");
+        return data.get(0)
+                .get("id")
+                .toString();
+    }
+
+    private ResponseEntity<Map> getWithAuth(String path,
+                                            String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange("http://localhost:" + port + path,
+                                     HttpMethod.GET,
+                                     entity,
+                                     Map.class);
     }
 
     @Test
@@ -90,37 +184,51 @@ class ReviewIntegrationTests extends IntegrationTestBase {
 
         for (int i = 0; i < 3; i++) {
             BookingState booking = bookingService.createBooking(
-                createTaskForCustomer(customer, "review-list-" + i),
-                tasker.userId(),
-                customer.userId(),
-                10000
+                    createTaskForCustomer(customer,
+                                          "review-list-" + i),
+                    tasker.userId(),
+                    customer.userId(),
+                    10000
             );
             bookingService.transitionToPaid(booking.id());
-            bookingService.completeBooking(customer.userId(), booking.id());
+            bookingService.completeBooking(customer.userId(),
+                                           booking.id());
 
-            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
-                "rating", 5,
-                "comment", "Comment " + i
-            ));
+            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews",
+                         customer.accessToken(),
+                         Map.of(
+                                 "rating",
+                                 5,
+                                 "comment",
+                                 "Comment " + i
+                         ));
         }
 
         // List with limit 2
-        ResponseEntity<Map> listResponse1 = getWithAuth("/api/v1/users/" + tasker.userId() + "/reviews?limit=2", customer.accessToken());
+        ResponseEntity<Map> listResponse1 =
+                getWithAuth("/api/v1/users/" + tasker.userId() + "/reviews?limit=2",
+                            customer.accessToken());
         assertThat(listResponse1.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Map> data1 = (List<Map>) listResponse1.getBody().get("data");
+        List<Map> data1 = (List<Map>) listResponse1.getBody()
+                .get("data");
         assertThat(data1).hasSize(2);
-        
-        Map pagination = (Map) listResponse1.getBody().get("cursor");
+
+        Map pagination = (Map) listResponse1.getBody()
+                .get("cursor");
         String nextCursor = (String) pagination.get("next");
         assertThat(nextCursor).isNotNull();
         assertThat((Boolean) pagination.get("has_more")).isEqualTo(true);
 
         // List next page
-        ResponseEntity<Map> listResponse2 = getWithAuth("/api/v1/users/" + tasker.userId() + "/reviews?limit=2&cursor=" + nextCursor, customer.accessToken());
+        ResponseEntity<Map> listResponse2 = getWithAuth(
+                "/api/v1/users/" + tasker.userId() + "/reviews?limit=2&cursor=" + nextCursor,
+                customer.accessToken());
         assertThat(listResponse2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Map> data2 = (List<Map>) listResponse2.getBody().get("data");
+        List<Map> data2 = (List<Map>) listResponse2.getBody()
+                .get("data");
         assertThat(data2).hasSize(1);
-        assertThat(((Map) listResponse2.getBody().get("cursor")).get("has_more")).isEqualTo(false);
+        assertThat(((Map) listResponse2.getBody()
+                .get("cursor")).get("has_more")).isEqualTo(false);
     }
 
     @Test
@@ -132,23 +240,30 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         // Pre-condition: Not Pro
         Optional<UserProfile> initialProfileOpt = authService.getProfile(tasker.userId());
         assertThat(initialProfileOpt).isPresent();
-        assertThat(initialProfileOpt.orElseThrow().isPro()).isFalse();
+        assertThat(initialProfileOpt.orElseThrow()
+                           .isPro()).isFalse();
 
         // 6 Completed Tasks + 5 Star Average
         for (int i = 0; i < 6; i++) {
             BookingState booking = bookingService.createBooking(
-                createTaskForCustomer(customer, "review-pro-" + i),
-                tasker.userId(),
-                customer.userId(),
-                10000
+                    createTaskForCustomer(customer,
+                                          "review-pro-" + i),
+                    tasker.userId(),
+                    customer.userId(),
+                    10000
             );
             bookingService.transitionToPaid(booking.id());
-            bookingService.completeBooking(customer.userId(), booking.id());
-            
-            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews", customer.accessToken(), Map.of(
-                "rating", 5,
-                "comment", "Good job " + i
-            ));
+            bookingService.completeBooking(customer.userId(),
+                                           booking.id());
+
+            postWithAuth("/api/v1/bookings/" + booking.id() + "/reviews",
+                         customer.accessToken(),
+                         Map.of(
+                                 "rating",
+                                 5,
+                                 "comment",
+                                 "Good job " + i
+                         ));
         }
 
         Optional<UserProfile> profileOpt = authService.getProfile(tasker.userId());
@@ -159,56 +274,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         assertThat(profile.isPro()).isTrue();
     }
 
-    private AuthContext authenticate(String seed) {
-        String phone = "+9769911" + String.format("%04d", Math.abs(seed.hashCode()) % 10000);
-        
-        post("/api/v1/auth/otp/request", Map.of("phone", phone));
-        ResponseEntity<Map> response = post("/api/v1/auth/otp/verify", Map.of("phone", phone, "code", "123456"));
-        
-        String accessToken = (String) response.getBody().get("access_token");
-        String userId = (String) ((Map) response.getBody().get("user")).get("id");
-        return new AuthContext(userId, accessToken);
-    }
+    record AuthContext(String userId, String accessToken) {
 
-    private ResponseEntity<Map> post(String path, Object body) {
-        return restTemplate.postForEntity("http://localhost:" + port + path, body, Map.class);
-    }
-
-    record AuthContext(String userId, String accessToken) {}
-
-    private ResponseEntity<Map> postWithAuth(String path, String token, Object body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        HttpEntity<Object> entity = new HttpEntity<>(body, headers);
-        return restTemplate.exchange("http://localhost:" + port + path, HttpMethod.POST, entity, Map.class);
-    }
-
-    private ResponseEntity<Map> getWithAuth(String path, String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-        return restTemplate.exchange("http://localhost:" + port + path, HttpMethod.GET, entity, Map.class);
-    }
-
-    private String createTaskForCustomer(AuthContext customer, String descriptionSeed) {
-        String categoryId = getFirstCategoryId(customer.accessToken());
-        return taskService.createTask(customer.userId(), new CreateTask(
-            categoryId,
-            "review-task-" + descriptionSeed,
-            10000,
-            47.9,
-            106.9,
-            "Ulaanbaatar",
-            Instant.now().plus(1, ChronoUnit.DAYS).toString(),
-            List.of()
-        )).task().id();
-    }
-
-    @SuppressWarnings("unchecked")
-    private String getFirstCategoryId(String token) {
-        ResponseEntity<Map> response = getWithAuth("/api/v1/categories", token);
-        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
-        return data.get(0).get("id").toString();
     }
 }

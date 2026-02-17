@@ -20,13 +20,15 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import java.util.List;
 
 @Configuration
-public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigurer {
+public class ChannelInterceptorConfig
+        implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenService jwtTokenService;
     private final MessagingService messagingService;
 
-    public ChannelInterceptorConfig(JwtTokenService jwtTokenService, @Lazy MessagingService messagingService) {
-        this.jwtTokenService = jwtTokenService;
+    public ChannelInterceptorConfig(JwtTokenService jwtTokenService,
+                                    @Lazy MessagingService messagingService) {
+        this.jwtTokenService  = jwtTokenService;
         this.messagingService = messagingService;
     }
 
@@ -34,9 +36,11 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             @Override
-            public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
+            public Message<?> preSend(@NonNull Message<?> message,
+                                      @NonNull MessageChannel channel) {
                 StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                        MessageHeaderAccessor.getAccessor(message,
+                                                          StompHeaderAccessor.class);
 
                 if (accessor == null) {
                     return message;
@@ -51,27 +55,34 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
                     if (authHeader != null && authHeader.startsWith("Bearer ")) {
                         String token = authHeader.substring(7);
-                        jwtTokenService.parse(token).ifPresent(principal -> {
-                            UsernamePasswordAuthenticationToken auth =
-                                    new UsernamePasswordAuthenticationToken(
-                                            principal,
-                                            null,
-                                            List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
-                                    );
-                            accessor.setUser(auth);
-                        });
+                        jwtTokenService.parse(token)
+                                .ifPresent(principal -> {
+                                    UsernamePasswordAuthenticationToken auth =
+                                            new UsernamePasswordAuthenticationToken(
+                                                    principal,
+                                                    null,
+                                                    List.of(new SimpleGrantedAuthority(
+                                                            "ROLE_" + principal.role()))
+                                            );
+                                    accessor.setUser(auth);
+                                });
                     }
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
                     String destination = accessor.getDestination();
                     if (destination != null && destination.startsWith("/topic/conversations/")) {
-                        String conversationId = destination.substring("/topic/conversations/".length());
-                        UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) accessor.getUser();
+                        String conversationId =
+                                destination.substring("/topic/conversations/".length());
+                        UsernamePasswordAuthenticationToken auth =
+                                (UsernamePasswordAuthenticationToken) accessor.getUser();
                         if (auth == null) {
                             throw new IllegalArgumentException("Unauthorized");
                         }
                         JwtPrincipal principal = (JwtPrincipal) auth.getPrincipal();
-                        boolean isParticipant = messagingService.listConversations(principal.userId()).stream()
-                                .anyMatch(c -> c.id().equals(conversationId));
+                        boolean isParticipant =
+                                messagingService.listConversations(principal.userId())
+                                        .stream()
+                                        .anyMatch(c -> c.id()
+                                                .equals(conversationId));
                         if (!isParticipant) {
                             throw new IllegalArgumentException("Forbidden");
                         }

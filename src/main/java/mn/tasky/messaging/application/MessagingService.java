@@ -21,41 +21,61 @@ public class MessagingService {
     private final MessageDao messageDao;
 
     public MessagingService(SimpMessagingTemplate messagingTemplate,
-                           ConversationDao conversationDao,
-                           MessageDao messageDao) {
+                            ConversationDao conversationDao,
+                            MessageDao messageDao) {
         this.messagingTemplate = messagingTemplate;
-        this.conversationDao = conversationDao;
-        this.messageDao = messageDao;
+        this.conversationDao   = conversationDao;
+        this.messageDao        = messageDao;
     }
 
-    public String startConversation(String taskId, String taskerId, String customerId) {
-        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId, taskerId, customerId);
+    public String startConversation(String taskId,
+                                    String taskerId,
+                                    String customerId) {
+        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId,
+                                                                                    taskerId,
+                                                                                    customerId);
 
         if (existing.isPresent()) {
-            return existing.get().id();
+            return existing.get()
+                    .id();
         }
 
-        String id = UUID.randomUUID().toString();
-        conversationDao.insert(id, taskId, taskerId, customerId, Instant.now());
+        String id = UUID.randomUUID()
+                .toString();
+        conversationDao.insert(id,
+                               taskId,
+                               taskerId,
+                               customerId,
+                               Instant.now());
         return id;
     }
 
     public List<Conversation> listConversations(String userId) {
-        return listConversations(userId, null, 50);
+        return listConversations(userId,
+                                 null,
+                                 50);
     }
 
-    public List<Conversation> listConversations(String userId, String cursor, int limit) {
-        return conversationDao.findByUserId(userId, cursor, limit);
+    public List<Conversation> listConversations(String userId,
+                                                String cursor,
+                                                int limit) {
+        return conversationDao.findByUserId(userId,
+                                            cursor,
+                                            limit);
     }
 
-    public Optional<Message> sendMessage(String senderId, String conversationId, String content) {
+    public Optional<Message> sendMessage(String senderId,
+                                         String conversationId,
+                                         String content) {
         Optional<Conversation> conversation = conversationDao.findById(conversationId);
         if (conversation.isEmpty()) {
             return Optional.empty();
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id().equals(senderId) && !conv.participant2Id().equals(senderId)) {
+        if (!conv.participant1Id()
+                .equals(senderId) && !conv.participant2Id()
+                .equals(senderId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
@@ -65,33 +85,45 @@ public class MessagingService {
         }
 
         Message message = new Message(
-            UUID.randomUUID().toString(),
-            conversationId,
-            senderId,
-            sanitizedContent,
-            Instant.now()
+                UUID.randomUUID()
+                        .toString(),
+                conversationId,
+                senderId,
+                sanitizedContent,
+                Instant.now()
         );
 
-        messageDao.insert(message.id(), message.conversationId(), message.senderId(),
-                         message.content(), message.sentAt());
+        messageDao.insert(message.id(),
+                          message.conversationId(),
+                          message.senderId(),
+                          message.content(),
+                          message.sentAt());
 
-        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
+        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId,
+                                         message);
 
         return Optional.of(message);
     }
 
-    public List<Message> listMessages(String userId, String conversationId, String cursor, int limit) {
+    public List<Message> listMessages(String userId,
+                                      String conversationId,
+                                      String cursor,
+                                      int limit) {
         Optional<Conversation> conversation = conversationDao.findById(conversationId);
         if (conversation.isEmpty()) {
             throw new IllegalArgumentException("Conversation not found");
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id().equals(userId) && !conv.participant2Id().equals(userId)) {
+        if (!conv.participant1Id()
+                .equals(userId) && !conv.participant2Id()
+                .equals(userId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
-        return messageDao.findByConversationId(conversationId, cursor, limit);
+        return messageDao.findByConversationId(conversationId,
+                                               cursor,
+                                               limit);
     }
 
 }

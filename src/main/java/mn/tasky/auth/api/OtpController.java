@@ -26,43 +26,22 @@ public class OtpController {
     private final OtpRateLimitService otpRateLimitService;
     private final AuthService authService;
 
-    public OtpController(OtpRateLimitService otpRateLimitService, AuthService authService) {
+    public OtpController(OtpRateLimitService otpRateLimitService,
+                         AuthService authService) {
         this.otpRateLimitService = otpRateLimitService;
-        this.authService = authService;
+        this.authService         = authService;
     }
 
     @PostMapping("/request")
     public Map<String, String> requestOtp(
-        @Valid @RequestBody OtpRequest body,
-        HttpServletRequest request
+            @Valid @RequestBody OtpRequest body,
+            HttpServletRequest request
     ) {
-        otpRateLimitService.assertRequestAllowed(body.phone(), resolveClientIp(request));
+        otpRateLimitService.assertRequestAllowed(body.phone(),
+                                                 resolveClientIp(request));
         String maskedPhone = authService.requestOtp(body.phone());
-        return Map.of("message", "OTP sent to " + maskedPhone);
-    }
-
-    @PostMapping("/verify")
-    public ResponseEntity<Map<String, Object>> verifyOtp(
-        @Valid @RequestBody OtpVerifyRequest body,
-        HttpServletRequest request
-    ) {
-        otpRateLimitService.assertVerifyAllowed(body.phone(), resolveClientIp(request));
-
-        return authService.verifyOtp(body.phone(), body.code())
-            .map(session -> ResponseEntity.ok(
-                Map.of(
-                    "access_token", session.accessToken(),
-                    "refresh_token", session.refreshToken(),
-                    "user", session.user()
-                )
-            ))
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                Map.of(
-                    "code", "OTP_INVALID",
-                    "message", "Invalid or expired OTP code.",
-                    "trace_id", resolveTraceId(request)
-                )
-            ));
+        return Map.of("message",
+                      "OTP sent to " + maskedPhone);
     }
 
     private String resolveClientIp(HttpServletRequest request) {
@@ -70,7 +49,42 @@ public class OtpController {
         if (forwarded != null && !forwarded.isBlank()) {
             return forwarded.split(",")[0].trim();
         }
-        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
+        return request.getRemoteAddr() != null
+                ? request.getRemoteAddr()
+                : "unknown";
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<Map<String, Object>> verifyOtp(
+            @Valid @RequestBody OtpVerifyRequest body,
+            HttpServletRequest request
+    ) {
+        otpRateLimitService.assertVerifyAllowed(body.phone(),
+                                                resolveClientIp(request));
+
+        return authService.verifyOtp(body.phone(),
+                                     body.code())
+                .map(session -> ResponseEntity.ok(
+                        Map.of(
+                                "access_token",
+                                session.accessToken(),
+                                "refresh_token",
+                                session.refreshToken(),
+                                "user",
+                                session.user()
+                        )
+                ))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(
+                                Map.of(
+                                        "code",
+                                        "OTP_INVALID",
+                                        "message",
+                                        "Invalid or expired OTP code.",
+                                        "trace_id",
+                                        resolveTraceId(request)
+                                )
+                        ));
     }
 
     private String resolveTraceId(HttpServletRequest request) {
@@ -78,6 +92,7 @@ public class OtpController {
         if (traceId != null) {
             return traceId.toString();
         }
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID()
+                .toString();
     }
 }

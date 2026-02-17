@@ -4,34 +4,34 @@ import {Button, FormField, Input} from '../../../components/ui';
 import {useEffect, useState} from 'react';
 
 export function ProfileView() {
-  const { data: profile, isLoading } = useMyProfile();
-  const updateMutation = useUpdateProfile();
-  const signOut = useSignOut();
+    const {data: profile, isLoading} = useMyProfile();
+    const updateMutation = useUpdateProfile();
+    const signOut = useSignOut();
 
-  const [name, setName] = useState('');
+    const [name, setName] = useState('');
 
-  useEffect(() => {
-    if (profile) setName(profile.full_name);
-  }, [profile]);
+    useEffect(() => {
+        if (profile) setName(profile.full_name);
+    }, [profile]);
 
-  if (isLoading) return <Text style={{padding: 20}}>Loading...</Text>;
+    if (isLoading) return <Text style={{padding: 20}}>Loading...</Text>;
 
-  return (
-     <View style={styles.container}>
-        <Text style={styles.header}>Profile</Text>
-        <FormField label="Full Name">
-             <Input value={name} onChangeText={setName} />
-        </FormField>
-        <View style={styles.spacer} />
-        <Button 
-            label="Save Changes" 
-            onPress={() => updateMutation.mutate({ full_name: name })} 
-            loading={updateMutation.isPending} 
-        />
-        <View style={styles.spacer} />
-        <Button label="Sign Out" variant="secondary" onPress={signOut} />
-     </View>
-  );
+    return (
+        <View style={styles.container}>
+            <Text style={styles.header}>Profile</Text>
+            <FormField label="Full Name">
+                <Input value={name} onChangeText={setName}/>
+            </FormField>
+            <View style={styles.spacer}/>
+            <Button
+                label="Save Changes"
+                onPress={() => updateMutation.mutate({full_name: name})}
+                loading={updateMutation.isPending}
+            />
+            <View style={styles.spacer}/>
+            <Button label="Sign Out" variant="secondary" onPress={signOut}/>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({

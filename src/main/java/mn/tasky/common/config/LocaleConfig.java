@@ -11,7 +11,8 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import java.util.Locale;
 
 @Configuration
-public class LocaleConfig implements WebMvcConfigurer {
+public class LocaleConfig
+        implements WebMvcConfigurer {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("mn");
 
@@ -24,7 +25,8 @@ public class LocaleConfig implements WebMvcConfigurer {
 
     @Bean
     public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource messageSource =
+                new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setFallbackToSystemLocale(false);

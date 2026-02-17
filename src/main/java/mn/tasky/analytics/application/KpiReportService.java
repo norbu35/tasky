@@ -23,50 +23,56 @@ public class KpiReportService {
 
     public KpiReport buildReport(List<Event> events) {
         Set<String> postedTaskIds = referenceIds(
-            events,
-            AnalyticsService.EVENT_TASK_POSTED,
-            AnalyticsService.PROPERTY_TASK_ID
+                events,
+                AnalyticsService.EVENT_TASK_POSTED,
+                AnalyticsService.PROPERTY_TASK_ID
         );
         Set<String> confirmedTaskIds = referenceIds(
-            events,
-            AnalyticsService.EVENT_BOOKING_CONFIRMED,
-            AnalyticsService.PROPERTY_TASK_ID
+                events,
+                AnalyticsService.EVENT_BOOKING_CONFIRMED,
+                AnalyticsService.PROPERTY_TASK_ID
         );
         Set<String> confirmedBookingIds = referenceIds(
-            events,
-            AnalyticsService.EVENT_BOOKING_CONFIRMED,
-            AnalyticsService.PROPERTY_BOOKING_ID
+                events,
+                AnalyticsService.EVENT_BOOKING_CONFIRMED,
+                AnalyticsService.PROPERTY_BOOKING_ID
         );
         Set<String> completedBookingIds = referenceIds(
-            events,
-            AnalyticsService.EVENT_BOOKING_COMPLETED,
-            AnalyticsService.PROPERTY_BOOKING_ID
+                events,
+                AnalyticsService.EVENT_BOOKING_COMPLETED,
+                AnalyticsService.PROPERTY_BOOKING_ID
         );
         Set<String> disputedBookingIds = referenceIds(
-            events,
-            AnalyticsService.EVENT_DISPUTE_RAISED,
-            AnalyticsService.PROPERTY_BOOKING_ID
+                events,
+                AnalyticsService.EVENT_DISPUTE_RAISED,
+                AnalyticsService.PROPERTY_BOOKING_ID
         );
 
         return new KpiReport(
-            postedTaskIds.size(),
-            confirmedTaskIds.size(),
-            confirmedBookingIds.size(),
-            completedBookingIds.size(),
-            disputedBookingIds.size(),
-            ratio(confirmedTaskIds.size(), postedTaskIds.size()),
-            ratio(completedBookingIds.size(), confirmedBookingIds.size()),
-            ratio(disputedBookingIds.size(), completedBookingIds.size())
+                postedTaskIds.size(),
+                confirmedTaskIds.size(),
+                confirmedBookingIds.size(),
+                completedBookingIds.size(),
+                disputedBookingIds.size(),
+                ratio(confirmedTaskIds.size(),
+                      postedTaskIds.size()),
+                ratio(completedBookingIds.size(),
+                      confirmedBookingIds.size()),
+                ratio(disputedBookingIds.size(),
+                      completedBookingIds.size())
         );
     }
 
-    private Set<String> referenceIds(List<Event> events, String eventName, String propertyKey) {
+    private Set<String> referenceIds(List<Event> events,
+                                     String eventName,
+                                     String propertyKey) {
         Set<String> ids = new LinkedHashSet<>();
         for (Event event : events) {
             if (!eventName.equals(event.name())) {
                 continue;
             }
-            Object value = event.properties().get(propertyKey);
+            Object value = event.properties()
+                    .get(propertyKey);
             if (value != null) {
                 ids.add(value.toString());
             }
@@ -74,7 +80,8 @@ public class KpiReportService {
         return ids;
     }
 
-    private double ratio(int numerator, int denominator) {
+    private double ratio(int numerator,
+                         int denominator) {
         if (denominator == 0) {
             return 0.0d;
         }

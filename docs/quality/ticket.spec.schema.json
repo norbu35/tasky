@@ -23,7 +23,11 @@
     },
     "risk_level": {
       "type": "string",
-      "enum": ["low", "medium", "high"]
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
     },
     "req_ids": {
       "type": "array",
@@ -54,7 +58,12 @@
     "acceptanceCriterion": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "type", "statement", "test_ids"],
+      "required": [
+        "id",
+        "type",
+        "statement",
+        "test_ids"
+      ],
       "properties": {
         "id": {
           "type": "string",
@@ -62,7 +71,15 @@
         },
         "type": {
           "type": "string",
-          "enum": ["functional", "security", "abuse", "performance", "reliability", "ui", "data"]
+          "enum": [
+            "functional",
+            "security",
+            "abuse",
+            "performance",
+            "reliability",
+            "ui",
+            "data"
+          ]
         },
         "statement": {
           "type": "string",

@@ -18,19 +18,18 @@ import java.util.Map;
 import java.util.UUID;
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"tasky.auth.otp-test-code="}
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {"tasky.auth.otp-test-code="}
 )
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class OtpSecurityIntegrationTests extends IntegrationTestBase {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private LoggingSmsService loggingSmsService;
+class OtpSecurityIntegrationTests
+        extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
+    @LocalServerPort
+    private int port;
+    @Autowired
+    private LoggingSmsService loggingSmsService;
 
     @Test
     @DisplayName("TID-TASK-010-SECURITY-OTP-RANDOM consecutive OTP requests rotate to a new code")
@@ -48,36 +47,48 @@ class OtpSecurityIntegrationTests extends IntegrationTestBase {
         assertThat(secondCode).isNotEqualTo(firstCode);
 
         ResponseEntity<Map> oldCodeResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/verify"),
-            Map.of("phone", phone, "code", firstCode),
-            Map.class
+                url("/api/v1/auth/otp/verify"),
+                Map.of("phone",
+                       phone,
+                       "code",
+                       firstCode),
+                Map.class
         );
         assertThat(oldCodeResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
         ResponseEntity<Map> currentCodeResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/verify"),
-            Map.of("phone", phone, "code", secondCode),
-            Map.class
+                url("/api/v1/auth/otp/verify"),
+                Map.of("phone",
+                       phone,
+                       "code",
+                       secondCode),
+                Map.class
         );
         assertThat(currentCodeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    private String uniquePhone() {
+        String digits = UUID.randomUUID()
+                .toString()
+                .replaceAll("[^0-9]",
+                            "") + "0123456789";
+        return "+97655" + digits.substring(0,
+                                           6);
+    }
+
     private String requestAndReadCode(String phone) {
         ResponseEntity<Map> requestResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/request"),
-            Map.of("phone", phone),
-            Map.class
+                url("/api/v1/auth/otp/request"),
+                Map.of("phone",
+                       phone),
+                Map.class
         );
         assertThat(requestResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        return loggingSmsService.latestOtpForPhone(phone).orElseThrow();
+        return loggingSmsService.latestOtpForPhone(phone)
+                .orElseThrow();
     }
 
     private String url(String path) {
         return "http://localhost:" + port + path;
-    }
-
-    private String uniquePhone() {
-        String digits = UUID.randomUUID().toString().replaceAll("[^0-9]", "") + "0123456789";
-        return "+97655" + digits.substring(0, 6);
     }
 }

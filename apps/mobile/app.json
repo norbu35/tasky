@@ -12,6 +12,8 @@
       "package": "mn.tasky.mobile"
     },
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ]
   }
 }

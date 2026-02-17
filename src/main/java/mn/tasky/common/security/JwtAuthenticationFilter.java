@@ -19,17 +19,18 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter
+        extends OncePerRequestFilter {
 
     private static final List<String> PUBLIC_PATHS = List.of(
-        "/error",
-        "/actuator/health",
-        "/actuator/info",
-        "/api/v1/system/version",
-        "/api/v1/auth/otp/request",
-        "/api/v1/auth/otp/verify",
-        "/api/v1/auth/token/refresh",
-        "/api/v1/auth/dev/login"
+            "/error",
+            "/actuator/health",
+            "/actuator/info",
+            "/api/v1/system/version",
+            "/api/v1/auth/otp/request",
+            "/api/v1/auth/otp/verify",
+            "/api/v1/auth/token/refresh",
+            "/api/v1/auth/dev/login"
     );
 
     private final JwtTokenService jwtTokenService;
@@ -37,13 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
 
     public JwtAuthenticationFilter(
-        JwtTokenService jwtTokenService,
-        JsonSecurityResponseWriter responseWriter,
-        AuthService authService
+            JwtTokenService jwtTokenService,
+            JsonSecurityResponseWriter responseWriter,
+            AuthService authService
     ) {
         this.jwtTokenService = jwtTokenService;
-        this.responseWriter = responseWriter;
-        this.authService = authService;
+        this.responseWriter  = responseWriter;
+        this.authService     = authService;
     }
 
     @Override
@@ -60,48 +61,53 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,
+                                 response);
             return;
         }
 
-        String token = authHeader.substring(7).trim();
-        JwtPrincipal principal = jwtTokenService.parse(token).orElse(null);
+        String token = authHeader.substring(7)
+                .trim();
+        JwtPrincipal principal = jwtTokenService.parse(token)
+                .orElse(null);
         if (principal == null) {
             responseWriter.write(
-                request,
-                response,
-                HttpStatus.UNAUTHORIZED.value(),
-                "INVALID_TOKEN",
-                "The provided JWT is invalid or expired."
+                    request,
+                    response,
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "INVALID_TOKEN",
+                    "The provided JWT is invalid or expired."
             );
             return;
         }
 
         String effectiveStatus = authService
-            .currentUserStatus(principal.userId())
-            .orElse(principal.status());
+                .currentUserStatus(principal.userId())
+                .orElse(principal.status());
 
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             responseWriter.write(
-                request,
-                response,
-                HttpStatus.FORBIDDEN.value(),
-                "USER_BANNED",
-                "This account is suspended or banned."
+                    request,
+                    response,
+                    HttpStatus.FORBIDDEN.value(),
+                    "USER_BANNED",
+                    "This account is suspended or banned."
             );
             return;
         }
 
         UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(
-                principal,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
-            );
+                new UsernamePasswordAuthenticationToken(
+                        principal,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
+                );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext()
+                .setAuthentication(authentication);
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,
+                                 response);
         } finally {
             SecurityContextHolder.clearContext();
         }

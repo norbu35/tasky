@@ -102,7 +102,7 @@ components:
     # ─── Common ───────────────────────────────────────────────
     Error:
       type: object
-      required: [code, message, trace_id]
+      required: [ code, message, trace_id ]
       properties:
         code:
           type: string
@@ -116,7 +116,7 @@ components:
 
     CursorPagination:
       type: object
-      required: [next, has_more]
+      required: [ next, has_more ]
       properties:
         next:
           type: string
@@ -129,7 +129,7 @@ components:
 
     PresignedUrlResponse:
       type: object
-      required: [upload_url, storage_key]
+      required: [ upload_url, storage_key ]
       properties:
         upload_url:
           type: string
@@ -143,7 +143,7 @@ components:
     # ─── Identity ─────────────────────────────────────────────
     User:
       type: object
-      required: [id, phone, role, status, created_at]
+      required: [ id, phone, role, status, created_at ]
       properties:
         id:
           type: string
@@ -153,17 +153,17 @@ components:
           example: "+97699001122"
         role:
           type: string
-          enum: [CUSTOMER, TASKER, ADMIN]
+          enum: [ CUSTOMER, TASKER, ADMIN ]
         status:
           type: string
-          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+          enum: [ PENDING, VERIFIED, BANNED, SUSPENDED ]
         created_at:
           type: string
           format: date-time
 
     Profile:
       type: object
-      required: [id, phone, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at]
+      required: [ id, phone, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at ]
       properties:
         id:
           type: string
@@ -173,10 +173,10 @@ components:
           example: "+97699001122"
         role:
           type: string
-          enum: [CUSTOMER, TASKER, ADMIN]
+          enum: [ CUSTOMER, TASKER, ADMIN ]
         status:
           type: string
-          enum: [PENDING, VERIFIED, BANNED, SUSPENDED]
+          enum: [ PENDING, VERIFIED, BANNED, SUSPENDED ]
         full_name:
           type: string
           example: Бат-Эрдэнэ
@@ -271,11 +271,11 @@ components:
     # ─── Verification ─────────────────────────────────────────
     VerificationStatus:
       type: object
-      required: [status]
+      required: [ status ]
       properties:
         status:
           type: string
-          enum: [NOT_SUBMITTED, PENDING, APPROVED, REJECTED]
+          enum: [ NOT_SUBMITTED, PENDING, APPROVED, REJECTED ]
         admin_notes:
           type: string
           nullable: true
@@ -291,7 +291,7 @@ components:
 
     VerificationDetail:
       type: object
-      required: [id, user_id, status, submitted_at]
+      required: [ id, user_id, status, submitted_at ]
       properties:
         id:
           type: string
@@ -311,7 +311,7 @@ components:
           format: uri
         status:
           type: string
-          enum: [PENDING, APPROVED, REJECTED]
+          enum: [ PENDING, APPROVED, REJECTED ]
         admin_notes:
           type: string
           nullable: true
@@ -326,7 +326,7 @@ components:
     # ─── Categories ───────────────────────────────────────────
     Category:
       type: object
-      required: [id, name, name_mn, icon_url, is_active, sort_order]
+      required: [ id, name, name_mn, icon_url, is_active, sort_order ]
       properties:
         id:
           type: string
@@ -348,7 +348,7 @@ components:
     # ─── Tasks ────────────────────────────────────────────────
     PublicTask:
       type: object
-      required: [id, category, customer, description, budget, approximate_location, status, scheduled_at, photo_urls, application_count, created_at]
+      required: [ id, category, customer, description, budget, approximate_location, status, scheduled_at, photo_urls, application_count, created_at ]
       properties:
         id:
           type: string
@@ -357,7 +357,7 @@ components:
           $ref: '#/components/schemas/Category'
         customer:
           type: object
-          required: [id, full_name, avatar_url, rating_avg]
+          required: [ id, full_name, avatar_url, rating_avg ]
           properties:
             id:
               type: string
@@ -391,7 +391,7 @@ components:
           description: Approximate longitude (fuzzed to ~500m).
         status:
           type: string
-          enum: [OPEN]
+          enum: [ OPEN ]
         scheduled_at:
           type: string
           format: date-time
@@ -409,7 +409,7 @@ components:
 
     Task:
       type: object
-      required: [id, category_id, description, budget, location_lat, location_lng, location_text, status, scheduled_at, photos, created_at]
+      required: [ id, category_id, description, budget, location_lat, location_lng, location_text, status, scheduled_at, photos, created_at ]
       properties:
         id:
           type: string
@@ -440,7 +440,7 @@ components:
           example: Энхтайваны өргөн чөлөө 5-р байр, 301 тоот
         status:
           type: string
-          enum: [OPEN, ASSIGNED, COMPLETED, CANCELLED]
+          enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED ]
         scheduled_at:
           type: string
           format: date-time
@@ -466,7 +466,7 @@ components:
 
     CreateTaskRequest:
       type: object
-      required: [category_id, description, budget, location_lat, location_lng, location_text, scheduled_at]
+      required: [ category_id, description, budget, location_lat, location_lng, location_text, scheduled_at ]
       properties:
         category_id:
           type: string
@@ -533,7 +533,7 @@ components:
     # ─── Applications ─────────────────────────────────────────
     TaskApplication:
       type: object
-      required: [id, task_id, tasker, message, status, created_at]
+      required: [ id, task_id, tasker, message, status, created_at ]
       properties:
         id:
           type: string
@@ -543,7 +543,7 @@ components:
           format: uuid
         tasker:
           type: object
-          required: [id, full_name, avatar_url, rating_avg, completed_tasks, is_pro]
+          required: [ id, full_name, avatar_url, rating_avg, completed_tasks, is_pro ]
           properties:
             id:
               type: string
@@ -566,7 +566,7 @@ components:
           description: Tasker's cover message.
         status:
           type: string
-          enum: [PENDING, ACCEPTED, REJECTED, WITHDRAWN]
+          enum: [ PENDING, ACCEPTED, REJECTED, WITHDRAWN ]
         created_at:
           type: string
           format: date-time
@@ -574,7 +574,7 @@ components:
     # ─── Bookings ─────────────────────────────────────────────
     Booking:
       type: object
-      required: [id, task_id, tasker_id, customer_id, price, status, created_at]
+      required: [ id, task_id, tasker_id, customer_id, price, status, created_at ]
       properties:
         id:
           type: string
@@ -599,7 +599,7 @@ components:
           description: Agreed price in MNT.
         status:
           type: string
-          enum: [ASSIGNED, COMPLETED, CANCELLED]
+          enum: [ ASSIGNED, COMPLETED, CANCELLED ]
         cancellation_fee:
           type: integer
           nullable: true
@@ -614,7 +614,7 @@ components:
     # ─── Wallet ───────────────────────────────────────────────
     WalletBalance:
       type: object
-      required: [balance, pending_payout, currency]
+      required: [ balance, pending_payout, currency ]
       properties:
         balance:
           type: integer
@@ -630,7 +630,7 @@ components:
 
     LedgerEntry:
       type: object
-      required: [id, amount, type, description, created_at]
+      required: [ id, amount, type, description, created_at ]
       properties:
         id:
           type: string
@@ -640,7 +640,7 @@ components:
           description: Signed amount in MNT. Positive = credit, negative = debit.
         type:
           type: string
-          enum: [DEPOSIT, FEE, PAYOUT, REFUND]
+          enum: [ DEPOSIT, FEE, PAYOUT, REFUND ]
         reference_id:
           type: string
           format: uuid
@@ -655,7 +655,7 @@ components:
 
     PayoutRequest:
       type: object
-      required: [id, amount, bank_name, bank_account, status, created_at]
+      required: [ id, amount, bank_name, bank_account, status, created_at ]
       properties:
         id:
           type: string
@@ -674,7 +674,7 @@ components:
           example: "5012345678"
         status:
           type: string
-          enum: [PENDING, PROCESSED, REJECTED]
+          enum: [ PENDING, PROCESSED, REJECTED ]
         created_at:
           type: string
           format: date-time
@@ -686,7 +686,7 @@ components:
     # ─── Reviews ──────────────────────────────────────────────
     Review:
       type: object
-      required: [id, booking_id, reviewer_id, reviewee_id, rating, created_at]
+      required: [ id, booking_id, reviewer_id, reviewee_id, rating, created_at ]
       properties:
         id:
           type: string
@@ -716,7 +716,7 @@ components:
     # ─── Disputes ─────────────────────────────────────────────
     Dispute:
       type: object
-      required: [id, booking_id, raised_by, reason, status, created_at]
+      required: [ id, booking_id, raised_by, reason, status, created_at ]
       properties:
         id:
           type: string
@@ -733,10 +733,10 @@ components:
           type: string
         status:
           type: string
-          enum: [OPEN, RESOLVED]
+          enum: [ OPEN, RESOLVED ]
         resolution:
           type: string
-          enum: [REFUND_CUSTOMER, RELEASE_TASKER]
+          enum: [ REFUND_CUSTOMER, RELEASE_TASKER ]
           nullable: true
         resolution_amount:
           type: integer
@@ -755,7 +755,7 @@ components:
     # ─── Conversations / Messages ─────────────────────────────
     Conversation:
       type: object
-      required: [id, task_id, customer_id, tasker_id, last_message, unread_count, created_at]
+      required: [ id, task_id, customer_id, tasker_id, last_message, unread_count, created_at ]
       properties:
         id:
           type: string
@@ -786,7 +786,7 @@ components:
 
     Message:
       type: object
-      required: [id, conversation_id, sender_id, content, created_at]
+      required: [ id, conversation_id, sender_id, content, created_at ]
       properties:
         id:
           type: string
@@ -849,21 +849,21 @@ paths:
   # ─── Auth ───────────────────────────────────────────────────
   /auth/otp/request:
     post:
-      tags: [Auth]
+      tags: [ Auth ]
       summary: Request SMS OTP
       description: |
         Sends a one-time password to the given phone number.
         Rate limited to 3 requests per hour per IP to prevent SMS pumping.
         Creates a new user account if the phone number is not registered.
       operationId: requestOtp
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [phone]
+              required: [ phone ]
               properties:
                 phone:
                   type: string
@@ -876,7 +876,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [message]
+                required: [ message ]
                 properties:
                   message:
                     type: string
@@ -888,20 +888,20 @@ paths:
 
   /auth/otp/verify:
     post:
-      tags: [Auth]
+      tags: [ Auth ]
       summary: Verify OTP and authenticate
       description: |
         Verifies the OTP code and returns JWT tokens.
         If this is the user's first login, a new account is created with CUSTOMER role.
       operationId: verifyOtp
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [phone, code]
+              required: [ phone, code ]
               properties:
                 phone:
                   type: string
@@ -918,7 +918,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token, user]
+                required: [ access_token, refresh_token, user ]
                 properties:
                   access_token:
                     type: string
@@ -939,18 +939,18 @@ paths:
 
   /auth/token/refresh:
     post:
-      tags: [Auth]
+      tags: [ Auth ]
       summary: Refresh access token
       description: Exchange a valid refresh token for a new token pair.
       operationId: refreshToken
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [refresh_token]
+              required: [ refresh_token ]
               properties:
                 refresh_token:
                   type: string
@@ -961,7 +961,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [access_token, refresh_token]
+                required: [ access_token, refresh_token ]
                 properties:
                   access_token:
                     type: string
@@ -977,12 +977,12 @@ paths:
   # ─── Users ──────────────────────────────────────────────────
   /users/me:
     get:
-      tags: [Users]
+      tags: [ Users ]
       summary: Get current user profile
       description: Returns the full profile of the authenticated user.
       operationId: getMyProfile
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
           description: User profile.
@@ -994,12 +994,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 
     put:
-      tags: [Users]
+      tags: [ Users ]
       summary: Update current user profile
       description: Updates profile fields for the authenticated user.
       operationId: updateMyProfile
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -1029,14 +1029,14 @@ paths:
 
   /users/me/role/tasker:
     post:
-      tags: [Users]
+      tags: [ Users ]
       summary: Activate tasker role
       description: |
         Requests role transition from CUSTOMER to TASKER.
         Verification status remains pending until admin approval.
       operationId: activateTaskerRole
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
           description: Role updated to TASKER.
@@ -1055,7 +1055,7 @@ paths:
 
   /users/me/avatar/upload-url:
     post:
-      tags: [Users]
+      tags: [ Users ]
       summary: Get presigned URL for avatar upload
       description: |
         Returns a presigned URL to upload an avatar image directly to S3/MinIO.
@@ -1063,19 +1063,19 @@ paths:
         After uploading, use the returned `storage_key` to update the profile.
       operationId: getAvatarUploadUrl
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required: [ content_type ]
               properties:
                 content_type:
                   type: string
                   description: MIME type of the file.
-                  enum: [image/jpeg, image/png, image/webp]
+                  enum: [ image/jpeg, image/png, image/webp ]
                   example: image/jpeg
       responses:
         '200':
@@ -1092,20 +1092,20 @@ paths:
   # ─── Verification ───────────────────────────────────────────
   /verification/upload-url:
     post:
-      tags: [Verification]
+      tags: [ Verification ]
       summary: Get presigned URL for verification image upload
       description: |
         Returns a presigned URL to upload government ID images used in verification submission.
       operationId: getVerificationUploadUrl
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required: [ content_type ]
               properties:
                 content_type:
                   type: string
@@ -1125,21 +1125,21 @@ paths:
 
   /verification/submit:
     post:
-      tags: [Verification]
+      tags: [ Verification ]
       summary: Submit ID verification
       description: |
         Tasker submits government ID photos for manual verification.
         The storage keys must reference previously uploaded files via presigned URL.
       operationId: submitVerification
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [id_card_front_key, id_card_back_key]
+              required: [ id_card_front_key, id_card_back_key ]
               properties:
                 id_card_front_key:
                   type: string
@@ -1167,12 +1167,12 @@ paths:
 
   /verification/status:
     get:
-      tags: [Verification]
+      tags: [ Verification ]
       summary: Check verification status
       description: Returns the current verification status for the authenticated user.
       operationId: getVerificationStatus
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
           description: Current verification status.
@@ -1186,12 +1186,12 @@ paths:
   # ─── Categories ─────────────────────────────────────────────
   /categories:
     get:
-      tags: [Categories]
+      tags: [ Categories ]
       summary: List active categories
       description: Returns paginated active service categories, sorted by `sort_order`.
       operationId: listCategories
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -1202,7 +1202,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -1216,21 +1216,21 @@ paths:
   # ─── Tasks ──────────────────────────────────────────────────
   /tasks/photos/upload-url:
     post:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Get presigned URL for pre-create task photo upload
       description: |
         Returns a presigned URL to upload a task photo directly to S3/MinIO before task creation.
         Upload keys can be submitted in `photo_keys` during `POST /tasks`.
       operationId: getTaskPreCreatePhotoUploadUrl
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required: [ content_type ]
               properties:
                 content_type:
                   type: string
@@ -1249,14 +1249,14 @@ paths:
 
   /tasks:
     get:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: List open tasks
       description: |
         Returns a paginated list of OPEN tasks. Supports filtering by category and
         geospatial radius search. Location data is fuzzed for privacy.
       operationId: listTasks
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: category
           in: query
@@ -1293,7 +1293,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -1307,14 +1307,14 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 
     post:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Create a new task
       description: |
         Creates a new task in OPEN status. Only authenticated customers can create tasks.
         The task must have a future scheduled_at date and a valid category.
       operationId: createTask
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -1337,14 +1337,14 @@ paths:
 
   /tasks/{id}:
     get:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Get task details
       description: |
         Returns full task details. Exact location is only visible to the task owner
         and the booked tasker. Other users see approximate location only.
       operationId: getTask
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -1366,13 +1366,13 @@ paths:
           $ref: '#/components/responses/NotFound'
 
     put:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Update a task
       description: |
         Updates a task. Only the task owner can update, and only while the task is in OPEN status.
       operationId: updateTask
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -1405,14 +1405,14 @@ paths:
 
   /tasks/{id}/cancel:
     post:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Cancel a task
       description: |
         Cancels an OPEN task. Only the task owner can cancel.
         If the task has an active booking, use the booking cancellation endpoint instead.
       operationId: cancelTask
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -1437,14 +1437,14 @@ paths:
 
   /tasks/{id}/photos/upload-url:
     post:
-      tags: [Tasks]
+      tags: [ Tasks ]
       summary: Get presigned URL for task photo upload
       description: |
         Returns a presigned URL to upload a task photo directly to S3/MinIO.
         Maximum 3 photos per task.
       operationId: getTaskPhotoUploadUrl
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -1453,7 +1453,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content_type]
+              required: [ content_type ]
               properties:
                 content_type:
                   type: string
@@ -1477,14 +1477,14 @@ paths:
   # ─── Applications ───────────────────────────────────────────
   /tasks/{id}/applications:
     post:
-      tags: [Applications]
+      tags: [ Applications ]
       summary: Apply to a task
       description: |
         Tasker applies to an OPEN task. Only verified taskers can apply.
         A conversation is automatically created between the customer and tasker.
       operationId: applyToTask
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -1493,7 +1493,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [message]
+              required: [ message ]
               properties:
                 message:
                   type: string
@@ -1527,14 +1527,14 @@ paths:
                 $ref: '#/components/schemas/Error'
 
     get:
-      tags: [Applications]
+      tags: [ Applications ]
       summary: List applications for a task
       description: |
         Returns paginated list of applications for a task.
         Only the task owner can view all applications.
       operationId: listTaskApplications
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/CursorParam'
@@ -1546,7 +1546,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -1563,7 +1563,7 @@ paths:
 
   /tasks/{id}/applications/{applicationId}/accept:
     post:
-      tags: [Applications]
+      tags: [ Applications ]
       summary: Accept a tasker's application
       description: |
         Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
@@ -1572,7 +1572,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: acceptApplication
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -1588,12 +1588,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [liability_disclaimer_accepted]
+              required: [ liability_disclaimer_accepted ]
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
                   description: Must be `true` to confirm booking.
-                  enum: [true]
+                  enum: [ true ]
       responses:
         '200':
           description: Application accepted, booking created.
@@ -1617,27 +1617,27 @@ paths:
   # ─── Bookings ───────────────────────────────────────────────
   /bookings:
     get:
-      tags: [Bookings]
+      tags: [ Bookings ]
       summary: List my bookings
       description: |
         Returns paginated list of bookings for the authenticated user.
         Filter by role (as customer or tasker) and booking status.
       operationId: listBookings
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: role
           in: query
           description: View bookings as customer or tasker.
           schema:
             type: string
-            enum: [customer, tasker]
+            enum: [ customer, tasker ]
         - name: status
           in: query
           description: Filter by booking status.
           schema:
             type: string
-            enum: [ASSIGNED, COMPLETED, CANCELLED]
+            enum: [ ASSIGNED, COMPLETED, CANCELLED ]
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -1647,7 +1647,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -1662,12 +1662,12 @@ paths:
 
   /bookings/{id}:
     get:
-      tags: [Bookings]
+      tags: [ Bookings ]
       summary: Get booking details
       description: Returns full booking details. Only accessible by the booking's customer or tasker.
       operationId: getBooking
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -1686,7 +1686,7 @@ paths:
 
   /bookings/{id}/cancel:
     post:
-      tags: [Bookings]
+      tags: [ Bookings ]
       summary: Cancel a booking
       description: |
         Cancels an active booking. Cancellation policy applies:
@@ -1695,7 +1695,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: cancelBooking
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -1721,7 +1721,7 @@ paths:
 
   /bookings/{id}/complete:
     post:
-      tags: [Bookings]
+      tags: [ Bookings ]
       summary: Mark booking as complete
       description: |
         Customer marks an ASSIGNED booking as complete. This triggers:
@@ -1730,7 +1730,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: completeBooking
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -1754,10 +1754,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /bookings/{id}/mark-done:
+    post:
+      tags: [ Bookings ]
+      summary: Tasker marks booking as done
+      description: |
+        Tasker signals that work is finished while booking remains active.
+        Customer is notified to review and finalize booking completion.
+        Requires Idempotency-Key header.
+      operationId: markBookingDone
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Booking marked done by tasker.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ booking, tasker_marked_done_at ]
+                properties:
+                  booking:
+                    $ref: '#/components/schemas/Booking'
+                  tasker_marked_done_at:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not in ASSIGNED or PAID status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # ─── Payments ───────────────────────────────────────────────
   /payments/bookings/{id}/initiate:
     post:
-      tags: [Payments]
+      tags: [ Payments ]
       summary: Initiate QPay payment for a booking
       deprecated: true
       description: |
@@ -1768,7 +1809,7 @@ paths:
         Requires explicit liability disclaimer acceptance.
       operationId: initiatePayment
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -1778,12 +1819,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [liability_disclaimer_accepted]
+              required: [ liability_disclaimer_accepted ]
               properties:
                 liability_disclaimer_accepted:
                   type: boolean
                   description: Must be `true` to initiate payment.
-                  enum: [true]
+                  enum: [ true ]
       responses:
         '200':
           description: Payment link generated.
@@ -1791,7 +1832,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [payment_url, qr_code]
+                required: [ payment_url, qr_code ]
                 properties:
                   payment_url:
                     type: string
@@ -1821,10 +1862,10 @@ paths:
 
   /payments/qpay/callback:
     post:
-      tags: [Payments]
+      tags: [ Payments ]
       summary: QPay payment webhook callback
       deprecated: true
-      security: []
+      security: [ ]
       description: |
         Post-MVP deferred endpoint. Not required for phase-1 MVP.
         Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
@@ -1878,13 +1919,13 @@ paths:
   # ─── Wallet ─────────────────────────────────────────────────
   /wallet:
     get:
-      tags: [Wallet]
+      tags: [ Wallet ]
       summary: Get wallet balance
       deprecated: true
       description: Post-MVP deferred endpoint. Returns wallet balance and pending payout amount.
       operationId: getWalletBalance
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
           description: Wallet balance.
@@ -1903,13 +1944,13 @@ paths:
 
   /wallet/transactions:
     get:
-      tags: [Wallet]
+      tags: [ Wallet ]
       summary: List wallet transactions
       deprecated: true
       description: Post-MVP deferred endpoint. Returns paginated transaction history.
       operationId: listWalletTransactions
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -1920,7 +1961,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -1939,7 +1980,7 @@ paths:
 
   /wallet/payouts:
     post:
-      tags: [Wallet]
+      tags: [ Wallet ]
       summary: Request payout
       deprecated: true
       description: |
@@ -1949,7 +1990,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: requestPayout
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
       requestBody:
@@ -1958,7 +1999,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [amount, bank_name, bank_account]
+              required: [ amount, bank_name, bank_account ]
               properties:
                 amount:
                   type: integer
@@ -1997,14 +2038,14 @@ paths:
   # ─── Reviews ────────────────────────────────────────────────
   /bookings/{id}/reviews:
     post:
-      tags: [Reviews]
+      tags: [ Reviews ]
       summary: Submit a review
       description: |
         Submit a review for a COMPLETED booking. Both customer and tasker can review each other.
         Each party can only submit one review per booking.
       operationId: submitReview
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -2013,7 +2054,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [rating]
+              required: [ rating ]
               properties:
                 rating:
                   type: integer
@@ -2047,12 +2088,12 @@ paths:
 
   /users/{id}/reviews:
     get:
-      tags: [Reviews]
+      tags: [ Reviews ]
       summary: Get reviews for a user
       description: Returns paginated reviews received by a user.
       operationId: getUserReviews
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/CursorParam'
@@ -2064,7 +2105,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2080,7 +2121,7 @@ paths:
   # ─── Disputes ───────────────────────────────────────────────
   /bookings/{id}/disputes:
     post:
-      tags: [Disputes]
+      tags: [ Disputes ]
       summary: Raise a dispute
       description: |
         Either booking party (customer or tasker) may raise a dispute.
@@ -2091,7 +2132,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: raiseDispute
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -2101,7 +2142,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason]
+              required: [ reason ]
               properties:
                 reason:
                   type: string
@@ -2131,12 +2172,12 @@ paths:
 
   /disputes/{id}:
     get:
-      tags: [Disputes]
+      tags: [ Disputes ]
       summary: Get dispute details
       description: Returns dispute details. Accessible by the dispute raiser, the other booking party, and admins.
       operationId: getDispute
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -2156,12 +2197,12 @@ paths:
   # ─── Conversations ──────────────────────────────────────────
   /conversations:
     get:
-      tags: [Conversations]
+      tags: [ Conversations ]
       summary: List my conversations
       description: Returns paginated list of conversations for the authenticated user, ordered by last message.
       operationId: listConversations
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -2172,7 +2213,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2185,14 +2226,14 @@ paths:
 
   /conversations/{id}/messages:
     get:
-      tags: [Conversations]
+      tags: [ Conversations ]
       summary: Get messages in a conversation
       description: |
         Returns paginated messages in a conversation, ordered by most recent first.
         Only accessible by conversation participants and admins (for dispute resolution).
       operationId: listMessages
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/CursorParam'
@@ -2204,7 +2245,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2220,7 +2261,7 @@ paths:
           $ref: '#/components/responses/NotFound'
 
     post:
-      tags: [Conversations]
+      tags: [ Conversations ]
       summary: Send a message (REST fallback)
       description: |
         Sends a message in a conversation. This is the REST fallback for clients that
@@ -2228,7 +2269,7 @@ paths:
         WebSocket endpoint: SEND /app/conversations/{id}/messages.
       operationId: sendMessage
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -2237,7 +2278,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [content]
+              required: [ content ]
               properties:
                 content:
                   type: string
@@ -2262,26 +2303,26 @@ paths:
   # ─── Notifications ──────────────────────────────────────────
   /notifications/devices:
     post:
-      tags: [Notifications]
+      tags: [ Notifications ]
       summary: Register push notification device
       description: Registers a device token for push notifications. Overwrites existing token for the same device.
       operationId: registerDevice
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [token, platform]
+              required: [ token, platform ]
               properties:
                 token:
                   type: string
                   description: FCM or Expo push token.
                 platform:
                   type: string
-                  enum: [IOS, ANDROID, WEB]
+                  enum: [ IOS, ANDROID, WEB ]
       responses:
         '200':
           description: Device registered.
@@ -2300,12 +2341,12 @@ paths:
 
   /notifications/devices/{token}:
     delete:
-      tags: [Notifications]
+      tags: [ Notifications ]
       summary: Unregister push notification device
       description: Removes a device token. Typically called on logout.
       operationId: unregisterDevice
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: token
           in: path
@@ -2323,12 +2364,12 @@ paths:
   # ─── Admin ──────────────────────────────────────────────────
   /admin/users:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Search users
       description: Search users by phone number. Admin only.
       operationId: adminSearchUsers
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - name: phone
           in: query
@@ -2344,7 +2385,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2359,14 +2400,14 @@ paths:
 
   /admin/users/{id}/ban:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Ban a user
       description: |
         Bans a user, preventing them from logging in even with a valid JWT.
         Active bookings are not automatically cancelled.
       operationId: adminBanUser
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -2375,7 +2416,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason]
+              required: [ reason ]
               properties:
                 reason:
                   type: string
@@ -2402,12 +2443,12 @@ paths:
 
   /admin/users/{id}/unban:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Unban a user
       description: Removes the ban on a user, restoring their access.
       operationId: adminUnbanUser
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -2432,12 +2473,12 @@ paths:
 
   /admin/verifications/pending:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: List pending verifications
       description: Returns paginated list of verification submissions awaiting admin review.
       operationId: adminListPendingVerifications
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -2448,7 +2489,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2463,12 +2504,12 @@ paths:
 
   /admin/verifications/{id}/approve:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Approve verification
       description: Approves a tasker's identity verification. User status changes to VERIFIED.
       operationId: adminApproveVerification
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -2493,12 +2534,12 @@ paths:
 
   /admin/verifications/{id}/reject:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Reject verification
       description: Rejects a tasker's identity verification with a reason. Tasker can resubmit.
       operationId: adminRejectVerification
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:
@@ -2507,7 +2548,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [reason]
+              required: [ reason ]
               properties:
                 reason:
                   type: string
@@ -2535,12 +2576,12 @@ paths:
 
   /admin/disputes:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: List open disputes
       description: Returns paginated list of open disputes for admin resolution.
       operationId: adminListDisputes
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -2551,7 +2592,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2566,14 +2607,14 @@ paths:
 
   /admin/disputes/{id}:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Get dispute details with evidence context
       description: |
         Returns full dispute details, related booking context, and recent conversation messages
         between booking participants for moderation review.
       operationId: adminGetDispute
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       responses:
@@ -2605,7 +2646,7 @@ paths:
 
   /admin/disputes/{id}/resolve:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Resolve a dispute
       description: |
         Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
@@ -2613,7 +2654,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: adminResolveDispute
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -2623,11 +2664,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [resolution]
+              required: [ resolution ]
               properties:
                 resolution:
                   type: string
-                  enum: [RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE]
+                  enum: [ RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE ]
                 notes:
                   type: string
                   maxLength: 2000
@@ -2656,12 +2697,12 @@ paths:
 
   /admin/moderation/strike-policy:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Get strike and suspension policy
       description: Returns current moderation policy used for tasker strike suspension logic.
       operationId: adminGetStrikePolicy
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       responses:
         '200':
           description: Current strike policy.
@@ -2675,13 +2716,13 @@ paths:
           $ref: '#/components/responses/Forbidden'
 
     put:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Update strike and suspension policy
       description: |
         Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
       operationId: adminUpdateStrikePolicy
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -2704,13 +2745,13 @@ paths:
 
   /admin/payouts/pending:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: List pending payouts
       deprecated: true
       description: Post-MVP deferred endpoint. Returns paginated pending payout requests.
       operationId: adminListPendingPayouts
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -2721,7 +2762,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2742,7 +2783,7 @@ paths:
 
   /admin/payouts/{id}/process:
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Mark payout as processed
       deprecated: true
       description: |
@@ -2752,7 +2793,7 @@ paths:
         Requires Idempotency-Key header.
       operationId: adminProcessPayout
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
@@ -2784,12 +2825,12 @@ paths:
 
   /admin/categories:
     get:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: List all categories
       description: Returns paginated categories including inactive ones. Admin only.
       operationId: adminListCategories
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
@@ -2800,7 +2841,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [data, cursor]
+                required: [ data, cursor ]
                 properties:
                   data:
                     type: array
@@ -2814,19 +2855,19 @@ paths:
           $ref: '#/components/responses/Forbidden'
 
     post:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Create a category
       description: Creates a new service category.
       operationId: adminCreateCategory
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [name, name_mn, icon_url, sort_order]
+              required: [ name, name_mn, icon_url, sort_order ]
               properties:
                 name:
                   type: string
@@ -2857,12 +2898,12 @@ paths:
 
   /admin/categories/{id}:
     put:
-      tags: [Admin]
+      tags: [ Admin ]
       summary: Update a category
       description: Updates an existing category. Can activate, deactivate, rename, or reorder.
       operationId: adminUpdateCategory
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       parameters:
         - $ref: '#/components/parameters/PathId'
       requestBody:

@@ -13,6 +13,7 @@ These specs are mandatory for `scripts/self-verify.sh` and are validated by:
 - `scripts/validate-ac-coverage.py`
 
 ## Rules
+
 1. One ticket spec per branch/task.
 2. Ticket ID must match branch prefix: `agent/<ticket>-<slug>`.
 3. Every acceptance criterion must include one or more `test_ids`.
@@ -20,6 +21,7 @@ These specs are mandatory for `scripts/self-verify.sh` and are validated by:
 5. For high-risk tickets, security/abuse criteria must include negative tests.
 
 ## Minimal Example
+
 ```json
 {
   "schema_version": "1.0.0",

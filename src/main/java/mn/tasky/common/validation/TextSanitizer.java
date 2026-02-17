@@ -14,7 +14,10 @@ public final class TextSanitizer {
         if (value == null) {
             return null;
         }
-        String withoutTags = HTML_TAG_PATTERN.matcher(value).replaceAll("");
-        return MULTI_SPACE_PATTERN.matcher(withoutTags).replaceAll(" ").trim();
+        String withoutTags = HTML_TAG_PATTERN.matcher(value)
+                .replaceAll("");
+        return MULTI_SPACE_PATTERN.matcher(withoutTags)
+                .replaceAll(" ")
+                .trim();
     }
 }

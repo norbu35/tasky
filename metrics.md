@@ -36,12 +36,14 @@ Fields:
 ## 1.2 Required Event Types
 
 ### User / Tasker Lifecycle
+
 - user_registered
 - tasker_registered
 - tasker_verified
 - tasker_deactivated
 
 ### Job Lifecycle
+
 - job_posted
 - job_viewed
 - tasker_applied
@@ -90,6 +92,7 @@ Liquidity Score =
 (Total jobs posted)
 
 Measured:
+
 - Per category
 - Weekly
 - Monthly
@@ -115,9 +118,10 @@ Track:
 ### Active Tasker Definition
 
 A tasker who:
+
 - Applied to ≥1 job OR
 - Completed ≥1 job
-in last 30 days.
+  in last 30 days.
 
 ---
 
@@ -270,6 +274,7 @@ For each category, display:
 - GMV (reported)
 
 Use this to determine which categories to:
+
 - Invest in
 - Drop
 - Expand

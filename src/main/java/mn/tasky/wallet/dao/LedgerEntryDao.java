@@ -1,5 +1,8 @@
 package mn.tasky.wallet.dao;
 
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
+
 import mn.tasky.wallet.dto.LedgerEntry;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -10,21 +13,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 @RegisterConstructorMapper(LedgerEntry.class)
 public interface LedgerEntryDao {
-
-    @SqlUpdate("INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, created_at) "
-             + "VALUES (:id, :userId, :amount, :type, :referenceId, :description, :createdAt)")
-    void insert(@Bind("id") UUID id,
-                @Bind("userId") UUID userId,
-                @Bind("amount") int amount,
-                @Bind("type") String type,
-                @Bind("referenceId") UUID referenceId,
-                @Bind("description") String description,
-                @Bind("createdAt") Instant createdAt);
 
     default void insert(String id,
                         String userId,
@@ -33,13 +23,34 @@ public interface LedgerEntryDao {
                         String referenceId,
                         String description,
                         Instant createdAt) {
-        insert(required(id, "id"), optional(userId), amount, type, optional(referenceId), description, createdAt);
+        insert(required(id,
+                        "id"),
+               optional(userId),
+               amount,
+               type,
+               optional(referenceId),
+               description,
+               createdAt);
+    }
+
+    @SqlUpdate(
+            "INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, " +
+                    "created_at) "
+                    +
+                    "VALUES (:id, :userId, :amount, :type, :referenceId, :description, :createdAt)")
+    void insert(@Bind("id") UUID id,
+                @Bind("userId") UUID userId,
+                @Bind("amount") int amount,
+                @Bind("type") String type,
+                @Bind("referenceId") UUID referenceId,
+                @Bind("description") String description,
+                @Bind("createdAt") Instant createdAt);
+
+    default List<LedgerEntry> findByUserId(String userId) {
+        return findByUserId(required(userId,
+                                     "userId"));
     }
 
     @SqlQuery("SELECT * FROM ledger_entries WHERE user_id = :userId ORDER BY created_at DESC")
     List<LedgerEntry> findByUserId(@Bind("userId") UUID userId);
-
-    default List<LedgerEntry> findByUserId(String userId) {
-        return findByUserId(required(userId, "userId"));
-    }
 }
