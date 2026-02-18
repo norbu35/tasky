@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -269,7 +270,13 @@ public class TaskService {
             String cursor,
             int limit
     ) {
-        int offset = decodeOffset(cursor);
+        TaskCursor cursorState = decodeCursor(cursor);
+        Instant cursorCreatedAt = cursorState != null
+                ? cursorState.createdAt()
+                : null;
+        UUID cursorId = cursorState != null
+                ? cursorState.id()
+                : null;
 
         List<TaskState> tasks;
         if (lat != null && lng != null && radiusKm != null) {
@@ -278,11 +285,13 @@ public class TaskService {
                                                  lat,
                                                  lng,
                                                  meters,
-                                                 offset,
+                                                 cursorCreatedAt,
+                                                 cursorId,
                                                  limit + 1);
         } else {
             tasks = taskDao.findOpen(categoryId,
-                                     offset,
+                                     cursorCreatedAt,
+                                     cursorId,
                                      limit + 1);
         }
 
@@ -295,7 +304,7 @@ public class TaskService {
                 .map(this::populatePhotoKeys)
                 .toList();
         String nextCursor = hasMore
-                ? encodeOffset(offset + limit)
+                ? encodeCursor(pageData.get(pageData.size() - 1))
                 : null;
 
         return new TaskPage(List.copyOf(pageData),
@@ -303,27 +312,34 @@ public class TaskService {
                             hasMore);
     }
 
-    private int decodeOffset(String cursor) {
+    private TaskCursor decodeCursor(String cursor) {
         if (!StringUtils.hasText(cursor)) {
-            return 0;
+            return null;
         }
         try {
             String decoded = new String(
-                    java.util.Base64.getUrlDecoder()
+                    Base64.getUrlDecoder()
                             .decode(cursor),
                     StandardCharsets.UTF_8
             );
-            return Integer.parseInt(decoded);
+            String[] parts = decoded.split("\\|",
+                                           2);
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Cursor payload is malformed.");
+            }
+            return new TaskCursor(Instant.parse(parts[0]),
+                                  UUID.fromString(parts[1]));
         } catch (Exception e) {
-            return 0;
+            throw new IllegalArgumentException("Cursor is invalid.",
+                                               e);
         }
     }
 
-    private String encodeOffset(int offset) {
-        return java.util.Base64.getUrlEncoder()
+    private String encodeCursor(TaskState lastTask) {
+        String payload = lastTask.createdAt() + "|" + lastTask.id();
+        return Base64.getUrlEncoder()
                 .withoutPadding()
-                .encodeToString(Integer.toString(offset)
-                                        .getBytes(StandardCharsets.UTF_8));
+                .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
     }
 
     public TaskCancelResult cancelTask(String customerId,
@@ -592,5 +608,9 @@ public class TaskService {
                 maxBytes +
                 "&expires_in=" +
                 ttlSeconds;
+    }
+
+    private record TaskCursor(Instant createdAt,
+                              UUID id) {
     }
 }

@@ -85,27 +85,42 @@ public class TaskController {
             @RequestParam(required = false) Double lng,
             @RequestParam(value = "radius_km", defaultValue = "10") @Max(50) Double radiusKm,
             @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
+            HttpServletRequest request
     ) {
-        TaskPage page = taskService.listTasks(category,
-                                              lat,
-                                              lng,
-                                              radiusKm,
-                                              cursor,
-                                              limit);
+        try {
+            TaskPage page = taskService.listTasks(category,
+                                                  lat,
+                                                  lng,
+                                                  radiusKm,
+                                                  cursor,
+                                                  limit);
 
-        List<Map<String, Object>> data = page.data()
-                .stream()
-                .map(this::toPublicTaskResponse)
-                .toList();
+            List<Map<String, Object>> data = page.data()
+                    .stream()
+                    .map(this::toPublicTaskResponse)
+                    .toList();
 
-        return ResponseEntity.ok(
-                new PagedResponse<>(
-                        data,
-                        new CursorPagination(page.nextCursor(),
-                                             page.hasMore())
-                )
-        );
+            return ResponseEntity.ok(
+                    new PagedResponse<>(
+                            data,
+                            new CursorPagination(page.nextCursor(),
+                                                 page.hasMore())
+                    )
+            );
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_CURSOR",
+                                    "message",
+                                    "Cursor parameter is invalid.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+        }
     }
 
     private Map<String, Object> toPublicTaskResponse(TaskState task) {

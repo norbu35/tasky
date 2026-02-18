@@ -3,7 +3,7 @@ package mn.tasky.admin.api;
 import jakarta.validation.Valid;
 import mn.tasky.admin.dto.AdminActionRequest;
 import mn.tasky.auth.application.AuthService;
-import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,35 +40,21 @@ public class AdminUserController {
         int clampedLimit = Math.max(1,
                                     Math.min(limit,
                                              100));
-        List<UserProfile> users = authService.searchUsersByPhone(phone)
-                .stream()
-                .sorted(Comparator.comparing(UserProfile::id))
-                .toList();
-
-        int start = 0;
-        if (cursor != null && !cursor.isBlank()) {
-            for (int i = 0; i < users.size(); i++) {
-                if (cursor.equals(users.get(i)
-                                          .id())) {
-                    start = i + 1;
-                    break;
-                }
-            }
+        try {
+            UserProfilePage page = authService.searchUsersByPhone(phone,
+                                                                  cursor,
+                                                                  clampedLimit);
+            CursorPagination pagination = new CursorPagination(page.nextCursor(),
+                                                               page.hasMore());
+            return ResponseEntity.ok(new PagedResponse<>(page.data(),
+                                                         pagination));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("code",
+                                 "INVALID_CURSOR",
+                                 "message",
+                                 "Cursor parameter is invalid."));
         }
-
-        int end = Math.min(start + clampedLimit,
-                           users.size());
-        List<UserProfile> page = users.subList(start,
-                                               end);
-        boolean hasMore = end < users.size();
-        String next = hasMore && !page.isEmpty()
-                ? page.getLast()
-                .id()
-                : null;
-        CursorPagination pagination = new CursorPagination(next,
-                                                           hasMore);
-        return ResponseEntity.ok(new PagedResponse<>(page,
-                                                     pagination));
     }
 
     @PostMapping("/{id}/ban")

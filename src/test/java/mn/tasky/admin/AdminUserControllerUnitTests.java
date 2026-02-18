@@ -7,6 +7,7 @@ import mn.tasky.admin.api.AdminUserController;
 import mn.tasky.admin.dto.AdminActionRequest;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.security.JwtPrincipal;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,9 +42,14 @@ class AdminUserControllerUnitTests {
                               "+97699110002");
         UserProfile u3 = user(uuid(3),
                               "+97699110003");
-        when(authService.searchUsersByPhone("9911")).thenReturn(List.of(u3,
-                                                                          u1,
-                                                                          u2));
+        when(authService.searchUsersByPhone("9911",
+                                            u1.id(),
+                                            2)).thenReturn(new UserProfilePage(
+                List.of(u2,
+                        u3),
+                null,
+                false
+        ));
 
         ResponseEntity<?> response = controller.search("9911",
                                                        u1.id(),
@@ -57,6 +63,21 @@ class AdminUserControllerUnitTests {
         assertThat(first.id()).isEqualTo(u2.id());
         assertThat(second.id()).isEqualTo(u3.id());
         assertThat(body.cursor().hasMore()).isFalse();
+    }
+
+    @Test
+    void searchReturnsBadRequestWhenCursorIsInvalid() {
+        when(authService.searchUsersByPhone("9911",
+                                            "not-a-uuid",
+                                            2)).thenThrow(new IllegalArgumentException("Cursor is invalid."));
+
+        ResponseEntity<?> response = controller.search("9911",
+                                                       "not-a-uuid",
+                                                       2);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+                                                                            "INVALID_CURSOR");
     }
 
     @Test

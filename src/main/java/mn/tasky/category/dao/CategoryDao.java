@@ -53,6 +53,40 @@ public interface CategoryDao {
     @SqlQuery("SELECT * FROM categories ORDER BY sort_order, name")
     List<CategoryState> findAll();
 
+    @SqlQuery("SELECT * FROM categories "
+            + "WHERE is_active = true "
+            + "ORDER BY sort_order, name, id "
+            + "LIMIT :limit")
+    List<CategoryState> findActivePage(@Bind("limit") int limit);
+
+    @SqlQuery("SELECT * FROM categories "
+            + "WHERE is_active = true "
+            + "AND (sort_order > :cursorSortOrder "
+            + "OR (sort_order = :cursorSortOrder AND name > :cursorName) "
+            + "OR (sort_order = :cursorSortOrder AND name = :cursorName AND id > :cursorId)) "
+            + "ORDER BY sort_order, name, id "
+            + "LIMIT :limit")
+    List<CategoryState> findActivePageAfter(@Bind("cursorSortOrder") int cursorSortOrder,
+                                            @Bind("cursorName") String cursorName,
+                                            @Bind("cursorId") UUID cursorId,
+                                            @Bind("limit") int limit);
+
+    @SqlQuery("SELECT * FROM categories "
+            + "ORDER BY sort_order, name, id "
+            + "LIMIT :limit")
+    List<CategoryState> findAllPage(@Bind("limit") int limit);
+
+    @SqlQuery("SELECT * FROM categories "
+            + "WHERE (sort_order > :cursorSortOrder "
+            + "OR (sort_order = :cursorSortOrder AND name > :cursorName) "
+            + "OR (sort_order = :cursorSortOrder AND name = :cursorName AND id > :cursorId)) "
+            + "ORDER BY sort_order, name, id "
+            + "LIMIT :limit")
+    List<CategoryState> findAllPageAfter(@Bind("cursorSortOrder") int cursorSortOrder,
+                                         @Bind("cursorName") String cursorName,
+                                         @Bind("cursorId") UUID cursorId,
+                                         @Bind("limit") int limit);
+
     @SqlQuery("SELECT COUNT(*) FROM categories WHERE is_active = true")
     int countActive();
 

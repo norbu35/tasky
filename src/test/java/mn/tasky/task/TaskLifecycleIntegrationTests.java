@@ -623,6 +623,19 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
+    @DisplayName("invalid cursor returns bad request for task feed")
+    void feedCursorInvalidReturnsBadRequest() {
+        AuthContext customer = authenticate("1021");
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks?limit=2&cursor=invalid-cursor",
+                                                   customer.accessToken());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("code",
+                                                     "INVALID_CURSOR");
+    }
+
+    @Test
     @DisplayName("TID-TASK-022-API-TASK-LIST-PRIVACY exact address hidden")
     void feedPrivacy() {
         AuthContext customer = authenticate("102");

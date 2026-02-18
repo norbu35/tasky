@@ -8,7 +8,6 @@ import mn.tasky.category.dto.UpdateCategory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,22 +31,34 @@ public class CategoryService {
     private CategoryPage listCategories(boolean includeInactive,
                                         String cursor,
                                         int limit) {
-        List<CategoryState> sorted = includeInactive
-                ? categoryDao.findAll()
-                : categoryDao.findActive();
-
-        int offset = decodeOffset(cursor);
-        if (offset > sorted.size()) {
-            throw new IllegalArgumentException("Cursor offset is out of range.");
+        CategoryCursor anchor = resolveCursor(includeInactive,
+                                              cursor);
+        int fetchLimit = limit + 1;
+        List<CategoryState> results;
+        if (anchor == null) {
+            results = includeInactive
+                    ? categoryDao.findAllPage(fetchLimit)
+                    : categoryDao.findActivePage(fetchLimit);
+        } else {
+            results = includeInactive
+                    ? categoryDao.findAllPageAfter(anchor.sortOrder(),
+                                                   anchor.name(),
+                                                   anchor.id(),
+                                                   fetchLimit)
+                    : categoryDao.findActivePageAfter(anchor.sortOrder(),
+                                                      anchor.name(),
+                                                      anchor.id(),
+                                                      fetchLimit);
         }
 
-        int endIndex = Math.min(offset + limit,
-                                sorted.size());
-        List<CategoryState> pageData = sorted.subList(offset,
-                                                      endIndex);
-        boolean hasMore = endIndex < sorted.size();
+        boolean hasMore = results.size() > limit;
+        List<CategoryState> pageData = hasMore
+                ? results.subList(0,
+                                  limit)
+                : results;
         String nextCursor = hasMore
-                ? encodeOffset(endIndex)
+                ? pageData.get(pageData.size() - 1)
+                        .id()
                 : null;
 
         return new CategoryPage(List.copyOf(pageData),
@@ -55,32 +66,29 @@ public class CategoryService {
                                 hasMore);
     }
 
-    private int decodeOffset(String cursor) {
+    private CategoryCursor resolveCursor(boolean includeInactive,
+                                         String cursor) {
         if (!StringUtils.hasText(cursor)) {
-            return 0;
+            return null;
         }
+
+        UUID cursorId;
         try {
-            String decoded = new String(
-                    Base64.getUrlDecoder()
-                            .decode(cursor),
-                    java.nio.charset.StandardCharsets.UTF_8
-            );
-            int offset = Integer.parseInt(decoded);
-            if (offset < 0) {
-                throw new IllegalArgumentException("Cursor offset cannot be negative.");
-            }
-            return offset;
+            cursorId = UUID.fromString(cursor.trim());
         } catch (RuntimeException exception) {
             throw new IllegalArgumentException("Cursor is invalid.",
                                                exception);
         }
-    }
 
-    private String encodeOffset(int offset) {
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(Integer.toString(offset)
-                                        .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        CategoryState anchor = categoryDao.findById(cursorId)
+                .orElseThrow(() -> new IllegalArgumentException("Cursor category was not found."));
+        if (!includeInactive && !anchor.isActive()) {
+            throw new IllegalArgumentException("Cursor category is not active.");
+        }
+
+        return new CategoryCursor(cursorId,
+                                  anchor.sortOrder(),
+                                  anchor.name());
     }
 
     public CategoryPage listAllCategories(String cursor,
@@ -151,5 +159,10 @@ public class CategoryService {
 
     public Optional<CategoryState> getCategory(String id) {
         return categoryDao.findById(id);
+    }
+
+    private record CategoryCursor(UUID id,
+                                  int sortOrder,
+                                  String name) {
     }
 }

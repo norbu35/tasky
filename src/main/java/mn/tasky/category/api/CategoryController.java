@@ -12,6 +12,7 @@ import mn.tasky.category.dto.CreateCategory;
 import mn.tasky.category.dto.CreateCategoryRequest;
 import mn.tasky.category.dto.UpdateCategory;
 import mn.tasky.category.dto.UpdateCategoryRequest;
+import mn.tasky.common.api.ApiResponseSupport;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.observability.RequestObservabilityFilter;
@@ -104,12 +105,7 @@ public class CategoryController {
     }
 
     private String resolveTraceId(HttpServletRequest request) {
-        Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
-        if (traceId != null) {
-            return traceId.toString();
-        }
-        return UUID.randomUUID()
-                .toString();
+        return ApiResponseSupport.resolveTraceId(request);
     }
 
     private String sanitize(String value) {

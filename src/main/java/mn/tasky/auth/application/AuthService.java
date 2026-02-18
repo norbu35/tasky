@@ -21,6 +21,7 @@ import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.RefreshSession;
 import mn.tasky.auth.dto.RoleActivationResult;
 import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.auth.dto.UserProfilePage;
 import mn.tasky.auth.dto.UserProfileState;
 import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.auth.dto.VerificationRequest;
@@ -43,6 +44,7 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -884,6 +886,33 @@ public class AuthService {
                 .toList();
     }
 
+    public UserProfilePage searchUsersByPhone(String phonePart,
+                                              String cursor,
+                                              int limit) {
+        UUID cursorId = parseUserSearchCursor(cursor);
+        List<UserProfile> candidates = searchUsersByPhone(phonePart)
+                .stream()
+                .sorted(Comparator.comparing(profile -> UUID.fromString(profile.id())))
+                .filter(profile -> cursorId == null || UUID.fromString(profile.id())
+                        .compareTo(cursorId) > 0)
+                .limit(limit + 1L)
+                .toList();
+
+        boolean hasMore = candidates.size() > limit;
+        List<UserProfile> pageData = hasMore
+                ? candidates.subList(0,
+                                     limit)
+                : candidates;
+        String nextCursor = hasMore && !pageData.isEmpty()
+                ? pageData.get(pageData.size() - 1)
+                        .id()
+                : null;
+
+        return new UserProfilePage(List.copyOf(pageData),
+                                   nextCursor,
+                                   hasMore);
+    }
+
     public boolean banUser(String adminId,
                            String userId,
                            String reason) {
@@ -1038,6 +1067,18 @@ public class AuthService {
                 avatarMaxBytes,
                 avatarUploadUrlTtlSeconds
         );
+    }
+
+    private UUID parseUserSearchCursor(String cursor) {
+        if (!StringUtils.hasText(cursor)) {
+            return null;
+        }
+        try {
+            return UUID.fromString(cursor.trim());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Cursor is invalid.",
+                                               exception);
+        }
     }
 
 }
