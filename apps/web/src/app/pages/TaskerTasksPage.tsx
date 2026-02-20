@@ -10,9 +10,11 @@ import { Badge } from "../../components/ui/badge";
 import { Rocket, Calendar, MapPin, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 function TaskerBookingCard({ task }: { task: Task }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <Card className="flex flex-col hover:border-primary/50 transition-colors">
@@ -42,14 +44,14 @@ function TaskerBookingCard({ task }: { task: Task }) {
           {task.status === "COMPLETED" ? (
             <>
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-green-600 font-medium">Completed</span>
+              <span className="text-green-600 font-medium">{t("taskerTasks.completed", "Completed")}</span>
             </>
           ) : (
-            <span className="font-medium">Assigned</span>
+            <span className="font-medium">{t("taskerTasks.assigned", "Assigned")}</span>
           )}
         </div>
         <Button size="sm" onClick={() => navigate(`/booking/safety?taskId=${task.id}`)}>
-          {task.status === "COMPLETED" ? "View Details" : "Manage Booking"}
+          {task.status === "COMPLETED" ? t("taskerTasks.viewDetails", "View Details") : t("taskerTasks.manageBooking", "Manage Booking")}
         </Button>
       </CardFooter>
     </Card>
@@ -59,6 +61,7 @@ function TaskerBookingCard({ task }: { task: Task }) {
 export function TaskerTasksPage() {
   const { apiClient, session, profile } = useAppContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Reusing listTasks but simulating filtering for assigned to this tasker.
   // In a real app, there would be an endpoint like `listAssignedTasks(taskId)`, 
@@ -95,22 +98,22 @@ export function TaskerTasksPage() {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-end gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">My Bookings</h1>
-            <p className="text-muted-foreground mt-1">Manage your accepted jobs and past work.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t("taskerTasks.title", "My Bookings")}</h1>
+            <p className="text-muted-foreground mt-1">{t("taskerTasks.subtitle", "Manage your accepted jobs and past work.")}</p>
           </div>
           <Button onClick={() => navigate("/tasker/tasks")} variant="secondary" className="gap-2">
             <Rocket className="w-4 h-4" />
-            <span className="hidden sm:inline">Find more work</span>
-            <span className="sm:hidden">Find</span>
+            <span className="hidden sm:inline">{t("taskerTasks.findMoreWork", "Find more work")}</span>
+            <span className="sm:hidden">{t("taskerTasks.find", "Find")}</span>
           </Button>
         </div>
 
         {error ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>{t("taskerTasks.errorTitle", "Error")}</AlertTitle>
             <AlertDescription>
-              {error instanceof Error ? error.message : "Failed to load bookings"}
+              {error instanceof Error ? error.message : t("taskerTasks.errorFailedLoad", "Failed to load bookings")}
             </AlertDescription>
           </Alert>
         ) : isLoading ? (
@@ -136,17 +139,17 @@ export function TaskerTasksPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Rocket className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="mb-2">No bookings yet</CardTitle>
+            <CardTitle className="mb-2">{t("taskerTasks.noBookingsTitle", "No bookings yet")}</CardTitle>
             <CardDescription className="mb-6 max-w-sm">
-              You haven't been assigned to any tasks yet. Head over to the feed to find and apply for jobs.
+              {t("taskerTasks.noBookingsDesc", "You haven't been assigned to any tasks yet. Head over to the feed to find and apply for jobs.")}
             </CardDescription>
-            <Button onClick={() => navigate("/tasker/tasks")}>Browse available tasks</Button>
+            <Button onClick={() => navigate("/tasker/tasks")}>{t("taskerTasks.browseAvailableTasks", "Browse available tasks")}</Button>
           </Card>
         ) : (
           <Tabs defaultValue="active" className="w-full mt-4">
             <TabsList className="mb-4">
-              <TabsTrigger value="active">Active Bookings</TabsTrigger>
-              <TabsTrigger value="past">Past Work</TabsTrigger>
+              <TabsTrigger value="active">{t("taskerTasks.tabActive", "Active Bookings")}</TabsTrigger>
+              <TabsTrigger value="past">{t("taskerTasks.tabPast", "Past Work")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="active" className="mt-0">
@@ -156,7 +159,7 @@ export function TaskerTasksPage() {
                 ))}
                 {tasksList.filter(t => t.status === "ASSIGNED").length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No active bookings.
+                    {t("taskerTasks.emptyActive", "No active bookings.")}
                   </div>
                 )}
               </div>
@@ -169,7 +172,7 @@ export function TaskerTasksPage() {
                 ))}
                 {tasksList.filter(t => t.status === "COMPLETED").length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No past work completed yet.
+                    {t("taskerTasks.emptyPast", "No past work completed yet.")}
                   </div>
                 )}
               </div>

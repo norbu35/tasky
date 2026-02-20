@@ -10,9 +10,11 @@ import { useAppContext } from "../context/AppContext";
 import { ScreenFrame } from "../layout/ScreenFrame";
 import { parseError } from "../utils/errorHandling";
 import { MapPin, Coins, Search, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function TaskerFeedPage() {
     const { apiClient, session, trackClientEvent } = useAppContext();
+    const { t } = useTranslation();
 
     const [filters, setFilters] = useState<{
         categoryId: string;
@@ -50,7 +52,7 @@ export function TaskerFeedPage() {
 
         const draft = (applyDrafts[taskId] ?? "").trim();
         if (draft.length < 10) {
-            setActionMessage("Application message must be at least 10 characters.");
+            setActionMessage(t("taskerFeed.msgMinLength", "Application message must be at least 10 characters."));
             return;
         }
 
@@ -60,7 +62,7 @@ export function TaskerFeedPage() {
             await apiClient.applyToTask(session.accessToken, taskId, draft);
             setApplyDrafts((prev) => ({ ...prev, [taskId]: "" }));
             trackClientEvent("APPLICATION_SUBMITTED", { taskId });
-            setActionMessage("Application sent.");
+            setActionMessage(t("taskerFeed.msgSent", "Application sent."));
             void refetchTasks();
         } catch (error) {
             setActionMessage(parseError(error));
@@ -74,9 +76,9 @@ export function TaskerFeedPage() {
             <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-display font-bold tracking-tight">Open task feed</h1>
+                        <h1 className="text-3xl font-display font-bold tracking-tight">{t("taskerFeed.title", "Open task feed")}</h1>
                         <p className="text-muted-foreground mt-1">
-                            Browse available tasks near your location and apply to them.
+                            {t("taskerFeed.subtitle", "Browse available tasks near your location and apply to them.")}
                         </p>
                     </div>
                 </div>
@@ -85,7 +87,7 @@ export function TaskerFeedPage() {
                     <CardContent className="pt-6 grid gap-4">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="feed-category" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">Category</Label>
+                                <Label htmlFor="feed-category" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
                                 <select
                                     id="feed-category"
                                     className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
@@ -93,14 +95,14 @@ export function TaskerFeedPage() {
                                     onChange={(event) => setFilters(prev => ({ ...prev, categoryId: event.target.value }))}
                                     disabled={loadingCategories}
                                 >
-                                    <option value="">All categories</option>
+                                    <option value="">{t("taskerFeed.allCategories", "All categories")}</option>
                                     {categories.map((c: any) => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-lat" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">Latitude</Label>
+                                <Label htmlFor="feed-lat" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
                                 <Input
                                     id="feed-lat"
                                     value={filters.lat}
@@ -109,7 +111,7 @@ export function TaskerFeedPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-lng" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">Longitude</Label>
+                                <Label htmlFor="feed-lng" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
                                 <Input
                                     id="feed-lng"
                                     value={filters.lng}
@@ -118,7 +120,7 @@ export function TaskerFeedPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-radius" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">Radius (km)</Label>
+                                <Label htmlFor="feed-radius" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
                                 <Input
                                     id="feed-radius"
                                     value={filters.radiusKm}
@@ -137,14 +139,14 @@ export function TaskerFeedPage() {
                     {loadingTasks && (
                         <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4">
                             <Loader2 className="w-8 h-8 animate-spin" />
-                            <p className="text-sm font-medium">Scanning for available tasks...</p>
+                            <p className="text-sm font-medium">{t("taskerFeed.scanningMsg", "Scanning for available tasks...")}</p>
                         </div>
                     )}
 
                     {!loadingTasks && taskCards.length === 0 && !tasksError && (
                         <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
                             <Search className="w-10 h-10 opacity-20" />
-                            <p className="text-sm font-medium opacity-60">No open tasks found in this area.</p>
+                            <p className="text-sm font-medium opacity-60">{t("taskerFeed.noTasksFound", "No open tasks found in this area.")}</p>
                         </div>
                     )}
 
@@ -155,10 +157,10 @@ export function TaskerFeedPage() {
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
                                             <Badge variant="secondary" className="hover:bg-secondary">
-                                                {task.category?.name || "Task"}
+                                                {task.category?.name || t("taskerFeed.categoryFallback", "Task")}
                                             </Badge>
                                             <Badge variant="outline" className="text-muted-foreground">
-                                                Open
+                                                {t("taskerFeed.statusOpen", "Open")}
                                             </Badge>
                                         </div>
                                         <CardTitle className="text-xl leading-snug font-medium mt-2">{task.description}</CardTitle>
@@ -173,23 +175,23 @@ export function TaskerFeedPage() {
                             <CardContent className="pt-4 pb-4 border-t border-border/40 grid md:grid-cols-2 gap-4 text-sm bg-card">
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <MapPin className="w-4 h-4 shrink-0 text-primary/70" />
-                                    <span>Approximate location: <strong className="text-foreground">{task.approximate_location}</strong></span>
+                                    <span>{t("taskerFeed.approxLocation", "Approximate location: ")}<strong className="text-foreground">{task.approximate_location}</strong></span>
                                 </div>
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <Coins className="w-4 h-4 shrink-0 text-primary/70" />
-                                    <span>Pay structure: <strong className="text-foreground">Fixed price</strong></span>
+                                    <span>{t("taskerFeed.payStructure", "Pay structure: ")}<strong className="text-foreground">{t("taskerFeed.fixedPrice", "Fixed price")}</strong></span>
                                 </div>
                             </CardContent>
                             <CardFooter className="bg-muted/10 border-t border-border/40 p-4 pt-4 flex flex-col items-stretch gap-3">
                                 <Label htmlFor={`apply-${task.id}`} className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">
-                                    Application message
+                                    {t("taskerFeed.appMessageLabel", "Application message")}
                                 </Label>
                                 <Textarea
                                     id={`apply-${task.id}`}
                                     className="resize-none min-h-[80px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors"
                                     value={applyDrafts[task.id] ?? ""}
                                     onChange={(e) => setApplyDrafts(prev => ({ ...prev, [task.id]: e.target.value }))}
-                                    placeholder="Explain why you are the best fit for this task..."
+                                    placeholder={t("taskerFeed.appMessagePlaceholder", "Explain why you are the best fit for this task...")}
                                 />
                                 <div className="flex justify-end mt-1">
                                     <Button
@@ -198,7 +200,7 @@ export function TaskerFeedPage() {
                                         className="rounded-xl shadow-lg hover:translate-y-[-1px] transition-all font-semibold"
                                     >
                                         {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                                        Apply to task
+                                        {t("taskerFeed.applyButton", "Apply to task")}
                                     </Button>
                                 </div>
                             </CardFooter>

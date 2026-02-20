@@ -11,9 +11,11 @@ import { parseError } from "../utils/errorHandling";
 import { LocationPicker } from "../../components/TaskCreation/LocationPicker";
 import { PhotoUploadManager } from "../../components/TaskCreation/PhotoUploadManager";
 import { createTaskSchema } from "@tasky/core";
+import { useTranslation } from "react-i18next";
 
 export function CustomerTaskPage() {
     const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
+    const { t } = useTranslation();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoryId, setCategoryId] = useState("");
@@ -74,7 +76,7 @@ export function CustomerTaskPage() {
             const created = await apiClient.createTask(session.accessToken, validatedData);
             setCreatedTasks((previous) => [created, ...previous]);
             trackClientEvent("TASK_POSTED", { taskId: created.id });
-            setMessage("Task created successfully.");
+            setMessage(t("customerTask.successMessage", "Task created successfully."));
 
             // Optional: reset form after creation
             setDescription("");
@@ -108,7 +110,7 @@ export function CustomerTaskPage() {
         try {
             const response = await apiClient.listTaskApplications(session.accessToken, taskId);
             setApplicationsByTask((previous) => ({ ...previous, [taskId]: response.data }));
-            setMessage(`Loaded ${response.data.length} application(s).`);
+            setMessage(t("customerTask.loadedCount", "Loaded {{count}} application(s).", { count: response.data.length }));
         } catch (error) {
             setMessage(parseError(error));
         } finally {
@@ -121,21 +123,21 @@ export function CustomerTaskPage() {
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)]">
                 <Card className="border-border/70 shadow-xl shadow-foreground/5">
                     <CardHeader>
-                        <CardTitle>Create task</CardTitle>
+                        <CardTitle>{t("customerTask.createTaskTitle", "Create task")}</CardTitle>
                         <CardDescription>
-                            Customer can create a task with category, location, schedule, and budget.
+                            {t("customerTask.createTaskDesc", "Customer can create a task with category, location, schedule, and budget.")}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="task-category">Category</Label>
+                            <Label htmlFor="task-category">{t("customerTask.categoryLabel", "Category")}</Label>
                             <select
                                 id="task-category"
                                 className="h-10 rounded-md border border-input bg-background px-3 text-sm"
                                 value={categoryId}
                                 onChange={(event) => setCategoryId(event.target.value)}
                             >
-                                <option value="">Select category</option>
+                                <option value="">{t("customerTask.selectCategory", "Select category")}</option>
                                 {categories.map((category) => (
                                     <option key={category.id} value={category.id}>
                                         {category.name}
@@ -149,18 +151,18 @@ export function CustomerTaskPage() {
                             </div>
                         )}
                         <div className="grid gap-2">
-                            <Label htmlFor="task-description">Task details</Label>
+                            <Label htmlFor="task-description">{t("customerTask.taskDetailsLabel", "Task details")}</Label>
                             <Textarea
                                 id="task-description"
                                 value={description}
                                 onChange={(event) => setDescription(event.target.value)}
-                                placeholder="1-bedroom apartment deep cleaning"
+                                placeholder={t("customerTask.taskDetailsPlaceholder", "1-bedroom apartment deep cleaning")}
                             />
                             {errorMap.description && <p className="text-xs text-destructive">{errorMap.description}</p>}
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">
                             <div className="grid gap-2">
-                                <Label htmlFor="task-budget">Budget (MNT)</Label>
+                                <Label htmlFor="task-budget">{t("customerTask.budgetLabel", "Budget (MNT)")}</Label>
                                 <Input
                                     id="task-budget"
                                     inputMode="numeric"
@@ -170,7 +172,7 @@ export function CustomerTaskPage() {
                                 {errorMap.budget && <p className="text-xs text-destructive">{errorMap.budget}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="task-scheduled-at">Scheduled at</Label>
+                                <Label htmlFor="task-scheduled-at">{t("customerTask.scheduledAtLabel", "Scheduled at")}</Label>
                                 <Input
                                     id="task-scheduled-at"
                                     type="datetime-local"
@@ -187,12 +189,12 @@ export function CustomerTaskPage() {
                         />
 
                         <div className="grid gap-2">
-                            <Label htmlFor="task-location-text">Address description</Label>
+                            <Label htmlFor="task-location-text">{t("customerTask.addressDescLabel", "Address description")}</Label>
                             <Input
                                 id="task-location-text"
                                 value={locationText}
                                 onChange={(event) => setLocationText(event.target.value)}
-                                placeholder="ХУД, 15-р хороо, Олимп хотхон"
+                                placeholder={t("customerTask.addressDescPlaceholder", "ХУД, 15-р хороо, Олимп хотхон")}
                             />
                             {errorMap.location_text && <p className="text-xs text-destructive">{errorMap.location_text}</p>}
                         </div>
@@ -205,7 +207,7 @@ export function CustomerTaskPage() {
                                 setLocationLng(lng);
                             }}
                         />
-                        {errorMap.location_lat && <p className="text-xs text-destructive">Location is required</p>}
+                        {errorMap.location_lat && <p className="text-xs text-destructive">{t("customerTask.locationRequired", "Location is required")}</p>}
 
                         {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
                     </CardContent>
@@ -214,25 +216,24 @@ export function CustomerTaskPage() {
                             disabled={working}
                             onClick={createTask}
                         >
-                            Create task
+                            {t("customerTask.createTaskButton", "Create task")}
                         </Button>
                     </CardFooter>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>My created tasks</CardTitle>
-                        <CardDescription>Load applications to validate customer-side applicant
-                            visibility.</CardDescription>
+                        <CardTitle>{t("customerTask.myCreatedTasksTitle", "My created tasks")}</CardTitle>
+                        <CardDescription>{t("customerTask.myCreatedTasksDesc", "Load applications to validate customer-side applicant visibility.")}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-3">
                         {createdTasks.length === 0 ?
-                            <p className="text-sm text-muted-foreground">No tasks created yet.</p> : null}
+                            <p className="text-sm text-muted-foreground">{t("customerTask.noTasksCreated", "No tasks created yet.")}</p> : null}
                         {createdTasks.map((task) => (
                             <article className="rounded-md border border-border p-3" key={task.id}>
                                 <p className="text-sm font-medium">{task.description}</p>
-                                <p className="text-xs text-muted-foreground">Task ID: {task.id}</p>
-                                <p className="text-xs text-muted-foreground">Status: {task.status}</p>
+                                <p className="text-xs text-muted-foreground">{t("customerTask.taskId", "Task ID: ")}{task.id}</p>
+                                <p className="text-xs text-muted-foreground">{t("customerTask.status", "Status: ")}{task.status}</p>
                                 <div className="mt-2 flex items-center gap-2">
                                     <Button
                                         size="sm"
@@ -242,10 +243,10 @@ export function CustomerTaskPage() {
                                             void loadApplications(task.id);
                                         }}
                                     >
-                                        Load applications
+                                        {t("customerTask.loadApplicationsButton", "Load applications")}
                                     </Button>
                                     <span className="text-xs text-muted-foreground">
-                                        Applications: {applicationsByTask[task.id]?.length ?? 0}
+                                        {t("customerTask.applicationsCount", "Applications: ")}{applicationsByTask[task.id]?.length ?? 0}
                                     </span>
                                 </div>
                             </article>

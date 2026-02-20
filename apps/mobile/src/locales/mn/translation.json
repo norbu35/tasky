@@ -6,11 +6,22 @@
     "otpLabel": "Баталгаажуулах код",
     "requestOtp": "Код авах",
     "verifyOtp": "Баталгаажуулах",
-    "developerBypass": "Хөгжүүлэгчийн нэвтрэлт"
+    "developerBypass": "Хөгжүүлэгчийн нэвтрэлт",
+    "phoneNumber": "",
+    "phonePlaceholder": "+976...",
+    "otpCode": "",
+    "otpPlaceholder": "123456",
+    "continue": "",
+    "verifyLogin": ""
   },
   "nav": {
     "profile": "Профайл",
     "tasks": "Ажлууд",
     "inbox": "Зурвас"
+  },
+  "common": {
+    "loading": "Уншиж байна...",
+    "error": "Алдаа гарлаа",
+    "retry": "Дахих"
   }
 }

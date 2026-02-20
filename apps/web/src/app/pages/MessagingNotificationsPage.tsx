@@ -11,9 +11,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import { Send, Bell, BellOff, MessageSquareText, Search } from "lucide-react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { useTranslation } from "react-i18next";
 
 export function MessagingNotificationsPage() {
     const { apiClient, session, profile } = useAppContext();
+    const { t } = useTranslation();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -132,11 +134,11 @@ export function MessagingNotificationsPage() {
                 // Generate a mock web token
                 const mockToken = "ExponentPushToken[mock-web-" + Date.now() + "]";
                 await apiClient.registerDevice(session.accessToken, { token: mockToken, platform: "WEB" });
-                setStatusMessage("Push notifications enabled.");
+                setStatusMessage(t("messaging.pushEnabled", "Push notifications enabled."));
             } else {
                 // Unregister mock logic (assumes API doesn't mind which token visually, just testing the call)
                 await apiClient.unregisterDevice(session.accessToken, "mock-token");
-                setStatusMessage("Push notifications disabled.");
+                setStatusMessage(t("messaging.pushDisabled", "Push notifications disabled."));
             }
         } catch (error) {
             setStatusMessage(parseError(error));
@@ -154,11 +156,11 @@ export function MessagingNotificationsPage() {
         <ScreenFrame>
             <div className="max-w-6xl mx-auto h-[calc(100vh-140px)] flex flex-col items-center">
                 <div className="w-full flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-bold tracking-tight">Inbox</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">{t("messaging.inboxTitle", "Inbox")}</h1>
                     <div className="flex items-center gap-2 border px-3 py-1.5 rounded-full bg-card">
                         <Label htmlFor="push-toggle" className="text-sm font-medium cursor-pointer flex gap-1 items-center">
                             {pushEnabled ? <Bell className="w-4 h-4 text-green-600" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
-                            Notifications
+                            {t("messaging.notificationsLabel", "Notifications")}
                         </Label>
                         <Switch id="push-toggle" checked={pushEnabled} onCheckedChange={handlePushToggle} disabled={working} />
                     </div>
@@ -176,14 +178,14 @@ export function MessagingNotificationsPage() {
                         <div className="p-4 border-b bg-card">
                             <div className="relative">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input className="w-full pl-9 bg-background" placeholder="Search chats..." />
+                                <Input className="w-full pl-9 bg-background" placeholder={t("messaging.searchPlaceholder", "Search chats...")} />
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto">
                             {conversations.length === 0 ? (
                                 <div className="p-6 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
                                     <MessageSquareText className="w-8 h-8 opacity-20" />
-                                    No conversations found.
+                                    {t("messaging.noConversations", "No conversations found.")}
                                 </div>
                             ) : (
                                 conversations.map(conv => (
@@ -198,7 +200,7 @@ export function MessagingNotificationsPage() {
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="overflow-hidden">
-                                            <div className="font-medium text-sm truncate">{conv.task_title || "Task Discussion"}</div>
+                                            <div className="font-medium text-sm truncate">{conv.task_title || t("messaging.taskDiscussion", "Task Discussion")}</div>
                                             <div className="text-xs text-muted-foreground truncate">{conv.id.substring(0, 8)}...</div>
                                         </div>
                                     </button>
@@ -212,9 +214,9 @@ export function MessagingNotificationsPage() {
                         {selectedConvId ? (
                             <>
                                 <div className="p-4 border-b bg-card/80 backdrop-blur-sm z-10 shadow-sm flex items-center justify-between">
-                                    <div className="font-medium">{selectedConvData?.task_title || "Task Chat"}</div>
+                                    <div className="font-medium">{selectedConvData?.task_title || t("messaging.taskChat", "Task Chat")}</div>
                                     {bookingId && (
-                                        <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">Booking #{bookingId.substring(0, 6)}...</div>
+                                        <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{t("messaging.bookingPrefix", "Booking #")}{bookingId.substring(0, 6)}...</div>
                                     )}
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -239,13 +241,13 @@ export function MessagingNotificationsPage() {
                                         <Input
                                             value={messageDraft}
                                             onChange={e => setMessageDraft(e.target.value)}
-                                            placeholder="Type your message..."
+                                            placeholder={t("messaging.typeMessagePlaceholder", "Type your message...")}
                                             className="flex-1 bg-background"
                                             disabled={working}
                                         />
                                         <Button type="submit" disabled={working || !messageDraft.trim()} size="default" className="px-3">
                                             <Send className="w-4 h-4" />
-                                            <span className="sr-only">Send</span>
+                                            <span className="sr-only">{t("messaging.sendAriaLabel", "Send")}</span>
                                         </Button>
                                     </form>
                                 </div>
@@ -253,7 +255,7 @@ export function MessagingNotificationsPage() {
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
                                 <MessageSquareText className="w-16 h-16 opacity-10 mb-4" />
-                                <p>Select a conversation to start messaging</p>
+                                <p>{t("messaging.selectConversationPrompt", "Select a conversation to start messaging")}</p>
                             </div>
                         )}
                     </div>

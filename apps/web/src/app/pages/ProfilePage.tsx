@@ -9,6 +9,7 @@ import { Label } from "../../components/ui/label";
 import { useAppContext } from "../context/AppContext";
 import { ScreenFrame } from "../layout/ScreenFrame";
 import { parseError } from "../utils/errorHandling";
+import { useTranslation } from "react-i18next";
 
 export function ProfilePage() {
     const {
@@ -21,6 +22,7 @@ export function ProfilePage() {
         refreshProfile,
         updateSessionUser
     } = useAppContext();
+    const { t } = useTranslation();
 
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
@@ -40,7 +42,7 @@ export function ProfilePage() {
 
         const contentType = file.type;
         if (contentType !== "image/jpeg" && contentType !== "image/png" && contentType !== "image/webp") {
-            setProfileError("Invalid file format. Please use JPEG, PNG, or WebP.");
+            setProfileError(t("profile.invalidFileFormat", "Invalid file format. Please use JPEG, PNG, or WebP."));
             return;
         }
 
@@ -75,7 +77,7 @@ export function ProfilePage() {
 
             // 3. Set preview URL
             setAvatarUrl(`https://cdn.tasky.local/${storageKey}`);
-            setSuccessMessage("Avatar uploaded to bucket. Click Save below to apply.");
+            setSuccessMessage(t("profile.avatarUploaded", "Avatar uploaded to bucket. Click Save below to apply."));
         } catch (error) {
             setProfileError(parseError(error));
         } finally {
@@ -98,7 +100,7 @@ export function ProfilePage() {
                 avatar_url: avatarUrl.trim().length > 0 ? avatarUrl.trim() : null
             });
             setProfile(updated);
-            setSuccessMessage("Profile updated successfully");
+            setSuccessMessage(t("profile.profileUpdated", "Profile updated successfully"));
         } catch (error) {
             setProfileError(parseError(error));
         } finally {
@@ -116,7 +118,7 @@ export function ProfilePage() {
             const user = await apiClient.activateTaskerRole(session.accessToken);
             updateSessionUser(user);
             await refreshProfile();
-            setSuccessMessage("Welcome to the Tasker network! Your role is now active.");
+            setSuccessMessage(t("profile.taskerActivated", "Welcome to the Tasker network! Your role is now active."));
         } catch (error) {
             setProfileError(parseError(error));
         } finally {
@@ -133,21 +135,21 @@ export function ProfilePage() {
                 <div className="flex items-center gap-3 px-2">
                     <User className="w-8 h-8 text-primary" />
                     <div>
-                        <h1 className="text-3xl font-display font-bold tracking-tight">Your Profile</h1>
-                        <p className="text-muted-foreground">Manage your personal information and preferences.</p>
+                        <h1 className="text-3xl font-display font-bold tracking-tight">{t("profile.yourProfile", "Your Profile")}</h1>
+                        <p className="text-muted-foreground">{t("profile.manageInfo", "Manage your personal information and preferences.")}</p>
                     </div>
                 </div>
 
                 <Card className="border-border shadow-xl rounded-3xl overflow-hidden backdrop-blur-xl bg-card">
                     <CardHeader className="border-b border-border/50 bg-muted/20 pb-6 flex flex-row items-start justify-between">
                         <div className="space-y-1">
-                            <CardTitle className="text-xl font-display">Identity & Avatar</CardTitle>
+                            <CardTitle className="text-xl font-display">{t("profile.identityAvatar", "Identity & Avatar")}</CardTitle>
                             <CardDescription>
-                                Add a photo to build trust with others in the network.
+                                {t("profile.addPhoto", "Add a photo to build trust with others in the network.")}
                             </CardDescription>
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">Network Role</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">{t("profile.networkRole", "Network Role")}</span>
                             <div className={`px-3 py-1 text-xs font-bold uppercase rounded-full border ${isCustomer ? 'bg-secondary text-secondary-foreground border-primary/20' : 'bg-accent/10 text-accent-foreground border-accent/30'}`}>
                                 {profile?.role ?? "UNKNOWN"}
                             </div>
@@ -191,8 +193,8 @@ export function ProfilePage() {
                                 disabled={working}
                             />
                             <div className="text-center space-y-1">
-                                <p className="text-sm font-medium">Profile Photo</p>
-                                <p className="text-xs text-muted-foreground">JPEG, PNG, WebP</p>
+                                <p className="text-sm font-medium">{t("profile.profilePhoto", "Profile Photo")}</p>
+                                <p className="text-xs text-muted-foreground">{t("profile.photoFormats", "JPEG, PNG, WebP")}</p>
                             </div>
                         </div>
 
@@ -200,14 +202,14 @@ export function ProfilePage() {
                         <div className="space-y-5">
                             <div className="space-y-2">
                                 <Label htmlFor="full-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                    Display Name
+                                    {t("profile.displayName", "Display Name")}
                                 </Label>
                                 <Input
                                     id="full-name"
-                                    aria-label="Full name"
+                                    aria-label={t("profile.displayName", "Display Name")}
                                     value={fullName}
                                     onChange={(event) => setFullName(event.target.value)}
-                                    placeholder="e.g. Бат-Эрдэнэ"
+                                    placeholder={t("profile.displayNamePlaceholder", "e.g. Бат-Эрдэнэ")}
                                     className="h-12 text-lg rounded-xl bg-muted/50 border-transparent focus:border-primary focus:bg-background transition-colors"
                                     disabled={working}
                                 />
@@ -243,7 +245,7 @@ export function ProfilePage() {
                                     onClick={saveProfile}
                                 >
                                     {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
-                                    Save Changes
+                                    {t("profile.saveChanges", "Save Changes")}
                                 </Button>
                             </div>
                         </div>
@@ -254,7 +256,7 @@ export function ProfilePage() {
                 <Card className="border-border shadow-md rounded-3xl overflow-hidden">
                     <CardHeader className="bg-muted/10 pb-4">
                         <CardTitle className="text-xl font-display flex items-center gap-2">
-                            Account Verification
+                            {t("profile.accountVerification", "Account Verification")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
@@ -263,7 +265,7 @@ export function ProfilePage() {
                                 {statusVerified ? <ShieldCheck className="w-6 h-6" /> : <ShieldAlert className="w-6 h-6" />}
                             </div>
                             <div className="space-y-1">
-                                <p className="font-semibold text-sm">Status</p>
+                                <p className="font-semibold text-sm">{t("profile.status", "Status")}</p>
                                 <p className="text-xl font-display tracking-tight text-foreground capitalize">
                                     {profile?.status?.toLowerCase() ?? "Unknown"}
                                 </p>
@@ -276,10 +278,10 @@ export function ProfilePage() {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <Sparkles className="w-5 h-5 text-accent" />
-                                        <h3 className="font-semibold text-lg font-display text-foreground">Earn with Tasky</h3>
+                                        <h3 className="font-semibold text-lg font-display text-foreground">{t("profile.earnWithTasky", "Earn with Tasky")}</h3>
                                     </div>
                                     <p className="text-sm text-foreground/70">
-                                        Ready to offer your services? Activate your Tasker role to start browsing and applying to open tasks.
+                                        {t("profile.activateTaskerDesc", "Ready to offer your services? Activate your Tasker role to start browsing and applying to open tasks.")}
                                     </p>
                                 </div>
                                 <Button
@@ -289,7 +291,7 @@ export function ProfilePage() {
                                     className="w-full sm:w-auto rounded-xl shadow-sm"
                                 >
                                     {working ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                                    Activate Tasker Account
+                                    {t("profile.activateTaskerBtn", "Activate Tasker Account")}
                                 </Button>
                             </div>
                         )}
@@ -314,7 +316,7 @@ export function ProfilePage() {
                         Save profile
                     </Button>
                     {generatedStorageKey && <p>Issued avatar storage key: {generatedStorageKey}</p>}
-                    {successMessage === "Profile updated successfully" && <p>Profile saved.</p>}
+                    {successMessage === t("profile.profileUpdated", "Profile updated successfully") && <p>Profile saved.</p>}
                 </div>
             </div>
         </ScreenFrame>

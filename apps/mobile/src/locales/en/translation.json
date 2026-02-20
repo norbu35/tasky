@@ -1,16 +1,21 @@
 {
   "auth": {
     "welcome": "Welcome to Tasky",
-    "login": "Login with Phone",
-    "phoneLabel": "Phone Number",
-    "otpLabel": "OTP Code",
-    "requestOtp": "Get Code",
-    "verifyOtp": "Verify Code",
-    "developerBypass": "Developer Bypass"
+    "phoneNumber": "Phone Number",
+    "phonePlaceholder": "+976...",
+    "otpCode": "OTP Code",
+    "otpPlaceholder": "123456",
+    "continue": "Continue",
+    "verifyLogin": "Verify & Login"
   },
   "nav": {
     "profile": "Profile",
     "tasks": "My Tasks",
     "inbox": "Inbox"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
   }
 }

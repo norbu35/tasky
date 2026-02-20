@@ -10,6 +10,7 @@ import { Badge } from "../../components/ui/badge";
 import { Star, MapPin, Calendar, Clock, ChevronLeft, UserCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { t } from "i18next";
 
 function formatTimeAgo(value: string): string {
   const timestamp = new Date(value).getTime();
@@ -17,19 +18,19 @@ function formatTimeAgo(value: string): string {
   const diffMinutes = Math.floor(diffMs / 60000);
 
   if (diffMinutes < 1) {
-    return "just now";
+    return t("customerTaskDetails.justNow", "just now");
   }
   if (diffMinutes < 60) {
-    return `${diffMinutes}m ago`;
+    return t("customerTaskDetails.m_ago", "{{count}}m ago", { count: diffMinutes });
   }
 
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < 24) {
-    return `${diffHours}h ago`;
+    return t("customerTaskDetails.h_ago", "{{count}}h ago", { count: diffHours });
   }
 
   const diffDays = Math.floor(diffHours / 24);
-  return `${diffDays}d ago`;
+  return t("customerTaskDetails.d_ago", "{{count}}d ago", { count: diffDays });
 }
 
 export function CustomerTaskDetailsPage() {
@@ -83,11 +84,11 @@ export function CustomerTaskDetailsPage() {
     return (
       <ScreenFrame>
         <Alert variant="destructive">
-          <AlertTitle>Not Found</AlertTitle>
-          <AlertDescription>Task not found or you don't have permission to view it.</AlertDescription>
+          <AlertTitle>{t("customerTaskDetails.notFoundTitle", "Not Found")}</AlertTitle>
+          <AlertDescription>{t("customerTaskDetails.notFoundDesc", "Task not found or you don't have permission to view it.")}</AlertDescription>
         </Alert>
         <Button variant="ghost" onClick={() => navigate("/customer/tasks")} className="mt-4">
-          Back to My Tasks
+          {t("customerTaskDetails.backToMyTasks", "Back to My Tasks")}
         </Button>
       </ScreenFrame>
     );
@@ -132,30 +133,30 @@ export function CustomerTaskDetailsPage() {
               </div>
             </div>
             <div className="space-y-3 sm:text-right">
-              <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Budget</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">{t("customerTaskDetails.budgetLabel", "Budget")}</div>
               <div className="text-2xl font-bold text-foreground">₮{task.budget.toLocaleString()}</div>
             </div>
           </CardContent>
         </Card>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold mt-4">Applicants</h2>
+          <h2 className="text-xl font-semibold mt-4">{t("customerTaskDetails.applicantsTitle", "Applicants")}</h2>
 
           {isAssigned ? (
             <Card className="border-primary bg-primary/5">
               <CardContent className="flex flex-col items-center justify-center p-8 text-center">
                 <UserCheck className="w-12 h-12 text-primary mb-4" />
-                <CardTitle className="mb-2">Task is assigned</CardTitle>
+                <CardTitle className="mb-2">{t("customerTaskDetails.taskAssignedTitle", "Task is assigned")}</CardTitle>
                 <CardDescription className="mb-4">
-                  You have already accepted a Tasker for this task.
+                  {t("customerTaskDetails.taskAssignedDesc", "You have already accepted a Tasker for this task.")}
                 </CardDescription>
-                <Button onClick={() => navigate("/booking/safety")}>Go to Booking Management</Button>
+                <Button onClick={() => navigate("/booking/safety")}>{t("customerTaskDetails.goToBookingManagement", "Go to Booking Management")}</Button>
               </CardContent>
             </Card>
           ) : applicationsError ? (
             <Alert variant="destructive">
               <AlertDescription>
-                {applicationsError instanceof Error ? applicationsError.message : "Failed to load applications"}
+                {applicationsError instanceof Error ? applicationsError.message : t("customerTaskDetails.failedToLoadApplications", "Failed to load applications")}
               </AlertDescription>
             </Alert>
           ) : applicationsLoading ? (
@@ -166,7 +167,7 @@ export function CustomerTaskDetailsPage() {
             </div>
           ) : !applicationsPage?.data || applicationsPage.data.length === 0 ? (
             <Card className="border-dashed p-8 text-center text-muted-foreground">
-              Waiting for Taskers to apply...
+              {t("customerTaskDetails.waitingForTaskers", "Waiting for Taskers to apply...")}
             </Card>
           ) : (
             <div className="grid gap-4">
@@ -208,14 +209,14 @@ function ApplicationCard({ application, taskId }: { application: TaskApplication
                   {application.tasker.rating_avg.toFixed(1)}
                 </span>
                 <span>•</span>
-                <span>{application.tasker.completed_tasks} tasks done</span>
+                <span>{t("customerTaskDetails.tasksDone", "{{count}} tasks done", { count: application.tasker.completed_tasks })}</span>
               </div>
             </div>
           </div>
           <Button
             onClick={() => navigate(`/customer/booking-confirmation?taskId=${taskId}&applicationId=${application.id}`)}
           >
-            Review & Accept
+            {t("customerTaskDetails.reviewAndAccept", "Review & Accept")}
           </Button>
         </div>
       </CardHeader>
@@ -223,7 +224,7 @@ function ApplicationCard({ application, taskId }: { application: TaskApplication
         "{application.message}"
       </CardContent>
       <CardFooter className="px-4 py-3 bg-muted/10 text-xs text-muted-foreground border-t">
-        Applied {formatTimeAgo(application.created_at)}
+        {t("customerTaskDetails.appliedAgo", "Applied {{timeAgo}}", { timeAgo: formatTimeAgo(application.created_at) })}
       </CardFooter>
     </Card>
   );

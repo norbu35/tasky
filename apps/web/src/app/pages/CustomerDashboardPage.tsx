@@ -10,9 +10,11 @@ import { Badge } from "../../components/ui/badge";
 import { Plus, Users, Calendar, MapPin, AlertCircle, CheckCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { useTranslation } from "react-i18next";
 
 function TaskCard({ task }: { task: Task }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <Card className="flex flex-col hover:border-primary/50 transition-colors">
@@ -42,12 +44,12 @@ function TaskCard({ task }: { task: Task }) {
           {task.status === "OPEN" ? (
             <>
               <Users className="w-4 h-4" />
-              <span>Review applicants</span>
+              <span>{t("customerDashboard.reviewApplicants", "Review applicants")}</span>
             </>
           ) : task.status === "ASSIGNED" ? (
             <>
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-green-600 font-medium">Booked</span>
+              <span className="text-green-600 font-medium">{t("customerDashboard.booked", "Booked")}</span>
             </>
           ) : (
             <>
@@ -56,7 +58,7 @@ function TaskCard({ task }: { task: Task }) {
           )}
         </div>
         <Button size="sm" onClick={() => navigate(`/customer/tasks/${task.id}`)}>
-          {task.status === "OPEN" ? "Manage" : "View details"}
+          {task.status === "OPEN" ? t("customerDashboard.manage", "Manage") : t("customerDashboard.viewDetails", "View details")}
         </Button>
       </CardFooter>
     </Card>
@@ -66,6 +68,7 @@ function TaskCard({ task }: { task: Task }) {
 export function CustomerDashboardPage() {
   const { apiClient, session } = useAppContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     data: tasksPage,
@@ -85,22 +88,22 @@ export function CustomerDashboardPage() {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-end gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">My Tasks</h1>
-            <p className="text-muted-foreground mt-1">Manage the tasks you have posted.</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t("customerDashboard.title", "My Tasks")}</h1>
+            <p className="text-muted-foreground mt-1">{t("customerDashboard.subtitle", "Manage the tasks you have posted.")}</p>
           </div>
           <Button onClick={() => navigate("/customer/tasks/new")} className="gap-2">
             <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Post new task</span>
-            <span className="sm:hidden">Post</span>
+            <span className="hidden sm:inline">{t("customerDashboard.postNewTask", "Post new task")}</span>
+            <span className="sm:hidden">{t("customerDashboard.post", "Post")}</span>
           </Button>
         </div>
 
         {error ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>{t("customerDashboard.errorTitle", "Error")}</AlertTitle>
             <AlertDescription>
-              {error instanceof Error ? error.message : "Failed to load tasks"}
+              {error instanceof Error ? error.message : t("customerDashboard.errorFailedLoad", "Failed to load tasks")}
             </AlertDescription>
           </Alert>
         ) : isLoading ? (
@@ -126,18 +129,18 @@ export function CustomerDashboardPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Plus className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="mb-2">No tasks posted yet</CardTitle>
+            <CardTitle className="mb-2">{t("customerDashboard.noTasksTitle", "No tasks posted yet")}</CardTitle>
             <CardDescription className="mb-6 max-w-sm">
-              You haven't posted any tasks. Create your first task to find taskers to help you out.
+              {t("customerDashboard.noTasksDesc", "You haven't posted any tasks. Create your first task to find taskers to help you out.")}
             </CardDescription>
-            <Button onClick={() => navigate("/customer/tasks/new")}>Post your first task</Button>
+            <Button onClick={() => navigate("/customer/tasks/new")}>{t("customerDashboard.postFirstTask", "Post your first task")}</Button>
           </Card>
         ) : (
           <Tabs defaultValue="open" className="w-full mt-4">
             <TabsList className="mb-4">
-              <TabsTrigger value="open">Open Requests</TabsTrigger>
-              <TabsTrigger value="active">Active Bookings</TabsTrigger>
-              <TabsTrigger value="past">Past Submissions</TabsTrigger>
+              <TabsTrigger value="open">{t("customerDashboard.tabOpen", "Open Requests")}</TabsTrigger>
+              <TabsTrigger value="active">{t("customerDashboard.tabActive", "Active Bookings")}</TabsTrigger>
+              <TabsTrigger value="past">{t("customerDashboard.tabPast", "Past Submissions")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="open" className="mt-0">
@@ -147,7 +150,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {tasksPage.data.filter(t => t.status === "OPEN").length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No open task requests.
+                    {t("customerDashboard.emptyOpen", "No open task requests.")}
                   </div>
                 )}
               </div>
@@ -160,7 +163,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {tasksPage.data.filter(t => t.status === "ASSIGNED").length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No active bookings.
+                    {t("customerDashboard.emptyActive", "No active bookings.")}
                   </div>
                 )}
               </div>
@@ -173,7 +176,7 @@ export function CustomerDashboardPage() {
                 ))}
                 {tasksPage.data.filter(t => t.status === "COMPLETED" || t.status === "CANCELLED").length === 0 && (
                   <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
-                    No past tasks.
+                    {t("customerDashboard.emptyPast", "No past tasks.")}
                   </div>
                 )}
               </div>

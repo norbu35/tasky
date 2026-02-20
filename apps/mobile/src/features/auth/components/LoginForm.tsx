@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Button, FormField, Input} from '../../../components/ui';
-import {useRequestOtp, useVerifyOtp} from '../hooks/useAuth';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button, FormField, Input } from '../../../components/ui';
+import { useRequestOtp, useVerifyOtp } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export function LoginForm() {
     const [phone, setPhone] = useState('+976');
     const [code, setCode] = useState('');
     const [step, setStep] = useState<'phone' | 'otp'>('phone');
 
+    const { t } = useTranslation();
     const requestOtp = useRequestOtp();
     const verifyOtp = useVerifyOtp();
 
@@ -19,31 +21,31 @@ export function LoginForm() {
     };
 
     const handleVerify = () => {
-        verifyOtp.mutate({phone, code});
+        verifyOtp.mutate({ phone, code });
     };
 
     const busy = requestOtp.isPending || verifyOtp.isPending;
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to Tasky</Text>
+            <Text style={styles.title}>{t("auth.welcome", "Welcome to Tasky")}</Text>
 
-            <FormField label="Phone Number">
+            <FormField label={t("auth.phoneNumber", "Phone Number")}>
                 <Input
                     value={phone}
                     onChangeText={setPhone}
-                    placeholder="+976..."
+                    placeholder={t("auth.phonePlaceholder", "+976...")}
                     keyboardType="phone-pad"
                     editable={!busy && step === 'phone'}
                 />
             </FormField>
 
             {step === 'otp' && (
-                <FormField label="OTP Code">
+                <FormField label={t("auth.otpCode", "OTP Code")}>
                     <Input
                         value={code}
                         onChangeText={setCode}
-                        placeholder="123456"
+                        placeholder={t("auth.otpPlaceholder", "123456")}
                         keyboardType="number-pad"
                     />
                 </FormField>
@@ -51,9 +53,9 @@ export function LoginForm() {
 
             <View style={styles.actions}>
                 {step === 'phone' ? (
-                    <Button label="Continue" onPress={handleRequest} loading={busy}/>
+                    <Button label={t("auth.continue", "Continue")} onPress={handleRequest} loading={busy} />
                 ) : (
-                    <Button label="Verify & Login" onPress={handleVerify} loading={busy}/>
+                    <Button label={t("auth.verifyLogin", "Verify & Login")} onPress={handleVerify} loading={busy} />
                 )}
             </View>
 
