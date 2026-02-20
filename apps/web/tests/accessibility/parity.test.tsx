@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { designTokens } from "../../../../packages/design-tokens/tokens";
 import { App } from "../../src/App";
 import type { ApiClient } from "../../src/lib/apiClient";
@@ -31,13 +31,13 @@ function contrastRatio(foreground: string, background: string): number {
 
 function buildApiClientMock(): ApiClient {
     return {
-        requestOtp: vi.fn().mockResolvedValue("OTP sent"),
-        verifyOtp: vi.fn().mockResolvedValue({
+        loginWithFacebook: vi.fn().mockResolvedValue({
             accessToken: "access",
             refreshToken: "refresh",
             user: {
                 id: "user-1",
-                phone: "+97699001122",
+                phone: null,
+                facebook_id: "fb-user-1",
                 role: "CUSTOMER",
                 status: "PENDING",
                 created_at: "2026-02-14T00:00:00Z"
@@ -83,31 +83,33 @@ function buildApiClientMock(): ApiClient {
     };
 }
 
+afterEach(() => {
+    delete (window as Window & { FB?: unknown }).FB;
+    delete (window as Window & { fbAsyncInit?: unknown }).fbAsyncInit;
+});
+
 describe("Accessibility and parity gates", () => {
     it("TID-TASK-072-WEB-A11Y-KEYBOARD keeps key controls focusable for keyboard navigation", async () => {
+        Object.defineProperty(window, "FB", {
+            configurable: true,
+            writable: true,
+            value: {
+                init: vi.fn(),
+                login: vi.fn((callback: (response: { authResponse: { accessToken: string } }) => void) => {
+                    callback({ authResponse: { accessToken: "fb-token-keyboard" } });
+                })
+            }
+        });
         render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
 
-        const phoneInput = screen.getByLabelText("Phone number");
-        const requestButton = screen.getByRole("button", { name: "Request OTP" });
+        const facebookButton = screen.getByRole("button", { name: "Continue with Facebook" });
+        const customerBypassButton = screen.getByRole("button", { name: "Customer" });
 
-        phoneInput.focus();
-        expect(phoneInput).toHaveFocus();
+        facebookButton.focus();
+        expect(facebookButton).toHaveFocus();
 
-        requestButton.focus();
-        expect(requestButton).toHaveFocus();
-
-        fireEvent.click(requestButton);
-
-        const codeInput = await screen.findByLabelText("OTP code");
-        const verifyButton = screen.getByRole("button", { name: "Verify OTP" });
-
-        codeInput.focus();
-        expect(codeInput).toHaveFocus();
-
-        fireEvent.change(codeInput, { target: { value: "123456" } });
-
-        verifyButton.focus();
-        expect(verifyButton).toHaveFocus();
+        customerBypassButton.focus();
+        expect(customerBypassButton).toHaveFocus();
     });
 
     it("TID-TASK-072-WEB-A11Y-CONTRAST-AA enforces WCAG AA contrast for core token pairs", () => {

@@ -40,17 +40,41 @@ public interface UserDao {
                 @Bind("status") String status,
                 @Bind("createdAt") Instant createdAt);
 
+    default void insertWithFacebookId(String id,
+                                      String facebookId,
+                                      String role,
+                                      String status,
+                                      Instant createdAt) {
+        insertWithFacebookId(required(id,
+                                      "id"),
+                             facebookId,
+                             role,
+                             status,
+                             createdAt);
+    }
+
+    @SqlUpdate("INSERT INTO users (id, phone, phone_blind_idx, facebook_id, role, status, created_at) "
+            + "VALUES (:id, NULL, NULL, :facebookId, :role, :status, :createdAt)")
+    void insertWithFacebookId(@Bind("id") UUID id,
+                              @Bind("facebookId") String facebookId,
+                              @Bind("role") String role,
+                              @Bind("status") String status,
+                              @Bind("createdAt") Instant createdAt);
+
     default Optional<AuthUser> findById(String id) {
         return findById(required(id,
                                  "id"));
     }
 
-    @SqlQuery("SELECT id, phone, role, status, created_at FROM users WHERE id = :id")
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE id = :id")
     Optional<AuthUser> findById(@Bind("id") UUID id);
 
-    @SqlQuery("SELECT id, phone, role, status, created_at FROM users WHERE phone_blind_idx = " +
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE phone_blind_idx = " +
             ":phoneBlindIdx")
     Optional<AuthUser> findByPhoneBlindIndex(@Bind("phoneBlindIdx") String phoneBlindIdx);
+
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE facebook_id = :facebookId")
+    Optional<AuthUser> findByFacebookId(@Bind("facebookId") String facebookId);
 
     default void updateStatus(String id,
                               String status) {
@@ -99,6 +123,6 @@ public interface UserDao {
     void updateRole(@Bind("id") UUID id,
                     @Bind("role") String role);
 
-    @SqlQuery("SELECT id, phone, role, status, created_at FROM users")
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users")
     List<AuthUser> findAll();
 }

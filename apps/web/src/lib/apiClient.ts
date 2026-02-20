@@ -39,9 +39,7 @@ export interface BookingFilters {
 }
 
 export interface ApiClient {
-    requestOtp(phone: string): Promise<string>;
-
-    verifyOtp(phone: string, code: string): Promise<AuthTokens>;
+    loginWithFacebook(accessToken: string): Promise<AuthTokens>;
 
     getMyProfile(accessToken: string): Promise<Profile>;
 
@@ -199,20 +197,12 @@ export class HttpApiClient implements ApiClient {
         this.baseUrl = normalizeBaseUrl(baseUrl);
     }
 
-    async requestOtp(phone: string): Promise<string> {
-        const response = await this.requestJson<{ message: string }>("/auth/otp/request", {
-            method: "POST",
-            body: JSON.stringify({phone})
-        });
-        return response.message;
-    }
-
-    verifyOtp(phone: string, code: string): Promise<AuthTokens> {
+    loginWithFacebook(accessToken: string): Promise<AuthTokens> {
         return this.requestJson<{ access_token: string; refresh_token: string; user: User }>(
-            "/auth/otp/verify",
+            "/auth/facebook",
             {
                 method: "POST",
-                body: JSON.stringify({phone, code})
+                body: JSON.stringify({ access_token: accessToken })
             }
         ).then((response) => ({
             accessToken: response.access_token,

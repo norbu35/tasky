@@ -44,6 +44,12 @@ management:
 tasky:
   api:
     version: v1
+  otp:
+    enabled: ${TASKY_OTP_ENABLED:false}
+  facebook:
+    app-id: ${TASKY_FACEBOOK_APP_ID:}
+    app-secret: ${TASKY_FACEBOOK_APP_SECRET:}
+    graph-api-base-url: ${TASKY_FACEBOOK_GRAPH_API_BASE_URL:https://graph.facebook.com}
   auth:
     otp-ttl-seconds: ${TASKY_OTP_TTL_SECONDS:300}
     otp-test-code: ${TASKY_OTP_TEST_CODE:}

@@ -8,6 +8,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.OtpRequest;
 import mn.tasky.auth.dto.OtpVerifyRequest;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/otp")
 @Validated
+@ConditionalOnProperty(name = "tasky.otp.enabled", havingValue = "true")
 public class OtpController {
 
     private final OtpRateLimitService otpRateLimitService;

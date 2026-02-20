@@ -24,9 +24,9 @@
     {
       "id": "AC-TASK-080-01",
       "type": "functional",
-      "statement": "Web supports OTP login/signup and profile setup/update with avatar upload.",
+      "statement": "Web supports Facebook OAuth login/signup and profile setup/update with avatar upload.",
       "test_ids": [
-        "TID-TASK-080-WEB-AUTH-OTP-FLOW"
+        "TID-TASK-080-WEB-AUTH-OAUTH-FLOW"
       ]
     },
     {

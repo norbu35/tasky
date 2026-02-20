@@ -4,29 +4,27 @@
  */
 
 export interface paths {
-    "/auth/otp/request": {
+    "/system/version": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
         /**
-         * Request SMS OTP
-         * @description Sends a one-time password to the given phone number.
-         *     Rate limited to 3 requests per hour per IP to prevent SMS pumping.
-         *     Creates a new user account if the phone number is not registered.
+         * API version and status
+         * @description Returns application name, API version, and a localized status string. No authentication required.
          */
-        post: operations["requestOtp"];
+        get: operations["getSystemVersion"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/auth/otp/verify": {
+    "/auth/facebook": {
         parameters: {
             query?: never;
             header?: never;
@@ -36,11 +34,11 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Verify OTP and authenticate
-         * @description Verifies the OTP code and returns JWT tokens.
-         *     If this is the user's first login, a new account is created with CUSTOMER role.
+         * Authenticate with Facebook OAuth
+         * @description Validates a Facebook user access token and returns JWT tokens.
+         *     Creates a new user when `facebook_id` has not been seen before.
          */
-        post: operations["verifyOtp"];
+        post: operations["loginWithFacebook"];
         delete?: never;
         options?: never;
         head?: never;
@@ -262,6 +260,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tasks/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List my task ads/history
+         * @description Returns authenticated user's task list with full task details.
+         *     - `role=customer`: tasks created by the authenticated user.
+         *     - `role=tasker`: tasks where the authenticated user has booking history as a tasker.
+         */
+        get: operations["listMyTasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tasks/{id}": {
         parameters: {
             query?: never;
@@ -432,7 +452,7 @@ export interface paths {
          * Cancel a booking
          * @description Cancels an active booking. Cancellation policy applies:
          *     - Customer: Free cancellation > 4 hours before scheduled_at. Late cancellation is recorded as a reliability incident.
-         *     - Tasker: Task reverts to OPEN. Strike recorded (3 strikes in 30 days = 7-day suspension).
+         *     - Tasker: Task reverts to OPEN. Strike recorded. Suspension thresholds/durations are managed by admin moderation policy.
          *     Requires Idempotency-Key header.
          */
         post: operations["cancelBooking"];
@@ -459,6 +479,28 @@ export interface paths {
          *     Requires Idempotency-Key header.
          */
         post: operations["completeBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bookings/{id}/mark-done": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Tasker marks booking as done
+         * @description Tasker signals that work is finished while booking remains active.
+         *     Customer is notified to review and finalize booking completion.
+         *     Requires Idempotency-Key header.
+         */
+        post: operations["markBookingDone"];
         delete?: never;
         options?: never;
         head?: never;
@@ -632,7 +674,10 @@ export interface paths {
         put?: never;
         /**
          * Raise a dispute
-         * @description Raise a dispute on a booking that is ASSIGNED (in progress) or COMPLETED (within 24 hours).
+         * @description Either booking party (customer or tasker) may raise a dispute.
+         *     Allowed states:
+         *     - ASSIGNED booking (in-progress)
+         *     - COMPLETED booking within 24 hours of completion
          *     Raising a dispute blocks booking closure actions until admin resolution.
          *     Requires Idempotency-Key header.
          */
@@ -891,6 +936,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/disputes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get dispute details with evidence context
+         * @description Returns full dispute details, related booking context, and recent conversation messages
+         *     between booking participants for moderation review.
+         */
+        get: operations["adminGetDispute"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/disputes/{id}/resolve": {
         parameters: {
             query?: never;
@@ -907,6 +973,30 @@ export interface paths {
          *     Requires Idempotency-Key header.
          */
         post: operations["adminResolveDispute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/moderation/strike-policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get strike and suspension policy
+         * @description Returns current moderation policy used for tasker strike suspension logic.
+         */
+        get: operations["adminGetStrikePolicy"];
+        /**
+         * Update strike and suspension policy
+         * @description Updates moderation policy values used for suspension thresholds and repeat-offense escalation.
+         */
+        put: operations["adminUpdateStrikePolicy"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1003,9 +1093,7 @@ export interface paths {
         trace?: never;
     };
 }
-
 export type webhooks = Record<string, never>;
-
 export interface components {
     schemas: {
         Error: {
@@ -1041,7 +1129,9 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** @example +97699001122 */
-            phone: string;
+            phone?: string | null;
+            /** @example fb-user-123 */
+            facebook_id?: string | null;
             /** @enum {string} */
             role: "CUSTOMER" | "TASKER" | "ADMIN";
             /** @enum {string} */
@@ -1053,7 +1143,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** @example +97699001122 */
-            phone: string;
+            phone: string | null;
             /** @enum {string} */
             role: "CUSTOMER" | "TASKER" | "ADMIN";
             /** @enum {string} */
@@ -1073,6 +1163,24 @@ export interface components {
             is_pro: boolean;
             /** Format: date-time */
             created_at: string;
+        };
+        StrikePolicy: {
+            strikeWindowDays: number;
+            strikeThreshold: number;
+            firstSuspensionDays: number;
+            repeatSuspensionDays: number;
+            repeatOffenseWindowDays: number;
+            autoUnsuspendEnabled: boolean;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        StrikePolicyUpdateRequest: {
+            strikeWindowDays: number;
+            strikeThreshold: number;
+            firstSuspensionDays: number;
+            repeatSuspensionDays: number;
+            repeatOffenseWindowDays: number;
+            autoUnsuspendEnabled: boolean;
         };
         VerificationStatus: {
             /** @enum {string} */
@@ -1457,11 +1565,38 @@ export interface components {
     headers: never;
     pathItems: never;
 }
-
 export type $defs = Record<string, never>;
-
 export interface operations {
-    requestOtp: {
+    getSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Version info */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example tasky-server */
+                        application?: string;
+                        /** @example v1 */
+                        api_version?: string;
+                        /** @example OK */
+                        status_localized?: string;
+                        /** Format: date-time */
+                        timestamp_utc?: string;
+                    };
+                };
+            };
+        };
+    };
+    loginWithFacebook: {
         parameters: {
             query?: never;
             header?: never;
@@ -1472,44 +1607,10 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * @description Phone number in E.164 format.
-                     * @example +97699001122
+                     * @description Facebook user access token from the client SDK.
+                     * @example EAABsbCS1...
                      */
-                    phone: string;
-                };
-            };
-        };
-        responses: {
-            /** @description OTP sent successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example OTP sent to +97699****22 */
-                        message: string;
-                    };
-                };
-            };
-            400: components["responses"]["BadRequest"];
-            429: components["responses"]["TooManyRequests"];
-        };
-    };
-    verifyOtp: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @example +97699001122 */
-                    phone: string;
-                    /** @example 123456 */
-                    code: string;
+                    access_token: string;
                 };
             };
         };
@@ -1528,7 +1629,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
-            /** @description Invalid or expired OTP code. */
+            /** @description Invalid or mismatched Facebook token. */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -1906,6 +2007,40 @@ export interface operations {
             400: components["responses"]["BadRequest"];
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+        };
+    };
+    listMyTasks: {
+        parameters: {
+            query?: {
+                /** @description View scope for task history. */
+                role?: "customer" | "tasker";
+                /** @description Filter by task status. */
+                status?: "OPEN" | "ASSIGNED" | "COMPLETED" | "CANCELLED";
+                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
+                cursor?: components["parameters"]["CursorParam"];
+                /** @description Maximum number of items to return (default 20, max 100). */
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of tasks for authenticated user scope. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Task"][];
+                        cursor: components["schemas"]["CursorPagination"];
+                    };
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
         };
     };
     getTask: {
@@ -2302,6 +2437,47 @@ export interface operations {
             };
         };
     };
+    markBookingDone: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Booking marked done by tasker. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        booking: components["schemas"]["Booking"];
+                        /** Format: date-time */
+                        tasker_marked_done_at: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Booking is not in ASSIGNED or PAID status. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     initiatePayment: {
         parameters: {
             query?: never;
@@ -2355,6 +2531,15 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     qpayCallback: {
@@ -2399,6 +2584,15 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     getWalletBalance: {
@@ -2420,6 +2614,15 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     listWalletTransactions: {
@@ -2449,6 +2652,15 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     requestPayout: {
@@ -2487,6 +2699,15 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             /** @description Insufficient balance or existing pending payout. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3030,6 +3251,37 @@ export interface operations {
             403: components["responses"]["Forbidden"];
         };
     };
+    adminGetDispute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Dispute detail payload for admin review. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        dispute?: components["schemas"]["Dispute"];
+                        booking?: components["schemas"]["Booking"];
+                        /** Format: uuid */
+                        conversation_id?: string | null;
+                        evidence_messages?: components["schemas"]["Message"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
     adminResolveDispute: {
         parameters: {
             query?: never;
@@ -3077,6 +3329,55 @@ export interface operations {
             };
         };
     };
+    adminGetStrikePolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current strike policy. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrikePolicy"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    adminUpdateStrikePolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StrikePolicyUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Strike policy updated. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StrikePolicy"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
     adminListPendingPayouts: {
         parameters: {
             query?: {
@@ -3105,6 +3406,15 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     adminProcessPayout: {
@@ -3135,6 +3445,15 @@ export interface operations {
             404: components["responses"]["NotFound"];
             /** @description Payout is not in PENDING status. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Monetization is deferred for the current MVP phase. */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

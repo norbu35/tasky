@@ -41,6 +41,13 @@ describe("Analytics Integration", () => {
     );
 
     await screen.findByRole("heading", { name: "Create task" });
+    const categorySelect = screen.getByLabelText("Category") as HTMLSelectElement;
+    await waitFor(() => {
+      expect(categorySelect.options.length).toBeGreaterThan(1);
+    });
+    fireEvent.change(categorySelect, {
+      target: { value: baseCategory.id }
+    });
     fireEvent.change(screen.getByLabelText("Task details"), {
       target: { value: "Analytics deep cleaning request for TID-090 coverage." }
     });

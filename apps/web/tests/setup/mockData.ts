@@ -24,6 +24,7 @@ export function localDateTimeInput(hoursAhead: number): string {
 export const baseUser: User = {
     id: "user-1",
     phone: "+97699001122",
+    facebook_id: "fb-user-1",
     role: "CUSTOMER",
     status: "PENDING",
     created_at: "2026-02-14T00:00:00Z"

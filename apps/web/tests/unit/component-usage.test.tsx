@@ -8,7 +8,7 @@ describe("Component Usage Compliance", () => {
     const apiClient = buildApiClientMock();
     render(<App apiClient={apiClient} initialRoute="/auth" />);
 
-    expect(screen.getByRole("button", { name: "Request OTP" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Phone number")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue with Facebook" })).toBeInTheDocument();
+    expect(screen.getByText("Developer Bypass")).toBeInTheDocument();
   });
 });

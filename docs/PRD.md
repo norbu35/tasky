@@ -34,7 +34,7 @@ reliability are established.
 
 #### MVP In Scope
 
-1. Customer onboarding (Phone/SMS OTP primary) and profile
+1. Customer onboarding (Facebook OAuth primary) and profile
 2. Task posting with category, fixed price budget (no hourly), schedule, and location (Pin-drop + Description)
 3. Tasker onboarding, profile, and identity verification (Gov ID upload + Manual approval)
 4. Search, matching, booking, and status tracking
@@ -75,8 +75,8 @@ reliability are established.
 
 ### 2.1 Customer Flow
 
-1. **Onboarding**: User downloads app $\rightarrow$ Enters Phone Number $\rightarrow$ Receives SMS OTP $\rightarrow$
-   Creates Profile (Name, Avatar).
+1. **Onboarding**: User downloads app $\rightarrow$ Continues with Facebook OAuth $\rightarrow$ Creates Profile (Name,
+   Avatar).
 2. **Post a Task**: User selects "Cleaning" $\rightarrow$ Sets Location (Pin + "Behind State Dept Store") $\rightarrow$
    Sets Schedule ("Tomorrow 10 AM") $\rightarrow$ Sets Budget ("50,000 MNT") $\rightarrow$ Posts Task.
 3. **Booking**: User receives notifications of interested Taskers $\rightarrow$ Views Tasker Profiles (Rating, Verified
@@ -87,8 +87,8 @@ reliability are established.
 
 ### 2.2 Tasker Flow
 
-1. **Onboarding**: Tasker downloads app $\rightarrow$ Phone/OTP $\rightarrow$ Uploads ID Card (Front/Back) $\rightarrow$
-   Submits for Review.
+1. **Onboarding**: Tasker downloads app $\rightarrow$ Facebook OAuth $\rightarrow$ Uploads ID Card (Front/Back)
+   $\rightarrow$ Submits for Review.
 2. **Verification**: (Offline) Admin reviews ID $\rightarrow$ Approves Tasker.
 3. **Find Work**: Tasker browses "Open Tasks" feed $\rightarrow$ Filters by Category/Location $\rightarrow$ Views Task
    Details.
@@ -103,9 +103,10 @@ reliability are established.
 
 ### 3.1 Authentication & Identity
 
-* **REQ-AUTH-01**: System MUST allow login/signup via Phone Number + SMS OTP (4-6 digits).
-* **REQ-AUTH-02**: System MUST prevent duplicate accounts for the same phone number.
-* **REQ-AUTH-03**: System MUST issue a secure Session Token (JWT) upon successful OTP.
+* **REQ-AUTH-01**: System MUST allow login/signup via Facebook OAuth as the primary flow. Phone/SMS OTP is deferred
+  behind a feature flag for future activation.
+* **REQ-AUTH-02**: System MUST prevent duplicate accounts for the same `facebook_id`.
+* **REQ-AUTH-03**: System MUST issue a secure Session Token (JWT) upon successful OAuth authentication.
 * **REQ-AUTH-04**: System MUST allow a user to request Tasker role activation before identity verification (role becomes
   `TASKER`, status remains verification-gated).
 
@@ -226,7 +227,7 @@ reliability are established.
 | Risk                                 | Impact                                           | Mitigation                                                                                                                          |
 |:-------------------------------------|:-------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------|
 | **Platform Leakage**                 | Users meet once, then trade offline to save 10%. | Hard to stop. Focus on "First Match" value. Offer insurance/guarantee for on-platform jobs (Post-MVP).                              |
-| **Fake Tasks/Spam**                  | Competitors flood feed with fake jobs.           | Rate limit task posting. Verify Customer phone numbers.                                                                             |
+| **Fake Tasks/Spam**                  | Competitors flood feed with fake jobs.           | Rate limit task posting. Validate OAuth identities and abuse signals.                                                                |
 | **Off-Platform Settlement Disputes** | Payment proof can be ambiguous in phase-1.       | Strong dispute evidence capture (chat, timestamps, photos), explicit liability disclaimer, and clear post-MVP monetization roadmap. |
 
 ---
@@ -241,7 +242,7 @@ reliability are established.
 
 ## 8. Appendix: Core Data Entities
 
-* **User**: ID, Phone, Role (Customer/Tasker/Admin), Status (Pending/Verified/Banned).
+* **User**: ID, FacebookID, Phone (nullable), Role (Customer/Tasker/Admin), Status (Pending/Verified/Banned).
 * **Task**: ID, CustomerID, CategoryID, Description, Photos, Location (Lat/Long, Text), Budget, Status (`OPEN`/
   `ASSIGNED`/`COMPLETED`/`CANCELLED`), ScheduleTime.
 * **Booking**: ID, TaskID, TaskerID, Price, Status (`ASSIGNED`/`COMPLETED`/`CANCELLED`), CreatedAt.

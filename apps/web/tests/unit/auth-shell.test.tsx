@@ -8,8 +8,8 @@ describe("Auth Shell", () => {
     const apiClient = buildApiClientMock();
     render(<App apiClient={apiClient} initialRoute="/auth" />);
 
-    expect(screen.getByRole("heading", { name: "OTP Login" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
     expect(screen.getByText(/OpenAPI SDK binding loaded:/)).toBeInTheDocument();
-    expect(screen.getByLabelText("Phone number")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue with Facebook" })).toBeInTheDocument();
   });
 });

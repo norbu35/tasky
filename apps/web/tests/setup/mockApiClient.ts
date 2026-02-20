@@ -14,8 +14,7 @@ import {
 
 export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClient {
     const mock: ApiClient = {
-        requestOtp: vi.fn().mockResolvedValue("OTP sent to +97699****22"),
-        verifyOtp: vi.fn().mockResolvedValue(baseSession),
+        loginWithFacebook: vi.fn().mockResolvedValue(baseSession),
         getMyProfile: vi.fn().mockResolvedValue(baseProfile),
         updateMyProfile: vi.fn().mockImplementation(async (_token, payload) => ({
             ...baseProfile,

@@ -6,7 +6,7 @@ info:
 
     ## Authentication
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
-    Obtain tokens via the OTP login flow (`/auth/otp/*`).
+    Obtain tokens via Facebook OAuth login (`/auth/facebook`).
 
     ## Pagination
     All list endpoints use **cursor-based pagination**.
@@ -31,7 +31,7 @@ servers:
 
 tags:
   - name: Auth
-    description: OTP login and token management
+    description: Facebook OAuth login and token management
   - name: Users
     description: User profile management
   - name: Verification
@@ -143,14 +143,19 @@ components:
     # ─── Identity ─────────────────────────────────────────────
     User:
       type: object
-      required: [ id, phone, role, status, created_at ]
+      required: [ id, role, status, created_at ]
       properties:
         id:
           type: string
           format: uuid
         phone:
           type: string
+          nullable: true
           example: "+97699001122"
+        facebook_id:
+          type: string
+          nullable: true
+          example: "fb-user-123"
         role:
           type: string
           enum: [ CUSTOMER, TASKER, ADMIN ]
@@ -170,6 +175,7 @@ components:
           format: uuid
         phone:
           type: string
+          nullable: true
           example: "+97699001122"
         role:
           type: string
@@ -876,15 +882,14 @@ paths:
                     format: date-time
 
   # ─── Auth ───────────────────────────────────────────────────
-  /auth/otp/request:
+  /auth/facebook:
     post:
       tags: [ Auth ]
-      summary: Request SMS OTP
+      summary: Authenticate with Facebook OAuth
       description: |
-        Sends a one-time password to the given phone number.
-        Rate limited to 3 requests per hour per IP to prevent SMS pumping.
-        Creates a new user account if the phone number is not registered.
-      operationId: requestOtp
+        Validates a Facebook user access token and returns JWT tokens.
+        Creates a new user when `facebook_id` has not been seen before.
+      operationId: loginWithFacebook
       security: [ ]
       requestBody:
         required: true
@@ -892,54 +897,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ phone ]
+              required: [ access_token ]
               properties:
-                phone:
+                access_token:
                   type: string
-                  description: Phone number in E.164 format.
-                  example: "+97699001122"
-      responses:
-        '200':
-          description: OTP sent successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ message ]
-                properties:
-                  message:
-                    type: string
-                    example: OTP sent to +97699****22
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-
-  /auth/otp/verify:
-    post:
-      tags: [ Auth ]
-      summary: Verify OTP and authenticate
-      description: |
-        Verifies the OTP code and returns JWT tokens.
-        If this is the user's first login, a new account is created with CUSTOMER role.
-      operationId: verifyOtp
-      security: [ ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [ phone, code ]
-              properties:
-                phone:
-                  type: string
-                  example: "+97699001122"
-                code:
-                  type: string
-                  minLength: 4
-                  maxLength: 6
-                  example: "123456"
+                  description: Facebook user access token from the client SDK.
+                  example: "EAABsbCS1..."
       responses:
         '200':
           description: Authentication successful.
@@ -958,7 +921,7 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
-          description: Invalid or expired OTP code.
+          description: Invalid or mismatched Facebook token.
           content:
             application/json:
               schema:

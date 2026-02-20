@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter
             "/actuator/health",
             "/actuator/info",
             "/api/v1/system/version",
+            "/api/v1/auth/facebook",
             "/api/v1/auth/otp/request",
             "/api/v1/auth/otp/verify",
             "/api/v1/auth/token/refresh",

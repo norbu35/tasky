@@ -15,50 +15,45 @@
     {
       "id": "AC-TASK-010-01",
       "type": "security",
-      "statement": "OTP request/verify flow creates or authenticates user.",
+      "statement": "Facebook OAuth flow creates or authenticates user via facebook_id.",
       "test_ids": [
-        "TID-TASK-010-API-OTP-REQUEST"
-      ],
-      "negative_test_ids": [
-        "TID-TASK-010-API-OTP-REQUEST",
-        "TID-TASK-010-SECURITY-OTP-RANDOM",
-        "TID-TASK-010-API-OTP-VERIFY-ATTEMPTS"
+        "TID-TASK-010-API-FACEBOOK-AUTH"
       ]
     },
     {
       "id": "AC-TASK-010-02",
       "type": "functional",
-      "statement": "OTP verify succeeds and returns valid session for authenticated user.",
+      "statement": "Same facebook_id presented twice returns same user (no duplicate).",
       "test_ids": [
-        "TID-TASK-010-API-OTP-VERIFY-SUCCESS"
-      ],
-      "negative_test_ids": [
-        "TID-TASK-010-API-OTP-VERIFY-BANNED"
+        "TID-TASK-010-API-FACEBOOK-DEDUP"
       ]
     },
     {
       "id": "AC-TASK-010-03",
       "type": "functional",
-      "statement": "Duplicate phone registration does not create duplicate users.",
-      "test_ids": [
-        "TID-TASK-010-API-PHONE-UNIQUE"
-      ]
-    },
-    {
-      "id": "AC-TASK-010-04",
-      "type": "functional",
-      "statement": "Refresh endpoint rotates/returns valid access token.",
+      "statement": "Refresh endpoint rotates tokens and validates lifecycle.",
       "test_ids": [
         "TID-TASK-010-API-TOKEN-REFRESH"
       ],
       "negative_test_ids": [
-        "TID-TASK-010-API-TOKEN-REFRESH-BANNED"
+        "TID-TASK-010-API-TOKEN-REFRESH"
+      ]
+    },
+    {
+      "id": "AC-TASK-010-04",
+      "type": "security",
+      "statement": "Banned user is rejected at Facebook OAuth login (403).",
+      "test_ids": [
+        "TID-TASK-010-API-FACEBOOK-AUTH-BANNED"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-010-API-FACEBOOK-AUTH-BANNED"
       ]
     },
     {
       "id": "AC-TASK-010-05",
       "type": "functional",
-      "statement": "Dev auth bypass is available in non-production environments and rejects unsupported roles.",
+      "statement": "Dev auth bypass is available in non-production; rejects unsupported roles.",
       "test_ids": [
         "TID-TASK-010-DEV-AUTH-BYPASS",
         "TID-TASK-010-DEV-AUTH-VALIDATION"

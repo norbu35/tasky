@@ -1,13 +1,17 @@
 package mn.tasky.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import mn.tasky.auth.application.FacebookGraphClient;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
@@ -31,6 +35,8 @@ class SecurityBaselineIntegrationTests
     private int port;
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
+    @MockBean
+    private FacebookGraphClient facebookGraphClient;
 
     @Test
     @DisplayName("TID-TASK-004-SEC-RBAC-GUARD route-level RBAC enforces customer/tasker/admin " +
@@ -129,59 +135,34 @@ class SecurityBaselineIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-004-SEC-OTP-RATE-LIMIT OTP endpoints enforce request and verify limits")
-    void otpEndpointsRateLimitedAndBruteForceProtected() {
-        String requestPhone = "+97699" + randomDigits(6);
-        String verifyPhone = "+97688" + randomDigits(6);
+    @DisplayName("TID-TASK-004-SEC-OAUTH-RATE-LIMIT Facebook OAuth endpoint enforces IP rate limit")
+    void facebookAuthRateLimited() {
+        String accessToken = "facebook-security-token";
+        doNothing().when(facebookGraphClient)
+                .debugToken(accessToken);
+        when(facebookGraphClient.fetchProfile(accessToken)).thenReturn(
+                new FacebookGraphClient.FacebookProfile(
+                        "fb-user-security",
+                        "Security Test",
+                        null
+                )
+        );
 
-        for (int index = 0; index < 3; index++) {
+        for (int index = 0; index < 10; index++) {
             ResponseEntity<Map> response = post(
-                    "/api/v1/auth/otp/request",
-                    Map.of("phone",
-                           requestPhone)
+                    "/api/v1/auth/facebook",
+                    Map.of("access_token",
+                           accessToken)
             );
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         }
 
-        ResponseEntity<Map> fourthRequest = post(
-                "/api/v1/auth/otp/request",
-                Map.of("phone",
-                       requestPhone)
+        ResponseEntity<Map> blockedRequest = post(
+                "/api/v1/auth/facebook",
+                Map.of("access_token",
+                       accessToken)
         );
-        assertThat(fourthRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
-
-        for (int index = 0; index < 5; index++) {
-            ResponseEntity<Map> verifyResponse = post(
-                    "/api/v1/auth/otp/verify",
-                    Map.of("phone",
-                           verifyPhone,
-                           "code",
-                           "000000")
-            );
-            assertThat(verifyResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        }
-
-        ResponseEntity<Map> blockedVerify = post(
-                "/api/v1/auth/otp/verify",
-                Map.of("phone",
-                       verifyPhone,
-                       "code",
-                       "000000")
-        );
-        assertThat(blockedVerify.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
-    }
-
-    private String randomDigits(int length) {
-        String seed = UUID.randomUUID()
-                .toString()
-                .replaceAll("[^0-9]",
-                            "");
-        if (seed.length() >= length) {
-            return seed.substring(0,
-                                  length);
-        }
-        return (seed + "0123456789").substring(0,
-                                               length);
+        assertThat(blockedRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
     private ResponseEntity<Map> post(String path,

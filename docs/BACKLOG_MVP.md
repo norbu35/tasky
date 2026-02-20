@@ -26,7 +26,7 @@ Rules:
 | TASK-002 | OpenAPI + SDK CI pipeline                                        | medium | NFR-API-01                                                                                                                         | TASK-001                                                                                           |
 | TASK-003 | Observability baseline                                           | medium | NFR-RELI-01                                                                                                                        | TASK-001                                                                                           |
 | TASK-004 | Security baseline (RBAC, banned check, rate limit)               | high   | REQ-ADMIN-03, NFR-SEC-01                                                                                                           | TASK-001                                                                                           |
-| TASK-010 | OTP auth + token lifecycle                                       | high   | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03                                                                                              | TASK-001, TASK-004                                                                                 |
+| TASK-010 | Facebook OAuth auth + token lifecycle                            | high   | REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03                                                                                              | TASK-001, TASK-004                                                                                 |
 | TASK-011 | Profile + avatar upload                                          | medium | REQ-AUTH-01                                                                                                                        | TASK-010                                                                                           |
 | TASK-012 | Tasker role activation + verification submit/status              | high   | REQ-AUTH-04, REQ-SAFE-01                                                                                                           | TASK-010, TASK-011                                                                                 |
 | TASK-013 | Admin verification queue + approve/reject                        | high   | REQ-SAFE-01, REQ-AUTH-04                                                                                                           | TASK-012                                                                                           |
@@ -123,32 +123,27 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Acceptance criteria:
     1. Route-level RBAC enforced for user/tasker/admin scopes.
     2. Banned and suspended users are denied even with valid JWT.
-    3. OTP endpoints are rate-limited and brute-force protected.
+    3. Facebook OAuth endpoint is rate-limited.
 - Required tests:
     - `TID-TASK-004-SEC-RBAC-GUARD`
     - `TID-TASK-004-SEC-BANNED-USER-BLOCK`
     - `TID-TASK-004-SEC-SUSPENDED-USER-BLOCK`
-    - `TID-TASK-004-SEC-OTP-RATE-LIMIT`
+    - `TID-TASK-004-SEC-OAUTH-RATE-LIMIT`
 
-### TASK-010 OTP Auth + Token Lifecycle
+### TASK-010 Facebook OAuth Auth + Token Lifecycle
 
-- Objective: Implement identity bootstrap via phone OTP and JWT refresh.
+- Objective: Implement identity bootstrap via Facebook OAuth and JWT refresh.
 - Acceptance criteria:
-    1. OTP request/verify flow creates or authenticates user; each OTP is unique and invalidated after 3 failed
-       attempts.
-    2. Duplicate phone registration does not create duplicate users.
-    3. Refresh endpoint rotates/returns valid access token; banned users cannot refresh.
-    4. Banned users cannot create a new session via OTP verify.
+    1. Facebook OAuth flow creates or authenticates user via `facebook_id`.
+    2. Same `facebook_id` presented twice returns the same user (no duplicate).
+    3. Refresh endpoint rotates tokens and validates lifecycle.
+    4. Banned user is rejected at Facebook OAuth login.
     5. Dev auth bypass is available in non-production environments and rejects unsupported roles.
 - Required tests:
-    - `TID-TASK-010-API-OTP-REQUEST`
-    - `TID-TASK-010-API-OTP-VERIFY-SUCCESS`
-    - `TID-TASK-010-API-PHONE-UNIQUE`
+    - `TID-TASK-010-API-FACEBOOK-AUTH`
+    - `TID-TASK-010-API-FACEBOOK-DEDUP`
     - `TID-TASK-010-API-TOKEN-REFRESH`
-    - `TID-TASK-010-SECURITY-OTP-RANDOM`
-    - `TID-TASK-010-API-OTP-VERIFY-ATTEMPTS`
-    - `TID-TASK-010-API-OTP-VERIFY-BANNED`
-    - `TID-TASK-010-API-TOKEN-REFRESH-BANNED`
+    - `TID-TASK-010-API-FACEBOOK-AUTH-BANNED`
     - `TID-TASK-010-DEV-AUTH-BYPASS`
     - `TID-TASK-010-DEV-AUTH-VALIDATION`
 
@@ -505,11 +500,11 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 
 - Objective: Ensure the web client can execute end-to-end MVP flows against production contracts.
 - Acceptance criteria:
-    1. Web supports OTP login/signup and profile setup/update with avatar upload.
+    1. Web supports Facebook OAuth login/signup and profile setup/update with avatar upload.
     2. Customer can create task, browse task feed with filters/privacy behavior, and tasker can apply.
     3. Route guards enforce auth state, role-specific access, and banned-user UX handling.
 - Required tests:
-    - `TID-TASK-080-WEB-AUTH-OTP-FLOW`
+    - `TID-TASK-080-WEB-AUTH-OAUTH-FLOW`
     - `TID-TASK-080-WEB-TASK-APPLICATION-FLOW`
     - `TID-TASK-080-WEB-AUTHZ-GUARDS`
 

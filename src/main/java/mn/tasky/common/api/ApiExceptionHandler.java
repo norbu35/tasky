@@ -3,6 +3,7 @@ package mn.tasky.common.api;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import mn.tasky.auth.AccountRestrictedException;
+import mn.tasky.auth.FacebookAuthException;
 import mn.tasky.auth.RateLimitExceededException;
 import mn.tasky.common.idempotency.IdempotencyException;
 import mn.tasky.common.observability.RequestObservabilityFilter;
@@ -25,6 +26,17 @@ public class ApiExceptionHandler {
             HttpServletRequest request
     ) {
         return error(HttpStatus.TOO_MANY_REQUESTS,
+                     ex.code(),
+                     ex.getMessage(),
+                     request);
+    }
+
+    @ExceptionHandler(FacebookAuthException.class)
+    public ResponseEntity<Map<String, String>> handleFacebookAuth(
+            FacebookAuthException ex,
+            HttpServletRequest request
+    ) {
+        return error(HttpStatus.UNAUTHORIZED,
                      ex.code(),
                      ex.getMessage(),
                      request);

@@ -10,7 +10,7 @@ describe("Authorization Guards Integration", () => {
     const guestApi = buildApiClientMock();
     const guestRender = render(<App apiClient={guestApi} initialRoute="/customer/tasks/new" />);
 
-    expect(await screen.findByRole("heading", { name: "OTP Login" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
 
     guestRender.unmount();
 

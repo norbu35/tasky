@@ -45,6 +45,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,8 +87,10 @@ public class AuthService {
     private final JwtTokenService jwtTokenService;
     private final CryptoService cryptoService;
     private final SmsService smsService;
+    private final FacebookGraphClient facebookGraphClient;
     private final Environment environment;
     private final boolean devAuthEnabled;
+    private final boolean otpEnabled;
     private final long otpTtlSeconds;
     private final String otpTestCode;
     private final String avatarUploadBaseUrl;
@@ -112,6 +115,7 @@ public class AuthService {
             JwtTokenService jwtTokenService,
             CryptoService cryptoService,
             SmsService smsService,
+            FacebookGraphClient facebookGraphClient,
             Environment environment,
             UserDao userDao,
             ProfileDao profileDao,
@@ -123,6 +127,7 @@ public class AuthService {
             ModerationPolicyDao moderationPolicyDao,
             SuspensionEventDao suspensionEventDao,
             @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
+            @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
             @Value("${tasky.auth.otp-test-code:}") String otpTestCode,
             @Value("${tasky.storage.avatar-upload-base-url:https://upload.tasky.local}") String avatarUploadBaseUrl,
@@ -135,6 +140,7 @@ public class AuthService {
         this.jwtTokenService                 = jwtTokenService;
         this.cryptoService                   = cryptoService;
         this.smsService                      = smsService;
+        this.facebookGraphClient             = facebookGraphClient;
         this.environment                     = environment;
         this.userDao                         = userDao;
         this.profileDao                      = profileDao;
@@ -146,6 +152,7 @@ public class AuthService {
         this.moderationPolicyDao             = moderationPolicyDao;
         this.suspensionEventDao              = suspensionEventDao;
         this.devAuthEnabled                  = devAuthEnabled;
+        this.otpEnabled                      = otpEnabled;
         this.otpTtlSeconds                   = otpTtlSeconds;
         this.otpTestCode                     = otpTestCode;
         this.avatarUploadBaseUrl             = avatarUploadBaseUrl;
@@ -166,6 +173,12 @@ public class AuthService {
             }
         }
 
+        if (productionProfile && devAuthEnabled) {
+            throw new IllegalStateException("tasky.dev-auth.enabled must be false in production.");
+        }
+        if (!otpEnabled) {
+            return;
+        }
         if (productionProfile && StringUtils.hasText(otpTestCode)) {
             throw new IllegalStateException("tasky.auth.otp-test-code must not be set in " +
                                                     "production.");
@@ -173,9 +186,6 @@ public class AuthService {
         if (productionProfile && !smsService.isProductionReady()) {
             throw new IllegalStateException("A production-ready SMS provider must be configured " +
                                                     "in production.");
-        }
-        if (productionProfile && devAuthEnabled) {
-            throw new IllegalStateException("tasky.dev-auth.enabled must be false in production.");
         }
     }
 
@@ -222,6 +232,7 @@ public class AuthService {
                                         .fullName());
         return new AuthUser(id,
                             encryptedPhone,
+                            null,
                             "CUSTOMER",
                             "PENDING",
                             now);
@@ -282,10 +293,80 @@ public class AuthService {
 
         AuthUser effectiveUser = new AuthUser(user.id(),
                                               user.phone(),
+                                              user.facebookId(),
                                               user.role(),
                                               effectiveStatus,
                                               user.createdAt());
         return Optional.of(issueSession(effectiveUser));
+    }
+
+    public AuthSession facebookLogin(String accessToken) {
+        String token = StringUtils.trimWhitespace(accessToken);
+        facebookGraphClient.debugToken(token);
+        FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
+
+        AuthUser user = ensureUserByFacebookId(profile.facebookId(),
+                                               profile);
+        String effectiveStatus = resolveUserStatus(user.id(),
+                                                   user.status());
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            throw new AccountRestrictedException("This account is suspended or banned.");
+        }
+
+        AuthUser effectiveUser = new AuthUser(user.id(),
+                                              user.phone(),
+                                              user.facebookId(),
+                                              user.role(),
+                                              effectiveStatus,
+                                              user.createdAt());
+        return issueSession(effectiveUser);
+    }
+
+    private AuthUser ensureUserByFacebookId(
+            String facebookId,
+            FacebookGraphClient.FacebookProfile profile
+    ) {
+        if (!StringUtils.hasText(facebookId)) {
+            throw new IllegalArgumentException("Facebook profile id is required.");
+        }
+
+        Optional<AuthUser> existing = userDao.findByFacebookId(facebookId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        String id = UUID.randomUUID()
+                .toString();
+        Instant now = Instant.now();
+        userDao.insertWithFacebookId(id,
+                                     facebookId,
+                                     "CUSTOMER",
+                                     "PENDING",
+                                     now);
+
+        String fullName = StringUtils.hasText(profile.name())
+                ? profile.name()
+                        .trim()
+                : UserProfileState.defaultState()
+                        .fullName();
+        String avatarUrl = StringUtils.hasText(profile.pictureUrl())
+                ? profile.pictureUrl()
+                        .trim()
+                : null;
+        profileDao.ensureExists(id,
+                                fullName);
+        if (StringUtils.hasText(profile.name()) || avatarUrl != null) {
+            profileDao.updateNameAndAvatar(id,
+                                           fullName,
+                                           avatarUrl);
+        }
+
+        return new AuthUser(id,
+                            null,
+                            facebookId,
+                            "CUSTOMER",
+                            "PENDING",
+                            now);
     }
 
     private boolean constantTimeEquals(String left,
@@ -340,22 +421,30 @@ public class AuthService {
                                  user.id(),
                                  refreshToken.expiresAt());
 
+        Map<String, Object> sessionUser = new LinkedHashMap<>();
+        sessionUser.put("id",
+                        user.id());
+        String decryptedPhone = decryptPhone(user.phone());
+        if (decryptedPhone != null) {
+            sessionUser.put("phone",
+                            decryptedPhone);
+        }
+        if (user.facebookId() != null) {
+            sessionUser.put("facebook_id",
+                            user.facebookId());
+        }
+        sessionUser.put("role",
+                        user.role());
+        sessionUser.put("status",
+                        effectiveStatus);
+        sessionUser.put("created_at",
+                        user.createdAt()
+                                .toString());
+
         return new AuthSession(
                 accessToken,
                 refreshToken.token(),
-                Map.of(
-                        "id",
-                        user.id(),
-                        "phone",
-                        cryptoService.decrypt(user.phone()),
-                        "role",
-                        user.role(),
-                        "status",
-                        effectiveStatus,
-                        "created_at",
-                        user.createdAt()
-                                .toString()
-                )
+                sessionUser
         );
     }
 
@@ -381,6 +470,7 @@ public class AuthService {
                                normalizedRole);
             user = new AuthUser(user.id(),
                                 user.phone(),
+                                user.facebookId(),
                                 normalizedRole,
                                 user.status(),
                                 user.createdAt());
@@ -394,6 +484,7 @@ public class AuthService {
 
         AuthUser effectiveUser = new AuthUser(user.id(),
                                               user.phone(),
+                                              user.facebookId(),
                                               user.role(),
                                               effectiveStatus,
                                               user.createdAt());
@@ -432,6 +523,7 @@ public class AuthService {
 
         AuthUser effectiveUser = new AuthUser(user.id(),
                                               user.phone(),
+                                              user.facebookId(),
                                               user.role(),
                                               effectiveStatus,
                                               user.createdAt());
@@ -480,6 +572,7 @@ public class AuthService {
                                                    user.status());
         AuthUser effectiveUser = new AuthUser(user.id(),
                                               user.phone(),
+                                              user.facebookId(),
                                               user.role(),
                                               effectiveStatus,
                                               user.createdAt());
@@ -492,7 +585,7 @@ public class AuthService {
         boolean isPro = profile.completedTasks() >= 6 && profile.ratingAvg() >= 4.5d;
         return new UserProfile(
                 user.id(),
-                cryptoService.decrypt(user.phone()),
+                decryptPhone(user.phone()),
                 user.role(),
                 user.status(),
                 profile.fullName(),
@@ -520,6 +613,7 @@ public class AuthService {
                            "TASKER");
         AuthUser updated = new AuthUser(user.id(),
                                         user.phone(),
+                                        user.facebookId(),
                                         "TASKER",
                                         user.status(),
                                         user.createdAt());
@@ -678,7 +772,7 @@ public class AuthService {
         Optional<AuthUser> userOpt = userDao.findById(request.userId());
         UserProfileState profile = profileDao.findByUserId(request.userId())
                 .orElse(null);
-        String phone = userOpt.map(u -> cryptoService.decrypt(u.phone()))
+        String phone = userOpt.map(u -> decryptPhone(u.phone()))
                 .orElse(null);
         String name = profile != null
                 ? profile.fullName()
@@ -908,13 +1002,16 @@ public class AuthService {
     public List<UserProfile> searchUsersByPhone(String phonePart) {
         return userDao.findAll()
                 .stream()
-                .filter(u -> cryptoService.decrypt(u.phone())
-                        .contains(phonePart))
+                .filter(u -> {
+                    String phone = decryptPhone(u.phone());
+                    return phone != null && phone.contains(phonePart);
+                })
                 .map(u -> {
                     String effectiveStatus = resolveUserStatus(u.id(),
                                                                u.status());
                     AuthUser effectiveUser = new AuthUser(u.id(),
                                                           u.phone(),
+                                                          u.facebookId(),
                                                           u.role(),
                                                           effectiveStatus,
                                                           u.createdAt());
@@ -923,6 +1020,13 @@ public class AuthService {
                                              .orElse(UserProfileState.defaultState()));
                 })
                 .toList();
+    }
+
+    private String decryptPhone(String encryptedPhone) {
+        if (!StringUtils.hasText(encryptedPhone)) {
+            return null;
+        }
+        return cryptoService.decrypt(encryptedPhone);
     }
 
     public boolean banUser(String adminId,

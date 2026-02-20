@@ -37,12 +37,12 @@
     {
       "id": "AC-TASK-004-03",
       "type": "security",
-      "statement": "OTP endpoints are rate-limited and brute-force protected.",
+      "statement": "Facebook OAuth endpoint is rate-limited.",
       "test_ids": [
-        "TID-TASK-004-SEC-OTP-RATE-LIMIT"
+        "TID-TASK-004-SEC-OAUTH-RATE-LIMIT"
       ],
       "negative_test_ids": [
-        "TID-TASK-004-SEC-OTP-RATE-LIMIT"
+        "TID-TASK-004-SEC-OAUTH-RATE-LIMIT"
       ]
     }
   ]

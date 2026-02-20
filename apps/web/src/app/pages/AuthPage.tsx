@@ -1,59 +1,137 @@
 import type { paths } from "@tasky/sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Smartphone, KeyRound, Loader2, ArrowRight, User, Wrench, ShieldAlert } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Facebook, Loader2, Shield, ShieldAlert, User, Wrench } from "lucide-react";
 
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
 import { useAppContext } from "../context/AppContext";
 import { parseError } from "../utils/errorHandling";
 
 type DevRole = "CUSTOMER" | "TASKER" | "ADMIN";
+
+type FacebookAuthResponse = {
+    accessToken: string;
+};
+
+type FacebookLoginResponse = {
+    authResponse?: FacebookAuthResponse;
+};
+
+type FacebookSdk = {
+    init: (config: {
+        appId: string;
+        cookie: boolean;
+        xfbml: boolean;
+        version: string;
+    }) => void;
+    login: (
+        callback: (response: FacebookLoginResponse) => void,
+        options?: { scope?: string }
+    ) => void;
+};
+
+declare global {
+    interface Window {
+        FB?: FacebookSdk;
+        fbAsyncInit?: () => void;
+    }
+}
+
+const FACEBOOK_SDK_SCRIPT_ID = "tasky-facebook-sdk";
 
 export function AuthPage() {
     const contractLoaded: boolean = typeof ({} as paths) === "object";
     const host = typeof window !== "undefined" ? window.location.hostname : "";
     const isLocalHost = host === "localhost" || host === "127.0.0.1";
     const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === "true" || isLocalHost;
+    const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID;
 
     const { apiClient, setSession, setProfile, refreshProfile } = useAppContext();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [phone, setPhone] = useState("+976");
-    const [code, setCode] = useState("");
-    const [otpRequested, setOtpRequested] = useState(false);
-    const [requestMessage, setRequestMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [facebookReady, setFacebookReady] = useState<boolean>(() =>
+        typeof window !== "undefined" && typeof window.FB !== "undefined"
+    );
 
     const returnPath =
         typeof location.state === "object" && location.state !== null && "from" in location.state
             ? (location.state as { from: string }).from
             : "/profile";
 
-    const handleRequestOtp = async (): Promise<void> => {
-        setLoading(true);
-        setErrorMessage(null);
-        try {
-            const message = await apiClient.requestOtp(phone.trim());
-            setRequestMessage(message);
-            setOtpRequested(true);
-        } catch (error) {
-            setErrorMessage(parseError(error));
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return;
         }
-    };
 
-    const handleVerify = async (): Promise<void> => {
+        if (window.FB) {
+            if (facebookAppId && facebookAppId.trim().length > 0) {
+                window.FB.init({
+                    appId: facebookAppId,
+                    cookie: true,
+                    xfbml: false,
+                    version: "v22.0"
+                });
+            }
+            setFacebookReady(true);
+            return;
+        }
+
+        if (!facebookAppId || facebookAppId.trim().length === 0) {
+            return;
+        }
+
+        window.fbAsyncInit = () => {
+            if (!window.FB) {
+                return;
+            }
+            window.FB.init({
+                appId: facebookAppId,
+                cookie: true,
+                xfbml: false,
+                version: "v22.0"
+            });
+            setFacebookReady(true);
+        };
+
+        if (!document.getElementById(FACEBOOK_SDK_SCRIPT_ID)) {
+            const script = document.createElement("script");
+            script.id = FACEBOOK_SDK_SCRIPT_ID;
+            script.async = true;
+            script.defer = true;
+            script.src = "https://connect.facebook.net/en_US/sdk.js";
+            document.body.appendChild(script);
+        }
+    }, [facebookAppId]);
+
+    const handleFacebookLogin = async (): Promise<void> => {
         setLoading(true);
         setErrorMessage(null);
+
         try {
-            const session = await apiClient.verifyOtp(phone.trim(), code.trim());
+            if (!window.FB) {
+                throw new Error("Facebook login is unavailable right now.");
+            }
+
+            const accessToken = await new Promise<string>((resolve, reject) => {
+                window.FB?.login(
+                    (response) => {
+                        const token = response.authResponse?.accessToken;
+                        if (token) {
+                            resolve(token);
+                            return;
+                        }
+                        reject(new Error("Facebook login was canceled."));
+                    },
+                    { scope: "public_profile,email" }
+                );
+            });
+
+            const session = await apiClient.loginWithFacebook(accessToken);
             setSession(session);
             setProfile(null);
             await refreshProfile();
@@ -133,85 +211,43 @@ export function AuthPage() {
 
                     <Card className="border-border shadow-2xl rounded-3xl overflow-hidden backdrop-blur-xl bg-card">
                         <CardHeader className="space-y-3 pb-6 border-b border-border/50 bg-muted/30">
-                            <h1 className="sr-only">OTP Login</h1>
+                            <h1 className="sr-only">Facebook Login</h1>
                             <CardTitle className="text-2xl font-display">Welcome back</CardTitle>
                             <CardDescription className="text-base">
-                                {otpRequested
-                                    ? "We sent a 6-digit code to your phone."
-                                    : "Enter your phone number to securely log in or sign up."}
+                                Continue with Facebook to log in or create your Tasky account.
                             </CardDescription>
-
-
                         </CardHeader>
 
-                        <CardContent className="pt-8 grid gap-6">
-                            <AnimatePresence mode="popLayout">
-                                {!otpRequested ? (
-                                    <motion.div
-                                        key="phone-step"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        className="space-y-4"
-                                    >
-                                        <div className="space-y-2">
-                                            <Label htmlFor="phone" className="text-muted-foreground font-semibold uppercase text-xs tracking-wider">
-                                                Phone number
-                                            </Label>
-                                            <div className="relative">
-                                                <Smartphone className="absolute left-3.5 top-3 h-5 w-5 text-muted-foreground/70" />
-                                                <Input
-                                                    id="phone"
-                                                    aria-label="Phone number"
-                                                    autoComplete="tel"
-                                                    value={phone}
-                                                    onChange={(e) => setPhone(e.target.value)}
-                                                    placeholder="+976 9900 1122"
-                                                    className="pl-11 h-12 text-lg rounded-xl bg-muted/50 border-transparent focus:border-primary focus:bg-background transition-colors"
-                                                />
-                                            </div>
-                                        </div>
-                                    </motion.div>
+                        <CardContent className="pt-8 grid gap-4">
+                            <Button
+                                className="w-full h-12 text-base rounded-xl font-semibold shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]"
+                                disabled={loading || !facebookReady}
+                                onClick={handleFacebookLogin}
+                                type="button"
+                                aria-label="Continue with Facebook"
+                            >
+                                {loading ? (
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                                 ) : (
-                                    <motion.div
-                                        key="code-step"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        className="space-y-4"
-                                    >
-                                        <div className="space-y-2">
-                                            <Label htmlFor="otp-code" className="text-muted-foreground font-semibold uppercase text-xs tracking-wider">
-                                                OTP code
-                                            </Label>
-                                            <div className="relative">
-                                                <KeyRound className="absolute left-3.5 top-3 h-5 w-5 text-muted-foreground/70" />
-                                                <Input
-                                                    id="otp-code"
-                                                    aria-label="OTP code"
-                                                    inputMode="numeric"
-                                                    value={code}
-                                                    onChange={(e) => setCode(e.target.value)}
-                                                    placeholder="123 456"
-                                                    className="pl-11 h-12 text-lg tracking-widest rounded-xl bg-muted/50 border-transparent focus:border-primary focus:bg-background transition-colors"
-                                                    maxLength={6}
-                                                />
-                                            </div>
-                                        </div>
-                                    </motion.div>
+                                    <Facebook className="mr-2 h-5 w-5 text-[#1877F2]" />
                                 )}
-                            </AnimatePresence>
+                                Continue with Facebook
+                                {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
+                            </Button>
+
+                            {!facebookReady && (
+                                <p className="text-sm text-muted-foreground">
+                                    Initializing Facebook login...
+                                </p>
+                            )}
+
+                            {!facebookAppId && !facebookReady && (
+                                <p className="text-sm text-muted-foreground">
+                                    Missing `VITE_FACEBOOK_APP_ID` configuration.
+                                </p>
+                            )}
 
                             <AnimatePresence>
-                                {requestMessage && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        className="p-3 bg-secondary/50 text-secondary-foreground rounded-lg text-sm font-medium border border-secondary"
-                                    >
-                                        {requestMessage}
-                                    </motion.div>
-                                )}
                                 {errorMessage && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
@@ -225,43 +261,7 @@ export function AuthPage() {
                             </AnimatePresence>
                         </CardContent>
 
-                        <CardFooter className="pt-2 pb-8 flex-col gap-4">
-                            {!otpRequested ? (
-                                <Button
-                                    className="w-full h-12 text-base rounded-xl font-semibold shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]"
-                                    disabled={loading || phone.trim().length < 4}
-                                    onClick={handleRequestOtp}
-                                    aria-label="Request OTP"
-                                >
-                                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Continue"}
-                                    {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
-                                </Button>
-                            ) : (
-                                <div className="w-full flex gap-3">
-                                    <Button
-                                        variant="secondary"
-                                        className="h-12 w-12 shrink-0 rounded-xl"
-                                        onClick={() => {
-                                            setOtpRequested(false);
-                                            setErrorMessage(null);
-                                            setRequestMessage(null);
-                                            setCode("");
-                                        }}
-                                        disabled={loading}
-                                    >
-                                        <ArrowRight className="h-4 w-4 rotate-180" />
-                                    </Button>
-                                    <Button
-                                        className="flex-1 h-12 text-base rounded-xl font-semibold shadow-lg shadow-primary/20"
-                                        disabled={loading || code.trim().length < 4}
-                                        onClick={handleVerify}
-                                        aria-label="Verify OTP"
-                                    >
-                                        {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Verify Identity"}
-                                    </Button>
-                                </div>
-                            )}
-                        </CardFooter>
+                        <CardFooter className="pt-2 pb-8" />
                     </Card>
 
                     {devAuthEnabled && (

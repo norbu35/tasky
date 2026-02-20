@@ -81,7 +81,7 @@ For an agent to mark a Ticket as "done", the verification script must see proof 
 * **CRITICAL RULE:** When writing a test block, you MUST include the `TID-XYZ` identifier defined in the ticket spec directly in the `it()` or `test()` description string. Write the TID bare — no brackets or decorators around it.
 * *Example (Vitest/Jest):*
   ```typescript
-  it('TID-TASK-080-WEB-AUTH-OTP-FLOW should allow user to submit OTP and redirect to feed', async () => {
+  it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook and redirect to feed', async () => {
       // test logic...
   });
   ```
