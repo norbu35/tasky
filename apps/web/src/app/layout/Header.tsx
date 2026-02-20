@@ -1,9 +1,12 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../components/ui/button";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAppContext } from "../context/AppContext";
 
 export function Header() {
     const { profile, signOut } = useAppContext();
+    const { t } = useTranslation();
 
     const linkClass = ({ isActive }: { isActive: boolean }): string =>
         [
@@ -15,35 +18,38 @@ export function Header() {
         <header
             className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 bg-card/80 p-4 shadow-sm backdrop-blur-sm">
             <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Tasky Web MVP
-                </p>
+                <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Tasky Web MVP
+                    </p>
+                    <LanguageSwitcher />
+                </div>
                 <p className="text-sm text-foreground">{profile ? `${profile.full_name} (${profile.role})` : "Guest"}</p>
             </div>
             <nav className="flex flex-wrap items-center gap-2" aria-label="Primary navigation">
                 <NavLink className={linkClass} to="/profile">
-                    Profile
+                    {t("nav.profile", "Profile")}
                 </NavLink>
                 <NavLink className={linkClass} to="/customer/tasks/new">
-                    Customer
+                    {t("nav.createTask", "Customer")}
                 </NavLink>
                 <NavLink className={linkClass} to="/customer/booking-confirmation">
-                    Confirm
+                    {t("nav.confirmBooking", "Confirm")}
                 </NavLink>
                 <NavLink className={linkClass} to="/booking/safety">
-                    Safety
+                    {t("nav.safety", "Safety")}
                 </NavLink>
                 <NavLink className={linkClass} to="/tasker/tasks">
-                    Tasker Feed
+                    {t("nav.taskerFeed", "Tasker Feed")}
                 </NavLink>
                 <NavLink className={linkClass} to="/tasker/my-tasks">
-                    My Bookings
+                    {t("nav.taskerTasks", "My Bookings")}
                 </NavLink>
                 <NavLink className={linkClass} to="/communication">
-                    Inbox
+                    {t("nav.inbox", "Inbox")}
                 </NavLink>
                 <Button variant="ghost" onClick={signOut}>
-                    Sign out
+                    {t("nav.logout", "Sign out")}
                 </Button>
             </nav>
         </header>

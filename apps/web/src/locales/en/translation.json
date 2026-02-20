@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "phoneLabel": "Phone Number",
+    "otpLabel": "OTP Code",
+    "requestOtp": "Request OTP",
+    "verifyOtp": "Verify Code",
+    "developerBypass": "Developer quick login (no OTP needed):",
+    "loginAsCustomer": "Customer",
+    "loginAsTasker": "Tasker"
+  },
+  "nav": {
+    "profile": "Profile",
+    "createTask": "Customer",
+    "confirmBooking": "Confirm",
+    "safety": "Safety",
+    "taskerFeed": "Tasker Feed",
+    "taskerTasks": "My Bookings",
+    "inbox": "Inbox",
+    "logout": "Logout"
+  }
+}

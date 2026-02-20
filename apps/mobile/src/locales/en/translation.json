@@ -1,0 +1,16 @@
+{
+  "auth": {
+    "welcome": "Welcome to Tasky",
+    "login": "Login with Phone",
+    "phoneLabel": "Phone Number",
+    "otpLabel": "OTP Code",
+    "requestOtp": "Get Code",
+    "verifyOtp": "Verify Code",
+    "developerBypass": "Developer Bypass"
+  },
+  "nav": {
+    "profile": "Profile",
+    "tasks": "My Tasks",
+    "inbox": "Inbox"
+  }
+}

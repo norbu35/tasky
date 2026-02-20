@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "login": "Нэвтрэх",
+    "signup": "Бүртгүүлэх",
+    "phoneLabel": "Утасны дугаар",
+    "otpLabel": "Баталгаажуулах код",
+    "requestOtp": "Код авах",
+    "verifyOtp": "Баталгаажуулах",
+    "developerBypass": "Хөгжүүлэгчийн хурдан нэвтрэлт (OTP шаардлагагүй):",
+    "loginAsCustomer": "Үйлчлүүлэгч",
+    "loginAsTasker": "Ажилтан"
+  },
+  "nav": {
+    "profile": "Профайл",
+    "createTask": "Үйлчлүүлэгч",
+    "confirmBooking": "Баталгаажуулах",
+    "safety": "Аюулгүй байдал",
+    "taskerFeed": "Ажлын мэдээлэл",
+    "taskerTasks": "Миний ажлууд",
+    "inbox": "Зурвас",
+    "logout": "Гарах"
+  }
+}

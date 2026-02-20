@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
 import { useAppContext } from "../context/AppContext";
 import { parseError } from "../utils/errorHandling";
+import { useTranslation } from "react-i18next";
 
 type DevRole = "CUSTOMER" | "TASKER" | "ADMIN";
 
@@ -51,6 +52,7 @@ export function AuthPage() {
     const { apiClient, setSession, setProfile, refreshProfile } = useAppContext();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useTranslation();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -279,7 +281,7 @@ export function AuthPage() {
                                     disabled={loading}
                                 >
                                     <User className="w-5 h-5 text-muted-foreground" />
-                                    <span className="text-xs">Customer</span>
+                                    <span className="text-xs">{t("auth.loginAsCustomer", "Customer")}</span>
                                 </Button>
                                 <Button
                                     variant="ghost"
@@ -288,7 +290,7 @@ export function AuthPage() {
                                     disabled={loading}
                                 >
                                     <Wrench className="w-5 h-5 text-muted-foreground" />
-                                    <span className="text-xs">Tasker</span>
+                                    <span className="text-xs">{t("auth.loginAsTasker", "Tasker")}</span>
                                 </Button>
                                 <Button
                                     variant="ghost"
