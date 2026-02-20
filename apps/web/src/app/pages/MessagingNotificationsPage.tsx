@@ -68,7 +68,7 @@ export function MessagingNotificationsPage() {
             void loadMessages(selectedConvId);
 
             // Skip STOMP client setup in test environment if it causes protocol errors
-            if (process.env.NODE_ENV === 'test') {
+            if (import.meta.env.MODE === 'test') {
                 return;
             }
 
