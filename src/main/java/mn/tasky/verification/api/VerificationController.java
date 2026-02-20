@@ -1,11 +1,12 @@
 package mn.tasky.verification.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.VerificationStatusResponse;
 import mn.tasky.auth.dto.VerificationSubmitResult;
-import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.verification.dto.VerificationStatusApiResponse;
 import mn.tasky.verification.dto.VerificationSubmitRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/verification")
@@ -61,15 +61,6 @@ public class VerificationController {
                                         resolveTraceId(request)
                                 )
                         ));
-    }
-
-    private String resolveTraceId(HttpServletRequest request) {
-        Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
-        if (traceId != null) {
-            return traceId.toString();
-        }
-        return UUID.randomUUID()
-                .toString();
     }
 
     @PostMapping("/submit")

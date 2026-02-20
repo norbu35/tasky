@@ -162,7 +162,7 @@ public interface TaskDao {
             "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
             "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenAll(@Bind("limit") int limit);
 
@@ -171,20 +171,9 @@ public interface TaskDao {
             "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
             "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
-            + "AND category_id = :categoryId "
-            + "ORDER BY created_at DESC, id ASC "
-            + "LIMIT :limit")
-    List<TaskState> findOpenByCategory(@Bind("categoryId") UUID categoryId,
-                                       @Bind("limit") int limit);
-
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            +
-            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
-            "updated_at "
-            + "FROM tasks WHERE status = 'OPEN' "
             + "AND (created_at < :cursorCreatedAt "
             + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenAllAfter(@Bind("cursorCreatedAt") Instant cursorCreatedAt,
                                      @Bind("cursorId") UUID cursorId,
@@ -196,9 +185,20 @@ public interface TaskDao {
             "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
             + "AND category_id = :categoryId "
+            + "ORDER BY created_at DESC, id "
+            + "LIMIT :limit")
+    List<TaskState> findOpenByCategory(@Bind("categoryId") UUID categoryId,
+                                       @Bind("limit") int limit);
+
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
+            + "FROM tasks WHERE status = 'OPEN' "
+            + "AND category_id = :categoryId "
             + "AND (created_at < :cursorCreatedAt "
             + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenByCategoryAfter(@Bind("categoryId") UUID categoryId,
                                             @Bind("cursorCreatedAt") Instant cursorCreatedAt,
@@ -264,7 +264,7 @@ public interface TaskDao {
             +
             "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
             "::geography, :meters) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenWithinRadiusAll(@Bind("lat") double lat,
                                             @Bind("lng") double lng,
@@ -276,28 +276,11 @@ public interface TaskDao {
             "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
             "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
-            + "AND category_id = :categoryId "
-            +
-            "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
-            "::geography, :meters) "
-            + "ORDER BY created_at DESC, id ASC "
-            + "LIMIT :limit")
-    List<TaskState> findOpenWithinRadiusByCategory(@Bind("categoryId") UUID categoryId,
-                                                   @Bind("lat") double lat,
-                                                   @Bind("lng") double lng,
-                                                   @Bind("meters") double meters,
-                                                   @Bind("limit") int limit);
-
-    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-            +
-            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
-            "updated_at "
-            + "FROM tasks WHERE status = 'OPEN' "
             + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
             "::geography, :meters) "
             + "AND (created_at < :cursorCreatedAt "
             + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenWithinRadiusAllAfter(@Bind("lat") double lat,
                                                  @Bind("lng") double lng,
@@ -312,11 +295,28 @@ public interface TaskDao {
             "updated_at "
             + "FROM tasks WHERE status = 'OPEN' "
             + "AND category_id = :categoryId "
+            +
+            "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
+            "::geography, :meters) "
+            + "ORDER BY created_at DESC, id "
+            + "LIMIT :limit")
+    List<TaskState> findOpenWithinRadiusByCategory(@Bind("categoryId") UUID categoryId,
+                                                   @Bind("lat") double lat,
+                                                   @Bind("lng") double lng,
+                                                   @Bind("meters") double meters,
+                                                   @Bind("limit") int limit);
+
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
+            + "FROM tasks WHERE status = 'OPEN' "
+            + "AND category_id = :categoryId "
             + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" +
             "::geography, :meters) "
             + "AND (created_at < :cursorCreatedAt "
             + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findOpenWithinRadiusByCategoryAfter(@Bind("categoryId") UUID categoryId,
                                                         @Bind("lat") double lat,
@@ -332,7 +332,7 @@ public interface TaskDao {
                                            UUID cursorId,
                                            int limit) {
         return findByCustomer(required(customerId,
-                                      "customerId"),
+                                       "customerId"),
                               status,
                               cursorCreatedAt,
                               cursorId,
@@ -362,7 +362,7 @@ public interface TaskDao {
             "updated_at "
             + "FROM tasks WHERE customer_id = :customerId "
             + "AND (:status IS NULL OR status = :status) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findByCustomerFirstPage(@Bind("customerId") UUID customerId,
                                             @Bind("status") String status,
@@ -376,7 +376,7 @@ public interface TaskDao {
             + "AND (:status IS NULL OR status = :status) "
             + "AND (created_at < :cursorCreatedAt "
             + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
-            + "ORDER BY created_at DESC, id ASC "
+            + "ORDER BY created_at DESC, id "
             + "LIMIT :limit")
     List<TaskState> findByCustomerAfterCursor(@Bind("customerId") UUID customerId,
                                               @Bind("status") String status,
@@ -390,7 +390,7 @@ public interface TaskDao {
                                          UUID cursorId,
                                          int limit) {
         return findByTasker(required(taskerId,
-                                    "taskerId"),
+                                     "taskerId"),
                             status,
                             cursorCreatedAt,
                             cursorId,
@@ -416,12 +416,15 @@ public interface TaskDao {
 
     @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
             +
-            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t.created_at, " +
+            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t" +
+            ".created_at, " +
             "t.updated_at "
             + "FROM tasks t "
-            + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = :taskerId) "
+            +
+            "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = " +
+            ":taskerId) "
             + "AND (:status IS NULL OR t.status = :status) "
-            + "ORDER BY t.created_at DESC, t.id ASC "
+            + "ORDER BY t.created_at DESC, t.id "
             + "LIMIT :limit")
     List<TaskState> findByTaskerFirstPage(@Bind("taskerId") UUID taskerId,
                                           @Bind("status") String status,
@@ -429,14 +432,17 @@ public interface TaskDao {
 
     @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
             +
-            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t.created_at, " +
+            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t" +
+            ".created_at, " +
             "t.updated_at "
             + "FROM tasks t "
-            + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = :taskerId) "
+            +
+            "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = " +
+            ":taskerId) "
             + "AND (:status IS NULL OR t.status = :status) "
             + "AND (t.created_at < :cursorCreatedAt "
             + "OR (t.created_at = :cursorCreatedAt AND t.id > :cursorId)) "
-            + "ORDER BY t.created_at DESC, t.id ASC "
+            + "ORDER BY t.created_at DESC, t.id "
             + "LIMIT :limit")
     List<TaskState> findByTaskerAfterCursor(@Bind("taskerId") UUID taskerId,
                                             @Bind("status") String status,

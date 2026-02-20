@@ -1,5 +1,7 @@
 package mn.tasky.category.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -12,10 +14,8 @@ import mn.tasky.category.dto.CreateCategory;
 import mn.tasky.category.dto.CreateCategoryRequest;
 import mn.tasky.category.dto.UpdateCategory;
 import mn.tasky.category.dto.UpdateCategoryRequest;
-import mn.tasky.common.api.ApiResponseSupport;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
-import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -102,10 +101,6 @@ public class CategoryController {
                 category.isActive(),
                 category.sortOrder()
         );
-    }
-
-    private String resolveTraceId(HttpServletRequest request) {
-        return ApiResponseSupport.resolveTraceId(request);
     }
 
     private String sanitize(String value) {

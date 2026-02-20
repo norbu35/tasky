@@ -288,7 +288,8 @@ class CategoryIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-065-API-CURSOR-ENVELOPE TID-TASK-065-API-CURSOR-DETERMINISM common envelope and determinism")
+    @DisplayName("TID-TASK-065-API-CURSOR-ENVELOPE TID-TASK-065-API-CURSOR-DETERMINISM common " +
+            "envelope and determinism")
     void commonPaginationEnvelopeAndDeterminism() {
         String adminToken = tokenFor("ADMIN",
                                      "ACTIVE");

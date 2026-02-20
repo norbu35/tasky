@@ -509,8 +509,9 @@ class AnalyticsIntegrationTests
         assertThat(submitVerification.getStatusCode()
                            .value()).isEqualTo(200);
 
-        ResponseEntity<Map> pendingList = getWithAuth("/api/v1/admin/verifications/pending?limit=100",
-                                                      adminToken);
+        ResponseEntity<Map> pendingList =
+                getWithAuth("/api/v1/admin/verifications/pending?limit=100",
+                            adminToken);
         assertThat(pendingList.getStatusCode()
                            .value()).isEqualTo(200);
         List<Map<String, Object>> data = (List<Map<String, Object>>) pendingList.getBody()

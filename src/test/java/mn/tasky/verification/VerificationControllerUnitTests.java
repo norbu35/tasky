@@ -52,7 +52,18 @@ class VerificationControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "INVALID_CONTENT_TYPE");
+                                                                           "INVALID_CONTENT_TYPE");
+    }
+
+    private JwtPrincipal principal() {
+        return new JwtPrincipal(uuid(1),
+                                "TASKER",
+                                "ACTIVE");
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -72,7 +83,15 @@ class VerificationControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("storage_key",
-                                                                            "uploads/verification/front.jpg");
+                                                                           "uploads/verification" +
+                                                                                   "/front.jpg");
+    }
+
+    private MockHttpServletRequest requestWithTrace() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
+                             "trace-verification");
+        return request;
     }
 
     @Test
@@ -94,7 +113,7 @@ class VerificationControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "NOT_TASKER");
+                                                                           "NOT_TASKER");
     }
 
     @Test
@@ -112,23 +131,5 @@ class VerificationControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         VerificationStatusApiResponse body = (VerificationStatusApiResponse) response.getBody();
         assertThat(body.status()).isEqualTo("PENDING");
-    }
-
-    private JwtPrincipal principal() {
-        return new JwtPrincipal(uuid(1),
-                                "TASKER",
-                                "ACTIVE");
-    }
-
-    private MockHttpServletRequest requestWithTrace() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-                             "trace-verification");
-        return request;
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
     }
 }

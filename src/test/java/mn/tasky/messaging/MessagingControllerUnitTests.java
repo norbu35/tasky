@@ -47,6 +47,17 @@ class MessagingControllerUnitTests {
                                              "hello");
     }
 
+    private JwtPrincipal principal() {
+        return new JwtPrincipal(uuid(100),
+                                "TASKER",
+                                "ACTIVE");
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
+    }
+
     @Test
     void listMessagesReturnsForbiddenOnAuthorizationError() {
         JwtPrincipal principal = principal();
@@ -64,7 +75,7 @@ class MessagingControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "FORBIDDEN");
+                                                                           "FORBIDDEN");
     }
 
     @Test
@@ -101,17 +112,6 @@ class MessagingControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
-                                                                            message.id());
-    }
-
-    private JwtPrincipal principal() {
-        return new JwtPrincipal(uuid(100),
-                                "TASKER",
-                                "ACTIVE");
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+                                                                           message.id());
     }
 }

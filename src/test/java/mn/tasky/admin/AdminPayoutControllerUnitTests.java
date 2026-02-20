@@ -44,7 +44,14 @@ class AdminPayoutControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "FEATURE_DEFERRED");
+                                                                           "FEATURE_DEFERRED");
+    }
+
+    private MockHttpServletRequest request() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("trace_id",
+                             "trace-admin-payout");
+        return request;
     }
 
     @Test
@@ -67,7 +74,18 @@ class AdminPayoutControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "IDEMPOTENCY_IN_PROGRESS");
+                                                                           "IDEMPOTENCY_IN_PROGRESS");
+    }
+
+    private JwtPrincipal adminPrincipal() {
+        return new JwtPrincipal(uuid(100),
+                                "ADMIN",
+                                "ACTIVE");
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -101,7 +119,7 @@ class AdminPayoutControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "IDEMPOTENCY_REPLAY_MISSING");
+                                                                           "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
@@ -132,7 +150,22 @@ class AdminPayoutControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("status",
-                                                                            "PROCESSED");
+                                                                           "PROCESSED");
+    }
+
+    private IdempotencyRecord completedRecord(String payoutId) {
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        return new IdempotencyRecord(
+                UUID.fromString(uuid(21)),
+                UUID.fromString(uuid(22)),
+                IdempotencyOperations.PROCESS_PAYOUT,
+                "idem-complete",
+                "COMPLETED",
+                "PAYOUT",
+                UUID.fromString(payoutId),
+                now,
+                now
+        );
     }
 
     @Test
@@ -157,38 +190,5 @@ class AdminPayoutControllerUnitTests {
         verify(idempotencyService).abandon(eq(principal.userId()),
                                            eq(IdempotencyOperations.PROCESS_PAYOUT),
                                            eq("idem-4"));
-    }
-
-    private JwtPrincipal adminPrincipal() {
-        return new JwtPrincipal(uuid(100),
-                                "ADMIN",
-                                "ACTIVE");
-    }
-
-    private MockHttpServletRequest request() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("trace_id",
-                             "trace-admin-payout");
-        return request;
-    }
-
-    private IdempotencyRecord completedRecord(String payoutId) {
-        Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new IdempotencyRecord(
-                UUID.fromString(uuid(21)),
-                UUID.fromString(uuid(22)),
-                IdempotencyOperations.PROCESS_PAYOUT,
-                "idem-complete",
-                "COMPLETED",
-                "PAYOUT",
-                UUID.fromString(payoutId),
-                now,
-                now
-        );
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
     }
 }

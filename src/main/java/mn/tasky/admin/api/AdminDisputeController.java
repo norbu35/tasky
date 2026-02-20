@@ -1,5 +1,7 @@
 package mn.tasky.admin.api;
 
+import static mn.tasky.dispute.api.DisputeResponseMapper.admin;
+
 import jakarta.validation.Valid;
 import mn.tasky.admin.dto.ResolveRequest;
 import mn.tasky.booking.application.BookingService;
@@ -30,8 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static mn.tasky.dispute.api.DisputeResponseMapper.admin;
 
 @RestController
 @RequestMapping("/api/v1/admin/disputes")

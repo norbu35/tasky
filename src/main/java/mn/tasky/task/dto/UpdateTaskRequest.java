@@ -23,4 +23,5 @@ public record UpdateTaskRequest(
         @JsonProperty("photo_keys")
         @Size(max = 3)
         List<String> photoKeys) {
+
 }

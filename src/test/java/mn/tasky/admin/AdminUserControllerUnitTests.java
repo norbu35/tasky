@@ -58,11 +58,35 @@ class AdminUserControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         PagedResponse<?> body = (PagedResponse<?>) response.getBody();
         assertThat(body.data()).hasSize(2);
-        UserProfile first = (UserProfile) body.data().get(0);
-        UserProfile second = (UserProfile) body.data().get(1);
+        UserProfile first = (UserProfile) body.data()
+                .get(0);
+        UserProfile second = (UserProfile) body.data()
+                .get(1);
         assertThat(first.id()).isEqualTo(u2.id());
         assertThat(second.id()).isEqualTo(u3.id());
-        assertThat(body.cursor().hasMore()).isFalse();
+        assertThat(body.cursor()
+                           .hasMore()).isFalse();
+    }
+
+    private UserProfile user(String id,
+                             String phone) {
+        return new UserProfile(
+                id,
+                phone,
+                "CUSTOMER",
+                "ACTIVE",
+                "User",
+                "",
+                0.0,
+                0,
+                false,
+                "2026-02-17T00:00:00Z"
+        );
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -77,7 +101,7 @@ class AdminUserControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "INVALID_CURSOR");
+                                                                           "INVALID_CURSOR");
     }
 
     @Test
@@ -111,27 +135,6 @@ class AdminUserControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("status",
-                                                                            "ACTIVE");
-    }
-
-    private UserProfile user(String id,
-                             String phone) {
-        return new UserProfile(
-                id,
-                phone,
-                "CUSTOMER",
-                "ACTIVE",
-                "User",
-                "",
-                0.0,
-                0,
-                false,
-                "2026-02-17T00:00:00Z"
-        );
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+                                                                           "ACTIVE");
     }
 }

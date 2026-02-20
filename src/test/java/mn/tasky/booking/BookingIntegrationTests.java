@@ -370,8 +370,26 @@ class BookingIntegrationTests
                            .get("status")).isEqualTo("CANCELLED");
     }
 
+    private ResponseEntity<Map> postWithAuthAndIdempotency(String path,
+                                                           String token,
+                                                           Object body,
+                                                           String idempotencyKey) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        headers.set("Idempotency-Key",
+                    idempotencyKey);
+        HttpEntity<Object> entity = new HttpEntity<>(body,
+                                                     headers);
+        return restTemplate.exchange("http://localhost:" + port + path,
+                                     HttpMethod.POST,
+                                     entity,
+                                     Map.class);
+    }
+
     @Test
-    @DisplayName("TID-TASK-041-RELI-IDEMPOTENT-DISPUTE same key replay returns original dispute result")
+    @DisplayName("TID-TASK-041-RELI-IDEMPOTENT-DISPUTE same key replay returns original dispute " +
+            "result")
     void idempotentDisputeReplayReturnsOriginalResult() {
         AuthContext customer = authenticate("disp-idem-cust");
         AuthContext tasker = authenticate("disp-idem-task");
@@ -381,7 +399,8 @@ class BookingIntegrationTests
                                                             tasker.userId(),
                                                             customer.userId(),
                                                             50000);
-        String key = UUID.randomUUID().toString();
+        String key = UUID.randomUUID()
+                .toString();
         Map<String, String> disputeBody = Map.of("reason",
                                                  "The task was not completed as agreed upon.");
 
@@ -400,24 +419,9 @@ class BookingIntegrationTests
 
         assertThat(first.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(replay.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(replay.getBody().get("id")).isEqualTo(first.getBody().get("id"));
-    }
-
-    private ResponseEntity<Map> postWithAuthAndIdempotency(String path,
-                                                           String token,
-                                                           Object body,
-                                                           String idempotencyKey) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        headers.set("Idempotency-Key",
-                    idempotencyKey);
-        HttpEntity<Object> entity = new HttpEntity<>(body,
-                                                     headers);
-        return restTemplate.exchange("http://localhost:" + port + path,
-                                     HttpMethod.POST,
-                                     entity,
-                                     Map.class);
+        assertThat(replay.getBody()
+                           .get("id")).isEqualTo(first.getBody()
+                                                         .get("id"));
     }
 
     @Test

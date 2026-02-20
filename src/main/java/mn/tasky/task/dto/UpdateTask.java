@@ -9,4 +9,5 @@ public record UpdateTask(String description,
                          String locationText,
                          String scheduledAt,
                          List<String> photoKeys) {
+
 }

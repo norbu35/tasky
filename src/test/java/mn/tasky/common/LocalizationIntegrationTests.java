@@ -32,7 +32,7 @@ class LocalizationIntegrationTests
         assertThat(res1.getBody()
                            .get("status_localized")
                            .toString()).contains("\u0425\u0443\u0432\u0438\u043b\u0431\u0430" +
-                                                                 "\u0440\u044b\u043d"); // Cyrillic
+                                                         "\u0440\u044b\u043d"); // Cyrillic
 
         // 2. Explicit en
         HttpHeaders headers2 = new HttpHeaders();
@@ -59,7 +59,7 @@ class LocalizationIntegrationTests
         assertThat(res3.getBody()
                            .get("status_localized")
                            .toString()).contains("\u0425\u0443\u0432\u0438\u043b\u0431\u0430" +
-                                                                 "\u0440\u044b\u043d");
+                                                         "\u0440\u044b\u043d");
     }
 
     @Test
@@ -77,7 +77,7 @@ class LocalizationIntegrationTests
         assertThat(response.getBody()
                            .get("status_localized")
                            .toString()).contains("\u0425\u0443\u0432\u0438\u043b\u0431\u0430" +
-                                                                 "\u0440\u044b\u043d");
+                                                         "\u0440\u044b\u043d");
     }
 
     @Test
@@ -96,6 +96,6 @@ class LocalizationIntegrationTests
         assertThat(response.getBody()
                            .get("status_localized")
                            .toString()).contains("\u0425\u0443\u0432\u0438\u043b\u0431\u0430" +
-                                                                 "\u0440\u044b\u043d");
+                                                         "\u0440\u044b\u043d");
     }
 }

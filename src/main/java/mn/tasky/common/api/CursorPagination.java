@@ -25,6 +25,6 @@ public record CursorPagination(
         }
         String next = cursorResolver.apply(items.get(limit - 1));
         return new CursorPagination(next,
-                                    hasMore);
+                                    true);
     }
 }

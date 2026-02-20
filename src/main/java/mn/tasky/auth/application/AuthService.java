@@ -866,26 +866,6 @@ public class AuthService {
         );
     }
 
-    public List<UserProfile> searchUsersByPhone(String phonePart) {
-        return userDao.findAll()
-                .stream()
-                .filter(u -> cryptoService.decrypt(u.phone())
-                        .contains(phonePart))
-                .map(u -> {
-                    String effectiveStatus = resolveUserStatus(u.id(),
-                                                               u.status());
-                    AuthUser effectiveUser = new AuthUser(u.id(),
-                                                          u.phone(),
-                                                          u.role(),
-                                                          effectiveStatus,
-                                                          u.createdAt());
-                    return toProfile(effectiveUser,
-                                     profileDao.findByUserId(u.id())
-                                             .orElse(UserProfileState.defaultState()));
-                })
-                .toList();
-    }
-
     public UserProfilePage searchUsersByPhone(String phonePart,
                                               String cursor,
                                               int limit) {
@@ -904,13 +884,45 @@ public class AuthService {
                                      limit)
                 : candidates;
         String nextCursor = hasMore && !pageData.isEmpty()
-                ? pageData.get(pageData.size() - 1)
-                        .id()
+                ? pageData.getLast()
+                .id()
                 : null;
 
         return new UserProfilePage(List.copyOf(pageData),
                                    nextCursor,
                                    hasMore);
+    }
+
+    private UUID parseUserSearchCursor(String cursor) {
+        if (!StringUtils.hasText(cursor)) {
+            return null;
+        }
+        try {
+            return UUID.fromString(cursor.trim());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Cursor is invalid.",
+                                               exception);
+        }
+    }
+
+    public List<UserProfile> searchUsersByPhone(String phonePart) {
+        return userDao.findAll()
+                .stream()
+                .filter(u -> cryptoService.decrypt(u.phone())
+                        .contains(phonePart))
+                .map(u -> {
+                    String effectiveStatus = resolveUserStatus(u.id(),
+                                                               u.status());
+                    AuthUser effectiveUser = new AuthUser(u.id(),
+                                                          u.phone(),
+                                                          u.role(),
+                                                          effectiveStatus,
+                                                          u.createdAt());
+                    return toProfile(effectiveUser,
+                                     profileDao.findByUserId(u.id())
+                                             .orElse(UserProfileState.defaultState()));
+                })
+                .toList();
     }
 
     public boolean banUser(String adminId,
@@ -1067,18 +1079,6 @@ public class AuthService {
                 avatarMaxBytes,
                 avatarUploadUrlTtlSeconds
         );
-    }
-
-    private UUID parseUserSearchCursor(String cursor) {
-        if (!StringUtils.hasText(cursor)) {
-            return null;
-        }
-        try {
-            return UUID.fromString(cursor.trim());
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Cursor is invalid.",
-                                               exception);
-        }
     }
 
 }

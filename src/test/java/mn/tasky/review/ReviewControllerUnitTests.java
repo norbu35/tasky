@@ -54,7 +54,12 @@ class ReviewControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "ALREADY_REVIEWED");
+                                                                           "ALREADY_REVIEWED");
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -87,11 +92,6 @@ class ReviewControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
-                                                                            review.id());
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+                                                                           review.id());
     }
 }

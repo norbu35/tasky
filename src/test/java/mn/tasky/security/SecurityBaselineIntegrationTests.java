@@ -114,7 +114,8 @@ class SecurityBaselineIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-004-SEC-SUSPENDED-USER-BLOCK suspended users are denied despite valid JWT")
+    @DisplayName("TID-TASK-004-SEC-SUSPENDED-USER-BLOCK suspended users are denied despite valid " +
+            "JWT")
     void suspendedUsersDeniedWithValidJwt() {
         String suspendedToken = tokenFor("CUSTOMER",
                                          "SUSPENDED");

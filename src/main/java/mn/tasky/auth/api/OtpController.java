@@ -1,12 +1,13 @@
 package mn.tasky.auth.api;
 
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.OtpRequest;
 import mn.tasky.auth.dto.OtpVerifyRequest;
-import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth/otp")
@@ -87,12 +87,4 @@ public class OtpController {
                         ));
     }
 
-    private String resolveTraceId(HttpServletRequest request) {
-        Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
-        if (traceId != null) {
-            return traceId.toString();
-        }
-        return UUID.randomUUID()
-                .toString();
-    }
 }

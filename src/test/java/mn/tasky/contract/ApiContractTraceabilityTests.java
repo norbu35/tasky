@@ -12,7 +12,8 @@ import java.util.List;
 class ApiContractTraceabilityTests {
 
     @Test
-    @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares pagination primitives")
+    @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " +
+            "pagination primitives")
     void openApiContractBaselineIsPresent() throws Exception {
         Path apiPath = Path.of("docs/API.yaml");
         assertThat(apiPath).exists();
@@ -37,7 +38,8 @@ class ApiContractTraceabilityTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK parity")
+    @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " +
+            "parity")
     void contractDriftGateScriptExists() throws Exception {
         Path driftScript = Path.of("scripts/validate-sdk-contract-drift.sh");
         assertThat(driftScript).exists();
@@ -50,7 +52,8 @@ class ApiContractTraceabilityTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit contract parameters")
+    @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit " +
+            "contract parameters")
     void listEndpointsExposeCursorAndLimitContract() throws Exception {
         String api = Files.readString(Path.of("docs/API.yaml"));
 
@@ -71,10 +74,12 @@ class ApiContractTraceabilityTests {
             String block = endpointBlock(api,
                                          endpoint);
             assertThat(block)
-                    .as("endpoint %s must include cursor parameter", endpoint)
+                    .as("endpoint %s must include cursor parameter",
+                        endpoint)
                     .contains("#/components/parameters/CursorParam");
             assertThat(block)
-                    .as("endpoint %s must include limit parameter", endpoint)
+                    .as("endpoint %s must include limit parameter",
+                        endpoint)
                     .contains("#/components/parameters/LimitParam");
         }
     }
@@ -84,7 +89,8 @@ class ApiContractTraceabilityTests {
         String marker = "  " + endpoint + ":";
         int start = api.indexOf(marker);
         assertThat(start)
-                .as("endpoint marker should exist: %s", endpoint)
+                .as("endpoint marker should exist: %s",
+                    endpoint)
                 .isGreaterThanOrEqualTo(0);
 
         int next = api.indexOf("\n  /",

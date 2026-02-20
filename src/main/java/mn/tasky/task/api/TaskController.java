@@ -1,5 +1,10 @@
 package mn.tasky.task.api;
 
+import static mn.tasky.booking.api.BookingResponseMapper.basic;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -37,12 +42,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,11 +55,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
-
-import static mn.tasky.booking.api.BookingResponseMapper.basic;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -121,56 +121,6 @@ public class TaskController {
                                     "INVALID_CURSOR",
                                     "message",
                                     "Cursor parameter is invalid.",
-                                    "trace_id",
-                                    resolveTraceId(request)
-                            )
-                    );
-        }
-    }
-
-    @GetMapping("/mine")
-    public ResponseEntity<?> listMyTasks(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @RequestParam(defaultValue = "customer") String role,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
-            HttpServletRequest request
-    ) {
-        try {
-            TaskPage page = taskService.listMyTasks(principal.userId(),
-                                                    role,
-                                                    status,
-                                                    cursor,
-                                                    limit);
-            List<Map<String, Object>> data = page.data()
-                    .stream()
-                    .map(this::toTaskResponse)
-                    .toList();
-            return ResponseEntity.ok(
-                    new PagedResponse<>(
-                            data,
-                            new CursorPagination(page.nextCursor(),
-                                                 page.hasMore())
-                    )
-            );
-        } catch (IllegalArgumentException exception) {
-            String code = "INVALID_CURSOR";
-            String message = "Cursor parameter is invalid.";
-            if ("Role filter is invalid.".equals(exception.getMessage())) {
-                code = "INVALID_ROLE";
-                message = "Role filter must be customer or tasker.";
-            } else if ("Status filter is invalid.".equals(exception.getMessage())) {
-                code = "INVALID_STATUS";
-                message = "Status filter must be OPEN, ASSIGNED, COMPLETED, or CANCELLED.";
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            Map.of(
-                                    "code",
-                                    code,
-                                    "message",
-                                    message,
                                     "trace_id",
                                     resolveTraceId(request)
                             )
@@ -263,51 +213,62 @@ public class TaskController {
         return new double[]{fuzzedLat, fuzzedLng};
     }
 
+    private int taskApplicationCount(String taskId) {
+        return taskService.countApplications(taskId);
+    }
+
     private double roundToTwoDecimals(double value) {
         return Math.round(value * 100.0d) / 100.0d;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getTask(
+    @GetMapping("/mine")
+    public ResponseEntity<?> listMyTasks(
             @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
+            @RequestParam(defaultValue = "customer") String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request
     ) {
-        Optional<TaskState> taskOpt = taskService.getTask(id);
-        if (taskOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        try {
+            TaskPage page = taskService.listMyTasks(principal.userId(),
+                                                    role,
+                                                    status,
+                                                    cursor,
+                                                    limit);
+            List<Map<String, Object>> data = page.data()
+                    .stream()
+                    .map(this::toTaskResponse)
+                    .toList();
+            return ResponseEntity.ok(
+                    new PagedResponse<>(
+                            data,
+                            new CursorPagination(page.nextCursor(),
+                                                 page.hasMore())
+                    )
+            );
+        } catch (IllegalArgumentException exception) {
+            String code = "INVALID_CURSOR";
+            String message = "Cursor parameter is invalid.";
+            if ("Role filter is invalid.".equals(exception.getMessage())) {
+                code    = "INVALID_ROLE";
+                message = "Role filter must be customer or tasker.";
+            } else if ("Status filter is invalid.".equals(exception.getMessage())) {
+                code    = "INVALID_STATUS";
+                message = "Status filter must be OPEN, ASSIGNED, COMPLETED, or CANCELLED.";
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(
                             Map.of(
                                     "code",
-                                    "NOT_FOUND",
+                                    code,
                                     "message",
-                                    "Task not found.",
+                                    message,
                                     "trace_id",
                                     resolveTraceId(request)
                             )
                     );
         }
-
-        TaskState task = taskOpt.get();
-        boolean owner = task.customerId()
-                .equals(principal.userId());
-        boolean bookedTasker = bookingService
-                .listBookings(principal.userId(),
-                              "tasker",
-                              null)
-                .stream()
-                .anyMatch(booking ->
-                                  booking.taskId()
-                                          .equals(task.id())
-                                          && ("ASSIGNED".equals(booking.status())
-                                          || "PAID".equals(booking.status())
-                                          || "COMPLETED".equals(booking.status()))
-                );
-
-        if (owner || bookedTasker) {
-            return ResponseEntity.ok(toTaskResponse(task));
-        }
-        return ResponseEntity.ok(toPublicTaskResponse(task));
     }
 
     private Map<String, Object> toTaskResponse(TaskState task) {
@@ -362,8 +323,47 @@ public class TaskController {
         return response;
     }
 
-    private int taskApplicationCount(String taskId) {
-        return taskService.countApplications(taskId);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTask(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            HttpServletRequest request
+    ) {
+        Optional<TaskState> taskOpt = taskService.getTask(id);
+        if (taskOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "NOT_FOUND",
+                                    "message",
+                                    "Task not found.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+        }
+
+        TaskState task = taskOpt.get();
+        boolean owner = task.customerId()
+                .equals(principal.userId());
+        boolean bookedTasker = bookingService
+                .listBookings(principal.userId(),
+                              "tasker",
+                              null)
+                .stream()
+                .anyMatch(booking ->
+                                  booking.taskId()
+                                          .equals(task.id())
+                                          && ("ASSIGNED".equals(booking.status())
+                                          || "PAID".equals(booking.status())
+                                          || "COMPLETED".equals(booking.status()))
+                );
+
+        if (owner || bookedTasker) {
+            return ResponseEntity.ok(toTaskResponse(task));
+        }
+        return ResponseEntity.ok(toPublicTaskResponse(task));
     }
 
     @PostMapping
@@ -690,16 +690,13 @@ public class TaskController {
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request
     ) {
-        int clampedLimit = Math.max(1,
-                                    Math.min(limit,
-                                             100));
         TaskApplicationsListResult result;
         try {
             result = taskService.listTaskApplications(
                     principal.userId(),
                     id,
                     cursor,
-                    clampedLimit + 1
+                    limit + 1
             );
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -717,14 +714,14 @@ public class TaskController {
 
         if (result.isSuccess()) {
             List<TaskApplicationState> applications = result.applications();
-            boolean hasMore = applications.size() > clampedLimit;
+            boolean hasMore = applications.size() > limit;
             List<TaskApplicationState> pageData = hasMore
                     ? applications.subList(0,
-                                           clampedLimit)
+                                           limit)
                     : applications;
             String nextCursor = hasMore
-                    ? pageData.get(pageData.size() - 1)
-                            .id()
+                    ? pageData.getLast()
+                    .id()
                     : null;
 
             List<Map<String, Object>> data = pageData

@@ -50,9 +50,9 @@ public class TaskService {
             "png"
     );
     private static final Set<String> TASK_STATUSES = Set.of("OPEN",
-                                                             "ASSIGNED",
-                                                             "COMPLETED",
-                                                             "CANCELLED");
+                                                            "ASSIGNED",
+                                                            "COMPLETED",
+                                                            "CANCELLED");
 
     private final AuthService authService;
     private final CategoryService categoryService;
@@ -321,12 +321,42 @@ public class TaskService {
                 .map(this::populatePhotoKeys)
                 .toList();
         String nextCursor = hasMore
-                ? encodeCursor(pageData.get(pageData.size() - 1))
+                ? encodeCursor(pageData.getLast())
                 : null;
 
         return new TaskPage(List.copyOf(pageData),
                             nextCursor,
                             hasMore);
+    }
+
+    private TaskCursor decodeCursor(String cursor) {
+        if (!StringUtils.hasText(cursor)) {
+            return null;
+        }
+        try {
+            String decoded = new String(
+                    Base64.getUrlDecoder()
+                            .decode(cursor),
+                    StandardCharsets.UTF_8
+            );
+            String[] parts = decoded.split("\\|",
+                                           2);
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Cursor payload is malformed.");
+            }
+            return new TaskCursor(Instant.parse(parts[0]),
+                                  UUID.fromString(parts[1]));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cursor is invalid.",
+                                               e);
+        }
+    }
+
+    private String encodeCursor(TaskState lastTask) {
+        String payload = lastTask.createdAt() + "|" + lastTask.id();
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
     }
 
     public TaskPage listMyTasks(String userId,
@@ -366,7 +396,7 @@ public class TaskService {
                 .map(this::populatePhotoKeys)
                 .toList();
         String nextCursor = hasMore
-                ? encodeCursor(pageData.get(pageData.size() - 1))
+                ? encodeCursor(pageData.getLast())
                 : null;
 
         return new TaskPage(List.copyOf(pageData),
@@ -396,36 +426,6 @@ public class TaskService {
             throw new IllegalArgumentException("Status filter is invalid.");
         }
         return normalized;
-    }
-
-    private TaskCursor decodeCursor(String cursor) {
-        if (!StringUtils.hasText(cursor)) {
-            return null;
-        }
-        try {
-            String decoded = new String(
-                    Base64.getUrlDecoder()
-                            .decode(cursor),
-                    StandardCharsets.UTF_8
-            );
-            String[] parts = decoded.split("\\|",
-                                           2);
-            if (parts.length != 2) {
-                throw new IllegalArgumentException("Cursor payload is malformed.");
-            }
-            return new TaskCursor(Instant.parse(parts[0]),
-                                  UUID.fromString(parts[1]));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Cursor is invalid.",
-                                               e);
-        }
-    }
-
-    private String encodeCursor(TaskState lastTask) {
-        String payload = lastTask.createdAt() + "|" + lastTask.id();
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
     }
 
     public TaskCancelResult cancelTask(String customerId,
@@ -542,10 +542,6 @@ public class TaskService {
                                     50);
     }
 
-    public int countApplications(String taskId) {
-        return taskApplicationDao.countByTaskId(taskId);
-    }
-
     public TaskApplicationsListResult listTaskApplications(String userId,
                                                            String taskId,
                                                            String cursor,
@@ -562,9 +558,13 @@ public class TaskService {
         }
 
         List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId,
-                                                                                   cursor,
-                                                                                   limit);
+                                                                                  cursor,
+                                                                                  limit);
         return TaskApplicationsListResult.success(List.copyOf(applications));
+    }
+
+    public int countApplications(String taskId) {
+        return taskApplicationDao.countByTaskId(taskId);
     }
 
     public TaskAcceptResult acceptApplication(
@@ -690,23 +690,6 @@ public class TaskService {
                                                storageKey));
     }
 
-    public List<String> buildPhotoAccessUrls(List<String> storageKeys) {
-        if (storageKeys == null || storageKeys.isEmpty()) {
-            return List.of();
-        }
-        return storageKeys.stream()
-                .map(this::buildPhotoAccessUrl)
-                .toList();
-    }
-
-    public String buildPhotoAccessUrl(String storageKey) {
-        String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
-        return normalizedBase +
-                "/presigned-get?key=" +
-                URLEncoder.encode(storageKey,
-                                  StandardCharsets.UTF_8);
-    }
-
     private String buildPresignedUploadUrl(
             String baseUrl,
             String storageKey,
@@ -727,6 +710,30 @@ public class TaskService {
                 maxBytes +
                 "&expires_in=" +
                 ttlSeconds;
+    }
+
+    private String normalizeBaseUrl(String baseUrl) {
+        return baseUrl.endsWith("/")
+                ? baseUrl.substring(0,
+                                    baseUrl.length() - 1)
+                : baseUrl;
+    }
+
+    public List<String> buildPhotoAccessUrls(List<String> storageKeys) {
+        if (storageKeys == null || storageKeys.isEmpty()) {
+            return List.of();
+        }
+        return storageKeys.stream()
+                .map(this::buildPhotoAccessUrl)
+                .toList();
+    }
+
+    public String buildPhotoAccessUrl(String storageKey) {
+        String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
+        return normalizedBase +
+                "/presigned-get?key=" +
+                URLEncoder.encode(storageKey,
+                                  StandardCharsets.UTF_8);
     }
 
     public TaskUpdateResult updateTask(String customerId,
@@ -789,8 +796,8 @@ public class TaskService {
         List<String> photoKeys = replacePhotos
                 ? List.copyOf(command.photoKeys())
                 : (existing.photoKeys() == null
-                ? List.of()
-                : List.copyOf(existing.photoKeys()));
+                        ? List.of()
+                        : List.copyOf(existing.photoKeys()));
         if (photoKeys.size() > 3) {
             return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
         }
@@ -840,14 +847,8 @@ public class TaskService {
         return TaskUpdateResult.success(updated);
     }
 
-    private String normalizeBaseUrl(String baseUrl) {
-        return baseUrl.endsWith("/")
-                ? baseUrl.substring(0,
-                                    baseUrl.length() - 1)
-                : baseUrl;
-    }
-
     private record TaskCursor(Instant createdAt,
                               UUID id) {
+
     }
 }

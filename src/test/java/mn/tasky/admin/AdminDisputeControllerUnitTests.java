@@ -100,10 +100,47 @@ class AdminDisputeControllerUnitTests {
                                       "booking",
                                       "conversation_id",
                                       "evidence_messages");
-        List<Map<String, Object>> evidence = (List<Map<String, Object>>) body.get("evidence_messages");
+        List<Map<String, Object>> evidence =
+                (List<Map<String, Object>>) body.get("evidence_messages");
         assertThat(evidence).hasSize(1);
         assertThat(evidence.get(0)).containsEntry("content",
-                                                   "Uploaded proof image");
+                                                  "Uploaded proof image");
+    }
+
+    private Dispute dispute(String status) {
+        return new Dispute(
+                uuid(1),
+                uuid(2),
+                uuid(3),
+                "dispute reason",
+                status,
+                null,
+                null,
+                null,
+                Instant.parse("2026-02-17T00:00:00Z"),
+                null
+        );
+    }
+
+    private BookingState booking(String bookingId) {
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        return new BookingState(
+                bookingId,
+                uuid(4),
+                uuid(7),
+                uuid(8),
+                50000,
+                "ASSIGNED",
+                null,
+                true,
+                now,
+                now
+        );
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -137,7 +174,13 @@ class AdminDisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "IDEMPOTENCY_REPLAY_MISSING");
+                                                                           "IDEMPOTENCY_REPLAY_MISSING");
+    }
+
+    private JwtPrincipal adminPrincipal() {
+        return new JwtPrincipal(uuid(100),
+                                "ADMIN",
+                                "ACTIVE");
     }
 
     @Test
@@ -173,9 +216,24 @@ class AdminDisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
-                                                                            resolved.id())
+                                                                           resolved.id())
                 .containsEntry("status",
                                "RESOLVED_TASKER");
+    }
+
+    private IdempotencyRecord completedRecord(String resourceId) {
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        return new IdempotencyRecord(
+                UUID.fromString(uuid(50)),
+                UUID.fromString(uuid(51)),
+                IdempotencyOperations.RESOLVE_DISPUTE,
+                "idem-complete",
+                "COMPLETED",
+                "DISPUTE",
+                UUID.fromString(resourceId),
+                now,
+                now
+        );
     }
 
     @Test
@@ -206,62 +264,5 @@ class AdminDisputeControllerUnitTests {
         verify(idempotencyService).abandon(eq(principal.userId()),
                                            eq(IdempotencyOperations.RESOLVE_DISPUTE),
                                            eq("idem-3"));
-    }
-
-    private Dispute dispute(String status) {
-        return new Dispute(
-                uuid(1),
-                uuid(2),
-                uuid(3),
-                "dispute reason",
-                status,
-                null,
-                null,
-                null,
-                Instant.parse("2026-02-17T00:00:00Z"),
-                null
-        );
-    }
-
-    private BookingState booking(String bookingId) {
-        Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new BookingState(
-                bookingId,
-                uuid(4),
-                uuid(7),
-                uuid(8),
-                50000,
-                "ASSIGNED",
-                null,
-                true,
-                now,
-                now
-        );
-    }
-
-    private JwtPrincipal adminPrincipal() {
-        return new JwtPrincipal(uuid(100),
-                                "ADMIN",
-                                "ACTIVE");
-    }
-
-    private IdempotencyRecord completedRecord(String resourceId) {
-        Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new IdempotencyRecord(
-                UUID.fromString(uuid(50)),
-                UUID.fromString(uuid(51)),
-                IdempotencyOperations.RESOLVE_DISPUTE,
-                "idem-complete",
-                "COMPLETED",
-                "DISPUTE",
-                UUID.fromString(resourceId),
-                now,
-                now
-        );
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
     }
 }

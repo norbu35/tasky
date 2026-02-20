@@ -69,7 +69,18 @@ class DisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "IDEMPOTENCY_IN_PROGRESS");
+                                                                           "IDEMPOTENCY_IN_PROGRESS");
+    }
+
+    private JwtPrincipal userPrincipal() {
+        return new JwtPrincipal(uuid(200),
+                                "CUSTOMER",
+                                "ACTIVE");
+    }
+
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
     }
 
     @Test
@@ -103,7 +114,7 @@ class DisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "IDEMPOTENCY_REPLAY_MISSING");
+                                                                           "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
@@ -130,7 +141,7 @@ class DisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                            "FORBIDDEN");
+                                                                           "FORBIDDEN");
     }
 
     @Test
@@ -171,6 +182,22 @@ class DisputeControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
+    private Dispute dispute(String status) {
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        return new Dispute(
+                uuid(20),
+                uuid(21),
+                uuid(22),
+                "reason",
+                status,
+                null,
+                null,
+                null,
+                now,
+                null
+        );
+    }
+
     @Test
     void getDisputeReturnsNotFoundWhenUserCannotAccess() {
         JwtPrincipal principal = new JwtPrincipal(uuid(100),
@@ -198,33 +225,6 @@ class DisputeControllerUnitTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
-                                                                            dispute.id());
-    }
-
-    private JwtPrincipal userPrincipal() {
-        return new JwtPrincipal(uuid(200),
-                                "CUSTOMER",
-                                "ACTIVE");
-    }
-
-    private Dispute dispute(String status) {
-        Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new Dispute(
-                uuid(20),
-                uuid(21),
-                uuid(22),
-                "reason",
-                status,
-                null,
-                null,
-                null,
-                now,
-                null
-        );
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+                                                                           dispute.id());
     }
 }

@@ -44,7 +44,8 @@ class WalletServiceTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-033-DOMAIN-WALLET-CREDIT TID-TASK-033-DOMAIN-FEE-DEDUCTION completion credit applies fee deduction before net deposit")
+    @DisplayName("TID-TASK-033-DOMAIN-WALLET-CREDIT TID-TASK-033-DOMAIN-FEE-DEDUCTION completion " +
+            "credit applies fee deduction before net deposit")
     void creditTaskCompletionAppliesFeeAndNetDeposit() {
         String taskerId = uuid(1);
         String bookingId = uuid(2);
@@ -80,6 +81,11 @@ class WalletServiceTests {
         );
     }
 
+    private String uuid(int suffix) {
+        return String.format("00000000-0000-0000-0000-%012d",
+                             suffix);
+    }
+
     @Test
     void creditTaskCompletionIsIdempotentPerBooking() {
         String taskerId = uuid(3);
@@ -107,10 +113,5 @@ class WalletServiceTests {
                 org.mockito.ArgumentMatchers.anyString(),
                 any()
         );
-    }
-
-    private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
     }
 }

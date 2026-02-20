@@ -566,7 +566,8 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-022-API-TASK-LIST-CURSOR cursor pagination is deterministic with next cursor semantics")
+    @DisplayName("TID-TASK-022-API-TASK-LIST-CURSOR cursor pagination is deterministic with next " +
+            "cursor semantics")
     @SuppressWarnings("unchecked")
     void feedCursorPaginationDeterministic() {
         AuthContext customer = authenticate("1020");
@@ -618,8 +619,8 @@ class TaskLifecycleIntegrationTests
         assertThat(page2Data)
                 .extracting(item -> item.get("id"))
                 .doesNotContainAnyElementsOf(page1Data.stream()
-                                                  .map(item -> item.get("id"))
-                                                  .toList());
+                                                     .map(item -> item.get("id"))
+                                                     .toList());
     }
 
     @Test
@@ -704,8 +705,9 @@ class TaskLifecycleIntegrationTests
         );
         assertThat(acceptResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        ResponseEntity<Map> historyResponse = getWithAuth("/api/v1/tasks/mine?role=tasker&status=ASSIGNED",
-                                                          taskerToken);
+        ResponseEntity<Map> historyResponse =
+                getWithAuth("/api/v1/tasks/mine?role=tasker&status=ASSIGNED",
+                            taskerToken);
         assertThat(historyResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Map<String, Object>> data = (List<Map<String, Object>>) historyResponse.getBody()
                 .get("data");
@@ -780,7 +782,8 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-023-API-APPLICANT-LIST TID-TASK-023-API-ACCEPT-CREATES-BOOKING customer can list applicants and accept one")
+    @DisplayName("TID-TASK-023-API-APPLICANT-LIST TID-TASK-023-API-ACCEPT-CREATES-BOOKING " +
+            "customer can list applicants and accept one")
     void customerCanAcceptApplicant() {
         AuthContext customer = authenticate("112");
         String categoryId = getFirstCategoryId(customer.accessToken());
@@ -939,6 +942,23 @@ class TaskLifecycleIntegrationTests
         assertThat(profile.status()).isEqualTo("SUSPENDED");
     }
 
+    private String tokenFor(String role,
+                            String status,
+                            String userId) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(userId)
+                .claim("role",
+                       role)
+                .claim("status",
+                       status)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
+                          Jwts.SIG.HS256)
+                .compact();
+    }
+
     @SuppressWarnings("unchecked")
     private String activateAndVerifyTasker(AuthContext tasker) {
         String adminToken = tokenFor("ADMIN",
@@ -960,9 +980,11 @@ class TaskLifecycleIntegrationTests
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/front-" + Instant.now()
+                                .toEpochMilli() + ".jpg",
                         "id_card_back_key",
-                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg"
+                        "uploads/verification/back-" + Instant.now()
+                                .toEpochMilli() + ".jpg"
                 )
         );
         assertThat(submitResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -972,8 +994,9 @@ class TaskLifecycleIntegrationTests
                 adminToken
         );
         assertThat(pendingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Map<String, Object>> pendingData = (List<Map<String, Object>>) pendingResponse.getBody()
-                .get("data");
+        List<Map<String, Object>> pendingData =
+                (List<Map<String, Object>>) pendingResponse.getBody()
+                        .get("data");
 
         Map<String, Object> verification = pendingData.stream()
                 .filter(item -> tasker.userId()
@@ -989,23 +1012,6 @@ class TaskLifecycleIntegrationTests
         );
         assertThat(approveResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         return taskerToken;
-    }
-
-    private String tokenFor(String role,
-                            String status,
-                            String userId) {
-        Instant now = Instant.now();
-        return Jwts.builder()
-                .subject(userId)
-                .claim("role",
-                       role)
-                .claim("status",
-                       status)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusSeconds(3600)))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
-                          Jwts.SIG.HS256)
-                .compact();
     }
 
     @Test
@@ -1102,17 +1108,52 @@ class TaskLifecycleIntegrationTests
         ResponseEntity<Map> response = restTemplate.exchange(
                 url("/api/v1/tasks/" + taskId),
                 HttpMethod.PUT,
-                new HttpEntity<>(updateBody, headers),
+                new HttpEntity<>(updateBody,
+                                 headers),
                 Map.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get("description")).isEqualTo(newDescription);
-        assertThat(((Number) response.getBody().get("budget")).intValue()).isEqualTo(80000);
+        assertThat(response.getBody()
+                           .get("description")).isEqualTo(newDescription);
+        assertThat(((Number) response.getBody()
+                .get("budget")).intValue()).isEqualTo(80000);
     }
 
+    private String createTask(String token,
+                              String categoryId) {
+        ResponseEntity<Map> response = postWithAuth("/api/v1/tasks",
+                                                    token,
+                                                    Map.of(
+                                                            "category_id",
+                                                            categoryId,
+                                                            "description",
+                                                            "Description for a task that will " +
+                                                                    "have applications.",
+                                                            "budget",
+                                                            70000,
+                                                            "location_lat",
+                                                            47.9,
+                                                            "location_lng",
+                                                            106.9,
+                                                            "location_text",
+                                                            "Ulaanbaatar",
+                                                            "scheduled_at",
+                                                            Instant.now()
+                                                                    .plus(1,
+                                                                          ChronoUnit.DAYS)
+                                                                    .toString()
+                                                    ));
+        return response.getBody()
+                .get("id")
+                .toString();
+    }
+
+    // --- Helpers ---
+
     @Test
-    @DisplayName("TID-TASK-020-API-CATEGORIES-SEED-PRESENT at least 5 active categories seeded on startup")
+    @DisplayName("TID-TASK-020-API-CATEGORIES-SEED-PRESENT at least 5 active categories seeded on" +
+            " startup")
     void atLeastFiveActiveCategoriesSeeded() {
         AuthContext customer = authenticate("200");
 
@@ -1127,8 +1168,6 @@ class TaskLifecycleIntegrationTests
                 cat -> assertThat(cat.get("is_active")).isEqualTo(true)
         );
     }
-
-    // --- Helpers ---
 
     @Test
     @DisplayName("TID-TASK-023-API-APPLY-OPEN-TASK apply failure paths")
@@ -1374,35 +1413,6 @@ class TaskLifecycleIntegrationTests
                 .map(String::valueOf)
                 .orElseThrow(() -> new IllegalStateException(
                         "Booking not found for task " + taskId));
-    }
-
-    private String createTask(String token,
-                              String categoryId) {
-        ResponseEntity<Map> response = postWithAuth("/api/v1/tasks",
-                                                    token,
-                                                    Map.of(
-                                                            "category_id",
-                                                            categoryId,
-                                                            "description",
-                                                            "Description for a task that will " +
-                                                                    "have applications.",
-                                                            "budget",
-                                                            70000,
-                                                            "location_lat",
-                                                            47.9,
-                                                            "location_lng",
-                                                            106.9,
-                                                            "location_text",
-                                                            "Ulaanbaatar",
-                                                            "scheduled_at",
-                                                            Instant.now()
-                                                                    .plus(1,
-                                                                          ChronoUnit.DAYS)
-                                                                    .toString()
-                                                    ));
-        return response.getBody()
-                .get("id")
-                .toString();
     }
 
     private String signatureFor(String paymentId,

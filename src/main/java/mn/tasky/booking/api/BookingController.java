@@ -1,5 +1,10 @@
 package mn.tasky.booking.api;
 
+import static mn.tasky.booking.api.BookingResponseMapper.withCancellationFee;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 import jakarta.servlet.http.HttpServletRequest;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
@@ -35,11 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static mn.tasky.booking.api.BookingResponseMapper.withCancellationFee;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 @RestController
 @RequestMapping("/api/v1/bookings")

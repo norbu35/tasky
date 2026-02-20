@@ -134,7 +134,8 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 
 - Objective: Implement identity bootstrap via phone OTP and JWT refresh.
 - Acceptance criteria:
-    1. OTP request/verify flow creates or authenticates user; each OTP is unique and invalidated after 3 failed attempts.
+    1. OTP request/verify flow creates or authenticates user; each OTP is unique and invalidated after 3 failed
+       attempts.
     2. Duplicate phone registration does not create duplicate users.
     3. Refresh endpoint rotates/returns valid access token; banned users cannot refresh.
     4. Banned users cannot create a new session via OTP verify.
@@ -245,7 +246,8 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Booking entity enforces allowed transitions only.
     2. Booking details/list endpoints reflect consistent status.
     3. Booking completion transitions booking to COMPLETED and task to COMPLETED.
-    4. Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached result; missing key is rejected.
+    4. Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached
+       result; missing key is rejected.
 - Required tests:
     - `TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE`
     - `TID-TASK-030-API-BOOKING-READS`
@@ -300,7 +302,8 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     2. Admin can list/process pending payouts.
     3. Processing enforces Tue/Fri schedule policy and writes ledger entries.
     4. When the monetization feature flag is disabled, wallet endpoints return FEATURE_DEFERRED (503).
-    5. Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the tasker's balance.
+    5. Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the
+       tasker's balance.
 - Required tests:
     - `TID-TASK-034-API-PAYOUT-REQUEST`
     - `TID-TASK-034-API-ADMIN-PAYOUT-PROCESS`
@@ -328,8 +331,10 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     2. Active dispute blocks booking closure actions until resolution.
     3. Admin resolution supports customer-favor, tasker-favor, and escalation outcomes with audit trail.
     4. Raise-dispute endpoint is idempotent: same Idempotency-Key replays the original dispute result.
-    5. Dispute can only be raised within 24 hours of booking completion; attempts after the window return DISPUTE_WINDOW_EXPIRED.
-    6. Admin dispute resolution is idempotent: replaying the resolve request with the same Idempotency-Key binds to the original dispute resource.
+    5. Dispute can only be raised within 24 hours of booking completion; attempts after the window return
+       DISPUTE_WINDOW_EXPIRED.
+    6. Admin dispute resolution is idempotent: replaying the resolve request with the same Idempotency-Key binds to the
+       original dispute resource.
 - Required tests:
     - `TID-TASK-041-API-DISPUTE-RAISE`
     - `TID-TASK-041-DOMAIN-PAYOUT-HOLD`

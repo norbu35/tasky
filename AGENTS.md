@@ -437,7 +437,7 @@ risk.*
 2. Canonical runner path: `scripts/self-verify.sh`.
 3. Minimum CLI contract:
     1.
-    `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--only <check-id>] [--out <path>]`
+   `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--only <check-id>] [--out <path>]`
 4. Mandatory script behavior:
     1. Resolve changed files from Git.
        If repository has no `HEAD`, use the empty tree base and set `git_context.head_sha` to `NO_HEAD`.

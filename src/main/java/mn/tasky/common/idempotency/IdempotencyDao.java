@@ -44,7 +44,7 @@ public interface IdempotencyDao {
             "SET status = 'COMPLETED', resource_type = :resourceType, resource_id = :resourceId, " +
             "updated_at = :updatedAt "
             + "WHERE user_id = :userId AND operation = :operation AND idempotency_key = :key")
-    int markCompleted(
+    void markCompleted(
             @Bind("userId") UUID userId,
             @Bind("operation") String operation,
             @Bind("key") String key,
@@ -57,7 +57,7 @@ public interface IdempotencyDao {
             +
             "WHERE user_id = :userId AND operation = :operation AND idempotency_key = :key AND " +
             "status = 'IN_PROGRESS'")
-    int abandonInProgress(
+    void abandonInProgress(
             @Bind("userId") UUID userId,
             @Bind("operation") String operation,
             @Bind("key") String key

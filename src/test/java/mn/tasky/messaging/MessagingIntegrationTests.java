@@ -169,31 +169,6 @@ class MessagingIntegrationTests
                            .toString()).isEqualTo(customer.userId());
     }
 
-    private Map<String, Object> awaitRealtimeDelivery(
-            CompletableFuture<Map<String, Object>> resultFuture,
-            String conversationId,
-            String customerToken,
-            String initialMessageContent
-    ) throws Exception {
-        TimeoutException lastTimeout = null;
-        for (int attempt = 0; attempt < 3; attempt++) {
-            try {
-                return resultFuture.get(5,
-                                        TimeUnit.SECONDS);
-            } catch (TimeoutException timeoutException) {
-                lastTimeout = timeoutException;
-                if (attempt == 2) {
-                    break;
-                }
-                postWithAuth("/api/v1/conversations/" + conversationId + "/messages",
-                             customerToken,
-                             Map.of("content",
-                                    initialMessageContent + " retry " + (attempt + 1)));
-            }
-        }
-        throw lastTimeout;
-    }
-
     private AuthContext authenticate(String seed) {
         String phone = "+9769911" + String.format("%04d",
                                                   Math.abs(seed.hashCode()) % 10000);
@@ -211,6 +186,21 @@ class MessagingIntegrationTests
                 .get("user")).get("id");
         return new AuthContext(userId,
                                accessToken);
+    }
+
+    private String tokenFor(String role,
+                            String status,
+                            String userId) {
+        return Jwts.builder()
+                .subject(userId)
+                .claim("role",
+                       role)
+                .claim("status",
+                       status)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                .compact();
     }
 
     @SuppressWarnings("unchecked")
@@ -231,9 +221,11 @@ class MessagingIntegrationTests
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/front-" + Instant.now()
+                                .toEpochMilli() + ".jpg",
                         "id_card_back_key",
-                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg"
+                        "uploads/verification/back-" + Instant.now()
+                                .toEpochMilli() + ".jpg"
                 )
         );
         assertThat(submitResponse.getStatusCode()
@@ -245,8 +237,9 @@ class MessagingIntegrationTests
         );
         assertThat(pendingResponse.getStatusCode()
                            .value()).isEqualTo(200);
-        List<Map<String, Object>> pendingItems = (List<Map<String, Object>>) pendingResponse.getBody()
-                .get("data");
+        List<Map<String, Object>> pendingItems =
+                (List<Map<String, Object>>) pendingResponse.getBody()
+                        .get("data");
 
         Map<String, Object> verification = pendingItems.stream()
                 .filter(item -> tasker.userId()
@@ -263,21 +256,6 @@ class MessagingIntegrationTests
         assertThat(approveResponse.getStatusCode()
                            .value()).isEqualTo(200);
         return taskerToken;
-    }
-
-    private String tokenFor(String role,
-                            String status,
-                            String userId) {
-        return Jwts.builder()
-                .subject(userId)
-                .claim("role",
-                       role)
-                .claim("status",
-                       status)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                .compact();
     }
 
     private ResponseEntity<Map> postWithAuth(String path,
@@ -303,6 +281,31 @@ class MessagingIntegrationTests
                                      HttpMethod.GET,
                                      entity,
                                      Map.class);
+    }
+
+    private Map<String, Object> awaitRealtimeDelivery(
+            CompletableFuture<Map<String, Object>> resultFuture,
+            String conversationId,
+            String customerToken,
+            String initialMessageContent
+    ) throws Exception {
+        TimeoutException lastTimeout = null;
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                return resultFuture.get(5,
+                                        TimeUnit.SECONDS);
+            } catch (TimeoutException timeoutException) {
+                lastTimeout = timeoutException;
+                if (attempt == 2) {
+                    break;
+                }
+                postWithAuth("/api/v1/conversations/" + conversationId + "/messages",
+                             customerToken,
+                             Map.of("content",
+                                    initialMessageContent + " retry " + (attempt + 1)));
+            }
+        }
+        throw lastTimeout;
     }
 
     private ResponseEntity<Map> post(String path,

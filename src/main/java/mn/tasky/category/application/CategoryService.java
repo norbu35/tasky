@@ -57,8 +57,8 @@ public class CategoryService {
                                   limit)
                 : results;
         String nextCursor = hasMore
-                ? pageData.get(pageData.size() - 1)
-                        .id()
+                ? pageData.getLast()
+                .id()
                 : null;
 
         return new CategoryPage(List.copyOf(pageData),
@@ -164,5 +164,6 @@ public class CategoryService {
     private record CategoryCursor(UUID id,
                                   int sortOrder,
                                   String name) {
+
     }
 }
