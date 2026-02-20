@@ -32,6 +32,8 @@ class AnalyticsIntegrationTests
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
     private static final String CUSTOMER_1 = "00000000-0000-0000-0000-000000000011";
     private static final String CUSTOMER_2 = "00000000-0000-0000-0000-000000000012";
+    private static final String TEST_LOCALE = "mn-MN";
+    private static final String TEST_PLATFORM = "WEB";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     @LocalServerPort
     private int port;
@@ -44,7 +46,7 @@ class AnalyticsIntegrationTests
 
     @Test
     @DisplayName("TID-TASK-090-OBS-EVENT-EMISSION backend emits canonical analytics events with " +
-            "correlation and references")
+            "correlation, locale, platform, and references")
     void emitsCanonicalFunnelEvents() {
         AuthContext customer = authenticate("cust-ana");
         AuthContext tasker = authenticate("task-ana");
@@ -150,7 +152,11 @@ class AnalyticsIntegrationTests
             Map<String, Object> properties = latestByName.get(eventName)
                     .properties();
             assertThat(properties)
-                    .containsKey(AnalyticsService.PROPERTY_CORRELATION_ID);
+                    .containsKey(AnalyticsService.PROPERTY_CORRELATION_ID)
+                    .containsEntry(AnalyticsService.PROPERTY_LOCALE,
+                                   TEST_LOCALE)
+                    .containsEntry(AnalyticsService.PROPERTY_PLATFORM,
+                                   TEST_PLATFORM);
             assertThat(
                     properties.containsKey(AnalyticsService.PROPERTY_TASK_ID) ||
                             properties.containsKey(AnalyticsService.PROPERTY_BOOKING_ID)
@@ -201,6 +207,10 @@ class AnalyticsIntegrationTests
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
+        headers.set("Accept-Language",
+                    TEST_LOCALE);
+        headers.set("X-Client-Platform",
+                    TEST_PLATFORM);
         if (requiresIdempotencyHeader(path)) {
             headers.set("Idempotency-Key",
                         UUID.randomUUID()
@@ -218,6 +228,10 @@ class AnalyticsIntegrationTests
                                             String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
+        headers.set("Accept-Language",
+                    TEST_LOCALE);
+        headers.set("X-Client-Platform",
+                    TEST_PLATFORM);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         return restTemplate.exchange("http://localhost:" + port + path,
                                      org.springframework.http.HttpMethod.GET,

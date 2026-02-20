@@ -530,8 +530,9 @@ Every agent MUST follow this sequence when starting a new work session:
    ```bash
    scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug> --workspace shared
    ```
-6. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
-7. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
+6. **Context Acquisition (Frontend Tasks Only)**: If the `<TICKET-ID>` involves any UI or frontend implementation, the agent MUST read `docs/agent/DESIGN_SYSTEM_GUIDELINES.md` to understand the shared design tokens and UI parity rules before writing any code.
+7. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
+8. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
    Preferred wrapper:
    ```bash
    scripts/agent-flow.sh verify --ticket <TICKET-ID>

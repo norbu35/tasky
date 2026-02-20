@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +32,8 @@ public class AnalyticsService {
     public static final String PROPERTY_TASK_ID = "task_id";
     public static final String PROPERTY_BOOKING_ID = "booking_id";
     public static final String PROPERTY_CORRELATION_ID = "correlation_id";
+    public static final String PROPERTY_LOCALE = "locale";
+    public static final String PROPERTY_PLATFORM = "platform";
 
     private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
     private final AnalyticsEventDao analyticsEventDao;
@@ -54,6 +57,22 @@ public class AnalyticsService {
         if (StringUtils.hasText(correlationId)) {
             enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID,
                                            correlationId);
+        }
+        String locale = MDC.get(RequestObservabilityFilter.LOCALE_MDC_KEY);
+        if (StringUtils.hasText(locale)) {
+            enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
+                                           locale);
+        } else {
+            enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
+                                           "mn");
+        }
+        String platform = MDC.get(RequestObservabilityFilter.PLATFORM_MDC_KEY);
+        if (StringUtils.hasText(platform)) {
+            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
+                                           platform.toUpperCase(Locale.ROOT));
+        } else {
+            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
+                                           "UNKNOWN");
         }
 
         String id = UUID.randomUUID()

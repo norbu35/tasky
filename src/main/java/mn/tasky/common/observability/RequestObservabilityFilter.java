@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.UUID;
 
 @Component
@@ -20,10 +21,13 @@ public class RequestObservabilityFilter
 
     public static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
     public static final String TRACE_ID_HEADER = "X-Trace-Id";
+    public static final String CLIENT_PLATFORM_HEADER = "X-Client-Platform";
     public static final String CORRELATION_ID_ATTRIBUTE = "tasky.correlation_id";
     public static final String TRACE_ID_ATTRIBUTE = "tasky.trace_id";
     public static final String CORRELATION_ID_MDC_KEY = "correlation_id";
     public static final String TRACE_ID_MDC_KEY = "trace_id";
+    public static final String LOCALE_MDC_KEY = "locale";
+    public static final String PLATFORM_MDC_KEY = "platform";
 
     private static final Logger log = LoggerFactory.getLogger(RequestObservabilityFilter.class);
 
@@ -35,6 +39,9 @@ public class RequestObservabilityFilter
     ) throws ServletException, IOException {
         String correlationId = resolveOrCreateId(request.getHeader(CORRELATION_ID_HEADER));
         String traceId = resolveOrCreateId(request.getHeader(TRACE_ID_HEADER));
+        String locale = resolveLocale(request.getHeader("Accept-Language"));
+        String platform = resolvePlatform(request.getHeader(CLIENT_PLATFORM_HEADER),
+                                          request.getHeader("User-Agent"));
         long startedAt = System.nanoTime();
 
         request.setAttribute(CORRELATION_ID_ATTRIBUTE,
@@ -49,6 +56,10 @@ public class RequestObservabilityFilter
                 correlationId);
         MDC.put(TRACE_ID_MDC_KEY,
                 traceId);
+        MDC.put(LOCALE_MDC_KEY,
+                locale);
+        MDC.put(PLATFORM_MDC_KEY,
+                platform);
 
         try {
             filterChain.doFilter(request,
@@ -67,6 +78,8 @@ public class RequestObservabilityFilter
             );
             MDC.remove(CORRELATION_ID_MDC_KEY);
             MDC.remove(TRACE_ID_MDC_KEY);
+            MDC.remove(LOCALE_MDC_KEY);
+            MDC.remove(PLATFORM_MDC_KEY);
         }
     }
 
@@ -76,5 +89,53 @@ public class RequestObservabilityFilter
         }
         return UUID.randomUUID()
                 .toString();
+    }
+
+    private String resolveLocale(String acceptLanguage) {
+        if (!StringUtils.hasText(acceptLanguage)) {
+            return "mn";
+        }
+        String firstPreference = acceptLanguage.split(",")[0]
+                .trim();
+        int qualitySeparator = firstPreference.indexOf(';');
+        if (qualitySeparator >= 0) {
+            firstPreference = firstPreference.substring(0,
+                                                       qualitySeparator)
+                    .trim();
+        }
+        return StringUtils.hasText(firstPreference)
+                ? firstPreference
+                : "mn";
+    }
+
+    private String resolvePlatform(String explicitPlatform,
+                                   String userAgent) {
+        if (StringUtils.hasText(explicitPlatform)) {
+            String normalized = explicitPlatform.trim()
+                    .toUpperCase(Locale.ROOT);
+            if ("WEB".equals(normalized) || "ANDROID".equals(normalized) || "IOS".equals(normalized)) {
+                return normalized;
+            }
+        }
+
+        String normalizedUserAgent = userAgent == null
+                ? ""
+                : userAgent.toLowerCase(Locale.ROOT);
+        if (normalizedUserAgent.contains("android")) {
+            return "ANDROID";
+        }
+        if (normalizedUserAgent.contains("iphone") ||
+                normalizedUserAgent.contains("ipad") ||
+                normalizedUserAgent.contains("ios")) {
+            return "IOS";
+        }
+        if (normalizedUserAgent.contains("mozilla") ||
+                normalizedUserAgent.contains("chrome") ||
+                normalizedUserAgent.contains("safari") ||
+                normalizedUserAgent.contains("firefox") ||
+                normalizedUserAgent.contains("edg")) {
+            return "WEB";
+        }
+        return "UNKNOWN";
     }
 }

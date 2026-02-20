@@ -13,7 +13,9 @@
     "sast_dependency_scan",
     "migration_safety",
     "performance_smoke",
-    "ac_coverage_gate"
+    "ac_coverage_gate",
+    "frontend_parity_check",
+    "frontend_a11y_check"
   ],
   "fast_checks": [
     "format_lint",
@@ -40,7 +42,9 @@
       "openapi_validation",
       "integration_tests_touched",
       "coverage_gate_touched",
-      "ac_coverage_gate"
+      "ac_coverage_gate",
+      "frontend_parity_check",
+      "frontend_a11y_check"
     ],
     "high": [
       "format_lint",
@@ -55,7 +59,9 @@
       "sast_dependency_scan",
       "migration_safety",
       "performance_smoke",
-      "ac_coverage_gate"
+      "ac_coverage_gate",
+      "frontend_parity_check",
+      "frontend_a11y_check"
     ]
   }
 }

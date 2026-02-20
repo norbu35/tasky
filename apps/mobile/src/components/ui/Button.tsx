@@ -1,110 +1,168 @@
-import type {ReactNode} from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import {mobileTheme} from "../../design/tokenAdapter";
+import React from 'react';
+import {
+    TouchableOpacity,
+    Text,
+    StyleSheet,
+    ActivityIndicator,
+    ViewStyle,
+    TextStyle,
+    TouchableOpacityProps,
+    StyleProp,
+} from 'react-native';
+import { colors, spacing, radius, typography } from '@tasky/design-tokens';
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
-type Props = {
-    label: string;
-    onPress?: () => void;
+export interface ButtonProps extends TouchableOpacityProps {
+    label?: string;
     variant?: ButtonVariant;
-    disabled?: boolean;
-    loading?: boolean;
-    icon?: ReactNode;
-};
+    size?: ButtonSize;
+    isLoading?: boolean;
+    style?: ViewStyle;
+    textStyle?: TextStyle;
+    children?: React.ReactNode;
+}
 
-export function Button({
-                           label,
-                           onPress,
-                           variant = "primary",
-                           disabled = false,
-                           loading = false,
-                           icon
-                       }: Props) {
-    const isDisabled = disabled || loading;
+export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>, ButtonProps>(
+    (
+        {
+            label,
+            variant = 'default',
+            size = 'default',
+            isLoading = false,
+            disabled,
+            style,
+            textStyle,
+            children,
+            ...props
+        },
+        ref
+    ) => {
+        const isInteractive = !disabled && !isLoading;
 
-    return (
-        <Pressable
-            accessibilityRole="button"
-            accessibilityState={{disabled: isDisabled, busy: loading}}
-            disabled={isDisabled}
-            onPress={onPress}
-            style={({pressed}) => [
-                styles.base,
-                variantStyles[variant],
-                pressed && !isDisabled && styles.pressed,
-                isDisabled && styles.disabled
-            ]}
-        >
-            <View style={styles.content}>
-                {icon}
-                <Text
-                    style={[
-                        styles.textBase,
-                        variantTextStyles[variant],
-                        isDisabled && styles.textDisabled
-                    ]}
-                >
-                    {loading ? "Loading..." : label}
-                </Text>
-            </View>
-        </Pressable>
-    );
+        const buttonStyles: StyleProp<ViewStyle> = [
+            styles.base,
+            styles[`${variant}Variant` as keyof typeof styles],
+            styles[`${size}Size` as keyof typeof styles],
+            !isInteractive ? styles.disabled : undefined,
+            style,
+        ];
+
+        const textColor = getTextColor(variant);
+
+        return (
+            <TouchableOpacity
+                ref={ref}
+                style={buttonStyles}
+                disabled={!isInteractive}
+                activeOpacity={0.8}
+                {...props}
+            >
+                {isLoading ? (
+                    <ActivityIndicator color={textColor} />
+                ) : children ? (
+                    children
+                ) : (
+                    <Text
+                        style={[
+                            styles.text,
+                            styles[`${size}Text` as keyof typeof styles],
+                            { color: textColor },
+                            textStyle,
+                        ]}
+                    >
+                        {label}
+                    </Text>
+                )}
+            </TouchableOpacity>
+        );
+    }
+);
+
+Button.displayName = 'Button';
+
+function getTextColor(variant: ButtonVariant): string {
+    switch (variant) {
+        case 'secondary':
+            return colors.secondary.foreground;
+        case 'outline':
+        case 'ghost':
+            return colors.foreground;
+        case 'destructive':
+            return colors.destructive.foreground;
+        case 'default':
+        default:
+            return colors.primary.foreground;
+    }
 }
 
 const styles = StyleSheet.create({
     base: {
-        minHeight: 44,
-        minWidth: 140,
-        borderRadius: mobileTheme.radius.md,
-        paddingHorizontal: mobileTheme.spacing.lg,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 1
-    },
-    content: {
-        flexDirection: "row",
-        gap: mobileTheme.spacing.sm,
-        alignItems: "center"
-    },
-    textBase: {
-        fontSize: mobileTheme.typography.body,
-        fontWeight: "600"
-    },
-    pressed: {
-        opacity: 0.86
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: parseInt(radius.DEFAULT),
     },
     disabled: {
-        opacity: 0.55
+        opacity: 0.5,
     },
-    textDisabled: {
-        color: mobileTheme.colors.mutedForeground
-    }
-});
 
-const variantStyles = StyleSheet.create({
-    primary: {
-        backgroundColor: mobileTheme.colors.primary,
-        borderColor: mobileTheme.colors.primary
+    // Variants
+    defaultVariant: {
+        backgroundColor: colors.primary.DEFAULT,
     },
-    secondary: {
-        backgroundColor: mobileTheme.colors.secondary,
-        borderColor: mobileTheme.colors.border
+    secondaryVariant: {
+        backgroundColor: colors.secondary.DEFAULT,
     },
-    ghost: {
-        backgroundColor: "transparent",
-        borderColor: "transparent"
-    }
-});
+    outlineVariant: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: colors.input,
+    },
+    ghostVariant: {
+        backgroundColor: 'transparent',
+    },
+    destructiveVariant: {
+        backgroundColor: colors.destructive.DEFAULT,
+    },
 
-const variantTextStyles = StyleSheet.create({
-    primary: {
-        color: mobileTheme.colors.primaryForeground
+    // Sizes
+    defaultSize: {
+        paddingHorizontal: parseInt(spacing[4]),
+        paddingVertical: parseInt(spacing[2]),
+        minHeight: 40,
     },
-    secondary: {
-        color: mobileTheme.colors.secondaryForeground
+    smSize: {
+        paddingHorizontal: parseInt(spacing[3]),
+        minHeight: 36,
     },
-    ghost: {
-        color: mobileTheme.colors.foreground
-    }
+    lgSize: {
+        paddingHorizontal: parseInt(spacing[8]),
+        minHeight: 44,
+    },
+    iconSize: {
+        width: 36,
+        height: 36,
+        padding: 0,
+    },
+
+    // Text
+    text: {
+        fontFamily: typography.fontFamily.sans,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    defaultText: {
+        fontSize: parseInt(typography.fontSize.sm),
+    },
+    smText: {
+        fontSize: parseInt(typography.fontSize.xs),
+    },
+    lgText: {
+        fontSize: parseInt(typography.fontSize.sm),
+    },
+    iconText: {
+        display: 'none',
+    },
 });
