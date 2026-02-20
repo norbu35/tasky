@@ -37,4 +37,12 @@ public interface TaskPhotoDao {
 
     @SqlQuery("SELECT storage_key FROM task_photos WHERE task_id = :taskId ORDER BY sort_order")
     List<String> findKeysByTaskId(@Bind("taskId") UUID taskId);
+
+    default void deleteByTaskId(String taskId) {
+        deleteByTaskId(required(taskId,
+                                "taskId"));
+    }
+
+    @SqlUpdate("DELETE FROM task_photos WHERE task_id = :taskId")
+    void deleteByTaskId(@Bind("taskId") UUID taskId);
 }

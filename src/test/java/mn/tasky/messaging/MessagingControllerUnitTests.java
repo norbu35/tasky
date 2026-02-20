@@ -53,7 +53,7 @@ class MessagingControllerUnitTests {
         when(messagingService.listMessages(principal.userId(),
                                            uuid(2),
                                            null,
-                                           50)).thenThrow(new IllegalArgumentException(
+                                           51)).thenThrow(new IllegalArgumentException(
                 "not participant"
         ));
 

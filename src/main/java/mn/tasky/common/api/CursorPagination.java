@@ -18,8 +18,12 @@ public record CursorPagination(
             return new CursorPagination(null,
                                         false);
         }
-        String next = cursorResolver.apply(items.getLast());
-        boolean hasMore = items.size() == limit;
+        boolean hasMore = items.size() > limit;
+        if (!hasMore) {
+            return new CursorPagination(null,
+                                        false);
+        }
+        String next = cursorResolver.apply(items.get(limit - 1));
         return new CursorPagination(next,
                                     hasMore);
     }

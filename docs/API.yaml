@@ -846,6 +846,35 @@ components:
 # ═══════════════════════════════════════════════════════════════
 paths:
 
+  # ─── System ─────────────────────────────────────────────────
+  /system/version:
+    get:
+      tags: [ System ]
+      summary: API version and status
+      description: Returns application name, API version, and a localized status string. No authentication required.
+      operationId: getSystemVersion
+      security: [ ]
+      responses:
+        '200':
+          description: Version info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  application:
+                    type: string
+                    example: tasky-server
+                  api_version:
+                    type: string
+                    example: v1
+                  status_localized:
+                    type: string
+                    example: OK
+                  timestamp_utc:
+                    type: string
+                    format: date-time
+
   # ─── Auth ───────────────────────────────────────────────────
   /auth/otp/request:
     post:
@@ -1334,6 +1363,53 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  /tasks/mine:
+    get:
+      tags: [ Tasks ]
+      summary: List my task ads/history
+      description: |
+        Returns authenticated user's task list with full task details.
+        - `role=customer`: tasks created by the authenticated user.
+        - `role=tasker`: tasks where the authenticated user has booking history as a tasker.
+      operationId: listMyTasks
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: role
+          in: query
+          description: View scope for task history.
+          schema:
+            type: string
+            enum: [ customer, tasker ]
+            default: customer
+        - name: status
+          in: query
+          description: Filter by task status.
+          schema:
+            type: string
+            enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED ]
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of tasks for authenticated user scope.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data, cursor ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /tasks/{id}:
     get:

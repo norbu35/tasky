@@ -26,14 +26,6 @@
       "test_ids": [
         "TID-TASK-033-DOMAIN-FEE-DEDUCTION"
       ]
-    },
-    {
-      "id": "AC-TASK-033-03",
-      "type": "functional",
-      "statement": "Booking/task status transitions are consistent.",
-      "test_ids": [
-        "TID-TASK-033-API-BOOKING-COMPLETE"
-      ]
     }
   ]
 }

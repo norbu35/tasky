@@ -33,6 +33,14 @@
       "test_ids": [
         "TID-TASK-021-API-TASK-CANCEL"
       ]
+    },
+    {
+      "id": "AC-TASK-021-04",
+      "type": "functional",
+      "statement": "Customer can update their own OPEN task's editable fields.",
+      "test_ids": [
+        "TID-TASK-021-API-TASK-UPDATE"
+      ]
     }
   ]
 }

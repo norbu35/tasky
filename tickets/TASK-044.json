@@ -25,7 +25,8 @@
       "type": "functional",
       "statement": "Push notifications emitted for required events.",
       "test_ids": [
-        "TID-TASK-044-DOMAIN-PUSH-EVENTS"
+        "TID-TASK-044-DOMAIN-PUSH-EVENTS",
+        "TID-TASK-044-DOMAIN-TASKER-DONE-NOTIFY"
       ]
     },
     {

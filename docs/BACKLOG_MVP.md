@@ -36,11 +36,11 @@ Rules:
 | TASK-023 | Task applications + accept                                       | high   | REQ-BOOK-01, REQ-BOOK-02, REQ-TASK-02                                                                                              | TASK-021                                                                                           |
 | TASK-030 | Booking aggregate + status guardrails                            | high   | REQ-BOOK-03, REQ-BOOK-05                                                                                                           | TASK-023                                                                                           |
 | TASK-031 | QPay initiate + callback idempotency (Post-MVP deferred)         | high   | REQ-PAY-01, NFR-RELI-01                                                                                                            | TASK-030, TASK-064                                                                                 |
-| TASK-032 | Cancellation policy + strike logic                               | high   | REQ-BOOK-04, REQ-BOOK-06                                                                                                           | TASK-030                                                                                           |
+| TASK-032 | Cancellation policy + strike logic                               | high   | REQ-BOOK-04, REQ-BOOK-06, NFR-RELI-01                                                                                              | TASK-030                                                                                           |
 | TASK-033 | Completion settlement + wallet credit + fee (Post-MVP deferred)  | high   | REQ-PAY-02, REQ-PAY-03                                                                                                             | TASK-030, TASK-031                                                                                 |
 | TASK-034 | Payout request + admin processing + schedule (Post-MVP deferred) | high   | REQ-PAY-04, REQ-PAY-05, REQ-PAY-06                                                                                                 | TASK-033                                                                                           |
 | TASK-040 | Reviews + rating rollup + pro badge                              | medium | REQ-SAFE-02, REQ-SAFE-04                                                                                                           | TASK-030                                                                                           |
-| TASK-041 | Dispute lifecycle + admin resolve                                | high   | REQ-SAFE-03, REQ-ADMIN-02, REQ-MSG-02                                                                                              | TASK-030, TASK-042                                                                                 |
+| TASK-041 | Dispute lifecycle + admin resolve                                | high   | REQ-SAFE-03, REQ-ADMIN-02, REQ-MSG-02, NFR-RELI-01                                                                                 | TASK-030, TASK-042                                                                                 |
 | TASK-042 | Conversations + REST messaging persistence                       | high   | REQ-MSG-01, REQ-MSG-02                                                                                                             | TASK-023                                                                                           |
 | TASK-043 | Real-time messaging (STOMP)                                      | medium | REQ-MSG-01                                                                                                                         | TASK-042                                                                                           |
 | TASK-044 | Push + SMS fallback notification orchestration                   | high   | REQ-NOTIF-01, REQ-NOTIF-02                                                                                                         | TASK-023, TASK-030, TASK-032                                                                       |
@@ -122,25 +122,34 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Objective: Establish minimum security boundary for all subsequent slices.
 - Acceptance criteria:
     1. Route-level RBAC enforced for user/tasker/admin scopes.
-    2. Banned users are denied even with valid JWT.
+    2. Banned and suspended users are denied even with valid JWT.
     3. OTP endpoints are rate-limited and brute-force protected.
 - Required tests:
     - `TID-TASK-004-SEC-RBAC-GUARD`
     - `TID-TASK-004-SEC-BANNED-USER-BLOCK`
+    - `TID-TASK-004-SEC-SUSPENDED-USER-BLOCK`
     - `TID-TASK-004-SEC-OTP-RATE-LIMIT`
 
 ### TASK-010 OTP Auth + Token Lifecycle
 
 - Objective: Implement identity bootstrap via phone OTP and JWT refresh.
 - Acceptance criteria:
-    1. OTP request/verify flow creates or authenticates user.
+    1. OTP request/verify flow creates or authenticates user; each OTP is unique and invalidated after 3 failed attempts.
     2. Duplicate phone registration does not create duplicate users.
-    3. Refresh endpoint rotates/returns valid access token.
+    3. Refresh endpoint rotates/returns valid access token; banned users cannot refresh.
+    4. Banned users cannot create a new session via OTP verify.
+    5. Dev auth bypass is available in non-production environments and rejects unsupported roles.
 - Required tests:
     - `TID-TASK-010-API-OTP-REQUEST`
     - `TID-TASK-010-API-OTP-VERIFY-SUCCESS`
     - `TID-TASK-010-API-PHONE-UNIQUE`
     - `TID-TASK-010-API-TOKEN-REFRESH`
+    - `TID-TASK-010-SECURITY-OTP-RANDOM`
+    - `TID-TASK-010-API-OTP-VERIFY-ATTEMPTS`
+    - `TID-TASK-010-API-OTP-VERIFY-BANNED`
+    - `TID-TASK-010-API-TOKEN-REFRESH-BANNED`
+    - `TID-TASK-010-DEV-AUTH-BYPASS`
+    - `TID-TASK-010-DEV-AUTH-VALIDATION`
 
 ### TASK-011 Profile + Avatar Upload
 
@@ -180,9 +189,11 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Acceptance criteria:
     1. Public endpoint returns only active categories.
     2. Admin can create/update/deactivate categories.
+    3. On a clean database startup, at least 5 MVP categories are present and active.
 - Required tests:
     - `TID-TASK-020-API-CATEGORIES-PUBLIC`
     - `TID-TASK-020-API-CATEGORIES-ADMIN-CRUD`
+    - `TID-TASK-020-API-CATEGORIES-SEED-PRESENT`
 
 ### TASK-021 Task CRUD + Photos
 
@@ -191,10 +202,12 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Task creation validates required fields and max 3 photo keys.
     2. Task photo upload URL endpoints return constrained signed URLs.
     3. Cancel endpoint transitions task to `CANCELLED` with guards.
+    4. Customer can update their own OPEN task's editable fields.
 - Required tests:
     - `TID-TASK-021-API-TASK-CREATE`
     - `TID-TASK-021-API-TASK-PHOTO-UPLOAD`
     - `TID-TASK-021-API-TASK-CANCEL`
+    - `TID-TASK-021-API-TASK-UPDATE`
 
 ### TASK-022 Open Task Feed (Filters + Privacy + Pagination)
 
@@ -202,12 +215,16 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Acceptance criteria:
     1. Feed returns only `OPEN` tasks.
     2. Category/distance filters work with cursor pagination.
-    3. Exact address is hidden in public feed; approximate location exposed.
+    3. Exact address is hidden in public feed; approximate/fuzzed coordinates exposed.
+    4. Cursor pagination returns deterministic results with correct next cursor and has_more flag.
+    5. Task detail endpoint returns full details to owner/accepted tasker; public view to others; 404 for missing task.
 - Required tests:
     - `TID-TASK-022-API-TASK-LIST-OPEN`
     - `TID-TASK-022-API-TASK-LIST-FILTERS`
     - `TID-TASK-022-API-TASK-LIST-PRIVACY`
+    - `TID-TASK-022-API-TASK-LIST-LOCATION`
     - `TID-TASK-022-API-TASK-LIST-CURSOR`
+    - `TID-TASK-022-API-TASK-DETAILS`
 
 ### TASK-023 Applications + Accept
 
@@ -227,9 +244,14 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Acceptance criteria:
     1. Booking entity enforces allowed transitions only.
     2. Booking details/list endpoints reflect consistent status.
+    3. Booking completion transitions booking to COMPLETED and task to COMPLETED.
+    4. Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached result; missing key is rejected.
 - Required tests:
     - `TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE`
     - `TID-TASK-030-API-BOOKING-READS`
+    - `TID-TASK-030-API-BOOKING-COMPLETE`
+    - `TID-TASK-030-RELI-IDEMPOTENT-CANCEL`
+    - `TID-TASK-030-RELI-IDEMPOTENT-HEADER`
 
 ### TASK-031 QPay Initiate + Callback Idempotency
 
@@ -238,22 +260,27 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Initiation endpoint creates provider payment intent with traceable reference.
     2. Callback endpoint is idempotent and signature-validated.
     3. Successful callback applies the configured monetization transition exactly once.
+    4. When the monetization feature flag is disabled, the payment initiation endpoint returns FEATURE_DEFERRED (503).
 - Required tests:
     - `TID-TASK-031-API-QPAY-INITIATE`
     - `TID-TASK-031-SEC-QPAY-SIGNATURE`
     - `TID-TASK-031-RELI-CALLBACK-IDEMPOTENT`
+    - `TID-TASK-031-API-MONETIZATION-DEFERRED`
 
 ### TASK-032 Cancellation + Strike Policy
 
 - Objective: Implement cancellation trust policy and tasker accountability.
 - Acceptance criteria:
-    1. Customer late-cancel records a reliability incident and audit evidence.
+    1. Customer late-cancel records a reliability incident and audit evidence; early cancel applies no fee.
     2. Tasker cancellation reopens task and records strike.
-    3. Three strikes in 30 days triggers 7-day suspension.
+    3. Three strikes in 30 days triggers 7-day suspension; repeat offenders receive escalating suspension duration.
 - Required tests:
     - `TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE`
+    - `TID-TASK-032-DOMAIN-CUSTOMER-CANCEL`
     - `TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE`
+    - `TID-TASK-032-DOMAIN-TASKER-CANCEL`
     - `TID-TASK-032-DOMAIN-STRIKE-SUSPENSION`
+    - `TID-TASK-032-DOMAIN-REPEAT-OFFENSE`
 
 ### TASK-033 Completion Settlement + Wallet Credit/Fee
 
@@ -261,11 +288,9 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Acceptance criteria:
     1. Completion credits tasker wallet with fee deduction.
     2. Ledger entries are immutable and auditable.
-    3. Booking/task status transitions are consistent.
 - Required tests:
     - `TID-TASK-033-DOMAIN-WALLET-CREDIT`
     - `TID-TASK-033-DOMAIN-FEE-DEDUCTION`
-    - `TID-TASK-033-API-BOOKING-COMPLETE`
 
 ### TASK-034 Payout Request + Processing Schedule
 
@@ -274,10 +299,14 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Tasker can request payout only up to available balance.
     2. Admin can list/process pending payouts.
     3. Processing enforces Tue/Fri schedule policy and writes ledger entries.
+    4. When the monetization feature flag is disabled, wallet endpoints return FEATURE_DEFERRED (503).
+    5. Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the tasker's balance.
 - Required tests:
     - `TID-TASK-034-API-PAYOUT-REQUEST`
     - `TID-TASK-034-API-ADMIN-PAYOUT-PROCESS`
     - `TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE`
+    - `TID-TASK-034-API-MONETIZATION-DEFERRED`
+    - `TID-TASK-034-DOMAIN-WALLET-DEDUP`
 
 ### TASK-040 Reviews + Pro Badge
 
@@ -298,10 +327,16 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Dispute can be raised only for eligible booking states/window.
     2. Active dispute blocks booking closure actions until resolution.
     3. Admin resolution supports customer-favor, tasker-favor, and escalation outcomes with audit trail.
+    4. Raise-dispute endpoint is idempotent: same Idempotency-Key replays the original dispute result.
+    5. Dispute can only be raised within 24 hours of booking completion; attempts after the window return DISPUTE_WINDOW_EXPIRED.
+    6. Admin dispute resolution is idempotent: replaying the resolve request with the same Idempotency-Key binds to the original dispute resource.
 - Required tests:
     - `TID-TASK-041-API-DISPUTE-RAISE`
     - `TID-TASK-041-DOMAIN-PAYOUT-HOLD`
     - `TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE`
+    - `TID-TASK-041-RELI-IDEMPOTENT-DISPUTE`
+    - `TID-TASK-041-DOMAIN-DISPUTE-WINDOW`
+    - `TID-TASK-041-RELI-IDEMPOTENT-ADMIN-RESOLVE`
 
 ### TASK-042 Conversations + REST Messaging Persistence
 
@@ -330,11 +365,12 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
 - Objective: Deliver event notifications for matching and booking milestones.
 - Acceptance criteria:
     1. Device register/unregister endpoints manage notification targets.
-    2. Push notifications emitted for required events.
+    2. Push notifications emitted for required events, including tasker mark-done notifying the customer.
     3. SMS fallback sent for hired/booking-confirmed events when app inactive.
 - Required tests:
     - `TID-TASK-044-API-DEVICE-REGISTER`
     - `TID-TASK-044-DOMAIN-PUSH-EVENTS`
+    - `TID-TASK-044-DOMAIN-TASKER-DONE-NOTIFY`
     - `TID-TASK-044-DOMAIN-SMS-FALLBACK`
 
 ### TASK-045 Admin User Search + Ban/Unban Enforcement
@@ -344,10 +380,14 @@ The following tickets remain defined but are not release-gating for phase-1 MVP:
     1. Admin can search users by phone.
     2. Ban/unban endpoints mutate user status with audit trail.
     3. Banned users are blocked across authenticated APIs.
+    4. Admin can view and update the strike/suspension moderation policy.
+    5. Expired suspensions are automatically lifted when next detected.
 - Required tests:
     - `TID-TASK-045-API-ADMIN-USER-SEARCH`
     - `TID-TASK-045-API-ADMIN-BAN-UNBAN`
     - `TID-TASK-045-SEC-BAN-ENFORCEMENT`
+    - `TID-TASK-045-API-ADMIN-MODERATION-POLICY`
+    - `TID-TASK-045-DOMAIN-AUTO-UNSUSPEND`
 
 ### TASK-060 PII Encryption + Secure Storage Controls
 

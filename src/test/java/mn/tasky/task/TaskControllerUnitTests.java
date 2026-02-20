@@ -83,11 +83,15 @@ class TaskControllerUnitTests {
                                                   "TASKER",
                                                   "ACTIVE");
         when(taskService.listTaskApplications(principal.userId(),
-                                              uuid(3))).thenReturn(TaskApplicationsListResult.FORBIDDEN_RESULT);
+                                              uuid(3),
+                                              null,
+                                              21)).thenReturn(TaskApplicationsListResult.FORBIDDEN_RESULT);
 
         ResponseEntity<?> response = controller.listTaskApplications(
                 principal,
                 uuid(3),
+                null,
+                20,
                 request()
         );
 

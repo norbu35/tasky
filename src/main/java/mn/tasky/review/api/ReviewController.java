@@ -112,9 +112,14 @@ public class ReviewController {
 
         List<Review> reviews = reviewService.listReviews(id,
                                                          cursor,
-                                                         limit);
+                                                         limit + 1);
+        boolean hasMore = reviews.size() > limit;
+        List<Review> pageReviews = hasMore
+                ? reviews.subList(0,
+                                  limit)
+                : reviews;
 
-        List<Map<String, Object>> data = reviews.stream()
+        List<Map<String, Object>> data = pageReviews.stream()
                 .map(this::toReviewResponse)
                 .toList();
 

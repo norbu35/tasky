@@ -23,6 +23,8 @@ import mn.tasky.task.dto.TaskCancelResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.UpdateTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -46,6 +49,10 @@ public class TaskService {
             "image/png",
             "png"
     );
+    private static final Set<String> TASK_STATUSES = Set.of("OPEN",
+                                                             "ASSIGNED",
+                                                             "COMPLETED",
+                                                             "CANCELLED");
 
     private final AuthService authService;
     private final CategoryService categoryService;
@@ -262,6 +269,16 @@ public class TaskService {
                 .map(this::populatePhotoKeys);
     }
 
+    public Optional<TaskState> transitionToCancelled(String taskId) {
+        Optional<TaskState> existing = taskDao.findById(taskId);
+        if (existing.isEmpty()) return Optional.empty();
+        taskDao.updateStatus(taskId,
+                             "CANCELLED",
+                             Instant.now());
+        return taskDao.findById(taskId)
+                .map(this::populatePhotoKeys);
+    }
+
     public TaskPage listTasks(
             String categoryId,
             Double lat,
@@ -310,6 +327,75 @@ public class TaskService {
         return new TaskPage(List.copyOf(pageData),
                             nextCursor,
                             hasMore);
+    }
+
+    public TaskPage listMyTasks(String userId,
+                                String role,
+                                String status,
+                                String cursor,
+                                int limit) {
+        String normalizedRole = normalizeMyTasksRole(role);
+        String normalizedStatus = normalizeTaskStatus(status);
+
+        TaskCursor cursorState = decodeCursor(cursor);
+        Instant cursorCreatedAt = cursorState != null
+                ? cursorState.createdAt()
+                : null;
+        UUID cursorId = cursorState != null
+                ? cursorState.id()
+                : null;
+
+        List<TaskState> tasks = "tasker".equals(normalizedRole)
+                ? taskDao.findByTasker(userId,
+                                       normalizedStatus,
+                                       cursorCreatedAt,
+                                       cursorId,
+                                       limit + 1)
+                : taskDao.findByCustomer(userId,
+                                         normalizedStatus,
+                                         cursorCreatedAt,
+                                         cursorId,
+                                         limit + 1);
+
+        boolean hasMore = tasks.size() > limit;
+        List<TaskState> pageData = hasMore
+                ? tasks.subList(0,
+                                limit)
+                : tasks;
+        pageData = pageData.stream()
+                .map(this::populatePhotoKeys)
+                .toList();
+        String nextCursor = hasMore
+                ? encodeCursor(pageData.get(pageData.size() - 1))
+                : null;
+
+        return new TaskPage(List.copyOf(pageData),
+                            nextCursor,
+                            hasMore);
+    }
+
+    private String normalizeMyTasksRole(String role) {
+        if (!StringUtils.hasText(role)) {
+            return "customer";
+        }
+        String normalized = role.trim()
+                .toLowerCase(Locale.ROOT);
+        if (!"customer".equals(normalized) && !"tasker".equals(normalized)) {
+            throw new IllegalArgumentException("Role filter is invalid.");
+        }
+        return normalized;
+    }
+
+    private String normalizeTaskStatus(String status) {
+        if (!StringUtils.hasText(status)) {
+            return null;
+        }
+        String normalized = status.trim()
+                .toUpperCase(Locale.ROOT);
+        if (!TASK_STATUSES.contains(normalized)) {
+            throw new IllegalArgumentException("Status filter is invalid.");
+        }
+        return normalized;
     }
 
     private TaskCursor decodeCursor(String cursor) {
@@ -392,6 +478,9 @@ public class TaskService {
             return TaskApplyResult.FORBIDDEN_RESULT;
         }
         UserProfile profile = profileOpt.get();
+        if (!"VERIFIED".equals(profile.status())) {
+            return TaskApplyResult.FORBIDDEN_RESULT;
+        }
 
         if (taskApplicationDao.existsByTaskIdAndTaskerId(taskId,
                                                          taskerId)) {
@@ -447,6 +536,20 @@ public class TaskService {
 
     public TaskApplicationsListResult listTaskApplications(String userId,
                                                            String taskId) {
+        return listTaskApplications(userId,
+                                    taskId,
+                                    null,
+                                    50);
+    }
+
+    public int countApplications(String taskId) {
+        return taskApplicationDao.countByTaskId(taskId);
+    }
+
+    public TaskApplicationsListResult listTaskApplications(String userId,
+                                                           String taskId,
+                                                           String cursor,
+                                                           int limit) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
             return TaskApplicationsListResult.NOT_FOUND_RESULT;
@@ -458,7 +561,9 @@ public class TaskService {
             return TaskApplicationsListResult.FORBIDDEN_RESULT;
         }
 
-        List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId);
+        List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId,
+                                                                                   cursor,
+                                                                                   limit);
         return TaskApplicationsListResult.success(List.copyOf(applications));
     }
 
@@ -585,6 +690,23 @@ public class TaskService {
                                                storageKey));
     }
 
+    public List<String> buildPhotoAccessUrls(List<String> storageKeys) {
+        if (storageKeys == null || storageKeys.isEmpty()) {
+            return List.of();
+        }
+        return storageKeys.stream()
+                .map(this::buildPhotoAccessUrl)
+                .toList();
+    }
+
+    public String buildPhotoAccessUrl(String storageKey) {
+        String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
+        return normalizedBase +
+                "/presigned-get?key=" +
+                URLEncoder.encode(storageKey,
+                                  StandardCharsets.UTF_8);
+    }
+
     private String buildPresignedUploadUrl(
             String baseUrl,
             String storageKey,
@@ -592,10 +714,7 @@ public class TaskService {
             long maxBytes,
             long ttlSeconds
     ) {
-        String normalizedBase = baseUrl.endsWith("/")
-                ? baseUrl.substring(0,
-                                    baseUrl.length() - 1)
-                : baseUrl;
+        String normalizedBase = normalizeBaseUrl(baseUrl);
 
         return normalizedBase +
                 "/presigned-upload?key=" +
@@ -608,6 +727,124 @@ public class TaskService {
                 maxBytes +
                 "&expires_in=" +
                 ttlSeconds;
+    }
+
+    public TaskUpdateResult updateTask(String customerId,
+                                       String taskId,
+                                       UpdateTask command) {
+        Optional<TaskState> existingOpt = taskDao.findById(taskId)
+                .map(this::populatePhotoKeys);
+        if (existingOpt.isEmpty()) {
+            return TaskUpdateResult.NOT_FOUND_RESULT;
+        }
+
+        TaskState existing = existingOpt.get();
+        if (!existing.customerId()
+                .equals(customerId)) {
+            return TaskUpdateResult.FORBIDDEN_RESULT;
+        }
+        if (!"OPEN".equals(existing.status())) {
+            return TaskUpdateResult.INVALID_STATUS_RESULT;
+        }
+
+        String description = existing.description();
+        if (command.description() != null) {
+            description = TextSanitizer.plainText(command.description());
+            if (!StringUtils.hasText(description)) {
+                return TaskUpdateResult.INVALID_DESCRIPTION_RESULT;
+            }
+        }
+
+        String locationText = existing.locationText();
+        if (command.locationText() != null) {
+            locationText = TextSanitizer.plainText(command.locationText());
+            if (!StringUtils.hasText(locationText)) {
+                return TaskUpdateResult.INVALID_LOCATION_RESULT;
+            }
+        }
+
+        int budget = command.budget() != null
+                ? command.budget()
+                : existing.budget();
+        double locationLat = command.locationLat() != null
+                ? command.locationLat()
+                : existing.locationLat();
+        double locationLng = command.locationLng() != null
+                ? command.locationLng()
+                : existing.locationLng();
+
+        Instant scheduledAt = existing.scheduledAt();
+        if (command.scheduledAt() != null) {
+            try {
+                scheduledAt = Instant.parse(command.scheduledAt());
+            } catch (Exception exception) {
+                return TaskUpdateResult.INVALID_SCHEDULE_RESULT;
+            }
+            if (scheduledAt.isBefore(Instant.now())) {
+                return TaskUpdateResult.INVALID_SCHEDULE_RESULT;
+            }
+        }
+
+        boolean replacePhotos = command.photoKeys() != null;
+        List<String> photoKeys = replacePhotos
+                ? List.copyOf(command.photoKeys())
+                : (existing.photoKeys() == null
+                ? List.of()
+                : List.copyOf(existing.photoKeys()));
+        if (photoKeys.size() > 3) {
+            return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
+        }
+
+        Instant now = Instant.now();
+        taskDao.updateDetails(taskId,
+                              description,
+                              budget,
+                              locationLat,
+                              locationLng,
+                              locationText,
+                              scheduledAt,
+                              now);
+
+        if (replacePhotos) {
+            taskPhotoDao.deleteByTaskId(taskId);
+            for (int i = 0; i < photoKeys.size(); i++) {
+                taskPhotoDao.insert(UUID.randomUUID()
+                                            .toString(),
+                                    taskId,
+                                    photoKeys.get(i),
+                                    i);
+            }
+        }
+
+        String finalDescription = description;
+        String finalLocationText = locationText;
+        Instant finalScheduledAt = scheduledAt;
+
+        TaskState updated = taskDao.findById(taskId)
+                .map(this::populatePhotoKeys)
+                .orElseGet(() -> new TaskState(
+                        existing.id(),
+                        existing.customerId(),
+                        existing.categoryId(),
+                        finalDescription,
+                        budget,
+                        locationLat,
+                        locationLng,
+                        finalLocationText,
+                        existing.status(),
+                        finalScheduledAt,
+                        photoKeys,
+                        existing.createdAt(),
+                        now
+                ));
+        return TaskUpdateResult.success(updated);
+    }
+
+    private String normalizeBaseUrl(String baseUrl) {
+        return baseUrl.endsWith("/")
+                ? baseUrl.substring(0,
+                                    baseUrl.length() - 1)
+                : baseUrl;
     }
 
     private record TaskCursor(Instant createdAt,

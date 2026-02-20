@@ -37,6 +37,22 @@
       "negative_test_ids": [
         "TID-TASK-045-SEC-BAN-ENFORCEMENT"
       ]
+    },
+    {
+      "id": "AC-TASK-045-04",
+      "type": "functional",
+      "statement": "Admin can view and update the strike/suspension moderation policy.",
+      "test_ids": [
+        "TID-TASK-045-API-ADMIN-MODERATION-POLICY"
+      ]
+    },
+    {
+      "id": "AC-TASK-045-05",
+      "type": "functional",
+      "statement": "Expired suspensions are automatically lifted when next detected.",
+      "test_ids": [
+        "TID-TASK-045-DOMAIN-AUTO-UNSUSPEND"
+      ]
     }
   ]
 }

@@ -51,6 +51,8 @@ class AnalyticsIntegrationTests
         String adminToken = tokenFor("ADMIN",
                                      "ACTIVE",
                                      ADMIN_ID);
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
 
         // 1. Post Task
         postWithAuth("/api/v1/admin/categories",
@@ -95,9 +97,6 @@ class AnalyticsIntegrationTests
                 .get("id");
 
         // 2. Apply
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -345,14 +344,16 @@ class AnalyticsIntegrationTests
     void mobileOfflineRead() {
         AuthContext customer = authenticate("offline-read-customer");
         AuthContext tasker = authenticate("offline-read-tasker");
+        String adminToken = tokenFor("ADMIN",
+                                     "ACTIVE",
+                                     ADMIN_ID);
         String categoryId = createCategoryAndGetFirstId(customer.accessToken());
         String taskId = createTask(customer.accessToken(),
                                    categoryId,
                                    "offline-read-task");
 
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -390,14 +391,16 @@ class AnalyticsIntegrationTests
     void mobileOfflineMutationBlock() {
         AuthContext customer = authenticate("offline-block-customer");
         AuthContext tasker = authenticate("offline-block-tasker");
+        String adminToken = tokenFor("ADMIN",
+                                     "ACTIVE",
+                                     ADMIN_ID);
         String categoryId = createCategoryAndGetFirstId(customer.accessToken());
         String taskId = createTask(customer.accessToken(),
                                    categoryId,
                                    "offline-block-task");
 
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -478,6 +481,56 @@ class AnalyticsIntegrationTests
                 )
         ).getBody()
                 .get("id");
+    }
+
+    @SuppressWarnings("unchecked")
+    private String activateAndVerifyTasker(AuthContext tasker,
+                                           String adminToken) {
+        ResponseEntity<Map> activateTasker = postWithAuth(
+                "/api/v1/users/me/role/tasker",
+                tasker.accessToken(),
+                null
+        );
+        assertThat(activateTasker.getStatusCode()
+                           .value()).isEqualTo(200);
+        String taskerToken = String.valueOf(activateTasker.getBody()
+                                                    .get("access_token"));
+
+        ResponseEntity<Map> submitVerification = postWithAuth(
+                "/api/v1/verification/submit",
+                taskerToken,
+                Map.of(
+                        "id_card_front_key",
+                        "uploads/verification/front-" + UUID.randomUUID() + ".jpg",
+                        "id_card_back_key",
+                        "uploads/verification/back-" + UUID.randomUUID() + ".jpg"
+                )
+        );
+        assertThat(submitVerification.getStatusCode()
+                           .value()).isEqualTo(200);
+
+        ResponseEntity<Map> pendingList = getWithAuth("/api/v1/admin/verifications/pending?limit=100",
+                                                      adminToken);
+        assertThat(pendingList.getStatusCode()
+                           .value()).isEqualTo(200);
+        List<Map<String, Object>> data = (List<Map<String, Object>>) pendingList.getBody()
+                .get("data");
+
+        Map<String, Object> verification = data.stream()
+                .filter(v -> tasker.userId()
+                        .equals(v.get("user_id")))
+                .findFirst()
+                .orElseThrow();
+        String verificationId = String.valueOf(verification.get("id"));
+
+        ResponseEntity<Map> approveVerification = postWithAuth(
+                "/api/v1/admin/verifications/" + verificationId + "/approve",
+                adminToken,
+                null
+        );
+        assertThat(approveVerification.getStatusCode()
+                           .value()).isEqualTo(200);
+        return taskerToken;
     }
 
     record AuthContext(String userId, String accessToken) {

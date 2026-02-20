@@ -24,12 +24,14 @@
     {
       "id": "AC-TASK-004-02",
       "type": "security",
-      "statement": "Banned users are denied even with valid JWT.",
+      "statement": "Banned and suspended users are denied even with valid JWT.",
       "test_ids": [
-        "TID-TASK-004-SEC-BANNED-USER-BLOCK"
+        "TID-TASK-004-SEC-BANNED-USER-BLOCK",
+        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
       ],
       "negative_test_ids": [
-        "TID-TASK-004-SEC-BANNED-USER-BLOCK"
+        "TID-TASK-004-SEC-BANNED-USER-BLOCK",
+        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
       ]
     },
     {

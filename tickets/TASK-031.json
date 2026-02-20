@@ -3,6 +3,7 @@
   "ticket": "TASK-031",
   "risk_level": "high",
   "req_ids": [
+    "NFR-RELI-01",
     "REQ-PAY-01"
   ],
   "depends_on": [
@@ -32,6 +33,14 @@
       "statement": "Successful callback applies the configured monetization transition exactly once.",
       "test_ids": [
         "TID-TASK-031-RELI-CALLBACK-IDEMPOTENT"
+      ]
+    },
+    {
+      "id": "AC-TASK-031-04",
+      "type": "functional",
+      "statement": "When the monetization feature flag is disabled, the payment initiation endpoint returns FEATURE_DEFERRED (503).",
+      "test_ids": [
+        "TID-TASK-031-API-MONETIZATION-DEFERRED"
       ]
     }
   ]

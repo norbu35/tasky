@@ -370,6 +370,39 @@ class BookingIntegrationTests
                            .get("status")).isEqualTo("CANCELLED");
     }
 
+    @Test
+    @DisplayName("TID-TASK-041-RELI-IDEMPOTENT-DISPUTE same key replay returns original dispute result")
+    void idempotentDisputeReplayReturnsOriginalResult() {
+        AuthContext customer = authenticate("disp-idem-cust");
+        AuthContext tasker = authenticate("disp-idem-task");
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId,
+                                                            tasker.userId(),
+                                                            customer.userId(),
+                                                            50000);
+        String key = UUID.randomUUID().toString();
+        Map<String, String> disputeBody = Map.of("reason",
+                                                 "The task was not completed as agreed upon.");
+
+        ResponseEntity<Map> first = postWithAuthAndIdempotency(
+                "/api/v1/bookings/" + booking.id() + "/disputes",
+                customer.accessToken(),
+                disputeBody,
+                key
+        );
+        ResponseEntity<Map> replay = postWithAuthAndIdempotency(
+                "/api/v1/bookings/" + booking.id() + "/disputes",
+                customer.accessToken(),
+                disputeBody,
+                key
+        );
+
+        assertThat(first.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(replay.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(replay.getBody().get("id")).isEqualTo(first.getBody().get("id"));
+    }
+
     private ResponseEntity<Map> postWithAuthAndIdempotency(String path,
                                                            String token,
                                                            Object body,

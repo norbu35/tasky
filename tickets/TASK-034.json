@@ -34,6 +34,22 @@
       "test_ids": [
         "TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE"
       ]
+    },
+    {
+      "id": "AC-TASK-034-04",
+      "type": "functional",
+      "statement": "When the monetization feature flag is disabled, wallet endpoints return FEATURE_DEFERRED (503).",
+      "test_ids": [
+        "TID-TASK-034-API-MONETIZATION-DEFERRED"
+      ]
+    },
+    {
+      "id": "AC-TASK-034-05",
+      "type": "reliability",
+      "statement": "Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the tasker's balance.",
+      "test_ids": [
+        "TID-TASK-034-DOMAIN-WALLET-DEDUP"
+      ]
     }
   ]
 }

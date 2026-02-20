@@ -44,17 +44,23 @@ public class AdminVerificationController {
                                     Math.min(limit,
                                              100));
         List<VerificationDetail> pending = authService.listPendingVerifications(cursor,
-                                                                                clampedLimit);
-        List<VerificationDetailResponse> data = pending.stream()
+                                                                                clampedLimit + 1);
+        boolean hasMore = pending.size() > clampedLimit;
+        List<VerificationDetail> pageDetails = hasMore
+                ? pending.subList(0,
+                                  clampedLimit)
+                : pending;
+
+        List<VerificationDetailResponse> data = pageDetails.stream()
                 .map(this::toDetailBody)
                 .toList();
 
         return ResponseEntity.ok(
                 new PagedResponse<>(
                         data,
-                        CursorPagination.from(data,
+                        CursorPagination.from(pending,
                                               clampedLimit,
-                                              VerificationDetailResponse::id)
+                                              VerificationDetail::id)
                 )
         );
     }

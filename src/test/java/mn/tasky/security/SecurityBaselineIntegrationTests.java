@@ -114,6 +114,20 @@ class SecurityBaselineIntegrationTests
     }
 
     @Test
+    @DisplayName("TID-TASK-004-SEC-SUSPENDED-USER-BLOCK suspended users are denied despite valid JWT")
+    void suspendedUsersDeniedWithValidJwt() {
+        String suspendedToken = tokenFor("CUSTOMER",
+                                         "SUSPENDED");
+
+        ResponseEntity<Map> response = get("/api/v1/security/customer/ping",
+                                           suspendedToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).containsEntry("code",
+                                                     "USER_BANNED");
+    }
+
+    @Test
     @DisplayName("TID-TASK-004-SEC-OTP-RATE-LIMIT OTP endpoints enforce request and verify limits")
     void otpEndpointsRateLimitedAndBruteForceProtected() {
         String requestPhone = "+97699" + randomDigits(6);

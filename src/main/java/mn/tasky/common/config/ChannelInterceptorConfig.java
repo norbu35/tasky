@@ -1,5 +1,6 @@
 package mn.tasky.common.config;
 
+import mn.tasky.auth.application.AuthService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.messaging.application.MessagingService;
@@ -25,11 +26,14 @@ public class ChannelInterceptorConfig
 
     private final JwtTokenService jwtTokenService;
     private final MessagingService messagingService;
+    private final AuthService authService;
 
     public ChannelInterceptorConfig(JwtTokenService jwtTokenService,
-                                    @Lazy MessagingService messagingService) {
+                                    @Lazy MessagingService messagingService,
+                                    AuthService authService) {
         this.jwtTokenService  = jwtTokenService;
         this.messagingService = messagingService;
+        this.authService      = authService;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class ChannelInterceptorConfig
                         String token = authHeader.substring(7);
                         jwtTokenService.parse(token)
                                 .ifPresent(principal -> {
+                                    assertUserNotRestricted(principal);
                                     UsernamePasswordAuthenticationToken auth =
                                             new UsernamePasswordAuthenticationToken(
                                                     principal,
@@ -78,6 +83,7 @@ public class ChannelInterceptorConfig
                             throw new IllegalArgumentException("Unauthorized");
                         }
                         JwtPrincipal principal = (JwtPrincipal) auth.getPrincipal();
+                        assertUserNotRestricted(principal);
                         boolean isParticipant =
                                 messagingService.listConversations(principal.userId())
                                         .stream()
@@ -91,5 +97,13 @@ public class ChannelInterceptorConfig
                 return message;
             }
         });
+    }
+
+    private void assertUserNotRestricted(JwtPrincipal principal) {
+        String effectiveStatus = authService.currentUserStatus(principal.userId())
+                .orElse(principal.status());
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            throw new IllegalArgumentException("Forbidden");
+        }
     }
 }

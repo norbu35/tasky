@@ -34,7 +34,8 @@
       "type": "functional",
       "statement": "Exact address is hidden in public feed; approximate location exposed.",
       "test_ids": [
-        "TID-TASK-022-API-TASK-LIST-PRIVACY"
+        "TID-TASK-022-API-TASK-LIST-PRIVACY",
+        "TID-TASK-022-API-TASK-LIST-LOCATION"
       ]
     },
     {
@@ -43,6 +44,14 @@
       "statement": "Cursor pagination returns deterministic results with correct next cursor and has_more flag.",
       "test_ids": [
         "TID-TASK-022-API-TASK-LIST-CURSOR"
+      ]
+    },
+    {
+      "id": "AC-TASK-022-05",
+      "type": "functional",
+      "statement": "Task detail endpoint returns full details to owner and accepted tasker; public view to others; 404 for missing task.",
+      "test_ids": [
+        "TID-TASK-022-API-TASK-DETAILS"
       ]
     }
   ]

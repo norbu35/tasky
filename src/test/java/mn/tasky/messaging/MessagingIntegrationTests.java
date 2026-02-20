@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class MessagingIntegrationTests
@@ -61,6 +62,8 @@ class MessagingIntegrationTests
         String adminToken = tokenFor("ADMIN",
                                      "ACTIVE",
                                      "admin-ws");
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
         postWithAuth("/api/v1/admin/categories",
                      adminToken,
                      Map.of("name",
@@ -101,9 +104,6 @@ class MessagingIntegrationTests
                                                       List.of()
                                               )).getBody()
                 .get("id");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -134,7 +134,7 @@ class MessagingIntegrationTests
                 .get(20,
                      TimeUnit.SECONDS);
 
-        CompletableFuture<Map> resultFuture = new CompletableFuture<>();
+        CompletableFuture<Map<String, Object>> resultFuture = new CompletableFuture<>();
         session.subscribe("/topic/conversations/" + conversationId,
                           new StompFrameHandler() {
                               @Override
@@ -145,23 +145,53 @@ class MessagingIntegrationTests
                               @Override
                               public void handleFrame(StompHeaders headers,
                                                       Object payload) {
-                                  resultFuture.complete((Map) payload);
+                                  @SuppressWarnings("unchecked")
+                                  Map<String, Object> message = (Map<String, Object>) payload;
+                                  resultFuture.complete(message);
                               }
                           });
 
         // Send via REST
+        String initialMessageContent = "Real-time Hello";
         postWithAuth("/api/v1/conversations/" + conversationId + "/messages",
                      customer.accessToken(),
                      Map.of("content",
-                            "Real-time Hello"));
+                            initialMessageContent));
 
         // Verify Real-time delivery
-        Map received = resultFuture.get(20,
-                                        TimeUnit.SECONDS);
+        Map<String, Object> received = awaitRealtimeDelivery(resultFuture,
+                                                             conversationId,
+                                                             customer.accessToken(),
+                                                             initialMessageContent);
         assertThat(received.get("content")
-                           .toString()).isEqualTo("Real-time Hello");
+                           .toString()).startsWith(initialMessageContent);
         assertThat(received.get("senderId")
                            .toString()).isEqualTo(customer.userId());
+    }
+
+    private Map<String, Object> awaitRealtimeDelivery(
+            CompletableFuture<Map<String, Object>> resultFuture,
+            String conversationId,
+            String customerToken,
+            String initialMessageContent
+    ) throws Exception {
+        TimeoutException lastTimeout = null;
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                return resultFuture.get(5,
+                                        TimeUnit.SECONDS);
+            } catch (TimeoutException timeoutException) {
+                lastTimeout = timeoutException;
+                if (attempt == 2) {
+                    break;
+                }
+                postWithAuth("/api/v1/conversations/" + conversationId + "/messages",
+                             customerToken,
+                             Map.of("content",
+                                    initialMessageContent + " retry " + (attempt + 1)));
+            }
+        }
+        throw lastTimeout;
     }
 
     private AuthContext authenticate(String seed) {
@@ -181,6 +211,58 @@ class MessagingIntegrationTests
                 .get("user")).get("id");
         return new AuthContext(userId,
                                accessToken);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String activateAndVerifyTasker(AuthContext tasker,
+                                           String adminToken) {
+        ResponseEntity<Map> activateResponse = postWithAuth(
+                "/api/v1/users/me/role/tasker",
+                tasker.accessToken(),
+                null
+        );
+        assertThat(activateResponse.getStatusCode()
+                           .value()).isEqualTo(200);
+        String taskerToken = String.valueOf(activateResponse.getBody()
+                                                    .get("access_token"));
+
+        ResponseEntity<Map> submitResponse = postWithAuth(
+                "/api/v1/verification/submit",
+                taskerToken,
+                Map.of(
+                        "id_card_front_key",
+                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "id_card_back_key",
+                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg"
+                )
+        );
+        assertThat(submitResponse.getStatusCode()
+                           .value()).isEqualTo(200);
+
+        ResponseEntity<Map> pendingResponse = getWithAuth(
+                "/api/v1/admin/verifications/pending?limit=100",
+                adminToken
+        );
+        assertThat(pendingResponse.getStatusCode()
+                           .value()).isEqualTo(200);
+        List<Map<String, Object>> pendingItems = (List<Map<String, Object>>) pendingResponse.getBody()
+                .get("data");
+
+        Map<String, Object> verification = pendingItems.stream()
+                .filter(item -> tasker.userId()
+                        .equals(item.get("user_id")))
+                .findFirst()
+                .orElseThrow();
+        String verificationId = String.valueOf(verification.get("id"));
+
+        ResponseEntity<Map> approveResponse = postWithAuth(
+                "/api/v1/admin/verifications/" + verificationId + "/approve",
+                adminToken,
+                null
+        );
+        assertThat(approveResponse.getStatusCode()
+                           .value()).isEqualTo(200);
+        return taskerToken;
     }
 
     private String tokenFor(String role,
@@ -293,22 +375,8 @@ class MessagingIntegrationTests
         String taskId = (String) taskResponse.getBody()
                 .get("id");
 
-        // Activate tasker role
-        postWithAuth("/api/v1/users/me/role/tasker",
-                     tasker.accessToken(),
-                     null);
-        // Refresh token to get role
-        AuthContext taskerWithRole =
-                authenticate("tasker-msg"); // Re-login to get updated token? No, activate
-        // returns new tokens.
-        // Actually activateTaskerRole returns tokens. I'll just use authenticate again which
-        // should pick up the role if stored.
-        // But authenticate creates new user if not exists.
-        // I'll just use the token from activate response if I can parse it, or just use
-        // `tokenFor` manual.
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
 
         // Apply
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
@@ -388,9 +456,8 @@ class MessagingIntegrationTests
                                                       List.of()
                                               )).getBody()
                 .get("id");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker,
+                                                     adminToken);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",

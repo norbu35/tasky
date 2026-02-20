@@ -20,7 +20,9 @@
         "TID-TASK-010-API-OTP-REQUEST"
       ],
       "negative_test_ids": [
-        "TID-TASK-010-API-OTP-REQUEST"
+        "TID-TASK-010-API-OTP-REQUEST",
+        "TID-TASK-010-SECURITY-OTP-RANDOM",
+        "TID-TASK-010-API-OTP-VERIFY-ATTEMPTS"
       ]
     },
     {
@@ -29,6 +31,9 @@
       "statement": "OTP verify succeeds and returns valid session for authenticated user.",
       "test_ids": [
         "TID-TASK-010-API-OTP-VERIFY-SUCCESS"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-010-API-OTP-VERIFY-BANNED"
       ]
     },
     {
@@ -45,6 +50,18 @@
       "statement": "Refresh endpoint rotates/returns valid access token.",
       "test_ids": [
         "TID-TASK-010-API-TOKEN-REFRESH"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-010-API-TOKEN-REFRESH-BANNED"
+      ]
+    },
+    {
+      "id": "AC-TASK-010-05",
+      "type": "functional",
+      "statement": "Dev auth bypass is available in non-production environments and rejects unsupported roles.",
+      "test_ids": [
+        "TID-TASK-010-DEV-AUTH-BYPASS",
+        "TID-TASK-010-DEV-AUTH-VALIDATION"
       ]
     }
   ]

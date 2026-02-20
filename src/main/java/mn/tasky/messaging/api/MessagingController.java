@@ -56,8 +56,13 @@ public class MessagingController {
     ) {
         List<Conversation> conversations = messagingService.listConversations(principal.userId(),
                                                                               cursor,
-                                                                              limit);
-        List<Map<String, Object>> data = conversations.stream()
+                                                                              limit + 1);
+        boolean hasMore = conversations.size() > limit;
+        List<Conversation> pageData = hasMore
+                ? conversations.subList(0,
+                                        limit)
+                : conversations;
+        List<Map<String, Object>> data = pageData.stream()
                 .map(this::toConversationResponse)
                 .toList();
         return ResponseEntity.ok(new PagedResponse<>(data,
@@ -92,8 +97,13 @@ public class MessagingController {
             List<Message> messages = messagingService.listMessages(principal.userId(),
                                                                    id,
                                                                    cursor,
-                                                                   limit);
-            List<Map<String, Object>> data = messages.stream()
+                                                                   limit + 1);
+            boolean hasMore = messages.size() > limit;
+            List<Message> pageMessages = hasMore
+                    ? messages.subList(0,
+                                       limit)
+                    : messages;
+            List<Map<String, Object>> data = pageMessages.stream()
                     .map(this::toMessageResponse)
                     .toList();
 

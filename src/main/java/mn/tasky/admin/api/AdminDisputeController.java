@@ -67,8 +67,14 @@ public class AdminDisputeController {
                                     Math.min(limit,
                                              100));
         List<Dispute> pending = disputeService.listPendingDisputes(cursor,
-                                                                   clampedLimit);
-        List<Map<String, Object>> data = pending.stream()
+                                                                   clampedLimit + 1);
+        boolean hasMore = pending.size() > clampedLimit;
+        List<Dispute> pageDisputes = hasMore
+                ? pending.subList(0,
+                                  clampedLimit)
+                : pending;
+
+        List<Map<String, Object>> data = pageDisputes.stream()
                 .map(DisputeResponseMapper::admin)
                 .toList();
         return ResponseEntity.ok(new PagedResponse<>(data,

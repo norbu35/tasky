@@ -95,6 +95,38 @@ public interface TaskDao {
                       @Bind("status") String status,
                       @Bind("updatedAt") Instant updatedAt);
 
+    default void updateDetails(String id,
+                               String description,
+                               int budget,
+                               double locationLat,
+                               double locationLng,
+                               String locationText,
+                               Instant scheduledAt,
+                               Instant updatedAt) {
+        updateDetails(required(id,
+                               "id"),
+                      description,
+                      budget,
+                      locationLat,
+                      locationLng,
+                      locationText,
+                      scheduledAt,
+                      updatedAt);
+    }
+
+    @SqlUpdate("UPDATE tasks SET description = :description, budget = :budget, "
+            + "location_lat = :locationLat, location_lng = :locationLng, "
+            + "location_text = :locationText, scheduled_at = :scheduledAt, updated_at = :updatedAt "
+            + "WHERE id = :id")
+    void updateDetails(@Bind("id") UUID id,
+                       @Bind("description") String description,
+                       @Bind("budget") int budget,
+                       @Bind("locationLat") double locationLat,
+                       @Bind("locationLng") double locationLng,
+                       @Bind("locationText") String locationText,
+                       @Bind("scheduledAt") Instant scheduledAt,
+                       @Bind("updatedAt") Instant updatedAt);
+
     default List<TaskState> findOpen(String categoryId,
                                      Instant cursorCreatedAt,
                                      UUID cursorId,
@@ -293,4 +325,122 @@ public interface TaskDao {
                                                         @Bind("cursorCreatedAt") Instant cursorCreatedAt,
                                                         @Bind("cursorId") UUID cursorId,
                                                         @Bind("limit") int limit);
+
+    default List<TaskState> findByCustomer(String customerId,
+                                           String status,
+                                           Instant cursorCreatedAt,
+                                           UUID cursorId,
+                                           int limit) {
+        return findByCustomer(required(customerId,
+                                      "customerId"),
+                              status,
+                              cursorCreatedAt,
+                              cursorId,
+                              limit);
+    }
+
+    default List<TaskState> findByCustomer(UUID customerId,
+                                           String status,
+                                           Instant cursorCreatedAt,
+                                           UUID cursorId,
+                                           int limit) {
+        if (cursorCreatedAt == null || cursorId == null) {
+            return findByCustomerFirstPage(customerId,
+                                           status,
+                                           limit);
+        }
+        return findByCustomerAfterCursor(customerId,
+                                         status,
+                                         cursorCreatedAt,
+                                         cursorId,
+                                         limit);
+    }
+
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
+            + "FROM tasks WHERE customer_id = :customerId "
+            + "AND (:status IS NULL OR status = :status) "
+            + "ORDER BY created_at DESC, id ASC "
+            + "LIMIT :limit")
+    List<TaskState> findByCustomerFirstPage(@Bind("customerId") UUID customerId,
+                                            @Bind("status") String status,
+                                            @Bind("limit") int limit);
+
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+            +
+            "location_lat, location_lng, location_text, status, scheduled_at, created_at, " +
+            "updated_at "
+            + "FROM tasks WHERE customer_id = :customerId "
+            + "AND (:status IS NULL OR status = :status) "
+            + "AND (created_at < :cursorCreatedAt "
+            + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
+            + "ORDER BY created_at DESC, id ASC "
+            + "LIMIT :limit")
+    List<TaskState> findByCustomerAfterCursor(@Bind("customerId") UUID customerId,
+                                              @Bind("status") String status,
+                                              @Bind("cursorCreatedAt") Instant cursorCreatedAt,
+                                              @Bind("cursorId") UUID cursorId,
+                                              @Bind("limit") int limit);
+
+    default List<TaskState> findByTasker(String taskerId,
+                                         String status,
+                                         Instant cursorCreatedAt,
+                                         UUID cursorId,
+                                         int limit) {
+        return findByTasker(required(taskerId,
+                                    "taskerId"),
+                            status,
+                            cursorCreatedAt,
+                            cursorId,
+                            limit);
+    }
+
+    default List<TaskState> findByTasker(UUID taskerId,
+                                         String status,
+                                         Instant cursorCreatedAt,
+                                         UUID cursorId,
+                                         int limit) {
+        if (cursorCreatedAt == null || cursorId == null) {
+            return findByTaskerFirstPage(taskerId,
+                                         status,
+                                         limit);
+        }
+        return findByTaskerAfterCursor(taskerId,
+                                       status,
+                                       cursorCreatedAt,
+                                       cursorId,
+                                       limit);
+    }
+
+    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
+            +
+            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t.created_at, " +
+            "t.updated_at "
+            + "FROM tasks t "
+            + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = :taskerId) "
+            + "AND (:status IS NULL OR t.status = :status) "
+            + "ORDER BY t.created_at DESC, t.id ASC "
+            + "LIMIT :limit")
+    List<TaskState> findByTaskerFirstPage(@Bind("taskerId") UUID taskerId,
+                                          @Bind("status") String status,
+                                          @Bind("limit") int limit);
+
+    @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
+            +
+            "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t.created_at, " +
+            "t.updated_at "
+            + "FROM tasks t "
+            + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = :taskerId) "
+            + "AND (:status IS NULL OR t.status = :status) "
+            + "AND (t.created_at < :cursorCreatedAt "
+            + "OR (t.created_at = :cursorCreatedAt AND t.id > :cursorId)) "
+            + "ORDER BY t.created_at DESC, t.id ASC "
+            + "LIMIT :limit")
+    List<TaskState> findByTaskerAfterCursor(@Bind("taskerId") UUID taskerId,
+                                            @Bind("status") String status,
+                                            @Bind("cursorCreatedAt") Instant cursorCreatedAt,
+                                            @Bind("cursorId") UUID cursorId,
+                                            @Bind("limit") int limit);
 }

@@ -27,6 +27,9 @@ import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskPage;
 import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.UpdateTask;
+import mn.tasky.task.dto.UpdateTaskRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,12 +42,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static mn.tasky.booking.api.BookingResponseMapper.basic;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
@@ -123,6 +128,56 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/mine")
+    public ResponseEntity<?> listMyTasks(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @RequestParam(defaultValue = "customer") String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
+            HttpServletRequest request
+    ) {
+        try {
+            TaskPage page = taskService.listMyTasks(principal.userId(),
+                                                    role,
+                                                    status,
+                                                    cursor,
+                                                    limit);
+            List<Map<String, Object>> data = page.data()
+                    .stream()
+                    .map(this::toTaskResponse)
+                    .toList();
+            return ResponseEntity.ok(
+                    new PagedResponse<>(
+                            data,
+                            new CursorPagination(page.nextCursor(),
+                                                 page.hasMore())
+                    )
+            );
+        } catch (IllegalArgumentException exception) {
+            String code = "INVALID_CURSOR";
+            String message = "Cursor parameter is invalid.";
+            if ("Role filter is invalid.".equals(exception.getMessage())) {
+                code = "INVALID_ROLE";
+                message = "Role filter must be customer or tasker.";
+            } else if ("Status filter is invalid.".equals(exception.getMessage())) {
+                code = "INVALID_STATUS";
+                message = "Status filter must be OPEN, ASSIGNED, COMPLETED, or CANCELLED.";
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    code,
+                                    "message",
+                                    message,
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+        }
+    }
+
     private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
         double[] fuzzedLocation = fuzzCoordinates(task.id(),
@@ -178,12 +233,13 @@ public class TaskController {
         response.put("scheduled_at",
                      task.scheduledAt()
                              .toString());
+        List<String> photoKeys = task.photoKeys() == null
+                ? List.of()
+                : task.photoKeys();
         response.put("photo_urls",
-                     task.photoKeys() == null
-                             ? List.of()
-                             : task.photoKeys()); // Should be URLs but for now keys
+                     taskService.buildPhotoAccessUrls(photoKeys));
         response.put("application_count",
-                     0);
+                     taskApplicationCount(task.id()));
         response.put("created_at",
                      task.createdAt()
                              .toString());
@@ -256,6 +312,22 @@ public class TaskController {
 
     private Map<String, Object> toTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
+        List<String> photoKeys = task.photoKeys() == null
+                ? List.of()
+                : task.photoKeys();
+        List<Map<String, Object>> photos = IntStream.range(0,
+                                                           photoKeys.size())
+                .mapToObj(index -> {
+                    Map<String, Object> photo = new LinkedHashMap<>();
+                    photo.put("storage_key",
+                              photoKeys.get(index));
+                    photo.put("url",
+                              taskService.buildPhotoAccessUrl(photoKeys.get(index)));
+                    photo.put("sort_order",
+                              index);
+                    return photo;
+                })
+                .toList();
         response.put("id",
                      task.id());
         response.put("category_id",
@@ -277,8 +349,10 @@ public class TaskController {
         response.put("scheduled_at",
                      task.scheduledAt()
                              .toString());
+        response.put("photos",
+                     photos);
         response.put("photo_keys",
-                     task.photoKeys());
+                     photoKeys);
         response.put("created_at",
                      task.createdAt()
                              .toString());
@@ -286,6 +360,10 @@ public class TaskController {
                      task.updatedAt()
                              .toString());
         return response;
+    }
+
+    private int taskApplicationCount(String taskId) {
+        return taskService.countApplications(taskId);
     }
 
     @PostMapping
@@ -340,6 +418,114 @@ public class TaskController {
                                 resolveTraceId(request)
                         )
                 );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTask(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @Valid @RequestBody UpdateTaskRequest body,
+            HttpServletRequest request
+    ) {
+        TaskUpdateResult result = taskService.updateTask(
+                principal.userId(),
+                id,
+                new UpdateTask(
+                        body.description(),
+                        body.budget(),
+                        body.locationLat(),
+                        body.locationLng(),
+                        body.locationText(),
+                        body.scheduledAt(),
+                        body.photoKeys()
+                )
+        );
+
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(toTaskResponse(result.task()));
+        }
+
+        return switch (result.errorCode()) {
+            case TaskUpdateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "NOT_FOUND",
+                                    "message",
+                                    "Task not found.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "FORBIDDEN",
+                                    "message",
+                                    "You do not have permission to update this task.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.INVALID_STATUS -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_STATUS",
+                                    "message",
+                                    "Task can be updated only while OPEN.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.INVALID_DESCRIPTION -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_DESCRIPTION",
+                                    "message",
+                                    "Description cannot be empty.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.INVALID_LOCATION -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_LOCATION",
+                                    "message",
+                                    "Location text cannot be empty.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.INVALID_SCHEDULE -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_SCHEDULE",
+                                    "message",
+                                    "Schedule date must be valid and in the future.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            case TaskUpdateResult.TOO_MANY_PHOTOS -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "TOO_MANY_PHOTOS",
+                                    "message",
+                                    "Maximum 3 photos per task.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        };
     }
 
     @PostMapping("/{id}/cancel")
@@ -500,21 +686,56 @@ public class TaskController {
     public ResponseEntity<?> listTaskApplications(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
             HttpServletRequest request
     ) {
-        TaskApplicationsListResult result = taskService.listTaskApplications(principal.userId(),
-                                                                             id);
+        int clampedLimit = Math.max(1,
+                                    Math.min(limit,
+                                             100));
+        TaskApplicationsListResult result;
+        try {
+            result = taskService.listTaskApplications(
+                    principal.userId(),
+                    id,
+                    cursor,
+                    clampedLimit + 1
+            );
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(
+                            Map.of(
+                                    "code",
+                                    "INVALID_CURSOR",
+                                    "message",
+                                    "Cursor parameter is invalid.",
+                                    "trace_id",
+                                    resolveTraceId(request)
+                            )
+                    );
+        }
 
         if (result.isSuccess()) {
-            List<Map<String, Object>> data = result.applications()
+            List<TaskApplicationState> applications = result.applications();
+            boolean hasMore = applications.size() > clampedLimit;
+            List<TaskApplicationState> pageData = hasMore
+                    ? applications.subList(0,
+                                           clampedLimit)
+                    : applications;
+            String nextCursor = hasMore
+                    ? pageData.get(pageData.size() - 1)
+                            .id()
+                    : null;
+
+            List<Map<String, Object>> data = pageData
                     .stream()
                     .map(this::toApplicationResponse)
                     .toList();
             return ResponseEntity.ok(
                     new PagedResponse<>(
                             data,
-                            new CursorPagination(null,
-                                                 false)
+                            new CursorPagination(nextCursor,
+                                                 hasMore)
                     )
             );
         }

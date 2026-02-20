@@ -27,6 +27,23 @@
       "test_ids": [
         "TID-TASK-030-API-BOOKING-READS"
       ]
+    },
+    {
+      "id": "AC-TASK-030-03",
+      "type": "functional",
+      "statement": "Booking completion transitions booking to COMPLETED and task to COMPLETED.",
+      "test_ids": [
+        "TID-TASK-030-API-BOOKING-COMPLETE"
+      ]
+    },
+    {
+      "id": "AC-TASK-030-04",
+      "type": "reliability",
+      "statement": "Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached result; missing key is rejected.",
+      "test_ids": [
+        "TID-TASK-030-RELI-IDEMPOTENT-CANCEL",
+        "TID-TASK-030-RELI-IDEMPOTENT-HEADER"
+      ]
     }
   ]
 }

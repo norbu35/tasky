@@ -24,6 +24,14 @@
       "test_ids": [
         "TID-TASK-020-API-CATEGORIES-ADMIN-CRUD"
       ]
+    },
+    {
+      "id": "AC-TASK-020-03",
+      "type": "functional",
+      "statement": "On a clean database startup, at least 5 MVP categories are present and active.",
+      "test_ids": [
+        "TID-TASK-020-API-CATEGORIES-SEED-PRESENT"
+      ]
     }
   ]
 }

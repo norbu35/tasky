@@ -87,10 +87,15 @@ public class BookingController {
                 role,
                 status,
                 cursor,
-                clampedLimit
+                clampedLimit + 1
         );
+        boolean hasMore = bookings.size() > clampedLimit;
+        List<BookingState> pageBookings = hasMore
+                ? bookings.subList(0,
+                                   clampedLimit)
+                : bookings;
 
-        List<Map<String, Object>> data = bookings.stream()
+        List<Map<String, Object>> data = pageBookings.stream()
                 .map(BookingResponseMapper::withCancellationFee)
                 .toList();
 
@@ -204,6 +209,16 @@ public class BookingController {
                                  booking.taskId());
                     }
                     authService.addStrike(principal.userId());
+                } else if (booking.customerId()
+                        .equals(principal.userId())) {
+                    // Customer cancelled: close task as cancelled.
+                    if (taskService.transitionToCancelled(booking.taskId())
+                            .isEmpty()) {
+                        log.warn("Task not found when cancelling after customer cancellation: " +
+                                         "bookingId={} taskId={}",
+                                 booking.id(),
+                                 booking.taskId());
+                    }
                 }
                 idempotencyService.completeWithResource(
                         principal.userId(),

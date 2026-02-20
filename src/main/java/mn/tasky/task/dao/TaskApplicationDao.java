@@ -1,5 +1,6 @@
 package mn.tasky.task.dao;
 
+import static mn.tasky.common.persistence.UuidHelper.optional;
 import static mn.tasky.common.persistence.UuidHelper.required;
 
 import mn.tasky.task.dto.TaskApplicationState;
@@ -63,8 +64,24 @@ public interface TaskApplicationDao {
     Optional<TaskApplicationState> findById(@Bind("id") UUID id);
 
     default List<TaskApplicationState> findByTaskId(String taskId) {
-        return findByTaskId(required(taskId,
-                                     "taskId"));
+        return findByTaskId(taskId,
+                            null,
+                            100);
+    }
+
+    default List<TaskApplicationState> findByTaskId(String taskId,
+                                                    String cursor,
+                                                    int limit) {
+        UUID taskUuid = required(taskId,
+                                 "taskId");
+        UUID cursorUuid = optional(cursor);
+        if (cursorUuid == null) {
+            return findByTaskIdFirstPage(taskUuid,
+                                         limit);
+        }
+        return findByTaskIdAfterCursor(taskUuid,
+                                       cursorUuid,
+                                       limit);
     }
 
     @SqlQuery("SELECT ta.id, ta.task_id, ta.tasker_id, "
@@ -76,8 +93,25 @@ public interface TaskApplicationDao {
             + "ta.message, ta.status, ta.created_at "
             + "FROM task_applications ta "
             + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
-            + "WHERE ta.task_id = :taskId ORDER BY ta.created_at")
-    List<TaskApplicationState> findByTaskId(@Bind("taskId") UUID taskId);
+            + "WHERE ta.task_id = :taskId "
+            + "ORDER BY ta.id LIMIT :limit")
+    List<TaskApplicationState> findByTaskIdFirstPage(@Bind("taskId") UUID taskId,
+                                                     @Bind("limit") int limit);
+
+    @SqlQuery("SELECT ta.id, ta.task_id, ta.tasker_id, "
+            + "p.full_name AS tasker_full_name, p.avatar_url AS tasker_avatar_url, "
+            + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
+            +
+            "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS" +
+            " tasker_is_pro, "
+            + "ta.message, ta.status, ta.created_at "
+            + "FROM task_applications ta "
+            + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
+            + "WHERE ta.task_id = :taskId AND ta.id > :cursor "
+            + "ORDER BY ta.id LIMIT :limit")
+    List<TaskApplicationState> findByTaskIdAfterCursor(@Bind("taskId") UUID taskId,
+                                                       @Bind("cursor") UUID cursor,
+                                                       @Bind("limit") int limit);
 
     default boolean existsByTaskIdAndTaskerId(String taskId,
                                               String taskerId) {
@@ -102,6 +136,14 @@ public interface TaskApplicationDao {
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM task_applications WHERE task_id = :taskId AND status =" +
             " 'ACCEPTED')")
     boolean hasAccepted(@Bind("taskId") UUID taskId);
+
+    default int countByTaskId(String taskId) {
+        return countByTaskId(required(taskId,
+                                      "taskId"));
+    }
+
+    @SqlQuery("SELECT COUNT(*) FROM task_applications WHERE task_id = :taskId")
+    int countByTaskId(@Bind("taskId") UUID taskId);
 
     default void updateStatus(String id,
                               String status) {

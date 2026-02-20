@@ -636,6 +636,85 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
+    @DisplayName("customer can list own task ads including historical statuses")
+    @SuppressWarnings("unchecked")
+    void customerCanListOwnTaskAds() {
+        AuthContext customer = authenticate("1022");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+
+        String openTaskId = createTask(customer.accessToken(),
+                                       categoryId);
+        String cancelledTaskId = createTask(customer.accessToken(),
+                                            categoryId);
+        ResponseEntity<Map> cancelResponse = postWithAuth("/api/v1/tasks/" + cancelledTaskId +
+                                                                  "/cancel",
+                                                          customer.accessToken(),
+                                                          null);
+        assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/mine?limit=20",
+                                                   customer.accessToken());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody()
+                .get("data");
+        assertThat(data)
+                .extracting(item -> item.get("id"))
+                .contains(openTaskId,
+                          cancelledTaskId);
+
+        Map<String, Object> cancelledTask = data.stream()
+                .filter(item -> cancelledTaskId.equals(item.get("id")))
+                .findFirst()
+                .orElseThrow();
+        assertThat(cancelledTask.get("status")).isEqualTo("CANCELLED");
+        assertThat(cancelledTask).containsKeys("location_text",
+                                               "location_lat",
+                                               "location_lng");
+    }
+
+    @Test
+    @DisplayName("tasker can use same flow for historical task list")
+    @SuppressWarnings("unchecked")
+    void taskerCanListTaskHistoryFromMineEndpoint() {
+        AuthContext customer = authenticate("1023");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(),
+                                   categoryId);
+
+        AuthContext tasker = authenticate("1024");
+        String taskerToken = activateAndVerifyTasker(tasker);
+        postWithAuth("/api/v1/tasks/" + taskId + "/applications",
+                     taskerToken,
+                     Map.of("message",
+                            "Task history please"));
+        String applicationId = ((List<Map>) getWithAuth("/api/v1/tasks/" + taskId +
+                                                                "/applications",
+                                                        customer.accessToken()).getBody()
+                .get("data"))
+                .get(0)
+                .get("id")
+                .toString();
+
+        ResponseEntity<Map> acceptResponse = postWithAuth(
+                "/api/v1/tasks/" + taskId + "/applications/" + applicationId + "/accept",
+                customer.accessToken(),
+                Map.of("liability_disclaimer_accepted",
+                       true)
+        );
+        assertThat(acceptResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Map> historyResponse = getWithAuth("/api/v1/tasks/mine?role=tasker&status=ASSIGNED",
+                                                          taskerToken);
+        assertThat(historyResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> data = (List<Map<String, Object>>) historyResponse.getBody()
+                .get("data");
+        assertThat(data)
+                .extracting(item -> item.get("id"))
+                .contains(taskId);
+    }
+
+    @Test
     @DisplayName("TID-TASK-022-API-TASK-LIST-PRIVACY exact address hidden")
     void feedPrivacy() {
         AuthContext customer = authenticate("102");
@@ -684,13 +763,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("111");
-        postWithAuth("/api/v1/users/me/role/tasker",
-                     tasker.accessToken(),
-                     null);
-        // Refresh token to get TASKER role
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
 
         ResponseEntity<Map> response = postWithAuth(
                 "/api/v1/tasks/" + taskId + "/applications",
@@ -716,9 +789,7 @@ class TaskLifecycleIntegrationTests
 
         // Tasker applies
         AuthContext tasker = authenticate("113");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -759,9 +830,7 @@ class TaskLifecycleIntegrationTests
 
         // Tasker applies and customer accepts
         AuthContext tasker = authenticate("121");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -810,9 +879,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("141");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -872,6 +939,58 @@ class TaskLifecycleIntegrationTests
         assertThat(profile.status()).isEqualTo("SUSPENDED");
     }
 
+    @SuppressWarnings("unchecked")
+    private String activateAndVerifyTasker(AuthContext tasker) {
+        String adminToken = tokenFor("ADMIN",
+                                     "ACTIVE",
+                                     UUID.randomUUID()
+                                             .toString());
+
+        ResponseEntity<Map> activateResponse = postWithAuth(
+                "/api/v1/users/me/role/tasker",
+                tasker.accessToken(),
+                null
+        );
+        assertThat(activateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String taskerToken = String.valueOf(activateResponse.getBody()
+                                                    .get("access_token"));
+
+        ResponseEntity<Map> submitResponse = postWithAuth(
+                "/api/v1/verification/submit",
+                taskerToken,
+                Map.of(
+                        "id_card_front_key",
+                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "id_card_back_key",
+                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg"
+                )
+        );
+        assertThat(submitResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Map> pendingResponse = getWithAuth(
+                "/api/v1/admin/verifications/pending?limit=100",
+                adminToken
+        );
+        assertThat(pendingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> pendingData = (List<Map<String, Object>>) pendingResponse.getBody()
+                .get("data");
+
+        Map<String, Object> verification = pendingData.stream()
+                .filter(item -> tasker.userId()
+                        .equals(item.get("user_id")))
+                .findFirst()
+                .orElseThrow();
+        String verificationId = String.valueOf(verification.get("id"));
+
+        ResponseEntity<Map> approveResponse = postWithAuth(
+                "/api/v1/admin/verifications/" + verificationId + "/approve",
+                adminToken,
+                null
+        );
+        assertThat(approveResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        return taskerToken;
+    }
+
     private String tokenFor(String role,
                             String status,
                             String userId) {
@@ -916,7 +1035,7 @@ class TaskLifecycleIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-033-API-BOOKING-COMPLETE completion transitions booking and task")
+    @DisplayName("TID-TASK-030-API-BOOKING-COMPLETE completion transitions booking and task")
     void completeBookingTransitionsState() {
         AuthContext customer = authenticate("150");
         String categoryId = getFirstCategoryId(customer.accessToken());
@@ -924,9 +1043,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("151");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -961,6 +1078,56 @@ class TaskLifecycleIntegrationTests
                            .status()).isEqualTo("COMPLETED");
     }
 
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-UPDATE customer can update their own OPEN task")
+    void customerCanUpdateTask() {
+        AuthContext customer = authenticate("199");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(),
+                                   categoryId);
+
+        String newDescription = "Updated description with more than ten characters.";
+        Map<String, Object> updateBody = Map.of(
+                "description",
+                newDescription,
+                "budget",
+                80000
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        headers.setBearerAuth(customer.accessToken());
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                url("/api/v1/tasks/" + taskId),
+                HttpMethod.PUT,
+                new HttpEntity<>(updateBody, headers),
+                Map.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get("description")).isEqualTo(newDescription);
+        assertThat(((Number) response.getBody().get("budget")).intValue()).isEqualTo(80000);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-020-API-CATEGORIES-SEED-PRESENT at least 5 active categories seeded on startup")
+    void atLeastFiveActiveCategoriesSeeded() {
+        AuthContext customer = authenticate("200");
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/categories",
+                                                   customer.accessToken());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody()
+                .get("data");
+        assertThat(data).hasSizeGreaterThanOrEqualTo(5);
+        assertThat(data).allSatisfy(
+                cat -> assertThat(cat.get("is_active")).isEqualTo(true)
+        );
+    }
+
     // --- Helpers ---
 
     @Test
@@ -972,12 +1139,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("161");
-        postWithAuth("/api/v1/users/me/role/tasker",
-                     tasker.accessToken(),
-                     null);
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
 
         // 1. Task missing
         String missingTaskId = UUID.randomUUID()
@@ -991,12 +1153,7 @@ class TaskLifecycleIntegrationTests
 
         // 2. Already accepted (prepare by accepting)
         AuthContext tasker2 = authenticate("162");
-        postWithAuth("/api/v1/users/me/role/tasker",
-                     tasker2.accessToken(),
-                     null);
-        String tasker2Token = tokenFor("TASKER",
-                                       "ACTIVE",
-                                       tasker2.userId());
+        String tasker2Token = activateAndVerifyTasker(tasker2);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      tasker2Token,
                      Map.of("message",
@@ -1030,9 +1187,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("171");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
@@ -1178,9 +1333,7 @@ class TaskLifecycleIntegrationTests
                                    categoryId);
 
         AuthContext tasker = authenticate("196");
-        String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+        String taskerToken = activateAndVerifyTasker(tasker);
         postWithAuth("/api/v1/tasks/" + taskId + "/applications",
                      taskerToken,
                      Map.of("message",
