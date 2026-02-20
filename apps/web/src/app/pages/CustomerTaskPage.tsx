@@ -1,29 +1,34 @@
-import {useEffect, useState} from "react";
-import type {Category, Task, TaskApplication} from "../../lib/apiClient";
-import {Button} from "../../components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
-import {Input} from "../../components/ui/input";
-import {Label} from "../../components/ui/label";
-import {Textarea} from "../../components/ui/textarea";
-import {useAppContext} from "../context/AppContext";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import {parseError} from "../utils/errorHandling";
+import { useEffect, useState } from "react";
+import type { Category, Task, TaskApplication } from "../../lib/apiClient";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import { useAppContext } from "../context/AppContext";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import { parseError } from "../utils/errorHandling";
+import { LocationPicker } from "../../components/TaskCreation/LocationPicker";
+import { PhotoUploadManager } from "../../components/TaskCreation/PhotoUploadManager";
+import { createTaskSchema } from "@tasky/core";
 
 export function CustomerTaskPage() {
-    const {apiClient, session, setProfileError, trackClientEvent} = useAppContext();
+    const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoryId, setCategoryId] = useState("");
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState("50000");
     const [locationText, setLocationText] = useState("");
-    const [locationLat, setLocationLat] = useState("47.9184");
-    const [locationLng, setLocationLng] = useState("106.9177");
+    const [locationLat, setLocationLat] = useState(47.9184);
+    const [locationLng, setLocationLng] = useState(106.9177);
     const [scheduledAt, setScheduledAt] = useState("");
+    const [photoKeys, setPhotoKeys] = useState<string[]>([]);
     const [createdTasks, setCreatedTasks] = useState<Task[]>([]);
     const [applicationsByTask, setApplicationsByTask] = useState<Record<string, TaskApplication[]>>({});
     const [working, setWorking] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [errorMap, setErrorMap] = useState<Record<string, string>>({});
 
     useEffect(() => {
         const loadCategories = async (): Promise<void> => {
@@ -49,34 +54,45 @@ export function CustomerTaskPage() {
             return;
         }
 
-        if (!scheduledAt) {
-            setMessage("Please choose a future schedule.");
-            return;
-        }
-
-        const scheduledDate = new Date(scheduledAt);
-        if (Number.isNaN(scheduledDate.getTime())) {
-            setMessage("Invalid schedule format.");
-            return;
-        }
-
         setWorking(true);
-        setMessage(null);
+        setErrorMap({});
+        setMessage("");
+
         try {
-            const created = await apiClient.createTask(session.accessToken, {
+            const formData = {
                 category_id: categoryId,
                 description: description.trim(),
                 budget: Number(budget),
-                location_lat: Number(locationLat),
-                location_lng: Number(locationLng),
+                location_lat: locationLat,
+                location_lng: locationLng,
                 location_text: locationText.trim(),
-                scheduled_at: scheduledDate.toISOString()
-            });
+                scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : "",
+                photo_keys: photoKeys,
+            };
+            const validatedData = createTaskSchema.parse(formData);
+
+            const created = await apiClient.createTask(session.accessToken, validatedData);
             setCreatedTasks((previous) => [created, ...previous]);
-            trackClientEvent("TASK_POSTED", {taskId: created.id});
-            setMessage("Task created.");
-        } catch (error) {
-            setMessage(parseError(error));
+            trackClientEvent("TASK_POSTED", { taskId: created.id });
+            setMessage("Task created successfully.");
+
+            // Optional: reset form after creation
+            setDescription("");
+            setBudget("50000");
+            setLocationText("");
+            setScheduledAt("");
+            setPhotoKeys([]);
+            setCategoryId(categories[0]?.id || "");
+        } catch (error: any) {
+            if (error.name === "ZodError") {
+                const map: Record<string, string> = {};
+                error.errors.forEach((e: any) => {
+                    if (e.path[0]) map[e.path[0]] = e.message;
+                });
+                setErrorMap(map);
+            } else {
+                setMessage(parseError(error));
+            }
         } finally {
             setWorking(false);
         }
@@ -91,7 +107,7 @@ export function CustomerTaskPage() {
         setMessage(null);
         try {
             const response = await apiClient.listTaskApplications(session.accessToken, taskId);
-            setApplicationsByTask((previous) => ({...previous, [taskId]: response.data}));
+            setApplicationsByTask((previous) => ({ ...previous, [taskId]: response.data }));
             setMessage(`Loaded ${response.data.length} application(s).`);
         } catch (error) {
             setMessage(parseError(error));
@@ -127,6 +143,11 @@ export function CustomerTaskPage() {
                                 ))}
                             </select>
                         </div>
+                        {Object.keys(errorMap).length > 0 && (
+                            <div data-testid="error-map-dump" className="text-red-500 font-mono text-xs mt-2">
+                                {JSON.stringify(errorMap)}
+                            </div>
+                        )}
                         <div className="grid gap-2">
                             <Label htmlFor="task-description">Task details</Label>
                             <Textarea
@@ -135,6 +156,7 @@ export function CustomerTaskPage() {
                                 onChange={(event) => setDescription(event.target.value)}
                                 placeholder="1-bedroom apartment deep cleaning"
                             />
+                            {errorMap.description && <p className="text-xs text-destructive">{errorMap.description}</p>}
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">
                             <div className="grid gap-2">
@@ -145,6 +167,7 @@ export function CustomerTaskPage() {
                                     value={budget}
                                     onChange={(event) => setBudget(event.target.value)}
                                 />
+                                {errorMap.budget && <p className="text-xs text-destructive">{errorMap.budget}</p>}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="task-scheduled-at">Scheduled at</Label>
@@ -154,8 +177,15 @@ export function CustomerTaskPage() {
                                     value={scheduledAt}
                                     onChange={(event) => setScheduledAt(event.target.value)}
                                 />
+                                {errorMap.scheduled_at && <p className="text-xs text-destructive">{errorMap.scheduled_at}</p>}
                             </div>
                         </div>
+
+                        <PhotoUploadManager
+                            photoKeys={photoKeys}
+                            onPhotoKeysChange={setPhotoKeys}
+                        />
+
                         <div className="grid gap-2">
                             <Label htmlFor="task-location-text">Address description</Label>
                             <Input
@@ -164,38 +194,24 @@ export function CustomerTaskPage() {
                                 onChange={(event) => setLocationText(event.target.value)}
                                 placeholder="ХУД, 15-р хороо, Олимп хотхон"
                             />
+                            {errorMap.location_text && <p className="text-xs text-destructive">{errorMap.location_text}</p>}
                         </div>
-                        <div className="grid gap-2 sm:grid-cols-2">
-                            <div className="grid gap-2">
-                                <Label htmlFor="task-location-lat">Latitude</Label>
-                                <Input
-                                    id="task-location-lat"
-                                    inputMode="decimal"
-                                    value={locationLat}
-                                    onChange={(event) => setLocationLat(event.target.value)}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="task-location-lng">Longitude</Label>
-                                <Input
-                                    id="task-location-lng"
-                                    inputMode="decimal"
-                                    value={locationLng}
-                                    onChange={(event) => setLocationLng(event.target.value)}
-                                />
-                            </div>
-                        </div>
+
+                        <LocationPicker
+                            lat={locationLat}
+                            lng={locationLng}
+                            onChange={(lat, lng) => {
+                                setLocationLat(lat);
+                                setLocationLng(lng);
+                            }}
+                        />
+                        {errorMap.location_lat && <p className="text-xs text-destructive">Location is required</p>}
+
                         {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
                     </CardContent>
                     <CardFooter className="justify-end">
                         <Button
-                            disabled={
-                                working ||
-                                !categoryId ||
-                                description.trim().length < 10 ||
-                                locationText.trim().length < 5 ||
-                                !scheduledAt
-                            }
+                            disabled={working}
                             onClick={createTask}
                         >
                             Create task
@@ -229,8 +245,8 @@ export function CustomerTaskPage() {
                                         Load applications
                                     </Button>
                                     <span className="text-xs text-muted-foreground">
-                    Applications: {applicationsByTask[task.id]?.length ?? 0}
-                  </span>
+                                        Applications: {applicationsByTask[task.id]?.length ?? 0}
+                                    </span>
                                 </div>
                             </article>
                         ))}

@@ -307,6 +307,8 @@ check_title() {
     migration_safety) echo "Migration safety verification" ;;
     performance_smoke) echo "Performance smoke test" ;;
     ac_coverage_gate) echo "Acceptance criteria coverage gate" ;;
+    frontend_parity_check) echo "Cross-platform design token and component parity check" ;;
+    frontend_a11y_check) echo "Web accessibility (keyboard navigation + WCAG AA contrast)" ;;
     *) echo "Unknown check" ;;
   esac
 }
@@ -466,7 +468,16 @@ fi
 CMD
       ;;
     coverage_gate_touched)
-      echo "./gradlew --no-daemon jacocoTestCoverageVerification"
+      cat <<'CMD'
+./gradlew --no-daemon jacocoTestCoverageVerification
+if rg -q '^apps/web/' artifacts/checks/changed-files.txt; then
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is required for frontend coverage gate." >&2
+    exit 1
+  fi
+  pnpm --filter @tasky/web test:coverage
+fi
+CMD
       ;;
     full_test_suite)
       cat <<'CMD'
@@ -506,7 +517,34 @@ python3 scripts/validate-ac-coverage.py \
   --ticket "${SELF_VERIFY_TICKET}" \
   --risk "${SELF_VERIFY_RISK}" \
   --logs-dir artifacts/checks \
+  --changed-files artifacts/checks/changed-files.txt \
   --out artifacts/checks/ac-coverage.json
+CMD
+      ;;
+    frontend_parity_check)
+      cat <<'CMD'
+if rg -q '^(apps/web/|apps/mobile/|packages/design-tokens/)' artifacts/checks/changed-files.txt; then
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is required for frontend parity check." >&2
+    exit 1
+  fi
+  pnpm --filter @tasky/web test:unit -- tests/accessibility/parity.test.tsx
+else
+  echo "No web, mobile, or design-token changes detected; parity check not applicable."
+fi
+CMD
+      ;;
+    frontend_a11y_check)
+      cat <<'CMD'
+if rg -q '^apps/web/' artifacts/checks/changed-files.txt; then
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pnpm is required for frontend a11y check." >&2
+    exit 1
+  fi
+  pnpm --filter @tasky/web test:unit -- tests/accessibility/parity.test.tsx
+else
+  echo "No web changes detected; a11y check not applicable."
+fi
 CMD
       ;;
     *)

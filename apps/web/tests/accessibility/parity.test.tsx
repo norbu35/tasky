@@ -1,9 +1,9 @@
-import {readFileSync} from "node:fs";
-import {resolve} from "node:path";
-import {fireEvent, render, screen} from "@testing-library/react";
-import {designTokens} from "../../../packages/design-tokens/tokens";
-import {App} from "./App";
-import type {ApiClient} from "./lib/apiClient";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { designTokens } from "../../../../packages/design-tokens/tokens";
+import { App } from "../../src/App";
+import type { ApiClient } from "../../src/lib/apiClient";
 
 function hexToRgb(hexColor: string): [number, number, number] {
     const clean = hexColor.replace("#", "");
@@ -57,6 +57,7 @@ function buildApiClientMock(): ApiClient {
         }),
         updateMyProfile: vi.fn(),
         getAvatarUploadUrl: vi.fn(),
+        getTaskPhotoUploadUrl: vi.fn(),
         activateTaskerRole: vi.fn(),
         listCategories: vi.fn(),
         createTask: vi.fn(),
@@ -84,10 +85,10 @@ function buildApiClientMock(): ApiClient {
 
 describe("Accessibility and parity gates", () => {
     it("TID-TASK-072-WEB-A11Y-KEYBOARD keeps key controls focusable for keyboard navigation", async () => {
-        render(<App apiClient={buildApiClientMock()} initialRoute="/auth"/>);
+        render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
 
         const phoneInput = screen.getByLabelText("Phone number");
-        const requestButton = screen.getByRole("button", {name: "Request OTP"});
+        const requestButton = screen.getByRole("button", { name: "Request OTP" });
 
         phoneInput.focus();
         expect(phoneInput).toHaveFocus();
@@ -98,12 +99,12 @@ describe("Accessibility and parity gates", () => {
         fireEvent.click(requestButton);
 
         const codeInput = await screen.findByLabelText("OTP code");
-        const verifyButton = screen.getByRole("button", {name: "Verify OTP"});
+        const verifyButton = screen.getByRole("button", { name: "Verify OTP" });
 
         codeInput.focus();
         expect(codeInput).toHaveFocus();
 
-        fireEvent.change(codeInput, {target: {value: "123456"}});
+        fireEvent.change(codeInput, { target: { value: "123456" } });
 
         verifyButton.focus();
         expect(verifyButton).toHaveFocus();
@@ -140,7 +141,7 @@ describe("Accessibility and parity gates", () => {
         expect(webStyles).toContain("--primary: var(--tasky-color-primary);");
         expect(webButton).toContain("secondary");
         expect(webButton).toContain("ghost");
-        expect(mobileButton).toContain("loading");
+        expect(mobileButton).toContain("isLoading");
         expect(mobileButton).toContain("disabled");
         expect(mobileInput).toContain("invalid");
         expect(mobileAdapter).toContain("designTokens.colors.primary.hex");

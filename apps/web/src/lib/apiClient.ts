@@ -58,6 +58,12 @@ export interface ApiClient {
         contentType: "image/jpeg" | "image/png" | "image/webp"
     ): Promise<{ uploadUrl: string; storageKey: string }>;
 
+    getTaskPhotoUploadUrl(
+        accessToken: string,
+        taskId: string | null,
+        contentType: "image/jpeg" | "image/png" | "image/webp"
+    ): Promise<{ uploadUrl: string; storageKey: string }>;
+
     activateTaskerRole(accessToken: string): Promise<User>;
 
     listCategories(accessToken: string): Promise<CursorPage<Category>>;
@@ -244,7 +250,26 @@ export class HttpApiClient implements ApiClient {
             "/users/me/avatar/upload-url",
             {
                 method: "POST",
-                body: JSON.stringify({content_type: contentType})
+                body: JSON.stringify({ content_type: contentType })
+            },
+            accessToken
+        ).then((response) => ({
+            uploadUrl: response.upload_url,
+            storageKey: response.storage_key
+        }));
+    }
+
+    getTaskPhotoUploadUrl(
+        accessToken: string,
+        taskId: string | null,
+        contentType: "image/jpeg" | "image/png" | "image/webp"
+    ): Promise<{ uploadUrl: string; storageKey: string }> {
+        const path = taskId ? `/tasks/${taskId}/photos/upload-url` : `/tasks/photos/upload-url`;
+        return this.requestJson<{ upload_url: string; storage_key: string }>(
+            path,
+            {
+                method: "POST",
+                body: JSON.stringify({ content_type: contentType })
             },
             accessToken
         ).then((response) => ({

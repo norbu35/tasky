@@ -1,20 +1,20 @@
 :root {
-    --tasky-color-background: 44 40% 97%;
-    --tasky-color-foreground: 212 24% 16%;
+    --tasky-color-background: 0 0% 98%;
+    --tasky-color-foreground: 0 0% 9%;
     --tasky-color-card: 0 0% 100%;
-    --tasky-color-card-foreground: 212 24% 16%;
+    --tasky-color-card-foreground: 0 0% 9%;
     --tasky-color-popover: 0 0% 100%;
-    --tasky-color-popover-foreground: 212 24% 16%;
-    --tasky-color-primary: 177 78% 28%;
+    --tasky-color-popover-foreground: 0 0% 9%;
+    --tasky-color-primary: 263 70% 50%;
     --tasky-color-primary-foreground: 0 0% 100%;
-    --tasky-color-secondary: 35 49% 91%;
-    --tasky-color-secondary-foreground: 212 24% 16%;
-    --tasky-color-muted: 38 34% 92%;
-    --tasky-color-muted-foreground: 213 14% 43%;
-    --tasky-color-accent: 19 88% 63%;
-    --tasky-color-accent-foreground: 213 33% 13%;
-    --tasky-color-border: 38 28% 83%;
-    --tasky-color-input: 38 28% 83%;
-    --tasky-color-ring: 177 78% 28%;
-    --tasky-radius: 0.9rem;
+    --tasky-color-secondary: 251 91% 95%;
+    --tasky-color-secondary-foreground: 264 67% 35%;
+    --tasky-color-muted: 240 5% 96%;
+    --tasky-color-muted-foreground: 240 5% 45%;
+    --tasky-color-accent: 38 92% 50%;
+    --tasky-color-accent-foreground: 0 0% 0%;
+    --tasky-color-border: 240 6% 90%;
+    --tasky-color-input: 240 6% 90%;
+    --tasky-color-ring: 263 70% 50%;
+    --tasky-radius: 1rem;
 }

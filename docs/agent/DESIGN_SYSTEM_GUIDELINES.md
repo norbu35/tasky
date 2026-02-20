@@ -68,21 +68,21 @@ To maximize code reuse and parity, frontend features must be developed as **vert
 To pass the `scripts/self-verify.sh` contract, **agents MUST ensure their tests demonstrate logical correctness and coverage** mapped to the Acceptance Criteria (AC).
 
 ### Writing Tests
-1. **Test Location:** 
-    * Web Unit: `apps/web/src/**/*.test.tsx` (Vitest)
+1. **Test Location:**
+    * Web Unit: `apps/web/src/**/*.test.tsx` or `apps/web/tests/**/*.test.tsx` (Vitest — both paths are included)
     * Web E2E: `apps/web/e2e/**/*.test.ts` (Playwright)
-    * Mobile Unit: `apps/mobile/src/__tests__/**/*.test.tsx` (Jest)
+    * Mobile Unit: `apps/mobile/__tests__/**/*.test.tsx` (Jest)
 2. **Behavioral Testing (Not Implementation Testing):** Tests should render the component, perform a user interaction (like clicking a button or filling an input), and verify the resulting DOM state or mocked hook call. Do not test internal component state directly.
-3. **Mocks:** When testing UI components that rely on API calls, mock the `packages/core` data-fetching hooks (e.g., mock `useAuth()` to return a logged-in state) rather than mocking the inner `shadcn` primitives.
+3. **Mocks:** When testing UI components that rely on API calls, use `buildApiClientMock()` from `apps/web/tests/setup/mockApiClient.ts` (web) or `jest.mock(...)` the feature hooks from `src/features/*/hooks/` (mobile). Do not mock inner `shadcn/ui` or React Native primitives directly.
 
 ### Passing the AC Coverage Gate
 For an agent to mark a Ticket as "done", the verification script must see proof that the required `Test IDs` passed in the test runner output. 
 
-* **CRITICAL RULE:** When writing a test block, you MUST include the `<TID-XYZ>` identifier defined in the ticket spec directly in the `it()` or `test()` description string.
+* **CRITICAL RULE:** When writing a test block, you MUST include the `TID-XYZ` identifier defined in the ticket spec directly in the `it()` or `test()` description string. Write the TID bare — no brackets or decorators around it.
 * *Example (Vitest/Jest):*
   ```typescript
-  it('[TID-TASK-080-WEB-AUTH-OTP-FLOW] should allow user to submit OTP and redirect to feed', async () => {
+  it('TID-TASK-080-WEB-AUTH-OTP-FLOW should allow user to submit OTP and redirect to feed', async () => {
       // test logic...
   });
   ```
-This string mapping is how the autonomous `self-verify.sh` script knows an Acceptance Criterion has been satisfied. Without this tag in the test name, the gate will fail.
+This string mapping is how the autonomous `self-verify.sh` script knows an Acceptance Criterion has been satisfied. Without this exact TID string in the test name, the gate will fail.
