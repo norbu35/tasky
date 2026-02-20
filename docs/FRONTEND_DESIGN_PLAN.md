@@ -22,6 +22,7 @@ Authoritative requirement text lives in `docs/PRD.md`.
 1. Web stack: React + Tailwind + `shadcn/ui` primitives (`apps/web/src/components/ui`).
 2. Mobile stack: React Native + token adapter + native component layer.
 3. Shared token source: recommended `packages/design-tokens` with platform adapters.
+4. Internationalization (i18n): Cross-platform string translations powered by `react-i18next`.
 
 See `docs/ARCHITECTURE.md` for baseline.
 
@@ -38,6 +39,16 @@ Exit criteria:
 1. Web primitives are reusable and documented.
 2. No additional third-party UI frameworks used.
 3. Tests cover primitive usage and token binding.
+
+### Phase 1.5: Internationalization (i18n) Foundation
+1. Install `i18next`, `react-i18next` for both Web and Mobile.
+2. Define locale dictionaries (`en`, `mn`) loaded dynamically.
+3. Integrate `i18next-browser-languagedetector` for Web, and `expo-localization` for Mobile system detection.
+
+Exit criteria:
+1. `t("key")` translations work on both platforms.
+2. Language switcher component (EN/MN) is implemented in main view headers.
+3. Mobile defaults to Mongolian (`mn`) if the detected language is completely unknown.
 
 ### Phase 2: Mobile Parity Base (`TASK-071`)
 

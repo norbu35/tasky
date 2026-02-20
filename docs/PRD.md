@@ -42,6 +42,7 @@ reliability are established.
 6. Booking confirmation with explicit liability disclaimer (no in-app payment in phase-1)
 7. Ratings, reviews, cancellation, and disputes
 8. Essential admin operations (Dispute resolution, User moderation) - minimal viable tooling
+9. **Global Internationalization (i18n)**: UI must support switching between English (`en`) and Mongolian (`mn`), with Mongolian set as the default primary language for release.
 
 #### Out of Scope (Until Post-MVP)
 
