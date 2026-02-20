@@ -8,19 +8,22 @@ describe("Booking Payment Integration", () => {
   it("TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance and disclaimer-gated confirmation", async () => {
     const apiClient = buildApiClientMock({
       getMyProfile: vi.fn().mockResolvedValue(baseProfile),
-      acceptApplication: vi.fn().mockResolvedValue(baseBooking)
+      acceptApplication: vi.fn().mockResolvedValue(baseBooking),
+      listMyTasks: vi.fn().mockResolvedValue({ data: [] }),
+      listTaskApplications: vi.fn().mockResolvedValue({ data: [] })
     });
 
     render(
-      <App apiClient={apiClient} initialRoute="/customer/booking-confirmation" initialSession={baseSession} />
+      <App apiClient={apiClient} initialRoute="/customer/booking-confirmation?taskId=task-1&applicationId=application-1" initialSession={baseSession} />
     );
 
-    await screen.findByRole("heading", { name: "Booking confirmation" });
+    await screen.findByRole("heading", { name: "Confirm Booking" });
 
-    fireEvent.change(screen.getByLabelText("Task ID"), { target: { value: "task-1" } });
-    fireEvent.change(screen.getByLabelText("Application ID"), { target: { value: "application-1" } });
-    fireEvent.click(screen.getByLabelText(/I acknowledge the liability disclaimer/i));
-    fireEvent.click(screen.getByRole("button", { name: "Confirm booking" }));
+    const disclaimerCheckbox = screen.getByLabelText(/Accept Terms & Liability Disclaimer/i);
+    fireEvent.click(disclaimerCheckbox);
+
+    const confirmButton = screen.getByRole("button", { name: "Confirm Booking" });
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
       expect(apiClient.acceptApplication).toHaveBeenCalledWith(
@@ -31,6 +34,7 @@ describe("Booking Payment Integration", () => {
         expect.any(String)
       );
     });
-    expect(await screen.findByText(/Booking confirmed:/)).toBeInTheDocument();
+
+    expect(await screen.findByText(/Booking Confirmed!/i)).toBeInTheDocument();
   });
 });

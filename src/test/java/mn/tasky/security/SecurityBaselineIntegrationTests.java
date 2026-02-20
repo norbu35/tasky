@@ -138,6 +138,7 @@ class SecurityBaselineIntegrationTests
     @DisplayName("TID-TASK-004-SEC-OAUTH-RATE-LIMIT Facebook OAuth endpoint enforces IP rate limit")
     void facebookAuthRateLimited() {
         String accessToken = "facebook-security-token";
+        String rateLimitIp = "203.0.113.42";
         doNothing().when(facebookGraphClient)
                 .debugToken(accessToken);
         when(facebookGraphClient.fetchProfile(accessToken)).thenReturn(
@@ -152,7 +153,8 @@ class SecurityBaselineIntegrationTests
             ResponseEntity<Map> response = post(
                     "/api/v1/auth/facebook",
                     Map.of("access_token",
-                           accessToken)
+                           accessToken),
+                    rateLimitIp
             );
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         }
@@ -160,15 +162,28 @@ class SecurityBaselineIntegrationTests
         ResponseEntity<Map> blockedRequest = post(
                 "/api/v1/auth/facebook",
                 Map.of("access_token",
-                       accessToken)
+                       accessToken),
+                rateLimitIp
         );
         assertThat(blockedRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
     private ResponseEntity<Map> post(String path,
                                      Map<String, String> body) {
+        return post(path,
+                    body,
+                    null);
+    }
+
+    private ResponseEntity<Map> post(String path,
+                                     Map<String, String> body,
+                                     String clientIp) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        if (clientIp != null && !clientIp.isBlank()) {
+            headers.set("X-Forwarded-For",
+                        clientIp);
+        }
 
         return restTemplate.exchange(
                 url(path),

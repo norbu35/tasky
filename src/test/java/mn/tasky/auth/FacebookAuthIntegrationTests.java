@@ -22,12 +22,14 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class FacebookAuthIntegrationTests
         extends IntegrationTestBase {
 
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
+    private final AtomicInteger ipSuffix = new AtomicInteger(10);
     @LocalServerPort
     private int port;
     @Autowired
@@ -182,6 +184,8 @@ class FacebookAuthIntegrationTests
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        headers.set("X-Forwarded-For",
+                    nextClientIp());
 
         return restTemplate.exchange(
                 url(path),
@@ -194,5 +198,9 @@ class FacebookAuthIntegrationTests
 
     private String url(String path) {
         return "http://localhost:" + port + path;
+    }
+
+    private String nextClientIp() {
+        return "198.51.100." + ipSuffix.getAndIncrement();
     }
 }

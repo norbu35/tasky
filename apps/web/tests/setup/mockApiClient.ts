@@ -77,6 +77,10 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
             ],
             cursor: {next: null, prev: null}
         }),
+        listMyTasks: vi.fn().mockResolvedValue({
+            data: [],
+            cursor: {next: null, prev: null}
+        }),
         applyToTask: vi.fn().mockResolvedValue({
             id: "app-1",
             task_id: "public-task-1",

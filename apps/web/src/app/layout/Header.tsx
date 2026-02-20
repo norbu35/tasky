@@ -1,11 +1,11 @@
-import {NavLink} from "react-router-dom";
-import {Button} from "../../components/ui/button";
-import {useAppContext} from "../context/AppContext";
+import { NavLink } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { useAppContext } from "../context/AppContext";
 
 export function Header() {
-    const {profile, signOut} = useAppContext();
+    const { profile, signOut } = useAppContext();
 
-    const linkClass = ({isActive}: { isActive: boolean }): string =>
+    const linkClass = ({ isActive }: { isActive: boolean }): string =>
         [
             "rounded-md px-3 py-2 text-sm font-medium transition-colors",
             isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
@@ -34,7 +34,10 @@ export function Header() {
                     Safety
                 </NavLink>
                 <NavLink className={linkClass} to="/tasker/tasks">
-                    Tasker
+                    Tasker Feed
+                </NavLink>
+                <NavLink className={linkClass} to="/tasker/my-tasks">
+                    My Bookings
                 </NavLink>
                 <NavLink className={linkClass} to="/communication">
                     Inbox

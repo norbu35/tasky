@@ -82,6 +82,8 @@ export interface ApiClient {
 
     listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
 
+    listMyTasks(accessToken: string): Promise<CursorPage<Task>>;
+
     applyToTask(accessToken: string, taskId: string, message: string): Promise<TaskApplication>;
 
     listTaskApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>>;
@@ -313,6 +315,15 @@ export class HttpApiClient implements ApiClient {
                 radius_km: filters?.radiusKm,
                 limit: 100
             }
+        );
+    }
+
+    listMyTasks(accessToken: string): Promise<CursorPage<Task>> {
+        return this.requestJson<CursorPage<Task>>(
+            "/tasks/mine",
+            { method: "GET" },
+            accessToken,
+            { limit: 100 }
         );
     }
 
