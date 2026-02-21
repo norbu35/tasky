@@ -1,10 +1,11 @@
 package mn.tasky.common.validation;
 
+import org.jsoup.Jsoup;
+
 import java.util.regex.Pattern;
 
 public final class TextSanitizer {
 
-    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
     private static final Pattern MULTI_SPACE_PATTERN = Pattern.compile("\\s+");
 
     private TextSanitizer() {
@@ -14,8 +15,12 @@ public final class TextSanitizer {
         if (value == null) {
             return null;
         }
-        String withoutTags = HTML_TAG_PATTERN.matcher(value)
-                .replaceAll("");
+        String withoutTags = Jsoup.parse(value)
+                .text()
+                .replace("<",
+                         "")
+                .replace(">",
+                         "");
         return MULTI_SPACE_PATTERN.matcher(withoutTags)
                 .replaceAll(" ")
                 .trim();

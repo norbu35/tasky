@@ -19,6 +19,13 @@ tasky:
     enabled: true
   auth:
     otp-test-code: "123456"
+    rate-limit:
+      otp-request-per-phone: 1000
+      otp-request-per-ip: 1000
+      otp-verify-per-phone: 1000
+      otp-verify-per-ip: 1000
+      refresh-per-token: 1000
+      refresh-per-ip: 1000
   security:
     jwt-secret: "test-jwt-signing-secret-should-be-at-least-32-bytes"
     encryption-key: "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY="

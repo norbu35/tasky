@@ -129,7 +129,11 @@ export interface MobileApiClient {
 
     unregisterDevice(accessToken: string, token: string): Promise<void>;
 
-    getVerificationStatus(accessToken: string): Promise<{ status: string; admin_notes?: string; submitted_at?: string }>;
+    getVerificationStatus(accessToken: string): Promise<{
+        status: string;
+        admin_notes?: string;
+        submitted_at?: string
+    }>;
 
     getVerificationUploadUrl(
         accessToken: string,
@@ -492,10 +496,14 @@ export class HttpMobileApiClient implements MobileApiClient {
         return this.requestVoid(`/notifications/devices/${encodeURIComponent(token)}`, {method: "DELETE"}, accessToken);
     }
 
-    getVerificationStatus(accessToken: string): Promise<{ status: string; admin_notes?: string; submitted_at?: string }> {
+    getVerificationStatus(accessToken: string): Promise<{
+        status: string;
+        admin_notes?: string;
+        submitted_at?: string
+    }> {
         return this.requestJson<{ status: string; admin_notes?: string; submitted_at?: string }>(
             "/verification/status",
-            { method: "GET" },
+            {method: "GET"},
             accessToken
         );
     }

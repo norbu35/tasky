@@ -1918,6 +1918,7 @@ paths:
             schema:
               type: object
               description: QPay callback payload. Schema defined by QPay integration.
+              required: [ payment_id, status, timestamp, signature ]
               properties:
                 payment_id:
                   type: string
@@ -1928,6 +1929,10 @@ paths:
                   type: integer
                 status:
                   type: string
+                timestamp:
+                  type: integer
+                  format: int64
+                  description: Unix epoch seconds, included in HMAC payload.
                 signature:
                   type: string
                   description: HMAC signature for verification.
@@ -2412,7 +2417,7 @@ paths:
       parameters:
         - name: phone
           in: query
-          description: Phone number to search for (partial match supported).
+          description: Phone number to search for (exact normalized match only, E.164 recommended).
           schema:
             type: string
         - $ref: '#/components/parameters/CursorParam'

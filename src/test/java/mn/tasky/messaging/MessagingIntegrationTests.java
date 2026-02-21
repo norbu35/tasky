@@ -197,6 +197,8 @@ class MessagingIntegrationTests
                        role)
                 .claim("status",
                        status)
+                .claim("token_type",
+                       "access")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))

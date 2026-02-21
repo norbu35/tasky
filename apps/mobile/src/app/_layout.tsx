@@ -12,8 +12,8 @@ export default function RootLayout() {
         <SafeAreaProvider>
             <NotificationProvider>
                 <QueryClientProvider client={queryClient}>
-                    <Stack screenOptions={{ headerShown: false }} />
-                    <StatusBar style="auto" />
+                    <Stack screenOptions={{headerShown: false}}/>
+                    <StatusBar style="auto"/>
                 </QueryClientProvider>
             </NotificationProvider>
         </SafeAreaProvider>

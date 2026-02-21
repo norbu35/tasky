@@ -58,7 +58,7 @@ public class JwtTokenService {
 
             String tokenType = claims.get(TOKEN_TYPE_CLAIM,
                                           String.class);
-            if (StringUtils.hasText(tokenType) && !ACCESS_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
+            if (!ACCESS_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
                 return Optional.empty();
             }
 

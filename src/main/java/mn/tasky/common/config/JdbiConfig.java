@@ -5,6 +5,7 @@ import mn.tasky.auth.dao.AuditLogDao;
 import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
+import mn.tasky.auth.dao.RateLimitCounterDao;
 import mn.tasky.auth.dao.RefreshSessionDao;
 import mn.tasky.auth.dao.StrikeDao;
 import mn.tasky.auth.dao.SuspensionEventDao;
@@ -75,6 +76,11 @@ public class JdbiConfig {
     @Bean
     public RefreshSessionDao refreshSessionDao(Jdbi jdbi) {
         return jdbi.onDemand(RefreshSessionDao.class);
+    }
+
+    @Bean
+    public RateLimitCounterDao rateLimitCounterDao(Jdbi jdbi) {
+        return jdbi.onDemand(RateLimitCounterDao.class);
     }
 
     @Bean

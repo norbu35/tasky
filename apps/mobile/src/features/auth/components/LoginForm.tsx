@@ -9,7 +9,7 @@ export function LoginForm() {
     const [code, setCode] = useState('');
     const [step, setStep] = useState<'phone' | 'otp'>('phone');
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const requestOtp = useRequestOtp();
     const verifyOtp = useVerifyOtp();
 
@@ -21,7 +21,7 @@ export function LoginForm() {
     };
 
     const handleVerify = () => {
-        verifyOtp.mutate({ phone, code });
+        verifyOtp.mutate({phone, code});
     };
 
     const busy = requestOtp.isPending || verifyOtp.isPending;
@@ -53,9 +53,9 @@ export function LoginForm() {
 
             <View style={styles.actions}>
                 {step === 'phone' ? (
-                    <Button label={t("auth.continue", "Continue")} onPress={handleRequest} isLoading={busy} />
+                    <Button label={t("auth.continue", "Continue")} onPress={handleRequest} isLoading={busy}/>
                 ) : (
-                    <Button label={t("auth.verifyLogin", "Verify & Login")} onPress={handleVerify} isLoading={busy} />
+                    <Button label={t("auth.verifyLogin", "Verify & Login")} onPress={handleVerify} isLoading={busy}/>
                 )}
             </View>
 

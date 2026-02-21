@@ -138,7 +138,7 @@ class PaymentIntegrationTests
     }
 
     private ResponseEntity<Map> post(String path,
-                                     Map<String, String> body) {
+                                     Map<String, Object> body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return restTemplate.exchange(url(path),
@@ -201,16 +201,21 @@ class PaymentIntegrationTests
                 .get("payment_url")
                 .toString();
         String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
+        long timestamp = Instant.now()
+                .getEpochSecond();
 
         // Callback
-        Map<String, String> callbackBody = Map.of(
+        Map<String, Object> callbackBody = Map.of(
                 "payment_id",
                 paymentId,
                 "status",
                 "PAID",
+                "timestamp",
+                timestamp,
                 "signature",
                 signatureFor(paymentId,
-                             "PAID")
+                             "PAID",
+                             timestamp)
         );
         ResponseEntity<Map> callbackResponse = post("/api/v1/payments/qpay/callback",
                                                     callbackBody);
@@ -260,15 +265,64 @@ class PaymentIntegrationTests
                        paymentId,
                        "status",
                        "PAID",
+                       "timestamp",
+                       Instant.now()
+                               .getEpochSecond(),
                        "signature",
                        "invalid")
         );
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @Test
+    @DisplayName("TID-TASK-031-SEC-QPAY-REPLAY stale callback timestamps are rejected")
+    void qpayCallbackRejectsStaleTimestamp() {
+        AuthContext customer = authenticate("135");
+        AuthContext tasker = authenticate("235");
+        TaskState task = createTaskForCustomer(customer,
+                                               "payment-stale-callback");
+        BookingState booking = bookingService.createBooking(task.id(),
+                                                            tasker.userId(),
+                                                            customer.userId(),
+                                                            50000);
+        ResponseEntity<Map> initResponse = postWithAuth(
+                "/api/v1/payments/bookings/" + booking.id() + "/initiate",
+                customer.accessToken(),
+                Map.of("liability_disclaimer_accepted",
+                       true)
+        );
+        String paymentUrl = initResponse.getBody()
+                .get("payment_url")
+                .toString();
+        String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
+        long staleTimestamp = Instant.now()
+                .minus(10,
+                       ChronoUnit.MINUTES)
+                .getEpochSecond();
+
+        ResponseEntity<Map> callbackResponse = post(
+                "/api/v1/payments/qpay/callback",
+                Map.of(
+                        "payment_id",
+                        paymentId,
+                        "status",
+                        "PAID",
+                        "timestamp",
+                        staleTimestamp,
+                        "signature",
+                        signatureFor(paymentId,
+                                     "PAID",
+                                     staleTimestamp)
+                )
+        );
+
+        assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
     private String signatureFor(String paymentId,
-                                String status) {
-        String payload = paymentId + "|" + status;
+                                String status,
+                                long timestamp) {
+        String payload = paymentId + "|" + status + "|" + timestamp;
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8),

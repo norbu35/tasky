@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.security.MessageDigest;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class PaymentService {
     private final PaymentIntentDao paymentIntentDao;
     private final boolean monetizationEnabled;
     private final byte[] qpayWebhookSecretBytes;
+    private final long maxCallbackAgeSeconds;
 
     public PaymentService(
             BookingService bookingService,
@@ -43,7 +45,8 @@ public class PaymentService {
             AnalyticsService analyticsService,
             PaymentIntentDao paymentIntentDao,
             @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled,
-            @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret
+            @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret,
+            @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds
     ) {
         this.bookingService      = bookingService;
         this.taskService         = taskService;
@@ -51,6 +54,7 @@ public class PaymentService {
         this.analyticsService    = analyticsService;
         this.paymentIntentDao    = paymentIntentDao;
         this.monetizationEnabled = monetizationEnabled;
+        this.maxCallbackAgeSeconds = maxCallbackAgeSeconds;
         if (monetizationEnabled && !StringUtils.hasText(qpayWebhookSecret)) {
             throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");
         }
@@ -104,10 +108,12 @@ public class PaymentService {
 
     public boolean processCallback(String paymentId,
                                    String status,
+                                   long timestamp,
                                    String signature) {
         ensureMonetizationEnabled();
         if (!isValidSignature(paymentId,
                               status,
+                              timestamp,
                               signature)) {
             log.warn("Rejected QPay callback due to invalid signature for payment {}",
                      paymentId);
@@ -172,18 +178,28 @@ public class PaymentService {
 
     private boolean isValidSignature(String paymentId,
                                      String status,
+                                     long timestamp,
                                      String providedSignature) {
         if (!StringUtils.hasText(paymentId) || !StringUtils.hasText(status) ||
-                !StringUtils.hasText(providedSignature)) {
+                !StringUtils.hasText(providedSignature) || timestamp <= 0) {
             return false;
         }
-        String expected = computeSignature(paymentId + "|" + status);
+        if (!isRecentTimestamp(timestamp)) {
+            return false;
+        }
+        String expected = computeSignature(paymentId + "|" + status + "|" + timestamp);
         String normalizedProvided = providedSignature.trim()
                 .toLowerCase(Locale.ROOT);
         return MessageDigest.isEqual(
                 expected.getBytes(StandardCharsets.UTF_8),
                 normalizedProvided.getBytes(StandardCharsets.UTF_8)
         );
+    }
+
+    private boolean isRecentTimestamp(long epochSeconds) {
+        long now = Instant.now()
+                .getEpochSecond();
+        return Math.abs(now - epochSeconds) <= maxCallbackAgeSeconds;
     }
 
     private String computeSignature(String payload) {

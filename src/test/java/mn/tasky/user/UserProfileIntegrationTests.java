@@ -182,6 +182,8 @@ class UserProfileIntegrationTests
         assertThat(uploadUrl).contains("content_type=image%2Fpng");
         assertThat(uploadUrl).contains("max_bytes=5242880");
         assertThat(uploadUrl).contains("expires_in=900");
+        assertThat(uploadUrl).contains("expires_at=");
+        assertThat(uploadUrl).contains("signature=");
 
         ResponseEntity<Map> badContentTypeResponse = postWithAuth(
                 "/api/v1/users/me/avatar/upload-url",

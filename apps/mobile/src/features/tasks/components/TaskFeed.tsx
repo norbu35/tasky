@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTasks } from '../hooks/useTasks';
 import { useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
@@ -7,14 +7,14 @@ import { PublicTask } from '../../../lib/mobileApiClient';
 import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export function TaskFeed() {
-    const { data, isLoading } = useTasks();
+    const {data, isLoading} = useTasks();
     const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null);
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
-    if (isLoading) return <Text style={{ padding: 20 }}>Loading tasks...</Text>;
+    if (isLoading) return <Text style={{padding: 20}}>Loading tasks...</Text>;
 
     const tasks = data?.data ?? [];
 
@@ -49,7 +49,7 @@ export function TaskFeed() {
                     data={tasks}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.list}
-                    renderItem={({ item }) => (
+                    renderItem={({item}) => (
                         <TouchableOpacity style={styles.card} onPress={() => setSelectedTask(item)}>
                             <Text style={styles.title}>{item.description}</Text>
                             <Text style={styles.price}>{item.budget} MNT</Text>
@@ -66,7 +66,7 @@ export function TaskFeed() {
                         t.approximate_lat && t.approximate_lng ? (
                             <Marker
                                 key={t.id}
-                                coordinate={{ latitude: t.approximate_lat, longitude: t.approximate_lng }}
+                                coordinate={{latitude: t.approximate_lat, longitude: t.approximate_lng}}
                                 title={t.budget + " MNT"}
                                 description={t.description}
                                 onPress={() => setSelectedTask(t)}
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderRadius: 8,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 2,

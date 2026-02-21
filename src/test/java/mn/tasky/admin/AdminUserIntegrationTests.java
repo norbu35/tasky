@@ -46,7 +46,7 @@ class AdminUserIntegrationTests
                                      ADMIN_ID);
         AuthContext user1 = authenticate("99110001");
 
-        ResponseEntity<Map> searchRes = getWithAuth("/api/v1/admin/users?phone=99110001",
+        ResponseEntity<Map> searchRes = getWithAuth("/api/v1/admin/users?phone=+97699110001",
                                                     adminToken);
         assertThat(searchRes.getStatusCode()
                            .value()).isEqualTo(200);
@@ -64,6 +64,8 @@ class AdminUserIntegrationTests
                        role)
                 .claim("status",
                        status)
+                .claim("token_type",
+                       "access")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))

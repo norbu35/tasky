@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const {colors, radius, spacing, typography} = mobileTheme;
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
@@ -62,7 +62,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                 {...props}
             >
                 {isLoading ? (
-                    <ActivityIndicator color={textColor} />
+                    <ActivityIndicator color={textColor}/>
                 ) : children ? (
                     children
                 ) : (
@@ -70,7 +70,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                         style={[
                             styles.text,
                             styles[`${size}Text` as keyof typeof styles],
-                            { color: textColor },
+                            {color: textColor},
                             textStyle,
                         ]}
                     >

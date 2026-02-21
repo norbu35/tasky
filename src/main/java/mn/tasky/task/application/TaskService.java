@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -43,6 +45,7 @@ import java.util.UUID;
 @Service
 public class TaskService {
 
+    private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final Map<String, String> PHOTO_EXTENSION_BY_CONTENT_TYPE = Map.of(
             "image/jpeg",
             "jpg",
@@ -66,6 +69,7 @@ public class TaskService {
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
+    private final byte[] uploadUrlSigningSecretBytes;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
@@ -82,6 +86,7 @@ public class TaskService {
             @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
             @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
             @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds,
+            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}") String uploadUrlSigningSecret,
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit
     ) {
@@ -97,6 +102,10 @@ public class TaskService {
         this.taskPhotoUploadBaseUrl        = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes             = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds  = taskPhotoUploadUrlTtlSeconds;
+        if (!StringUtils.hasText(uploadUrlSigningSecret)) {
+            throw new IllegalStateException("tasky.storage.upload-signing-secret must be configured.");
+        }
+        this.uploadUrlSigningSecretBytes   = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
         this.taskMatchNotificationRadiusKm = taskMatchNotificationRadiusKm;
         this.taskMatchNotificationLimit    = taskMatchNotificationLimit;
     }
@@ -698,6 +707,11 @@ public class TaskService {
             long ttlSeconds
     ) {
         String normalizedBase = normalizeBaseUrl(baseUrl);
+        long expiresAt = Instant.now()
+                .plusSeconds(ttlSeconds)
+                .getEpochSecond();
+        String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
+        String signature = computeUploadSignature(payload);
 
         return normalizedBase +
                 "/presigned-upload?key=" +
@@ -709,7 +723,30 @@ public class TaskService {
                 "&max_bytes=" +
                 maxBytes +
                 "&expires_in=" +
-                ttlSeconds;
+                ttlSeconds +
+                "&expires_at=" +
+                expiresAt +
+                "&signature=" +
+                signature;
+    }
+
+    private String computeUploadSignature(String payload) {
+        try {
+            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes,
+                                       HMAC_ALGORITHM));
+            byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                builder.append(String.format(Locale.ROOT,
+                                             "%02x",
+                                             b));
+            }
+            return builder.toString();
+        } catch (Exception exception) {
+            throw new IllegalStateException("Failed to sign upload URL payload",
+                                            exception);
+        }
     }
 
     private String normalizeBaseUrl(String baseUrl) {

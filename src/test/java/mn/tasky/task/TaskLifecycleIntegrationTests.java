@@ -952,6 +952,8 @@ class TaskLifecycleIntegrationTests
                        role)
                 .claim("status",
                        status)
+                .claim("token_type",
+                       "access")
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),

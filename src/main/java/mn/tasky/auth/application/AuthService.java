@@ -38,8 +38,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -56,6 +59,7 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final ModerationPolicy DEFAULT_MODERATION_POLICY = new ModerationPolicy(
             30,
             3,
@@ -69,6 +73,9 @@ public class AuthService {
     private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER",
                                                               "TASKER",
                                                               "ADMIN");
+    private static final Set<String> NON_PROD_PROFILES = Set.of("dev",
+                                                                 "test",
+                                                                 "local");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE = Map.of(
             "image/jpeg",
             "jpg",
@@ -99,6 +106,7 @@ public class AuthService {
     private final String verificationUploadBaseUrl;
     private final long verificationMaxBytes;
     private final long verificationUploadUrlTtlSeconds;
+    private final byte[] uploadUrlSigningSecretBytes;
     private final SecureRandom secureRandom = new SecureRandom();
 
     private final UserDao userDao;
@@ -135,7 +143,8 @@ public class AuthService {
             @Value("${tasky.storage.avatar-upload-url-ttl-seconds:900}") long avatarUploadUrlTtlSeconds,
             @Value("${tasky.storage.verification-upload-base-url:https://upload.tasky.local}") String verificationUploadBaseUrl,
             @Value("${tasky.storage.verification-max-bytes:10485760}") long verificationMaxBytes,
-            @Value("${tasky.storage.verification-upload-url-ttl-seconds:900}") long verificationUploadUrlTtlSeconds
+            @Value("${tasky.storage.verification-upload-url-ttl-seconds:900}") long verificationUploadUrlTtlSeconds,
+            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}") String uploadUrlSigningSecret
     ) {
         this.jwtTokenService                 = jwtTokenService;
         this.cryptoService                   = cryptoService;
@@ -161,32 +170,36 @@ public class AuthService {
         this.verificationUploadBaseUrl       = verificationUploadBaseUrl;
         this.verificationMaxBytes            = verificationMaxBytes;
         this.verificationUploadUrlTtlSeconds = verificationUploadUrlTtlSeconds;
+        if (!StringUtils.hasText(uploadUrlSigningSecret)) {
+            throw new IllegalStateException("tasky.storage.upload-signing-secret must be configured.");
+        }
+        this.uploadUrlSigningSecretBytes     = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
     }
 
     @PostConstruct
     void validateOtpConfiguration() {
-        boolean productionProfile = false;
-        for (String profile : environment.getActiveProfiles()) {
-            if ("prod".equalsIgnoreCase(profile) || "production".equalsIgnoreCase(profile)) {
-                productionProfile = true;
-                break;
-            }
-        }
+        boolean nonProductionProfile = isNonProductionProfile();
 
-        if (productionProfile && devAuthEnabled) {
+        if (!nonProductionProfile && devAuthEnabled) {
             throw new IllegalStateException("tasky.dev-auth.enabled must be false in production.");
         }
         if (!otpEnabled) {
             return;
         }
-        if (productionProfile && StringUtils.hasText(otpTestCode)) {
+        if (!nonProductionProfile && StringUtils.hasText(otpTestCode)) {
             throw new IllegalStateException("tasky.auth.otp-test-code must not be set in " +
                                                     "production.");
         }
-        if (productionProfile && !smsService.isProductionReady()) {
+        if (!nonProductionProfile && !smsService.isProductionReady()) {
             throw new IllegalStateException("A production-ready SMS provider must be configured " +
                                                     "in production.");
         }
+    }
+
+    private boolean isNonProductionProfile() {
+        return Arrays.stream(environment.getActiveProfiles())
+                .map(profile -> profile.toLowerCase(Locale.ROOT))
+                .anyMatch(NON_PROD_PROFILES::contains);
     }
 
     public String requestOtp(String rawPhone) {
@@ -206,7 +219,16 @@ public class AuthService {
     }
 
     private String normalizePhone(String phone) {
-        return StringUtils.trimAllWhitespace(phone);
+        if (!StringUtils.hasText(phone)) {
+            return "";
+        }
+        String digitsOnly = phone.trim()
+                .replaceAll("\\D",
+                                               "");
+        if (!StringUtils.hasText(digitsOnly)) {
+            return "";
+        }
+        return "+" + digitsOnly;
     }
 
     private AuthUser ensureUser(String phone) {
@@ -668,6 +690,11 @@ public class AuthService {
                 ? baseUrl.substring(0,
                                     baseUrl.length() - 1)
                 : baseUrl;
+        long expiresAt = Instant.now()
+                .plusSeconds(ttlSeconds)
+                .getEpochSecond();
+        String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
+        String signature = computeUploadSignature(payload);
 
         return normalizedBase +
                 "/presigned-upload?key=" +
@@ -679,7 +706,30 @@ public class AuthService {
                 "&max_bytes=" +
                 maxBytes +
                 "&expires_in=" +
-                ttlSeconds;
+                ttlSeconds +
+                "&expires_at=" +
+                expiresAt +
+                "&signature=" +
+                signature;
+    }
+
+    private String computeUploadSignature(String payload) {
+        try {
+            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes,
+                                       HMAC_ALGORITHM));
+            byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                builder.append(String.format(Locale.ROOT,
+                                             "%02x",
+                                             b));
+            }
+            return builder.toString();
+        } catch (Exception exception) {
+            throw new IllegalStateException("Failed to sign upload URL payload",
+                                            exception);
+        }
     }
 
     public VerificationSubmitResult submitVerification(String userId,
@@ -964,7 +1014,7 @@ public class AuthService {
                                               String cursor,
                                               int limit) {
         UUID cursorId = parseUserSearchCursor(cursor);
-        List<UserProfile> candidates = searchUsersByPhone(phonePart)
+        List<UserProfile> candidates = searchUsersByPhoneExact(phonePart)
                 .stream()
                 .sorted(Comparator.comparing(profile -> UUID.fromString(profile.id())))
                 .filter(profile -> cursorId == null || UUID.fromString(profile.id())
@@ -999,26 +1049,27 @@ public class AuthService {
         }
     }
 
-    public List<UserProfile> searchUsersByPhone(String phonePart) {
-        return userDao.findAll()
-                .stream()
-                .filter(u -> {
-                    String phone = decryptPhone(u.phone());
-                    return phone != null && phone.contains(phonePart);
-                })
-                .map(u -> {
-                    String effectiveStatus = resolveUserStatus(u.id(),
-                                                               u.status());
-                    AuthUser effectiveUser = new AuthUser(u.id(),
-                                                          u.phone(),
-                                                          u.facebookId(),
-                                                          u.role(),
+    private List<UserProfile> searchUsersByPhoneExact(String phone) {
+        String normalizedPhone = normalizePhone(phone);
+        if (!StringUtils.hasText(normalizedPhone)) {
+            return List.of();
+        }
+        String blindIndex = cryptoService.blindIndex(normalizedPhone);
+        return userDao.findByPhoneBlindIndex(blindIndex)
+                .map(user -> {
+                    String effectiveStatus = resolveUserStatus(user.id(),
+                                                               user.status());
+                    AuthUser effectiveUser = new AuthUser(user.id(),
+                                                          user.phone(),
+                                                          user.facebookId(),
+                                                          user.role(),
                                                           effectiveStatus,
-                                                          u.createdAt());
+                                                          user.createdAt());
                     return toProfile(effectiveUser,
-                                     profileDao.findByUserId(u.id())
+                                     profileDao.findByUserId(user.id())
                                              .orElse(UserProfileState.defaultState()));
                 })
+                .stream()
                 .toList();
     }
 

@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -25,15 +26,18 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final boolean devAuthEnabled;
 
     public SecurityConfig(
             @Value("${tasky.cors.allowed-origins:http://localhost:5173}") String allowedOrigins,
+            @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             RestAuthenticationEntryPoint restAuthenticationEntryPoint,
             RestAccessDeniedHandler restAccessDeniedHandler
     ) {
         this.allowedOrigins               = List.of(allowedOrigins.trim()
                                                             .split("\\s*,\\s*"));
+        this.devAuthEnabled               = devAuthEnabled;
         this.jwtAuthenticationFilter      = jwtAuthenticationFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.restAccessDeniedHandler      = restAccessDeniedHandler;
@@ -41,6 +45,21 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        List<String> publicPaths = new ArrayList<>(List.of(
+                "/error",
+                "/actuator/health",
+                "/actuator/info",
+                "/api/v1/system/version",
+                "/api/v1/auth/facebook",
+                "/api/v1/auth/otp/request",
+                "/api/v1/auth/otp/verify",
+                "/api/v1/auth/token/refresh",
+                "/api/v1/payments/qpay/callback",
+                "/ws"
+        ));
+        if (devAuthEnabled) {
+            publicPaths.add("/api/v1/auth/dev/login");
+        }
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -52,19 +71,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(restAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/error",
-                                "/actuator/health",
-                                "/actuator/info",
-                                "/api/v1/system/version",
-                                "/api/v1/auth/facebook",
-                                "/api/v1/auth/otp/request",
-                                "/api/v1/auth/otp/verify",
-                                "/api/v1/auth/token/refresh",
-                                "/api/v1/auth/dev/login",
-                                "/api/v1/payments/qpay/callback",
-                                "/ws"
-                        )
+                        .requestMatchers(publicPaths.toArray(String[]::new))
                         .permitAll()
                         .requestMatchers("/api/v1/security/customer/**")
                         .hasRole("CUSTOMER")

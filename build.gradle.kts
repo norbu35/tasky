@@ -59,6 +59,7 @@ dependencies {
 
     // Jackson
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("org.jsoup:jsoup:1.18.3")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

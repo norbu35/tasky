@@ -57,32 +57,29 @@ public class ChannelInterceptorConfig
 
                 if (StompCommand.CONNECT.equals(command)) {
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
-                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                        String token = authHeader.substring(7);
-                        jwtTokenService.parse(token)
-                                .ifPresent(principal -> {
-                                    assertUserNotRestricted(principal);
-                                    UsernamePasswordAuthenticationToken auth =
-                                            new UsernamePasswordAuthenticationToken(
-                                                    principal,
-                                                    null,
-                                                    List.of(new SimpleGrantedAuthority(
-                                                            "ROLE_" + principal.role()))
-                                            );
-                                    accessor.setUser(auth);
-                                });
+                    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                        throw new IllegalArgumentException("Unauthorized");
                     }
+                    String token = authHeader.substring(7);
+                    JwtPrincipal principal = jwtTokenService.parse(token)
+                            .orElseThrow(() -> new IllegalArgumentException("Unauthorized"));
+                    assertUserNotRestricted(principal);
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    principal,
+                                    null,
+                                    List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
+                            );
+                    accessor.setUser(auth);
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
                     String destination = accessor.getDestination();
                     if (destination != null && destination.startsWith("/topic/conversations/")) {
                         String conversationId =
                                 destination.substring("/topic/conversations/".length());
-                        UsernamePasswordAuthenticationToken auth =
-                                (UsernamePasswordAuthenticationToken) accessor.getUser();
-                        if (auth == null) {
+                        if (!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
+                                || !(auth.getPrincipal() instanceof JwtPrincipal principal)) {
                             throw new IllegalArgumentException("Unauthorized");
                         }
-                        JwtPrincipal principal = (JwtPrincipal) auth.getPrincipal();
                         assertUserNotRestricted(principal);
                         boolean isParticipant =
                                 messagingService.listConversations(principal.userId())

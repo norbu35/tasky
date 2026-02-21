@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mn.tasky.auth.application.AuthService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -17,12 +18,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtAuthenticationFilter
         extends OncePerRequestFilter {
 
-    private static final List<String> PUBLIC_PATHS = List.of(
+    private static final Set<String> PUBLIC_PATHS = Set.of(
             "/error",
             "/actuator/health",
             "/actuator/info",
@@ -30,28 +32,32 @@ public class JwtAuthenticationFilter
             "/api/v1/auth/facebook",
             "/api/v1/auth/otp/request",
             "/api/v1/auth/otp/verify",
-            "/api/v1/auth/token/refresh",
-            "/api/v1/auth/dev/login"
+            "/api/v1/auth/token/refresh"
     );
+    private static final String DEV_AUTH_LOGIN_PATH = "/api/v1/auth/dev/login";
 
     private final JwtTokenService jwtTokenService;
     private final JsonSecurityResponseWriter responseWriter;
     private final AuthService authService;
+    private final boolean devAuthEnabled;
 
     public JwtAuthenticationFilter(
             JwtTokenService jwtTokenService,
             JsonSecurityResponseWriter responseWriter,
-            AuthService authService
+            AuthService authService,
+            @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled
     ) {
         this.jwtTokenService = jwtTokenService;
         this.responseWriter  = responseWriter;
         this.authService     = authService;
+        this.devAuthEnabled  = devAuthEnabled;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return PUBLIC_PATHS.contains(path);
+        return PUBLIC_PATHS.contains(path) ||
+                (devAuthEnabled && DEV_AUTH_LOGIN_PATH.equals(path));
     }
 
     @Override

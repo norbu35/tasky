@@ -195,6 +195,8 @@ class AnalyticsIntegrationTests
                        role)
                 .claim("status",
                        status)
+                .claim("token_type",
+                       "access")
                 .issuedAt(new java.util.Date())
                 .expiration(new java.util.Date(System.currentTimeMillis() + 3600000))
                 .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))

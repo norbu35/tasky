@@ -53,7 +53,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.stream.IntStream;
 
 @RestController
@@ -62,6 +62,7 @@ import java.util.stream.IntStream;
 public class TaskController {
 
     private static final double MAX_PUBLIC_OFFSET_METERS = 500.0d;
+    private static final SecureRandom LOCATION_FUZZ_RANDOM = new SecureRandom();
 
     private final TaskService taskService;
     private final CategoryService categoryService;
@@ -130,8 +131,7 @@ public class TaskController {
 
     private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
-        double[] fuzzedLocation = fuzzCoordinates(task.id(),
-                                                  task.locationLat(),
+        double[] fuzzedLocation = fuzzCoordinates(task.locationLat(),
                                                   task.locationLng());
         response.put("id",
                      task.id());
@@ -197,12 +197,10 @@ public class TaskController {
         return response;
     }
 
-    private double[] fuzzCoordinates(String seed,
-                                     double lat,
+    private double[] fuzzCoordinates(double lat,
                                      double lng) {
-        Random random = new Random(seed.hashCode());
-        double angle = random.nextDouble() * Math.PI * 2;
-        double distanceMeters = random.nextDouble() * MAX_PUBLIC_OFFSET_METERS;
+        double angle = LOCATION_FUZZ_RANDOM.nextDouble() * Math.PI * 2;
+        double distanceMeters = LOCATION_FUZZ_RANDOM.nextDouble() * MAX_PUBLIC_OFFSET_METERS;
         double latOffset = (distanceMeters * Math.cos(angle)) / 111_320.0d;
         double lngOffset = (distanceMeters * Math.sin(angle)) /
                 (111_320.0d * Math.max(0.1d,

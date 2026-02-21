@@ -11,7 +11,7 @@ public record UpdateProfileRequest(
         String fullName,
         @JsonProperty("avatar_url")
         @Size(max = 512)
-        @Pattern(regexp = "^(https?://\\S+|uploads/\\S+)$")
+        @Pattern(regexp = "^(https://(?:cdn\\.tasky\\.mn|cdn\\.tasky\\.local)/\\S+|uploads/\\S+)$")
         String avatarUrl
 ) {
 

@@ -198,6 +198,7 @@ public class PaymentController {
         boolean success = paymentService.processCallback(
                 body.paymentId(),
                 body.status(),
+                body.timestamp(),
                 body.signature()
         );
 
