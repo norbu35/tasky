@@ -86,11 +86,14 @@ reliability are established.
    Payment is settled directly between Customer and Tasker in phase-1 (no platform wallet/escrow).
 5. **Completion**: Tasker finishes job $\rightarrow$ User marks "Complete" $\rightarrow$ Rates Tasker.
 
-### 2.2 Tasker Flow
+### 2.2 Tasker Flow (Progressive Verification)
 
-1. **Onboarding**: Tasker downloads app $\rightarrow$ Facebook OAuth $\rightarrow$ Uploads ID Card (Front/Back)
-   $\rightarrow$ Submits for Review.
-2. **Verification**: (Offline) Admin reviews ID $\rightarrow$ Approves Tasker.
+1. **Level 1 (Window Shopper)**: Tasker downloads app $\rightarrow$ Enters Phone/Facebook OAuth $\rightarrow$ Selects intended Categories $\rightarrow$ **Enables Push Notifications**.
+   * *State:* Unverified. Can view task feed and receive push alerts, but cannot apply.
+2. **Level 2 (First Job Barrier)**: Tasker attempts to "Apply" to a task $\rightarrow$ Prompted to upload ID Card + Selfie $\rightarrow$ Submits for Review.
+3. **Level 3 (Verified)**: Admin manually reviews ID + Selfie in backend $\rightarrow$ Approves Tasker $\rightarrow$ Tasker matches and performs work.
+4. **Execution**: Tasker sees exact location *after* booking $\rightarrow$ Goes to site $\rightarrow$ Performs work $\rightarrow$ Marks "Done".
+5. **Settlement**: Tasker is paid directly by Customer using off-platform methods agreed in chat/booking notes.
 3. **Find Work**: Tasker browses "Open Tasks" feed $\rightarrow$ Filters by Category/Location $\rightarrow$ Views Task
    Details.
 4. **Accept/Offer**: Tasker accepts the Customer's budget $\rightarrow$ Waits for Customer confirmation.
@@ -164,7 +167,7 @@ reliability are established.
 ### 3.6 Notifications
 
 * **REQ-NOTIF-01**: System MUST send Push Notifications for:
-    * Tasker: New matching task nearby.
+    * Tasker (Unverified & Verified): New matching task nearby (Critical for Phase 1 Liquidity strategy).
     * Tasker: "You are hired!" (Booking confirmed).
     * Customer: "Tasker applied to your task".
     * Customer: "Tasker marked job complete".
@@ -235,7 +238,7 @@ reliability are established.
 
 ## 7. Future Scope (Post-MVP)
 
-* "Dan" (E-Mongolia) Verification.
+* "Dan" (E-Mongolia) Verification and MongolBank integrations.
 * Advanced dynamic pricing and promotions engine.
 * Cross-border services.
 * QPay integration, platform escrow/wallet, and payout operations.
