@@ -19,7 +19,13 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        fallbackLng: "mn", // Default to Mongolian per architecture plan
+        fallbackLng: import.meta.env.VITE_DEFAULT_LOCALE || "mn", // Default to Mongolian or ENV
+        detection: {
+            // order: User toggle (localStorage) -> Browser settings (navigator)
+            order: ["localStorage", "navigator"],
+            lookupLocalStorage: "tasky-locale",
+            caches: ["localStorage"],
+        },
         interpolation: {
             escapeValue: false, // React already safes from xss
         },

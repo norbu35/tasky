@@ -8,7 +8,16 @@
     "verifyOtp": "Баталгаажуулах",
     "developerBypass": "Хөгжүүлэгчийн нэвтрэлт (OTP шаардлагагүй):",
     "loginAsCustomer": "Үйлчлүүлэгч",
-    "loginAsTasker": "Ажилтан"
+    "loginAsTasker": "Ажилтан",
+    "loginUnavailable": "Facebook нэвтрэлт одоогоор боломжгүй байна.",
+    "trustedNetwork": "Өдөр тутмын ажлаа даатгах таны найдвартай сүлжээ.",
+    "connectSecurely": "Баталгаажсан мэргэжилтнүүдтэй аюулгүй холбогд. Хурдан, найдвартай, баталгаатай.",
+    "copyright": "© 2026 Tasky Сүлжээ",
+    "welcomeBack": "Эргэн тавтай морил",
+    "continueDesc": "Tasky бүртгэл үүсгэх эсвэл нэвтрэхийн тулд Facebook-ээр үргэлжлүүлнэ үү.",
+    "continueFacebook": "Facebook-ээр үргэлжлүүлэх",
+    "initializing": "Facebook нэвтрэлтийг бэлтгэж байна...",
+    "missingConfig": "`VITE_FACEBOOK_APP_ID` тохиргоо дутуу байна."
   },
   "nav": {
     "profile": "Профайл",

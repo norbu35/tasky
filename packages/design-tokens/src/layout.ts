@@ -25,7 +25,7 @@ export const radius = {
 export const typography = {
   fontFamily: {
     sans: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
-    display: "'Outfit', system-ui, -apple-system, sans-serif",
+    display: "'Manrope', system-ui, -apple-system, sans-serif",
   },
   fontSize: {
     xs: '12px',

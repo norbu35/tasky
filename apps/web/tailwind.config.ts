@@ -44,7 +44,7 @@ const config: Config = {
             },
             fontFamily: {
                 sans: ["Inter", "sans-serif"],
-                display: ["Outfit", "sans-serif"]
+                display: ["Manrope", "sans-serif"]
             }
         }
     },

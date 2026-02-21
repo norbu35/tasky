@@ -5,29 +5,29 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAppContext } from "../context/AppContext";
 
 export function Header() {
-    const {profile, signOut} = useAppContext();
-    const {t} = useTranslation();
+    const { profile, signOut } = useAppContext();
+    const { t } = useTranslation();
 
-    const linkClass = ({isActive}: { isActive: boolean }): string =>
+    const linkClass = ({ isActive }: { isActive: boolean }): string =>
         [
-            "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            "rounded-md px-2 lg:px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap",
             isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
         ].join(" ");
 
     return (
         <header
             className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border/40 bg-background/75 px-4 py-3 shadow-sm backdrop-blur-md">
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4">
+            <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 lg:gap-4">
                 <div className="flex items-center gap-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mr-1">
+                    <p className="hidden md:block text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mr-1">
                         Tasky Web MVP
                     </p>
-                    <LanguageSwitcher/>
+                    <LanguageSwitcher />
                 </div>
                 <div className="hidden text-sm font-medium text-foreground sm:block">
                     {profile ? `${profile.full_name} (${profile.role})` : "Guest"}
                 </div>
-                <nav className="flex flex-wrap items-center gap-2" aria-label="Primary navigation">
+                <nav className="flex flex-wrap items-center gap-1 lg:gap-2" aria-label="Primary navigation">
                     <NavLink className={linkClass} to="/profile">
                         {t("nav.profile", "Profile")}
                     </NavLink>

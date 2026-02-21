@@ -8,7 +8,16 @@
     "verifyOtp": "Verify Code",
     "developerBypass": "Developer quick login (no OTP needed):",
     "loginAsCustomer": "Customer",
-    "loginAsTasker": "Tasker"
+    "loginAsTasker": "Tasker",
+    "loginUnavailable": "Facebook login is unavailable right now.",
+    "trustedNetwork": "Your trusted network for everyday tasks.",
+    "connectSecurely": "Connect with verified professionals securely. Fast, reliable, and completely guaranteed.",
+    "copyright": "© 2026 Tasky Network",
+    "welcomeBack": "Welcome back",
+    "continueDesc": "Continue with Facebook to log in or create your Tasky account.",
+    "continueFacebook": "Continue with Facebook",
+    "initializing": "Initializing Facebook login...",
+    "missingConfig": "Missing `VITE_FACEBOOK_APP_ID` configuration."
   },
   "nav": {
     "profile": "Profile",
