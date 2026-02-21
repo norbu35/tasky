@@ -17,11 +17,10 @@ export function ProfilePage() {
         session,
         profile,
         setProfile,
-        setProfileError,
         refreshProfile,
         updateSessionUser
     } = useAppContext();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
@@ -72,7 +71,8 @@ export function ProfilePage() {
                     s3Err += ` ${text}`;
                 } catch { /* ignore */
                 }
-                throw new Error(s3Err);
+                toast.error(s3Err);
+                return;
             }
 
             // 3. Set preview URL
@@ -129,7 +129,7 @@ export function ProfilePage() {
         <ScreenFrame>
             <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
                 <div className="flex items-center gap-3 px-2">
-                    <User className="w-8 h-8 text-primary"/>
+                    <User className="w-8 h-8 text-primary" />
                     <div>
                         <h1 className="text-3xl font-display font-bold tracking-tight">{t("profile.yourProfile", "Your Profile")}</h1>
                         <p className="text-muted-foreground">{t("profile.manageInfo", "Manage your personal information and preferences.")}</p>
@@ -173,16 +173,16 @@ export function ProfilePage() {
                                         }}
                                     />
                                 ) : (
-                                    <User className="w-12 h-12 text-primary/40"/>
+                                    <User className="w-12 h-12 text-primary/40" />
                                 )}
                                 <div
                                     className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Camera className="w-8 h-8 text-white"/>
+                                    <Camera className="w-8 h-8 text-white" />
                                 </div>
                                 {working && (
                                     <div
                                         className="absolute inset-0 bg-background/50 flex items-center justify-center backdrop-blur-sm">
-                                        <Loader2 className="w-6 h-6 animate-spin text-primary"/>
+                                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
                                     </div>
                                 )}
                             </div>
@@ -204,7 +204,7 @@ export function ProfilePage() {
                         <div className="space-y-5">
                             <div className="space-y-2">
                                 <Label htmlFor="full-name"
-                                       className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                     {t("profile.displayName", "Display Name")}
                                 </Label>
                                 <Input
@@ -224,8 +224,8 @@ export function ProfilePage() {
                                     disabled={working || !fullName.trim()}
                                     onClick={saveProfile}
                                 >
-                                    {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin"/> :
-                                        <Save className="mr-2 h-5 w-5"/>}
+                                    {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> :
+                                        <Save className="mr-2 h-5 w-5" />}
                                     {t("profile.saveChanges", "Save Changes")}
                                 </Button>
                             </div>
@@ -244,8 +244,8 @@ export function ProfilePage() {
                         <div className="bg-muted/40 rounded-2xl p-5 border border-border flex items-start gap-4">
                             <div
                                 className={`p-2 rounded-xl mt-1 ${statusVerified ? 'bg-emerald-500/20 text-emerald-600' : 'bg-accent/20 text-accent-foreground'}`}>
-                                {statusVerified ? <ShieldCheck className="w-6 h-6"/> :
-                                    <ShieldAlert className="w-6 h-6"/>}
+                                {statusVerified ? <ShieldCheck className="w-6 h-6" /> :
+                                    <ShieldAlert className="w-6 h-6" />}
                             </div>
                             <div className="space-y-1">
                                 <p className="font-semibold text-sm">{t("profile.status", "Status")}</p>
@@ -261,7 +261,7 @@ export function ProfilePage() {
                                 className="bg-primary/5 text-primary rounded-2xl p-5 border border-primary/20 flex flex-col justify-between items-start gap-4">
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <Sparkles className="w-5 h-5 text-accent"/>
+                                        <Sparkles className="w-5 h-5 text-accent" />
                                         <h3 className="font-semibold text-lg font-display text-foreground">{t("profile.earnWithTasky", "Earn with Tasky")}</h3>
                                     </div>
                                     <p className="text-sm text-foreground/70">
@@ -274,7 +274,7 @@ export function ProfilePage() {
                                     variant="secondary"
                                     className="w-full sm:w-auto rounded-xl shadow-sm"
                                 >
-                                    {working ? <Loader2 className="h-4 w-4 animate-spin mr-2"/> : null}
+                                    {working ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                                     {t("profile.activateTaskerBtn", "Activate Tasker Account")}
                                 </Button>
                             </div>

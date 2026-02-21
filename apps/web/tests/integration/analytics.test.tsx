@@ -1,10 +1,10 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseCategory, baseProfile, baseSession, baseUser, localDateTimeInput} from "../setup/mockData";
-import {createMemoryClientAnalyticsTracker} from "../../src/lib/clientAnalytics";
-import type {AuthTokens, Profile, Task} from "../../src/lib/apiClient";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseCategory, baseProfile, baseSession, baseUser, localDateTimeInput } from "../setup/mockData";
+import { createMemoryClientAnalyticsTracker } from "../../src/lib/clientAnalytics";
+import type { AuthTokens, Profile, Task } from "../../src/lib/apiClient";
 
 describe("Analytics Integration", () => {
     it("TID-TASK-090-OBS-CLIENT-EVENTS emits aligned client events with platform, locale, and actor role", async () => {

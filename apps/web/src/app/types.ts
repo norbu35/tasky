@@ -1,5 +1,5 @@
-import type {ApiClient, AuthTokens, Profile, User} from "../lib/apiClient";
-import type {ClientEventName} from "../lib/clientAnalytics";
+import type { ApiClient, AuthTokens, Profile, User } from "../lib/apiClient";
+import type { ClientEventName } from "../lib/clientAnalytics";
 
 export type Role = "CUSTOMER" | "TASKER";
 

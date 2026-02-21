@@ -1,9 +1,9 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseBooking, baseDispute, baseProfile, baseReview, baseSession} from "../setup/mockData";
-import type {Booking} from "../../src/lib/apiClient";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseBooking, baseDispute, baseProfile, baseReview, baseSession } from "../setup/mockData";
+import type { Booking } from "../../src/lib/apiClient";
 
 // 1. Mock the DropdownMenu so its items are just rendered inline for easy clicking in JSDOM
 vi.mock("../../src/components/ui/dropdown-menu", () => ({

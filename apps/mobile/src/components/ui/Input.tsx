@@ -1,7 +1,7 @@
-import {forwardRef} from "react";
-import type {TextInputProps} from "react-native";
-import {StyleSheet, TextInput} from "react-native";
-import {mobileTheme} from "../../design/tokenAdapter";
+import { forwardRef } from "react";
+import type { TextInputProps } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
+import { mobileTheme } from "../../design/tokenAdapter";
 
 type Props = TextInputProps & {
     invalid?: boolean;

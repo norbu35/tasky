@@ -1,20 +1,20 @@
-import {useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import type {Booking} from "../../lib/apiClient";
-import {Button} from "../../components/ui/button";
-import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
-import {Checkbox} from "../../components/ui/checkbox";
-import {useAppContext} from "../context/AppContext";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import {parseError} from "../utils/errorHandling";
-import {createIdempotencyKey} from "../utils/idempotency";
-import {AlertCircle, CheckCircle2, ChevronLeft, CreditCard, ShieldCheck} from "lucide-react";
-import {Alert, AlertDescription, AlertTitle} from "../../components/ui/alert";
-import {Avatar, AvatarFallback, AvatarImage} from "../../components/ui/avatar";
-import {Separator} from "../../components/ui/separator";
-import {Skeleton} from "../../components/ui/skeleton";
-import {useTranslation} from "react-i18next";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { Booking } from "../../lib/apiClient";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { Checkbox } from "../../components/ui/checkbox";
+import { useAppContext } from "../context/AppContext";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import { parseError } from "../utils/errorHandling";
+import { createIdempotencyKey } from "../utils/idempotency";
+import { AlertCircle, CheckCircle2, ChevronLeft, CreditCard, ShieldCheck } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { Separator } from "../../components/ui/separator";
+import { Skeleton } from "../../components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 export function BookingConfirmationPage() {
     const {apiClient, session, trackClientEvent} = useAppContext();

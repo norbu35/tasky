@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
-import {useMyProfile, useSignOut, useUpdateProfile} from '../hooks/useProfile';
-import {Button, FormField, Input} from '../../../components/ui';
-import {useEffect, useState} from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
+import { Button, FormField, Input } from '../../../components/ui';
+import { useEffect, useState } from 'react';
 
 export function ProfileView() {
     const {data: profile, isLoading} = useMyProfile();

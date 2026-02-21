@@ -9,7 +9,7 @@ import {
     TouchableOpacityProps,
     ViewStyle,
 } from 'react-native';
-import {colors, radius, spacing, typography} from '@tasky/design-tokens';
+import { colors, radius, spacing, typography } from '@tasky/design-tokens';
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';

@@ -1,5 +1,5 @@
-import {Map, Marker} from "pigeon-maps";
-import {Label} from "../ui/label";
+import { Map, Marker } from "pigeon-maps";
+import { Label } from "../ui/label";
 
 interface LocationPickerProps {
     lat: number;

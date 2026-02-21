@@ -1,5 +1,5 @@
-import {createContext, useContext} from "react";
-import type {AppContextValue} from "../types";
+import { createContext, useContext } from "react";
+import type { AppContextValue } from "../types";
 
 export const AppContext = createContext<AppContextValue | null>(null);
 

@@ -1,8 +1,8 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseBooking, baseProfile, baseSession} from "../setup/mockData";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseBooking, baseProfile, baseSession } from "../setup/mockData";
 
 describe("Booking Payment Integration", () => {
     it("TID-TASK-081-WEB-BOOKING-PAYMENT-FLOW supports applicant acceptance and disclaimer-gated confirmation", async () => {

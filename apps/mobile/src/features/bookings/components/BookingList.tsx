@@ -1,5 +1,5 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {useBookings} from '../hooks/useBookings';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useBookings } from '../hooks/useBookings';
 
 export function BookingList() {
     const {data, isLoading} = useBookings();

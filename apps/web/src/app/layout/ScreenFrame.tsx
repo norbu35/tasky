@@ -1,5 +1,5 @@
-import type {ReactNode} from "react";
-import {Header} from "./Header";
+import type { ReactNode } from "react";
+import { Header } from "./Header";
 
 export function ScreenFrame({children}: { children: ReactNode }) {
     return (

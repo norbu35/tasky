@@ -1,6 +1,6 @@
-import type {ReactNode} from "react";
-import {StyleSheet, Text, View} from "react-native";
-import {mobileTheme} from "../../design/tokenAdapter";
+import type { ReactNode } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { mobileTheme } from "../../design/tokenAdapter";
 
 type Props = {
     label: string;

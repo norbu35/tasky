@@ -1,17 +1,17 @@
-import {useQuery} from "@tanstack/react-query";
-import {useNavigate, useParams} from "react-router-dom";
-import type {TaskApplication} from "../../lib/apiClient";
-import {useAppContext} from "../context/AppContext";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import {Button} from "../../components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
-import {Skeleton} from "../../components/ui/skeleton";
-import {Badge} from "../../components/ui/badge";
-import {Calendar, ChevronLeft, Clock, MapPin, Star, UserCheck} from "lucide-react";
-import {Alert, AlertDescription, AlertTitle} from "../../components/ui/alert";
-import {Avatar, AvatarFallback, AvatarImage} from "../../components/ui/avatar";
-import {useTranslation} from "react-i18next";
-import type {TFunction} from "i18next";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import type { TaskApplication } from "../../lib/apiClient";
+import { useAppContext } from "../context/AppContext";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { Skeleton } from "../../components/ui/skeleton";
+import { Badge } from "../../components/ui/badge";
+import { Calendar, ChevronLeft, Clock, MapPin, Star, UserCheck } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
 function formatTimeAgo(value: string, t: TFunction): string {
     const timestamp = new Date(value).getTime();

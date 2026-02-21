@@ -1,7 +1,7 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {afterEach, describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
 
 afterEach(() => {
     delete (window as Window & { FB?: unknown }).FB;

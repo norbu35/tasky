@@ -1,4 +1,4 @@
-import type {components} from "@tasky/sdk";
+import type { components } from "@tasky/sdk";
 
 export type User = components["schemas"]["User"];
 export type Profile = components["schemas"]["Profile"];

@@ -1,6 +1,6 @@
-import {readFileSync} from "node:fs";
-import {resolve} from "node:path";
-import {describe, expect, it} from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
 
 describe("Token Binding", () => {
     it("TID-TASK-070-WEB-TOKEN-BINDING binds shared tokens to tailwind theme variables", () => {

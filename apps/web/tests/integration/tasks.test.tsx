@@ -1,9 +1,9 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseCategory, baseProfile, baseSession, baseUser, localDateTimeInput} from "../setup/mockData";
-import type {AuthTokens, Profile, Task} from "../../src/lib/apiClient";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseCategory, baseProfile, baseSession, baseUser, localDateTimeInput } from "../setup/mockData";
+import type { AuthTokens, Profile, Task } from "../../src/lib/apiClient";
 
 describe("Tasks Integration", () => {
     it("TID-TASK-080-WEB-TASK-APPLICATION-FLOW supports task create, privacy-safe feed browsing, and tasker apply", async () => {

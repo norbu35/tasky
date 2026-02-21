@@ -1,9 +1,9 @@
-import {useRef, useState} from "react";
-import {Button} from "../ui/button";
-import {Label} from "../ui/label";
-import {ImagePlus, Loader2, X} from "lucide-react";
-import {useAppContext} from "../../app/context/AppContext";
-import {parseError} from "../../app/utils/errorHandling";
+import { useRef, useState } from "react";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { ImagePlus, Loader2, X } from "lucide-react";
+import { useAppContext } from "../../app/context/AppContext";
+import { parseError } from "../../app/utils/errorHandling";
 
 interface PhotoUploadManagerProps {
     photoKeys: string[];
@@ -11,8 +11,8 @@ interface PhotoUploadManagerProps {
     maxPhotos?: number;
 }
 
-export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}: PhotoUploadManagerProps) {
-    const {apiClient, session} = useAppContext();
+export function PhotoUploadManager({ photoKeys, onPhotoKeysChange, maxPhotos = 3 }: PhotoUploadManagerProps) {
+    const { apiClient, session } = useAppContext();
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +37,7 @@ export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}
 
         try {
             // Get presigned URL
-            const {uploadUrl, storageKey} = await apiClient.getTaskPhotoUploadUrl(
+            const { uploadUrl, storageKey } = await apiClient.getTaskPhotoUploadUrl(
                 session.accessToken,
                 null,
                 file.type as "image/jpeg" | "image/png" | "image/webp"
@@ -53,7 +53,8 @@ export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}
             });
 
             if (!uploadResponse.ok) {
-                throw new Error("Failed to upload image to storage layer.");
+                setError("Failed to upload image to storage layer.");
+                return;
             }
 
             onPhotoKeysChange([...photoKeys, storageKey]);
@@ -77,10 +78,10 @@ export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}
             <div className="flex flex-wrap gap-4">
                 {photoKeys.map((key, index) => (
                     <div key={index}
-                         className="relative h-24 w-24 rounded-md border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden">
-            <span className="text-[10px] text-muted-foreground w-full truncate break-all">
-              {key.split("/").pop()}
-            </span>
+                        className="relative h-24 w-24 rounded-md border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+                        <span className="text-[10px] text-muted-foreground w-full truncate break-all">
+                            {key.split("/").pop()}
+                        </span>
                         <Button
                             variant="secondary"
                             size="sm"
@@ -89,7 +90,7 @@ export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}
                             disabled={uploading}
                             type="button"
                         >
-                            <X className="h-3 w-3"/>
+                            <X className="h-3 w-3" />
                         </Button>
                     </div>
                 ))}
@@ -102,10 +103,10 @@ export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}
                         className="h-24 w-24 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {uploading ? (
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         ) : (
                             <>
-                                <ImagePlus className="h-6 w-6 text-muted-foreground"/>
+                                <ImagePlus className="h-6 w-6 text-muted-foreground" />
                                 <span className="text-xs text-muted-foreground">Add Photo</span>
                             </>
                         )}

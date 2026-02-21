@@ -1,9 +1,9 @@
-import {render, screen} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseProfile, baseSession, baseUser} from "../setup/mockData";
-import type {AuthTokens, Profile} from "../../src/lib/apiClient";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseProfile, baseSession, baseUser } from "../setup/mockData";
+import type { AuthTokens, Profile } from "../../src/lib/apiClient";
 
 describe("Authorization Guards Integration", () => {
     it("TID-TASK-080-WEB-AUTHZ-GUARDS enforce auth state, role gating, and banned-user UX", async () => {

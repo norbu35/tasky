@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Button, FormField, Input} from '../../../components/ui';
-import {useRequestOtp, useVerifyOtp} from '../hooks/useAuth';
-import {useTranslation} from 'react-i18next';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button, FormField, Input } from '../../../components/ui';
+import { useRequestOtp, useVerifyOtp } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export function LoginForm() {
     const [phone, setPhone] = useState('+976');

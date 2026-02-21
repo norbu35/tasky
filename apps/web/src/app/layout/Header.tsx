@@ -1,8 +1,8 @@
-import {NavLink} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {Button} from "../../components/ui/button";
-import {LanguageSwitcher} from "./LanguageSwitcher";
-import {useAppContext} from "../context/AppContext";
+import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Button } from "../../components/ui/button";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useAppContext } from "../context/AppContext";
 
 export function Header() {
     const {profile, signOut} = useAppContext();

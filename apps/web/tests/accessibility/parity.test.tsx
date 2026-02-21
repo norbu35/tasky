@@ -1,9 +1,9 @@
-import {readFileSync} from "node:fs";
-import {resolve} from "node:path";
-import {render, screen} from "@testing-library/react";
-import {designTokens} from "../../../../packages/design-tokens/tokens";
-import {App} from "../../src/App";
-import type {ApiClient} from "../../src/lib/apiClient";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { render, screen } from "@testing-library/react";
+import { designTokens } from "../../../../packages/design-tokens/tokens";
+import { App } from "../../src/App";
+import type { ApiClient } from "../../src/lib/apiClient";
 
 function hexToRgb(hexColor: string): [number, number, number] {
     const clean = hexColor.replace("#", "");

@@ -1,5 +1,5 @@
-import {View} from 'react-native';
-import {TaskFeed} from '../../features/tasks/components/TaskFeed';
+import { View } from 'react-native';
+import { TaskFeed } from '../../features/tasks/components/TaskFeed';
 
 export default function FeedScreen() {
     return (

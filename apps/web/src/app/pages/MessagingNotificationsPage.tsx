@@ -1,17 +1,17 @@
-import {useCallback, useEffect, useRef, useState} from "react";
-import {type Conversation, type Message} from "../../lib/apiClient";
-import {Button} from "../../components/ui/button";
-import {Input} from "../../components/ui/input";
-import {Switch} from "../../components/ui/switch";
-import {Label} from "../../components/ui/label";
-import {useAppContext} from "../context/AppContext";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import {parseError} from "../utils/errorHandling";
-import {Avatar, AvatarFallback} from "../../components/ui/avatar";
-import {Bell, BellOff, MessageSquareText, Search, Send} from "lucide-react";
-import {Client} from "@stomp/stompjs";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { type Conversation, type Message } from "../../lib/apiClient";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Switch } from "../../components/ui/switch";
+import { Label } from "../../components/ui/label";
+import { useAppContext } from "../context/AppContext";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import { parseError } from "../utils/errorHandling";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { Bell, BellOff, MessageSquareText, Search, Send } from "lucide-react";
+import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 export function MessagingNotificationsPage() {
     const {apiClient, session, profile} = useAppContext();

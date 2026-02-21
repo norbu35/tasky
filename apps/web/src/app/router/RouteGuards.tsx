@@ -1,12 +1,12 @@
-import type {ReactNode} from "react";
-import {Navigate, NavLink, useLocation} from "react-router-dom";
-import {Button} from "../../components/ui/button";
-import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
-import {useAppContext} from "../context/AppContext";
-import {LoadingCard} from "../layout/LoadingCard";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import type {Role} from "../types";
-import {isRestrictedUser} from "../utils/userAccess";
+import type { ReactNode } from "react";
+import { Navigate, NavLink, useLocation } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { useAppContext } from "../context/AppContext";
+import { LoadingCard } from "../layout/LoadingCard";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import type { Role } from "../types";
+import { isRestrictedUser } from "../utils/userAccess";
 
 export function ProtectedRoute({children}: { children: ReactNode }) {
     const {session, profile, profileBusy} = useAppContext();

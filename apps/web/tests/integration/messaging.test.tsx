@@ -1,8 +1,8 @@
-import {fireEvent, render, screen, waitFor} from "@testing-library/react";
-import {describe, expect, it, vi} from "vitest";
-import {App} from "../../src/App";
-import {buildApiClientMock} from "../setup/mockApiClient";
-import {baseProfile, baseSession} from "../setup/mockData";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { App } from "../../src/App";
+import { buildApiClientMock } from "../setup/mockApiClient";
+import { baseProfile, baseSession } from "../setup/mockData";
 
 // JSDOM does not implement scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = vi.fn();

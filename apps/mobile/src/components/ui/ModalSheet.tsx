@@ -1,7 +1,7 @@
-import type {ReactNode} from "react";
-import {Modal, Pressable, StyleSheet, Text, View} from "react-native";
-import {mobileTheme} from "../../design/tokenAdapter";
-import {Button} from "./Button";
+import type { ReactNode } from "react";
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { mobileTheme } from "../../design/tokenAdapter";
+import { Button } from "./Button";
 
 type Props = {
     visible: boolean;

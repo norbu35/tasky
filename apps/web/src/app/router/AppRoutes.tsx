@@ -1,5 +1,5 @@
-import {Navigate, Route, Routes} from "react-router-dom";
-import {useAppContext} from "../context/AppContext";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 import {
     AuthPage,
     BookingConfirmationPage,
@@ -13,8 +13,8 @@ import {
     TaskerFeedPage,
     TaskerTasksPage
 } from "../pages";
-import {ProtectedRoute, RoleGuard} from "./RouteGuards";
-import {isRestrictedUser} from "../utils/userAccess";
+import { ProtectedRoute, RoleGuard } from "./RouteGuards";
+import { isRestrictedUser } from "../utils/userAccess";
 
 export function HomeRedirect() {
     const {session, profile} = useAppContext();

@@ -1,5 +1,5 @@
-import {vi} from "vitest";
-import type {ApiClient} from "../../src/lib/apiClient";
+import { vi } from "vitest";
+import type { ApiClient } from "../../src/lib/apiClient";
 import {
     baseBooking,
     baseCategory,
