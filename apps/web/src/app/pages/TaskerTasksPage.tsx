@@ -12,9 +12,9 @@ import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { useTranslation } from "react-i18next";
 
-function TaskerBookingCard({task}: { task: Task }) {
+function TaskerBookingCard({ task }: { task: Task }) {
     const navigate = useNavigate();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <Card className="flex flex-col hover:border-primary/50 transition-colors">
@@ -26,13 +26,13 @@ function TaskerBookingCard({task}: { task: Task }) {
                     </Badge>
                 </div>
                 <CardDescription className="flex items-center gap-1 mt-1 text-xs">
-                    <Calendar className="w-3 h-3"/>
+                    <Calendar className="w-3 h-3" />
                     {new Date(task.scheduled_at).toLocaleDateString()}
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-3 text-sm flex flex-col gap-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="w-4 h-4"/>
+                    <MapPin className="w-4 h-4" />
                     <span className="truncate">{task.location_text}</span>
                 </div>
                 <div className="font-medium text-foreground">
@@ -43,7 +43,7 @@ function TaskerBookingCard({task}: { task: Task }) {
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     {task.status === "COMPLETED" ? (
                         <>
-                            <CheckCircle className="w-4 h-4 text-green-600"/>
+                            <CheckCircle className="w-4 h-4 text-green-600" />
                             <span
                                 className="text-green-600 font-medium">{t("taskerTasks.completed", "Completed")}</span>
                         </>
@@ -60,9 +60,9 @@ function TaskerBookingCard({task}: { task: Task }) {
 }
 
 export function TaskerTasksPage() {
-    const {apiClient, session, profile} = useAppContext();
+    const { apiClient, session, profile } = useAppContext();
     const navigate = useNavigate();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     // Reusing listTasks but simulating filtering for assigned to this tasker.
     // In a real app, there would be an endpoint like `listAssignedTasks(taskId)`,
@@ -71,7 +71,7 @@ export function TaskerTasksPage() {
     // Looking at apiClient, there is no `listMyBookings()`.
     // So we will just fetch all tasks (TaskerFeed) and filter them manually for MVP
     // to avoid blocking the UI flow. Actually, wait! The backend returns ALL tasks in feed.
-    // We can filter where `status` is ASSIGNED or COMPLETED and we are the assigned tasker.
+    // We can filter where `status` is ASSIGNED or COMPLETED, and we are the assigned tasker.
     // Wait, task object doesn't have `assigned_tasker_id`. It has `booking_id`.
 
     const {
@@ -87,7 +87,7 @@ export function TaskerTasksPage() {
         enabled: !!session && profile?.role === "TASKER"
     });
 
-    // Keep type simple since feed Task might be slightly different than full Task for linting
+    // Keep type simple since feed Task might be slightly different from full Task for linting
     const tasksList = (tasksPage?.data || []) as unknown as Task[];
 
     // Since we don't have task.assigned_tasker_id in the model we just filter by ASSIGNED and COMPLETED.
@@ -103,7 +103,7 @@ export function TaskerTasksPage() {
                         <p className="text-muted-foreground mt-1">{t("taskerTasks.subtitle", "Manage your accepted jobs and past work.")}</p>
                     </div>
                     <Button onClick={() => navigate("/tasker/tasks")} variant="secondary" className="gap-2">
-                        <Rocket className="w-4 h-4"/>
+                        <Rocket className="w-4 h-4" />
                         <span className="hidden sm:inline">{t("taskerTasks.findMoreWork", "Find more work")}</span>
                         <span className="sm:hidden">{t("taskerTasks.find", "Find")}</span>
                     </Button>
@@ -111,7 +111,7 @@ export function TaskerTasksPage() {
 
                 {error ? (
                     <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4"/>
+                        <AlertCircle className="h-4 w-4" />
                         <AlertTitle>{t("taskerTasks.errorTitle", "Error")}</AlertTitle>
                         <AlertDescription>
                             {error.message ?? t("taskerTasks.errorFailedLoad", "Failed to load bookings")}
@@ -119,18 +119,18 @@ export function TaskerTasksPage() {
                     </Alert>
                 ) : isLoading ? (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {Array.from({length: 3}).map((_, i) => (
+                        {Array.from({ length: 3 }).map((_, i) => (
                             <Card key={i} className="flex flex-col">
                                 <CardHeader>
-                                    <Skeleton className="h-6 w-3/4 mb-2"/>
-                                    <Skeleton className="h-4 w-1/4"/>
+                                    <Skeleton className="h-6 w-3/4 mb-2" />
+                                    <Skeleton className="h-4 w-1/4" />
                                 </CardHeader>
                                 <CardContent className="flex-1">
-                                    <Skeleton className="h-4 w-1/2 mb-2"/>
-                                    <Skeleton className="h-4 w-1/3"/>
+                                    <Skeleton className="h-4 w-1/2 mb-2" />
+                                    <Skeleton className="h-4 w-1/3" />
                                 </CardContent>
                                 <CardFooter className="pt-4 border-t">
-                                    <Skeleton className="h-9 w-full"/>
+                                    <Skeleton className="h-9 w-full" />
                                 </CardFooter>
                             </Card>
                         ))}
@@ -139,7 +139,7 @@ export function TaskerTasksPage() {
                     <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed">
                         <div
                             className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
-                            <Rocket className="h-6 w-6 text-primary"/>
+                            <Rocket className="h-6 w-6 text-primary" />
                         </div>
                         <CardTitle className="mb-2">{t("taskerTasks.noBookingsTitle", "No bookings yet")}</CardTitle>
                         <CardDescription className="mb-6 max-w-sm">
@@ -158,7 +158,7 @@ export function TaskerTasksPage() {
                         <TabsContent value="active" className="mt-0">
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {tasksList.filter(t => t.status === "ASSIGNED").map((task) => (
-                                    <TaskerBookingCard key={task.id} task={task}/>
+                                    <TaskerBookingCard key={task.id} task={task} />
                                 ))}
                                 {tasksList.filter(t => t.status === "ASSIGNED").length === 0 && (
                                     <div
@@ -172,7 +172,7 @@ export function TaskerTasksPage() {
                         <TabsContent value="past" className="mt-0">
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {tasksList.filter(t => t.status === "COMPLETED").map((task) => (
-                                    <TaskerBookingCard key={task.id} task={task}/>
+                                    <TaskerBookingCard key={task.id} task={task} />
                                 ))}
                                 {tasksList.filter(t => t.status === "COMPLETED").length === 0 && (
                                     <div

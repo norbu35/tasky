@@ -6,11 +6,11 @@ import { baseProfile, baseSession, baseUser } from "../setup/mockData";
 import type { AuthTokens, Profile } from "../../src/lib/apiClient";
 
 describe("Authorization Guards Integration", () => {
-    it("TID-TASK-080-WEB-AUTHZ-GUARDS enforce auth state, role gating, and banned-user UX", async () => {
+    it("TID-TASK-080-WEB-AUTHORIZATION-GUARDS enforce auth state, role gating, and banned-user UX", async () => {
         const guestApi = buildApiClientMock();
-        const guestRender = render(<App apiClient={guestApi} initialRoute="/customer/tasks/new"/>);
+        const guestRender = render(<App apiClient={guestApi} initialRoute="/customer/tasks/new" />);
 
-        expect(await screen.findByRole("heading", {name: "Welcome back"})).toBeInTheDocument();
+        expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
 
         guestRender.unmount();
 
@@ -18,10 +18,10 @@ describe("Authorization Guards Integration", () => {
             getMyProfile: vi.fn().mockResolvedValue(baseProfile)
         });
         const customerRender = render(
-            <App apiClient={customerApi} initialRoute="/tasker/tasks" initialSession={baseSession}/>
+            <App apiClient={customerApi} initialRoute="/tasker/tasks" initialSession={baseSession} />
         );
 
-        expect(await screen.findByRole("heading", {name: "Tasker role required"})).toBeInTheDocument();
+        expect(await screen.findByRole("heading", { name: "Tasker role required" })).toBeInTheDocument();
 
         customerRender.unmount();
 
@@ -42,8 +42,8 @@ describe("Authorization Guards Integration", () => {
             getMyProfile: vi.fn().mockResolvedValue(bannedProfile)
         });
 
-        render(<App apiClient={bannedApi} initialRoute="/profile" initialSession={bannedSession}/>);
+        render(<App apiClient={bannedApi} initialRoute="/profile" initialSession={bannedSession} />);
 
-        expect(await screen.findByRole("heading", {name: "Account restricted"})).toBeInTheDocument();
+        expect(await screen.findByRole("heading", { name: "Account restricted" })).toBeInTheDocument();
     });
 });
