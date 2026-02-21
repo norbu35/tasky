@@ -1,10 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useMyProfile, useSignOut, useUpdateProfile } from '../hooks/useProfile';
 import { Button, FormField, Input } from '../../../components/ui';
+import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function ProfileView() {
-    const {data: profile, isLoading} = useMyProfile();
+    const { t } = useTranslation();
+    const { data: profile, isLoading } = useMyProfile();
     const updateMutation = useUpdateProfile();
     const signOut = useSignOut();
 
@@ -14,22 +17,31 @@ export function ProfileView() {
         if (profile) setName(profile.full_name);
     }, [profile]);
 
-    if (isLoading) return <Text style={{padding: 20}}>Loading...</Text>;
+    if (isLoading) return <Text style={{ padding: 20 }}>{t("common.loading")}</Text>;
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Profile</Text>
-            <FormField label="Full Name">
-                <Input value={name} onChangeText={setName}/>
+            <Text style={styles.header}>{t("profile.title")}</Text>
+
+            <FormField label={t("profile.fullName")}>
+                <Input value={name} onChangeText={setName} />
             </FormField>
-            <View style={styles.spacer}/>
+
+            <View style={styles.spacer} />
+
+            <FormField label={t("profile.language")}>
+                <LanguageSwitcher />
+            </FormField>
+
+            <View style={styles.spacer} />
+
             <Button
-                label="Save Changes"
-                onPress={() => updateMutation.mutate({full_name: name})}
+                label={t("profile.saveChanges")}
+                onPress={() => updateMutation.mutate({ full_name: name })}
                 isLoading={updateMutation.isPending}
             />
-            <View style={styles.spacer}/>
-            <Button label="Sign Out" variant="secondary" onPress={signOut}/>
+            <View style={styles.spacer} />
+            <Button label={t("profile.signOut")} variant="secondary" onPress={signOut} />
         </View>
     );
 }

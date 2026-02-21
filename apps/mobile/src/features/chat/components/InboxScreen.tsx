@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Conversation, createMobileApiClient } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const {colors, typography, spacing} = mobileTheme;
+const { colors, typography, spacing } = mobileTheme;
 
 export function InboxScreen() {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const router = useRouter();
-    const {session} = useAuthStore();
+    const { session } = useAuthStore();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export function InboxScreen() {
     if (isLoading) {
         return (
             <View style={styles.center}>
-                <ActivityIndicator size="large" color={colors.primary}/>
+                <ActivityIndicator size="large" color={colors.primary} />
             </View>
         );
     }
@@ -51,14 +52,14 @@ export function InboxScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView edges={['top']} style={styles.container}>
             <Text style={styles.headerTitle}>{t("messaging.inboxTitle", "Inbox")}</Text>
 
             <FlatList
                 data={conversations}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listContent}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                     <TouchableOpacity
                         style={styles.card}
                         onPress={() => router.push(`/inbox/${item.id}`)}
@@ -76,7 +77,7 @@ export function InboxScreen() {
                     <Text style={styles.emptyText}>{t("messaging.noConversations", "No conversations found.")}</Text>
                 }
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         paddingHorizontal: 20,
-        paddingTop: 60,
+        paddingTop: 20,
         paddingBottom: 20,
         color: colors.foreground,
     },

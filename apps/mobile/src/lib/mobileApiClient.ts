@@ -43,6 +43,8 @@ export interface MobileApiClient {
 
     verifyOtp(phone: string, code: string): Promise<AuthTokens>;
 
+    devLogin(phone: string, role: string): Promise<AuthTokens>;
+
     getMyProfile(accessToken: string): Promise<Profile>;
 
     updateMyProfile(
@@ -212,6 +214,20 @@ export class HttpMobileApiClient implements MobileApiClient {
             {
                 method: "POST",
                 body: JSON.stringify({phone, code})
+            }
+        ).then((response) => ({
+            accessToken: response.access_token,
+            refreshToken: response.refresh_token,
+            user: response.user
+        }));
+    }
+
+    devLogin(phone: string, role: string): Promise<AuthTokens> {
+        return this.requestJson<{ access_token: string; refresh_token: string; user: User }>(
+            "/auth/dev/login",
+            {
+                method: "POST",
+                body: JSON.stringify({phone, role})
             }
         ).then((response) => ({
             accessToken: response.access_token,

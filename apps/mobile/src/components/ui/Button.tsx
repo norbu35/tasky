@@ -5,18 +5,25 @@ import {
     StyleSheet,
     Text,
     TextStyle,
-    TouchableOpacity,
-    TouchableOpacityProps,
+    Pressable,
+    PressableProps,
     ViewStyle,
 } from 'react-native';
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const {colors, radius, spacing, typography} = mobileTheme;
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const { colors, radius, spacing, typography } = mobileTheme;
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
-export interface ButtonProps extends TouchableOpacityProps {
+export interface ButtonProps extends Omit<PressableProps, 'style'> {
     label?: string;
     variant?: ButtonVariant;
     size?: ButtonSize;
@@ -26,7 +33,7 @@ export interface ButtonProps extends TouchableOpacityProps {
     children?: React.ReactNode;
 }
 
-export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>, ButtonProps>(
+export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
     (
         {
             label,
@@ -53,16 +60,41 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
 
         const textColor = getTextColor(variant);
 
+        const scale = useSharedValue(1);
+
+        const animatedStyle = useAnimatedStyle(() => {
+            return {
+                transform: [{ scale: scale.value }],
+            };
+        });
+
+        const handlePressIn = (e: any) => {
+            scale.value = withSpring(0.96, {
+                damping: 15,
+                stiffness: 300,
+            });
+            props.onPressIn?.(e);
+        };
+
+        const handlePressOut = (e: any) => {
+            scale.value = withSpring(1, {
+                damping: 15,
+                stiffness: 300,
+            });
+            props.onPressOut?.(e);
+        };
+
         return (
-            <TouchableOpacity
+            <AnimatedPressable
                 ref={ref}
-                style={buttonStyles}
+                style={[buttonStyles, animatedStyle]}
                 disabled={!isInteractive}
-                activeOpacity={0.8}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
                 {...props}
             >
                 {isLoading ? (
-                    <ActivityIndicator color={textColor}/>
+                    <ActivityIndicator color={textColor} />
                 ) : children ? (
                     children
                 ) : (
@@ -70,14 +102,14 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                         style={[
                             styles.text,
                             styles[`${size}Text` as keyof typeof styles],
-                            {color: textColor},
+                            { color: textColor },
                             textStyle,
                         ]}
                     >
                         {label}
                     </Text>
                 )}
-            </TouchableOpacity>
+            </AnimatedPressable>
         );
     }
 );

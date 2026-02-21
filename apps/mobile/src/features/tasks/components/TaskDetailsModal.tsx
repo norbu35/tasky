@@ -5,9 +5,10 @@ import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useAuthStore } from '../../../store/authStore';
 import { VerificationModal } from '../../verification/components/VerificationModal';
+import { useRouter } from 'expo-router';
 
-const {colors, typography, spacing} = mobileTheme;
-const {width} = Dimensions.get('window');
+const { colors, typography, spacing } = mobileTheme;
+const { width } = Dimensions.get('window');
 
 interface Props {
     task: PublicTask | null;
@@ -15,15 +16,20 @@ interface Props {
     onClose: () => void;
 }
 
-export function TaskDetailsModal({task, visible, onClose}: Props) {
-    const {profile, session} = useAuthStore();
+export function TaskDetailsModal({ task, visible, onClose }: Props) {
+    const { profile, session } = useAuthStore();
+    const router = useRouter();
     const [isVerifying, setIsVerifying] = useState(false);
     const [isApplying, setIsApplying] = useState(false);
 
     if (!task) return null;
 
     const handleApply = async () => {
-        if (!profile || !session) return;
+        if (!session || !profile) {
+            onClose();
+            router.push('/(auth)');
+            return;
+        }
 
         if (profile.role !== 'TASKER' && profile.role !== 'ADMIN') {
             Alert.alert("Action Required", "Only Taskers can apply for tasks.");
@@ -63,7 +69,7 @@ export function TaskDetailsModal({task, visible, onClose}: Props) {
                     <View style={styles.carouselContainer}>
                         <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
                             {task.photo_urls.map((url, idx) => (
-                                <Image key={idx} source={{uri: url}} style={styles.carouselImage}/>
+                                <Image key={idx} source={{ uri: url }} style={styles.carouselImage} />
                             ))}
                         </ScrollView>
                     </View>
@@ -90,7 +96,7 @@ export function TaskDetailsModal({task, visible, onClose}: Props) {
                         variant="ghost"
                         onPress={onClose}
                         disabled={isApplying}
-                        style={{marginTop: 8}}
+                        style={{ marginTop: 8 }}
                     />
                 </View>
             </ScrollView>

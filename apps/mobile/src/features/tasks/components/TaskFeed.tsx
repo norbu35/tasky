@@ -3,18 +3,31 @@ import { useTasks } from '../hooks/useTasks';
 import { useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { TaskDetailsModal } from './TaskDetailsModal';
+import { TaskCardSkeleton } from './TaskCardSkeleton';
 import { PublicTask } from '../../../lib/mobileApiClient';
-import { Button } from '../../../components/ui';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { useTranslation } from 'react-i18next';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export function TaskFeed() {
-    const {data, isLoading} = useTasks();
+    const { t } = useTranslation();
+    const { data, isLoading } = useTasks();
     const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null);
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
-    if (isLoading) return <Text style={{padding: 20}}>Loading tasks...</Text>;
+    if (isLoading) {
+        return (
+            <View style={[styles.container, styles.list]}>
+                <TaskCardSkeleton />
+                <TaskCardSkeleton />
+                <TaskCardSkeleton />
+                <TaskCardSkeleton />
+                <TaskCardSkeleton />
+            </View>
+        );
+    }
 
     const tasks = data?.data ?? [];
 
@@ -29,14 +42,14 @@ export function TaskFeed() {
         <View style={styles.container}>
             <View style={styles.toggleRow}>
                 <Button
-                    label="List"
+                    label={t("taskFeed.listMode")}
                     variant={viewMode === 'list' ? 'default' : 'outline'}
                     size="sm"
                     onPress={() => setViewMode('list')}
                     style={styles.toggleBtn}
                 />
                 <Button
-                    label="Map"
+                    label={t("taskFeed.mapMode")}
                     variant={viewMode === 'map' ? 'default' : 'outline'}
                     size="sm"
                     onPress={() => setViewMode('map')}
@@ -49,11 +62,19 @@ export function TaskFeed() {
                     data={tasks}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.list}
-                    renderItem={({item}) => (
-                        <TouchableOpacity style={styles.card} onPress={() => setSelectedTask(item)}>
-                            <Text style={styles.title}>{item.description}</Text>
-                            <Text style={styles.price}>{item.budget} MNT</Text>
-                            <Text style={styles.loc}>{item.approximate_location}</Text>
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => setSelectedTask(item)}>
+                            <Card style={styles.cardSpacing}>
+                                <CardHeader>
+                                    <View style={styles.cardHeaderRow}>
+                                        <CardTitle style={styles.title}>{item.description}</CardTitle>
+                                        <Text style={styles.price}>{item.budget} {t("taskFeed.currencySuffix")}</Text>
+                                    </View>
+                                </CardHeader>
+                                <CardContent>
+                                    <Text style={styles.loc}>{item.approximate_location}</Text>
+                                </CardContent>
+                            </Card>
                         </TouchableOpacity>
                     )}
                 />
@@ -62,14 +83,14 @@ export function TaskFeed() {
                     style={styles.map}
                     initialRegion={ulaanbaatarRegion}
                 >
-                    {tasks.map((t) => (
-                        t.approximate_lat && t.approximate_lng ? (
+                    {tasks.map((t_item) => (
+                        t_item.approximate_lat && t_item.approximate_lng ? (
                             <Marker
-                                key={t.id}
-                                coordinate={{latitude: t.approximate_lat, longitude: t.approximate_lng}}
-                                title={t.budget + " MNT"}
-                                description={t.description}
-                                onPress={() => setSelectedTask(t)}
+                                key={t_item.id}
+                                coordinate={{ latitude: t_item.approximate_lat, longitude: t_item.approximate_lng }}
+                                title={`${t_item.budget} ${t("taskFeed.currencySuffix")}`}
+                                description={t_item.description}
+                                onPress={() => setSelectedTask(t_item)}
                             />
                         ) : null
                     ))}
@@ -107,34 +128,32 @@ const styles = StyleSheet.create({
     list: {
         padding: 16,
     },
-    card: {
-        backgroundColor: 'white',
-        padding: 16,
+    cardSpacing: {
         marginBottom: 12,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
+    },
+    cardHeaderRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
     },
     title: {
+        flex: 1,
+        marginRight: 8,
         fontSize: 16,
         fontWeight: '600',
-        marginBottom: 8,
     },
     price: {
-        color: '#2e7d32',
+        color: mobileTheme.colors.primary,
         fontWeight: 'bold',
-        marginBottom: 4,
+        fontSize: 16,
     },
     loc: {
-        color: '#666',
-        fontSize: 12,
+        color: mobileTheme.colors.mutedForeground,
+        fontSize: 14,
     },
     empty: {
         textAlign: 'center',
         marginTop: 40,
-        color: '#999',
+        color: mobileTheme.colors.mutedForeground,
     }
 });

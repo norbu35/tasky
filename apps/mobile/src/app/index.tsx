@@ -1,7 +1,12 @@
 import { Redirect } from 'expo-router';
-import { useAuthStore } from '../store/authStore';
+import { useAppStore } from '../store/appStore';
 
 export default function Index() {
-    const session = useAuthStore((state) => state.session);
-    return <Redirect href={session ? "/(tabs)" : "/(auth)"}/>;
+    const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding);
+
+    if (!hasSeenOnboarding) {
+        return <Redirect href="/onboarding" />;
+    }
+
+    return <Redirect href="/(tabs)" />;
 }

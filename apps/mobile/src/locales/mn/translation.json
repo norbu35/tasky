@@ -11,11 +11,57 @@
   "nav": {
     "profile": "Профайл",
     "tasks": "Миний ажлууд",
-    "inbox": "Зурвас"
+    "inbox": "Зурвас",
+    "explore": "Хайх",
+    "bookings": "Захиалга",
+    "messages": "Зурвас"
   },
   "common": {
     "loading": "Уншиж байна...",
     "error": "Алдаа гарлаа",
-    "retry": "Дахих"
+    "retry": "Дахих",
+    "cancel": "Цуцлах",
+    "next": "Дараах",
+    "getStarted": "Эхлэх"
+  },
+  "messaging": {
+    "inboxTitle": "Зурвас",
+    "noConversations": "Зурвас олдсонгүй."
+  },
+  "onboarding": {
+    "slide1_title": "Tasky програмд тавтай морил",
+    "slide1_desc": "Өдөр тутмын баатруудад зориулсан орчин үеийн ажил зуучлалын систем.",
+    "slide2_title": "Тусламж авах эсвэл санал болгох",
+    "slide2_desc": "Танд тусламж хэрэгтэй юу? Эсвэл нэмэлт орлого олохыг хүсч байна уу? Бид захиалагч болон гүйцэтгэгчийг шууд холбоно.",
+    "slide3_title": "Аюулгүй бас найдвартай",
+    "slide3_desc": "Баталгаажсан хэрэглэгчид болон аюулгүй төлбөрийн систем нь хүн бүрийн сэтгэлийн амгалан байдлыг хангана."
+  },
+  "createTask": {
+    "title": "Ажил оруулах",
+    "stepTarget": "Алхам {{current}}/{{total}}",
+    "qHelp": "Танд юунд тусламж хэрэгтэй вэ?",
+    "qHelpPlaceholder": "Ж.нь: Зурагт хананд тогтоох",
+    "qCategory": "Төрөл",
+    "qCategoryPlaceholder": "Ж.нь: Мужаан",
+    "qLocation": "Ажил хаана хийгдэх вэ?",
+    "qLocationPlaceholder": "Дүүрэг эсвэл хаяг оруулна уу",
+    "mapPinHelper": "Энд газрын зураг дээр байршил тэмдэглэх хэсэг орно.",
+    "qBudget": "Таны үнийн санал? (₮)",
+    "qBudgetPlaceholder": "150000",
+    "reviewText": "Хянах: {{location}} байршилд {{title}} ажлыг {{budget}} ₮-өөр.",
+    "postTask": "Ажил оруулах"
+  },
+  "taskFeed": {
+    "listMode": "Жагсаалт",
+    "mapMode": "Газрын зураг",
+    "loadingTasks": "Ажлууд уншиж байна...",
+    "currencySuffix": "₮"
+  },
+  "profile": {
+    "title": "Профайл",
+    "fullName": "Бүтэн нэр",
+    "saveChanges": "Хадгалах",
+    "signOut": "Гарах",
+    "language": "Хэл"
   }
 }

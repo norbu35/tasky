@@ -36,3 +36,25 @@ export function useVerifyOtp() {
         },
     });
 }
+
+export function useDevLogin() {
+    const setSession = useAuthStore((state) => state.setSession);
+    const setProfile = useAuthStore((state) => state.setProfile);
+
+    return useMutation({
+        mutationFn: async ({phone, role}: { phone: string; role: string }) => {
+            return await api.devLogin(phone, role);
+        },
+        onSuccess: async (session) => {
+            setSession(session);
+            try {
+                const profile = await api.getMyProfile(session.accessToken);
+                setProfile(profile);
+                router.replace('/(tabs)');
+            } catch (e) {
+                console.error("Failed to fetch profile after dev login", e);
+                router.replace('/(tabs)');
+            }
+        },
+    });
+}
