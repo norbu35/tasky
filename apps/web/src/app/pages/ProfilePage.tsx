@@ -1,22 +1,21 @@
-import {useEffect, useRef, useState} from "react";
-import {AnimatePresence, motion} from "framer-motion";
-import {Camera, CheckCircle2, Loader2, Save, ShieldAlert, ShieldCheck, Sparkles, User} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Loader2, Save, ShieldAlert, ShieldCheck, Sparkles, User } from "lucide-react";
 
-import {Button} from "../../components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../../components/ui/card";
-import {Input} from "../../components/ui/input";
-import {Label} from "../../components/ui/label";
-import {useAppContext} from "../context/AppContext";
-import {ScreenFrame} from "../layout/ScreenFrame";
-import {parseError} from "../utils/errorHandling";
-import {useTranslation} from "react-i18next";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { useAppContext } from "../context/AppContext";
+import { ScreenFrame } from "../layout/ScreenFrame";
+import { parseError } from "../utils/errorHandling";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export function ProfilePage() {
     const {
         apiClient,
         session,
         profile,
-        profileError,
         setProfile,
         setProfileError,
         refreshProfile,
@@ -27,7 +26,6 @@ export function ProfilePage() {
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
     const [working, setWorking] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [generatedStorageKey, setGeneratedStorageKey] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,13 +40,11 @@ export function ProfilePage() {
 
         const contentType = file.type;
         if (contentType !== "image/jpeg" && contentType !== "image/png" && contentType !== "image/webp") {
-            setProfileError(t("profile.invalidFileFormat", "Invalid file format. Please use JPEG, PNG, or WebP."));
+            toast.error(t("profile.invalidFileFormat", "Invalid file format. Please use JPEG, PNG, or WebP."));
             return;
         }
 
         setWorking(true);
-        setSuccessMessage(null);
-        setProfileError(null);
 
         try {
             // 1. Get presigned URL
@@ -81,9 +77,9 @@ export function ProfilePage() {
 
             // 3. Set preview URL
             setAvatarUrl(`https://cdn.tasky.local/${storageKey}`);
-            setSuccessMessage(t("profile.avatarUploaded", "Avatar uploaded to bucket. Click Save below to apply."));
+            toast.success(t("profile.avatarUploaded", "Avatar uploaded to bucket. Click Save below to apply."));
         } catch (error) {
-            setProfileError(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setWorking(false);
             if (fileInputRef.current) {
@@ -96,17 +92,15 @@ export function ProfilePage() {
         if (!session) return;
 
         setWorking(true);
-        setSuccessMessage(null);
-        setProfileError(null);
         try {
             const updated = await apiClient.updateMyProfile(session.accessToken, {
                 full_name: fullName.trim(),
                 avatar_url: avatarUrl.trim().length > 0 ? avatarUrl.trim() : null
             });
             setProfile(updated);
-            setSuccessMessage(t("profile.profileUpdated", "Profile updated successfully"));
+            toast.success(t("profile.profileUpdated", "Profile updated successfully"));
         } catch (error) {
-            setProfileError(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setWorking(false);
         }
@@ -116,15 +110,13 @@ export function ProfilePage() {
         if (!session) return;
 
         setWorking(true);
-        setSuccessMessage(null);
-        setProfileError(null);
         try {
             const user = await apiClient.activateTaskerRole(session.accessToken);
             updateSessionUser(user);
             await refreshProfile();
-            setSuccessMessage(t("profile.taskerActivated", "Welcome to the Tasker network! Your role is now active."));
+            toast.success(t("profile.taskerActivated", "Welcome to the Tasker network! Your role is now active."));
         } catch (error) {
-            setProfileError(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setWorking(false);
         }
@@ -226,29 +218,6 @@ export function ProfilePage() {
                                 />
                             </div>
 
-                            <AnimatePresence>
-                                {profileError && (
-                                    <motion.div
-                                        initial={{opacity: 0, height: 0}}
-                                        animate={{opacity: 1, height: "auto"}}
-                                        className="p-4 bg-destructive/10 text-destructive rounded-xl text-sm font-medium border border-destructive/20 flex items-start gap-3"
-                                    >
-                                        <ShieldAlert className="w-5 h-5 mt-0.5 shrink-0"/>
-                                        <p>{profileError}</p>
-                                    </motion.div>
-                                )}
-                                {successMessage && (
-                                    <motion.div
-                                        initial={{opacity: 0, height: 0}}
-                                        animate={{opacity: 1, height: "auto"}}
-                                        className="p-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-sm font-medium border border-emerald-500/20 flex items-start gap-3"
-                                    >
-                                        <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0"/>
-                                        <p>{successMessage}</p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
                             <div className="pt-2 flex flex-col sm:flex-row gap-3">
                                 <Button
                                     className="h-12 px-8 text-base rounded-xl font-semibold shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px] sm:w-auto w-full"
@@ -331,8 +300,6 @@ export function ProfilePage() {
                         Save profile
                     </Button>
                     {generatedStorageKey && <p>Issued avatar storage key: {generatedStorageKey}</p>}
-                    {successMessage === t("profile.profileUpdated", "Profile updated successfully") &&
-                        <p>Profile saved.</p>}
                 </div>
             </div>
         </ScreenFrame>

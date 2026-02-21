@@ -14,8 +14,8 @@ import { Coins, Loader2, MapPin, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function TaskerFeedPage() {
-    const { apiClient, session, trackClientEvent } = useAppContext();
-    const { t, i18n } = useTranslation();
+    const {apiClient, session, trackClientEvent} = useAppContext();
+    const {t, i18n} = useTranslation();
 
     const [filters, setFilters] = useState<{
         categoryId: string;
@@ -33,10 +33,10 @@ export function TaskerFeedPage() {
     const [working, setWorking] = useState(false);
     const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-    const { data: categoriesPage, isLoading: loadingCategories } = useCategoriesQuery(apiClient, session?.accessToken);
+    const {data: categoriesPage, isLoading: loadingCategories} = useCategoriesQuery(apiClient, session?.accessToken);
     const categories = categoriesPage?.data || [];
 
-    const { data: tasksPage, isLoading: loadingTasks, refetch: refetchTasks, error: tasksError } = useTasksQuery(
+    const {data: tasksPage, isLoading: loadingTasks, refetch: refetchTasks, error: tasksError} = useTasksQuery(
         apiClient,
         session?.accessToken,
         {
@@ -61,8 +61,8 @@ export function TaskerFeedPage() {
         setActionMessage(null);
         try {
             await apiClient.applyToTask(session.accessToken, taskId, draft);
-            setApplyDrafts((prev) => ({ ...prev, [taskId]: "" }));
-            trackClientEvent("APPLICATION_SUBMITTED", { taskId });
+            setApplyDrafts((prev) => ({...prev, [taskId]: ""}));
+            trackClientEvent("APPLICATION_SUBMITTED", {taskId});
             setActionMessage(t("taskerFeed.msgSent", "Application sent."));
             void refetchTasks();
         } catch (error) {
@@ -89,7 +89,7 @@ export function TaskerFeedPage() {
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="feed-category"
-                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
+                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
                                 <select
                                     id="feed-category"
                                     className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
@@ -110,31 +110,31 @@ export function TaskerFeedPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="feed-lat"
-                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
+                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
                                 <Input
                                     id="feed-lat"
                                     value={filters.lat}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, lat: e.target.value }))}
+                                    onChange={(e) => setFilters(prev => ({...prev, lat: e.target.value}))}
                                     className="rounded-xl bg-background"
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="feed-lng"
-                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
+                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
                                 <Input
                                     id="feed-lng"
                                     value={filters.lng}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, lng: e.target.value }))}
+                                    onChange={(e) => setFilters(prev => ({...prev, lng: e.target.value}))}
                                     className="rounded-xl bg-background"
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="feed-radius"
-                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
+                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
                                 <Input
                                     id="feed-radius"
                                     value={filters.radiusKm}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, radiusKm: e.target.value }))}
+                                    onChange={(e) => setFilters(prev => ({...prev, radiusKm: e.target.value}))}
                                     className="rounded-xl bg-background"
                                 />
                             </div>
@@ -150,7 +150,7 @@ export function TaskerFeedPage() {
                 <div className="grid gap-6">
                     {loadingTasks && (
                         <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4">
-                            <Loader2 className="w-8 h-8 animate-spin" />
+                            <Loader2 className="w-8 h-8 animate-spin"/>
                             <p className="text-sm font-medium">{t("taskerFeed.scanningMsg", "Scanning for available tasks...")}</p>
                         </div>
                     )}
@@ -158,14 +158,14 @@ export function TaskerFeedPage() {
                     {!loadingTasks && taskCards.length === 0 && !tasksError && (
                         <div
                             className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
-                            <Search className="w-10 h-10 opacity-20" />
+                            <Search className="w-10 h-10 opacity-20"/>
                             <p className="text-sm font-medium opacity-60">{t("taskerFeed.noTasksFound", "No open tasks found in this area.")}</p>
                         </div>
                     )}
 
                     {!loadingTasks && taskCards.map((task: PublicTask) => (
                         <Card key={task.id}
-                            className="overflow-hidden shadow-md hover:shadow-lg transition-all group border-border">
+                              className="overflow-hidden shadow-md hover:shadow-lg transition-all group border-border">
                             <CardHeader className="bg-muted/10 pb-4">
                                 <div className="flex justify-between items-start gap-4">
                                     <div className="space-y-1.5">
@@ -183,7 +183,7 @@ export function TaskerFeedPage() {
                                     <div className="text-right whitespace-nowrap">
                                         <div className="text-2xl font-display font-bold text-foreground">
                                             {task.budget.toLocaleString("en-US")} <span
-                                                className="text-sm font-normal text-muted-foreground">MNT</span>
+                                            className="text-sm font-normal text-muted-foreground">MNT</span>
                                         </div>
                                     </div>
                                 </div>
@@ -191,12 +191,12 @@ export function TaskerFeedPage() {
                             <CardContent
                                 className="pt-4 pb-4 border-t border-border/40 grid md:grid-cols-2 gap-4 text-sm bg-card">
                                 <div className="flex items-center gap-2 text-muted-foreground">
-                                    <MapPin className="w-4 h-4 shrink-0 text-primary/70" />
+                                    <MapPin className="w-4 h-4 shrink-0 text-primary/70"/>
                                     <span>{t("taskerFeed.approxLocation", "Approximate location: ")}<strong
                                         className="text-foreground">{task.approximate_location}</strong></span>
                                 </div>
                                 <div className="flex items-center gap-2 text-muted-foreground">
-                                    <Coins className="w-4 h-4 shrink-0 text-primary/70" />
+                                    <Coins className="w-4 h-4 shrink-0 text-primary/70"/>
                                     <span>{t("taskerFeed.payStructure", "Pay structure: ")}<strong
                                         className="text-foreground">{t("taskerFeed.fixedPrice", "Fixed price")}</strong></span>
                                 </div>
@@ -204,14 +204,14 @@ export function TaskerFeedPage() {
                             <CardFooter
                                 className="bg-muted/10 border-t border-border/40 p-4 pt-4 flex flex-col items-stretch gap-3">
                                 <Label htmlFor={`apply-${task.id}`}
-                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">
+                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">
                                     {t("taskerFeed.appMessageLabel", "Application message")}
                                 </Label>
                                 <Textarea
                                     id={`apply-${task.id}`}
                                     className="resize-none min-h-[80px] rounded-xl bg-background border-border/60 focus:bg-background transition-colors"
                                     value={applyDrafts[task.id] ?? ""}
-                                    onChange={(e) => setApplyDrafts(prev => ({ ...prev, [task.id]: e.target.value }))}
+                                    onChange={(e) => setApplyDrafts(prev => ({...prev, [task.id]: e.target.value}))}
                                     placeholder={t("taskerFeed.appMessagePlaceholder", "Explain why you are the best fit for this task...")}
                                 />
                                 <div className="flex justify-end mt-1">
@@ -220,7 +220,7 @@ export function TaskerFeedPage() {
                                         onClick={() => void applyToTask(task.id)}
                                         className="rounded-xl shadow-lg hover:translate-y-[-1px] transition-all font-semibold"
                                     >
-                                        {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                                        {working ? <Loader2 className="w-4 h-4 mr-2 animate-spin"/> : null}
                                         {t("taskerFeed.applyButton", "Apply to task")}
                                     </Button>
                                 </div>

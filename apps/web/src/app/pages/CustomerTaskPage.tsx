@@ -12,10 +12,11 @@ import { LocationPicker } from "../../components/TaskCreation/LocationPicker";
 import { PhotoUploadManager } from "../../components/TaskCreation/PhotoUploadManager";
 import { createTaskSchema } from "@tasky/core";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export function CustomerTaskPage() {
-    const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
-    const { t, i18n } = useTranslation();
+    const {apiClient, session, setProfileError, trackClientEvent} = useAppContext();
+    const {t, i18n} = useTranslation();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoryId, setCategoryId] = useState("");
@@ -29,7 +30,6 @@ export function CustomerTaskPage() {
     const [createdTasks, setCreatedTasks] = useState<Task[]>([]);
     const [applicationsByTask, setApplicationsByTask] = useState<Record<string, TaskApplication[]>>({});
     const [working, setWorking] = useState(false);
-    const [message, setMessage] = useState<string | null>(null);
     const [errorMap, setErrorMap] = useState<Record<string, string>>({});
 
     useEffect(() => {
@@ -58,7 +58,6 @@ export function CustomerTaskPage() {
 
         setWorking(true);
         setErrorMap({});
-        setMessage("");
 
         try {
             const formData = {
@@ -75,8 +74,8 @@ export function CustomerTaskPage() {
 
             const created = await apiClient.createTask(session.accessToken, validatedData);
             setCreatedTasks((previous) => [created, ...previous]);
-            trackClientEvent("TASK_POSTED", { taskId: created.id });
-            setMessage(t("customerTask.successMessage", "Task created successfully."));
+            trackClientEvent("TASK_POSTED", {taskId: created.id});
+            toast.success(t("customerTask.successMessage", "Task created successfully."));
 
             // Optional: reset form after creation
             setDescription("");
@@ -94,7 +93,7 @@ export function CustomerTaskPage() {
                 });
                 setErrorMap(map);
             } else {
-                setMessage(parseError(error));
+                toast.error(parseError(error));
             }
         } finally {
             setWorking(false);
@@ -107,13 +106,12 @@ export function CustomerTaskPage() {
         }
 
         setWorking(true);
-        setMessage(null);
         try {
             const response = await apiClient.listTaskApplications(session.accessToken, taskId);
-            setApplicationsByTask((previous) => ({ ...previous, [taskId]: response.data }));
-            setMessage(t("customerTask.loadedCount", "Loaded {{count}} application(s).", { count: response.data.length }));
+            setApplicationsByTask((previous) => ({...previous, [taskId]: response.data}));
+            toast.success(t("customerTask.loadedCount", "Loaded {{count}} application(s).", {count: response.data.length}));
         } catch (error) {
-            setMessage(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setWorking(false);
         }
@@ -215,8 +213,6 @@ export function CustomerTaskPage() {
                         />
                         {errorMap.location_lat &&
                             <p className="text-xs text-destructive">{t("customerTask.locationRequired", "Location is required")}</p>}
-
-                        {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
                     </CardContent>
                     <CardFooter className="justify-end">
                         <Button

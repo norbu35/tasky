@@ -1,14 +1,15 @@
-import type {paths} from "@tasky/sdk";
-import {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import {AnimatePresence, motion} from "framer-motion";
-import {ArrowRight, Loader2, Shield, ShieldAlert, User, Wrench} from "lucide-react";
+import type { paths } from "@tasky/sdk";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRight, Loader2, Shield, ShieldAlert, User, Wrench } from "lucide-react";
 
-import {Button} from "../../components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../../components/ui/card";
-import {useAppContext} from "../context/AppContext";
-import {parseError} from "../utils/errorHandling";
-import {useTranslation} from "react-i18next";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { useAppContext } from "../context/AppContext";
+import { parseError } from "../utils/errorHandling";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 type DevRole = "CUSTOMER" | "TASKER" | "ADMIN";
 
@@ -69,7 +70,6 @@ export function AuthPage() {
     const location = useLocation();
     const {t} = useTranslation();
 
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [facebookReady, setFacebookReady] = useState<boolean>(() =>
         typeof window !== "undefined" && typeof window.FB !== "undefined"
@@ -126,14 +126,14 @@ export function AuthPage() {
     }, [facebookAppId]);
 
     const handleFacebookLogin = async (): Promise<void> => {
+        if (!window.FB) {
+            toast.error("Facebook login is unavailable right now.");
+            return;
+        }
+
         setLoading(true);
-        setErrorMessage(null);
 
         try {
-            if (!window.FB) {
-                throw new Error("Facebook login is unavailable right now.");
-            }
-
             const accessToken = await new Promise<string>((resolve, reject) => {
                 window.FB?.login(
                     (response) => {
@@ -154,7 +154,7 @@ export function AuthPage() {
             await refreshProfile();
             navigate(returnPath, {replace: true});
         } catch (error) {
-            setErrorMessage(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setLoading(false);
         }
@@ -162,7 +162,6 @@ export function AuthPage() {
 
     const handleDevLogin = async (role: DevRole): Promise<void> => {
         setLoading(true);
-        setErrorMessage(null);
         try {
             const devPhone =
                 role === "ADMIN" ? "+97600000000" : role === "TASKER" ? "+97611111111" : "+97622222222";
@@ -172,7 +171,7 @@ export function AuthPage() {
             await refreshProfile();
             navigate(returnPath, {replace: true});
         } catch (error) {
-            setErrorMessage(parseError(error));
+            toast.error(parseError(error));
         } finally {
             setLoading(false);
         }
@@ -273,19 +272,6 @@ export function AuthPage() {
                                         Missing `VITE_FACEBOOK_APP_ID` configuration.
                                     </p>
                                 )}
-
-                                <AnimatePresence>
-                                    {errorMessage && (
-                                        <motion.div
-                                            initial={{opacity: 0, height: 0}}
-                                            animate={{opacity: 1, height: "auto"}}
-                                            className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm font-medium border border-destructive/20 flex items-start gap-2"
-                                        >
-                                            <ShieldAlert className="w-4 h-4 mt-0.5 shrink-0"/>
-                                            <p>{errorMessage}</p>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
                             </CardContent>
 
                             <CardFooter className="pt-2 pb-8"/>

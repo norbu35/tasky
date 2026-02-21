@@ -1,4 +1,4 @@
-import type {components} from "@tasky/sdk";
+import type { components } from "@tasky/sdk";
 
 export type User = components["schemas"]["User"];
 export type Profile = components["schemas"]["Profile"];
@@ -570,6 +570,9 @@ export class HttpApiClient implements ApiClient {
         });
 
         if (!response.ok) {
+            if (response.status === 401 && typeof window !== "undefined") {
+                window.dispatchEvent(new Event("tasky:unauthorized"));
+            }
             throw new ApiError(response.status, await readErrorMessage(response));
         }
 
@@ -589,6 +592,9 @@ export class HttpApiClient implements ApiClient {
         });
 
         if (!response.ok) {
+            if (response.status === 401 && typeof window !== "undefined") {
+                window.dispatchEvent(new Event("tasky:unauthorized"));
+            }
             throw new ApiError(response.status, await readErrorMessage(response));
         }
     }

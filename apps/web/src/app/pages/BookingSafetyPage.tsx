@@ -23,6 +23,7 @@ import {
 } from "../../components/ui/dialog";
 import { useAppContext } from "../context/AppContext";
 import { ScreenFrame } from "../layout/ScreenFrame";
+import { toast } from "sonner";
 import { parseError } from "../utils/errorHandling";
 import { createIdempotencyKey } from "../utils/idempotency";
 import { useTranslation } from "react-i18next";
@@ -32,15 +33,14 @@ import { Badge } from "../../components/ui/badge";
 import { Skeleton } from "../../components/ui/skeleton";
 
 export function BookingSafetyPage() {
-    const { apiClient, session, trackClientEvent } = useAppContext();
+    const {apiClient, session, trackClientEvent} = useAppContext();
     const queryClient = useQueryClient();
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     // UI State
     const [activeTab, setActiveTab] = useState("ASSIGNED");
     const [actionDialog, setActionDialog] = useState<"CANCEL" | "COMPLETE" | "REVIEW" | "DISPUTE" | null>(null);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-    const [actionError, setActionError] = useState<string | null>(null);
 
     // Form states
     const [rating, setRating] = useState(5);
@@ -48,7 +48,7 @@ export function BookingSafetyPage() {
     const [disputeCategory, setDisputeCategory] = useState("");
     const [disputeReason, setDisputeReason] = useState("");
 
-    const { data: bookingsArray = [], isLoading, error } = useQuery({
+    const {data: bookingsArray = [], isLoading, error} = useQuery({
         queryKey: ["bookings", session?.accessToken, activeTab],
         queryFn: async () => {
             if (!session) throw new Error("Not authenticated");
@@ -64,7 +64,6 @@ export function BookingSafetyPage() {
     const closeDialog = () => {
         setActionDialog(null);
         setSelectedBooking(null);
-        setActionError(null);
         setReviewComment("");
         setRating(5);
         setDisputeCategory("");
@@ -72,7 +71,7 @@ export function BookingSafetyPage() {
     };
 
     const invalidateBookings = () => {
-        queryClient.invalidateQueries({ queryKey: ["bookings"] });
+        queryClient.invalidateQueries({queryKey: ["bookings"]});
     };
 
     const cancelMutation = useMutation({
@@ -82,8 +81,9 @@ export function BookingSafetyPage() {
         onSuccess: () => {
             invalidateBookings();
             closeDialog();
+            toast.success(t("bookingSafety.cancelSuccess", "Booking cancelled successfully."));
         },
-        onError: (err) => setActionError(parseError(err))
+        onError: (err) => toast.error(parseError(err))
     });
 
     const completeMutation = useMutation({
@@ -91,11 +91,12 @@ export function BookingSafetyPage() {
             return apiClient.completeBooking(session!.accessToken, bookingId, createIdempotencyKey("complete"));
         },
         onSuccess: (booking) => {
-            trackClientEvent("BOOKING_COMPLETED", { bookingId: booking.id, taskId: booking.task_id });
+            trackClientEvent("BOOKING_COMPLETED", {bookingId: booking.id, taskId: booking.task_id});
             invalidateBookings();
             closeDialog();
+            toast.success(t("bookingSafety.completeSuccess", "Booking marked as completed."));
         },
-        onError: (err) => setActionError(parseError(err))
+        onError: (err) => toast.error(parseError(err))
     });
 
     const reviewMutation = useMutation({
@@ -107,8 +108,9 @@ export function BookingSafetyPage() {
         onSuccess: () => {
             invalidateBookings();
             closeDialog();
+            toast.success(t("bookingSafety.reviewSuccess", "Review submitted successfully."));
         },
-        onError: (err) => setActionError(parseError(err))
+        onError: (err) => toast.error(parseError(err))
     });
 
     const disputeMutation = useMutation({
@@ -117,11 +119,12 @@ export function BookingSafetyPage() {
             return apiClient.raiseDispute(session!.accessToken, bookingId, combinedReason, createIdempotencyKey("dispute"));
         },
         onSuccess: (dispute) => {
-            trackClientEvent("DISPUTE_RAISED", { bookingId: dispute.booking_id, taskId: selectedBooking?.task_id });
+            trackClientEvent("DISPUTE_RAISED", {bookingId: dispute.booking_id, taskId: selectedBooking?.task_id});
             invalidateBookings();
             closeDialog();
+            toast.success(t("bookingSafety.disputeSuccess", "Dispute raised successfully."));
         },
-        onError: (err) => setActionError(parseError(err))
+        onError: (err) => toast.error(parseError(err))
     });
 
     const openDialog = (type: typeof actionDialog, booking: Booking) => {
@@ -154,8 +157,8 @@ export function BookingSafetyPage() {
                     <div className="mt-6">
                         {isLoading ? (
                             <div className="grid gap-4 md:grid-cols-2">
-                                <Skeleton className="h-[200px] w-full" />
-                                <Skeleton className="h-[200px] w-full" />
+                                <Skeleton className="h-[200px] w-full"/>
+                                <Skeleton className="h-[200px] w-full"/>
                             </div>
                         ) : bookingsArray.length === 0 ? (
                             <div className="text-center py-16 border-2 border-dashed rounded-lg bg-muted/10">
@@ -165,7 +168,7 @@ export function BookingSafetyPage() {
                             <div className="grid gap-4 md:grid-cols-2">
                                 {bookingsArray.map(booking => (
                                     <Card key={booking.id}
-                                        className="relative overflow-hidden group hover:border-primary/40 transition-colors">
+                                          className="relative overflow-hidden group hover:border-primary/40 transition-colors">
                                         <CardHeader className="pb-3 pr-10">
                                             <div className="flex justify-between items-start">
                                                 <CardTitle
@@ -184,7 +187,7 @@ export function BookingSafetyPage() {
                                             </div>
                                             <CardDescription>
                                                 {t("bookingSafety.taskerId", "Tasker ID:")} <span
-                                                    className="font-mono text-xs">{booking.tasker_id.slice(0, 8)}...</span>
+                                                className="font-mono text-xs">{booking.tasker_id.slice(0, 8)}...</span>
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent className="pb-4">
@@ -208,7 +211,7 @@ export function BookingSafetyPage() {
                                                     <Button variant="ghost" className="h-8 w-8 p-0">
                                                         <span
                                                             className="sr-only">{t("bookingSafety.openMenu", "Open menu")}</span>
-                                                        <MoreVertical className="h-4 w-4" />
+                                                        <MoreVertical className="h-4 w-4"/>
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-[160px]">
@@ -217,13 +220,13 @@ export function BookingSafetyPage() {
                                                             <DropdownMenuItem
                                                                 onClick={() => openDialog("COMPLETE", booking)}>
                                                                 <CheckCircle
-                                                                    className="mr-2 h-4 w-4" /> {t("bookingSafety.completeTask", "Complete Task")}
+                                                                    className="mr-2 h-4 w-4"/> {t("bookingSafety.completeTask", "Complete Task")}
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem
                                                                 onClick={() => openDialog("CANCEL", booking)}
                                                                 className="text-destructive">
                                                                 <XCircle
-                                                                    className="mr-2 h-4 w-4" /> {t("bookingSafety.cancelBooking", "Cancel Booking")}
+                                                                    className="mr-2 h-4 w-4"/> {t("bookingSafety.cancelBooking", "Cancel Booking")}
                                                             </DropdownMenuItem>
                                                         </>
                                                     )}
@@ -232,13 +235,13 @@ export function BookingSafetyPage() {
                                                             <DropdownMenuItem
                                                                 onClick={() => openDialog("REVIEW", booking)}>
                                                                 <Star
-                                                                    className="mr-2 h-4 w-4" /> {t("bookingSafety.leaveReview", "Leave Review")}
+                                                                    className="mr-2 h-4 w-4"/> {t("bookingSafety.leaveReview", "Leave Review")}
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem
                                                                 onClick={() => openDialog("DISPUTE", booking)}
                                                                 className="text-amber-600 focus:text-amber-600">
                                                                 <ShieldAlert
-                                                                    className="mr-2 h-4 w-4" /> {t("bookingSafety.raiseDispute", "Raise Dispute")}
+                                                                    className="mr-2 h-4 w-4"/> {t("bookingSafety.raiseDispute", "Raise Dispute")}
                                                             </DropdownMenuItem>
                                                         </>
                                                     )}
@@ -267,14 +270,12 @@ export function BookingSafetyPage() {
                             {t("bookingSafety.cancelDesc", "Are you sure you want to cancel this booking? This action cannot be undone and may incur cancellation fees.")}
                         </DialogDescription>
                     </DialogHeader>
-                    {actionError &&
-                        <Alert variant="destructive"><AlertDescription>{actionError}</AlertDescription></Alert>}
                     <DialogFooter className="mt-4">
                         <Button variant="secondary" onClick={closeDialog}
-                            disabled={cancelMutation.isPending}>{t("bookingSafety.closeBtn", "Close")}</Button>
+                                disabled={cancelMutation.isPending}>{t("bookingSafety.closeBtn", "Close")}</Button>
                         <Button className="bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() => cancelMutation.mutate(selectedBooking!.id)}
-                            disabled={cancelMutation.isPending}>
+                                onClick={() => cancelMutation.mutate(selectedBooking!.id)}
+                                disabled={cancelMutation.isPending}>
                             {cancelMutation.isPending ? t("bookingSafety.cancellingBtn", "Cancelling...") : t("bookingSafety.yesCancelBtn", "Yes, Cancel")}
                         </Button>
                     </DialogFooter>
@@ -290,13 +291,11 @@ export function BookingSafetyPage() {
                             {t("bookingSafety.completeDesc", "Mark this booking as successfully completed. This will release payment to the Tasker.")}
                         </DialogDescription>
                     </DialogHeader>
-                    {actionError &&
-                        <Alert variant="destructive"><AlertDescription>{actionError}</AlertDescription></Alert>}
                     <DialogFooter className="mt-4">
                         <Button variant="secondary" onClick={closeDialog}
-                            disabled={completeMutation.isPending}>{t("bookingSafety.closeBtn", "Close")}</Button>
+                                disabled={completeMutation.isPending}>{t("bookingSafety.closeBtn", "Close")}</Button>
                         <Button onClick={() => completeMutation.mutate(selectedBooking!.id)}
-                            disabled={completeMutation.isPending}>
+                                disabled={completeMutation.isPending}>
                             {completeMutation.isPending ? t("bookingSafety.completingBtn", "Completing...") : t("bookingSafety.markCompletedBtn", "Mark Completed")}
                         </Button>
                     </DialogFooter>
@@ -333,13 +332,11 @@ export function BookingSafetyPage() {
                             />
                         </div>
                     </div>
-                    {actionError &&
-                        <Alert variant="destructive"><AlertDescription>{actionError}</AlertDescription></Alert>}
                     <DialogFooter>
                         <Button variant="secondary" onClick={closeDialog}
-                            disabled={reviewMutation.isPending}>{t("bookingSafety.cancelActionBtn", "Cancel")}</Button>
+                                disabled={reviewMutation.isPending}>{t("bookingSafety.cancelActionBtn", "Cancel")}</Button>
                         <Button onClick={() => reviewMutation.mutate(selectedBooking!.id)}
-                            disabled={reviewMutation.isPending}>
+                                disabled={reviewMutation.isPending}>
                             {reviewMutation.isPending ? t("bookingSafety.submittingBtn", "Submitting...") : t("bookingSafety.submitReviewBtn", "Submit Review")}
                         </Button>
                     </DialogFooter>
@@ -351,7 +348,7 @@ export function BookingSafetyPage() {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle className="text-destructive flex items-center gap-2">
-                            <ShieldAlert className="w-5 h-5" /> {t("bookingSafety.disputeTitle", "Raise a Dispute")}
+                            <ShieldAlert className="w-5 h-5"/> {t("bookingSafety.disputeTitle", "Raise a Dispute")}
                         </DialogTitle>
                         <DialogDescription>
                             {t("bookingSafety.disputeDesc", "If you have issues with a completed task (e.g., poor quality, damage), you can raise a dispute for our Trust & Safety team to review.")}
@@ -368,7 +365,7 @@ export function BookingSafetyPage() {
                                 onChange={(e) => setDisputeCategory(e.target.value)}
                             >
                                 <option value=""
-                                    disabled>{t("bookingSafety.selectReason", "Select a reason...")}</option>
+                                        disabled>{t("bookingSafety.selectReason", "Select a reason...")}</option>
                                 <option
                                     value="POOR_QUALITY">{t("bookingSafety.reasonQuality", "Poor Quality of Work")}</option>
                                 <option
@@ -392,14 +389,12 @@ export function BookingSafetyPage() {
                             />
                         </div>
                     </div>
-                    {actionError &&
-                        <Alert variant="destructive"><AlertDescription>{actionError}</AlertDescription></Alert>}
                     <DialogFooter>
                         <Button variant="secondary" onClick={closeDialog}
-                            disabled={disputeMutation.isPending}>{t("bookingSafety.cancelActionBtn", "Cancel")}</Button>
+                                disabled={disputeMutation.isPending}>{t("bookingSafety.cancelActionBtn", "Cancel")}</Button>
                         <Button className="bg-red-600 hover:bg-red-700 text-white"
-                            onClick={() => disputeMutation.mutate(selectedBooking!.id)}
-                            disabled={disputeMutation.isPending || disputeReason.length < 10 || !disputeCategory}>
+                                onClick={() => disputeMutation.mutate(selectedBooking!.id)}
+                                disabled={disputeMutation.isPending || disputeReason.length < 10 || !disputeCategory}>
                             {disputeMutation.isPending ? t("bookingSafety.submittingBtn", "Submitting...") : t("bookingSafety.submitDisputeBtn", "Submit Dispute")}
                         </Button>
                     </DialogFooter>

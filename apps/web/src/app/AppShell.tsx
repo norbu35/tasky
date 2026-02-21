@@ -1,10 +1,14 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
-import type {ApiClient, AuthTokens, Profile, User} from "../lib/apiClient";
-import type {ActorRole, ClientAnalyticsTracker, ClientEventName} from "../lib/clientAnalytics";
-import {AppContext} from "./context/AppContext";
-import {AppRoutes} from "./router/AppRoutes";
-import type {AppContextValue} from "./types";
-import {parseError} from "./utils/errorHandling";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ApiClient, AuthTokens, Profile, User } from "../lib/apiClient";
+import type { ActorRole, ClientAnalyticsTracker, ClientEventName } from "../lib/clientAnalytics";
+import { AppContext } from "./context/AppContext";
+import { AppRoutes } from "./router/AppRoutes";
+import { Toaster } from "../components/ui/sonner";
+import { toast } from "sonner";
+import { ErrorBoundary } from "react-error-boundary";
+import { GlobalErrorFallback } from "./components/GlobalErrorFallback";
+import type { AppContextValue } from "./types";
+import { parseError } from "./utils/errorHandling";
 
 export function AppShell({
                              apiClient,
@@ -36,11 +40,11 @@ export function AppShell({
             const loaded = await apiClient.getMyProfile(session.accessToken);
             setProfile(loaded);
         } catch (error) {
-            setProfileError(parseError(error));
+            setProfileError(parseError(error, analyticsTracker));
         } finally {
             setProfileBusy(false);
         }
-    }, [apiClient, session]);
+    }, [analyticsTracker, apiClient, session]);
 
     useEffect(() => {
         void refreshProfile();
@@ -52,6 +56,16 @@ export function AppShell({
         setProfileError(null);
         setProfileBusy(false);
     }, []);
+
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            signOut();
+            toast.error("Session expired. Please log in again.");
+        };
+
+        window.addEventListener("tasky:unauthorized", handleUnauthorized);
+        return () => window.removeEventListener("tasky:unauthorized", handleUnauthorized);
+    }, [signOut]);
 
     const updateSessionUser = useCallback((user: User) => {
         setSession((previous) => {
@@ -97,12 +111,15 @@ export function AppShell({
             signOut,
             trackClientEvent
         }),
-        [apiClient, locale, profile, refreshProfile, session, setSession, signOut, trackClientEvent, updateSessionUser]
+        [apiClient, locale, profile, profileBusy, profileError, refreshProfile, session, signOut, trackClientEvent, updateSessionUser]
     );
 
     return (
         <AppContext.Provider value={value}>
-            <AppRoutes/>
+            <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
+                <AppRoutes/>
+            </ErrorBoundary>
+            <Toaster position="bottom-right"/>
         </AppContext.Provider>
     );
 }

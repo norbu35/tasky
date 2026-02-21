@@ -5,7 +5,8 @@ export type ClientEventName =
     | "BOOKING_CONFIRMED"
     | "PAYMENT_INITIATED"
     | "BOOKING_COMPLETED"
-    | "DISPUTE_RAISED";
+    | "DISPUTE_RAISED"
+    | "ERROR_LOGGED";
 
 export type ActorRole = "CUSTOMER" | "TASKER" | "ADMIN" | "UNKNOWN";
 export type ClientPlatform = "WEB" | "MOBILE";
@@ -17,6 +18,8 @@ export interface ClientAnalyticsEvent {
     actor_role: ActorRole;
     task_id?: string;
     booking_id?: string;
+    error_message?: string;
+    error_stack?: string;
     timestamp: string;
 }
 

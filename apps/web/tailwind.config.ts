@@ -1,4 +1,4 @@
-import type {Config} from "tailwindcss";
+import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
@@ -43,7 +43,8 @@ const config: Config = {
                 sm: "calc(var(--radius) - 4px)"
             },
             fontFamily: {
-                sans: ["Inter", "sans-serif"]
+                sans: ["Inter", "sans-serif"],
+                display: ["Outfit", "sans-serif"]
             }
         }
     },
