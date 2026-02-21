@@ -13,7 +13,11 @@ This document outlines the strategic 4-Phase Go-To-Market and Business Model pla
 1. **Student App Installation Push:** Market aggressively offline (universities, local malls, markets) targeting students looking for side income. The messaging must transparently state the platform is new, directing them to install the app and **turn on push notifications**. 
 2. **Notification-Driven Engagement:** Because the app sits passively on their phone, it costs them nothing to keep it. When a task is finally posted, the push notification acts as the trigger, immediately mobilizing the latent student workforce without requiring you to pay them a retainer.
 3. **Automated Cross-Posting (Facebook):** To bootstrap the customer demand side, automatically syndicate every task posted on Tasky to relevant local Facebook Groups (e.g., job boards, community groups in Ulaanbaatar). This bridges the gap between your new platform and where the audience currently lives.
-4. **Constrain the Market (Hyper-Local):** Focus these efforts on specific districts or task types (like tutoring, delivery, or simple labor) to maximize the chance of a successful match.
+4. **Constrain the Market (Hyper-Local & Category Specific):** To guarantee liquidity, focus these efforts on specific, high-frequency task categories mapped directly to your two initial Tasker pools:
+   - **Pool A (University Students):** Target the "Delivery & Errands" and "Cleaning" categories. These require zero formal qualifications, making them perfect for students looking for quick, flexible income between classes.
+   - **Pool B ("100 Ail" Craftsman District):** Setup posters and guerilla marketing in the building materials district targeting skilled and semi-skilled laborers. Map this pool specifically to the "Handyman", "Moving & Hauling", "Furniture Assembly", and "Painting" categories.
+   
+By rigidly restricting the initial marketing to *just* these 6 categories, you artificially compress the market, significantly increasing the mathematical probability that a posted task will find a willing Tasker within minutes.
 
 ---
 
