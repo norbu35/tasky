@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
+import { Modal, StyleSheet, Text, View, ScrollView, Alert, Image, Dimensions } from 'react-native';
 import { PublicTask } from '../../../lib/mobileApiClient';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useAuthStore } from '../../../store/authStore';
 import { VerificationModal } from '../../verification/components/VerificationModal';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
 
 const { colors, typography, spacing } = mobileTheme;
+const { width } = Dimensions.get('window');
 
 interface Props {
   task: PublicTask | null;
@@ -58,6 +59,16 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
       <ScrollView style={styles.container}>
         <Text style={styles.category}>{task.category?.name_mn || task.category?.name}</Text>
         <Text style={styles.description}>{task.description}</Text>
+
+        {task.photo_urls && task.photo_urls.length > 0 && (
+          <View style={styles.carouselContainer}>
+            <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
+              {task.photo_urls.map((url, idx) => (
+                <Image key={idx} source={{ uri: url }} style={styles.carouselImage} />
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <View style={styles.metaBox}>
           <Text style={styles.metaLabel}>Budget</Text>
@@ -129,6 +140,17 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     lineHeight: 24,
     marginBottom: 24,
+  },
+  carouselContainer: {
+    height: 250,
+    marginBottom: 24,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  carouselImage: {
+    width: width - 40, // 20 padding on each side
+    height: 250,
+    resizeMode: 'cover',
   },
   metaBox: {
     backgroundColor: colors.card,
