@@ -9,6 +9,9 @@ tasky:
     enabled: true
   auth:
     otp-test-code: "123456"
+  facebook:
+    app-id: "934714008897101"
+    app-secret: "1d9b7d23a7c9e15ab95fd3af378cf293"
   security:
     jwt-secret: "dev-only-jwt-secret-not-for-production-use-replace-me-1234567890"
     encryption-key: "xBN9U7Shl9TxpE+B4H8C68T0oPuEht0SGeyQf4o/yag="
