@@ -128,6 +128,18 @@ export interface MobileApiClient {
     ): Promise<string>;
 
     unregisterDevice(accessToken: string, token: string): Promise<void>;
+
+    getVerificationStatus(accessToken: string): Promise<{ status: string; admin_notes?: string; submitted_at?: string }>;
+
+    getVerificationUploadUrl(
+        accessToken: string,
+        payload: { content_type: string; document_side: "FRONT" | "BACK" | "SELFIE" }
+    ): Promise<{ upload_url: string; storage_key: string }>;
+
+    submitVerification(
+        accessToken: string,
+        payload: { id_card_front_key: string; id_card_back_key: string; selfie_key: string }
+    ): Promise<void>;
 }
 
 export class ApiError extends Error {
@@ -478,6 +490,42 @@ export class HttpMobileApiClient implements MobileApiClient {
 
     unregisterDevice(accessToken: string, token: string): Promise<void> {
         return this.requestVoid(`/notifications/devices/${encodeURIComponent(token)}`, {method: "DELETE"}, accessToken);
+    }
+
+    getVerificationStatus(accessToken: string): Promise<{ status: string; admin_notes?: string; submitted_at?: string }> {
+        return this.requestJson<{ status: string; admin_notes?: string; submitted_at?: string }>(
+            "/verification/status",
+            { method: "GET" },
+            accessToken
+        );
+    }
+
+    getVerificationUploadUrl(
+        accessToken: string,
+        payload: { content_type: string; document_side: "FRONT" | "BACK" | "SELFIE" }
+    ): Promise<{ upload_url: string; storage_key: string }> {
+        return this.requestJson<{ upload_url: string; storage_key: string }>(
+            "/verification/upload-url",
+            {
+                method: "POST",
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
+    }
+
+    submitVerification(
+        accessToken: string,
+        payload: { id_card_front_key: string; id_card_back_key: string; selfie_key: string }
+    ): Promise<void> {
+        return this.requestVoid(
+            "/verification/submit",
+            {
+                method: "POST",
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
     }
 
     private async requestJson<T>(
