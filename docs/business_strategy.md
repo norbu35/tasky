@@ -6,14 +6,14 @@ This document outlines the strategic 4-Phase Go-To-Market and Business Model pla
 ---
 
 ### Phase 1: The Liquidity Phase (0% Commission)
-**The Goal:** Reach "Liquidity"—the state where a posted task is accepted almost immediately, and a Tasker opening the app consistently finds work.
+**The Goal:** Reach "Liquidity" by building an initial pool of Taskers without heavy financial outlay. 
 **The Revenue:** $0 
 
-**Key Execution Steps:**
-1. **Constrain the Market (Hyper-Local):** Launch in one specific district or for one specific high-frequency task category (e.g., exclusively "Apartment Cleaning" or "Delivery").
-2. **Seed the Supply (Taskers) First:** Manually recruit a core group of 20-30 highly motivated, vetted Taskers. We may need to guarantee them an hourly rate to stay "on call" during launch week.
-3. **Subsidize the Demand (Customers):** Aggressively market to customers in the launch district offering "First Task Free" or heavy discounts. *Tasky pays the Tasker their full rate out of startup capital.*
-4. **Do Things That Don't Scale:** Call every customer after their task. Help every Tasker set up their profile. If a Tasker cancels, the founding team must show up to do the task to protect the brand.
+**Key Execution Steps (Zero-Cost Growth Hacking):**
+1. **Student App Installation Push:** Market aggressively offline (universities, local malls, markets) targeting students looking for side income. The messaging must transparently state the platform is new, directing them to install the app and **turn on push notifications**. 
+2. **Notification-Driven Engagement:** Because the app sits passively on their phone, it costs them nothing to keep it. When a task is finally posted, the push notification acts as the trigger, immediately mobilizing the latent student workforce without requiring you to pay them a retainer.
+3. **Automated Cross-Posting (Facebook):** To bootstrap the customer demand side, automatically syndicate every task posted on Tasky to relevant local Facebook Groups (e.g., job boards, community groups in Ulaanbaatar). This bridges the gap between your new platform and where the audience currently lives.
+4. **Constrain the Market (Hyper-Local):** Focus these efforts on specific districts or task types (like tutoring, delivery, or simple labor) to maximize the chance of a successful match.
 
 ---
 
