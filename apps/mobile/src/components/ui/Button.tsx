@@ -9,7 +9,9 @@ import {
     TouchableOpacityProps,
     ViewStyle,
 } from 'react-native';
-import { colors, radius, spacing, typography } from '@tasky/design-tokens';
+import { mobileTheme } from '../../design/tokenAdapter';
+
+const { colors, radius, spacing, typography } = mobileTheme;
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
@@ -43,8 +45,8 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
 
         const buttonStyles: StyleProp<ViewStyle> = [
             styles.base,
-            styles[`${variant}Variant` as keyof typeof styles],
-            styles[`${size}Size` as keyof typeof styles],
+            styles[`${variant}Variant` as keyof typeof styles] as ViewStyle,
+            styles[`${size}Size` as keyof typeof styles] as ViewStyle,
             !isInteractive ? styles.disabled : undefined,
             style,
         ];
@@ -60,7 +62,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                 {...props}
             >
                 {isLoading ? (
-                    <ActivityIndicator color={textColor}/>
+                    <ActivityIndicator color={textColor} />
                 ) : children ? (
                     children
                 ) : (
@@ -68,7 +70,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                         style={[
                             styles.text,
                             styles[`${size}Text` as keyof typeof styles],
-                            {color: textColor},
+                            { color: textColor },
                             textStyle,
                         ]}
                     >
@@ -85,15 +87,15 @@ Button.displayName = 'Button';
 function getTextColor(variant: ButtonVariant): string {
     switch (variant) {
         case 'secondary':
-            return colors.secondary.foreground;
+            return colors.secondaryForeground;
         case 'outline':
         case 'ghost':
             return colors.foreground;
         case 'destructive':
-            return colors.destructive.foreground;
+            return colors.dangerForeground;
         case 'default':
         default:
-            return colors.primary.foreground;
+            return colors.primaryForeground;
     }
 }
 
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: parseInt(radius.DEFAULT),
+        borderRadius: 8,
     },
     disabled: {
         opacity: 0.5,
@@ -110,10 +112,10 @@ const styles = StyleSheet.create({
 
     // Variants
     defaultVariant: {
-        backgroundColor: colors.primary.DEFAULT,
+        backgroundColor: colors.primary,
     },
     secondaryVariant: {
-        backgroundColor: colors.secondary.DEFAULT,
+        backgroundColor: colors.secondary,
     },
     outlineVariant: {
         backgroundColor: 'transparent',
@@ -124,21 +126,21 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     destructiveVariant: {
-        backgroundColor: colors.destructive.DEFAULT,
+        backgroundColor: colors.danger,
     },
 
     // Sizes
     defaultSize: {
-        paddingHorizontal: parseInt(spacing[4]),
-        paddingVertical: parseInt(spacing[2]),
+        paddingHorizontal: 16,
+        paddingVertical: 8,
         minHeight: 40,
     },
     smSize: {
-        paddingHorizontal: parseInt(spacing[3]),
+        paddingHorizontal: 12,
         minHeight: 36,
     },
     lgSize: {
-        paddingHorizontal: parseInt(spacing[8]),
+        paddingHorizontal: 32,
         minHeight: 44,
     },
     iconSize: {
@@ -149,18 +151,17 @@ const styles = StyleSheet.create({
 
     // Text
     text: {
-        fontFamily: typography.fontFamily.sans,
         fontWeight: '500',
         textAlign: 'center',
-    },
+    } as TextStyle,
     defaultText: {
-        fontSize: parseInt(typography.fontSize.sm),
+        fontSize: 14,
     },
     smText: {
-        fontSize: parseInt(typography.fontSize.xs),
+        fontSize: 12,
     },
     lgText: {
-        fontSize: parseInt(typography.fontSize.sm),
+        fontSize: 14,
     },
     iconText: {
         display: 'none',

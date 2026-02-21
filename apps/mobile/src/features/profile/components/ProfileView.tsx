@@ -4,7 +4,7 @@ import { Button, FormField, Input } from '../../../components/ui';
 import { useEffect, useState } from 'react';
 
 export function ProfileView() {
-    const {data: profile, isLoading} = useMyProfile();
+    const { data: profile, isLoading } = useMyProfile();
     const updateMutation = useUpdateProfile();
     const signOut = useSignOut();
 
@@ -14,22 +14,22 @@ export function ProfileView() {
         if (profile) setName(profile.full_name);
     }, [profile]);
 
-    if (isLoading) return <Text style={{padding: 20}}>Loading...</Text>;
+    if (isLoading) return <Text style={{ padding: 20 }}>Loading...</Text>;
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Profile</Text>
             <FormField label="Full Name">
-                <Input value={name} onChangeText={setName}/>
+                <Input value={name} onChangeText={setName} />
             </FormField>
-            <View style={styles.spacer}/>
+            <View style={styles.spacer} />
             <Button
                 label="Save Changes"
-                onPress={() => updateMutation.mutate({full_name: name})}
-                loading={updateMutation.isPending}
+                onPress={() => updateMutation.mutate({ full_name: name })}
+                isLoading={updateMutation.isPending}
             />
-            <View style={styles.spacer}/>
-            <Button label="Sign Out" variant="secondary" onPress={signOut}/>
+            <View style={styles.spacer} />
+            <Button label="Sign Out" variant="secondary" onPress={signOut} />
         </View>
     );
 }
