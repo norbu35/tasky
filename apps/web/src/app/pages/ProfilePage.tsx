@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Camera, User, CheckCircle2, ShieldAlert, ShieldCheck, Loader2, Save, Sparkles } from "lucide-react";
+import {useEffect, useRef, useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
+import {Camera, CheckCircle2, Loader2, Save, ShieldAlert, ShieldCheck, Sparkles, User} from "lucide-react";
 
-import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { useAppContext } from "../context/AppContext";
-import { ScreenFrame } from "../layout/ScreenFrame";
-import { parseError } from "../utils/errorHandling";
-import { useTranslation } from "react-i18next";
+import {Button} from "../../components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../../components/ui/card";
+import {Input} from "../../components/ui/input";
+import {Label} from "../../components/ui/label";
+import {useAppContext} from "../context/AppContext";
+import {ScreenFrame} from "../layout/ScreenFrame";
+import {parseError} from "../utils/errorHandling";
+import {useTranslation} from "react-i18next";
 
 export function ProfilePage() {
     const {
@@ -22,7 +22,7 @@ export function ProfilePage() {
         refreshProfile,
         updateSessionUser
     } = useAppContext();
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
@@ -52,7 +52,10 @@ export function ProfilePage() {
 
         try {
             // 1. Get presigned URL
-            const { uploadUrl, storageKey } = await apiClient.getAvatarUploadUrl(session.accessToken, contentType as "image/jpeg" | "image/png" | "image/webp");
+            const {
+                uploadUrl,
+                storageKey
+            } = await apiClient.getAvatarUploadUrl(session.accessToken, contentType as "image/jpeg" | "image/png" | "image/webp");
 
             // Store it just in case the test relies on it
             setGeneratedStorageKey(storageKey);
@@ -71,7 +74,8 @@ export function ProfilePage() {
                 try {
                     const text = await uploadRes.text();
                     s3Err += ` ${text}`;
-                } catch { /* ignore */ }
+                } catch { /* ignore */
+                }
                 throw new Error(s3Err);
             }
 
@@ -133,7 +137,7 @@ export function ProfilePage() {
         <ScreenFrame>
             <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
                 <div className="flex items-center gap-3 px-2">
-                    <User className="w-8 h-8 text-primary" />
+                    <User className="w-8 h-8 text-primary"/>
                     <div>
                         <h1 className="text-3xl font-display font-bold tracking-tight">{t("profile.yourProfile", "Your Profile")}</h1>
                         <p className="text-muted-foreground">{t("profile.manageInfo", "Manage your personal information and preferences.")}</p>
@@ -141,16 +145,20 @@ export function ProfilePage() {
                 </div>
 
                 <Card className="border-border shadow-xl rounded-3xl overflow-hidden backdrop-blur-xl bg-card">
-                    <CardHeader className="border-b border-border/50 bg-muted/20 pb-6 flex flex-row items-start justify-between">
+                    <CardHeader
+                        className="border-b border-border/50 bg-muted/20 pb-6 flex flex-row items-start justify-between">
                         <div className="space-y-1">
-                            <CardTitle className="text-xl font-display">{t("profile.identityAvatar", "Identity & Avatar")}</CardTitle>
+                            <CardTitle
+                                className="text-xl font-display">{t("profile.identityAvatar", "Identity & Avatar")}</CardTitle>
                             <CardDescription>
                                 {t("profile.addPhoto", "Add a photo to build trust with others in the network.")}
                             </CardDescription>
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">{t("profile.networkRole", "Network Role")}</span>
-                            <div className={`px-3 py-1 text-xs font-bold uppercase rounded-full border ${isCustomer ? 'bg-secondary text-secondary-foreground border-primary/20' : 'bg-accent/10 text-accent-foreground border-accent/30'}`}>
+                            <span
+                                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">{t("profile.networkRole", "Network Role")}</span>
+                            <div
+                                className={`px-3 py-1 text-xs font-bold uppercase rounded-full border ${isCustomer ? 'bg-secondary text-secondary-foreground border-primary/20' : 'bg-accent/10 text-accent-foreground border-accent/30'}`}>
                                 {profile?.role ?? "UNKNOWN"}
                             </div>
                         </div>
@@ -173,14 +181,16 @@ export function ProfilePage() {
                                         }}
                                     />
                                 ) : (
-                                    <User className="w-12 h-12 text-primary/40" />
+                                    <User className="w-12 h-12 text-primary/40"/>
                                 )}
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Camera className="w-8 h-8 text-white" />
+                                <div
+                                    className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Camera className="w-8 h-8 text-white"/>
                                 </div>
                                 {working && (
-                                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center backdrop-blur-sm">
-                                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                                    <div
+                                        className="absolute inset-0 bg-background/50 flex items-center justify-center backdrop-blur-sm">
+                                        <Loader2 className="w-6 h-6 animate-spin text-primary"/>
                                     </div>
                                 )}
                             </div>
@@ -201,7 +211,8 @@ export function ProfilePage() {
                         {/* Form Fields */}
                         <div className="space-y-5">
                             <div className="space-y-2">
-                                <Label htmlFor="full-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                <Label htmlFor="full-name"
+                                       className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                     {t("profile.displayName", "Display Name")}
                                 </Label>
                                 <Input
@@ -218,21 +229,21 @@ export function ProfilePage() {
                             <AnimatePresence>
                                 {profileError && (
                                     <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
+                                        initial={{opacity: 0, height: 0}}
+                                        animate={{opacity: 1, height: "auto"}}
                                         className="p-4 bg-destructive/10 text-destructive rounded-xl text-sm font-medium border border-destructive/20 flex items-start gap-3"
                                     >
-                                        <ShieldAlert className="w-5 h-5 mt-0.5 shrink-0" />
+                                        <ShieldAlert className="w-5 h-5 mt-0.5 shrink-0"/>
                                         <p>{profileError}</p>
                                     </motion.div>
                                 )}
                                 {successMessage && (
                                     <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
+                                        initial={{opacity: 0, height: 0}}
+                                        animate={{opacity: 1, height: "auto"}}
                                         className="p-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl text-sm font-medium border border-emerald-500/20 flex items-start gap-3"
                                     >
-                                        <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" />
+                                        <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0"/>
                                         <p>{successMessage}</p>
                                     </motion.div>
                                 )}
@@ -244,7 +255,8 @@ export function ProfilePage() {
                                     disabled={working || !fullName.trim()}
                                     onClick={saveProfile}
                                 >
-                                    {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
+                                    {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin"/> :
+                                        <Save className="mr-2 h-5 w-5"/>}
                                     {t("profile.saveChanges", "Save Changes")}
                                 </Button>
                             </div>
@@ -261,8 +273,10 @@ export function ProfilePage() {
                     </CardHeader>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
                         <div className="bg-muted/40 rounded-2xl p-5 border border-border flex items-start gap-4">
-                            <div className={`p-2 rounded-xl mt-1 ${statusVerified ? 'bg-emerald-500/20 text-emerald-600' : 'bg-accent/20 text-accent-foreground'}`}>
-                                {statusVerified ? <ShieldCheck className="w-6 h-6" /> : <ShieldAlert className="w-6 h-6" />}
+                            <div
+                                className={`p-2 rounded-xl mt-1 ${statusVerified ? 'bg-emerald-500/20 text-emerald-600' : 'bg-accent/20 text-accent-foreground'}`}>
+                                {statusVerified ? <ShieldCheck className="w-6 h-6"/> :
+                                    <ShieldAlert className="w-6 h-6"/>}
                             </div>
                             <div className="space-y-1">
                                 <p className="font-semibold text-sm">{t("profile.status", "Status")}</p>
@@ -274,10 +288,11 @@ export function ProfilePage() {
 
                         {/* Tasker Activation Callout */}
                         {isCustomer && (
-                            <div className="bg-primary/5 text-primary rounded-2xl p-5 border border-primary/20 flex flex-col justify-between items-start gap-4">
+                            <div
+                                className="bg-primary/5 text-primary rounded-2xl p-5 border border-primary/20 flex flex-col justify-between items-start gap-4">
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <Sparkles className="w-5 h-5 text-accent" />
+                                        <Sparkles className="w-5 h-5 text-accent"/>
                                         <h3 className="font-semibold text-lg font-display text-foreground">{t("profile.earnWithTasky", "Earn with Tasky")}</h3>
                                     </div>
                                     <p className="text-sm text-foreground/70">
@@ -290,7 +305,7 @@ export function ProfilePage() {
                                     variant="secondary"
                                     className="w-full sm:w-auto rounded-xl shadow-sm"
                                 >
-                                    {working ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                                    {working ? <Loader2 className="h-4 w-4 animate-spin mr-2"/> : null}
                                     {t("profile.activateTaskerBtn", "Activate Tasker Account")}
                                 </Button>
                             </div>
@@ -316,7 +331,8 @@ export function ProfilePage() {
                         Save profile
                     </Button>
                     {generatedStorageKey && <p>Issued avatar storage key: {generatedStorageKey}</p>}
-                    {successMessage === t("profile.profileUpdated", "Profile updated successfully") && <p>Profile saved.</p>}
+                    {successMessage === t("profile.profileUpdated", "Profile updated successfully") &&
+                        <p>Profile saved.</p>}
                 </div>
             </div>
         </ScreenFrame>

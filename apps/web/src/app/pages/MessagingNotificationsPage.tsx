@@ -1,21 +1,21 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { type Conversation, type Message } from "../../lib/apiClient";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Switch } from "../../components/ui/switch";
-import { Label } from "../../components/ui/label";
-import { useAppContext } from "../context/AppContext";
-import { ScreenFrame } from "../layout/ScreenFrame";
-import { parseError } from "../utils/errorHandling";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { Send, Bell, BellOff, MessageSquareText, Search } from "lucide-react";
-import { Client } from "@stomp/stompjs";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {type Conversation, type Message} from "../../lib/apiClient";
+import {Button} from "../../components/ui/button";
+import {Input} from "../../components/ui/input";
+import {Switch} from "../../components/ui/switch";
+import {Label} from "../../components/ui/label";
+import {useAppContext} from "../context/AppContext";
+import {ScreenFrame} from "../layout/ScreenFrame";
+import {parseError} from "../utils/errorHandling";
+import {Avatar, AvatarFallback} from "../../components/ui/avatar";
+import {Bell, BellOff, MessageSquareText, Search, Send} from "lucide-react";
+import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 export function MessagingNotificationsPage() {
-    const { apiClient, session, profile } = useAppContext();
-    const { t } = useTranslation();
+    const {apiClient, session, profile} = useAppContext();
+    const {t} = useTranslation();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -103,7 +103,7 @@ export function MessagingNotificationsPage() {
 
     const scrollToBottom = () => {
         setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
         }, 100);
     };
 
@@ -133,7 +133,7 @@ export function MessagingNotificationsPage() {
             if (checked) {
                 // Generate a mock web token
                 const mockToken = "ExponentPushToken[mock-web-" + Date.now() + "]";
-                await apiClient.registerDevice(session.accessToken, { token: mockToken, platform: "WEB" });
+                await apiClient.registerDevice(session.accessToken, {token: mockToken, platform: "WEB"});
                 setStatusMessage(t("messaging.pushEnabled", "Push notifications enabled."));
             } else {
                 // Unregister mock logic (assumes API doesn't mind which token visually, just testing the call)
@@ -149,7 +149,7 @@ export function MessagingNotificationsPage() {
     };
 
     const selectedConvData = conversations.find(c => c.id === selectedConvId);
-    // @ts-ignore - booking_id is attached by the backend DTO despite interface definition
+    // @ts-expect-error - booking_id is attached by the backend DTO despite interface definition
     const bookingId = selectedConvData?.booking_id as string | undefined;
 
     return (
@@ -158,16 +158,20 @@ export function MessagingNotificationsPage() {
                 <div className="w-full flex justify-between items-center mb-4">
                     <h1 className="text-3xl font-bold tracking-tight">{t("messaging.inboxTitle", "Inbox")}</h1>
                     <div className="flex items-center gap-2 border px-3 py-1.5 rounded-full bg-card">
-                        <Label htmlFor="push-toggle" className="text-sm font-medium cursor-pointer flex gap-1 items-center">
-                            {pushEnabled ? <Bell className="w-4 h-4 text-green-600" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
+                        <Label htmlFor="push-toggle"
+                               className="text-sm font-medium cursor-pointer flex gap-1 items-center">
+                            {pushEnabled ? <Bell className="w-4 h-4 text-green-600"/> :
+                                <BellOff className="w-4 h-4 text-muted-foreground"/>}
                             {t("messaging.notificationsLabel", "Notifications")}
                         </Label>
-                        <Switch id="push-toggle" checked={pushEnabled} onCheckedChange={handlePushToggle} disabled={working} />
+                        <Switch id="push-toggle" checked={pushEnabled} onCheckedChange={handlePushToggle}
+                                disabled={working}/>
                     </div>
                 </div>
 
                 {statusMessage && (
-                    <div className="w-full mb-4 px-4 py-2 bg-primary/10 text-primary rounded-md text-sm border-primary/20 border">
+                    <div
+                        className="w-full mb-4 px-4 py-2 bg-primary/10 text-primary rounded-md text-sm border-primary/20 border">
                         {statusMessage}
                     </div>
                 )}
@@ -177,14 +181,16 @@ export function MessagingNotificationsPage() {
                     <div className="w-full md:w-80 border-r flex flex-col bg-muted/20 flex-shrink-0">
                         <div className="p-4 border-b bg-card">
                             <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input className="w-full pl-9 bg-background" placeholder={t("messaging.searchPlaceholder", "Search chats...")} />
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
+                                <Input className="w-full pl-9 bg-background"
+                                       placeholder={t("messaging.searchPlaceholder", "Search chats...")}/>
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto">
                             {conversations.length === 0 ? (
-                                <div className="p-6 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
-                                    <MessageSquareText className="w-8 h-8 opacity-20" />
+                                <div
+                                    className="p-6 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
+                                    <MessageSquareText className="w-8 h-8 opacity-20"/>
                                     {t("messaging.noConversations", "No conversations found.")}
                                 </div>
                             ) : (
@@ -200,8 +206,11 @@ export function MessagingNotificationsPage() {
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="overflow-hidden">
-                                            <div className="font-medium text-sm truncate">{conv.task_title || t("messaging.taskDiscussion", "Task Discussion")}</div>
-                                            <div className="text-xs text-muted-foreground truncate">{conv.id.substring(0, 8)}...</div>
+                                            <div
+                                                className="font-medium text-sm truncate">{conv.task_title || t("messaging.taskDiscussion", "Task Discussion")}</div>
+                                            <div
+                                                className="text-xs text-muted-foreground truncate">{conv.id.substring(0, 8)}...
+                                            </div>
                                         </div>
                                     </button>
                                 ))
@@ -213,28 +222,37 @@ export function MessagingNotificationsPage() {
                     <div className="hidden md:flex flex-col flex-1 bg-background relative">
                         {selectedConvId ? (
                             <>
-                                <div className="p-4 border-b bg-card/80 backdrop-blur-sm z-10 shadow-sm flex items-center justify-between">
-                                    <div className="font-medium">{selectedConvData?.task_title || t("messaging.taskChat", "Task Chat")}</div>
+                                <div
+                                    className="p-4 border-b bg-card/80 backdrop-blur-sm z-10 shadow-sm flex items-center justify-between">
+                                    <div
+                                        className="font-medium">{selectedConvData?.task_title || t("messaging.taskChat", "Task Chat")}</div>
                                     {bookingId && (
-                                        <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{t("messaging.bookingPrefix", "Booking #")}{bookingId.substring(0, 6)}...</div>
+                                        <div
+                                            className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">{t("messaging.bookingPrefix", "Booking #")}{bookingId.substring(0, 6)}...</div>
                                     )}
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                                     {[...messages].reverse().map((msg, i) => {
                                         const isMe = msg.sender_id === profile?.id;
                                         return (
-                                            <div key={msg?.id || i} className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
-                                                <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${isMe ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted rounded-tl-sm'
+                                            <div key={msg?.id || i}
+                                                 className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
+                                                <div
+                                                    className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${isMe ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted rounded-tl-sm'
                                                     }`}>
                                                     {msg?.content || ""}
-                                                    <div className={`text-[10px] mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}>
-                                                        {msg?.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                                                    <div
+                                                        className={`text-[10px] mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right`}>
+                                                        {msg?.created_at ? new Date(msg.created_at).toLocaleTimeString([], {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        }) : ""}
                                                     </div>
                                                 </div>
                                             </div>
                                         );
                                     })}
-                                    <div ref={messagesEndRef} />
+                                    <div ref={messagesEndRef}/>
                                 </div>
                                 <div className="p-4 bg-muted/20 border-t">
                                     <form onSubmit={sendMessage} className="flex gap-2">
@@ -245,8 +263,9 @@ export function MessagingNotificationsPage() {
                                             className="flex-1 bg-background"
                                             disabled={working}
                                         />
-                                        <Button type="submit" disabled={working || !messageDraft.trim()} size="default" className="px-3">
-                                            <Send className="w-4 h-4" />
+                                        <Button type="submit" disabled={working || !messageDraft.trim()} size="default"
+                                                className="px-3">
+                                            <Send className="w-4 h-4"/>
                                             <span className="sr-only">{t("messaging.sendAriaLabel", "Send")}</span>
                                         </Button>
                                     </form>
@@ -254,7 +273,7 @@ export function MessagingNotificationsPage() {
                             </>
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-                                <MessageSquareText className="w-16 h-16 opacity-10 mb-4" />
+                                <MessageSquareText className="w-16 h-16 opacity-10 mb-4"/>
                                 <p>{t("messaging.selectConversationPrompt", "Select a conversation to start messaging")}</p>
                             </div>
                         )}

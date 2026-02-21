@@ -204,7 +204,7 @@ export class HttpApiClient implements ApiClient {
             "/auth/facebook",
             {
                 method: "POST",
-                body: JSON.stringify({ access_token: accessToken })
+                body: JSON.stringify({access_token: accessToken})
             }
         ).then((response) => ({
             accessToken: response.access_token,
@@ -242,7 +242,7 @@ export class HttpApiClient implements ApiClient {
             "/users/me/avatar/upload-url",
             {
                 method: "POST",
-                body: JSON.stringify({ content_type: contentType })
+                body: JSON.stringify({content_type: contentType})
             },
             accessToken
         ).then((response) => ({
@@ -261,7 +261,7 @@ export class HttpApiClient implements ApiClient {
             path,
             {
                 method: "POST",
-                body: JSON.stringify({ content_type: contentType })
+                body: JSON.stringify({content_type: contentType})
             },
             accessToken
         ).then((response) => ({
@@ -321,9 +321,9 @@ export class HttpApiClient implements ApiClient {
     listMyTasks(accessToken: string): Promise<CursorPage<Task>> {
         return this.requestJson<CursorPage<Task>>(
             "/tasks/mine",
-            { method: "GET" },
+            {method: "GET"},
             accessToken,
-            { limit: 100 }
+            {limit: 100}
         );
     }
 

@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 
 export function CustomerTaskPage() {
     const { apiClient, session, setProfileError, trackClientEvent } = useAppContext();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const [categoryId, setCategoryId] = useState("");
@@ -85,11 +85,12 @@ export function CustomerTaskPage() {
             setScheduledAt("");
             setPhotoKeys([]);
             setCategoryId(categories[0]?.id || "");
-        } catch (error: any) {
-            if (error.name === "ZodError") {
+        } catch (error: unknown) {
+            const err = error as Error & { name?: string; errors?: { path: (string | number)[]; message: string }[] };
+            if (err.name === "ZodError" && err.errors) {
                 const map: Record<string, string> = {};
-                error.errors.forEach((e: any) => {
-                    if (e.path[0]) map[e.path[0]] = e.message;
+                err.errors.forEach((e) => {
+                    if (e.path[0]) map[e.path[0].toString()] = e.message;
                 });
                 setErrorMap(map);
             } else {
@@ -140,7 +141,7 @@ export function CustomerTaskPage() {
                                 <option value="">{t("customerTask.selectCategory", "Select category")}</option>
                                 {categories.map((category) => (
                                     <option key={category.id} value={category.id}>
-                                        {category.name}
+                                        {i18n.language === "mn" ? category.name_mn : category.name}
                                     </option>
                                 ))}
                             </select>
@@ -151,7 +152,8 @@ export function CustomerTaskPage() {
                             </div>
                         )}
                         <div className="grid gap-2">
-                            <Label htmlFor="task-description">{t("customerTask.taskDetailsLabel", "Task details")}</Label>
+                            <Label
+                                htmlFor="task-description">{t("customerTask.taskDetailsLabel", "Task details")}</Label>
                             <Textarea
                                 id="task-description"
                                 value={description}
@@ -172,14 +174,16 @@ export function CustomerTaskPage() {
                                 {errorMap.budget && <p className="text-xs text-destructive">{errorMap.budget}</p>}
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="task-scheduled-at">{t("customerTask.scheduledAtLabel", "Scheduled at")}</Label>
+                                <Label
+                                    htmlFor="task-scheduled-at">{t("customerTask.scheduledAtLabel", "Scheduled at")}</Label>
                                 <Input
                                     id="task-scheduled-at"
                                     type="datetime-local"
                                     value={scheduledAt}
                                     onChange={(event) => setScheduledAt(event.target.value)}
                                 />
-                                {errorMap.scheduled_at && <p className="text-xs text-destructive">{errorMap.scheduled_at}</p>}
+                                {errorMap.scheduled_at &&
+                                    <p className="text-xs text-destructive">{errorMap.scheduled_at}</p>}
                             </div>
                         </div>
 
@@ -189,14 +193,16 @@ export function CustomerTaskPage() {
                         />
 
                         <div className="grid gap-2">
-                            <Label htmlFor="task-location-text">{t("customerTask.addressDescLabel", "Address description")}</Label>
+                            <Label
+                                htmlFor="task-location-text">{t("customerTask.addressDescLabel", "Address description")}</Label>
                             <Input
                                 id="task-location-text"
                                 value={locationText}
                                 onChange={(event) => setLocationText(event.target.value)}
                                 placeholder={t("customerTask.addressDescPlaceholder", "ХУД, 15-р хороо, Олимп хотхон")}
                             />
-                            {errorMap.location_text && <p className="text-xs text-destructive">{errorMap.location_text}</p>}
+                            {errorMap.location_text &&
+                                <p className="text-xs text-destructive">{errorMap.location_text}</p>}
                         </div>
 
                         <LocationPicker
@@ -207,7 +213,8 @@ export function CustomerTaskPage() {
                                 setLocationLng(lng);
                             }}
                         />
-                        {errorMap.location_lat && <p className="text-xs text-destructive">{t("customerTask.locationRequired", "Location is required")}</p>}
+                        {errorMap.location_lat &&
+                            <p className="text-xs text-destructive">{t("customerTask.locationRequired", "Location is required")}</p>}
 
                         {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
                     </CardContent>

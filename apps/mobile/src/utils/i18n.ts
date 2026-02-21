@@ -1,13 +1,13 @@
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
+import {initReactI18next} from "react-i18next";
 import * as Localization from "expo-localization";
 
 import enTranslation from "../locales/en/translation.json";
 import mnTranslation from "../locales/mn/translation.json";
 
 const resources = {
-    en: { mapping: enTranslation },
-    mn: { mapping: mnTranslation },
+    en: {mapping: enTranslation},
+    mn: {mapping: mnTranslation},
 };
 
 // Fallback to Mongolian if no compatible system language is found
@@ -26,8 +26,8 @@ i18n
     .use(initReactI18next)
     .init({
         resources: {
-            en: { translation: resources.en.mapping },
-            mn: { translation: resources.mn.mapping },
+            en: {translation: resources.en.mapping},
+            mn: {translation: resources.mn.mapping},
         },
         lng: initialLng,
         fallbackLng,

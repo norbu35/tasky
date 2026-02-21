@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { useTasksQuery, useCategoriesQuery } from "@tasky/core";
+import type { Category, PublicTask } from "../../lib/apiClient";
+import { useCategoriesQuery, useTasksQuery } from "@tasky/core";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../../components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useAppContext } from "../context/AppContext";
 import { ScreenFrame } from "../layout/ScreenFrame";
 import { parseError } from "../utils/errorHandling";
-import { MapPin, Coins, Search, Loader2 } from "lucide-react";
+import { Coins, Loader2, MapPin, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function TaskerFeedPage() {
     const { apiClient, session, trackClientEvent } = useAppContext();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [filters, setFilters] = useState<{
         categoryId: string;
@@ -87,22 +88,29 @@ export function TaskerFeedPage() {
                     <CardContent className="pt-6 grid gap-4">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="feed-category" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
+                                <Label htmlFor="feed-category"
+                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
                                 <select
                                     id="feed-category"
                                     className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                     value={filters.categoryId}
-                                    onChange={(event) => setFilters(prev => ({ ...prev, categoryId: event.target.value }))}
+                                    onChange={(event) => setFilters(prev => ({
+                                        ...prev,
+                                        categoryId: event.target.value
+                                    }))}
                                     disabled={loadingCategories}
                                 >
                                     <option value="">{t("taskerFeed.allCategories", "All categories")}</option>
-                                    {categories.map((c: any) => (
-                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    {categories.map((c: Category) => (
+                                        <option key={c.id} value={c.id}>
+                                            {i18n.language === "mn" ? c.name_mn : c.name}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-lat" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
+                                <Label htmlFor="feed-lat"
+                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
                                 <Input
                                     id="feed-lat"
                                     value={filters.lat}
@@ -111,7 +119,8 @@ export function TaskerFeedPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-lng" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
+                                <Label htmlFor="feed-lng"
+                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
                                 <Input
                                     id="feed-lng"
                                     value={filters.lng}
@@ -120,7 +129,8 @@ export function TaskerFeedPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="feed-radius" className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
+                                <Label htmlFor="feed-radius"
+                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
                                 <Input
                                     id="feed-radius"
                                     value={filters.radiusKm}
@@ -132,8 +142,10 @@ export function TaskerFeedPage() {
                     </CardContent>
                 </Card>
 
-                {tasksError && <p className="text-sm text-destructive font-medium p-4 bg-destructive/10 rounded-xl">{parseError(tasksError)}</p>}
-                {actionMessage && <p className="text-sm text-primary font-medium p-4 bg-primary/10 rounded-xl">{actionMessage}</p>}
+                {tasksError &&
+                    <p className="text-sm text-destructive font-medium p-4 bg-destructive/10 rounded-xl">{parseError(tasksError)}</p>}
+                {actionMessage &&
+                    <p className="text-sm text-primary font-medium p-4 bg-primary/10 rounded-xl">{actionMessage}</p>}
 
                 <div className="grid gap-6">
                     {loadingTasks && (
@@ -144,14 +156,16 @@ export function TaskerFeedPage() {
                     )}
 
                     {!loadingTasks && taskCards.length === 0 && !tasksError && (
-                        <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
+                        <div
+                            className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4 bg-muted/20 rounded-xl border border-dashed border-border">
                             <Search className="w-10 h-10 opacity-20" />
                             <p className="text-sm font-medium opacity-60">{t("taskerFeed.noTasksFound", "No open tasks found in this area.")}</p>
                         </div>
                     )}
 
-                    {!loadingTasks && taskCards.map((task: any) => (
-                        <Card key={task.id} className="overflow-hidden shadow-md hover:shadow-lg transition-all group border-border">
+                    {!loadingTasks && taskCards.map((task: PublicTask) => (
+                        <Card key={task.id}
+                            className="overflow-hidden shadow-md hover:shadow-lg transition-all group border-border">
                             <CardHeader className="bg-muted/10 pb-4">
                                 <div className="flex justify-between items-start gap-4">
                                     <div className="space-y-1.5">
@@ -163,27 +177,34 @@ export function TaskerFeedPage() {
                                                 {t("taskerFeed.statusOpen", "Open")}
                                             </Badge>
                                         </div>
-                                        <CardTitle className="text-xl leading-snug font-medium mt-2">{task.description}</CardTitle>
+                                        <CardTitle
+                                            className="text-xl leading-snug font-medium mt-2">{task.description}</CardTitle>
                                     </div>
                                     <div className="text-right whitespace-nowrap">
                                         <div className="text-2xl font-display font-bold text-foreground">
-                                            {task.budget.toLocaleString("en-US")} <span className="text-sm font-normal text-muted-foreground">MNT</span>
+                                            {task.budget.toLocaleString("en-US")} <span
+                                                className="text-sm font-normal text-muted-foreground">MNT</span>
                                         </div>
                                     </div>
                                 </div>
                             </CardHeader>
-                            <CardContent className="pt-4 pb-4 border-t border-border/40 grid md:grid-cols-2 gap-4 text-sm bg-card">
+                            <CardContent
+                                className="pt-4 pb-4 border-t border-border/40 grid md:grid-cols-2 gap-4 text-sm bg-card">
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <MapPin className="w-4 h-4 shrink-0 text-primary/70" />
-                                    <span>{t("taskerFeed.approxLocation", "Approximate location: ")}<strong className="text-foreground">{task.approximate_location}</strong></span>
+                                    <span>{t("taskerFeed.approxLocation", "Approximate location: ")}<strong
+                                        className="text-foreground">{task.approximate_location}</strong></span>
                                 </div>
                                 <div className="flex items-center gap-2 text-muted-foreground">
                                     <Coins className="w-4 h-4 shrink-0 text-primary/70" />
-                                    <span>{t("taskerFeed.payStructure", "Pay structure: ")}<strong className="text-foreground">{t("taskerFeed.fixedPrice", "Fixed price")}</strong></span>
+                                    <span>{t("taskerFeed.payStructure", "Pay structure: ")}<strong
+                                        className="text-foreground">{t("taskerFeed.fixedPrice", "Fixed price")}</strong></span>
                                 </div>
                             </CardContent>
-                            <CardFooter className="bg-muted/10 border-t border-border/40 p-4 pt-4 flex flex-col items-stretch gap-3">
-                                <Label htmlFor={`apply-${task.id}`} className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">
+                            <CardFooter
+                                className="bg-muted/10 border-t border-border/40 p-4 pt-4 flex flex-col items-stretch gap-3">
+                                <Label htmlFor={`apply-${task.id}`}
+                                    className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">
                                     {t("taskerFeed.appMessageLabel", "Application message")}
                                 </Label>
                                 <Textarea

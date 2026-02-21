@@ -1,4 +1,4 @@
-import { z } from "zod";
+import {z} from "zod";
 
 export const createTaskSchema = z.object({
   category_id: z.string().min(1, "Category is required"),

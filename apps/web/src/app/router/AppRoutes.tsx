@@ -1,46 +1,46 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import {Navigate, Route, Routes} from "react-router-dom";
+import {useAppContext} from "../context/AppContext";
 import {
     AuthPage,
     BookingConfirmationPage,
     BookingSafetyPage,
     CustomerDashboardPage,
-    CustomerTaskPage,
     CustomerTaskDetailsPage,
+    CustomerTaskPage,
     MessagingNotificationsPage,
     ProfilePage,
     RestrictedAccountPage,
     TaskerFeedPage,
     TaskerTasksPage
 } from "../pages";
-import { ProtectedRoute, RoleGuard } from "./RouteGuards";
-import { isRestrictedUser } from "../utils/userAccess";
+import {ProtectedRoute, RoleGuard} from "./RouteGuards";
+import {isRestrictedUser} from "../utils/userAccess";
 
 export function HomeRedirect() {
-    const { session, profile } = useAppContext();
+    const {session, profile} = useAppContext();
 
     if (!session) {
-        return <Navigate replace to="/auth" />;
+        return <Navigate replace to="/auth"/>;
     }
 
     if (isRestrictedUser(profile)) {
-        return <Navigate replace to="/banned" />;
+        return <Navigate replace to="/banned"/>;
     }
 
-    return <Navigate replace to="/profile" />;
+    return <Navigate replace to="/profile"/>;
 }
 
 export function AppRoutes() {
-    const { session } = useAppContext();
+    const {session} = useAppContext();
 
     return (
         <Routes>
-            <Route element={<HomeRedirect />} path="/" />
-            <Route element={session ? <Navigate replace to="/profile" /> : <AuthPage />} path="/auth" />
+            <Route element={<HomeRedirect/>} path="/"/>
+            <Route element={session ? <Navigate replace to="/profile"/> : <AuthPage/>} path="/auth"/>
             <Route
                 element={
                     <ProtectedRoute>
-                        <ProfilePage />
+                        <ProfilePage/>
                     </ProtectedRoute>
                 }
                 path="/profile"
@@ -49,7 +49,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <CustomerDashboardPage />
+                            <CustomerDashboardPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -59,7 +59,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <CustomerTaskPage />
+                            <CustomerTaskPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -69,7 +69,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <CustomerTaskPage />
+                            <CustomerTaskPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -79,7 +79,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <CustomerTaskDetailsPage />
+                            <CustomerTaskDetailsPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -89,7 +89,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <BookingConfirmationPage />
+                            <BookingConfirmationPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -99,7 +99,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="CUSTOMER">
-                            <BookingConfirmationPage />
+                            <BookingConfirmationPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -109,7 +109,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="TASKER">
-                            <TaskerFeedPage />
+                            <TaskerFeedPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -119,7 +119,7 @@ export function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <RoleGuard role="TASKER">
-                            <TaskerTasksPage />
+                            <TaskerTasksPage/>
                         </RoleGuard>
                     </ProtectedRoute>
                 }
@@ -128,7 +128,7 @@ export function AppRoutes() {
             <Route
                 element={
                     <ProtectedRoute>
-                        <BookingSafetyPage />
+                        <BookingSafetyPage/>
                     </ProtectedRoute>
                 }
                 path="/booking/safety"
@@ -136,7 +136,7 @@ export function AppRoutes() {
             <Route
                 element={
                     <ProtectedRoute>
-                        <MessagingNotificationsPage />
+                        <MessagingNotificationsPage/>
                     </ProtectedRoute>
                 }
                 path="/communication"
@@ -144,14 +144,14 @@ export function AppRoutes() {
             <Route
                 element={
                     session ? (
-                        <RestrictedAccountPage />
+                        <RestrictedAccountPage/>
                     ) : (
-                        <Navigate replace state={{ from: "/banned" }} to="/auth" />
+                        <Navigate replace state={{from: "/banned"}} to="/auth"/>
                     )
                 }
                 path="/banned"
             />
-            <Route element={<Navigate replace to="/" />} path="*" />
+            <Route element={<Navigate replace to="/"/>} path="*"/>
         </Routes>
     );
 }

@@ -1,9 +1,9 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { render, screen } from "@testing-library/react";
-import { designTokens } from "../../../../packages/design-tokens/tokens";
-import { App } from "../../src/App";
-import type { ApiClient } from "../../src/lib/apiClient";
+import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
+import {render, screen} from "@testing-library/react";
+import {designTokens} from "../../../../packages/design-tokens/tokens";
+import {App} from "../../src/App";
+import type {ApiClient} from "../../src/lib/apiClient";
 
 function hexToRgb(hexColor: string): [number, number, number] {
     const clean = hexColor.replace("#", "");
@@ -97,14 +97,14 @@ describe("Accessibility and parity gates", () => {
             value: {
                 init: vi.fn(),
                 login: vi.fn((callback: (response: { authResponse: { accessToken: string } }) => void) => {
-                    callback({ authResponse: { accessToken: "fb-token-keyboard" } });
+                    callback({authResponse: {accessToken: "fb-token-keyboard"}});
                 })
             }
         });
-        render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
+        render(<App apiClient={buildApiClientMock()} initialRoute="/auth"/>);
 
-        const facebookButton = screen.getByRole("button", { name: "Continue with Facebook" });
-        const customerBypassButton = screen.getByRole("button", { name: "Customer" });
+        const facebookButton = screen.getByRole("button", {name: "Continue with Facebook"});
+        const customerBypassButton = screen.getByRole("button", {name: "Customer"});
 
         facebookButton.focus();
         expect(facebookButton).toHaveFocus();

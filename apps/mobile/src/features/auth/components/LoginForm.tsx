@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, FormField, Input } from '../../../components/ui';
-import { useRequestOtp, useVerifyOtp } from '../hooks/useAuth';
-import { useTranslation } from 'react-i18next';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {Button, FormField, Input} from '../../../components/ui';
+import {useRequestOtp, useVerifyOtp} from '../hooks/useAuth';
+import {useTranslation} from 'react-i18next';
 
 export function LoginForm() {
     const [phone, setPhone] = useState('+976');
     const [code, setCode] = useState('');
     const [step, setStep] = useState<'phone' | 'otp'>('phone');
 
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const requestOtp = useRequestOtp();
     const verifyOtp = useVerifyOtp();
 
@@ -21,7 +21,7 @@ export function LoginForm() {
     };
 
     const handleVerify = () => {
-        verifyOtp.mutate({ phone, code });
+        verifyOtp.mutate({phone, code});
     };
 
     const busy = requestOtp.isPending || verifyOtp.isPending;
@@ -53,9 +53,9 @@ export function LoginForm() {
 
             <View style={styles.actions}>
                 {step === 'phone' ? (
-                    <Button label={t("auth.continue", "Continue")} onPress={handleRequest} loading={busy} />
+                    <Button label={t("auth.continue", "Continue")} onPress={handleRequest} loading={busy}/>
                 ) : (
-                    <Button label={t("auth.verifyLogin", "Verify & Login")} onPress={handleVerify} loading={busy} />
+                    <Button label={t("auth.verifyLogin", "Verify & Login")} onPress={handleVerify} loading={busy}/>
                 )}
             </View>
 

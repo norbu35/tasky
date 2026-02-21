@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { App } from "../../src/App";
-import { buildApiClientMock } from "../setup/mockApiClient";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {afterEach, describe, expect, it, vi} from "vitest";
+import {App} from "../../src/App";
+import {buildApiClientMock} from "../setup/mockApiClient";
 
 afterEach(() => {
     delete (window as Window & { FB?: unknown }).FB;
@@ -29,14 +29,14 @@ describe("Auth Integration", () => {
 
         const apiClient = buildApiClientMock();
 
-        render(<App apiClient={apiClient} initialRoute="/auth" />);
+        render(<App apiClient={apiClient} initialRoute="/auth"/>);
 
-        fireEvent.click(screen.getByRole("button", { name: "Continue with Facebook" }));
+        fireEvent.click(screen.getByRole("button", {name: "Continue with Facebook"}));
 
         await waitFor(() => {
             expect(apiClient.loginWithFacebook).toHaveBeenCalledWith("fb-access-token-1");
         });
 
-        expect(await screen.findByRole("heading", { name: "Profile setup and updates" })).toBeInTheDocument();
+        expect(await screen.findByRole("heading", {name: "Profile setup and updates"})).toBeInTheDocument();
     });
 });

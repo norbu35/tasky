@@ -1,125 +1,126 @@
-import { useState, useRef } from "react";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { ImagePlus, X, Loader2 } from "lucide-react";
-import { useAppContext } from "../../app/context/AppContext";
-import { parseError } from "../../app/utils/errorHandling";
+import {useRef, useState} from "react";
+import {Button} from "../ui/button";
+import {Label} from "../ui/label";
+import {ImagePlus, Loader2, X} from "lucide-react";
+import {useAppContext} from "../../app/context/AppContext";
+import {parseError} from "../../app/utils/errorHandling";
 
 interface PhotoUploadManagerProps {
-  photoKeys: string[];
-  onPhotoKeysChange: (keys: string[]) => void;
-  maxPhotos?: number;
+    photoKeys: string[];
+    onPhotoKeysChange: (keys: string[]) => void;
+    maxPhotos?: number;
 }
 
-export function PhotoUploadManager({ photoKeys, onPhotoKeysChange, maxPhotos = 3 }: PhotoUploadManagerProps) {
-  const { apiClient, session } = useAppContext();
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function PhotoUploadManager({photoKeys, onPhotoKeysChange, maxPhotos = 3}: PhotoUploadManagerProps) {
+    const {apiClient, session} = useAppContext();
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!session) return;
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!session) return;
+        const file = event.target.files?.[0];
+        if (!file) return;
 
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Invalid file type. Only JPG, PNG, and WebP are allowed.");
-      return;
-    }
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            setError("Invalid file type. Only JPG, PNG, and WebP are allowed.");
+            return;
+        }
 
-    if (photoKeys.length >= maxPhotos) {
-      setError(`You can only upload up to ${maxPhotos} photos.`);
-      return;
-    }
+        if (photoKeys.length >= maxPhotos) {
+            setError(`You can only upload up to ${maxPhotos} photos.`);
+            return;
+        }
 
-    setUploading(true);
-    setError(null);
+        setUploading(true);
+        setError(null);
 
-    try {
-      // Get presigned URL
-      const { uploadUrl, storageKey } = await apiClient.getTaskPhotoUploadUrl(
-        session.accessToken,
-        null,
-        file.type as "image/jpeg" | "image/png" | "image/webp"
-      );
+        try {
+            // Get presigned URL
+            const {uploadUrl, storageKey} = await apiClient.getTaskPhotoUploadUrl(
+                session.accessToken,
+                null,
+                file.type as "image/jpeg" | "image/png" | "image/webp"
+            );
 
-      // Upload to storage
-      const uploadResponse = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
+            // Upload to storage
+            const uploadResponse = await fetch(uploadUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": file.type,
+                },
+                body: file,
+            });
 
-      if (!uploadResponse.ok) {
-        throw new Error("Failed to upload image to storage layer.");
-      }
+            if (!uploadResponse.ok) {
+                throw new Error("Failed to upload image to storage layer.");
+            }
 
-      onPhotoKeysChange([...photoKeys, storageKey]);
-    } catch (err) {
-      setError(parseError(err));
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
+            onPhotoKeysChange([...photoKeys, storageKey]);
+        } catch (err) {
+            setError(parseError(err));
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
+    };
 
-  const removePhoto = (indexToRemove: number) => {
-    onPhotoKeysChange(photoKeys.filter((_, index) => index !== indexToRemove));
-  };
+    const removePhoto = (indexToRemove: number) => {
+        onPhotoKeysChange(photoKeys.filter((_, index) => index !== indexToRemove));
+    };
 
-  return (
-    <div className="grid gap-2">
-      <Label>Task Photos ({photoKeys.length}/{maxPhotos})</Label>
-      <div className="flex flex-wrap gap-4">
-        {photoKeys.map((key, index) => (
-          <div key={index} className="relative h-24 w-24 rounded-md border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+    return (
+        <div className="grid gap-2">
+            <Label>Task Photos ({photoKeys.length}/{maxPhotos})</Label>
+            <div className="flex flex-wrap gap-4">
+                {photoKeys.map((key, index) => (
+                    <div key={index}
+                         className="relative h-24 w-24 rounded-md border border-border bg-muted flex flex-col items-center justify-center p-2 text-center overflow-hidden">
             <span className="text-[10px] text-muted-foreground w-full truncate break-all">
               {key.split("/").pop()}
             </span>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-red-500 hover:bg-red-600 text-white"
-              onClick={() => removePhoto(index)}
-              disabled={uploading}
-              type="button"
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        ))}
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 bg-red-500 hover:bg-red-600 text-white"
+                            onClick={() => removePhoto(index)}
+                            disabled={uploading}
+                            type="button"
+                        >
+                            <X className="h-3 w-3"/>
+                        </Button>
+                    </div>
+                ))}
 
-        {photoKeys.length < maxPhotos && (
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="h-24 w-24 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {uploading ? (
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            ) : (
-              <>
-                <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Add Photo</span>
-              </>
-            )}
-          </button>
-        )}
-      </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+                {photoKeys.length < maxPhotos && (
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="h-24 w-24 rounded-md border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {uploading ? (
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
+                        ) : (
+                            <>
+                                <ImagePlus className="h-6 w-6 text-muted-foreground"/>
+                                <span className="text-xs text-muted-foreground">Add Photo</span>
+                            </>
+                        )}
+                    </button>
+                )}
+            </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept="image/jpeg,image/png,image/webp"
-        onChange={handleFileChange}
-      />
-    </div>
-  );
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileChange}
+            />
+        </div>
+    );
 }

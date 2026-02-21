@@ -1,15 +1,15 @@
 import React from 'react';
 import {
-    TouchableOpacity,
-    Text,
-    StyleSheet,
     ActivityIndicator,
-    ViewStyle,
-    TextStyle,
-    TouchableOpacityProps,
     StyleProp,
+    StyleSheet,
+    Text,
+    TextStyle,
+    TouchableOpacity,
+    TouchableOpacityProps,
+    ViewStyle,
 } from 'react-native';
-import { colors, spacing, radius, typography } from '@tasky/design-tokens';
+import {colors, radius, spacing, typography} from '@tasky/design-tokens';
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
@@ -60,7 +60,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                 {...props}
             >
                 {isLoading ? (
-                    <ActivityIndicator color={textColor} />
+                    <ActivityIndicator color={textColor}/>
                 ) : children ? (
                     children
                 ) : (
@@ -68,7 +68,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof TouchableOpacity>
                         style={[
                             styles.text,
                             styles[`${size}Text` as keyof typeof styles],
-                            { color: textColor },
+                            {color: textColor},
                             textStyle,
                         ]}
                     >

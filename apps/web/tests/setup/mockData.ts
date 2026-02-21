@@ -7,7 +7,6 @@ import type {
     Message,
     Profile,
     Review,
-    Task,
     User
 } from "../../src/lib/apiClient";
 

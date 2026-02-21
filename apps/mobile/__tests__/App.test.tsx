@@ -1,21 +1,21 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import { designTokens } from "../../../packages/design-tokens/tokens";
+import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react-native";
+import {designTokens} from "../../../packages/design-tokens/tokens";
 import AuthScreen from "../src/app/(auth)/index";
 import IndexScreen from "../src/app/index";
 import BookingsScreen from "../src/app/(tabs)/bookings";
 import TabsLayout from "../src/app/(tabs)/_layout";
 import FeedScreen from "../src/app/(tabs)/index";
 import ProfileScreen from "../src/app/(tabs)/profile";
-import { Button, FormField, Input, Toast } from "../src/components/ui";
-import { mobileTheme } from "../src/design/tokenAdapter";
-import { LoginForm } from "../src/features/auth/components/LoginForm";
-import { useRequestOtp, useVerifyOtp } from "../src/features/auth/hooks/useAuth";
-import { useBookings } from "../src/features/bookings/hooks/useBookings";
-import { useMyProfile, useSignOut, useUpdateProfile } from "../src/features/profile/hooks/useProfile";
-import { useTasks } from "../src/features/tasks/hooks/useTasks";
-import { createMemoryClientAnalyticsTracker, resolveClientLocale } from "../src/lib/clientAnalytics";
+import {Button, FormField, Input, Toast} from "../src/components/ui";
+import {mobileTheme} from "../src/design/tokenAdapter";
+import {LoginForm} from "../src/features/auth/components/LoginForm";
+import {useRequestOtp, useVerifyOtp} from "../src/features/auth/hooks/useAuth";
+import {useBookings} from "../src/features/bookings/hooks/useBookings";
+import {useMyProfile, useSignOut, useUpdateProfile} from "../src/features/profile/hooks/useProfile";
+import {useTasks} from "../src/features/tasks/hooks/useTasks";
+import {createMemoryClientAnalyticsTracker, resolveClientLocale} from "../src/lib/clientAnalytics";
 import {
     ApiError,
     type AuthTokens,
@@ -26,26 +26,26 @@ import {
     type PublicTask,
     type User
 } from "../src/lib/mobileApiClient";
-import { useAuthStore } from "../src/store/authStore";
-import { parseError } from "../src/utils/errorHandling";
-import { isRestricted } from "../src/utils/routeGuard";
+import {useAuthStore} from "../src/store/authStore";
+import {parseError} from "../src/utils/errorHandling";
+import {isRestricted} from "../src/utils/routeGuard";
 
 jest.mock("expo-router", () => {
     const React = require("react");
-    const { Text, View } = require("react-native");
+    const {Text, View} = require("react-native");
 
-    function RedirectMock({ href }: { href: string }) {
+    function RedirectMock({href}: { href: string }) {
         return <Text testID="redirect-target">{href}</Text>;
     }
 
-    function TabsMock({ children }: { children?: React.ReactNode }) {
+    function TabsMock({children}: { children?: React.ReactNode }) {
         return <View testID="tabs-layout">{children}</View>;
     }
 
     function TabsScreenMock({
-        name,
-        options
-    }: {
+                                name,
+                                options
+                            }: {
         name: string;
         options?: { title?: string };
     }) {
@@ -54,11 +54,11 @@ jest.mock("expo-router", () => {
 
     TabsMock.Screen = TabsScreenMock;
 
-    function StackMock({ children }: { children?: React.ReactNode }) {
+    function StackMock({children}: { children?: React.ReactNode }) {
         return <View testID="stack-layout">{children}</View>;
     }
 
-    function StackScreenMock({ name }: { name: string }) {
+    function StackScreenMock({name}: { name: string }) {
         return <Text testID={`stack-${name}`}>{name}</Text>;
     }
 
@@ -191,7 +191,7 @@ function installDefaultHookMocks(): void {
     mockUseTasks.mockReturnValue({
         data: {
             data: [],
-            cursor: { next: null, prev: null }
+            cursor: {next: null, prev: null}
         },
         isLoading: false
     } as unknown as ReturnType<typeof useTasks>);
@@ -199,7 +199,7 @@ function installDefaultHookMocks(): void {
     mockUseBookings.mockReturnValue({
         data: {
             data: [],
-            cursor: { next: null, prev: null }
+            cursor: {next: null, prev: null}
         },
         isLoading: false
     } as unknown as ReturnType<typeof useBookings>);
@@ -225,15 +225,15 @@ beforeEach(() => {
 
 describe("mobile app structure", () => {
     it("TID-TASK-000-MOBILE-UNIT renders auth-first shell and core error utility", () => {
-        const guestRender = render(<IndexScreen />);
+        const guestRender = render(<IndexScreen/>);
         expect(screen.getByTestId("redirect-target")).toHaveTextContent("/(auth)");
         guestRender.unmount();
 
-        useAuthStore.setState({ session: baseSession });
-        render(<IndexScreen />);
+        useAuthStore.setState({session: baseSession});
+        render(<IndexScreen/>);
         expect(screen.getByTestId("redirect-target")).toHaveTextContent("/(tabs)");
 
-        render(<AuthScreen />);
+        render(<AuthScreen/>);
         expect(screen.getByText("Welcome to Tasky")).toBeTruthy();
         expect(parseError(new ApiError(401, "OTP invalid"))).toBe("OTP invalid");
         expect(parseError(new Error("generic"))).toBe("generic");
@@ -248,16 +248,16 @@ describe("mobile app structure", () => {
     it("TID-TASK-071-MOBILE-COMPONENT-PARITY-BASE renders core primitive states", () => {
         render(
             <FormField label="Phone Number" helperText="Use Mongolian format">
-                <Input placeholder="+976..." value="+97699112233" onChangeText={jest.fn()} />
+                <Input placeholder="+976..." value="+97699112233" onChangeText={jest.fn()}/>
             </FormField>
         );
         expect(screen.getByText("Phone Number")).toBeTruthy();
         expect(screen.getByPlaceholderText("+976...")).toBeTruthy();
 
-        render(<Button label="Continue" isLoading />);
+        render(<Button label="Continue" isLoading/>);
         expect(screen.queryByText("Continue")).toBeFalsy();
 
-        render(<Toast message="Saved" variant="success" />);
+        render(<Toast message="Saved" variant="success"/>);
         expect(screen.getByText("Saved")).toBeTruthy();
     });
 
@@ -292,7 +292,7 @@ describe("mobile app structure", () => {
             error: null
         } as unknown as ReturnType<typeof useVerifyOtp>);
 
-        render(<LoginForm />);
+        render(<LoginForm/>);
 
         fireEvent.changeText(screen.getByPlaceholderText("+976..."), "+97699112233");
         fireEvent.press(screen.getByText("Continue"));
@@ -313,12 +313,12 @@ describe("mobile app structure", () => {
         mockUseTasks.mockReturnValue({
             data: {
                 data: [baseTask],
-                cursor: { next: null, prev: null }
+                cursor: {next: null, prev: null}
             },
             isLoading: false
         } as unknown as ReturnType<typeof useTasks>);
 
-        render(<FeedScreen />);
+        render(<FeedScreen/>);
 
         expect(screen.getByText("Window cleaning")).toBeTruthy();
         expect(screen.getByText("70000 MNT")).toBeTruthy();
@@ -326,7 +326,7 @@ describe("mobile app structure", () => {
     });
 
     it("TID-TASK-082-MOBILE-AUTHZ-GUARDS enforces auth routing and restricted-account checks", () => {
-        const guestRender = render(<TabsLayout />);
+        const guestRender = render(<TabsLayout/>);
         expect(screen.getByTestId("redirect-target")).toHaveTextContent("/(auth)");
         guestRender.unmount();
 
@@ -335,14 +335,14 @@ describe("mobile app structure", () => {
             profile: baseProfile
         });
 
-        render(<TabsLayout />);
+        render(<TabsLayout/>);
         expect(screen.getByTestId("tabs-layout")).toBeTruthy();
         expect(screen.getByText("Explore")).toBeTruthy();
         expect(screen.getByText("Bookings")).toBeTruthy();
         expect(screen.getByText("Profile")).toBeTruthy();
 
-        expect(isRestricted({ ...baseProfile, status: "BANNED" })).toBe(true);
-        expect(isRestricted({ ...baseProfile, status: "SUSPENDED" })).toBe(true);
+        expect(isRestricted({...baseProfile, status: "BANNED"})).toBe(true);
+        expect(isRestricted({...baseProfile, status: "SUSPENDED"})).toBe(true);
         expect(isRestricted(baseProfile)).toBe(false);
     });
 
@@ -350,12 +350,12 @@ describe("mobile app structure", () => {
         mockUseBookings.mockReturnValue({
             data: {
                 data: [baseBooking],
-                cursor: { next: null, prev: null }
+                cursor: {next: null, prev: null}
             },
             isLoading: false
         } as unknown as ReturnType<typeof useBookings>);
 
-        render(<BookingsScreen />);
+        render(<BookingsScreen/>);
 
         expect(screen.getByText("ASSIGNED")).toBeTruthy();
         expect(screen.getByText("Task ID: task-123...")).toBeTruthy();
@@ -377,7 +377,7 @@ describe("mobile app structure", () => {
 
         mockUseSignOut.mockReturnValue(signOut);
 
-        render(<ProfileScreen />);
+        render(<ProfileScreen/>);
 
         await waitFor(() => {
             expect(screen.getByDisplayValue("Test Customer")).toBeTruthy();
@@ -385,7 +385,7 @@ describe("mobile app structure", () => {
 
         fireEvent.changeText(screen.getByDisplayValue("Test Customer"), "Updated Customer");
         fireEvent.press(screen.getByText("Save Changes"));
-        expect(updateMutate).toHaveBeenCalledWith({ full_name: "Updated Customer" });
+        expect(updateMutate).toHaveBeenCalledWith({full_name: "Updated Customer"});
 
         fireEvent.press(screen.getByText("Sign Out"));
         expect(signOut).toHaveBeenCalledTimes(1);
@@ -396,7 +396,7 @@ describe("mobile app structure", () => {
             .fn()
             .mockResolvedValueOnce({
                 ok: true,
-                json: async () => ({ message: "Device registered." })
+                json: async () => ({message: "Device registered."})
             })
             .mockResolvedValueOnce({
                 ok: true,
