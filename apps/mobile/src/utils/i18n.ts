@@ -10,17 +10,14 @@ const resources = {
     mn: {mapping: mnTranslation},
 };
 
-// Fallback to Mongolian if no compatible system language is found
+// Fallback to Mongolian
 const fallbackLng = "mn";
 
-// Get system locales from the device
-const systemLocales = Localization.getLocales();
-const detectedLanguageCode = systemLocales[0]?.languageTag?.split("-")[0] || fallbackLng;
-
-// Verify if the detected locale is supported by our dictionary
-const initialLng = Object.keys(resources).includes(detectedLanguageCode)
-    ? detectedLanguageCode
-    : fallbackLng;
+// Get user preference from AsyncStorage, or default to Mongolian
+// We will initialize with 'mn' synchronously to avoid blank screens.
+// The async language load is handled in the root layout if needed,
+// but for now, we force 'mn' as the strict default over system locale.
+const initialLng = "mn";
 
 i18n
     .use(initReactI18next)

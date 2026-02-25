@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Dimensions, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Dimensions, NativeSyntheticEvent, NativeScrollEvent, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../store/appStore';
 import { mobileTheme } from '../design/tokenAdapter';
@@ -7,6 +7,7 @@ import { Button } from '../components/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckCircle, Search, ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const { colors } = mobileTheme;
@@ -33,11 +34,17 @@ const SLIDES = [
 ];
 
 export default function OnboardingScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  const toggleLanguage = async () => {
+    const nextLang = i18n.language === 'en' ? 'mn' : 'en';
+    await i18n.changeLanguage(nextLang);
+    await AsyncStorage.setItem('appLanguage', nextLang);
+  };
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
@@ -84,6 +91,13 @@ export default function OnboardingScreen() {
         scrollEventThrottle={16}
       />
 
+      {/* Subtle Language Switcher Top Right */}
+      <View style={styles.langContainer}>
+        <TouchableOpacity onPress={toggleLanguage} style={styles.langButton}>
+          <Text style={styles.langText}>{i18n.language === 'en' ? 'MN' : 'EN'}</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.footer}>
         <View style={styles.pagination}>
           {SLIDES.map((_, index) => (
@@ -113,6 +127,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  langContainer: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    zIndex: 10,
+  },
+  langButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: colors.border + '30',
+  },
+  langText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: colors.mutedForeground,
   },
   slide: {
     width,

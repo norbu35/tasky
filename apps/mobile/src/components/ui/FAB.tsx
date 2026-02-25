@@ -9,11 +9,9 @@ import Animated, {
 import { mobileTheme } from '../../design/tokenAdapter';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';
-import { CopilotStep, walkthroughable } from 'react-native-copilot';
 
 const { colors } = mobileTheme;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const WalkthroughablePressable = walkthroughable(AnimatedPressable);
 
 export function FAB() {
   const scale = useSharedValue(1);
@@ -40,15 +38,13 @@ export function FAB() {
   };
 
   return (
-    <CopilotStep text="Tap here whenever you need to hire someone!" order={2} name="fab">
-      <WalkthroughablePressable
-        style={[styles.container, animatedStyle]}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <Plus color={colors.primaryForeground} size={28} />
-      </WalkthroughablePressable>
-    </CopilotStep>
+    <AnimatedPressable
+      style={[styles.container, animatedStyle]}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Plus color={colors.primaryForeground} size={28} />
+    </AnimatedPressable>
   );
 }
 

@@ -17,18 +17,6 @@ export function TaskFeed() {
     const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null);
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
-    if (isLoading) {
-        return (
-            <View style={[styles.container, styles.list]}>
-                <TaskCardSkeleton />
-                <TaskCardSkeleton />
-                <TaskCardSkeleton />
-                <TaskCardSkeleton />
-                <TaskCardSkeleton />
-            </View>
-        );
-    }
-
     const tasks = data?.data ?? [];
 
     const ulaanbaatarRegion = {
@@ -57,7 +45,15 @@ export function TaskFeed() {
                 />
             </View>
 
-            {viewMode === 'list' ? (
+            {isLoading ? (
+                <View style={styles.list}>
+                    <TaskCardSkeleton />
+                    <TaskCardSkeleton />
+                    <TaskCardSkeleton />
+                    <TaskCardSkeleton />
+                    <TaskCardSkeleton />
+                </View>
+            ) : viewMode === 'list' ? (
                 <FlatList
                     data={tasks}
                     keyExtractor={(item) => item.id}

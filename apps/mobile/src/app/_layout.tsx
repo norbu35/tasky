@@ -4,7 +4,6 @@ import { queryClient } from '../lib/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { NotificationProvider } from '../store/NotificationContext';
-import { CopilotProvider } from 'react-native-copilot';
 
 import '../utils/i18n';
 
@@ -16,10 +15,8 @@ export default function RootLayout() {
             <SafeAreaProvider>
                 <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
-                        <CopilotProvider tooltipStyle={{ backgroundColor: '#ffffff', borderRadius: 8 }}>
-                            <Stack screenOptions={{ headerShown: false }} />
-                            <StatusBar style="auto" />
-                        </CopilotProvider>
+                        <Stack screenOptions={{ headerShown: false }} />
+                        <StatusBar style="auto" />
                     </QueryClientProvider>
                 </NotificationProvider>
             </SafeAreaProvider>

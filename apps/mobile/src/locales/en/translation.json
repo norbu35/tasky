@@ -6,7 +6,10 @@
     "otpCode": "OTP Code",
     "otpPlaceholder": "123456",
     "continue": "Continue",
-    "verifyLogin": "Verify & Login"
+    "verifyLogin": "Verify & Login",
+    "loginRequired": "Log in to continue",
+    "loginReason": "You need to be logged in to view this content.",
+    "loginButton": "Log In or Sign Up"
   },
   "nav": {
     "profile": "Profile",

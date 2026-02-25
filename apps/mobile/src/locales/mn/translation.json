@@ -6,7 +6,10 @@
     "otpCode": "Баталгаажуулах код",
     "otpPlaceholder": "123456",
     "continue": "Үргэлжлүүлэх",
-    "verifyLogin": "Баталгаажуулах"
+    "verifyLogin": "Баталгаажуулах",
+    "loginRequired": "Нэвтэрч орно уу",
+    "loginReason": "Та энэ хэсгийг үзэхийн тулд нэвтрэх шаардлагатай.",
+    "loginButton": "Нэвтрэх / Бүртгүүлэх"
   },
   "nav": {
     "profile": "Профайл",
