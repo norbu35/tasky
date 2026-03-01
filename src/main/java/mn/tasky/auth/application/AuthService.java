@@ -42,11 +42,11 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,6 +56,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Core authentication and account service.
+ * Handles OTP/Facebook login, token rotation, profile and verification workflows,
+ * moderation actions, and signed upload URL generation.
+ */
 @Service
 public class AuthService {
 
@@ -203,6 +208,12 @@ public class AuthService {
                 .anyMatch(NON_PROD_PROFILES::contains);
     }
 
+    /**
+     * Creates/updates an OTP challenge for a phone number and dispatches the code.
+     *
+     * @param rawPhone Raw phone input.
+     * @return Masked phone string suitable for UI display.
+     */
     public String requestOtp(String rawPhone) {
         String phone = normalizePhone(rawPhone);
         String blindIndex = cryptoService.blindIndex(phone);
@@ -279,6 +290,15 @@ public class AuthService {
                                         phone.length())) + "****";
     }
 
+    /**
+     * Verifies OTP challenge and issues an authenticated session when valid.
+     *
+     * @param rawPhone Raw phone input.
+     * @param code     OTP code.
+     * @return Session payload when verification succeeds; empty when challenge is missing,
+     * expired, or invalid.
+     * @throws AccountRestrictedException when account status resolves to suspended or banned.
+     */
     public Optional<AuthSession> verifyOtp(String rawPhone,
                                            String code) {
         String phone = normalizePhone(rawPhone);
@@ -414,6 +434,13 @@ public class AuthService {
         return cryptoService.decrypt(encryptedPhone);
     }
 
+    /**
+     * Authenticates with a Facebook access token and returns a session.
+     *
+     * @param accessToken Facebook user access token.
+     * @return Authenticated session payload.
+     * @throws AccountRestrictedException when account status resolves to suspended or banned.
+     */
     public AuthSession facebookLogin(String accessToken) {
         String token = StringUtils.trimWhitespace(accessToken);
         facebookGraphClient.debugToken(token);
@@ -483,6 +510,15 @@ public class AuthService {
                             now);
     }
 
+    /**
+     * Performs local development login for a phone and requested role.
+     *
+     * @param rawPhone Raw phone input.
+     * @param role     Requested role; defaults to {@code CUSTOMER} when absent.
+     * @return Authenticated session payload.
+     * @throws IllegalArgumentException   when role is unsupported.
+     * @throws AccountRestrictedException when account status resolves to suspended or banned.
+     */
     public AuthSession devLogin(String rawPhone,
                                 String role) {
         String phone = normalizePhone(rawPhone);
@@ -521,6 +557,12 @@ public class AuthService {
         return issueSession(effectiveUser);
     }
 
+    /**
+     * Rotates refresh token and returns new access/refresh tokens when valid.
+     *
+     * @param refreshToken Raw refresh token.
+     * @return New token pair when refresh is accepted; empty otherwise.
+     */
     public Optional<AuthTokens> refreshToken(String refreshToken) {
         Optional<ParsedRefreshToken> parsedOpt = jwtTokenService.parseRefreshToken(refreshToken);
         if (parsedOpt.isEmpty()) {
@@ -562,6 +604,13 @@ public class AuthService {
                                           rotated.refreshToken()));
     }
 
+    /**
+     * Updates mutable profile fields for an existing user.
+     *
+     * @param userId User identifier.
+     * @param update Profile update payload.
+     * @return Updated profile when user exists.
+     */
     public Optional<UserProfile> updateProfile(String userId,
                                                ProfileUpdate update) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
@@ -589,6 +638,12 @@ public class AuthService {
         return getProfile(user.id());
     }
 
+    /**
+     * Returns consolidated user profile view including resolved status.
+     *
+     * @param userId User identifier.
+     * @return User profile when user exists.
+     */
     public Optional<UserProfile> getProfile(String userId) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
@@ -628,6 +683,12 @@ public class AuthService {
         );
     }
 
+    /**
+     * Activates tasker role for a customer account and rotates tokens.
+     *
+     * @param userId User identifier.
+     * @return Activation payload when transition is applicable.
+     */
     public Optional<RoleActivationResult> activateTaskerRole(String userId) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
@@ -656,6 +717,13 @@ public class AuthService {
         ));
     }
 
+    /**
+     * Creates a signed upload URL for verification document images.
+     *
+     * @param userId      User identifier.
+     * @param contentType MIME type.
+     * @return Upload payload when user exists and MIME type is supported.
+     */
     public Optional<PresignedUpload> createVerificationUploadUrl(String userId,
                                                                  String contentType) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
@@ -740,6 +808,14 @@ public class AuthService {
         }
     }
 
+    /**
+     * Submits a tasker verification request.
+     *
+     * @param userId   Tasker identifier.
+     * @param frontKey Storage key for front ID image.
+     * @param backKey  Storage key for back ID image.
+     * @return Verification submission result with status code and payload when successful.
+     */
     public VerificationSubmitResult submitVerification(String userId,
                                                        String frontKey,
                                                        String backKey) {
@@ -803,6 +879,12 @@ public class AuthService {
         );
     }
 
+    /**
+     * Returns latest verification status for a user, or {@code NOT_SUBMITTED}.
+     *
+     * @param userId User identifier.
+     * @return Current verification status view.
+     */
     public VerificationStatusResponse getVerificationStatus(String userId) {
         return verificationDao.findLatestByUserId(userId)
                 .map(this::toVerificationStatus)
@@ -812,11 +894,24 @@ public class AuthService {
                                                                 null));
     }
 
+    /**
+     * Lists pending verification requests using first-page defaults.
+     *
+     * @param limit Maximum number of rows.
+     * @return Pending verification details.
+     */
     public List<VerificationDetail> listPendingVerifications(int limit) {
         return listPendingVerifications(null,
                                         limit);
     }
 
+    /**
+     * Lists pending verification requests with pagination cursor.
+     *
+     * @param cursor Optional cursor.
+     * @param limit  Maximum number of rows.
+     * @return Pending verification details.
+     */
     public List<VerificationDetail> listPendingVerifications(String cursor,
                                                              int limit) {
         List<VerificationRequest> pending = verificationDao.findPending(cursor,
@@ -872,11 +967,23 @@ public class AuthService {
                                   StandardCharsets.UTF_8);
     }
 
+    /**
+     * Checks whether a verification request exists.
+     *
+     * @param verificationId Verification identifier.
+     * @return {@code true} when present.
+     */
     public boolean verificationExists(String verificationId) {
         return verificationDao.findById(verificationId)
                 .isPresent();
     }
 
+    /**
+     * Approves a pending verification and marks user status as {@code VERIFIED}.
+     *
+     * @param verificationId Verification identifier.
+     * @return Resolved verification detail when transition succeeds.
+     */
     public Optional<VerificationDetail> approveVerification(String verificationId) {
         return resolveVerification(verificationId,
                                    "APPROVED",
@@ -926,6 +1033,13 @@ public class AuthService {
         return Optional.of(toVerificationDetail(resolved));
     }
 
+    /**
+     * Rejects a pending verification with admin reason.
+     *
+     * @param verificationId Verification identifier.
+     * @param reason         Rejection reason/notes.
+     * @return Resolved verification detail when transition succeeds.
+     */
     public Optional<VerificationDetail> rejectVerification(String verificationId,
                                                            String reason) {
         return resolveVerification(verificationId,
@@ -934,6 +1048,13 @@ public class AuthService {
                                    false);
     }
 
+    /**
+     * Updates aggregate profile stats.
+     *
+     * @param userId             User identifier.
+     * @param rating             Optional new rating; values {@code <= 0} do not change average.
+     * @param incrementCompleted Whether to increment completed task count.
+     */
     public void updateUserStats(String userId,
                                 int rating,
                                 boolean incrementCompleted) {
@@ -961,10 +1082,20 @@ public class AuthService {
                                newCompleted);
     }
 
+    /**
+     * Returns all audit log entries.
+     *
+     * @return Audit log rows.
+     */
     public List<AuditLogEntry> getAuditLog() {
         return auditLogDao.findAll();
     }
 
+    /**
+     * Adds a moderation strike and applies suspension policy when thresholds are reached.
+     *
+     * @param userId Target user identifier.
+     */
     public void addStrike(String userId) {
         Instant now = Instant.now();
         strikeDao.insert(UUID.randomUUID()
@@ -1018,6 +1149,15 @@ public class AuthService {
         );
     }
 
+    /**
+     * Searches users by exact normalized phone value and returns cursor-paged profile results.
+     *
+     * @param phonePart Phone input to normalize and search.
+     * @param cursor    Optional UUID cursor.
+     * @param limit     Page size.
+     * @return Paged user profiles.
+     * @throws IllegalArgumentException when cursor is not a valid UUID.
+     */
     public UserProfilePage searchUsersByPhone(String phonePart,
                                               String cursor,
                                               int limit) {
@@ -1081,6 +1221,14 @@ public class AuthService {
                 .toList();
     }
 
+    /**
+     * Bans a user and writes an admin audit log entry.
+     *
+     * @param adminId Admin identifier.
+     * @param userId  Target user identifier.
+     * @param reason  Ban reason.
+     * @return {@code true} when user exists and was updated.
+     */
     public boolean banUser(String adminId,
                            String userId,
                            String reason) {
@@ -1100,6 +1248,14 @@ public class AuthService {
         return true;
     }
 
+    /**
+     * Removes ban/suspension status from a user and writes an admin audit log entry.
+     *
+     * @param adminId Admin identifier.
+     * @param userId  Target user identifier.
+     * @param reason  Unban reason.
+     * @return {@code true} when user exists and was updated.
+     */
     public boolean unbanUser(String adminId,
                              String userId,
                              String reason) {
@@ -1119,6 +1275,12 @@ public class AuthService {
         return true;
     }
 
+    /**
+     * Returns effective status for a user id if id format and user are valid.
+     *
+     * @param userId User identifier.
+     * @return Effective status when user exists and id is valid UUID; otherwise empty.
+     */
     public Optional<String> currentUserStatus(String userId) {
         try {
             UUID.fromString(userId);
@@ -1130,10 +1292,28 @@ public class AuthService {
                                                user.status()));
     }
 
+    /**
+     * Returns the active moderation policy, or default policy when no row is present.
+     *
+     * @return Current moderation policy.
+     */
     public ModerationPolicy getModerationPolicy() {
         return moderationPolicy();
     }
 
+    /**
+     * Updates moderation policy after validating value ranges.
+     *
+     * @param strikeWindowDays        Strike rolling window in days.
+     * @param strikeThreshold         Strike count that triggers suspension.
+     * @param firstSuspensionDays     First suspension duration in days.
+     * @param repeatSuspensionDays    Repeat suspension duration in days.
+     * @param repeatOffenseWindowDays Lookback window for repeat offense escalation.
+     * @param autoUnsuspendEnabled    Whether automatic unsuspend is enabled.
+     * @return Updated moderation policy.
+     * @throws IllegalArgumentException if provided values fail validation constraints.
+     * @throws IllegalStateException    if moderation policy row is missing at update time.
+     */
     public ModerationPolicy updateModerationPolicy(
             int strikeWindowDays,
             int strikeThreshold,
@@ -1200,6 +1380,13 @@ public class AuthService {
         }
     }
 
+    /**
+     * Creates a signed upload URL for avatar images.
+     *
+     * @param userId      User identifier.
+     * @param contentType MIME type.
+     * @return Upload payload when user exists and MIME type is supported.
+     */
     public Optional<PresignedUpload> createAvatarUploadUrl(String userId,
                                                            String contentType) {
         Optional<AuthUser> userOpt = userDao.findById(userId);

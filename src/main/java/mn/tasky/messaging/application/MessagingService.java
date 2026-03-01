@@ -93,13 +93,16 @@ public class MessagingService {
 
     /**
      * Sends a message in a conversation.
-     * Validates that the sender is a participant and the content is not empty.
-     * Broadcasts the message via websockets if successful.
+     * Returns empty when the conversation does not exist.
+     * Validates that the sender is a participant and the content is not empty,
+     * and broadcasts the message over WebSocket on success.
      *
      * @param senderId       The ID of the sender.
      * @param conversationId The ID of the conversation.
      * @param content        The message content.
-     * @return An Optional containing the sent {@link Message}, or empty if validation fails.
+     * @return An Optional containing the sent {@link Message}, or empty when the conversation is
+     * missing.
+     * @throws IllegalArgumentException if the sender is not a participant or the content is blank.
      */
     public Optional<Message> sendMessage(String senderId,
                                          String conversationId,
@@ -151,6 +154,8 @@ public class MessagingService {
      * @param cursor         The pagination cursor.
      * @param limit          The maximum number of results.
      * @return A list of {@link Message} objects.
+     * @throws IllegalArgumentException if the conversation is not found or the user is not a
+     * participant.
      */
     public List<Message> listMessages(String userId,
                                       String conversationId,

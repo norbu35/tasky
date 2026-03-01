@@ -5,15 +5,18 @@ import mn.tasky.auth.dao.RateLimitCounterDao;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.dto.ParsedRefreshToken;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.Instant;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.HexFormat;
 
+/**
+ * Distributed rate limiter for OTP and refresh-token flows.
+ */
 @Service
 public class OtpRateLimitService {
 
@@ -50,6 +53,13 @@ public class OtpRateLimitService {
         this.refreshLimitPerIp       = refreshLimitPerIp;
     }
 
+    /**
+     * Enforces OTP request limits on both phone and client IP keys.
+     *
+     * @param phone    Normalized phone value.
+     * @param clientIp Client IP address.
+     * @throws RateLimitExceededException if either limit is exceeded.
+     */
     public void assertRequestAllowed(String phone,
                                      String clientIp) {
         enforce(
@@ -88,6 +98,13 @@ public class OtpRateLimitService {
         }
     }
 
+    /**
+     * Enforces OTP verification limits on both phone and client IP keys.
+     *
+     * @param phone    Normalized phone value.
+     * @param clientIp Client IP address.
+     * @throws RateLimitExceededException if either limit is exceeded.
+     */
     public void assertVerifyAllowed(String phone,
                                     String clientIp) {
         enforce(
@@ -104,6 +121,13 @@ public class OtpRateLimitService {
         );
     }
 
+    /**
+     * Enforces refresh-token limits on both token and client IP keys.
+     *
+     * @param refreshToken Raw refresh token string.
+     * @param clientIp     Client IP address.
+     * @throws RateLimitExceededException if either limit is exceeded.
+     */
     public void assertRefreshAllowed(String refreshToken,
                                      String clientIp) {
         String tokenKey = jwtTokenService.parseRefreshToken(refreshToken)

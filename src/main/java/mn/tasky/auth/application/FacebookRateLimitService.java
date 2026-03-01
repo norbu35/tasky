@@ -8,6 +8,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * In-memory per-IP throttle for Facebook OAuth attempts.
+ */
 @Service
 public class FacebookRateLimitService {
 
@@ -16,6 +19,12 @@ public class FacebookRateLimitService {
 
     private final ConcurrentHashMap<String, Deque<Long>> attemptsByIp = new ConcurrentHashMap<>();
 
+    /**
+     * Verifies that a client IP has not exceeded the OAuth attempt limit for the current window.
+     *
+     * @param clientIp Client IP address.
+     * @throws RateLimitExceededException when the IP exceeds the configured limit.
+     */
     public void assertAllowed(String clientIp) {
         Deque<Long> attempts = attemptsByIp.computeIfAbsent(clientIp,
                                                             ignored -> new ArrayDeque<>());

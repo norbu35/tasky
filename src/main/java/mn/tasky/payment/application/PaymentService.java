@@ -16,13 +16,17 @@ import org.springframework.util.StringUtils;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service responsible for payment intent lifecycle and verified gateway callbacks.
+ * Integrates booking/task transitions, notifications, and analytics events.
+ */
 @Service
 public class PaymentService {
 
@@ -63,6 +67,13 @@ public class PaymentService {
                 : new byte[0];
     }
 
+    /**
+     * Creates a new payment intent for a booking and emits a payment-initiated analytics event.
+     *
+     * @param bookingId The booking identifier.
+     * @return The created {@link PaymentIntent}.
+     * @throws IllegalStateException if monetization is disabled.
+     */
     public PaymentIntent initiatePayment(String bookingId) {
         ensureMonetizationEnabled();
         String paymentId = UUID.randomUUID()
@@ -97,6 +108,12 @@ public class PaymentService {
         }
     }
 
+    /**
+     * Retrieves a payment intent by payment identifier.
+     *
+     * @param paymentId The payment identifier.
+     * @return The matching {@link PaymentIntent}, if one exists.
+     */
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
         return paymentIntentDao.findBookingIdByPaymentId(paymentId)
                 .map(ignored -> new PaymentIntent(
@@ -106,6 +123,21 @@ public class PaymentService {
                 ));
     }
 
+    /**
+     * Processes a signed payment callback from QPay.
+     * Accepts callbacks only when signature and timestamp are valid and status is {@code PAID}.
+     * On first successful processing, transitions the booking/task state and emits
+     * notifications/events.
+     *
+     * @param paymentId The payment identifier.
+     * @param status    The callback payment status.
+     * @param timestamp Callback timestamp in epoch seconds.
+     * @param signature Callback HMAC signature.
+     * @return {@code true} when the callback is accepted (including already-processed idempotent
+     * callbacks),
+     * {@code false} when rejected or not applicable.
+     * @throws IllegalStateException if monetization is disabled.
+     */
     public boolean processCallback(String paymentId,
                                    String status,
                                    long timestamp,

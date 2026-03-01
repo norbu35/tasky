@@ -42,6 +42,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Service for task lifecycle operations: creation, listing, applications, acceptance,
+ * cancellation, and task-photo upload/access URL generation.
+ */
 @Service
 public class TaskService {
 
@@ -112,6 +116,15 @@ public class TaskService {
         this.taskMatchNotificationLimit    = taskMatchNotificationLimit;
     }
 
+    /**
+     * Creates a new task owned by the customer after validating category, schedule,
+     * description, and photo constraints.
+     * Emits analytics and notifies nearby taskers when successful.
+     *
+     * @param customerId Task owner identifier.
+     * @param command    Task creation payload.
+     * @return Success or validation failure details.
+     */
     public TaskCreateResult createTask(String customerId,
                                        CreateTask command) {
         Optional<CategoryState> category = categoryService.getCategory(command.categoryId());
@@ -222,6 +235,12 @@ public class TaskService {
         }
     }
 
+    /**
+     * Retrieves a task by id and populates photo keys when needed.
+     *
+     * @param id Task identifier.
+     * @return The task if found.
+     */
     public Optional<TaskState> getTask(String id) {
         return taskDao.findById(id)
                 .map(this::populatePhotoKeys);
@@ -250,6 +269,12 @@ public class TaskService {
         );
     }
 
+    /**
+     * Sets task status to {@code ASSIGNED} when task exists.
+     *
+     * @param taskId Task identifier.
+     * @return Updated task when found.
+     */
     public Optional<TaskState> transitionToAssigned(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
         if (existing.isEmpty()) return Optional.empty();
@@ -260,6 +285,12 @@ public class TaskService {
                 .map(this::populatePhotoKeys);
     }
 
+    /**
+     * Sets task status back to {@code OPEN} when task exists.
+     *
+     * @param taskId Task identifier.
+     * @return Updated task when found.
+     */
     public Optional<TaskState> reopenTask(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
         if (existing.isEmpty()) return Optional.empty();
@@ -270,6 +301,12 @@ public class TaskService {
                 .map(this::populatePhotoKeys);
     }
 
+    /**
+     * Sets task status to {@code COMPLETED} when task exists.
+     *
+     * @param taskId Task identifier.
+     * @return Updated task when found.
+     */
     public Optional<TaskState> transitionToCompleted(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
         if (existing.isEmpty()) return Optional.empty();
@@ -280,6 +317,12 @@ public class TaskService {
                 .map(this::populatePhotoKeys);
     }
 
+    /**
+     * Sets task status to {@code CANCELLED} when task exists.
+     *
+     * @param taskId Task identifier.
+     * @return Updated task when found.
+     */
     public Optional<TaskState> transitionToCancelled(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
         if (existing.isEmpty()) return Optional.empty();
@@ -290,6 +333,18 @@ public class TaskService {
                 .map(this::populatePhotoKeys);
     }
 
+    /**
+     * Lists open tasks with cursor pagination and optional geo-radius filtering.
+     *
+     * @param categoryId Optional category filter.
+     * @param lat        Optional latitude for radius query.
+     * @param lng        Optional longitude for radius query.
+     * @param radiusKm   Optional radius in kilometers.
+     * @param cursor     Optional pagination cursor.
+     * @param limit      Page size.
+     * @return Paginated task page.
+     * @throws IllegalArgumentException when cursor format is invalid.
+     */
     public TaskPage listTasks(
             String categoryId,
             Double lat,
@@ -370,6 +425,18 @@ public class TaskService {
                 .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Lists tasks for a user as customer or tasker with optional status filtering.
+     * Defaults role to {@code customer} when absent.
+     *
+     * @param userId User identifier.
+     * @param role   Optional role filter: {@code customer} or {@code tasker}.
+     * @param status Optional status filter.
+     * @param cursor Optional pagination cursor.
+     * @param limit  Page size.
+     * @return Paginated task page.
+     * @throws IllegalArgumentException when role, status, or cursor is invalid.
+     */
     public TaskPage listMyTasks(String userId,
                                 String role,
                                 String status,
@@ -439,6 +506,13 @@ public class TaskService {
         return normalized;
     }
 
+    /**
+     * Cancels an open task when requested by its owning customer.
+     *
+     * @param customerId Customer identifier.
+     * @param taskId     Task identifier.
+     * @return Result with success or reason for rejection.
+     */
     public TaskCancelResult cancelTask(String customerId,
                                        String taskId) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
@@ -465,6 +539,16 @@ public class TaskService {
         return TaskCancelResult.success(cancelled);
     }
 
+    /**
+     * Submits a task application for a verified tasker.
+     * Rejects non-taskers, self-application, non-open tasks, and duplicate applications.
+     *
+     * @param taskerId   Tasker identifier.
+     * @param taskerRole Caller role expected to be {@code TASKER}.
+     * @param taskId     Target task identifier.
+     * @param message    Optional application message.
+     * @return Result containing created application or error state.
+     */
     public TaskApplyResult applyToTask(String taskerId,
                                        String taskerRole,
                                        String taskId,
@@ -545,6 +629,13 @@ public class TaskService {
         return TaskApplyResult.success(application);
     }
 
+    /**
+     * Lists task applications using default first-page pagination.
+     *
+     * @param userId Requesting user (must be task owner).
+     * @param taskId Task identifier.
+     * @return Applications list result.
+     */
     public TaskApplicationsListResult listTaskApplications(String userId,
                                                            String taskId) {
         return listTaskApplications(userId,
@@ -553,6 +644,15 @@ public class TaskService {
                                     50);
     }
 
+    /**
+     * Lists task applications for a task owned by the requesting user.
+     *
+     * @param userId Requesting user (must be task owner).
+     * @param taskId Task identifier.
+     * @param cursor Optional pagination cursor.
+     * @param limit  Page size.
+     * @return Applications list result.
+     */
     public TaskApplicationsListResult listTaskApplications(String userId,
                                                            String taskId,
                                                            String cursor,
@@ -574,10 +674,27 @@ public class TaskService {
         return TaskApplicationsListResult.success(List.copyOf(applications));
     }
 
+    /**
+     * Counts applications submitted for a task.
+     *
+     * @param taskId Task identifier.
+     * @return Number of applications.
+     */
     public int countApplications(String taskId) {
         return taskApplicationDao.countByTaskId(taskId);
     }
 
+    /**
+     * Accepts a pending application for an open task and creates the booking.
+     * Marks selected application accepted, rejects others, assigns task, starts conversation,
+     * notifies the selected tasker, and emits analytics.
+     *
+     * @param customerId                  Task owner identifier.
+     * @param taskId                      Task identifier.
+     * @param applicationId               Application identifier.
+     * @param liabilityDisclaimerAccepted Whether disclaimer was accepted.
+     * @return Acceptance result with booking on success.
+     */
     public TaskAcceptResult acceptApplication(
             String customerId,
             String taskId,
@@ -674,6 +791,13 @@ public class TaskService {
         return TaskAcceptResult.success(booking);
     }
 
+    /**
+     * Creates a signed upload URL for a task photo.
+     *
+     * @param userId      Requesting user identifier.
+     * @param contentType MIME type to upload.
+     * @return Signed upload payload when MIME type is supported.
+     */
     public Optional<PresignedUpload> createPhotoUploadUrl(String userId,
                                                           String contentType) {
         String normalizedContentType = contentType.toLowerCase(Locale.ROOT);
@@ -758,6 +882,12 @@ public class TaskService {
         }
     }
 
+    /**
+     * Builds read URLs for a list of stored photo keys.
+     *
+     * @param storageKeys Photo storage keys.
+     * @return Access URLs, or empty list when no keys are provided.
+     */
     public List<String> buildPhotoAccessUrls(List<String> storageKeys) {
         if (storageKeys == null || storageKeys.isEmpty()) {
             return List.of();
@@ -767,6 +897,12 @@ public class TaskService {
                 .toList();
     }
 
+    /**
+     * Builds a read URL for one stored photo key.
+     *
+     * @param storageKey Photo storage key.
+     * @return Presigned read URL.
+     */
     public String buildPhotoAccessUrl(String storageKey) {
         String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
         return normalizedBase +
@@ -775,6 +911,15 @@ public class TaskService {
                                   StandardCharsets.UTF_8);
     }
 
+    /**
+     * Partially updates an open task owned by the requesting customer.
+     * Supports replacing photo keys when provided.
+     *
+     * @param customerId Task owner identifier.
+     * @param taskId     Task identifier.
+     * @param command    Partial update payload.
+     * @return Updated task or validation/authorization failure details.
+     */
     public TaskUpdateResult updateTask(String customerId,
                                        String taskId,
                                        UpdateTask command) {

@@ -9,6 +9,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+/**
+ * Thin client for Facebook Graph API token validation and profile fetch.
+ */
 @Service
 public class FacebookGraphClient {
 
@@ -31,6 +34,13 @@ public class FacebookGraphClient {
         this.appSecret  = appSecret;
     }
 
+    /**
+     * Validates a user token via Facebook's {@code /debug_token} endpoint.
+     *
+     * @param userToken User access token.
+     * @throws FacebookAuthException when OAuth config is missing, the token is invalid,
+     *                               or the token app does not match this configured app.
+     */
     public void debugToken(String userToken) {
         if (!StringUtils.hasText(appId) || !StringUtils.hasText(appSecret)) {
             throw new FacebookAuthException(
@@ -76,6 +86,13 @@ public class FacebookGraphClient {
         }
     }
 
+    /**
+     * Fetches basic profile information from Facebook's {@code /me} endpoint.
+     *
+     * @param userToken User access token.
+     * @return Normalized Facebook profile payload.
+     * @throws FacebookAuthException when the token cannot be used to fetch a valid profile.
+     */
     public FacebookProfile fetchProfile(String userToken) {
         MeResponse response;
         try {
