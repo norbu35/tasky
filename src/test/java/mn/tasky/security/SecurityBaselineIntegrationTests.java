@@ -1,9 +1,5 @@
 package mn.tasky.security;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import mn.tasky.auth.application.FacebookGraphClient;
@@ -27,8 +23,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
 class SecurityBaselineIntegrationTests
-        extends IntegrationTestBase {
+    extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     @LocalServerPort
@@ -40,51 +40,51 @@ class SecurityBaselineIntegrationTests
 
     @Test
     @DisplayName("TID-TASK-004-SEC-RBAC-GUARD route-level RBAC enforces customer/tasker/admin " +
-            "scopes")
+        "scopes")
     void routeLevelRbacGuardEnforced() {
         String customerToken = tokenFor("CUSTOMER",
-                                        "ACTIVE");
+            "ACTIVE");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE");
+            "ACTIVE");
         String adminToken = tokenFor("ADMIN",
-                                     "ACTIVE");
+            "ACTIVE");
 
         assertThat(get("/api/v1/security/customer/ping",
-                       customerToken).getStatusCode())
-                .isEqualTo(HttpStatus.OK);
+            customerToken).getStatusCode())
+            .isEqualTo(HttpStatus.OK);
         assertThat(get("/api/v1/security/tasker/ping",
-                       customerToken).getStatusCode())
-                .isEqualTo(HttpStatus.FORBIDDEN);
+            customerToken).getStatusCode())
+            .isEqualTo(HttpStatus.FORBIDDEN);
 
         assertThat(get("/api/v1/security/tasker/ping",
-                       taskerToken).getStatusCode())
-                .isEqualTo(HttpStatus.OK);
+            taskerToken).getStatusCode())
+            .isEqualTo(HttpStatus.OK);
         assertThat(get("/api/v1/security/admin/ping",
-                       taskerToken).getStatusCode())
-                .isEqualTo(HttpStatus.FORBIDDEN);
+            taskerToken).getStatusCode())
+            .isEqualTo(HttpStatus.FORBIDDEN);
 
         assertThat(get("/api/v1/security/admin/ping",
-                       adminToken).getStatusCode())
-                .isEqualTo(HttpStatus.OK);
+            adminToken).getStatusCode())
+            .isEqualTo(HttpStatus.OK);
     }
 
     private String tokenFor(String role,
                             String status) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .subject(UUID.randomUUID()
-                                 .toString())
-                .claim("role",
-                       role)
-                .claim("status",
-                       status)
-                .claim("token_type",
-                       "access")
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusSeconds(3600)))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
-                          Jwts.SIG.HS256)
-                .compact();
+            .subject(UUID.randomUUID()
+                .toString())
+            .claim("role",
+                role)
+            .claim("status",
+                status)
+            .claim("token_type",
+                "access")
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(now.plusSeconds(3600)))
+            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
+                Jwts.SIG.HS256)
+            .compact();
     }
 
     private ResponseEntity<Map> get(String path,
@@ -96,10 +96,10 @@ class SecurityBaselineIntegrationTests
         }
 
         return restTemplate.exchange(
-                url(path),
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                Map.class
+            url(path),
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            Map.class
         );
     }
 
@@ -111,29 +111,29 @@ class SecurityBaselineIntegrationTests
     @DisplayName("TID-TASK-004-SEC-BANNED-USER-BLOCK banned users are denied despite valid JWT")
     void bannedUsersDeniedWithValidJwt() {
         String bannedAdminToken = tokenFor("ADMIN",
-                                           "BANNED");
+            "BANNED");
 
         ResponseEntity<Map> response = get("/api/v1/security/admin/ping",
-                                           bannedAdminToken);
+            bannedAdminToken);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "USER_BANNED");
+            "USER_BANNED");
     }
 
     @Test
     @DisplayName("TID-TASK-004-SEC-SUSPENDED-USER-BLOCK suspended users are denied despite valid " +
-            "JWT")
+        "JWT")
     void suspendedUsersDeniedWithValidJwt() {
         String suspendedToken = tokenFor("CUSTOMER",
-                                         "SUSPENDED");
+            "SUSPENDED");
 
         ResponseEntity<Map> response = get("/api/v1/security/customer/ping",
-                                           suspendedToken);
+            suspendedToken);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "USER_BANNED");
+            "USER_BANNED");
     }
 
     @Test
@@ -142,30 +142,30 @@ class SecurityBaselineIntegrationTests
         String accessToken = "facebook-security-token";
         String rateLimitIp = "203.0.113.42";
         doNothing().when(facebookGraphClient)
-                .debugToken(accessToken);
+            .debugToken(accessToken);
         when(facebookGraphClient.fetchProfile(accessToken)).thenReturn(
-                new FacebookGraphClient.FacebookProfile(
-                        "fb-user-security",
-                        "Security Test",
-                        null
-                )
+            new FacebookGraphClient.FacebookProfile(
+                "fb-user-security",
+                "Security Test",
+                null
+            )
         );
 
         for (int index = 0; index < 10; index++) {
             ResponseEntity<Map> response = post(
-                    "/api/v1/auth/facebook",
-                    Map.of("access_token",
-                           accessToken),
-                    rateLimitIp
+                "/api/v1/auth/facebook",
+                Map.of("access_token",
+                    accessToken),
+                rateLimitIp
             );
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         }
 
         ResponseEntity<Map> blockedRequest = post(
-                "/api/v1/auth/facebook",
-                Map.of("access_token",
-                       accessToken),
-                rateLimitIp
+            "/api/v1/auth/facebook",
+            Map.of("access_token",
+                accessToken),
+            rateLimitIp
         );
         assertThat(blockedRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
@@ -177,22 +177,22 @@ class SecurityBaselineIntegrationTests
         headers.setContentType(MediaType.APPLICATION_JSON);
         if (clientIp != null && !clientIp.isBlank()) {
             headers.set("X-Forwarded-For",
-                        clientIp);
+                clientIp);
         }
 
         return restTemplate.exchange(
-                url(path),
-                HttpMethod.POST,
-                new HttpEntity<>(body,
-                                 headers),
-                Map.class
+            url(path),
+            HttpMethod.POST,
+            new HttpEntity<>(body,
+                headers),
+            Map.class
         );
     }
 
     private ResponseEntity<Map> post(String path,
                                      Map<String, String> body) {
         return post(path,
-                    body,
-                    null);
+            body,
+            null);
     }
 }

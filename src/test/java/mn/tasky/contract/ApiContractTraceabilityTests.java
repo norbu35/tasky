@@ -1,7 +1,5 @@
 package mn.tasky.contract;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,21 +7,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ApiContractTraceabilityTests {
 
     @Test
     @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " +
-            "pagination primitives")
+        "pagination primitives")
     void openApiContractBaselineIsPresent() throws Exception {
         Path apiPath = Path.of("docs/API.yaml");
         assertThat(apiPath).exists();
 
         String api = Files.readString(apiPath);
         assertThat(api).contains("openapi: 3.0.3")
-                .contains("servers:")
-                .contains("- url: /api/v1")
-                .contains("CursorParam:")
-                .contains("LimitParam:");
+            .contains("servers:")
+            .contains("- url: /api/v1")
+            .contains("CursorParam:")
+            .contains("LimitParam:");
     }
 
     @Test
@@ -39,48 +39,48 @@ class ApiContractTraceabilityTests {
 
     @Test
     @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " +
-            "parity")
+        "parity")
     void contractDriftGateScriptExists() throws Exception {
         Path driftScript = Path.of("scripts/validate-sdk-contract-drift.sh");
         assertThat(driftScript).exists();
 
         String script = Files.readString(driftScript);
         assertThat(script)
-                .contains("target_file=\"packages/sdk/src/generated/api-types.ts\"")
-                .contains("pnpm sdk:generate")
-                .contains("SDK contract drift detected");
+            .contains("target_file=\"packages/sdk/src/generated/api-types.ts\"")
+            .contains("pnpm sdk:generate")
+            .contains("SDK contract drift detected");
     }
 
     @Test
     @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit " +
-            "contract parameters")
+        "contract parameters")
     void listEndpointsExposeCursorAndLimitContract() throws Exception {
         String api = Files.readString(Path.of("docs/API.yaml"));
 
         List<String> listEndpoints = List.of(
-                "/categories",
-                "/tasks",
-                "/bookings",
-                "/users/{id}/reviews",
-                "/conversations",
-                "/conversations/{id}/messages",
-                "/admin/users",
-                "/admin/verifications/pending",
-                "/admin/disputes",
-                "/admin/categories"
+            "/categories",
+            "/tasks",
+            "/bookings",
+            "/users/{id}/reviews",
+            "/conversations",
+            "/conversations/{id}/messages",
+            "/admin/users",
+            "/admin/verifications/pending",
+            "/admin/disputes",
+            "/admin/categories"
         );
 
         for (String endpoint : listEndpoints) {
             String block = endpointBlock(api,
-                                         endpoint);
+                endpoint);
             assertThat(block)
-                    .as("endpoint %s must include cursor parameter",
-                        endpoint)
-                    .contains("#/components/parameters/CursorParam");
+                .as("endpoint %s must include cursor parameter",
+                    endpoint)
+                .contains("#/components/parameters/CursorParam");
             assertThat(block)
-                    .as("endpoint %s must include limit parameter",
-                        endpoint)
-                    .contains("#/components/parameters/LimitParam");
+                .as("endpoint %s must include limit parameter",
+                    endpoint)
+                .contains("#/components/parameters/LimitParam");
         }
     }
 
@@ -89,16 +89,16 @@ class ApiContractTraceabilityTests {
         String marker = "  " + endpoint + ":";
         int start = api.indexOf(marker);
         assertThat(start)
-                .as("endpoint marker should exist: %s",
-                    endpoint)
-                .isGreaterThanOrEqualTo(0);
+            .as("endpoint marker should exist: %s",
+                endpoint)
+            .isGreaterThanOrEqualTo(0);
 
         int next = api.indexOf("\n  /",
-                               start + marker.length());
+            start + marker.length());
         if (next < 0) {
             return api.substring(start);
         }
         return api.substring(start,
-                             next);
+            next);
     }
 }

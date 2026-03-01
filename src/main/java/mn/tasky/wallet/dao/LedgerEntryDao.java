@@ -1,8 +1,5 @@
 package mn.tasky.wallet.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import mn.tasky.wallet.dto.LedgerEntry;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -12,6 +9,9 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(LedgerEntry.class)
 public interface LedgerEntryDao {
@@ -24,20 +24,20 @@ public interface LedgerEntryDao {
                         String description,
                         Instant createdAt) {
         insert(required(id,
-                        "id"),
-               optional(userId),
-               amount,
-               type,
-               optional(referenceId),
-               description,
-               createdAt);
+                "id"),
+            optional(userId),
+            amount,
+            type,
+            optional(referenceId),
+            description,
+            createdAt);
     }
 
     @SqlUpdate(
-            "INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, " +
-                    "created_at) "
-                    +
-                    "VALUES (:id, :userId, :amount, :type, :referenceId, :description, :createdAt)")
+        "INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, " +
+            "created_at) "
+            +
+            "VALUES (:id, :userId, :amount, :type, :referenceId, :description, :createdAt)")
     void insert(@Bind("id") UUID id,
                 @Bind("userId") UUID userId,
                 @Bind("amount") int amount,
@@ -48,7 +48,7 @@ public interface LedgerEntryDao {
 
     default List<LedgerEntry> findByUserId(String userId) {
         return findByUserId(required(userId,
-                                     "userId"));
+            "userId"));
     }
 
     @SqlQuery("SELECT * FROM ledger_entries WHERE user_id = :userId ORDER BY created_at DESC")

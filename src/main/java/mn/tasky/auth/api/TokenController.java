@@ -1,7 +1,5 @@
 package mn.tasky.auth.api;
 
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.auth.application.AuthService;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 @RestController
 @RequestMapping("/api/v1/auth/token")
 @Validated
@@ -27,38 +27,38 @@ public class TokenController {
 
     public TokenController(AuthService authService,
                            OtpRateLimitService otpRateLimitService) {
-        this.authService         = authService;
+        this.authService = authService;
         this.otpRateLimitService = otpRateLimitService;
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest body,
-            HttpServletRequest request
+        @Valid @RequestBody RefreshTokenRequest body,
+        HttpServletRequest request
     ) {
         otpRateLimitService.assertRefreshAllowed(body.refreshToken(),
-                                                 resolveClientIp(request));
+            resolveClientIp(request));
 
         return authService.refreshToken(body.refreshToken())
-                .map(tokens -> ResponseEntity.ok(
-                        Map.of(
-                                "access_token",
-                                tokens.accessToken(),
-                                "refresh_token",
-                                tokens.refreshToken()
-                        )
-                ))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(
-                                Map.of(
-                                        "code",
-                                        "REFRESH_TOKEN_INVALID",
-                                        "message",
-                                        "Invalid or expired refresh token.",
-                                        "trace_id",
-                                        resolveTraceId(request)
-                                )
-                        ));
+            .map(tokens -> ResponseEntity.ok(
+                Map.of(
+                    "access_token",
+                    tokens.accessToken(),
+                    "refresh_token",
+                    tokens.refreshToken()
+                )
+            ))
+            .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                    Map.of(
+                        "code",
+                        "REFRESH_TOKEN_INVALID",
+                        "message",
+                        "Invalid or expired refresh token.",
+                        "trace_id",
+                        resolveTraceId(request)
+                    )
+                ));
     }
 
     private String resolveClientIp(HttpServletRequest request) {
@@ -67,8 +67,8 @@ public class TokenController {
             return forwarded.split(",")[0].trim();
         }
         return request.getRemoteAddr() != null
-                ? request.getRemoteAddr()
-                : "unknown";
+            ? request.getRemoteAddr()
+            : "unknown";
     }
 
 }

@@ -1,7 +1,7 @@
 package mn.tasky.auth;
 
 public class FacebookAuthException
-        extends RuntimeException {
+    extends RuntimeException {
 
     private final String code;
 

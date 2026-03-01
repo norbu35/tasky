@@ -46,7 +46,7 @@ public class AnalyticsService {
     public AnalyticsService(AnalyticsEventDao analyticsEventDao,
                             ObjectMapper objectMapper) {
         this.analyticsEventDao = analyticsEventDao;
-        this.objectMapper      = objectMapper;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -68,27 +68,27 @@ public class AnalyticsService {
         String correlationId = MDC.get(RequestObservabilityFilter.CORRELATION_ID_MDC_KEY);
         if (StringUtils.hasText(correlationId)) {
             enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID,
-                                           correlationId);
+                correlationId);
         }
         String locale = MDC.get(RequestObservabilityFilter.LOCALE_MDC_KEY);
         if (StringUtils.hasText(locale)) {
             enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
-                                           locale);
+                locale);
         } else {
             enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
-                                           "mn");
+                "mn");
         }
         String platform = MDC.get(RequestObservabilityFilter.PLATFORM_MDC_KEY);
         if (StringUtils.hasText(platform)) {
             enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
-                                           platform.toUpperCase(Locale.ROOT));
+                platform.toUpperCase(Locale.ROOT));
         } else {
             enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
-                                           "UNKNOWN");
+                "UNKNOWN");
         }
 
         String id = UUID.randomUUID()
-                .toString();
+            .toString();
         Instant now = Instant.now();
 
         String propertiesJson;
@@ -99,14 +99,14 @@ public class AnalyticsService {
         }
 
         analyticsEventDao.insert(id,
-                                 eventName,
-                                 userId,
-                                 propertiesJson,
-                                 now);
+            eventName,
+            userId,
+            propertiesJson,
+            now);
         log.info("TRACK event={} user={} props={}",
-                 eventName,
-                 userId,
-                 enrichedProperties);
+            eventName,
+            userId,
+            enrichedProperties);
     }
 
     /**

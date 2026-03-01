@@ -3,7 +3,7 @@ package mn.tasky.common.idempotency;
 import org.springframework.http.HttpStatus;
 
 public class IdempotencyException
-        extends RuntimeException {
+    extends RuntimeException {
 
     private final HttpStatus status;
     private final String code;
@@ -13,7 +13,7 @@ public class IdempotencyException
                                 String message) {
         super(message);
         this.status = status;
-        this.code   = code;
+        this.code = code;
     }
 
     public HttpStatus status() {

@@ -52,9 +52,9 @@ public class JdbiConfig {
         jdbi.installPlugin(new PostgresPlugin());
         jdbi.installPlugin(new Jackson2Plugin());
         jdbi.getConfig(ColumnMappers.class)
-                .setCoalesceNullPrimitivesToDefaults(true);
+            .setCoalesceNullPrimitivesToDefaults(true);
         jdbi.getConfig(ReflectionMappers.class)
-                .setStrictMatching(false);
+            .setStrictMatching(false);
         return jdbi;
     }
 

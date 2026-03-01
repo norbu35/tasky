@@ -1,8 +1,5 @@
 package mn.tasky.auth.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import mn.tasky.auth.dto.VerificationRequest;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -13,6 +10,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(VerificationRequest.class)
 public interface VerificationDao {
@@ -26,25 +26,25 @@ public interface VerificationDao {
                         String adminNotes,
                         Instant reviewedAt) {
         insert(
-                required(id,
-                         "id"),
-                required(userId,
-                         "userId"),
-                idCardFrontKey,
-                idCardBackKey,
-                status,
-                submittedAt,
-                adminNotes,
-                reviewedAt
+            required(id,
+                "id"),
+            required(userId,
+                "userId"),
+            idCardFrontKey,
+            idCardBackKey,
+            status,
+            submittedAt,
+            adminNotes,
+            reviewedAt
         );
     }
 
     @SqlUpdate(
-            "INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, status," +
-                    " submitted_at, admin_notes, reviewed_at) "
-                    +
-                    "VALUES (:id, :userId, :idCardFrontKey, :idCardBackKey, :status, " +
-                    ":submittedAt, :adminNotes, :reviewedAt)")
+        "INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, status," +
+            " submitted_at, admin_notes, reviewed_at) "
+            +
+            "VALUES (:id, :userId, :idCardFrontKey, :idCardBackKey, :status, " +
+            ":submittedAt, :adminNotes, :reviewedAt)")
     void insert(@Bind("id") UUID id,
                 @Bind("userId") UUID userId,
                 @Bind("idCardFrontKey") String idCardFrontKey,
@@ -56,7 +56,7 @@ public interface VerificationDao {
 
     default Optional<VerificationRequest> findById(String id) {
         return findById(required(id,
-                                 "id"));
+            "id"));
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE id = :id")
@@ -64,17 +64,17 @@ public interface VerificationDao {
 
     default Optional<VerificationRequest> findLatestByUserId(String userId) {
         return findLatestByUserId(required(userId,
-                                           "userId"));
+            "userId"));
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE user_id = :userId ORDER BY submitted_at DESC " +
-            "LIMIT 1")
+        "LIMIT 1")
     Optional<VerificationRequest> findLatestByUserId(@Bind("userId") UUID userId);
 
     default List<VerificationRequest> findPending(String cursor,
                                                   int limit) {
         return findPending(optional(cursor),
-                           limit);
+            limit);
     }
 
     default List<VerificationRequest> findPending(UUID cursor,
@@ -83,14 +83,14 @@ public interface VerificationDao {
             return findPendingFirstPage(limit);
         }
         return findPendingAfterCursor(cursor,
-                                      limit);
+            limit);
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE status = 'PENDING' ORDER BY id LIMIT :limit")
     List<VerificationRequest> findPendingFirstPage(@Bind("limit") int limit);
 
     @SqlQuery("SELECT * FROM verifications WHERE status = 'PENDING' AND id > :cursor ORDER BY id " +
-            "LIMIT :limit")
+        "LIMIT :limit")
     List<VerificationRequest> findPendingAfterCursor(@Bind("cursor") UUID cursor,
                                                      @Bind("limit") int limit);
 
@@ -99,14 +99,14 @@ public interface VerificationDao {
                               String adminNotes,
                               Instant reviewedAt) {
         updateStatus(required(id,
-                              "id"),
-                     status,
-                     adminNotes,
-                     reviewedAt);
+                "id"),
+            status,
+            adminNotes,
+            reviewedAt);
     }
 
     @SqlUpdate("UPDATE verifications SET status = :status, admin_notes = :adminNotes, reviewed_at" +
-            " = :reviewedAt WHERE id = :id")
+        " = :reviewedAt WHERE id = :id")
     void updateStatus(@Bind("id") UUID id,
                       @Bind("status") String status,
                       @Bind("adminNotes") String adminNotes,

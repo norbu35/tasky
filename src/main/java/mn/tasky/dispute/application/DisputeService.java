@@ -28,7 +28,7 @@ public class DisputeService {
     public DisputeService(BookingService bookingService,
                           DisputeDao disputeDao) {
         this.bookingService = bookingService;
-        this.disputeDao     = disputeDao;
+        this.disputeDao = disputeDao;
     }
 
     /**
@@ -56,8 +56,8 @@ public class DisputeService {
         var booking = bookingOpt.get();
 
         boolean participant = booking.customerId()
-                .equals(userId) || booking.taskerId()
-                .equals(userId);
+            .equals(userId) || booking.taskerId()
+            .equals(userId);
         if (!participant) {
             return DisputeRaiseResult.error("FORBIDDEN");
         }
@@ -67,41 +67,41 @@ public class DisputeService {
         }
         if ("COMPLETED".equals(booking.status())) {
             Instant deadline = booking.updatedAt()
-                    .plusSeconds(COMPLETED_DISPUTE_WINDOW_HOURS * 3600);
+                .plusSeconds(COMPLETED_DISPUTE_WINDOW_HOURS * 3600);
             if (Instant.now()
-                    .isAfter(deadline)) {
+                .isAfter(deadline)) {
                 return DisputeRaiseResult.error("DISPUTE_WINDOW_EXPIRED");
             }
         }
 
         if (disputeDao.findOpenByBookingId(bookingId)
-                .isPresent()) {
+            .isPresent()) {
             return DisputeRaiseResult.error("DISPUTE_EXISTS");
         }
 
         String id = UUID.randomUUID()
-                .toString();
+            .toString();
         Instant now = Instant.now();
         Dispute dispute = new Dispute(id,
-                                      bookingId,
-                                      userId,
-                                      sanitizedReason,
-                                      "OPEN",
-                                      null,
-                                      null,
-                                      null,
-                                      now,
-                                      null);
+            bookingId,
+            userId,
+            sanitizedReason,
+            "OPEN",
+            null,
+            null,
+            null,
+            now,
+            null);
         disputeDao.insert(id,
-                          bookingId,
-                          userId,
-                          sanitizedReason,
-                          "OPEN",
-                          null,
-                          null,
-                          null,
-                          now,
-                          null);
+            bookingId,
+            userId,
+            sanitizedReason,
+            "OPEN",
+            null,
+            null,
+            null,
+            now,
+            null);
 
         return DisputeRaiseResult.success(dispute);
     }
@@ -113,7 +113,7 @@ public class DisputeService {
      */
     public List<Dispute> listPendingDisputes() {
         return listPendingDisputes(null,
-                                   50);
+            50);
     }
 
     /**
@@ -126,7 +126,7 @@ public class DisputeService {
     public List<Dispute> listPendingDisputes(String cursor,
                                              int limit) {
         return disputeDao.findPending(cursor,
-                                      limit);
+            limit);
     }
 
     /**
@@ -155,14 +155,14 @@ public class DisputeService {
 
         Dispute dispute = disputeOpt.get();
         Optional<String> role = bookingService.getBooking(dispute.bookingId())
-                .map(booking -> {
-                    if (booking.customerId()
-                            .equals(userId) || booking.taskerId()
-                            .equals(userId)) {
-                        return "PARTICIPANT";
-                    }
-                    return "NONE";
-                });
+            .map(booking -> {
+                if (booking.customerId()
+                    .equals(userId) || booking.taskerId()
+                    .equals(userId)) {
+                    return "PARTICIPANT";
+                }
+                return "NONE";
+            });
 
         if ("PARTICIPANT".equals(role.orElse("NONE"))) {
             return Optional.of(dispute);
@@ -211,23 +211,23 @@ public class DisputeService {
 
         Instant now = Instant.now();
         disputeDao.update(disputeId,
-                          newStatus,
-                          outcome,
-                          adminId,
-                          sanitizedNotes,
-                          now);
+            newStatus,
+            outcome,
+            adminId,
+            sanitizedNotes,
+            now);
 
         Dispute resolved = new Dispute(
-                dispute.id(),
-                dispute.bookingId(),
-                dispute.raiserId(),
-                dispute.reason(),
-                newStatus,
-                outcome,
-                adminId,
-                sanitizedNotes,
-                dispute.createdAt(),
-                now
+            dispute.id(),
+            dispute.bookingId(),
+            dispute.raiserId(),
+            dispute.reason(),
+            newStatus,
+            outcome,
+            adminId,
+            sanitizedNotes,
+            dispute.createdAt(),
+            now
         );
 
         return DisputeResolutionResult.success(resolved);

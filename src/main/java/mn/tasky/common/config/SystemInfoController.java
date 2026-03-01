@@ -31,19 +31,19 @@ public class SystemInfoController {
     public Map<String, String> getVersion() {
         Locale locale = LocaleContextHolder.getLocale();
         String status = messageSource.getMessage("system.version",
-                                                 null,
-                                                 locale);
+            null,
+            locale);
 
         return Map.of(
-                "application",
-                applicationName,
-                "api_version",
-                apiVersion,
-                "status_localized",
-                status,
-                "timestamp_utc",
-                Instant.now()
-                        .toString()
+            "application",
+            applicationName,
+            "api_version",
+            apiVersion,
+            "status_localized",
+            status,
+            "timestamp_utc",
+            Instant.now()
+                .toString()
         );
     }
 }

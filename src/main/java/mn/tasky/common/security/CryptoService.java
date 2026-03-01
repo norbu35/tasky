@@ -26,8 +26,8 @@ public class CryptoService {
     private final SecretKey blindIndexKey;
 
     public CryptoService(
-            @Value("${tasky.security.encryption-key}") String base64Key,
-            @Value("${tasky.security.blind-index-key}") String blindIndexKey
+        @Value("${tasky.security.encryption-key}") String base64Key,
+        @Value("${tasky.security.blind-index-key}") String blindIndexKey
     ) {
         if (!StringUtils.hasText(base64Key)) {
             throw new IllegalStateException("tasky.security.encryption-key must be configured.");
@@ -37,12 +37,12 @@ public class CryptoService {
         }
 
         byte[] decodedKey = Base64.getDecoder()
-                .decode(base64Key);
-        this.secretKey     = new SecretKeySpec(decodedKey,
-                                               "AES");
+            .decode(base64Key);
+        this.secretKey = new SecretKeySpec(decodedKey,
+            "AES");
         this.blindIndexKey = new SecretKeySpec(
-                blindIndexKey.getBytes(StandardCharsets.UTF_8),
-                BLIND_INDEX_ALGORITHM
+            blindIndexKey.getBytes(StandardCharsets.UTF_8),
+            BLIND_INDEX_ALGORITHM
         );
     }
 
@@ -50,7 +50,7 @@ public class CryptoService {
     void validateKeys() {
         if (secretKey.getEncoded().length != 32) {
             throw new IllegalStateException("Encryption key must decode to exactly 32 bytes for " +
-                                                    "AES-256.");
+                "AES-256.");
         }
         if (blindIndexKey.getEncoded().length < 32) {
             throw new IllegalStateException("Blind index key must be at least 32 bytes.");
@@ -67,29 +67,29 @@ public class CryptoService {
 
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH,
-                                                                  iv);
+                iv);
             cipher.init(Cipher.ENCRYPT_MODE,
-                        secretKey,
-                        parameterSpec);
+                secretKey,
+                parameterSpec);
 
             byte[] cipherText = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
             byte[] combined = new byte[iv.length + cipherText.length];
             System.arraycopy(iv,
-                             0,
-                             combined,
-                             0,
-                             iv.length);
+                0,
+                combined,
+                0,
+                iv.length);
             System.arraycopy(cipherText,
-                             0,
-                             combined,
-                             iv.length,
-                             cipherText.length);
+                0,
+                combined,
+                iv.length,
+                cipherText.length);
 
             return Base64.getEncoder()
-                    .encodeToString(combined);
+                .encodeToString(combined);
         } catch (Exception e) {
             throw new RuntimeException("Encryption failed",
-                                       e);
+                e);
         }
     }
 
@@ -99,25 +99,25 @@ public class CryptoService {
         }
         try {
             byte[] decoded = Base64.getDecoder()
-                    .decode(ciphertext);
+                .decode(ciphertext);
 
             GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH,
-                                                                  decoded,
-                                                                  0,
-                                                                  GCM_IV_LENGTH);
+                decoded,
+                0,
+                GCM_IV_LENGTH);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE,
-                        secretKey,
-                        parameterSpec);
+                secretKey,
+                parameterSpec);
 
             byte[] plaintext = cipher.doFinal(decoded,
-                                              GCM_IV_LENGTH,
-                                              decoded.length - GCM_IV_LENGTH);
+                GCM_IV_LENGTH,
+                decoded.length - GCM_IV_LENGTH);
             return new String(plaintext,
-                              StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException("Decryption failed",
-                                       e);
+                e);
         }
     }
 
@@ -130,10 +130,10 @@ public class CryptoService {
             mac.init(blindIndexKey);
             byte[] hash = mac.doFinal(input.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder()
-                    .encodeToString(hash);
+                .encodeToString(hash);
         } catch (Exception e) {
             throw new RuntimeException("Hashing failed",
-                                       e);
+                e);
         }
     }
 }

@@ -31,19 +31,19 @@ public class NotificationController {
     public ResponseEntity<?> register(@AuthenticationPrincipal JwtPrincipal principal,
                                       @Valid @RequestBody RegisterDeviceRequest body) {
         notificationService.registerDevice(principal.userId(),
-                                           body.token(),
-                                           body.platform());
+            body.token(),
+            body.platform());
         return ResponseEntity.ok(Map.of("message",
-                                        "Device registered successfully."));
+            "Device registered successfully."));
     }
 
     @DeleteMapping("/{token}")
     public ResponseEntity<?> unregister(@AuthenticationPrincipal JwtPrincipal principal,
                                         @PathVariable String token) {
         notificationService.unregisterDevice(principal.userId(),
-                                             token);
+            token);
         return ResponseEntity.noContent()
-                .build();
+            .build();
     }
 
 }

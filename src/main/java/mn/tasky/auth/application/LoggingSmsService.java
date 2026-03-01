@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class LoggingSmsService
-        implements SmsService {
+    implements SmsService {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingSmsService.class);
     private final ConcurrentHashMap<String, String> latestOtpByPhone = new ConcurrentHashMap<>();
@@ -27,15 +27,15 @@ public class LoggingSmsService
     public void sendOtp(String phone,
                         String code) {
         latestOtpByPhone.put(phone,
-                             code);
+            code);
         String suffix = phone.length() >= 4
-                ? phone.substring(phone.length() - 4)
-                : phone;
+            ? phone.substring(phone.length() - 4)
+            : phone;
         log.info("Sending OTP code to phone ending in {}",
-                 suffix);
+            suffix);
         log.debug("OTP for {} is {}",
-                  phone,
-                  code);
+            phone,
+            code);
     }
 
     /**

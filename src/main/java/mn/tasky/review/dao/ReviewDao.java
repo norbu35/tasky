@@ -1,8 +1,5 @@
 package mn.tasky.review.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import mn.tasky.review.dto.Review;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -12,6 +9,9 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(Review.class)
 public interface ReviewDao {
@@ -24,26 +24,26 @@ public interface ReviewDao {
                         String comment,
                         Instant createdAt) {
         insert(
-                required(id,
-                         "id"),
-                required(bookingId,
-                         "bookingId"),
-                required(authorId,
-                         "authorId"),
-                required(targetUserId,
-                         "targetUserId"),
-                rating,
-                comment,
-                createdAt
+            required(id,
+                "id"),
+            required(bookingId,
+                "bookingId"),
+            required(authorId,
+                "authorId"),
+            required(targetUserId,
+                "targetUserId"),
+            rating,
+            comment,
+            createdAt
         );
     }
 
     @SqlUpdate(
-            "INSERT INTO reviews (id, booking_id, author_id, target_user_id, rating, comment, " +
-                    "created_at) "
-                    +
-                    "VALUES (:id, :bookingId, :authorId, :targetUserId, :rating, :comment, " +
-                    ":createdAt)")
+        "INSERT INTO reviews (id, booking_id, author_id, target_user_id, rating, comment, " +
+            "created_at) "
+            +
+            "VALUES (:id, :bookingId, :authorId, :targetUserId, :rating, :comment, " +
+            ":createdAt)")
     void insert(@Bind("id") UUID id,
                 @Bind("bookingId") UUID bookingId,
                 @Bind("authorId") UUID authorId,
@@ -56,10 +56,10 @@ public interface ReviewDao {
                                             String cursor,
                                             int limit) {
         UUID userUuid = required(userId,
-                                 "userId");
+            "userId");
         return findByTargetUserId(userUuid,
-                                  optional(cursor),
-                                  limit);
+            optional(cursor),
+            limit);
     }
 
     default List<Review> findByTargetUserId(UUID userId,
@@ -67,21 +67,21 @@ public interface ReviewDao {
                                             int limit) {
         if (cursor == null) {
             return findByTargetUserIdFirstPage(userId,
-                                               limit);
+                limit);
         }
         return findByTargetUserIdAfterCursor(userId,
-                                             cursor,
-                                             limit);
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM reviews WHERE target_user_id = :userId "
-            + "ORDER BY id LIMIT :limit")
+        + "ORDER BY id LIMIT :limit")
     List<Review> findByTargetUserIdFirstPage(@Bind("userId") UUID userId,
                                              @Bind("limit") int limit);
 
     @SqlQuery("SELECT * FROM reviews WHERE target_user_id = :userId "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+        + "AND id > :cursor "
+        + "ORDER BY id LIMIT :limit")
     List<Review> findByTargetUserIdAfterCursor(@Bind("userId") UUID userId,
                                                @Bind("cursor") UUID cursor,
                                                @Bind("limit") int limit);
@@ -89,15 +89,15 @@ public interface ReviewDao {
     default boolean existsByBookingIdAndAuthorId(String bookingId,
                                                  String authorId) {
         UUID bookingUuid = required(bookingId,
-                                    "bookingId");
+            "bookingId");
         UUID authorUuid = required(authorId,
-                                   "authorId");
+            "authorId");
         return existsByBookingIdAndAuthorId(bookingUuid,
-                                            authorUuid);
+            authorUuid);
     }
 
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM reviews WHERE booking_id = :bookingId AND author_id = " +
-            ":authorId)")
+        ":authorId)")
     boolean existsByBookingIdAndAuthorId(@Bind("bookingId") UUID bookingId,
                                          @Bind("authorId") UUID authorId);
 }

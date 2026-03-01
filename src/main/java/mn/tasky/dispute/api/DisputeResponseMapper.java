@@ -13,32 +13,32 @@ public final class DisputeResponseMapper {
     public static Map<String, Object> admin(Dispute dispute) {
         Map<String, Object> response = summary(dispute);
         response.put("raiser_id",
-                     dispute.raiserId());
+            dispute.raiserId());
         response.put("outcome",
-                     dispute.outcome());
+            dispute.outcome());
         response.put("resolution_notes",
-                     dispute.resolutionNotes());
+            dispute.resolutionNotes());
         response.put("resolved_at",
-                     dispute.resolvedAt() != null
-                             ? dispute.resolvedAt()
-                             .toString()
-                             : null);
+            dispute.resolvedAt() != null
+                ? dispute.resolvedAt()
+                .toString()
+                : null);
         return response;
     }
 
     public static Map<String, Object> summary(Dispute dispute) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id",
-                     dispute.id());
+            dispute.id());
         response.put("booking_id",
-                     dispute.bookingId());
+            dispute.bookingId());
         response.put("status",
-                     dispute.status());
+            dispute.status());
         response.put("reason",
-                     dispute.reason());
+            dispute.reason());
         response.put("created_at",
-                     dispute.createdAt()
-                             .toString());
+            dispute.createdAt()
+                .toString());
         return response;
     }
 }

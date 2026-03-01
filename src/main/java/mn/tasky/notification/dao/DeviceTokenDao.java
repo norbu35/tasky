@@ -1,7 +1,5 @@
 package mn.tasky.notification.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import mn.tasky.notification.dto.DeviceToken;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -12,6 +10,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static mn.tasky.common.persistence.UuidHelper.required;
+
 @RegisterConstructorMapper(DeviceToken.class)
 public interface DeviceTokenDao {
 
@@ -20,17 +20,17 @@ public interface DeviceTokenDao {
                         String platform,
                         Instant createdAt) {
         upsert(required(userId,
-                        "userId"),
-               token,
-               platform,
-               createdAt);
+                "userId"),
+            token,
+            platform,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO device_tokens (user_id, token, platform, created_at) "
-            + "VALUES (:userId, :token, :platform, :createdAt) "
-            +
-            "ON CONFLICT (user_id, token) DO UPDATE SET platform = :platform, created_at = " +
-            ":createdAt")
+        + "VALUES (:userId, :token, :platform, :createdAt) "
+        +
+        "ON CONFLICT (user_id, token) DO UPDATE SET platform = :platform, created_at = " +
+        ":createdAt")
     void upsert(@Bind("userId") UUID userId,
                 @Bind("token") String token,
                 @Bind("platform") String platform,
@@ -39,8 +39,8 @@ public interface DeviceTokenDao {
     default void delete(String userId,
                         String token) {
         delete(required(userId,
-                        "userId"),
-               token);
+                "userId"),
+            token);
     }
 
     @SqlUpdate("DELETE FROM device_tokens WHERE user_id = :userId AND token = :token")
@@ -49,7 +49,7 @@ public interface DeviceTokenDao {
 
     default List<DeviceToken> findByUserId(String userId) {
         return findByUserId(required(userId,
-                                     "userId"));
+            "userId"));
     }
 
     @SqlQuery("SELECT token, platform, created_at FROM device_tokens WHERE user_id = :userId")

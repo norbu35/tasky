@@ -1,7 +1,7 @@
 package mn.tasky.auth;
 
 public class RateLimitExceededException
-        extends RuntimeException {
+    extends RuntimeException {
 
     private final String code;
 

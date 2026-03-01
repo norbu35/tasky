@@ -1,9 +1,5 @@
 package mn.tasky.admin.api;
 
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
-
 import jakarta.servlet.http.HttpServletRequest;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
@@ -30,6 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 @RestController
 @RequestMapping("/api/v1/admin/payouts")
 public class AdminPayoutController {
@@ -39,12 +39,12 @@ public class AdminPayoutController {
     private final IdempotencyService idempotencyService;
 
     public AdminPayoutController(
-            WalletService walletService,
-            IdempotencyService idempotencyService,
-            @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
+        WalletService walletService,
+        IdempotencyService idempotencyService,
+        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
     ) {
-        this.walletService       = walletService;
-        this.idempotencyService  = idempotencyService;
+        this.walletService = walletService;
+        this.idempotencyService = idempotencyService;
         this.monetizationEnabled = monetizationEnabled;
     }
 
@@ -56,120 +56,120 @@ public class AdminPayoutController {
         List<PayoutRequest> pending = walletService.listPendingPayouts();
 
         List<Map<String, Object>> data = pending.stream()
-                .map(this::toPayoutResponse)
-                .toList();
+            .map(this::toPayoutResponse)
+            .toList();
 
         return ResponseEntity.ok(
-                new PagedResponse<>(
-                        data,
-                        new CursorPagination(null,
-                                             false)
-                )
+            new PagedResponse<>(
+                data,
+                new CursorPagination(null,
+                    false)
+            )
         );
     }
 
     private ResponseEntity<Map<String, Object>> deferredResponse(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(
-                        Map.of(
-                                "code",
-                                "FEATURE_DEFERRED",
-                                "message",
-                                "Payout operations are deferred during the liquidity-first MVP " +
-                                        "phase.",
-                                "trace_id",
-                                resolveTraceId(request)
-                        )
-                );
+            .body(
+                Map.of(
+                    "code",
+                    "FEATURE_DEFERRED",
+                    "message",
+                    "Payout operations are deferred during the liquidity-first MVP " +
+                        "phase.",
+                    "trace_id",
+                    resolveTraceId(request)
+                )
+            );
     }
 
     private Map<String, Object> toPayoutResponse(PayoutRequest p) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id",
-                p.id());
+            p.id());
         res.put("user_id",
-                p.userId());
+            p.userId());
         res.put("amount",
-                p.amount());
+            p.amount());
         res.put("status",
-                p.status());
+            p.status());
         res.put("created_at",
-                p.createdAt()
-                        .toString());
+            p.createdAt()
+                .toString());
         return res;
     }
 
     @PostMapping("/{id}/process")
     public ResponseEntity<?> processPayout(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-            HttpServletRequest request
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+        HttpServletRequest request
     ) {
         String actorId = principal.userId();
         IdempotencyClaim claim = idempotencyService.claim(
-                actorId,
-                IdempotencyOperations.PROCESS_PAYOUT,
-                idempotencyKey
+            actorId,
+            IdempotencyOperations.PROCESS_PAYOUT,
+            idempotencyKey
         );
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
             if (claim.record() == null || claim.record()
-                    .resourceId() == null) {
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
             String payoutId = claim.record()
-                    .resourceId()
-                    .toString();
+                .resourceId()
+                .toString();
             return walletService.getPayout(payoutId)
-                    .<ResponseEntity<?>>map(payout -> ResponseEntity.ok(Map.of("status",
-                                                                               payout.status())))
-                    .orElseGet(() -> idempotencyReplayMissing(request));
+                .<ResponseEntity<?>>map(payout -> ResponseEntity.ok(Map.of("status",
+                    payout.status())))
+                .orElseGet(() -> idempotencyReplayMissing(request));
         }
 
         if (!monetizationEnabled) {
             idempotencyService.abandon(actorId,
-                                       IdempotencyOperations.PROCESS_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.PROCESS_PAYOUT,
+                idempotencyKey);
             return deferredResponse(request);
         }
         DayOfWeek today = LocalDate.now()
-                .getDayOfWeek();
+            .getDayOfWeek();
         if (today != DayOfWeek.TUESDAY && today != DayOfWeek.FRIDAY) {
             idempotencyService.abandon(actorId,
-                                       IdempotencyOperations.PROCESS_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.PROCESS_PAYOUT,
+                idempotencyKey);
             return ResponseEntity.badRequest()
-                    .body(Map.of(
-                            "error",
-                            "Payouts can only be processed on Tuesday and Friday. Today is " + today
-                    ));
+                .body(Map.of(
+                    "error",
+                    "Payouts can only be processed on Tuesday and Friday. Today is " + today
+                ));
         }
 
         try {
             walletService.processPayout(id);
             idempotencyService.completeWithResource(
-                    actorId,
-                    IdempotencyOperations.PROCESS_PAYOUT,
-                    idempotencyKey,
-                    "PAYOUT",
-                    id
+                actorId,
+                IdempotencyOperations.PROCESS_PAYOUT,
+                idempotencyKey,
+                "PAYOUT",
+                id
             );
             return ResponseEntity.ok(Map.of("status",
-                                            "PROCESSED"));
+                "PROCESSED"));
         } catch (IllegalArgumentException e) {
             idempotencyService.abandon(actorId,
-                                       IdempotencyOperations.PROCESS_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.PROCESS_PAYOUT,
+                idempotencyKey);
             return ResponseEntity.badRequest()
-                    .body(Map.of("error",
-                                 e.getMessage()));
+                .body(Map.of("error",
+                    e.getMessage()));
         } catch (RuntimeException e) {
             idempotencyService.abandon(actorId,
-                                       IdempotencyOperations.PROCESS_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.PROCESS_PAYOUT,
+                idempotencyKey);
             throw e;
         }
     }

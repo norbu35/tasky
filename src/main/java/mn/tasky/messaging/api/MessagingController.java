@@ -40,126 +40,126 @@ public class MessagingController {
 
     @MessageMapping("/conversations/{id}/messages")
     public void sendMessageRealtime(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @DestinationVariable String id,
-            @Valid MessageRequest body) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @DestinationVariable String id,
+        @Valid MessageRequest body) {
         messagingService.sendMessage(principal.userId(),
-                                     id,
-                                     body.content());
+            id,
+            body.content());
     }
 
     @GetMapping
     public ResponseEntity<?> listConversations(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit
     ) {
         List<Conversation> conversations = messagingService.listConversations(principal.userId(),
-                                                                              cursor,
-                                                                              limit + 1);
+            cursor,
+            limit + 1);
         boolean hasMore = conversations.size() > limit;
         List<Conversation> pageData = hasMore
-                ? conversations.subList(0,
-                                        limit)
-                : conversations;
+            ? conversations.subList(0,
+            limit)
+            : conversations;
         List<Map<String, Object>> data = pageData.stream()
-                .map(this::toConversationResponse)
-                .toList();
+            .map(this::toConversationResponse)
+            .toList();
         return ResponseEntity.ok(new PagedResponse<>(data,
-                                                     CursorPagination.from(conversations,
-                                                                           limit,
-                                                                           Conversation::id)));
+            CursorPagination.from(conversations,
+                limit,
+                Conversation::id)));
     }
 
     private Map<String, Object> toConversationResponse(Conversation c) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id",
-                c.id());
+            c.id());
         res.put("task_id",
-                c.taskId());
+            c.taskId());
         res.put("participant_1_id",
-                c.participant1Id());
+            c.participant1Id());
         res.put("participant_2_id",
-                c.participant2Id());
+            c.participant2Id());
         res.put("created_at",
-                c.createdAt()
-                        .toString());
+            c.createdAt()
+                .toString());
         return res;
     }
 
     @GetMapping("/{id}/messages")
     public ResponseEntity<?> listMessages(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "50") @Min(1) @Max(100) int limit) {
         try {
             List<Message> messages = messagingService.listMessages(principal.userId(),
-                                                                   id,
-                                                                   cursor,
-                                                                   limit + 1);
+                id,
+                cursor,
+                limit + 1);
             boolean hasMore = messages.size() > limit;
             List<Message> pageMessages = hasMore
-                    ? messages.subList(0,
-                                       limit)
-                    : messages;
+                ? messages.subList(0,
+                limit)
+                : messages;
             List<Map<String, Object>> data = pageMessages.stream()
-                    .map(this::toMessageResponse)
-                    .toList();
+                .map(this::toMessageResponse)
+                .toList();
 
             return ResponseEntity.ok(
-                    new PagedResponse<>(data,
-                                        CursorPagination.from(messages,
-                                                              limit,
-                                                              Message::id))
+                new PagedResponse<>(data,
+                    CursorPagination.from(messages,
+                        limit,
+                        Message::id))
             );
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(403)
-                    .body(Map.of("code",
-                                 "FORBIDDEN",
-                                 "message",
-                                 e.getMessage()));
+                .body(Map.of("code",
+                    "FORBIDDEN",
+                    "message",
+                    e.getMessage()));
         }
     }
 
     private Map<String, Object> toMessageResponse(Message message) {
         Map<String, Object> res = new LinkedHashMap<>();
         res.put("id",
-                message.id());
+            message.id());
         res.put("conversation_id",
-                message.conversationId());
+            message.conversationId());
         res.put("sender_id",
-                message.senderId());
+            message.senderId());
         res.put("content",
-                message.content());
+            message.content());
         res.put("sent_at",
-                message.sentAt()
-                        .toString());
+            message.sentAt()
+                .toString());
         return res;
     }
 
     @PostMapping("/{id}/messages")
     public ResponseEntity<?> sendMessage(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @Valid @RequestBody MessageRequest body) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @Valid @RequestBody MessageRequest body) {
 
         try {
             var messageOpt = messagingService.sendMessage(principal.userId(),
-                                                          id,
-                                                          body.content());
+                id,
+                body.content());
             if (messageOpt.isEmpty()) {
                 return ResponseEntity.notFound()
-                        .build();
+                    .build();
             }
             return ResponseEntity.status(201)
-                    .body(toMessageResponse(messageOpt.get()));
+                .body(toMessageResponse(messageOpt.get()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(403)
-                    .body(Map.of("code",
-                                 "FORBIDDEN",
-                                 "message",
-                                 e.getMessage()));
+                .body(Map.of("code",
+                    "FORBIDDEN",
+                    "message",
+                    e.getMessage()));
         }
     }
 

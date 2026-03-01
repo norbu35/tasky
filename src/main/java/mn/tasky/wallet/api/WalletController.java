@@ -42,125 +42,125 @@ public class WalletController {
     private final IdempotencyService idempotencyService;
 
     public WalletController(
-            WalletService walletService,
-            IdempotencyService idempotencyService,
-            @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
+        WalletService walletService,
+        IdempotencyService idempotencyService,
+        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
     ) {
-        this.walletService       = walletService;
-        this.idempotencyService  = idempotencyService;
+        this.walletService = walletService;
+        this.idempotencyService = idempotencyService;
         this.monetizationEnabled = monetizationEnabled;
     }
 
     @GetMapping
     public ResponseEntity<?> getBalance(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            HttpServletRequest request
+        @AuthenticationPrincipal JwtPrincipal principal,
+        HttpServletRequest request
     ) {
         if (!monetizationEnabled) {
             return deferredResponse(request);
         }
         WalletBalance balance = walletService.getBalance(principal.userId());
         return ResponseEntity.ok(Map.of(
-                "balance",
-                balance.balance(),
-                "pending_payout",
-                balance.pendingPayout(),
-                "currency",
-                balance.currency()
+            "balance",
+            balance.balance(),
+            "pending_payout",
+            balance.pendingPayout(),
+            "currency",
+            balance.currency()
         ));
     }
 
     private ResponseEntity<Map<String, Object>> deferredResponse(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(
-                        Map.of(
-                                "code",
-                                "FEATURE_DEFERRED",
-                                "message",
-                                "Wallet and payouts are deferred during the liquidity-first MVP " +
-                                        "phase.",
-                                "trace_id",
-                                resolveTraceId(request)
-                        )
-                );
+            .body(
+                Map.of(
+                    "code",
+                    "FEATURE_DEFERRED",
+                    "message",
+                    "Wallet and payouts are deferred during the liquidity-first MVP " +
+                        "phase.",
+                    "trace_id",
+                    resolveTraceId(request)
+                )
+            );
     }
 
     @PostMapping("/payouts")
     public ResponseEntity<?> requestPayout(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @Valid @RequestBody CreatePayoutRequest body,
-            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-            HttpServletRequest request) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @Valid @RequestBody CreatePayoutRequest body,
+        @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+        HttpServletRequest request) {
         IdempotencyClaim claim = idempotencyService.claim(
-                principal.userId(),
-                IdempotencyOperations.REQUEST_PAYOUT,
-                idempotencyKey
+            principal.userId(),
+            IdempotencyOperations.REQUEST_PAYOUT,
+            idempotencyKey
         );
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
             if (claim.record() == null || claim.record()
-                    .resourceId() == null) {
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
             return walletService.getPayout(claim.record()
-                                                   .resourceId()
-                                                   .toString())
-                    .<ResponseEntity<?>>map(payout -> ResponseEntity.ok(
-                            Map.of(
-                                    "id",
-                                    payout.id(),
-                                    "status",
-                                    payout.status()
-                            )
-                    ))
-                    .orElseGet(() -> idempotencyReplayMissing(request));
+                    .resourceId()
+                    .toString())
+                .<ResponseEntity<?>>map(payout -> ResponseEntity.ok(
+                    Map.of(
+                        "id",
+                        payout.id(),
+                        "status",
+                        payout.status()
+                    )
+                ))
+                .orElseGet(() -> idempotencyReplayMissing(request));
         }
 
         try {
             if (!monetizationEnabled) {
                 idempotencyService.abandon(principal.userId(),
-                                           IdempotencyOperations.REQUEST_PAYOUT,
-                                           idempotencyKey);
+                    IdempotencyOperations.REQUEST_PAYOUT,
+                    idempotencyKey);
                 return deferredResponse(request);
             }
             String payoutId = walletService.requestPayout(principal.userId(),
-                                                          body.amount());
+                body.amount());
             idempotencyService.completeWithResource(
-                    principal.userId(),
-                    IdempotencyOperations.REQUEST_PAYOUT,
-                    idempotencyKey,
-                    "PAYOUT",
-                    payoutId
+                principal.userId(),
+                IdempotencyOperations.REQUEST_PAYOUT,
+                idempotencyKey,
+                "PAYOUT",
+                payoutId
             );
             return ResponseEntity.ok(Map.of("id",
-                                            payoutId,
-                                            "status",
-                                            "PENDING"));
+                payoutId,
+                "status",
+                "PENDING"));
         } catch (IllegalArgumentException e) {
             idempotencyService.abandon(principal.userId(),
-                                       IdempotencyOperations.REQUEST_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.REQUEST_PAYOUT,
+                idempotencyKey);
             String msg = e.getMessage();
             if ("Insufficient balance for payout".equals(msg)) {
                 msg = "Insufficient balance";
             }
             return ResponseEntity.badRequest()
-                    .body(Map.of("error",
-                                 msg));
+                .body(Map.of("error",
+                    msg));
         } catch (RuntimeException e) {
             idempotencyService.abandon(principal.userId(),
-                                       IdempotencyOperations.REQUEST_PAYOUT,
-                                       idempotencyKey);
+                IdempotencyOperations.REQUEST_PAYOUT,
+                idempotencyKey);
             throw e;
         }
     }
 
     @GetMapping("/transactions")
     public ResponseEntity<?> listTransactions(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            HttpServletRequest request
+        @AuthenticationPrincipal JwtPrincipal principal,
+        HttpServletRequest request
     ) {
         if (!monetizationEnabled) {
             return deferredResponse(request);
@@ -168,33 +168,33 @@ public class WalletController {
         List<LedgerEntry> transactions = walletService.listTransactions(principal.userId());
 
         List<Map<String, Object>> data = transactions.stream()
-                .map(this::toLedgerResponse)
-                .toList();
+            .map(this::toLedgerResponse)
+            .toList();
 
         return ResponseEntity.ok(
-                new PagedResponse<>(
-                        data,
-                        new CursorPagination(null,
-                                             false)
-                )
+            new PagedResponse<>(
+                data,
+                new CursorPagination(null,
+                    false)
+            )
         );
     }
 
     private Map<String, Object> toLedgerResponse(LedgerEntry entry) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("id",
-                     entry.id());
+            entry.id());
         response.put("amount",
-                     entry.amount());
+            entry.amount());
         response.put("type",
-                     entry.type());
+            entry.type());
         response.put("reference_id",
-                     entry.referenceId());
+            entry.referenceId());
         response.put("description",
-                     entry.description());
+            entry.description());
         response.put("created_at",
-                     entry.createdAt()
-                             .toString());
+            entry.createdAt()
+                .toString());
         return response;
     }
 

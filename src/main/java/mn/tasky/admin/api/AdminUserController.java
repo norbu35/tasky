@@ -33,57 +33,57 @@ public class AdminUserController {
 
     @GetMapping
     public ResponseEntity<?> search(
-            @RequestParam String phone,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") int limit
+        @RequestParam String phone,
+        @RequestParam(required = false) String cursor,
+        @RequestParam(defaultValue = "50") int limit
     ) {
         int clampedLimit = Math.max(1,
-                                    Math.min(limit,
-                                             100));
+            Math.min(limit,
+                100));
         try {
             UserProfilePage page = authService.searchUsersByPhone(phone,
-                                                                  cursor,
-                                                                  clampedLimit);
+                cursor,
+                clampedLimit);
             CursorPagination pagination = new CursorPagination(page.nextCursor(),
-                                                               page.hasMore());
+                page.hasMore());
             return ResponseEntity.ok(new PagedResponse<>(page.data(),
-                                                         pagination));
+                pagination));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("code",
-                                 "INVALID_CURSOR",
-                                 "message",
-                                 "Cursor parameter is invalid."));
+                .body(Map.of("code",
+                    "INVALID_CURSOR",
+                    "message",
+                    "Cursor parameter is invalid."));
         }
     }
 
     @PostMapping("/{id}/ban")
     public ResponseEntity<?> ban(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @Valid @RequestBody AdminActionRequest body) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @Valid @RequestBody AdminActionRequest body) {
         boolean success = authService.banUser(principal.userId(),
-                                              id,
-                                              body.reason());
+            id,
+            body.reason());
         if (!success) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(Map.of("status",
-                                        "BANNED"));
+            "BANNED"));
     }
 
     @PostMapping("/{id}/unban")
     public ResponseEntity<?> unban(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            @Valid @RequestBody AdminActionRequest body) {
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @Valid @RequestBody AdminActionRequest body) {
         boolean success = authService.unbanUser(principal.userId(),
-                                                id,
-                                                body.reason());
+            id,
+            body.reason());
         if (!success) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(Map.of("status",
-                                        "ACTIVE"));
+            "ACTIVE"));
     }
 }

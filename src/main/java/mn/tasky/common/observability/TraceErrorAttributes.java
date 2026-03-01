@@ -11,25 +11,25 @@ import java.util.UUID;
 
 @Component
 public class TraceErrorAttributes
-        extends DefaultErrorAttributes {
+    extends DefaultErrorAttributes {
 
     @Override
     public Map<String, Object> getErrorAttributes(
-            WebRequest webRequest,
-            ErrorAttributeOptions options
+        WebRequest webRequest,
+        ErrorAttributeOptions options
     ) {
         Map<String, Object> attributes = super.getErrorAttributes(webRequest,
-                                                                  options);
+            options);
         Object traceId = webRequest.getAttribute(
-                RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-                RequestAttributes.SCOPE_REQUEST
+            RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
+            RequestAttributes.SCOPE_REQUEST
         );
         if (traceId == null) {
             traceId = UUID.randomUUID()
-                    .toString();
+                .toString();
         }
         attributes.put("trace_id",
-                       traceId.toString());
+            traceId.toString());
         return attributes;
     }
 }

@@ -16,13 +16,13 @@ public final class TextSanitizer {
             return null;
         }
         String withoutTags = Jsoup.parse(value)
-                .text()
-                .replace("<",
-                         "")
-                .replace(">",
-                         "");
+            .text()
+            .replace("<",
+                "")
+            .replace(">",
+                "");
         return MULTI_SPACE_PATTERN.matcher(withoutTags)
-                .replaceAll(" ")
-                .trim();
+            .replaceAll(" ")
+            .trim();
     }
 }

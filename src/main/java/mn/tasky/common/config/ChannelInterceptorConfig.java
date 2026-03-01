@@ -22,7 +22,7 @@ import java.util.List;
 
 @Configuration
 public class ChannelInterceptorConfig
-        implements WebSocketMessageBrokerConfigurer {
+    implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenService jwtTokenService;
     private final MessagingService messagingService;
@@ -31,9 +31,9 @@ public class ChannelInterceptorConfig
     public ChannelInterceptorConfig(JwtTokenService jwtTokenService,
                                     @Lazy MessagingService messagingService,
                                     AuthService authService) {
-        this.jwtTokenService  = jwtTokenService;
+        this.jwtTokenService = jwtTokenService;
         this.messagingService = messagingService;
-        this.authService      = authService;
+        this.authService = authService;
     }
 
     @Override
@@ -43,8 +43,8 @@ public class ChannelInterceptorConfig
             public Message<?> preSend(@NonNull Message<?> message,
                                       @NonNull MessageChannel channel) {
                 StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message,
-                                                          StompHeaderAccessor.class);
+                    MessageHeaderAccessor.getAccessor(message,
+                        StompHeaderAccessor.class);
 
                 if (accessor == null) {
                     return message;
@@ -62,30 +62,30 @@ public class ChannelInterceptorConfig
                     }
                     String token = authHeader.substring(7);
                     JwtPrincipal principal = jwtTokenService.parse(token)
-                            .orElseThrow(() -> new IllegalArgumentException("Unauthorized"));
+                        .orElseThrow(() -> new IllegalArgumentException("Unauthorized"));
                     assertUserNotRestricted(principal);
                     UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(
-                                    principal,
-                                    null,
-                                    List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
-                            );
+                        new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + principal.role()))
+                        );
                     accessor.setUser(auth);
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
                     String destination = accessor.getDestination();
                     if (destination != null && destination.startsWith("/topic/conversations/")) {
                         String conversationId =
-                                destination.substring("/topic/conversations/".length());
+                            destination.substring("/topic/conversations/".length());
                         if (!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
-                                || !(auth.getPrincipal() instanceof JwtPrincipal principal)) {
+                            || !(auth.getPrincipal() instanceof JwtPrincipal principal)) {
                             throw new IllegalArgumentException("Unauthorized");
                         }
                         assertUserNotRestricted(principal);
                         boolean isParticipant =
-                                messagingService.listConversations(principal.userId())
-                                        .stream()
-                                        .anyMatch(c -> c.id()
-                                                .equals(conversationId));
+                            messagingService.listConversations(principal.userId())
+                                .stream()
+                                .anyMatch(c -> c.id()
+                                    .equals(conversationId));
                         if (!isParticipant) {
                             throw new IllegalArgumentException("Forbidden");
                         }
@@ -98,7 +98,7 @@ public class ChannelInterceptorConfig
 
     private void assertUserNotRestricted(JwtPrincipal principal) {
         String effectiveStatus = authService.currentUserStatus(principal.userId())
-                .orElse(principal.status());
+            .orElse(principal.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new IllegalArgumentException("Forbidden");
         }

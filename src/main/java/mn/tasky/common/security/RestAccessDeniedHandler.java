@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Component
 public class RestAccessDeniedHandler
-        implements AccessDeniedHandler {
+    implements AccessDeniedHandler {
 
     private final JsonSecurityResponseWriter responseWriter;
 
@@ -21,16 +21,16 @@ public class RestAccessDeniedHandler
 
     @Override
     public void handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AccessDeniedException accessDeniedException
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AccessDeniedException accessDeniedException
     ) throws IOException {
         responseWriter.write(
-                request,
-                response,
-                HttpStatus.FORBIDDEN.value(),
-                "FORBIDDEN",
-                "Insufficient permissions for this action."
+            request,
+            response,
+            HttpStatus.FORBIDDEN.value(),
+            "FORBIDDEN",
+            "Insufficient permissions for this action."
         );
     }
 }

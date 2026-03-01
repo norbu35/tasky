@@ -15,16 +15,16 @@ public final class ApiResponseSupport {
 
     public static ResponseEntity<Map<String, String>> idempotencyInProgress(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                        Map.of(
-                                "code",
-                                "IDEMPOTENCY_IN_PROGRESS",
-                                "message",
-                                "An identical request is still being processed.",
-                                "trace_id",
-                                resolveTraceId(request)
-                        )
-                );
+            .body(
+                Map.of(
+                    "code",
+                    "IDEMPOTENCY_IN_PROGRESS",
+                    "message",
+                    "An identical request is still being processed.",
+                    "trace_id",
+                    resolveTraceId(request)
+                )
+            );
     }
 
     public static String resolveTraceId(HttpServletRequest request) {
@@ -33,20 +33,20 @@ public final class ApiResponseSupport {
             return traceId.toString();
         }
         return UUID.randomUUID()
-                .toString();
+            .toString();
     }
 
     public static ResponseEntity<Map<String, String>> idempotencyReplayMissing(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                        Map.of(
-                                "code",
-                                "IDEMPOTENCY_REPLAY_MISSING",
-                                "message",
-                                "Previous request exists but replay state could not be loaded.",
-                                "trace_id",
-                                resolveTraceId(request)
-                        )
-                );
+            .body(
+                Map.of(
+                    "code",
+                    "IDEMPOTENCY_REPLAY_MISSING",
+                    "message",
+                    "Previous request exists but replay state could not be loaded.",
+                    "trace_id",
+                    resolveTraceId(request)
+                )
+            );
     }
 }

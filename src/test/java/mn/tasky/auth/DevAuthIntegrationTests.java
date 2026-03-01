@@ -1,7 +1,5 @@
 package mn.tasky.auth;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,12 +16,14 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "tasky.dev-auth.enabled=true"
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = "tasky.dev-auth.enabled=true"
 )
 class DevAuthIntegrationTests
-        extends IntegrationTestBase {
+    extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     @LocalServerPort
@@ -31,34 +31,34 @@ class DevAuthIntegrationTests
 
     @Test
     @DisplayName("TID-TASK-010-DEV-AUTH-BYPASS local dev auth issues a session without OTP " +
-            "challenge")
+        "challenge")
     void devAuthBypassIssuesSession() {
         String phone = uniquePhone("55");
         ResponseEntity<Map> response = post(
-                "/api/v1/auth/dev/login",
-                Map.of("phone",
-                       phone,
-                       "role",
-                       "TASKER")
+            "/api/v1/auth/dev/login",
+            Map.of("phone",
+                phone,
+                "role",
+                "TASKER")
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).containsKeys("access_token",
-                                                    "refresh_token",
-                                                    "user");
+            "refresh_token",
+            "user");
         Map<String, Object> user = (Map<String, Object>) response.getBody()
-                .get("user");
+            .get("user");
         assertThat(user.get("phone")).isEqualTo(phone);
         assertThat(user.get("role")).isEqualTo("TASKER");
     }
 
     private String uniquePhone(String prefix) {
         String digits = UUID.randomUUID()
-                .toString()
-                .replaceAll("[^0-9]",
-                            "") + "0123456789";
+            .toString()
+            .replaceAll("[^0-9]",
+                "") + "0123456789";
         return "+976" + prefix + digits.substring(0,
-                                                  6);
+            6);
     }
 
     private ResponseEntity<Map> post(String path,
@@ -68,11 +68,11 @@ class DevAuthIntegrationTests
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
 
         return restTemplate.exchange(
-                url(path),
-                HttpMethod.POST,
-                new HttpEntity<>(body,
-                                 headers),
-                Map.class
+            url(path),
+            HttpMethod.POST,
+            new HttpEntity<>(body,
+                headers),
+            Map.class
         );
     }
 
@@ -85,11 +85,11 @@ class DevAuthIntegrationTests
     void devAuthRejectsUnsupportedRoles() {
         String phone = uniquePhone("54");
         ResponseEntity<Map> response = post(
-                "/api/v1/auth/dev/login",
-                Map.of("phone",
-                       phone,
-                       "role",
-                       "HACKER")
+            "/api/v1/auth/dev/login",
+            Map.of("phone",
+                phone,
+                "role",
+                "HACKER")
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

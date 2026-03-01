@@ -16,7 +16,7 @@ public final class UuidHelper {
             return UUID.fromString(value);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException("Invalid UUID for " + fieldName + ": " + value,
-                                               exception);
+                exception);
         }
     }
 
@@ -28,7 +28,7 @@ public final class UuidHelper {
             return UUID.fromString(value);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException("Invalid UUID: " + value,
-                                               exception);
+                exception);
         }
     }
 }

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.function.Function;
 
 public record CursorPagination(
-        String next,
-        @JsonProperty("has_more")
-        boolean hasMore
+    String next,
+    @JsonProperty("has_more")
+    boolean hasMore
 ) {
 
     public static <T> CursorPagination from(List<T> items,
@@ -16,15 +16,15 @@ public record CursorPagination(
                                             Function<T, String> cursorResolver) {
         if (items == null || items.isEmpty()) {
             return new CursorPagination(null,
-                                        false);
+                false);
         }
         boolean hasMore = items.size() > limit;
         if (!hasMore) {
             return new CursorPagination(null,
-                                        false);
+                false);
         }
         String next = cursorResolver.apply(items.get(limit - 1));
         return new CursorPagination(next,
-                                    true);
+            true);
     }
 }

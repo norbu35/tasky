@@ -1,9 +1,5 @@
 package mn.tasky.task;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.category.application.CategoryService;
@@ -35,6 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class TaskControllerUnitTests {
 
@@ -54,70 +54,70 @@ class TaskControllerUnitTests {
     @BeforeEach
     void setUp() {
         controller = new TaskController(taskService,
-                                        categoryService,
-                                        authService,
-                                        bookingService,
-                                        idempotencyService);
+            categoryService,
+            authService,
+            bookingService,
+            idempotencyService);
     }
 
     @Test
     void createTaskRejectsNonCustomerRole() {
         JwtPrincipal principal = new JwtPrincipal(uuid(1),
-                                                  "TASKER",
-                                                  "ACTIVE");
+            "TASKER",
+            "ACTIVE");
 
         ResponseEntity<?> response = controller.createTask(
-                principal,
-                createTaskRequest(),
-                request()
+            principal,
+            createTaskRequest(),
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "FORBIDDEN");
+            "FORBIDDEN");
     }
 
     private String uuid(int suffix) {
         return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+            suffix);
     }
 
     private CreateTaskRequest createTaskRequest() {
         return new CreateTaskRequest(
-                uuid(30),
-                "Task description long enough",
-                50000,
-                47.9,
-                106.9,
-                "Ulaanbaatar city",
-                "2026-02-18T00:00:00Z",
-                List.of()
+            uuid(30),
+            "Task description long enough",
+            50000,
+            47.9,
+            106.9,
+            "Ulaanbaatar city",
+            "2026-02-18T00:00:00Z",
+            List.of()
         );
     }
 
     private MockHttpServletRequest request() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-                             "trace-task-controller");
+            "trace-task-controller");
         return request;
     }
 
     @Test
     void listApplicationsReturnsForbiddenWhenServiceRejectsActor() {
         JwtPrincipal principal = new JwtPrincipal(uuid(2),
-                                                  "TASKER",
-                                                  "ACTIVE");
+            "TASKER",
+            "ACTIVE");
         when(taskService.listTaskApplications(principal.userId(),
-                                              uuid(3),
-                                              null,
-                                              21)).thenReturn(TaskApplicationsListResult.FORBIDDEN_RESULT);
+            uuid(3),
+            null,
+            21)).thenReturn(TaskApplicationsListResult.FORBIDDEN_RESULT);
 
         ResponseEntity<?> response = controller.listTaskApplications(
-                principal,
-                uuid(3),
-                null,
-                20,
-                request()
+            principal,
+            uuid(3),
+            null,
+            20,
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -126,87 +126,87 @@ class TaskControllerUnitTests {
     @Test
     void acceptApplicationMapsDisclaimerRequiredError() {
         JwtPrincipal principal = new JwtPrincipal(uuid(4),
-                                                  "CUSTOMER",
-                                                  "ACTIVE");
+            "CUSTOMER",
+            "ACTIVE");
         when(idempotencyService.claim(principal.userId(),
-                                      IdempotencyOperations.ACCEPT_APPLICATION,
-                                      "idem-1")).thenReturn(new IdempotencyClaim(
-                IdempotencyClaim.Status.NEW,
-                null
+            IdempotencyOperations.ACCEPT_APPLICATION,
+            "idem-1")).thenReturn(new IdempotencyClaim(
+            IdempotencyClaim.Status.NEW,
+            null
         ));
         when(taskService.acceptApplication(principal.userId(),
-                                           uuid(5),
-                                           uuid(6),
-                                           false)).thenReturn(TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT);
+            uuid(5),
+            uuid(6),
+            false)).thenReturn(TaskAcceptResult.DISCLAIMER_REQUIRED_RESULT);
 
         ResponseEntity<?> response = controller.acceptApplication(
-                principal,
-                uuid(5),
-                uuid(6),
-                new AcceptApplicationRequest(false),
-                "idem-1",
-                request()
+            principal,
+            uuid(5),
+            uuid(6),
+            new AcceptApplicationRequest(false),
+            "idem-1",
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "DISCLAIMER_REQUIRED");
+            "DISCLAIMER_REQUIRED");
         verify(idempotencyService).abandon(principal.userId(),
-                                           IdempotencyOperations.ACCEPT_APPLICATION,
-                                           "idem-1");
+            IdempotencyOperations.ACCEPT_APPLICATION,
+            "idem-1");
     }
 
     @Test
     void acceptApplicationMapsConflictError() {
         JwtPrincipal principal = new JwtPrincipal(uuid(7),
-                                                  "CUSTOMER",
-                                                  "ACTIVE");
+            "CUSTOMER",
+            "ACTIVE");
         when(idempotencyService.claim(principal.userId(),
-                                      IdempotencyOperations.ACCEPT_APPLICATION,
-                                      "idem-2")).thenReturn(new IdempotencyClaim(
-                IdempotencyClaim.Status.NEW,
-                null
+            IdempotencyOperations.ACCEPT_APPLICATION,
+            "idem-2")).thenReturn(new IdempotencyClaim(
+            IdempotencyClaim.Status.NEW,
+            null
         ));
         when(taskService.acceptApplication(principal.userId(),
-                                           uuid(8),
-                                           uuid(9),
-                                           true)).thenReturn(TaskAcceptResult.CONFLICT_RESULT);
+            uuid(8),
+            uuid(9),
+            true)).thenReturn(TaskAcceptResult.CONFLICT_RESULT);
 
         ResponseEntity<?> response = controller.acceptApplication(
-                principal,
-                uuid(8),
-                uuid(9),
-                new AcceptApplicationRequest(true),
-                "idem-2",
-                request()
+            principal,
+            uuid(8),
+            uuid(9),
+            new AcceptApplicationRequest(true),
+            "idem-2",
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "CONFLICT");
+            "CONFLICT");
     }
 
     @Test
     void getPostCreateUploadUrlRejectsWhenTaskAlreadyHasThreePhotos() {
         JwtPrincipal principal = new JwtPrincipal(uuid(10),
-                                                  "CUSTOMER",
-                                                  "ACTIVE");
+            "CUSTOMER",
+            "ACTIVE");
         when(taskService.getTask(uuid(11))).thenReturn(Optional.of(taskWithPhotos(uuid(11),
-                                                                                  principal.userId(),
-                                                                                  List.of("a",
-                                                                                          "b",
-                                                                                          "c"))));
+            principal.userId(),
+            List.of("a",
+                "b",
+                "c"))));
 
         ResponseEntity<?> response = controller.getPostCreateUploadUrl(
-                principal,
-                uuid(11),
-                new TaskPhotoUploadUrlRequest("image/jpeg"),
-                request()
+            principal,
+            uuid(11),
+            new TaskPhotoUploadUrlRequest("image/jpeg"),
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "TOO_MANY_PHOTOS");
+            "TOO_MANY_PHOTOS");
     }
 
     private TaskState taskWithPhotos(String id,
@@ -214,60 +214,60 @@ class TaskControllerUnitTests {
                                      List<String> photoKeys) {
         Instant now = Instant.parse("2026-02-17T00:00:00Z");
         return new TaskState(
-                id,
-                customerId,
-                uuid(20),
-                "Task description long",
-                50000,
-                47.9,
-                106.9,
-                "Ulaanbaatar",
-                "OPEN",
-                now.plusSeconds(3600),
-                photoKeys,
-                now,
-                now
+            id,
+            customerId,
+            uuid(20),
+            "Task description long",
+            50000,
+            47.9,
+            106.9,
+            "Ulaanbaatar",
+            "OPEN",
+            now.plusSeconds(3600),
+            photoKeys,
+            now,
+            now
         );
     }
 
     @Test
     void getPreCreateUploadUrlReturnsValidationErrorWhenServiceRejectsContentType() {
         JwtPrincipal principal = new JwtPrincipal(uuid(12),
-                                                  "CUSTOMER",
-                                                  "ACTIVE");
+            "CUSTOMER",
+            "ACTIVE");
         when(taskService.createPhotoUploadUrl(principal.userId(),
-                                              "image/webp")).thenReturn(Optional.empty());
+            "image/webp")).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = controller.getPreCreateUploadUrl(
-                principal,
-                new TaskPhotoUploadUrlRequest("image/webp"),
-                request()
+            principal,
+            new TaskPhotoUploadUrlRequest("image/webp"),
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "INVALID_CONTENT_TYPE");
+            "INVALID_CONTENT_TYPE");
     }
 
     @Test
     void getPreCreateUploadUrlReturnsUploadPayload() {
         JwtPrincipal principal = new JwtPrincipal(uuid(13),
-                                                  "CUSTOMER",
-                                                  "ACTIVE");
+            "CUSTOMER",
+            "ACTIVE");
         when(taskService.createPhotoUploadUrl(principal.userId(),
-                                              "image/jpeg")).thenReturn(Optional.of(new PresignedUpload(
-                "https://upload.example.com",
-                "uploads/tasks/one.jpg"
+            "image/jpeg")).thenReturn(Optional.of(new PresignedUpload(
+            "https://upload.example.com",
+            "uploads/tasks/one.jpg"
         )));
 
         ResponseEntity<?> response = controller.getPreCreateUploadUrl(
-                principal,
-                new TaskPhotoUploadUrlRequest("image/jpeg"),
-                request()
+            principal,
+            new TaskPhotoUploadUrlRequest("image/jpeg"),
+            request()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("storage_key",
-                                                                           "uploads/tasks/one.jpg");
+            "uploads/tasks/one.jpg");
     }
 }

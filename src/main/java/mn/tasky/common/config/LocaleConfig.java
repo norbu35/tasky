@@ -12,7 +12,7 @@ import java.util.Locale;
 
 @Configuration
 public class LocaleConfig
-        implements WebMvcConfigurer {
+    implements WebMvcConfigurer {
 
     private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("mn");
 
@@ -26,7 +26,7 @@ public class LocaleConfig
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource =
-                new ReloadableResourceBundleMessageSource();
+            new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setFallbackToSystemLocale(false);

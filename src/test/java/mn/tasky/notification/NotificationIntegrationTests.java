@@ -1,7 +1,5 @@
 package mn.tasky.notification;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.notification.dto.NotificationLog;
@@ -20,9 +18,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class NotificationIntegrationTests
-        extends IntegrationTestBase {
+    extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
     @LocalServerPort
@@ -37,43 +37,43 @@ class NotificationIntegrationTests
 
         // 1. Register
         ResponseEntity<Map> regRes = postWithAuth("/api/v1/notifications/devices",
-                                                  user.accessToken(),
-                                                  Map.of("token",
-                                                         "token-1",
-                                                         "platform",
-                                                         "IOS"));
+            user.accessToken(),
+            Map.of("token",
+                "token-1",
+                "platform",
+                "IOS"));
         assertThat(regRes.getStatusCode()
-                           .value()).isEqualTo(200);
+            .value()).isEqualTo(200);
 
         // 2. Unregister
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(user.accessToken());
         ResponseEntity<Map> unregRes = restTemplate.exchange(
-                "http://localhost:" + port + "/api/v1/notifications/devices/token-1",
-                HttpMethod.DELETE,
-                new HttpEntity<>(headers),
-                Map.class);
+            "http://localhost:" + port + "/api/v1/notifications/devices/token-1",
+            HttpMethod.DELETE,
+            new HttpEntity<>(headers),
+            Map.class);
         assertThat(unregRes.getStatusCode()
-                           .value()).isEqualTo(204);
+            .value()).isEqualTo(204);
     }
 
     private AuthContext authenticate(String seed) {
         String phone = "+9767711" + String.format("%04d",
-                                                  Math.abs(seed.hashCode()) % 10000);
+            Math.abs(seed.hashCode()) % 10000);
         post("/api/v1/auth/otp/request",
-             Map.of("phone",
-                    phone));
+            Map.of("phone",
+                phone));
         ResponseEntity<Map> response = post("/api/v1/auth/otp/verify",
-                                            Map.of("phone",
-                                                   phone,
-                                                   "code",
-                                                   "123456"));
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"));
         String accessToken = (String) response.getBody()
-                .get("access_token");
+            .get("access_token");
         String userId = (String) ((Map) response.getBody()
-                .get("user")).get("id");
+            .get("user")).get("id");
         return new AuthContext(userId,
-                               accessToken);
+            accessToken);
     }
 
     private ResponseEntity<Map> postWithAuth(String path,
@@ -83,32 +83,32 @@ class NotificationIntegrationTests
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
         HttpEntity<Object> entity = new HttpEntity<>(body,
-                                                     headers);
+            headers);
         return restTemplate.exchange("http://localhost:" + port + path,
-                                     HttpMethod.POST,
-                                     entity,
-                                     Map.class);
+            HttpMethod.POST,
+            entity,
+            Map.class);
     }
 
     private ResponseEntity<Map> post(String path,
                                      Object body) {
         return restTemplate.postForEntity("http://localhost:" + port + path,
-                                          body,
-                                          Map.class);
+            body,
+            Map.class);
     }
 
     @Test
     @DisplayName("TID-TASK-044-DOMAIN-PUSH-EVENTS push and SMS fallback " +
-            "(TID-TASK-044-DOMAIN-SMS-FALLBACK)")
+        "(TID-TASK-044-DOMAIN-SMS-FALLBACK)")
     void notificationDelivery() {
         AuthContext customer = authenticate("cust-notif");
         AuthContext tasker = authenticate("tasker-notif");
 
         // No devices registered for tasker initially
         notificationService.sendPush(tasker.userId(),
-                                     "Test",
-                                     "Test Body",
-                                     "HIRED");
+            "Test",
+            "Test Body",
+            "HIRED");
 
         // Should trigger SMS fallback
         List<NotificationLog> logs = notificationService.getLogs();
@@ -120,12 +120,12 @@ class NotificationIntegrationTests
 
         // Register device for customer
         notificationService.registerDevice(customer.userId(),
-                                           "cust-token",
-                                           "ANDROID");
+            "cust-token",
+            "ANDROID");
         notificationService.sendPush(customer.userId(),
-                                     "Job Started",
-                                     "Job is starting",
-                                     "JOB_STARTED");
+            "Job Started",
+            "Job is starting",
+            "JOB_STARTED");
 
         // Should be PUSH
         List<NotificationLog> logs2 = notificationService.getLogs();

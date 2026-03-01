@@ -9,15 +9,15 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
 
     public static TaskCreateResult success(TaskState task) {
         return new TaskCreateResult(task,
-                                    null,
-                                    null);
+            null,
+            null);
     }
 
     public static TaskCreateResult error(String code,
                                          String message) {
         return new TaskCreateResult(null,
-                                    code,
-                                    message);
+            code,
+            message);
     }
 
     public boolean isSuccess() {

@@ -1,7 +1,5 @@
 package mn.tasky.security;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dto.AuditLogEntry;
@@ -20,9 +18,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class EncryptionIntegrationTests
-        extends IntegrationTestBase {
+    extends IntegrationTestBase {
 
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -42,21 +42,21 @@ class EncryptionIntegrationTests
 
         // Register user
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/request",
-                                   Map.of("phone",
-                                          phone),
-                                   Map.class);
+            Map.of("phone",
+                phone),
+            Map.class);
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/verify",
-                                   Map.of("phone",
-                                          phone,
-                                          "code",
-                                          "123456"),
-                                   Map.class);
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"),
+            Map.class);
 
         String blindIndex = cryptoService.blindIndex(phone);
         var storedUser = userDao.findByPhoneBlindIndex(blindIndex);
         assertThat(storedUser).isPresent();
         String storedPhone = storedUser.get()
-                .phone();
+            .phone();
 
         assertThat(storedPhone).isNotEqualTo(phone);
         assertThat(storedPhone).isNotEqualTo(blindIndex);
@@ -68,13 +68,13 @@ class EncryptionIntegrationTests
 
     @Test
     @DisplayName("TID-TASK-060-SEC-ID-ASSET-PRIVATE ID assets remain private and use short-lived " +
-            "URLs")
+        "URLs")
     void idAssetPrivacy() {
         AuthContext user = authenticate("user-id");
         authService.activateTaskerRole(user.userId());
         authService.submitVerification(user.userId(),
-                                       "front.jpg",
-                                       "back.jpg");
+            "front.jpg",
+            "back.jpg");
 
         VerificationStatusResponse status = authService.getVerificationStatus(user.userId());
         assertThat(status.status()).isEqualTo("PENDING");
@@ -89,24 +89,24 @@ class EncryptionIntegrationTests
 
     private AuthContext authenticate(String seed) {
         String phone = "+9767711" + String.format("%04d",
-                                                  Math.abs(seed.hashCode()) % 10000);
+            Math.abs(seed.hashCode()) % 10000);
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/request",
-                                   Map.of("phone",
-                                          phone),
-                                   Map.class);
+            Map.of("phone",
+                phone),
+            Map.class);
         ResponseEntity<Map> response =
-                restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/verify",
-                                           Map.of("phone",
-                                                  phone,
-                                                  "code",
-                                                  "123456"),
-                                           Map.class);
+            restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/verify",
+                Map.of("phone",
+                    phone,
+                    "code",
+                    "123456"),
+                Map.class);
         String accessToken = (String) response.getBody()
-                .get("access_token");
+            .get("access_token");
         String userId = (String) ((Map) response.getBody()
-                .get("user")).get("id");
+            .get("user")).get("id");
         return new AuthContext(userId,
-                               accessToken);
+            accessToken);
     }
 
     @Test
@@ -115,8 +115,8 @@ class EncryptionIntegrationTests
         AuthContext user = authenticate("user-audit");
 
         authService.banUser(ADMIN_ID,
-                            user.userId(),
-                            "Audit Test");
+            user.userId(),
+            "Audit Test");
 
         List<AuditLogEntry> logs = authService.getAuditLog();
         assertThat(logs).anySatisfy(l -> {

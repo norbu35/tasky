@@ -4,12 +4,12 @@ public record DisputeRaiseResult(Dispute dispute, String error) {
 
     public static DisputeRaiseResult success(Dispute d) {
         return new DisputeRaiseResult(d,
-                                      null);
+            null);
     }
 
     public static DisputeRaiseResult error(String e) {
         return new DisputeRaiseResult(null,
-                                      e);
+            e);
     }
 
     public boolean isSuccess() {

@@ -1,3 +1,4 @@
+import net.ltgt.gradle.errorprone.errorprone
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -7,6 +8,10 @@ plugins {
     id("org.openapi.generator") version "7.12.0"
     jacoco
     checkstyle
+    pmd
+    id("com.github.spotbugs") version "6.1.11"
+    id("net.ltgt.errorprone") version "4.1.0"
+    id("org.owasp.dependencycheck") version "12.1.0"
 }
 
 group = "mn.tasky"
@@ -71,6 +76,12 @@ dependencies {
     testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
     testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+
+    // Static analysis
+    errorprone("com.google.errorprone:error_prone_core:2.36.0")
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
+    testCompileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 }
 
 // OpenAPI Generator
@@ -158,6 +169,47 @@ checkstyle {
     toolVersion = "10.21.2"
     configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
+}
+
+// PMD
+pmd {
+    toolVersion = "7.9.0"
+    isConsoleOutput = true
+    ruleSets = mutableListOf()   // clear defaults; use our ruleset only
+    ruleSetFiles = files("${rootProject.projectDir}/config/pmd/pmd-ruleset.xml")
+    isIgnoreFailures = false
+}
+tasks.withType<Pmd>().configureEach {
+    reports {
+        html.required = true
+        xml.required = false
+    }
+}
+
+// SpotBugs
+spotbugs {
+    toolVersion = "4.8.6"
+    effort = com.github.spotbugs.snom.Effort.MAX
+    reportLevel = com.github.spotbugs.snom.Confidence.MEDIUM
+    excludeFilter = file("${rootProject.projectDir}/config/spotbugs/spotbugs-exclude.xml")
+    ignoreFailures = false
+}
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports.create("html") { required.set(true) }
+}
+
+// ErrorProne
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone {
+        disableWarningsInGeneratedCode.set(true)
+    }
+}
+
+// OWASP Dependency Check (opt-in — deliberately NOT wired into `check`)
+dependencyCheck {
+    failBuildOnCVSS = 7.0f
+    suppressionFile = "${rootProject.projectDir}/config/owasp/suppressions.xml"
+    nvd { apiKey = System.getenv("NVD_API_KEY") ?: "" }
 }
 
 // Test

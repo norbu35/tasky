@@ -42,28 +42,28 @@ class VerificationControllerUnitTests {
     void getUploadUrlReturnsBadRequestForUnsupportedContentType() {
         JwtPrincipal principal = principal();
         when(authService.createVerificationUploadUrl(principal.userId(),
-                                                     "image/webp")).thenReturn(Optional.empty());
+            "image/webp")).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = controller.getUploadUrl(
-                principal,
-                new VerificationUploadUrlRequest("image/webp"),
-                new MockHttpServletRequest()
+            principal,
+            new VerificationUploadUrlRequest("image/webp"),
+            new MockHttpServletRequest()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "INVALID_CONTENT_TYPE");
+            "INVALID_CONTENT_TYPE");
     }
 
     private JwtPrincipal principal() {
         return new JwtPrincipal(uuid(1),
-                                "TASKER",
-                                "ACTIVE");
+            "TASKER",
+            "ACTIVE");
     }
 
     private String uuid(int suffix) {
         return String.format("00000000-0000-0000-0000-%012d",
-                             suffix);
+            suffix);
     }
 
     @Test
@@ -75,21 +75,21 @@ class VerificationControllerUnitTests {
                 "uploads/verification/front.jpg")));
 
         ResponseEntity<?> response = controller.getUploadUrl(
-                principal,
-                new VerificationUploadUrlRequest("image/jpeg"),
-                requestWithTrace()
+            principal,
+            new VerificationUploadUrlRequest("image/jpeg"),
+            requestWithTrace()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("storage_key",
-                                                                           "uploads/verification" +
-                                                                                   "/front.jpg");
+            "uploads/verification" +
+                "/front.jpg");
     }
 
     private MockHttpServletRequest requestWithTrace() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-                             "trace-verification");
+            "trace-verification");
         return request;
     }
 
@@ -97,32 +97,32 @@ class VerificationControllerUnitTests {
     void submitVerificationHandlesNotTaskerOutcome() {
         JwtPrincipal principal = principal();
         when(authService.submitVerification(principal.userId(),
-                                            "front",
-                                            "back")).thenReturn(new VerificationSubmitResult(
-                VerificationSubmitResult.NOT_TASKER,
-                null
+            "front",
+            "back")).thenReturn(new VerificationSubmitResult(
+            VerificationSubmitResult.NOT_TASKER,
+            null
         ));
 
         ResponseEntity<?> response = controller.submitVerification(
-                principal,
-                new VerificationSubmitRequest("front",
-                                              "back"),
-                requestWithTrace()
+            principal,
+            new VerificationSubmitRequest("front",
+                "back"),
+            requestWithTrace()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-                                                                           "NOT_TASKER");
+            "NOT_TASKER");
     }
 
     @Test
     void getStatusReturnsMappedVerificationPayload() {
         JwtPrincipal principal = principal();
         when(authService.getVerificationStatus(principal.userId())).thenReturn(new VerificationStatusResponse(
-                "PENDING",
-                null,
-                "2026-02-17T00:00:00Z",
-                null
+            "PENDING",
+            null,
+            "2026-02-17T00:00:00Z",
+            null
         ));
 
         ResponseEntity<?> response = controller.getStatus(principal);

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Component
 public class RestAuthenticationEntryPoint
-        implements AuthenticationEntryPoint {
+    implements AuthenticationEntryPoint {
 
     private final JsonSecurityResponseWriter responseWriter;
 
@@ -21,16 +21,16 @@ public class RestAuthenticationEntryPoint
 
     @Override
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException authException
     ) throws IOException {
         responseWriter.write(
-                request,
-                response,
-                HttpStatus.UNAUTHORIZED.value(),
-                "UNAUTHORIZED",
-                "Authentication is required."
+            request,
+            response,
+            HttpStatus.UNAUTHORIZED.value(),
+            "UNAUTHORIZED",
+            "Authentication is required."
         );
     }
 }

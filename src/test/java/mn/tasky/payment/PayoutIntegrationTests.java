@@ -1,7 +1,5 @@
 package mn.tasky.payment;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import mn.tasky.booking.dao.BookingDao;
@@ -33,10 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @TestPropertySource(properties = "tasky.features.monetization-enabled=true")
 class PayoutIntegrationTests
-        extends IntegrationTestBase {
+    extends IntegrationTestBase {
 
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -55,124 +55,124 @@ class PayoutIntegrationTests
 
     @Test
     @DisplayName("TID-TASK-034-API-PAYOUT-REQUEST tasker can request payout up to available " +
-            "balance")
+        "balance")
     void taskerCanRequestPayout() {
         AuthContext tasker = authenticate("payout-1");
         AuthContext customer = authenticate("payout-customer-1");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+            "ACTIVE",
+            tasker.userId());
 
         // Credit wallet first
         walletService.creditTaskCompletion(tasker.userId(),
-                                           createBooking(customer.userId(),
-                                                         tasker.userId()),
-                                           10000,
-                                           0.1); // 9000 credit
+            createBooking(customer.userId(),
+                tasker.userId()),
+            10000,
+            0.1); // 9000 credit
 
         // Request payout
         ResponseEntity<Map> response = postWithAuth("/api/v1/wallet/payouts",
-                                                    taskerToken,
-                                                    Map.of("amount",
-                                                           5000));
+            taskerToken,
+            Map.of("amount",
+                5000));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()
-                           .get("status")).isEqualTo("PENDING");
+            .get("status")).isEqualTo("PENDING");
 
         // Verify balance reflects pending
         ResponseEntity<Map> balanceResponse = getWithAuth("/api/v1/wallet",
-                                                          taskerToken);
+            taskerToken);
         assertThat(((Number) balanceResponse.getBody()
-                .get("balance")).intValue()).isEqualTo(4000);
+            .get("balance")).intValue()).isEqualTo(4000);
         assertThat(((Number) balanceResponse.getBody()
-                .get("pending_payout")).intValue()).isEqualTo(5000);
+            .get("pending_payout")).intValue()).isEqualTo(5000);
     }
 
     private AuthContext authenticate(String seed) {
         String phone = "+9767711" + String.format("%04d",
-                                                  Math.abs(seed.hashCode()) % 10000);
+            Math.abs(seed.hashCode()) % 10000);
         restTemplate.postForEntity("http://localhost:" + port + "/api/v1/auth/otp/request",
-                                   Map.of("phone",
-                                          phone),
-                                   Map.class);
+            Map.of("phone",
+                phone),
+            Map.class);
         ResponseEntity<Map> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/v1/auth/otp/verify",
-                Map.of("phone",
-                       phone,
-                       "code",
-                       "123456"),
-                Map.class
+            "http://localhost:" + port + "/api/v1/auth/otp/verify",
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"),
+            Map.class
         );
 
         String accessToken = (String) response.getBody()
-                .get("access_token");
+            .get("access_token");
         String userId = (String) ((Map) response.getBody()
-                .get("user")).get("id");
+            .get("user")).get("id");
         return new AuthContext(userId,
-                               accessToken);
+            accessToken);
     }
 
     private String tokenFor(String role,
                             String status,
                             String userId) {
         return Jwts.builder()
-                .subject(userId)
-                .claim("role",
-                       role)
-                .claim("status",
-                       status)
-                .claim("token_type",
-                       "access")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-                .compact();
+            .subject(userId)
+            .claim("role",
+                role)
+            .claim("status",
+                status)
+            .claim("token_type",
+                "access")
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 3600000))
+            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+            .compact();
     }
 
     private String createBooking(String customerId,
                                  String taskerId) {
         Instant now = Instant.now();
         String categoryId = UUID.randomUUID()
-                .toString();
+            .toString();
         categoryDao.insert(
-                categoryId,
-                "Payout category",
-                "Төлбөрийн ангилал",
-                "https://example.com/icon.png",
-                true,
-                1
+            categoryId,
+            "Payout category",
+            "Төлбөрийн ангилал",
+            "https://example.com/icon.png",
+            true,
+            1
         );
 
         String taskId = UUID.randomUUID()
-                .toString();
+            .toString();
         taskDao.insert(
-                taskId,
-                customerId,
-                categoryId,
-                "Payout test task",
-                10000,
-                47.918,
-                106.917,
-                "Ulaanbaatar",
-                "ASSIGNED",
-                now.plusSeconds(3600),
-                now,
-                now
+            taskId,
+            customerId,
+            categoryId,
+            "Payout test task",
+            10000,
+            47.918,
+            106.917,
+            "Ulaanbaatar",
+            "ASSIGNED",
+            now.plusSeconds(3600),
+            now,
+            now
         );
 
         String bookingId = UUID.randomUUID()
-                .toString();
+            .toString();
         bookingDao.insert(
-                bookingId,
-                taskId,
-                taskerId,
-                customerId,
-                10000,
-                "COMPLETED",
-                null,
-                true,
-                now,
-                now
+            bookingId,
+            taskId,
+            taskerId,
+            customerId,
+            10000,
+            "COMPLETED",
+            null,
+            true,
+            now,
+            now
         );
         return bookingId;
     }
@@ -185,15 +185,15 @@ class PayoutIntegrationTests
         headers.setBearerAuth(token);
         if (requiresIdempotencyHeader(path)) {
             headers.set("Idempotency-Key",
-                        UUID.randomUUID()
-                                .toString());
+                UUID.randomUUID()
+                    .toString());
         }
         HttpEntity<Object> entity = new HttpEntity<>(body,
-                                                     headers);
+            headers);
         return restTemplate.exchange("http://localhost:" + port + path,
-                                     HttpMethod.POST,
-                                     entity,
-                                     Map.class);
+            HttpMethod.POST,
+            entity,
+            Map.class);
     }
 
     private ResponseEntity<Map> getWithAuth(String path,
@@ -202,14 +202,14 @@ class PayoutIntegrationTests
         headers.setBearerAuth(token);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         return restTemplate.exchange("http://localhost:" + port + path,
-                                     HttpMethod.GET,
-                                     entity,
-                                     Map.class);
+            HttpMethod.GET,
+            entity,
+            Map.class);
     }
 
     private boolean requiresIdempotencyHeader(String path) {
         return path.matches("^/api/v1/wallet/payouts$")
-                || path.matches("^/api/v1/admin/payouts/[^/]+/process$");
+            || path.matches("^/api/v1/admin/payouts/[^/]+/process$");
     }
 
     @Test
@@ -218,22 +218,22 @@ class PayoutIntegrationTests
         AuthContext tasker = authenticate("payout-2");
         AuthContext customer = authenticate("payout-customer-2");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+            "ACTIVE",
+            tasker.userId());
 
         walletService.creditTaskCompletion(tasker.userId(),
-                                           createBooking(customer.userId(),
-                                                         tasker.userId()),
-                                           10000,
-                                           0.1); // 9000 credit
+            createBooking(customer.userId(),
+                tasker.userId()),
+            10000,
+            0.1); // 9000 credit
 
         ResponseEntity<Map> response = postWithAuth("/api/v1/wallet/payouts",
-                                                    taskerToken,
-                                                    Map.of("amount",
-                                                           10000));
+            taskerToken,
+            Map.of("amount",
+                10000));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()
-                           .get("error")).isEqualTo("Insufficient balance");
+            .get("error")).isEqualTo("Insufficient balance");
     }
 
     @Test
@@ -242,25 +242,25 @@ class PayoutIntegrationTests
         AuthContext tasker = authenticate("payout-3");
         AuthContext customer = authenticate("payout-customer-3");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+            "ACTIVE",
+            tasker.userId());
 
         walletService.creditTaskCompletion(tasker.userId(),
-                                           createBooking(customer.userId(),
-                                                         tasker.userId()),
-                                           10000,
-                                           0.1);
+            createBooking(customer.userId(),
+                tasker.userId()),
+            10000,
+            0.1);
 
         ResponseEntity<Map> zeroAmount = postWithAuth("/api/v1/wallet/payouts",
-                                                      taskerToken,
-                                                      Map.of("amount",
-                                                             0));
+            taskerToken,
+            Map.of("amount",
+                0));
         assertThat(zeroAmount.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
         ResponseEntity<Map> negativeAmount = postWithAuth("/api/v1/wallet/payouts",
-                                                          taskerToken,
-                                                          Map.of("amount",
-                                                                 -1));
+            taskerToken,
+            Map.of("amount",
+                -1));
         assertThat(negativeAmount.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -270,76 +270,76 @@ class PayoutIntegrationTests
         AuthContext tasker = authenticate("payout-4");
         AuthContext customer = authenticate("payout-customer-4");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+            "ACTIVE",
+            tasker.userId());
 
         String bookingId = createBooking(customer.userId(),
-                                         tasker.userId());
+            tasker.userId());
         walletService.creditTaskCompletion(tasker.userId(),
-                                           bookingId,
-                                           10000,
-                                           0.1);
+            bookingId,
+            10000,
+            0.1);
         walletService.creditTaskCompletion(tasker.userId(),
-                                           bookingId,
-                                           10000,
-                                           0.1);
+            bookingId,
+            10000,
+            0.1);
 
         ResponseEntity<Map> balanceResponse = getWithAuth("/api/v1/wallet",
-                                                          taskerToken);
+            taskerToken);
         assertThat(((Number) balanceResponse.getBody()
-                .get("balance")).intValue()).isEqualTo(9000);
+            .get("balance")).intValue()).isEqualTo(9000);
     }
 
     @Test
     @DisplayName("TID-TASK-034-API-ADMIN-PAYOUT-PROCESS TID-TASK-034-DOMAIN-PAYOUT-SCHEDULE admin" +
-            " can list and processing is restricted by schedule")
+        " can list and processing is restricted by schedule")
     void adminPayoutFlow() {
         AuthContext tasker = authenticate("payout-5");
         AuthContext customer = authenticate("payout-customer-5");
         String taskerToken = tokenFor("TASKER",
-                                      "ACTIVE",
-                                      tasker.userId());
+            "ACTIVE",
+            tasker.userId());
         String adminToken = tokenFor("ADMIN",
-                                     "ACTIVE",
-                                     ADMIN_ID);
+            "ACTIVE",
+            ADMIN_ID);
 
         walletService.creditTaskCompletion(tasker.userId(),
-                                           createBooking(customer.userId(),
-                                                         tasker.userId()),
-                                           10000,
-                                           0.1);
+            createBooking(customer.userId(),
+                tasker.userId()),
+            10000,
+            0.1);
         String payoutId = (String) postWithAuth("/api/v1/wallet/payouts",
-                                                taskerToken,
-                                                Map.of("amount",
-                                                       5000)).getBody()
-                .get("id");
+            taskerToken,
+            Map.of("amount",
+                5000)).getBody()
+            .get("id");
 
         // Admin list
         ResponseEntity<Map> listResponse = getWithAuth("/api/v1/admin/payouts/pending",
-                                                       adminToken);
+            adminToken);
         assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Map> data = (List<Map>) listResponse.getBody()
-                .get("data");
+            .get("data");
         assertThat(data.stream()
-                           .map(item -> item.get("id")
-                                   .toString())).contains(payoutId);
+            .map(item -> item.get("id")
+                .toString())).contains(payoutId);
 
         // Process result depends on configured schedule days (Tuesday/Friday).
         ResponseEntity<Map> processResponse =
-                postWithAuth("/api/v1/admin/payouts/" + payoutId + "/process",
-                             adminToken,
-                             null);
+            postWithAuth("/api/v1/admin/payouts/" + payoutId + "/process",
+                adminToken,
+                null);
         DayOfWeek today = LocalDate.now()
-                .getDayOfWeek();
+            .getDayOfWeek();
         if (today == DayOfWeek.TUESDAY || today == DayOfWeek.FRIDAY) {
             assertThat(processResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(processResponse.getBody()
-                               .get("status")).isEqualTo("PROCESSED");
+                .get("status")).isEqualTo("PROCESSED");
         } else {
             assertThat(processResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(processResponse.getBody()
-                               .get("error")
-                               .toString()).contains("Today is " + today);
+                .get("error")
+                .toString()).contains("Today is " + today);
         }
     }
 

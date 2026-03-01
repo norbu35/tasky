@@ -43,14 +43,14 @@ public class OtpRateLimitService {
                                @Value("${tasky.auth.rate-limit.otp-verify-per-ip:20}") int otpVerifyLimitPerIp,
                                @Value("${tasky.auth.rate-limit.refresh-per-token:10}") int refreshLimitPerToken,
                                @Value("${tasky.auth.rate-limit.refresh-per-ip:30}") int refreshLimitPerIp) {
-        this.rateLimitCounterDao     = rateLimitCounterDao;
-        this.jwtTokenService         = jwtTokenService;
+        this.rateLimitCounterDao = rateLimitCounterDao;
+        this.jwtTokenService = jwtTokenService;
         this.otpRequestLimitPerPhone = otpRequestLimitPerPhone;
-        this.otpRequestLimitPerIp    = otpRequestLimitPerIp;
-        this.otpVerifyLimitPerPhone  = otpVerifyLimitPerPhone;
-        this.otpVerifyLimitPerIp     = otpVerifyLimitPerIp;
-        this.refreshLimitPerToken    = refreshLimitPerToken;
-        this.refreshLimitPerIp       = refreshLimitPerIp;
+        this.otpRequestLimitPerIp = otpRequestLimitPerIp;
+        this.otpVerifyLimitPerPhone = otpVerifyLimitPerPhone;
+        this.otpVerifyLimitPerIp = otpVerifyLimitPerIp;
+        this.refreshLimitPerToken = refreshLimitPerToken;
+        this.refreshLimitPerIp = refreshLimitPerIp;
     }
 
     /**
@@ -63,37 +63,37 @@ public class OtpRateLimitService {
     public void assertRequestAllowed(String phone,
                                      String clientIp) {
         enforce(
-                "otp-request-phone:" + phone,
-                otpRequestLimitPerPhone,
-                OTP_REQUEST_WINDOW,
-                "OTP_REQUEST_RATE_LIMITED"
+            "otp-request-phone:" + phone,
+            otpRequestLimitPerPhone,
+            OTP_REQUEST_WINDOW,
+            "OTP_REQUEST_RATE_LIMITED"
         );
         enforce(
-                "otp-request-ip:" + clientIp,
-                otpRequestLimitPerIp,
-                OTP_REQUEST_WINDOW,
-                "OTP_REQUEST_RATE_LIMITED"
+            "otp-request-ip:" + clientIp,
+            otpRequestLimitPerIp,
+            OTP_REQUEST_WINDOW,
+            "OTP_REQUEST_RATE_LIMITED"
         );
     }
 
     private void enforce(
-            String key,
-            int limit,
-            Duration window,
-            String errorCode
+        String key,
+        int limit,
+        Duration window,
+        String errorCode
     ) {
         Instant now = Instant.now();
         rateLimitCounterDao.deleteExpired(now);
         int attempts = rateLimitCounterDao.incrementAndGet(
-                key,
-                now,
-                now.minus(window),
-                now.plus(window)
+            key,
+            now,
+            now.minus(window),
+            now.plus(window)
         );
         if (attempts > limit) {
             throw new RateLimitExceededException(
-                    errorCode,
-                    "Too many OTP attempts. Please try again later."
+                errorCode,
+                "Too many OTP attempts. Please try again later."
             );
         }
     }
@@ -108,16 +108,16 @@ public class OtpRateLimitService {
     public void assertVerifyAllowed(String phone,
                                     String clientIp) {
         enforce(
-                "otp-verify-phone:" + phone,
-                otpVerifyLimitPerPhone,
-                OTP_VERIFY_WINDOW,
-                "OTP_VERIFY_RATE_LIMITED"
+            "otp-verify-phone:" + phone,
+            otpVerifyLimitPerPhone,
+            OTP_VERIFY_WINDOW,
+            "OTP_VERIFY_RATE_LIMITED"
         );
         enforce(
-                "otp-verify-ip:" + clientIp,
-                otpVerifyLimitPerIp,
-                OTP_VERIFY_WINDOW,
-                "OTP_VERIFY_RATE_LIMITED"
+            "otp-verify-ip:" + clientIp,
+            otpVerifyLimitPerIp,
+            OTP_VERIFY_WINDOW,
+            "OTP_VERIFY_RATE_LIMITED"
         );
     }
 
@@ -131,33 +131,33 @@ public class OtpRateLimitService {
     public void assertRefreshAllowed(String refreshToken,
                                      String clientIp) {
         String tokenKey = jwtTokenService.parseRefreshToken(refreshToken)
-                .map(ParsedRefreshToken::tokenId)
-                .orElseGet(() -> "invalid-" + sha256(refreshToken));
+            .map(ParsedRefreshToken::tokenId)
+            .orElseGet(() -> "invalid-" + sha256(refreshToken));
         enforce(
-                "refresh-token:" + tokenKey,
-                refreshLimitPerToken,
-                REFRESH_WINDOW,
-                "TOKEN_REFRESH_RATE_LIMITED"
+            "refresh-token:" + tokenKey,
+            refreshLimitPerToken,
+            REFRESH_WINDOW,
+            "TOKEN_REFRESH_RATE_LIMITED"
         );
         enforce(
-                "refresh-ip:" + clientIp,
-                refreshLimitPerIp,
-                REFRESH_WINDOW,
-                "TOKEN_REFRESH_RATE_LIMITED"
+            "refresh-ip:" + clientIp,
+            refreshLimitPerIp,
+            REFRESH_WINDOW,
+            "TOKEN_REFRESH_RATE_LIMITED"
         );
     }
 
     private String sha256(String value) {
         String safeValue = StringUtils.hasText(value)
-                ? value
-                : "empty";
+            ? value
+            : "empty";
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(safeValue.getBytes(StandardCharsets.UTF_8));
             return HEX_FORMAT.formatHex(hash);
         } catch (Exception exception) {
             throw new IllegalStateException("Unable to hash refresh token for rate limiting",
-                                            exception);
+                exception);
         }
     }
 }

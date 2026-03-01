@@ -1,8 +1,5 @@
 package mn.tasky.messaging.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import mn.tasky.messaging.dto.Message;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -13,6 +10,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
+
 @RegisterConstructorMapper(Message.class)
 public interface MessageDao {
 
@@ -22,17 +22,17 @@ public interface MessageDao {
                         String content,
                         Instant sentAt) {
         insert(required(id,
-                        "id"),
-               required(conversationId,
-                        "conversationId"),
-               required(senderId,
-                        "senderId"),
-               content,
-               sentAt);
+                "id"),
+            required(conversationId,
+                "conversationId"),
+            required(senderId,
+                "senderId"),
+            content,
+            sentAt);
     }
 
     @SqlUpdate("INSERT INTO messages (id, conversation_id, sender_id, content, sent_at) "
-            + "VALUES (:id, :conversationId, :senderId, :content, :sentAt)")
+        + "VALUES (:id, :conversationId, :senderId, :content, :sentAt)")
     void insert(@Bind("id") UUID id,
                 @Bind("conversationId") UUID conversationId,
                 @Bind("senderId") UUID senderId,
@@ -43,10 +43,10 @@ public interface MessageDao {
                                                String cursor,
                                                int limit) {
         UUID conversationUuid = required(conversationId,
-                                         "conversationId");
+            "conversationId");
         return findByConversationId(conversationUuid,
-                                    optional(cursor),
-                                    limit);
+            optional(cursor),
+            limit);
     }
 
     default List<Message> findByConversationId(UUID conversationId,
@@ -54,21 +54,21 @@ public interface MessageDao {
                                                int limit) {
         if (cursor == null) {
             return findByConversationIdFirstPage(conversationId,
-                                                 limit);
+                limit);
         }
         return findByConversationIdAfterCursor(conversationId,
-                                               cursor,
-                                               limit);
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
-            + "ORDER BY id LIMIT :limit")
+        + "ORDER BY id LIMIT :limit")
     List<Message> findByConversationIdFirstPage(@Bind("conversationId") UUID conversationId,
                                                 @Bind("limit") int limit);
 
     @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId "
-            + "AND id > :cursor "
-            + "ORDER BY id LIMIT :limit")
+        + "AND id > :cursor "
+        + "ORDER BY id LIMIT :limit")
     List<Message> findByConversationIdAfterCursor(@Bind("conversationId") UUID conversationId,
                                                   @Bind("cursor") UUID cursor,
                                                   @Bind("limit") int limit);

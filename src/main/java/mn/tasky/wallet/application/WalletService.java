@@ -30,9 +30,9 @@ public class WalletService {
                          LedgerEntryDao ledgerEntryDao,
                          PayoutRequestDao payoutRequestDao,
                          CreditedBookingDao creditedBookingDao) {
-        this.walletDao          = walletDao;
-        this.ledgerEntryDao     = ledgerEntryDao;
-        this.payoutRequestDao   = payoutRequestDao;
+        this.walletDao = walletDao;
+        this.ledgerEntryDao = ledgerEntryDao;
+        this.payoutRequestDao = payoutRequestDao;
         this.creditedBookingDao = creditedBookingDao;
     }
 
@@ -45,14 +45,14 @@ public class WalletService {
      */
     public WalletBalance getBalance(String userId) {
         walletDao.ensureExists(userId,
-                               Instant.now());
+            Instant.now());
         Long balance = walletDao.getBalance(userId);
         long pendingPayout = payoutRequestDao.sumPendingByUserId(userId);
         return new WalletBalance(balance != null
-                                         ? balance
-                                         : 0L,
-                                 pendingPayout,
-                                 "MNT");
+            ? balance
+            : 0L,
+            pendingPayout,
+            "MNT");
     }
 
     /**
@@ -87,31 +87,31 @@ public class WalletService {
 
         Instant now = Instant.now();
         walletDao.ensureExists(taskerId,
-                               now);
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                taskerId,
-                creditAmount,
-                "DEPOSIT",
-                bookingId,
-                "Booking completion credit for #" + bookingId,
-                now
+            UUID.randomUUID()
+                .toString(),
+            taskerId,
+            creditAmount,
+            "DEPOSIT",
+            bookingId,
+            "Booking completion credit for #" + bookingId,
+            now
         );
         walletDao.addBalance(taskerId,
-                             creditAmount,
-                             now);
+            creditAmount,
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                null,
-                feeAmount,
-                "FEE",
-                bookingId,
-                "Platform fee for booking #" + bookingId,
-                now
+            UUID.randomUUID()
+                .toString(),
+            null,
+            feeAmount,
+            "FEE",
+            bookingId,
+            "Platform fee for booking #" + bookingId,
+            now
         );
     }
 
@@ -129,7 +129,7 @@ public class WalletService {
                           String referenceId,
                           String description) {
         walletDao.ensureExists(userId,
-                               Instant.now());
+            Instant.now());
         Long currentBalance = walletDao.getBalance(userId);
         if (currentBalance == null || currentBalance < amount) {
             throw new IllegalArgumentException("Insufficient balance to hold");
@@ -137,21 +137,21 @@ public class WalletService {
 
         Instant now = Instant.now();
         walletDao.addBalance(userId,
-                             -amount,
-                             now);
+            -amount,
+            now);
         walletDao.addHeldBalance(userId,
-                                 amount,
-                                 now);
+            amount,
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                -amount,
-                "HOLD",
-                referenceId,
-                description,
-                now
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            -amount,
+            "HOLD",
+            referenceId,
+            description,
+            now
         );
     }
 
@@ -174,21 +174,21 @@ public class WalletService {
 
         Instant now = Instant.now();
         walletDao.addHeldBalance(userId,
-                                 -amount,
-                                 now);
+            -amount,
+            now);
         walletDao.addBalance(userId,
-                             amount,
-                             now);
+            amount,
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                amount,
-                "RELEASE",
-                referenceId,
-                description,
-                now
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            amount,
+            "RELEASE",
+            referenceId,
+            description,
+            now
         );
     }
 
@@ -212,18 +212,18 @@ public class WalletService {
 
         Instant now = Instant.now();
         walletDao.addHeldBalance(userId,
-                                 -amount,
-                                 now);
+            -amount,
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                -amount,
-                "CONFISCATE",
-                referenceId,
-                description,
-                now
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            -amount,
+            "CONFISCATE",
+            referenceId,
+            description,
+            now
         );
     }
 
@@ -242,23 +242,23 @@ public class WalletService {
         }
 
         walletDao.ensureExists(userId,
-                               Instant.now());
+            Instant.now());
         Long currentBalance = walletDao.getBalance(userId);
         if (currentBalance == null || currentBalance < amount) {
             throw new IllegalArgumentException("Insufficient balance for payout");
         }
 
         walletDao.addBalance(userId,
-                             -amount,
-                             Instant.now());
+            -amount,
+            Instant.now());
 
         String payoutId = UUID.randomUUID()
-                .toString();
+            .toString();
         payoutRequestDao.insert(payoutId,
-                                userId,
-                                amount,
-                                "PENDING",
-                                Instant.now());
+            userId,
+            amount,
+            "PENDING",
+            Instant.now());
         return payoutId;
     }
 
@@ -298,18 +298,18 @@ public class WalletService {
 
         Instant now = Instant.now();
         payoutRequestDao.updateStatus(payoutId,
-                                      "PROCESSED",
-                                      now);
+            "PROCESSED",
+            now);
 
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
+            UUID.randomUUID()
+                .toString(),
             payout.userId(),
             -payout.amount(),
-                "PAYOUT",
+            "PAYOUT",
             payout.id(),
-                "Payout processed",
-                now
+            "Payout processed",
+            now
         );
     }
 
@@ -329,20 +329,20 @@ public class WalletService {
             return;
         }
         walletDao.ensureExists(userId,
-                               Instant.now());
+            Instant.now());
         Instant now = Instant.now();
         walletDao.addBalance(userId,
-                             amount,
-                             now);
+            amount,
+            now);
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                amount,
-                "REFUND",
-                bookingId,
-                description,
-                now
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            amount,
+            "REFUND",
+            bookingId,
+            description,
+            now
         );
     }
 
@@ -360,20 +360,20 @@ public class WalletService {
             return;
         }
         walletDao.ensureExists(userId,
-                               Instant.now());
+            Instant.now());
         Instant now = Instant.now();
         walletDao.addBalance(userId,
-                             amount,
-                             now);
+            amount,
+            now);
         ledgerEntryDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                amount,
-                "REFUND",
-                bookingId,
-                "Late cancellation fee for booking #" + bookingId,
-                now
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            amount,
+            "REFUND",
+            bookingId,
+            "Late cancellation fee for booking #" + bookingId,
+            now
         );
     }
 

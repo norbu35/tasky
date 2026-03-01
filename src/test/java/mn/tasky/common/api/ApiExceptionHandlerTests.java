@@ -1,9 +1,5 @@
 package mn.tasky.common.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -24,6 +20,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 class ApiExceptionHandlerTests {
 
     private final ApiExceptionHandler handler = new ApiExceptionHandler();
@@ -33,53 +33,53 @@ class ApiExceptionHandlerTests {
         MockHttpServletRequest request = requestWithTraceId("trace-1");
 
         var response = handler.handleRateLimit(
-                new RateLimitExceededException("OTP_RATE_LIMIT",
-                                               "Too many attempts."),
-                request
+            new RateLimitExceededException("OTP_RATE_LIMIT",
+                "Too many attempts."),
+            request
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "OTP_RATE_LIMIT");
+            "OTP_RATE_LIMIT");
         assertThat(response.getBody()).containsEntry("trace_id",
-                                                     "trace-1");
+            "trace-1");
     }
 
     private MockHttpServletRequest requestWithTraceId(String traceId) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
-                             traceId);
+            traceId);
         return request;
     }
 
     @Test
     void handleMethodArgumentNotValidReturnsFieldMessage() throws Exception {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(),
-                                                                                "body");
+            "body");
         bindingResult.addError(new FieldError("body",
-                                              "rating",
-                                              "must be between 1 and 5"));
+            "rating",
+            "must be between 1 and 5"));
         MethodArgumentNotValidException exception =
-                new MethodArgumentNotValidException(methodParameter(),
-                                                    bindingResult);
+            new MethodArgumentNotValidException(methodParameter(),
+                bindingResult);
 
         var response = handler.handleMethodArgumentNotValid(exception,
-                                                            new MockHttpServletRequest());
+            new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "VALIDATION_ERROR");
+            "VALIDATION_ERROR");
         assertThat(response.getBody()
-                           .get("message")).isEqualTo("rating must be between 1 and 5");
+            .get("message")).isEqualTo("rating must be between 1 and 5");
         assertThat(response.getBody()
-                           .get("trace_id")).isNotBlank();
+            .get("trace_id")).isNotBlank();
     }
 
     private MethodParameter methodParameter() throws Exception {
         Method method = ApiExceptionHandlerTests.class.getDeclaredMethod("sampleMethod",
-                                                                         Map.class);
+            Map.class);
         return new MethodParameter(method,
-                                   0);
+            0);
     }
 
     @Test
@@ -91,46 +91,46 @@ class ApiExceptionHandlerTests {
         when(violation.getMessage()).thenReturn("must be greater than 0");
 
         ConstraintViolationException exception =
-                new ConstraintViolationException(Set.of(violation));
+            new ConstraintViolationException(Set.of(violation));
         HttpServletRequest request = new MockHttpServletRequest();
 
         var response = handler.handleConstraintViolation(exception,
-                                                         request);
+            request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "VALIDATION_ERROR");
+            "VALIDATION_ERROR");
         assertThat(response.getBody()
-                           .get("message")).isEqualTo("limit must be greater than 0");
+            .get("message")).isEqualTo("limit must be greater than 0");
     }
 
     @Test
     void handleNotReadableReturnsInvalidJsonCode() {
         var response = handler.handleNotReadable(
-                new HttpMessageNotReadableException("Malformed payload",
-                                                    new MockHttpInputMessage(new byte[0])),
-                new MockHttpServletRequest()
+            new HttpMessageNotReadableException("Malformed payload",
+                new MockHttpInputMessage(new byte[0])),
+            new MockHttpServletRequest()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "INVALID_JSON");
+            "INVALID_JSON");
         assertThat(response.getBody()).containsEntry("message",
-                                                     "Malformed JSON request.");
+            "Malformed JSON request.");
     }
 
     @Test
     void handleIllegalArgumentUsesFallbackMessageWhenMissing() {
         var response = handler.handleIllegalArgument(
-                new IllegalArgumentException((String) null),
-                new MockHttpServletRequest()
+            new IllegalArgumentException((String) null),
+            new MockHttpServletRequest()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code",
-                                                     "INVALID_ARGUMENT");
+            "INVALID_ARGUMENT");
         assertThat(response.getBody()).containsEntry("message",
-                                                     "Invalid request argument.");
+            "Invalid request argument.");
     }
 
     @SuppressWarnings("unused")

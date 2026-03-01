@@ -22,11 +22,11 @@ public class JsonSecurityResponseWriter {
     }
 
     public void write(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            int status,
-            String code,
-            String message
+        HttpServletRequest request,
+        HttpServletResponse response,
+        int status,
+        String code,
+        String message
     ) throws IOException {
         if (response.isCommitted()) {
             return;
@@ -37,19 +37,19 @@ public class JsonSecurityResponseWriter {
 
         Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
         String resolvedTraceId = traceId != null
-                ? traceId.toString()
-                : UUID.randomUUID()
-                        .toString();
+            ? traceId.toString()
+            : UUID.randomUUID()
+            .toString();
 
         Map<String, String> body = new LinkedHashMap<>();
         body.put("code",
-                 code);
+            code);
         body.put("message",
-                 message);
+            message);
         body.put("trace_id",
-                 resolvedTraceId);
+            resolvedTraceId);
 
         response.getWriter()
-                .write(objectMapper.writeValueAsString(body));
+            .write(objectMapper.writeValueAsString(body));
     }
 }

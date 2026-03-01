@@ -1,13 +1,13 @@
 package mn.tasky.auth.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.Instant;
 import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 public interface StrikeDao {
 
@@ -16,15 +16,15 @@ public interface StrikeDao {
                         String reason,
                         Instant createdAt) {
         insert(required(id,
-                        "id"),
-               required(userId,
-                        "userId"),
-               reason,
-               createdAt);
+                "id"),
+            required(userId,
+                "userId"),
+            reason,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO tasker_strikes (id, user_id, reason, created_at) VALUES (:id, " +
-            ":userId, :reason, :createdAt)")
+        ":userId, :reason, :createdAt)")
     void insert(@Bind("id") UUID id,
                 @Bind("userId") UUID userId,
                 @Bind("reason") String reason,
@@ -33,8 +33,8 @@ public interface StrikeDao {
     default long countSince(String userId,
                             Instant since) {
         return countSince(required(userId,
-                                   "userId"),
-                          since);
+                "userId"),
+            since);
     }
 
     @SqlQuery("SELECT COUNT(*) FROM tasker_strikes WHERE user_id = :userId AND created_at > :since")

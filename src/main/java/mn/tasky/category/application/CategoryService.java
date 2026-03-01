@@ -36,46 +36,46 @@ public class CategoryService {
     public CategoryPage listActiveCategories(String cursor,
                                              int limit) {
         return listCategories(false,
-                              cursor,
-                              limit);
+            cursor,
+            limit);
     }
 
     private CategoryPage listCategories(boolean includeInactive,
                                         String cursor,
                                         int limit) {
         CategoryCursor anchor = resolveCursor(includeInactive,
-                                              cursor);
+            cursor);
         int fetchLimit = limit + 1;
         List<CategoryState> results;
         if (anchor == null) {
             results = includeInactive
-                    ? categoryDao.findAllPage(fetchLimit)
-                    : categoryDao.findActivePage(fetchLimit);
+                ? categoryDao.findAllPage(fetchLimit)
+                : categoryDao.findActivePage(fetchLimit);
         } else {
             results = includeInactive
-                    ? categoryDao.findAllPageAfter(anchor.sortOrder(),
-                                                   anchor.name(),
-                                                   anchor.id(),
-                                                   fetchLimit)
-                    : categoryDao.findActivePageAfter(anchor.sortOrder(),
-                                                      anchor.name(),
-                                                      anchor.id(),
-                                                      fetchLimit);
+                ? categoryDao.findAllPageAfter(anchor.sortOrder(),
+                anchor.name(),
+                anchor.id(),
+                fetchLimit)
+                : categoryDao.findActivePageAfter(anchor.sortOrder(),
+                anchor.name(),
+                anchor.id(),
+                fetchLimit);
         }
 
         boolean hasMore = results.size() > limit;
         List<CategoryState> pageData = hasMore
-                ? results.subList(0,
-                                  limit)
-                : results;
+            ? results.subList(0,
+            limit)
+            : results;
         String nextCursor = hasMore
-                ? pageData.getLast()
-                .id()
-                : null;
+            ? pageData.getLast()
+            .id()
+            : null;
 
         return new CategoryPage(List.copyOf(pageData),
-                                nextCursor,
-                                hasMore);
+            nextCursor,
+            hasMore);
     }
 
     private CategoryCursor resolveCursor(boolean includeInactive,
@@ -89,18 +89,18 @@ public class CategoryService {
             cursorId = UUID.fromString(cursor.trim());
         } catch (RuntimeException exception) {
             throw new IllegalArgumentException("Cursor is invalid.",
-                                               exception);
+                exception);
         }
 
         CategoryState anchor = categoryDao.findById(cursorId)
-                .orElseThrow(() -> new IllegalArgumentException("Cursor category was not found."));
+            .orElseThrow(() -> new IllegalArgumentException("Cursor category was not found."));
         if (!includeInactive && !anchor.isActive()) {
             throw new IllegalArgumentException("Cursor category is not active.");
         }
 
         return new CategoryCursor(cursorId,
-                                  anchor.sortOrder(),
-                                  anchor.name());
+            anchor.sortOrder(),
+            anchor.name());
     }
 
     /**
@@ -113,8 +113,8 @@ public class CategoryService {
     public CategoryPage listAllCategories(String cursor,
                                           int limit) {
         return listCategories(true,
-                              cursor,
-                              limit);
+            cursor,
+            limit);
     }
 
     /**
@@ -125,23 +125,23 @@ public class CategoryService {
      */
     public CategoryState createCategory(CreateCategory command) {
         CategoryState created = new CategoryState(
-                UUID.randomUUID()
-                        .toString(),
-                command.name()
-                        .trim(),
-                command.nameMn()
-                        .trim(),
-                command.iconUrl()
-                        .trim(),
-                true,
-                command.sortOrder()
+            UUID.randomUUID()
+                .toString(),
+            command.name()
+                .trim(),
+            command.nameMn()
+                .trim(),
+            command.iconUrl()
+                .trim(),
+            true,
+            command.sortOrder()
         );
         categoryDao.insert(created.id(),
-                           created.name(),
-                           created.nameMn(),
-                           created.iconUrl(),
-                           created.isActive(),
-                           created.sortOrder());
+            created.name(),
+            created.nameMn(),
+            created.iconUrl(),
+            created.isActive(),
+            created.sortOrder());
         return created;
     }
 
@@ -161,32 +161,32 @@ public class CategoryService {
         }
         CategoryState current = existing.get();
         CategoryState updated = new CategoryState(
-                current.id(),
-                command.name() != null
-                        ? command.name()
-                        .trim()
-                        : current.name(),
-                command.nameMn() != null
-                        ? command.nameMn()
-                        .trim()
-                        : current.nameMn(),
-                command.iconUrl() != null
-                        ? command.iconUrl()
-                        .trim()
-                        : current.iconUrl(),
-                command.isActive() != null
-                        ? command.isActive()
-                        : current.isActive(),
-                command.sortOrder() != null
-                        ? command.sortOrder()
-                        : current.sortOrder()
+            current.id(),
+            command.name() != null
+                ? command.name()
+                .trim()
+                : current.name(),
+            command.nameMn() != null
+                ? command.nameMn()
+                .trim()
+                : current.nameMn(),
+            command.iconUrl() != null
+                ? command.iconUrl()
+                .trim()
+                : current.iconUrl(),
+            command.isActive() != null
+                ? command.isActive()
+                : current.isActive(),
+            command.sortOrder() != null
+                ? command.sortOrder()
+                : current.sortOrder()
         );
         categoryDao.update(updated.id(),
-                           updated.name(),
-                           updated.nameMn(),
-                           updated.iconUrl(),
-                           updated.isActive(),
-                           updated.sortOrder());
+            updated.name(),
+            updated.nameMn(),
+            updated.iconUrl(),
+            updated.isActive(),
+            updated.sortOrder());
         return Optional.of(updated);
     }
 

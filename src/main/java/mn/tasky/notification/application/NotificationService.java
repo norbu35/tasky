@@ -25,7 +25,7 @@ public class NotificationService {
 
     public NotificationService(DeviceTokenDao deviceTokenDao,
                                NotificationLogDao notificationLogDao) {
-        this.deviceTokenDao     = deviceTokenDao;
+        this.deviceTokenDao = deviceTokenDao;
         this.notificationLogDao = notificationLogDao;
     }
 
@@ -41,12 +41,12 @@ public class NotificationService {
                                String token,
                                String platform) {
         deviceTokenDao.upsert(userId,
-                              token,
-                              platform,
-                              Instant.now());
+            token,
+            platform,
+            Instant.now());
         log.info("Registered device for user {}: platform={}",
-                 userId,
-                 platform);
+            userId,
+            platform);
     }
 
     /**
@@ -58,9 +58,9 @@ public class NotificationService {
     public void unregisterDevice(String userId,
                                  String token) {
         deviceTokenDao.delete(userId,
-                              token);
+            token);
         log.info("Unregistered device for user {}",
-                 userId);
+            userId);
     }
 
     /**
@@ -81,8 +81,8 @@ public class NotificationService {
 
         if (tokens.isEmpty()) {
             log.warn("No device tokens for user {}, push not sent: type={}",
-                     userId,
-                     type);
+                userId,
+                type);
             if ("HIRED".equals(type) || "BOOKING_CONFIRMED".equals(type)) {
                 sendSmsFallback(userId);
             }
@@ -91,21 +91,21 @@ public class NotificationService {
 
         for (DeviceToken t : tokens) {
             log.info(
-                    "Sending push to user {} on platform {}: notification_type={} title={} body={}",
-                    userId,
-                    t.platform(),
-                    type,
-                    title,
-                    body
+                "Sending push to user {} on platform {}: notification_type={} title={} body={}",
+                userId,
+                t.platform(),
+                type,
+                title,
+                body
             );
             notificationLogDao.insert(
-                    UUID.randomUUID()
-                            .toString(),
-                    userId,
-                    type,
-                    "PUSH",
-                    "SENT",
-                    Instant.now()
+                UUID.randomUUID()
+                    .toString(),
+                userId,
+                type,
+                "PUSH",
+                "SENT",
+                Instant.now()
             );
         }
     }
@@ -117,15 +117,15 @@ public class NotificationService {
      */
     public void sendSmsFallback(String userId) {
         log.info("Sending SMS fallback to user {}",
-                 userId);
+            userId);
         notificationLogDao.insert(
-                UUID.randomUUID()
-                        .toString(),
-                userId,
-                "FALLBACK",
-                "SMS",
-                "SENT",
-                Instant.now()
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            "FALLBACK",
+            "SMS",
+            "SENT",
+            Instant.now()
         );
     }
 
