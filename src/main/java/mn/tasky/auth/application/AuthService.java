@@ -442,7 +442,7 @@ public class AuthService {
      * @throws AccountRestrictedException when account status resolves to suspended or banned.
      */
     public AuthSession facebookLogin(String accessToken) {
-        String token = StringUtils.trimWhitespace(accessToken);
+        String token = accessToken.strip();
         facebookGraphClient.debugToken(token);
         FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
 

@@ -217,8 +217,8 @@ public class DomainEventOutboxProcessor {
             "customer_id");
         String taskerId = requiredString(payload,
             "tasker_id");
-        int price = requiredInt(payload,
-            "price");
+        int price = requiredInt(payload
+        );
 
         walletService.creditTaskCompletion(taskerId,
             bookingId,
@@ -254,11 +254,10 @@ public class DomainEventOutboxProcessor {
         return value.toString();
     }
 
-    private int requiredInt(Map<String, Object> payload,
-                            String key) {
-        Object value = payload.get(key);
+    private int requiredInt(Map<String, Object> payload) {
+        Object value = payload.get("price");
         if (value == null) {
-            throw new IllegalArgumentException("Missing payload field: " + key);
+            throw new IllegalArgumentException("Missing payload field: " + "price");
         }
         if (value instanceof Number number) {
             return number.intValue();
@@ -266,7 +265,7 @@ public class DomainEventOutboxProcessor {
         try {
             return Integer.parseInt(value.toString());
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Payload field is not an integer: " + key,
+            throw new IllegalArgumentException("Payload field is not an integer: " + "price",
                 exception);
         }
     }

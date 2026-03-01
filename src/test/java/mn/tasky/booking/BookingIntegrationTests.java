@@ -132,7 +132,7 @@ class BookingIntegrationTests
                                 Instant scheduledAt) {
         String catId = ((List<Map>) getWithAuth("/api/v1/categories",
                                                 token).getBody()
-                .get("data")).get(0)
+            .get("data")).getFirst()
                 .get("id")
                 .toString();
         ResponseEntity<Map> res = postWithAuth("/api/v1/tasks",
@@ -496,8 +496,7 @@ class BookingIntegrationTests
 
         ResponseEntity<Map> response = postWithAuthWithoutIdempotency(
                 "/api/v1/bookings/" + booking.id() + "/cancel",
-                customer.accessToken(),
-                null
+            customer.accessToken()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -506,12 +505,11 @@ class BookingIntegrationTests
     }
 
     private ResponseEntity<Map> postWithAuthWithoutIdempotency(String path,
-                                                               String token,
-                                                               Object body) {
+                                                               String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
-        HttpEntity<Object> entity = new HttpEntity<>(body,
+        HttpEntity<Object> entity = new HttpEntity<>(null,
                                                      headers);
         return restTemplate.exchange("http://localhost:" + port + path,
                                      HttpMethod.POST,
