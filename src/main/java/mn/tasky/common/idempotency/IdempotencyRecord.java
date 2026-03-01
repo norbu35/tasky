@@ -12,7 +12,5 @@ public record IdempotencyRecord(
     String resourceType,
     UUID resourceId,
     Instant createdAt,
-    Instant updatedAt
-) {
-
+    Instant updatedAt) {
 }

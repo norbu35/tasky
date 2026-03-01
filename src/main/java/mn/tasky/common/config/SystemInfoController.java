@@ -30,9 +30,7 @@ public class SystemInfoController {
     @GetMapping("/version")
     public Map<String, String> getVersion() {
         Locale locale = LocaleContextHolder.getLocale();
-        String status = messageSource.getMessage("system.version",
-            null,
-            locale);
+        String status = messageSource.getMessage("system.version", null, locale);
 
         return Map.of(
             "application",
@@ -42,8 +40,6 @@ public class SystemInfoController {
             "status_localized",
             status,
             "timestamp_utc",
-            Instant.now()
-                .toString()
-        );
+            Instant.now().toString());
     }
 }

@@ -46,8 +46,7 @@ public class PaymentService {
 
     @SuppressFBWarnings(
         value = "CT_CONSTRUCTOR_THROW",
-        justification = "Payment integration must fail fast when monetization is enabled without webhook secret."
-    )
+        justification = "Payment integration must fail fast when monetization is enabled without webhook secret.")
     public PaymentService(
         BookingService bookingService,
         TaskService taskService,
@@ -56,8 +55,7 @@ public class PaymentService {
         PaymentIntentDao paymentIntentDao,
         @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled,
         @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret,
-        @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds
-    ) {
+        @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -82,10 +80,8 @@ public class PaymentService {
      */
     public PaymentIntent initiatePayment(String bookingId) {
         ensureMonetizationEnabled();
-        String paymentId = UUID.randomUUID()
-            .toString();
-        paymentIntentDao.insert(paymentId,
-            bookingId);
+        String paymentId = UUID.randomUUID().toString();
+        paymentIntentDao.insert(paymentId, bookingId);
 
         Optional<BookingState> booking = bookingService.getBooking(bookingId);
         booking.ifPresent(b -> analyticsService.track(
@@ -97,15 +93,9 @@ public class PaymentService {
                 AnalyticsService.PROPERTY_TASK_ID,
                 b.taskId(),
                 "payment_id",
-                paymentId
-            )
-        ));
+                paymentId)));
 
-        return new PaymentIntent(
-            paymentId,
-            "https://qpay.mn/pay/" + paymentId,
-            "BASE64_QR_CODE_" + paymentId
-        );
+        return new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId);
     }
 
     private void ensureMonetizationEnabled() {
@@ -121,12 +111,10 @@ public class PaymentService {
      * @return The matching {@link PaymentIntent}, if one exists.
      */
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
-        return paymentIntentDao.findBookingIdByPaymentId(paymentId)
+        return paymentIntentDao
+            .findBookingIdByPaymentId(paymentId)
             .map(ignored -> new PaymentIntent(
-                paymentId,
-                "https://qpay.mn/pay/" + paymentId,
-                "BASE64_QR_CODE_" + paymentId
-            ));
+                paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId));
     }
 
     /**
@@ -144,17 +132,10 @@ public class PaymentService {
      * {@code false} when rejected or not applicable.
      * @throws IllegalStateException if monetization is disabled.
      */
-    public boolean processCallback(String paymentId,
-                                   String status,
-                                   long timestamp,
-                                   String signature) {
+    public boolean processCallback(String paymentId, String status, long timestamp, String signature) {
         ensureMonetizationEnabled();
-        if (!isValidSignature(paymentId,
-            status,
-            timestamp,
-            signature)) {
-            log.warn("Rejected QPay callback due to invalid signature for payment {}",
-                paymentId);
+        if (!isValidSignature(paymentId, status, timestamp, signature)) {
+            log.warn("Rejected QPay callback due to invalid signature for payment {}", paymentId);
             return false;
         }
 
@@ -181,9 +162,9 @@ public class PaymentService {
         BookingState booking = bookingOpt.get();
         if ("ASSIGNED".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
-            if (taskService.transitionToAssigned(booking.taskId())
-                .isEmpty()) {
-                log.warn("Task not found when assigning after payment: bookingId={} taskId={}",
+            if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
+                log.warn(
+                    "Task not found when assigning after payment: bookingId={} taskId={}",
                     bookingId,
                     booking.taskId());
             }
@@ -202,57 +183,45 @@ public class PaymentService {
                     "customer_id",
                     booking.customerId(),
                     "tasker_id",
-                    booking.taskerId()
-                )
-            );
+                    booking.taskerId()));
         }
 
         return true;
     }
 
-    private boolean isValidSignature(String paymentId,
-                                     String status,
-                                     long timestamp,
-                                     String providedSignature) {
-        if (!StringUtils.hasText(paymentId) || !StringUtils.hasText(status) ||
-            !StringUtils.hasText(providedSignature) || timestamp <= 0) {
+    private boolean isValidSignature(String paymentId, String status, long timestamp, String providedSignature) {
+        if (!StringUtils.hasText(paymentId)
+            || !StringUtils.hasText(status)
+            || !StringUtils.hasText(providedSignature)
+            || timestamp <= 0) {
             return false;
         }
         if (!isRecentTimestamp(timestamp)) {
             return false;
         }
         String expected = computeSignature(paymentId + "|" + status + "|" + timestamp);
-        String normalizedProvided = providedSignature.trim()
-            .toLowerCase(Locale.ROOT);
+        String normalizedProvided = providedSignature.trim().toLowerCase(Locale.ROOT);
         return MessageDigest.isEqual(
-            expected.getBytes(StandardCharsets.UTF_8),
-            normalizedProvided.getBytes(StandardCharsets.UTF_8)
-        );
+            expected.getBytes(StandardCharsets.UTF_8), normalizedProvided.getBytes(StandardCharsets.UTF_8));
     }
 
     private boolean isRecentTimestamp(long epochSeconds) {
-        long now = Instant.now()
-            .getEpochSecond();
+        long now = Instant.now().getEpochSecond();
         return Math.abs(now - epochSeconds) <= maxCallbackAgeSeconds;
     }
 
     private String computeSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(qpayWebhookSecretBytes,
-                HMAC_ALGORITHM));
+            mac.init(new SecretKeySpec(qpayWebhookSecretBytes, HMAC_ALGORITHM));
             byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(signature.length * 2);
             for (byte b : signature) {
-                builder.append(String.format(Locale.ROOT,
-                    "%02x",
-                    b));
+                builder.append(String.format(Locale.ROOT, "%02x", b));
             }
             return builder.toString();
         } catch (Exception ex) {
-            throw new IllegalStateException("Failed to calculate QPay signature",
-                ex);
+            throw new IllegalStateException("Failed to calculate QPay signature", ex);
         }
     }
-
 }

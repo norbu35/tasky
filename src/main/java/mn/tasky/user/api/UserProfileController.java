@@ -36,11 +36,9 @@ public class UserProfileController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getMyProfile(
-        @AuthenticationPrincipal JwtPrincipal principal,
-        HttpServletRequest request
-    ) {
-        return authService.getProfile(principal.userId())
+    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
+        return authService
+            .getProfile(principal.userId())
             .<ResponseEntity<?>>map(profile -> ResponseEntity.ok(toProfileResponse(profile)))
             .orElseGet(() -> unauthorizedResponse(request));
     }
@@ -56,86 +54,64 @@ public class UserProfileController {
             profile.ratingAvg(),
             profile.completedTasks(),
             profile.isPro(),
-            profile.createdAt()
-        );
+            profile.createdAt());
     }
 
     private ResponseEntity<Map<String, String>> unauthorizedResponse(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(
-                Map.of(
-                    "code",
-                    "USER_NOT_FOUND",
-                    "message",
-                    "Authenticated user could not be resolved.",
-                    "trace_id",
-                    resolveTraceId(request)
-                )
-            );
+            .body(Map.of(
+                "code",
+                "USER_NOT_FOUND",
+                "message",
+                "Authenticated user could not be resolved.",
+                "trace_id",
+                resolveTraceId(request)));
     }
 
     @PutMapping("/me")
     public ResponseEntity<?> updateMyProfile(
         @AuthenticationPrincipal JwtPrincipal principal,
         @Valid @RequestBody UpdateProfileRequest body,
-        HttpServletRequest request
-    ) {
-        ProfileUpdate update = new ProfileUpdate(
-            body.fullName(),
-            body.avatarUrl()
-        );
+        HttpServletRequest request) {
+        ProfileUpdate update = new ProfileUpdate(body.fullName(), body.avatarUrl());
 
-        return authService.updateProfile(principal.userId(),
-                update)
+        return authService
+            .updateProfile(principal.userId(), update)
             .<ResponseEntity<?>>map(profile -> ResponseEntity.ok(toProfileResponse(profile)))
             .orElseGet(() -> unauthorizedResponse(request));
     }
 
     @PostMapping("/me/role/tasker")
     public ResponseEntity<?> activateTaskerRole(
-        @AuthenticationPrincipal JwtPrincipal principal,
-        HttpServletRequest request
-    ) {
-        return authService.activateTaskerRole(principal.userId())
-            .<ResponseEntity<?>>map(result -> ResponseEntity.ok(
-                Map.of(
-                    "access_token",
-                    result.accessToken(),
-                    "refresh_token",
-                    result.refreshToken(),
-                    "user",
-                    result.user()
-                )
-            ))
+        @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
+        return authService
+            .activateTaskerRole(principal.userId())
+            .<ResponseEntity<?>>map(result -> ResponseEntity.ok(Map.of(
+                "access_token",
+                result.accessToken(),
+                "refresh_token",
+                result.refreshToken(),
+                "user",
+                result.user())))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                    Map.of(
-                        "code",
-                        "ROLE_ALREADY_ASSIGNED",
-                        "message",
-                        "User is already TASKER or ADMIN.",
-                        "trace_id",
-                        resolveTraceId(request)
-                    )
-                ));
+                .body(Map.of(
+                    "code",
+                    "ROLE_ALREADY_ASSIGNED",
+                    "message",
+                    "User is already TASKER or ADMIN.",
+                    "trace_id",
+                    resolveTraceId(request))));
     }
 
     @PostMapping("/me/avatar/upload-url")
     public ResponseEntity<?> getAvatarUploadUrl(
         @AuthenticationPrincipal JwtPrincipal principal,
         @Valid @RequestBody AvatarUploadUrlRequest body,
-        HttpServletRequest request
-    ) {
-        return authService.createAvatarUploadUrl(principal.userId(),
-                body.contentType())
-            .<ResponseEntity<?>>map(upload -> ResponseEntity.ok(
-                Map.of(
-                    "upload_url",
-                    upload.uploadUrl(),
-                    "storage_key",
-                    upload.storageKey()
-                )
-            ))
+        HttpServletRequest request) {
+        return authService
+            .createAvatarUploadUrl(principal.userId(), body.contentType())
+            .<ResponseEntity<?>>map(upload ->
+                ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
             .orElseGet(() -> unauthorizedResponse(request));
     }
 }

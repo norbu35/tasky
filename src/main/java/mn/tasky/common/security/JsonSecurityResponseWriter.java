@@ -21,13 +21,8 @@ public class JsonSecurityResponseWriter {
         this.objectMapper = objectMapper;
     }
 
-    public void write(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        int status,
-        String code,
-        String message
-    ) throws IOException {
+    public void write(HttpServletRequest request, HttpServletResponse response, int status, String code, String message)
+        throws IOException {
         if (response.isCommitted()) {
             return;
         }
@@ -36,20 +31,14 @@ public class JsonSecurityResponseWriter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
-        String resolvedTraceId = traceId != null
-            ? traceId.toString()
-            : UUID.randomUUID()
-            .toString();
+        String resolvedTraceId =
+            traceId != null ? traceId.toString() : UUID.randomUUID().toString();
 
         Map<String, String> body = new LinkedHashMap<>();
-        body.put("code",
-            code);
-        body.put("message",
-            message);
-        body.put("trace_id",
-            resolvedTraceId);
+        body.put("code", code);
+        body.put("message", message);
+        body.put("trace_id", resolvedTraceId);
 
-        response.getWriter()
-            .write(objectMapper.writeValueAsString(body));
+        response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 }

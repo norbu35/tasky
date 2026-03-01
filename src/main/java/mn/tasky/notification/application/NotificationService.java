@@ -23,8 +23,7 @@ public class NotificationService {
     private final DeviceTokenDao deviceTokenDao;
     private final NotificationLogDao notificationLogDao;
 
-    public NotificationService(DeviceTokenDao deviceTokenDao,
-                               NotificationLogDao notificationLogDao) {
+    public NotificationService(DeviceTokenDao deviceTokenDao, NotificationLogDao notificationLogDao) {
         this.deviceTokenDao = deviceTokenDao;
         this.notificationLogDao = notificationLogDao;
     }
@@ -37,16 +36,9 @@ public class NotificationService {
      * @param token    The device token (e.g., FCM or APNs token).
      * @param platform The platform of the device (e.g., "IOS", "ANDROID").
      */
-    public void registerDevice(String userId,
-                               String token,
-                               String platform) {
-        deviceTokenDao.upsert(userId,
-            token,
-            platform,
-            Instant.now());
-        log.info("Registered device for user {}: platform={}",
-            userId,
-            platform);
+    public void registerDevice(String userId, String token, String platform) {
+        deviceTokenDao.upsert(userId, token, platform, Instant.now());
+        log.info("Registered device for user {}: platform={}", userId, platform);
     }
 
     /**
@@ -55,12 +47,9 @@ public class NotificationService {
      * @param userId The ID of the user.
      * @param token  The device token to remove.
      */
-    public void unregisterDevice(String userId,
-                                 String token) {
-        deviceTokenDao.delete(userId,
-            token);
-        log.info("Unregistered device for user {}",
-            userId);
+    public void unregisterDevice(String userId, String token) {
+        deviceTokenDao.delete(userId, token);
+        log.info("Unregistered device for user {}", userId);
     }
 
     /**
@@ -73,16 +62,11 @@ public class NotificationService {
      * @param body   The notification body/message.
      * @param type   The type/category of the notification.
      */
-    public void sendPush(String userId,
-                         String title,
-                         String body,
-                         String type) {
+    public void sendPush(String userId, String title, String body, String type) {
         List<DeviceToken> tokens = deviceTokenDao.findByUserId(userId);
 
         if (tokens.isEmpty()) {
-            log.warn("No device tokens for user {}, push not sent: type={}",
-                userId,
-                type);
+            log.warn("No device tokens for user {}, push not sent: type={}", userId, type);
             if ("HIRED".equals(type) || "BOOKING_CONFIRMED".equals(type)) {
                 sendSmsFallback(userId);
             }
@@ -96,17 +80,8 @@ public class NotificationService {
                 t.platform(),
                 type,
                 title,
-                body
-            );
-            notificationLogDao.insert(
-                UUID.randomUUID()
-                    .toString(),
-                userId,
-                type,
-                "PUSH",
-                "SENT",
-                Instant.now()
-            );
+                body);
+            notificationLogDao.insert(UUID.randomUUID().toString(), userId, type, "PUSH", "SENT", Instant.now());
         }
     }
 
@@ -116,17 +91,8 @@ public class NotificationService {
      * @param userId The ID of the user to receive the SMS.
      */
     public void sendSmsFallback(String userId) {
-        log.info("Sending SMS fallback to user {}",
-            userId);
-        notificationLogDao.insert(
-            UUID.randomUUID()
-                .toString(),
-            userId,
-            "FALLBACK",
-            "SMS",
-            "SENT",
-            Instant.now()
-        );
+        log.info("Sending SMS fallback to user {}", userId);
+        notificationLogDao.insert(UUID.randomUUID().toString(), userId, "FALLBACK", "SMS", "SENT", Instant.now());
     }
 
     /**
@@ -137,5 +103,4 @@ public class NotificationService {
     public List<NotificationLog> getLogs() {
         return notificationLogDao.findAll();
     }
-
 }

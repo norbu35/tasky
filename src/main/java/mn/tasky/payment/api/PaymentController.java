@@ -43,8 +43,7 @@ public class PaymentController {
         BookingService bookingService,
         PaymentService paymentService,
         IdempotencyService idempotencyService,
-        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled
-    ) {
+        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled) {
         this.bookingService = bookingService;
         this.paymentService = paymentService;
         this.idempotencyService = idempotencyService;
@@ -57,79 +56,55 @@ public class PaymentController {
         @PathVariable String id,
         @Valid @RequestBody InitiatePaymentRequest body,
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-        HttpServletRequest request
-    ) {
-        IdempotencyClaim claim = idempotencyService.claim(
-            principal.userId(),
-            IdempotencyOperations.INITIATE_PAYMENT,
-            idempotencyKey
-        );
+        HttpServletRequest request) {
+        IdempotencyClaim claim =
+            idempotencyService.claim(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record()
-                .resourceId() == null) {
+            if (claim.record() == null || claim.record().resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            return paymentService.findPaymentIntent(claim.record()
-                    .resourceId()
-                    .toString())
-                .<ResponseEntity<?>>map(intent -> ResponseEntity.ok(
-                    Map.of(
-                        "payment_url",
-                        intent.paymentUrl(),
-                        "qr_code",
-                        intent.qrCode()
-                    )
-                ))
+            return paymentService
+                .findPaymentIntent(claim.record().resourceId().toString())
+                .<ResponseEntity<?>>map(intent ->
+                    ResponseEntity.ok(Map.of("payment_url", intent.paymentUrl(), "qr_code", intent.qrCode())))
                 .orElseGet(() -> idempotencyReplayMissing(request));
         }
 
         try {
             if (!monetizationEnabled) {
-                idempotencyService.abandon(principal.userId(),
-                    IdempotencyOperations.INITIATE_PAYMENT,
-                    idempotencyKey);
+                idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
                 return deferredResponse(request);
             }
             if (!Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())) {
-                idempotencyService.abandon(principal.userId(),
-                    IdempotencyOperations.INITIATE_PAYMENT,
-                    idempotencyKey);
+                idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                        Map.of(
-                            "code",
-                            "DISCLAIMER_REQUIRED",
-                            "message",
-                            "Liability disclaimer must be accepted to initiate " +
-                                "payment.",
-                            "trace_id",
-                            resolveTraceId(request)
-                        )
-                    );
+                    .body(Map.of(
+                        "code",
+                        "DISCLAIMER_REQUIRED",
+                        "message",
+                        "Liability disclaimer must be accepted to initiate " + "payment.",
+                        "trace_id",
+                        resolveTraceId(request)));
             }
 
-            return bookingService.getBooking(id)
-                .filter(b -> b.customerId()
-                    .equals(principal.userId()))
+            return bookingService
+                .getBooking(id)
+                .filter(b -> b.customerId().equals(principal.userId()))
                 .<ResponseEntity<?>>map(booking -> {
                     if (!"ASSIGNED".equals(booking.status())) {
-                        idempotencyService.abandon(principal.userId(),
-                            IdempotencyOperations.INITIATE_PAYMENT,
-                            idempotencyKey);
+                        idempotencyService.abandon(
+                            principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
                         return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(
-                                Map.of(
-                                    "code",
-                                    "INVALID_STATUS",
-                                    "message",
-                                    "Booking is not in ASSIGNED status.",
-                                    "trace_id",
-                                    resolveTraceId(request)
-                                )
-                            );
+                            .body(Map.of(
+                                "code",
+                                "INVALID_STATUS",
+                                "message",
+                                "Booking is not in ASSIGNED status.",
+                                "trace_id",
+                                resolveTraceId(request)));
                     }
 
                     bookingService.recordDisclaimerAcceptance(id);
@@ -139,85 +114,59 @@ public class PaymentController {
                         IdempotencyOperations.INITIATE_PAYMENT,
                         idempotencyKey,
                         "PAYMENT_INTENT",
-                        intent.paymentId()
-                    );
+                        intent.paymentId());
 
-                    return ResponseEntity.ok(Map.of(
-                        "payment_url",
-                        intent.paymentUrl(),
-                        "qr_code",
-                        intent.qrCode()
-                    ));
+                    return ResponseEntity.ok(
+                        Map.of("payment_url", intent.paymentUrl(), "qr_code", intent.qrCode()));
                 })
                 .orElseGet(() -> {
-                    idempotencyService.abandon(principal.userId(),
-                        IdempotencyOperations.INITIATE_PAYMENT,
-                        idempotencyKey);
+                    idempotencyService.abandon(
+                        principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(
-                            Map.of(
-                                "code",
-                                "NOT_FOUND",
-                                "message",
-                                "Booking not found.",
-                                "trace_id",
-                                resolveTraceId(request)
-                            )
-                        );
+                        .body(Map.of(
+                            "code",
+                            "NOT_FOUND",
+                            "message",
+                            "Booking not found.",
+                            "trace_id",
+                            resolveTraceId(request)));
                 });
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(),
-                IdempotencyOperations.INITIATE_PAYMENT,
-                idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
             throw exception;
         }
     }
 
     private ResponseEntity<Map<String, Object>> deferredResponse(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-            .body(
-                Map.of(
-                    "code",
-                    "FEATURE_DEFERRED",
-                    "message",
-                    "Payments are deferred during the liquidity-first MVP phase.",
-                    "trace_id",
-                    resolveTraceId(request)
-                )
-            );
+            .body(Map.of(
+                "code",
+                "FEATURE_DEFERRED",
+                "message",
+                "Payments are deferred during the liquidity-first MVP phase.",
+                "trace_id",
+                resolveTraceId(request)));
     }
 
     @PostMapping("/qpay/callback")
-    public ResponseEntity<?> qpayCallback(
-        @Valid @RequestBody QpayCallbackRequest body,
-        HttpServletRequest request
-    ) {
+    public ResponseEntity<?> qpayCallback(@Valid @RequestBody QpayCallbackRequest body, HttpServletRequest request) {
         if (!monetizationEnabled) {
             return deferredResponse(request);
         }
-        boolean success = paymentService.processCallback(
-            body.paymentId(),
-            body.status(),
-            body.timestamp(),
-            body.signature()
-        );
+        boolean success =
+            paymentService.processCallback(body.paymentId(), body.status(), body.timestamp(), body.signature());
 
         if (success) {
-            return ResponseEntity.ok(Map.of("status",
-                "ok"));
+            return ResponseEntity.ok(Map.of("status", "ok"));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(
-                Map.of(
-                    "code",
-                    "INVALID_CALLBACK",
-                    "message",
-                    "Payment could not be processed.",
-                    "trace_id",
-                    resolveTraceId(request)
-                )
-            );
+            .body(Map.of(
+                "code",
+                "INVALID_CALLBACK",
+                "message",
+                "Payment could not be processed.",
+                "trace_id",
+                resolveTraceId(request)));
     }
-
 }

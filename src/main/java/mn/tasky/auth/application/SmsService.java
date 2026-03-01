@@ -11,8 +11,7 @@ public interface SmsService {
      * @param phone Normalized destination phone number.
      * @param code  OTP code.
      */
-    void sendOtp(String phone,
-                 String code);
+    void sendOtp(String phone, String code);
 
     /**
      * Indicates whether this provider is suitable for production.

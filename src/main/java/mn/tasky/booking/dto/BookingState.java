@@ -12,7 +12,5 @@ public record BookingState(
     Integer cancellationFee,
     boolean liabilityDisclaimerAccepted,
     Instant createdAt,
-    Instant updatedAt
-) {
-
+    Instant updatedAt) {
 }

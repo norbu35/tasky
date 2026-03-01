@@ -43,8 +43,7 @@ public class AnalyticsService {
     private final AnalyticsEventDao analyticsEventDao;
     private final ObjectMapper objectMapper;
 
-    public AnalyticsService(AnalyticsEventDao analyticsEventDao,
-                            ObjectMapper objectMapper) {
+    public AnalyticsService(AnalyticsEventDao analyticsEventDao, ObjectMapper objectMapper) {
         this.analyticsEventDao = analyticsEventDao;
         this.objectMapper = objectMapper;
     }
@@ -57,9 +56,7 @@ public class AnalyticsService {
      * @param userId     The ID of the user triggering the event (can be null).
      * @param properties Additional contextual properties for the event.
      */
-    public void track(String eventName,
-                      String userId,
-                      Map<String, Object> properties) {
+    public void track(String eventName, String userId, Map<String, Object> properties) {
         Map<String, Object> enrichedProperties = new LinkedHashMap<>();
         if (properties != null) {
             enrichedProperties.putAll(properties);
@@ -67,28 +64,22 @@ public class AnalyticsService {
 
         String correlationId = MDC.get(RequestObservabilityFilter.CORRELATION_ID_MDC_KEY);
         if (StringUtils.hasText(correlationId)) {
-            enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID,
-                correlationId);
+            enrichedProperties.putIfAbsent(PROPERTY_CORRELATION_ID, correlationId);
         }
         String locale = MDC.get(RequestObservabilityFilter.LOCALE_MDC_KEY);
         if (StringUtils.hasText(locale)) {
-            enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
-                locale);
+            enrichedProperties.putIfAbsent(PROPERTY_LOCALE, locale);
         } else {
-            enrichedProperties.putIfAbsent(PROPERTY_LOCALE,
-                "mn");
+            enrichedProperties.putIfAbsent(PROPERTY_LOCALE, "mn");
         }
         String platform = MDC.get(RequestObservabilityFilter.PLATFORM_MDC_KEY);
         if (StringUtils.hasText(platform)) {
-            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
-                platform.toUpperCase(Locale.ROOT));
+            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM, platform.toUpperCase(Locale.ROOT));
         } else {
-            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM,
-                "UNKNOWN");
+            enrichedProperties.putIfAbsent(PROPERTY_PLATFORM, "UNKNOWN");
         }
 
-        String id = UUID.randomUUID()
-            .toString();
+        String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
 
         String propertiesJson;
@@ -98,12 +89,9 @@ public class AnalyticsService {
             propertiesJson = "{}";
         }
 
-        analyticsEventDao.insert(id,
-            eventName,
-            userId,
-            propertiesJson,
-            now);
-        log.info("TRACK event={} user={} props={}",
+        analyticsEventDao.insert(id, eventName, userId, propertiesJson, now);
+        log.info(
+            "TRACK event={} user={} props={}",
             sanitizeForLog(eventName),
             sanitizeForLog(userId),
             sanitizeForLog(propertiesJson));
@@ -122,11 +110,6 @@ public class AnalyticsService {
         if (value == null) {
             return "null";
         }
-        return value.toString()
-            .replace("\r",
-                "_")
-            .replace("\n",
-                "_");
+        return value.toString().replace("\r", "_").replace("\n", "_");
     }
-
 }

@@ -10,7 +10,5 @@ public record UserProfile(
     double ratingAvg,
     int completedTasks,
     boolean isPro,
-    String createdAt
-) {
-
+    String createdAt) {
 }

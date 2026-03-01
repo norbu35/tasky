@@ -15,14 +15,8 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 @RegisterConstructorMapper(BookingCompletionSignal.class)
 public interface BookingCompletionSignalDao {
 
-    default int markDone(String bookingId,
-                         String taskerId,
-                         Instant markedDoneAt) {
-        return markDone(required(bookingId,
-                "bookingId"),
-            required(taskerId,
-                "taskerId"),
-            markedDoneAt);
+    default int markDone(String bookingId, String taskerId, Instant markedDoneAt) {
+        return markDone(required(bookingId, "bookingId"), required(taskerId, "taskerId"), markedDoneAt);
     }
 
     @SqlUpdate("INSERT INTO booking_completion_signals (booking_id, tasker_id, marked_done_at) "
@@ -31,12 +25,10 @@ public interface BookingCompletionSignalDao {
     int markDone(
         @Bind("bookingId") UUID bookingId,
         @Bind("taskerId") UUID taskerId,
-        @Bind("markedDoneAt") Instant markedDoneAt
-    );
+        @Bind("markedDoneAt") Instant markedDoneAt);
 
     default Optional<BookingCompletionSignal> findByBookingId(String bookingId) {
-        return findByBookingId(required(bookingId,
-            "bookingId"));
+        return findByBookingId(required(bookingId, "bookingId"));
     }
 
     @SqlQuery("SELECT booking_id, tasker_id, marked_done_at "

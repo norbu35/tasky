@@ -3,10 +3,5 @@ package mn.tasky.auth.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 
-public record RefreshTokenRequest(
-    @JsonProperty("refresh_token")
-    @NotBlank
-    String refreshToken
-) {
-
+public record RefreshTokenRequest(@JsonProperty("refresh_token") @NotBlank String refreshToken) {
 }

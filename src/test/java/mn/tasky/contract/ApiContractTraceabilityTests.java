@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApiContractTraceabilityTests {
 
     @Test
-    @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " +
-        "pagination primitives")
+    @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " + "pagination primitives")
     void openApiContractBaselineIsPresent() throws Exception {
         Path apiPath = Path.of("docs/API.yaml");
         assertThat(apiPath).exists();
 
         String api = Files.readString(apiPath);
-        assertThat(api).contains("openapi: 3.0.3")
+        assertThat(api)
+            .contains("openapi: 3.0.3")
             .contains("servers:")
             .contains("- url: /api/v1")
             .contains("CursorParam:")
@@ -38,8 +38,7 @@ class ApiContractTraceabilityTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " +
-        "parity")
+    @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " + "parity")
     void contractDriftGateScriptExists() throws Exception {
         Path driftScript = Path.of("scripts/validate-sdk-contract-drift.sh");
         assertThat(driftScript).exists();
@@ -52,8 +51,7 @@ class ApiContractTraceabilityTests {
     }
 
     @Test
-    @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit " +
-        "contract parameters")
+    @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit " + "contract parameters")
     void listEndpointsExposeCursorAndLimitContract() throws Exception {
         String api = Files.readString(Path.of("docs/API.yaml"));
 
@@ -67,38 +65,28 @@ class ApiContractTraceabilityTests {
             "/admin/users",
             "/admin/verifications/pending",
             "/admin/disputes",
-            "/admin/categories"
-        );
+            "/admin/categories");
 
         for (String endpoint : listEndpoints) {
-            String block = endpointBlock(api,
-                endpoint);
+            String block = endpointBlock(api, endpoint);
             assertThat(block)
-                .as("endpoint %s must include cursor parameter",
-                    endpoint)
+                .as("endpoint %s must include cursor parameter", endpoint)
                 .contains("#/components/parameters/CursorParam");
             assertThat(block)
-                .as("endpoint %s must include limit parameter",
-                    endpoint)
+                .as("endpoint %s must include limit parameter", endpoint)
                 .contains("#/components/parameters/LimitParam");
         }
     }
 
-    private String endpointBlock(String api,
-                                 String endpoint) {
+    private String endpointBlock(String api, String endpoint) {
         String marker = "  " + endpoint + ":";
         int start = api.indexOf(marker);
-        assertThat(start)
-            .as("endpoint marker should exist: %s",
-                endpoint)
-            .isGreaterThanOrEqualTo(0);
+        assertThat(start).as("endpoint marker should exist: %s", endpoint).isGreaterThanOrEqualTo(0);
 
-        int next = api.indexOf("\n  /",
-            start + marker.length());
+        int next = api.indexOf("\n  /", start + marker.length());
         if (next < 0) {
             return api.substring(start);
         }
-        return api.substring(start,
-            next);
+        return api.substring(start, next);
     }
 }

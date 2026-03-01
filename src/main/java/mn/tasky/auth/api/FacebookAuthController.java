@@ -23,30 +23,24 @@ public class FacebookAuthController {
     private final AuthService authService;
     private final FacebookRateLimitService facebookRateLimitService;
 
-    public FacebookAuthController(AuthService authService,
-                                  FacebookRateLimitService facebookRateLimitService) {
+    public FacebookAuthController(AuthService authService, FacebookRateLimitService facebookRateLimitService) {
         this.authService = authService;
         this.facebookRateLimitService = facebookRateLimitService;
     }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> login(
-        @Valid @RequestBody FacebookLoginRequest body,
-        HttpServletRequest request
-    ) {
+        @Valid @RequestBody FacebookLoginRequest body, HttpServletRequest request) {
         facebookRateLimitService.assertAllowed(resolveClientIp(request));
         AuthSession session = authService.facebookLogin(body.accessToken());
 
-        return ResponseEntity.ok(
-            Map.of(
+        return ResponseEntity.ok(Map.of(
                 "access_token",
                 session.accessToken(),
                 "refresh_token",
                 session.refreshToken(),
                 "user",
-                session.user()
-            )
-        );
+            session.user()));
     }
 
     private String resolveClientIp(HttpServletRequest request) {
@@ -54,8 +48,6 @@ public class FacebookAuthController {
         if (forwarded != null && !forwarded.isBlank()) {
             return forwarded.split(",")[0].trim();
         }
-        return request.getRemoteAddr() != null
-            ? request.getRemoteAddr()
-            : "unknown";
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }

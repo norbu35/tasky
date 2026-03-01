@@ -51,10 +51,8 @@ public class JdbiConfig {
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new PostgresPlugin());
         jdbi.installPlugin(new Jackson2Plugin());
-        jdbi.getConfig(ColumnMappers.class)
-            .setCoalesceNullPrimitivesToDefaults(true);
-        jdbi.getConfig(ReflectionMappers.class)
-            .setStrictMatching(false);
+        jdbi.getConfig(ColumnMappers.class).setCoalesceNullPrimitivesToDefaults(true);
+        jdbi.getConfig(ReflectionMappers.class).setStrictMatching(false);
         return jdbi;
     }
 

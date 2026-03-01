@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class TaskyApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TaskyApplication.class,
-            args);
+        SpringApplication.run(TaskyApplication.class, args);
     }
 }

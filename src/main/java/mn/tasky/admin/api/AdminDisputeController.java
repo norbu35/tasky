@@ -49,8 +49,7 @@ public class AdminDisputeController {
         BookingService bookingService,
         ConversationDao conversationDao,
         MessageDao messageDao,
-        IdempotencyService idempotencyService
-    ) {
+        IdempotencyService idempotencyService) {
         this.disputeService = disputeService;
         this.bookingService = bookingService;
         this.conversationDao = conversationDao;
@@ -60,91 +59,58 @@ public class AdminDisputeController {
 
     @GetMapping
     public ResponseEntity<?> listPending(
-        @RequestParam(required = false) String cursor,
-        @RequestParam(defaultValue = "50") int limit
-    ) {
-        int clampedLimit = Math.max(1,
-            Math.min(limit,
-                100));
-        List<Dispute> pending = disputeService.listPendingDisputes(cursor,
-            clampedLimit + 1);
+        @RequestParam(required = false) String cursor, @RequestParam(defaultValue = "50") int limit) {
+        int clampedLimit = Math.max(1, Math.min(limit, 100));
+        List<Dispute> pending = disputeService.listPendingDisputes(cursor, clampedLimit + 1);
         boolean hasMore = pending.size() > clampedLimit;
-        List<Dispute> pageDisputes = hasMore
-            ? pending.subList(0,
-            clampedLimit)
-            : pending;
+        List<Dispute> pageDisputes = hasMore ? pending.subList(0, clampedLimit) : pending;
 
-        List<Map<String, Object>> data = pageDisputes.stream()
-            .map(DisputeResponseMapper::admin)
-            .toList();
-        return ResponseEntity.ok(new PagedResponse<>(data,
-            CursorPagination.from(pending,
-                clampedLimit,
-                Dispute::id)));
+        List<Map<String, Object>> data =
+            pageDisputes.stream().map(DisputeResponseMapper::admin).toList();
+        return ResponseEntity.ok(new PagedResponse<>(data, CursorPagination.from(pending, clampedLimit, Dispute::id)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDispute(@PathVariable String id) {
-        return disputeService.getDispute(id)
+        return disputeService
+            .getDispute(id)
             .<ResponseEntity<?>>map(dispute -> {
                 Map<String, Object> body = new LinkedHashMap<>();
-                body.put("dispute",
-                    admin(dispute));
+                body.put("dispute", admin(dispute));
 
-                bookingService.getBooking(dispute.bookingId())
-                    .ifPresent(booking -> {
+                bookingService.getBooking(dispute.bookingId()).ifPresent(booking -> {
                         Map<String, Object> bookingBody = new LinkedHashMap<>();
-                        bookingBody.put("id",
-                            booking.id());
-                        bookingBody.put("task_id",
-                            booking.taskId());
-                        bookingBody.put("tasker_id",
-                            booking.taskerId());
-                        bookingBody.put("customer_id",
-                            booking.customerId());
-                        bookingBody.put("status",
-                            booking.status());
-                        bookingBody.put("updated_at",
-                            booking.updatedAt()
-                                .toString());
-                        body.put("booking",
-                            bookingBody);
+                    bookingBody.put("id", booking.id());
+                    bookingBody.put("task_id", booking.taskId());
+                    bookingBody.put("tasker_id", booking.taskerId());
+                    bookingBody.put("customer_id", booking.customerId());
+                    bookingBody.put("status", booking.status());
+                    bookingBody.put("updated_at", booking.updatedAt().toString());
+                    body.put("booking", bookingBody);
 
-                        conversationDao.findByTaskAndParticipants(booking.taskId(),
-                                booking.taskerId(),
-                                booking.customerId())
-                            .ifPresent(conversation -> {
-                                body.put("conversation_id",
-                                    conversation.id());
-                                List<Map<String, Object>> evidence =
-                                    messageDao.findByConversationId(conversation.id(),
-                                            null,
-                                            50)
-                                        .stream()
-                                        .map(this::toMessageResponse)
-                                        .toList();
-                                body.put("evidence_messages",
-                                    evidence);
-                            });
+                    conversationDao
+                        .findByTaskAndParticipants(booking.taskId(), booking.taskerId(), booking.customerId())
+                        .ifPresent(conversation -> {
+                            body.put("conversation_id", conversation.id());
+                            List<Map<String, Object>> evidence =
+                                messageDao.findByConversationId(conversation.id(), null, 50).stream()
+                                    .map(this::toMessageResponse)
+                                    .toList();
+                            body.put("evidence_messages", evidence);
+                        });
                     });
 
                 return ResponseEntity.ok(body);
             })
-            .orElseGet(() -> ResponseEntity.notFound()
-                .build());
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     private Map<String, Object> toMessageResponse(Message message) {
         Map<String, Object> res = new LinkedHashMap<>();
-        res.put("id",
-            message.id());
-        res.put("sender_id",
-            message.senderId());
-        res.put("content",
-            message.content());
-        res.put("sent_at",
-            message.sentAt()
-                .toString());
+        res.put("id", message.id());
+        res.put("sender_id", message.senderId());
+        res.put("content", message.content());
+        res.put("sent_at", message.sentAt().toString());
         return res;
     }
 
@@ -154,83 +120,55 @@ public class AdminDisputeController {
         @PathVariable String id,
         @Valid @RequestBody ResolveRequest body,
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey) {
-        IdempotencyClaim claim = idempotencyService.claim(
-            principal.userId(),
-            IdempotencyOperations.RESOLVE_DISPUTE,
-            idempotencyKey
-        );
+        IdempotencyClaim claim =
+            idempotencyService.claim(principal.userId(), IdempotencyOperations.RESOLVE_DISPUTE, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return ResponseEntity.status(409)
-                .body(
-                    Map.of(
-                        "code",
-                        "IDEMPOTENCY_IN_PROGRESS",
-                        "message",
-                        "An identical request is still being processed."
-                    )
-                );
+                .body(Map.of(
+                    "code",
+                    "IDEMPOTENCY_IN_PROGRESS",
+                    "message",
+                    "An identical request is still being processed."));
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record()
-                .resourceId() == null) {
+            if (claim.record() == null || claim.record().resourceId() == null) {
                 return ResponseEntity.status(409)
-                    .body(
-                        Map.of(
-                            "code",
-                            "IDEMPOTENCY_REPLAY_MISSING",
-                            "message",
-                            "Previous request exists but replay state could not be " +
-                                "loaded."
-                        )
-                    );
+                    .body(Map.of(
+                        "code",
+                        "IDEMPOTENCY_REPLAY_MISSING",
+                        "message",
+                        "Previous request exists but replay state could not be " + "loaded."));
             }
-            String disputeId = claim.record()
-                .resourceId()
-                .toString();
-            return disputeService.getDispute(disputeId)
+            String disputeId = claim.record().resourceId().toString();
+            return disputeService
+                .getDispute(disputeId)
                 .<ResponseEntity<?>>map(d -> ResponseEntity.ok(admin(d)))
                 .orElseGet(() -> ResponseEntity.status(409)
-                    .body(
-                        Map.of(
-                            "code",
-                            "IDEMPOTENCY_REPLAY_MISSING",
-                            "message",
-                            "Previous request exists but replay state could not " +
-                                "be loaded."
-                        )
-                    ));
+                    .body(Map.of(
+                        "code",
+                        "IDEMPOTENCY_REPLAY_MISSING",
+                        "message",
+                        "Previous request exists but replay state could not " + "be loaded.")));
         }
 
         try {
-            var result = disputeService.resolveDispute(principal.userId(),
-                id,
-                body.outcome(),
-                body.notes());
+            var result = disputeService.resolveDispute(principal.userId(), id, body.outcome(), body.notes());
             if (!result.isSuccess()) {
-                idempotencyService.abandon(principal.userId(),
-                    IdempotencyOperations.RESOLVE_DISPUTE,
-                    idempotencyKey);
+                idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESOLVE_DISPUTE, idempotencyKey);
                 if ("NOT_FOUND".equals(result.error())) {
-                    return ResponseEntity.notFound()
-                        .build();
+                    return ResponseEntity.notFound().build();
                 }
-                return ResponseEntity.badRequest()
-                    .body(Map.of("error",
-                        result.error()));
+                return ResponseEntity.badRequest().body(Map.of("error", result.error()));
             }
             idempotencyService.completeWithResource(
                 principal.userId(),
                 IdempotencyOperations.RESOLVE_DISPUTE,
                 idempotencyKey,
                 "DISPUTE",
-                result.dispute()
-                    .id()
-            );
+                result.dispute().id());
             return ResponseEntity.ok(admin(result.dispute()));
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(),
-                IdempotencyOperations.RESOLVE_DISPUTE,
-                idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESOLVE_DISPUTE, idempotencyKey);
             throw exception;
         }
     }

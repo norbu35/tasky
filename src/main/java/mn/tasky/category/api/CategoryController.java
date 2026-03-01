@@ -46,49 +46,29 @@ public class CategoryController {
     public ResponseEntity<?> listActiveCategories(
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
-        HttpServletRequest request
-    ) {
-        return listCategories(false,
-            cursor,
-            limit,
-            request);
+        HttpServletRequest request) {
+        return listCategories(false, cursor, limit, request);
     }
 
     private ResponseEntity<?> listCategories(
-        boolean includeInactive,
-        String cursor,
-        int limit,
-        HttpServletRequest request
-    ) {
+        boolean includeInactive, String cursor, int limit, HttpServletRequest request) {
         try {
             CategoryPage page = includeInactive
-                ? categoryService.listAllCategories(cursor,
-                limit)
-                : categoryService.listActiveCategories(cursor,
-                limit);
+                ? categoryService.listAllCategories(cursor, limit)
+                : categoryService.listActiveCategories(cursor, limit);
 
-            return ResponseEntity.ok(
-                new PagedResponse<>(
-                    page.data()
-                        .stream()
-                        .map(this::toCategoryResponse)
-                        .toList(),
-                    new CursorPagination(page.nextCursor(),
-                        page.hasMore())
-                )
-            );
+            return ResponseEntity.ok(new PagedResponse<>(
+                page.data().stream().map(this::toCategoryResponse).toList(),
+                new CursorPagination(page.nextCursor(), page.hasMore())));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(
-                    Map.of(
-                        "code",
-                        "INVALID_CURSOR",
-                        "message",
-                        "Cursor parameter is invalid.",
-                        "trace_id",
-                        resolveTraceId(request)
-                    )
-                );
+                .body(Map.of(
+                    "code",
+                    "INVALID_CURSOR",
+                    "message",
+                    "Cursor parameter is invalid.",
+                    "trace_id",
+                    resolveTraceId(request)));
         }
     }
 
@@ -99,72 +79,45 @@ public class CategoryController {
             sanitize(category.nameMn()),
             sanitize(category.iconUrl()),
             category.isActive(),
-            category.sortOrder()
-        );
+            category.sortOrder());
     }
 
     private String sanitize(String value) {
-        return value == null
-            ? null
-            : HtmlUtils.htmlEscape(value);
+        return value == null ? null : HtmlUtils.htmlEscape(value);
     }
 
     @GetMapping("/admin/categories")
     public ResponseEntity<?> listAllCategories(
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
-        HttpServletRequest request
-    ) {
-        return listCategories(true,
-            cursor,
-            limit,
-            request);
+        HttpServletRequest request) {
+        return listCategories(true, cursor, limit, request);
     }
 
     @PostMapping("/admin/categories")
-    public ResponseEntity<CategoryResponse> createCategory(
-        @Valid @RequestBody CreateCategoryRequest body
-    ) {
+    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest body) {
         CategoryState created = categoryService.createCategory(
-            new CreateCategory(
-                body.name(),
-                body.nameMn(),
-                body.iconUrl(),
-                body.sortOrder()
-            )
-        );
+            new CreateCategory(body.name(), body.nameMn(), body.iconUrl(), body.sortOrder()));
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(toCategoryResponse(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toCategoryResponse(created));
     }
 
     @PutMapping("/admin/categories/{id}")
     public ResponseEntity<?> updateCategory(
-        @PathVariable String id,
-        @Valid @RequestBody UpdateCategoryRequest body,
-        HttpServletRequest request
-    ) {
-        return categoryService.updateCategory(
+        @PathVariable String id, @Valid @RequestBody UpdateCategoryRequest body, HttpServletRequest request) {
+        return categoryService
+            .updateCategory(
                 id,
                 new UpdateCategory(
-                    body.name(),
-                    body.nameMn(),
-                    body.iconUrl(),
-                    body.isActive(),
-                    body.sortOrder()
-                )
-            )
+                    body.name(), body.nameMn(), body.iconUrl(), body.isActive(), body.sortOrder()))
             .<ResponseEntity<?>>map(category -> ResponseEntity.ok(toCategoryResponse(category)))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(
-                    Map.of(
-                        "code",
-                        "CATEGORY_NOT_FOUND",
-                        "message",
-                        "Category was not found.",
-                        "trace_id",
-                        resolveTraceId(request)
-                    )
-                ));
+                .body(Map.of(
+                    "code",
+                    "CATEGORY_NOT_FOUND",
+                    "message",
+                    "Category was not found.",
+                    "trace_id",
+                    resolveTraceId(request))));
     }
 }

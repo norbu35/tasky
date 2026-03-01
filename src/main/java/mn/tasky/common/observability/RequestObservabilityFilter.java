@@ -16,8 +16,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 @Component
-public class RequestObservabilityFilter
-    extends OncePerRequestFilter {
+public class RequestObservabilityFilter extends OncePerRequestFilter {
 
     public static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
     public static final String TRACE_ID_HEADER = "X-Trace-Id";
@@ -32,50 +31,35 @@ public class RequestObservabilityFilter
     private static final Logger log = LoggerFactory.getLogger(RequestObservabilityFilter.class);
 
     @Override
-    protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
         String correlationId = resolveOrCreateId(request.getHeader(CORRELATION_ID_HEADER));
         String traceId = resolveOrCreateId(request.getHeader(TRACE_ID_HEADER));
         String locale = resolveLocale(request.getHeader("Accept-Language"));
-        String platform = resolvePlatform(request.getHeader(CLIENT_PLATFORM_HEADER),
-            request.getHeader("User-Agent"));
+        String platform = resolvePlatform(request.getHeader(CLIENT_PLATFORM_HEADER), request.getHeader("User-Agent"));
         long startedAt = System.nanoTime();
 
-        request.setAttribute(CORRELATION_ID_ATTRIBUTE,
-            correlationId);
-        request.setAttribute(TRACE_ID_ATTRIBUTE,
-            traceId);
-        response.setHeader(CORRELATION_ID_HEADER,
-            correlationId);
-        response.setHeader(TRACE_ID_HEADER,
-            traceId);
-        MDC.put(CORRELATION_ID_MDC_KEY,
-            correlationId);
-        MDC.put(TRACE_ID_MDC_KEY,
-            traceId);
-        MDC.put(LOCALE_MDC_KEY,
-            locale);
-        MDC.put(PLATFORM_MDC_KEY,
-            platform);
+        request.setAttribute(CORRELATION_ID_ATTRIBUTE, correlationId);
+        request.setAttribute(TRACE_ID_ATTRIBUTE, traceId);
+        response.setHeader(CORRELATION_ID_HEADER, correlationId);
+        response.setHeader(TRACE_ID_HEADER, traceId);
+        MDC.put(CORRELATION_ID_MDC_KEY, correlationId);
+        MDC.put(TRACE_ID_MDC_KEY, traceId);
+        MDC.put(LOCALE_MDC_KEY, locale);
+        MDC.put(PLATFORM_MDC_KEY, platform);
 
         try {
-            filterChain.doFilter(request,
-                response);
+            filterChain.doFilter(request, response);
         } finally {
             long durationMs = (System.nanoTime() - startedAt) / 1_000_000;
             log.info(
-                "request_completed method={} path={} status={} duration_ms={} " +
-                    "correlation_id={} trace_id={}",
+                "request_completed method={} path={} status={} duration_ms={} " + "correlation_id={} trace_id={}",
                 request.getMethod(),
                 request.getRequestURI(),
                 response.getStatus(),
                 durationMs,
                 correlationId,
-                traceId
-            );
+                traceId);
             MDC.remove(CORRELATION_ID_MDC_KEY);
             MDC.remove(TRACE_ID_MDC_KEY);
             MDC.remove(LOCALE_MDC_KEY);
@@ -87,54 +71,43 @@ public class RequestObservabilityFilter
         if (StringUtils.hasText(value)) {
             return value.trim();
         }
-        return UUID.randomUUID()
-            .toString();
+        return UUID.randomUUID().toString();
     }
 
     private String resolveLocale(String acceptLanguage) {
         if (!StringUtils.hasText(acceptLanguage)) {
             return "mn";
         }
-        String firstPreference = acceptLanguage.split(",")[0]
-            .trim();
+        String firstPreference = acceptLanguage.split(",")[0].trim();
         int qualitySeparator = firstPreference.indexOf(';');
         if (qualitySeparator >= 0) {
-            firstPreference = firstPreference.substring(0,
-                    qualitySeparator)
-                .trim();
+            firstPreference = firstPreference.substring(0, qualitySeparator).trim();
         }
-        return StringUtils.hasText(firstPreference)
-            ? firstPreference
-            : "mn";
+        return StringUtils.hasText(firstPreference) ? firstPreference : "mn";
     }
 
-    private String resolvePlatform(String explicitPlatform,
-                                   String userAgent) {
+    private String resolvePlatform(String explicitPlatform, String userAgent) {
         if (StringUtils.hasText(explicitPlatform)) {
-            String normalized = explicitPlatform.trim()
-                .toUpperCase(Locale.ROOT);
-            if ("WEB".equals(normalized) || "ANDROID".equals(normalized) ||
-                "IOS".equals(normalized)) {
+            String normalized = explicitPlatform.trim().toUpperCase(Locale.ROOT);
+            if ("WEB".equals(normalized) || "ANDROID".equals(normalized) || "IOS".equals(normalized)) {
                 return normalized;
             }
         }
 
-        String normalizedUserAgent = userAgent == null
-            ? ""
-            : userAgent.toLowerCase(Locale.ROOT);
+        String normalizedUserAgent = userAgent == null ? "" : userAgent.toLowerCase(Locale.ROOT);
         if (normalizedUserAgent.contains("android")) {
             return "ANDROID";
         }
-        if (normalizedUserAgent.contains("iphone") ||
-            normalizedUserAgent.contains("ipad") ||
-            normalizedUserAgent.contains("ios")) {
+        if (normalizedUserAgent.contains("iphone")
+            || normalizedUserAgent.contains("ipad")
+            || normalizedUserAgent.contains("ios")) {
             return "IOS";
         }
-        if (normalizedUserAgent.contains("mozilla") ||
-            normalizedUserAgent.contains("chrome") ||
-            normalizedUserAgent.contains("safari") ||
-            normalizedUserAgent.contains("firefox") ||
-            normalizedUserAgent.contains("edg")) {
+        if (normalizedUserAgent.contains("mozilla")
+            || normalizedUserAgent.contains("chrome")
+            || normalizedUserAgent.contains("safari")
+            || normalizedUserAgent.contains("firefox")
+            || normalizedUserAgent.contains("edg")) {
             return "WEB";
         }
         return "UNKNOWN";

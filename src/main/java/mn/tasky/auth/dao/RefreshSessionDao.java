@@ -15,22 +15,14 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 @RegisterConstructorMapper(RefreshSession.class)
 public interface RefreshSessionDao {
 
-    default void insert(String tokenId,
-                        String userId,
-                        Instant expiresAt) {
-        insert(tokenId,
-            required(userId,
-                "userId"),
-            expiresAt);
+    default void insert(String tokenId, String userId, Instant expiresAt) {
+        insert(tokenId, required(userId, "userId"), expiresAt);
     }
 
-    @SqlUpdate("INSERT INTO refresh_sessions (token_id, user_id, expires_at) VALUES (:tokenId, " +
-        ":userId, :expiresAt)")
-    void insert(@Bind("tokenId") String tokenId,
-                @Bind("userId") UUID userId,
-                @Bind("expiresAt") Instant expiresAt);
+    @SqlUpdate(
+        "INSERT INTO refresh_sessions (token_id, user_id, expires_at) VALUES (:tokenId, " + ":userId, :expiresAt)")
+    void insert(@Bind("tokenId") String tokenId, @Bind("userId") UUID userId, @Bind("expiresAt") Instant expiresAt);
 
-    @SqlQuery("DELETE FROM refresh_sessions WHERE token_id = :tokenId RETURNING user_id, " +
-        "expires_at")
+    @SqlQuery("DELETE FROM refresh_sessions WHERE token_id = :tokenId RETURNING user_id, " + "expires_at")
     Optional<RefreshSession> findAndDelete(@Bind("tokenId") String tokenId);
 }

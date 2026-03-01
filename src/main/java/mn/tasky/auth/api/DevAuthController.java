@@ -28,17 +28,13 @@ public class DevAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> devLogin(@Valid @RequestBody DevLoginRequest body) {
-        AuthSession session = authService.devLogin(body.phone(),
-            body.role());
-        return ResponseEntity.ok(
-            Map.of(
+        AuthSession session = authService.devLogin(body.phone(), body.role());
+        return ResponseEntity.ok(Map.of(
                 "access_token",
                 session.accessToken(),
                 "refresh_token",
                 session.refreshToken(),
                 "user",
-                session.user()
-            )
-        );
+            session.user()));
     }
 }

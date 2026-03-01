@@ -37,11 +37,7 @@ public class AdminModerationController {
             policy.repeatSuspensionDays(),
             policy.repeatOffenseWindowDays(),
             policy.autoUnsuspendEnabled(),
-            policy.updatedAt() != null
-                ? policy.updatedAt()
-                .toString()
-                : null
-        );
+            policy.updatedAt() != null ? policy.updatedAt().toString() : null);
     }
 
     @PutMapping("/strike-policy")
@@ -52,9 +48,7 @@ public class AdminModerationController {
                     "code",
                     "INVALID_POLICY",
                     "message",
-                    "repeatSuspensionDays must be greater than or equal to " +
-                        "firstSuspensionDays"
-                ));
+                    "repeatSuspensionDays must be greater than or equal to " + "firstSuspensionDays"));
         }
         if (body.repeatOffenseWindowDays() < body.strikeWindowDays()) {
             return ResponseEntity.badRequest()
@@ -62,9 +56,7 @@ public class AdminModerationController {
                     "code",
                     "INVALID_POLICY",
                     "message",
-                    "repeatOffenseWindowDays must be greater than or equal to " +
-                        "strikeWindowDays"
-                ));
+                    "repeatOffenseWindowDays must be greater than or equal to " + "strikeWindowDays"));
         }
 
         ModerationPolicy updated = authService.updateModerationPolicy(
@@ -73,8 +65,7 @@ public class AdminModerationController {
             body.firstSuspensionDays(),
             body.repeatSuspensionDays(),
             body.repeatOffenseWindowDays(),
-            body.autoUnsuspendEnabled()
-        );
+            body.autoUnsuspendEnabled());
         return ResponseEntity.ok(toResponse(updated));
     }
 }

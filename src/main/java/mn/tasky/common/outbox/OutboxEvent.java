@@ -14,7 +14,5 @@ public record OutboxEvent(
     Instant availableAt,
     Instant createdAt,
     Instant processedAt,
-    String lastError
-) {
-
+    String lastError) {
 }

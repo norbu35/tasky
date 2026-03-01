@@ -28,22 +28,15 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> register(@AuthenticationPrincipal JwtPrincipal principal,
-                                      @Valid @RequestBody RegisterDeviceRequest body) {
-        notificationService.registerDevice(principal.userId(),
-            body.token(),
-            body.platform());
-        return ResponseEntity.ok(Map.of("message",
-            "Device registered successfully."));
+    public ResponseEntity<?> register(
+        @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody RegisterDeviceRequest body) {
+        notificationService.registerDevice(principal.userId(), body.token(), body.platform());
+        return ResponseEntity.ok(Map.of("message", "Device registered successfully."));
     }
 
     @DeleteMapping("/{token}")
-    public ResponseEntity<?> unregister(@AuthenticationPrincipal JwtPrincipal principal,
-                                        @PathVariable String token) {
-        notificationService.unregisterDevice(principal.userId(),
-            token);
-        return ResponseEntity.noContent()
-            .build();
+    public ResponseEntity<?> unregister(@AuthenticationPrincipal JwtPrincipal principal, @PathVariable String token) {
+        notificationService.unregisterDevice(principal.userId(), token);
+        return ResponseEntity.noContent().build();
     }
-
 }

@@ -12,6 +12,7 @@ plugins {
     id("com.github.spotbugs") version "6.1.11"
     id("net.ltgt.errorprone") version "4.1.0"
     id("org.owasp.dependencycheck") version "12.1.0"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 group = "mn.tasky"
@@ -169,6 +170,20 @@ checkstyle {
     toolVersion = "10.21.2"
     configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
+}
+
+// Spotless — enforces Palantir Java Style via palantir-java-format
+// Run `./gradlew spotlessApply` to auto-format; `./gradlew spotlessCheck` (or `check`) to verify.
+// Mirrors the IntelliJ code style in .idea/codeStyles/Project.xml (4-space indent, 120-char limit).
+spotless {
+    java {
+        target("src/main/java/**/*.java", "src/test/java/**/*.java")
+        palantirJavaFormat("2.47.0").style("PALANTIR") // 4-space indent, 120-char line limit
+        removeUnusedImports()
+        // Import ordering is handled by palantir-java-format (static → blank → non-static).
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 // PMD

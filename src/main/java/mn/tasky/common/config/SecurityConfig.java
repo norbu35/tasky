@@ -33,10 +33,8 @@ public class SecurityConfig {
         @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
         JwtAuthenticationFilter jwtAuthenticationFilter,
         RestAuthenticationEntryPoint restAuthenticationEntryPoint,
-        RestAccessDeniedHandler restAccessDeniedHandler
-    ) {
-        this.allowedOrigins = List.of(allowedOrigins.trim()
-            .split("\\s*,\\s*"));
+        RestAccessDeniedHandler restAccessDeniedHandler) {
+        this.allowedOrigins = List.of(allowedOrigins.trim().split("\\s*,\\s*"));
         this.devAuthEnabled = devAuthEnabled;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
@@ -55,39 +53,28 @@ public class SecurityConfig {
             "/api/v1/auth/otp/verify",
             "/api/v1/auth/token/refresh",
             "/api/v1/payments/qpay/callback",
-            "/ws"
-        ));
+            "/ws"));
         if (devAuthEnabled) {
             publicPaths.add("/api/v1/auth/dev/login");
         }
-        return http
-            .csrf(AbstractHttpConfigurer::disable)
+        return http.csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
-            .sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .exceptionHandling(handler -> handler
-                .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .accessDeniedHandler(restAccessDeniedHandler)
-            )
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(publicPaths.toArray(String[]::new))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(handler -> handler.authenticationEntryPoint(restAuthenticationEntryPoint)
+                .accessDeniedHandler(restAccessDeniedHandler))
+            .authorizeHttpRequests(auth -> auth.requestMatchers(publicPaths.toArray(String[]::new))
                 .permitAll()
                 .requestMatchers("/api/v1/security/customer/**")
                 .hasRole("CUSTOMER")
-                .requestMatchers(org.springframework.http.HttpMethod.POST,
-                    "/api/v1/tasks")
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks")
                 .hasRole("CUSTOMER")
                 .requestMatchers("/api/v1/security/tasker/**")
                 .hasRole("TASKER")
-                .requestMatchers("/api/v1/security/admin/**",
-                    "/api/v1/admin/**")
+                .requestMatchers("/api/v1/security/admin/**", "/api/v1/admin/**")
                 .hasRole("ADMIN")
                 .anyRequest()
-                .authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class)
+                .authenticated())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 
@@ -95,18 +82,12 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
-        configuration.setAllowedMethods(List.of("GET",
-            "POST",
-            "PUT",
-            "PATCH",
-            "DELETE",
-            "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**",
-            configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

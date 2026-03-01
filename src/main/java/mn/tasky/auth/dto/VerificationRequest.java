@@ -10,7 +10,5 @@ public record VerificationRequest(
     String status,
     Instant submittedAt,
     String adminNotes,
-    Instant reviewedAt
-) {
-
+    Instant reviewedAt) {
 }

@@ -26,10 +26,8 @@ public class FacebookGraphClient {
         RestClient.Builder restClientBuilder,
         @Value("${tasky.facebook.app-id:}") String appId,
         @Value("${tasky.facebook.app-secret:}") String appSecret,
-        @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl
-    ) {
-        this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl)
-            .build();
+        @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl) {
+        this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl).build();
         this.appId = appId;
         this.appSecret = appSecret;
     }
@@ -43,47 +41,33 @@ public class FacebookGraphClient {
      */
     public void debugToken(String userToken) {
         if (!StringUtils.hasText(appId) || !StringUtils.hasText(appSecret)) {
-            throw new FacebookAuthException(
-                TOKEN_INVALID_CODE,
-                "Facebook OAuth is not configured."
-            );
+            throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook OAuth is not configured.");
         }
 
         String appAccessToken = appId + "|" + appSecret;
         DebugTokenResponse response;
         try {
-            response = restClient.get()
+            response = restClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                     .path("/debug_token")
-                    .queryParam("input_token",
-                        userToken)
-                    .queryParam("access_token",
-                        appAccessToken)
+                    .queryParam("input_token", userToken)
+                    .queryParam("access_token", appAccessToken)
                     .build())
                 .retrieve()
                 .body(DebugTokenResponse.class);
         } catch (RestClientException exception) {
-            throw new FacebookAuthException(
-                TOKEN_INVALID_CODE,
-                "Unable to validate Facebook token.",
-                exception
-            );
+            throw new FacebookAuthException(TOKEN_INVALID_CODE, "Unable to validate Facebook token.", exception);
         }
 
-        if (response == null || response.data() == null || !Boolean.TRUE.equals(response.data()
-            .isValid())) {
-            throw new FacebookAuthException(
-                TOKEN_INVALID_CODE,
-                "Facebook token is invalid."
-            );
+        if (response == null
+            || response.data() == null
+            || !Boolean.TRUE.equals(response.data().isValid())) {
+            throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook token is invalid.");
         }
 
-        if (!appId.equals(response.data()
-            .appId())) {
-            throw new FacebookAuthException(
-                TOKEN_MISMATCH_CODE,
-                "Facebook token does not match this app."
-            );
+        if (!appId.equals(response.data().appId())) {
+            throw new FacebookAuthException(TOKEN_MISMATCH_CODE, "Facebook token does not match this app.");
         }
     }
 
@@ -97,83 +81,51 @@ public class FacebookGraphClient {
     public FacebookProfile fetchProfile(String userToken) {
         MeResponse response;
         try {
-            response = restClient.get()
+            response = restClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                     .path("/me")
-                    .queryParam("fields",
-                        "id,name,picture")
-                    .queryParam("access_token",
-                        userToken)
+                    .queryParam("fields", "id,name,picture")
+                    .queryParam("access_token", userToken)
                     .build())
                 .retrieve()
                 .body(MeResponse.class);
         } catch (RestClientException exception) {
-            throw new FacebookAuthException(
-                TOKEN_INVALID_CODE,
-                "Unable to read Facebook profile.",
-                exception
-            );
+            throw new FacebookAuthException(TOKEN_INVALID_CODE, "Unable to read Facebook profile.", exception);
         }
 
         if (response == null || !StringUtils.hasText(response.id())) {
-            throw new FacebookAuthException(
-                TOKEN_INVALID_CODE,
-                "Facebook token is invalid."
-            );
+            throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook token is invalid.");
         }
 
         String pictureUrl = null;
-        if (response.picture() != null && response.picture()
-            .data() != null) {
-            pictureUrl = response.picture()
-                .data()
-                .url();
+        if (response.picture() != null && response.picture().data() != null) {
+            pictureUrl = response.picture().data().url();
         }
 
-        return new FacebookProfile(response.id(),
-            response.name(),
-            pictureUrl);
+        return new FacebookProfile(response.id(), response.name(), pictureUrl);
     }
 
-    public record FacebookProfile(
-        String facebookId,
-        String name,
-        String pictureUrl
-    ) {
-
+    public record FacebookProfile(String facebookId, String name, String pictureUrl) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record DebugTokenResponse(DebugTokenData data) {
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record DebugTokenData(
-        @JsonProperty("is_valid")
-        Boolean isValid,
-        @JsonProperty("app_id")
-        String appId
-    ) {
-
+    private record DebugTokenData(@JsonProperty("is_valid") Boolean isValid, @JsonProperty("app_id") String appId) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record MeResponse(
-        String id,
-        String name,
-        Picture picture
-    ) {
-
+    private record MeResponse(String id, String name, Picture picture) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record Picture(PictureData data) {
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record PictureData(String url) {
-
     }
 }

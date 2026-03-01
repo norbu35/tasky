@@ -1,9 +1,9 @@
 package mn.tasky.task.dto;
 
-import org.springframework.lang.Nullable;
-
 import java.time.Instant;
 import java.util.List;
+
+import org.springframework.lang.Nullable;
 
 public record TaskState(
     String id,
@@ -18,7 +18,5 @@ public record TaskState(
     Instant scheduledAt,
     @Nullable List<String> photoKeys,
     Instant createdAt,
-    Instant updatedAt
-) {
-
+    Instant updatedAt) {
 }

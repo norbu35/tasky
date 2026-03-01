@@ -15,30 +15,19 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 @RegisterConstructorMapper(NotificationLog.class)
 public interface NotificationLogDao {
 
-    default void insert(String id,
-                        String userId,
-                        String type,
-                        String channel,
-                        String status,
-                        Instant createdAt) {
-        insert(required(id,
-                "id"),
-            required(userId,
-                "userId"),
-            type,
-            channel,
-            status,
-            createdAt);
+    default void insert(String id, String userId, String type, String channel, String status, Instant createdAt) {
+        insert(required(id, "id"), required(userId, "userId"), type, channel, status, createdAt);
     }
 
     @SqlUpdate("INSERT INTO notification_log (id, user_id, type, channel, status, created_at) "
         + "VALUES (:id, :userId, :type, :channel, :status, :createdAt)")
-    void insert(@Bind("id") UUID id,
-                @Bind("userId") UUID userId,
-                @Bind("type") String type,
-                @Bind("channel") String channel,
-                @Bind("status") String status,
-                @Bind("createdAt") Instant createdAt);
+    void insert(
+        @Bind("id") UUID id,
+        @Bind("userId") UUID userId,
+        @Bind("type") String type,
+        @Bind("channel") String channel,
+        @Bind("status") String status,
+        @Bind("createdAt") Instant createdAt);
 
     @SqlQuery("SELECT * FROM notification_log ORDER BY created_at DESC")
     List<NotificationLog> findAll();

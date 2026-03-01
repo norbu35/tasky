@@ -12,19 +12,16 @@ public class SecurityScopeController {
 
     @GetMapping("/customer/ping")
     public Map<String, String> customerPing() {
-        return Map.of("scope",
-            "customer");
+        return Map.of("scope", "customer");
     }
 
     @GetMapping("/tasker/ping")
     public Map<String, String> taskerPing() {
-        return Map.of("scope",
-            "tasker");
+        return Map.of("scope", "tasker");
     }
 
     @GetMapping("/admin/ping")
     public Map<String, String> adminPing() {
-        return Map.of("scope",
-            "admin");
+        return Map.of("scope", "admin");
     }
 }

@@ -10,11 +10,9 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface CreditedBookingDao {
 
     default int tryInsert(String bookingId) {
-        return tryInsert(required(bookingId,
-            "bookingId"));
+        return tryInsert(required(bookingId, "bookingId"));
     }
 
-    @SqlUpdate("INSERT INTO credited_bookings (booking_id) VALUES (:bookingId) ON CONFLICT DO " +
-        "NOTHING")
+    @SqlUpdate("INSERT INTO credited_bookings (booking_id) VALUES (:bookingId) ON CONFLICT DO " + "NOTHING")
     int tryInsert(@Bind("bookingId") UUID bookingId);
 }

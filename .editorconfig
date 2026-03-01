@@ -1,0 +1,33 @@
+root = true
+
+# Google Java Style Guide defaults for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Java — Palantir Java Style (4-space indent, 120-char limit)
+[*.java]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# Kotlin (build scripts)
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+
+# JSON / YAML
+[*.{json,yaml,yml}]
+indent_style = space
+indent_size = 2
+
+# XML (Checkstyle / SpotBugs / PMD configs, Maven POMs)
+[*.xml]
+indent_style = space
+indent_size = 4
+
+# Markdown and plain text — preserve intentional trailing spaces
+[*.{md,txt}]
+trim_trailing_whitespace = false

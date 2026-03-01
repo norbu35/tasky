@@ -29,8 +29,9 @@ public interface RateLimitCounterDao {
         + "END, "
         + "updated_at = :now "
         + "RETURNING attempt_count")
-    int incrementAndGet(@Bind("rateKey") String rateKey,
-                        @Bind("now") Instant now,
-                        @Bind("cutoff") Instant cutoff,
-                        @Bind("expiresAt") Instant expiresAt);
+    int incrementAndGet(
+        @Bind("rateKey") String rateKey,
+        @Bind("now") Instant now,
+        @Bind("cutoff") Instant cutoff,
+        @Bind("expiresAt") Instant expiresAt);
 }

@@ -12,7 +12,5 @@ public record Dispute(
     String resolvedBy,
     String resolutionNotes,
     Instant createdAt,
-    Instant resolvedAt
-) {
-
+    Instant resolvedAt) {
 }

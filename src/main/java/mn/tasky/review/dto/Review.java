@@ -9,7 +9,5 @@ public record Review(
     String targetUserId,
     int rating,
     String comment,
-    Instant createdAt
-) {
-
+    Instant createdAt) {
 }

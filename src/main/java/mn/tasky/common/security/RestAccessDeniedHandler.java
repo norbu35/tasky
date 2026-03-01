@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class RestAccessDeniedHandler
-    implements AccessDeniedHandler {
+public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     private final JsonSecurityResponseWriter responseWriter;
 
@@ -21,16 +20,13 @@ public class RestAccessDeniedHandler
 
     @Override
     public void handle(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        AccessDeniedException accessDeniedException
-    ) throws IOException {
+        HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+        throws IOException {
         responseWriter.write(
             request,
             response,
             HttpStatus.FORBIDDEN.value(),
             "FORBIDDEN",
-            "Insufficient permissions for this action."
-        );
+            "Insufficient permissions for this action.");
     }
 }

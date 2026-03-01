@@ -7,7 +7,5 @@ public record StrikePolicyResponse(
     int repeatSuspensionDays,
     int repeatOffenseWindowDays,
     boolean autoUnsuspendEnabled,
-    String updatedAt
-) {
-
+    String updatedAt) {
 }

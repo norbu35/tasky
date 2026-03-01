@@ -13,7 +13,5 @@ public record TaskApplicationState(
     boolean taskerIsPro,
     String message,
     String status,
-    Instant createdAt
-) {
-
+    Instant createdAt) {
 }

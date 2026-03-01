@@ -8,7 +8,5 @@ public record KpiReport(
     int disputedBookingCount,
     double conversionRate,
     double fulfillmentRate,
-    double disputeRate
-) {
-
+    double disputeRate) {
 }

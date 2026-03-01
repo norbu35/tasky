@@ -12,24 +12,27 @@ import java.util.UUID;
 @RegisterConstructorMapper(OutboxEvent.class)
 public interface OutboxEventDao {
 
-    @SqlUpdate("""
+    @SqlUpdate(
+        """
         INSERT INTO domain_outbox_events
             (id, event_type, aggregate_type, aggregate_id, payload, status, attempts, available_at, created_at)
         VALUES
             (:id, :eventType, :aggregateType, :aggregateId, CAST(:payload AS jsonb),
              :status, :attempts, :availableAt, :createdAt)
         """)
-    void insert(@Bind("id") UUID id,
-                @Bind("eventType") String eventType,
-                @Bind("aggregateType") String aggregateType,
-                @Bind("aggregateId") UUID aggregateId,
-                @Bind("payload") String payload,
-                @Bind("status") String status,
-                @Bind("attempts") int attempts,
-                @Bind("availableAt") Instant availableAt,
-                @Bind("createdAt") Instant createdAt);
+    void insert(
+        @Bind("id") UUID id,
+        @Bind("eventType") String eventType,
+        @Bind("aggregateType") String aggregateType,
+        @Bind("aggregateId") UUID aggregateId,
+        @Bind("payload") String payload,
+        @Bind("status") String status,
+        @Bind("attempts") int attempts,
+        @Bind("availableAt") Instant availableAt,
+        @Bind("createdAt") Instant createdAt);
 
-    @SqlQuery("""
+    @SqlQuery(
+        """
         WITH candidates AS (
             SELECT id
             FROM domain_outbox_events
@@ -57,21 +60,21 @@ public interface OutboxEventDao {
                   e.processed_at,
                   e.last_error
         """)
-    List<OutboxEvent> claimBatch(@Bind("now") Instant now,
-                                 @Bind("claimUntil") Instant claimUntil,
-                                 @Bind("limit") int limit);
+    List<OutboxEvent> claimBatch(
+        @Bind("now") Instant now, @Bind("claimUntil") Instant claimUntil, @Bind("limit") int limit);
 
-    @SqlUpdate("""
+    @SqlUpdate(
+        """
         UPDATE domain_outbox_events
         SET status = 'PROCESSED',
             processed_at = :processedAt,
             last_error = NULL
         WHERE id = :id
         """)
-    int markProcessed(@Bind("id") UUID id,
-                      @Bind("processedAt") Instant processedAt);
+    int markProcessed(@Bind("id") UUID id, @Bind("processedAt") Instant processedAt);
 
-    @SqlUpdate("""
+    @SqlUpdate(
+        """
         UPDATE domain_outbox_events
         SET status = 'FAILED',
             attempts = attempts + 1,
@@ -79,7 +82,5 @@ public interface OutboxEventDao {
             last_error = :lastError
         WHERE id = :id
         """)
-    int markFailed(@Bind("id") UUID id,
-                   @Bind("availableAt") Instant availableAt,
-                   @Bind("lastError") String lastError);
+    int markFailed(@Bind("id") UUID id, @Bind("availableAt") Instant availableAt, @Bind("lastError") String lastError);
 }

@@ -8,7 +8,5 @@ public record InitiatePaymentRequest(
     @JsonProperty("liability_disclaimer_accepted")
     @NotNull
     @AssertTrue(message = "Liability disclaimer must be accepted to initiate payment.")
-    Boolean liabilityDisclaimerAccepted
-) {
-
+    Boolean liabilityDisclaimerAccepted) {
 }

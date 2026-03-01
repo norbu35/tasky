@@ -1,8 +1,8 @@
 package mn.tasky.common.validation;
 
-import org.jsoup.Jsoup;
-
 import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
 
 public final class TextSanitizer {
 
@@ -15,14 +15,7 @@ public final class TextSanitizer {
         if (value == null) {
             return null;
         }
-        String withoutTags = Jsoup.parse(value)
-            .text()
-            .replace("<",
-                "")
-            .replace(">",
-                "");
-        return MULTI_SPACE_PATTERN.matcher(withoutTags)
-            .replaceAll(" ")
-            .trim();
+        String withoutTags = Jsoup.parse(value).text().replace("<", "").replace(">", "");
+        return MULTI_SPACE_PATTERN.matcher(withoutTags).replaceAll(" ").trim();
     }
 }

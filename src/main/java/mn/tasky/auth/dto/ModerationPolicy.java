@@ -9,7 +9,5 @@ public record ModerationPolicy(
     int repeatSuspensionDays,
     int repeatOffenseWindowDays,
     boolean autoUnsuspendEnabled,
-    Instant updatedAt
-) {
-
+    Instant updatedAt) {
 }

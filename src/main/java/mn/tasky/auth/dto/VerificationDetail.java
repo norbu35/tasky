@@ -10,7 +10,5 @@ public record VerificationDetail(
     String status,
     String adminNotes,
     String submittedAt,
-    String reviewedAt
-) {
-
+    String reviewedAt) {
 }
