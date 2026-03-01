@@ -1,5 +1,6 @@
 package mn.tasky.payment.application;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
@@ -43,6 +44,10 @@ public class PaymentService {
     private final byte[] qpayWebhookSecretBytes;
     private final long maxCallbackAgeSeconds;
 
+    @SuppressFBWarnings(
+        value = "CT_CONSTRUCTOR_THROW",
+        justification = "Payment integration must fail fast when monetization is enabled without webhook secret."
+    )
     public PaymentService(
         BookingService bookingService,
         TaskService taskService,

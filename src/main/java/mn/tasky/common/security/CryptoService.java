@@ -1,5 +1,6 @@
 package mn.tasky.common.security;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,15 @@ public class CryptoService {
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 128;
     private static final String BLIND_INDEX_ALGORITHM = "HmacSHA256";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final SecretKey secretKey;
     private final SecretKey blindIndexKey;
 
+    @SuppressFBWarnings(
+        value = "CT_CONSTRUCTOR_THROW",
+        justification = "Constructor validates encryption material and must fail fast when misconfigured."
+    )
     public CryptoService(
         @Value("${tasky.security.encryption-key}") String base64Key,
         @Value("${tasky.security.blind-index-key}") String blindIndexKey
@@ -63,7 +69,7 @@ public class CryptoService {
         }
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
-            new SecureRandom().nextBytes(iv);
+            SECURE_RANDOM.nextBytes(iv);
 
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH,

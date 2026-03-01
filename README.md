@@ -4,18 +4,26 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 
 ## Repository Layout
 
-- `AGENTS.md`: governing policy for delivery, quality, and security gates
-- `docs/agent/RUNBOOK.md`: canonical agent operational workflow
-- `docs/`: PRD, architecture, API contract, quality contracts
-- `docs/TRACEABILITY.md`: PRD requirement to architecture/API/ticket mapping
-- `docs/BACKLOG_MVP.md`: atomic MVP ticket backlog with acceptance and test IDs
-- `docs/FRONTEND_DESIGN_PLAN.md`: shadcn/web + mobile parity execution plan
-- `src/`: Spring Boot backend source
-- `apps/web`: React web client scaffold
-- `apps/mobile`: React Native (Expo) mobile scaffold
-- `packages/sdk`: shared TypeScript SDK scaffold (generated from OpenAPI)
-- `packages/design-tokens`: shared cross-platform design token source
-- `scripts/`: verification and workflow tooling
+| Path                                   | Purpose                                                             |
+|----------------------------------------|---------------------------------------------------------------------|
+| `AGENTS.md`                            | Governing policy — doctrine, quality gates, security baseline       |
+| `docs/PRD.md`                          | Product requirements and scope                                      |
+| `docs/ARCHITECTURE.md`                 | Technical architecture, data model, API guidelines, frontend system |
+| `docs/BACKLOG.md`                      | Atomic MVP ticket backlog with acceptance criteria and test IDs     |
+| `docs/METRICS.md`                      | Marketplace KPIs, funnel metrics, and event tracking schema         |
+| `docs/STRATEGY.md`                     | Business model and go-to-market plan                                |
+| `docs/adr/`                            | Architecture Decision Records                                       |
+| `docs/quality/SELF_VERIFY_CONTRACT.md` | Self-verification script and artifact contract                      |
+| `docs/agent/RUNBOOK.md`                | Canonical agent operational workflow                                |
+| `docs/agent/WORK_LOG.md`               | Append-only agent execution audit trail                             |
+| `docs/API.yaml`                        | OpenAPI 3.0 contract (source of truth for all clients)              |
+| `src/`                                 | Spring Boot backend source                                          |
+| `apps/web`                             | React web client scaffold                                           |
+| `apps/mobile`                          | React Native (Expo) mobile scaffold                                 |
+| `packages/sdk`                         | Shared TypeScript SDK scaffold (generated from OpenAPI)             |
+| `packages/design-tokens`               | Shared cross-platform design token source                           |
+| `scripts/`                             | Verification and workflow tooling                                   |
+| `tickets/`                             | Machine-readable ticket specs (`TASK-*.json`) and `STATUS.json`     |
 
 ## Prerequisites
 

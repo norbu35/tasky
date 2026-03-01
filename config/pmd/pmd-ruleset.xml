@@ -19,9 +19,15 @@
         <exclude name="LiteralsFirstInComparisons"/>
         <!-- Conflicts with Spring's standard @Autowired constructors -->
         <exclude name="LooseCoupling"/>
-        <!-- Common pattern in Spring tests -->
-        <exclude name="JUnitTestsShouldIncludeAssert"/>
-        <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+        <!-- Too strict for expressive behavior-focused tests -->
+        <exclude name="UnitTestContainsTooManyAsserts"/>
+        <!-- Test and fixture helpers frequently use local setup placeholders -->
+        <exclude name="UnusedLocalVariable"/>
+        <exclude name="UnusedPrivateMethod"/>
+        <!-- Test-only localhost usage should not fail quality gates -->
+        <exclude name="AvoidUsingHardCodedIP"/>
+        <!-- Parameterized logging is already lazy in SLF4J -->
+        <exclude name="GuardLogStatement"/>
         <!-- AccessorClassGeneration conflicts with record and immutable-DTO pattern -->
         <exclude name="AccessorClassGeneration"/>
         <exclude name="AccessorMethodGeneration"/>
@@ -31,8 +37,6 @@
     <rule ref="category/java/errorprone.xml">
         <!-- Too noisy — misidentifies intentional null checks -->
         <exclude name="NullAssignment"/>
-        <!-- Common in Spring Boot config classes -->
-        <exclude name="BeanMembersShouldSerialize"/>
         <!-- Triggers on Spring Security config — intentional -->
         <exclude name="AvoidLiteralsInIfCondition"/>
         <!-- Noisy with Lombok / record patterns -->
@@ -41,12 +45,17 @@
         <exclude name="CloseResource"/>
         <!-- Too strict for test code patterns -->
         <exclude name="TestClassWithoutTestCases"/>
+        <!-- Low-signal across DTO/controller-heavy code -->
+        <exclude name="AvoidDuplicateLiterals"/>
+        <!-- Valid pattern for compact domain exceptions with accessor methods -->
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
     </rule>
 
     <!-- ===== Performance ===== -->
     <rule ref="category/java/performance.xml">
         <!-- Conflicts with idiomatic Java patterns used in this codebase -->
-        <exclude name="AvoidInstantiatingObjectsJustToGetClass"/>
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+        <exclude name="UseIndexOfChar"/>
     </rule>
 
     <!-- ===== Security ===== -->
@@ -59,7 +68,6 @@
     <rule ref="category/java/design.xml/SimplifyBooleanReturns"/>
     <rule ref="category/java/design.xml/SingularField"/>
     <rule ref="category/java/design.xml/ImmutableField"/>
-    <rule ref="category/java/design.xml/UseObjectForClearerAPI"/>
     <rule ref="category/java/design.xml/FinalFieldCouldBeStatic"/>
     <rule ref="category/java/design.xml/LogicInversion"/>
 

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,10 +77,10 @@ class BookingControllerUnitTests {
         JwtPrincipal principal = customerPrincipal();
         when(idempotencyService.claim(principal.userId(),
             IdempotencyOperations.CANCEL_BOOKING,
-            "idem-1")).thenReturn(
-            new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS,
-                null)
-        );
+            "idem-1")).thenReturn(new IdempotencyClaim(
+            IdempotencyClaim.Status.IN_PROGRESS,
+            null
+        ));
 
         ResponseEntity<?> response = controller.cancelBooking(
             principal,
@@ -114,10 +114,10 @@ class BookingControllerUnitTests {
         String bookingId = uuid(11);
         when(idempotencyService.claim(principal.userId(),
             IdempotencyOperations.CANCEL_BOOKING,
-            "idem-2")).thenReturn(
-            new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
-                completedRecord(bookingId))
-        );
+            "idem-2")).thenReturn(new IdempotencyClaim(
+            IdempotencyClaim.Status.COMPLETED,
+            completedRecord(bookingId)
+        ));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking(bookingId,
             principal.userId(),
             "tasker-1",
@@ -182,10 +182,10 @@ class BookingControllerUnitTests {
         String bookingId = uuid(111);
         when(idempotencyService.claim(principal.userId(),
             IdempotencyOperations.CANCEL_BOOKING,
-            "idem-2b")).thenReturn(
-            new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
-                completedRecord(bookingId))
-        );
+            "idem-2b")).thenReturn(new IdempotencyClaim(
+            IdempotencyClaim.Status.COMPLETED,
+            completedRecord(bookingId)
+        ));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = controller.cancelBooking(
@@ -286,7 +286,7 @@ class BookingControllerUnitTests {
     }
 
     @Test
-    @DisplayName("BookingController complete success emits notification and analytics")
+    @DisplayName("BookingController complete success emits booking completion outbox event")
     void completeBookingSuccessEmitsSignals() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(13);
@@ -315,16 +315,24 @@ class BookingControllerUnitTests {
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(notificationService).sendPush(eq("tasker-3"),
-            eq("Job Complete"),
-            eq("The customer has marked the job as complete."),
-            eq("JOB_COMPLETED"));
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Map<String, Object>> payloadCaptor = ArgumentCaptor.forClass(Map.class);
         verify(domainEventOutboxService).publish(
             eq(OutboxEventTypes.BOOKING_COMPLETED),
             eq("BOOKING"),
             eq(bookingId),
-            any(Map.class)
+            payloadCaptor.capture()
         );
+        assertThat(payloadCaptor.getValue()).containsEntry("booking_id",
+                bookingId)
+            .containsEntry("task_id",
+                booking.taskId())
+            .containsEntry("customer_id",
+                principal.userId())
+            .containsEntry("tasker_id",
+                "tasker-3")
+            .containsEntry("price",
+                50000);
         verify(idempotencyService).completeWithResource(
             principal.userId(),
             IdempotencyOperations.COMPLETE_BOOKING,

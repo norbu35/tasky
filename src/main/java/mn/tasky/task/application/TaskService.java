@@ -1,5 +1,6 @@
 package mn.tasky.task.application;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfile;
@@ -80,6 +81,10 @@ public class TaskService {
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
+    @SuppressFBWarnings(
+        value = "CT_CONSTRUCTOR_THROW",
+        justification = "Upload signing secret is mandatory and validated during startup for fail-fast safety."
+    )
     public TaskService(
         AuthService authService,
         CategoryService categoryService,

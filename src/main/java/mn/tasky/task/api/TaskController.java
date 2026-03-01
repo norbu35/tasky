@@ -260,9 +260,10 @@ public class TaskController {
 
     private Map<String, Object> toTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
-        List<String> photoKeys = task.photoKeys() == null
+        List<String> rawPhotoKeys = task.photoKeys();
+        final List<String> photoKeys = rawPhotoKeys == null
             ? List.of()
-            : task.photoKeys();
+            : rawPhotoKeys;
         List<Map<String, Object>> photos = IntStream.range(0,
                 photoKeys.size())
             .mapToObj(index -> {
@@ -910,9 +911,10 @@ public class TaskController {
                 );
         }
 
-        List<String> existingPhotoKeys = task.photoKeys() == null
+        List<String> rawPhotoKeys = task.photoKeys();
+        final List<String> existingPhotoKeys = rawPhotoKeys == null
             ? List.of()
-            : task.photoKeys();
+            : rawPhotoKeys;
         if (existingPhotoKeys.size() >= 3) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(

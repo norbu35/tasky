@@ -15,8 +15,11 @@ import mn.tasky.task.dto.AcceptApplicationRequest;
 import mn.tasky.task.dto.CreateTaskRequest;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationsListResult;
+import mn.tasky.task.dto.TaskCreateResult;
 import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
 import mn.tasky.task.dto.TaskState;
+import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.UpdateTaskRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +80,30 @@ class TaskControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
             "FORBIDDEN");
+    }
+
+    @Test
+    void createTaskReturnsBadRequestWhenServiceRejectsPayload() {
+        JwtPrincipal principal = new JwtPrincipal(uuid(101),
+            "CUSTOMER",
+            "ACTIVE");
+        when(taskService.createTask(eq(principal.userId()),
+            any())).thenReturn(TaskCreateResult.error(
+            TaskCreateResult.INVALID_CATEGORY,
+            "Category does not exist."
+        ));
+
+        ResponseEntity<?> response = controller.createTask(
+            principal,
+            createTaskRequest(),
+            request()
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+                TaskCreateResult.INVALID_CATEGORY)
+            .containsEntry("message",
+                "Category does not exist.");
     }
 
     private String uuid(int suffix) {
@@ -269,5 +298,101 @@ class TaskControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("storage_key",
             "uploads/tasks/one.jpg");
+    }
+
+    @Test
+    void updateTaskMapsAllErrorCodesToExpectedResponses() {
+        JwtPrincipal principal = new JwtPrincipal(uuid(201),
+            "CUSTOMER",
+            "ACTIVE");
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-not-found"),
+            any())).thenReturn(TaskUpdateResult.NOT_FOUND_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-forbidden"),
+            any())).thenReturn(TaskUpdateResult.FORBIDDEN_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-invalid-status"),
+            any())).thenReturn(TaskUpdateResult.INVALID_STATUS_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-invalid-desc"),
+            any())).thenReturn(TaskUpdateResult.INVALID_DESCRIPTION_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-invalid-location"),
+            any())).thenReturn(TaskUpdateResult.INVALID_LOCATION_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-invalid-schedule"),
+            any())).thenReturn(TaskUpdateResult.INVALID_SCHEDULE_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-too-many-photos"),
+            any())).thenReturn(TaskUpdateResult.TOO_MANY_PHOTOS_RESULT);
+        when(taskService.updateTask(eq(principal.userId()),
+            eq("task-unknown"),
+            any())).thenReturn(new TaskUpdateResult(null,
+            "UNKNOWN"));
+
+        assertTaskUpdateError(principal,
+            "task-not-found",
+            HttpStatus.NOT_FOUND,
+            "NOT_FOUND");
+        assertTaskUpdateError(principal,
+            "task-forbidden",
+            HttpStatus.FORBIDDEN,
+            "FORBIDDEN");
+        assertTaskUpdateError(principal,
+            "task-invalid-status",
+            HttpStatus.CONFLICT,
+            "INVALID_STATUS");
+        assertTaskUpdateError(principal,
+            "task-invalid-desc",
+            HttpStatus.BAD_REQUEST,
+            "INVALID_DESCRIPTION");
+        assertTaskUpdateError(principal,
+            "task-invalid-location",
+            HttpStatus.BAD_REQUEST,
+            "INVALID_LOCATION");
+        assertTaskUpdateError(principal,
+            "task-invalid-schedule",
+            HttpStatus.BAD_REQUEST,
+            "INVALID_SCHEDULE");
+        assertTaskUpdateError(principal,
+            "task-too-many-photos",
+            HttpStatus.BAD_REQUEST,
+            "TOO_MANY_PHOTOS");
+
+        ResponseEntity<?> unknownResponse = controller.updateTask(
+            principal,
+            "task-unknown",
+            updateTaskRequest(),
+            request()
+        );
+        assertThat(unknownResponse.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private void assertTaskUpdateError(JwtPrincipal principal,
+                                       String taskId,
+                                       HttpStatus expectedStatus,
+                                       String expectedCode) {
+        ResponseEntity<?> response = controller.updateTask(
+            principal,
+            taskId,
+            updateTaskRequest(),
+            request()
+        );
+        assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            expectedCode);
+    }
+
+    private UpdateTaskRequest updateTaskRequest() {
+        return new UpdateTaskRequest(
+            "Updated description long enough",
+            65000,
+            47.91,
+            106.92,
+            "Updated Ulaanbaatar location",
+            "2026-02-19T00:00:00Z",
+            List.of("photo-1")
+        );
     }
 }

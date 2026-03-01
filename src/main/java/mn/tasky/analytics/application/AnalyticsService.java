@@ -104,9 +104,9 @@ public class AnalyticsService {
             propertiesJson,
             now);
         log.info("TRACK event={} user={} props={}",
-            eventName,
-            userId,
-            enrichedProperties);
+            sanitizeForLog(eventName),
+            sanitizeForLog(userId),
+            sanitizeForLog(propertiesJson));
     }
 
     /**
@@ -116,6 +116,17 @@ public class AnalyticsService {
      */
     public List<Event> getEvents() {
         return analyticsEventDao.findAll();
+    }
+
+    private String sanitizeForLog(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        return value.toString()
+            .replace("\r",
+                "_")
+            .replace("\n",
+                "_");
     }
 
 }

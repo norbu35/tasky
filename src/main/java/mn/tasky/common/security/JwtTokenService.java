@@ -1,5 +1,6 @@
 package mn.tasky.common.security;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -30,6 +31,10 @@ public class JwtTokenService {
     private final long accessTokenTtlSeconds;
     private final long refreshTokenTtlSeconds;
 
+    @SuppressFBWarnings(
+        value = "CT_CONSTRUCTOR_THROW",
+        justification = "Constructor validates required signing key and fails fast on invalid runtime config."
+    )
     public JwtTokenService(
         @Value("${tasky.security.jwt-secret}")
         String jwtSecret,

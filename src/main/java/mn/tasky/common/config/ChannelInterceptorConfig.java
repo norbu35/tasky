@@ -72,28 +72,36 @@ public class ChannelInterceptorConfig
                         );
                     accessor.setUser(auth);
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
-                    String destination = accessor.getDestination();
-                    if (destination != null && destination.startsWith("/topic/conversations/")) {
-                        String conversationId =
-                            destination.substring("/topic/conversations/".length());
-                        if (!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
-                            || !(auth.getPrincipal() instanceof JwtPrincipal principal)) {
-                            throw new IllegalArgumentException("Unauthorized");
-                        }
-                        assertUserNotRestricted(principal);
-                        boolean isParticipant =
-                            messagingService.listConversations(principal.userId())
-                                .stream()
-                                .anyMatch(c -> c.id()
-                                    .equals(conversationId));
-                        if (!isParticipant) {
-                            throw new IllegalArgumentException("Forbidden");
-                        }
-                    }
+                    assertAuthorizedConversationSubscription(accessor);
                 }
                 return message;
             }
         });
+    }
+
+    private void assertAuthorizedConversationSubscription(StompHeaderAccessor accessor) {
+        String destination = accessor.getDestination();
+        if (destination == null || !destination.startsWith("/topic/conversations/")) {
+            return;
+        }
+        String conversationId = destination.substring("/topic/conversations/".length());
+        JwtPrincipal principal = requireJwtPrincipal(accessor);
+        assertUserNotRestricted(principal);
+        boolean isParticipant = messagingService.listConversations(principal.userId())
+            .stream()
+            .anyMatch(c -> c.id()
+                .equals(conversationId));
+        if (!isParticipant) {
+            throw new IllegalArgumentException("Forbidden");
+        }
+    }
+
+    private JwtPrincipal requireJwtPrincipal(StompHeaderAccessor accessor) {
+        if (!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
+            || !(auth.getPrincipal() instanceof JwtPrincipal principal)) {
+            throw new IllegalArgumentException("Unauthorized");
+        }
+        return principal;
     }
 
     private void assertUserNotRestricted(JwtPrincipal principal) {

@@ -1,5 +1,6 @@
 package mn.tasky.auth.application;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.AccountRestrictedException;
 import mn.tasky.auth.dao.AuditLogDao;
@@ -124,6 +125,10 @@ public class AuthService {
     private final ModerationPolicyDao moderationPolicyDao;
     private final SuspensionEventDao suspensionEventDao;
 
+    @SuppressFBWarnings(
+        value = "CT_CONSTRUCTOR_THROW",
+        justification = "Fail-fast configuration validation is intentional; class is non-finalizer managed."
+    )
     public AuthService(
         JwtTokenService jwtTokenService,
         CryptoService cryptoService,

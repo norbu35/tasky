@@ -90,7 +90,7 @@ occurs via internal service interfaces (Java method calls), not network calls, t
     * Each shared UX pattern (Button, Input, Select, Modal/Sheet, Toast, Form Field, Empty State) has a parity record
       defining states, spacing, typography, and interaction behavior.
     * Mobile keeps native rendering patterns while matching token values and state semantics.
-    * Canonical parity baseline table: `docs/UI_PARITY_MATRIX.md`.
+  * Canonical parity baseline table: see §8.2 below.
 * **Accessibility Baseline**:
     * Web components must preserve Radix/shadcn accessibility defaults and satisfy keyboard navigation + WCAG AA
       contrast.
@@ -268,7 +268,119 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 ---
 
-## 7. Development Workflow
+## 7. Frontend Architecture
+
+### 7.1 Implementation Rules
+
+#### Web (`apps/web`)
+
+* Framework: React + Vite + Tailwind CSS.
+* **Primitives (Atoms):** Always use `shadcn/ui`. Do not introduce Material UI, Chakra, or any other third-party UI
+  framework.
+* Styling pipeline: `shadcn/ui` components use Tailwind utility classes pulling values from `@tasky/design-tokens`.
+* State management: standard React hooks + Tailwind state variants (`hover:`, `focus:`, `disabled:`).
+* Accessibility: visible focus states and minimum AA contrast on all touched flows.
+
+#### Mobile (`apps/mobile`)
+
+* Framework: React Native + Expo.
+* **Primitives (Atoms):** Always build native component equivalents. Never import `shadcn/ui` into the mobile app.
+* Styling pipeline: React Native `StyleSheet.create` or inline styles using constants from `@tasky/design-tokens`.
+* If a component exists in `apps/web/src/components/ui/` (e.g., `Button`), a functionally and visually parallel
+  component **must** exist in `apps/mobile/src/components/ui/`.
+
+#### Building Composite Components
+
+1. Check if required primitive Atoms (Button, Badge, Input, Label, Card) exist in `components/ui/`.
+2. If not, create them first according to the platform rules above.
+3. Assemble Molecules/Organisms exclusively from those Atoms using spacing/layout variables from `@tasky/design-tokens`.
+
+### 7.2 UI Parity Baseline
+
+| Primitive   | Web Source (`apps/web/src/components/ui`) | Mobile Source (`apps/mobile/src/components/ui`) | Required States                              | Notes                                     |
+|-------------|-------------------------------------------|-------------------------------------------------|----------------------------------------------|-------------------------------------------|
+| Button      | `button.tsx`                              | `Button.tsx`                                    | default, secondary, ghost, disabled, loading | Loading disables press on both platforms. |
+| Input       | `input.tsx`                               | `Input.tsx`                                     | default, focus, invalid, disabled            | Invalid state uses danger border token.   |
+| Form Field  | composition (`label` + input + message)   | `FormField.tsx`                                 | default, helper, error                       | Error message replaces helper text.       |
+| Modal/Sheet | dialog/sheet pattern                      | `ModalSheet.tsx`                                | open, close, backdrop-dismiss                | Backdrop dismiss is enabled by default.   |
+| Toast       | toast/badge pattern                       | `Toast.tsx`                                     | info, success, error                         | Alert role for accessibility semantics.   |
+
+**Token contract:** All parity components consume tokens from `packages/design-tokens/tokens.ts` (typed source),
+`packages/design-tokens/tokens.css` (web CSS variables), and `apps/mobile/src/design/tokenAdapter.ts` (mobile adapter).
+
+**Validation:** `TID-TASK-070-WEB-*` validates web primitives and token usage. `TID-TASK-071-MOBILE-*` validates mobile
+token adapter, component parity, and this table.
+
+### 7.3 File Structure
+
+```
+apps/web/src/components/
+  ui/       ← shadcn/ui primitive components only
+  feature/  ← domain-specific components composed of UI primitives
+
+apps/mobile/src/components/
+  ui/       ← native atomic components matching web primitives
+  feature/  ← domain-specific mobile components
+```
+
+### 7.4 Delivery Phases
+
+#### Phase 1 — Web Design Foundation (TASK-070)
+
+1. Initialize and standardize `shadcn/ui` primitives.
+2. Define token source of truth and wire to Tailwind/theme variables.
+3. Implement at least one feature screen using primitives only.
+
+Exit criteria: web primitives are reusable; no additional UI frameworks introduced; tests cover primitive usage and
+token binding.
+
+#### Phase 1.5 — i18n Foundation
+
+1. Install `i18next` and `react-i18next` for web and mobile.
+2. Define locale dictionaries (`en`, `mn`) loaded dynamically.
+3. Integrate `i18next-browser-languagedetector` for web; `expo-localization` for mobile.
+
+Exit criteria: `t("key")` translations work on both platforms; language switcher (EN/MN) is implemented; mobile defaults
+to `mn`.
+
+#### Phase 2 — Mobile Parity Base (TASK-071)
+
+1. Add mobile token adapter consuming shared tokens.
+2. Implement core component equivalents: Button, Input, FormField, Modal/Sheet, Toast.
+3. Publish parity matrix (§8.2) with states and interaction rules.
+
+Exit criteria: shared tokens used on mobile; state semantics match parity matrix; tests verify token + state behavior.
+
+#### Phase 3 — Accessibility and Parity Gate (TASK-072)
+
+1. Add web keyboard navigation checks for touched flows.
+2. Add WCAG 2.1 AA contrast checks for touched flows.
+3. Add cross-platform parity checks against token and state contracts.
+
+Exit criteria: a11y checks pass in CI for affected web flows; parity checks pass for shared components; ticket AC
+evidence includes `TID-*` test IDs.
+
+### 7.5 Test Location and TID Naming
+
+| Platform | Test type      | Location                                                                |
+|----------|----------------|-------------------------------------------------------------------------|
+| Web      | Unit/component | `apps/web/src/**/*.test.tsx` or `apps/web/tests/**/*.test.tsx` (Vitest) |
+| Web      | E2E            | `apps/web/e2e/**/*.test.ts` (Playwright)                                |
+| Mobile   | Unit/component | `apps/mobile/__tests__/**/*.test.tsx` (Jest)                            |
+
+**Critical rule:** Every test block must include its `TID-*` identifier directly in the `it()` or `test()` description
+string — bare, with no brackets or decorators. The self-verification script discovers AC coverage by scanning for this
+string in test runner output.
+
+```typescript
+it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook and redirect to feed', async () => {
+    // test logic
+});
+```
+
+---
+
+## 8. Development Workflow
 
 1. **Classify Risk**: Determine `low|medium|high` per `AGENTS.md` quality policy.
 2. **Design**: Update `API.yaml` (contract-first).

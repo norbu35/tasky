@@ -199,28 +199,8 @@ public class BookingController {
             );
 
             if (result.isSuccess()) {
-                if (booking.taskerId()
-                    .equals(principal.userId())) {
-                    // Tasker cancelled: reopen task and record strike
-                    if (taskService.reopenTask(booking.taskId())
-                        .isEmpty()) {
-                        log.warn("Task not found when reopening after cancellation: bookingId={} " +
-                                "taskId={}",
-                            booking.id(),
-                            booking.taskId());
-                    }
-                    authService.addStrike(principal.userId());
-                } else if (booking.customerId()
-                    .equals(principal.userId())) {
-                    // Customer cancelled: close task as cancelled.
-                    if (taskService.transitionToCancelled(booking.taskId())
-                        .isEmpty()) {
-                        log.warn("Task not found when cancelling after customer cancellation: " +
-                                "bookingId={} taskId={}",
-                            booking.id(),
-                            booking.taskId());
-                    }
-                }
+                handleTaskCancellationSideEffects(result.booking(),
+                    principal.userId());
                 idempotencyService.completeWithResource(
                     principal.userId(),
                     IdempotencyOperations.CANCEL_BOOKING,
@@ -278,6 +258,40 @@ public class BookingController {
                 idempotencyKey);
             throw exception;
         }
+    }
+
+    private void handleTaskCancellationSideEffects(BookingState booking,
+                                                   String actorUserId) {
+        if (booking.taskerId()
+            .equals(actorUserId)) {
+            handleTaskerCancellation(booking);
+            authService.addStrike(actorUserId);
+            return;
+        }
+        if (booking.customerId()
+            .equals(actorUserId)) {
+            handleCustomerCancellation(booking);
+        }
+    }
+
+    private void handleTaskerCancellation(BookingState booking) {
+        if (taskService.reopenTask(booking.taskId())
+            .isPresent()) {
+            return;
+        }
+        log.warn("Task not found when reopening after cancellation: bookingId={} taskId={}",
+            booking.id(),
+            booking.taskId());
+    }
+
+    private void handleCustomerCancellation(BookingState booking) {
+        if (taskService.transitionToCancelled(booking.taskId())
+            .isPresent()) {
+            return;
+        }
+        log.warn("Task not found when cancelling after customer cancellation: bookingId={} taskId={}",
+            booking.id(),
+            booking.taskId());
     }
 
     @PostMapping("/{id}/complete")

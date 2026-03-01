@@ -395,79 +395,13 @@ risk.*
 2. If implementation and documentation conflict, code and docs MUST be updated in the same PR.
 3. If requirements are unclear, stop implementation and request clarification before coding.
 
-### 10.8 Self-Verification Gate (Mandatory Before Commit and Push)
+### 10.8 Self-Verification and Work Log Contracts
 
-1. Every agent change MUST run self-verification before commit and before each PR update.
-2. Self-verification MUST produce evidence at `artifacts/self-verify.json` with:
-    1. Ticket ID
-    2. Risk level
-    3. REQ IDs covered
-    4. Files changed
-    5. Checks executed
-    6. Acceptance criteria and test mapping evidence
-    7. Pass/fail status
-    8. Known risks and assumptions
-3. Required checks by risk:
-    1. Low: lint, commit message lint, secret scan, ticket spec validation, changed-module tests, AC coverage gate
-    2. Medium: low plus integration tests plus OpenAPI validation
-    3. High: medium plus full test suite plus security scan plus migration safety verification and performance smoke
-4. The agent MUST run a self-critique and record:
-    1. What requirement is most likely to break?
-    2. What security or abuse path is impacted?
-    3. Which test proves the intended behavior?
-5. If any required check fails, commit and push are blocked until fixed.
-6. For pull requests, the local report at `artifacts/self-verify.json` MUST be included in the branch for CI parity
-   checks.
-7. CI MUST re-run the same verification independently. Any mismatch between local report and CI result is a merge
-   blocker.
-8. After each self-verification run, the agent MUST append an entry to `docs/agent/WORK_LOG.md`.
+Every agent change MUST run self-verification before commit and before each PR update, and MUST append an entry to
+`docs/agent/WORK_LOG.md` after each run. If any required check fails, commit and push are blocked until fixed.
 
-### 10.9 Canonical Self-Verify Artifact Schema
-
-1. Canonical schema path: `docs/quality/self-verify.schema.json`.
-2. Canonical risk-check registry path: `docs/quality/risk-checks.json`.
-3. The artifact `artifacts/self-verify.json` MUST validate against this schema.
-4. Unknown or undocumented fields are forbidden. Agents MUST use schema version `1.0.0`.
-5. Required check IDs and required check sets per risk level are defined by the risk-check registry and enforced in CI.
-6. Bootstrap exception: if repository has no commits yet, `git_context.head_sha` MUST be `NO_HEAD`.
-
-### 10.10 Self-Verify Script Contract
-
-1. Canonical contract path: `docs/quality/SELF_VERIFY_CONTRACT.md`.
-2. Canonical runner path: `scripts/self-verify.sh`.
-3. Minimum CLI contract:
-    1.
-   `scripts/self-verify.sh --ticket <TICKET-ID> --risk <low|medium|high> --req <REQ-IDS-CSV> [--ticket-spec <path>] [--base <git-ref>] [--only <check-id>] [--out <path>]`
-4. Mandatory script behavior:
-    1. Resolve changed files from Git.
-       If repository has no `HEAD`, use the empty tree base and set `git_context.head_sha` to `NO_HEAD`.
-    2. Select required checks from risk level.
-    3. Execute required fast checks first (`format_lint`, `commit_message_lint`, `secret_scan`, `openapi_validation`
-       when required).
-    4. If fast checks pass, execute remaining required checks.
-    5. If a fast check fails, do not run expensive checks; record each remaining required check as blocked `FAIL` with
-       command and reason.
-    6. Capture command, duration, exit code, and status for every required check entry.
-    7. Validate ticket spec and branch-ticket consistency before running expensive checks.
-    8. Validate acceptance-criteria coverage using executed test logs.
-       Test runners must emit test titles so `TID-*` identifiers are visible in logs.
-    9. Produce `artifacts/self-verify.json`.
-    10. Validate artifact against `docs/quality/self-verify.schema.json` before exiting.
-5. Mandatory exit codes:
-    1. `0`: all required checks passed
-    2. `1`: one or more required checks failed
-    3. `2`: invalid script usage
-    4. `3`: artifact schema validation failed
-    5. `4`: environment or tooling failure
-
-### 10.11 Agent Work Log Contract
-
-1. Canonical log path: `docs/agent/WORK_LOG.md`.
-2. Canonical logger path: `scripts/agent-log.sh`.
-3. The log is append-only; entries are never edited or deleted except by documented corrective ADR.
-4. Each entry MUST include timestamp, context (`local|ci|manual`), ticket, branch, risk, overall status, check pass
-   count, and artifact path.
-5. If work log append fails, self-verification is considered failed due to traceability gap.
+The full self-verification script interface, artifact schema, risk-check registry, exit codes, CI parity rules, and work
+log format are defined in `docs/quality/SELF_VERIFY_CONTRACT.md`.
 
 ---
 
@@ -506,108 +440,10 @@ Canonical operational checklist: `docs/agent/RUNBOOK.md`.
    worktree branch into `main` as the final step. Includes automatic rebase when the source branch has diverged from
    `main`.
 
-### 11.4 Agent Startup Protocol (MANDATORY)
+### 11.4 Operational Workflow
 
-Every agent MUST follow this sequence when starting a new work session:
+Full agent startup protocol, parallel execution rules, workspace utilization model, stale claim recovery, and quick
+reference commands are in `docs/agent/RUNBOOK.md`.
 
-1. **Orient**: Run `scripts/agent-flow.sh status` to see the current state.
-   ```bash
-   scripts/agent-flow.sh status
-   ```
-2. **Select**: Identify the next available ticket. A ticket is "available" when:
-    - Its status is `pending` in `tickets/STATUS.json`.
-    - ALL tickets listed in its `depends_on` (from `tickets/<TICKET>.json`) have status `done`.
-3. **Resume-or-Claim**: `start` is deterministic:
-    - If this agent already owns exactly one `in_progress` ticket, `start` MUST resume that ticket.
-    - If this agent owns none, `start` MUST require explicit `--ticket` for new claims (or `--auto-claim` to pick the
-      next available ticket).
-    - If this agent owns multiple `in_progress` tickets, `start` MUST fail and require explicit `--ticket`.
-4. **Workspace**: Use isolated workspaces for concurrent local agents.
-   ```bash
-   scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug>
-   ```
-5. **Fallback (single-agent only)**: Shared workspace mode is allowed when no other local agent is running.
-   ```bash
-   scripts/agent-flow.sh start --agent <your-agent-name> --ticket <TICKET-ID> --slug <slug> --workspace shared
-   ```
-6. **Context Acquisition (Frontend Tasks Only)**: If the `<TICKET-ID>` involves any UI or frontend implementation, the agent MUST read `docs/agent/DESIGN_SYSTEM_GUIDELINES.md` to understand the shared design tokens and UI parity rules before writing any code.
-7. **Implement**: Follow the development workflow in Section 7 of `docs/ARCHITECTURE.md`.
-8. **Self-verify**: Run `scripts/self-verify.sh` with the ticket's risk level and requirements.
-   Preferred wrapper:
-   ```bash
-   scripts/agent-flow.sh verify --ticket <TICKET-ID>
-   ```
-8. **Complete**: After successful self-verification, mark the ticket done.
-   ```bash
-   scripts/agent-flow.sh complete --ticket <TICKET-ID>
-   ```
-   **Preferred alternative**: Use `finish` to combine steps 7 and 8 in a single command:
-   ```bash
-   scripts/agent-flow.sh finish --ticket <TICKET-ID>
-   ```
-9. **Merge to Main**: As the final step, merge the completed task branch into `main`.
-   If another agent has merged first and `main` has advanced, the merge command automatically rebases the source branch
-   before fast-forwarding.
-   ```bash
-   scripts/agent-flow.sh merge --ticket <TICKET-ID>
-   ```
-
-### 11.5 Parallel Execution Rules
-
-1. Two agents MUST NOT claim the same ticket. The `claim-ticket.sh` script enforces this via git push atomicity.
-2. If a push fails during claim (race condition), the script pulls, re-evaluates available tickets, and retries
-   automatically (up to 3 attempts).
-3. Agents SHOULD prefer the lowest-numbered available ticket for deterministic ordering, unless a specific ticket is
-   strategically better.
-4. An agent MUST NOT start work on a ticket whose dependencies are not all `done`. The claim script enforces this.
-5. Multiple agents MAY work in parallel on independent tickets (e.g., TASK-004 and TASK-020 can run simultaneously since
-   they share no dependencies beyond done tickets).
-6. Simultaneous local agents MUST use isolated workspaces (`git worktree`) to avoid branch and file collisions in a
-   single checkout.
-7. One local workspace maps to one active ticket branch.
-8. `start --ticket <ID>` MUST fail if `<ID>` is `in_progress` and owned by a different agent.
-
-### 11.6 Stale Claim Recovery
-
-1. If an agent crashes or abandons work, its ticket remains `in_progress` indefinitely.
-2. A human or admin agent MAY reset a stale claim by editing `tickets/STATUS.json` to set the ticket back to `pending` (
-   removing `agent`, `branch`, and `claimed_at` fields).
-3. Before resetting, verify the agent's branch does not contain valuable partial work.
-
-### 11.7 Quick Reference for New Agents
-
-```
-# 1. See what's happening
-scripts/agent-flow.sh status
-
-# 2. Start a specific ticket
-scripts/agent-flow.sh start --agent my-agent-name --ticket TASK-020 --slug my-work
-
-# 3. Optional: auto-claim next available ticket
-scripts/agent-flow.sh start --agent my-agent-name --slug my-work --auto-claim
-
-# 4. Run verification using ticket metadata defaults
-scripts/agent-flow.sh verify --ticket TASK-020
-
-# 5. After done: mark ticket complete
-scripts/agent-flow.sh complete --ticket TASK-020
-
-# 4+5 combined: verify then complete in one step
-scripts/agent-flow.sh finish --ticket TASK-020
-
-# 6. Finalize by merging into main
-scripts/agent-flow.sh merge --ticket TASK-020
-```
-
-### 11.8 Workspace Utilization Model (Local Parallelism)
-
-1. Default isolated workspace root is `.worktrees`.
-2. Deterministic path format: `.worktrees/<agent>/<TICKET-ID>`.
-3. `start` (default isolated workspace) MUST:
-    1. Resolve ticket
-    2. Create/switch branch `agent/<ticket>-<slug>`
-    3. Create/reuse isolated worktree path
-    4. Claim ticket from inside that worktree
-4. Agent output MUST include the resolved worktree path so the process can continue implementation in the correct
-   workspace.
-5. Shared workspace mode MUST be treated as single-agent fallback only.
+**Frontend tasks only:** Before writing any UI code, read `docs/ARCHITECTURE.md` §7 for design system rules, file
+structure, parity baseline, and TID test naming requirements.

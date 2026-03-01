@@ -65,7 +65,8 @@ public class FacebookGraphClient {
         } catch (RestClientException exception) {
             throw new FacebookAuthException(
                 TOKEN_INVALID_CODE,
-                "Unable to validate Facebook token."
+                "Unable to validate Facebook token.",
+                exception
             );
         }
 
@@ -109,7 +110,8 @@ public class FacebookGraphClient {
         } catch (RestClientException exception) {
             throw new FacebookAuthException(
                 TOKEN_INVALID_CODE,
-                "Unable to read Facebook profile."
+                "Unable to read Facebook profile.",
+                exception
             );
         }
 

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,13 +132,6 @@ class AnalyticsIntegrationTests
                 "Quality issue requires review.")
         );
 
-        // Verify events
-        List<Event> events = analyticsService.getEvents();
-        Map<String, Event> latestByName = events.stream()
-            .collect(java.util.stream.Collectors.toMap(Event::name,
-                event -> event,
-                (first, second) -> second));
-
         List<String> expectedNames = List.of(
             AnalyticsService.EVENT_TASK_POSTED,
             AnalyticsService.EVENT_APPLICATION_SUBMITTED,
@@ -146,6 +140,7 @@ class AnalyticsIntegrationTests
             AnalyticsService.EVENT_BOOKING_COMPLETED,
             AnalyticsService.EVENT_DISPUTE_RAISED
         );
+        Map<String, Event> latestByName = waitForLatestEventsByName(expectedNames);
         assertThat(latestByName.keySet()).containsAll(expectedNames);
 
         expectedNames.forEach(eventName -> {
@@ -165,6 +160,35 @@ class AnalyticsIntegrationTests
                     eventName)
                 .isTrue();
         });
+    }
+
+    private Map<String, Event> waitForLatestEventsByName(List<String> expectedNames) {
+        Duration timeout = Duration.ofSeconds(10);
+        Duration pollInterval = Duration.ofMillis(100);
+        long deadlineNanos = System.nanoTime() + timeout.toNanos();
+        Map<String, Event> latestByName = Map.of();
+        while (System.nanoTime() < deadlineNanos) {
+            List<Event> events = analyticsService.getEvents();
+            latestByName = events.stream()
+                .collect(java.util.stream.Collectors.toMap(Event::name,
+                    event -> event,
+                    (first, second) -> second));
+            if (latestByName.keySet().containsAll(expectedNames)) {
+                return latestByName;
+            }
+            sleep(pollInterval);
+        }
+        return latestByName;
+    }
+
+    private void sleep(Duration pollInterval) {
+        try {
+            Thread.sleep(pollInterval.toMillis());
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("Interrupted while waiting for analytics events",
+                exception);
+        }
     }
 
     private AuthContext authenticate(String seed) {

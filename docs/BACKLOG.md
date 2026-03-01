@@ -7,7 +7,6 @@ This backlog is derived from:
 1. `docs/PRD.md`
 2. `docs/ARCHITECTURE.md`
 3. `docs/API.yaml`
-4. `docs/TRACEABILITY.md`
 
 Rules:
 
@@ -562,4 +561,4 @@ Backlog generation is complete when:
 
 1. Every ticket above has a `tickets/<TICKET-ID>.json` spec with AC + test IDs + `depends_on`.
 2. Ticket dependencies are acyclic for planned sprint slices.
-3. Each ticket includes risk level and mapped REQ/NFR IDs matching `docs/TRACEABILITY.md`.
+3. Each ticket includes risk level and mapped REQ/NFR IDs.
