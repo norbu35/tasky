@@ -1,13 +1,5 @@
 package mn.tasky.booking;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
-
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
@@ -26,6 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 class BookingServiceTests {
 
@@ -117,54 +117,57 @@ class BookingServiceTests {
         when(bookingDao.findByCustomerId(anyString(),
                                          any(),
                                          any(),
-                                         anyInt())).thenAnswer(invocation -> {
-            String userId = invocation.getArgument(0);
-            String status = invocation.getArgument(1);
-            return store.values()
+            anyInt()))
+            .thenAnswer(invocation -> {
+                String userId = invocation.getArgument(0);
+                String status = invocation.getArgument(1);
+                return store.values()
                     .stream()
                     .filter(b -> b.customerId()
-                            .equals(userId))
+                        .equals(userId))
                     .filter(b -> status == null || b.status()
-                            .equalsIgnoreCase(status))
+                        .equalsIgnoreCase(status))
                     .sorted((a, b) -> b.createdAt()
-                            .compareTo(a.createdAt()))
+                        .compareTo(a.createdAt()))
                     .toList();
-        });
+            });
 
         when(bookingDao.findByTaskerId(anyString(),
                                        any(),
                                        any(),
-                                       anyInt())).thenAnswer(invocation -> {
-            String userId = invocation.getArgument(0);
-            String status = invocation.getArgument(1);
-            return store.values()
+            anyInt()))
+            .thenAnswer(invocation -> {
+                String userId = invocation.getArgument(0);
+                String status = invocation.getArgument(1);
+                return store.values()
                     .stream()
                     .filter(b -> b.taskerId()
-                            .equals(userId))
+                        .equals(userId))
                     .filter(b -> status == null || b.status()
-                            .equalsIgnoreCase(status))
+                        .equalsIgnoreCase(status))
                     .sorted((a, b) -> b.createdAt()
-                            .compareTo(a.createdAt()))
+                        .compareTo(a.createdAt()))
                     .toList();
-        });
+            });
 
         when(bookingDao.findByParticipant(anyString(),
                                           any(),
                                           any(),
-                                          anyInt())).thenAnswer(invocation -> {
-            String userId = invocation.getArgument(0);
-            String status = invocation.getArgument(1);
-            return store.values()
+            anyInt()))
+            .thenAnswer(invocation -> {
+                String userId = invocation.getArgument(0);
+                String status = invocation.getArgument(1);
+                return store.values()
                     .stream()
                     .filter(b -> b.customerId()
-                            .equals(userId) || b.taskerId()
-                            .equals(userId))
+                        .equals(userId) || b.taskerId()
+                        .equals(userId))
                     .filter(b -> status == null || b.status()
-                            .equalsIgnoreCase(status))
+                        .equalsIgnoreCase(status))
                     .sorted((a, b) -> b.createdAt()
-                            .compareTo(a.createdAt()))
+                        .compareTo(a.createdAt()))
                     .toList();
-        });
+            });
 
         when(bookingCompletionSignalDao.markDone(anyString(),
                                                  anyString(),

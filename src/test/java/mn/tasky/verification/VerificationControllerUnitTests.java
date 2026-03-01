@@ -1,8 +1,5 @@
 package mn.tasky.verification;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.VerificationStatusResponse;
 import mn.tasky.auth.dto.VerificationSubmitResult;
@@ -24,6 +21,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Map;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VerificationControllerUnitTests {
@@ -70,10 +70,9 @@ class VerificationControllerUnitTests {
     void getUploadUrlReturnsPresignedPayloadWhenValid() {
         JwtPrincipal principal = principal();
         when(authService.createVerificationUploadUrl(principal.userId(),
-                                                     "image/jpeg")).thenReturn(Optional.of(
-                new PresignedUpload("https://upload.example.com",
-                                    "uploads/verification/front.jpg")
-        ));
+            "image/jpeg"))
+            .thenReturn(Optional.of(new PresignedUpload("https://upload.example.com",
+                "uploads/verification/front.jpg")));
 
         ResponseEntity<?> response = controller.getUploadUrl(
                 principal,

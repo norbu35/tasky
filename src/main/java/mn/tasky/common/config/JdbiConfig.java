@@ -16,6 +16,7 @@ import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.common.idempotency.IdempotencyDao;
+import mn.tasky.common.outbox.OutboxEventDao;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
@@ -217,5 +218,10 @@ public class JdbiConfig {
     @Bean
     public IdempotencyDao idempotencyDao(Jdbi jdbi) {
         return jdbi.onDemand(IdempotencyDao.class);
+    }
+
+    @Bean
+    public OutboxEventDao outboxEventDao(Jdbi jdbi) {
+        return jdbi.onDemand(OutboxEventDao.class);
     }
 }

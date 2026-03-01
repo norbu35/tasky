@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+    <!-- Suppress checks for generated code -->
+    <suppress files="[\\/]generated-sources[\\/]" checks=".*"/>
+    <suppress files="[\\/]generated[\\/]" checks=".*"/>
+    <!-- Also ignore tests from strict checking initially or as needed -->
+    <!-- <suppress files="[\\/]src[\\/]test[\\/]" checks=".*"/> -->
+    <suppress files="LocalizationIntegrationTests\.java" checks="AvoidEscapedUnicodeCharactersCheck"/>
+</suppressions>

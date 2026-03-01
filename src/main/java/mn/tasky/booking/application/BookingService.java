@@ -106,7 +106,8 @@ public class BookingService {
                 now,
                 now
         );
-        log.info("Booking created: id={}, task={}, tasker={}, customer={}, price={}", id, taskId, taskerId, customerId, price);
+        log.info("Booking created: id={}, task={}, tasker={}, customer={}, price={}",
+            id, taskId, taskerId, customerId, price);
         return booking;
     }
 
@@ -118,7 +119,9 @@ public class BookingService {
      */
     public Optional<BookingState> recordDisclaimerAcceptance(String bookingId) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return Optional.empty();
+        if (bookingOpt.isEmpty()) {
+            return Optional.empty();
+        }
 
         BookingState current = bookingOpt.get();
         Instant now = Instant.now();
@@ -252,10 +255,13 @@ public class BookingService {
     public BookingTransitionResult completeBooking(String userId,
                                                    String bookingId) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState booking = bookingOpt.get();
-        if (!booking.customerId()
-                .equals(userId)) return BookingTransitionResult.FORBIDDEN_RESULT;
+        if (!booking.customerId().equals(userId)) {
+            return BookingTransitionResult.FORBIDDEN_RESULT;
+        }
 
         BookingTransitionResult result = transition(bookingId,
                                                     "COMPLETED",
@@ -283,7 +289,9 @@ public class BookingService {
                                                  String bookingId,
                                                  Instant scheduledAt) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
-        if (bookingOpt.isEmpty()) return BookingTransitionResult.NOT_FOUND_RESULT;
+        if (bookingOpt.isEmpty()) {
+            return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
         BookingState booking = bookingOpt.get();
 
         boolean isCustomer = booking.customerId()

@@ -1,7 +1,5 @@
 package mn.tasky.booking;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
@@ -29,7 +27,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
 class BookingIntegrationTests
         extends IntegrationTestBase {
 

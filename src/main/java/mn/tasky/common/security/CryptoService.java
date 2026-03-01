@@ -58,7 +58,9 @@ public class CryptoService {
     }
 
     public String encrypt(String plaintext) {
-        if (plaintext == null) return null;
+        if (plaintext == null) {
+            return null;
+        }
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
             new SecureRandom().nextBytes(iv);
@@ -92,7 +94,9 @@ public class CryptoService {
     }
 
     public String decrypt(String ciphertext) {
-        if (ciphertext == null) return null;
+        if (ciphertext == null) {
+            return null;
+        }
         try {
             byte[] decoded = Base64.getDecoder()
                     .decode(ciphertext);
@@ -118,7 +122,9 @@ public class CryptoService {
     }
 
     public String blindIndex(String input) {
-        if (input == null) return null;
+        if (input == null) {
+            return null;
+        }
         try {
             Mac mac = Mac.getInstance(BLIND_INDEX_ALGORITHM);
             mac.init(blindIndexKey);

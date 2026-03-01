@@ -1,10 +1,5 @@
 package mn.tasky.task.api;
 
-import static mn.tasky.booking.api.BookingResponseMapper.basic;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -49,12 +44,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.security.SecureRandom;
 import java.util.stream.IntStream;
+
+import static mn.tasky.booking.api.BookingResponseMapper.basic;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -137,36 +137,25 @@ public class TaskController {
                      task.id());
 
         categoryService.getCategory(task.categoryId())
-                .ifPresent(cat ->
-                                   response.put("category",
-                                                Map.of(
-                                                        "id",
-                                                        cat.id(),
-                                                        "name",
-                                                        cat.name(),
-                                                        "name_mn",
-                                                        cat.nameMn(),
-                                                        "icon_url",
-                                                        cat.iconUrl()
-                                                ))
-                );
+            .ifPresent(cat -> response.put("category",
+                Map.of(
+                    "id", cat.id(),
+                    "name", cat.name(),
+                    "name_mn", cat.nameMn(),
+                    "icon_url", cat.iconUrl()
+                )
+            ));
 
         authService.getProfile(task.customerId())
-                .ifPresent(profile ->
-                                   response.put("customer",
-                                                Map.of(
-                                                        "id",
-                                                        profile.id(),
-                                                        "full_name",
-                                                        profile.fullName(),
-                                                        "avatar_url",
-                                                        profile.avatarUrl() != null
-                                                                ? profile.avatarUrl()
-                                                                : "",
-                                                        "rating_avg",
-                                                        profile.ratingAvg()
-                                                ))
-                );
+            .ifPresent(profile -> response.put("customer",
+                Map.of(
+                    "id", profile.id(),
+                    "full_name", profile.fullName(),
+                    "avatar_url", profile.avatarUrl() != null
+                        ? profile.avatarUrl() : "",
+                    "rating_avg", profile.ratingAvg()
+                )
+            ));
 
         response.put("description",
                      task.description());

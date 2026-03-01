@@ -287,11 +287,14 @@ public class WalletService {
      * @param payoutId The ID of the payout request to process.
      */
     public void processPayout(String payoutId) {
-        Optional<PayoutRequest> pOpt = payoutRequestDao.findById(payoutId);
-        if (pOpt.isEmpty()) throw new IllegalArgumentException("Payout not found");
-        PayoutRequest p = pOpt.get();
-        if (!"PENDING".equals(p.status()))
+        Optional<PayoutRequest> payoutOpt = payoutRequestDao.findById(payoutId);
+        if (payoutOpt.isEmpty()) {
+            throw new IllegalArgumentException("Payout not found");
+        }
+        PayoutRequest payout = payoutOpt.get();
+        if (!"PENDING".equals(payout.status())) {
             throw new IllegalArgumentException("Payout already processed");
+        }
 
         Instant now = Instant.now();
         payoutRequestDao.updateStatus(payoutId,
@@ -301,10 +304,10 @@ public class WalletService {
         ledgerEntryDao.insert(
                 UUID.randomUUID()
                         .toString(),
-                p.userId(),
-                -p.amount(),
+            payout.userId(),
+            -payout.amount(),
                 "PAYOUT",
-                p.id(),
+            payout.id(),
                 "Payout processed",
                 now
         );

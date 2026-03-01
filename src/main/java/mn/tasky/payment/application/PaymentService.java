@@ -3,7 +3,8 @@ package mn.tasky.payment.application;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
-import mn.tasky.notification.application.NotificationService;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.task.application.TaskService;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 /**
  * Service responsible for payment intent lifecycle and verified gateway callbacks.
- * Integrates booking/task transitions, notifications, and analytics events.
+ * Integrates booking/task transitions and emits post-payment side effects via domain outbox.
  */
 @Service
 public class PaymentService {
@@ -35,7 +36,7 @@ public class PaymentService {
 
     private final BookingService bookingService;
     private final TaskService taskService;
-    private final NotificationService notificationService;
+    private final DomainEventOutboxService domainEventOutboxService;
     private final AnalyticsService analyticsService;
     private final PaymentIntentDao paymentIntentDao;
     private final boolean monetizationEnabled;
@@ -45,19 +46,19 @@ public class PaymentService {
     public PaymentService(
             BookingService bookingService,
             TaskService taskService,
-            NotificationService notificationService,
+            DomainEventOutboxService domainEventOutboxService,
             AnalyticsService analyticsService,
             PaymentIntentDao paymentIntentDao,
             @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled,
             @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret,
             @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds
     ) {
-        this.bookingService        = bookingService;
-        this.taskService           = taskService;
-        this.notificationService   = notificationService;
-        this.analyticsService      = analyticsService;
-        this.paymentIntentDao      = paymentIntentDao;
-        this.monetizationEnabled   = monetizationEnabled;
+        this.bookingService = bookingService;
+        this.taskService = taskService;
+        this.domainEventOutboxService = domainEventOutboxService;
+        this.analyticsService = analyticsService;
+        this.paymentIntentDao = paymentIntentDao;
+        this.monetizationEnabled = monetizationEnabled;
         this.maxCallbackAgeSeconds = maxCallbackAgeSeconds;
         if (monetizationEnabled && !StringUtils.hasText(qpayWebhookSecret)) {
             throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");
@@ -126,8 +127,8 @@ public class PaymentService {
     /**
      * Processes a signed payment callback from QPay.
      * Accepts callbacks only when signature and timestamp are valid and status is {@code PAID}.
-     * On first successful processing, transitions the booking/task state and emits
-     * notifications/events.
+     * On first successful processing, transitions the booking/task state and enqueues
+     * post-payment side effects through the domain outbox.
      *
      * @param paymentId The payment identifier.
      * @param status    The callback payment status.
@@ -182,25 +183,21 @@ public class PaymentService {
                          booking.taskId());
             }
 
-            notificationService.sendPush(booking.taskerId(),
-                                         "Booking Confirmed",
-                                         "Payment received for booking #" + bookingId,
-                                         "BOOKING_CONFIRMED");
-            notificationService.sendPush(booking.customerId(),
-                                         "Booking Confirmed",
-                                         "Your payment for booking #" + bookingId +
-                                                 " was successful.",
-                                         "BOOKING_CONFIRMED");
-            analyticsService.track(
-                    AnalyticsService.EVENT_PAYMENT_CONFIRMED,
-                    booking.customerId(),
+            domainEventOutboxService.publish(
+                OutboxEventTypes.PAYMENT_CONFIRMED,
+                "PAYMENT",
+                paymentId,
                     Map.of(
-                            AnalyticsService.PROPERTY_BOOKING_ID,
+                        "payment_id",
+                        paymentId,
+                        "booking_id",
                             bookingId,
-                            AnalyticsService.PROPERTY_TASK_ID,
+                        "task_id",
                             booking.taskId(),
-                            "payment_id",
-                            paymentId
+                        "customer_id",
+                        booking.customerId(),
+                        "tasker_id",
+                        booking.taskerId()
                     )
             );
         }

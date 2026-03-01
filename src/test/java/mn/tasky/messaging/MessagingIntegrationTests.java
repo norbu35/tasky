@@ -1,7 +1,5 @@
 package mn.tasky.messaging;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -40,7 +38,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
 class MessagingIntegrationTests
         extends IntegrationTestBase {
 
@@ -126,30 +127,33 @@ class MessagingIntegrationTests
         connectHeaders.add("Authorization",
                            "Bearer " + taskerToken);
 
+        StompSessionHandlerAdapter handlerAdapter = new StompSessionHandlerAdapter() {
+        };
+
         StompSession session = stompClient.connectAsync("ws://localhost:" + port + "/ws",
                                                         new WebSocketHttpHeaders(),
                                                         connectHeaders,
-                                                        new StompSessionHandlerAdapter() {
-                                                        })
+                handlerAdapter)
                 .get(20,
                      TimeUnit.SECONDS);
 
         CompletableFuture<Map<String, Object>> resultFuture = new CompletableFuture<>();
-        session.subscribe("/topic/conversations/" + conversationId,
-                          new StompFrameHandler() {
-                              @Override
-                              public Type getPayloadType(StompHeaders headers) {
-                                  return Map.class;
-                              }
+        StompFrameHandler frameHandler = new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return Map.class;
+            }
 
-                              @Override
-                              public void handleFrame(StompHeaders headers,
-                                                      Object payload) {
-                                  @SuppressWarnings("unchecked")
-                                  Map<String, Object> message = (Map<String, Object>) payload;
-                                  resultFuture.complete(message);
-                              }
-                          });
+            @Override
+            public void handleFrame(StompHeaders headers,
+                                    Object payload) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> message = (Map<String, Object>) payload;
+                resultFuture.complete(message);
+            }
+        };
+        session.subscribe("/topic/conversations/" + conversationId,
+            frameHandler);
 
         // Send via REST
         String initialMessageContent = "Real-time Hello";

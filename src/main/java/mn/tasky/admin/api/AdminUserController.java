@@ -65,8 +65,9 @@ public class AdminUserController {
         boolean success = authService.banUser(principal.userId(),
                                               id,
                                               body.reason());
-        if (!success) return ResponseEntity.notFound()
-                .build();
+        if (!success) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(Map.of("status",
                                         "BANNED"));
     }
@@ -79,8 +80,9 @@ public class AdminUserController {
         boolean success = authService.unbanUser(principal.userId(),
                                                 id,
                                                 body.reason());
-        if (!success) return ResponseEntity.notFound()
-                .build();
+        if (!success) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(Map.of("status",
                                         "ACTIVE"));
     }

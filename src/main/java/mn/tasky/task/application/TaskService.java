@@ -8,6 +8,8 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.dto.PresignedUpload;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
@@ -67,6 +69,7 @@ public class TaskService {
     private final MessagingService messagingService;
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
+    private final DomainEventOutboxService domainEventOutboxService;
     private final TaskDao taskDao;
     private final TaskPhotoDao taskPhotoDao;
     private final TaskApplicationDao taskApplicationDao;
@@ -84,13 +87,17 @@ public class TaskService {
             MessagingService messagingService,
             NotificationService notificationService,
             AnalyticsService analyticsService,
+            DomainEventOutboxService domainEventOutboxService,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
             TaskApplicationDao taskApplicationDao,
-            @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}") String taskPhotoUploadBaseUrl,
+            @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}")
+            String taskPhotoUploadBaseUrl,
             @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
-            @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds,
-            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}") String uploadUrlSigningSecret,
+            @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}")
+            long taskPhotoUploadUrlTtlSeconds,
+            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}")
+            String uploadUrlSigningSecret,
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit
     ) {
@@ -100,6 +107,7 @@ public class TaskService {
         this.messagingService             = messagingService;
         this.notificationService          = notificationService;
         this.analyticsService             = analyticsService;
+        this.domainEventOutboxService = domainEventOutboxService;
         this.taskDao                      = taskDao;
         this.taskPhotoDao                 = taskPhotoDao;
         this.taskApplicationDao           = taskApplicationDao;
@@ -277,7 +285,9 @@ public class TaskService {
      */
     public Optional<TaskState> transitionToAssigned(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) return Optional.empty();
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
         taskDao.updateStatus(taskId,
                              "ASSIGNED",
                              Instant.now());
@@ -293,7 +303,9 @@ public class TaskService {
      */
     public Optional<TaskState> reopenTask(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) return Optional.empty();
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
         taskDao.updateStatus(taskId,
                              "OPEN",
                              Instant.now());
@@ -309,7 +321,9 @@ public class TaskService {
      */
     public Optional<TaskState> transitionToCompleted(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) return Optional.empty();
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
         taskDao.updateStatus(taskId,
                              "COMPLETED",
                              Instant.now());
@@ -325,7 +339,9 @@ public class TaskService {
      */
     public Optional<TaskState> transitionToCancelled(String taskId) {
         Optional<TaskState> existing = taskDao.findById(taskId);
-        if (existing.isEmpty()) return Optional.empty();
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
         taskDao.updateStatus(taskId,
                              "CANCELLED",
                              Instant.now());
@@ -686,8 +702,8 @@ public class TaskService {
 
     /**
      * Accepts a pending application for an open task and creates the booking.
-     * Marks selected application accepted, rejects others, assigns task, starts conversation,
-     * notifies the selected tasker, and emits analytics.
+     * Marks selected application accepted, rejects others, assigns task, and enqueues
+     * downstream side effects (conversation bootstrap, notifications, analytics) via outbox.
      *
      * @param customerId                  Task owner identifier.
      * @param taskId                      Task identifier.
@@ -750,37 +766,17 @@ public class TaskService {
                              "ASSIGNED",
                              Instant.now());
 
-        String conversationId = messagingService.startConversation(task.id(),
-                                                                   selected.taskerId(),
-                                                                   task.customerId());
-        notificationService.sendPush(selected.taskerId(),
-                                     "You are hired!",
-                                     "Your application has been accepted.",
-                                     "HIRED");
-        analyticsService.track(
-                AnalyticsService.EVENT_TASKER_ACCEPTED,
-                customerId,
+        domainEventOutboxService.publish(
+            OutboxEventTypes.TASK_APPLICATION_ACCEPTED,
+            "BOOKING",
+            booking.id(),
                 Map.of(
                         AnalyticsService.PROPERTY_TASK_ID,
                         task.id(),
                         AnalyticsService.PROPERTY_BOOKING_ID,
                         booking.id(),
-                        "tasker_id",
-                        selected.taskerId(),
-                        "application_id",
-                        applicationId,
-                        "conversation_id",
-                        conversationId
-                )
-        );
-        analyticsService.track(
-                AnalyticsService.EVENT_BOOKING_CONFIRMED,
-                customerId,
-                Map.of(
-                        AnalyticsService.PROPERTY_TASK_ID,
-                        task.id(),
-                        AnalyticsService.PROPERTY_BOOKING_ID,
-                        booking.id(),
+                    "customer_id",
+                    customerId,
                         "tasker_id",
                         selected.taskerId(),
                         "application_id",

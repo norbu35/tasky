@@ -1,9 +1,5 @@
 package mn.tasky.wallet.api;
 
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import mn.tasky.common.api.CursorPagination;
@@ -31,6 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 @RestController
 @RequestMapping("/api/v1/wallet")
@@ -143,7 +143,9 @@ public class WalletController {
                                        IdempotencyOperations.REQUEST_PAYOUT,
                                        idempotencyKey);
             String msg = e.getMessage();
-            if ("Insufficient balance for payout".equals(msg)) msg = "Insufficient balance";
+            if ("Insufficient balance for payout".equals(msg)) {
+                msg = "Insufficient balance";
+            }
             return ResponseEntity.badRequest()
                     .body(Map.of("error",
                                  msg));

@@ -1,12 +1,6 @@
 package mn.tasky.booking.api;
 
-import static mn.tasky.booking.api.BookingResponseMapper.withCancellationFee;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
-
 import jakarta.servlet.http.HttpServletRequest;
-import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
@@ -17,6 +11,8 @@ import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
@@ -41,6 +37,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static mn.tasky.booking.api.BookingResponseMapper.withCancellationFee;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
+import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
+import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+
 @RestController
 @RequestMapping("/api/v1/bookings")
 @Validated
@@ -51,24 +52,24 @@ public class BookingController {
     private final BookingService bookingService;
     private final TaskService taskService;
     private final AuthService authService;
+    private final DomainEventOutboxService domainEventOutboxService;
     private final NotificationService notificationService;
-    private final AnalyticsService analyticsService;
     private final IdempotencyService idempotencyService;
 
     public BookingController(
             BookingService bookingService,
             TaskService taskService,
             AuthService authService,
+            DomainEventOutboxService domainEventOutboxService,
             NotificationService notificationService,
-            AnalyticsService analyticsService,
             IdempotencyService idempotencyService
     ) {
-        this.bookingService      = bookingService;
-        this.taskService         = taskService;
-        this.authService         = authService;
+        this.bookingService = bookingService;
+        this.taskService = taskService;
+        this.authService = authService;
+        this.domainEventOutboxService = domainEventOutboxService;
         this.notificationService = notificationService;
-        this.analyticsService    = analyticsService;
-        this.idempotencyService  = idempotencyService;
+        this.idempotencyService = idempotencyService;
     }
 
     @GetMapping
@@ -321,20 +322,21 @@ public class BookingController {
                              booking.taskId());
                 }
 
-                notificationService.sendPush(booking.taskerId(),
-                                             "Job Complete",
-                                             "The customer has marked the job as complete.",
-                                             "JOB_COMPLETED");
-                analyticsService.track(
-                        AnalyticsService.EVENT_BOOKING_COMPLETED,
-                        principal.userId(),
+                domainEventOutboxService.publish(
+                    OutboxEventTypes.BOOKING_COMPLETED,
+                    "BOOKING",
+                    booking.id(),
                         Map.of(
-                                AnalyticsService.PROPERTY_BOOKING_ID,
+                            "booking_id",
                                 booking.id(),
-                                AnalyticsService.PROPERTY_TASK_ID,
+                            "task_id",
                                 booking.taskId(),
+                            "customer_id",
+                            booking.customerId(),
                                 "tasker_id",
-                                booking.taskerId()
+                            booking.taskerId(),
+                            "price",
+                            booking.price()
                         )
                 );
 

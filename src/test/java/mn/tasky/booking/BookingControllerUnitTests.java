@@ -1,12 +1,5 @@
 package mn.tasky.booking;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.api.BookingController;
 import mn.tasky.booking.application.BookingService;
@@ -18,6 +11,8 @@ import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyRecord;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.observability.RequestObservabilityFilter;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.application.TaskService;
@@ -38,6 +33,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class BookingControllerUnitTests {
 
@@ -50,9 +51,9 @@ class BookingControllerUnitTests {
     @Mock
     private AuthService authService;
     @Mock
-    private NotificationService notificationService;
+    private DomainEventOutboxService domainEventOutboxService;
     @Mock
-    private AnalyticsService analyticsService;
+    private NotificationService notificationService;
     @Mock
     private IdempotencyService idempotencyService;
 
@@ -64,8 +65,8 @@ class BookingControllerUnitTests {
                 bookingService,
                 taskService,
                 authService,
+            domainEventOutboxService,
                 notificationService,
-                analyticsService,
                 idempotencyService
         );
     }
@@ -318,9 +319,12 @@ class BookingControllerUnitTests {
                                              eq("Job Complete"),
                                              eq("The customer has marked the job as complete."),
                                              eq("JOB_COMPLETED"));
-        verify(analyticsService).track(eq(AnalyticsService.EVENT_BOOKING_COMPLETED),
-                                       eq(principal.userId()),
-                                       any(Map.class));
+        verify(domainEventOutboxService).publish(
+            eq(OutboxEventTypes.BOOKING_COMPLETED),
+            eq("BOOKING"),
+            eq(bookingId),
+            any(Map.class)
+        );
         verify(idempotencyService).completeWithResource(
                 principal.userId(),
                 IdempotencyOperations.COMPLETE_BOOKING,

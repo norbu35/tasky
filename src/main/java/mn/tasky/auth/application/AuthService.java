@@ -1071,9 +1071,13 @@ public class AuthService {
                 newRating = rating;
             } else {
                 int count = current.completedTasks();
-                if (count == 0) count = 1;
+                if (count == 0) {
+                    count = 1;
+                }
                 newRating = (current.ratingAvg() * count + rating) / (count + 1);
-                if (current.ratingAvg() == 5.0 && rating == 5) newRating = 5.0;
+                if (current.ratingAvg() == 5.0 && rating == 5) {
+                    newRating = 5.0;
+                }
             }
         }
 
@@ -1233,7 +1237,9 @@ public class AuthService {
                            String userId,
                            String reason) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) return false;
+        if (userOpt.isEmpty()) {
+            return false;
+        }
 
         userDao.updateStatusAndSuspensionEnd(userId,
                                              "BANNED",
@@ -1260,7 +1266,9 @@ public class AuthService {
                              String userId,
                              String reason) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
-        if (userOpt.isEmpty()) return false;
+        if (userOpt.isEmpty()) {
+            return false;
+        }
 
         userDao.updateStatusAndSuspensionEnd(userId,
                                              "ACTIVE",
