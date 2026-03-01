@@ -233,6 +233,7 @@ export SELF_VERIFY_RISK="${risk}"
 export SELF_VERIFY_REQ_CSV="${req_csv}"
 export SELF_VERIFY_TICKET_SPEC_PATH="${ticket_spec_path}"
 export SELF_VERIFY_BRANCH="${branch}"
+export SELF_VERIFY_BASE_REF="${base_ref}"
 
 files_changed=()
 while IFS= read -r changed_file; do

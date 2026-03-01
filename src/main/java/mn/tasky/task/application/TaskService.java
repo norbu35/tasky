@@ -90,22 +90,24 @@ public class TaskService {
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit
     ) {
-        this.authService                   = authService;
-        this.categoryService               = categoryService;
-        this.bookingService                = bookingService;
-        this.messagingService              = messagingService;
-        this.notificationService           = notificationService;
-        this.analyticsService              = analyticsService;
-        this.taskDao                       = taskDao;
-        this.taskPhotoDao                  = taskPhotoDao;
-        this.taskApplicationDao            = taskApplicationDao;
-        this.taskPhotoUploadBaseUrl        = taskPhotoUploadBaseUrl;
-        this.taskPhotoMaxBytes             = taskPhotoMaxBytes;
-        this.taskPhotoUploadUrlTtlSeconds  = taskPhotoUploadUrlTtlSeconds;
+        this.authService                  = authService;
+        this.categoryService              = categoryService;
+        this.bookingService               = bookingService;
+        this.messagingService             = messagingService;
+        this.notificationService          = notificationService;
+        this.analyticsService             = analyticsService;
+        this.taskDao                      = taskDao;
+        this.taskPhotoDao                 = taskPhotoDao;
+        this.taskApplicationDao           = taskApplicationDao;
+        this.taskPhotoUploadBaseUrl       = taskPhotoUploadBaseUrl;
+        this.taskPhotoMaxBytes            = taskPhotoMaxBytes;
+        this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
         if (!StringUtils.hasText(uploadUrlSigningSecret)) {
-            throw new IllegalStateException("tasky.storage.upload-signing-secret must be configured.");
+            throw new IllegalStateException("tasky.storage.upload-signing-secret must be " +
+                                                    "configured.");
         }
-        this.uploadUrlSigningSecretBytes   = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
+        this.uploadUrlSigningSecretBytes   =
+                uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
         this.taskMatchNotificationRadiusKm = taskMatchNotificationRadiusKm;
         this.taskMatchNotificationLimit    = taskMatchNotificationLimit;
     }
@@ -730,6 +732,13 @@ public class TaskService {
                 signature;
     }
 
+    private String normalizeBaseUrl(String baseUrl) {
+        return baseUrl.endsWith("/")
+                ? baseUrl.substring(0,
+                                    baseUrl.length() - 1)
+                : baseUrl;
+    }
+
     private String computeUploadSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
@@ -747,13 +756,6 @@ public class TaskService {
             throw new IllegalStateException("Failed to sign upload URL payload",
                                             exception);
         }
-    }
-
-    private String normalizeBaseUrl(String baseUrl) {
-        return baseUrl.endsWith("/")
-                ? baseUrl.substring(0,
-                                    baseUrl.length() - 1)
-                : baseUrl;
     }
 
     public List<String> buildPhotoAccessUrls(List<String> storageKeys) {

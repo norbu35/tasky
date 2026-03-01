@@ -39,14 +39,14 @@ public class OtpRateLimitService {
                                @Value("${tasky.auth.rate-limit.otp-verify-per-ip:20}") int otpVerifyLimitPerIp,
                                @Value("${tasky.auth.rate-limit.refresh-per-token:10}") int refreshLimitPerToken,
                                @Value("${tasky.auth.rate-limit.refresh-per-ip:30}") int refreshLimitPerIp) {
-        this.rateLimitCounterDao = rateLimitCounterDao;
-        this.jwtTokenService     = jwtTokenService;
+        this.rateLimitCounterDao     = rateLimitCounterDao;
+        this.jwtTokenService         = jwtTokenService;
         this.otpRequestLimitPerPhone = otpRequestLimitPerPhone;
-        this.otpRequestLimitPerIp = otpRequestLimitPerIp;
-        this.otpVerifyLimitPerPhone = otpVerifyLimitPerPhone;
-        this.otpVerifyLimitPerIp = otpVerifyLimitPerIp;
-        this.refreshLimitPerToken = refreshLimitPerToken;
-        this.refreshLimitPerIp = refreshLimitPerIp;
+        this.otpRequestLimitPerIp    = otpRequestLimitPerIp;
+        this.otpVerifyLimitPerPhone  = otpVerifyLimitPerPhone;
+        this.otpVerifyLimitPerIp     = otpVerifyLimitPerIp;
+        this.refreshLimitPerToken    = refreshLimitPerToken;
+        this.refreshLimitPerIp       = refreshLimitPerIp;
     }
 
     public void assertRequestAllowed(String phone,

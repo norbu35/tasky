@@ -27,8 +27,8 @@ public class FacebookGraphClient {
     ) {
         this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl)
                 .build();
-        this.appId = appId;
-        this.appSecret = appSecret;
+        this.appId      = appId;
+        this.appSecret  = appSecret;
     }
 
     public void debugToken(String userToken) {
@@ -60,7 +60,7 @@ public class FacebookGraphClient {
         }
 
         if (response == null || response.data() == null || !Boolean.TRUE.equals(response.data()
-                                                                                         .isValid())) {
+                                                                                        .isValid())) {
             throw new FacebookAuthException(
                     TOKEN_INVALID_CODE,
                     "Facebook token is invalid."
@@ -121,10 +121,12 @@ public class FacebookGraphClient {
             String name,
             String pictureUrl
     ) {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record DebugTokenResponse(DebugTokenData data) {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -134,6 +136,7 @@ public class FacebookGraphClient {
             @JsonProperty("app_id")
             String appId
     ) {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -142,13 +145,16 @@ public class FacebookGraphClient {
             String name,
             Picture picture
     ) {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record Picture(PictureData data) {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record PictureData(String url) {
+
     }
 }

@@ -53,8 +53,9 @@ public interface UserDao {
                              createdAt);
     }
 
-    @SqlUpdate("INSERT INTO users (id, phone, phone_blind_idx, facebook_id, role, status, created_at) "
-            + "VALUES (:id, NULL, NULL, :facebookId, :role, :status, :createdAt)")
+    @SqlUpdate(
+            "INSERT INTO users (id, phone, phone_blind_idx, facebook_id, role, status, created_at) "
+                    + "VALUES (:id, NULL, NULL, :facebookId, :role, :status, :createdAt)")
     void insertWithFacebookId(@Bind("id") UUID id,
                               @Bind("facebookId") String facebookId,
                               @Bind("role") String role,
@@ -69,11 +70,14 @@ public interface UserDao {
     @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE id = :id")
     Optional<AuthUser> findById(@Bind("id") UUID id);
 
-    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE phone_blind_idx = " +
-            ":phoneBlindIdx")
+    @SqlQuery(
+            "SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE " +
+                    "phone_blind_idx = " +
+                    ":phoneBlindIdx")
     Optional<AuthUser> findByPhoneBlindIndex(@Bind("phoneBlindIdx") String phoneBlindIdx);
 
-    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE facebook_id = :facebookId")
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users WHERE " +
+            "facebook_id = :facebookId")
     Optional<AuthUser> findByFacebookId(@Bind("facebookId") String facebookId);
 
     default void updateStatus(String id,

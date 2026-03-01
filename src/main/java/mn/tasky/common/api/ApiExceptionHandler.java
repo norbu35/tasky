@@ -31,17 +31,6 @@ public class ApiExceptionHandler {
                      request);
     }
 
-    @ExceptionHandler(FacebookAuthException.class)
-    public ResponseEntity<Map<String, String>> handleFacebookAuth(
-            FacebookAuthException ex,
-            HttpServletRequest request
-    ) {
-        return error(HttpStatus.UNAUTHORIZED,
-                     ex.code(),
-                     ex.getMessage(),
-                     request);
-    }
-
     private ResponseEntity<Map<String, String>> error(
             HttpStatus status,
             String code,
@@ -64,6 +53,17 @@ public class ApiExceptionHandler {
                                 resolvedTraceId
                         )
                 );
+    }
+
+    @ExceptionHandler(FacebookAuthException.class)
+    public ResponseEntity<Map<String, String>> handleFacebookAuth(
+            FacebookAuthException ex,
+            HttpServletRequest request
+    ) {
+        return error(HttpStatus.UNAUTHORIZED,
+                     ex.code(),
+                     ex.getMessage(),
+                     request);
     }
 
     @ExceptionHandler(AccountRestrictedException.class)

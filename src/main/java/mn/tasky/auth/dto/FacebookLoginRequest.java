@@ -8,4 +8,5 @@ public record FacebookLoginRequest(
         @JsonProperty("access_token")
         String accessToken
 ) {
+
 }

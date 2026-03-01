@@ -60,6 +60,44 @@ class FacebookAuthIntegrationTests
         assertThat(user.get("role")).isEqualTo("CUSTOMER");
     }
 
+    private void stubFacebookToken(String accessToken,
+                                   String facebookId) {
+        doNothing().when(facebookGraphClient)
+                .debugToken(accessToken);
+        when(facebookGraphClient.fetchProfile(accessToken)).thenReturn(
+                new FacebookGraphClient.FacebookProfile(
+                        facebookId,
+                        "Facebook User " + UUID.randomUUID(),
+                        "https://graph.facebook.com/" + facebookId + "/picture"
+                )
+        );
+    }
+
+    private ResponseEntity<Map> post(String path,
+                                     Map<String, String> body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        headers.set("X-Forwarded-For",
+                    nextClientIp());
+
+        return restTemplate.exchange(
+                url(path),
+                HttpMethod.POST,
+                new HttpEntity<>(body,
+                                 headers),
+                Map.class
+        );
+    }
+
+    private String nextClientIp() {
+        return "198.51.100." + ipSuffix.getAndIncrement();
+    }
+
+    private String url(String path) {
+        return "http://localhost:" + port + path;
+    }
+
     @Test
     @DisplayName("TID-TASK-010-API-FACEBOOK-DEDUP same facebook_id does not create duplicates")
     void facebookDeduplicatesByFacebookId() {
@@ -94,7 +132,8 @@ class FacebookAuthIntegrationTests
     }
 
     @Test
-    @DisplayName("TID-TASK-010-API-TOKEN-REFRESH refresh endpoint rotates and validates token lifecycle")
+    @DisplayName("TID-TASK-010-API-TOKEN-REFRESH refresh endpoint rotates and validates token " +
+            "lifecycle")
     void refreshEndpointRotatesAndValidatesTokens() {
         String accessToken = "facebook-token-refresh";
         stubFacebookToken(accessToken,
@@ -164,43 +203,5 @@ class FacebookAuthIntegrationTests
         );
 
         assertThat(bannedResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    }
-
-    private void stubFacebookToken(String accessToken,
-                                   String facebookId) {
-        doNothing().when(facebookGraphClient)
-                .debugToken(accessToken);
-        when(facebookGraphClient.fetchProfile(accessToken)).thenReturn(
-                new FacebookGraphClient.FacebookProfile(
-                        facebookId,
-                        "Facebook User " + UUID.randomUUID(),
-                        "https://graph.facebook.com/" + facebookId + "/picture"
-                )
-        );
-    }
-
-    private ResponseEntity<Map> post(String path,
-                                     Map<String, String> body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
-        headers.set("X-Forwarded-For",
-                    nextClientIp());
-
-        return restTemplate.exchange(
-                url(path),
-                HttpMethod.POST,
-                new HttpEntity<>(body,
-                                 headers),
-                Map.class
-        );
-    }
-
-    private String url(String path) {
-        return "http://localhost:" + port + path;
-    }
-
-    private String nextClientIp() {
-        return "198.51.100." + ipSuffix.getAndIncrement();
     }
 }

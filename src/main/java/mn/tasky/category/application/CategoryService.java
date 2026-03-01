@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service responsible for managing task categories.
+ * Provides operations to list, create, update, and retrieve categories
+ * with support for pagination using cursor-based navigation.
+ */
 @Service
 public class CategoryService {
 
@@ -21,6 +26,13 @@ public class CategoryService {
         this.categoryDao = categoryDao;
     }
 
+    /**
+     * Lists active categories with cursor-based pagination.
+     *
+     * @param cursor The pagination cursor. Pass null or empty for the first page.
+     * @param limit  The maximum number of categories to return.
+     * @return A {@link CategoryPage} containing the list of active categories and the next cursor.
+     */
     public CategoryPage listActiveCategories(String cursor,
                                              int limit) {
         return listCategories(false,
@@ -91,6 +103,13 @@ public class CategoryService {
                                   anchor.name());
     }
 
+    /**
+     * Lists all categories (both active and inactive) with cursor-based pagination.
+     *
+     * @param cursor The pagination cursor. Pass null or empty for the first page.
+     * @param limit  The maximum number of categories to return.
+     * @return A {@link CategoryPage} containing all categories and the next cursor.
+     */
     public CategoryPage listAllCategories(String cursor,
                                           int limit) {
         return listCategories(true,
@@ -98,6 +117,12 @@ public class CategoryService {
                               limit);
     }
 
+    /**
+     * Creates a new category.
+     *
+     * @param command The data required to create a new category.
+     * @return The newly created {@link CategoryState}.
+     */
     public CategoryState createCategory(CreateCategory command) {
         CategoryState created = new CategoryState(
                 UUID.randomUUID()
@@ -120,6 +145,14 @@ public class CategoryService {
         return created;
     }
 
+    /**
+     * Updates an existing category partially based on the provided command.
+     * Fields that are null in the command are left unchanged.
+     *
+     * @param id      The ID of the category to update.
+     * @param command The update instructions.
+     * @return An Optional containing the updated {@link CategoryState}, or empty if not found.
+     */
     public Optional<CategoryState> updateCategory(String id,
                                                   UpdateCategory command) {
         Optional<CategoryState> existing = categoryDao.findById(id);
@@ -157,6 +190,12 @@ public class CategoryService {
         return Optional.of(updated);
     }
 
+    /**
+     * Retrieves a category by its ID.
+     *
+     * @param id The ID of the category.
+     * @return An Optional containing the {@link CategoryState}, or empty if not found.
+     */
     public Optional<CategoryState> getCategory(String id) {
         return categoryDao.findById(id);
     }

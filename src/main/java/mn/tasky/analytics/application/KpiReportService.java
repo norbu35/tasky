@@ -8,6 +8,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Service responsible for generating Key Performance Indicator (KPI) reports
+ * based on analytics events.
+ */
 @Service
 public class KpiReportService {
 
@@ -17,10 +21,22 @@ public class KpiReportService {
         this.analyticsService = analyticsService;
     }
 
+    /**
+     * Builds a KPI report using all currently recorded analytics events.
+     *
+     * @return A {@link KpiReport} containing aggregated metrics.
+     */
     public KpiReport buildReport() {
         return buildReport(analyticsService.getEvents());
     }
 
+    /**
+     * Builds a KPI report from a provided list of analytics events.
+     * Calculates totals and conversion/dispute ratios.
+     *
+     * @param events The list of {@link Event} objects to analyze.
+     * @return A {@link KpiReport} with calculated metrics.
+     */
     public KpiReport buildReport(List<Event> events) {
         Set<String> postedTaskIds = referenceIds(
                 events,

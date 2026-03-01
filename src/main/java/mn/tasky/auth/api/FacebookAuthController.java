@@ -25,7 +25,7 @@ public class FacebookAuthController {
 
     public FacebookAuthController(AuthService authService,
                                   FacebookRateLimitService facebookRateLimitService) {
-        this.authService = authService;
+        this.authService              = authService;
         this.facebookRateLimitService = facebookRateLimitService;
     }
 

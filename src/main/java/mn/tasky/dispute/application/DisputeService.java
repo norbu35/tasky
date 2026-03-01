@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service responsible for managing disputes raised by taskers or customers
+ * regarding specific bookings. Handles the lifecycle of disputes from creation to resolution.
+ */
 @Service
 public class DisputeService {
 
@@ -27,6 +31,16 @@ public class DisputeService {
         this.disputeDao     = disputeDao;
     }
 
+    /**
+     * Raises a new dispute for a given booking.
+     * Validates that the user is a participant, the booking is in a valid state for disputes,
+     * and the dispute window has not expired.
+     *
+     * @param userId    The ID of the user raising the dispute.
+     * @param bookingId The ID of the booking being disputed.
+     * @param reason    The reason for the dispute.
+     * @return A {@link DisputeRaiseResult} indicating success or failure with an error code.
+     */
     public DisputeRaiseResult raiseDispute(String userId,
                                            String bookingId,
                                            String reason) {
@@ -92,21 +106,46 @@ public class DisputeService {
         return DisputeRaiseResult.success(dispute);
     }
 
+    /**
+     * Lists the first page of pending (OPEN) disputes.
+     *
+     * @return A list of {@link Dispute} objects.
+     */
     public List<Dispute> listPendingDisputes() {
         return listPendingDisputes(null,
                                    50);
     }
 
+    /**
+     * Lists pending (OPEN) disputes with pagination.
+     *
+     * @param cursor The pagination cursor.
+     * @param limit  The maximum number of results to return.
+     * @return A list of {@link Dispute} objects.
+     */
     public List<Dispute> listPendingDisputes(String cursor,
                                              int limit) {
         return disputeDao.findPending(cursor,
                                       limit);
     }
 
+    /**
+     * Retrieves a dispute by its unique ID.
+     *
+     * @param disputeId The ID of the dispute.
+     * @return An Optional containing the {@link Dispute}, or empty if not found.
+     */
     public Optional<Dispute> getDispute(String disputeId) {
         return disputeDao.findById(disputeId);
     }
 
+    /**
+     * Retrieves a dispute, ensuring the requesting user is a participant in the associated booking.
+     *
+     * @param disputeId The ID of the dispute.
+     * @param userId    The ID of the user requesting the dispute.
+     * @return An Optional containing the {@link Dispute}, or empty if not found or unauthorized.
+     */
     public Optional<Dispute> getDisputeForUser(String disputeId,
                                                String userId) {
         Optional<Dispute> disputeOpt = disputeDao.findById(disputeId);
@@ -131,6 +170,16 @@ public class DisputeService {
         return Optional.empty();
     }
 
+    /**
+     * Resolves an open dispute. Admins can decide the outcome and provide notes.
+     * Valid outcomes are "RESOLVE_TASKER", "RESOLVE_CUSTOMER", or "ESCALATE".
+     *
+     * @param adminId         The ID of the admin resolving the dispute.
+     * @param disputeId       The ID of the dispute to resolve.
+     * @param outcome         The resolution outcome.
+     * @param resolutionNotes Notes explaining the resolution.
+     * @return A {@link DisputeResolutionResult} indicating success or failure.
+     */
     public DisputeResolutionResult resolveDispute(String adminId,
                                                   String disputeId,
                                                   String outcome,

@@ -171,13 +171,6 @@ class SecurityBaselineIntegrationTests
     }
 
     private ResponseEntity<Map> post(String path,
-                                     Map<String, String> body) {
-        return post(path,
-                    body,
-                    null);
-    }
-
-    private ResponseEntity<Map> post(String path,
                                      Map<String, String> body,
                                      String clientIp) {
         HttpHeaders headers = new HttpHeaders();
@@ -194,5 +187,12 @@ class SecurityBaselineIntegrationTests
                                  headers),
                 Map.class
         );
+    }
+
+    private ResponseEntity<Map> post(String path,
+                                     Map<String, String> body) {
+        return post(path,
+                    body,
+                    null);
     }
 }

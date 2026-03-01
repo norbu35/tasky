@@ -48,12 +48,12 @@ public class PaymentService {
             @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret,
             @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds
     ) {
-        this.bookingService      = bookingService;
-        this.taskService         = taskService;
-        this.notificationService = notificationService;
-        this.analyticsService    = analyticsService;
-        this.paymentIntentDao    = paymentIntentDao;
-        this.monetizationEnabled = monetizationEnabled;
+        this.bookingService        = bookingService;
+        this.taskService           = taskService;
+        this.notificationService   = notificationService;
+        this.analyticsService      = analyticsService;
+        this.paymentIntentDao      = paymentIntentDao;
+        this.monetizationEnabled   = monetizationEnabled;
         this.maxCallbackAgeSeconds = maxCallbackAgeSeconds;
         if (monetizationEnabled && !StringUtils.hasText(qpayWebhookSecret)) {
             throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");

@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
     java
     id("org.springframework.boot") version "3.4.2"
@@ -104,6 +106,15 @@ sourceSets {
 
 tasks.named("compileJava") {
     dependsOn("openApiGenerate")
+}
+
+tasks.named<BootRun>("bootRun") {
+    val activeProfileFromSystemProperty = System.getProperty("spring.profiles.active")
+    val activeProfileFromEnvironment = System.getenv("SPRING_PROFILES_ACTIVE")
+
+    if (activeProfileFromSystemProperty.isNullOrBlank() && activeProfileFromEnvironment.isNullOrBlank()) {
+        environment("SPRING_PROFILES_ACTIVE", "dev")
+    }
 }
 
 // JaCoCo

@@ -74,8 +74,8 @@ public class AuthService {
                                                               "TASKER",
                                                               "ADMIN");
     private static final Set<String> NON_PROD_PROFILES = Set.of("dev",
-                                                                 "test",
-                                                                 "local");
+                                                                "test",
+                                                                "local");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE = Map.of(
             "image/jpeg",
             "jpg",
@@ -171,9 +171,10 @@ public class AuthService {
         this.verificationMaxBytes            = verificationMaxBytes;
         this.verificationUploadUrlTtlSeconds = verificationUploadUrlTtlSeconds;
         if (!StringUtils.hasText(uploadUrlSigningSecret)) {
-            throw new IllegalStateException("tasky.storage.upload-signing-secret must be configured.");
+            throw new IllegalStateException("tasky.storage.upload-signing-secret must be " +
+                                                    "configured.");
         }
-        this.uploadUrlSigningSecretBytes     = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
+        this.uploadUrlSigningSecretBytes = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
     }
 
     @PostConstruct
@@ -224,7 +225,7 @@ public class AuthService {
         }
         String digitsOnly = phone.trim()
                 .replaceAll("\\D",
-                                               "");
+                            "");
         if (!StringUtils.hasText(digitsOnly)) {
             return "";
         }
@@ -322,75 +323,6 @@ public class AuthService {
         return Optional.of(issueSession(effectiveUser));
     }
 
-    public AuthSession facebookLogin(String accessToken) {
-        String token = StringUtils.trimWhitespace(accessToken);
-        facebookGraphClient.debugToken(token);
-        FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
-
-        AuthUser user = ensureUserByFacebookId(profile.facebookId(),
-                                               profile);
-        String effectiveStatus = resolveUserStatus(user.id(),
-                                                   user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
-            throw new AccountRestrictedException("This account is suspended or banned.");
-        }
-
-        AuthUser effectiveUser = new AuthUser(user.id(),
-                                              user.phone(),
-                                              user.facebookId(),
-                                              user.role(),
-                                              effectiveStatus,
-                                              user.createdAt());
-        return issueSession(effectiveUser);
-    }
-
-    private AuthUser ensureUserByFacebookId(
-            String facebookId,
-            FacebookGraphClient.FacebookProfile profile
-    ) {
-        if (!StringUtils.hasText(facebookId)) {
-            throw new IllegalArgumentException("Facebook profile id is required.");
-        }
-
-        Optional<AuthUser> existing = userDao.findByFacebookId(facebookId);
-        if (existing.isPresent()) {
-            return existing.get();
-        }
-
-        String id = UUID.randomUUID()
-                .toString();
-        Instant now = Instant.now();
-        userDao.insertWithFacebookId(id,
-                                     facebookId,
-                                     "CUSTOMER",
-                                     "PENDING",
-                                     now);
-
-        String fullName = StringUtils.hasText(profile.name())
-                ? profile.name()
-                        .trim()
-                : UserProfileState.defaultState()
-                        .fullName();
-        String avatarUrl = StringUtils.hasText(profile.pictureUrl())
-                ? profile.pictureUrl()
-                        .trim()
-                : null;
-        profileDao.ensureExists(id,
-                                fullName);
-        if (StringUtils.hasText(profile.name()) || avatarUrl != null) {
-            profileDao.updateNameAndAvatar(id,
-                                           fullName,
-                                           avatarUrl);
-        }
-
-        return new AuthUser(id,
-                            null,
-                            facebookId,
-                            "CUSTOMER",
-                            "PENDING",
-                            now);
-    }
-
     private boolean constantTimeEquals(String left,
                                        String right) {
         if (left == null || right == null) {
@@ -473,6 +405,82 @@ public class AuthService {
     private ModerationPolicy moderationPolicy() {
         return moderationPolicyDao.findActive()
                 .orElse(DEFAULT_MODERATION_POLICY);
+    }
+
+    private String decryptPhone(String encryptedPhone) {
+        if (!StringUtils.hasText(encryptedPhone)) {
+            return null;
+        }
+        return cryptoService.decrypt(encryptedPhone);
+    }
+
+    public AuthSession facebookLogin(String accessToken) {
+        String token = StringUtils.trimWhitespace(accessToken);
+        facebookGraphClient.debugToken(token);
+        FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
+
+        AuthUser user = ensureUserByFacebookId(profile.facebookId(),
+                                               profile);
+        String effectiveStatus = resolveUserStatus(user.id(),
+                                                   user.status());
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            throw new AccountRestrictedException("This account is suspended or banned.");
+        }
+
+        AuthUser effectiveUser = new AuthUser(user.id(),
+                                              user.phone(),
+                                              user.facebookId(),
+                                              user.role(),
+                                              effectiveStatus,
+                                              user.createdAt());
+        return issueSession(effectiveUser);
+    }
+
+    private AuthUser ensureUserByFacebookId(
+            String facebookId,
+            FacebookGraphClient.FacebookProfile profile
+    ) {
+        if (!StringUtils.hasText(facebookId)) {
+            throw new IllegalArgumentException("Facebook profile id is required.");
+        }
+
+        Optional<AuthUser> existing = userDao.findByFacebookId(facebookId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        String id = UUID.randomUUID()
+                .toString();
+        Instant now = Instant.now();
+        userDao.insertWithFacebookId(id,
+                                     facebookId,
+                                     "CUSTOMER",
+                                     "PENDING",
+                                     now);
+
+        String fullName = StringUtils.hasText(profile.name())
+                ? profile.name()
+                .trim()
+                : UserProfileState.defaultState()
+                        .fullName();
+        String avatarUrl = StringUtils.hasText(profile.pictureUrl())
+                ? profile.pictureUrl()
+                .trim()
+                : null;
+        profileDao.ensureExists(id,
+                                fullName);
+        if (StringUtils.hasText(profile.name()) || avatarUrl != null) {
+            profileDao.updateNameAndAvatar(id,
+                                           fullName,
+                                           avatarUrl);
+        }
+
+        return new AuthUser(id,
+                            null,
+                            facebookId,
+                            "CUSTOMER",
+                            "PENDING",
+                            now);
     }
 
     public AuthSession devLogin(String rawPhone,
@@ -1071,13 +1079,6 @@ public class AuthService {
                 })
                 .stream()
                 .toList();
-    }
-
-    private String decryptPhone(String encryptedPhone) {
-        if (!StringUtils.hasText(encryptedPhone)) {
-            return null;
-        }
-        return cryptoService.decrypt(encryptedPhone);
     }
 
     public boolean banUser(String adminId,

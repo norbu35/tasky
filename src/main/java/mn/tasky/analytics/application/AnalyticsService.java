@@ -18,6 +18,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Service responsible for tracking and recording business and system events.
+ * Captures context like correlation IDs and platforms before persisting events.
+ */
 @Service
 public class AnalyticsService {
 
@@ -45,6 +49,14 @@ public class AnalyticsService {
         this.objectMapper      = objectMapper;
     }
 
+    /**
+     * Tracks an event by enriching it with MDC context (correlation ID, locale, platform)
+     * and saving it to the data store.
+     *
+     * @param eventName  The name of the event (e.g., "TASK_POSTED").
+     * @param userId     The ID of the user triggering the event (can be null).
+     * @param properties Additional contextual properties for the event.
+     */
     public void track(String eventName,
                       String userId,
                       Map<String, Object> properties) {
@@ -97,6 +109,11 @@ public class AnalyticsService {
                  enrichedProperties);
     }
 
+    /**
+     * Retrieves all recorded analytics events.
+     *
+     * @return A list of {@link Event} objects.
+     */
     public List<Event> getEvents() {
         return analyticsEventDao.findAll();
     }

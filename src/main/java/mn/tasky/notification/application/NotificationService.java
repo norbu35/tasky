@@ -12,6 +12,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service responsible for managing user device tokens and sending push notifications.
+ * Includes fallback mechanisms for critical notifications.
+ */
 @Service
 public class NotificationService {
 
@@ -25,6 +29,14 @@ public class NotificationService {
         this.notificationLogDao = notificationLogDao;
     }
 
+    /**
+     * Registers a new device token for a user.
+     * Upserts the token to ensure the latest token is stored for the platform.
+     *
+     * @param userId   The ID of the user.
+     * @param token    The device token (e.g., FCM or APNs token).
+     * @param platform The platform of the device (e.g., "IOS", "ANDROID").
+     */
     public void registerDevice(String userId,
                                String token,
                                String platform) {
@@ -37,6 +49,12 @@ public class NotificationService {
                  platform);
     }
 
+    /**
+     * Unregisters a device token for a user, ceasing push notifications to that device.
+     *
+     * @param userId The ID of the user.
+     * @param token  The device token to remove.
+     */
     public void unregisterDevice(String userId,
                                  String token) {
         deviceTokenDao.delete(userId,
@@ -45,6 +63,16 @@ public class NotificationService {
                  userId);
     }
 
+    /**
+     * Sends a push notification to all registered devices for a given user.
+     * If the user has no registered devices and the notification is critical
+     * (e.g., "HIRED", "BOOKING_CONFIRMED"), it triggers an SMS fallback.
+     *
+     * @param userId The ID of the user.
+     * @param title  The notification title.
+     * @param body   The notification body/message.
+     * @param type   The type/category of the notification.
+     */
     public void sendPush(String userId,
                          String title,
                          String body,
@@ -82,6 +110,11 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Sends an SMS fallback to a user for critical notifications.
+     *
+     * @param userId The ID of the user to receive the SMS.
+     */
     public void sendSmsFallback(String userId) {
         log.info("Sending SMS fallback to user {}",
                  userId);
@@ -96,6 +129,11 @@ public class NotificationService {
         );
     }
 
+    /**
+     * Retrieves all recorded notification logs.
+     *
+     * @return A list of {@link NotificationLog} entries.
+     */
     public List<NotificationLog> getLogs() {
         return notificationLogDao.findAll();
     }

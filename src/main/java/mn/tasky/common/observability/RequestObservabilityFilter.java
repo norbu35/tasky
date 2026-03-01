@@ -100,7 +100,7 @@ public class RequestObservabilityFilter
         int qualitySeparator = firstPreference.indexOf(';');
         if (qualitySeparator >= 0) {
             firstPreference = firstPreference.substring(0,
-                                                       qualitySeparator)
+                                                        qualitySeparator)
                     .trim();
         }
         return StringUtils.hasText(firstPreference)
@@ -113,7 +113,8 @@ public class RequestObservabilityFilter
         if (StringUtils.hasText(explicitPlatform)) {
             String normalized = explicitPlatform.trim()
                     .toUpperCase(Locale.ROOT);
-            if ("WEB".equals(normalized) || "ANDROID".equals(normalized) || "IOS".equals(normalized)) {
+            if ("WEB".equals(normalized) || "ANDROID".equals(normalized) ||
+                    "IOS".equals(normalized)) {
                 return normalized;
             }
         }

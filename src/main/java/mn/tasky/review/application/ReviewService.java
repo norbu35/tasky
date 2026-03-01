@@ -12,6 +12,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service responsible for managing user reviews and ratings.
+ * Allows participants of a completed booking to review each other.
+ */
 @Service
 public class ReviewService {
 
@@ -27,6 +31,18 @@ public class ReviewService {
         this.reviewDao      = reviewDao;
     }
 
+    /**
+     * Submits a rating and review for a completed booking.
+     * Validates that the submitter is a participant, the booking is completed,
+     * and that the submitter hasn't already reviewed this booking.
+     * Updates the target user's aggregate rating statistics.
+     *
+     * @param authorId  The ID of the user submitting the review.
+     * @param bookingId The ID of the completed booking.
+     * @param rating    The integer rating (1 to 5).
+     * @param comment   An optional text review/comment.
+     * @return A {@link ReviewSubmitResult} containing the created Review or an error.
+     */
     public ReviewSubmitResult submitReview(String authorId,
                                            String bookingId,
                                            int rating,
@@ -93,6 +109,14 @@ public class ReviewService {
                                       null);
     }
 
+    /**
+     * Lists reviews directed at a specific user with pagination.
+     *
+     * @param userId The ID of the target user receiving the reviews.
+     * @param cursor The pagination cursor.
+     * @param limit  The maximum number of reviews to return.
+     * @return A list of {@link Review} objects.
+     */
     public List<Review> listReviews(String userId,
                                     String cursor,
                                     int limit) {

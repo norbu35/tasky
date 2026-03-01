@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service for managing real-time chat conversations between taskers and customers.
+ * Handles the creation of conversations, sending messages, and retrieving message history.
+ */
 @Service
 public class MessagingService {
 
@@ -28,6 +32,15 @@ public class MessagingService {
         this.messageDao        = messageDao;
     }
 
+    /**
+     * Starts a new conversation between a tasker and customer for a specific task.
+     * Returns the existing conversation ID if one already exists.
+     *
+     * @param taskId     The ID of the task the conversation is about.
+     * @param taskerId   The ID of the tasker.
+     * @param customerId The ID of the customer.
+     * @return The ID of the conversation.
+     */
     public String startConversation(String taskId,
                                     String taskerId,
                                     String customerId) {
@@ -50,12 +63,26 @@ public class MessagingService {
         return id;
     }
 
+    /**
+     * Lists the first page of conversations for a user.
+     *
+     * @param userId The ID of the user.
+     * @return A list of {@link Conversation} objects.
+     */
     public List<Conversation> listConversations(String userId) {
         return listConversations(userId,
                                  null,
                                  50);
     }
 
+    /**
+     * Lists conversations for a user with pagination.
+     *
+     * @param userId The ID of the user.
+     * @param cursor The pagination cursor.
+     * @param limit  The maximum number of results.
+     * @return A list of {@link Conversation} objects.
+     */
     public List<Conversation> listConversations(String userId,
                                                 String cursor,
                                                 int limit) {
@@ -64,6 +91,16 @@ public class MessagingService {
                                             limit);
     }
 
+    /**
+     * Sends a message in a conversation.
+     * Validates that the sender is a participant and the content is not empty.
+     * Broadcasts the message via websockets if successful.
+     *
+     * @param senderId       The ID of the sender.
+     * @param conversationId The ID of the conversation.
+     * @param content        The message content.
+     * @return An Optional containing the sent {@link Message}, or empty if validation fails.
+     */
     public Optional<Message> sendMessage(String senderId,
                                          String conversationId,
                                          String content) {
@@ -105,6 +142,16 @@ public class MessagingService {
         return Optional.of(message);
     }
 
+    /**
+     * Lists messages in a conversation with pagination.
+     * Validates that the requester is a participant in the conversation.
+     *
+     * @param userId         The ID of the user requesting messages.
+     * @param conversationId The ID of the conversation.
+     * @param cursor         The pagination cursor.
+     * @param limit          The maximum number of results.
+     * @return A list of {@link Message} objects.
+     */
     public List<Message> listMessages(String userId,
                                       String conversationId,
                                       String cursor,
