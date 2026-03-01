@@ -4,6 +4,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
+import mn.tasky.booking.dto.BookingCompletionSignal;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -353,7 +354,7 @@ public class BookingService {
                                                            now);
         log.info("Tasker {} marked booking {} as done", userId, bookingId);
         Instant markedDoneAt = bookingCompletionSignalDao.findByBookingId(bookingId)
-                .map(signal -> signal.markedDoneAt())
+                .map(BookingCompletionSignal::markedDoneAt)
                 .orElse(now);
 
         return BookingMarkDoneResult.success(booking,
@@ -369,6 +370,6 @@ public class BookingService {
      */
     public Optional<Instant> getTaskerMarkedDoneAt(String bookingId) {
         return bookingCompletionSignalDao.findByBookingId(bookingId)
-                .map(signal -> signal.markedDoneAt());
+                .map(BookingCompletionSignal::markedDoneAt);
     }
 }

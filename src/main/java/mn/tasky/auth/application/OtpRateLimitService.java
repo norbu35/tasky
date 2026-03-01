@@ -3,6 +3,7 @@ package mn.tasky.auth.application;
 import mn.tasky.auth.RateLimitExceededException;
 import mn.tasky.auth.dao.RateLimitCounterDao;
 import mn.tasky.common.security.JwtTokenService;
+import mn.tasky.common.security.dto.ParsedRefreshToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
@@ -106,7 +107,7 @@ public class OtpRateLimitService {
     public void assertRefreshAllowed(String refreshToken,
                                      String clientIp) {
         String tokenKey = jwtTokenService.parseRefreshToken(refreshToken)
-                .map(parsed -> parsed.tokenId())
+                .map(ParsedRefreshToken::tokenId)
                 .orElseGet(() -> "invalid-" + sha256(refreshToken));
         enforce(
                 "refresh-token:" + tokenKey,
