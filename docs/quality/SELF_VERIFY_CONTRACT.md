@@ -112,7 +112,7 @@ scripts/self-verify.sh \
 4. `full_test_suite` MUST run full frontend unit + E2E suites when frontend-impacting files are touched.
 12. Ticket and AC coverage integration:
 1. `ticket_spec_validation` MUST validate `tickets/<TICKET-ID>.json` structure, branch naming (`agent/<ticket>-<slug>`),
-   REQ/risk alignment, and `depends_on` alignment with `docs/BACKLOG_MVP.md`.
+   REQ/risk alignment, and `depends_on` alignment with `docs/BACKLOG.md`.
 2. `ac_coverage_gate` MUST fail if any acceptance criterion lacks test evidence in executed logs.
 3. The artifact MUST include `ticket_spec_path`, `acceptance_criteria`, `ac_test_mapping`, and `ac_coverage_summary`.
 4. Test commands MUST emit test titles to stdout (for example `vitest --reporter verbose`) so `TID-*` evidence is
@@ -144,3 +144,15 @@ scripts/self-verify.sh \
 3. CI MUST compare required check IDs and status parity against the local artifact at `artifacts/self-verify.json` from
    the PR branch.
 4. Any mismatch is a merge blocker.
+
+## Work Log Interpretation Contract
+
+1. `docs/agent/WORK_LOG.md` is append-only; it is not a standalone source of current ticket status.
+2. Queue state decisions MUST use `tickets/STATUS.json` as the source of truth.
+3. A `WORK_LOG` row MAY be used as completion evidence only when:
+    1. `status` is `PASS`
+    2. `ticket` exists in `tickets/STATUS.json`
+    3. `branch` matches `agent/<ticket>-<slug>`
+    4. `head_sha` is not `NO_HEAD`
+4. Rows from bootstrap/exploratory contexts (for example non-canonical ticket IDs or `NO_HEAD`) MUST be ignored by
+   reconciliation logic.

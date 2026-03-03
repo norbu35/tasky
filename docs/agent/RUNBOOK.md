@@ -76,6 +76,21 @@ scripts/agent-flow.sh start --agent codex-b --ticket TASK-020 --slug categories 
 5. If a race occurs, claim retries after pull/rebase and re-selection.
 6. `--auto-claim` is available for deterministic lowest-numbered auto-pick when explicit selection is not needed.
 
+## Status Reconciliation Rules
+
+1. `tickets/STATUS.json` is authoritative for current queue state (`pending`, `in_progress`, `done`).
+2. `docs/agent/WORK_LOG.md` is an append-only evidence ledger and can include exploratory/bootstrap runs.
+3. A `WORK_LOG` row is completion evidence only when all are true:
+    - `status=PASS`
+    - `ticket` exists in `tickets/STATUS.json`
+    - `branch` matches `agent/<TICKET-ID>-<slug>`
+    - `head_sha` is not `NO_HEAD`
+4. Rows failing any of rule 3 are historical diagnostics and MUST NOT automatically transition ticket status.
+5. For stale `in_progress` claims (for example older than 72h), reconcile by:
+    - validating ticket test evidence (`TID-*`) and latest PASS work-log row
+    - setting ticket to `done` when evidence is complete, otherwise resetting to `pending`
+    - updating `updated_at` in `tickets/STATUS.json`
+
 ## Shared Workspace Fallback
 
 Use shared mode only when a single local agent is active:

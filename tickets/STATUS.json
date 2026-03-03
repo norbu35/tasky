@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-02-20T11:45:56Z",
+  "updated_at": "2026-03-03T18:58:10Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -39,7 +39,11 @@
       "completed_at": "2026-02-13T12:39:18Z"
     },
     "TASK-010": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-010-otp-token-lifecycle",
+      "claimed_at": "2026-02-13T13:33:45Z",
+      "completed_at": "2026-02-13T13:36:21Z"
     },
     "TASK-011": {
       "status": "done",
@@ -228,21 +232,86 @@
       "completed_at": "2026-02-14T05:27:45Z"
     },
     "TASK-080": {
-      "status": "in_progress",
-      "agent": "Antigravity",
-      "branch": "agent/TASK-080-web-auth",
-      "claimed_at": "2026-02-20T08:58:58Z"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-080-web-mvp-flow",
+      "claimed_at": "2026-02-14T06:54:10Z",
+      "completed_at": "2026-02-14T06:54:10Z"
     },
     "TASK-081": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-081-web-booking-safety",
+      "claimed_at": "2026-02-14T07:05:25Z",
+      "completed_at": "2026-02-14T07:05:25Z"
     },
     "TASK-082": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-082-mobile-mvp-flow",
+      "claimed_at": "2026-02-14T07:14:24Z",
+      "completed_at": "2026-02-14T07:14:24Z"
     },
     "TASK-083": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-083-mobile-booking-safety",
+      "claimed_at": "2026-02-14T07:23:58Z",
+      "completed_at": "2026-02-14T07:23:58Z"
     },
     "TASK-090": {
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-090-analytics-kpi",
+      "claimed_at": "2026-02-14T07:42:07Z",
+      "completed_at": "2026-02-14T07:42:07Z"
+    },
+    "TASK-091": {
+      "status": "pending"
+    },
+    "TASK-092": {
+      "status": "pending"
+    },
+    "TASK-093": {
+      "status": "pending"
+    },
+    "TASK-094": {
+      "status": "pending"
+    },
+    "TASK-095": {
+      "status": "pending"
+    },
+    "TASK-096": {
+      "status": "pending"
+    },
+    "TASK-097": {
+      "status": "pending"
+    },
+    "TASK-098": {
+      "status": "pending"
+    },
+    "TASK-099": {
+      "status": "pending"
+    },
+    "TASK-100": {
+      "status": "pending"
+    },
+    "TASK-101": {
+      "status": "pending"
+    },
+    "TASK-102": {
+      "status": "pending"
+    },
+    "TASK-103": {
+      "status": "pending"
+    },
+    "TASK-104": {
+      "status": "pending"
+    },
+    "TASK-105": {
+      "status": "pending"
+    },
+    "TASK-106": {
       "status": "pending"
     }
   }
