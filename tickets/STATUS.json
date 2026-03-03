@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-03-03T18:58:10Z",
+  "updated_at": "2026-03-03T19:45:25Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -267,7 +267,10 @@
       "completed_at": "2026-02-14T07:42:07Z"
     },
     "TASK-091": {
-      "status": "pending"
+      "status": "in_progress",
+      "agent": "codex",
+      "branch": "agent/TASK-091-auth-outage-otp",
+      "claimed_at": "2026-03-03T19:45:25Z"
     },
     "TASK-092": {
       "status": "pending"
