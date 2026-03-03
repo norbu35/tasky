@@ -1,16 +1,7 @@
 package mn.tasky.common.config;
 
 import mn.tasky.analytics.dao.AnalyticsEventDao;
-import mn.tasky.auth.dao.AuditLogDao;
-import mn.tasky.auth.dao.ModerationPolicyDao;
-import mn.tasky.auth.dao.OtpChallengeDao;
-import mn.tasky.auth.dao.ProfileDao;
-import mn.tasky.auth.dao.RateLimitCounterDao;
-import mn.tasky.auth.dao.RefreshSessionDao;
-import mn.tasky.auth.dao.StrikeDao;
-import mn.tasky.auth.dao.SuspensionEventDao;
-import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dao.VerificationDao;
+import mn.tasky.auth.dao.*;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
@@ -51,8 +42,10 @@ public class JdbiConfig {
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new PostgresPlugin());
         jdbi.installPlugin(new Jackson2Plugin());
-        jdbi.getConfig(ColumnMappers.class).setCoalesceNullPrimitivesToDefaults(true);
-        jdbi.getConfig(ReflectionMappers.class).setStrictMatching(false);
+        jdbi.getConfig(ColumnMappers.class)
+            .setCoalesceNullPrimitivesToDefaults(true);
+        jdbi.getConfig(ReflectionMappers.class)
+            .setStrictMatching(false);
         return jdbi;
     }
 

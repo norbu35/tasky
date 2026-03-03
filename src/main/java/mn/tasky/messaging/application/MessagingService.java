@@ -41,14 +41,22 @@ public class MessagingService {
      * @return The ID of the conversation.
      */
     public String startConversation(String taskId, String taskerId, String customerId) {
-        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId, taskerId, customerId);
+        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId,
+            taskerId,
+            customerId);
 
         if (existing.isPresent()) {
-            return existing.get().id();
+            return existing.get()
+                .id();
         }
 
-        String id = UUID.randomUUID().toString();
-        conversationDao.insert(id, taskId, taskerId, customerId, Instant.now());
+        String id = UUID.randomUUID()
+            .toString();
+        conversationDao.insert(id,
+            taskId,
+            taskerId,
+            customerId,
+            Instant.now());
         return id;
     }
 
@@ -59,7 +67,9 @@ public class MessagingService {
      * @return A list of {@link Conversation} objects.
      */
     public List<Conversation> listConversations(String userId) {
-        return listConversations(userId, null, 50);
+        return listConversations(userId,
+            null,
+            50);
     }
 
     /**
@@ -71,7 +81,9 @@ public class MessagingService {
      * @return A list of {@link Conversation} objects.
      */
     public List<Conversation> listConversations(String userId, String cursor, int limit) {
-        return conversationDao.findByUserId(userId, cursor, limit);
+        return conversationDao.findByUserId(userId,
+            cursor,
+            limit);
     }
 
     /**
@@ -94,7 +106,9 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id().equals(senderId) && !conv.participant2Id().equals(senderId)) {
+        if (!conv.participant1Id()
+            .equals(senderId) && !conv.participant2Id()
+            .equals(senderId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
@@ -104,12 +118,22 @@ public class MessagingService {
         }
 
         Message message =
-            new Message(UUID.randomUUID().toString(), conversationId, senderId, sanitizedContent, Instant.now());
+            new Message(UUID.randomUUID()
+                .toString(),
+                conversationId,
+                senderId,
+                sanitizedContent,
+                Instant.now());
 
         messageDao.insert(
-            message.id(), message.conversationId(), message.senderId(), message.content(), message.sentAt());
+            message.id(),
+            message.conversationId(),
+            message.senderId(),
+            message.content(),
+            message.sentAt());
 
-        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
+        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId,
+            message);
 
         return Optional.of(message);
     }
@@ -133,10 +157,14 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id().equals(userId) && !conv.participant2Id().equals(userId)) {
+        if (!conv.participant1Id()
+            .equals(userId) && !conv.participant2Id()
+            .equals(userId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
-        return messageDao.findByConversationId(conversationId, cursor, limit);
+        return messageDao.findByConversationId(conversationId,
+            cursor,
+            limit);
     }
 }

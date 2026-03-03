@@ -4,7 +4,8 @@
 
 Validate and improve marketplace liquidity.
 
-**Liquidity definition:** A task is posted → receives a response → gets assigned → gets completed → receives a review.
+**Liquidity definition:** A task is posted → receives a qualified application → gets assigned → gets completed →
+receives a review.
 
 All metrics serve this goal.
 
@@ -12,10 +13,11 @@ All metrics serve this goal.
 
 ## 1. North Star Metric
 
-**Category Liquidity Score** — percentage of tasks posted that receive at least one response within 24 hours.
+**Category Liquidity Score** — percentage of tasks posted that receive at least one qualified application within 24
+hours.
 
 ```
-Liquidity Score = tasks_with_response_within_24h / tasks_posted
+Liquidity Score = tasks_with_qualified_application_within_24h / tasks_posted
 ```
 
 Measured per category, weekly and monthly.
@@ -28,15 +30,15 @@ Measured per category, weekly and monthly.
 
 ## 2. Marketplace Funnel
 
-| Stage                | Metric          | Year 1 Target    |
-|----------------------|-----------------|------------------|
-| Posted → Response    | Response Rate   | ≥ 70% within 24h |
-| Posted → Assigned    | Assignment Rate | —                |
-| Posted → Completed   | Completion Rate | ≥ 60%            |
-| Completed → Reviewed | Review Rate     | —                |
+| Stage                          | Metric          | Year 1 Target    |
+|--------------------------------|-----------------|------------------|
+| Posted → Qualified application | Liquidity Rate  | ≥ 70% within 24h |
+| Posted → Assigned              | Assignment Rate | —                |
+| Posted → Completed             | Completion Rate | ≥ 60%            |
+| Completed → Reviewed           | Review Rate     | —                |
 
 ```
-Response Rate   = tasks_with_response / tasks_posted
+Liquidity Rate  = tasks_with_qualified_application / tasks_posted
 Assignment Rate = tasks_assigned / tasks_posted
 Completion Rate = tasks_completed / tasks_posted
 Review Rate     = reviews_left / tasks_completed

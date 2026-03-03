@@ -24,7 +24,14 @@ public interface LedgerEntryDao {
         String referenceId,
         String description,
         Instant createdAt) {
-        insert(required(id, "id"), optional(userId), amount, type, optional(referenceId), description, createdAt);
+        insert(required(id,
+                "id"),
+            optional(userId),
+            amount,
+            type,
+            optional(referenceId),
+            description,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO ledger_entries (id, user_id, amount, type, reference_id, description, " + "created_at) "
@@ -39,7 +46,8 @@ public interface LedgerEntryDao {
         @Bind("createdAt") Instant createdAt);
 
     default List<LedgerEntry> findByUserId(String userId) {
-        return findByUserId(required(userId, "userId"));
+        return findByUserId(required(userId,
+            "userId"));
     }
 
     @SqlQuery("SELECT * FROM ledger_entries WHERE user_id = :userId ORDER BY created_at DESC")

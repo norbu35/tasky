@@ -5,6 +5,9 @@ public record UserProfileState(String fullName, String avatarUrl, double ratingA
     private static final String DEFAULT_PROFILE_NAME = "Tasky User";
 
     public static UserProfileState defaultState() {
-        return new UserProfileState(DEFAULT_PROFILE_NAME, null, 0.0d, 0);
+        return new UserProfileState(DEFAULT_PROFILE_NAME,
+            null,
+            0.0d,
+            0);
     }
 }

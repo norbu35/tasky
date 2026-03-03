@@ -1,5 +1,8 @@
 # Architecture Specification: Tasky
 
+Quick navigation: start with `docs/ARCHITECTURE_INDEX.md` to choose canonical docs by topic; use this file as the
+deep technical baseline.
+
 ## 1. Executive Summary
 
 **System Type:** Modular Monolith
@@ -18,7 +21,7 @@ all engineering efforts align with the `AGENTS.md` doctrine and `PRD.md` require
 Tasky acts as a trusted intermediary between **Customers** (Demand) and **Taskers** (Supply).
 
 * **External Systems**:
-    * **QPay (Post-MVP)**: Payment collection (Customer -> Tasky) for deferred monetization rollout.
+    * **QPay (Phase 2+)**: Credit pack purchases in Phase 2 and escrow settlement rails in Phase 3+.
     * **SMS Gateway**: OTP delivery.
     * **Google Maps / Mapbox**: Geocoding and static maps.
     * **Push Provider (FCM/Expo)**: Mobile notifications.
@@ -32,7 +35,7 @@ occurs via internal service interfaces (Java method calls), not network calls, t
 
 1. **`identity`**: Auth, User Profiles, KYC/Verification.
 2. **`marketplace`**: Task Posting, Search, Booking State Machine.
-3. **`wallet`** *(Post-MVP Deferred)*: Internal Ledger, QPay Integration, Payouts.
+3. **`wallet`** *(Phase 2+)*: Credit Ledger (Phase 2), Internal Wallet/Escrow/Payouts (Phase 3+), QPay Integration.
 4. **`communication`**: Notifications (Push/SMS), In-app Messaging.
 5. **`support`**: Disputes, Moderation, Admin Tools.
 
@@ -117,11 +120,16 @@ occurs via internal service interfaces (Java method calls), not network calls, t
 * `task_applications`: `task_id`, `tasker_id`, `status`, `created_at`
 * `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED), `price`
 
-#### Wallet Module *(Post-MVP Deferred)*
+#### Wallet Module *(Phase 2+)*
 
-* `wallets`: `user_id (PK)`, `balance_mnt`, `updated_at`
-* `ledger_entries`: `id`, `wallet_id`, `amount`, `type` (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`, `created_at`
-* `payout_requests`: `id`, `user_id`, `amount`, `bank_account`, `status`
+* `credit_balances`: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`, `total_refunded`, `updated_at`
+* `credit_transactions`: `id`, `tasker_id`, `amount`, `type` (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`,
+  `created_at`
+* `credit_packs`: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
+* `wallets` *(Phase 3+)*: `user_id (PK)`, `balance_mnt`, `updated_at`
+* `ledger_entries` *(Phase 3+)*: `id`, `wallet_id`, `amount`, `type` (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`,
+  `created_at`
+* `payout_requests` *(Phase 3+)*: `id`, `user_id`, `amount`, `bank_account`, `status`
 
 #### Communication Module
 
@@ -146,10 +154,14 @@ occurs via internal service interfaces (Java method calls), not network calls, t
     * `POST /tasks/{id}/applications` → Tasker applies, creates `task_applications` record.
     * `POST /tasks/{id}/applications/{appId}/accept` → Customer accepts Tasker, confirms liability disclaimer, creates
       `bookings` record (Status: ASSIGNED), updates `tasks` (Status: ASSIGNED).
+   * Phase 2+: selected Tasker confirms acceptance by spending lead-unlock credits; Customer contact details are
+     revealed only after successful unlock.
     * `POST /bookings/{id}/complete` → Updates `bookings` (Status: COMPLETED), updates `tasks` (Status: COMPLETED).
-2. **Monetization Flow** *(Post-MVP Deferred)*:
-    * QPay initiation + callback, wallet crediting, and payout processing are intentionally deferred from phase-1.
-    * Wallet and payout tables remain a planned extension path, not a release dependency for MVP liquidity validation.
+2. **Monetization Flow** *(Phased by PRD)*:
+    * Phase 2: Taskers buy credit packs via QPay and spend credits only when accepting a selected lead to unlock
+      Customer contact details.
+    * Phase 3+: Escrow payment initiation/callback, wallet crediting, and payout processing are enabled behind feature
+      toggles.
 
 3. **Messaging Flow** (WebSocket + REST fallback):
     * Conversation created when Tasker applies to a task.
@@ -158,7 +170,9 @@ occurs via internal service interfaces (Java method calls), not network calls, t
     * REST fallback: `POST /conversations/{id}/messages` for clients that cannot maintain WebSocket.
     * Messages persisted to `messages` table on send.
 4. **Identity Role Transition Flow**:
-    * User authenticates via OTP and starts as `CUSTOMER`.
+    * Phase 0-1: User authenticates via Facebook OAuth and starts as `CUSTOMER`.
+    * Phase 2+: User authenticates via SMS OTP (`phone_number` primary). Existing Facebook-auth users must complete OTP
+      migration.
     * User requests Tasker role via `POST /users/me/role/tasker`.
     * System updates role to `TASKER` while verification status remains pending until admin decision.
 
@@ -199,7 +213,7 @@ Standardized error response:
     * **Gov IDs**: Stored in a strict **Private S3 Bucket**. API never exposes public links. Admin viewing uses
       short-lived Presigned GET URLs.
     * **Location**: Exact coords in DB. API exposes `approximate_lat/lng` only for `PublicTask`.
-* **Monetization Security (Post-MVP)**:
+* **Monetization Security (Phase 2+)**:
     * **Callbacks**: QPay Webhook MUST verify the HMAC signature using a server-side secret key.
     * **Idempotency**: Enforced on all financial endpoints when monetization is enabled.
 * **Input Validation**: JSR-380 (Bean Validation) on all DTOs.
@@ -257,7 +271,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 * **Idempotency**: Critical irreversible state-changing endpoints must accept an `Idempotency-Key` header.
     * Minimum MVP scope: application accept, booking cancel/complete, dispute creation/resolution.
-    * Post-MVP monetization scope: payment initiation/callback handling and payout processing.
+  * Phase 2+ monetization scope: lead-unlock credit spending, payment initiation/callback handling, and payout
+    processing.
 * **Offline Support**: Mobile app caches active "My Tasks" locally (AsyncStorage) for read-only viewing when offline.
   This is limited to previously fetched data; no offline mutations are supported in MVP.
 

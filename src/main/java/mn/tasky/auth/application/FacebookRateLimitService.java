@@ -26,7 +26,8 @@ public class FacebookRateLimitService {
      * @throws RateLimitExceededException when the IP exceeds the configured limit.
      */
     public void assertAllowed(String clientIp) {
-        Deque<Long> attempts = attemptsByIp.computeIfAbsent(clientIp, ignored -> new ArrayDeque<>());
+        Deque<Long> attempts = attemptsByIp.computeIfAbsent(clientIp,
+            ignored -> new ArrayDeque<>());
         long now = System.currentTimeMillis();
         long cutoff = now - WINDOW.toMillis();
 
@@ -37,7 +38,8 @@ public class FacebookRateLimitService {
 
             if (attempts.size() >= REQUEST_LIMIT_PER_IP) {
                 throw new RateLimitExceededException(
-                    "OAUTH_RATE_LIMITED", "Too many OAuth attempts. Please try again later.");
+                    "OAUTH_RATE_LIMITED",
+                    "Too many OAuth attempts. Please try again later.");
             }
 
             attempts.addLast(now);

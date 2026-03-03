@@ -20,10 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
@@ -112,77 +109,126 @@ class BookingServiceTests {
             return null;
         })
             .when(bookingDao)
-            .update(anyString(), anyString(), any(), anyBoolean(), any(Instant.class));
+            .update(anyString(),
+                anyString(),
+                any(),
+                anyBoolean(),
+                any(Instant.class));
 
         // Simulate listing queries
-        when(bookingDao.findByCustomerId(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
+        when(bookingDao.findByCustomerId(anyString(),
+            any(),
+            any(),
+            anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
-            return store.values().stream()
-                .filter(b -> b.customerId().equals(userId))
-                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
-                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
-                    .toList();
+            return store.values()
+                .stream()
+                .filter(b -> b.customerId()
+                    .equals(userId))
+                .filter(b -> status == null || b.status()
+                    .equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt()
+                    .compareTo(a.createdAt()))
+                .toList();
         });
 
-        when(bookingDao.findByTaskerId(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
+        when(bookingDao.findByTaskerId(anyString(),
+            any(),
+            any(),
+            anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
-            return store.values().stream()
-                .filter(b -> b.taskerId().equals(userId))
-                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
-                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
-                    .toList();
+            return store.values()
+                .stream()
+                .filter(b -> b.taskerId()
+                    .equals(userId))
+                .filter(b -> status == null || b.status()
+                    .equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt()
+                    .compareTo(a.createdAt()))
+                .toList();
         });
 
-        when(bookingDao.findByParticipant(anyString(), any(), any(), anyInt())).thenAnswer(invocation -> {
+        when(bookingDao.findByParticipant(anyString(),
+            any(),
+            any(),
+            anyInt())).thenAnswer(invocation -> {
             String userId = invocation.getArgument(0);
             String status = invocation.getArgument(1);
-            return store.values().stream()
-                .filter(b -> b.customerId().equals(userId) || b.taskerId().equals(userId))
-                .filter(b -> status == null || b.status().equalsIgnoreCase(status))
-                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
-                    .toList();
+            return store.values()
+                .stream()
+                .filter(b -> b.customerId()
+                    .equals(userId) || b.taskerId()
+                    .equals(userId))
+                .filter(b -> status == null || b.status()
+                    .equalsIgnoreCase(status))
+                .sorted((a, b) -> b.createdAt()
+                    .compareTo(a.createdAt()))
+                .toList();
         });
 
-        when(bookingCompletionSignalDao.markDone(anyString(), anyString(), any(Instant.class)))
+        when(bookingCompletionSignalDao.markDone(anyString(),
+            anyString(),
+            any(Instant.class)))
             .thenReturn(1);
         when(bookingCompletionSignalDao.findByBookingId(anyString())).thenReturn(Optional.empty());
 
         bookingService =
-            new BookingService(authService, bookingDao, bookingReliabilityIncidentDao, bookingCompletionSignalDao);
+            new BookingService(authService,
+                bookingDao,
+                bookingReliabilityIncidentDao,
+                bookingCompletionSignalDao);
     }
 
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE valid transitions")
     void validTransitions() {
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
+        BookingState booking = bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            50000);
         assertThat(booking.status()).isEqualTo("ASSIGNED");
 
         // ASSIGNED -> PAID
         BookingTransitionResult paidResult = bookingService.transitionToPaid(booking.id());
         assertThat(paidResult.isSuccess()).isTrue();
-        assertThat(paidResult.booking().status()).isEqualTo("PAID");
+        assertThat(paidResult.booking()
+            .status()).isEqualTo("PAID");
 
         // PAID -> COMPLETED
-        BookingTransitionResult completedResult = bookingService.completeBooking("customer-1", booking.id());
+        BookingTransitionResult completedResult = bookingService.completeBooking("customer-1",
+            booking.id());
         assertThat(completedResult.isSuccess()).isTrue();
-        assertThat(completedResult.booking().status()).isEqualTo("COMPLETED");
+        assertThat(completedResult.booking()
+            .status()).isEqualTo("COMPLETED");
     }
 
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE invalid transitions")
     void invalidTransitions() {
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
+        BookingState booking = bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            50000);
 
         // ASSIGNED -> COMPLETED (Valid)
-        BookingTransitionResult completedResult = bookingService.completeBooking("customer-1", booking.id());
+        BookingTransitionResult completedResult = bookingService.completeBooking("customer-1",
+            booking.id());
         assertThat(completedResult.isSuccess()).isTrue();
-        assertThat(completedResult.booking().status()).isEqualTo("COMPLETED");
+        assertThat(completedResult.booking()
+            .status()).isEqualTo("COMPLETED");
 
-        BookingState secondBooking = bookingService.createBooking("task-2", "tasker-1", "customer-1", 50000);
+        BookingState secondBooking = bookingService.createBooking("task-2",
+            "tasker-1",
+            "customer-1",
+            50000);
         bookingService.cancelBooking(
-            "customer-1", secondBooking.id(), Instant.now().plus(10, ChronoUnit.HOURS));
+            "customer-1",
+            secondBooking.id(),
+            Instant.now()
+                .plus(10,
+                    ChronoUnit.HOURS));
 
         // CANCELLED -> PAID (Invalid)
         BookingTransitionResult paidResult = bookingService.transitionToPaid(secondBooking.id());
@@ -192,80 +238,135 @@ class BookingServiceTests {
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE cancellation rules")
     void cancellationRules() {
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
+        BookingState booking = bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            50000);
 
         // Customer can cancel ASSIGNED
         BookingTransitionResult cancelResult = bookingService.cancelBooking(
-            "customer-1", booking.id(), Instant.now().plus(10, ChronoUnit.HOURS));
+            "customer-1",
+            booking.id(),
+            Instant.now()
+                .plus(10,
+                    ChronoUnit.HOURS));
         assertThat(cancelResult.isSuccess()).isTrue();
 
         // Random user cannot cancel
-        BookingState booking2 = bookingService.createBooking("task-2", "tasker-2", "customer-2", 50000);
+        BookingState booking2 = bookingService.createBooking("task-2",
+            "tasker-2",
+            "customer-2",
+            50000);
         BookingTransitionResult forbiddenResult = bookingService.cancelBooking(
-            "random-user", booking2.id(), Instant.now().plus(10, ChronoUnit.HOURS));
+            "random-user",
+            booking2.id(),
+            Instant.now()
+                .plus(10,
+                    ChronoUnit.HOURS));
         assertThat(forbiddenResult.errorCode()).isEqualTo(BookingTransitionResult.FORBIDDEN);
     }
 
     @Test
     @DisplayName("TID-TASK-030-API-BOOKING-READS list bookings with filters")
     void listBookings() {
-        bookingService.createBooking("task-1", "tasker-1", "customer-1", 50000);
-        bookingService.createBooking("task-2", "tasker-2", "customer-1", 60000);
-        bookingService.createBooking("task-3", "tasker-1", "customer-2", 70000);
+        bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            50000);
+        bookingService.createBooking("task-2",
+            "tasker-2",
+            "customer-1",
+            60000);
+        bookingService.createBooking("task-3",
+            "tasker-1",
+            "customer-2",
+            70000);
 
         // Filter by customer
-        assertThat(bookingService.listBookings("customer-1", "customer", null)).hasSize(2);
+        assertThat(bookingService.listBookings("customer-1",
+            "customer",
+            null)).hasSize(2);
         // Filter by tasker
-        assertThat(bookingService.listBookings("tasker-1", "tasker", null)).hasSize(2);
+        assertThat(bookingService.listBookings("tasker-1",
+            "tasker",
+            null)).hasSize(2);
         // Filter by other (both)
-        assertThat(bookingService.listBookings("tasker-1", "any", null)).hasSize(2);
+        assertThat(bookingService.listBookings("tasker-1",
+            "any",
+            null)).hasSize(2);
         // Filter by status
-        assertThat(bookingService.listBookings("customer-1", "customer", "ASSIGNED"))
+        assertThat(bookingService.listBookings("customer-1",
+            "customer",
+            "ASSIGNED"))
             .hasSize(2);
     }
 
     @Test
     @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE complete booking errors")
     void completeBookingErrors() {
-        BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
+        BookingState booking = bookingService.createBooking("t1",
+            "tr1",
+            "c1",
+            100);
 
         // Not found
         assertThat(bookingService
-            .completeBooking("c1", UUID.randomUUID().toString())
+            .completeBooking("c1",
+                UUID.randomUUID()
+                    .toString())
             .errorCode())
             .isEqualTo("NOT_FOUND");
         // Forbidden
-        assertThat(bookingService.completeBooking("stranger", booking.id()).errorCode())
+        assertThat(bookingService.completeBooking("stranger",
+                booking.id())
+            .errorCode())
             .isEqualTo("FORBIDDEN");
         // Already completed cannot transition again
-        assertThat(bookingService.completeBooking("c1", booking.id()).isSuccess())
+        assertThat(bookingService.completeBooking("c1",
+                booking.id())
+            .isSuccess())
             .isTrue();
-        assertThat(bookingService.completeBooking("c1", booking.id()).errorCode())
+        assertThat(bookingService.completeBooking("c1",
+                booking.id())
+            .errorCode())
             .isEqualTo("INVALID_TRANSITION");
     }
 
     @Test
     @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL tasker can cancel without fee")
     void taskerCancel() {
-        BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100000);
+        BookingState booking = bookingService.createBooking("t1",
+            "tr1",
+            "c1",
+            100000);
         BookingTransitionResult res =
-            bookingService.cancelBooking("tr1", booking.id(), Instant.now().plus(1, ChronoUnit.HOURS));
+            bookingService.cancelBooking("tr1",
+                booking.id(),
+                Instant.now()
+                    .plus(1,
+                        ChronoUnit.HOURS));
         assertThat(res.isSuccess()).isTrue();
-        assertThat(res.booking().cancellationFee()).isNull();
+        assertThat(res.booking()
+            .cancellationFee()).isNull();
     }
 
     @Test
     @DisplayName("TID-TASK-064-API-DISCLAIMER-REQUIRED TID-TASK-064-AUDIT-DISCLAIMER-RECORDED "
         + "record disclaimer acceptance")
     void disclaimerAcceptance() {
-        BookingState booking = bookingService.createBooking("t1", "tr1", "c1", 100);
+        BookingState booking = bookingService.createBooking("t1",
+            "tr1",
+            "c1",
+            100);
         assertThat(booking.liabilityDisclaimerAccepted()).isFalse();
 
         Optional<BookingState> updated = bookingService.recordDisclaimerAcceptance(booking.id());
         assertThat(updated).isPresent();
-        assertThat(updated.get().liabilityDisclaimerAccepted()).isTrue();
+        assertThat(updated.get()
+            .liabilityDisclaimerAccepted()).isTrue();
 
-        assertThat(bookingService.recordDisclaimerAcceptance(UUID.randomUUID().toString()))
+        assertThat(bookingService.recordDisclaimerAcceptance(UUID.randomUUID()
+            .toString()))
             .isEmpty();
     }
 
@@ -273,23 +374,39 @@ class BookingServiceTests {
     @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL customer late-cancel records incident " + "without fee")
     void customerLateCancelNoFee() {
         // Task scheduled 1 hour from now (late)
-        Instant scheduledAt = Instant.now().plus(1, ChronoUnit.HOURS);
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 100000);
+        Instant scheduledAt = Instant.now()
+            .plus(1,
+                ChronoUnit.HOURS);
+        BookingState booking = bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            100000);
 
-        BookingTransitionResult result = bookingService.cancelBooking("customer-1", booking.id(), scheduledAt);
+        BookingTransitionResult result = bookingService.cancelBooking("customer-1",
+            booking.id(),
+            scheduledAt);
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.booking().cancellationFee()).isNull();
+        assertThat(result.booking()
+            .cancellationFee()).isNull();
     }
 
     @Test
     @DisplayName("TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE customer free cancellation")
     void customerFreeCancel() {
         // Task scheduled 10 hours from now (free)
-        Instant scheduledAt = Instant.now().plus(10, ChronoUnit.HOURS);
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 100000);
+        Instant scheduledAt = Instant.now()
+            .plus(10,
+                ChronoUnit.HOURS);
+        BookingState booking = bookingService.createBooking("task-1",
+            "tasker-1",
+            "customer-1",
+            100000);
 
-        BookingTransitionResult result = bookingService.cancelBooking("customer-1", booking.id(), scheduledAt);
+        BookingTransitionResult result = bookingService.cancelBooking("customer-1",
+            booking.id(),
+            scheduledAt);
         assertThat(result.isSuccess()).isTrue();
-        assertThat(result.booking().cancellationFee()).isNull();
+        assertThat(result.booking()
+            .cancellationFee()).isNull();
     }
 }

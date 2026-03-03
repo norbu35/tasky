@@ -14,35 +14,12 @@ import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.task.application.TaskService;
-import mn.tasky.task.dto.AcceptApplicationRequest;
-import mn.tasky.task.dto.ApplyTaskRequest;
-import mn.tasky.task.dto.CreateTask;
-import mn.tasky.task.dto.CreateTaskRequest;
-import mn.tasky.task.dto.TaskAcceptResult;
-import mn.tasky.task.dto.TaskApplicationState;
-import mn.tasky.task.dto.TaskApplicationsListResult;
-import mn.tasky.task.dto.TaskApplyResult;
-import mn.tasky.task.dto.TaskCancelResult;
-import mn.tasky.task.dto.TaskCreateResult;
-import mn.tasky.task.dto.TaskPage;
-import mn.tasky.task.dto.TaskPhotoUploadUrlRequest;
-import mn.tasky.task.dto.TaskState;
-import mn.tasky.task.dto.TaskUpdateResult;
-import mn.tasky.task.dto.UpdateTask;
-import mn.tasky.task.dto.UpdateTaskRequest;
+import mn.tasky.task.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
@@ -52,9 +29,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static mn.tasky.booking.api.BookingResponseMapper.basic;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+import static mn.tasky.common.api.ApiResponseSupport.*;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -93,13 +68,23 @@ public class TaskController {
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
         HttpServletRequest request) {
         try {
-            TaskPage page = taskService.listTasks(category, lat, lng, radiusKm, cursor, limit);
+            TaskPage page = taskService.listTasks(category,
+                lat,
+                lng,
+                radiusKm,
+                cursor,
+                limit);
 
             List<Map<String, Object>> data =
-                page.data().stream().map(this::toPublicTaskResponse).toList();
+                page.data()
+                    .stream()
+                    .map(this::toPublicTaskResponse)
+                    .toList();
 
             return ResponseEntity.ok(
-                new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
+                new PagedResponse<>(data,
+                    new CursorPagination(page.nextCursor(),
+                        page.hasMore())));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
@@ -114,40 +99,62 @@ public class TaskController {
 
     private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
-        double[] fuzzedLocation = fuzzCoordinates(task.locationLat(), task.locationLng());
-        response.put("id", task.id());
+        double[] fuzzedLocation = fuzzCoordinates(task.locationLat(),
+            task.locationLng());
+        response.put("id",
+            task.id());
 
         categoryService
             .getCategory(task.categoryId())
             .ifPresent(cat -> response.put(
                 "category",
                 Map.of(
-                    "id", cat.id(),
-                    "name", cat.name(),
-                    "name_mn", cat.nameMn(),
-                    "icon_url", cat.iconUrl())));
+                    "id",
+                    cat.id(),
+                    "name",
+                    cat.name(),
+                    "name_mn",
+                    cat.nameMn(),
+                    "icon_url",
+                    cat.iconUrl())));
 
         authService
             .getProfile(task.customerId())
             .ifPresent(profile -> response.put(
                 "customer",
                 Map.of(
-                    "id", profile.id(),
-                    "full_name", profile.fullName(),
-                    "avatar_url", profile.avatarUrl() != null ? profile.avatarUrl() : "",
-                    "rating_avg", profile.ratingAvg())));
+                    "id",
+                    profile.id(),
+                    "full_name",
+                    profile.fullName(),
+                    "avatar_url",
+                    profile.avatarUrl() != null ? profile.avatarUrl() : "",
+                    "rating_avg",
+                    profile.ratingAvg())));
 
-        response.put("description", task.description());
-        response.put("budget", task.budget());
-        response.put("approximate_location", "Ulaanbaatar, Mongolia (Fuzzed)");
-        response.put("approximate_lat", fuzzedLocation[0]);
-        response.put("approximate_lng", fuzzedLocation[1]);
-        response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
+        response.put("description",
+            task.description());
+        response.put("budget",
+            task.budget());
+        response.put("approximate_location",
+            "Ulaanbaatar, Mongolia (Fuzzed)");
+        response.put("approximate_lat",
+            fuzzedLocation[0]);
+        response.put("approximate_lng",
+            fuzzedLocation[1]);
+        response.put("status",
+            task.status());
+        response.put("scheduled_at",
+            task.scheduledAt()
+                .toString());
         List<String> photoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
-        response.put("photo_urls", taskService.buildPhotoAccessUrls(photoKeys));
-        response.put("application_count", taskApplicationCount(task.id()));
-        response.put("created_at", task.createdAt().toString());
+        response.put("photo_urls",
+            taskService.buildPhotoAccessUrls(photoKeys));
+        response.put("application_count",
+            taskApplicationCount(task.id()));
+        response.put("created_at",
+            task.createdAt()
+                .toString());
 
         return response;
     }
@@ -157,7 +164,8 @@ public class TaskController {
         double distanceMeters = LOCATION_FUZZ_RANDOM.nextDouble() * MAX_PUBLIC_OFFSET_METERS;
         double latOffset = (distanceMeters * Math.cos(angle)) / 111_320.0d;
         double lngOffset =
-            (distanceMeters * Math.sin(angle)) / (111_320.0d * Math.max(0.1d, Math.cos(Math.toRadians(lat))));
+            (distanceMeters * Math.sin(angle)) / (111_320.0d * Math.max(0.1d,
+                Math.cos(Math.toRadians(lat))));
 
         double fuzzedLat = roundToTwoDecimals(lat + latOffset);
         double fuzzedLng = roundToTwoDecimals(lng + lngOffset);
@@ -181,11 +189,20 @@ public class TaskController {
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
         HttpServletRequest request) {
         try {
-            TaskPage page = taskService.listMyTasks(principal.userId(), role, status, cursor, limit);
+            TaskPage page = taskService.listMyTasks(principal.userId(),
+                role,
+                status,
+                cursor,
+                limit);
             List<Map<String, Object>> data =
-                page.data().stream().map(this::toTaskResponse).toList();
+                page.data()
+                    .stream()
+                    .map(this::toTaskResponse)
+                    .toList();
             return ResponseEntity.ok(
-                new PagedResponse<>(data, new CursorPagination(page.nextCursor(), page.hasMore())));
+                new PagedResponse<>(data,
+                    new CursorPagination(page.nextCursor(),
+                        page.hasMore())));
         } catch (IllegalArgumentException exception) {
             String code = "INVALID_CURSOR";
             String message = "Cursor parameter is invalid.";
@@ -197,7 +214,12 @@ public class TaskController {
                 message = "Status filter must be OPEN, ASSIGNED, COMPLETED, or CANCELLED.";
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("code", code, "message", message, "trace_id", resolveTraceId(request)));
+                .body(Map.of("code",
+                    code,
+                    "message",
+                    message,
+                    "trace_id",
+                    resolveTraceId(request)));
         }
     }
 
@@ -205,29 +227,50 @@ public class TaskController {
         Map<String, Object> response = new LinkedHashMap<>();
         List<String> rawPhotoKeys = task.photoKeys();
         final List<String> photoKeys = rawPhotoKeys == null ? List.of() : rawPhotoKeys;
-        List<Map<String, Object>> photos = IntStream.range(0, photoKeys.size())
+        List<Map<String, Object>> photos = IntStream.range(0,
+                photoKeys.size())
             .mapToObj(index -> {
                 Map<String, Object> photo = new LinkedHashMap<>();
-                photo.put("storage_key", photoKeys.get(index));
-                photo.put("url", taskService.buildPhotoAccessUrl(photoKeys.get(index)));
-                photo.put("sort_order", index);
+                photo.put("storage_key",
+                    photoKeys.get(index));
+                photo.put("url",
+                    taskService.buildPhotoAccessUrl(photoKeys.get(index)));
+                photo.put("sort_order",
+                    index);
                 return photo;
             })
             .toList();
-        response.put("id", task.id());
-        response.put("category_id", task.categoryId());
-        response.put("customer_id", task.customerId());
-        response.put("description", task.description());
-        response.put("budget", task.budget());
-        response.put("location_lat", task.locationLat());
-        response.put("location_lng", task.locationLng());
-        response.put("location_text", task.locationText());
-        response.put("status", task.status());
-        response.put("scheduled_at", task.scheduledAt().toString());
-        response.put("photos", photos);
-        response.put("photo_keys", photoKeys);
-        response.put("created_at", task.createdAt().toString());
-        response.put("updated_at", task.updatedAt().toString());
+        response.put("id",
+            task.id());
+        response.put("category_id",
+            task.categoryId());
+        response.put("customer_id",
+            task.customerId());
+        response.put("description",
+            task.description());
+        response.put("budget",
+            task.budget());
+        response.put("location_lat",
+            task.locationLat());
+        response.put("location_lng",
+            task.locationLng());
+        response.put("location_text",
+            task.locationText());
+        response.put("status",
+            task.status());
+        response.put("scheduled_at",
+            task.scheduledAt()
+                .toString());
+        response.put("photos",
+            photos);
+        response.put("photo_keys",
+            photoKeys);
+        response.put("created_at",
+            task.createdAt()
+                .toString());
+        response.put("updated_at",
+            task.updatedAt()
+                .toString());
         return response;
     }
 
@@ -238,13 +281,23 @@ public class TaskController {
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
         }
 
         TaskState task = taskOpt.get();
-        boolean owner = task.customerId().equals(principal.userId());
-        boolean bookedTasker = bookingService.listBookings(principal.userId(), "tasker", null).stream()
-            .anyMatch(booking -> booking.taskId().equals(task.id())
+        boolean owner = task.customerId()
+            .equals(principal.userId());
+        boolean bookedTasker = bookingService.listBookings(principal.userId(),
+                "tasker",
+                null)
+            .stream()
+            .anyMatch(booking -> booking.taskId()
+                .equals(task.id())
                 && ("ASSIGNED".equals(booking.status())
                 || "PAID".equals(booking.status())
                 || "COMPLETED".equals(booking.status())));
@@ -284,7 +337,8 @@ public class TaskController {
                 body.photoKeys() != null ? body.photoKeys() : List.of()));
 
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toTaskResponse(result.task()));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(toTaskResponse(result.task()));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -322,7 +376,12 @@ public class TaskController {
         return switch (result.errorCode()) {
             case TaskUpdateResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
             case TaskUpdateResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(
                     "code",
@@ -371,14 +430,16 @@ public class TaskController {
                     "Maximum 3 photos per task.",
                     "trace_id",
                     resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         };
     }
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<?> cancelTask(
         @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
-        TaskCancelResult result = taskService.cancelTask(principal.userId(), id);
+        TaskCancelResult result = taskService.cancelTask(principal.userId(),
+            id);
 
         if (result.isSuccess()) {
             return ResponseEntity.ok(toTaskResponse(result.task()));
@@ -387,7 +448,12 @@ public class TaskController {
         return switch (result.errorCode()) {
             case TaskCancelResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
             case TaskCancelResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(
                     "code",
@@ -404,7 +470,8 @@ public class TaskController {
                     "Task cannot be cancelled in its current status.",
                     "trace_id",
                     resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         };
     }
 
@@ -414,16 +481,25 @@ public class TaskController {
         @PathVariable String id,
         @Valid @RequestBody ApplyTaskRequest body,
         HttpServletRequest request) {
-        TaskApplyResult result = taskService.applyToTask(principal.userId(), principal.role(), id, body.message());
+        TaskApplyResult result = taskService.applyToTask(principal.userId(),
+            principal.role(),
+            id,
+            body.message());
 
         if (result.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(toApplicationResponse(result.application()));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(toApplicationResponse(result.application()));
         }
 
         return switch (result.errorCode()) {
             case TaskApplyResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
             case TaskApplyResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(
                     "code",
@@ -448,14 +524,17 @@ public class TaskController {
                     "You have already applied to this task.",
                     "trace_id",
                     resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         };
     }
 
     private Map<String, Object> toApplicationResponse(TaskApplicationState app) {
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("id", app.id());
-        response.put("task_id", app.taskId());
+        response.put("id",
+            app.id());
+        response.put("task_id",
+            app.taskId());
         response.put(
             "tasker",
             Map.of(
@@ -471,9 +550,13 @@ public class TaskController {
                 app.taskerCompletedTasks(),
                 "is_pro",
                 app.taskerIsPro()));
-        response.put("message", app.message());
-        response.put("status", app.status());
-        response.put("created_at", app.createdAt().toString());
+        response.put("message",
+            app.message());
+        response.put("status",
+            app.status());
+        response.put("created_at",
+            app.createdAt()
+                .toString());
         return response;
     }
 
@@ -486,7 +569,10 @@ public class TaskController {
         HttpServletRequest request) {
         TaskApplicationsListResult result;
         try {
-            result = taskService.listTaskApplications(principal.userId(), id, cursor, limit + 1);
+            result = taskService.listTaskApplications(principal.userId(),
+                id,
+                cursor,
+                limit + 1);
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
@@ -501,18 +587,29 @@ public class TaskController {
         if (result.isSuccess()) {
             List<TaskApplicationState> applications = result.applications();
             boolean hasMore = applications.size() > limit;
-            List<TaskApplicationState> pageData = hasMore ? applications.subList(0, limit) : applications;
-            String nextCursor = hasMore ? pageData.getLast().id() : null;
+            List<TaskApplicationState> pageData = hasMore ? applications.subList(0,
+                limit) : applications;
+            String nextCursor = hasMore ? pageData.getLast()
+                .id() : null;
 
             List<Map<String, Object>> data =
-                pageData.stream().map(this::toApplicationResponse).toList();
-            return ResponseEntity.ok(new PagedResponse<>(data, new CursorPagination(nextCursor, hasMore)));
+                pageData.stream()
+                    .map(this::toApplicationResponse)
+                    .toList();
+            return ResponseEntity.ok(new PagedResponse<>(data,
+                new CursorPagination(nextCursor,
+                    hasMore)));
         }
 
         return switch (result.errorCode()) {
             case TaskApplicationsListResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
             case TaskApplicationsListResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(
                     "code",
@@ -521,7 +618,8 @@ public class TaskController {
                     "Only the task owner can view applications.",
                     "trace_id",
                     resolveTraceId(request)));
-            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         };
     }
 
@@ -534,15 +632,20 @@ public class TaskController {
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
         HttpServletRequest request) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.ACCEPT_APPLICATION,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            String bookingId = claim.record().resourceId().toString();
+            String bookingId = claim.record()
+                .resourceId()
+                .toString();
             return bookingService
                 .getBooking(bookingId)
                 .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(basic(booking)))
@@ -551,7 +654,10 @@ public class TaskController {
 
         try {
             TaskAcceptResult result = taskService.acceptApplication(
-                principal.userId(), id, applicationId, Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()));
+                principal.userId(),
+                id,
+                applicationId,
+                Boolean.TRUE.equals(body.liabilityDisclaimerAccepted()));
 
             if (result.isSuccess()) {
                 idempotencyService.completeWithResource(
@@ -559,11 +665,14 @@ public class TaskController {
                     IdempotencyOperations.ACCEPT_APPLICATION,
                     idempotencyKey,
                     "BOOKING",
-                    result.booking().id());
+                    result.booking()
+                        .id());
                 return ResponseEntity.ok(basic(result.booking()));
             }
 
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.ACCEPT_APPLICATION,
+                idempotencyKey);
             return switch (result.errorCode()) {
                 case TaskAcceptResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -609,7 +718,9 @@ public class TaskController {
                     .build();
             };
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.ACCEPT_APPLICATION, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.ACCEPT_APPLICATION,
+                idempotencyKey);
             throw exception;
         }
     }
@@ -624,11 +735,17 @@ public class TaskController {
         if (taskOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
-                    "code", "NOT_FOUND", "message", "Task not found.", "trace_id", resolveTraceId(request)));
+                    "code",
+                    "NOT_FOUND",
+                    "message",
+                    "Task not found.",
+                    "trace_id",
+                    resolveTraceId(request)));
         }
 
         TaskState task = taskOpt.get();
-        if (!task.customerId().equals(principal.userId())) {
+        if (!task.customerId()
+            .equals(principal.userId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(
                     "code",
@@ -652,7 +769,9 @@ public class TaskController {
                     resolveTraceId(request)));
         }
 
-        return getPreCreateUploadUrl(principal, body, request);
+        return getPreCreateUploadUrl(principal,
+            body,
+            request);
     }
 
     @PostMapping("/photos/upload-url")
@@ -661,9 +780,13 @@ public class TaskController {
         @Valid @RequestBody TaskPhotoUploadUrlRequest body,
         HttpServletRequest request) {
         return taskService
-            .createPhotoUploadUrl(principal.userId(), body.contentType())
+            .createPhotoUploadUrl(principal.userId(),
+                body.contentType())
             .<ResponseEntity<?>>map(upload ->
-                ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
+                ResponseEntity.ok(Map.of("upload_url",
+                    upload.uploadUrl(),
+                    "storage_key",
+                    upload.storageKey())))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
                     "code",

@@ -13,18 +13,18 @@ import java.util.Optional;
 public interface ModerationPolicyDao {
 
     @SqlQuery("SELECT strike_window_days, strike_threshold, first_suspension_days, " + "repeat_suspension_days, "
-            + "repeat_offense_window_days, auto_unsuspend_enabled, updated_at "
+        + "repeat_offense_window_days, auto_unsuspend_enabled, updated_at "
         + "FROM moderation_policy WHERE id = 1")
     Optional<ModerationPolicy> findActive();
 
     @SqlUpdate("UPDATE moderation_policy "
-            + "SET strike_window_days = :strikeWindowDays, "
-            + "strike_threshold = :strikeThreshold, "
-            + "first_suspension_days = :firstSuspensionDays, "
-            + "repeat_suspension_days = :repeatSuspensionDays, "
-            + "repeat_offense_window_days = :repeatOffenseWindowDays, "
-            + "auto_unsuspend_enabled = :autoUnsuspendEnabled, "
-            + "updated_at = :updatedAt "
+        + "SET strike_window_days = :strikeWindowDays, "
+        + "strike_threshold = :strikeThreshold, "
+        + "first_suspension_days = :firstSuspensionDays, "
+        + "repeat_suspension_days = :repeatSuspensionDays, "
+        + "repeat_offense_window_days = :repeatOffenseWindowDays, "
+        + "auto_unsuspend_enabled = :autoUnsuspendEnabled, "
+        + "updated_at = :updatedAt "
         + "WHERE id = 1")
     int update(
         @Bind("strikeWindowDays") int strikeWindowDays,

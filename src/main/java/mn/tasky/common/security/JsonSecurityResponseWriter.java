@@ -32,13 +32,18 @@ public class JsonSecurityResponseWriter {
 
         Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
         String resolvedTraceId =
-            traceId != null ? traceId.toString() : UUID.randomUUID().toString();
+            traceId != null ? traceId.toString() : UUID.randomUUID()
+                .toString();
 
         Map<String, String> body = new LinkedHashMap<>();
-        body.put("code", code);
-        body.put("message", message);
-        body.put("trace_id", resolvedTraceId);
+        body.put("code",
+            code);
+        body.put("message",
+            message);
+        body.put("trace_id",
+            resolvedTraceId);
 
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+        response.getWriter()
+            .write(objectMapper.writeValueAsString(body));
     }
 }

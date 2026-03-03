@@ -5,26 +5,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import mn.tasky.category.application.CategoryService;
-import mn.tasky.category.dto.CategoryPage;
-import mn.tasky.category.dto.CategoryResponse;
-import mn.tasky.category.dto.CategoryState;
-import mn.tasky.category.dto.CreateCategory;
-import mn.tasky.category.dto.CreateCategoryRequest;
-import mn.tasky.category.dto.UpdateCategory;
-import mn.tasky.category.dto.UpdateCategoryRequest;
+import mn.tasky.category.dto.*;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.Map;
@@ -47,19 +34,28 @@ public class CategoryController {
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
         HttpServletRequest request) {
-        return listCategories(false, cursor, limit, request);
+        return listCategories(false,
+            cursor,
+            limit,
+            request);
     }
 
     private ResponseEntity<?> listCategories(
         boolean includeInactive, String cursor, int limit, HttpServletRequest request) {
         try {
             CategoryPage page = includeInactive
-                ? categoryService.listAllCategories(cursor, limit)
-                : categoryService.listActiveCategories(cursor, limit);
+                ? categoryService.listAllCategories(cursor,
+                limit)
+                : categoryService.listActiveCategories(cursor,
+                limit);
 
             return ResponseEntity.ok(new PagedResponse<>(
-                page.data().stream().map(this::toCategoryResponse).toList(),
-                new CursorPagination(page.nextCursor(), page.hasMore())));
+                page.data()
+                    .stream()
+                    .map(this::toCategoryResponse)
+                    .toList(),
+                new CursorPagination(page.nextCursor(),
+                    page.hasMore())));
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
@@ -91,15 +87,22 @@ public class CategoryController {
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "20") @Min(1) @Max(100) int limit,
         HttpServletRequest request) {
-        return listCategories(true, cursor, limit, request);
+        return listCategories(true,
+            cursor,
+            limit,
+            request);
     }
 
     @PostMapping("/admin/categories")
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest body) {
         CategoryState created = categoryService.createCategory(
-            new CreateCategory(body.name(), body.nameMn(), body.iconUrl(), body.sortOrder()));
+            new CreateCategory(body.name(),
+                body.nameMn(),
+                body.iconUrl(),
+                body.sortOrder()));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(toCategoryResponse(created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(toCategoryResponse(created));
     }
 
     @PutMapping("/admin/categories/{id}")
@@ -109,7 +112,11 @@ public class CategoryController {
             .updateCategory(
                 id,
                 new UpdateCategory(
-                    body.name(), body.nameMn(), body.iconUrl(), body.isActive(), body.sortOrder()))
+                    body.name(),
+                    body.nameMn(),
+                    body.iconUrl(),
+                    body.isActive(),
+                    body.sortOrder()))
             .<ResponseEntity<?>>map(category -> ResponseEntity.ok(toCategoryResponse(category)))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(

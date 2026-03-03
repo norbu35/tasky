@@ -3,31 +3,8 @@ package mn.tasky.auth.application;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.AccountRestrictedException;
-import mn.tasky.auth.dao.AuditLogDao;
-import mn.tasky.auth.dao.ModerationPolicyDao;
-import mn.tasky.auth.dao.OtpChallengeDao;
-import mn.tasky.auth.dao.ProfileDao;
-import mn.tasky.auth.dao.RefreshSessionDao;
-import mn.tasky.auth.dao.StrikeDao;
-import mn.tasky.auth.dao.SuspensionEventDao;
-import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dao.VerificationDao;
-import mn.tasky.auth.dto.AuditLogEntry;
-import mn.tasky.auth.dto.AuthSession;
-import mn.tasky.auth.dto.AuthTokens;
-import mn.tasky.auth.dto.AuthUser;
-import mn.tasky.auth.dto.ModerationPolicy;
-import mn.tasky.auth.dto.OtpChallenge;
-import mn.tasky.auth.dto.ProfileUpdate;
-import mn.tasky.auth.dto.RefreshSession;
-import mn.tasky.auth.dto.RoleActivationResult;
-import mn.tasky.auth.dto.UserProfile;
-import mn.tasky.auth.dto.UserProfilePage;
-import mn.tasky.auth.dto.UserProfileState;
-import mn.tasky.auth.dto.VerificationDetail;
-import mn.tasky.auth.dto.VerificationRequest;
-import mn.tasky.auth.dto.VerificationStatusResponse;
-import mn.tasky.auth.dto.VerificationSubmitResult;
+import mn.tasky.auth.dao.*;
+import mn.tasky.auth.dto.*;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
@@ -47,15 +24,7 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Core authentication and account service.
@@ -67,14 +36,32 @@ public class AuthService {
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final ModerationPolicy DEFAULT_MODERATION_POLICY =
-        new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
+        new ModerationPolicy(30,
+            3,
+            7,
+            14,
+            180,
+            true,
+            Instant.EPOCH);
 
-    private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
-    private static final Set<String> NON_PROD_PROFILES = Set.of("dev", "test", "local");
+    private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER",
+        "TASKER",
+        "ADMIN");
+    private static final Set<String> NON_PROD_PROFILES = Set.of("dev",
+        "test",
+        "local");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE =
-        Map.of("image/jpeg", "jpg", "image/png", "png", "image/webp", "webp");
+        Map.of("image/jpeg",
+            "jpg",
+            "image/png",
+            "png",
+            "image/webp",
+            "webp");
     private static final Map<String, String> VERIFICATION_EXTENSION_BY_CONTENT_TYPE =
-        Map.of("image/jpeg", "jpg", "image/png", "png");
+        Map.of("image/jpeg",
+            "jpg",
+            "image/png",
+            "png");
 
     private final JwtTokenService jwtTokenService;
     private final CryptoService cryptoService;
@@ -201,8 +188,12 @@ public class AuthService {
         ensureUser(phone);
         String otpCode = generateOtpCode();
 
-        otpChallengeDao.upsert(blindIndex, otpCode, Instant.now().plusSeconds(otpTtlSeconds));
-        smsService.sendOtp(phone, otpCode);
+        otpChallengeDao.upsert(blindIndex,
+            otpCode,
+            Instant.now()
+                .plusSeconds(otpTtlSeconds));
+        smsService.sendOtp(phone,
+            otpCode);
 
         return maskPhone(phone);
     }
@@ -211,7 +202,9 @@ public class AuthService {
         if (!StringUtils.hasText(phone)) {
             return "";
         }
-        String digitsOnly = phone.trim().replaceAll("\\D", "");
+        String digitsOnly = phone.trim()
+            .replaceAll("\\D",
+                "");
         if (!StringUtils.hasText(digitsOnly)) {
             return "";
         }
@@ -226,26 +219,43 @@ public class AuthService {
             return existing.get();
         }
 
-        String id = UUID.randomUUID().toString();
+        String id = UUID.randomUUID()
+            .toString();
         String encryptedPhone = cryptoService.encrypt(phone);
         Instant now = Instant.now();
-        userDao.insert(id, encryptedPhone, blindIndex, "CUSTOMER", "PENDING", now);
-        profileDao.ensureExists(id, UserProfileState.defaultState().fullName());
-        return new AuthUser(id, encryptedPhone, null, "CUSTOMER", "PENDING", now);
+        userDao.insert(id,
+            encryptedPhone,
+            blindIndex,
+            "CUSTOMER",
+            "PENDING",
+            now);
+        profileDao.ensureExists(id,
+            UserProfileState.defaultState()
+                .fullName());
+        return new AuthUser(id,
+            encryptedPhone,
+            null,
+            "CUSTOMER",
+            "PENDING",
+            now);
     }
 
     private String generateOtpCode() {
         if (StringUtils.hasText(otpTestCode)) {
             return otpTestCode;
         }
-        return String.format(Locale.ROOT, "%06d", secureRandom.nextInt(1_000_000));
+        return String.format(Locale.ROOT,
+            "%06d",
+            secureRandom.nextInt(1_000_000));
     }
 
     private String maskPhone(String phone) {
         if (phone.length() <= 4) {
             return "****";
         }
-        return phone.substring(0, Math.min(6, phone.length())) + "****";
+        return phone.substring(0,
+            Math.min(6,
+                phone.length())) + "****";
     }
 
     /**
@@ -266,12 +276,14 @@ public class AuthService {
         }
 
         OtpChallenge challenge = challengeOpt.get();
-        if (challenge.expiresAt().isBefore(Instant.now())) {
+        if (challenge.expiresAt()
+            .isBefore(Instant.now())) {
             otpChallengeDao.delete(blindIndex);
             return Optional.empty();
         }
 
-        if (!constantTimeEquals(challenge.code(), code)) {
+        if (!constantTimeEquals(challenge.code(),
+            code)) {
             int attempts = challenge.attempts() + 1;
             if (attempts >= 3) {
                 otpChallengeDao.delete(blindIndex);
@@ -283,13 +295,19 @@ public class AuthService {
 
         otpChallengeDao.delete(blindIndex);
         AuthUser user = ensureUser(phone);
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
         AuthUser effectiveUser = new AuthUser(
-            user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
+            user.id(),
+            user.phone(),
+            user.facebookId(),
+            user.role(),
+            effectiveStatus,
+            user.createdAt());
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -297,7 +315,8 @@ public class AuthService {
         if (left == null || right == null) {
             return false;
         }
-        return MessageDigest.isEqual(left.getBytes(StandardCharsets.UTF_8), right.getBytes(StandardCharsets.UTF_8));
+        return MessageDigest.isEqual(left.getBytes(StandardCharsets.UTF_8),
+            right.getBytes(StandardCharsets.UTF_8));
     }
 
     private String resolveUserStatus(String userId, String currentStatus) {
@@ -314,41 +333,60 @@ public class AuthService {
         if (suspensionEnd.isEmpty()) {
             return currentStatus;
         }
-        if (suspensionEnd.get().isAfter(Instant.now())) {
+        if (suspensionEnd.get()
+            .isAfter(Instant.now())) {
             return currentStatus;
         }
 
-        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
-        suspensionEventDao.markUnsuspended(userId, Instant.now());
+        userDao.updateStatusAndSuspensionEnd(userId,
+            "ACTIVE",
+            null);
+        suspensionEventDao.markUnsuspended(userId,
+            Instant.now());
         return "ACTIVE";
     }
 
     private AuthSession issueSession(AuthUser user) {
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
-        JwtPrincipal principal = new JwtPrincipal(user.id(), user.role(), effectiveStatus);
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
+        JwtPrincipal principal = new JwtPrincipal(user.id(),
+            user.role(),
+            effectiveStatus);
         String accessToken = jwtTokenService.issueAccessToken(principal);
         RefreshToken refreshToken = jwtTokenService.issueRefreshToken(user.id());
 
-        refreshSessionDao.insert(refreshToken.tokenId(), user.id(), refreshToken.expiresAt());
+        refreshSessionDao.insert(refreshToken.tokenId(),
+            user.id(),
+            refreshToken.expiresAt());
 
         Map<String, Object> sessionUser = new LinkedHashMap<>();
-        sessionUser.put("id", user.id());
+        sessionUser.put("id",
+            user.id());
         String decryptedPhone = decryptPhone(user.phone());
         if (decryptedPhone != null) {
-            sessionUser.put("phone", decryptedPhone);
+            sessionUser.put("phone",
+                decryptedPhone);
         }
         if (user.facebookId() != null) {
-            sessionUser.put("facebook_id", user.facebookId());
+            sessionUser.put("facebook_id",
+                user.facebookId());
         }
-        sessionUser.put("role", user.role());
-        sessionUser.put("status", effectiveStatus);
-        sessionUser.put("created_at", user.createdAt().toString());
+        sessionUser.put("role",
+            user.role());
+        sessionUser.put("status",
+            effectiveStatus);
+        sessionUser.put("created_at",
+            user.createdAt()
+                .toString());
 
-        return new AuthSession(accessToken, refreshToken.token(), sessionUser);
+        return new AuthSession(accessToken,
+            refreshToken.token(),
+            sessionUser);
     }
 
     private ModerationPolicy moderationPolicy() {
-        return moderationPolicyDao.findActive().orElse(DEFAULT_MODERATION_POLICY);
+        return moderationPolicyDao.findActive()
+            .orElse(DEFAULT_MODERATION_POLICY);
     }
 
     private String decryptPhone(String encryptedPhone) {
@@ -370,14 +408,21 @@ public class AuthService {
         facebookGraphClient.debugToken(token);
         FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
 
-        AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        AuthUser user = ensureUserByFacebookId(profile.facebookId(),
+            profile);
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
         AuthUser effectiveUser = new AuthUser(
-            user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
+            user.id(),
+            user.phone(),
+            user.facebookId(),
+            user.role(),
+            effectiveStatus,
+            user.createdAt());
         return issueSession(effectiveUser);
     }
 
@@ -391,21 +436,37 @@ public class AuthService {
             return existing.get();
         }
 
-        String id = UUID.randomUUID().toString();
+        String id = UUID.randomUUID()
+            .toString();
         Instant now = Instant.now();
-        userDao.insertWithFacebookId(id, facebookId, "CUSTOMER", "PENDING", now);
+        userDao.insertWithFacebookId(id,
+            facebookId,
+            "CUSTOMER",
+            "PENDING",
+            now);
 
         String fullName = StringUtils.hasText(profile.name())
-            ? profile.name().trim()
-            : UserProfileState.defaultState().fullName();
+            ? profile.name()
+            .trim()
+            : UserProfileState.defaultState()
+            .fullName();
         String avatarUrl =
-            StringUtils.hasText(profile.pictureUrl()) ? profile.pictureUrl().trim() : null;
-        profileDao.ensureExists(id, fullName);
+            StringUtils.hasText(profile.pictureUrl()) ? profile.pictureUrl()
+                .trim() : null;
+        profileDao.ensureExists(id,
+            fullName);
         if (StringUtils.hasText(profile.name()) || avatarUrl != null) {
-            profileDao.updateNameAndAvatar(id, fullName, avatarUrl);
+            profileDao.updateNameAndAvatar(id,
+                fullName,
+                avatarUrl);
         }
 
-        return new AuthUser(id, null, facebookId, "CUSTOMER", "PENDING", now);
+        return new AuthUser(id,
+            null,
+            facebookId,
+            "CUSTOMER",
+            "PENDING",
+            now);
     }
 
     /**
@@ -419,25 +480,38 @@ public class AuthService {
      */
     public AuthSession devLogin(String rawPhone, String role) {
         String phone = normalizePhone(rawPhone);
-        String normalizedRole = role == null ? "CUSTOMER" : role.trim().toUpperCase(Locale.ROOT);
+        String normalizedRole = role == null ? "CUSTOMER" : role.trim()
+            .toUpperCase(Locale.ROOT);
         if (!SUPPORTED_ROLES.contains(normalizedRole)) {
             throw new IllegalArgumentException("Unsupported role: " + normalizedRole);
         }
 
         AuthUser user = ensureUser(phone);
         if (!normalizedRole.equals(user.role())) {
-            userDao.updateRole(user.id(), normalizedRole);
+            userDao.updateRole(user.id(),
+                normalizedRole);
             user = new AuthUser(
-                user.id(), user.phone(), user.facebookId(), normalizedRole, user.status(), user.createdAt());
+                user.id(),
+                user.phone(),
+                user.facebookId(),
+                normalizedRole,
+                user.status(),
+                user.createdAt());
         }
 
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
         AuthUser effectiveUser = new AuthUser(
-            user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
+            user.id(),
+            user.phone(),
+            user.facebookId(),
+            user.role(),
+            effectiveStatus,
+            user.createdAt());
         return issueSession(effectiveUser);
     }
 
@@ -460,7 +534,9 @@ public class AuthService {
         }
 
         RefreshSession session = sessionOpt.get();
-        if (!session.userId().equals(parsed.userId()) || session.expiresAt().isBefore(Instant.now())) {
+        if (!session.userId()
+            .equals(parsed.userId()) || session.expiresAt()
+            .isBefore(Instant.now())) {
             return Optional.empty();
         }
 
@@ -469,15 +545,22 @@ public class AuthService {
             return Optional.empty();
         }
         AuthUser user = userOpt.get();
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             return Optional.empty();
         }
 
         AuthUser effectiveUser = new AuthUser(
-            user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
+            user.id(),
+            user.phone(),
+            user.facebookId(),
+            user.role(),
+            effectiveStatus,
+            user.createdAt());
         AuthSession rotated = issueSession(effectiveUser);
-        return Optional.of(new AuthTokens(rotated.accessToken(), rotated.refreshToken()));
+        return Optional.of(new AuthTokens(rotated.accessToken(),
+            rotated.refreshToken()));
     }
 
     /**
@@ -494,12 +577,17 @@ public class AuthService {
         }
 
         AuthUser user = userOpt.get();
-        UserProfileState current = profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState());
+        UserProfileState current = profileDao.findByUserId(user.id())
+            .orElse(UserProfileState.defaultState());
 
-        String fullName = update.fullName() != null ? update.fullName().trim() : current.fullName();
-        String avatarUrl = update.avatarUrl() != null ? update.avatarUrl().trim() : current.avatarUrl();
+        String fullName = update.fullName() != null ? update.fullName()
+            .trim() : current.fullName();
+        String avatarUrl = update.avatarUrl() != null ? update.avatarUrl()
+            .trim() : current.avatarUrl();
 
-        profileDao.updateNameAndAvatar(user.id(), fullName, avatarUrl);
+        profileDao.updateNameAndAvatar(user.id(),
+            fullName,
+            avatarUrl);
 
         return getProfile(user.id());
     }
@@ -517,11 +605,19 @@ public class AuthService {
         }
 
         AuthUser user = userOpt.get();
-        UserProfileState profile = profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState());
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        UserProfileState profile = profileDao.findByUserId(user.id())
+            .orElse(UserProfileState.defaultState());
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         AuthUser effectiveUser = new AuthUser(
-            user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
-        return Optional.of(toProfile(effectiveUser, profile));
+            user.id(),
+            user.phone(),
+            user.facebookId(),
+            user.role(),
+            effectiveStatus,
+            user.createdAt());
+        return Optional.of(toProfile(effectiveUser,
+            profile));
     }
 
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {
@@ -536,7 +632,8 @@ public class AuthService {
             profile.ratingAvg(),
             profile.completedTasks(),
             isPro,
-            user.createdAt().toString());
+            user.createdAt()
+                .toString());
     }
 
     /**
@@ -556,12 +653,20 @@ public class AuthService {
             return Optional.empty();
         }
 
-        userDao.updateRole(user.id(), "TASKER");
+        userDao.updateRole(user.id(),
+            "TASKER");
         AuthUser updated =
-            new AuthUser(user.id(), user.phone(), user.facebookId(), "TASKER", user.status(), user.createdAt());
+            new AuthUser(user.id(),
+                user.phone(),
+                user.facebookId(),
+                "TASKER",
+                user.status(),
+                user.createdAt());
 
         AuthSession session = issueSession(updated);
-        return Optional.of(new RoleActivationResult(session.accessToken(), session.refreshToken(), session.user()));
+        return Optional.of(new RoleActivationResult(session.accessToken(),
+            session.refreshToken(),
+            session.user()));
     }
 
     /**
@@ -591,20 +696,26 @@ public class AuthService {
             verificationMaxBytes,
             verificationUploadUrlTtlSeconds);
 
-        return Optional.of(new PresignedUpload(uploadUrl, storageKey));
+        return Optional.of(new PresignedUpload(uploadUrl,
+            storageKey));
     }
 
     private String buildPresignedUploadUrl(
         String baseUrl, String storageKey, String contentType, long maxBytes, long ttlSeconds) {
-        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-        long expiresAt = Instant.now().plusSeconds(ttlSeconds).getEpochSecond();
+        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0,
+            baseUrl.length() - 1) : baseUrl;
+        long expiresAt = Instant.now()
+            .plusSeconds(ttlSeconds)
+            .getEpochSecond();
         String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
         String signature = computeUploadSignature(payload);
 
         return normalizedBase + "/presigned-upload?key="
-            + URLEncoder.encode(storageKey, StandardCharsets.UTF_8)
+            + URLEncoder.encode(storageKey,
+            StandardCharsets.UTF_8)
             + "&content_type="
-            + URLEncoder.encode(contentType, StandardCharsets.UTF_8)
+            + URLEncoder.encode(contentType,
+            StandardCharsets.UTF_8)
             + "&max_bytes="
             + maxBytes
             + "&expires_in="
@@ -618,15 +729,19 @@ public class AuthService {
     private String computeUploadSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes, HMAC_ALGORITHM));
+            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes,
+                HMAC_ALGORITHM));
             byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(digest.length * 2);
             for (byte b : digest) {
-                builder.append(String.format(Locale.ROOT, "%02x", b));
+                builder.append(String.format(Locale.ROOT,
+                    "%02x",
+                    b));
             }
             return builder.toString();
         } catch (Exception exception) {
-            throw new IllegalStateException("Failed to sign upload URL payload", exception);
+            throw new IllegalStateException("Failed to sign upload URL payload",
+                exception);
         }
     }
 
@@ -641,12 +756,14 @@ public class AuthService {
     public VerificationSubmitResult submitVerification(String userId, String frontKey, String backKey) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
-            return new VerificationSubmitResult(VerificationSubmitResult.USER_NOT_FOUND, null);
+            return new VerificationSubmitResult(VerificationSubmitResult.USER_NOT_FOUND,
+                null);
         }
         AuthUser user = userOpt.get();
 
         if (!"TASKER".equals(user.role())) {
-            return new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER, null);
+            return new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER,
+                null);
         }
 
         Optional<VerificationRequest> existingOpt = verificationDao.findLatestByUserId(userId);
@@ -654,23 +771,42 @@ public class AuthService {
             .map(existing -> "PENDING".equals(existing.status()) || "APPROVED".equals(existing.status()))
             .orElse(false);
         if (hasPendingOrApproved) {
-            return new VerificationSubmitResult(VerificationSubmitResult.CONFLICT, null);
+            return new VerificationSubmitResult(VerificationSubmitResult.CONFLICT,
+                null);
         }
 
-        String id = UUID.randomUUID().toString();
+        String id = UUID.randomUUID()
+            .toString();
         Instant now = Instant.now();
-        verificationDao.insert(id, userId, frontKey, backKey, "PENDING", now, null, null);
+        verificationDao.insert(id,
+            userId,
+            frontKey,
+            backKey,
+            "PENDING",
+            now,
+            null,
+            null);
         VerificationRequest request =
-            new VerificationRequest(id, userId, frontKey, backKey, "PENDING", now, null, null);
-        return new VerificationSubmitResult(VerificationSubmitResult.SUCCESS, toVerificationStatus(request));
+            new VerificationRequest(id,
+                userId,
+                frontKey,
+                backKey,
+                "PENDING",
+                now,
+                null,
+                null);
+        return new VerificationSubmitResult(VerificationSubmitResult.SUCCESS,
+            toVerificationStatus(request));
     }
 
     private VerificationStatusResponse toVerificationStatus(VerificationRequest request) {
         return new VerificationStatusResponse(
             request.status(),
             request.adminNotes(),
-            request.submittedAt() != null ? request.submittedAt().toString() : null,
-            request.reviewedAt() != null ? request.reviewedAt().toString() : null);
+            request.submittedAt() != null ? request.submittedAt()
+                .toString() : null,
+            request.reviewedAt() != null ? request.reviewedAt()
+                .toString() : null);
     }
 
     /**
@@ -683,7 +819,10 @@ public class AuthService {
         return verificationDao
             .findLatestByUserId(userId)
             .map(this::toVerificationStatus)
-            .orElseGet(() -> new VerificationStatusResponse("NOT_SUBMITTED", null, null, null));
+            .orElseGet(() -> new VerificationStatusResponse("NOT_SUBMITTED",
+                null,
+                null,
+                null));
     }
 
     /**
@@ -693,7 +832,8 @@ public class AuthService {
      * @return Pending verification details.
      */
     public List<VerificationDetail> listPendingVerifications(int limit) {
-        return listPendingVerifications(null, limit);
+        return listPendingVerifications(null,
+            limit);
     }
 
     /**
@@ -704,18 +844,25 @@ public class AuthService {
      * @return Pending verification details.
      */
     public List<VerificationDetail> listPendingVerifications(String cursor, int limit) {
-        List<VerificationRequest> pending = verificationDao.findPending(cursor, limit);
-        return pending.stream().map(this::toVerificationDetail).toList();
+        List<VerificationRequest> pending = verificationDao.findPending(cursor,
+            limit);
+        return pending.stream()
+            .map(this::toVerificationDetail)
+            .toList();
     }
 
     private VerificationDetail toVerificationDetail(VerificationRequest request) {
         Optional<AuthUser> userOpt = userDao.findById(request.userId());
-        UserProfileState profile = profileDao.findByUserId(request.userId()).orElse(null);
-        String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
+        UserProfileState profile = profileDao.findByUserId(request.userId())
+            .orElse(null);
+        String phone = userOpt.map(u -> decryptPhone(u.phone()))
+            .orElse(null);
         String name = profile != null ? profile.fullName() : null;
 
-        String frontUrl = buildPresignedGetUrl(verificationUploadBaseUrl, request.idCardFrontKey());
-        String backUrl = buildPresignedGetUrl(verificationUploadBaseUrl, request.idCardBackKey());
+        String frontUrl = buildPresignedGetUrl(verificationUploadBaseUrl,
+            request.idCardFrontKey());
+        String backUrl = buildPresignedGetUrl(verificationUploadBaseUrl,
+            request.idCardBackKey());
 
         return new VerificationDetail(
             request.id(),
@@ -726,14 +873,18 @@ public class AuthService {
             backUrl,
             request.status(),
             request.adminNotes(),
-            request.submittedAt().toString(),
-            request.reviewedAt() != null ? request.reviewedAt().toString() : null);
+            request.submittedAt()
+                .toString(),
+            request.reviewedAt() != null ? request.reviewedAt()
+                .toString() : null);
     }
 
     private String buildPresignedGetUrl(String baseUrl, String storageKey) {
-        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0,
+            baseUrl.length() - 1) : baseUrl;
 
-        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey, StandardCharsets.UTF_8);
+        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey,
+            StandardCharsets.UTF_8);
     }
 
     /**
@@ -743,7 +894,8 @@ public class AuthService {
      * @return {@code true} when present.
      */
     public boolean verificationExists(String verificationId) {
-        return verificationDao.findById(verificationId).isPresent();
+        return verificationDao.findById(verificationId)
+            .isPresent();
     }
 
     /**
@@ -753,7 +905,10 @@ public class AuthService {
      * @return Resolved verification detail when transition succeeds.
      */
     public Optional<VerificationDetail> approveVerification(String verificationId) {
-        return resolveVerification(verificationId, "APPROVED", null, true);
+        return resolveVerification(verificationId,
+            "APPROVED",
+            null,
+            true);
     }
 
     private Optional<VerificationDetail> resolveVerification(
@@ -770,9 +925,13 @@ public class AuthService {
 
         String adminNotes = notes != null ? notes : request.adminNotes();
         Instant now = Instant.now();
-        verificationDao.updateStatus(verificationId, status, adminNotes, now);
+        verificationDao.updateStatus(verificationId,
+            status,
+            adminNotes,
+            now);
         if (markUserVerified) {
-            userDao.updateStatus(request.userId(), "VERIFIED");
+            userDao.updateStatus(request.userId(),
+                "VERIFIED");
         }
 
         VerificationRequest resolved = new VerificationRequest(
@@ -795,7 +954,10 @@ public class AuthService {
      * @return Resolved verification detail when transition succeeds.
      */
     public Optional<VerificationDetail> rejectVerification(String verificationId, String reason) {
-        return resolveVerification(verificationId, "REJECTED", reason, false);
+        return resolveVerification(verificationId,
+            "REJECTED",
+            reason,
+            false);
     }
 
     /**
@@ -806,7 +968,8 @@ public class AuthService {
      * @param incrementCompleted Whether to increment completed task count.
      */
     public void updateUserStats(String userId, int rating, boolean incrementCompleted) {
-        UserProfileState current = profileDao.findByUserId(userId).orElse(UserProfileState.defaultState());
+        UserProfileState current = profileDao.findByUserId(userId)
+            .orElse(UserProfileState.defaultState());
 
         int newCompleted = current.completedTasks() + (incrementCompleted ? 1 : 0);
         double newRating = current.ratingAvg();
@@ -826,7 +989,9 @@ public class AuthService {
             }
         }
 
-        profileDao.updateStats(userId, newRating, newCompleted);
+        profileDao.updateStats(userId,
+            newRating,
+            newCompleted);
     }
 
     /**
@@ -845,11 +1010,17 @@ public class AuthService {
      */
     public void addStrike(String userId) {
         Instant now = Instant.now();
-        strikeDao.insert(UUID.randomUUID().toString(), userId, null, now);
+        strikeDao.insert(UUID.randomUUID()
+                .toString(),
+            userId,
+            null,
+            now);
 
         ModerationPolicy policy = moderationPolicy();
-        Instant windowStart = now.minus(policy.strikeWindowDays(), ChronoUnit.DAYS);
-        long recentStrikes = strikeDao.countSince(userId, windowStart);
+        Instant windowStart = now.minus(policy.strikeWindowDays(),
+            ChronoUnit.DAYS);
+        long recentStrikes = strikeDao.countSince(userId,
+            windowStart);
 
         if (recentStrikes < policy.strikeThreshold()) {
             return;
@@ -860,19 +1031,31 @@ public class AuthService {
             return;
         }
         AuthUser user = userOpt.get();
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
+        String effectiveStatus = resolveUserStatus(user.id(),
+            user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             return;
         }
 
-        Instant repeatLookback = now.minus(policy.repeatOffenseWindowDays(), ChronoUnit.DAYS);
-        long priorSuspensions = suspensionEventDao.countSince(userId, repeatLookback);
+        Instant repeatLookback = now.minus(policy.repeatOffenseWindowDays(),
+            ChronoUnit.DAYS);
+        long priorSuspensions = suspensionEventDao.countSince(userId,
+            repeatLookback);
         int suspensionDays = priorSuspensions > 0 ? policy.repeatSuspensionDays() : policy.firstSuspensionDays();
-        Instant suspensionEndAt = now.plus(suspensionDays, ChronoUnit.DAYS);
+        Instant suspensionEndAt = now.plus(suspensionDays,
+            ChronoUnit.DAYS);
 
-        userDao.updateStatusAndSuspensionEnd(userId, "SUSPENDED", suspensionEndAt);
+        userDao.updateStatusAndSuspensionEnd(userId,
+            "SUSPENDED",
+            suspensionEndAt);
         suspensionEventDao.insert(
-            UUID.randomUUID().toString(), userId, Math.toIntExact(recentStrikes), suspensionDays, now, null);
+            UUID.randomUUID()
+                .toString(),
+            userId,
+            Math.toIntExact(recentStrikes),
+            suspensionDays,
+            now,
+            null);
     }
 
     /**
@@ -889,15 +1072,20 @@ public class AuthService {
         List<UserProfile> candidates = searchUsersByPhoneExact(phonePart).stream()
             .sorted(Comparator.comparing(profile -> UUID.fromString(profile.id())))
             .filter(profile ->
-                cursorId == null || UUID.fromString(profile.id()).compareTo(cursorId) > 0)
+                cursorId == null || UUID.fromString(profile.id())
+                    .compareTo(cursorId) > 0)
             .limit(limit + 1L)
             .toList();
 
         boolean hasMore = candidates.size() > limit;
-        List<UserProfile> pageData = hasMore ? candidates.subList(0, limit) : candidates;
-        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
+        List<UserProfile> pageData = hasMore ? candidates.subList(0,
+            limit) : candidates;
+        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast()
+            .id() : null;
 
-        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
+        return new UserProfilePage(List.copyOf(pageData),
+            nextCursor,
+            hasMore);
     }
 
     private UUID parseUserSearchCursor(String cursor) {
@@ -907,7 +1095,8 @@ public class AuthService {
         try {
             return UUID.fromString(cursor.trim());
         } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Cursor is invalid.", exception);
+            throw new IllegalArgumentException("Cursor is invalid.",
+                exception);
         }
     }
 
@@ -920,11 +1109,19 @@ public class AuthService {
         return userDao
             .findByPhoneBlindIndex(blindIndex)
             .map(user -> {
-                String effectiveStatus = resolveUserStatus(user.id(), user.status());
+                String effectiveStatus = resolveUserStatus(user.id(),
+                    user.status());
                 AuthUser effectiveUser = new AuthUser(
-                    user.id(), user.phone(), user.facebookId(), user.role(), effectiveStatus, user.createdAt());
+                    user.id(),
+                    user.phone(),
+                    user.facebookId(),
+                    user.role(),
+                    effectiveStatus,
+                    user.createdAt());
                 return toProfile(
-                    effectiveUser, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
+                    effectiveUser,
+                    profileDao.findByUserId(user.id())
+                        .orElse(UserProfileState.defaultState()));
             })
             .stream()
             .toList();
@@ -944,8 +1141,16 @@ public class AuthService {
             return false;
         }
 
-        userDao.updateStatusAndSuspensionEnd(userId, "BANNED", null);
-        auditLogDao.insert(UUID.randomUUID().toString(), adminId, "BAN_USER", userId, reason, Instant.now());
+        userDao.updateStatusAndSuspensionEnd(userId,
+            "BANNED",
+            null);
+        auditLogDao.insert(UUID.randomUUID()
+                .toString(),
+            adminId,
+            "BAN_USER",
+            userId,
+            reason,
+            Instant.now());
         return true;
     }
 
@@ -963,8 +1168,16 @@ public class AuthService {
             return false;
         }
 
-        userDao.updateStatusAndSuspensionEnd(userId, "ACTIVE", null);
-        auditLogDao.insert(UUID.randomUUID().toString(), adminId, "UNBAN_USER", userId, reason, Instant.now());
+        userDao.updateStatusAndSuspensionEnd(userId,
+            "ACTIVE",
+            null);
+        auditLogDao.insert(UUID.randomUUID()
+                .toString(),
+            adminId,
+            "UNBAN_USER",
+            userId,
+            reason,
+            Instant.now());
         return true;
     }
 
@@ -980,7 +1193,9 @@ public class AuthService {
         } catch (IllegalArgumentException ignored) {
             return Optional.empty();
         }
-        return userDao.findById(userId).map(user -> resolveUserStatus(user.id(), user.status()));
+        return userDao.findById(userId)
+            .map(user -> resolveUserStatus(user.id(),
+                user.status()));
     }
 
     /**
@@ -1013,7 +1228,11 @@ public class AuthService {
         int repeatOffenseWindowDays,
         boolean autoUnsuspendEnabled) {
         validatePolicy(
-            strikeWindowDays, strikeThreshold, firstSuspensionDays, repeatSuspensionDays, repeatOffenseWindowDays);
+            strikeWindowDays,
+            strikeThreshold,
+            firstSuspensionDays,
+            repeatSuspensionDays,
+            repeatOffenseWindowDays);
         Instant now = Instant.now();
         int updated = moderationPolicyDao.update(
             strikeWindowDays,
@@ -1081,13 +1300,19 @@ public class AuthService {
         }
 
         String storageKey = "uploads/avatars/" + userId + "/" + UUID.randomUUID() + "." + extension;
-        String uploadUrl = buildUploadUrl(storageKey, normalizedContentType);
+        String uploadUrl = buildUploadUrl(storageKey,
+            normalizedContentType);
 
-        return Optional.of(new PresignedUpload(uploadUrl, storageKey));
+        return Optional.of(new PresignedUpload(uploadUrl,
+            storageKey));
     }
 
     private String buildUploadUrl(String storageKey, String contentType) {
         return buildPresignedUploadUrl(
-            avatarUploadBaseUrl, storageKey, contentType, avatarMaxBytes, avatarUploadUrlTtlSeconds);
+            avatarUploadBaseUrl,
+            storageKey,
+            contentType,
+            avatarMaxBytes,
+            avatarUploadUrlTtlSeconds);
     }
 }

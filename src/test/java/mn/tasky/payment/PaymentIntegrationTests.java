@@ -12,12 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -56,29 +51,45 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     void initiateQpay() {
         AuthContext customer = authenticate("132");
         AuthContext tasker = authenticate("232");
-        TaskState task = createTaskForCustomer(customer, "payment-initiate");
-        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
+        TaskState task = createTaskForCustomer(customer,
+            "payment-initiate");
+        BookingState booking = bookingService.createBooking(task.id(),
+            tasker.userId(),
+            customer.userId(),
+            50000);
 
         ResponseEntity<Map> response = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
             customer.accessToken(),
-            Map.of("liability_disclaimer_accepted", true));
+            Map.of("liability_disclaimer_accepted",
+                true));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get("payment_url").toString()).contains("qpay.mn");
+        assertThat(response.getBody()
+            .get("payment_url")
+            .toString()).contains("qpay.mn");
     }
 
     private AuthContext authenticate(String prefix) {
         String phone = "+976" + prefix + "000000";
-        post("/api/v1/auth/otp/request", Map.of("phone", phone));
+        post("/api/v1/auth/otp/request",
+            Map.of("phone",
+                phone));
 
-        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify", Map.of("phone", phone, "code", "123456"));
+        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify",
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"));
 
         @SuppressWarnings("unchecked")
         Map<String, Object> user =
-            (Map<String, Object>) verifyResponse.getBody().get("user");
+            (Map<String, Object>) verifyResponse.getBody()
+                .get("user");
         return new AuthContext(
-            String.valueOf(verifyResponse.getBody().get("access_token")), String.valueOf(user.get("id")));
+            String.valueOf(verifyResponse.getBody()
+                .get("access_token")),
+            String.valueOf(user.get("id")));
     }
 
     private TaskState createTaskForCustomer(AuthContext customer, String descriptionSeed) {
@@ -93,7 +104,10 @@ class PaymentIntegrationTests extends IntegrationTestBase {
                     47.0,
                     106.0,
                     "text",
-                    Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                    Instant.now()
+                        .plus(1,
+                            ChronoUnit.DAYS)
+                        .toString(),
                     List.of()))
             .task();
     }
@@ -105,22 +119,36 @@ class PaymentIntegrationTests extends IntegrationTestBase {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(bearerToken);
         if (requiresIdempotencyHeader(path)) {
-            headers.set("Idempotency-Key", UUID.randomUUID().toString());
+            headers.set("Idempotency-Key",
+                UUID.randomUUID()
+                    .toString());
         }
-        return restTemplate.exchange(url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
+        return restTemplate.exchange(url(path),
+            HttpMethod.POST,
+            new HttpEntity<>(body,
+                headers),
+            Map.class);
     }
 
     private ResponseEntity<Map> post(String path, Map<String, Object> body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return restTemplate.exchange(url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
+        return restTemplate.exchange(url(path),
+            HttpMethod.POST,
+            new HttpEntity<>(body,
+                headers),
+            Map.class);
     }
 
     private String getFirstCategoryId(String token) {
-        ResponseEntity<Map> response = getWithAuth("/api/v1/categories", token);
+        ResponseEntity<Map> response = getWithAuth("/api/v1/categories",
+            token);
         List<Map<String, Object>> data =
-            (List<Map<String, Object>>) response.getBody().get("data");
-        return data.get(0).get("id").toString();
+            (List<Map<String, Object>>) response.getBody()
+                .get("data");
+        return data.get(0)
+            .get("id")
+            .toString();
     }
 
     private boolean requiresIdempotencyHeader(String path) {
@@ -135,7 +163,10 @@ class PaymentIntegrationTests extends IntegrationTestBase {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
         headers.setBearerAuth(bearerToken);
-        return restTemplate.exchange(url(path), HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+        return restTemplate.exchange(url(path),
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            Map.class);
     }
 
     @Test
@@ -143,17 +174,25 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     void qpayCallbackLifecycle() {
         AuthContext customer = authenticate("133");
         AuthContext tasker = authenticate("233");
-        TaskState task = createTaskForCustomer(customer, "payment-callback");
-        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
+        TaskState task = createTaskForCustomer(customer,
+            "payment-callback");
+        BookingState booking = bookingService.createBooking(task.id(),
+            tasker.userId(),
+            customer.userId(),
+            50000);
 
         // Initiate to get paymentId (hidden in implementation but we can simulate)
         ResponseEntity<Map> initResponse = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
             customer.accessToken(),
-            Map.of("liability_disclaimer_accepted", true));
-        String paymentUrl = initResponse.getBody().get("payment_url").toString();
+            Map.of("liability_disclaimer_accepted",
+                true));
+        String paymentUrl = initResponse.getBody()
+            .get("payment_url")
+            .toString();
         String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
-        long timestamp = Instant.now().getEpochSecond();
+        long timestamp = Instant.now()
+            .getEpochSecond();
 
         // Callback
         Map<String, Object> callbackBody = Map.of(
@@ -164,20 +203,26 @@ class PaymentIntegrationTests extends IntegrationTestBase {
             "timestamp",
             timestamp,
             "signature",
-            signatureFor(paymentId, "PAID", timestamp));
-        ResponseEntity<Map> callbackResponse = post("/api/v1/payments/qpay/callback", callbackBody);
+            signatureFor(paymentId,
+                "PAID",
+                timestamp));
+        ResponseEntity<Map> callbackResponse = post("/api/v1/payments/qpay/callback",
+            callbackBody);
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Verify statuses
         Optional<BookingState> bookingOpt = bookingService.getBooking(booking.id());
         assertThat(bookingOpt).isPresent();
-        assertThat(bookingOpt.orElseThrow().status()).isEqualTo("PAID");
+        assertThat(bookingOpt.orElseThrow()
+            .status()).isEqualTo("PAID");
         Optional<TaskState> taskOpt = taskService.getTask(task.id());
         assertThat(taskOpt).isPresent();
-        assertThat(taskOpt.orElseThrow().status()).isEqualTo("ASSIGNED");
+        assertThat(taskOpt.orElseThrow()
+            .status()).isEqualTo("ASSIGNED");
 
         // Duplicate callback (Idempotency)
-        ResponseEntity<Map> secondCallback = post("/api/v1/payments/qpay/callback", callbackBody);
+        ResponseEntity<Map> secondCallback = post("/api/v1/payments/qpay/callback",
+            callbackBody);
         assertThat(secondCallback.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -186,13 +231,20 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     void qpayCallbackRejectsInvalidSignature() {
         AuthContext customer = authenticate("134");
         AuthContext tasker = authenticate("234");
-        TaskState task = createTaskForCustomer(customer, "payment-invalid-signature");
-        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
+        TaskState task = createTaskForCustomer(customer,
+            "payment-invalid-signature");
+        BookingState booking = bookingService.createBooking(task.id(),
+            tasker.userId(),
+            customer.userId(),
+            50000);
         ResponseEntity<Map> initResponse = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
             customer.accessToken(),
-            Map.of("liability_disclaimer_accepted", true));
-        String paymentUrl = initResponse.getBody().get("payment_url").toString();
+            Map.of("liability_disclaimer_accepted",
+                true));
+        String paymentUrl = initResponse.getBody()
+            .get("payment_url")
+            .toString();
         String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
 
         ResponseEntity<Map> callbackResponse = post(
@@ -203,7 +255,8 @@ class PaymentIntegrationTests extends IntegrationTestBase {
                 "status",
                 "PAID",
                 "timestamp",
-                Instant.now().getEpochSecond(),
+                Instant.now()
+                    .getEpochSecond(),
                 "signature",
                 "invalid"));
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -214,15 +267,25 @@ class PaymentIntegrationTests extends IntegrationTestBase {
     void qpayCallbackRejectsStaleTimestamp() {
         AuthContext customer = authenticate("135");
         AuthContext tasker = authenticate("235");
-        TaskState task = createTaskForCustomer(customer, "payment-stale-callback");
-        BookingState booking = bookingService.createBooking(task.id(), tasker.userId(), customer.userId(), 50000);
+        TaskState task = createTaskForCustomer(customer,
+            "payment-stale-callback");
+        BookingState booking = bookingService.createBooking(task.id(),
+            tasker.userId(),
+            customer.userId(),
+            50000);
         ResponseEntity<Map> initResponse = postWithAuth(
             "/api/v1/payments/bookings/" + booking.id() + "/initiate",
             customer.accessToken(),
-            Map.of("liability_disclaimer_accepted", true));
-        String paymentUrl = initResponse.getBody().get("payment_url").toString();
+            Map.of("liability_disclaimer_accepted",
+                true));
+        String paymentUrl = initResponse.getBody()
+            .get("payment_url")
+            .toString();
         String paymentId = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
-        long staleTimestamp = Instant.now().minus(10, ChronoUnit.MINUTES).getEpochSecond();
+        long staleTimestamp = Instant.now()
+            .minus(10,
+                ChronoUnit.MINUTES)
+            .getEpochSecond();
 
         ResponseEntity<Map> callbackResponse = post(
             "/api/v1/payments/qpay/callback",
@@ -234,7 +297,9 @@ class PaymentIntegrationTests extends IntegrationTestBase {
                 "timestamp",
                 staleTimestamp,
                 "signature",
-                signatureFor(paymentId, "PAID", staleTimestamp)));
+                signatureFor(paymentId,
+                    "PAID",
+                    staleTimestamp)));
 
         assertThat(callbackResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -243,11 +308,13 @@ class PaymentIntegrationTests extends IntegrationTestBase {
         String payload = paymentId + "|" + status + "|" + timestamp;
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            mac.init(new SecretKeySpec(qpayWebhookSecret.getBytes(StandardCharsets.UTF_8),
+                "HmacSHA256"));
             byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(signature.length * 2);
             for (byte b : signature) {
-                builder.append(String.format("%02x", b));
+                builder.append(String.format("%02x",
+                    b));
             }
             return builder.toString();
         } catch (Exception e) {

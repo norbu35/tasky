@@ -1,17 +1,18 @@
 package mn.tasky.task.dao;
 
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import mn.tasky.task.dto.TaskState;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
 
 @RegisterConstructorMapper(value = TaskState.class)
 public interface TaskDao {
@@ -30,9 +31,12 @@ public interface TaskDao {
         Instant createdAt,
         Instant updatedAt) {
         insert(
-            required(id, "id"),
-            required(customerId, "customerId"),
-            required(categoryId, "categoryId"),
+            required(id,
+                "id"),
+            required(customerId,
+                "customerId"),
+            required(categoryId,
+                "categoryId"),
             description,
             budget,
             locationLat,
@@ -65,7 +69,8 @@ public interface TaskDao {
         @Bind("updatedAt") Instant updatedAt);
 
     default Optional<TaskState> findById(String id) {
-        return findById(required(id, "id"));
+        return findById(required(id,
+            "id"));
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
@@ -75,7 +80,10 @@ public interface TaskDao {
     Optional<TaskState> findById(@Bind("id") UUID id);
 
     default void updateStatus(String id, String status, Instant updatedAt) {
-        updateStatus(required(id, "id"), status, updatedAt);
+        updateStatus(required(id,
+                "id"),
+            status,
+            updatedAt);
     }
 
     @SqlUpdate("UPDATE tasks SET status = :status, updated_at = :updatedAt WHERE id = :id")
@@ -91,7 +99,8 @@ public interface TaskDao {
         Instant scheduledAt,
         Instant updatedAt) {
         updateDetails(
-            required(id, "id"),
+            required(id,
+                "id"),
             description,
             budget,
             locationLat,
@@ -116,16 +125,25 @@ public interface TaskDao {
         @Bind("updatedAt") Instant updatedAt);
 
     default List<TaskState> findOpen(String categoryId, Instant cursorCreatedAt, UUID cursorId, int limit) {
-        return findOpen(optional(categoryId), cursorCreatedAt, cursorId, limit);
+        return findOpen(optional(categoryId),
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     default List<TaskState> findOpen(UUID categoryId, Instant cursorCreatedAt, UUID cursorId, int limit) {
         if (categoryId == null) {
-            return cursorCreatedAt == null ? findOpenAll(limit) : findOpenAllAfter(cursorCreatedAt, cursorId, limit);
+            return cursorCreatedAt == null ? findOpenAll(limit) : findOpenAllAfter(cursorCreatedAt,
+                cursorId,
+                limit);
         }
         return cursorCreatedAt == null
-            ? findOpenByCategory(categoryId, limit)
-            : findOpenByCategoryAfter(categoryId, cursorCreatedAt, cursorId, limit);
+            ? findOpenByCategory(categoryId,
+            limit)
+            : findOpenByCategoryAfter(categoryId,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
@@ -181,19 +199,43 @@ public interface TaskDao {
         Instant cursorCreatedAt,
         UUID cursorId,
         int limit) {
-        return findOpenWithinRadius(optional(categoryId), lat, lng, meters, cursorCreatedAt, cursorId, limit);
+        return findOpenWithinRadius(optional(categoryId),
+            lat,
+            lng,
+            meters,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     default List<TaskState> findOpenWithinRadius(
         UUID categoryId, double lat, double lng, double meters, Instant cursorCreatedAt, UUID cursorId, int limit) {
         if (categoryId == null) {
             return cursorCreatedAt == null
-                ? findOpenWithinRadiusAll(lat, lng, meters, limit)
-                : findOpenWithinRadiusAllAfter(lat, lng, meters, cursorCreatedAt, cursorId, limit);
+                ? findOpenWithinRadiusAll(lat,
+                lng,
+                meters,
+                limit)
+                : findOpenWithinRadiusAllAfter(lat,
+                lng,
+                meters,
+                cursorCreatedAt,
+                cursorId,
+                limit);
         }
         return cursorCreatedAt == null
-            ? findOpenWithinRadiusByCategory(categoryId, lat, lng, meters, limit)
-            : findOpenWithinRadiusByCategoryAfter(categoryId, lat, lng, meters, cursorCreatedAt, cursorId, limit);
+            ? findOpenWithinRadiusByCategory(categoryId,
+            lat,
+            lng,
+            meters,
+            limit)
+            : findOpenWithinRadiusByCategoryAfter(categoryId,
+            lat,
+            lng,
+            meters,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
@@ -261,15 +303,26 @@ public interface TaskDao {
 
     default List<TaskState> findByCustomer(
         String customerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
-        return findByCustomer(required(customerId, "customerId"), status, cursorCreatedAt, cursorId, limit);
+        return findByCustomer(required(customerId,
+                "customerId"),
+            status,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     default List<TaskState> findByCustomer(
         UUID customerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
         if (cursorCreatedAt == null || cursorId == null) {
-            return findByCustomerFirstPage(customerId, status, limit);
+            return findByCustomerFirstPage(customerId,
+                status,
+                limit);
         }
-        return findByCustomerAfterCursor(customerId, status, cursorCreatedAt, cursorId, limit);
+        return findByCustomerAfterCursor(customerId,
+            status,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
@@ -300,15 +353,26 @@ public interface TaskDao {
 
     default List<TaskState> findByTasker(
         String taskerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
-        return findByTasker(required(taskerId, "taskerId"), status, cursorCreatedAt, cursorId, limit);
+        return findByTasker(required(taskerId,
+                "taskerId"),
+            status,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     default List<TaskState> findByTasker(
         UUID taskerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
         if (cursorCreatedAt == null || cursorId == null) {
-            return findByTaskerFirstPage(taskerId, status, limit);
+            return findByTaskerFirstPage(taskerId,
+                status,
+                limit);
         }
-        return findByTaskerAfterCursor(taskerId, status, cursorCreatedAt, cursorId, limit);
+        return findByTaskerAfterCursor(taskerId,
+            status,
+            cursorCreatedAt,
+            cursorId,
+            limit);
     }
 
     @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "

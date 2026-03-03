@@ -35,9 +35,11 @@ public class OtpController {
 
     @PostMapping("/request")
     public Map<String, String> requestOtp(@Valid @RequestBody OtpRequest body, HttpServletRequest request) {
-        otpRateLimitService.assertRequestAllowed(body.phone(), resolveClientIp(request));
+        otpRateLimitService.assertRequestAllowed(body.phone(),
+            resolveClientIp(request));
         String maskedPhone = authService.requestOtp(body.phone());
-        return Map.of("message", "OTP sent to " + maskedPhone);
+        return Map.of("message",
+            "OTP sent to " + maskedPhone);
     }
 
     private String resolveClientIp(HttpServletRequest request) {
@@ -51,10 +53,12 @@ public class OtpController {
     @PostMapping("/verify")
     public ResponseEntity<Map<String, Object>> verifyOtp(
         @Valid @RequestBody OtpVerifyRequest body, HttpServletRequest request) {
-        otpRateLimitService.assertVerifyAllowed(body.phone(), resolveClientIp(request));
+        otpRateLimitService.assertVerifyAllowed(body.phone(),
+            resolveClientIp(request));
 
         return authService
-            .verifyOtp(body.phone(), body.code())
+            .verifyOtp(body.phone(),
+                body.code())
             .map(session -> ResponseEntity.ok(Map.of(
                 "access_token",
                 session.accessToken(),

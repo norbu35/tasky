@@ -68,12 +68,15 @@ class ApiContractTraceabilityTests {
             "/admin/categories");
 
         for (String endpoint : listEndpoints) {
-            String block = endpointBlock(api, endpoint);
+            String block = endpointBlock(api,
+                endpoint);
             assertThat(block)
-                .as("endpoint %s must include cursor parameter", endpoint)
+                .as("endpoint %s must include cursor parameter",
+                    endpoint)
                 .contains("#/components/parameters/CursorParam");
             assertThat(block)
-                .as("endpoint %s must include limit parameter", endpoint)
+                .as("endpoint %s must include limit parameter",
+                    endpoint)
                 .contains("#/components/parameters/LimitParam");
         }
     }
@@ -81,12 +84,16 @@ class ApiContractTraceabilityTests {
     private String endpointBlock(String api, String endpoint) {
         String marker = "  " + endpoint + ":";
         int start = api.indexOf(marker);
-        assertThat(start).as("endpoint marker should exist: %s", endpoint).isGreaterThanOrEqualTo(0);
+        assertThat(start).as("endpoint marker should exist: %s",
+                endpoint)
+            .isGreaterThanOrEqualTo(0);
 
-        int next = api.indexOf("\n  /", start + marker.length());
+        int next = api.indexOf("\n  /",
+            start + marker.length());
         if (next < 0) {
             return api.substring(start);
         }
-        return api.substring(start, next);
+        return api.substring(start,
+            next);
     }
 }

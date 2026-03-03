@@ -13,7 +13,10 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface PaymentIntentDao {
 
     default void insert(String paymentId, String bookingId) {
-        insert(required(paymentId, "paymentId"), required(bookingId, "bookingId"));
+        insert(required(paymentId,
+                "paymentId"),
+            required(bookingId,
+                "bookingId"));
     }
 
     @SqlUpdate("INSERT INTO payment_intents (payment_id, booking_id, processed) VALUES "

@@ -57,14 +57,17 @@ public class JwtTokenService {
         try {
             Claims claims = parseClaims(token);
 
-            String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+            String tokenType = claims.get(TOKEN_TYPE_CLAIM,
+                String.class);
             if (!ACCESS_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
                 return Optional.empty();
             }
 
             String userId = claims.getSubject();
-            String role = claims.get("role", String.class);
-            String status = claims.get("status", String.class);
+            String role = claims.get("role",
+                String.class);
+            String status = claims.get("status",
+                String.class);
 
             if (!StringUtils.hasText(userId) || !StringUtils.hasText(role)) {
                 return Optional.empty();
@@ -72,7 +75,9 @@ public class JwtTokenService {
 
             String normalizedStatus = StringUtils.hasText(status) ? status.toUpperCase(Locale.ROOT) : "ACTIVE";
 
-            return Optional.of(new JwtPrincipal(userId, role.toUpperCase(Locale.ROOT), normalizedStatus));
+            return Optional.of(new JwtPrincipal(userId,
+                role.toUpperCase(Locale.ROOT),
+                normalizedStatus));
         } catch (JwtException | IllegalArgumentException ex) {
             return Optional.empty();
         }
@@ -90,36 +95,46 @@ public class JwtTokenService {
         Instant now = Instant.now();
         return Jwts.builder()
             .subject(principal.userId())
-            .claim("role", principal.role())
-            .claim("status", principal.status())
-            .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
+            .claim("role",
+                principal.role())
+            .claim("status",
+                principal.status())
+            .claim(TOKEN_TYPE_CLAIM,
+                ACCESS_TOKEN_TYPE)
             .issuedAt(Date.from(now))
             .expiration(Date.from(now.plusSeconds(accessTokenTtlSeconds)))
-            .signWith(signingKey, Jwts.SIG.HS256)
+            .signWith(signingKey,
+                Jwts.SIG.HS256)
             .compact();
     }
 
     public RefreshToken issueRefreshToken(String userId) {
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(refreshTokenTtlSeconds);
-        String tokenId = UUID.randomUUID().toString();
+        String tokenId = UUID.randomUUID()
+            .toString();
 
         String token = Jwts.builder()
             .subject(userId)
             .id(tokenId)
-            .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
+            .claim(TOKEN_TYPE_CLAIM,
+                REFRESH_TOKEN_TYPE)
             .issuedAt(Date.from(now))
             .expiration(Date.from(expiresAt))
-            .signWith(signingKey, Jwts.SIG.HS256)
+            .signWith(signingKey,
+                Jwts.SIG.HS256)
             .compact();
 
-        return new RefreshToken(token, tokenId, expiresAt);
+        return new RefreshToken(token,
+            tokenId,
+            expiresAt);
     }
 
     public Optional<ParsedRefreshToken> parseRefreshToken(String token) {
         try {
             Claims claims = parseClaims(token);
-            String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+            String tokenType = claims.get(TOKEN_TYPE_CLAIM,
+                String.class);
             if (!REFRESH_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
                 return Optional.empty();
             }
@@ -132,7 +147,9 @@ public class JwtTokenService {
                 return Optional.empty();
             }
 
-            return Optional.of(new ParsedRefreshToken(userId, tokenId, expiration.toInstant()));
+            return Optional.of(new ParsedRefreshToken(userId,
+                tokenId,
+                expiration.toInstant()));
         } catch (JwtException | IllegalArgumentException ex) {
             return Optional.empty();
         }

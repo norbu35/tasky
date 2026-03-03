@@ -18,7 +18,14 @@ public interface AuditLogDao {
 
     default void insert(
         String id, String adminId, String action, String targetUserId, String reason, Instant createdAt) {
-        insert(required(id, "id"), required(adminId, "adminId"), action, optional(targetUserId), reason, createdAt);
+        insert(required(id,
+                "id"),
+            required(adminId,
+                "adminId"),
+            action,
+            optional(targetUserId),
+            reason,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO audit_log (id, admin_id, action, target_user_id, reason, created_at) "

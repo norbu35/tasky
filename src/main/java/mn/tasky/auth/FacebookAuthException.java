@@ -10,7 +10,8 @@ public class FacebookAuthException extends RuntimeException {
     }
 
     public FacebookAuthException(String code, String message, Throwable cause) {
-        super(message, cause);
+        super(message,
+            cause);
         this.errorCode = code;
     }
 

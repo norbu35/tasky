@@ -24,10 +24,14 @@ public class LoggingSmsService implements SmsService {
      */
     @Override
     public void sendOtp(String phone, String code) {
-        latestOtpByPhone.put(phone, code);
+        latestOtpByPhone.put(phone,
+            code);
         String suffix = phone.length() >= 4 ? phone.substring(phone.length() - 4) : phone;
-        log.info("Sending OTP code to phone ending in {}", suffix);
-        log.debug("OTP for {} is {}", phone, code);
+        log.info("Sending OTP code to phone ending in {}",
+            suffix);
+        log.debug("OTP for {} is {}",
+            phone,
+            code);
     }
 
     /**

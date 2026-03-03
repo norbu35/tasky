@@ -10,13 +10,29 @@ public record BookingMarkDoneResult(
     public static final String INVALID_TRANSITION = "INVALID_TRANSITION";
 
     public static final BookingMarkDoneResult NOT_FOUND_RESULT =
-        new BookingMarkDoneResult(false, null, null, false, NOT_FOUND);
+        new BookingMarkDoneResult(false,
+            null,
+            null,
+            false,
+            NOT_FOUND);
     public static final BookingMarkDoneResult FORBIDDEN_RESULT =
-        new BookingMarkDoneResult(false, null, null, false, FORBIDDEN);
+        new BookingMarkDoneResult(false,
+            null,
+            null,
+            false,
+            FORBIDDEN);
     public static final BookingMarkDoneResult INVALID_TRANSITION_RESULT =
-        new BookingMarkDoneResult(false, null, null, false, INVALID_TRANSITION);
+        new BookingMarkDoneResult(false,
+            null,
+            null,
+            false,
+            INVALID_TRANSITION);
 
     public static BookingMarkDoneResult success(BookingState booking, Instant markedDoneAt, boolean newlyMarked) {
-        return new BookingMarkDoneResult(true, booking, markedDoneAt, newlyMarked, null);
+        return new BookingMarkDoneResult(true,
+            booking,
+            markedDoneAt,
+            newlyMarked,
+            null);
     }
 }

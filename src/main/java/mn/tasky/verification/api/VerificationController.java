@@ -13,11 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -40,9 +36,13 @@ public class VerificationController {
         @Valid @RequestBody VerificationUploadUrlRequest body,
         HttpServletRequest request) {
         return authService
-            .createVerificationUploadUrl(principal.userId(), body.contentType())
+            .createVerificationUploadUrl(principal.userId(),
+                body.contentType())
             .<ResponseEntity<?>>map(upload ->
-                ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
+                ResponseEntity.ok(Map.of("upload_url",
+                    upload.uploadUrl(),
+                    "storage_key",
+                    upload.storageKey())))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of(
                     "code",
@@ -59,7 +59,9 @@ public class VerificationController {
         @Valid @RequestBody VerificationSubmitRequest body,
         HttpServletRequest request) {
         VerificationSubmitResult result =
-            authService.submitVerification(principal.userId(), body.idCardFrontKey(), body.idCardBackKey());
+            authService.submitVerification(principal.userId(),
+                body.idCardFrontKey(),
+                body.idCardBackKey());
 
         return switch (result.outcome()) {
             case VerificationSubmitResult.SUCCESS -> ResponseEntity.ok(toStatusResponse(result.statusResponse()));
@@ -92,7 +94,10 @@ public class VerificationController {
 
     private VerificationStatusApiResponse toStatusResponse(VerificationStatusResponse status) {
         return new VerificationStatusApiResponse(
-            status.status(), status.adminNotes(), status.submittedAt(), status.reviewedAt());
+            status.status(),
+            status.adminNotes(),
+            status.submittedAt(),
+            status.reviewedAt());
     }
 
     @GetMapping("/status")

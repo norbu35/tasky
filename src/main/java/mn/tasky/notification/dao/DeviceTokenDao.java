@@ -16,7 +16,11 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface DeviceTokenDao {
 
     default void upsert(String userId, String token, String platform, Instant createdAt) {
-        upsert(required(userId, "userId"), token, platform, createdAt);
+        upsert(required(userId,
+                "userId"),
+            token,
+            platform,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO device_tokens (user_id, token, platform, created_at) "
@@ -30,14 +34,17 @@ public interface DeviceTokenDao {
         @Bind("createdAt") Instant createdAt);
 
     default void delete(String userId, String token) {
-        delete(required(userId, "userId"), token);
+        delete(required(userId,
+                "userId"),
+            token);
     }
 
     @SqlUpdate("DELETE FROM device_tokens WHERE user_id = :userId AND token = :token")
     void delete(@Bind("userId") UUID userId, @Bind("token") String token);
 
     default List<DeviceToken> findByUserId(String userId) {
-        return findByUserId(required(userId, "userId"));
+        return findByUserId(required(userId,
+            "userId"));
     }
 
     @SqlQuery("SELECT token, platform, created_at FROM device_tokens WHERE user_id = :userId")

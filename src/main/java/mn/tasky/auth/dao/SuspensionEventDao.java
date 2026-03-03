@@ -13,7 +13,14 @@ public interface SuspensionEventDao {
 
     default void insert(
         String id, String userId, int strikeCount, int suspensionDays, Instant suspendedAt, Instant unsuspendedAt) {
-        insert(required(id, "id"), required(userId, "userId"), strikeCount, suspensionDays, suspendedAt, unsuspendedAt);
+        insert(required(id,
+                "id"),
+            required(userId,
+                "userId"),
+            strikeCount,
+            suspensionDays,
+            suspendedAt,
+            unsuspendedAt);
     }
 
     @SqlUpdate("INSERT INTO suspension_events (id, user_id, strike_count, suspension_days, "
@@ -29,14 +36,18 @@ public interface SuspensionEventDao {
         @Bind("unsuspendedAt") Instant unsuspendedAt);
 
     default long countSince(String userId, Instant since) {
-        return countSince(required(userId, "userId"), since);
+        return countSince(required(userId,
+                "userId"),
+            since);
     }
 
     @SqlQuery("SELECT COUNT(*) FROM suspension_events WHERE user_id = :userId AND suspended_at >=" + " :since")
     long countSince(@Bind("userId") UUID userId, @Bind("since") Instant since);
 
     default void markUnsuspended(String userId, Instant unsuspendedAt) {
-        markUnsuspended(required(userId, "userId"), unsuspendedAt);
+        markUnsuspended(required(userId,
+                "userId"),
+            unsuspendedAt);
     }
 
     @SqlUpdate("UPDATE suspension_events "

@@ -36,20 +36,30 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
         String correlationId = resolveOrCreateId(request.getHeader(CORRELATION_ID_HEADER));
         String traceId = resolveOrCreateId(request.getHeader(TRACE_ID_HEADER));
         String locale = resolveLocale(request.getHeader("Accept-Language"));
-        String platform = resolvePlatform(request.getHeader(CLIENT_PLATFORM_HEADER), request.getHeader("User-Agent"));
+        String platform = resolvePlatform(request.getHeader(CLIENT_PLATFORM_HEADER),
+            request.getHeader("User-Agent"));
         long startedAt = System.nanoTime();
 
-        request.setAttribute(CORRELATION_ID_ATTRIBUTE, correlationId);
-        request.setAttribute(TRACE_ID_ATTRIBUTE, traceId);
-        response.setHeader(CORRELATION_ID_HEADER, correlationId);
-        response.setHeader(TRACE_ID_HEADER, traceId);
-        MDC.put(CORRELATION_ID_MDC_KEY, correlationId);
-        MDC.put(TRACE_ID_MDC_KEY, traceId);
-        MDC.put(LOCALE_MDC_KEY, locale);
-        MDC.put(PLATFORM_MDC_KEY, platform);
+        request.setAttribute(CORRELATION_ID_ATTRIBUTE,
+            correlationId);
+        request.setAttribute(TRACE_ID_ATTRIBUTE,
+            traceId);
+        response.setHeader(CORRELATION_ID_HEADER,
+            correlationId);
+        response.setHeader(TRACE_ID_HEADER,
+            traceId);
+        MDC.put(CORRELATION_ID_MDC_KEY,
+            correlationId);
+        MDC.put(TRACE_ID_MDC_KEY,
+            traceId);
+        MDC.put(LOCALE_MDC_KEY,
+            locale);
+        MDC.put(PLATFORM_MDC_KEY,
+            platform);
 
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,
+                response);
         } finally {
             long durationMs = (System.nanoTime() - startedAt) / 1_000_000;
             log.info(
@@ -71,7 +81,8 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(value)) {
             return value.trim();
         }
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID()
+            .toString();
     }
 
     private String resolveLocale(String acceptLanguage) {
@@ -81,14 +92,17 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
         String firstPreference = acceptLanguage.split(",")[0].trim();
         int qualitySeparator = firstPreference.indexOf(';');
         if (qualitySeparator >= 0) {
-            firstPreference = firstPreference.substring(0, qualitySeparator).trim();
+            firstPreference = firstPreference.substring(0,
+                    qualitySeparator)
+                .trim();
         }
         return StringUtils.hasText(firstPreference) ? firstPreference : "mn";
     }
 
     private String resolvePlatform(String explicitPlatform, String userAgent) {
         if (StringUtils.hasText(explicitPlatform)) {
-            String normalized = explicitPlatform.trim().toUpperCase(Locale.ROOT);
+            String normalized = explicitPlatform.trim()
+                .toUpperCase(Locale.ROOT);
             if ("WEB".equals(normalized) || "ANDROID".equals(normalized) || "IOS".equals(normalized)) {
                 return normalized;
             }

@@ -39,7 +39,8 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message,
+                    StompHeaderAccessor.class);
 
                 if (accessor == null) {
                     return message;
@@ -61,7 +62,9 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
                         .orElseThrow(() -> new IllegalArgumentException("Unauthorized"));
                     assertUserNotRestricted(principal);
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
+                        principal,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
                     accessor.setUser(auth);
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
                     assertAuthorizedConversationSubscription(accessor);
@@ -79,8 +82,10 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
         String conversationId = destination.substring("/topic/conversations/".length());
         JwtPrincipal principal = requireJwtPrincipal(accessor);
         assertUserNotRestricted(principal);
-        boolean isParticipant = messagingService.listConversations(principal.userId()).stream()
-            .anyMatch(c -> c.id().equals(conversationId));
+        boolean isParticipant = messagingService.listConversations(principal.userId())
+            .stream()
+            .anyMatch(c -> c.id()
+                .equals(conversationId));
         if (!isParticipant) {
             throw new IllegalArgumentException("Forbidden");
         }
@@ -96,7 +101,8 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
 
     private void assertUserNotRestricted(JwtPrincipal principal) {
         String effectiveStatus =
-            authService.currentUserStatus(principal.userId()).orElse(principal.status());
+            authService.currentUserStatus(principal.userId())
+                .orElse(principal.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             throw new IllegalArgumentException("Forbidden");
         }

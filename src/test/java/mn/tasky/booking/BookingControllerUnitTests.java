@@ -79,22 +79,32 @@ class BookingControllerUnitTests {
     @DisplayName("BookingController cancel returns in-progress idempotency response")
     void cancelBookingReturnsInProgress() {
         JwtPrincipal principal = customerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-1"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS, null));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-1"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS,
+                null));
 
-        ResponseEntity<?> response = controller.cancelBooking(principal, "booking-1", "idem-1", request());
+        ResponseEntity<?> response = controller.cancelBooking(principal,
+            "booking-1",
+            "idem-1",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_IN_PROGRESS");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "IDEMPOTENCY_IN_PROGRESS");
     }
 
     private JwtPrincipal customerPrincipal() {
-        return new JwtPrincipal("customer-123", "CUSTOMER", "ACTIVE");
+        return new JwtPrincipal("customer-123",
+            "CUSTOMER",
+            "ACTIVE");
     }
 
     private MockHttpServletRequest request() {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE, TRACE_ID);
+        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
+            TRACE_ID);
         return request;
     }
 
@@ -103,19 +113,30 @@ class BookingControllerUnitTests {
     void cancelBookingCompletedReplayReturnsBooking() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(11);
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-2"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-2"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId))
-            .thenReturn(Optional.of(booking(bookingId, principal.userId(), "tasker-1", "CANCELLED")));
+            .thenReturn(Optional.of(booking(bookingId,
+                principal.userId(),
+                "tasker-1",
+                "CANCELLED")));
 
-        ResponseEntity<?> response = controller.cancelBooking(principal, "ignored", "idem-2", request());
+        ResponseEntity<?> response = controller.cancelBooking(principal,
+            "ignored",
+            "idem-2",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("id", bookingId);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
+            bookingId);
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d", suffix);
+        return String.format("00000000-0000-0000-0000-%012d",
+            suffix);
     }
 
     private IdempotencyRecord completedRecord(String resourceId) {
@@ -134,7 +155,16 @@ class BookingControllerUnitTests {
 
     private BookingState booking(String id, String customerId, String taskerId, String status) {
         Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new BookingState(id, uuid(30), taskerId, customerId, 50000, status, null, true, now, now);
+        return new BookingState(id,
+            uuid(30),
+            taskerId,
+            customerId,
+            50000,
+            status,
+            null,
+            true,
+            now,
+            now);
     }
 
     @Test
@@ -142,31 +172,48 @@ class BookingControllerUnitTests {
     void cancelBookingCompletedReplayMissingWhenBookingUnavailable() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(111);
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-2b"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-2b"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.cancelBooking(principal, "ignored", "idem-2b", request());
+        ResponseEntity<?> response = controller.cancelBooking(principal,
+            "ignored",
+            "idem-2b",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
     @DisplayName("BookingController cancel returns not found when booking does not exist")
     void cancelBookingReturnsNotFound() {
         JwtPrincipal principal = customerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-3"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-3"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
         when(bookingService.getBooking("missing-booking")).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.cancelBooking(principal, "missing-booking", "idem-3", request());
+        ResponseEntity<?> response = controller.cancelBooking(principal,
+            "missing-booking",
+            "idem-3",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat((Map<String, Object>) response.getBody())
-            .containsEntry("code", "NOT_FOUND")
-            .containsEntry("trace_id", TRACE_ID);
-        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-3");
+            .containsEntry("code",
+                "NOT_FOUND")
+            .containsEntry("trace_id",
+                TRACE_ID);
+        verify(idempotencyService).abandon(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-3");
     }
 
     @Test
@@ -174,17 +221,28 @@ class BookingControllerUnitTests {
     void completeBookingCompletedReplayReturnsBooking() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(12);
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-4"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-4"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId))
-            .thenReturn(Optional.of(booking(bookingId, principal.userId(), "tasker-2", "COMPLETED")));
+            .thenReturn(Optional.of(booking(bookingId,
+                principal.userId(),
+                "tasker-2",
+                "COMPLETED")));
 
-        ResponseEntity<?> response = controller.completeBooking(principal, "ignored", "idem-4", request());
+        ResponseEntity<?> response = controller.completeBooking(principal,
+            "ignored",
+            "idem-4",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody())
-            .containsEntry("id", bookingId)
-            .containsEntry("status", "COMPLETED");
+            .containsEntry("id",
+                bookingId)
+            .containsEntry("status",
+                "COMPLETED");
     }
 
     @Test
@@ -193,14 +251,21 @@ class BookingControllerUnitTests {
     void completeBookingCompletedReplayMissingWhenBookingUnavailable() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(121);
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-4b"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-4b"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.completeBooking(principal, "ignored", "idem-4b", request());
+        ResponseEntity<?> response = controller.completeBooking(principal,
+            "ignored",
+            "idem-4b",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
@@ -208,30 +273,53 @@ class BookingControllerUnitTests {
     void completeBookingSuccessEmitsSignals() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(13);
-        BookingState booking = booking(bookingId, principal.userId(), "tasker-3", "COMPLETED");
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-5"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.completeBooking(principal.userId(), bookingId))
+        BookingState booking = booking(bookingId,
+            principal.userId(),
+            "tasker-3",
+            "COMPLETED");
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-5"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.completeBooking(principal.userId(),
+            bookingId))
             .thenReturn(BookingTransitionResult.success(booking));
         when(taskService.transitionToCompleted(booking.taskId()))
-            .thenReturn(Optional.of(task(booking.taskId(), "COMPLETED")));
+            .thenReturn(Optional.of(task(booking.taskId(),
+                "COMPLETED")));
 
-        ResponseEntity<?> response = controller.completeBooking(principal, bookingId, "idem-5", request());
+        ResponseEntity<?> response = controller.completeBooking(principal,
+            bookingId,
+            "idem-5",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<Map<String, Object>> payloadCaptor = ArgumentCaptor.forClass(Map.class);
         verify(domainEventOutboxService)
-            .publish(eq(OutboxEventTypes.BOOKING_COMPLETED), eq("BOOKING"), eq(bookingId), payloadCaptor.capture());
+            .publish(eq(OutboxEventTypes.BOOKING_COMPLETED),
+                eq("BOOKING"),
+                eq(bookingId),
+                payloadCaptor.capture());
         assertThat(payloadCaptor.getValue())
-            .containsEntry("booking_id", bookingId)
-            .containsEntry("task_id", booking.taskId())
-            .containsEntry("customer_id", principal.userId())
-            .containsEntry("tasker_id", "tasker-3")
-            .containsEntry("price", 50000);
+            .containsEntry("booking_id",
+                bookingId)
+            .containsEntry("task_id",
+                booking.taskId())
+            .containsEntry("customer_id",
+                principal.userId())
+            .containsEntry("tasker_id",
+                "tasker-3")
+            .containsEntry("price",
+                50000);
         verify(idempotencyService)
             .completeWithResource(
-                principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-5", "BOOKING", bookingId);
+                principal.userId(),
+                IdempotencyOperations.COMPLETE_BOOKING,
+                "idem-5",
+                "BOOKING",
+                bookingId);
     }
 
     private TaskState task(String taskId, String status) {
@@ -256,28 +344,45 @@ class BookingControllerUnitTests {
     @DisplayName("BookingController complete handles invalid status transitions")
     void completeBookingInvalidTransition() {
         JwtPrincipal principal = customerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.completeBooking(principal.userId(), "booking-invalid"))
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-6"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.completeBooking(principal.userId(),
+            "booking-invalid"))
             .thenReturn(BookingTransitionResult.INVALID_TRANSITION_RESULT);
 
-        ResponseEntity<?> response = controller.completeBooking(principal, "booking-invalid", "idem-6", request());
+        ResponseEntity<?> response = controller.completeBooking(principal,
+            "booking-invalid",
+            "idem-6",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "INVALID_STATUS");
-        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "INVALID_STATUS");
+        verify(idempotencyService).abandon(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-6");
     }
 
     @Test
     @DisplayName("BookingController complete maps not-found transition result")
     void completeBookingNotFound() {
         JwtPrincipal principal = customerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6b"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.completeBooking(principal.userId(), "booking-missing"))
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.COMPLETE_BOOKING,
+            "idem-6b"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.completeBooking(principal.userId(),
+            "booking-missing"))
             .thenReturn(BookingTransitionResult.NOT_FOUND_RESULT);
 
-        ResponseEntity<?> response = controller.completeBooking(principal, "booking-missing", "idem-6b", request());
+        ResponseEntity<?> response = controller.completeBooking(principal,
+            "booking-missing",
+            "idem-6b",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -288,21 +393,33 @@ class BookingControllerUnitTests {
         JwtPrincipal principal = taskerPrincipal();
         String bookingId = uuid(14);
         Instant markedDoneAt = Instant.parse("2026-02-17T00:00:00Z");
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-7"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-7"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId))
-            .thenReturn(Optional.of(booking(bookingId, "customer-1", principal.userId(), "PAID")));
+            .thenReturn(Optional.of(booking(bookingId,
+                "customer-1",
+                principal.userId(),
+                "PAID")));
         when(bookingService.getTaskerMarkedDoneAt(bookingId)).thenReturn(Optional.of(markedDoneAt));
 
-        ResponseEntity<?> response = controller.markBookingDone(principal, "ignored", "idem-7", request());
+        ResponseEntity<?> response = controller.markBookingDone(principal,
+            "ignored",
+            "idem-7",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody())
-            .containsEntry("tasker_marked_done_at", markedDoneAt.toString());
+            .containsEntry("tasker_marked_done_at",
+                markedDoneAt.toString());
     }
 
     private JwtPrincipal taskerPrincipal() {
-        return new JwtPrincipal("tasker-123", "TASKER", "ACTIVE");
+        return new JwtPrincipal("tasker-123",
+            "TASKER",
+            "ACTIVE");
     }
 
     @Test
@@ -311,14 +428,21 @@ class BookingControllerUnitTests {
     void markDoneCompletedReplayMissingWhenBookingUnavailable() {
         JwtPrincipal principal = taskerPrincipal();
         String bookingId = uuid(141);
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-7b"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completedRecord(bookingId)));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-7b"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
+                completedRecord(bookingId)));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.markBookingDone(principal, "ignored", "idem-7b", request());
+        ResponseEntity<?> response = controller.markBookingDone(principal,
+            "ignored",
+            "idem-7b",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
@@ -326,19 +450,32 @@ class BookingControllerUnitTests {
     void markDoneSuccessReturnsEnvelope() {
         JwtPrincipal principal = taskerPrincipal();
         String bookingId = uuid(15);
-        BookingState booking = booking(bookingId, "customer-2", principal.userId(), "ASSIGNED");
+        BookingState booking = booking(bookingId,
+            "customer-2",
+            principal.userId(),
+            "ASSIGNED");
         Instant markedDoneAt = Instant.parse("2026-02-17T01:00:00Z");
 
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-8"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.markBookingDone(principal.userId(), bookingId))
-            .thenReturn(BookingMarkDoneResult.success(booking, markedDoneAt, true));
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-8"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.markBookingDone(principal.userId(),
+            bookingId))
+            .thenReturn(BookingMarkDoneResult.success(booking,
+                markedDoneAt,
+                true));
 
-        ResponseEntity<?> response = controller.markBookingDone(principal, bookingId, "idem-8", request());
+        ResponseEntity<?> response = controller.markBookingDone(principal,
+            bookingId,
+            "idem-8",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody())
-            .containsEntry("tasker_marked_done_at", markedDoneAt.toString())
+            .containsEntry("tasker_marked_done_at",
+                markedDoneAt.toString())
             .containsKey("booking");
         verify(notificationService)
             .sendPush(
@@ -348,38 +485,60 @@ class BookingControllerUnitTests {
                 eq("TASKER_MARKED_COMPLETE"));
         verify(idempotencyService)
             .completeWithResource(
-                principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-8", "BOOKING", bookingId);
+                principal.userId(),
+                IdempotencyOperations.MARK_BOOKING_DONE,
+                "idem-8",
+                "BOOKING",
+                bookingId);
     }
 
     @Test
     @DisplayName("BookingController mark-done handles forbidden actor")
     void markDoneForbidden() {
         JwtPrincipal principal = customerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-9"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.markBookingDone(principal.userId(), "booking-forbidden"))
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-9"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.markBookingDone(principal.userId(),
+            "booking-forbidden"))
             .thenReturn(BookingMarkDoneResult.FORBIDDEN_RESULT);
 
-        ResponseEntity<?> response = controller.markBookingDone(principal, "booking-forbidden", "idem-9", request());
+        ResponseEntity<?> response = controller.markBookingDone(principal,
+            "booking-forbidden",
+            "idem-9",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "FORBIDDEN");
-        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-9");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "FORBIDDEN");
+        verify(idempotencyService).abandon(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-9");
     }
 
     @Test
     @DisplayName("BookingController mark-done maps invalid transition result")
     void markDoneInvalidTransition() {
         JwtPrincipal principal = taskerPrincipal();
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-10"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(bookingService.markBookingDone(principal.userId(), "booking-invalid"))
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.MARK_BOOKING_DONE,
+            "idem-10"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
+        when(bookingService.markBookingDone(principal.userId(),
+            "booking-invalid"))
             .thenReturn(BookingMarkDoneResult.INVALID_TRANSITION_RESULT);
 
-        ResponseEntity<?> response = controller.markBookingDone(principal, "booking-invalid", "idem-10", request());
+        ResponseEntity<?> response = controller.markBookingDone(principal,
+            "booking-invalid",
+            "idem-10",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "INVALID_STATUS");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "INVALID_STATUS");
     }
 
     @Test
@@ -387,15 +546,26 @@ class BookingControllerUnitTests {
     void cancelBookingTaskLookupFailure() {
         JwtPrincipal principal = customerPrincipal();
         String bookingId = uuid(160);
-        BookingState booking = booking(bookingId, principal.userId(), "tasker-160", "ASSIGNED");
-        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-11"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        BookingState booking = booking(bookingId,
+            principal.userId(),
+            "tasker-160",
+            "ASSIGNED");
+        when(idempotencyService.claim(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-11"))
+            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
+                null));
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
         when(taskService.getTask(booking.taskId())).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.cancelBooking(principal, bookingId, "idem-11", request());
+        ResponseEntity<?> response = controller.cancelBooking(principal,
+            bookingId,
+            "idem-11",
+            request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-11");
+        verify(idempotencyService).abandon(principal.userId(),
+            IdempotencyOperations.CANCEL_BOOKING,
+            "idem-11");
     }
 }

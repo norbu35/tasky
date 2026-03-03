@@ -34,7 +34,8 @@ public class SecurityConfig {
         JwtAuthenticationFilter jwtAuthenticationFilter,
         RestAuthenticationEntryPoint restAuthenticationEntryPoint,
         RestAccessDeniedHandler restAccessDeniedHandler) {
-        this.allowedOrigins = List.of(allowedOrigins.trim().split("\\s*,\\s*"));
+        this.allowedOrigins = List.of(allowedOrigins.trim()
+            .split("\\s*,\\s*"));
         this.devAuthEnabled = devAuthEnabled;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
@@ -66,15 +67,18 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/v1/security/customer/**")
                 .hasRole("CUSTOMER")
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks")
+                .requestMatchers(org.springframework.http.HttpMethod.POST,
+                    "/api/v1/tasks")
                 .hasRole("CUSTOMER")
                 .requestMatchers("/api/v1/security/tasker/**")
                 .hasRole("TASKER")
-                .requestMatchers("/api/v1/security/admin/**", "/api/v1/admin/**")
+                .requestMatchers("/api/v1/security/admin/**",
+                    "/api/v1/admin/**")
                 .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated())
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 
@@ -82,12 +86,18 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**",
+            configuration);
         return source;
     }
 }

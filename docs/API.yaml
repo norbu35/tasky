@@ -6,7 +6,8 @@ info:
 
     ## Authentication
     All endpoints (unless noted) require a Bearer JWT in the `Authorization` header.
-    Obtain tokens via Facebook OAuth login (`/auth/facebook`).
+    Phase 0-1 auth uses Facebook OAuth (`/auth/facebook`).
+    Phase 2+ adds phone OTP auth (`/auth/otp/request`, `/auth/otp/verify`) and OTP becomes primary for new signups.
 
     ## Pagination
     All list endpoints use **cursor-based pagination**.
@@ -21,8 +22,8 @@ info:
 
     ## Idempotency
     Critical state-changing endpoints require an `Idempotency-Key` header.
-    Payment and wallet endpoints are documented as post-MVP deferred surfaces.
-  version: 1.1.0
+    Payment and wallet endpoints are phase-gated. They return `503` when disabled for the current rollout phase.
+  version: 1.2.0
   contact:
     name: Tasky Engineering
 servers:
@@ -31,7 +32,7 @@ servers:
 
 tags:
   - name: Auth
-    description: Facebook OAuth login and token management
+    description: Facebook OAuth (Phase 0-1) and phone OTP auth flows
   - name: Users
     description: User profile management
   - name: Verification
@@ -45,9 +46,9 @@ tags:
   - name: Bookings
     description: Booking lifecycle
   - name: Payments
-    description: QPay payment integration (Post-MVP deferred)
+    description: QPay payment integration (feature-toggled by phase)
   - name: Wallet
-    description: Tasker wallet and payouts (Post-MVP deferred)
+    description: Tasker wallet and payouts (feature-toggled by phase)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
@@ -199,7 +200,7 @@ components:
           example: 12
         is_pro:
           type: boolean
-          description: Auto-assigned when completed_tasks > 5 AND rating_avg > 4.5.
+          description: Auto-assigned when completed_tasks > 15 AND rating_avg > 4.5 in Phase 0-1; threshold may change in later phases.
         created_at:
           type: string
           format: date-time
@@ -609,7 +610,7 @@ components:
         cancellation_fee:
           type: integer
           nullable: true
-          description: Post-MVP monetization field. Null in phase-1.
+          description: Phase-gated monetization field. Null when the current phase keeps cancellation fees disabled.
         created_at:
           type: string
           format: date-time
@@ -888,7 +889,10 @@ paths:
       summary: Authenticate with Facebook OAuth
       description: |
         Validates a Facebook user access token and returns JWT tokens.
-        Creates a new user when `facebook_id` has not been seen before.
+        Phase 0-1: primary authentication endpoint.
+        Phase 2+: available only for legacy identity linkage/migration flows.
+        Phase 0-1 behavior: creates a new user when `facebook_id` has not been seen before.
+        Phase 2+ behavior: does not create new users from Facebook-only identity.
       operationId: loginWithFacebook
       security: [ ]
       requestBody:
@@ -922,6 +926,102 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           description: Invalid or mismatched Facebook token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '409':
+          description: In Phase 2+, Facebook-only signup is disabled for new users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/otp/request:
+    post:
+      tags: [ Auth ]
+      summary: Request OTP code
+      description: |
+        Sends a one-time password (OTP) to a phone number.
+        Phase 2+ endpoint used for primary phone authentication and Facebook-user migration.
+      operationId: requestOtp
+      security: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ phone_number ]
+              properties:
+                phone_number:
+                  type: string
+                  example: "+97699001122"
+      responses:
+        '202':
+          description: OTP request accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ message ]
+                properties:
+                  message:
+                    type: string
+                    example: OTP sent
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/otp/verify:
+    post:
+      tags: [ Auth ]
+      summary: Verify OTP and authenticate
+      description: |
+        Verifies OTP code and issues JWT tokens.
+        In Phase 2+, this is the primary auth endpoint for new users and migrated Facebook users.
+      operationId: verifyOtp
+      security: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ phone_number, otp_code ]
+              properties:
+                phone_number:
+                  type: string
+                  example: "+97699001122"
+                otp_code:
+                  type: string
+                  example: "123456"
+                facebook_access_token:
+                  type: string
+                  nullable: true
+                  description: Optional token used during Phase 2 migration to link prior Facebook identity.
+      responses:
+        '200':
+          description: Authentication successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ access_token, refresh_token, user ]
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid or expired OTP code.
           content:
             application/json:
               schema:
@@ -1606,6 +1706,7 @@ paths:
       summary: Accept a tasker's application
       description: |
         Customer accepts a tasker's application. This creates a booking in ASSIGNED status.
+        Phase 2+: selected tasker must complete lead unlock to reveal Customer contact details.
         Requires `liability_disclaimer_accepted=true`.
         All other pending applications for this task are automatically rejected.
         Requires Idempotency-Key header.
@@ -1723,6 +1824,69 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /bookings/{id}/lead-unlock:
+    post:
+      tags: [ Bookings ]
+      summary: Tasker accepts lead and unlocks customer contact
+      description: |
+        Phase 2+ endpoint.
+        Selected tasker confirms participation by spending configured lead-unlock credits.
+        On success, customer contact details become visible to the selected tasker.
+        Requires Idempotency-Key header.
+      operationId: unlockBookingLead
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ accept ]
+              properties:
+                accept:
+                  type: boolean
+                  enum: [ true ]
+                  description: Must be `true` to spend credits and unlock customer contact details.
+      responses:
+        '200':
+          description: Lead unlock successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ booking, credits_spent, customer_contact_unlocked ]
+                properties:
+                  booking:
+                    $ref: '#/components/schemas/Booking'
+                  credits_spent:
+                    type: integer
+                    example: 1
+                  customer_contact_unlocked:
+                    type: boolean
+                    enum: [ true ]
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not eligible for lead unlock or has already been unlocked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /bookings/{id}/cancel:
     post:
       tags: [ Bookings ]
@@ -1839,9 +2003,8 @@ paths:
     post:
       tags: [ Payments ]
       summary: Initiate QPay payment for a booking
-      deprecated: true
       description: |
-        Post-MVP deferred endpoint. Not required for phase-1 MVP.
+        Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
         Generates a QPay payment link and QR code for the booking.
         The booking must be in ASSIGNED status and monetization must be enabled.
         Requires Idempotency-Key header.
@@ -1893,7 +2056,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -1903,10 +2066,9 @@ paths:
     post:
       tags: [ Payments ]
       summary: QPay payment webhook callback
-      deprecated: true
       security: [ ]
       description: |
-        Post-MVP deferred endpoint. Not required for phase-1 MVP.
+        Phase-gated endpoint. Enabled only when the current rollout phase activates this feature.
         Receives payment confirmation from QPay. No Bearer auth — secured via signature verification.
         On successful payment: booking status may be updated per monetization state machine.
         Must be idempotent (handle duplicate callbacks gracefully).
@@ -1954,7 +2116,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -1965,8 +2127,7 @@ paths:
     get:
       tags: [ Wallet ]
       summary: Get wallet balance
-      deprecated: true
-      description: Post-MVP deferred endpoint. Returns wallet balance and pending payout amount.
+      description: Phase-gated endpoint. Returns wallet balance and pending payout amount.
       operationId: getWalletBalance
       security:
         - BearerAuth: [ ]
@@ -1980,7 +2141,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -1990,8 +2151,7 @@ paths:
     get:
       tags: [ Wallet ]
       summary: List wallet transactions
-      deprecated: true
-      description: Post-MVP deferred endpoint. Returns paginated transaction history.
+      description: Phase-gated endpoint. Returns paginated transaction history.
       operationId: listWalletTransactions
       security:
         - BearerAuth: [ ]
@@ -2016,7 +2176,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -2026,9 +2186,8 @@ paths:
     post:
       tags: [ Wallet ]
       summary: Request payout
-      deprecated: true
       description: |
-        Post-MVP deferred endpoint.
+        Phase-gated endpoint.
         Tasker requests a payout from their wallet balance to a bank account.
         Payouts are processed by admin on Tuesdays and Fridays.
         Requires Idempotency-Key header.
@@ -2073,7 +2232,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -2694,7 +2853,7 @@ paths:
       summary: Resolve a dispute
       description: |
         Admin resolves a dispute by selecting customer-favor, tasker-favor, or escalation outcome.
-        Post-MVP monetization may extend this endpoint with refund/release amount handling.
+        Later rollout phases may extend this endpoint with refund/release amount handling.
         Requires Idempotency-Key header.
       operationId: adminResolveDispute
       security:
@@ -2791,8 +2950,7 @@ paths:
     get:
       tags: [ Admin ]
       summary: List pending payouts
-      deprecated: true
-      description: Post-MVP deferred endpoint. Returns paginated pending payout requests.
+      description: Phase-gated endpoint. Returns paginated pending payout requests.
       operationId: adminListPendingPayouts
       security:
         - BearerAuth: [ ]
@@ -2819,7 +2977,7 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:
@@ -2829,9 +2987,8 @@ paths:
     post:
       tags: [ Admin ]
       summary: Mark payout as processed
-      deprecated: true
       description: |
-        Post-MVP deferred endpoint.
+        Phase-gated endpoint.
         Admin marks a payout request as processed after completing the bank transfer.
         This debits the tasker's wallet and creates a ledger entry.
         Requires Idempotency-Key header.
@@ -2861,7 +3018,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '503':
-          description: Monetization is deferred for the current MVP phase.
+          description: Monetization feature is disabled for the current rollout phase.
           content:
             application/json:
               schema:

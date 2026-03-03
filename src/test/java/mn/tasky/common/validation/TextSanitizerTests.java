@@ -1,8 +1,8 @@
 package mn.tasky.common.validation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TextSanitizerTests {
 
@@ -17,6 +17,7 @@ class TextSanitizerTests {
     void plainTextHandlesMalformedHtmlWithoutLeavingTags() {
         String sanitized = TextSanitizer.plainText("<scr<script>ipt>alert(1)</scri<</script>pt>");
 
-        assertThat(sanitized).doesNotContain("<").doesNotContain(">");
+        assertThat(sanitized).doesNotContain("<")
+            .doesNotContain(">");
     }
 }

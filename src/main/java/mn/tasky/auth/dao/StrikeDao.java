@@ -12,7 +12,12 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface StrikeDao {
 
     default void insert(String id, String userId, String reason, Instant createdAt) {
-        insert(required(id, "id"), required(userId, "userId"), reason, createdAt);
+        insert(required(id,
+                "id"),
+            required(userId,
+                "userId"),
+            reason,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO tasker_strikes (id, user_id, reason, created_at) VALUES (:id, "
@@ -24,7 +29,9 @@ public interface StrikeDao {
         @Bind("createdAt") Instant createdAt);
 
     default long countSince(String userId, Instant since) {
-        return countSince(required(userId, "userId"), since);
+        return countSince(required(userId,
+                "userId"),
+            since);
     }
 
     @SqlQuery("SELECT COUNT(*) FROM tasker_strikes WHERE user_id = :userId AND created_at > :since")

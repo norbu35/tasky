@@ -18,9 +18,12 @@ public interface MessageDao {
 
     default void insert(String id, String conversationId, String senderId, String content, Instant sentAt) {
         insert(
-            required(id, "id"),
-            required(conversationId, "conversationId"),
-            required(senderId, "senderId"),
+            required(id,
+                "id"),
+            required(conversationId,
+                "conversationId"),
+            required(senderId,
+                "senderId"),
             content,
             sentAt);
     }
@@ -35,15 +38,21 @@ public interface MessageDao {
         @Bind("sentAt") Instant sentAt);
 
     default List<Message> findByConversationId(String conversationId, String cursor, int limit) {
-        UUID conversationUuid = required(conversationId, "conversationId");
-        return findByConversationId(conversationUuid, optional(cursor), limit);
+        UUID conversationUuid = required(conversationId,
+            "conversationId");
+        return findByConversationId(conversationUuid,
+            optional(cursor),
+            limit);
     }
 
     default List<Message> findByConversationId(UUID conversationId, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByConversationIdFirstPage(conversationId, limit);
+            return findByConversationIdFirstPage(conversationId,
+                limit);
         }
-        return findByConversationIdAfterCursor(conversationId, cursor, limit);
+        return findByConversationIdAfterCursor(conversationId,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM messages WHERE conversation_id = :conversationId " + "ORDER BY id LIMIT :limit")

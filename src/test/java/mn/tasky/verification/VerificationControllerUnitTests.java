@@ -41,63 +41,86 @@ class VerificationControllerUnitTests {
     @Test
     void getUploadUrlReturnsBadRequestForUnsupportedContentType() {
         JwtPrincipal principal = principal();
-        when(authService.createVerificationUploadUrl(principal.userId(), "image/webp"))
+        when(authService.createVerificationUploadUrl(principal.userId(),
+            "image/webp"))
             .thenReturn(Optional.empty());
 
         ResponseEntity<?> response = controller.getUploadUrl(
-            principal, new VerificationUploadUrlRequest("image/webp"), new MockHttpServletRequest());
+            principal,
+            new VerificationUploadUrlRequest("image/webp"),
+            new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "INVALID_CONTENT_TYPE");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "INVALID_CONTENT_TYPE");
     }
 
     private JwtPrincipal principal() {
-        return new JwtPrincipal(uuid(1), "TASKER", "ACTIVE");
+        return new JwtPrincipal(uuid(1),
+            "TASKER",
+            "ACTIVE");
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d", suffix);
+        return String.format("00000000-0000-0000-0000-%012d",
+            suffix);
     }
 
     @Test
     void getUploadUrlReturnsPresignedPayloadWhenValid() {
         JwtPrincipal principal = principal();
-        when(authService.createVerificationUploadUrl(principal.userId(), "image/jpeg"))
+        when(authService.createVerificationUploadUrl(principal.userId(),
+            "image/jpeg"))
             .thenReturn(Optional.of(
-                new PresignedUpload("https://upload.example.com", "uploads/verification/front.jpg")));
+                new PresignedUpload("https://upload.example.com",
+                    "uploads/verification/front.jpg")));
 
         ResponseEntity<?> response =
-            controller.getUploadUrl(principal, new VerificationUploadUrlRequest("image/jpeg"), requestWithTrace());
+            controller.getUploadUrl(principal,
+                new VerificationUploadUrlRequest("image/jpeg"),
+                requestWithTrace());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody())
-            .containsEntry("storage_key", "uploads/verification" + "/front.jpg");
+            .containsEntry("storage_key",
+                "uploads/verification" + "/front.jpg");
     }
 
     private MockHttpServletRequest requestWithTrace() {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE, "trace-verification");
+        request.setAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE,
+            "trace-verification");
         return request;
     }
 
     @Test
     void submitVerificationHandlesNotTaskerOutcome() {
         JwtPrincipal principal = principal();
-        when(authService.submitVerification(principal.userId(), "front", "back"))
-            .thenReturn(new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER, null));
+        when(authService.submitVerification(principal.userId(),
+            "front",
+            "back"))
+            .thenReturn(new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER,
+                null));
 
         ResponseEntity<?> response = controller.submitVerification(
-            principal, new VerificationSubmitRequest("front", "back"), requestWithTrace());
+            principal,
+            new VerificationSubmitRequest("front",
+                "back"),
+            requestWithTrace());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "NOT_TASKER");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "NOT_TASKER");
     }
 
     @Test
     void getStatusReturnsMappedVerificationPayload() {
         JwtPrincipal principal = principal();
         when(authService.getVerificationStatus(principal.userId()))
-            .thenReturn(new VerificationStatusResponse("PENDING", null, "2026-02-17T00:00:00Z", null));
+            .thenReturn(new VerificationStatusResponse("PENDING",
+                null,
+                "2026-02-17T00:00:00Z",
+                null));
 
         ResponseEntity<?> response = controller.getStatus(principal);
 

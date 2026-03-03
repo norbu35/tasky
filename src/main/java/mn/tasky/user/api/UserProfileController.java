@@ -13,12 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -73,10 +68,12 @@ public class UserProfileController {
         @AuthenticationPrincipal JwtPrincipal principal,
         @Valid @RequestBody UpdateProfileRequest body,
         HttpServletRequest request) {
-        ProfileUpdate update = new ProfileUpdate(body.fullName(), body.avatarUrl());
+        ProfileUpdate update = new ProfileUpdate(body.fullName(),
+            body.avatarUrl());
 
         return authService
-            .updateProfile(principal.userId(), update)
+            .updateProfile(principal.userId(),
+                update)
             .<ResponseEntity<?>>map(profile -> ResponseEntity.ok(toProfileResponse(profile)))
             .orElseGet(() -> unauthorizedResponse(request));
     }
@@ -109,9 +106,13 @@ public class UserProfileController {
         @Valid @RequestBody AvatarUploadUrlRequest body,
         HttpServletRequest request) {
         return authService
-            .createAvatarUploadUrl(principal.userId(), body.contentType())
+            .createAvatarUploadUrl(principal.userId(),
+                body.contentType())
             .<ResponseEntity<?>>map(upload ->
-                ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
+                ResponseEntity.ok(Map.of("upload_url",
+                    upload.uploadUrl(),
+                    "storage_key",
+                    upload.storageKey())))
             .orElseGet(() -> unauthorizedResponse(request));
     }
 }

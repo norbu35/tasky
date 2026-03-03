@@ -29,10 +29,14 @@ public interface BookingDao {
         Instant createdAt,
         Instant updatedAt) {
         insert(
-            required(id, "id"),
-            required(taskId, "taskId"),
-            required(taskerId, "taskerId"),
-            required(customerId, "customerId"),
+            required(id,
+                "id"),
+            required(taskId,
+                "taskId"),
+            required(taskerId,
+                "taskerId"),
+            required(customerId,
+                "customerId"),
             price,
             status,
             cancellationFee,
@@ -58,7 +62,8 @@ public interface BookingDao {
         @Bind("updatedAt") Instant updatedAt);
 
     default Optional<BookingState> findById(String id) {
-        return findById(required(id, "id"));
+        return findById(required(id,
+            "id"));
     }
 
     @SqlQuery("SELECT * FROM bookings WHERE id = :id")
@@ -66,7 +71,12 @@ public interface BookingDao {
 
     default void update(
         String id, String status, Integer cancellationFee, boolean liabilityDisclaimerAccepted, Instant updatedAt) {
-        update(required(id, "id"), status, cancellationFee, liabilityDisclaimerAccepted, updatedAt);
+        update(required(id,
+                "id"),
+            status,
+            cancellationFee,
+            liabilityDisclaimerAccepted,
+            updatedAt);
     }
 
     @SqlUpdate("UPDATE bookings SET status = :status, cancellation_fee = :cancellationFee, "
@@ -80,18 +90,30 @@ public interface BookingDao {
         @Bind("updatedAt") Instant updatedAt);
 
     default List<BookingState> findByCustomerId(String userId, String status) {
-        return findByCustomerId(userId, status, null, 100);
+        return findByCustomerId(userId,
+            status,
+            null,
+            100);
     }
 
     default List<BookingState> findByCustomerId(String userId, String status, String cursor, int limit) {
-        return findByCustomerId(required(userId, "userId"), status, optional(cursor), limit);
+        return findByCustomerId(required(userId,
+                "userId"),
+            status,
+            optional(cursor),
+            limit);
     }
 
     default List<BookingState> findByCustomerId(UUID userId, String status, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByCustomerIdFirstPage(userId, status, limit);
+            return findByCustomerIdFirstPage(userId,
+                status,
+                limit);
         }
-        return findByCustomerIdAfterCursor(userId, status, cursor, limit);
+        return findByCustomerIdAfterCursor(userId,
+            status,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM bookings WHERE customer_id = :userId "
@@ -111,18 +133,30 @@ public interface BookingDao {
         @Bind("limit") int limit);
 
     default List<BookingState> findByTaskerId(String userId, String status) {
-        return findByTaskerId(userId, status, null, 100);
+        return findByTaskerId(userId,
+            status,
+            null,
+            100);
     }
 
     default List<BookingState> findByTaskerId(String userId, String status, String cursor, int limit) {
-        return findByTaskerId(required(userId, "userId"), status, optional(cursor), limit);
+        return findByTaskerId(required(userId,
+                "userId"),
+            status,
+            optional(cursor),
+            limit);
     }
 
     default List<BookingState> findByTaskerId(UUID userId, String status, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByTaskerIdFirstPage(userId, status, limit);
+            return findByTaskerIdFirstPage(userId,
+                status,
+                limit);
         }
-        return findByTaskerIdAfterCursor(userId, status, cursor, limit);
+        return findByTaskerIdAfterCursor(userId,
+            status,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM bookings WHERE tasker_id = :userId "
@@ -142,18 +176,30 @@ public interface BookingDao {
         @Bind("limit") int limit);
 
     default List<BookingState> findByParticipant(String userId, String status) {
-        return findByParticipant(userId, status, null, 100);
+        return findByParticipant(userId,
+            status,
+            null,
+            100);
     }
 
     default List<BookingState> findByParticipant(String userId, String status, String cursor, int limit) {
-        return findByParticipant(required(userId, "userId"), status, optional(cursor), limit);
+        return findByParticipant(required(userId,
+                "userId"),
+            status,
+            optional(cursor),
+            limit);
     }
 
     default List<BookingState> findByParticipant(UUID userId, String status, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByParticipantFirstPage(userId, status, limit);
+            return findByParticipantFirstPage(userId,
+                status,
+                limit);
         }
-        return findByParticipantAfterCursor(userId, status, cursor, limit);
+        return findByParticipantAfterCursor(userId,
+            status,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM bookings WHERE (customer_id = :userId OR tasker_id = :userId) "

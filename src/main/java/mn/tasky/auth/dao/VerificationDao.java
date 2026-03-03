@@ -27,8 +27,10 @@ public interface VerificationDao {
         String adminNotes,
         Instant reviewedAt) {
         insert(
-            required(id, "id"),
-            required(userId, "userId"),
+            required(id,
+                "id"),
+            required(userId,
+                "userId"),
             idCardFrontKey,
             idCardBackKey,
             status,
@@ -52,28 +54,32 @@ public interface VerificationDao {
         @Bind("reviewedAt") Instant reviewedAt);
 
     default Optional<VerificationRequest> findById(String id) {
-        return findById(required(id, "id"));
+        return findById(required(id,
+            "id"));
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE id = :id")
     Optional<VerificationRequest> findById(@Bind("id") UUID id);
 
     default Optional<VerificationRequest> findLatestByUserId(String userId) {
-        return findLatestByUserId(required(userId, "userId"));
+        return findLatestByUserId(required(userId,
+            "userId"));
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE user_id = :userId ORDER BY submitted_at DESC " + "LIMIT 1")
     Optional<VerificationRequest> findLatestByUserId(@Bind("userId") UUID userId);
 
     default List<VerificationRequest> findPending(String cursor, int limit) {
-        return findPending(optional(cursor), limit);
+        return findPending(optional(cursor),
+            limit);
     }
 
     default List<VerificationRequest> findPending(UUID cursor, int limit) {
         if (cursor == null) {
             return findPendingFirstPage(limit);
         }
-        return findPendingAfterCursor(cursor, limit);
+        return findPendingAfterCursor(cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM verifications WHERE status = 'PENDING' ORDER BY id LIMIT :limit")
@@ -83,7 +89,11 @@ public interface VerificationDao {
     List<VerificationRequest> findPendingAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
     default void updateStatus(String id, String status, String adminNotes, Instant reviewedAt) {
-        updateStatus(required(id, "id"), status, adminNotes, reviewedAt);
+        updateStatus(required(id,
+                "id"),
+            status,
+            adminNotes,
+            reviewedAt);
     }
 
     @SqlUpdate("UPDATE verifications SET status = :status, admin_notes = :adminNotes, reviewed_at"

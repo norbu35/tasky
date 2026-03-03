@@ -35,11 +35,11 @@ public class FacebookAuthController {
         AuthSession session = authService.facebookLogin(body.accessToken());
 
         return ResponseEntity.ok(Map.of(
-                "access_token",
-                session.accessToken(),
-                "refresh_token",
-                session.refreshToken(),
-                "user",
+            "access_token",
+            session.accessToken(),
+            "refresh_token",
+            session.refreshToken(),
+            "user",
             session.user()));
     }
 

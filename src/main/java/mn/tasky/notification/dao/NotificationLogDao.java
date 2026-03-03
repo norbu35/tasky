@@ -16,7 +16,14 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface NotificationLogDao {
 
     default void insert(String id, String userId, String type, String channel, String status, Instant createdAt) {
-        insert(required(id, "id"), required(userId, "userId"), type, channel, status, createdAt);
+        insert(required(id,
+                "id"),
+            required(userId,
+                "userId"),
+            type,
+            channel,
+            status,
+            createdAt);
     }
 
     @SqlUpdate("INSERT INTO notification_log (id, user_id, type, channel, status, created_at) "

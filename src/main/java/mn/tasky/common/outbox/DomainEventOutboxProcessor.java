@@ -61,20 +61,31 @@ public class DomainEventOutboxProcessor {
     @Scheduled(fixedDelayString = "${tasky.outbox.processor.poll-interval-ms:1000}")
     public void processBatch() {
         Instant now = Instant.now();
-        List<OutboxEvent> events = outboxEventDao.claimBatch(now, now.plusSeconds(processingLeaseSeconds), batchSize);
+        List<OutboxEvent> events = outboxEventDao.claimBatch(now,
+            now.plusSeconds(processingLeaseSeconds),
+            batchSize);
         for (OutboxEvent event : events) {
             try {
                 dispatch(event);
-                outboxEventDao.markProcessed(event.id(), Instant.now());
+                outboxEventDao.markProcessed(event.id(),
+                    Instant.now());
             } catch (RuntimeException exception) {
                 String error =
-                    exception.getMessage() == null ? exception.getClass().getSimpleName() : exception.getMessage();
+                    exception.getMessage() == null ? exception.getClass()
+                        .getSimpleName() : exception.getMessage();
                 if (error.length() > 1024) {
-                    error = error.substring(0, 1024);
+                    error = error.substring(0,
+                        1024);
                 }
-                outboxEventDao.markFailed(event.id(), Instant.now().plusSeconds(retryDelaySeconds), error);
+                outboxEventDao.markFailed(event.id(),
+                    Instant.now()
+                        .plusSeconds(retryDelaySeconds),
+                    error);
                 log.warn(
-                    "Outbox event processing failed: id={} type={} error={}", event.id(), event.eventType(), error);
+                    "Outbox event processing failed: id={} type={} error={}",
+                    event.id(),
+                    event.eventType(),
+                    error);
             }
         }
     }
@@ -91,21 +102,33 @@ public class DomainEventOutboxProcessor {
 
     private Map<String, Object> parsePayload(String payloadJson) {
         try {
-            return objectMapper.readValue(payloadJson, MAP_TYPE);
+            return objectMapper.readValue(payloadJson,
+                MAP_TYPE);
         } catch (Exception exception) {
-            throw new IllegalArgumentException("Failed to parse outbox event payload.", exception);
+            throw new IllegalArgumentException("Failed to parse outbox event payload.",
+                exception);
         }
     }
 
     private void handleTaskApplicationAccepted(Map<String, Object> payload) {
-        String taskId = requiredString(payload, "task_id");
-        String bookingId = requiredString(payload, "booking_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
-        String applicationId = requiredString(payload, "application_id");
+        String taskId = requiredString(payload,
+            "task_id");
+        String bookingId = requiredString(payload,
+            "booking_id");
+        String customerId = requiredString(payload,
+            "customer_id");
+        String taskerId = requiredString(payload,
+            "tasker_id");
+        String applicationId = requiredString(payload,
+            "application_id");
 
-        String conversationId = messagingService.startConversation(taskId, taskerId, customerId);
-        notificationService.sendPush(taskerId, "You are hired!", "Your application has been accepted.", "HIRED");
+        String conversationId = messagingService.startConversation(taskId,
+            taskerId,
+            customerId);
+        notificationService.sendPush(taskerId,
+            "You are hired!",
+            "Your application has been accepted.",
+            "HIRED");
 
         analyticsService.track(
             AnalyticsService.EVENT_TASKER_ACCEPTED,
@@ -140,14 +163,22 @@ public class DomainEventOutboxProcessor {
     }
 
     private void handlePaymentConfirmed(Map<String, Object> payload) {
-        String paymentId = requiredString(payload, "payment_id");
-        String bookingId = requiredString(payload, "booking_id");
-        String taskId = requiredString(payload, "task_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
+        String paymentId = requiredString(payload,
+            "payment_id");
+        String bookingId = requiredString(payload,
+            "booking_id");
+        String taskId = requiredString(payload,
+            "task_id");
+        String customerId = requiredString(payload,
+            "customer_id");
+        String taskerId = requiredString(payload,
+            "tasker_id");
 
         notificationService.sendPush(
-            taskerId, "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
+            taskerId,
+            "Booking Confirmed",
+            "Payment received for booking #" + bookingId,
+            "BOOKING_CONFIRMED");
         notificationService.sendPush(
             customerId,
             "Booking Confirmed",
@@ -168,15 +199,25 @@ public class DomainEventOutboxProcessor {
     }
 
     private void handleBookingCompleted(Map<String, Object> payload) {
-        String bookingId = requiredString(payload, "booking_id");
-        String taskId = requiredString(payload, "task_id");
-        String customerId = requiredString(payload, "customer_id");
-        String taskerId = requiredString(payload, "tasker_id");
+        String bookingId = requiredString(payload,
+            "booking_id");
+        String taskId = requiredString(payload,
+            "task_id");
+        String customerId = requiredString(payload,
+            "customer_id");
+        String taskerId = requiredString(payload,
+            "tasker_id");
         int price = requiredInt(payload);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeePercent);
+        walletService.creditTaskCompletion(taskerId,
+            bookingId,
+            price,
+            platformFeePercent);
         notificationService.sendPush(
-            taskerId, "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
+            taskerId,
+            "Job Complete",
+            "The customer has marked the job as complete.",
+            "JOB_COMPLETED");
         analyticsService.track(
             AnalyticsService.EVENT_BOOKING_COMPLETED,
             customerId,
@@ -210,22 +251,30 @@ public class DomainEventOutboxProcessor {
         try {
             return Integer.parseInt(value.toString());
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Payload field is not an integer: " + "price", exception);
+            throw new IllegalArgumentException("Payload field is not an integer: " + "price",
+                exception);
         }
     }
 
     private Map<String, Object> withObservability(Map<String, Object> payload, Map<String, Object> base) {
         Map<String, Object> enriched = new LinkedHashMap<>(base);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_CORRELATION_ID);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_LOCALE);
-        copyIfPresent(payload, enriched, AnalyticsService.PROPERTY_PLATFORM);
+        copyIfPresent(payload,
+            enriched,
+            AnalyticsService.PROPERTY_CORRELATION_ID);
+        copyIfPresent(payload,
+            enriched,
+            AnalyticsService.PROPERTY_LOCALE);
+        copyIfPresent(payload,
+            enriched,
+            AnalyticsService.PROPERTY_PLATFORM);
         return enriched;
     }
 
     private void copyIfPresent(Map<String, Object> source, Map<String, Object> target, String key) {
         Object value = source.get(key);
         if (value != null) {
-            target.putIfAbsent(key, value);
+            target.putIfAbsent(key,
+                value);
         }
     }
 }

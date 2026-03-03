@@ -12,13 +12,7 @@ import mn.tasky.dispute.dto.DisputeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,7 +47,9 @@ public class DisputeController {
         @Valid @RequestBody DisputeRequest body,
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.RAISE_DISPUTE,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return ResponseEntity.status(409)
                 .body(Map.of(
@@ -63,7 +59,8 @@ public class DisputeController {
                     "An identical request is still being processed."));
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return ResponseEntity.status(409)
                     .body(Map.of(
                         "code",
@@ -72,7 +69,9 @@ public class DisputeController {
                         "Previous request exists but replay state could not be " + "loaded."));
             }
             return disputeService
-                .getDispute(claim.record().resourceId().toString())
+                .getDispute(claim.record()
+                    .resourceId()
+                    .toString())
                 .<ResponseEntity<?>>map(dispute -> ResponseEntity.ok(summary(dispute)))
                 .orElseGet(() -> ResponseEntity.status(409)
                     .body(Map.of(
@@ -83,16 +82,27 @@ public class DisputeController {
         }
 
         try {
-            var result = disputeService.raiseDispute(principal.userId(), id, body.reason());
+            var result = disputeService.raiseDispute(principal.userId(),
+                id,
+                body.reason());
             if (!result.isSuccess()) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, idempotencyKey);
+                idempotencyService.abandon(principal.userId(),
+                    IdempotencyOperations.RAISE_DISPUTE,
+                    idempotencyKey);
                 return switch (result.error()) {
-                    case "BOOKING_NOT_FOUND" -> ResponseEntity.notFound().build();
+                    case "BOOKING_NOT_FOUND" -> ResponseEntity.notFound()
+                        .build();
                     case "FORBIDDEN" -> ResponseEntity.status(403)
                         .body(Map.of(
-                            "code", "FORBIDDEN", "message", "Only booking participants can raise disputes"));
+                            "code",
+                            "FORBIDDEN",
+                            "message",
+                            "Only booking participants can raise disputes"));
                     case "INVALID_REASON" -> ResponseEntity.badRequest()
-                        .body(Map.of("code", "INVALID_REASON", "message", "Dispute reason cannot be empty"));
+                        .body(Map.of("code",
+                            "INVALID_REASON",
+                            "message",
+                            "Dispute reason cannot be empty"));
                     case "INVALID_STATUS" -> ResponseEntity.badRequest()
                         .body(Map.of(
                             "code",
@@ -106,28 +116,42 @@ public class DisputeController {
                             "message",
                             "Completed bookings can only be disputed within 24 " + "hours"));
                     case "DISPUTE_EXISTS" -> ResponseEntity.status(409)
-                        .body(Map.of("code", "DISPUTE_EXISTS", "message", "Dispute already exists"));
-                    default -> ResponseEntity.internalServerError().build();
+                        .body(Map.of("code",
+                            "DISPUTE_EXISTS",
+                            "message",
+                            "Dispute already exists"));
+                    default -> ResponseEntity.internalServerError()
+                        .build();
                 };
             }
 
             Map<String, Object> analyticsProperties = new LinkedHashMap<>();
-            analyticsProperties.put(AnalyticsService.PROPERTY_BOOKING_ID, id);
-            analyticsProperties.put("dispute_id", result.dispute().id());
+            analyticsProperties.put(AnalyticsService.PROPERTY_BOOKING_ID,
+                id);
+            analyticsProperties.put("dispute_id",
+                result.dispute()
+                    .id());
             bookingService
                 .getBooking(id)
-                .ifPresent(booking -> analyticsProperties.put(AnalyticsService.PROPERTY_TASK_ID, booking.taskId()));
-            analyticsService.track(AnalyticsService.EVENT_DISPUTE_RAISED, principal.userId(), analyticsProperties);
+                .ifPresent(booking -> analyticsProperties.put(AnalyticsService.PROPERTY_TASK_ID,
+                    booking.taskId()));
+            analyticsService.track(AnalyticsService.EVENT_DISPUTE_RAISED,
+                principal.userId(),
+                analyticsProperties);
 
             idempotencyService.completeWithResource(
                 principal.userId(),
                 IdempotencyOperations.RAISE_DISPUTE,
                 idempotencyKey,
                 "DISPUTE",
-                result.dispute().id());
-            return ResponseEntity.status(201).body(summary(result.dispute()));
+                result.dispute()
+                    .id());
+            return ResponseEntity.status(201)
+                .body(summary(result.dispute()));
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.RAISE_DISPUTE,
+                idempotencyKey);
             throw exception;
         }
     }
@@ -135,8 +159,10 @@ public class DisputeController {
     @GetMapping("/disputes/{id}")
     public ResponseEntity<?> getDispute(@AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
         boolean admin = "ADMIN".equals(principal.role());
-        return (admin ? disputeService.getDispute(id) : disputeService.getDisputeForUser(id, principal.userId()))
+        return (admin ? disputeService.getDispute(id) : disputeService.getDisputeForUser(id,
+            principal.userId()))
             .<ResponseEntity<?>>map(d -> ResponseEntity.ok(summary(d)))
-            .orElseGet(() -> ResponseEntity.notFound().build());
+            .orElseGet(() -> ResponseEntity.notFound()
+                .build());
     }
 }

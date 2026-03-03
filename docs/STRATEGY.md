@@ -40,11 +40,14 @@ pool at zero ongoing cost when a task is posted nearby.
 
 ## Phase 2 — Soft Monetization
 
-**Goal:** Prove willingness to pay for value-add features without taxing core transactions.
-**Revenue:** Optional premium features, core matching still free.
+**Goal:** Standardize lead-fee monetization while keeping core matching free.
+**Revenue:** Lead-unlock credits purchased by Taskers.
 
-- **Pro Badge (Taskers):** Nominal one-time fee for an advanced background check and boosted profile visibility.
-- **Priority Matching (Customers):** Small optional fee to surface the task to top-rated Taskers first.
+- **Core matching remains free:** Taskers browse and apply for free; Customers review applicants for free.
+- **Lead unlock charge point:** Credits are charged only when the selected Tasker accepts and unlocks Customer contact
+  details.
+- **Ramp-up policy:** Unlock credit cost starts low and scales by admin policy as trust and demand stabilize.
+- **Phone auth migration:** SMS OTP becomes primary auth; Phase 1 Facebook-only users migrate by verifying phone OTP.
 
 ---
 
@@ -73,12 +76,24 @@ pool at zero ongoing cost when a task is posted nearby.
 
 ## Phase 1 Management Philosophy
 
-1. **Optimize for speed over revenue.** North Star metrics in the first 6 months are Time-to-Match and Repeat Usage.
-   Revenue is a lagging indicator.
-2. **Be the concierge.** For the first 100 tasks, personally match, monitor, and intervene to guarantee a 5-star
+1. **Optimize for liquidity quality first.** North Star metric in the first 6 months is Category Liquidity Score.
+   Revenue remains a lagging indicator.
+2. **Be the concierge.** For the first 30 tasks, personally match, monitor, and intervene to guarantee a 5-star
    outcome.
 3. **Build the trust moat.** Every feature — identity verification, secure messaging, dispute resolution — builds the
    trust differential that justifies future commission.
+
+---
+
+## AI-Enabled Solo Ops
+
+Use AI as an execution multiplier, not as final authority:
+
+1. **Verification Copilot:** Prioritize queue by SLA risk and suspected fraud signals.
+2. **Dispute Copilot:** Summarize evidence threads and recommend policy-aligned outcomes for founder approval.
+3. **Supply Activation Copilot:** Recommend outreach and push-notification timing by district/category liquidity gaps.
+4. **Retention Copilot:** Generate rebook/referral campaigns for high-intent cohorts.
+5. **Founder Weekly Brief:** Auto-generate one-page report with blockers, risk alerts, and next 3 actions.
 
 ---
 
@@ -91,7 +106,8 @@ When a Customer posts a task on Tasky, automatically cross-post it to relevant F
 > *"New Job Alert: Someone nearby needs a plumber! Budget: 50,000 MNT. See exactly where and apply
 instantly: [Deep_Link]"*
 
-Taskers must download Tasky to access the exact location and contact details.
+Taskers must download Tasky to access task details. Exact location is revealed after booking, and Customer contact
+details are revealed only after paid lead unlock in Phase 2+.
 
 ### Demand-Side Import (Advanced)
 

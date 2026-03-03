@@ -29,7 +29,8 @@ public final class ApiResponseSupport {
         if (traceId != null) {
             return traceId.toString();
         }
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID()
+            .toString();
     }
 
     public static ResponseEntity<Map<String, String>> idempotencyReplayMissing(HttpServletRequest request) {

@@ -62,12 +62,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,
+                response);
             return;
         }
 
-        String token = authHeader.substring(7).trim();
-        JwtPrincipal principal = jwtTokenService.parse(token).orElse(null);
+        String token = authHeader.substring(7)
+            .trim();
+        JwtPrincipal principal = jwtTokenService.parse(token)
+            .orElse(null);
         if (principal == null) {
             responseWriter.write(
                 request,
@@ -79,7 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String effectiveStatus =
-            authService.currentUserStatus(principal.userId()).orElse(principal.status());
+            authService.currentUserStatus(principal.userId())
+                .orElse(principal.status());
 
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
             responseWriter.write(
@@ -92,11 +96,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
+            principal,
+            null,
+            List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext()
+            .setAuthentication(authentication);
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request,
+                response);
         } finally {
             SecurityContextHolder.clearContext();
         }

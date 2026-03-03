@@ -38,3 +38,7 @@ artifacts/*
 artifacts/checks/*
 !artifacts/checks/.gitkeep
 !artifacts/self-verify.json
+
+# Scraper output (keep directory placeholder)
+data/unegui/*
+!data/unegui/.gitkeep

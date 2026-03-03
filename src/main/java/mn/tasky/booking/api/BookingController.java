@@ -23,13 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -38,9 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static mn.tasky.booking.api.BookingResponseMapper.withCancellationFee;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+import static mn.tasky.common.api.ApiResponseSupport.*;
 
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -78,18 +70,28 @@ public class BookingController {
         @RequestParam(required = false) String status,
         @RequestParam(required = false) String cursor,
         @RequestParam(defaultValue = "50") int limit) {
-        int clampedLimit = Math.max(1, Math.min(limit, 100));
+        int clampedLimit = Math.max(1,
+            Math.min(limit,
+                100));
         List<BookingState> bookings =
-            bookingService.listBookings(principal.userId(), role, status, cursor, clampedLimit + 1);
+            bookingService.listBookings(principal.userId(),
+                role,
+                status,
+                cursor,
+                clampedLimit + 1);
         boolean hasMore = bookings.size() > clampedLimit;
-        List<BookingState> pageBookings = hasMore ? bookings.subList(0, clampedLimit) : bookings;
+        List<BookingState> pageBookings = hasMore ? bookings.subList(0,
+            clampedLimit) : bookings;
 
         List<Map<String, Object>> data = pageBookings.stream()
             .map(BookingResponseMapper::withCancellationFee)
             .toList();
 
         return ResponseEntity.ok(
-            new PagedResponse<>(data, CursorPagination.from(bookings, clampedLimit, BookingState::id)));
+            new PagedResponse<>(data,
+                CursorPagination.from(bookings,
+                    clampedLimit,
+                    BookingState::id)));
     }
 
     @GetMapping("/{id}")
@@ -97,8 +99,10 @@ public class BookingController {
         @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
         return bookingService
             .getBooking(id)
-            .filter(b -> b.customerId().equals(principal.userId())
-                || b.taskerId().equals(principal.userId()))
+            .filter(b -> b.customerId()
+                .equals(principal.userId())
+                || b.taskerId()
+                .equals(principal.userId()))
             .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(withCancellationFee(booking)))
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
@@ -117,15 +121,20 @@ public class BookingController {
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
         HttpServletRequest request) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.CANCEL_BOOKING,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            String bookingId = claim.record().resourceId().toString();
+            String bookingId = claim.record()
+                .resourceId()
+                .toString();
             return bookingService
                 .getBooking(bookingId)
                 .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(withCancellationFee(booking)))
@@ -135,7 +144,9 @@ public class BookingController {
         try {
             Optional<BookingState> bookingOpt = bookingService.getBooking(id);
             if (bookingOpt.isEmpty()) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
+                idempotencyService.abandon(principal.userId(),
+                    IdempotencyOperations.CANCEL_BOOKING,
+                    idempotencyKey);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                         "code",
@@ -149,25 +160,35 @@ public class BookingController {
             BookingState booking = bookingOpt.get();
             Optional<TaskState> taskOpt = taskService.getTask(booking.taskId());
             if (taskOpt.isEmpty()) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                idempotencyService.abandon(principal.userId(),
+                    IdempotencyOperations.CANCEL_BOOKING,
+                    idempotencyKey);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
             }
 
             BookingTransitionResult result = bookingService.cancelBooking(
-                principal.userId(), id, taskOpt.get().scheduledAt());
+                principal.userId(),
+                id,
+                taskOpt.get()
+                    .scheduledAt());
 
             if (result.isSuccess()) {
-                handleTaskCancellationSideEffects(result.booking(), principal.userId());
+                handleTaskCancellationSideEffects(result.booking(),
+                    principal.userId());
                 idempotencyService.completeWithResource(
                     principal.userId(),
                     IdempotencyOperations.CANCEL_BOOKING,
                     idempotencyKey,
                     "BOOKING",
-                    result.booking().id());
+                    result.booking()
+                        .id());
                 return ResponseEntity.ok(withCancellationFee(result.booking()));
             }
 
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.CANCEL_BOOKING,
+                idempotencyKey);
             return switch (result.errorCode()) {
                 case BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -197,24 +218,29 @@ public class BookingController {
                     .build();
             };
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.CANCEL_BOOKING,
+                idempotencyKey);
             throw exception;
         }
     }
 
     private void handleTaskCancellationSideEffects(BookingState booking, String actorUserId) {
-        if (booking.taskerId().equals(actorUserId)) {
+        if (booking.taskerId()
+            .equals(actorUserId)) {
             handleTaskerCancellation(booking);
             authService.addStrike(actorUserId);
             return;
         }
-        if (booking.customerId().equals(actorUserId)) {
+        if (booking.customerId()
+            .equals(actorUserId)) {
             handleCustomerCancellation(booking);
         }
     }
 
     private void handleTaskerCancellation(BookingState booking) {
-        if (taskService.reopenTask(booking.taskId()).isPresent()) {
+        if (taskService.reopenTask(booking.taskId())
+            .isPresent()) {
             return;
         }
         log.warn(
@@ -224,7 +250,8 @@ public class BookingController {
     }
 
     private void handleCustomerCancellation(BookingState booking) {
-        if (taskService.transitionToCancelled(booking.taskId()).isPresent()) {
+        if (taskService.transitionToCancelled(booking.taskId())
+            .isPresent()) {
             return;
         }
         log.warn(
@@ -240,15 +267,20 @@ public class BookingController {
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
         HttpServletRequest request) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.COMPLETE_BOOKING,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            String bookingId = claim.record().resourceId().toString();
+            String bookingId = claim.record()
+                .resourceId()
+                .toString();
             return bookingService
                 .getBooking(bookingId)
                 .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(withCancellationFee(booking)))
@@ -256,12 +288,14 @@ public class BookingController {
         }
 
         try {
-            BookingTransitionResult result = bookingService.completeBooking(principal.userId(), id);
+            BookingTransitionResult result = bookingService.completeBooking(principal.userId(),
+                id);
 
             if (result.isSuccess()) {
                 BookingState booking = result.booking();
                 // Update task status to COMPLETED
-                if (taskService.transitionToCompleted(booking.taskId()).isEmpty()) {
+                if (taskService.transitionToCompleted(booking.taskId())
+                    .isEmpty()) {
                     log.warn(
                         "Task not found when completing booking: bookingId={} taskId={}",
                         booking.id(),
@@ -293,7 +327,9 @@ public class BookingController {
                 return ResponseEntity.ok(withCancellationFee(result.booking()));
             }
 
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.COMPLETE_BOOKING,
+                idempotencyKey);
             return switch (result.errorCode()) {
                 case BookingTransitionResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -323,7 +359,9 @@ public class BookingController {
                     .build();
             };
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.COMPLETE_BOOKING,
+                idempotencyKey);
             throw exception;
         }
     }
@@ -335,20 +373,26 @@ public class BookingController {
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
         HttpServletRequest request) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.MARK_BOOKING_DONE,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            String bookingId = claim.record().resourceId().toString();
+            String bookingId = claim.record()
+                .resourceId()
+                .toString();
             return bookingService
                 .getBooking(bookingId)
                 .<ResponseEntity<?>>map(booking -> {
                     Map<String, Object> body = new LinkedHashMap<>();
-                    body.put("booking", withCancellationFee(booking));
+                    body.put("booking",
+                        withCancellationFee(booking));
                     body.put(
                         "tasker_marked_done_at",
                         bookingService
@@ -361,11 +405,13 @@ public class BookingController {
         }
 
         try {
-            BookingMarkDoneResult result = bookingService.markBookingDone(principal.userId(), id);
+            BookingMarkDoneResult result = bookingService.markBookingDone(principal.userId(),
+                id);
             if (result.isSuccess()) {
                 if (result.newlyMarked()) {
                     notificationService.sendPush(
-                        result.booking().customerId(),
+                        result.booking()
+                            .customerId(),
                         "Tasker marked job complete",
                         "Your tasker marked the booking as done. Please review and confirm " + "completion.",
                         "TASKER_MARKED_COMPLETE");
@@ -376,15 +422,19 @@ public class BookingController {
                     IdempotencyOperations.MARK_BOOKING_DONE,
                     idempotencyKey,
                     "BOOKING",
-                    result.booking().id());
+                    result.booking()
+                        .id());
                 return ResponseEntity.ok(Map.of(
-                        "booking",
-                        withCancellationFee(result.booking()),
-                        "tasker_marked_done_at",
-                    result.markedDoneAt().toString()));
+                    "booking",
+                    withCancellationFee(result.booking()),
+                    "tasker_marked_done_at",
+                    result.markedDoneAt()
+                        .toString()));
             }
 
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.MARK_BOOKING_DONE,
+                idempotencyKey);
             return switch (result.errorCode()) {
                 case BookingMarkDoneResult.NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
@@ -414,7 +464,9 @@ public class BookingController {
                     .build();
             };
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.MARK_BOOKING_DONE,
+                idempotencyKey);
             throw exception;
         }
     }

@@ -16,18 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
-import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
-import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
+import static mn.tasky.common.api.ApiResponseSupport.*;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -58,28 +51,40 @@ public class PaymentController {
         @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
         HttpServletRequest request) {
         IdempotencyClaim claim =
-            idempotencyService.claim(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+            idempotencyService.claim(principal.userId(),
+                IdempotencyOperations.INITIATE_PAYMENT,
+                idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
         if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
-            if (claim.record() == null || claim.record().resourceId() == null) {
+            if (claim.record() == null || claim.record()
+                .resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
             return paymentService
-                .findPaymentIntent(claim.record().resourceId().toString())
+                .findPaymentIntent(claim.record()
+                    .resourceId()
+                    .toString())
                 .<ResponseEntity<?>>map(intent ->
-                    ResponseEntity.ok(Map.of("payment_url", intent.paymentUrl(), "qr_code", intent.qrCode())))
+                    ResponseEntity.ok(Map.of("payment_url",
+                        intent.paymentUrl(),
+                        "qr_code",
+                        intent.qrCode())))
                 .orElseGet(() -> idempotencyReplayMissing(request));
         }
 
         try {
             if (!monetizationEnabled) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+                idempotencyService.abandon(principal.userId(),
+                    IdempotencyOperations.INITIATE_PAYMENT,
+                    idempotencyKey);
                 return deferredResponse(request);
             }
             if (!Boolean.TRUE.equals(body.liabilityDisclaimerAccepted())) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+                idempotencyService.abandon(principal.userId(),
+                    IdempotencyOperations.INITIATE_PAYMENT,
+                    idempotencyKey);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
                         "code",
@@ -92,11 +97,14 @@ public class PaymentController {
 
             return bookingService
                 .getBooking(id)
-                .filter(b -> b.customerId().equals(principal.userId()))
+                .filter(b -> b.customerId()
+                    .equals(principal.userId()))
                 .<ResponseEntity<?>>map(booking -> {
                     if (!"ASSIGNED".equals(booking.status())) {
                         idempotencyService.abandon(
-                            principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+                            principal.userId(),
+                            IdempotencyOperations.INITIATE_PAYMENT,
+                            idempotencyKey);
                         return ResponseEntity.status(HttpStatus.CONFLICT)
                             .body(Map.of(
                                 "code",
@@ -117,11 +125,16 @@ public class PaymentController {
                         intent.paymentId());
 
                     return ResponseEntity.ok(
-                        Map.of("payment_url", intent.paymentUrl(), "qr_code", intent.qrCode()));
+                        Map.of("payment_url",
+                            intent.paymentUrl(),
+                            "qr_code",
+                            intent.qrCode()));
                 })
                 .orElseGet(() -> {
                     idempotencyService.abandon(
-                        principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+                        principal.userId(),
+                        IdempotencyOperations.INITIATE_PAYMENT,
+                        idempotencyKey);
                     return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of(
                             "code",
@@ -132,7 +145,9 @@ public class PaymentController {
                             resolveTraceId(request)));
                 });
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(principal.userId(), IdempotencyOperations.INITIATE_PAYMENT, idempotencyKey);
+            idempotencyService.abandon(principal.userId(),
+                IdempotencyOperations.INITIATE_PAYMENT,
+                idempotencyKey);
             throw exception;
         }
     }
@@ -154,10 +169,14 @@ public class PaymentController {
             return deferredResponse(request);
         }
         boolean success =
-            paymentService.processCallback(body.paymentId(), body.status(), body.timestamp(), body.signature());
+            paymentService.processCallback(body.paymentId(),
+                body.status(),
+                body.timestamp(),
+                body.signature());
 
         if (success) {
-            return ResponseEntity.ok(Map.of("status", "ok"));
+            return ResponseEntity.ok(Map.of("status",
+                "ok"));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -25,10 +25,14 @@ public interface ReviewDao {
         String comment,
         Instant createdAt) {
         insert(
-            required(id, "id"),
-            required(bookingId, "bookingId"),
-            required(authorId, "authorId"),
-            required(targetUserId, "targetUserId"),
+            required(id,
+                "id"),
+            required(bookingId,
+                "bookingId"),
+            required(authorId,
+                "authorId"),
+            required(targetUserId,
+                "targetUserId"),
             rating,
             comment,
             createdAt);
@@ -47,15 +51,21 @@ public interface ReviewDao {
         @Bind("createdAt") Instant createdAt);
 
     default List<Review> findByTargetUserId(String userId, String cursor, int limit) {
-        UUID userUuid = required(userId, "userId");
-        return findByTargetUserId(userUuid, optional(cursor), limit);
+        UUID userUuid = required(userId,
+            "userId");
+        return findByTargetUserId(userUuid,
+            optional(cursor),
+            limit);
     }
 
     default List<Review> findByTargetUserId(UUID userId, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByTargetUserIdFirstPage(userId, limit);
+            return findByTargetUserIdFirstPage(userId,
+                limit);
         }
-        return findByTargetUserIdAfterCursor(userId, cursor, limit);
+        return findByTargetUserIdAfterCursor(userId,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM reviews WHERE target_user_id = :userId " + "ORDER BY id LIMIT :limit")
@@ -67,9 +77,12 @@ public interface ReviewDao {
         @Bind("userId") UUID userId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
     default boolean existsByBookingIdAndAuthorId(String bookingId, String authorId) {
-        UUID bookingUuid = required(bookingId, "bookingId");
-        UUID authorUuid = required(authorId, "authorId");
-        return existsByBookingIdAndAuthorId(bookingUuid, authorUuid);
+        UUID bookingUuid = required(bookingId,
+            "bookingId");
+        UUID authorUuid = required(authorId,
+            "authorId");
+        return existsByBookingIdAndAuthorId(bookingUuid,
+            authorUuid);
     }
 
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM reviews WHERE booking_id = :bookingId AND author_id = " + ":authorId)")

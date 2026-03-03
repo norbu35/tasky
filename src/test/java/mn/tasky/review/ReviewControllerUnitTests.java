@@ -35,32 +35,59 @@ class ReviewControllerUnitTests {
 
     @Test
     void submitReviewMapsKnownErrors() {
-        JwtPrincipal principal = new JwtPrincipal(uuid(1), "CUSTOMER", "ACTIVE");
-        when(reviewService.submitReview(principal.userId(), uuid(2), 5, "great"))
-            .thenReturn(new ReviewSubmitResult(null, "ALREADY_REVIEWED"));
+        JwtPrincipal principal = new JwtPrincipal(uuid(1),
+            "CUSTOMER",
+            "ACTIVE");
+        when(reviewService.submitReview(principal.userId(),
+            uuid(2),
+            5,
+            "great"))
+            .thenReturn(new ReviewSubmitResult(null,
+                "ALREADY_REVIEWED"));
 
-        ResponseEntity<?> response = controller.submitReview(principal, uuid(2), new ReviewRequest(5, "great"));
+        ResponseEntity<?> response = controller.submitReview(principal,
+            uuid(2),
+            new ReviewRequest(5,
+                "great"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "ALREADY_REVIEWED");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
+            "ALREADY_REVIEWED");
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d", suffix);
+        return String.format("00000000-0000-0000-0000-%012d",
+            suffix);
     }
 
     @Test
     void submitReviewReturnsCreatedWhenServiceSucceeds() {
-        JwtPrincipal principal = new JwtPrincipal(uuid(3), "CUSTOMER", "ACTIVE");
+        JwtPrincipal principal = new JwtPrincipal(uuid(3),
+            "CUSTOMER",
+            "ACTIVE");
         Review review = new Review(
-            uuid(4), uuid(5), principal.userId(), uuid(6), 5, "great", Instant.parse("2026-02-17T00:00:00Z"));
-        when(reviewService.submitReview(principal.userId(), review.bookingId(), review.rating(), review.comment()))
-            .thenReturn(new ReviewSubmitResult(review, null));
+            uuid(4),
+            uuid(5),
+            principal.userId(),
+            uuid(6),
+            5,
+            "great",
+            Instant.parse("2026-02-17T00:00:00Z"));
+        when(reviewService.submitReview(principal.userId(),
+            review.bookingId(),
+            review.rating(),
+            review.comment()))
+            .thenReturn(new ReviewSubmitResult(review,
+                null));
 
         ResponseEntity<?> response = controller.submitReview(
-            principal, review.bookingId(), new ReviewRequest(review.rating(), review.comment()));
+            principal,
+            review.bookingId(),
+            new ReviewRequest(review.rating(),
+                review.comment()));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("id", review.id());
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
+            review.id());
     }
 }

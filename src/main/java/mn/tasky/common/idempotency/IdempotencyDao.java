@@ -14,8 +14,8 @@ public interface IdempotencyDao {
 
     @SqlUpdate("INSERT INTO idempotency_keys (id, user_id, operation, idempotency_key, status, "
         + "created_at, updated_at) "
-            + "VALUES (:id, :userId, :operation, :key, :status, :createdAt, :updatedAt) "
-            + "ON CONFLICT (user_id, operation, idempotency_key) DO NOTHING")
+        + "VALUES (:id, :userId, :operation, :key, :status, :createdAt, :updatedAt) "
+        + "ON CONFLICT (user_id, operation, idempotency_key) DO NOTHING")
     int insert(
         @Bind("id") UUID id,
         @Bind("userId") UUID userId,
@@ -27,7 +27,7 @@ public interface IdempotencyDao {
 
     @SqlQuery("SELECT id, user_id, operation, idempotency_key, status, resource_type, resource_id, "
         + "created_at, updated_at "
-            + "FROM idempotency_keys "
+        + "FROM idempotency_keys "
         + "WHERE user_id = :userId AND operation = :operation AND idempotency_key = :key")
     Optional<IdempotencyRecord> find(
         @Bind("userId") UUID userId, @Bind("operation") String operation, @Bind("key") String key);

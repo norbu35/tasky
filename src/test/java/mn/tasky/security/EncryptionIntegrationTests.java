@@ -45,16 +45,23 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
 
         // Register user
         restTemplate.postForEntity(
-            "http://localhost:" + port + "/api/v1/auth/otp/request", Map.of("phone", phone), Map.class);
+            "http://localhost:" + port + "/api/v1/auth/otp/request",
+            Map.of("phone",
+                phone),
+            Map.class);
         restTemplate.postForEntity(
             "http://localhost:" + port + "/api/v1/auth/otp/verify",
-            Map.of("phone", phone, "code", "123456"),
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"),
             Map.class);
 
         String blindIndex = cryptoService.blindIndex(phone);
         var storedUser = userDao.findByPhoneBlindIndex(blindIndex);
         assertThat(storedUser).isPresent();
-        String storedPhone = storedUser.get().phone();
+        String storedPhone = storedUser.get()
+            .phone();
 
         assertThat(storedPhone).isNotEqualTo(phone);
         assertThat(storedPhone).isNotEqualTo(blindIndex);
@@ -69,7 +76,9 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
     void idAssetPrivacy() {
         AuthContext user = authenticate("user-id");
         authService.activateTaskerRole(user.userId());
-        authService.submitVerification(user.userId(), "front.jpg", "back.jpg");
+        authService.submitVerification(user.userId(),
+            "front.jpg",
+            "back.jpg");
 
         VerificationStatusResponse status = authService.getVerificationStatus(user.userId());
         assertThat(status.status()).isEqualTo("PENDING");
@@ -83,16 +92,26 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
     }
 
     private AuthContext authenticate(String seed) {
-        String phone = "+9767711" + String.format("%04d", Math.abs(seed.hashCode()) % 10000);
+        String phone = "+9767711" + String.format("%04d",
+            Math.abs(seed.hashCode()) % 10000);
         restTemplate.postForEntity(
-            "http://localhost:" + port + "/api/v1/auth/otp/request", Map.of("phone", phone), Map.class);
+            "http://localhost:" + port + "/api/v1/auth/otp/request",
+            Map.of("phone",
+                phone),
+            Map.class);
         ResponseEntity<Map> response = restTemplate.postForEntity(
             "http://localhost:" + port + "/api/v1/auth/otp/verify",
-            Map.of("phone", phone, "code", "123456"),
+            Map.of("phone",
+                phone,
+                "code",
+                "123456"),
             Map.class);
-        String accessToken = (String) response.getBody().get("access_token");
-        String userId = (String) ((Map) response.getBody().get("user")).get("id");
-        return new AuthContext(userId, accessToken);
+        String accessToken = (String) response.getBody()
+            .get("access_token");
+        String userId = (String) ((Map) response.getBody()
+            .get("user")).get("id");
+        return new AuthContext(userId,
+            accessToken);
     }
 
     @Test
@@ -100,7 +119,9 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
     void piiAuditAccess() {
         AuthContext user = authenticate("user-audit");
 
-        authService.banUser(ADMIN_ID, user.userId(), "Audit Test");
+        authService.banUser(ADMIN_ID,
+            user.userId(),
+            "Audit Test");
 
         List<AuditLogEntry> logs = authService.getAuditLog();
         assertThat(logs).anySatisfy(l -> {

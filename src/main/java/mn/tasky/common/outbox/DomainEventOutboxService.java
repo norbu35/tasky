@@ -27,14 +27,25 @@ public class DomainEventOutboxService {
 
     public void publish(String eventType, String aggregateType, String aggregateId, Map<String, Object> payload) {
         UUID aggregateUuid = aggregateId != null ? UUID.fromString(aggregateId) : null;
-        publish(eventType, aggregateType, aggregateUuid, payload);
+        publish(eventType,
+            aggregateType,
+            aggregateUuid,
+            payload);
     }
 
     public void publish(String eventType, String aggregateType, UUID aggregateId, Map<String, Object> payload) {
         String payloadJson = toPayloadJson(enrichWithObservability(payload));
         Instant now = Instant.now();
         outboxEventDao.insert(
-            UUID.randomUUID(), eventType, aggregateType, aggregateId, payloadJson, "PENDING", 0, now, now);
+            UUID.randomUUID(),
+            eventType,
+            aggregateType,
+            aggregateId,
+            payloadJson,
+            "PENDING",
+            0,
+            now,
+            now);
     }
 
     private Map<String, Object> enrichWithObservability(Map<String, Object> payload) {
@@ -45,17 +56,20 @@ public class DomainEventOutboxService {
 
         String correlationId = MDC.get(RequestObservabilityFilter.CORRELATION_ID_MDC_KEY);
         if (StringUtils.hasText(correlationId)) {
-            enriched.putIfAbsent(AnalyticsService.PROPERTY_CORRELATION_ID, correlationId);
+            enriched.putIfAbsent(AnalyticsService.PROPERTY_CORRELATION_ID,
+                correlationId);
         }
 
         String locale = MDC.get(RequestObservabilityFilter.LOCALE_MDC_KEY);
         if (StringUtils.hasText(locale)) {
-            enriched.putIfAbsent(AnalyticsService.PROPERTY_LOCALE, locale);
+            enriched.putIfAbsent(AnalyticsService.PROPERTY_LOCALE,
+                locale);
         }
 
         String platform = MDC.get(RequestObservabilityFilter.PLATFORM_MDC_KEY);
         if (StringUtils.hasText(platform)) {
-            enriched.putIfAbsent(AnalyticsService.PROPERTY_PLATFORM, platform.toUpperCase(Locale.ROOT));
+            enriched.putIfAbsent(AnalyticsService.PROPERTY_PLATFORM,
+                platform.toUpperCase(Locale.ROOT));
         }
         return enriched;
     }
@@ -64,7 +78,8 @@ public class DomainEventOutboxService {
         try {
             return objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException exception) {
-            throw new IllegalArgumentException("Failed to serialize domain event payload.", exception);
+            throw new IllegalArgumentException("Failed to serialize domain event payload.",
+                exception);
         }
     }
 }

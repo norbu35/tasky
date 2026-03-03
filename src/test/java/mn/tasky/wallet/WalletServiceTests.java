@@ -12,12 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WalletServiceTests {
@@ -38,7 +34,10 @@ class WalletServiceTests {
 
     @BeforeEach
     void setUp() {
-        walletService = new WalletService(walletDao, ledgerEntryDao, payoutRequestDao, creditedBookingDao);
+        walletService = new WalletService(walletDao,
+            ledgerEntryDao,
+            payoutRequestDao,
+            creditedBookingDao);
     }
 
     @Test
@@ -49,10 +48,16 @@ class WalletServiceTests {
         String bookingId = uuid(2);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(1);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
+        walletService.creditTaskCompletion(taskerId,
+            bookingId,
+            10000,
+            0.10);
 
-        verify(walletDao).ensureExists(eq(taskerId), any());
-        verify(walletDao).addBalance(eq(taskerId), eq(9000L), any());
+        verify(walletDao).ensureExists(eq(taskerId),
+            any());
+        verify(walletDao).addBalance(eq(taskerId),
+            eq(9000L),
+            any());
         verify(ledgerEntryDao)
             .insert(
                 any(),
@@ -74,7 +79,8 @@ class WalletServiceTests {
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d", suffix);
+        return String.format("00000000-0000-0000-0000-%012d",
+            suffix);
     }
 
     @Test
@@ -83,11 +89,18 @@ class WalletServiceTests {
         String bookingId = uuid(4);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(0);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
+        walletService.creditTaskCompletion(taskerId,
+            bookingId,
+            10000,
+            0.10);
 
-        verify(walletDao, never())
-            .addBalance(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyLong(), any());
-        verify(ledgerEntryDao, never())
+        verify(walletDao,
+            never())
+            .addBalance(org.mockito.ArgumentMatchers.anyString(),
+                org.mockito.ArgumentMatchers.anyLong(),
+                any());
+        verify(ledgerEntryDao,
+            never())
             .insert(
                 org.mockito.ArgumentMatchers.anyString(),
                 org.mockito.ArgumentMatchers.anyString(),

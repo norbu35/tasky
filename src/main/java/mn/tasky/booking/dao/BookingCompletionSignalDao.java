@@ -16,7 +16,11 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface BookingCompletionSignalDao {
 
     default int markDone(String bookingId, String taskerId, Instant markedDoneAt) {
-        return markDone(required(bookingId, "bookingId"), required(taskerId, "taskerId"), markedDoneAt);
+        return markDone(required(bookingId,
+                "bookingId"),
+            required(taskerId,
+                "taskerId"),
+            markedDoneAt);
     }
 
     @SqlUpdate("INSERT INTO booking_completion_signals (booking_id, tasker_id, marked_done_at) "
@@ -28,7 +32,8 @@ public interface BookingCompletionSignalDao {
         @Bind("markedDoneAt") Instant markedDoneAt);
 
     default Optional<BookingCompletionSignal> findByBookingId(String bookingId) {
-        return findByBookingId(required(bookingId, "bookingId"));
+        return findByBookingId(required(bookingId,
+            "bookingId"));
     }
 
     @SqlQuery("SELECT booking_id, tasker_id, marked_done_at "

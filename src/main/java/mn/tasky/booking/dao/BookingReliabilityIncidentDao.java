@@ -13,9 +13,12 @@ public interface BookingReliabilityIncidentDao {
     default void insert(
         String id, String bookingId, String userId, String incidentType, String details, Instant recordedAt) {
         insert(
-            required(id, "id"),
-            required(bookingId, "bookingId"),
-            required(userId, "userId"),
+            required(id,
+                "id"),
+            required(bookingId,
+                "bookingId"),
+            required(userId,
+                "userId"),
             incidentType,
             details,
             recordedAt);

@@ -19,15 +19,19 @@ public interface ConversationDao {
 
     default void insert(String id, String taskId, String participant1Id, String participant2Id, Instant createdAt) {
         insert(
-            required(id, "id"),
-            required(taskId, "taskId"),
-            required(participant1Id, "participant1Id"),
-            required(participant2Id, "participant2Id"),
+            required(id,
+                "id"),
+            required(taskId,
+                "taskId"),
+            required(participant1Id,
+                "participant1Id"),
+            required(participant2Id,
+                "participant2Id"),
             createdAt);
     }
 
     @SqlUpdate("INSERT INTO conversations (id, task_id, participant1_id, participant2_id, created_at) "
-            + "VALUES (:id, :taskId, :participant1Id, :participant2Id, :createdAt)")
+        + "VALUES (:id, :taskId, :participant1Id, :participant2Id, :createdAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("taskId") UUID taskId,
@@ -36,7 +40,8 @@ public interface ConversationDao {
         @Bind("createdAt") Instant createdAt);
 
     default Optional<Conversation> findById(String id) {
-        return findById(required(id, "id"));
+        return findById(required(id,
+            "id"));
     }
 
     @SqlQuery("SELECT * FROM conversations WHERE id = :id")
@@ -44,10 +49,15 @@ public interface ConversationDao {
 
     default Optional<Conversation> findByTaskAndParticipants(
         String taskId, String participant1Id, String participant2Id) {
-        UUID taskUuid = required(taskId, "taskId");
-        UUID p1Uuid = required(participant1Id, "participant1Id");
-        UUID p2Uuid = required(participant2Id, "participant2Id");
-        return findByTaskAndParticipants(taskUuid, p1Uuid, p2Uuid);
+        UUID taskUuid = required(taskId,
+            "taskId");
+        UUID p1Uuid = required(participant1Id,
+            "participant1Id");
+        UUID p2Uuid = required(participant2Id,
+            "participant2Id");
+        return findByTaskAndParticipants(taskUuid,
+            p1Uuid,
+            p2Uuid);
     }
 
     @SqlQuery("SELECT * FROM conversations WHERE task_id = :taskId "
@@ -57,18 +67,26 @@ public interface ConversationDao {
         @Bind("taskId") UUID taskId, @Bind("p1") UUID participant1Id, @Bind("p2") UUID participant2Id);
 
     default List<Conversation> findByUserId(String userId) {
-        return findByUserId(userId, null, 100);
+        return findByUserId(userId,
+            null,
+            100);
     }
 
     default List<Conversation> findByUserId(String userId, String cursor, int limit) {
-        return findByUserId(required(userId, "userId"), optional(cursor), limit);
+        return findByUserId(required(userId,
+                "userId"),
+            optional(cursor),
+            limit);
     }
 
     default List<Conversation> findByUserId(UUID userId, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByUserIdFirstPage(userId, limit);
+            return findByUserIdFirstPage(userId,
+                limit);
         }
-        return findByUserIdAfterCursor(userId, cursor, limit);
+        return findByUserIdAfterCursor(userId,
+            cursor,
+            limit);
     }
 
     @SqlQuery("SELECT * FROM conversations "

@@ -16,7 +16,10 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface RefreshSessionDao {
 
     default void insert(String tokenId, String userId, Instant expiresAt) {
-        insert(tokenId, required(userId, "userId"), expiresAt);
+        insert(tokenId,
+            required(userId,
+                "userId"),
+            expiresAt);
     }
 
     @SqlUpdate(

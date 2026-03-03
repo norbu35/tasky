@@ -16,7 +16,13 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 public interface CategoryDao {
 
     default void insert(String id, String name, String nameMn, String iconUrl, boolean isActive, int sortOrder) {
-        insert(required(id, "id"), name, nameMn, iconUrl, isActive, sortOrder);
+        insert(required(id,
+                "id"),
+            name,
+            nameMn,
+            iconUrl,
+            isActive,
+            sortOrder);
     }
 
     @SqlUpdate("INSERT INTO categories (id, name, name_mn, icon_url, is_active, sort_order) "
@@ -30,7 +36,8 @@ public interface CategoryDao {
         @Bind("sortOrder") int sortOrder);
 
     default Optional<CategoryState> findById(String id) {
-        return findById(required(id, "id"));
+        return findById(required(id,
+            "id"));
     }
 
     @SqlQuery("SELECT * FROM categories WHERE id = :id")
@@ -81,7 +88,13 @@ public interface CategoryDao {
     int countAll();
 
     default void update(String id, String name, String nameMn, String iconUrl, boolean isActive, int sortOrder) {
-        update(required(id, "id"), name, nameMn, iconUrl, isActive, sortOrder);
+        update(required(id,
+                "id"),
+            name,
+            nameMn,
+            iconUrl,
+            isActive,
+            sortOrder);
     }
 
     @SqlUpdate("UPDATE categories SET name = :name, name_mn = :nameMn, icon_url = :iconUrl, "
