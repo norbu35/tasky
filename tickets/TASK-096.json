@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-096",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-ADMIN-04",
+    "REQ-SAFE-05",
+    "REQ-SAFE-06",
+    "REQ-SAFE-07",
+    "REQ-SAFE-08",
+    "REQ-SAFE-09",
+    "REQ-SAFE-10",
+    "REQ-SAFE-11"
+  ],
+  "depends_on": [
+    "TASK-012",
+    "TASK-013",
+    "TASK-040",
+    "TASK-041"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-096-01",
+      "type": "functional",
+      "statement": "Verification queue exposes SLA countdown and daily throughput exports, ordered by oldest pending submissions.",
+      "test_ids": [
+        "TID-TASK-096-API-VERIFICATION-QUEUE-SLA"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-02",
+      "type": "functional",
+      "statement": "DAN fast-path verification can approve identity without blocking manual-review fallback when provider fails.",
+      "test_ids": [
+        "TID-TASK-096-API-DAN-FALLBACK"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-03",
+      "type": "functional",
+      "statement": "ID upload is blocked until consent is captured with policy version and timestamp.",
+      "test_ids": [
+        "TID-TASK-096-SEC-CONSENT-REQUIRED"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-04",
+      "type": "functional",
+      "statement": "Admin reads/downloads of verification media produce immutable audit logs and identity data retention/deletion jobs",
+      "test_ids": [
+        "TID-TASK-096-SEC-VERIFICATION-AUDIT-IMMUTABLE"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-05",
+      "type": "functional",
+      "statement": "Reliability score computation is deterministic and consumed by ranking/recommendation services in paid phases.",
+      "test_ids": [
+        "TID-TASK-096-DOMAIN-RELIABILITY-SCORE"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-06",
+      "type": "functional",
+      "statement": "Dispute creation enforces minimum evidence or starts grace timer then auto-closes as insufficient evidence.",
+      "test_ids": [
+        "TID-TASK-096-DOMAIN-DISPUTE-EVIDENCE-GRACE"
+      ]
+    },
+    {
+      "id": "AC-TASK-096-07",
+      "type": "functional",
+      "statement": "Review cadence is immediate +24h +72h with hard lock only for configured risk triggers.",
+      "test_ids": [
+        "TID-TASK-096-DOMAIN-REVIEW-CADENCE"
+      ]
+    }
+  ]
+}

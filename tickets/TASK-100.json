@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-100",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-30",
+    "REQ-PAY-32",
+    "REQ-PAY-33",
+    "REQ-PAY-34",
+    "REQ-PAY-38"
+  ],
+  "depends_on": [
+    "TASK-031",
+    "TASK-033"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-100-01",
+      "type": "functional",
+      "statement": "Eligible Pro taskers can activate monthly subscription that suppresses lead-fee debits and enables premium",
+      "test_ids": [
+        "TID-TASK-100-API-SUBSCRIPTION-ACTIVATE"
+      ]
+    },
+    {
+      "id": "AC-TASK-100-02",
+      "type": "functional",
+      "statement": "Escrow lifecycle persists `PAID -> HELD -> RELEASED` with default release at completion+4h and audited manual",
+      "test_ids": [
+        "TID-TASK-100-DOMAIN-ESCROW-STATE-MACHINE"
+      ]
+    },
+    {
+      "id": "AC-TASK-100-03",
+      "type": "functional",
+      "statement": "Completion under escrow creates one pending wallet credit per booking with configured platform-fee deduction.",
+      "test_ids": [
+        "TID-TASK-100-DOMAIN-PLATFORM-FEE-DEDUCTION"
+      ]
+    },
+    {
+      "id": "AC-TASK-100-04",
+      "type": "functional",
+      "statement": "Exact address remains locked until payment commitment succeeds when escrow is active.",
+      "test_ids": [
+        "TID-TASK-100-API-ESCROW-ADDRESS-GATE"
+      ]
+    }
+  ]
+}

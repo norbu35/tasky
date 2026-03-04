@@ -1,98 +1,28 @@
 # Feature: messaging
 
-In-app real-time messaging between booking participants.
+Conversation and message transport for customer-tasker chat.
 
-## Purpose
+## Implemented API
 
-Provides a persistent conversation channel between a Customer and a Tasker.
-Conversations are created automatically when a Tasker applies to a task.
-Real-time delivery uses WebSocket/STOMP; a REST fallback is provided for clients that cannot
-maintain a WebSocket connection.
+| Method | Path                                  | Notes                                     |
+|--------|---------------------------------------|-------------------------------------------|
+| `GET`  | `/api/v1/conversations`               | List caller conversations (cursor, limit) |
+| `GET`  | `/api/v1/conversations/{id}/messages` | List messages if caller is participant    |
+| `POST` | `/api/v1/conversations/{id}/messages` | Send message if caller is participant     |
 
-## API Endpoints
+## Realtime Endpoint
 
-### REST
+- STOMP inbound: `/app/conversations/{id}/messages` (`@MessageMapping`)
+- Broadcast topic: `/topic/conversations/{id}`
 
-| Method | Path                                  | Auth | Notes                                          |
-|--------|---------------------------------------|------|------------------------------------------------|
-| `GET`  | `/api/v1/conversations`               | JWT  | List conversations the caller participates in  |
-| `GET`  | `/api/v1/conversations/{id}/messages` | JWT  | List messages in a conversation (parties only) |
-| `POST` | `/api/v1/conversations/{id}/messages` | JWT  | Send a message (REST fallback)                 |
+## Behavior
 
-### WebSocket / STOMP
+- `MessagingService.startConversation(taskId, taskerId, customerId)` creates/reuses one conversation.
+- Message content is plain-text sanitized and cannot be blank.
+- Sender must be one of the two participants.
+- Message send writes DB row and broadcasts via `SimpMessagingTemplate`.
 
-| Direction       | Destination                        | Notes                                   |
-|-----------------|------------------------------------|-----------------------------------------|
-| Client → Server | `/app/conversations/{id}/messages` | Send a message via STOMP                |
-| Server → Client | `/topic/conversations/{id}`        | Subscribe to receive real-time messages |
+## Current Error Semantics
 
-## Query Parameters — List Endpoints
-
-| Param    | Default | Constraints              |
-|----------|---------|--------------------------|
-| `cursor` | —       | Opaque pagination cursor |
-| `limit`  | `50`    | 1–100                    |
-
-## Request / Response Shapes
-
-### `POST /api/v1/conversations/{id}/messages`
-
-```json
-// Request
-{ "content": "string (max 5000 chars, non-blank)" }
-
-// Response 201 — MessageResponse
-// Response 404 — conversation not found
-// Response 403 — FORBIDDEN (caller not a participant)
-```
-
-### ConversationResponse
-
-```json
-{
-  "id": "uuid",
-  "task_id": "uuid",
-  "participant_1_id": "uuid",
-  "participant_2_id": "uuid",
-  "created_at": "ISO-8601"
-}
-```
-
-### MessageResponse
-
-```json
-{
-  "id": "uuid",
-  "conversation_id": "uuid",
-  "sender_id": "uuid",
-  "content": "string",
-  "sent_at": "ISO-8601"
-}
-```
-
-## Error Codes
-
-| Code        | HTTP | Trigger                                         |
-|-------------|------|-------------------------------------------------|
-| `FORBIDDEN` | 403  | Caller is not a participant in the conversation |
-
-## Conversation Lifecycle
-
-- A conversation is created automatically when a Tasker applies to a task
-  (side effect of `POST /tasks/{id}/applications`).
-- The conversation links: `task_id`, `tasker_id` (participant_1), `customer_id` (participant_2).
-- Conversation and message history is always persisted (used as evidence in dispute resolution).
-- Admin can read any conversation for dispute investigation via `AdminDisputeController`.
-
-## WebSocket Authentication
-
-- The STOMP connection is authenticated via JWT passed in the `CONNECT` frame headers.
-- The server validates the JWT and resolves a `JwtPrincipal` before accepting the session.
-- Participant check is enforced on both WebSocket `@MessageMapping` and REST handlers.
-
-## Invariants & Guards
-
-- Only the two participants (Customer and Tasker) may read or write messages.
-- Message content is limited to 5,000 characters.
-- All messages are persisted to `messages` table on send (both REST and WebSocket paths).
-- Conversations are never deleted; they serve as a permanent audit trail.
+- Conversation missing or participant check failures are surfaced as `403` in controller for list/send paths (service
+  throws `IllegalArgumentException`), not separate `404`/`403` codes.

@@ -23,10 +23,13 @@
   "acceptance_criteria": [
     {
       "id": "AC-TASK-082-01",
-      "type": "functional",
-      "statement": "Mobile supports OTP login/signup and profile setup/update with avatar upload.",
+      "type": "security",
+      "statement": "Mobile supports Facebook OAuth login/signup and profile setup/update with avatar upload.",
       "test_ids": [
-        "TID-TASK-082-MOBILE-AUTH-OTP-FLOW"
+        "TID-TASK-082-MOBILE-AUTH-OAUTH-FLOW"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-082-MOBILE-AUTH-OAUTH-FLOW"
       ]
     },
     {

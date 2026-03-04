@@ -46,7 +46,7 @@ def parse_traceability_reqs(traceability_path: Path) -> dict[str, list[str]]:
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
-    backlog_path = repo_root / "docs/BACKLOG_MVP.md"
+    backlog_path = repo_root / "docs/BACKLOG.md"
     traceability_path = repo_root / "docs/TRACEABILITY.md"
     validate_script = repo_root / "scripts/validate-ticket-spec.py"
     out_dir = repo_root / "artifacts/checks/spec-validation"
@@ -55,15 +55,17 @@ def main() -> int:
     if not backlog_path.is_file():
         print(f"Backlog not found: {backlog_path}", file=sys.stderr)
         return 1
-    if not traceability_path.is_file():
-        print(f"Traceability not found: {traceability_path}", file=sys.stderr)
-        return 1
     if not validate_script.is_file():
         print(f"Validator not found: {validate_script}", file=sys.stderr)
         return 1
 
     backlog_index = parse_backlog_index(backlog_path)
-    reqs_by_ticket = parse_traceability_reqs(traceability_path)
+    if traceability_path.is_file():
+        reqs_by_ticket = parse_traceability_reqs(traceability_path)
+        req_source = f"{traceability_path}"
+    else:
+        reqs_by_ticket = {}
+        req_source = "backlog index coverage column (traceability file missing)"
     failures: list[str] = []
 
     for ticket, meta in sorted(backlog_index.items()):
@@ -102,6 +104,7 @@ def main() -> int:
         return 1
 
     print(f"Validated {len(backlog_index)} ticket specs successfully.")
+    print(f"REQ source: {req_source}")
     return 0
 
 

@@ -81,7 +81,8 @@ technical capability.
 #### In Scope (All Phases)
 
 1. Customer onboarding (Facebook OAuth only in Phase 0-1; SMS OTP primary from Phase 2 onward) and profile
-2. Task posting with category, fixed price budget (no hourly), schedule, and location (Pin-drop + Description)
+2. Task posting with category-specific structured intake forms, fixed price budget (no hourly), schedule, and location (
+   Pin-drop + Description)
 3. Tasker onboarding, profile, and identity verification (Gov ID upload + Manual approval with SLA)
 4. Search, matching, booking, and status tracking
 5. In-app messaging and notifications with controlled contact reveal policy by phase `[F7]`
@@ -101,9 +102,10 @@ technical capability.
 |:-----------------------------------------------|:-------------|
 | SMS OTP authentication                         | Phase 2      |
 | Referral program (Tasker + Customer)           | Phase 2      |
-| E-Mongolia DAN verification integration        | Phase 3      |
+| E-Mongolia DAN verification integration        | Phase 2      |
 | QPay payment integration                       | Phase 2      |
 | Escrow / in-app wallet / payout operations     | Phase 3      |
+| Runtime LLM chat-style intake in posting path  | Phase 3      |
 | Cross-border services                          | Post-Phase 4 |
 | Advanced dynamic pricing and promotions engine | Phase 4      |
 | Multi-country compliance layers                | Post-Phase 4 |
@@ -116,8 +118,9 @@ technical capability.
 
 1. **Onboarding**: User downloads app → Authenticates (Phase 0-1: Facebook OAuth; Phase 2+: Phone OTP) → Creates
    Profile (Name, Avatar).
-2. **Post a Task**: User selects "Cleaning" → Sets Location (Pin + "Behind State Dept Store") → Sets Schedule ("Tomorrow
-   10 AM") → Sets Budget ("50,000 MNT") → Posts Task.
+2. **Post a Task**: User selects "Cleaning" → Completes category-specific structured intake form (3-5 fixed questions)
+   → Reviews auto-generated "Job Scope Summary" (editable) → Sets Location (Pin + "Behind State Dept Store") → Sets
+   Schedule ("Tomorrow 10 AM") → Sets Budget ("50,000 MNT") → Posts Task.
 3. **Matching and Fast Confirmation** *(model evolves by phase — see Section 7.3)*:
     * *Phase 0–1 (Open Application):* User receives notifications of interested Taskers who applied → Views Tasker
       Profiles (Rating, Verified Badge, Review Count) → Accepts one.
@@ -126,7 +129,7 @@ technical capability.
     * *Phase 3+ (Instant Match option):* For repeat bookings or high-liquidity categories, User can tap "Match me now"
       to auto-assign the highest-ranked available Tasker, or choose to review applicants manually.
 4. **Confirmation**: User explicitly accepts the liability disclaimer and confirms booking. Service payment is settled
-   directly between Customer and Tasker in Phase 1-2 (no platform wallet/escrow). In Phase 2, QPay is used for
+   directly between Customer and Tasker in Phase 0-2 (no platform wallet/escrow). In Phase 2, QPay is used for
    lead-unlock credit purchases. In Phase 3+, service payment can flow through QPay/escrow.
 5. **Completion**: Tasker finishes job → User marks "Complete" → User is prompted to submit category ratings (quality,
    punctuality, communication) with optional freetext. Review policy is mandatory, but enforcement is soft first (
@@ -214,11 +217,20 @@ The following rules are normative and mapped to Section 7 requirements.
   a connected Facebook identity.
 * **REQ-AUTH-09** *(Phase 0-1 outage posture)*: If Facebook OAuth is unavailable in Phase 0-1, new login/signup is
   unavailable and the service is treated as temporarily unavailable until Facebook recovers.
+* **REQ-AUTH-10** *(Phase 0-1 outage operations)*: During OAuth outage windows, existing valid sessions MUST remain
+  usable until normal session expiry, and clients MUST display a user-facing incident banner/state indicating login and
+  signup are temporarily unavailable.
 
 ### 7.2 Task Management
 
+* **REQ-TASK-00** *(Phase 0-2 baseline)*: Task posting MUST require category-specific fixed intake forms rendered from a
+  database-managed `intake_schema` (JSON schema-driven dynamic renderer). In Phase 0-2, every active customer-postable
+  category MUST have an active intake schema. Each active schema MUST define 3-5 required structured questions using
+  fixed-choice primitives (single-select, multi-select, dropdown, yes/no toggle, numeric counter). Conversational LLM
+  chat-style intake is out of scope in Phase 0-2. `[F17]`
 * **REQ-TASK-01**: Customer MUST be able to create a task with: Category, Description, Photos (max 3), Location (
-  Lat/Long + Text), Schedule (Date/Time), and Budget (Fixed Amount > 1,000 MNT to prevent placeholders). `[F14]`
+  Lat/Long + Text), Schedule (Date/Time), and Budget (Fixed Amount > 1,000 MNT to prevent placeholders). Description
+  MAY be prefilled from REQ-TASK-07 and edited by the Customer before submit. `[F14]`
 * **REQ-TASK-02**: Task status lifecycle MUST be: `OPEN` → `ASSIGNED` → `COMPLETED` | `CANCELLED` | `NO_SHOW`. A task
   moves to `ASSIGNED` when a Customer accepts a Tasker's application and confirms liability disclaimer acceptance. A
   task moves to `NO_SHOW` when its linked booking is finalized as `NO_SHOW` under REQ-BOOK-11.
@@ -232,6 +244,20 @@ The following rules are normative and mapped to Section 7 requirements.
       may be used for post-create additions (max 3 total photos).
 * **REQ-TASK-05**: Task categories are database-managed. Admin can add, edit, and deactivate categories. Taskers can
   filter feed by Category and Distance.
+* **REQ-TASK-06**: Structured intake answers MUST be persisted with schema version metadata and returned in task detail
+  payloads for Customer, Tasker, and Admin views.
+* **REQ-TASK-07** *(Phase 0-2)*: Before final task submit, system MUST generate a human-readable "Job Scope Summary"
+  from intake answers using deterministic template rules. Customer MAY edit this summary before posting.
+* **REQ-TASK-08** *(Phase 3+ optional)*: If `ai_scope_summary_enabled` is activated, system MAY asynchronously rewrite
+  the Job Scope Summary with LLM after form completion. Task posting MUST remain available with deterministic summary
+  fallback if AI generation fails or is unavailable.
+* **REQ-TASK-09**: Task posting drafts MUST bind to the `intake_schema_version` loaded at draft start; submit-time
+  validation MUST use that bound version even if a newer schema version is activated later.
+* **REQ-TASK-10**: If deterministic Job Scope Summary generation fails, task posting MUST fail open by generating a
+  canonical structured fallback summary from raw intake answers (key-value format), and MUST log the failure for
+  operations review.
+* **REQ-TASK-11**: When a category is deactivated, creation of new drafts and new task posts for that category MUST be
+  blocked, while existing tasks remain visible and continue lifecycle operations under their original category data.
 
 ### 7.3 Booking & Matching
 
@@ -320,9 +346,9 @@ These controls serve different purposes depending on the monetization phase:
 Monetization is implemented in four stages, each behind a feature toggle. Progression between stages is gated by trust
 and usage milestones, not calendar dates.
 
-#### Phase 1 — Free (0% Commission, Direct Settlement)
+#### Phase 0-1 — Free (0% Commission, Direct Settlement)
 
-* **REQ-PAY-01**: Phase 1 has ZERO platform fees. Core matching is completely free for both Customers and Taskers.
+* **REQ-PAY-01**: In Phase 0-1, platform fees are ZERO. Core matching is completely free for both Customers and Taskers.
 * **REQ-PAY-02**: Settlement occurs directly between Customer and Tasker off-platform (cash, bank transfer, or
   peer-to-peer QPay at their discretion). The platform does not intermediate payment.
 * **REQ-PAY-03**: Booking flow MUST include clear messaging that payment is arranged directly between parties and that
@@ -415,7 +441,7 @@ low-friction matching while standardizing monetization on confirmed lead intent.
       to that user's profile. This note is visible to admins only.
 * **REQ-SAFE-04**: System MUST auto-assign "Pro Badge" to Taskers with >15 completed jobs and >4.5 average rating during
   Phase 0-1. Thresholds are reviewed and may be revised in later phases as liquidity grows.
-* **REQ-SAFE-05** *(Phase 3)*: E-Mongolia DAN integration as a fast-path verification alternative to manual ID review.
+* **REQ-SAFE-05** *(Phase 2)*: E-Mongolia DAN integration as a fast-path verification alternative to manual ID review.
   Manual review remains as fallback. `[F9]`
 * **REQ-SAFE-06**: System MUST track and surface "Tasker Reliability Score" based on: completion rate, punctuality
   rating average, overall review average, and cancellation history. This score influences search ranking in Phase 2+
@@ -475,7 +501,9 @@ low-friction matching while standardizing monetization on confirmed lead intent.
 * **REQ-ADMIN-04**: Admin MUST have a **Verification Queue** dashboard showing pending Tasker verifications, sorted by
   submission time, with SLA countdown (24h target). Queue throughput is a tracked operational metric. `[F9]`
 * **REQ-ADMIN-05**: Admin MUST have a **Category Management** interface to add, edit, deactivate, and reorder seed
-  categories.
+  categories, and to create/update/activate versioned category `intake_schema` definitions. Schema activation MUST
+  require lint/validation checks, preview against sample payloads, canary activation controls, and rollback to the last
+  known good schema version.
 * **REQ-ADMIN-06**: Admin MUST have a **Feature Toggle** panel to control monetization phase activation (lead-fee,
   subscription, escrow) without code deployment.
 * **REQ-ADMIN-07**: **Concierge Dispatch Mode** *(Phase 0-1)*: Admin/founder can manually assign a Tasker to a task,
@@ -499,6 +527,245 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   and features MUST compose from those primitives rather than introducing additional UI component frameworks.
 * **REQ-UI-02**: Mobile UI MUST implement platform-native component equivalents that follow the same design tokens,
   naming semantics, states, and interaction behaviour defined by the web design system.
+
+### 7.12 Functional Requirement Acceptance Criteria Matrix
+
+#### 7.12.1 Authentication & Identity
+
+* **REQ-AUTH-01**: In Phase 0-1, only Facebook OAuth login/signup endpoints are enabled; any non-Facebook auth endpoint
+  returns `403 FEATURE_DISABLED`; E2E auth tests pass for both Customer and Tasker personas via Facebook OAuth.
+* **REQ-AUTH-02**: Creating a second account with an existing `facebook_id` is blocked with deterministic
+  `409 DUPLICATE_IDENTITY`; database enforces unique index on `facebook_id`; duplicate-attempt test is present.
+* **REQ-AUTH-03**: Successful OAuth login returns a signed JWT with `sub`, `role`, `exp`, and `iat` claims; token expiry
+  is enforced server-side; invalid signature and expired-token requests are rejected with `401`.
+* **REQ-AUTH-04**: A verified Customer can request Tasker activation and receives role `TASKER` with verification status
+  unchanged; applying to tasks before verification is blocked with `403 VERIFICATION_REQUIRED`.
+* **REQ-AUTH-05**: In Phase 2+, phone OTP is mandatory for sign-in/up; OTP requests are rate-limited per phone and
+  request source using configuration-defined limits; exceeded attempts return `429`.
+* **REQ-AUTH-06**: Migrated Phase 0-1 users are hard-gated to OTP phone verification before non-auth product actions;
+  all gated endpoints return `403 OTP_MIGRATION_REQUIRED` until verification completes.
+* **REQ-AUTH-07**: For migrated users, login by `phone_number` succeeds and `facebook_id` remains retrievable as
+  read-only metadata; identity lookup and audit logs mark `phone_number` as primary credential.
+* **REQ-AUTH-08**: In Phase 2+, new users can complete registration/login with OTP only, without linking Facebook;
+  registration flow test confirms no Facebook prerequisite.
+* **REQ-AUTH-09**: During Facebook OAuth outage in Phase 0-1, login/signup routes fail closed with
+  `503 AUTH_PROVIDER_UNAVAILABLE`; status page/health signal reflects degraded auth state.
+* **REQ-AUTH-10**: During OAuth outages in Phase 0-1, users with already-valid sessions can continue authenticated usage
+  until token/session expiry; clients display outage banner/state for blocked login/signup.
+
+#### 7.12.2 Task Management
+
+* **REQ-TASK-00**: For all active customer-postable categories in Phase 0-2, task-post UI and API load form structure
+  from active `intake_schema` (versioned). Schema activation is blocked unless it has 3-5 required questions and
+  supported fixed-choice field types. Task submit with missing required answers fails with field-level validation
+  errors.
+  In Phase 0-2, no conversational intake path is invoked on posting.
+* **REQ-TASK-01**: Task creation fails unless Category, Description, Location (`lat`,`lng`,`text`), Schedule (
+  `ISO-8601`), and Budget are provided; Budget must be integer > 1,000 MNT; photo count is 0-3; validation errors are
+  field-specific.
+* **REQ-TASK-02**: Task state transitions only follow `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW`; invalid
+  transitions are rejected with `409 INVALID_STATE_TRANSITION`; transition audit records are immutable.
+* **REQ-TASK-03**: Tasker feed includes only `OPEN` tasks and never exposes exact address fields pre-confirmation; API
+  payload includes district or fuzzed location only; privacy regression tests verify no exact coordinates leak.
+* **REQ-TASK-04**: Presigned upload flow requires `POST /tasks/photos/upload-url` before create and optional
+  `POST /tasks/{id}/photos/upload-url` post-create; max total photos per task is 3; fourth photo attempt returns
+  `422 PHOTO_LIMIT_EXCEEDED`.
+* **REQ-TASK-05**: Admin can add/edit/deactivate/reorder categories in DB-backed UI/API; deactivated categories cannot
+  be selected for new tasks; tasker feed filtering by Category and Distance returns deterministic filtered sets.
+* **REQ-TASK-06**: On task creation, structured intake answers and `intake_schema_version` are stored with the task and
+  returned in task detail APIs for Customer, Tasker, and Admin roles.
+* **REQ-TASK-07**: Deterministic "Job Scope Summary" is auto-generated from intake answers before final submit,
+  prefilled into editable Description, and persisted with the posted task.
+* **REQ-TASK-08**: When optional AI summary rewrite is enabled, generation runs asynchronously and never blocks task
+  posting; on AI failure/unavailability, deterministic summary remains authoritative.
+* **REQ-TASK-09**: Draft records persist bound `intake_schema_version` at form start; submit validation executes against
+  that bound version even if a newer active schema exists.
+* **REQ-TASK-10**: If deterministic summary rendering fails, task submission still succeeds using canonical key-value
+  fallback summary; failure event is logged with category and schema version.
+* **REQ-TASK-11**: Deactivated categories reject new draft/create requests; existing tasks keep category metadata and
+  proceed through allowed lifecycle transitions.
+
+#### 7.12.3 Booking & Matching
+
+* **REQ-BOOK-01**: Verified Taskers can apply only to `OPEN` tasks; in Phase 2+, proactive push is sent to top-ranked
+  eligible Taskers for each new task; notification delivery attempts are logged with recipient IDs.
+* **REQ-BOOK-02**: Customer applicant list loads with all eligible applicants; in Phase 2+, list ordering strictly
+  follows descending relevance score and top-ranked entries include `recommended=true`.
+* **REQ-BOOK-03**: Booking reaches final confirmed state only after Customer acceptance plus
+  `liability_disclaimer_accepted=true`; in Phase 2+, confirmation additionally requires successful lead-unlock debit
+  event.
+* **REQ-BOOK-04**: Customer cancellations >4h before schedule create no incident; cancellations <=4h create reliability
+  incident; first incident in trailing 28 days creates warning only; second incident applies ranking penalty flag.
+* **REQ-BOOK-05**: Booking status transitions are restricted to `ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW`; task and
+  booking state machines are independently persisted and validated in contract tests.
+* **REQ-BOOK-06**: Tasker cancellation reopens linked task to `OPEN`; if a Tasker records 3 cancellations in any rolling
+  30-day window, account suspension is automatically set for 7 days and enforcement is auditable.
+* **REQ-BOOK-07**: Rebook action is available on completed bookings and pre-fills same-category Task creation; rebook is
+  initiated by a single primary action from booking history.
+* **REQ-BOOK-08**: Instant Match is visible only when liquidity threshold (>=10 verified Taskers with >4.0 rating in
+  district) is met; each offer expires at 5 minutes; after 3 declines/timeouts system falls back to open application
+  automatically.
+* **REQ-BOOK-09**: For tasks with zero eligible applicants at 120 minutes during 08:00-22:00 local time, rescue flow
+  triggers all three actions (budget/schedule prompt, broadened push, concierge queue) and records the rescue trigger
+  event.
+* **REQ-BOOK-10**: Selected applicant confirmation timeout is 15 minutes in Phase 2 and 5 minutes in Phase 3+ instant
+  match; timeout/decline counter resets per task after fallback and transition is logged.
+* **REQ-BOOK-11**: At schedule +10 minutes, both parties receive reminder; `NO_SHOW` flag at +15 is accepted only if no
+  status update/check-in from either party in prior 30 minutes and no accepted reschedule exists; repeated no-shows (>
+  =2/28d) create strike-review case.
+* **REQ-BOOK-12**: In `ASSIGNED`, either party can submit reschedule request with proposed datetime; accepted requests
+  update canonical schedule and reset timers; declined/expired requests preserve original schedule.
+* **REQ-BOOK-13**: No-show and late-cancel timers always reference latest mutually accepted in-app schedule only;
+  chat-only schedule mentions never alter timers; immutable timeline stores request/accept/decline/expiry events.
+
+#### 7.12.4 Information Controls
+
+* **REQ-LEAK-01**: Tasker phone fields are absent from all Customer-facing APIs/UI states (profile, chat, booking,
+  receipts); automated schema tests fail if phone appears in Customer payloads.
+* **REQ-LEAK-02**: Customer phone remains masked until selected Tasker accepts and (Phase 2+) lead-unlock debit
+  succeeds; pre-unlock reads return masked format only.
+* **REQ-LEAK-03**: Exact address fields are unretrievable until booking-confirmed state in Phase 1 or
+  payment/lead-unlock commitment in paid phases; unauthorized retrieval attempts return `403 ADDRESS_LOCKED`.
+* **REQ-LEAK-04**: Messaging pipeline scans outbound text for phone-sharing patterns and raises admin alert events;
+  Phase 0-1 actions are advisory-only, later phases support escalation workflows.
+* **REQ-LEAK-05**: Off-platform bookings cannot open guarantee/refund workflows; UI and API both display explicit
+  no-recourse notice before booking finalization and at dispute intake.
+
+#### 7.12.5 Monetization (Phased)
+
+* **REQ-PAY-01**: When phase is set to Phase 0-1 free mode, all fee fields are 0 and no charge transaction type can be
+  created from booking flow.
+* **REQ-PAY-02**: Booking completion in Phase 0-1 stores settlement method as `DIRECT`; no escrow wallet ledger entries
+  are created.
+* **REQ-PAY-03**: Booking confirmation screen and API response include connector-payment disclaimer text; confirmation
+  API rejects requests missing disclaimer acknowledgement.
+* **REQ-PAY-10**: In Phase 2, Taskers can browse/apply with zero credits; credit balance is unchanged for browse/apply
+  actions in audit logs.
+* **REQ-PAY-11**: After customer selection, selected Tasker sees 15-minute accept/decline timer; on accept, credits are
+  atomically debited exactly once and customer contact unlock is performed only after successful debit.
+* **REQ-PAY-12**: Decline or timeout creates no credit debit; customer receives `select next applicant` prompt/event;
+  prior selected applicant cannot auto-relock contact without reselection.
+* **REQ-PAY-13**: If customer cancels after successful lead unlock, identical credit amount is refunded to Tasker ledger
+  and marked as `REFUND` transaction with booking reference.
+* **REQ-PAY-14**: Lead-unlock price table is admin-configurable by category/district with minimum start value 1 credit;
+  all price changes are versioned with effective timestamp.
+* **REQ-PAY-15**: Credit charges are allowed only on `LEAD_UNLOCK_ACCEPTED`; attempts to charge on browse/apply/create
+  events are blocked and logged as policy violations.
+* **REQ-PAY-16**: Customer can always choose any eligible applicant regardless of ranking position; UI tests verify no
+  forced selection of top-ranked Tasker.
+* **REQ-PAY-17**: Application cap defaults to 10 per task and is admin-configurable; on cap reached, subsequent apply
+  attempts return `409 APPLICATION_CAP_REACHED`.
+* **REQ-PAY-18**: Tasker dashboard exposes success rate and unlock conversion with trailing 28-day window and minimum
+  sample-size indicator; metric definitions match Section 9.2 formulas.
+* **REQ-PAY-19**: Credit packs are purchasable via QPay in configured tiers; pack purchase creates immutable `PURCHASE`
+  ledger entry and updates balance exactly by pack credit count.
+* **REQ-PAY-20**: On first Tasker onboarding completion, system grants exactly 5 signup credits once per user; duplicate
+  bonus grants are prevented by idempotency key.
+* **REQ-PAY-21**: Current credit balance is visible on Tasker home and billing screens; low-balance push triggers when
+  balance transitions to <=1 credit.
+* **REQ-PAY-22**: Credits never expire automatically and cannot be converted to cash; cancellation refunds return
+  credits only; legal review is required for stored-value regulatory classification.
+* **REQ-PAY-30**: Eligible Pro Badge Taskers can subscribe monthly; active subscription suppresses lead-fee debits and
+  applies premium-ranking visibility flag.
+* **REQ-PAY-31**: QPay integration returns valid QR/deeplink payload for booking payment attempts; failed generation
+  returns retryable error without mutating booking state.
+* **REQ-PAY-32**: Escrow flow records `PAID -> HELD -> RELEASED`; funds release occurs 4 hours after completion unless
+  manual early release action is approved and logged.
+* **REQ-PAY-33**: On booking completion under escrow, a wallet `PENDING_CREDIT` entry is created once per booking and
+  linked to booking transaction ID.
+* **REQ-PAY-34**: Platform fee is deducted using active configurable rate before net crediting Tasker wallet; payout
+  statement shows gross, fee, and net amounts.
+* **REQ-PAY-35**: Tasker can submit payout request only when available wallet balance is positive and not on hold;
+  request state transitions are auditable.
+* **REQ-PAY-36**: Admin panel lists pending payouts with requester, amount, and created time; processing action requires
+  explicit status update and processor audit trail.
+* **REQ-PAY-37**: Payout processing is executable only on Tuesdays and Fridays (platform timezone); off-schedule
+  processing attempts are blocked.
+* **REQ-PAY-38**: When escrow is active, exact address remains locked until payment commitment is successful;
+  pre-payment address fetch returns `403 ADDRESS_LOCKED`.
+* **REQ-PAY-40**: Tasky Plus subscribers receive priority queueing and SLA tracking that shows <1 hour match guarantee
+  eligibility; non-subscribers cannot access Plus-only queue.
+* **REQ-PAY-41**: B2B plans support recurring scheduling, organization billing profile, and seat-based admin controls;
+  contract tests verify tenant isolation from consumer accounts.
+* **REQ-PAY-42**: In Phase 4, checkout supports QPay plus SocialPay/bank-transfer rails with per-rail success/failure
+  telemetry and fallback messaging.
+
+#### 7.12.6 Trust & Safety
+
+* **REQ-SAFE-01**: New Tasker verification status remains `PENDING` until admin decision; median review time and SLA
+  breach metrics are computed against 24-hour target; upload flow accepts presigned-key references only.
+* **REQ-SAFE-02**: After `COMPLETED`, both parties receive structured review form; soft-gate reminders trigger at
+  completion, +24h, +72h; hard lock is enforced only when configured risk conditions are true.
+* **REQ-SAFE-03**: Dispute creation is allowed only in `ASSIGNED` or within 24 hours of `COMPLETED`; Phase 1 resolution
+  actions are limited to evidence-only outcomes and admin misconduct note updates.
+* **REQ-SAFE-04**: Pro Badge is auto-assigned when Tasker has >15 completed jobs and >4.5 average rating in Phase 0-1;
+  assignment logic is deterministic and idempotent.
+* **REQ-SAFE-05**: In Phase 2, DAN verification path can independently approve identity; if DAN fails/unavailable,
+  manual review route remains available without blocking applicant submission.
+* **REQ-SAFE-06**: Reliability score is computed from completion rate, punctuality average, overall average, and
+  cancellation history with documented weighting; Phase 2 ranking consumes this score in applicant ordering.
+* **REQ-SAFE-07**: Identity upload cannot proceed until consent checkbox is accepted; persisted consent record includes
+  `user_id`, `policy_version`, and timestamp.
+* **REQ-SAFE-08**: Every admin read/download action on verification media writes immutable audit log (`viewer_id`,
+  action, timestamp, object_key); audit queries support incident lookups by user and date range.
+* **REQ-SAFE-09**: Identity assets follow policy lifecycle (active account +90 days) and are deleted/anonymized on
+  eligible user deletion requests; deletion jobs emit completion evidence logs.
+* **REQ-SAFE-10**: Dispute submission requires at least one evidence artifact; if missing evidence remains after
+  reminder and 24-hour grace, dispute auto-closes as `INSUFFICIENT_EVIDENCE`.
+* **REQ-SAFE-11**: Review enforcement cadence strictly follows immediate prompt, +24h reminder, +72h reminder; hard lock
+  action requires one of the REQ-SAFE-02 risk flags and logs trigger reason.
+
+#### 7.12.7 Notifications
+
+* **REQ-NOTIF-01**: Push notifications are emitted for every listed trigger event with correct recipient role and
+  localized content; emission and delivery attempts are logged.
+* **REQ-NOTIF-02**: In Phase 2, when app is inactive, SMS fallback is sent for `HIRED` and `BOOKING_CONFIRMED`;
+  duplicate SMS for same event is prevented by idempotency key.
+
+#### 7.12.8 In-App Messaging
+
+* **REQ-MSG-01**: Messaging becomes available only after task application exists; real-time transport uses
+  WebSocket/STOMP and supports real-time delivery for online participants.
+* **REQ-MSG-02**: All message events are durably stored and retrievable by both participants and authorized admin;
+  tamper-evident message audit metadata is retained.
+* **REQ-MSG-03**: Messaging is default communication path; in Phase 2+, customer contact unlock depends on lead unlock
+  and Tasker contact remains hidden from customers in all message payloads.
+
+#### 7.12.9 Admin & Operations
+
+* **REQ-ADMIN-01**: Admin search supports Name and Facebook ID in Phase 0-1, and adds Phone Number criterion in Phase 2;
+  search responses are permission-scoped and paginated.
+* **REQ-ADMIN-02**: Dispute Manager displays task context, chat evidence, and allows `Resolve for Customer`,
+  `Resolve for Tasker`, or `Escalate` with mandatory rationale note.
+* **REQ-ADMIN-03**: Ban action blocks new login/session refresh and returns `403 USER_BANNED`; existing active sessions
+  are revoked according to authentication policy.
+* **REQ-ADMIN-04**: Verification Queue lists pending submissions ordered by submission time, shows SLA countdown to 24h
+  target, and exports throughput metrics daily.
+* **REQ-ADMIN-05**: Category Management supports add/edit/deactivate/reorder operations plus `intake_schema`
+  create/update/activate/version actions, with schema lint/preview checks, canary activation, rollback to
+  last-known-good version, audit logging, and immediate propagation to task-posting category picker.
+* **REQ-ADMIN-06**: Feature Toggle panel can enable/disable lead-fee, subscription, and escrow independently without
+  redeploy; toggle changes are audited with actor and timestamp.
+* **REQ-ADMIN-07**: In Phase 0-1, admin can manually assign Tasker to task via concierge flow; assignment writes
+  override reason and actor ID and respects verification eligibility checks.
+
+#### 7.12.10 Referral Program
+
+* **REQ-REF-01**: In Phase 2, each user profile exposes unique shareable referral link/code; link resolves to onboarding
+  flow with referrer attribution token.
+* **REQ-REF-02**: Referral records persist `referrer_id`, `referred_id`, attribution timestamp, and first
+  completed-booking conversion timestamp; attribution is immutable after conversion.
+* **REQ-REF-03**: Reward engine applies phase-specific reward logic (Phase 2 priority boost; Phase 3+ credit rewards)
+  only after qualifying conversion event.
+* **REQ-REF-04**: Fraud control blocks reward accrual beyond 10 successful referrals per user per calendar month and
+  emits manual-review alert on threshold breach attempts.
+
+#### 7.12.11 Frontend Design System
+
+* **REQ-UI-01**: All newly added web components are composed from `shadcn/ui` primitives; CI check fails if unauthorized
+  web component framework dependencies are introduced.
+* **REQ-UI-02**: Mobile components map to shared token and state semantics used on web; parity tests verify equivalent
+  states (default/disabled/error/loading/success) across platforms.
 
 ---
 
@@ -550,8 +817,11 @@ low-friction matching while standardizing monetization on confirmed lead intent.
 
 ### 8.7 Observability
 
-* **NFR-OBS-01**: System MUST emit product analytics events for MVP funnel milestones (task posted, application
-  submitted, tasker accepted, booking confirmed, booking completed, dispute raised) with locale and platform dimensions.
+* **NFR-OBS-01**: System MUST emit product analytics events for MVP funnel milestones (task intake started, task intake
+  completed, intake schema render failed, intake validation failed, deterministic summary generation failed with
+  fallback,
+  job scope summary edited, task posted, application submitted, tasker accepted, booking confirmed, booking completed,
+  dispute raised) with locale and platform dimensions.
 * **NFR-OBS-02**: System MUST instrument **leakage indicators**: message content flagged for phone number patterns,
   repeat off-platform contact attempts, booking-to-repost ratios. `[F7]`
 * **NFR-OBS-03**: System MUST track **review completion rate** per cohort (target: >85%). `[F8]`
@@ -559,6 +829,8 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   breach count. `[F9]`
 * **NFR-OBS-05**: System MUST track **monetization stage adoption**: lead-fee payment rate, subscription conversion
   rate, escrow opt-in rate (when each is active).
+* **NFR-OBS-06**: Intake-related observability events MUST include at minimum `category_id`, `intake_schema_version`,
+  and `client_app_version` dimensions.
 
 ### 8.8 UI
 
@@ -582,6 +854,7 @@ low-friction matching while standardizing monetization on confirmed lead intent.
     * Repeat usage: % of Customers who book again within 30 days.
     * Supply health: Verification queue SLA adherence (target: 95% within 24h).
     * Time to first match: median hours from task post to first Tasker application.
+  * Scope clarity: median pre-booking clarification message count per `ASSIGNED` booking.
 
 ### 9.1 Liquidity Thresholds (District-First) `[F2]`
 
@@ -609,6 +882,7 @@ Initial demand marketing district: **Sukhbaatar**.
 | Repeat usage        | Customers with >=2 completed bookings in 30 days / active customers                     | Used for monetization readiness                                      |
 | Time to first match | Median time from task creation to first qualified application                           | Used for district/category expansion decisions                       |
 | Leakage indicator   | Bookings with phone-sharing signal / total bookings                                     | Advisory in Phase 0-1, enforcement in Phase 2+                       |
+| Scope clarity       | Median pre-booking clarification message count per `ASSIGNED` booking                   | Alert and operations review if >2.0 for 2 consecutive weeks          |
 | Monthly net revenue | Gross platform revenue minus direct variable platform costs (payment rails, SMS, infra) | Must be >= 12,000,000 MNT for 3 consecutive months before Phase 3    |
 
 ### 9.3 Phase 3 Trigger Formula (Adjustable)
@@ -663,13 +937,15 @@ until funding or team expansion occurs:
   engineering, QA, marketing content, and customer support triage.
 * **Zero paid infrastructure in Phase 1:** Free-tier cloud services wherever possible. Paid infrastructure scales only
   with validated revenue.
+* **No runtime LLM dependency on posting path in Phase 0-2:** Structured intake and job scope summary generation MUST
+  use deterministic templates. Optional AI summary polish is asynchronous with deterministic fallback.
 * **Manual operations acceptable:** Concierge dispatch, manual verification, and founder-as-backstop are expected
   operational modes in early phases.
 * **Founder manual-ops budget:** Combined concierge dispatch + manual verification time is capped at **10 hours/week**.
 * **No SMS costs in Phase 1:** SMS OTP is deferred in Phase 0-1. SMS cost line-items begin in Phase 2 when OTP becomes
   mandatory.
-* **No DAN integration in Phase 1–2:** E-Mongolia DAN requires contractual relationships and compliance overhead. Manual
-  ID verification with defined SLA is the Phase 1–2 approach.
+* **No DAN integration in Phase 0-1:** E-Mongolia DAN requires contractual relationships and compliance overhead.
+  Manual ID verification with defined SLA is the Phase 0-1 approach.
 
 ### 10.4 Explicit Dependency Posture
 
@@ -679,6 +955,8 @@ until funding or team expansion occurs:
    incident communication and recovery; authentication remains unavailable until Facebook recovers.
 3. **Phase 2 introduces mandatory SMS OTP migration.** Existing Facebook-auth users must verify phone OTP; new users can
    register without Facebook linkage.
+4. **OAuth outage runbook requirement (Phase 0-1):** while new login/signup is unavailable, existing valid sessions must
+   continue until expiry and the app must surface outage state to users.
 
 ---
 
@@ -688,9 +966,10 @@ until funding or team expansion occurs:
 |:-----------------------------------------------------------|:---------|:-----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Platform Leakage** (users settle offline)                | High     | High       | In-app messaging from day one builds habits before fees exist. Location gated to booking state. Repeat-booking convenience. Reputation is platform-exclusive. `[F7]`                         |
 | **Fake Tasks / Spam**                                      | Medium   | Medium     | Rate limit task posting. Validate OAuth identities and abuse signals.                                                                                                                        |
+| **Low-quality task scope from weak descriptions**          | High     | High       | Enforce category-specific structured intake (3-5 required questions), deterministic job scope summaries, and schema governance in admin category management. `[F17]`                         |
 | **Off-Platform Settlement Disputes** (Phase 1)             | Medium   | High       | Evidence-only mediation policy, admin-only misconduct notes for wrongful party, strong dispute evidence capture (chat, timestamps, photos), explicit liability disclaimer.                   |
 | **Founder Ops Overload** (manual concierge + verification) | High     | Medium     | Hard cap founder manual operations at 10 hours/week. If exceeded for 2 consecutive weeks, freeze expansion activities and reduce category/district scope.                                    |
-| **Admin Verification Bottleneck**                          | High     | High       | 24h SLA, verification queue dashboard, concierge first-cohort onboarding. DAN fast-path in Phase 3. `[F9]`                                                                                   |
+| **Admin Verification Bottleneck**                          | High     | High       | 24h SLA, verification queue dashboard, concierge first-cohort onboarding. DAN fast-path in Phase 2. `[F9]`                                                                                   |
 | **Facebook OAuth Outage / Policy Change** (Phase 0-1)      | Critical | Medium     | Accepted operational failure window in Phase 0-1 (auth unavailable until Facebook recovers). Communicate outage status, preserve existing bookings, and execute incident/postmortem process. |
 | **2-Year Labour Law Contractor Reclassification**          | High     | Low–Med    | Legal disclaimer in ToS. Engagement duration tracking with admin alerts. Legal review at 18-month mark. `[Research: labour law]`                                                             |
 | **Seasonal Demand Collapse** (summer)                      | Medium   | High       | Seasonal category expansion (tutoring, digital tasks in summer). Adjust marketing spend seasonally. `[F10]`                                                                                  |
@@ -729,7 +1008,7 @@ until funding or team expansion occurs:
 | Area                    | Deliverable                                                                                                                                                                                                     |
 |:------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Auth**                | Facebook OAuth only. No SMS OTP. Phone field is optional profile data, not an auth method.                                                                                                                      |
-| **Task Management**     | Full task CRUD with category, photos, location, schedule, budget. Cyrillic-hardened throughout.                                                                                                                 |
+| **Task Management**     | Full task CRUD with category, schema-driven structured intake forms (3-5 required questions), deterministic editable job scope summary, photos, location, schedule, and budget. Cyrillic-hardened throughout.   |
 | **Booking**             | Application → Customer confirmation → Liability disclaimer → Booking lifecycle. Concierge dispatch override for founder.                                                                                        |
 | **Messaging**           | WebSocket real-time chat. Phone number detection alerting (advisory only).                                                                                                                                      |
 | **Reviews**             | Mandatory bilateral reviews with soft-gate reminders; hard lock only for risk-triggered cases (dispute, repeated non-submission, or active investigation).                                                      |
@@ -777,14 +1056,15 @@ monetization.
 **Revenue:** $0
 **Duration:** Until exit criteria are met.
 
-| Area           | Additions over Phase 0                                                                                                                                                                                                         |
-|:---------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Operations** | Transition from concierge dispatch to application-first matching. Founder monitors but does not manually assign every booking. Matching remains open-application model; data collection for future algorithmic ranking begins. |
-| **Geography**  | If Sukhbaatar liquidity thresholds met, expand supply acquisition to adjacent districts (Bayangol, Khan-Uul).                                                                                                                  |
-| **Categories** | Expand to 6 categories: add Plumbing, Electrical, and Renovation to the seed set (medium-complexity, higher-value). Plumbing is highly monopolized on incumbents, offering strong disruption value. `[F16]`                    |
-| **Analytics**  | Baseline leakage rate. Baseline repeat customer rate. Baseline time-to-first-match by category and district.                                                                                                                   |
-| **Referrals**  | Referral readiness only: tracking hooks and operational playbook prepared for Phase 2 launch.                                                                                                                                  |
-| **Profile**    | AI Profile Polish: Taskers can use AI to enhance their profile descriptions, increasing the single-player value of the platform.                                                                                               |
+| Area            | Additions over Phase 0                                                                                                                                                                                                         |
+|:----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Operations**  | Transition from concierge dispatch to application-first matching. Founder monitors but does not manually assign every booking. Matching remains open-application model; data collection for future algorithmic ranking begins. |
+| **Geography**   | If Sukhbaatar liquidity thresholds met, expand supply acquisition to adjacent districts (Bayangol, Khan-Uul).                                                                                                                  |
+| **Categories**  | Expand to 6 categories: add Plumbing, Electrical, and Renovation to the seed set (medium-complexity, higher-value). Plumbing is highly monopolized on incumbents, offering strong disruption value. `[F16]`                    |
+| **Task Intake** | Roll out schema-driven intake forms for newly added categories with admin-managed schema versioning and quality checks.                                                                                                        |
+| **Analytics**   | Baseline leakage rate. Baseline repeat customer rate. Baseline time-to-first-match by category and district.                                                                                                                   |
+| **Referrals**   | Referral readiness only: tracking hooks and operational playbook prepared for Phase 2 launch.                                                                                                                                  |
+| **Profile**     | AI Profile Polish: Taskers can use AI to enhance their profile descriptions, increasing the single-player value of the platform.                                                                                               |
 
 **Kill Criteria** (if unmet, pivot or shut down):
 
@@ -799,7 +1079,7 @@ monetization.
 - Repeat customer rate (30-day) > 25%
 - Verification SLA adherence > 90%
 
-### 12.4 Phase 2 — Soft Monetization (Standard Lead-Fee + SMS OTP + QPay)
+### 12.4 Phase 2 — Soft Monetization (Standard Lead-Fee + SMS OTP + QPay + DAN)
 
 **Goal:** Introduce first revenue stream with standardized lead-unlock credits while keeping core matching free.
 **Revenue:** Credit purchases from Taskers. Target: cover infrastructure costs.
@@ -809,11 +1089,13 @@ monetization.
 |:------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Matching**      | Algorithm-assisted application model live (REQ-BOOK-01/02 Phase 2). Proactive push to best-matching Taskers. Applicant list sorted by relevance score with "Recommended" labels.               |
 | **Auth**          | SMS OTP activated as primary login method for Phase 2+. Existing Facebook-auth users must register and verify phone OTP. New users can register with OTP without connected Facebook ID. `[F5]` |
+| **Verification**  | E-Mongolia DAN API integration enabled as fast-path identity verification in Phase 2. Manual review remains as fallback path.                                                                  |
 | **Credits**       | Credit system live. QPay merchant integration for credit pack purchases. 5 free credits on Tasker signup.                                                                                      |
 | **Monetization**  | Standard lead-fee model: Core matching remains free. Taskers pay credits only when accepting a selected lead to unlock Customer contact information (15-minute accept/decline window).         |
 | **Notifications** | SMS fallback for critical events (Hired, Booking Confirmed) when app is not open.                                                                                                              |
 | **Incentives**    | QPay digital payment incentives: MNT 5,000–10,000 booking credit for first digital payment. "Secure Booking" badge. `[Payment]`                                                                |
 | **Referrals**     | Referral program goes live (REQ-REF-01..04): shareable link/code, attribution tracking, and priority-boost reward at launch.                                                                   |
+| **Task Intake**   | Structured intake coverage expanded to all active categories. Optional AI summary polish may be tested behind feature toggle with deterministic fallback retained as default.                  |
 | **Admin**         | Credit pack pricing configuration, unlock price ramp-up configuration, revenue reporting, and SMS cost monitoring.                                                                             |
 | **Geography**     | Expand to remaining central UB districts if liquidity thresholds met.                                                                                                                          |
 | **Categories**    | Add remaining seed categories based on demand signals (Furniture Assembly, Tutoring, Digital Tasks).                                                                                           |
@@ -829,10 +1111,9 @@ monetization.
 - 500+ total completed bookings
 - Pro Badge Taskers: 10+ (eligible for subscription tier)
 
-### 12.5 Phase 3 — Subscription + Escrow + DAN
+### 12.5 Phase 3 — Subscription + Escrow
 
-**Goal:** Lock in elite supply with subscriptions. Transition to on-platform escrow as default payment. Automate
-verification with DAN.
+**Goal:** Lock in elite supply with subscriptions. Transition to on-platform escrow as default payment.
 **Revenue:** Subscriptions (Tasker MRR) + Platform fee on escrow transactions.
 
 | Area             | Additions over Phase 2                                                                                                                                                           |
@@ -840,7 +1121,6 @@ verification with DAN.
 | **Matching**     | Instant Match option live (REQ-BOOK-08) for high-liquidity categories. "Match me now" button with 5-minute accept/decline window. Fallback to application flow after 3 declines. |
 | **Monetization** | Tasker subscription tier live (monthly fee → zero lead fees + Premium badge + priority ranking).                                                                                 |
 | **Payment**      | Escrow flow live: Customer pays at booking → funds held → released after completion. Platform fee deducted (5% for early cohort, 10–15% for new Taskers).                        |
-| **Verification** | E-Mongolia DAN API integration for instant identity verification. Manual review remains as fallback path.                                                                        |
 | **Payouts**      | Tasker wallet with payout requests. Admin payout processing (Tuesdays and Fridays). Manual bank transfer initially.                                                              |
 | **Anti-leakage** | Exact address gated behind escrow payment commitment. Phone number detection in messages becomes enforced (warning + admin flag).                                                |
 | **Dispute**      | Monetary dispute resolution: "Refund Customer" / "Release to Tasker" actions in admin panel.                                                                                     |
@@ -890,6 +1170,8 @@ decisions under deterministic system and human control.
 3. **Supply Activation Copilot**: Recommends push timing, district/category activation, and outreach priority lists.
 4. **Retention Copilot**: Generates rebook nudges, churn risk segments, and referral prompts.
 5. **Founder Ops Copilot**: Produces weekly action brief with top failures, risks, and recommended interventions.
+6. **Task Scope Summary Copilot** *(Phase 3+ optional)*: Rewrites structured intake answers into concise, readable job
+   scope summaries without changing required structured fields.
 
 #### Evaluation and Guardrails
 
@@ -928,6 +1210,8 @@ decisions under deterministic system and human control.
    are mandatory before scale?
 4. What minimum alert/ops tooling is required before demand-side Facebook scraping can be enabled, given ToS enforcement
    risk?
+5. When should AI scope-summary polish graduate from optional experiment to default experience, and what quality gate
+   should be required?
 
 ## 14. Appendix
 
@@ -949,10 +1233,12 @@ decisions under deterministic system and human control.
 * **User**: ID, FacebookID, Phone (nullable), Role (Customer/Tasker/Admin), Status (Pending/Verified/Banned),
   ReferralCode, ReferredBy, AdminInternalNotes (admin-only).
 * **Task**: ID, CustomerID, CategoryID, Description, Photos, Location (Lat/Long, Text), Budget, Status (`OPEN`/
-  `ASSIGNED`/`COMPLETED`/`CANCELLED`/`NO_SHOW`), ScheduleTime.
+  `ASSIGNED`/`COMPLETED`/`CANCELLED`/`NO_SHOW`), ScheduleTime, IntakeAnswersJSON, IntakeSchemaVersion,
+  ScopeSummarySource (TEMPLATE/LLM/USER_EDITED).
 * **Booking**: ID, TaskID, TaskerID, Price, Status (`ASSIGNED`/`COMPLETED`/`CANCELLED`/`NO_SHOW`), CreatedAt,
   SettlementMethod (DIRECT/QPAY/ESCROW).
-* **Category**: ID, Name, NameMN, IconURL, IsActive, SortOrder, LeadUnlockCreditCost (nullable, Phase 2).
+* **Category**: ID, Name, NameMN, IconURL, IsActive, SortOrder, LeadUnlockCreditCost (nullable, Phase 2), IntakeEnabled,
+  IntakeSchemaJSON, IntakeSchemaVersion.
 * **CreditBalance** *(Phase 2)*: ID, TaskerID, Balance, TotalPurchased, TotalSpent, TotalRefunded.
 * **CreditTransaction** *(Phase 2)*: ID, TaskerID, Amount, Type (PURCHASE/SPEND/REFUND/SIGNUP_BONUS), ReferenceID (
   BookingID or CreditPackID), CreatedAt.
@@ -987,28 +1273,50 @@ decisions under deterministic system and human control.
 8. **Tutoring** (Хичээл заах) `[Gemini2 — student supply]`
 9. **Digital Tasks** (Дижитал ажил) `[Gemini2 — student supply]`
 
+#### 14.2.4 Intake Schema Baseline Examples (Phase 1-2)
+
+These are baseline examples for `Category.IntakeSchemaJSON` and are implemented as fixed forms, not conversational
+chat.
+
+1. **Cleaning**
+    - `property_type` (single-select): Apartment, Ger, Office, House
+    - `size_or_rooms` (numeric counter or bounded select): 1, 2, 3, 4+
+    - `cleaning_type` (single-select): Standard, Deep Clean, Move-in/Move-out, Post-Renovation
+    - `supplies_provided` (boolean): Yes/No
+2. **Moving**
+    - `moving_scope` (multi-select): A few items, 1-2 room apartment, 3+ room apartment, Office
+    - `origin_floor_elevator` (single-select): Ground, 2nd-4th (no elevator), 5+ (no elevator), Freight elevator,
+      Passenger elevator
+    - `destination_floor_elevator` (single-select): Ground, 2nd-4th (no elevator), 5+ (no elevator), Freight elevator,
+      Passenger elevator
+    - `heavy_lifting_required` (boolean): Yes/No
+3. **Plumbing**
+    - `primary_issue` (single-select): Blocked pipe, Leak/Burst, Installation, Low pressure, Frozen pipe
+    - `issue_location` (single-select): Bathroom, Kitchen, Heating system, Main line
+
 ---
 
 ### 14.3 Appendix: Research References
 
-| ID  | Finding Summary                                                                               | Source                             |
-|:----|:----------------------------------------------------------------------------------------------|:-----------------------------------|
-| F1  | Mongolia digitally ready: 85% smartphone, 83.9% internet, 88% Facebook penetration            | MONGOLIA_MARKET_RESEARCH.md        |
-| F2  | UB concentration supports district-first liquidity strategy                                   | MONGOLIA_MARKET_RESEARCH.md        |
-| F3  | Core gap vs incumbents is trust infrastructure, not listing availability                      | MONGOLIA_MARKET_RESEARCH.md        |
-| F4  | Relationship-driven culture: referrals are culturally aligned, not just growth tactics        | MONGOLIA_MARKET_RESEARCH.md        |
-| F5  | Supply side includes phone-first workers; Facebook-only auth excludes some Taskers            | MONGOLIA_MARKET_RESEARCH.md        |
-| F6  | QPay is dominant rail, but platform escrow trust must be earned via graduation                | PAYMENT_BEHAVIOUR_ANALYSIS.md      |
-| F7  | Off-platform leakage solved by information control, not fee policy                            | PAYMENT_BEHAVIOUR_ANALYSIS.md      |
-| F8  | Voluntary reviews underperform in high-context cultures; must be workflow-enforced            | MONGOLIA_MARKET_RESEARCH.md        |
-| F9  | Manual verification bottleneck can kill supply growth; need SLA and concierge ops             | MONGOLIA_MARKET_RESEARCH.md        |
-| F10 | Seasonal demand (Tsagaan Sar peak) is a major planning variable                               | MONGOLIA_MARKET_RESEARCH.md        |
-| F11 | 2-year contractor reclassification risk under Mongolian labour law                            | MONGOLIA_MARKET_RESEARCH.md        |
-| F12 | UB market ceiling (~500K–600K households) requires expansion plan                             | MONGOLIA_MARKET_RESEARCH.md        |
-| F13 | 98.3% of market supply is individual solo-operators, not companies                            | unegui_market_report_2026-03-03.md |
-| F14 | 60%+ of unegui listings hide prices or use placeholders; structured pricing is a critical gap | unegui_market_report_2026-03-03.md |
-| F15 | Location data on incumbent platforms is broken/fake (no GPS); GPS-based matching is needed    | unegui_market_report_2026-03-03.md |
-| F16 | Moving is highly fragmented (ideal cold-start); Plumbing is highly monopolized                | unegui_market_report_2026-03-03.md |
+| ID  | Finding Summary                                                                                        | Source                             |
+|:----|:-------------------------------------------------------------------------------------------------------|:-----------------------------------|
+| F1  | Mongolia digitally ready: 85% smartphone, 83.9% internet, 88% Facebook penetration                     | MONGOLIA_MARKET_RESEARCH.md        |
+| F2  | UB concentration supports district-first liquidity strategy                                            | MONGOLIA_MARKET_RESEARCH.md        |
+| F3  | Core gap vs incumbents is trust infrastructure, not listing availability                               | MONGOLIA_MARKET_RESEARCH.md        |
+| F4  | Relationship-driven culture: referrals are culturally aligned, not just growth tactics                 | MONGOLIA_MARKET_RESEARCH.md        |
+| F5  | Supply side includes phone-first workers; Facebook-only auth excludes some Taskers                     | MONGOLIA_MARKET_RESEARCH.md        |
+| F6  | QPay is dominant rail, but platform escrow trust must be earned via graduation                         | PAYMENT_BEHAVIOUR_ANALYSIS.md      |
+| F7  | Off-platform leakage solved by information control, not fee policy                                     | PAYMENT_BEHAVIOUR_ANALYSIS.md      |
+| F8  | Voluntary reviews underperform in high-context cultures; must be workflow-enforced                     | MONGOLIA_MARKET_RESEARCH.md        |
+| F9  | Manual verification bottleneck can kill supply growth; need SLA and concierge ops                      | MONGOLIA_MARKET_RESEARCH.md        |
+| F10 | Seasonal demand (Tsagaan Sar peak) is a major planning variable                                        | MONGOLIA_MARKET_RESEARCH.md        |
+| F11 | 2-year contractor reclassification risk under Mongolian labour law                                     | MONGOLIA_MARKET_RESEARCH.md        |
+| F12 | UB market ceiling (~500K–600K households) requires expansion plan                                      | MONGOLIA_MARKET_RESEARCH.md        |
+| F13 | 98.3% of market supply is individual solo-operators, not companies                                     | unegui_market_report_2026-03-03.md |
+| F14 | 60%+ of unegui listings hide prices or use placeholders; structured pricing is a critical gap          | unegui_market_report_2026-03-03.md |
+| F15 | Location data on incumbent platforms is broken/fake (no GPS); GPS-based matching is needed             | unegui_market_report_2026-03-03.md |
+| F16 | Moving is highly fragmented (ideal cold-start); Plumbing is highly monopolized                         | unegui_market_report_2026-03-03.md |
+| F17 | Median incumbent listing description length is 52 chars; structured intake is needed for scope quality | unegui_market_report_2026-03-03.md |
 
 ---
 

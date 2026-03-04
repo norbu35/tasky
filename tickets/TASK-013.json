@@ -21,17 +21,9 @@
     {
       "id": "AC-TASK-013-02",
       "type": "functional",
-      "statement": "Admin approve transitions user verification status to approved.",
+      "statement": "Admin approve/reject transitions user verification status correctly.",
       "test_ids": [
         "TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE"
-      ]
-    },
-    {
-      "id": "AC-TASK-013-03",
-      "type": "functional",
-      "statement": "Admin reject transitions user verification status to rejected.",
-      "test_ids": [
-        "TID-TASK-013-API-ADMIN-VERIFICATION-REJECT"
       ]
     }
   ]

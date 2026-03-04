@@ -31,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backlog",
-        default="docs/BACKLOG_MVP.md",
+        default="docs/BACKLOG.md",
         help="Backlog path used for dependency contract validation",
     )
     parser.add_argument("--out", required=True, help="Output path for normalized spec JSON")

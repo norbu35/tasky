@@ -3,8 +3,8 @@
   "ticket": "TASK-031",
   "risk_level": "high",
   "req_ids": [
-    "NFR-RELI-01",
-    "REQ-PAY-01"
+    "NFR-API-03",
+    "REQ-PAY-31"
   ],
   "depends_on": [
     "TASK-030",
@@ -14,7 +14,7 @@
     {
       "id": "AC-TASK-031-01",
       "type": "functional",
-      "statement": "Initiation endpoint creates provider payment intent with traceable reference.",
+      "statement": "Initiation endpoint returns valid QPay payment payload (QR/deeplink) with traceable reference.",
       "test_ids": [
         "TID-TASK-031-API-QPAY-INITIATE"
       ]
@@ -29,8 +29,8 @@
     },
     {
       "id": "AC-TASK-031-03",
-      "type": "functional",
-      "statement": "Successful callback applies the configured monetization transition exactly once.",
+      "type": "reliability",
+      "statement": "Failed payload generation leaves booking state unchanged and returns retryable provider error code.",
       "test_ids": [
         "TID-TASK-031-RELI-CALLBACK-IDEMPOTENT"
       ]

@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-106",
+  "risk_level": "medium",
+  "req_ids": [
+    "REQ-TASK-08"
+  ],
+  "depends_on": [
+    "TASK-092"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-106-01",
+      "type": "functional",
+      "statement": "AI summary rewrite runs only when feature toggle is enabled and executes asynchronously after deterministic summary",
+      "test_ids": [
+        "TID-TASK-106-API-AI-SUMMARY-TOGGLE"
+      ]
+    },
+    {
+      "id": "AC-TASK-106-02",
+      "type": "functional",
+      "statement": "Task posting remains available if AI job times out/fails; deterministic summary remains source of truth.",
+      "test_ids": [
+        "TID-TASK-106-RELI-NONBLOCKING-AI-FAILURE"
+      ]
+    },
+    {
+      "id": "AC-TASK-106-03",
+      "type": "functional",
+      "statement": "AI rewrite can update editable summary text only and cannot mutate structured intake answers.",
+      "test_ids": [
+        "TID-TASK-106-DOMAIN-INTAKE-IMMUTABILITY"
+      ]
+    }
+  ]
+}

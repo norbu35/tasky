@@ -1,53 +1,39 @@
 # Feature: analytics
 
-Internal business event tracking. No public API.
+Internal event tracking and KPI reporting. No public HTTP endpoints.
 
-## Purpose
+## Internal Services
 
-Records funnel milestones and domain events to a persistent `analytics_events` table.
-Called directly by other modules via `AnalyticsService`; there is no REST controller.
+- `AnalyticsService.track(eventName, userId, properties)`
+- `KpiReportService.buildReport(...)`
 
-## Internal API — `AnalyticsService.track()`
+## Event Constants
 
-```java
-analyticsService.track(String eventName, String userId, Map<String, Object> properties);
-```
+- `TASK_POSTED`
+- `APPLICATION_SUBMITTED`
+- `TASKER_ACCEPTED`
+- `BOOKING_CONFIRMED`
+- `PAYMENT_INITIATED`
+- `PAYMENT_CONFIRMED`
+- `BOOKING_COMPLETED`
+- `DISPUTE_RAISED`
 
-The service automatically enriches every event with:
+## Enrichment Behavior
 
-- `correlation_id` — from MDC (set by `RequestObservabilityFilter`)
-- `locale` — from MDC (`Accept-Language`), defaults to `mn`
-- `platform` — from MDC (`X-Client-Platform` header or User-Agent inference), defaults to `UNKNOWN`
+`AnalyticsService` enriches events with MDC values when present:
 
-## Tracked Events
-
-| Event Constant                | Name                    | Emitter                                                    |
-|-------------------------------|-------------------------|------------------------------------------------------------|
-| `EVENT_TASK_POSTED`           | `TASK_POSTED`           | `TaskController`                                           |
-| `EVENT_APPLICATION_SUBMITTED` | `APPLICATION_SUBMITTED` | `TaskController`                                           |
-| `EVENT_TASKER_ACCEPTED`       | `TASKER_ACCEPTED`       | `DomainEventOutboxProcessor` (`TASK_APPLICATION_ACCEPTED`) |
-| `EVENT_BOOKING_CONFIRMED`     | `BOOKING_CONFIRMED`     | `DomainEventOutboxProcessor` (`TASK_APPLICATION_ACCEPTED`) |
-| `EVENT_BOOKING_COMPLETED`     | `BOOKING_COMPLETED`     | `BookingController` (via outbox)                           |
-| `EVENT_DISPUTE_RAISED`        | `DISPUTE_RAISED`        | `DisputeController`                                        |
-| `EVENT_PAYMENT_INITIATED`     | `PAYMENT_INITIATED`     | `PaymentController`                                        |
-| `EVENT_PAYMENT_CONFIRMED`     | `PAYMENT_CONFIRMED`     | `DomainEventOutboxProcessor` (`PAYMENT_CONFIRMED`)         |
-
-## Standard Properties
-
-| Property         | Description                                          |
-|------------------|------------------------------------------------------|
-| `task_id`        | Task UUID (where applicable)                         |
-| `booking_id`     | Booking UUID (where applicable)                      |
-| `correlation_id` | Request correlation ID                               |
-| `locale`         | User locale (`en`, `mn`)                             |
-| `platform`       | Client platform (`IOS`, `ANDROID`, `WEB`, `UNKNOWN`) |
+- `correlation_id`
+- `locale` (defaults to `mn`)
+- `platform` (defaults to `UNKNOWN`)
 
 ## Storage
 
-Events are written to the `analytics_events` table via `AnalyticsEventDao`.
-The `getEvents()` method returns all recorded events (used for internal reporting).
+- Persisted via `AnalyticsEventDao` to `analytics_events`.
+- `getEvents()` returns all recorded events.
 
-## Cross-Module Dependencies
+## Emitters (current code)
 
-This module is a **leaf** dependency — it is called by other modules and depends on nothing
-except its own DAO and the common `RequestObservabilityFilter` MDC context.
+- `TaskService`: `TASK_POSTED`, `APPLICATION_SUBMITTED`
+- `PaymentService`: `PAYMENT_INITIATED`
+- `DisputeController`: `DISPUTE_RAISED`
+- `DomainEventOutboxProcessor`: `TASKER_ACCEPTED`, `BOOKING_CONFIRMED`, `PAYMENT_CONFIRMED`, `BOOKING_COMPLETED`

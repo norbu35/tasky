@@ -21,7 +21,7 @@
     {
       "id": "AC-TASK-071-02",
       "type": "functional",
-      "statement": "Core components (Button, Input, FormField, Modal/Sheet, Toast) have mobile equivalents with matching state semantics.",
+      "statement": "Core components (Button, Input, FormField, Modal/Sheet, Toast) have mobile equivalents with matching state",
       "test_ids": [
         "TID-TASK-071-MOBILE-COMPONENT-PARITY-BASE"
       ]

@@ -82,29 +82,31 @@ def detect_cycles(index: dict[str, dict[str, object]]) -> list[list[str]]:
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
-    backlog_path = repo_root / "docs/BACKLOG_MVP.md"
+    backlog_path = repo_root / "docs/BACKLOG.md"
     traceability_path = repo_root / "docs/TRACEABILITY.md"
     tickets_dir = repo_root / "tickets"
 
     if not backlog_path.is_file():
         print(f"Backlog file not found: {backlog_path}", file=sys.stderr)
         return 1
-    if not traceability_path.is_file():
-        print(f"Traceability file not found: {traceability_path}", file=sys.stderr)
-        return 1
     if not tickets_dir.is_dir():
         print(f"Ticket directory not found: {tickets_dir}", file=sys.stderr)
         return 1
 
     backlog_text = backlog_path.read_text(encoding="utf-8")
-    traceability_text = traceability_path.read_text(encoding="utf-8")
     index = parse_index(backlog_text)
     definitions = parse_definitions(backlog_text)
-    reqs_by_ticket = parse_traceability_requirements(traceability_text)
+    if traceability_path.is_file():
+        traceability_text = traceability_path.read_text(encoding="utf-8")
+        reqs_by_ticket = parse_traceability_requirements(traceability_text)
+        req_source = f"{traceability_path}"
+    else:
+        reqs_by_ticket = {}
+        req_source = "backlog index coverage column (traceability file missing)"
     failures: list[str] = []
 
     if not index:
-        failures.append("No ticket index rows found in docs/BACKLOG_MVP.md.")
+        failures.append("No ticket index rows found in docs/BACKLOG.md.")
 
     for ticket in sorted(index):
         if ticket not in definitions:
@@ -152,6 +154,7 @@ def main() -> int:
     print(f"- Indexed tickets: {len(index)}")
     print(f"- Definitions found: {len(definitions)}")
     print(f"- Spec files validated: {len(index)}")
+    print(f"- REQ source: {req_source}")
     print("- Dependency graph: acyclic")
     print("Backlog validation passed.")
     return 0

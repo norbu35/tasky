@@ -14,7 +14,7 @@
       "type": "performance",
       "statement": "Feed query plan uses appropriate indexes (including geospatial).",
       "test_ids": [
-        "TID-TASK-063-PERF-INDEX-PLAN"
+        "TID-TASK-063-PERF-TASK-FEED-P95"
       ]
     },
     {
@@ -22,7 +22,7 @@
       "type": "performance",
       "statement": "p95 latency for `GET /tasks` remains under target in perf smoke profile.",
       "test_ids": [
-        "TID-TASK-063-PERF-TASK-FEED-P95"
+        "TID-TASK-063-PERF-INDEX-PLAN"
       ]
     },
     {

@@ -22,9 +22,10 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
 
 * **External Systems**:
     * **QPay (Phase 2+)**: Credit pack purchases in Phase 2 and escrow settlement rails in Phase 3+.
-    * **SMS Gateway**: OTP delivery.
+  * **SMS Gateway (Phase 2+)**: OTP delivery and critical fallback notifications.
     * **Google Maps / Mapbox**: Geocoding and static maps.
     * **Push Provider (FCM/Expo)**: Mobile notifications.
+  * **LLM Provider (Phase 3+ optional)**: Async task scope summary polish only; never blocking task posting.
 
 ### 2.2 Modular Monolith Structure
 
@@ -34,7 +35,7 @@ occurs via internal service interfaces (Java method calls), not network calls, t
 **Modules:**
 
 1. **`identity`**: Auth, User Profiles, KYC/Verification.
-2. **`marketplace`**: Task Posting, Search, Booking State Machine.
+2. **`marketplace`**: Task Posting (including schema-driven intake), Search, Booking State Machine.
 3. **`wallet`** *(Phase 2+)*: Credit Ledger (Phase 2), Internal Wallet/Escrow/Payouts (Phase 3+), QPay Integration.
 4. **`communication`**: Notifications (Push/SMS), In-app Messaging.
 5. **`support`**: Disputes, Moderation, Admin Tools.
@@ -93,7 +94,7 @@ occurs via internal service interfaces (Java method calls), not network calls, t
     * Each shared UX pattern (Button, Input, Select, Modal/Sheet, Toast, Form Field, Empty State) has a parity record
       defining states, spacing, typography, and interaction behavior.
     * Mobile keeps native rendering patterns while matching token values and state semantics.
-  * Canonical parity baseline table: see §8.2 below.
+  * Canonical parity baseline table: see §7.2 below.
 * **Accessibility Baseline**:
     * Web components must preserve Radix/shadcn accessibility defaults and satisfy keyboard navigation + WCAG AA
       contrast.
@@ -106,75 +107,160 @@ occurs via internal service interfaces (Java method calls), not network calls, t
 
 #### Identity Module
 
-* `users`: `id (UUID)`, `phone (UK)`, `role`, `status` (PENDING, VERIFIED, BANNED, SUSPENDED), `suspension_end_at`,
-  `created_at`
+* `users`: `id (UUID)`, `facebook_id (nullable, UK)`, `phone (nullable, UK)`, `primary_auth` (FACEBOOK, PHONE_OTP),
+  `role`, `status` (PENDING, VERIFIED, BANNED, SUSPENDED), `suspension_end_at`, `created_at`, `updated_at`
 * `profiles`: `user_id (FK)`, `full_name`, `avatar_url`, `rating_avg`
-* `verifications`: `user_id (FK)`, `id_card_front`, `id_card_back`, `status`, `admin_notes`
+* `verifications`: `user_id (FK)`, `id_card_front`, `id_card_back`, `status`, `admin_notes`, `submitted_at`,
+  `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
 
 #### Marketplace Module
 
 * `tasks`: `id`, `customer_id`, `category_id (FK)`, `description`, `budget`, `location_point (GEOMETRY)`,
-  `location_text`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED), `scheduled_at`
+  `location_text`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `intake_answers_json`
+  (JSONB), `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
+* `task_drafts`: `id`, `customer_id`, `category_id`, `intake_answers_json (JSONB)`, `intake_schema_version`,
+  `summary_draft`, `created_at`, `expires_at`
 * `task_photos`: `id`, `task_id (FK)`, `storage_key`, `sort_order`
-* `categories`: `id`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`
-* `task_applications`: `task_id`, `tasker_id`, `status`, `created_at`
-* `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED), `price`
+* `categories`: `id`, `name`, `name_mn`, `icon_url`, `is_active`, `sort_order`, `intake_enabled`,
+  `intake_schema_version`, `intake_schema_json (JSONB)`, `last_known_good_schema_version`
+* `category_schema_versions`: `id`, `category_id`, `version`, `schema_json (JSONB)`, `status` (DRAFT, CANARY, ACTIVE,
+  ROLLED_BACK), `is_last_known_good`, `created_by`, `created_at`, `activated_at`
+* `task_applications`: `task_id`, `tasker_id`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED),
+  `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`
+* `instant_match_offers` *(Phase 3+)*: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status`
+  (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
+* `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `price`,
+  `confirmed_scheduled_at`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `settlement_mode`
+  (DIRECT, LEAD_UNLOCK, ESCROW), `late_cancel_incident`, `created_at`
+* `booking_schedule_events`: `id`, `booking_id`, `actor_user_id`, `event_type` (REQUESTED, ACCEPTED, DECLINED, EXPIRED),
+  `proposed_scheduled_at`, `reason`, `created_at`
+* `booking_timeline_events`: `id`, `booking_id`, `event_type`, `actor_user_id`, `metadata_json (JSONB)`, `created_at`
+* `task_rescue_events`: `id`, `task_id`, `triggered_at`, `trigger_window` (DAYTIME, OFF_HOURS), `actions_json` (JSONB),
+  `created_at`
+* `booking_reviews`: `id`, `booking_id`, `reviewer_id`, `reviewee_id`, `quality_rating`, `punctuality_rating`,
+  `communication_rating`, `clarity_rating`, `respectfulness_rating`, `comment`, `created_at`
+* `tasker_reliability_scores`: `tasker_id`, `score`, `completion_rate`, `punctuality_rate`, `cancellation_rate`,
+  `review_avg`, `window_days`, `computed_at`
+* `tasker_badges`: `tasker_id`, `badge_type` (PRO), `assigned_at`, `revoked_at`
 
 #### Wallet Module *(Phase 2+)*
 
 * `credit_balances`: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`, `total_refunded`, `updated_at`
 * `credit_transactions`: `id`, `tasker_id`, `amount`, `type` (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`,
-  `created_at`
+  `idempotency_key`, `created_at`
 * `credit_packs`: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
-* `wallets` *(Phase 3+)*: `user_id (PK)`, `balance_mnt`, `updated_at`
+* `lead_unlock_prices`: `id`, `category_id`, `district_id`, `credits_required`, `effective_from`, `effective_to`,
+  `updated_by`
+* `wallets` *(Phase 3+)*: `user_id (PK)`, `available_balance_mnt`, `pending_balance_mnt`, `updated_at`
 * `ledger_entries` *(Phase 3+)*: `id`, `wallet_id`, `amount`, `type` (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`,
   `created_at`
-* `payout_requests` *(Phase 3+)*: `id`, `user_id`, `amount`, `bank_account`, `status`
+* `payout_requests` *(Phase 3+)*: `id`, `user_id`, `amount`, `bank_account`, `status`, `requested_at`, `processed_at`,
+  `processed_by`
+* `tasker_subscriptions` *(Phase 3+)*: `id`, `tasker_id`, `status`, `started_at`, `expires_at`, `plan_code`
+* `business_accounts` *(Phase 4)*: `id`, `name`, `billing_profile_json (JSONB)`, `status`, `created_at`
+* `business_members` *(Phase 4)*: `id`, `business_account_id`, `user_id`, `role`, `created_at`
 
 #### Communication Module
 
 * `conversations`: `id`, `task_id (FK)`, `customer_id (FK)`, `tasker_id (FK)`, `created_at`
-* `messages`: `id`, `conversation_id (FK)`, `sender_id (FK)`, `content`, `created_at`
+* `messages`: `id`, `conversation_id (FK)`, `sender_id (FK)`, `content`, `phone_number_flagged`, `content_hash`,
+  `created_at`
 * `device_tokens`: `user_id (FK)`, `token`, `platform` (IOS, ANDROID, WEB), `created_at`
-* `notification_log`: `id`, `user_id`, `type`, `channel` (PUSH, SMS), `status`, `created_at`
+* `notification_log`: `id`, `user_id`, `type`, `channel` (PUSH, SMS), `status`, `event_key`, `provider_message_id`,
+  `error_code`, `created_at`
 
 #### Support Module
 
-* `disputes`: `id`, `booking_id (FK)`, `raised_by (FK)`, `reason`, `status`, `resolution_notes`, `created_at`
+* `disputes`: `id`, `booking_id (FK)`, `raised_by (FK)`, `reason`, `status`, `resolution_action` (RESOLVE_CUSTOMER,
+  RESOLVE_TASKER, ESCALATE, REFUND, RELEASE), `wrongful_party_user_id`, `resolution_notes`, `created_at`
+* `dispute_evidence`: `id`, `dispute_id (FK)`, `type` (CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE), `storage_key`,
+  `text_payload`, `created_at`
 * `tasker_strikes`: `id`, `user_id (FK)`, `booking_id (FK)`, `reason`, `created_at`
+* `referrals`: `id`, `referrer_id`, `referred_id`, `conversion_event`, `converted_at`, `reward_type`, `reward_applied`
+* `referral_rewards`: `id`, `referral_id`, `phase`, `reward_type`, `reward_value`, `applied_at`
+* `review_enforcement_cases`: `id`, `booking_id`, `user_id`, `reason_code`, `status`, `triggered_at`, `resolved_at`
+* `audit_events`: `id`, `actor_user_id`, `action`, `resource_type`, `resource_id`, `metadata_json (JSONB)`,
+  `created_at`
 
 #### Infrastructure Tables
 
 * `job_queue`: `id`, `type`, `payload (JSONB)`, `status`, `attempts`, `next_run_at`, `created_at`
+* `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
 
 ### 4.2 Data Flow Patterns
 
-1. **Task & Booking Flow** (Dual-status model):
-    * `POST /tasks` → Writes to `tasks` table (Status: OPEN).
-    * `POST /tasks/{id}/applications` → Tasker applies, creates `task_applications` record.
-    * `POST /tasks/{id}/applications/{appId}/accept` → Customer accepts Tasker, confirms liability disclaimer, creates
-      `bookings` record (Status: ASSIGNED), updates `tasks` (Status: ASSIGNED).
-   * Phase 2+: selected Tasker confirms acceptance by spending lead-unlock credits; Customer contact details are
-     revealed only after successful unlock.
-    * `POST /bookings/{id}/complete` → Updates `bookings` (Status: COMPLETED), updates `tasks` (Status: COMPLETED).
-2. **Monetization Flow** *(Phased by PRD)*:
-    * Phase 2: Taskers buy credit packs via QPay and spend credits only when accepting a selected lead to unlock
-      Customer contact details.
-    * Phase 3+: Escrow payment initiation/callback, wallet crediting, and payout processing are enabled behind feature
-      toggles.
-
-3. **Messaging Flow** (WebSocket + REST fallback):
-    * Conversation created when Tasker applies to a task.
-    * Real-time delivery via Spring WebSocket + STOMP protocol.
+1. **Structured Task Intake & Posting Flow**:
+    * Client loads active category schema (`intake_schema_json`, `intake_schema_version`).
+    * Draft is created with bound schema version (`task_drafts`) and validated against that same version at submit.
+    * Server generates deterministic scope summary from answers; if template rendering fails, server falls back to
+      canonical key-value summary and logs failure.
+    * `POST /tasks` writes `tasks` row with `intake_answers_json`, `intake_schema_version`, `scope_summary_source`.
+2. **Task & Booking Flow** (Dual-status model):
+    * `POST /tasks` → `tasks.status=OPEN`.
+    * `POST /tasks/{id}/applications` → creates `task_applications`.
+    * `POST /tasks/{id}/applications/{appId}/accept` → customer accepts Tasker + liability disclaimer; creates
+      `bookings.status=ASSIGNED`; updates `tasks.status=ASSIGNED`.
+    * In Phase 2+, booking confirmation/contact reveal requires successful lead-unlock debit (`LEAD_UNLOCK_ACCEPTED`)
+      before customer phone reveal.
+    * `POST /bookings/{id}/complete` → `bookings.status=COMPLETED`; `tasks.status=COMPLETED`.
+    * **No-show adjudication path (REQ-BOOK-11)**:
+        * Scheduler emits reminder at `confirmed_scheduled_at +10m` and writes `booking_timeline_events` (
+          `NO_SHOW_REMINDER_SENT`).
+        * Either party may call `POST /bookings/{id}/no-show/flag` at/after `+15m`.
+        * Eligibility check uses canonical schedule (latest accepted in-app reschedule; otherwise booking confirmed
+          time).
+        * Request is rejected unless all are true: booking is `ASSIGNED`; no accepted future reschedule supersedes
+          current
+          schedule; no status/check-in events from either party in trailing 30 minutes.
+        * On success, one DB transaction updates `bookings.status=NO_SHOW` and `tasks.status=NO_SHOW`, then appends
+          immutable `booking_timeline_events` (`NO_SHOW_CONFIRMED`) plus `audit_events` with actor and rule snapshot.
+        * Endpoint is idempotent: duplicate/retry requests for same booking return existing terminal state.
+3. **Reschedule & Timer Authority Flow**:
+    * Reschedule request/accept/decline/expiry writes to `booking_schedule_events`.
+    * Canonical schedule timers (late-cancel/no-show) reference only latest accepted in-app schedule.
+    * Chat-only schedule mentions do not mutate enforcement timers.
+4. **Ranking, Repeat Booking, and Instant Match Flow**:
+    * Applicant ranking uses category match, proximity, reliability score, completion rate, and review quality.
+    * Repeat booking pre-fills a new task from a completed booking in the same category.
+    * Phase 3+ instant match uses `instant_match_offers` with 5-minute offer window and fallback to application flow
+      after 3 declines/timeouts.
+5. **Monetization Flow** *(Phased by PRD)*:
+    * Phase 0-1: direct settlement only (`DIRECT`), no platform fee transactions.
+    * Phase 2: credit pack purchase via QPay; selected Tasker lead unlock consumes credits before customer contact
+      reveal.
+    * Phase 2 lead-unlock pricing resolves from `lead_unlock_prices` by category/district/effective window.
+    * Signup bonus credits are granted once per tasker via idempotent transaction key.
+    * Phase 3+: escrow payment initiation/callback, wallet crediting, and payout processing are feature-toggled.
+6. **No-Applicant Rescue Flow**:
+    * If a task has zero eligible applicants for 120 minutes during 08:00-22:00 local time, enqueue rescue actions.
+    * Rescue actions include: budget/schedule adjustment prompt, broadened push fanout, and concierge queue placement.
+    * Persist trigger and executed actions in `task_rescue_events`.
+7. **Messaging Flow** (WebSocket + REST fallback):
+    * Conversation is created when Tasker applies to a task.
+    * Real-time delivery via Spring WebSocket + STOMP.
     * WebSocket: `SUBSCRIBE /topic/conversations/{id}`, `SEND /app/conversations/{id}/messages`.
-    * REST fallback: `POST /conversations/{id}/messages` for clients that cannot maintain WebSocket.
-    * Messages persisted to `messages` table on send.
-4. **Identity Role Transition Flow**:
-    * Phase 0-1: User authenticates via Facebook OAuth and starts as `CUSTOMER`.
-    * Phase 2+: User authenticates via SMS OTP (`phone_number` primary). Existing Facebook-auth users must complete OTP
-      migration.
-    * User requests Tasker role via `POST /users/me/role/tasker`.
-    * System updates role to `TASKER` while verification status remains pending until admin decision.
+    * REST fallback: `POST /conversations/{id}/messages`.
+    * Message scanning flags phone-sharing patterns for advisory/admin workflows; `content_hash` supports tamper-evident
+      dispute investigation.
+8. **Identity, Consent, and Outage Posture Flow**:
+    * Phase 0-1: Facebook OAuth primary login; Phase 2+ OTP primary with migration of existing users.
+    * During OAuth outage, new login/signup fails closed, while existing valid sessions continue until expiry.
+    * Identity upload is blocked until consent is captured (`consent_policy_version`, timestamp).
+    * Outage state is surfaced to clients and audit/ops events are emitted.
+9. **Reviews, Disputes, and Enforcement Flow**:
+    * Booking completion triggers bilateral review prompt + reminders at 24h and 72h.
+    * Hard lock is created only for configured risk cases and stored in `review_enforcement_cases`.
+    * Dispute creation requires at least one evidence artifact, or enters 24-hour evidence grace before auto-close.
+    * Tasker cancellation/no-show incidents are rolled into strike review and reliability-score recomputation.
+    * Pro badge assignment is auto-evaluated from completion/rating thresholds and stored in `tasker_badges`.
+10. **Category Lifecycle & Referral Flow**:
+    * Category deactivation blocks new drafts and new tasks while preserving lifecycle for existing tasks.
+    * Phase 2+ referral attribution is persisted at signup and finalized on first completed booking conversion.
+    * Monthly referral reward caps and threshold breaches emit manual-review alerts.
+    * Referral rewards are phase-aware and persisted in `referral_rewards`.
+11. **Payout and Legal-Guard Flow**:
+    * Payout processing enforces Tuesday/Friday execution window in platform timezone.
+    * System tracks cumulative tasker engagement duration and emits legal-review alerts before 2-year threshold.
 
 ---
 
@@ -186,6 +272,8 @@ occurs via internal service interfaces (Java method calls), not network calls, t
 * **Format**: JSON.
 * **Spec**: OpenAPI 3.0.3 (Source of Truth).
 * **Versioning**: URI Versioning (`/api/v1/...`).
+* **Breaking-change policy**: Contract-breaking API updates require version bump and migration notes in the same
+  release.
 
 ### 5.2 Error Handling
 
@@ -205,17 +293,31 @@ Standardized error response:
 * **Authorization**:
     * **Banned User Check**: Security Filter MUST check `users.status` in DB (or Redis cache) on *every* request. Banned
       users must be rejected immediately, even if JWT is valid.
+  * **Contact/Address Reveal Rules**:
+      * Tasker phone is never exposed to customers in API responses.
+      * Customer phone is masked until selected Tasker completes lead unlock in paid phases.
+      * Exact task address is hidden pre-confirmation (and pre-payment commitment in escrow phases).
+  * **OAuth Outage Posture (Phase 0-1)**: Login/signup endpoints fail closed when OAuth provider is down; existing
+    already-issued valid tokens remain usable until expiry.
+  * **Liability Disclaimer Contract**: applicant accept endpoint rejects requests without
+    `liability_disclaimer_accepted=true`; accepted disclaimer is persisted on booking.
 * **Rate Limiting**:
-    * **OTP Endpoints**: Strict limit (e.g., 3 requests / hour / IP) to prevent SMS pumping. **Brute Force**: Max 5
-      failed verification attempts per OTP; invalidate logic thereafter.
-    * **General API**: Token bucket (e.g., 100 req / min).
+    * **OTP Endpoints**: Config-defined per phone and per request-source limits with lockout on repeated failed OTP
+      verification attempts.
+    * **General API**: Token bucket, configured by environment/profile.
 * **Data Privacy**:
     * **Gov IDs**: Stored in a strict **Private S3 Bucket**. API never exposes public links. Admin viewing uses
       short-lived Presigned GET URLs.
     * **Location**: Exact coords in DB. API exposes `approximate_lat/lng` only for `PublicTask`.
+  * **Intake Answers**: Stored as structured JSON; retained/deleted per platform data retention policy and access is
+    role-scoped.
 * **Monetization Security (Phase 2+)**:
     * **Callbacks**: QPay Webhook MUST verify the HMAC signature using a server-side secret key.
     * **Idempotency**: Enforced on all financial endpoints when monetization is enabled.
+* **AI Safety (Phase 0-2)**:
+    * Runtime LLM is not on the task-posting critical path.
+    * If optional async LLM summary polish is enabled in Phase 3+, deterministic summary remains source of truth on
+      failures/timeouts.
 * **Input Validation**: JSR-380 (Bean Validation) on all DTOs.
 
 ### 5.4 File Upload Pattern (Presigned URLs)
@@ -263,6 +365,46 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 * **API contract**: The API returns server-driven strings (error messages, notification text) localized based on the
   `Accept-Language` header. If the requested locale is unavailable, the server falls back to `mn`.
 
+### 5.7 Task Intake and Booking Contracts
+
+* **Category Intake Contract**:
+    * `GET /categories` (or category detail) must expose `intake_enabled`, `intake_schema_version`, and active schema
+      payload for task-posting clients.
+* **Draft Contract**:
+    * Draft create/update APIs must persist `intake_schema_version` bound at start.
+    * Final task submit validates against bound schema version and rejects missing required answers with field-level
+      error codes.
+* **Summary Contract**:
+    * Task submit pipeline performs deterministic scope summary generation.
+    * On summary generation failure, server returns success with canonical fallback summary and logs failure event.
+* **Booking Contract**:
+    * Applicant acceptance endpoint requires `liability_disclaimer_accepted=true`.
+    * In paid phases, booking confirmation/contact reveal must be gated by successful lead-unlock debit event.
+    * Applicant list supports ranked ordering (`relevance_score`) while preserving customer free selection.
+    * Selected-applicant confirmation timeout is phase-driven (15m in Phase 2, 5m for Phase 3 instant-match offers).
+    * Repeat-booking endpoint must only allow rebook from completed bookings and same-category prefill.
+    * No-show policy is deterministic: reminder at `+10m`, no-show flag eligibility at `+15m`, dual inactivity check on
+      trailing 30 minutes, and accepted reschedule precedence over prior schedule.
+    * Status transitions must enforce `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for tasks and
+      `ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW` for bookings.
+* **Monetization Contract**:
+    * Credit debits are valid only for `LEAD_UNLOCK_ACCEPTED` events.
+    * Application cap defaults to 10 and is config-driven per category.
+    * Price resolution for lead unlock must use active `lead_unlock_prices` row by category/district/effective time.
+    * Signup bonus (5 credits) must be one-time per eligible tasker and enforced idempotently.
+* **Dispute and Review Contract**:
+    * Dispute creation from `ASSIGNED` or within 24h of `COMPLETED` requires at least one evidence artifact or enters
+      24h grace before auto-close.
+    * Review reminders follow immediate +24h +72h cadence; hard lock applies only for configured risk triggers.
+    * Notification fallback events (`HIRED`, `BOOKING_CONFIRMED`) are idempotent via `notification_log.event_key`.
+* **Trust Scoring Contract**:
+    * Reliability score is recomputed on cancellation/no-show/completion signals and consumed by applicant ranking.
+    * Pro badge assignment is deterministic from completion/rating thresholds and evaluated in background jobs.
+* **Admin Contract**:
+    * Admin user search supports name and Facebook ID in Phase 0-1, and phone criteria in Phase 2+.
+    * Category management supports intake schema create/update/activate/version/rollback with audit logs.
+    * Feature toggles (lead fee, subscription, escrow) must be runtime-switchable without redeploy and fully audited.
+
 ---
 
 ## 6. Non-Functional Requirements Implementation
@@ -273,13 +415,55 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
     * Minimum MVP scope: application accept, booking cancel/complete, dispute creation/resolution.
   * Phase 2+ monetization scope: lead-unlock credit spending, payment initiation/callback handling, and payout
     processing.
+* **Schema Safety (Structured Intake)**:
+    * Category schema activation runs lint + preview validation before activation.
+    * Rollout supports canary activation and instant rollback to last-known-good schema version.
+    * Task drafts bind schema version at form start to prevent submit-time drift.
 * **Offline Support**: Mobile app caches active "My Tasks" locally (AsyncStorage) for read-only viewing when offline.
   This is limited to previously fetched data; no offline mutations are supported in MVP.
+* **Policy Guards**:
+    * Enforce Tuesday/Friday payout processing window in platform timezone.
+    * Enforce no-show and late-cancel timers against latest accepted in-app schedule only.
 
 ### 6.2 Observability
 
 * **Logs**: Structured JSON logs with `trace_id` and `user_id`.
 * **Metrics**: Prometheus endpoint exposing JVM, HikariCP, and HTTP latency metrics.
+* **Product Events**:
+    * Must emit: `task_intake_started`, `task_intake_completed`, `intake_schema_render_failed`,
+      `intake_validation_failed`, `scope_summary_generation_failed_fallback`, `job_scope_summary_edited`,
+      `task_posted`, `application_submitted`, `tasker_accepted`, `booking_confirmed`, `booking_completed`,
+      `dispute_raised`, `review_prompted`, `review_reminder_sent`, `review_hard_lock_applied`,
+      `lead_unlock_debited`, `lead_unlock_refunded`, `verification_submitted`, `verification_reviewed`,
+      `referral_reward_applied`.
+    * Intake-related events must include `category_id`, `intake_schema_version`, and `client_app_version`.
+    * Funnel events must include `locale` and `platform` dimensions.
+* **Product Metrics (Required)**:
+    * Leakage indicators: phone-sharing flag rate, repeat contact-sharing attempts, booking-to-repost ratio.
+    * Verification queue metrics: submissions/day, median approval time, SLA breach count.
+    * Review completion rate by cohort (target > 85%).
+    * Monetization adoption metrics by active phase: lead-unlock payment rate, subscription conversion, escrow opt-in.
+    * Payment rail telemetry (Phase 4): per-rail checkout success/failure for QPay, SocialPay, and bank transfer.
+    * Referral fraud signals: monthly successful referrals per user and cap-breach attempts.
+    * Matching quality metrics: instant-match timeout/decline fallback rate and rescue-trigger rate by
+      category/district.
+* **Operational Alerts**:
+    * Alert on scope-clarity regression when median pre-booking clarification messages per `ASSIGNED` booking exceeds
+      2.0 for two consecutive weeks.
+    * Alert on verification SLA breaches and OAuth outage active windows.
+    * Monitor review completion rate and leakage-signal ratio per trailing 28-day window.
+    * Alert when open-task feed p95 latency breaches performance SLO budget.
+
+### 6.3 Performance and Legal Compliance
+
+* **Feed Performance Budget**:
+    * Open-task feed should meet <1s median response under representative 4G client conditions.
+    * Track backend API p95 and end-to-end client render timing separately.
+* **Regulatory and Legal Controls**:
+    * Identity and contact data handling must align with Mongolia Personal Information law and documented retention
+      policy.
+    * Connector liability disclaimer text/version must be versioned and auditable.
+    * Track cumulative tasker engagement duration and alert operations before 2-year continuous activity threshold.
 
 ---
 
@@ -362,7 +546,7 @@ to `mn`.
 
 1. Add mobile token adapter consuming shared tokens.
 2. Implement core component equivalents: Button, Input, FormField, Modal/Sheet, Toast.
-3. Publish parity matrix (§8.2) with states and interaction rules.
+3. Publish parity matrix (§7.2) with states and interaction rules.
 
 Exit criteria: shared tokens used on mobile; state semantics match parity matrix; tests verify token + state behavior.
 
@@ -393,6 +577,22 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 });
 ```
 
+### 7.6 Structured Intake Renderer Contract (MVP)
+
+1. **Renderer Input Contract**:
+    * Task-post UI loads `intake_schema_json` + `intake_schema_version` from category metadata.
+    * Supported field primitives in Phase 0-2: single-select, multi-select, dropdown, yes/no toggle, numeric counter.
+2. **Draft Binding Contract**:
+    * Client binds draft to schema version on form start.
+    * Submit endpoint validates answers against bound version, not latest activated version.
+3. **Summary Contract**:
+    * Deterministic template summary is generated before submit and prefilled into editable description.
+    * On deterministic summary failure, fallback key-value summary is generated and posting continues.
+4. **AI Optionality Contract** *(Phase 3+ only)*:
+    * Async summary polish can run behind feature toggle.
+    * Posting success cannot depend on LLM availability.
+    * LLM output cannot mutate structured intake answers.
+
 ---
 
 ## 8. Development Workflow
@@ -407,3 +607,45 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 8. **Commit**: Commit code, tests, and self-verification artifact together.
 9. **PR + CI**: CI re-runs self-verification and performs parity checks.
 10. **Review + Merge**: Merge only after required approvals and passing gates.
+
+---
+
+## 9. PRD Traceability (Implementability Gate)
+
+This section is the architecture-to-PRD alignment checklist. A PRD requirement is considered architecturally covered
+only when mapped to schema, flow, security/ops policy, and test strategy below.
+
+| PRD Capability Area                                               | Architecture Coverage                                                                                                                  |
+|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| Phase 0-1 Facebook OAuth + outage posture                         | §4.1 `users` identity model, §4.2 identity/outage flow, §5.3 auth outage policy, §7.5 test rule                                        |
+| Structured intake forms (Phase 0-2)                               | §4.1 `categories` + `category_schema_versions` + `task_drafts` + `tasks`, §4.2 intake flow, §6.1 schema safety, §7.6 renderer contract |
+| Deterministic scope summary + fail-open                           | §4.1 `tasks.scope_summary_source`, §4.2 intake flow, §5.3 AI safety, §7.6 summary contract                                             |
+| Task/Booking lifecycle with NO_SHOW                               | §4.1 `tasks.status`, `bookings.status`, `booking_timeline_events`; §4.2 task/booking flow                                              |
+| Reschedule authority + timer integrity                            | §4.1 `booking_schedule_events`, §4.2 reschedule flow                                                                                   |
+| Repeat booking + instant match fallback logic                     | §4.1 `instant_match_offers`, §4.2 ranking/repeat/instant-match flow, §5.7 booking contract                                             |
+| No-applicant rescue flow                                          | §4.1 `task_rescue_events`, §4.2 rescue flow                                                                                            |
+| Information controls (contact/address reveal)                     | §5.3 authorization reveal rules, §4.2 monetization/message flow                                                                        |
+| Phase 0-1 direct settlement + legal disclaimer persistence        | §4.1 `bookings.settlement_mode` + disclaimer fields, §4.2 monetization flow, §5.3 liability contract                                   |
+| Phase 2 lead-unlock pricing and debit policy                      | §4.1 `lead_unlock_prices`, `credit_transactions`, §5.7 monetization contract                                                           |
+| Phase 3 subscription and escrow walleting                         | §4.1 wallet + subscription tables, §4.2 monetization flow, §6.1 idempotency                                                            |
+| Phase 4 B2B and alternate rails preparedness                      | §4.1 `business_accounts`/`business_members`, §4.2 monetization flow, §6.2 per-rail telemetry                                           |
+| Mandatory bilateral reviews                                       | §4.1 `booking_reviews` + `review_enforcement_cases`, §4.2 reviews/disputes flow                                                        |
+| Reliability score and Pro badge automation                        | §4.1 `tasker_reliability_scores` + `tasker_badges`, §4.2 reviews/disputes flow, §5.7 trust scoring contract                            |
+| Disputes with evidence                                            | §4.1 `disputes` + `dispute_evidence`, §6.1 idempotency scope                                                                           |
+| Messaging default with tamper-evident retention                   | §4.1 `messages.content_hash`, §4.2 messaging flow                                                                                      |
+| Notifications with SMS fallback idempotency                       | §4.1 `notification_log.event_key`, §5.7 dispute/review contract                                                                        |
+| Verification and admin auditability                               | §4.1 `verifications`, `audit_events`, §6.2 operational alerts                                                                          |
+| Admin operations (category lifecycle, feature toggles, concierge) | §4.1 `categories`/`category_schema_versions`/`feature_toggles`/`audit_events`, §4.2 rescue + category lifecycle flows                  |
+| Category deactivation + existing-task continuity                  | §4.2 category lifecycle flow, §7.6 draft/submit contract                                                                               |
+| Referral tracking, phase-aware rewards, and conversion            | §4.1 `referrals` + `referral_rewards`, §4.2 category/referral flow                                                                     |
+| Referral fraud caps and ops review                                | §4.2 referral flow alerts, §6.2 fraud/threshold observability                                                                          |
+| Frontend design system and cross-platform parity                  | §3.4 design-system governance, §7.1-§7.5 parity/file/test contracts                                                                    |
+| NFR security/privacy + retention + consent                        | §4.1 verification consent fields, §5.3 privacy controls, §6.3 legal controls                                                           |
+| NFR performance                                                   | §6.3 feed performance budget + §6.2 latency alerting                                                                                   |
+| NFR localization/i18n                                             | §5.6 i18n contract                                                                                                                     |
+| NFR API/versioning/pagination/error envelope                      | §5.1, §5.2, §5.5, §5.7                                                                                                                 |
+| NFR reliability + offline cache                                   | §6.1 idempotency/policy guards/offline support                                                                                         |
+| MVP observability and scope-clarity gate                          | §6.2 product events + required dimensions + alerts                                                                                     |
+
+**Gate rule:** Any PRD delta touching Section 7 functional requirements must update this section and the corresponding
+schema/flow/security blocks in the same PR.

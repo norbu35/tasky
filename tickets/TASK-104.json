@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-104",
+  "risk_level": "high",
+  "req_ids": [
+    "NFR-LEGAL-02",
+    "NFR-LEGAL-03",
+    "NFR-SEC-02",
+    "NFR-SEC-03",
+    "NFR-SEC-04",
+    "NFR-SEC-05"
+  ],
+  "depends_on": [
+    "TASK-060",
+    "TASK-096"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-104-01",
+      "type": "functional",
+      "statement": "Identity/PII handling includes explicit compliance controls for Mongolia privacy law and consent-bound processing.",
+      "test_ids": [
+        "TID-TASK-104-SEC-RETENTION-POLICY-ENFORCED"
+      ]
+    },
+    {
+      "id": "AC-TASK-104-02",
+      "type": "functional",
+      "statement": "Data retention policy is enforced in code/jobs for identity assets (active account +90 days) with deletion",
+      "test_ids": [
+        "TID-TASK-104-SEC-PII-ACCESS-IMMUTABLE-LOG"
+      ]
+    },
+    {
+      "id": "AC-TASK-104-03",
+      "type": "functional",
+      "statement": "PII/identity access logs are immutable and queryable for incident investigations.",
+      "test_ids": [
+        "TID-TASK-104-SEC-CONSENT-POLICY-LINK"
+      ]
+    },
+    {
+      "id": "AC-TASK-104-04",
+      "type": "functional",
+      "statement": "Legal facilitator-not-employer posture is reflected in contract surfaces and cumulative engagement duration alerts",
+      "test_ids": [
+        "TID-TASK-104-LEGAL-ENGAGEMENT-DURATION-ALERT"
+      ]
+    }
+  ]
+}

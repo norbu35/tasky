@@ -23,7 +23,7 @@ info:
     ## Idempotency
     Critical state-changing endpoints require an `Idempotency-Key` header.
     Payment and wallet endpoints are phase-gated. They return `503` when disabled for the current rollout phase.
-  version: 1.2.0
+  version: 1.3.0
   contact:
     name: Tasky Engineering
 servers:
@@ -31,6 +31,8 @@ servers:
     description: API v1
 
 tags:
+  - name: System
+    description: Service status and version metadata
   - name: Auth
     description: Facebook OAuth (Phase 0-1) and phone OTP auth flows
   - name: Users
@@ -47,12 +49,16 @@ tags:
     description: Booking lifecycle
   - name: Payments
     description: QPay payment integration (feature-toggled by phase)
+  - name: Credits
+    description: Phase 2 lead-unlock credit ledger and purchases
   - name: Wallet
     description: Tasker wallet and payouts (feature-toggled by phase)
   - name: Reviews
     description: Post-completion reviews
   - name: Disputes
     description: Booking disputes
+  - name: Referrals
+    description: Referral attribution and rewards
   - name: Conversations
     description: In-app messaging (REST fallback)
   - name: Notifications
@@ -144,7 +150,7 @@ components:
     # ─── Identity ─────────────────────────────────────────────
     User:
       type: object
-      required: [ id, role, status, created_at ]
+      required: [ id, role, status, primary_auth, created_at ]
       properties:
         id:
           type: string
@@ -157,6 +163,9 @@ components:
           type: string
           nullable: true
           example: "fb-user-123"
+        primary_auth:
+          type: string
+          enum: [ FACEBOOK, PHONE_OTP ]
         role:
           type: string
           enum: [ CUSTOMER, TASKER, ADMIN ]
@@ -169,15 +178,15 @@ components:
 
     Profile:
       type: object
-      required: [ id, phone, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at ]
+      required: [ id, role, status, full_name, avatar_url, rating_avg, completed_tasks, is_pro, created_at ]
       properties:
         id:
           type: string
           format: uuid
-        phone:
+        phone_masked:
           type: string
           nullable: true
-          example: "+97699001122"
+          example: "+97699****22"
         role:
           type: string
           enum: [ CUSTOMER, TASKER, ADMIN ]
@@ -195,6 +204,11 @@ components:
           type: number
           format: double
           example: 4.7
+        reliability_score:
+          type: number
+          format: double
+          nullable: true
+          description: Composite reliability score used in ranking (Phase 2+).
         completed_tasks:
           type: integer
           example: 12
@@ -329,11 +343,42 @@ components:
           type: string
           format: date-time
           nullable: true
+        sla_deadline_at:
+          type: string
+          format: date-time
+          nullable: true
 
     # ─── Categories ───────────────────────────────────────────
+    IntakeFieldSchema:
+      type: object
+      required: [ key, label, type, required ]
+      properties:
+        key:
+          type: string
+          example: cleaning_type
+        label:
+          type: string
+          example: Cleaning type
+        type:
+          type: string
+          enum: [ single_select, multi_select, dropdown, yes_no, numeric_counter ]
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+          nullable: true
+        min:
+          type: integer
+          nullable: true
+        max:
+          type: integer
+          nullable: true
+
     Category:
       type: object
-      required: [ id, name, name_mn, icon_url, is_active, sort_order ]
+      required: [ id, name, name_mn, icon_url, is_active, sort_order, intake_enabled, intake_schema_version ]
       properties:
         id:
           type: string
@@ -351,6 +396,19 @@ components:
           type: boolean
         sort_order:
           type: integer
+        intake_enabled:
+          type: boolean
+        intake_schema_version:
+          type: integer
+        intake_schema_json:
+          nullable: true
+          description: Active intake schema payload for task-posting clients.
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                $ref: '#/components/schemas/IntakeFieldSchema'
 
     # ─── Tasks ────────────────────────────────────────────────
     PublicTask:
@@ -416,7 +474,7 @@ components:
 
     Task:
       type: object
-      required: [ id, category_id, description, budget, location_lat, location_lng, location_text, status, scheduled_at, photos, created_at ]
+      required: [ id, category_id, description, budget, location_lat, location_lng, location_text, status, scheduled_at, photos, intake_schema_version, created_at ]
       properties:
         id:
           type: string
@@ -447,10 +505,20 @@ components:
           example: Энхтайваны өргөн чөлөө 5-р байр, 301 тоот
         status:
           type: string
-          enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED ]
+          enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW ]
         scheduled_at:
           type: string
           format: date-time
+        intake_answers:
+          type: object
+          additionalProperties: true
+          description: Structured intake answers keyed by schema field keys.
+        intake_schema_version:
+          type: integer
+          minimum: 1
+        scope_summary_source:
+          type: string
+          enum: [ TEMPLATE, USER_EDITED, LLM ]
         photos:
           type: array
           items:
@@ -473,19 +541,18 @@ components:
 
     CreateTaskRequest:
       type: object
-      required: [ category_id, description, budget, location_lat, location_lng, location_text, scheduled_at ]
+      required: [ category_id, description, budget, location_lat, location_lng, location_text, scheduled_at, intake_answers, intake_schema_version ]
       properties:
         category_id:
           type: string
           format: uuid
         description:
           type: string
-          minLength: 10
           maxLength: 2000
         budget:
           type: integer
-          minimum: 5000
-          description: Fixed budget in MNT. Minimum 5,000 MNT.
+          minimum: 1001
+          description: Fixed budget in MNT. Must be greater than 1,000 MNT.
         location_lat:
           type: number
           format: double
@@ -501,23 +568,38 @@ components:
           type: string
           format: date-time
           description: Must be in the future.
+        intake_answers:
+          type: object
+          additionalProperties: true
+          description: Structured responses generated from active category intake schema.
+        intake_schema_version:
+          type: integer
+          minimum: 1
+        scope_summary:
+          type: string
+          nullable: true
+          description: Optional editable deterministic summary shown before final submit.
         photo_keys:
           type: array
           items:
             type: string
           maxItems: 3
           description: Storage keys from presigned upload.
+        draft_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Optional task draft reference bound to intake schema version.
 
     UpdateTaskRequest:
       type: object
       properties:
         description:
           type: string
-          minLength: 10
           maxLength: 2000
         budget:
           type: integer
-          minimum: 5000
+          minimum: 1001
         location_lat:
           type: number
           format: double
@@ -536,6 +618,31 @@ components:
           items:
             type: string
           maxItems: 3
+
+    TaskDraft:
+      type: object
+      required: [ id, category_id, intake_answers, intake_schema_version, created_at, expires_at ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+        intake_answers:
+          type: object
+          additionalProperties: true
+        intake_schema_version:
+          type: integer
+        summary_draft:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
 
     # ─── Applications ─────────────────────────────────────────
     TaskApplication:
@@ -573,7 +680,14 @@ components:
           description: Tasker's cover message.
         status:
           type: string
-          enum: [ PENDING, ACCEPTED, REJECTED, WITHDRAWN ]
+          enum: [ APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED ]
+        relevance_score:
+          type: number
+          format: double
+          nullable: true
+        recommended:
+          type: boolean
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -581,7 +695,7 @@ components:
     # ─── Bookings ─────────────────────────────────────────────
     Booking:
       type: object
-      required: [ id, task_id, tasker_id, customer_id, price, status, created_at ]
+      required: [ id, task_id, tasker_id, customer_id, price, status, confirmed_scheduled_at, created_at ]
       properties:
         id:
           type: string
@@ -606,7 +720,28 @@ components:
           description: Agreed price in MNT.
         status:
           type: string
-          enum: [ ASSIGNED, COMPLETED, CANCELLED ]
+          enum: [ ASSIGNED, COMPLETED, CANCELLED, NO_SHOW ]
+        confirmed_scheduled_at:
+          type: string
+          format: date-time
+        liability_disclaimer_accepted:
+          type: boolean
+        liability_disclaimer_accepted_at:
+          type: string
+          format: date-time
+          nullable: true
+        settlement_mode:
+          type: string
+          enum: [ DIRECT, LEAD_UNLOCK, ESCROW ]
+        escrow_status:
+          type: string
+          nullable: true
+          enum: [ UNPAID, PAID, HELD, RELEASED ]
+        late_cancel_incident:
+          type: boolean
+        customer_contact_unlocked:
+          type: boolean
+          nullable: true
         cancellation_fee:
           type: integer
           nullable: true
@@ -618,18 +753,96 @@ components:
           type: string
           format: date-time
 
-    # ─── Wallet ───────────────────────────────────────────────
-    WalletBalance:
+    BookingScheduleEvent:
       type: object
-      required: [ balance, pending_payout, currency ]
+      required: [ id, booking_id, event_type, actor_user_id, created_at ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+          enum: [ REQUESTED, ACCEPTED, DECLINED, EXPIRED ]
+        actor_user_id:
+          type: string
+          format: uuid
+        proposed_scheduled_at:
+          type: string
+          format: date-time
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Wallet ───────────────────────────────────────────────
+    CreditBalance:
+      type: object
+      required: [ balance, total_purchased, total_spent, total_refunded ]
       properties:
         balance:
           type: integer
+          minimum: 0
+        total_purchased:
+          type: integer
+        total_spent:
+          type: integer
+        total_refunded:
+          type: integer
+
+    CreditTransaction:
+      type: object
+      required: [ id, amount, type, created_at ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: integer
+        type:
+          type: string
+          enum: [ PURCHASE, SPEND, REFUND, SIGNUP_BONUS ]
+        reference_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CreditPack:
+      type: object
+      required: [ id, name, credit_count, price_mnt, is_active ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        credit_count:
+          type: integer
+          minimum: 1
+        price_mnt:
+          type: integer
+          minimum: 1
+        is_active:
+          type: boolean
+
+    WalletBalance:
+      type: object
+      required: [ available_balance, pending_balance, currency ]
+      properties:
+        available_balance:
+          type: integer
           description: Available balance in MNT.
           example: 250000
-        pending_payout:
+        pending_balance:
           type: integer
-          description: Amount currently requested for payout but not yet processed.
+          description: Pending balance in MNT (not yet eligible for payout).
           example: 100000
         currency:
           type: string
@@ -693,7 +906,7 @@ components:
     # ─── Reviews ──────────────────────────────────────────────
     Review:
       type: object
-      required: [ id, booking_id, reviewer_id, reviewee_id, rating, created_at ]
+      required: [ id, booking_id, reviewer_id, reviewee_id, quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, created_at ]
       properties:
         id:
           type: string
@@ -709,7 +922,23 @@ components:
         reviewee_id:
           type: string
           format: uuid
-        rating:
+        quality_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        punctuality_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        communication_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        clarity_rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        respectfulness_rating:
           type: integer
           minimum: 1
           maximum: 5
@@ -740,10 +969,14 @@ components:
           type: string
         status:
           type: string
-          enum: [ OPEN, RESOLVED ]
-        resolution:
+          enum: [ OPEN, RESOLVED, CLOSED_INSUFFICIENT_EVIDENCE ]
+        resolution_action:
           type: string
-          enum: [ REFUND_CUSTOMER, RELEASE_TASKER ]
+          enum: [ RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE, REFUND, RELEASE ]
+          nullable: true
+        wrongful_party_user_id:
+          type: string
+          format: uuid
           nullable: true
         resolution_amount:
           type: integer
@@ -751,12 +984,30 @@ components:
         resolution_notes:
           type: string
           nullable: true
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisputeEvidence'
         created_at:
           type: string
           format: date-time
         resolved_at:
           type: string
           format: date-time
+          nullable: true
+
+    DisputeEvidence:
+      type: object
+      required: [ type ]
+      properties:
+        type:
+          type: string
+          enum: [ CHAT_EXCERPT, PHOTO, WRITTEN_TIMELINE ]
+        storage_key:
+          type: string
+          nullable: true
+        text_payload:
+          type: string
           nullable: true
 
     # ─── Conversations / Messages ─────────────────────────────
@@ -806,9 +1057,110 @@ components:
           format: uuid
         content:
           type: string
+        phone_number_flagged:
+          type: boolean
+          nullable: true
+        content_hash:
+          type: string
+          nullable: true
         created_at:
           type: string
           format: date-time
+
+    FeatureToggle:
+      type: object
+      required: [ feature_name, is_enabled, updated_at ]
+      properties:
+        feature_name:
+          type: string
+          enum: [ lead_fee_enabled, subscription_enabled, escrow_enabled, ai_scope_summary_enabled ]
+        is_enabled:
+          type: boolean
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    LeadUnlockPrice:
+      type: object
+      required: [ id, category_id, district_id, credits_required, effective_from ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category_id:
+          type: string
+          format: uuid
+        district_id:
+          type: string
+        credits_required:
+          type: integer
+          minimum: 1
+        effective_from:
+          type: string
+          format: date-time
+        effective_to:
+          type: string
+          format: date-time
+          nullable: true
+
+    TaskerSubscription:
+      type: object
+      required: [ id, tasker_id, status, started_at ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tasker_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ ACTIVE, CANCELLED, EXPIRED ]
+        started_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    BusinessAccount:
+      type: object
+      required: [ id, name, status, created_at ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum: [ ACTIVE, INACTIVE ]
+        billing_profile:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+
+    ReferralSummary:
+      type: object
+      required: [ referral_code, referral_link, successful_referrals_this_month ]
+      properties:
+        referral_code:
+          type: string
+        referral_link:
+          type: string
+          format: uri
+        successful_referrals_this_month:
+          type: integer
+        remaining_reward_capacity_this_month:
+          type: integer
+          description: Remaining successful referrals eligible for rewards within monthly cap.
 
   responses:
     BadRequest:
@@ -824,7 +1176,9 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     Forbidden:
-      description: Insufficient permissions for this action.
+      description: |
+        Insufficient permissions or policy gate active for this action.
+        Common codes: `FORBIDDEN`, `VERIFICATION_REQUIRED`, `OTP_MIGRATION_REQUIRED`, `ADDRESS_LOCKED`, `USER_BANNED`.
       content:
         application/json:
           schema:
@@ -938,6 +1292,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '503':
+          description: OAuth provider unavailable in Phase 0-1 (`AUTH_PROVIDER_UNAVAILABLE`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /auth/otp/request:
     post:
@@ -975,6 +1335,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '403':
+          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /auth/otp/verify:
     post:
@@ -1028,6 +1394,12 @@ paths:
                 $ref: '#/components/schemas/Error'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '403':
+          description: OTP authentication disabled for current rollout phase (`FEATURE_DISABLED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /auth/token/refresh:
     post:
@@ -1231,7 +1603,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ id_card_front_key, id_card_back_key ]
+              required: [ id_card_front_key, id_card_back_key, consent_policy_version, consent_accepted ]
               properties:
                 id_card_front_key:
                   type: string
@@ -1239,6 +1611,12 @@ paths:
                 id_card_back_key:
                   type: string
                   description: Storage key of the uploaded ID card back image.
+                consent_policy_version:
+                  type: string
+                  description: Policy version accepted by the user before identity upload.
+                consent_accepted:
+                  type: boolean
+                  enum: [ true ]
       responses:
         '200':
           description: Verification submitted successfully.
@@ -1275,6 +1653,42 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
+  /verification/dan/verify:
+    post:
+      tags: [ Verification ]
+      summary: Verify via E-Mongolia DAN (Phase 2+)
+      description: |
+        Optional fast-path verification using DAN. On provider failure/unavailability,
+        manual verification remains available as fallback.
+      operationId: verifyWithDan
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ dan_token ]
+              properties:
+                dan_token:
+                  type: string
+      responses:
+        '200':
+          description: DAN verification processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: DAN provider unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # ─── Categories ─────────────────────────────────────────────
   /categories:
     get:
@@ -1304,6 +1718,113 @@ paths:
                     $ref: '#/components/schemas/CursorPagination'
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+  /tasks/drafts:
+    post:
+      tags: [ Tasks ]
+      summary: Create task draft
+      description: |
+        Creates a draft bound to the currently active category intake schema version.
+        Submit-time validation must use this bound version even if a newer schema is activated later.
+      operationId: createTaskDraft
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ category_id, intake_answers, intake_schema_version ]
+              properties:
+                category_id:
+                  type: string
+                  format: uuid
+                intake_answers:
+                  type: object
+                  additionalProperties: true
+                intake_schema_version:
+                  type: integer
+                summary_draft:
+                  type: string
+                  nullable: true
+      responses:
+        '201':
+          description: Draft created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDraft'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Category inactive or schema mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/drafts/{id}:
+    get:
+      tags: [ Tasks ]
+      summary: Get task draft
+      operationId: getTaskDraft
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Draft details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDraft'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Exact address is locked for current user/state (`ADDRESS_LOCKED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [ Tasks ]
+      summary: Update task draft
+      operationId: updateTaskDraft
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intake_answers:
+                  type: object
+                  additionalProperties: true
+                summary_draft:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Draft updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDraft'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ─── Tasks ──────────────────────────────────────────────────
   /tasks/photos/upload-url:
@@ -1402,8 +1923,10 @@ paths:
       tags: [ Tasks ]
       summary: Create a new task
       description: |
-        Creates a new task in OPEN status. Only authenticated customers can create tasks.
-        The task must have a future scheduled_at date and a valid category.
+        Creates a new task in OPEN status using schema-driven intake payload.
+        Deterministic scope summary generation runs before final submit; if generation fails,
+        server falls back to canonical key-value summary and still returns success.
+        Only authenticated customers can create tasks.
       operationId: createTask
       security:
         - BearerAuth: [ ]
@@ -1451,7 +1974,7 @@ paths:
           description: Filter by task status.
           schema:
             type: string
-            enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED ]
+            enum: [ OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW ]
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -1664,6 +2187,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                applicationCap:
+                  summary: Application cap reached
+                  value:
+                    code: APPLICATION_CAP_REACHED
+                    message: Maximum number of applications reached for this task.
+                    trace_id: abc-123
 
     get:
       tags: [ Applications ]
@@ -1753,6 +2283,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '422':
+          description: Liability disclaimer not accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tasks/{id}/instant-match:
+    post:
+      tags: [ Applications ]
+      summary: Start instant match (Phase 3+)
+      description: |
+        Starts instant-match flow for eligible high-liquidity categories/districts.
+        Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
+      operationId: startInstantMatch
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: Instant match started or booking immediately assigned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mode:
+                    type: string
+                    enum: [ INSTANT_MATCH_STARTED, BOOKING_ASSIGNED, FALLBACK_TO_APPLICATIONS ]
+                  booking:
+                    $ref: '#/components/schemas/Booking'
+                    nullable: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Task not eligible for instant match.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   # ─── Bookings ───────────────────────────────────────────────
   /bookings:
@@ -1777,7 +2353,7 @@ paths:
           description: Filter by booking status.
           schema:
             type: string
-            enum: [ ASSIGNED, COMPLETED, CANCELLED ]
+            enum: [ ASSIGNED, COMPLETED, CANCELLED, NO_SHOW ]
         - $ref: '#/components/parameters/CursorParam'
         - $ref: '#/components/parameters/LimitParam'
       responses:
@@ -1824,14 +2400,45 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /bookings/{id}/schedule-events:
+    get:
+      tags: [ Bookings ]
+      summary: List booking schedule events
+      description: Returns immutable reschedule timeline events for auditability.
+      operationId: listBookingScheduleEvents
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Schedule events.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   /bookings/{id}/lead-unlock:
     post:
       tags: [ Bookings ]
       summary: Tasker accepts lead and unlocks customer contact
       description: |
         Phase 2+ endpoint.
-        Selected tasker confirms participation by spending configured lead-unlock credits.
-        On success, customer contact details become visible to the selected tasker.
+        Selected tasker accepts or declines lead within configured timeout window.
+        Accepting spends configured lead-unlock credits and unlocks customer contact details.
+        Declining does not spend credits and keeps contact details locked.
         Requires Idempotency-Key header.
       operationId: unlockBookingLead
       security:
@@ -1849,25 +2456,42 @@ paths:
               properties:
                 accept:
                   type: boolean
-                  enum: [ true ]
-                  description: Must be `true` to spend credits and unlock customer contact details.
+                  description: True spends credits and unlocks contact; false declines without debit.
       responses:
         '200':
-          description: Lead unlock successful.
+          description: Lead response processed.
           content:
             application/json:
               schema:
-                type: object
-                required: [ booking, credits_spent, customer_contact_unlocked ]
-                properties:
-                  booking:
-                    $ref: '#/components/schemas/Booking'
-                  credits_spent:
-                    type: integer
-                    example: 1
-                  customer_contact_unlocked:
-                    type: boolean
-                    enum: [ true ]
+                oneOf:
+                  - type: object
+                    required: [ booking, accepted, credits_spent, customer_contact_unlocked ]
+                    properties:
+                      booking:
+                        $ref: '#/components/schemas/Booking'
+                      accepted:
+                        type: boolean
+                        enum: [ true ]
+                      credits_spent:
+                        type: integer
+                        example: 1
+                      customer_contact_unlocked:
+                        type: boolean
+                        enum: [ true ]
+                  - type: object
+                    required: [ booking, accepted, credits_spent, customer_contact_unlocked ]
+                    properties:
+                      booking:
+                        $ref: '#/components/schemas/Booking'
+                      accepted:
+                        type: boolean
+                        enum: [ false ]
+                      credits_spent:
+                        type: integer
+                        enum: [ 0 ]
+                      customer_contact_unlocked:
+                        type: boolean
+                        enum: [ false ]
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1957,6 +2581,139 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /bookings/{id}/reschedule:
+    post:
+      tags: [ Bookings ]
+      summary: Request booking reschedule
+      description: |
+        Either booking party may request a reschedule while booking is ASSIGNED.
+        Counterparty accepts/declines in-app. Policy timers always reference the latest accepted schedule.
+        Requires Idempotency-Key header.
+      operationId: requestBookingReschedule
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ proposed_scheduled_at ]
+              properties:
+                proposed_scheduled_at:
+                  type: string
+                  format: date-time
+                reason:
+                  type: string
+                  nullable: true
+                  maxLength: 1000
+      responses:
+        '201':
+          description: Reschedule request created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not in ASSIGNED status or proposed time invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/{id}/reschedule/{eventId}/respond:
+    post:
+      tags: [ Bookings ]
+      summary: Accept or decline reschedule request
+      description: Responds to a pending reschedule request. Accepted response updates canonical schedule.
+      operationId: respondBookingReschedule
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ action ]
+              properties:
+                action:
+                  type: string
+                  enum: [ ACCEPT, DECLINE ]
+      responses:
+        '200':
+          description: Reschedule request responded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingScheduleEvent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Request already finalized or booking not eligible.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/{id}/no-show/flag:
+    post:
+      tags: [ Bookings ]
+      summary: Flag and adjudicate no-show
+      description: |
+        No-show adjudication follows deterministic rules:
+        reminder at scheduled +10m; no-show flag eligibility at +15m; rejected if either party
+        posted a status/check-in in trailing 30 minutes or a newer accepted reschedule supersedes schedule.
+        On success, both booking and linked task transition to NO_SHOW in one transaction.
+        Requires Idempotency-Key header.
+      operationId: flagNoShow
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      responses:
+        '200':
+          description: No-show confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: No-show rules not satisfied (`NO_SHOW_NOT_ELIGIBLE`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /bookings/{id}/mark-done:
     post:
       tags: [ Bookings ]
@@ -1992,7 +2749,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: Booking is not in ASSIGNED or PAID status.
+          description: Booking is not in ASSIGNED status.
           content:
             application/json:
               schema:
@@ -2084,9 +2841,12 @@ paths:
               properties:
                 payment_id:
                   type: string
+                object_type:
+                  type: string
+                  enum: [ BOOKING_ESCROW, CREDIT_PACK ]
                 object_id:
                   type: string
-                  description: Booking ID passed during payment initiation.
+                  description: Booking ID or credit purchase intent ID passed during payment initiation.
                 amount:
                   type: integer
                 status:
@@ -2117,6 +2877,219 @@ paths:
                 $ref: '#/components/schemas/Error'
         '503':
           description: Monetization feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ─── Credits (Phase 2+) ────────────────────────────────────
+  /credits/balance:
+    get:
+      tags: [ Credits ]
+      summary: Get lead-unlock credit balance
+      description: Phase 2+ endpoint for tasker credit balance.
+      operationId: getCreditBalance
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Credit balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditBalance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /credits/transactions:
+    get:
+      tags: [ Credits ]
+      summary: List credit transactions
+      operationId: listCreditTransactions
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated credit transaction history.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data, cursor ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreditTransaction'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /credits/packs:
+    get:
+      tags: [ Credits ]
+      summary: List available credit packs
+      operationId: listCreditPacks
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Active credit packs.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreditPack'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /credits/purchase:
+    post:
+      tags: [ Credits ]
+      summary: Purchase credit pack via QPay
+      description: Creates a QPay checkout intent for selected credit pack.
+      operationId: purchaseCreditPack
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ pack_id ]
+              properties:
+                pack_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Purchase intent created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ payment_url, qr_code, pack ]
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                  qr_code:
+                    type: string
+                  pack:
+                    $ref: '#/components/schemas/CreditPack'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          description: Credit system disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /subscriptions/tasker:
+    post:
+      tags: [ Payments ]
+      summary: Activate tasker subscription (Phase 3+)
+      description: Enables monthly subscription for eligible Pro taskers.
+      operationId: activateTaskerSubscription
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ plan_code ]
+              properties:
+                plan_code:
+                  type: string
+      responses:
+        '200':
+          description: Subscription activated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskerSubscription'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          description: Subscription feature disabled for current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /business/accounts:
+    post:
+      tags: [ Admin ]
+      summary: Create business account (Phase 4)
+      description: Creates B2B account for recurring scheduling and organization billing.
+      operationId: createBusinessAccount
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ name ]
+              properties:
+                name:
+                  type: string
+                billing_profile:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '201':
+          description: Business account created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessAccount'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          description: B2B feature disabled for current rollout phase.
           content:
             application/json:
               schema:
@@ -2257,9 +3230,25 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ rating ]
+              required: [ quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating ]
               properties:
-                rating:
+                quality_rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                punctuality_rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                communication_rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                clarity_rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                respectfulness_rating:
                   type: integer
                   minimum: 1
                   maximum: 5
@@ -2321,6 +3310,32 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /referrals/me:
+    get:
+      tags: [ Referrals ]
+      summary: Get my referral link and monthly reward status
+      description: |
+        Phase 2+ endpoint. Returns referral code/link, current monthly conversion count,
+        and remaining reward-eligible slots under fraud-cap policy.
+      operationId: getMyReferralSummary
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Referral summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '503':
+          description: Referral feature is disabled for the current rollout phase.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # ─── Disputes ───────────────────────────────────────────────
   /bookings/{id}/disputes:
     post:
@@ -2345,12 +3360,17 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ reason ]
+              required: [ reason, evidence ]
               properties:
                 reason:
                   type: string
                   minLength: 10
                   maxLength: 2000
+                evidence:
+                  type: array
+                  minItems: 1
+                  items:
+                    $ref: '#/components/schemas/DisputeEvidence'
       responses:
         '201':
           description: Dispute raised.
@@ -2569,11 +3589,21 @@ paths:
     get:
       tags: [ Admin ]
       summary: Search users
-      description: Search users by phone number. Admin only.
+      description: Search users by name and Facebook ID in Phase 0-1; phone criteria is added in Phase 2+.
       operationId: adminSearchUsers
       security:
         - BearerAuth: [ ]
       parameters:
+        - name: name
+          in: query
+          description: Partial full name match.
+          schema:
+            type: string
+        - name: facebook_id
+          in: query
+          description: Exact Facebook identity match (Phase 0-1 and migrated users).
+          schema:
+            type: string
         - name: phone
           in: query
           description: Phone number to search for (exact normalized match only, E.164 recommended).
@@ -2669,6 +3699,60 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           description: User is not banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/tasks/{id}/concierge-assign:
+    post:
+      tags: [ Admin ]
+      summary: Concierge assign task to tasker (Phase 0-1)
+      description: |
+        Founder/admin manual dispatch fallback for low-liquidity periods.
+        Creates booking assignment if target tasker is eligible and verified.
+        Requires Idempotency-Key header.
+      operationId: adminConciergeAssignTask
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ tasker_id, override_reason, liability_disclaimer_accepted ]
+              properties:
+                tasker_id:
+                  type: string
+                  format: uuid
+                override_reason:
+                  type: string
+                  minLength: 3
+                  maxLength: 500
+                liability_disclaimer_accepted:
+                  type: boolean
+                  enum: [ true ]
+      responses:
+        '200':
+          description: Concierge assignment completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Task not eligible for assignment or tasker not eligible.
           content:
             application/json:
               schema:
@@ -2991,6 +4075,7 @@ paths:
         Phase-gated endpoint.
         Admin marks a payout request as processed after completing the bank transfer.
         This debits the tasker's wallet and creates a ledger entry.
+        Processing is allowed only on Tuesdays and Fridays in platform timezone.
         Requires Idempotency-Key header.
       operationId: adminProcessPayout
       security:
@@ -3023,6 +4108,140 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /admin/features/toggles:
+    get:
+      tags: [ Admin ]
+      summary: List feature toggles
+      description: Returns monetization and AI feature toggles. Changes are audit-logged.
+      operationId: adminListFeatureToggles
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Current feature toggle states.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FeatureToggle'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    put:
+      tags: [ Admin ]
+      summary: Update feature toggle
+      description: Enables or disables runtime feature flags without redeploy.
+      operationId: adminUpdateFeatureToggle
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ feature_name, is_enabled ]
+              properties:
+                feature_name:
+                  type: string
+                  enum: [ lead_fee_enabled, subscription_enabled, escrow_enabled, ai_scope_summary_enabled ]
+                is_enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: Feature toggle updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureToggle'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/lead-unlock-prices:
+    get:
+      tags: [ Admin ]
+      summary: List lead unlock prices
+      description: Returns active and scheduled lead-unlock pricing rows by category and district.
+      operationId: adminListLeadUnlockPrices
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated price rows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data, cursor ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LeadUnlockPrice'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    post:
+      tags: [ Admin ]
+      summary: Create or schedule lead unlock price
+      operationId: adminCreateLeadUnlockPrice
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ category_id, district_id, credits_required, effective_from ]
+              properties:
+                category_id:
+                  type: string
+                  format: uuid
+                district_id:
+                  type: string
+                credits_required:
+                  type: integer
+                  minimum: 1
+                effective_from:
+                  type: string
+                  format: date-time
+                effective_to:
+                  type: string
+                  format: date-time
+                  nullable: true
+      responses:
+        '201':
+          description: Price row created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadUnlockPrice'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
   /admin/categories:
     get:
@@ -3058,7 +4277,7 @@ paths:
     post:
       tags: [ Admin ]
       summary: Create a category
-      description: Creates a new service category.
+      description: Creates a new service category. Intake can be enabled with schema in separate schema endpoints.
       operationId: adminCreateCategory
       security:
         - BearerAuth: [ ]
@@ -3083,6 +4302,9 @@ paths:
                   format: uri
                 sort_order:
                   type: integer
+                intake_enabled:
+                  type: boolean
+                  default: true
       responses:
         '201':
           description: Category created.
@@ -3101,7 +4323,7 @@ paths:
     put:
       tags: [ Admin ]
       summary: Update a category
-      description: Updates an existing category. Can activate, deactivate, rename, or reorder.
+      description: Updates an existing category. Can activate, deactivate, rename, reorder, or toggle intake availability.
       operationId: adminUpdateCategory
       security:
         - BearerAuth: [ ]
@@ -3127,6 +4349,8 @@ paths:
                   type: boolean
                 sort_order:
                   type: integer
+                intake_enabled:
+                  type: boolean
       responses:
         '200':
           description: Category updated.
@@ -3134,6 +4358,135 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/categories/{id}/schemas:
+    get:
+      tags: [ Admin ]
+      summary: List category intake schema versions
+      operationId: adminListCategorySchemas
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Schema versions for category.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required: [ version, status, schema_json, created_at ]
+                      properties:
+                        version:
+                          type: integer
+                        status:
+                          type: string
+                          enum: [ DRAFT, CANARY, ACTIVE, ROLLED_BACK ]
+                        schema_json:
+                          type: object
+                          additionalProperties: true
+                        created_at:
+                          type: string
+                          format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    post:
+      tags: [ Admin ]
+      summary: Create category intake schema version
+      description: Runs schema lint/preview checks before persisting version.
+      operationId: adminCreateCategorySchema
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ schema_json ]
+              properties:
+                schema_json:
+                  type: object
+                  additionalProperties: true
+                activate_as:
+                  type: string
+                  enum: [ DRAFT, CANARY, ACTIVE ]
+      responses:
+        '201':
+          description: Schema version created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ version, status ]
+                properties:
+                  version:
+                    type: integer
+                  status:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/categories/{id}/schemas/{version}/activate:
+    post:
+      tags: [ Admin ]
+      summary: Activate or rollback category schema version
+      operationId: adminActivateCategorySchema
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ mode ]
+              properties:
+                mode:
+                  type: string
+                  enum: [ CANARY, ACTIVE, ROLLBACK_TO_LAST_KNOWN_GOOD ]
+      responses:
+        '200':
+          description: Schema activation state updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: integer
+                  status:
+                    type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
