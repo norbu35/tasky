@@ -13,9 +13,12 @@
   "acceptance_criteria": [
     {
       "id": "AC-TASK-045-01",
-      "type": "functional",
-      "statement": "Admin can search users by phone.",
+      "type": "security",
+      "statement": "Admin can search users by name and Facebook ID in Phase 0-1, and by phone once Phase 2 auth is active.",
       "test_ids": [
+        "TID-TASK-045-API-ADMIN-USER-SEARCH"
+      ],
+      "negative_test_ids": [
         "TID-TASK-045-API-ADMIN-USER-SEARCH"
       ]
     },

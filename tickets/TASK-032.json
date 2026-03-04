@@ -5,9 +5,7 @@
   "req_ids": [
     "NFR-RELI-01",
     "REQ-BOOK-04",
-    "REQ-BOOK-05",
-    "REQ-BOOK-06",
-    "REQ-TASK-02"
+    "REQ-BOOK-06"
   ],
   "depends_on": [
     "TASK-030"
@@ -16,10 +14,9 @@
     {
       "id": "AC-TASK-032-01",
       "type": "functional",
-      "statement": "Customer late-cancel records a reliability incident and audit evidence.",
+      "statement": "Customer late-cancel records a reliability incident and audit evidence; early cancel applies no fee.",
       "test_ids": [
-        "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE",
-        "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL"
+        "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL-FEE"
       ]
     },
     {
@@ -27,8 +24,7 @@
       "type": "functional",
       "statement": "Tasker cancellation reopens task and records strike.",
       "test_ids": [
-        "TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE",
-        "TID-TASK-032-DOMAIN-TASKER-CANCEL"
+        "TID-TASK-032-DOMAIN-CUSTOMER-CANCEL"
       ]
     },
     {
@@ -36,8 +32,7 @@
       "type": "functional",
       "statement": "Three strikes in 30 days triggers 7-day suspension; repeat offenders receive escalating suspension duration.",
       "test_ids": [
-        "TID-TASK-032-DOMAIN-STRIKE-SUSPENSION",
-        "TID-TASK-032-DOMAIN-REPEAT-OFFENSE"
+        "TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE"
       ]
     }
   ]

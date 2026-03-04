@@ -3,9 +3,9 @@
   "ticket": "TASK-034",
   "risk_level": "high",
   "req_ids": [
-    "REQ-PAY-04",
-    "REQ-PAY-05",
-    "REQ-PAY-06"
+    "REQ-PAY-35",
+    "REQ-PAY-36",
+    "REQ-PAY-37"
   ],
   "depends_on": [
     "TASK-033"
@@ -46,7 +46,7 @@
     {
       "id": "AC-TASK-034-05",
       "type": "reliability",
-      "statement": "Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the tasker's balance.",
+      "statement": "Duplicate booking completion credit events for the same booking are idempotent: only one credit is applied to the",
       "test_ids": [
         "TID-TASK-034-DOMAIN-WALLET-DEDUP"
       ]

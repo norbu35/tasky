@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-098",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-10",
+    "REQ-PAY-11",
+    "REQ-PAY-12",
+    "REQ-PAY-13",
+    "REQ-PAY-14",
+    "REQ-PAY-15",
+    "REQ-PAY-16",
+    "REQ-PAY-17",
+    "REQ-PAY-18"
+  ],
+  "depends_on": [
+    "TASK-023",
+    "TASK-030",
+    "TASK-044"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-098-01",
+      "type": "functional",
+      "statement": "Browse/apply actions never debit credits and remain available with zero-credit balance.",
+      "test_ids": [
+        "TID-TASK-098-DOMAIN-UNLOCK-DEBIT-IDEMPOTENT"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-02",
+      "type": "functional",
+      "statement": "Selected-tasker accept flow uses 15-minute timer and debits credits exactly once on accepted lead unlock.",
+      "test_ids": [
+        "TID-TASK-098-API-NEXT-APPLICANT-ON-TIMEOUT"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-03",
+      "type": "functional",
+      "statement": "Customer retains free selection agency across eligible applicants regardless of ranking position.",
+      "test_ids": [
+        "TID-TASK-098-DOMAIN-CREDIT-REFUND"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-04",
+      "type": "functional",
+      "statement": "Decline/timeout creates no debit, prompts select-next-applicant flow, and prevents stale auto-unlock.",
+      "test_ids": [
+        "TID-TASK-098-API-LEAD-PRICE-RESOLUTION"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-05",
+      "type": "functional",
+      "statement": "Customer cancel after unlock triggers exact credit refund transaction linked to booking.",
+      "test_ids": [
+        "TID-TASK-098-API-APPLICATION-CAP"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-06",
+      "type": "functional",
+      "statement": "Lead unlock pricing is versioned by category/district/effective window with minimum start value enforcement.",
+      "test_ids": [
+        "TID-TASK-098-API-TASKER-CONVERSION-METRICS"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-07",
+      "type": "functional",
+      "statement": "Application cap default is 10 and admin-configurable; cap violations return deterministic domain error.",
+      "test_ids": [
+        "TID-TASK-098-AUTO-AC-07"
+      ]
+    },
+    {
+      "id": "AC-TASK-098-08",
+      "type": "functional",
+      "statement": "Tasker analytics exposes success-rate and unlock-conversion metrics on trailing 28-day window.",
+      "test_ids": [
+        "TID-TASK-098-AUTO-AC-08"
+      ]
+    }
+  ]
+}

@@ -12,6 +12,10 @@ REQ_RE = re.compile(r"\b(?:REQ|NFR)-[A-Z]+-[0-9]+\b")
 TASK_RE = re.compile(r"\bTASK-[0-9]{3}\b")
 TABLE_ROW_RE = re.compile(r"^\|\s*([^|]+?)\s*\|(.+)$")
 BACKLOG_HEADING_RE = re.compile(r"^###\s+(TASK-[0-9]{3})\b")
+BACKLOG_INDEX_ROW_RE = re.compile(
+    r"^\|\s*(TASK-[0-9]{3})\s*\|\s*[^|]+\|\s*(?:low|medium|high)\s*\|\s*([^|]+)\|",
+    re.IGNORECASE,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,7 +28,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backlog",
-        default="docs/BACKLOG_MVP.md",
+        default="docs/BACKLOG.md",
         help="Path to backlog markdown",
     )
     return parser.parse_args()
@@ -68,6 +72,19 @@ def extract_backlog_ticket_ids(backlog_text: str) -> set[str]:
     return ticket_ids
 
 
+def extract_backlog_index_rows(backlog_text: str) -> dict[str, set[str]]:
+    rows: dict[str, set[str]] = {}
+    for raw_line in backlog_text.splitlines():
+        m = BACKLOG_INDEX_ROW_RE.match(raw_line.strip())
+        if not m:
+            continue
+        ticket = m.group(1)
+        coverage_col = m.group(2)
+        for req_id in REQ_RE.findall(coverage_col):
+            rows.setdefault(req_id, set()).add(ticket)
+    return rows
+
+
 def main() -> int:
     args = parse_args()
     prd_path = Path(args.prd)
@@ -76,14 +93,19 @@ def main() -> int:
 
     try:
         prd_text = load_text(prd_path)
-        traceability_text = load_text(traceability_path)
         backlog_text = load_text(backlog_path)
     except FileNotFoundError as exc:
         print(str(exc), file=sys.stderr)
         return 1
 
     prd_reqs = extract_prd_requirement_ids(prd_text)
-    trace_rows = extract_traceability_rows(traceability_text)
+    if traceability_path.is_file():
+        traceability_text = traceability_path.read_text(encoding="utf-8")
+        trace_rows = extract_traceability_rows(traceability_text)
+        coverage_source = f"traceability matrix: {traceability_path}"
+    else:
+        trace_rows = extract_backlog_index_rows(backlog_text)
+        coverage_source = "backlog index coverage column (traceability file missing)"
     backlog_tickets = extract_backlog_ticket_ids(backlog_text)
 
     trace_reqs = set(trace_rows.keys())
@@ -111,6 +133,7 @@ def main() -> int:
         )
 
     print("Traceability validation summary:")
+    print(f"- Coverage source: {coverage_source}")
     print(f"- PRD requirement IDs: {len(prd_reqs)}")
     print(f"- Traceability rows: {len(trace_reqs)}")
     print(f"- Backlog ticket definitions: {len(backlog_tickets)}")

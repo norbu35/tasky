@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-105",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-40",
+    "REQ-PAY-41",
+    "REQ-PAY-42"
+  ],
+  "depends_on": [
+    "TASK-031",
+    "TASK-100"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-105-01",
+      "type": "functional",
+      "statement": "Tasky Plus subscription gates priority queue/SLA eligibility behavior for eligible customers.",
+      "test_ids": [
+        "TID-TASK-105-API-TASKY-PLUS-PRIORITY"
+      ]
+    },
+    {
+      "id": "AC-TASK-105-02",
+      "type": "functional",
+      "statement": "Business plans support recurring scheduling, org billing profile, and seat-scoped admin controls with tenant",
+      "test_ids": [
+        "TID-TASK-105-API-B2B-TENANT-ISOLATION"
+      ]
+    },
+    {
+      "id": "AC-TASK-105-03",
+      "type": "functional",
+      "statement": "Checkout supports QPay, SocialPay, and bank-transfer rails with per-rail success/failure telemetry and fallback",
+      "test_ids": [
+        "TID-TASK-105-OBS-PAYMENT-RAIL-TELEMETRY"
+      ]
+    }
+  ]
+}

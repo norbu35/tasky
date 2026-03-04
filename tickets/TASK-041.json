@@ -48,7 +48,7 @@
     {
       "id": "AC-TASK-041-05",
       "type": "functional",
-      "statement": "Dispute can only be raised within 24 hours of booking completion; attempts after the window return DISPUTE_WINDOW_EXPIRED.",
+      "statement": "Dispute can only be raised within 24 hours of booking completion; attempts after the window return",
       "test_ids": [
         "TID-TASK-041-DOMAIN-DISPUTE-WINDOW"
       ]
@@ -56,7 +56,7 @@
     {
       "id": "AC-TASK-041-06",
       "type": "reliability",
-      "statement": "Admin dispute resolution is idempotent: replaying the resolve request with the same Idempotency-Key binds to the original dispute resource.",
+      "statement": "Admin dispute resolution is idempotent: replaying the resolve request with the same Idempotency-Key binds to the",
       "test_ids": [
         "TID-TASK-041-RELI-IDEMPOTENT-ADMIN-RESOLVE"
       ]

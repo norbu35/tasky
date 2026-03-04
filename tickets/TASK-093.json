@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-093",
+  "risk_level": "high",
+  "req_ids": [
+    "NFR-API-03",
+    "REQ-BOOK-11",
+    "REQ-BOOK-12",
+    "REQ-BOOK-13"
+  ],
+  "depends_on": [
+    "TASK-030",
+    "TASK-032",
+    "TASK-041"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-093-01",
+      "type": "functional",
+      "statement": "System emits +10 minute reminder events and accepts +15 minute no-show flag only when no accepted future",
+      "test_ids": [
+        "TID-TASK-093-API-NOSHOW-ELIGIBILITY"
+      ]
+    },
+    {
+      "id": "AC-TASK-093-02",
+      "type": "functional",
+      "statement": "Successful no-show adjudication updates both booking and task to `NO_SHOW` in one transaction and appends",
+      "test_ids": [
+        "TID-TASK-093-DOMAIN-NOSHOW-DUAL-STATE-TRANSITION"
+      ]
+    },
+    {
+      "id": "AC-TASK-093-03",
+      "type": "functional",
+      "statement": "Reschedule request/accept/decline/expiry actions are immutable timeline events; accepted reschedule updates",
+      "test_ids": [
+        "TID-TASK-093-API-RESCHEDULE-LIFECYCLE"
+      ]
+    },
+    {
+      "id": "AC-TASK-093-04",
+      "type": "functional",
+      "statement": "Chat-only schedule mentions do not alter policy timers; no-show and late-cancel checks always use latest accepted",
+      "test_ids": [
+        "TID-TASK-093-DOMAIN-SCHEDULE-AUTHORITY"
+      ]
+    },
+    {
+      "id": "AC-TASK-093-05",
+      "type": "reliability",
+      "statement": "No-show and reschedule state-changing endpoints are idempotent on duplicate retries.",
+      "test_ids": [
+        "TID-TASK-093-RELI-IDEMPOTENT-NOSHOW"
+      ]
+    }
+  ]
+}

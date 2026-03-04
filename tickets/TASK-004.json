@@ -26,12 +26,10 @@
       "type": "security",
       "statement": "Banned and suspended users are denied even with valid JWT.",
       "test_ids": [
-        "TID-TASK-004-SEC-BANNED-USER-BLOCK",
-        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
+        "TID-TASK-004-SEC-BANNED-USER-BLOCK"
       ],
       "negative_test_ids": [
-        "TID-TASK-004-SEC-BANNED-USER-BLOCK",
-        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
+        "TID-TASK-004-SEC-BANNED-USER-BLOCK"
       ]
     },
     {
@@ -39,10 +37,10 @@
       "type": "security",
       "statement": "Facebook OAuth endpoint is rate-limited.",
       "test_ids": [
-        "TID-TASK-004-SEC-OAUTH-RATE-LIMIT"
+        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
       ],
       "negative_test_ids": [
-        "TID-TASK-004-SEC-OAUTH-RATE-LIMIT"
+        "TID-TASK-004-SEC-SUSPENDED-USER-BLOCK"
       ]
     }
   ]

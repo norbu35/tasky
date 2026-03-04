@@ -15,15 +15,18 @@
     {
       "id": "AC-TASK-010-01",
       "type": "security",
-      "statement": "Facebook OAuth flow creates or authenticates user via facebook_id.",
+      "statement": "Facebook OAuth flow creates or authenticates user via `facebook_id`.",
       "test_ids": [
+        "TID-TASK-010-API-FACEBOOK-AUTH"
+      ],
+      "negative_test_ids": [
         "TID-TASK-010-API-FACEBOOK-AUTH"
       ]
     },
     {
       "id": "AC-TASK-010-02",
       "type": "functional",
-      "statement": "Same facebook_id presented twice returns same user (no duplicate).",
+      "statement": "Same `facebook_id` presented twice returns the same user (no duplicate).",
       "test_ids": [
         "TID-TASK-010-API-FACEBOOK-DEDUP"
       ]
@@ -34,15 +37,12 @@
       "statement": "Refresh endpoint rotates tokens and validates lifecycle.",
       "test_ids": [
         "TID-TASK-010-API-TOKEN-REFRESH"
-      ],
-      "negative_test_ids": [
-        "TID-TASK-010-API-TOKEN-REFRESH"
       ]
     },
     {
       "id": "AC-TASK-010-04",
       "type": "security",
-      "statement": "Banned user is rejected at Facebook OAuth login (403).",
+      "statement": "Banned user is rejected at Facebook OAuth login.",
       "test_ids": [
         "TID-TASK-010-API-FACEBOOK-AUTH-BANNED"
       ],
@@ -52,11 +52,13 @@
     },
     {
       "id": "AC-TASK-010-05",
-      "type": "functional",
-      "statement": "Dev auth bypass is available in non-production; rejects unsupported roles.",
+      "type": "security",
+      "statement": "Dev auth bypass is available in non-production environments and rejects unsupported roles.",
       "test_ids": [
-        "TID-TASK-010-DEV-AUTH-BYPASS",
-        "TID-TASK-010-DEV-AUTH-VALIDATION"
+        "TID-TASK-010-DEV-AUTH-BYPASS"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-010-DEV-AUTH-BYPASS"
       ]
     }
   ]

@@ -1,74 +1,27 @@
 # Feature: review
 
-Post-completion ratings and reviews between booking participants.
+Booking-based bilateral reviews and profile rating updates.
 
-## Purpose
+## Implemented API
 
-Allows both the Customer and the Tasker to leave a 1–5 star rating and optional text review
-after a booking reaches `COMPLETED` status. Reviews contribute to the reviewer's target user's
-`rating_avg` and `is_pro` badge eligibility.
+| Method | Path                            | Notes                         |
+|--------|---------------------------------|-------------------------------|
+| `POST` | `/api/v1/bookings/{id}/reviews` | Submit review                 |
+| `GET`  | `/api/v1/users/{id}/reviews`    | List reviews received by user |
 
-## API Endpoints
+## Submit Rules
 
-| Method | Path                            | Auth | Notes                                   |
-|--------|---------------------------------|------|-----------------------------------------|
-| `POST` | `/api/v1/bookings/{id}/reviews` | JWT  | Submit a review for a completed booking |
-| `GET`  | `/api/v1/users/{id}/reviews`    | JWT  | List all reviews received by a user     |
-
-## Request / Response Shapes
-
-### `POST /api/v1/bookings/{id}/reviews`
-
-```json
-// Request
-{
-  "rating": 5,              // integer 1–5
-  "comment": "string"       // optional, max 1000 chars
-}
-
-// Response 201 — ReviewResponse
-{
-  "id": "uuid",
-  "booking_id": "uuid",
-  "author_id": "uuid",
-  "target_user_id": "uuid",
-  "rating": 5,
-  "comment": "Great job!",
-  "created_at": "ISO-8601"
-}
-```
-
-### `GET /api/v1/users/{id}/reviews`
-
-```json
-// Query params: cursor (opaque), limit (1–100, default 20)
-// Response 200 — PagedResponse<ReviewResponse>
-{
-  "data": [ { ReviewResponse } ],
-  "cursor": { "next": "...", "has_more": false }
-}
-```
-
-## Error Codes
-
-| Code                    | HTTP | Trigger                                    |
-|-------------------------|------|--------------------------------------------|
-| `INVALID_RATING`        | 400  | Rating is outside the 1–5 range            |
-| `NOT_FOUND`             | 404  | Booking does not exist                     |
-| `BOOKING_NOT_COMPLETED` | 400  | Booking is not in `COMPLETED` status       |
-| `FORBIDDEN`             | 403  | Caller is not a participant in the booking |
-| `ALREADY_REVIEWED`      | 409  | Caller has already reviewed this booking   |
+- Rating must be `1..5`.
+- Booking must exist and be `COMPLETED`.
+- Caller must be booking participant (customer or tasker).
+- One review per booking per author.
+- Target user is inferred as the opposite participant.
+- Comment is sanitized plain text.
 
 ## Side Effects
 
-- Each accepted review updates the target user's `rating_avg` in `profiles`.
-- `is_pro` is derived at read-time from profile stats (`completed_tasks >= 6` and `rating_avg >= 4.5`)
-  in profile projection logic (`AuthService` / DAO projections), not persisted by `ReviewService`.
+- `AuthService.updateUserStats(targetUserId, rating, false)` updates target aggregate rating.
 
-## Invariants & Guards
+## Pagination
 
-- Only the Customer and the Tasker of the booking may submit a review.
-- Each party may submit exactly one review per booking.
-- Reviews are only accepted on `COMPLETED` bookings.
-- `target_user_id` is inferred server-side: the review targets the other participant
-  (Customer reviews Tasker and vice-versa).
+- `GET /users/{id}/reviews` uses cursor + `limit` (controller fetches `limit+1` for `has_more`).

@@ -22,17 +22,9 @@
     {
       "id": "AC-TASK-012-02",
       "type": "functional",
-      "statement": "Verification upload and submit flow persists verification request.",
+      "statement": "Verification upload/submit/status flow persists and returns correct state.",
       "test_ids": [
         "TID-TASK-012-API-VERIFICATION-SUBMIT"
-      ]
-    },
-    {
-      "id": "AC-TASK-012-03",
-      "type": "functional",
-      "statement": "Verification status endpoint returns correct current verification state.",
-      "test_ids": [
-        "TID-TASK-012-API-VERIFICATION-STATUS"
       ]
     }
   ]

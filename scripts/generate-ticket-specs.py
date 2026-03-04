@@ -22,8 +22,12 @@ TRACE_ROW_RE = re.compile(r"^\|\s*((?:REQ|NFR)-[A-Z]+-[0-9]+)\s*\|.*\|\s*(.+?)\s
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate backlog ticket specs.")
-    parser.add_argument("--backlog", default="docs/BACKLOG_MVP.md")
-    parser.add_argument("--traceability", default="docs/TRACEABILITY.md")
+    parser.add_argument("--backlog", default="docs/BACKLOG.md")
+    parser.add_argument(
+        "--traceability",
+        default="docs/TRACEABILITY.md",
+        help="Optional traceability matrix. Falls back to backlog coverage column when missing.",
+    )
     parser.add_argument("--out-dir", default="tickets")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing ticket specs")
     return parser.parse_args()
@@ -214,12 +218,18 @@ def main() -> int:
     trace_path = Path(args.traceability)
     out_dir = Path(args.out_dir)
 
+    if not backlog_path.is_file():
+        raise FileNotFoundError(f"Backlog file not found: {backlog_path}")
+
     backlog_text = backlog_path.read_text(encoding="utf-8")
-    trace_text = trace_path.read_text(encoding="utf-8")
 
     risks, coverage_ids, dependencies = parse_risk_coverage_and_dependencies(backlog_text)
     sections = parse_sections(backlog_text)
-    reqs_by_ticket = parse_traceability(trace_text)
+    if trace_path.is_file():
+        trace_text = trace_path.read_text(encoding="utf-8")
+        reqs_by_ticket = parse_traceability(trace_text)
+    else:
+        reqs_by_ticket = {}
 
     out_dir.mkdir(parents=True, exist_ok=True)
 

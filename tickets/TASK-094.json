@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-094",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-BOOK-07",
+    "REQ-BOOK-08",
+    "REQ-BOOK-09",
+    "REQ-BOOK-10"
+  ],
+  "depends_on": [
+    "TASK-023",
+    "TASK-030",
+    "TASK-044"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-094-01",
+      "type": "functional",
+      "statement": "Completed-booking history exposes one-tap rebook action that pre-fills a new task in the same category.",
+      "test_ids": [
+        "TID-TASK-094-API-REBOOK-PREFILL"
+      ]
+    },
+    {
+      "id": "AC-TASK-094-02",
+      "type": "functional",
+      "statement": "Tasks with zero eligible applicants at 120 minutes during 08:00-22:00 local time trigger rescue actions (budget/",
+      "test_ids": [
+        "TID-TASK-094-JOB-RESCUE-TRIGGER"
+      ]
+    },
+    {
+      "id": "AC-TASK-094-03",
+      "type": "functional",
+      "statement": "Selected-applicant confirmation timeout is phase-configured (15m Phase 2, 5m instant match path); after 3",
+      "test_ids": [
+        "TID-TASK-094-DOMAIN-PHASED-TIMEOUT"
+      ]
+    },
+    {
+      "id": "AC-TASK-094-04",
+      "type": "functional",
+      "statement": "Instant match path is available only for categories meeting liquidity threshold and falls back safely when offers",
+      "test_ids": [
+        "TID-TASK-094-DOMAIN-INSTANT-MATCH-FALLBACK"
+      ]
+    }
+  ]
+}

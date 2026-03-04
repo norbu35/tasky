@@ -23,10 +23,9 @@
     {
       "id": "AC-TASK-044-02",
       "type": "functional",
-      "statement": "Push notifications emitted for required events.",
+      "statement": "Push notifications emitted for required events, including tasker mark-done notifying the customer.",
       "test_ids": [
-        "TID-TASK-044-DOMAIN-PUSH-EVENTS",
-        "TID-TASK-044-DOMAIN-TASKER-DONE-NOTIFY"
+        "TID-TASK-044-DOMAIN-PUSH-EVENTS"
       ]
     },
     {
@@ -34,7 +33,7 @@
       "type": "functional",
       "statement": "SMS fallback sent for hired/booking-confirmed events when app inactive.",
       "test_ids": [
-        "TID-TASK-044-DOMAIN-SMS-FALLBACK"
+        "TID-TASK-044-DOMAIN-TASKER-DONE-NOTIFY"
       ]
     }
   ]

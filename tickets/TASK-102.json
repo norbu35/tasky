@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-102",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-API-02",
+    "NFR-API-03",
+    "NFR-API-04"
+  ],
+  "depends_on": [
+    "TASK-002",
+    "TASK-030",
+    "TASK-065"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-102-01",
+      "type": "functional",
+      "statement": "Public endpoints are namespaced under versioned path and breaking changes require migration notes.",
+      "test_ids": [
+        "TID-TASK-102-CONTRACT-VERSIONED-PATHS"
+      ]
+    },
+    {
+      "id": "AC-TASK-102-02",
+      "type": "functional",
+      "statement": "State-changing booking/payment endpoints reject missing idempotency keys and replay prior response on duplicate",
+      "test_ids": [
+        "TID-TASK-102-RELI-IDEMPOTENCY-REPLAY"
+      ]
+    },
+    {
+      "id": "AC-TASK-102-03",
+      "type": "functional",
+      "statement": "Error responses consistently expose machine-readable code/message/trace ID envelope.",
+      "test_ids": [
+        "TID-TASK-102-CONTRACT-ERROR-ENVELOPE"
+      ]
+    }
+  ]
+}

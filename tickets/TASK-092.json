@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-092",
+  "risk_level": "high",
+  "req_ids": [
+    "NFR-OBS-06",
+    "REQ-ADMIN-05",
+    "REQ-TASK-00",
+    "REQ-TASK-06",
+    "REQ-TASK-07",
+    "REQ-TASK-09",
+    "REQ-TASK-10",
+    "REQ-TASK-11"
+  ],
+  "depends_on": [
+    "TASK-020",
+    "TASK-021"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-092-01",
+      "type": "functional",
+      "statement": "Category schema activation enforces fixed-form constraints (3-5 required questions, supported field primitives),",
+      "test_ids": [
+        "TID-TASK-092-API-SCHEMA-ACTIVATE-GUARDS"
+      ]
+    },
+    {
+      "id": "AC-TASK-092-02",
+      "type": "functional",
+      "statement": "Draft create/update binds `intake_schema_version`; submit validation executes against bound version with",
+      "test_ids": [
+        "TID-TASK-092-API-DRAFT-SCHEMA-BINDING"
+      ]
+    },
+    {
+      "id": "AC-TASK-092-03",
+      "type": "functional",
+      "statement": "Task creation persists and returns `intake_answers_json` and `intake_schema_version` in customer/tasker/admin",
+      "test_ids": [
+        "TID-TASK-092-API-TASK-INTAKE-PERSISTENCE"
+      ]
+    },
+    {
+      "id": "AC-TASK-092-04",
+      "type": "functional",
+      "statement": "Deterministic job scope summary is prefilled and editable before submit; summary-render failures fail open to",
+      "test_ids": [
+        "TID-TASK-092-DOMAIN-SUMMARY-FALLBACK"
+      ]
+    },
+    {
+      "id": "AC-TASK-092-05",
+      "type": "functional",
+      "statement": "Deactivated categories reject new drafts/posts while existing tasks remain operable through lifecycle endpoints.",
+      "test_ids": [
+        "TID-TASK-092-OBS-INTAKE-DIMENSIONS"
+      ]
+    }
+  ]
+}

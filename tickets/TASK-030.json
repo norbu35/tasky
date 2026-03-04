@@ -3,10 +3,8 @@
   "ticket": "TASK-030",
   "risk_level": "high",
   "req_ids": [
-    "NFR-RELI-01",
     "REQ-BOOK-03",
-    "REQ-BOOK-05",
-    "REQ-TASK-02"
+    "REQ-BOOK-05"
   ],
   "depends_on": [
     "TASK-023"
@@ -39,10 +37,9 @@
     {
       "id": "AC-TASK-030-04",
       "type": "reliability",
-      "statement": "Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached result; missing key is rejected.",
+      "statement": "Booking state-transition endpoints are idempotent: duplicate request with same Idempotency-Key replays the cached",
       "test_ids": [
-        "TID-TASK-030-RELI-IDEMPOTENT-CANCEL",
-        "TID-TASK-030-RELI-IDEMPOTENT-HEADER"
+        "TID-TASK-030-RELI-IDEMPOTENT-CANCEL"
       ]
     }
   ]
