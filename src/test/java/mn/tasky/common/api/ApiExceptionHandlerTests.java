@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
+import mn.tasky.auth.FacebookAuthException;
 import mn.tasky.auth.RateLimitExceededException;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import org.junit.jupiter.api.Test;
@@ -127,6 +128,32 @@ class ApiExceptionHandlerTests {
             "INVALID_ARGUMENT");
         assertThat(response.getBody()).containsEntry("message",
             "Invalid request argument.");
+    }
+
+    @Test
+    void handleFacebookAuthProviderUnavailableReturnsServiceUnavailable() {
+        var response = handler.handleFacebookAuth(
+            new FacebookAuthException("AUTH_PROVIDER_UNAVAILABLE",
+                "Facebook provider is unavailable."),
+            requestWithTraceId("trace-provider-down"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(response.getBody()).containsEntry("code",
+            "AUTH_PROVIDER_UNAVAILABLE");
+        assertThat(response.getBody()).containsEntry("trace_id",
+            "trace-provider-down");
+    }
+
+    @Test
+    void handleFacebookAuthTokenInvalidReturnsUnauthorized() {
+        var response = handler.handleFacebookAuth(
+            new FacebookAuthException("FACEBOOK_TOKEN_INVALID",
+                "Facebook token is invalid."),
+            new MockHttpServletRequest());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).containsEntry("code",
+            "FACEBOOK_TOKEN_INVALID");
     }
 
     @SuppressWarnings("unused")

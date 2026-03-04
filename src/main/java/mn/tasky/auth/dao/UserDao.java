@@ -106,6 +106,20 @@ public interface UserDao {
     @SqlUpdate("UPDATE users SET role = :role WHERE id = :id")
     void updateRole(@Bind("id") UUID id, @Bind("role") String role);
 
+    default void updatePhoneAndBlindIndex(String id, String phone, String phoneBlindIdx) {
+        updatePhoneAndBlindIndex(
+            required(id,
+                "id"),
+            phone,
+            phoneBlindIdx);
+    }
+
+    @SqlUpdate("UPDATE users SET phone = :phone, phone_blind_idx = :phoneBlindIdx WHERE id = :id")
+    void updatePhoneAndBlindIndex(
+        @Bind("id") UUID id,
+        @Bind("phone") String phone,
+        @Bind("phoneBlindIdx") String phoneBlindIdx);
+
     @SqlQuery("SELECT id, phone, facebook_id, role, status, created_at FROM users")
     List<AuthUser> findAll();
 }

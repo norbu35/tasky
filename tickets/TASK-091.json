@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-091",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-AUTH-05",
+    "REQ-AUTH-06",
+    "REQ-AUTH-07",
+    "REQ-AUTH-08",
+    "REQ-AUTH-09",
+    "REQ-AUTH-10"
+  ],
+  "depends_on": [
+    "TASK-010",
+    "TASK-044"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-091-01",
+      "type": "security",
+      "statement": "OTP request/verify endpoints are feature-toggled and enforce per-phone and per-source rate limits.",
+      "test_ids": [
+        "TID-TASK-091-API-OTP-RATE-LIMIT"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-091-API-OTP-RATE-LIMIT"
+      ]
+    },
+    {
+      "id": "AC-TASK-091-02",
+      "type": "security",
+      "statement": "Facebook-era users are hard-gated to phone verification before non-auth product actions and receive",
+      "test_ids": [
+        "TID-TASK-091-API-MIGRATION-GATE"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-091-API-MIGRATION-GATE"
+      ]
+    },
+    {
+      "id": "AC-TASK-091-03",
+      "type": "functional",
+      "statement": "Phase 2 new users can register/login with OTP without requiring Facebook linkage; migrated users keep",
+      "test_ids": [
+        "TID-TASK-091-API-OTP-PRIMARY-AUTH"
+      ]
+    },
+    {
+      "id": "AC-TASK-091-04",
+      "type": "security",
+      "statement": "During OAuth outage in Phase 0-1, login/signup fails closed with provider-unavailable errors while existing valid",
+      "test_ids": [
+        "TID-TASK-091-RELI-OAUTH-OUTAGE-POSTURE"
+      ],
+      "negative_test_ids": [
+        "TID-TASK-091-RELI-OAUTH-OUTAGE-POSTURE"
+      ]
+    }
+  ]
+}

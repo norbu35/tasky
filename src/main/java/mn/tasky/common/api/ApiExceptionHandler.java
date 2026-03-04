@@ -47,7 +47,10 @@ public class ApiExceptionHandler {
     @ExceptionHandler(FacebookAuthException.class)
     public ResponseEntity<Map<String, String>> handleFacebookAuth(
         FacebookAuthException ex, HttpServletRequest request) {
-        return error(HttpStatus.UNAUTHORIZED,
+        HttpStatus status = "AUTH_PROVIDER_UNAVAILABLE".equals(ex.code())
+            ? HttpStatus.SERVICE_UNAVAILABLE
+            : HttpStatus.UNAUTHORIZED;
+        return error(status,
             ex.code(),
             ex.getMessage(),
             request);

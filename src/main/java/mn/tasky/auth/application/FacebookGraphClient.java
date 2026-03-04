@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 /**
  * Thin client for Facebook Graph API token validation and profile fetch.
@@ -17,6 +18,7 @@ public class FacebookGraphClient {
 
     private static final String TOKEN_INVALID_CODE = "FACEBOOK_TOKEN_INVALID";
     private static final String TOKEN_MISMATCH_CODE = "FACEBOOK_TOKEN_MISMATCH";
+    private static final String PROVIDER_UNAVAILABLE_CODE = "AUTH_PROVIDER_UNAVAILABLE";
 
     private final RestClient restClient;
     private final String appId;
@@ -60,9 +62,19 @@ public class FacebookGraphClient {
                     .build())
                 .retrieve()
                 .body(DebugTokenResponse.class);
+        } catch (RestClientResponseException exception) {
+            if (exception.getStatusCode()
+                .is4xxClientError()) {
+                throw new FacebookAuthException(TOKEN_INVALID_CODE,
+                    "Facebook token is invalid.",
+                    exception);
+            }
+            throw new FacebookAuthException(PROVIDER_UNAVAILABLE_CODE,
+                "Facebook authentication provider is unavailable.",
+                exception);
         } catch (RestClientException exception) {
-            throw new FacebookAuthException(TOKEN_INVALID_CODE,
-                "Unable to validate Facebook token.",
+            throw new FacebookAuthException(PROVIDER_UNAVAILABLE_CODE,
+                "Facebook authentication provider is unavailable.",
                 exception);
         }
 
@@ -102,9 +114,19 @@ public class FacebookGraphClient {
                     .build())
                 .retrieve()
                 .body(MeResponse.class);
+        } catch (RestClientResponseException exception) {
+            if (exception.getStatusCode()
+                .is4xxClientError()) {
+                throw new FacebookAuthException(TOKEN_INVALID_CODE,
+                    "Facebook token is invalid.",
+                    exception);
+            }
+            throw new FacebookAuthException(PROVIDER_UNAVAILABLE_CODE,
+                "Facebook authentication provider is unavailable.",
+                exception);
         } catch (RestClientException exception) {
-            throw new FacebookAuthException(TOKEN_INVALID_CODE,
-                "Unable to read Facebook profile.",
+            throw new FacebookAuthException(PROVIDER_UNAVAILABLE_CODE,
+                "Facebook authentication provider is unavailable.",
                 exception);
         }
 

@@ -185,7 +185,6 @@ public class AuthService {
     public String requestOtp(String rawPhone) {
         String phone = normalizePhone(rawPhone);
         String blindIndex = cryptoService.blindIndex(phone);
-        ensureUser(phone);
         String otpCode = generateOtpCode();
 
         otpChallengeDao.upsert(blindIndex,
@@ -268,6 +267,23 @@ public class AuthService {
      * @throws AccountRestrictedException when account status resolves to suspended or banned.
      */
     public Optional<AuthSession> verifyOtp(String rawPhone, String code) {
+        return verifyOtp(rawPhone,
+            code,
+            null);
+    }
+
+    /**
+     * Verifies OTP challenge and issues an authenticated session when valid.
+     * Optional Facebook token allows linking phone credentials to an existing Facebook-era account.
+     *
+     * @param rawPhone            Raw phone input.
+     * @param code                OTP code.
+     * @param facebookAccessToken Optional Facebook access token used for migration linkage.
+     * @return Session payload when verification succeeds; empty when challenge is missing,
+     * expired, or invalid.
+     * @throws AccountRestrictedException when account status resolves to suspended or banned.
+     */
+    public Optional<AuthSession> verifyOtp(String rawPhone, String code, String facebookAccessToken) {
         String phone = normalizePhone(rawPhone);
         String blindIndex = cryptoService.blindIndex(phone);
         Optional<OtpChallenge> challengeOpt = otpChallengeDao.findByPhoneBlindIdx(blindIndex);
@@ -294,7 +310,9 @@ public class AuthService {
         }
 
         otpChallengeDao.delete(blindIndex);
-        AuthUser user = ensureUser(phone);
+        AuthUser user = resolveOtpUser(phone,
+            blindIndex,
+            facebookAccessToken);
         String effectiveStatus = resolveUserStatus(user.id(),
             user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
@@ -309,6 +327,48 @@ public class AuthService {
             effectiveStatus,
             user.createdAt());
         return Optional.of(issueSession(effectiveUser));
+    }
+
+    private AuthUser resolveOtpUser(String phone, String blindIndex, String facebookAccessToken) {
+        if (!StringUtils.hasText(facebookAccessToken)) {
+            return ensureUser(phone);
+        }
+
+        String token = facebookAccessToken.trim();
+        facebookGraphClient.debugToken(token);
+        FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
+        Optional<AuthUser> facebookUserOpt = userDao.findByFacebookId(profile.facebookId());
+        if (facebookUserOpt.isEmpty()) {
+            return ensureUser(phone);
+        }
+
+        AuthUser facebookUser = facebookUserOpt.get();
+        Optional<AuthUser> phoneUserOpt = userDao.findByPhoneBlindIndex(blindIndex);
+        if (phoneUserOpt.isPresent() && !phoneUserOpt.get()
+            .id()
+            .equals(facebookUser.id())) {
+            throw new IllegalArgumentException("Phone number is already linked to another account.");
+        }
+
+        String encryptedPhone = cryptoService.encrypt(phone);
+        String existingPhone = decryptPhone(facebookUser.phone());
+        if (StringUtils.hasText(existingPhone) && !phone.equals(existingPhone)) {
+            throw new IllegalArgumentException("Phone number does not match linked Facebook account.");
+        }
+        if (!StringUtils.hasText(existingPhone)) {
+            userDao.updatePhoneAndBlindIndex(facebookUser.id(),
+                encryptedPhone,
+                blindIndex);
+        }
+
+        return userDao.findById(facebookUser.id())
+            .orElseGet(() -> new AuthUser(
+                facebookUser.id(),
+                encryptedPhone,
+                facebookUser.facebookId(),
+                facebookUser.role(),
+                facebookUser.status(),
+                facebookUser.createdAt()));
     }
 
     private boolean constantTimeEquals(String left, String right) {
@@ -1196,6 +1256,21 @@ public class AuthService {
         return userDao.findById(userId)
             .map(user -> resolveUserStatus(user.id(),
                 user.status()));
+    }
+
+    /**
+     * Returns whether an existing Facebook-era account must complete OTP migration before product access.
+     *
+     * @param userId Authenticated user identifier.
+     * @return {@code true} when OTP is enabled and user has Facebook identity without a linked phone.
+     */
+    public boolean requiresOtpMigration(String userId) {
+        if (!otpEnabled) {
+            return false;
+        }
+        return userDao.findById(userId)
+            .map(user -> StringUtils.hasText(user.facebookId()) && !StringUtils.hasText(decryptPhone(user.phone())))
+            .orElse(false);
     }
 
     /**

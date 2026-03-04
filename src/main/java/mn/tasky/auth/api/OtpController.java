@@ -6,7 +6,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.OtpRequest;
 import mn.tasky.auth.dto.OtpVerifyRequest;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,24 +22,32 @@ import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 @RestController
 @RequestMapping("/api/v1/auth/otp")
 @Validated
-@ConditionalOnProperty(name = "tasky.otp.enabled", havingValue = "true")
 public class OtpController {
 
     private final OtpRateLimitService otpRateLimitService;
     private final AuthService authService;
+    private final boolean otpEnabled;
 
-    public OtpController(OtpRateLimitService otpRateLimitService, AuthService authService) {
+    public OtpController(
+        OtpRateLimitService otpRateLimitService,
+        AuthService authService,
+        @Value("${tasky.otp.enabled:false}") boolean otpEnabled) {
         this.otpRateLimitService = otpRateLimitService;
         this.authService = authService;
+        this.otpEnabled = otpEnabled;
     }
 
     @PostMapping("/request")
-    public Map<String, String> requestOtp(@Valid @RequestBody OtpRequest body, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> requestOtp(
+        @Valid @RequestBody OtpRequest body, HttpServletRequest request) {
+        if (!otpEnabled) {
+            return featureDisabled(request);
+        }
         otpRateLimitService.assertRequestAllowed(body.phone(),
             resolveClientIp(request));
         String maskedPhone = authService.requestOtp(body.phone());
-        return Map.of("message",
-            "OTP sent to " + maskedPhone);
+        return ResponseEntity.ok(Map.of("message",
+            "OTP sent to " + maskedPhone));
     }
 
     private String resolveClientIp(HttpServletRequest request) {
@@ -53,12 +61,16 @@ public class OtpController {
     @PostMapping("/verify")
     public ResponseEntity<Map<String, Object>> verifyOtp(
         @Valid @RequestBody OtpVerifyRequest body, HttpServletRequest request) {
+        if (!otpEnabled) {
+            return featureDisabled(request);
+        }
         otpRateLimitService.assertVerifyAllowed(body.phone(),
             resolveClientIp(request));
 
         return authService
             .verifyOtp(body.phone(),
-                body.code())
+                body.code(),
+                body.facebookAccessToken())
             .map(session -> ResponseEntity.ok(Map.of(
                 "access_token",
                 session.accessToken(),
@@ -74,5 +86,16 @@ public class OtpController {
                     "Invalid or expired OTP code.",
                     "trace_id",
                     resolveTraceId(request))));
+    }
+
+    private ResponseEntity<Map<String, Object>> featureDisabled(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(Map.of(
+                "code",
+                "FEATURE_DISABLED",
+                "message",
+                "OTP authentication is disabled for current rollout phase.",
+                "trace_id",
+                resolveTraceId(request)));
     }
 }

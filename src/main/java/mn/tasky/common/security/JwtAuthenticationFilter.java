@@ -38,16 +38,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JsonSecurityResponseWriter responseWriter;
     private final AuthService authService;
     private final boolean devAuthEnabled;
+    private final boolean otpMigrationEnforced;
 
     public JwtAuthenticationFilter(
         JwtTokenService jwtTokenService,
         JsonSecurityResponseWriter responseWriter,
         AuthService authService,
-        @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled) {
+        @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
+        @Value("${tasky.auth.otp-migration-enforced:false}") boolean otpMigrationEnforced) {
         this.jwtTokenService = jwtTokenService;
         this.responseWriter = responseWriter;
         this.authService = authService;
         this.devAuthEnabled = devAuthEnabled;
+        this.otpMigrationEnforced = otpMigrationEnforced;
     }
 
     @Override
@@ -94,6 +97,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "This account is suspended or banned.");
             return;
         }
+        if (otpMigrationEnforced && authService.requiresOtpMigration(principal.userId())
+            && !isAuthOrPublicPath(request.getRequestURI())) {
+            responseWriter.write(
+                request,
+                response,
+                HttpStatus.FORBIDDEN.value(),
+                "OTP_MIGRATION_REQUIRED",
+                "Phone verification is required before accessing product features.");
+            return;
+        }
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             principal,
@@ -108,5 +121,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } finally {
             SecurityContextHolder.clearContext();
         }
+    }
+
+    private boolean isAuthOrPublicPath(String path) {
+        if (path == null) {
+            return false;
+        }
+        if (PUBLIC_PATHS.contains(path)) {
+            return true;
+        }
+        if (path.startsWith("/api/v1/auth/")) {
+            return true;
+        }
+        if (path.startsWith("/actuator/")) {
+            return true;
+        }
+        return "/api/v1/system/version".equals(path) || "/ws".equals(path);
     }
 }
