@@ -77,7 +77,8 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
         authService.activateTaskerRole(user.userId());
         authService.submitVerification(user.userId(),
             "front.jpg",
-            "back.jpg");
+            "back.jpg",
+            "1.0");
 
         VerificationStatusResponse status = authService.getVerificationStatus(user.userId());
         assertThat(status.status()).isEqualTo("PENDING");

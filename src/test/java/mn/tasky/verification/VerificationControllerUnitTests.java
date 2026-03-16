@@ -98,14 +98,17 @@ class VerificationControllerUnitTests {
         JwtPrincipal principal = principal();
         when(authService.submitVerification(principal.userId(),
             "front",
-            "back"))
+            "back",
+            "1.0"))
             .thenReturn(new VerificationSubmitResult(VerificationSubmitResult.NOT_TASKER,
                 null));
 
         ResponseEntity<?> response = controller.submitVerification(
             principal,
             new VerificationSubmitRequest("front",
-                "back"),
+                "back",
+                "1.0",
+                true),
             requestWithTrace());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

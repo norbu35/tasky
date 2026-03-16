@@ -234,7 +234,11 @@ class MessagingIntegrationTests extends IntegrationTestBase {
                     .toEpochMilli() + ".jpg",
                 "id_card_back_key",
                 "uploads/verification/back-" + Instant.now()
-                    .toEpochMilli() + ".jpg"));
+                    .toEpochMilli() + ".jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(submitResponse.getStatusCode()
             .value()).isEqualTo(200);
 

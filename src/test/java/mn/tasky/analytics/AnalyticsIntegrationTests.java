@@ -532,7 +532,11 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
                 "id_card_front_key",
                 "uploads/verification/front-" + UUID.randomUUID() + ".jpg",
                 "id_card_back_key",
-                "uploads/verification/back-" + UUID.randomUUID() + ".jpg"));
+                "uploads/verification/back-" + UUID.randomUUID() + ".jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(submitVerification.getStatusCode()
             .value()).isEqualTo(200);
 

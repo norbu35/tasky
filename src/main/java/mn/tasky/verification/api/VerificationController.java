@@ -58,10 +58,22 @@ public class VerificationController {
         @AuthenticationPrincipal JwtPrincipal principal,
         @Valid @RequestBody VerificationSubmitRequest body,
         HttpServletRequest request) {
+        if (!Boolean.TRUE.equals(body.consentAccepted())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                    "code",
+                    "CONSENT_REQUIRED",
+                    "message",
+                    "Consent must be accepted to submit verification.",
+                    "trace_id",
+                    resolveTraceId(request)));
+        }
+
         VerificationSubmitResult result =
             authService.submitVerification(principal.userId(),
                 body.idCardFrontKey(),
-                body.idCardBackKey());
+                body.idCardBackKey(),
+                body.consentPolicyVersion());
 
         return switch (result.outcome()) {
             case VerificationSubmitResult.SUCCESS -> ResponseEntity.ok(toStatusResponse(result.statusResponse()));

@@ -973,7 +973,11 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
                     .toEpochMilli() + ".jpg",
                 "id_card_back_key",
                 "uploads/verification/back-" + Instant.now()
-                    .toEpochMilli() + ".jpg"));
+                    .toEpochMilli() + ".jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(submitResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<Map> pendingResponse = getWithAuth("/api/v1/admin/verifications/pending?limit=100",

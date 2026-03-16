@@ -226,8 +226,8 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         assertThat(initialProfileOpt.orElseThrow()
             .isPro()).isFalse();
 
-        // 6 Completed Tasks + 5 Star Average
-        for (int i = 0; i < 6; i++) {
+        // 15 Completed Tasks + 5 Star Average (REQ-SAFE-04 threshold)
+        for (int i = 0; i < 15; i++) {
             BookingState booking = bookingService.createBooking(
                 createTaskForCustomer(customer,
                     "review-pro-" + i),
@@ -247,7 +247,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         Optional<UserProfile> profileOpt = authService.getProfile(tasker.userId());
         assertThat(profileOpt).isPresent();
         UserProfile profile = profileOpt.orElseThrow();
-        assertThat(profile.completedTasks()).isEqualTo(6);
+        assertThat(profile.completedTasks()).isEqualTo(15);
         assertThat(profile.ratingAvg()).isEqualTo(5.0);
         assertThat(profile.isPro()).isTrue();
     }

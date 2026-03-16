@@ -700,7 +700,7 @@ public class AuthService {
     }
 
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {
-        boolean isPro = profile.completedTasks() >= 6 && profile.ratingAvg() >= 4.5d;
+        boolean isPro = profile.completedTasks() >= 15 && profile.ratingAvg() >= 4.5d;
         return new UserProfile(
             user.id(),
             decryptPhone(user.phone()),
@@ -834,7 +834,7 @@ public class AuthService {
      * @param backKey  Storage key for back ID image.
      * @return Verification submission result with status code and payload when successful.
      */
-    public VerificationSubmitResult submitVerification(String userId, String frontKey, String backKey) {
+    public VerificationSubmitResult submitVerification(String userId, String frontKey, String backKey, String consentPolicyVersion) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
             return new VerificationSubmitResult(VerificationSubmitResult.USER_NOT_FOUND,
@@ -867,8 +867,8 @@ public class AuthService {
             now,
             null,
             null,
-            null,
-            null,
+            consentPolicyVersion,
+            now,
             null);
         VerificationRequest request =
             new VerificationRequest(id,

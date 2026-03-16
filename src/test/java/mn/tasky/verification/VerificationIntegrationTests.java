@@ -91,7 +91,7 @@ class VerificationIntegrationTests extends IntegrationTestBase {
             String.valueOf(user.get("id")));
     }
 
-    private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, String> body) {
+    private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, ?> body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
@@ -189,7 +189,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
             Map.of("id_card_front_key",
                 frontKey,
                 "id_card_back_key",
-                backKey));
+                backKey,
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(submitResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(submitResponse.getBody()
             .get("status")).isEqualTo("PENDING");
@@ -201,7 +205,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
             Map.of("id_card_front_key",
                 frontKey,
                 "id_card_back_key",
-                backKey));
+                backKey,
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(duplicateSubmit.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
@@ -235,7 +243,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 "id_card_front_key",
                 "uploads/verification/front.jpg",
                 "id_card_back_key",
-                "uploads/verification/back.jpg"));
+                "uploads/verification/back.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
 
         // After submit: PENDING
         ResponseEntity<Map> statusPending = getWithAuth("/api/v1/verification/status",
@@ -330,7 +342,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 "id_card_front_key",
                 "uploads/verification/front.jpg",
                 "id_card_back_key",
-                "uploads/verification/back.jpg"));
+                "uploads/verification/back.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
 
         // Admin rejects
         String adminToken = adminToken();
@@ -375,7 +391,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 "id_card_front_key",
                 "uploads/verification/front2.jpg",
                 "id_card_back_key",
-                "uploads/verification/back2.jpg"));
+                "uploads/verification/back2.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(resubmit.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resubmit.getBody()
             .get("status")).isEqualTo("PENDING");
@@ -402,7 +422,11 @@ class VerificationIntegrationTests extends IntegrationTestBase {
             Map.of("id_card_front_key",
                 "front.jpg",
                 "id_card_back_key",
-                "back.jpg"));
+                "back.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
         assertThat(notTasker.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -431,6 +455,72 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 Map.of("content_type",
                     "application/pdf"));
         assertThat(pdfResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Verification submit without consent returns 400")
+    void submitWithoutConsentReturns400() {
+        AuthContext auth = authenticate("76");
+
+        // Activate tasker role
+        ResponseEntity<Map> activateResponse = postWithAuth("/api/v1/users/me/role/tasker",
+            auth.accessToken(),
+            null);
+        String taskerToken = String.valueOf(activateResponse.getBody()
+            .get("access_token"));
+
+        // Submit without consent fields at all — should get 400 from validation
+        ResponseEntity<Map> noConsentResponse = postWithAuth(
+            "/api/v1/verification/submit",
+            taskerToken,
+            Map.of("id_card_front_key",
+                "uploads/verification/front.jpg",
+                "id_card_back_key",
+                "uploads/verification/back.jpg"));
+        assertThat(noConsentResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        // Submit with consent_accepted = false — should get 400
+        ResponseEntity<Map> consentFalseResponse = postWithAuth(
+            "/api/v1/verification/submit",
+            taskerToken,
+            Map.of("id_card_front_key",
+                "uploads/verification/front.jpg",
+                "id_card_back_key",
+                "uploads/verification/back.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                false));
+        assertThat(consentFalseResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("Verification submit with consent succeeds")
+    void submitWithConsentSucceeds() {
+        AuthContext auth = authenticate("77");
+
+        // Activate tasker role
+        ResponseEntity<Map> activateResponse = postWithAuth("/api/v1/users/me/role/tasker",
+            auth.accessToken(),
+            null);
+        String taskerToken = String.valueOf(activateResponse.getBody()
+            .get("access_token"));
+
+        // Submit with valid consent
+        ResponseEntity<Map> submitResponse = postWithAuth(
+            "/api/v1/verification/submit",
+            taskerToken,
+            Map.of("id_card_front_key",
+                "uploads/verification/front.jpg",
+                "id_card_back_key",
+                "uploads/verification/back.jpg",
+                "consent_policy_version",
+                "1.0",
+                "consent_accepted",
+                true));
+        assertThat(submitResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(submitResponse.getBody()
+            .get("status")).isEqualTo("PENDING");
     }
 
     @Test

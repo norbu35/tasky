@@ -8,7 +8,11 @@ import mn.tasky.messaging.dto.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -117,6 +121,10 @@ public class MessagingService {
             throw new IllegalArgumentException("Message content cannot be empty");
         }
 
+        String contentHash = computeContentHash(conversationId,
+            senderId,
+            sanitizedContent);
+
         Message message =
             new Message(UUID.randomUUID()
                 .toString(),
@@ -124,7 +132,7 @@ public class MessagingService {
                 senderId,
                 sanitizedContent,
                 false,
-                null,
+                contentHash,
                 Instant.now());
 
         messageDao.insert(
@@ -170,5 +178,16 @@ public class MessagingService {
         return messageDao.findByConversationId(conversationId,
             cursor,
             limit);
+    }
+
+    private String computeContentHash(String conversationId, String senderId, String content) {
+        try {
+            String hashInput = conversationId + "|" + senderId + "|" + content + "|" + System.currentTimeMillis();
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(hashInput.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 algorithm not available", e);
+        }
     }
 }
