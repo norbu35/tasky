@@ -5,22 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Map;
 import java.util.UUID;
 import mn.tasky.auth.application.LoggingSmsService;
+import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"tasky.auth.otp-test-code="}
-)
+@TestPropertySource(properties = {"tasky.auth.otp-test-code="})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class OtpSecurityIntegrationTests {
+class OtpSecurityIntegrationTests extends IntegrationTestBase {
 
     @LocalServerPort
     private int port;
@@ -46,26 +44,17 @@ class OtpSecurityIntegrationTests {
         assertThat(secondCode).isNotEqualTo(firstCode);
 
         ResponseEntity<Map> oldCodeResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/verify"),
-            Map.of("phone", phone, "code", firstCode),
-            Map.class
-        );
+                url("/api/v1/auth/otp/verify"), Map.of("phone", phone, "code", firstCode), Map.class);
         assertThat(oldCodeResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
         ResponseEntity<Map> currentCodeResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/verify"),
-            Map.of("phone", phone, "code", secondCode),
-            Map.class
-        );
+                url("/api/v1/auth/otp/verify"), Map.of("phone", phone, "code", secondCode), Map.class);
         assertThat(currentCodeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     private String requestAndReadCode(String phone) {
-        ResponseEntity<Map> requestResponse = restTemplate.postForEntity(
-            url("/api/v1/auth/otp/request"),
-            Map.of("phone", phone),
-            Map.class
-        );
+        ResponseEntity<Map> requestResponse =
+                restTemplate.postForEntity(url("/api/v1/auth/otp/request"), Map.of("phone", phone), Map.class);
         assertThat(requestResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         return loggingSmsService.latestOtpForPhone(phone).orElseThrow();
     }
