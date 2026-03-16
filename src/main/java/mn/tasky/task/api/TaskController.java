@@ -339,10 +339,10 @@ public class TaskController {
                 body.locationText(),
                 body.scheduledAt(),
                 body.photoKeys() != null ? body.photoKeys() : List.of(),
-                null,
-                null,
-                null,
-                null));
+                body.intakeAnswersJson(),
+                body.intakeSchemaVersion(),
+                body.scopeSummary(),
+                body.draftId()));
 
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED)

@@ -1,5 +1,8 @@
 package mn.tasky.task.application;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
@@ -7,6 +10,8 @@ import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.category.application.CategoryService;
+import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.outbox.DomainEventOutboxService;
@@ -16,8 +21,11 @@ import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
+import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,6 +55,8 @@ public class TaskService {
         "COMPLETED",
         "CANCELLED");
 
+    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
+
     private final AuthService authService;
     private final CategoryService categoryService;
     private final BookingService bookingService;
@@ -54,9 +64,13 @@ public class TaskService {
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
     private final DomainEventOutboxService domainEventOutboxService;
+    private final ScopeSummaryGenerator scopeSummaryGenerator;
     private final TaskDao taskDao;
     private final TaskPhotoDao taskPhotoDao;
     private final TaskApplicationDao taskApplicationDao;
+    private final CategorySchemaVersionDao categorySchemaVersionDao;
+    private final TaskDraftDao taskDraftDao;
+    private final ObjectMapper objectMapper;
     private final String taskPhotoUploadBaseUrl;
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
@@ -75,9 +89,13 @@ public class TaskService {
         NotificationService notificationService,
         AnalyticsService analyticsService,
         DomainEventOutboxService domainEventOutboxService,
+        ScopeSummaryGenerator scopeSummaryGenerator,
         TaskDao taskDao,
         TaskPhotoDao taskPhotoDao,
         TaskApplicationDao taskApplicationDao,
+        CategorySchemaVersionDao categorySchemaVersionDao,
+        TaskDraftDao taskDraftDao,
+        ObjectMapper objectMapper,
         @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}")
         String taskPhotoUploadBaseUrl,
         @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
@@ -93,9 +111,13 @@ public class TaskService {
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.domainEventOutboxService = domainEventOutboxService;
+        this.scopeSummaryGenerator = scopeSummaryGenerator;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
         this.taskApplicationDao = taskApplicationDao;
+        this.categorySchemaVersionDao = categorySchemaVersionDao;
+        this.taskDraftDao = taskDraftDao;
+        this.objectMapper = objectMapper;
         this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
         this.taskPhotoMaxBytes = taskPhotoMaxBytes;
         this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
@@ -117,12 +139,13 @@ public class TaskService {
      * @return Success or validation failure details.
      */
     public TaskCreateResult createTask(String customerId, CreateTask command) {
-        Optional<CategoryState> category = categoryService.getCategory(command.categoryId());
-        if (category.isEmpty() || !category.get()
+        Optional<CategoryState> categoryOpt = categoryService.getCategory(command.categoryId());
+        if (categoryOpt.isEmpty() || !categoryOpt.get()
             .isActive()) {
             return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY,
                 "Category not found or inactive.");
         }
+        CategoryState category = categoryOpt.get();
 
         if (command.photoKeys()
             .size() > 3) {
@@ -150,6 +173,64 @@ public class TaskService {
                 "Invalid schedule date format.");
         }
 
+        // --- Intake validation ---
+        String intakeAnswersJson = command.intakeAnswersJson();
+        Integer intakeSchemaVersion = command.intakeSchemaVersion();
+        String scopeSummarySource = command.scopeSummary();
+        TaskDraft draft = null;
+
+        // If draftId is provided, resolve schema version from the draft
+        if (StringUtils.hasText(command.draftId())) {
+            Optional<TaskDraft> draftOpt = taskDraftDao.findById(command.draftId());
+            if (draftOpt.isEmpty()) {
+                return TaskCreateResult.error(TaskCreateResult.DRAFT_NOT_FOUND,
+                    "Draft not found.");
+            }
+            draft = draftOpt.get();
+            // Draft's bound version takes precedence
+            intakeSchemaVersion = draft.intakeSchemaVersion();
+            if (intakeAnswersJson == null && draft.intakeAnswersJson() != null) {
+                intakeAnswersJson = draft.intakeAnswersJson();
+            }
+        }
+
+        // Validate intake if schema version is specified
+        if (intakeSchemaVersion != null) {
+            // Check intake is enabled for this category
+            if (!Boolean.TRUE.equals(category.intakeEnabled())) {
+                return TaskCreateResult.error(TaskCreateResult.INTAKE_NOT_ENABLED,
+                    "Intake is not enabled for this category.");
+            }
+
+            Optional<CategorySchemaVersion> schemaOpt = categorySchemaVersionDao
+                .findByCategoryIdAndVersion(command.categoryId(), intakeSchemaVersion);
+            if (schemaOpt.isEmpty()) {
+                return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEMA_VERSION,
+                    "Schema version " + intakeSchemaVersion + " not found for this category.");
+            }
+            CategorySchemaVersion schemaVersion = schemaOpt.get();
+
+            // Validate intake answers against schema
+            if (StringUtils.hasText(intakeAnswersJson)) {
+                String validationError = validateIntakeAnswers(schemaVersion.schemaJson(), intakeAnswersJson);
+                if (validationError != null) {
+                    return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED,
+                        validationError);
+                }
+            }
+
+            // Generate scope summary
+            ScopeSummaryGenerator.SummaryResult summaryResult =
+                scopeSummaryGenerator.generate(schemaVersion.schemaJson(), intakeAnswersJson);
+
+            // User-provided summary override
+            if (StringUtils.hasText(command.scopeSummary())) {
+                scopeSummarySource = "USER_EDITED";
+            } else {
+                scopeSummarySource = summaryResult.source();
+            }
+        }
+
         String id = UUID.randomUUID()
             .toString();
         Instant now = Instant.now();
@@ -165,9 +246,9 @@ public class TaskService {
             sanitizedLocationText,
             "OPEN",
             scheduledAt,
-            command.intakeAnswersJson(),
-            command.intakeSchemaVersion(),
-            command.scopeSummary(),
+            intakeAnswersJson,
+            intakeSchemaVersion,
+            scopeSummarySource,
             now,
             now);
 
@@ -193,9 +274,9 @@ public class TaskService {
             "OPEN",
             scheduledAt,
             photoKeys,
-            command.intakeAnswersJson(),
-            command.intakeSchemaVersion(),
-            command.scopeSummary(),
+            intakeAnswersJson,
+            intakeSchemaVersion,
+            scopeSummarySource,
             now,
             now);
 
@@ -209,6 +290,120 @@ public class TaskService {
 
         notifyNearbyTaskers(task);
         return TaskCreateResult.success(task);
+    }
+
+    /**
+     * Validates intake answers against the category schema.
+     * Returns null if valid, or an error message string describing the validation failures.
+     */
+    private String validateIntakeAnswers(String schemaJson, String answersJson) {
+        try {
+            JsonNode schemaArray = objectMapper.readTree(schemaJson);
+            if (!schemaArray.isArray()) {
+                return "Schema is not a valid JSON array.";
+            }
+            Map<String, Object> answers = objectMapper.readValue(
+                answersJson, new TypeReference<>() {});
+            JsonNode answersNode = objectMapper.readTree(answersJson);
+
+            List<String> errors = new ArrayList<>();
+
+            for (JsonNode field : schemaArray) {
+                String key = field.has("key") ? field.get("key").asText() : null;
+                if (key == null) {
+                    continue;
+                }
+                String label = field.has("label") ? field.get("label").asText() : key;
+                String type = field.has("type") ? field.get("type").asText() : "text";
+                boolean required = field.has("required") && field.get("required").asBoolean();
+
+                Object answerValue = answers.get(key);
+                JsonNode answerNode = answersNode.get(key);
+
+                // Required field check
+                if (required) {
+                    if (answerValue == null || (answerValue instanceof String s && s.isBlank())) {
+                        errors.add(label + " is required.");
+                        continue;
+                    }
+                }
+
+                // Skip further validation if answer is not provided
+                if (answerValue == null) {
+                    continue;
+                }
+
+                // Type-specific validation
+                switch (type) {
+                    case "single_select", "dropdown" -> {
+                        if (field.has("options")) {
+                            List<String> options = new ArrayList<>();
+                            for (JsonNode opt : field.get("options")) {
+                                options.add(opt.asText());
+                            }
+                            String val = String.valueOf(answerValue);
+                            if (!options.contains(val)) {
+                                errors.add(label + ": '" + val + "' is not a valid option.");
+                            }
+                        }
+                    }
+                    case "multi_select" -> {
+                        if (field.has("options") && answerNode != null && answerNode.isArray()) {
+                            List<String> options = new ArrayList<>();
+                            for (JsonNode opt : field.get("options")) {
+                                options.add(opt.asText());
+                            }
+                            for (JsonNode selectedNode : answerNode) {
+                                String selected = selectedNode.asText();
+                                if (!options.contains(selected)) {
+                                    errors.add(label + ": '" + selected + "' is not a valid option.");
+                                }
+                            }
+                        }
+                    }
+                    case "numeric_counter" -> {
+                        try {
+                            double numVal;
+                            if (answerValue instanceof Number num) {
+                                numVal = num.doubleValue();
+                            } else {
+                                numVal = Double.parseDouble(String.valueOf(answerValue));
+                            }
+                            if (field.has("min") && numVal < field.get("min").asDouble()) {
+                                errors.add(label + ": value must be at least " + field.get("min").asText() + ".");
+                            }
+                            if (field.has("max") && numVal > field.get("max").asDouble()) {
+                                errors.add(label + ": value must be at most " + field.get("max").asText() + ".");
+                            }
+                        } catch (NumberFormatException e) {
+                            errors.add(label + ": value must be numeric.");
+                        }
+                    }
+                    case "yes_no" -> {
+                        if (answerValue instanceof Boolean) {
+                            // valid
+                        } else {
+                            String strVal = String.valueOf(answerValue).toLowerCase(Locale.ROOT);
+                            if (!"yes".equals(strVal) && !"no".equals(strVal)
+                                && !"true".equals(strVal) && !"false".equals(strVal)) {
+                                errors.add(label + ": value must be yes/no or true/false.");
+                            }
+                        }
+                    }
+                    default -> {
+                        // no additional validation for text and other types
+                    }
+                }
+            }
+
+            if (errors.isEmpty()) {
+                return null;
+            }
+            return String.join(" ", errors);
+        } catch (Exception e) {
+            log.warn("Failed to validate intake answers against schema", e);
+            return "Failed to validate intake answers: " + e.getMessage();
+        }
     }
 
     private void notifyNearbyTaskers(TaskState task) {

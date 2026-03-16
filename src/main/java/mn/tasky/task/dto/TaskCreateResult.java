@@ -6,6 +6,10 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
     public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
     public static final String INVALID_DESCRIPTION = "INVALID_DESCRIPTION";
     public static final String INVALID_SCHEDULE = "INVALID_SCHEDULE";
+    public static final String INTAKE_NOT_ENABLED = "INTAKE_NOT_ENABLED";
+    public static final String INVALID_SCHEMA_VERSION = "INVALID_SCHEMA_VERSION";
+    public static final String INTAKE_VALIDATION_FAILED = "INTAKE_VALIDATION_FAILED";
+    public static final String DRAFT_NOT_FOUND = "DRAFT_NOT_FOUND";
 
     public static TaskCreateResult success(TaskState task) {
         return new TaskCreateResult(task,
