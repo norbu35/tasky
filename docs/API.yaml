@@ -906,7 +906,7 @@ components:
     # ─── Reviews ──────────────────────────────────────────────
     Review:
       type: object
-      required: [ id, booking_id, reviewer_id, reviewee_id, quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, created_at ]
+      required: [ id, booking_id, reviewer_id, reviewee_id, punctuality_rating, created_at ]
       properties:
         id:
           type: string
@@ -3230,7 +3230,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating ]
+              description: >
+                Role-specific validation: customers must provide quality + punctuality + communication;
+                taskers must provide clarity + respectfulness + punctuality.
+              required: [ punctuality_rating ]
               properties:
                 quality_rating:
                   type: integer
