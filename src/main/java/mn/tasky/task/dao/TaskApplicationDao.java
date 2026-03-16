@@ -50,7 +50,9 @@ public interface TaskApplicationDao {
         + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
         + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
         + " tasker_is_pro, "
-        + "ta.message, ta.status, ta.created_at "
+        + "ta.message, ta.status, "
+        + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
+        + "ta.created_at "
         + "FROM task_applications ta "
         + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
         + "WHERE ta.id = :id")
@@ -80,7 +82,9 @@ public interface TaskApplicationDao {
         + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
         + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
         + " tasker_is_pro, "
-        + "ta.message, ta.status, ta.created_at "
+        + "ta.message, ta.status, "
+        + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
+        + "ta.created_at "
         + "FROM task_applications ta "
         + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
         + "WHERE ta.task_id = :taskId "
@@ -92,7 +96,9 @@ public interface TaskApplicationDao {
         + "p.rating_avg AS tasker_rating_avg, p.completed_tasks AS tasker_completed_tasks, "
         + "CASE WHEN p.completed_tasks >= 6 AND p.rating_avg >= 4.5 THEN true ELSE false END AS"
         + " tasker_is_pro, "
-        + "ta.message, ta.status, ta.created_at "
+        + "ta.message, ta.status, "
+        + "ta.relevance_score, ta.recommended, ta.selected_at, ta.respond_by_at, "
+        + "ta.created_at "
         + "FROM task_applications ta "
         + "LEFT JOIN profiles p ON p.user_id = ta.tasker_id "
         + "WHERE ta.task_id = :taskId AND ta.id > :cursor "
@@ -146,8 +152,8 @@ public interface TaskApplicationDao {
             excludeUuid);
     }
 
-    @SqlUpdate("UPDATE task_applications SET status = 'REJECTED' "
-        + "WHERE task_id = :taskId AND status = 'PENDING' AND id != :excludeId")
+    @SqlUpdate("UPDATE task_applications SET status = 'DECLINED' "
+        + "WHERE task_id = :taskId AND status = 'APPLIED' AND id != :excludeId")
     void rejectOthers(@Bind("taskId") UUID taskId, @Bind("excludeId") UUID excludeId);
 
     default List<String> findNearbyTaskerCandidates(

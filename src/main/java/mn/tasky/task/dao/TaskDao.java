@@ -28,6 +28,9 @@ public interface TaskDao {
         String locationText,
         String status,
         Instant scheduledAt,
+        String intakeAnswersJson,
+        Integer intakeSchemaVersion,
+        String scopeSummarySource,
         Instant createdAt,
         Instant updatedAt) {
         insert(
@@ -44,16 +47,21 @@ public interface TaskDao {
             locationText,
             status,
             scheduledAt,
+            intakeAnswersJson,
+            intakeSchemaVersion,
+            scopeSummarySource,
             createdAt,
             updatedAt);
     }
 
     @SqlUpdate("INSERT INTO tasks (id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at) "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at) "
         + "VALUES (:id, :customerId, :categoryId, :description, :budget, "
-        + ":locationLat, :locationLng, :locationText, :status, :scheduledAt, :createdAt, "
-        + ":updatedAt)")
+        + ":locationLat, :locationLng, :locationText, :status, :scheduledAt, "
+        + "CAST(:intakeAnswersJson AS jsonb), :intakeSchemaVersion, :scopeSummarySource, "
+        + ":createdAt, :updatedAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("customerId") UUID customerId,
@@ -65,6 +73,9 @@ public interface TaskDao {
         @Bind("locationText") String locationText,
         @Bind("status") String status,
         @Bind("scheduledAt") Instant scheduledAt,
+        @Bind("intakeAnswersJson") String intakeAnswersJson,
+        @Bind("intakeSchemaVersion") Integer intakeSchemaVersion,
+        @Bind("scopeSummarySource") String scopeSummarySource,
         @Bind("createdAt") Instant createdAt,
         @Bind("updatedAt") Instant updatedAt);
 
@@ -74,8 +85,9 @@ public interface TaskDao {
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE id = :id")
     Optional<TaskState> findById(@Bind("id") UUID id);
 
@@ -147,16 +159,18 @@ public interface TaskDao {
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "ORDER BY created_at DESC, id "
         + "LIMIT :limit")
     List<TaskState> findOpenAll(@Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND (created_at < :cursorCreatedAt "
         + "OR (created_at = :cursorCreatedAt AND id > :cursorId)) "
@@ -168,8 +182,9 @@ public interface TaskDao {
         @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND category_id = :categoryId "
         + "ORDER BY created_at DESC, id "
@@ -177,8 +192,9 @@ public interface TaskDao {
     List<TaskState> findOpenByCategory(@Bind("categoryId") UUID categoryId, @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND category_id = :categoryId "
         + "AND (created_at < :cursorCreatedAt "
@@ -239,8 +255,9 @@ public interface TaskDao {
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)"
         + "::geography, :meters) "
@@ -250,8 +267,9 @@ public interface TaskDao {
         @Bind("lat") double lat, @Bind("lng") double lng, @Bind("meters") double meters, @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" + "::geography, :meters) "
         + "AND (created_at < :cursorCreatedAt "
@@ -267,8 +285,9 @@ public interface TaskDao {
         @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND category_id = :categoryId "
         + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)"
@@ -283,8 +302,9 @@ public interface TaskDao {
         @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE status = 'OPEN' "
         + "AND category_id = :categoryId "
         + "AND ST_DWithin(location_point, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)" + "::geography, :meters) "
@@ -326,8 +346,9 @@ public interface TaskDao {
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE customer_id = :customerId "
         + "AND (:status IS NULL OR status = :status) "
         + "ORDER BY created_at DESC, id "
@@ -336,8 +357,9 @@ public interface TaskDao {
         @Bind("customerId") UUID customerId, @Bind("status") String status, @Bind("limit") int limit);
 
     @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
-        + "location_lat, location_lng, location_text, status, scheduled_at, created_at, "
-        + "updated_at "
+        + "location_lat, location_lng, location_text, status, scheduled_at, "
+        + "intake_answers_json, intake_schema_version, scope_summary_source, "
+        + "created_at, updated_at "
         + "FROM tasks WHERE customer_id = :customerId "
         + "AND (:status IS NULL OR status = :status) "
         + "AND (created_at < :cursorCreatedAt "
@@ -376,9 +398,9 @@ public interface TaskDao {
     }
 
     @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
-        + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t"
-        + ".created_at, "
-        + "t.updated_at "
+        + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, "
+        + "t.intake_answers_json, t.intake_schema_version, t.scope_summary_source, "
+        + "t.created_at, t.updated_at "
         + "FROM tasks t "
         + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = "
         + ":taskerId) "
@@ -389,9 +411,9 @@ public interface TaskDao {
         @Bind("taskerId") UUID taskerId, @Bind("status") String status, @Bind("limit") int limit);
 
     @SqlQuery("SELECT t.id, t.customer_id, t.category_id, t.description, t.budget, "
-        + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, t"
-        + ".created_at, "
-        + "t.updated_at "
+        + "t.location_lat, t.location_lng, t.location_text, t.status, t.scheduled_at, "
+        + "t.intake_answers_json, t.intake_schema_version, t.scope_summary_source, "
+        + "t.created_at, t.updated_at "
         + "FROM tasks t "
         + "WHERE EXISTS (SELECT 1 FROM bookings b WHERE b.task_id = t.id AND b.tasker_id = "
         + ":taskerId) "

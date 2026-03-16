@@ -17,26 +17,26 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 @RegisterConstructorMapper(Conversation.class)
 public interface ConversationDao {
 
-    default void insert(String id, String taskId, String participant1Id, String participant2Id, Instant createdAt) {
+    default void insert(String id, String taskId, String customerId, String taskerId, Instant createdAt) {
         insert(
             required(id,
                 "id"),
             required(taskId,
                 "taskId"),
-            required(participant1Id,
-                "participant1Id"),
-            required(participant2Id,
-                "participant2Id"),
+            required(customerId,
+                "customerId"),
+            required(taskerId,
+                "taskerId"),
             createdAt);
     }
 
-    @SqlUpdate("INSERT INTO conversations (id, task_id, participant1_id, participant2_id, created_at) "
-        + "VALUES (:id, :taskId, :participant1Id, :participant2Id, :createdAt)")
+    @SqlUpdate("INSERT INTO conversations (id, task_id, customer_id, tasker_id, created_at) "
+        + "VALUES (:id, :taskId, :customerId, :taskerId, :createdAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("taskId") UUID taskId,
-        @Bind("participant1Id") UUID participant1Id,
-        @Bind("participant2Id") UUID participant2Id,
+        @Bind("customerId") UUID customerId,
+        @Bind("taskerId") UUID taskerId,
         @Bind("createdAt") Instant createdAt);
 
     default Optional<Conversation> findById(String id) {
@@ -48,23 +48,22 @@ public interface ConversationDao {
     Optional<Conversation> findById(@Bind("id") UUID id);
 
     default Optional<Conversation> findByTaskAndParticipants(
-        String taskId, String participant1Id, String participant2Id) {
+        String taskId, String customerId, String taskerId) {
         UUID taskUuid = required(taskId,
             "taskId");
-        UUID p1Uuid = required(participant1Id,
-            "participant1Id");
-        UUID p2Uuid = required(participant2Id,
-            "participant2Id");
+        UUID customerUuid = required(customerId,
+            "customerId");
+        UUID taskerUuid = required(taskerId,
+            "taskerId");
         return findByTaskAndParticipants(taskUuid,
-            p1Uuid,
-            p2Uuid);
+            customerUuid,
+            taskerUuid);
     }
 
     @SqlQuery("SELECT * FROM conversations WHERE task_id = :taskId "
-        + "AND ((participant1_id = :p1 AND participant2_id = :p2) "
-        + " OR (participant1_id = :p2 AND participant2_id = :p1))")
+        + "AND customer_id = :customerId AND tasker_id = :taskerId")
     Optional<Conversation> findByTaskAndParticipants(
-        @Bind("taskId") UUID taskId, @Bind("p1") UUID participant1Id, @Bind("p2") UUID participant2Id);
+        @Bind("taskId") UUID taskId, @Bind("customerId") UUID customerId, @Bind("taskerId") UUID taskerId);
 
     default List<Conversation> findByUserId(String userId) {
         return findByUserId(userId,
@@ -90,12 +89,12 @@ public interface ConversationDao {
     }
 
     @SqlQuery("SELECT * FROM conversations "
-        + "WHERE (participant1_id = :userId OR participant2_id = :userId) "
+        + "WHERE (customer_id = :userId OR tasker_id = :userId) "
         + "ORDER BY id LIMIT :limit")
     List<Conversation> findByUserIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
 
     @SqlQuery("SELECT * FROM conversations "
-        + "WHERE (participant1_id = :userId OR participant2_id = :userId) "
+        + "WHERE (customer_id = :userId OR tasker_id = :userId) "
         + "AND id > :cursor "
         + "ORDER BY id LIMIT :limit")
     List<Conversation> findByUserIdAfterCursor(

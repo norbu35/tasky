@@ -26,6 +26,10 @@ public interface BookingDao {
         String status,
         Integer cancellationFee,
         boolean liabilityDisclaimerAccepted,
+        Instant confirmedScheduledAt,
+        String settlementMode,
+        boolean lateCancelIncident,
+        Instant liabilityDisclaimerAcceptedAt,
         Instant createdAt,
         Instant updatedAt) {
         insert(
@@ -41,14 +45,23 @@ public interface BookingDao {
             status,
             cancellationFee,
             liabilityDisclaimerAccepted,
+            confirmedScheduledAt,
+            settlementMode,
+            lateCancelIncident,
+            liabilityDisclaimerAcceptedAt,
             createdAt,
             updatedAt);
     }
 
     @SqlUpdate("INSERT INTO bookings (id, task_id, tasker_id, customer_id, price, status, "
-        + "cancellation_fee, liability_disclaimer_accepted, created_at, updated_at) "
+        + "cancellation_fee, liability_disclaimer_accepted, "
+        + "confirmed_scheduled_at, settlement_mode, late_cancel_incident, "
+        + "liability_disclaimer_accepted_at, created_at, updated_at) "
         + "VALUES (:id, :taskId, :taskerId, :customerId, :price, :status, "
-        + ":cancellationFee, :liabilityDisclaimerAccepted, :createdAt, :updatedAt)")
+        + ":cancellationFee, :liabilityDisclaimerAccepted, "
+        + ":confirmedScheduledAt, COALESCE(:settlementMode, 'DIRECT'), "
+        + "COALESCE(:lateCancelIncident, false), :liabilityDisclaimerAcceptedAt, "
+        + ":createdAt, :updatedAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("taskId") UUID taskId,
@@ -58,6 +71,10 @@ public interface BookingDao {
         @Bind("status") String status,
         @Bind("cancellationFee") Integer cancellationFee,
         @Bind("liabilityDisclaimerAccepted") boolean liabilityDisclaimerAccepted,
+        @Bind("confirmedScheduledAt") Instant confirmedScheduledAt,
+        @Bind("settlementMode") String settlementMode,
+        @Bind("lateCancelIncident") boolean lateCancelIncident,
+        @Bind("liabilityDisclaimerAcceptedAt") Instant liabilityDisclaimerAcceptedAt,
         @Bind("createdAt") Instant createdAt,
         @Bind("updatedAt") Instant updatedAt);
 

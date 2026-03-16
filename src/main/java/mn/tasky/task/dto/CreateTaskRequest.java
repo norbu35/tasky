@@ -16,5 +16,9 @@ public record CreateTaskRequest(
     @JsonProperty("location_lng") @NotNull double locationLng,
     @JsonProperty("location_text") @NotBlank @Size(min = 5, max = 500) String locationText,
     @JsonProperty("scheduled_at") @NotBlank String scheduledAt,
-    @JsonProperty("photo_keys") @Size(max = 3) List<String> photoKeys) {
+    @JsonProperty("photo_keys") @Size(max = 3) List<String> photoKeys,
+    @JsonProperty("intake_answers") String intakeAnswersJson,
+    @JsonProperty("intake_schema_version") Integer intakeSchemaVersion,
+    @JsonProperty("scope_summary") String scopeSummary,
+    @JsonProperty("draft_id") String draftId) {
 }

@@ -10,5 +10,9 @@ public record CreateTask(
     double locationLng,
     String locationText,
     String scheduledAt,
-    List<String> photoKeys) {
+    List<String> photoKeys,
+    String intakeAnswersJson,
+    Integer intakeSchemaVersion,
+    String scopeSummary,
+    String draftId) {
 }

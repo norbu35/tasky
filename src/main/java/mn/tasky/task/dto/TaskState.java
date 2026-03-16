@@ -17,6 +17,9 @@ public record TaskState(
     String status,
     Instant scheduledAt,
     @Nullable List<String> photoKeys,
+    @Nullable String intakeAnswersJson,
+    @Nullable Integer intakeSchemaVersion,
+    @Nullable String scopeSummarySource,
     Instant createdAt,
     Instant updatedAt) {
 }

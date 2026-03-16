@@ -16,7 +16,9 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 @RegisterConstructorMapper(Message.class)
 public interface MessageDao {
 
-    default void insert(String id, String conversationId, String senderId, String content, Instant sentAt) {
+    default void insert(
+        String id, String conversationId, String senderId, String content,
+        boolean phoneNumberFlagged, String contentHash, Instant sentAt) {
         insert(
             required(id,
                 "id"),
@@ -25,16 +27,22 @@ public interface MessageDao {
             required(senderId,
                 "senderId"),
             content,
+            phoneNumberFlagged,
+            contentHash,
             sentAt);
     }
 
-    @SqlUpdate("INSERT INTO messages (id, conversation_id, sender_id, content, sent_at) "
-        + "VALUES (:id, :conversationId, :senderId, :content, :sentAt)")
+    @SqlUpdate("INSERT INTO messages (id, conversation_id, sender_id, content, "
+        + "phone_number_flagged, content_hash, sent_at) "
+        + "VALUES (:id, :conversationId, :senderId, :content, "
+        + ":phoneNumberFlagged, :contentHash, :sentAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("conversationId") UUID conversationId,
         @Bind("senderId") UUID senderId,
         @Bind("content") String content,
+        @Bind("phoneNumberFlagged") boolean phoneNumberFlagged,
+        @Bind("contentHash") String contentHash,
         @Bind("sentAt") Instant sentAt);
 
     default List<Message> findByConversationId(String conversationId, String cursor, int limit) {
