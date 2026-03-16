@@ -100,4 +100,21 @@ public interface CategorySchemaVersionDao {
 
     @SqlQuery("SELECT MAX(version) FROM category_schema_versions WHERE category_id = :categoryId")
     Optional<Integer> findMaxVersion(@Bind("categoryId") UUID categoryId);
+
+    default Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(String categoryId) {
+        return findLastKnownGoodByCategoryId(required(categoryId, "categoryId"));
+    }
+
+    @SqlQuery("SELECT id, category_id, version, schema_json, status, is_last_known_good, "
+        + "created_by, created_at, activated_at "
+        + "FROM category_schema_versions WHERE category_id = :categoryId AND is_last_known_good = true "
+        + "LIMIT 1")
+    Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(@Bind("categoryId") UUID categoryId);
+
+    default void updateStatusAndActivatedAt(String id, String status) {
+        updateStatusAndActivatedAt(required(id, "id"), status);
+    }
+
+    @SqlUpdate("UPDATE category_schema_versions SET status = :status, activated_at = NOW() WHERE id = :id")
+    void updateStatusAndActivatedAt(@Bind("id") UUID id, @Bind("status") String status);
 }

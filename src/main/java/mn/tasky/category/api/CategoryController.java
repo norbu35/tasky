@@ -4,16 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import mn.tasky.category.application.CategorySchemaVersionService;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dto.*;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
+import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.List;
 import java.util.Map;
 
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
@@ -24,9 +28,12 @@ import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategorySchemaVersionService schemaVersionService;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService,
+                              CategorySchemaVersionService schemaVersionService) {
         this.categoryService = categoryService;
+        this.schemaVersionService = schemaVersionService;
     }
 
     @GetMapping("/categories")
@@ -126,5 +133,69 @@ public class CategoryController {
                     "Category was not found.",
                     "trace_id",
                     resolveTraceId(request))));
+    }
+
+    @GetMapping("/admin/categories/{id}/schemas")
+    public ResponseEntity<?> listSchemaVersions(@PathVariable String id) {
+        List<SchemaVersionResponse> versions = schemaVersionService.listVersions(id).stream()
+            .map(this::toSchemaVersionResponse)
+            .toList();
+        return ResponseEntity.ok(versions);
+    }
+
+    @PostMapping("/admin/categories/{id}/schemas")
+    public ResponseEntity<?> createSchemaVersion(
+            @PathVariable String id,
+            @Valid @RequestBody CreateSchemaVersionRequest body,
+            @AuthenticationPrincipal JwtPrincipal principal,
+            HttpServletRequest request) {
+        try {
+            CategorySchemaVersion created = schemaVersionService.createVersion(
+                id, body.schemaJson(), principal.userId());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(toSchemaVersionResponse(created));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                    "code", "INVALID_SCHEMA",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        }
+    }
+
+    @PostMapping("/admin/categories/{id}/schemas/{version}/activate")
+    public ResponseEntity<?> activateSchemaVersion(
+            @PathVariable String id,
+            @PathVariable int version,
+            HttpServletRequest request) {
+        try {
+            CategorySchemaVersion activated = schemaVersionService.activate(id, version);
+            return ResponseEntity.ok(toSchemaVersionResponse(activated));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                    "code", "SCHEMA_VERSION_NOT_FOUND",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                    "code", "SCHEMA_ACTIVATION_CONFLICT",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        }
+    }
+
+    private SchemaVersionResponse toSchemaVersionResponse(CategorySchemaVersion sv) {
+        return new SchemaVersionResponse(
+            sv.id(),
+            sv.categoryId(),
+            sv.version(),
+            sv.schemaJson(),
+            sv.status(),
+            sv.isLastKnownGood(),
+            sv.createdBy(),
+            sv.createdAt(),
+            sv.activatedAt());
     }
 }
