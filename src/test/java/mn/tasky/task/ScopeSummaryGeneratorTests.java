@@ -126,6 +126,33 @@ class ScopeSummaryGeneratorTests {
     }
 
     @Test
+    @DisplayName("Malformed schema with array values in answers falls back with list formatting")
+    void fallbackWithArrayValues() {
+        String malformedSchema = "not valid json [";
+        String answers = """
+            {"skills":["Plumbing","Electric"],"location":"UB"}
+            """;
+
+        SummaryResult result = generator.generate(malformedSchema, answers);
+
+        assertThat(result.source()).isEqualTo("TEMPLATE");
+        assertThat(result.summary()).contains("skills: Plumbing, Electric");
+        assertThat(result.summary()).contains("location: UB");
+    }
+
+    @Test
+    @DisplayName("Both malformed schema and malformed answers produce empty summary")
+    void bothMalformedFallsBackToEmpty() {
+        String malformedSchema = "not valid json";
+        String malformedAnswers = "not valid json either";
+
+        SummaryResult result = generator.generate(malformedSchema, malformedAnswers);
+
+        assertThat(result.source()).isEqualTo("TEMPLATE");
+        assertThat(result.summary()).isEmpty();
+    }
+
+    @Test
     @DisplayName("Empty answers produce empty summary")
     void emptyAnswers() {
         String schema =
