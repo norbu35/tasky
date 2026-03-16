@@ -35,6 +35,19 @@ public class ScopeSummaryGenerator {
      * @return Summary result with formatted text and source indicator.
      */
     public SummaryResult generate(String schemaJson, String answersJson) {
+        return generate(schemaJson, answersJson, null, null);
+    }
+
+    /**
+     * Generates a scope summary with category context for observability.
+     *
+     * @param schemaJson    JSON array of field objects (each with key, label, type).
+     * @param answersJson   JSON object mapping field keys to answer values.
+     * @param categoryId    Category identifier for structured logging (nullable).
+     * @param schemaVersion Schema version for structured logging (nullable).
+     * @return Summary result with formatted text and source indicator.
+     */
+    public SummaryResult generate(String schemaJson, String answersJson, String categoryId, Integer schemaVersion) {
         try {
             JsonNode schemaArray = objectMapper.readTree(schemaJson);
             if (!schemaArray.isArray()) {
@@ -59,8 +72,13 @@ public class ScopeSummaryGenerator {
             String summary = String.join("\n", lines);
             return new SummaryResult(summary, "TEMPLATE");
         } catch (Exception e) {
-            log.warn("Failed to generate scope summary from schema, falling back to key-value format", e);
-            return fallback(answersJson);
+            log.warn(
+                    "Scope summary generation failed, falling back to key-value format"
+                            + " [category_id={}, schema_version={}]",
+                    categoryId,
+                    schemaVersion,
+                    e);
+            return fallback(answersJson, categoryId, schemaVersion);
         }
     }
 
@@ -84,7 +102,7 @@ public class ScopeSummaryGenerator {
         return String.valueOf(value);
     }
 
-    private SummaryResult fallback(String answersJson) {
+    private SummaryResult fallback(String answersJson, String categoryId, Integer schemaVersion) {
         try {
             Map<String, Object> answers = objectMapper.readValue(answersJson, new TypeReference<>() {});
             List<String> lines = new ArrayList<>();
@@ -98,9 +116,19 @@ public class ScopeSummaryGenerator {
                 }
                 lines.add(entry.getKey() + ": " + formatted);
             }
+            log.warn(
+                    "Scope summary used TEMPLATE fallback path"
+                            + " [category_id={}, schema_version={}, event=scope_summary_generation_failed_fallback]",
+                    categoryId,
+                    schemaVersion);
             return new SummaryResult(String.join("\n", lines), "TEMPLATE");
         } catch (Exception ex) {
-            log.warn("Fallback scope summary generation also failed", ex);
+            log.warn(
+                    "Fallback scope summary generation also failed"
+                            + " [category_id={}, schema_version={}, event=scope_summary_generation_failed_fallback]",
+                    categoryId,
+                    schemaVersion,
+                    ex);
             return new SummaryResult("", "TEMPLATE");
         }
     }

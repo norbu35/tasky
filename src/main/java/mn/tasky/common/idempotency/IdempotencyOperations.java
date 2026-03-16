@@ -11,6 +11,7 @@ public final class IdempotencyOperations {
     public static final String INITIATE_PAYMENT = "payment.initiate";
     public static final String REQUEST_PAYOUT = "wallet.request_payout";
     public static final String PROCESS_PAYOUT = "wallet.process_payout";
+    public static final String CONCIERGE_ASSIGN = "admin.concierge_assign";
 
     private IdempotencyOperations() {}
 }

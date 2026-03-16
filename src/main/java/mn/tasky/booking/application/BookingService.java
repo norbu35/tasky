@@ -52,7 +52,7 @@ public class BookingService {
      * @return The newly created {@link BookingState}.
      */
     public BookingState createBooking(String taskId, String taskerId, String customerId, int price) {
-        return createBooking(taskId, taskerId, customerId, price, false);
+        return createBooking(taskId, taskerId, customerId, price, false, null);
     }
 
     /**
@@ -67,6 +67,27 @@ public class BookingService {
      */
     public BookingState createBooking(
             String taskId, String taskerId, String customerId, int price, boolean liabilityDisclaimerAccepted) {
+        return createBooking(taskId, taskerId, customerId, price, liabilityDisclaimerAccepted, null);
+    }
+
+    /**
+     * Creates a new booking with liability disclaimer and confirmed schedule.
+     *
+     * @param taskId                      The ID of the task being booked.
+     * @param taskerId                    The ID of the tasker assigned to the task.
+     * @param customerId                  The ID of the customer who created the task.
+     * @param price                       The agreed-upon price for the task.
+     * @param liabilityDisclaimerAccepted True if the disclaimer is accepted; false otherwise.
+     * @param confirmedScheduledAt        The initial confirmed schedule from the task's scheduledAt.
+     * @return The newly created {@link BookingState}.
+     */
+    public BookingState createBooking(
+            String taskId,
+            String taskerId,
+            String customerId,
+            int price,
+            boolean liabilityDisclaimerAccepted,
+            Instant confirmedScheduledAt) {
         Instant now = Instant.now();
         String id = UUID.randomUUID().toString();
         Instant disclaimerAcceptedAt = liabilityDisclaimerAccepted ? now : null;
@@ -79,7 +100,7 @@ public class BookingService {
                 "ASSIGNED",
                 null,
                 liabilityDisclaimerAccepted,
-                null,
+                confirmedScheduledAt,
                 "DIRECT",
                 false,
                 disclaimerAcceptedAt,
@@ -94,7 +115,7 @@ public class BookingService {
                 "ASSIGNED",
                 null,
                 liabilityDisclaimerAccepted,
-                null,
+                confirmedScheduledAt,
                 "DIRECT",
                 false,
                 disclaimerAcceptedAt,

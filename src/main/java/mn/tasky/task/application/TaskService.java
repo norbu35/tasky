@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 /**
@@ -223,8 +224,8 @@ public class TaskService {
             }
 
             // Generate scope summary
-            ScopeSummaryGenerator.SummaryResult summaryResult =
-                    scopeSummaryGenerator.generate(schemaVersion.schemaJson(), intakeAnswersJson);
+            ScopeSummaryGenerator.SummaryResult summaryResult = scopeSummaryGenerator.generate(
+                    schemaVersion.schemaJson(), intakeAnswersJson, command.categoryId(), intakeSchemaVersion);
 
             // User-provided summary override
             if (StringUtils.hasText(command.scopeSummary())) {
@@ -785,6 +786,7 @@ public class TaskService {
      * @param liabilityDisclaimerAccepted Whether disclaimer was accepted.
      * @return Acceptance result with booking on success.
      */
+    @Transactional
     public TaskAcceptResult acceptApplication(
             String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
@@ -821,8 +823,8 @@ public class TaskService {
         taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
         taskApplicationDao.rejectOthers(taskId, selected.id());
 
-        BookingState booking =
-                bookingService.createBooking(task.id(), selected.taskerId(), task.customerId(), task.budget(), true);
+        BookingState booking = bookingService.createBooking(
+                task.id(), selected.taskerId(), task.customerId(), task.budget(), true, task.scheduledAt());
         taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
 
         domainEventOutboxService.publish(

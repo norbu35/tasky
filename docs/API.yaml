@@ -969,7 +969,7 @@ components:
           type: string
         status:
           type: string
-          enum: [ OPEN, RESOLVED, CLOSED_INSUFFICIENT_EVIDENCE ]
+          enum: [ OPEN, RESOLVED_TASKER, RESOLVED_CUSTOMER, ESCALATED, CLOSED_INSUFFICIENT_EVIDENCE ]
         resolution_action:
           type: string
           enum: [ RESOLVE_CUSTOMER, RESOLVE_TASKER, ESCALATE, REFUND, RELEASE ]

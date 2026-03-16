@@ -106,16 +106,11 @@ public class MessagingService {
             throw new IllegalArgumentException("Message content cannot be empty");
         }
 
-        String contentHash = computeContentHash(conversationId, senderId, sanitizedContent);
+        Instant sentAt = Instant.now();
+        String contentHash = computeContentHash(conversationId, senderId, sanitizedContent, sentAt);
 
         Message message = new Message(
-                UUID.randomUUID().toString(),
-                conversationId,
-                senderId,
-                sanitizedContent,
-                false,
-                contentHash,
-                Instant.now());
+                UUID.randomUUID().toString(), conversationId, senderId, sanitizedContent, false, contentHash, sentAt);
 
         messageDao.insert(
                 message.id(),
@@ -157,9 +152,9 @@ public class MessagingService {
         return messageDao.findByConversationId(conversationId, cursor, limit);
     }
 
-    private String computeContentHash(String conversationId, String senderId, String content) {
+    private String computeContentHash(String conversationId, String senderId, String content, Instant sentAt) {
         try {
-            String hashInput = conversationId + "|" + senderId + "|" + content + "|" + System.currentTimeMillis();
+            String hashInput = conversationId + "|" + senderId + "|" + content + "|" + sentAt.toEpochMilli();
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(hashInput.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hash);
