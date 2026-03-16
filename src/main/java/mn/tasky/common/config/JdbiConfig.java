@@ -7,6 +7,8 @@ import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.category.dao.CategoryDao;
+import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.common.feature.FeatureToggleDao;
 import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
 import mn.tasky.dispute.dao.DisputeDao;
@@ -18,6 +20,7 @@ import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
+import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.wallet.dao.CreditedBookingDao;
 import mn.tasky.wallet.dao.LedgerEntryDao;
@@ -101,16 +104,26 @@ public class JdbiConfig {
         return jdbi.onDemand(SuspensionEventDao.class);
     }
 
-    // Category DAO
+    // Category DAOs
     @Bean
     public CategoryDao categoryDao(Jdbi jdbi) {
         return jdbi.onDemand(CategoryDao.class);
+    }
+
+    @Bean
+    public CategorySchemaVersionDao categorySchemaVersionDao(Jdbi jdbi) {
+        return jdbi.onDemand(CategorySchemaVersionDao.class);
     }
 
     // Task DAOs
     @Bean
     public TaskDao taskDao(Jdbi jdbi) {
         return jdbi.onDemand(TaskDao.class);
+    }
+
+    @Bean
+    public TaskDraftDao taskDraftDao(Jdbi jdbi) {
+        return jdbi.onDemand(TaskDraftDao.class);
     }
 
     @Bean
@@ -215,5 +228,11 @@ public class JdbiConfig {
     @Bean
     public OutboxEventDao outboxEventDao(Jdbi jdbi) {
         return jdbi.onDemand(OutboxEventDao.class);
+    }
+
+    // Feature toggle DAO
+    @Bean
+    public FeatureToggleDao featureToggleDao(Jdbi jdbi) {
+        return jdbi.onDemand(FeatureToggleDao.class);
     }
 }
