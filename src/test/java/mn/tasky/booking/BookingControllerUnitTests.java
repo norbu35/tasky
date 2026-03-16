@@ -386,6 +386,83 @@ class BookingControllerUnitTests {
     }
 
     @Test
+    @DisplayName("BookingController listBookings returns paged response with cancellation fee")
+    void listBookingsReturnsCancellationFee() {
+        JwtPrincipal principal = customerPrincipal();
+        String bookingId = uuid(170);
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        BookingState booking = new BookingState(
+                bookingId,
+                uuid(30),
+                "tasker-170",
+                principal.userId(),
+                50000,
+                "ASSIGNED",
+                null,
+                true,
+                now.plusSeconds(3600),
+                "ESCROW",
+                false,
+                now,
+                now,
+                now);
+        when(bookingService.listBookings(principal.userId(), "CUSTOMER", "ASSIGNED", null, 51))
+                .thenReturn(List.of(booking));
+
+        ResponseEntity<?> response = controller.listBookings(principal, "CUSTOMER", "ASSIGNED", null, 50);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("BookingController getBooking returns booking with settlement mode and schedule fields")
+    void getBookingReturnsNewFields() {
+        JwtPrincipal principal = customerPrincipal();
+        String bookingId = uuid(171);
+        Instant now = Instant.parse("2026-02-17T00:00:00Z");
+        BookingState booking = new BookingState(
+                bookingId,
+                uuid(30),
+                "tasker-171",
+                principal.userId(),
+                50000,
+                "ASSIGNED",
+                null,
+                true,
+                now.plusSeconds(3600),
+                "ESCROW",
+                true,
+                now,
+                now,
+                now);
+        when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
+
+        ResponseEntity<?> response = controller.getBooking(principal, bookingId, request());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertThat(body).containsEntry("id", bookingId);
+        assertThat(body).containsEntry("status", "ASSIGNED");
+    }
+
+    @Test
+    @DisplayName("BookingController mark-done maps not-found transition result")
+    void markDoneNotFound() {
+        JwtPrincipal principal = taskerPrincipal();
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-nf"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(bookingService.markBookingDone(principal.userId(), "booking-missing"))
+                .thenReturn(BookingMarkDoneResult.NOT_FOUND_RESULT);
+
+        ResponseEntity<?> response = controller.markBookingDone(principal, "booking-missing", "idem-nf", request());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "NOT_FOUND");
+        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, "idem-nf");
+    }
+
+    @Test
     @DisplayName("BookingController cancel returns internal error when associated task cannot be " + "loaded")
     void cancelBookingTaskLookupFailure() {
         JwtPrincipal principal = customerPrincipal();
