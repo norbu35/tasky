@@ -2,6 +2,7 @@ package mn.tasky.common.config;
 
 import mn.tasky.analytics.dao.AnalyticsEventDao;
 import mn.tasky.auth.dao.*;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
@@ -81,8 +82,8 @@ public class JdbiConfig {
     }
 
     @Bean
-    public AuditLogDao auditLogDao(Jdbi jdbi) {
-        return jdbi.onDemand(AuditLogDao.class);
+    public AuditEventDao auditEventDao(Jdbi jdbi) {
+        return jdbi.onDemand(AuditEventDao.class);
     }
 
     @Bean

@@ -20,11 +20,11 @@ public interface DisputeDao {
     default void insert(
         String id,
         String bookingId,
-        String raiserId,
+        String raisedBy,
         String reason,
         String status,
-        String outcome,
-        String resolvedBy,
+        String resolutionAction,
+        String wrongfulPartyUserId,
         String resolutionNotes,
         Instant createdAt,
         Instant resolvedAt) {
@@ -33,29 +33,29 @@ public interface DisputeDao {
                 "id"),
             required(bookingId,
                 "bookingId"),
-            required(raiserId,
-                "raiserId"),
+            required(raisedBy,
+                "raisedBy"),
             reason,
             status,
-            outcome,
-            optional(resolvedBy),
+            resolutionAction,
+            optional(wrongfulPartyUserId),
             resolutionNotes,
             createdAt,
             resolvedAt);
     }
 
-    @SqlUpdate("INSERT INTO disputes (id, booking_id, raiser_id, reason, status, outcome, "
-        + "resolved_by, resolution_notes, created_at, resolved_at) "
-        + "VALUES (:id, :bookingId, :raiserId, :reason, :status, "
-        + ":outcome, :resolvedBy, :resolutionNotes, :createdAt, :resolvedAt)")
+    @SqlUpdate("INSERT INTO disputes (id, booking_id, raised_by, reason, status, resolution_action, "
+        + "wrongful_party_user_id, resolution_notes, created_at, resolved_at) "
+        + "VALUES (:id, :bookingId, :raisedBy, :reason, :status, "
+        + ":resolutionAction, :wrongfulPartyUserId, :resolutionNotes, :createdAt, :resolvedAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("bookingId") UUID bookingId,
-        @Bind("raiserId") UUID raiserId,
+        @Bind("raisedBy") UUID raisedBy,
         @Bind("reason") String reason,
         @Bind("status") String status,
-        @Bind("outcome") String outcome,
-        @Bind("resolvedBy") UUID resolvedBy,
+        @Bind("resolutionAction") String resolutionAction,
+        @Bind("wrongfulPartyUserId") UUID wrongfulPartyUserId,
         @Bind("resolutionNotes") String resolutionNotes,
         @Bind("createdAt") Instant createdAt,
         @Bind("resolvedAt") Instant resolvedAt);
@@ -65,7 +65,9 @@ public interface DisputeDao {
             "id"));
     }
 
-    @SqlQuery("SELECT * FROM disputes WHERE id = :id")
+    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
+        + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+        + "FROM disputes WHERE id = :id")
     Optional<Dispute> findById(@Bind("id") UUID id);
 
     default Optional<Dispute> findOpenByBookingId(String bookingId) {
@@ -73,7 +75,9 @@ public interface DisputeDao {
             "bookingId"));
     }
 
-    @SqlQuery("SELECT * FROM disputes WHERE booking_id = :bookingId AND status = 'OPEN'")
+    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
+        + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+        + "FROM disputes WHERE booking_id = :bookingId AND status = 'OPEN'")
     Optional<Dispute> findOpenByBookingId(@Bind("bookingId") UUID bookingId);
 
     default List<Dispute> findPending(String cursor, int limit) {
@@ -89,10 +93,14 @@ public interface DisputeDao {
             limit);
     }
 
-    @SqlQuery("SELECT * FROM disputes WHERE status = 'OPEN' ORDER BY id LIMIT :limit")
+    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
+        + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+        + "FROM disputes WHERE status = 'OPEN' ORDER BY id LIMIT :limit")
     List<Dispute> findPendingFirstPage(@Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM disputes WHERE status = 'OPEN' AND id > :cursor ORDER BY id LIMIT " + ":limit")
+    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
+        + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+        + "FROM disputes WHERE status = 'OPEN' AND id > :cursor ORDER BY id LIMIT :limit")
     List<Dispute> findPendingAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
     default List<Dispute> findPending() {
@@ -101,23 +109,25 @@ public interface DisputeDao {
     }
 
     default void update(
-        String id, String status, String outcome, String resolvedBy, String resolutionNotes, Instant resolvedAt) {
+        String id, String status, String resolutionAction, String wrongfulPartyUserId,
+        String resolutionNotes, Instant resolvedAt) {
         update(required(id,
                 "id"),
             status,
-            outcome,
-            optional(resolvedBy),
+            resolutionAction,
+            optional(wrongfulPartyUserId),
             resolutionNotes,
             resolvedAt);
     }
 
-    @SqlUpdate("UPDATE disputes SET status = :status, outcome = :outcome, resolved_by = :resolvedBy, "
+    @SqlUpdate("UPDATE disputes SET status = :status, resolution_action = :resolutionAction, "
+        + "wrongful_party_user_id = :wrongfulPartyUserId, "
         + "resolution_notes = :resolutionNotes, resolved_at = :resolvedAt WHERE id = :id")
     void update(
         @Bind("id") UUID id,
         @Bind("status") String status,
-        @Bind("outcome") String outcome,
-        @Bind("resolvedBy") UUID resolvedBy,
+        @Bind("resolutionAction") String resolutionAction,
+        @Bind("wrongfulPartyUserId") UUID wrongfulPartyUserId,
         @Bind("resolutionNotes") String resolutionNotes,
         @Bind("resolvedAt") Instant resolvedAt);
 }

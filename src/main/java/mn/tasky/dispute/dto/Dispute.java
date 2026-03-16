@@ -5,11 +5,11 @@ import java.time.Instant;
 public record Dispute(
     String id,
     String bookingId,
-    String raiserId,
+    String raisedBy,
     String reason,
     String status,
-    String outcome,
-    String resolvedBy,
+    String resolutionAction,
+    String wrongfulPartyUserId,
     String resolutionNotes,
     Instant createdAt,
     Instant resolvedAt) {

@@ -1,5 +1,7 @@
 package mn.tasky.auth.dto;
 
+import java.time.Instant;
+
 public record VerificationDetail(
     String id,
     String userId,
@@ -10,5 +12,8 @@ public record VerificationDetail(
     String status,
     String adminNotes,
     String submittedAt,
-    String reviewedAt) {
+    String reviewedAt,
+    String consentPolicyVersion,
+    Instant consentAcceptedAt,
+    String danReference) {
 }

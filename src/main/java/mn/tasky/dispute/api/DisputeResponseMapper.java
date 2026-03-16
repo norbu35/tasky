@@ -12,10 +12,12 @@ public final class DisputeResponseMapper {
 
     public static Map<String, Object> admin(Dispute dispute) {
         Map<String, Object> response = summary(dispute);
-        response.put("raiser_id",
-            dispute.raiserId());
-        response.put("outcome",
-            dispute.outcome());
+        response.put("raised_by",
+            dispute.raisedBy());
+        response.put("resolution_action",
+            dispute.resolutionAction());
+        response.put("wrongful_party_user_id",
+            dispute.wrongfulPartyUserId());
         response.put("resolution_notes",
             dispute.resolutionNotes());
         response.put(

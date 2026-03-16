@@ -5,9 +5,13 @@ import java.time.Instant;
 public record Review(
     String id,
     String bookingId,
-    String authorId,
-    String targetUserId,
-    int rating,
+    String reviewerId,
+    String revieweeId,
+    Integer qualityRating,
+    Integer punctualityRating,
+    Integer communicationRating,
+    Integer clarityRating,
+    Integer respectfulnessRating,
     String comment,
     Instant createdAt) {
 }

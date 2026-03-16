@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import mn.tasky.auth.AccountRestrictedException;
 import mn.tasky.auth.dao.*;
 import mn.tasky.auth.dto.*;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtPrincipal;
@@ -86,7 +87,7 @@ public class AuthService {
     private final OtpChallengeDao otpChallengeDao;
     private final RefreshSessionDao refreshSessionDao;
     private final VerificationDao verificationDao;
-    private final AuditLogDao auditLogDao;
+    private final AuditEventDao auditEventDao;
     private final StrikeDao strikeDao;
     private final ModerationPolicyDao moderationPolicyDao;
     private final SuspensionEventDao suspensionEventDao;
@@ -105,7 +106,7 @@ public class AuthService {
         OtpChallengeDao otpChallengeDao,
         RefreshSessionDao refreshSessionDao,
         VerificationDao verificationDao,
-        AuditLogDao auditLogDao,
+        AuditEventDao auditEventDao,
         StrikeDao strikeDao,
         ModerationPolicyDao moderationPolicyDao,
         SuspensionEventDao suspensionEventDao,
@@ -132,7 +133,7 @@ public class AuthService {
         this.otpChallengeDao = otpChallengeDao;
         this.refreshSessionDao = refreshSessionDao;
         this.verificationDao = verificationDao;
-        this.auditLogDao = auditLogDao;
+        this.auditEventDao = auditEventDao;
         this.strikeDao = strikeDao;
         this.moderationPolicyDao = moderationPolicyDao;
         this.suspensionEventDao = suspensionEventDao;
@@ -1054,14 +1055,8 @@ public class AuthService {
             newCompleted);
     }
 
-    /**
-     * Returns all audit log entries.
-     *
-     * @return Audit log rows.
-     */
-    public List<AuditLogEntry> getAuditLog() {
-        return auditLogDao.findAll();
-    }
+    // getAuditLog removed — audit_log table replaced by audit_events (V10).
+    // A query-capable audit service will be introduced in a later task.
 
     /**
      * Adds a moderation strike and applies suspension policy when thresholds are reached.
@@ -1204,13 +1199,11 @@ public class AuthService {
         userDao.updateStatusAndSuspensionEnd(userId,
             "BANNED",
             null);
-        auditLogDao.insert(UUID.randomUUID()
-                .toString(),
-            adminId,
+        auditEventDao.insert(adminId,
             "BAN_USER",
+            "USER",
             userId,
-            reason,
-            Instant.now());
+            "{\"reason\":\"" + reason + "\"}");
         return true;
     }
 
@@ -1231,13 +1224,11 @@ public class AuthService {
         userDao.updateStatusAndSuspensionEnd(userId,
             "ACTIVE",
             null);
-        auditLogDao.insert(UUID.randomUUID()
-                .toString(),
-            adminId,
+        auditEventDao.insert(adminId,
             "UNBAN_USER",
+            "USER",
             userId,
-            reason,
-            Instant.now());
+            "{\"reason\":\"" + reason + "\"}");
         return true;
     }
 

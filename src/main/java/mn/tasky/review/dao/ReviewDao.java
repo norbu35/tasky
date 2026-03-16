@@ -19,9 +19,13 @@ public interface ReviewDao {
     default void insert(
         String id,
         String bookingId,
-        String authorId,
-        String targetUserId,
-        int rating,
+        String reviewerId,
+        String revieweeId,
+        Integer qualityRating,
+        Integer punctualityRating,
+        Integer communicationRating,
+        Integer clarityRating,
+        Integer respectfulnessRating,
         String comment,
         Instant createdAt) {
         insert(
@@ -29,62 +33,81 @@ public interface ReviewDao {
                 "id"),
             required(bookingId,
                 "bookingId"),
-            required(authorId,
-                "authorId"),
-            required(targetUserId,
-                "targetUserId"),
-            rating,
+            required(reviewerId,
+                "reviewerId"),
+            required(revieweeId,
+                "revieweeId"),
+            qualityRating,
+            punctualityRating,
+            communicationRating,
+            clarityRating,
+            respectfulnessRating,
             comment,
             createdAt);
     }
 
-    @SqlUpdate("INSERT INTO reviews (id, booking_id, author_id, target_user_id, rating, comment, " + "created_at) "
-        + "VALUES (:id, :bookingId, :authorId, :targetUserId, :rating, :comment, "
-        + ":createdAt)")
+    @SqlUpdate("INSERT INTO booking_reviews (id, booking_id, reviewer_id, reviewee_id, "
+        + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
+        + "comment, created_at) "
+        + "VALUES (:id, :bookingId, :reviewerId, :revieweeId, "
+        + ":qualityRating, :punctualityRating, :communicationRating, :clarityRating, :respectfulnessRating, "
+        + ":comment, :createdAt)")
     void insert(
         @Bind("id") UUID id,
         @Bind("bookingId") UUID bookingId,
-        @Bind("authorId") UUID authorId,
-        @Bind("targetUserId") UUID targetUserId,
-        @Bind("rating") int rating,
+        @Bind("reviewerId") UUID reviewerId,
+        @Bind("revieweeId") UUID revieweeId,
+        @Bind("qualityRating") Integer qualityRating,
+        @Bind("punctualityRating") Integer punctualityRating,
+        @Bind("communicationRating") Integer communicationRating,
+        @Bind("clarityRating") Integer clarityRating,
+        @Bind("respectfulnessRating") Integer respectfulnessRating,
         @Bind("comment") String comment,
         @Bind("createdAt") Instant createdAt);
 
-    default List<Review> findByTargetUserId(String userId, String cursor, int limit) {
+    default List<Review> findByRevieweeId(String userId, String cursor, int limit) {
         UUID userUuid = required(userId,
             "userId");
-        return findByTargetUserId(userUuid,
+        return findByRevieweeId(userUuid,
             optional(cursor),
             limit);
     }
 
-    default List<Review> findByTargetUserId(UUID userId, UUID cursor, int limit) {
+    default List<Review> findByRevieweeId(UUID userId, UUID cursor, int limit) {
         if (cursor == null) {
-            return findByTargetUserIdFirstPage(userId,
+            return findByRevieweeIdFirstPage(userId,
                 limit);
         }
-        return findByTargetUserIdAfterCursor(userId,
+        return findByRevieweeIdAfterCursor(userId,
             cursor,
             limit);
     }
 
-    @SqlQuery("SELECT * FROM reviews WHERE target_user_id = :userId " + "ORDER BY id LIMIT :limit")
-    List<Review> findByTargetUserIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
+    @SqlQuery("SELECT id, booking_id, reviewer_id, reviewee_id, "
+        + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
+        + "comment, created_at "
+        + "FROM booking_reviews WHERE reviewee_id = :userId "
+        + "ORDER BY id LIMIT :limit")
+    List<Review> findByRevieweeIdFirstPage(@Bind("userId") UUID userId, @Bind("limit") int limit);
 
-    @SqlQuery(
-        "SELECT * FROM reviews WHERE target_user_id = :userId " + "AND id > :cursor " + "ORDER BY id LIMIT :limit")
-    List<Review> findByTargetUserIdAfterCursor(
+    @SqlQuery("SELECT id, booking_id, reviewer_id, reviewee_id, "
+        + "quality_rating, punctuality_rating, communication_rating, clarity_rating, respectfulness_rating, "
+        + "comment, created_at "
+        + "FROM booking_reviews WHERE reviewee_id = :userId "
+        + "AND id > :cursor "
+        + "ORDER BY id LIMIT :limit")
+    List<Review> findByRevieweeIdAfterCursor(
         @Bind("userId") UUID userId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
 
-    default boolean existsByBookingIdAndAuthorId(String bookingId, String authorId) {
+    default boolean existsByBookingIdAndReviewerId(String bookingId, String reviewerId) {
         UUID bookingUuid = required(bookingId,
             "bookingId");
-        UUID authorUuid = required(authorId,
-            "authorId");
-        return existsByBookingIdAndAuthorId(bookingUuid,
-            authorUuid);
+        UUID reviewerUuid = required(reviewerId,
+            "reviewerId");
+        return existsByBookingIdAndReviewerId(bookingUuid,
+            reviewerUuid);
     }
 
-    @SqlQuery("SELECT EXISTS(SELECT 1 FROM reviews WHERE booking_id = :bookingId AND author_id = " + ":authorId)")
-    boolean existsByBookingIdAndAuthorId(@Bind("bookingId") UUID bookingId, @Bind("authorId") UUID authorId);
+    @SqlQuery("SELECT EXISTS(SELECT 1 FROM booking_reviews WHERE booking_id = :bookingId AND reviewer_id = :reviewerId)")
+    boolean existsByBookingIdAndReviewerId(@Bind("bookingId") UUID bookingId, @Bind("reviewerId") UUID reviewerId);
 }

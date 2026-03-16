@@ -25,7 +25,10 @@ public interface VerificationDao {
         String status,
         Instant submittedAt,
         String adminNotes,
-        Instant reviewedAt) {
+        Instant reviewedAt,
+        String consentPolicyVersion,
+        Instant consentAcceptedAt,
+        String danReference) {
         insert(
             required(id,
                 "id"),
@@ -36,13 +39,18 @@ public interface VerificationDao {
             status,
             submittedAt,
             adminNotes,
-            reviewedAt);
+            reviewedAt,
+            consentPolicyVersion,
+            consentAcceptedAt,
+            danReference);
     }
 
     @SqlUpdate("INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, status,"
-        + " submitted_at, admin_notes, reviewed_at) "
+        + " submitted_at, admin_notes, reviewed_at,"
+        + " consent_policy_version, consent_accepted_at, dan_reference) "
         + "VALUES (:id, :userId, :idCardFrontKey, :idCardBackKey, :status, "
-        + ":submittedAt, :adminNotes, :reviewedAt)")
+        + ":submittedAt, :adminNotes, :reviewedAt,"
+        + " :consentPolicyVersion, :consentAcceptedAt, :danReference)")
     void insert(
         @Bind("id") UUID id,
         @Bind("userId") UUID userId,
@@ -51,7 +59,10 @@ public interface VerificationDao {
         @Bind("status") String status,
         @Bind("submittedAt") Instant submittedAt,
         @Bind("adminNotes") String adminNotes,
-        @Bind("reviewedAt") Instant reviewedAt);
+        @Bind("reviewedAt") Instant reviewedAt,
+        @Bind("consentPolicyVersion") String consentPolicyVersion,
+        @Bind("consentAcceptedAt") Instant consentAcceptedAt,
+        @Bind("danReference") String danReference);
 
     default Optional<VerificationRequest> findById(String id) {
         return findById(required(id,
