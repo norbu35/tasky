@@ -7,14 +7,22 @@ import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -38,8 +46,8 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
         """;
 
     @Test
-    @DisplayName(
-            "Create task with intake answers persists intake_answers_json, intake_schema_version, scope_summary_source=TEMPLATE")
+    @DisplayName("Create task with intake answers persists intake_answers_json, "
+            + "intake_schema_version, scope_summary_source=TEMPLATE")
     void createTaskWithIntakeAnswers() {
         String adminToken = adminToken();
         AuthContext customer = authenticate("60");
@@ -123,9 +131,12 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
         String schemaV2 =
                 """
             [
-              {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan","Erdenet"]},
-              {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Medium","Large"]},
-              {"key":"floor","label":"Floor","type":"numeric_counter","required":true,"min":1,"max":30}
+              {"key":"location","label":"Location","type":"dropdown",
+                "required":true,"options":["UB","Darkhan","Erdenet"]},
+              {"key":"size","label":"Size","type":"single_select",
+                "required":true,"options":["Small","Medium","Large"]},
+              {"key":"floor","label":"Floor","type":"numeric_counter",
+                "required":true,"min":1,"max":30}
             ]
             """;
         postWithAuth(
