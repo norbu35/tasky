@@ -6,6 +6,8 @@ import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.TaskState;
+import org.jdbi.v3.core.Jdbi;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,7 +30,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@TestPropertySource(properties = "tasky.features.monetization-enabled=true")
 class PaymentIntegrationTests extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -45,6 +45,15 @@ class PaymentIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private Jdbi jdbi;
+
+    @BeforeEach
+    void enableEscrowToggle() {
+        jdbi.useHandle(handle -> handle.execute(
+            "UPDATE feature_toggles SET is_enabled = true WHERE feature_name = 'escrow_enabled'"));
+    }
 
     @Test
     @DisplayName("TID-TASK-031-API-QPAY-INITIATE initiation returns traceable reference")

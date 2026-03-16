@@ -1,9 +1,9 @@
 package mn.tasky.payment.application;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
+import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.payment.dao.PaymentIntentDao;
@@ -40,35 +40,41 @@ public class PaymentService {
     private final DomainEventOutboxService domainEventOutboxService;
     private final AnalyticsService analyticsService;
     private final PaymentIntentDao paymentIntentDao;
-    private final boolean monetizationEnabled;
-    private final byte[] qpayWebhookSecretBytes;
+    private final FeatureToggleService featureToggleService;
+    private final String qpayWebhookSecret;
     private final long maxCallbackAgeSeconds;
+    private volatile byte[] qpayWebhookSecretBytes;
 
-    @SuppressFBWarnings(
-        value = "CT_CONSTRUCTOR_THROW",
-        justification = "Payment integration must fail fast when monetization is enabled without webhook secret.")
     public PaymentService(
         BookingService bookingService,
         TaskService taskService,
         DomainEventOutboxService domainEventOutboxService,
         AnalyticsService analyticsService,
         PaymentIntentDao paymentIntentDao,
-        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled,
-        @Value("${tasky.qpay.webhook-secret}") String qpayWebhookSecret,
+        FeatureToggleService featureToggleService,
+        @Value("${tasky.qpay.webhook-secret:}") String qpayWebhookSecret,
         @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.domainEventOutboxService = domainEventOutboxService;
         this.analyticsService = analyticsService;
         this.paymentIntentDao = paymentIntentDao;
-        this.monetizationEnabled = monetizationEnabled;
+        this.featureToggleService = featureToggleService;
+        this.qpayWebhookSecret = qpayWebhookSecret;
         this.maxCallbackAgeSeconds = maxCallbackAgeSeconds;
-        if (monetizationEnabled && !StringUtils.hasText(qpayWebhookSecret)) {
-            throw new IllegalStateException("tasky.qpay.webhook-secret must be configured.");
+    }
+
+    private byte[] getWebhookSecretBytes() {
+        byte[] bytes = this.qpayWebhookSecretBytes;
+        if (bytes == null) {
+            if (!StringUtils.hasText(qpayWebhookSecret)) {
+                throw new IllegalStateException(
+                    "tasky.qpay.webhook-secret must be configured when escrow is enabled.");
+            }
+            bytes = qpayWebhookSecret.getBytes(StandardCharsets.UTF_8);
+            this.qpayWebhookSecretBytes = bytes;
         }
-        this.qpayWebhookSecretBytes = StringUtils.hasText(qpayWebhookSecret)
-            ? qpayWebhookSecret.getBytes(StandardCharsets.UTF_8)
-            : new byte[0];
+        return bytes;
     }
 
     /**
@@ -103,7 +109,7 @@ public class PaymentService {
     }
 
     private void ensureMonetizationEnabled() {
-        if (!monetizationEnabled) {
+        if (!featureToggleService.isEnabled("escrow_enabled")) {
             throw new IllegalStateException("Monetization is deferred.");
         }
     }
@@ -227,7 +233,7 @@ public class PaymentService {
     private String computeSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(qpayWebhookSecretBytes,
+            mac.init(new SecretKeySpec(getWebhookSecretBytes(),
                 HMAC_ALGORITHM));
             byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(signature.length * 2);

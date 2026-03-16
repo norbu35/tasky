@@ -7,11 +7,11 @@ import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.payment.application.PaymentService;
 import mn.tasky.payment.dto.InitiatePaymentRequest;
 import mn.tasky.payment.dto.PaymentIntent;
 import mn.tasky.payment.dto.QpayCallbackRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,18 +29,18 @@ public class PaymentController {
 
     private final BookingService bookingService;
     private final PaymentService paymentService;
-    private final boolean monetizationEnabled;
+    private final FeatureToggleService featureToggleService;
     private final IdempotencyService idempotencyService;
 
     public PaymentController(
         BookingService bookingService,
         PaymentService paymentService,
         IdempotencyService idempotencyService,
-        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled) {
+        FeatureToggleService featureToggleService) {
         this.bookingService = bookingService;
         this.paymentService = paymentService;
         this.idempotencyService = idempotencyService;
-        this.monetizationEnabled = monetizationEnabled;
+        this.featureToggleService = featureToggleService;
     }
 
     @PostMapping("/bookings/{id}/initiate")
@@ -75,7 +75,7 @@ public class PaymentController {
         }
 
         try {
-            if (!monetizationEnabled) {
+            if (!featureToggleService.isEnabled("escrow_enabled")) {
                 idempotencyService.abandon(principal.userId(),
                     IdempotencyOperations.INITIATE_PAYMENT,
                     idempotencyKey);
@@ -165,7 +165,7 @@ public class PaymentController {
 
     @PostMapping("/qpay/callback")
     public ResponseEntity<?> qpayCallback(@Valid @RequestBody QpayCallbackRequest body, HttpServletRequest request) {
-        if (!monetizationEnabled) {
+        if (!featureToggleService.isEnabled("escrow_enabled")) {
             return deferredResponse(request);
         }
         boolean success =

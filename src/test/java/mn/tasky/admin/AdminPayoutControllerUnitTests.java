@@ -1,6 +1,7 @@
 package mn.tasky.admin;
 
 import mn.tasky.admin.api.AdminPayoutController;
+import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyRecord;
@@ -23,8 +24,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdminPayoutControllerUnitTests {
@@ -35,11 +35,17 @@ class AdminPayoutControllerUnitTests {
     @Mock
     private IdempotencyService idempotencyService;
 
+    private FeatureToggleService featureToggleService(boolean enabled) {
+        FeatureToggleService fts = mock(FeatureToggleService.class);
+        lenient().when(fts.isEnabled("escrow_enabled")).thenReturn(enabled);
+        return fts;
+    }
+
     @Test
     void listPendingReturnsDeferredWhenMonetizationDisabled() {
         AdminPayoutController controller = new AdminPayoutController(walletService,
             idempotencyService,
-            false);
+            featureToggleService(false));
 
         ResponseEntity<?> response = controller.listPendingPayouts(request());
 
@@ -59,7 +65,7 @@ class AdminPayoutControllerUnitTests {
     void processPayoutReturnsInProgressWhenClaimIsRunning() {
         AdminPayoutController controller = new AdminPayoutController(walletService,
             idempotencyService,
-            true);
+            featureToggleService(true));
         JwtPrincipal principal = adminPrincipal();
         when(idempotencyService.claim(principal.userId(),
             IdempotencyOperations.PROCESS_PAYOUT,
@@ -92,7 +98,7 @@ class AdminPayoutControllerUnitTests {
     void processPayoutReturnsReplayMissingWhenCompletedRecordMissingResource() {
         AdminPayoutController controller = new AdminPayoutController(walletService,
             idempotencyService,
-            true);
+            featureToggleService(true));
         JwtPrincipal principal = adminPrincipal();
         IdempotencyRecord record = new IdempotencyRecord(
             UUID.fromString(uuid(11)),
@@ -124,7 +130,7 @@ class AdminPayoutControllerUnitTests {
     void processPayoutReplaysCompletedResourceWhenPresent() {
         AdminPayoutController controller = new AdminPayoutController(walletService,
             idempotencyService,
-            true);
+            featureToggleService(true));
         JwtPrincipal principal = adminPrincipal();
         String payoutId = uuid(3);
         when(idempotencyService.claim(principal.userId(),
@@ -168,7 +174,7 @@ class AdminPayoutControllerUnitTests {
     void processPayoutReturnsDeferredWhenMonetizationDisabled() {
         AdminPayoutController controller = new AdminPayoutController(walletService,
             idempotencyService,
-            false);
+            featureToggleService(false));
         JwtPrincipal principal = adminPrincipal();
         when(idempotencyService.claim(principal.userId(),
             IdempotencyOperations.PROCESS_PAYOUT,

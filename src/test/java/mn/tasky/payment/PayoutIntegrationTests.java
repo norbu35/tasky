@@ -7,6 +7,8 @@ import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.common.IntegrationTestBase;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.wallet.application.WalletService;
+import org.jdbi.v3.core.Jdbi;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.time.DayOfWeek;
@@ -29,7 +30,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@TestPropertySource(properties = "tasky.features.monetization-enabled=true")
 class PayoutIntegrationTests extends IntegrationTestBase {
 
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
@@ -52,6 +52,15 @@ class PayoutIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private BookingDao bookingDao;
+
+    @Autowired
+    private Jdbi jdbi;
+
+    @BeforeEach
+    void enableEscrowToggle() {
+        jdbi.useHandle(handle -> handle.execute(
+            "UPDATE feature_toggles SET is_enabled = true WHERE feature_name = 'escrow_enabled'"));
+    }
 
     @Test
     @DisplayName("TID-TASK-034-API-PAYOUT-REQUEST tasker can request payout up to available " + "balance")

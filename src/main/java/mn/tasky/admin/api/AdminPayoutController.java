@@ -3,13 +3,13 @@ package mn.tasky.admin.api;
 import jakarta.servlet.http.HttpServletRequest;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
+import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.wallet.application.WalletService;
 import mn.tasky.wallet.dto.PayoutRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,21 +28,21 @@ import static mn.tasky.common.api.ApiResponseSupport.*;
 public class AdminPayoutController {
 
     private final WalletService walletService;
-    private final boolean monetizationEnabled;
+    private final FeatureToggleService featureToggleService;
     private final IdempotencyService idempotencyService;
 
     public AdminPayoutController(
         WalletService walletService,
         IdempotencyService idempotencyService,
-        @Value("${tasky.features.monetization-enabled:false}") boolean monetizationEnabled) {
+        FeatureToggleService featureToggleService) {
         this.walletService = walletService;
         this.idempotencyService = idempotencyService;
-        this.monetizationEnabled = monetizationEnabled;
+        this.featureToggleService = featureToggleService;
     }
 
     @GetMapping("/pending")
     public ResponseEntity<?> listPendingPayouts(HttpServletRequest request) {
-        if (!monetizationEnabled) {
+        if (!featureToggleService.isEnabled("escrow_enabled")) {
             return deferredResponse(request);
         }
         List<PayoutRequest> pending = walletService.listPendingPayouts();
@@ -113,7 +113,7 @@ public class AdminPayoutController {
                 .orElseGet(() -> idempotencyReplayMissing(request));
         }
 
-        if (!monetizationEnabled) {
+        if (!featureToggleService.isEnabled("escrow_enabled")) {
             idempotencyService.abandon(actorId,
                 IdempotencyOperations.PROCESS_PAYOUT,
                 idempotencyKey);
