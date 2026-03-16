@@ -46,10 +46,6 @@ public class ReviewService {
         Integer qualityRating, Integer punctualityRating,
         Integer communicationRating, Integer clarityRating,
         Integer respectfulnessRating, String comment) {
-        if (qualityRating == null || qualityRating < 1 || qualityRating > 5) {
-            return new ReviewSubmitResult(null,
-                "INVALID_RATING");
-        }
 
         var bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
@@ -64,15 +60,42 @@ public class ReviewService {
         }
 
         String targetUserId;
-        if (booking.customerId()
-            .equals(authorId)) {
+        boolean isCustomerReviewingTasker;
+        if (booking.customerId().equals(authorId)) {
             targetUserId = booking.taskerId();
-        } else if (booking.taskerId()
-            .equals(authorId)) {
+            isCustomerReviewingTasker = true;
+        } else if (booking.taskerId().equals(authorId)) {
             targetUserId = booking.customerId();
+            isCustomerReviewingTasker = false;
         } else {
             return new ReviewSubmitResult(null,
                 "NOT_PARTICIPANT");
+        }
+
+        // Role-specific rating validation (REQ-SAFE-02)
+        double reviewAverage;
+        if (isCustomerReviewingTasker) {
+            // Customer reviewing Tasker: quality + punctuality + communication required
+            if (!isValidRating(qualityRating) || !isValidRating(punctualityRating)
+                || !isValidRating(communicationRating)) {
+                return new ReviewSubmitResult(null,
+                    "INVALID_RATING");
+            }
+            // Null out fields not applicable to this direction
+            clarityRating = null;
+            respectfulnessRating = null;
+            reviewAverage = (qualityRating + punctualityRating + communicationRating) / 3.0;
+        } else {
+            // Tasker reviewing Customer: clarity + respectfulness + punctuality required
+            if (!isValidRating(clarityRating) || !isValidRating(respectfulnessRating)
+                || !isValidRating(punctualityRating)) {
+                return new ReviewSubmitResult(null,
+                    "INVALID_RATING");
+            }
+            // Null out fields not applicable to this direction
+            qualityRating = null;
+            communicationRating = null;
+            reviewAverage = (clarityRating + respectfulnessRating + punctualityRating) / 3.0;
         }
 
         if (reviewDao.existsByBookingIdAndReviewerId(bookingId,
@@ -109,11 +132,15 @@ public class ReviewService {
             now);
 
         authService.updateUserStats(targetUserId,
-            qualityRating,
+            reviewAverage,
             false);
 
         return new ReviewSubmitResult(review,
             null);
+    }
+
+    private static boolean isValidRating(Integer rating) {
+        return rating != null && rating >= 1 && rating <= 5;
     }
 
     /**

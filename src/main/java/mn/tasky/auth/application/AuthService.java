@@ -1054,7 +1054,7 @@ public class AuthService {
      * @param rating             Optional new rating; values {@code <= 0} do not change average.
      * @param incrementCompleted Whether to increment completed task count.
      */
-    public void updateUserStats(String userId, int rating, boolean incrementCompleted) {
+    public void updateUserStats(String userId, double rating, boolean incrementCompleted) {
         UserProfileState current = profileDao.findByUserId(userId)
             .orElse(UserProfileState.defaultState());
 
@@ -1070,7 +1070,7 @@ public class AuthService {
                     count = 1;
                 }
                 newRating = (current.ratingAvg() * count + rating) / (count + 1);
-                if (current.ratingAvg() == 5.0 && rating == 5) {
+                if (current.ratingAvg() == 5.0 && rating == 5.0) {
                     newRating = 5.0;
                 }
             }

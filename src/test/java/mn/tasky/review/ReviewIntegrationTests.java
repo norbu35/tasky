@@ -252,15 +252,154 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         assertThat(profile.isPro()).isTrue();
     }
 
+    /**
+     * Review body for customer reviewing tasker: quality + punctuality + communication.
+     */
     private Map<String, Object> reviewBody(int rating, String comment) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("qualityRating", rating);
         body.put("punctualityRating", rating);
         body.put("communicationRating", rating);
-        body.put("clarityRating", rating);
-        body.put("respectfulnessRating", rating);
         body.put("comment", comment);
         return body;
+    }
+
+    /**
+     * Review body for customer reviewing tasker with individual ratings.
+     */
+    private Map<String, Object> customerReviewBody(
+        int quality, int punctuality, int communication, String comment) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("qualityRating", quality);
+        body.put("punctualityRating", punctuality);
+        body.put("communicationRating", communication);
+        body.put("comment", comment);
+        return body;
+    }
+
+    /**
+     * Review body for tasker reviewing customer: clarity + respectfulness + punctuality.
+     */
+    private Map<String, Object> taskerReviewBody(
+        int clarity, int respectfulness, int punctuality, String comment) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("clarityRating", clarity);
+        body.put("respectfulnessRating", respectfulness);
+        body.put("punctualityRating", punctuality);
+        body.put("comment", comment);
+        return body;
+    }
+
+    @Test
+    @DisplayName("REQ-SAFE-02 customer reviews tasker with quality/punctuality/communication")
+    void customerReviewsTaskerWithCorrectFields() {
+        AuthContext customer = authenticate("customer-role-1");
+        AuthContext tasker = authenticate("tasker-role-1");
+
+        BookingState booking = bookingService.createBooking(
+            createTaskForCustomer(customer, "cust-review-tasker"),
+            tasker.userId(),
+            customer.userId(),
+            10000);
+        bookingService.transitionToPaid(booking.id());
+        bookingService.completeBooking(customer.userId(), booking.id());
+
+        ResponseEntity<Map> response = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/reviews",
+            customer.accessToken(),
+            customerReviewBody(5, 4, 5, "Great tasker!"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        Map body = response.getBody();
+        assertThat(body.get("quality_rating")).isEqualTo(5);
+        assertThat(body.get("punctuality_rating")).isEqualTo(4);
+        assertThat(body.get("communication_rating")).isEqualTo(5);
+        assertThat(body.get("clarity_rating")).isNull();
+        assertThat(body.get("respectfulness_rating")).isNull();
+    }
+
+    @Test
+    @DisplayName("REQ-SAFE-02 customer reviews tasker missing punctuality returns 400")
+    void customerReviewsTaskerMissingPunctuality() {
+        AuthContext customer = authenticate("customer-role-2");
+        AuthContext tasker = authenticate("tasker-role-2");
+
+        BookingState booking = bookingService.createBooking(
+            createTaskForCustomer(customer, "cust-missing-punct"),
+            tasker.userId(),
+            customer.userId(),
+            10000);
+        bookingService.transitionToPaid(booking.id());
+        bookingService.completeBooking(customer.userId(), booking.id());
+
+        // Send quality and communication but omit punctuality
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("qualityRating", 5);
+        body.put("communicationRating", 4);
+        body.put("comment", "Missing punctuality");
+
+        ResponseEntity<Map> response = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/reviews",
+            customer.accessToken(),
+            body);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody().get("code")).isEqualTo("INVALID_RATING");
+    }
+
+    @Test
+    @DisplayName("REQ-SAFE-02 tasker reviews customer with clarity/respectfulness/punctuality")
+    void taskerReviewsCustomerWithCorrectFields() {
+        AuthContext customer = authenticate("customer-role-3");
+        AuthContext tasker = authenticate("tasker-role-3");
+
+        BookingState booking = bookingService.createBooking(
+            createTaskForCustomer(customer, "tasker-review-cust"),
+            tasker.userId(),
+            customer.userId(),
+            10000);
+        bookingService.transitionToPaid(booking.id());
+        bookingService.completeBooking(customer.userId(), booking.id());
+
+        ResponseEntity<Map> response = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/reviews",
+            tasker.accessToken(),
+            taskerReviewBody(4, 5, 4, "Good customer!"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        Map body = response.getBody();
+        assertThat(body.get("clarity_rating")).isEqualTo(4);
+        assertThat(body.get("respectfulness_rating")).isEqualTo(5);
+        assertThat(body.get("punctuality_rating")).isEqualTo(4);
+        assertThat(body.get("quality_rating")).isNull();
+        assertThat(body.get("communication_rating")).isNull();
+    }
+
+    @Test
+    @DisplayName("REQ-SAFE-02 tasker reviews customer missing clarity returns 400")
+    void taskerReviewsCustomerMissingClarity() {
+        AuthContext customer = authenticate("customer-role-4");
+        AuthContext tasker = authenticate("tasker-role-4");
+
+        BookingState booking = bookingService.createBooking(
+            createTaskForCustomer(customer, "tasker-missing-clarity"),
+            tasker.userId(),
+            customer.userId(),
+            10000);
+        bookingService.transitionToPaid(booking.id());
+        bookingService.completeBooking(customer.userId(), booking.id());
+
+        // Send respectfulness and punctuality but omit clarity
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("respectfulnessRating", 5);
+        body.put("punctualityRating", 4);
+        body.put("comment", "Missing clarity");
+
+        ResponseEntity<Map> response = postWithAuth(
+            "/api/v1/bookings/" + booking.id() + "/reviews",
+            tasker.accessToken(),
+            body);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody().get("code")).isEqualTo("INVALID_RATING");
     }
 
     record AuthContext(String userId, String accessToken) {

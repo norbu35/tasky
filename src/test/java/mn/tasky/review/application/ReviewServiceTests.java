@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -42,10 +43,15 @@ class ReviewServiceTests {
 
     @Test
     void submitReviewRejectsInvalidRating() {
-        ReviewSubmitResult result = reviewService.submitReview(uuid(),
-            uuid(),
+        // Customer with quality=0 (invalid), punctuality=3, communication=3
+        String bookingId = uuid();
+        BookingState booking = booking("COMPLETED");
+        when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
+
+        ReviewSubmitResult result = reviewService.submitReview(booking.customerId(),
+            bookingId,
             0,
-            null, null, null, null,
+            3, 3, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -65,7 +71,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
-            null, null, null, null,
+            4, 5, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -80,7 +86,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
-            null, null, null, null,
+            4, 5, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -113,7 +119,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
-            null, null, null, null,
+            4, 5, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -129,10 +135,11 @@ class ReviewServiceTests {
             booking.customerId()))
             .thenReturn(true);
 
+        // Customer reviewing tasker: quality + punctuality + communication
         ReviewSubmitResult result = reviewService.submitReview(booking.customerId(),
             bookingId,
             5,
-            null, null, null, null,
+            4, 5, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -148,11 +155,12 @@ class ReviewServiceTests {
             booking.customerId()))
             .thenReturn(false);
 
+        // Customer reviewing tasker: quality=5, punctuality=4, communication=5
         ReviewSubmitResult result =
             reviewService.submitReview(booking.customerId(),
                 bookingId,
                 5,
-                null, null, null, null,
+                4, 5, null, null,
                 "  <b>Great</b>   job  ");
 
         assertThat(result.isSuccess()).isTrue();
@@ -161,6 +169,9 @@ class ReviewServiceTests {
             .comment()).isEqualTo("Great job");
         assertThat(result.review()
             .revieweeId()).isEqualTo(booking.taskerId());
+        // Non-applicable fields nulled out
+        assertThat(result.review().clarityRating()).isNull();
+        assertThat(result.review().respectfulnessRating()).isNull();
 
         verify(reviewDao)
             .insert(
@@ -169,15 +180,16 @@ class ReviewServiceTests {
                 eq(booking.customerId()),
                 eq(booking.taskerId()),
                 eq(5),
-                any(),
-                any(),
-                any(),
-                any(),
+                eq(4),
+                eq(5),
+                isNull(),
+                isNull(),
                 eq("Great job"),
                 any(Instant.class));
+        // Average: (5+4+5)/3.0 = 4.666...
         verify(authService).updateUserStats(eq(booking.taskerId()),
-            anyInt(),
-            anyBoolean());
+            doubleThat(d -> Math.abs(d - 14.0 / 3.0) < 0.001),
+            eq(false));
     }
 
     @Test
@@ -200,30 +212,38 @@ class ReviewServiceTests {
             booking.taskerId()))
             .thenReturn(false);
 
+        // Tasker reviewing customer: clarity=4, respectfulness=5, punctuality=4
         ReviewSubmitResult result = reviewService.submitReview(booking.taskerId(),
             bookingId,
-            4,
-            null, null, null, null,
+            null,
+            4, null, 4, 5,
             "Done");
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.review()
             .revieweeId()).isEqualTo(booking.customerId());
+        // Non-applicable fields nulled out
+        assertThat(result.review().qualityRating()).isNull();
+        assertThat(result.review().communicationRating()).isNull();
+        // Average: (4+5+4)/3.0 = 4.333...
         verify(authService).updateUserStats(eq(booking.customerId()),
-            anyInt(),
-            anyBoolean());
+            doubleThat(d -> Math.abs(d - 13.0 / 3.0) < 0.001),
+            eq(false));
     }
 
     @Test
     void invalidRatingDoesNotCallDependencies() {
-        reviewService.submitReview(uuid(),
-            uuid(),
+        // Customer with quality=9 (invalid) -- but booking lookup happens first now
+        String bookingId = uuid();
+        BookingState booking = booking("COMPLETED");
+        when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
+
+        reviewService.submitReview(booking.customerId(),
+            bookingId,
             9,
-            null, null, null, null,
+            4, 5, null, null,
             "bad");
 
-        verify(bookingService,
-            never()).getBooking(anyString());
         verify(reviewDao,
             never())
             .insert(anyString(),
