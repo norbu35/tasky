@@ -12,6 +12,5 @@ public final class IdempotencyOperations {
     public static final String REQUEST_PAYOUT = "wallet.request_payout";
     public static final String PROCESS_PAYOUT = "wallet.process_payout";
 
-    private IdempotencyOperations() {
-    }
+    private IdempotencyOperations() {}
 }

@@ -4,8 +4,7 @@ import java.util.UUID;
 
 public final class UuidHelper {
 
-    private UuidHelper() {
-    }
+    private UuidHelper() {}
 
     public static UUID required(String value, String fieldName) {
         if (value == null) {
@@ -14,8 +13,7 @@ public final class UuidHelper {
         try {
             return UUID.fromString(value);
         } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Invalid UUID for " + fieldName + ": " + value,
-                exception);
+            throw new IllegalArgumentException("Invalid UUID for " + fieldName + ": " + value, exception);
         }
     }
 
@@ -26,8 +24,7 @@ public final class UuidHelper {
         try {
             return UUID.fromString(value);
         } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Invalid UUID: " + value,
-                exception);
+            throw new IllegalArgumentException("Invalid UUID: " + value, exception);
         }
     }
 }

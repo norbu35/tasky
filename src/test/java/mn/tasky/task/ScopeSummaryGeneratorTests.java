@@ -1,13 +1,13 @@
 package mn.tasky.task;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mn.tasky.task.application.ScopeSummaryGenerator;
 import mn.tasky.task.application.ScopeSummaryGenerator.SummaryResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ScopeSummaryGeneratorTests {
 
@@ -21,7 +21,8 @@ class ScopeSummaryGeneratorTests {
     @Test
     @DisplayName("Valid schema + answers generates Label: Value summary lines in schema order")
     void validSchemaAndAnswers() {
-        String schema = """
+        String schema =
+                """
             [
               {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan"]},
               {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Large"]},
@@ -41,7 +42,8 @@ class ScopeSummaryGeneratorTests {
     @Test
     @DisplayName("Missing answers only includes answered fields")
     void missingAnswersSkipsFields() {
-        String schema = """
+        String schema =
+                """
             [
               {"key":"location","label":"Location","type":"dropdown"},
               {"key":"size","label":"Size","type":"single_select"},
@@ -61,7 +63,8 @@ class ScopeSummaryGeneratorTests {
     @Test
     @DisplayName("Array values are joined with comma separator")
     void arrayValuesJoinedWithComma() {
-        String schema = """
+        String schema =
+                """
             [
               {"key":"skills","label":"Skills Needed","type":"multi_select","options":["Plumbing","Electric","Paint"]}
             ]
@@ -125,7 +128,8 @@ class ScopeSummaryGeneratorTests {
     @Test
     @DisplayName("Empty answers produce empty summary")
     void emptyAnswers() {
-        String schema = """
+        String schema =
+                """
             [
               {"key":"location","label":"Location","type":"text"}
             ]

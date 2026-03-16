@@ -2,6 +2,7 @@ package mn.tasky.auth.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Map;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.FacebookRateLimitService;
 import mn.tasky.auth.dto.AuthSession;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/facebook")
@@ -30,17 +29,17 @@ public class FacebookAuthController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> login(
-        @Valid @RequestBody FacebookLoginRequest body, HttpServletRequest request) {
+            @Valid @RequestBody FacebookLoginRequest body, HttpServletRequest request) {
         facebookRateLimitService.assertAllowed(resolveClientIp(request));
         AuthSession session = authService.facebookLogin(body.accessToken());
 
         return ResponseEntity.ok(Map.of(
-            "access_token",
-            session.accessToken(),
-            "refresh_token",
-            session.refreshToken(),
-            "user",
-            session.user()));
+                "access_token",
+                session.accessToken(),
+                "refresh_token",
+                session.refreshToken(),
+                "user",
+                session.user()));
     }
 
     private String resolveClientIp(HttpServletRequest request) {

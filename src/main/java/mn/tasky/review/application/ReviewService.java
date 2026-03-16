@@ -1,5 +1,8 @@
 package mn.tasky.review.application;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.validation.TextSanitizer;
@@ -7,10 +10,6 @@ import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.review.dto.Review;
 import mn.tasky.review.dto.ReviewSubmitResult;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service responsible for managing user reviews and ratings.
@@ -42,21 +41,23 @@ public class ReviewService {
      * @return A {@link ReviewSubmitResult} containing the created Review or an error.
      */
     public ReviewSubmitResult submitReview(
-        String authorId, String bookingId,
-        Integer qualityRating, Integer punctualityRating,
-        Integer communicationRating, Integer clarityRating,
-        Integer respectfulnessRating, String comment) {
+            String authorId,
+            String bookingId,
+            Integer qualityRating,
+            Integer punctualityRating,
+            Integer communicationRating,
+            Integer clarityRating,
+            Integer respectfulnessRating,
+            String comment) {
 
         var bookingOpt = bookingService.getBooking(bookingId);
         if (bookingOpt.isEmpty()) {
-            return new ReviewSubmitResult(null,
-                "BOOKING_NOT_FOUND");
+            return new ReviewSubmitResult(null, "BOOKING_NOT_FOUND");
         }
         var booking = bookingOpt.get();
 
         if (!"COMPLETED".equals(booking.status())) {
-            return new ReviewSubmitResult(null,
-                "BOOKING_NOT_COMPLETED");
+            return new ReviewSubmitResult(null, "BOOKING_NOT_COMPLETED");
         }
 
         String targetUserId;
@@ -68,18 +69,17 @@ public class ReviewService {
             targetUserId = booking.customerId();
             isCustomerReviewingTasker = false;
         } else {
-            return new ReviewSubmitResult(null,
-                "NOT_PARTICIPANT");
+            return new ReviewSubmitResult(null, "NOT_PARTICIPANT");
         }
 
         // Role-specific rating validation (REQ-SAFE-02)
         double reviewAverage;
         if (isCustomerReviewingTasker) {
             // Customer reviewing Tasker: quality + punctuality + communication required
-            if (!isValidRating(qualityRating) || !isValidRating(punctualityRating)
-                || !isValidRating(communicationRating)) {
-                return new ReviewSubmitResult(null,
-                    "INVALID_RATING");
+            if (!isValidRating(qualityRating)
+                    || !isValidRating(punctualityRating)
+                    || !isValidRating(communicationRating)) {
+                return new ReviewSubmitResult(null, "INVALID_RATING");
             }
             // Null out fields not applicable to this direction
             clarityRating = null;
@@ -87,10 +87,10 @@ public class ReviewService {
             reviewAverage = (qualityRating + punctualityRating + communicationRating) / 3.0;
         } else {
             // Tasker reviewing Customer: clarity + respectfulness + punctuality required
-            if (!isValidRating(clarityRating) || !isValidRating(respectfulnessRating)
-                || !isValidRating(punctualityRating)) {
-                return new ReviewSubmitResult(null,
-                    "INVALID_RATING");
+            if (!isValidRating(clarityRating)
+                    || !isValidRating(respectfulnessRating)
+                    || !isValidRating(punctualityRating)) {
+                return new ReviewSubmitResult(null, "INVALID_RATING");
             }
             // Null out fields not applicable to this direction
             qualityRating = null;
@@ -98,45 +98,41 @@ public class ReviewService {
             reviewAverage = (clarityRating + respectfulnessRating + punctualityRating) / 3.0;
         }
 
-        if (reviewDao.existsByBookingIdAndReviewerId(bookingId,
-            authorId)) {
-            return new ReviewSubmitResult(null,
-                "ALREADY_REVIEWED");
+        if (reviewDao.existsByBookingIdAndReviewerId(bookingId, authorId)) {
+            return new ReviewSubmitResult(null, "ALREADY_REVIEWED");
         }
 
-        String id = UUID.randomUUID()
-            .toString();
+        String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
         String sanitizedComment = TextSanitizer.plainText(comment);
-        Review review = new Review(id,
-            bookingId,
-            authorId,
-            targetUserId,
-            qualityRating,
-            punctualityRating,
-            communicationRating,
-            clarityRating,
-            respectfulnessRating,
-            sanitizedComment,
-            now);
-        reviewDao.insert(id,
-            bookingId,
-            authorId,
-            targetUserId,
-            qualityRating,
-            punctualityRating,
-            communicationRating,
-            clarityRating,
-            respectfulnessRating,
-            sanitizedComment,
-            now);
+        Review review = new Review(
+                id,
+                bookingId,
+                authorId,
+                targetUserId,
+                qualityRating,
+                punctualityRating,
+                communicationRating,
+                clarityRating,
+                respectfulnessRating,
+                sanitizedComment,
+                now);
+        reviewDao.insert(
+                id,
+                bookingId,
+                authorId,
+                targetUserId,
+                qualityRating,
+                punctualityRating,
+                communicationRating,
+                clarityRating,
+                respectfulnessRating,
+                sanitizedComment,
+                now);
 
-        authService.updateUserStats(targetUserId,
-            reviewAverage,
-            false);
+        authService.updateUserStats(targetUserId, reviewAverage, false);
 
-        return new ReviewSubmitResult(review,
-            null);
+        return new ReviewSubmitResult(review, null);
     }
 
     private static boolean isValidRating(Integer rating) {
@@ -152,8 +148,6 @@ public class ReviewService {
      * @return A list of {@link Review} objects.
      */
     public List<Review> listReviews(String userId, String cursor, int limit) {
-        return reviewDao.findByRevieweeId(userId,
-            cursor,
-            limit);
+        return reviewDao.findByRevieweeId(userId, cursor, limit);
     }
 }

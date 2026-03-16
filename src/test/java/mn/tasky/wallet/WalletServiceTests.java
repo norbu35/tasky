@@ -1,5 +1,8 @@
 package mn.tasky.wallet;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import mn.tasky.wallet.application.WalletService;
 import mn.tasky.wallet.dao.CreditedBookingDao;
 import mn.tasky.wallet.dao.LedgerEntryDao;
@@ -11,9 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WalletServiceTests {
@@ -34,53 +34,43 @@ class WalletServiceTests {
 
     @BeforeEach
     void setUp() {
-        walletService = new WalletService(walletDao,
-            ledgerEntryDao,
-            payoutRequestDao,
-            creditedBookingDao);
+        walletService = new WalletService(walletDao, ledgerEntryDao, payoutRequestDao, creditedBookingDao);
     }
 
     @Test
     @DisplayName("TID-TASK-033-DOMAIN-WALLET-CREDIT TID-TASK-033-DOMAIN-FEE-DEDUCTION completion "
-        + "credit applies fee deduction before net deposit")
+            + "credit applies fee deduction before net deposit")
     void creditTaskCompletionAppliesFeeAndNetDeposit() {
         String taskerId = uuid(1);
         String bookingId = uuid(2);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(1);
 
-        walletService.creditTaskCompletion(taskerId,
-            bookingId,
-            10000,
-            0.10);
+        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
 
-        verify(walletDao).ensureExists(eq(taskerId),
-            any());
-        verify(walletDao).addBalance(eq(taskerId),
-            eq(9000L),
-            any());
+        verify(walletDao).ensureExists(eq(taskerId), any());
+        verify(walletDao).addBalance(eq(taskerId), eq(9000L), any());
         verify(ledgerEntryDao)
-            .insert(
-                any(),
-                eq(taskerId),
-                eq(9000),
-                eq("DEPOSIT"),
-                eq(bookingId),
-                org.mockito.ArgumentMatchers.contains(bookingId),
-                any());
+                .insert(
+                        any(),
+                        eq(taskerId),
+                        eq(9000),
+                        eq("DEPOSIT"),
+                        eq(bookingId),
+                        org.mockito.ArgumentMatchers.contains(bookingId),
+                        any());
         verify(ledgerEntryDao)
-            .insert(
-                any(),
-                isNull(),
-                eq(1000),
-                eq("FEE"),
-                eq(bookingId),
-                org.mockito.ArgumentMatchers.contains(bookingId),
-                any());
+                .insert(
+                        any(),
+                        isNull(),
+                        eq(1000),
+                        eq("FEE"),
+                        eq(bookingId),
+                        org.mockito.ArgumentMatchers.contains(bookingId),
+                        any());
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-            suffix);
+        return String.format("00000000-0000-0000-0000-%012d", suffix);
     }
 
     @Test
@@ -89,25 +79,18 @@ class WalletServiceTests {
         String bookingId = uuid(4);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(0);
 
-        walletService.creditTaskCompletion(taskerId,
-            bookingId,
-            10000,
-            0.10);
+        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
 
-        verify(walletDao,
-            never())
-            .addBalance(org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                any());
-        verify(ledgerEntryDao,
-            never())
-            .insert(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyInt(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                any());
+        verify(walletDao, never())
+                .addBalance(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyLong(), any());
+        verify(ledgerEntryDao, never())
+                .insert(
+                        org.mockito.ArgumentMatchers.anyString(),
+                        org.mockito.ArgumentMatchers.anyString(),
+                        org.mockito.ArgumentMatchers.anyInt(),
+                        org.mockito.ArgumentMatchers.anyString(),
+                        org.mockito.ArgumentMatchers.anyString(),
+                        org.mockito.ArgumentMatchers.anyString(),
+                        any());
     }
 }

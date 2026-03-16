@@ -1,7 +1,14 @@
 package mn.tasky.task;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,14 +17,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TaskDraftIntegrationTests extends IntegrationTestBase {
@@ -30,7 +29,8 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
 
-    private static final String VALID_SCHEMA = """
+    private static final String VALID_SCHEMA =
+            """
         [
           {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan","Erdenet"]},
           {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Medium","Large"]},
@@ -45,8 +45,8 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         AuthContext customer = authenticate("50");
         String categoryId = createCategoryWithActiveSchema(adminToken);
 
-        ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Map<String, Object> body = response.getBody();
@@ -67,8 +67,8 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         // Create category but do NOT activate a schema
         String categoryId = createCategory(adminToken);
 
-        ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody()).containsKey("code");
@@ -82,8 +82,8 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         String categoryId = createCategoryWithActiveSchema(adminToken);
 
         // Create a draft
-        ResponseEntity<Map> createRes = postWithAuth(
-            "/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
+        ResponseEntity<Map> createRes =
+                postWithAuth("/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
         assertThat(createRes.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String draftId = String.valueOf(createRes.getBody().get("id"));
 
@@ -106,8 +106,8 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         String categoryId = createCategoryWithActiveSchema(adminToken);
 
         // Create a draft
-        ResponseEntity<Map> createRes = postWithAuth(
-            "/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
+        ResponseEntity<Map> createRes =
+                postWithAuth("/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
         assertThat(createRes.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String draftId = String.valueOf(createRes.getBody().get("id"));
 
@@ -115,8 +115,9 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         String answers = "{\"location\":\"UB\",\"size\":\"Medium\",\"urgent\":true}";
         String summary = "Cleaning needed in UB, medium size, urgent";
         ResponseEntity<Map> updateRes = putWithAuth(
-            "/api/v1/tasks/drafts/" + draftId, customer.accessToken(),
-            Map.of("intake_answers", answers, "summary_draft", summary));
+                "/api/v1/tasks/drafts/" + draftId,
+                customer.accessToken(),
+                Map.of("intake_answers", answers, "summary_draft", summary));
 
         assertThat(updateRes.getStatusCode()).isEqualTo(HttpStatus.OK);
         Map<String, Object> body = updateRes.getBody();
@@ -148,17 +149,15 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
         String phone = "+976" + prefix + "000000";
         post("/api/v1/auth/otp/request", Map.of("phone", phone));
 
-        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify",
-            Map.of("phone", phone, "code", "123456"));
+        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify", Map.of("phone", phone, "code", "123456"));
 
         assertThat(verifyResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> user = (Map<String, Object>) verifyResponse.getBody().get("user");
+        Map<String, Object> user =
+                (Map<String, Object>) verifyResponse.getBody().get("user");
         return new AuthContext(
-            String.valueOf(verifyResponse.getBody().get("access_token")),
-            String.valueOf(user.get("id")),
-            phone);
+                String.valueOf(verifyResponse.getBody().get("access_token")), String.valueOf(user.get("id")), phone);
     }
 
     private record AuthContext(String accessToken, String userId, String phone) {}
@@ -170,28 +169,27 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
 
         // Create schema version
         postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", VALID_SCHEMA));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", VALID_SCHEMA));
 
         // Activate schema version 1
-        postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/1/activate",
-            adminToken,
-            Map.of());
+        postWithAuth("/api/v1/admin/categories/" + categoryId + "/schemas/1/activate", adminToken, Map.of());
 
         return categoryId;
     }
 
     private String createCategory(String adminToken) {
         ResponseEntity<Map> res = postWithAuth(
-            "/api/v1/admin/categories",
-            adminToken,
-            Map.of(
-                "name", "Draft Test " + UUID.randomUUID().toString().substring(0, 8),
-                "name_mn", "Драфт Тест",
-                "icon_url", "https://cdn.tasky.local/icons/test.png",
-                "sort_order", 900));
+                "/api/v1/admin/categories",
+                adminToken,
+                Map.of(
+                        "name",
+                        "Draft Test " + UUID.randomUUID().toString().substring(0, 8),
+                        "name_mn",
+                        "Драфт Тест",
+                        "icon_url",
+                        "https://cdn.tasky.local/icons/test.png",
+                        "sort_order",
+                        900));
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return String.valueOf(res.getBody().get("id"));
     }
@@ -201,14 +199,14 @@ class TaskDraftIntegrationTests extends IntegrationTestBase {
     private String adminToken() {
         Instant now = Instant.now();
         return Jwts.builder()
-            .subject(UUID.randomUUID().toString())
-            .claim("role", "ADMIN")
-            .claim("status", "ACTIVE")
-            .claim("token_type", "access")
-            .issuedAt(Date.from(now))
-            .expiration(Date.from(now.plusSeconds(3600)))
-            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
-            .compact();
+                .subject(UUID.randomUUID().toString())
+                .claim("role", "ADMIN")
+                .claim("status", "ACTIVE")
+                .claim("token_type", "access")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
     }
 
     // --- HTTP helpers ---

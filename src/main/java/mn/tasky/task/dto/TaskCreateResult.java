@@ -12,15 +12,11 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
     public static final String DRAFT_NOT_FOUND = "DRAFT_NOT_FOUND";
 
     public static TaskCreateResult success(TaskState task) {
-        return new TaskCreateResult(task,
-            null,
-            null);
+        return new TaskCreateResult(task, null, null);
     }
 
     public static TaskCreateResult error(String code, String message) {
-        return new TaskCreateResult(null,
-            code,
-            message);
+        return new TaskCreateResult(null, code, message);
     }
 
     public boolean isSuccess() {

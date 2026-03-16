@@ -1,9 +1,8 @@
 package mn.tasky.common.feature;
 
+import java.util.List;
 import mn.tasky.common.audit.AuditEventDao;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class FeatureToggleService {
@@ -21,23 +20,24 @@ public class FeatureToggleService {
     }
 
     public boolean isEnabled(String featureName) {
-        return featureToggleDao.findByName(featureName)
-            .map(FeatureToggle::isEnabled)
-            .orElse(false);
+        return featureToggleDao
+                .findByName(featureName)
+                .map(FeatureToggle::isEnabled)
+                .orElse(false);
     }
 
     public FeatureToggle update(String featureName, boolean enabled, String actorUserId) {
         featureToggleDao.update(featureName, enabled, actorUserId);
 
         auditEventDao.insert(
-            actorUserId,
-            "FEATURE_TOGGLE_UPDATED",
-            "FEATURE_TOGGLE",
-            null,
-            "{\"feature_name\":\"" + featureName + "\",\"is_enabled\":" + enabled + "}");
+                actorUserId,
+                "FEATURE_TOGGLE_UPDATED",
+                "FEATURE_TOGGLE",
+                null,
+                "{\"feature_name\":\"" + featureName + "\",\"is_enabled\":" + enabled + "}");
 
-        return featureToggleDao.findByName(featureName)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Feature toggle not found: " + featureName));
+        return featureToggleDao
+                .findByName(featureName)
+                .orElseThrow(() -> new IllegalArgumentException("Feature toggle not found: " + featureName));
     }
 }

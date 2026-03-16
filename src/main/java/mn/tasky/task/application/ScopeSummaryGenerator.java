@@ -3,15 +3,14 @@ package mn.tasky.task.application;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * Generates deterministic scope summaries from intake answers and category schema fields.
@@ -41,8 +40,7 @@ public class ScopeSummaryGenerator {
             if (!schemaArray.isArray()) {
                 throw new IllegalArgumentException("Schema is not a JSON array");
             }
-            Map<String, Object> answers = objectMapper.readValue(
-                answersJson, new TypeReference<>() {});
+            Map<String, Object> answers = objectMapper.readValue(answersJson, new TypeReference<>() {});
 
             List<String> lines = new ArrayList<>();
             for (JsonNode field : schemaArray) {
@@ -68,9 +66,7 @@ public class ScopeSummaryGenerator {
 
     private String formatValue(Object value, String answersJson, String key) {
         if (value instanceof List<?> listValue) {
-            return listValue.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
+            return listValue.stream().map(String::valueOf).collect(Collectors.joining(", "));
         }
         // Check if the raw JSON node is an array (Jackson may deserialize as list already,
         // but handle the case where ObjectMapper produced something else)
@@ -79,8 +75,8 @@ public class ScopeSummaryGenerator {
             JsonNode valueNode = answersNode.get(key);
             if (valueNode != null && valueNode.isArray()) {
                 return StreamSupport.stream(valueNode.spliterator(), false)
-                    .map(JsonNode::asText)
-                    .collect(Collectors.joining(", "));
+                        .map(JsonNode::asText)
+                        .collect(Collectors.joining(", "));
             }
         } catch (Exception ignored) {
             // fall through to toString
@@ -90,16 +86,13 @@ public class ScopeSummaryGenerator {
 
     private SummaryResult fallback(String answersJson) {
         try {
-            Map<String, Object> answers = objectMapper.readValue(
-                answersJson, new TypeReference<>() {});
+            Map<String, Object> answers = objectMapper.readValue(answersJson, new TypeReference<>() {});
             List<String> lines = new ArrayList<>();
             for (Map.Entry<String, Object> entry : answers.entrySet()) {
                 Object val = entry.getValue();
                 String formatted;
                 if (val instanceof List<?> listVal) {
-                    formatted = listVal.stream()
-                        .map(String::valueOf)
-                        .collect(Collectors.joining(", "));
+                    formatted = listVal.stream().map(String::valueOf).collect(Collectors.joining(", "));
                 } else {
                     formatted = String.valueOf(val);
                 }

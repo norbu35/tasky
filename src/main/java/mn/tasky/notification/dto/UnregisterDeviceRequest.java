@@ -1,4 +1,3 @@
 package mn.tasky.notification.dto;
 
-public record UnregisterDeviceRequest(String token) {
-}
+public record UnregisterDeviceRequest(String token) {}

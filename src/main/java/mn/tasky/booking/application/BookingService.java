@@ -1,5 +1,9 @@
 package mn.tasky.booking.application;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
@@ -11,11 +15,6 @@ import mn.tasky.booking.dto.BookingTransitionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service responsible for managing bookings between customers and taskers.
@@ -33,10 +32,10 @@ public class BookingService {
     private final BookingCompletionSignalDao bookingCompletionSignalDao;
 
     public BookingService(
-        AuthService authService,
-        BookingDao bookingDao,
-        BookingReliabilityIncidentDao bookingReliabilityIncidentDao,
-        BookingCompletionSignalDao bookingCompletionSignalDao) {
+            AuthService authService,
+            BookingDao bookingDao,
+            BookingReliabilityIncidentDao bookingReliabilityIncidentDao,
+            BookingCompletionSignalDao bookingCompletionSignalDao) {
         this.authService = authService;
         this.bookingDao = bookingDao;
         this.bookingReliabilityIncidentDao = bookingReliabilityIncidentDao;
@@ -53,11 +52,7 @@ public class BookingService {
      * @return The newly created {@link BookingState}.
      */
     public BookingState createBooking(String taskId, String taskerId, String customerId, int price) {
-        return createBooking(taskId,
-            taskerId,
-            customerId,
-            price,
-            false);
+        return createBooking(taskId, taskerId, customerId, price, false);
     }
 
     /**
@@ -71,48 +66,47 @@ public class BookingService {
      * @return The newly created {@link BookingState}.
      */
     public BookingState createBooking(
-        String taskId, String taskerId, String customerId, int price, boolean liabilityDisclaimerAccepted) {
+            String taskId, String taskerId, String customerId, int price, boolean liabilityDisclaimerAccepted) {
         Instant now = Instant.now();
-        String id = UUID.randomUUID()
-            .toString();
+        String id = UUID.randomUUID().toString();
         Instant disclaimerAcceptedAt = liabilityDisclaimerAccepted ? now : null;
         BookingState booking = new BookingState(
-            id,
-            taskId,
-            taskerId,
-            customerId,
-            price,
-            "ASSIGNED",
-            null,
-            liabilityDisclaimerAccepted,
-            null,
-            "DIRECT",
-            false,
-            disclaimerAcceptedAt,
-            now,
-            now);
+                id,
+                taskId,
+                taskerId,
+                customerId,
+                price,
+                "ASSIGNED",
+                null,
+                liabilityDisclaimerAccepted,
+                null,
+                "DIRECT",
+                false,
+                disclaimerAcceptedAt,
+                now,
+                now);
         bookingDao.insert(
-            id,
-            taskId,
-            taskerId,
-            customerId,
-            price,
-            "ASSIGNED",
-            null,
-            liabilityDisclaimerAccepted,
-            null,
-            "DIRECT",
-            false,
-            disclaimerAcceptedAt,
-            now,
-            now);
+                id,
+                taskId,
+                taskerId,
+                customerId,
+                price,
+                "ASSIGNED",
+                null,
+                liabilityDisclaimerAccepted,
+                null,
+                "DIRECT",
+                false,
+                disclaimerAcceptedAt,
+                now,
+                now);
         log.info(
-            "Booking created: id={}, task={}, tasker={}, customer={}, price={}",
-            id,
-            taskId,
-            taskerId,
-            customerId,
-            price);
+                "Booking created: id={}, task={}, tasker={}, customer={}, price={}",
+                id,
+                taskId,
+                taskerId,
+                customerId,
+                price);
         return booking;
     }
 
@@ -130,11 +124,7 @@ public class BookingService {
 
         BookingState current = bookingOpt.get();
         Instant now = Instant.now();
-        bookingDao.update(bookingId,
-            current.status(),
-            current.cancellationFee(),
-            true,
-            now);
+        bookingDao.update(bookingId, current.status(), current.cancellationFee(), true, now);
         return bookingDao.findById(bookingId);
     }
 
@@ -157,11 +147,7 @@ public class BookingService {
      * @return A list of matching {@link BookingState} instances.
      */
     public List<BookingState> listBookings(String userId, String role, String status) {
-        return listBookings(userId,
-            role,
-            status,
-            null,
-            50);
+        return listBookings(userId, role, status, null, 50);
     }
 
     /**
@@ -176,20 +162,11 @@ public class BookingService {
      */
     public List<BookingState> listBookings(String userId, String role, String status, String cursor, int limit) {
         if ("customer".equalsIgnoreCase(role)) {
-            return bookingDao.findByCustomerId(userId,
-                status,
-                cursor,
-                limit);
+            return bookingDao.findByCustomerId(userId, status, cursor, limit);
         } else if ("tasker".equalsIgnoreCase(role)) {
-            return bookingDao.findByTaskerId(userId,
-                status,
-                cursor,
-                limit);
+            return bookingDao.findByTaskerId(userId, status, cursor, limit);
         }
-        return bookingDao.findByParticipant(userId,
-            status,
-            cursor,
-            limit);
+        return bookingDao.findByParticipant(userId, status, cursor, limit);
     }
 
     /**
@@ -199,9 +176,7 @@ public class BookingService {
      * @return The {@link BookingTransitionResult} describing success or failure.
      */
     public BookingTransitionResult transitionToPaid(String bookingId) {
-        return transition(bookingId,
-            "PAID",
-            List.of("ASSIGNED"));
+        return transition(bookingId, "PAID", List.of("ASSIGNED"));
     }
 
     private BookingTransitionResult transition(String bookingId, String newStatus, List<String> allowedFrom) {
@@ -217,31 +192,24 @@ public class BookingService {
 
         Instant now = Instant.now();
         Integer fee = current.cancellationFee();
-        bookingDao.update(bookingId,
-            newStatus,
-            fee,
-            current.liabilityDisclaimerAccepted(),
-            now);
-        log.info("Booking {} transitioned from {} to {}",
-            bookingId,
-            current.status(),
-            newStatus);
+        bookingDao.update(bookingId, newStatus, fee, current.liabilityDisclaimerAccepted(), now);
+        log.info("Booking {} transitioned from {} to {}", bookingId, current.status(), newStatus);
 
         BookingState updated = new BookingState(
-            current.id(),
-            current.taskId(),
-            current.taskerId(),
-            current.customerId(),
-            current.price(),
-            newStatus,
-            fee,
-            current.liabilityDisclaimerAccepted(),
-            current.confirmedScheduledAt(),
-            current.settlementMode(),
-            current.lateCancelIncident(),
-            current.liabilityDisclaimerAcceptedAt(),
-            current.createdAt(),
-            now);
+                current.id(),
+                current.taskId(),
+                current.taskerId(),
+                current.customerId(),
+                current.price(),
+                newStatus,
+                fee,
+                current.liabilityDisclaimerAccepted(),
+                current.confirmedScheduledAt(),
+                current.settlementMode(),
+                current.lateCancelIncident(),
+                current.liabilityDisclaimerAcceptedAt(),
+                current.createdAt(),
+                now);
         return BookingTransitionResult.success(updated);
     }
 
@@ -259,19 +227,13 @@ public class BookingService {
             return BookingTransitionResult.NOT_FOUND_RESULT;
         }
         BookingState booking = bookingOpt.get();
-        if (!booking.customerId()
-            .equals(userId)) {
+        if (!booking.customerId().equals(userId)) {
             return BookingTransitionResult.FORBIDDEN_RESULT;
         }
 
-        BookingTransitionResult result = transition(bookingId,
-            "COMPLETED",
-            List.of("ASSIGNED",
-                "PAID"));
+        BookingTransitionResult result = transition(bookingId, "COMPLETED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess()) {
-            authService.updateUserStats(booking.taskerId(),
-                0,
-                true);
+            authService.updateUserStats(booking.taskerId(), 0, true);
         }
         return result;
     }
@@ -293,31 +255,23 @@ public class BookingService {
         }
         BookingState booking = bookingOpt.get();
 
-        boolean isCustomer = booking.customerId()
-            .equals(userId);
-        boolean isTasker = booking.taskerId()
-            .equals(userId);
+        boolean isCustomer = booking.customerId().equals(userId);
+        boolean isTasker = booking.taskerId().equals(userId);
         if (!isCustomer && !isTasker) {
             return BookingTransitionResult.FORBIDDEN_RESULT;
         }
 
         boolean lateCustomerCancellation = isCustomer && isLateCancellation(scheduledAt);
-        BookingTransitionResult result = transition(bookingId,
-            "CANCELLED",
-            List.of("ASSIGNED",
-                "PAID"));
+        BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess() && lateCustomerCancellation) {
-            log.warn("Late cancellation for booking {} by customer {}",
-                bookingId,
-                userId);
+            log.warn("Late cancellation for booking {} by customer {}", bookingId, userId);
             bookingReliabilityIncidentDao.insert(
-                UUID.randomUUID()
-                    .toString(),
-                bookingId,
-                userId,
-                "CUSTOMER_LATE_CANCEL",
-                "Customer cancelled within 4 hours of scheduled task time.",
-                Instant.now());
+                    UUID.randomUUID().toString(),
+                    bookingId,
+                    userId,
+                    "CUSTOMER_LATE_CANCEL",
+                    "Customer cancelled within 4 hours of scheduled task time.",
+                    Instant.now());
         }
         return result;
     }
@@ -326,10 +280,8 @@ public class BookingService {
         if (scheduledAt == null) {
             return false;
         }
-        Instant fourHoursBefore = scheduledAt.minus(4,
-            java.time.temporal.ChronoUnit.HOURS);
-        return Instant.now()
-            .isAfter(fourHoursBefore);
+        Instant fourHoursBefore = scheduledAt.minus(4, java.time.temporal.ChronoUnit.HOURS);
+        return Instant.now().isAfter(fourHoursBefore);
     }
 
     /**
@@ -347,8 +299,7 @@ public class BookingService {
         }
 
         BookingState booking = bookingOpt.get();
-        if (!booking.taskerId()
-            .equals(userId)) {
+        if (!booking.taskerId().equals(userId)) {
             return BookingMarkDoneResult.FORBIDDEN_RESULT;
         }
         if (!"ASSIGNED".equals(booking.status()) && !"PAID".equals(booking.status())) {
@@ -356,20 +307,14 @@ public class BookingService {
         }
 
         Instant now = Instant.now();
-        int inserted = bookingCompletionSignalDao.markDone(bookingId,
-            userId,
-            now);
-        log.info("Tasker {} marked booking {} as done",
-            userId,
-            bookingId);
+        int inserted = bookingCompletionSignalDao.markDone(bookingId, userId, now);
+        log.info("Tasker {} marked booking {} as done", userId, bookingId);
         Instant markedDoneAt = bookingCompletionSignalDao
-            .findByBookingId(bookingId)
-            .map(BookingCompletionSignal::markedDoneAt)
-            .orElse(now);
+                .findByBookingId(bookingId)
+                .map(BookingCompletionSignal::markedDoneAt)
+                .orElse(now);
 
-        return BookingMarkDoneResult.success(booking,
-            markedDoneAt,
-            inserted > 0);
+        return BookingMarkDoneResult.success(booking, markedDoneAt, inserted > 0);
     }
 
     /**
@@ -379,7 +324,6 @@ public class BookingService {
      * @return An Optional containing the {@link Instant} it was marked done, or empty.
      */
     public Optional<Instant> getTaskerMarkedDoneAt(String bookingId) {
-        return bookingCompletionSignalDao.findByBookingId(bookingId)
-            .map(BookingCompletionSignal::markedDoneAt);
+        return bookingCompletionSignalDao.findByBookingId(bookingId).map(BookingCompletionSignal::markedDoneAt);
     }
 }

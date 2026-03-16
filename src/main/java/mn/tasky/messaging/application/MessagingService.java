@@ -1,13 +1,5 @@
 package mn.tasky.messaging.application;
 
-import mn.tasky.common.validation.TextSanitizer;
-import mn.tasky.messaging.dao.ConversationDao;
-import mn.tasky.messaging.dao.MessageDao;
-import mn.tasky.messaging.dto.Conversation;
-import mn.tasky.messaging.dto.Message;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +8,13 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.common.validation.TextSanitizer;
+import mn.tasky.messaging.dao.ConversationDao;
+import mn.tasky.messaging.dao.MessageDao;
+import mn.tasky.messaging.dto.Conversation;
+import mn.tasky.messaging.dto.Message;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for managing real-time chat conversations between taskers and customers.
@@ -29,7 +28,7 @@ public class MessagingService {
     private final MessageDao messageDao;
 
     public MessagingService(
-        SimpMessagingTemplate messagingTemplate, ConversationDao conversationDao, MessageDao messageDao) {
+            SimpMessagingTemplate messagingTemplate, ConversationDao conversationDao, MessageDao messageDao) {
         this.messagingTemplate = messagingTemplate;
         this.conversationDao = conversationDao;
         this.messageDao = messageDao;
@@ -45,22 +44,14 @@ public class MessagingService {
      * @return The ID of the conversation.
      */
     public String startConversation(String taskId, String taskerId, String customerId) {
-        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId,
-            customerId,
-            taskerId);
+        Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId, customerId, taskerId);
 
         if (existing.isPresent()) {
-            return existing.get()
-                .id();
+            return existing.get().id();
         }
 
-        String id = UUID.randomUUID()
-            .toString();
-        conversationDao.insert(id,
-            taskId,
-            customerId,
-            taskerId,
-            Instant.now());
+        String id = UUID.randomUUID().toString();
+        conversationDao.insert(id, taskId, customerId, taskerId, Instant.now());
         return id;
     }
 
@@ -71,9 +62,7 @@ public class MessagingService {
      * @return A list of {@link Conversation} objects.
      */
     public List<Conversation> listConversations(String userId) {
-        return listConversations(userId,
-            null,
-            50);
+        return listConversations(userId, null, 50);
     }
 
     /**
@@ -85,9 +74,7 @@ public class MessagingService {
      * @return A list of {@link Conversation} objects.
      */
     public List<Conversation> listConversations(String userId, String cursor, int limit) {
-        return conversationDao.findByUserId(userId,
-            cursor,
-            limit);
+        return conversationDao.findByUserId(userId, cursor, limit);
     }
 
     /**
@@ -110,9 +97,7 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.customerId()
-            .equals(senderId) && !conv.taskerId()
-            .equals(senderId)) {
+        if (!conv.customerId().equals(senderId) && !conv.taskerId().equals(senderId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
@@ -121,13 +106,10 @@ public class MessagingService {
             throw new IllegalArgumentException("Message content cannot be empty");
         }
 
-        String contentHash = computeContentHash(conversationId,
-            senderId,
-            sanitizedContent);
+        String contentHash = computeContentHash(conversationId, senderId, sanitizedContent);
 
-        Message message =
-            new Message(UUID.randomUUID()
-                .toString(),
+        Message message = new Message(
+                UUID.randomUUID().toString(),
                 conversationId,
                 senderId,
                 sanitizedContent,
@@ -136,16 +118,15 @@ public class MessagingService {
                 Instant.now());
 
         messageDao.insert(
-            message.id(),
-            message.conversationId(),
-            message.senderId(),
-            message.content(),
-            message.phoneNumberFlagged(),
-            message.contentHash(),
-            message.sentAt());
+                message.id(),
+                message.conversationId(),
+                message.senderId(),
+                message.content(),
+                message.phoneNumberFlagged(),
+                message.contentHash(),
+                message.sentAt());
 
-        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId,
-            message);
+        messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
 
         return Optional.of(message);
     }
@@ -169,15 +150,11 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.customerId()
-            .equals(userId) && !conv.taskerId()
-            .equals(userId)) {
+        if (!conv.customerId().equals(userId) && !conv.taskerId().equals(userId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
-        return messageDao.findByConversationId(conversationId,
-            cursor,
-            limit);
+        return messageDao.findByConversationId(conversationId, cursor, limit);
     }
 
     private String computeContentHash(String conversationId, String senderId, String content) {

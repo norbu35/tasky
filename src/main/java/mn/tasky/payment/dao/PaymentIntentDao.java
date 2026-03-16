@@ -1,26 +1,22 @@
 package mn.tasky.payment.dao;
 
+import static mn.tasky.common.persistence.UuidHelper.optional;
+import static mn.tasky.common.persistence.UuidHelper.required;
+
+import java.util.Optional;
+import java.util.UUID;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import static mn.tasky.common.persistence.UuidHelper.optional;
-import static mn.tasky.common.persistence.UuidHelper.required;
-
 public interface PaymentIntentDao {
 
     default void insert(String paymentId, String bookingId) {
-        insert(required(paymentId,
-                "paymentId"),
-            required(bookingId,
-                "bookingId"));
+        insert(required(paymentId, "paymentId"), required(bookingId, "bookingId"));
     }
 
     @SqlUpdate("INSERT INTO payment_intents (payment_id, booking_id, processed) VALUES "
-        + "(:paymentId, :bookingId, false)")
+            + "(:paymentId, :bookingId, false)")
     void insert(@Bind("paymentId") UUID paymentId, @Bind("bookingId") UUID bookingId);
 
     default Optional<String> findBookingIdByPaymentId(String paymentId) {

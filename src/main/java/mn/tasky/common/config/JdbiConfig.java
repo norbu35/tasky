@@ -1,13 +1,22 @@
 package mn.tasky.common.config;
 
+import javax.sql.DataSource;
 import mn.tasky.analytics.dao.AnalyticsEventDao;
-import mn.tasky.auth.dao.*;
-import mn.tasky.common.audit.AuditEventDao;
+import mn.tasky.auth.dao.ModerationPolicyDao;
+import mn.tasky.auth.dao.OtpChallengeDao;
+import mn.tasky.auth.dao.ProfileDao;
+import mn.tasky.auth.dao.RateLimitCounterDao;
+import mn.tasky.auth.dao.RefreshSessionDao;
+import mn.tasky.auth.dao.StrikeDao;
+import mn.tasky.auth.dao.SuspensionEventDao;
+import mn.tasky.auth.dao.UserDao;
+import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.feature.FeatureToggleDao;
 import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
@@ -35,8 +44,6 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
-
 @Configuration
 public class JdbiConfig {
 
@@ -46,10 +53,8 @@ public class JdbiConfig {
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new PostgresPlugin());
         jdbi.installPlugin(new Jackson2Plugin());
-        jdbi.getConfig(ColumnMappers.class)
-            .setCoalesceNullPrimitivesToDefaults(true);
-        jdbi.getConfig(ReflectionMappers.class)
-            .setStrictMatching(false);
+        jdbi.getConfig(ColumnMappers.class).setCoalesceNullPrimitivesToDefaults(true);
+        jdbi.getConfig(ReflectionMappers.class).setStrictMatching(false);
         return jdbi;
     }
 

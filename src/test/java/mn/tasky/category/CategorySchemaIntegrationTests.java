@@ -1,7 +1,15 @@
 package mn.tasky.category;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,15 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class CategorySchemaIntegrationTests extends IntegrationTestBase {
 
@@ -29,7 +28,8 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
 
-    private static final String VALID_SCHEMA = """
+    private static final String VALID_SCHEMA =
+            """
         [
           {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan","Erdenet"]},
           {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Medium","Large"]},
@@ -44,9 +44,7 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
         String categoryId = createCategory(adminToken);
 
         ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", VALID_SCHEMA));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", VALID_SCHEMA));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).containsEntry("version", 1);
@@ -60,7 +58,8 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
         String adminToken = adminToken();
         String categoryId = createCategory(adminToken);
 
-        String twoFieldSchema = """
+        String twoFieldSchema =
+                """
             [
               {"key":"a","label":"A","type":"yes_no","required":true},
               {"key":"b","label":"B","type":"yes_no","required":false}
@@ -68,9 +67,9 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
             """;
 
         ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", twoFieldSchema));
+                "/api/v1/admin/categories/" + categoryId + "/schemas",
+                adminToken,
+                Map.of("schema_json", twoFieldSchema));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code", "INVALID_SCHEMA");
@@ -82,7 +81,8 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
         String adminToken = adminToken();
         String categoryId = createCategory(adminToken);
 
-        String badTypeSchema = """
+        String badTypeSchema =
+                """
             [
               {"key":"a","label":"A","type":"text_input","required":true},
               {"key":"b","label":"B","type":"yes_no","required":false},
@@ -91,9 +91,9 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
             """;
 
         ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", badTypeSchema));
+                "/api/v1/admin/categories/" + categoryId + "/schemas",
+                adminToken,
+                Map.of("schema_json", badTypeSchema));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsEntry("code", "INVALID_SCHEMA");
@@ -107,25 +107,21 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
 
         // Create a draft
         ResponseEntity<Map> createRes = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", VALID_SCHEMA));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", VALID_SCHEMA));
         assertThat(createRes.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         int version = (int) createRes.getBody().get("version");
 
         // Activate
         ResponseEntity<Map> activateRes = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/" + version + "/activate",
-            adminToken,
-            Map.of());
+                "/api/v1/admin/categories/" + categoryId + "/schemas/" + version + "/activate", adminToken, Map.of());
         assertThat(activateRes.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(activateRes.getBody()).containsEntry("status", "ACTIVE");
         assertThat(activateRes.getBody()).containsEntry("is_last_known_good", true);
         assertThat(activateRes.getBody().get("activated_at")).isNotNull();
 
         // Verify schema list shows the version
-        ResponseEntity<List> listRes = getWithAuthList(
-            "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken);
+        ResponseEntity<List> listRes =
+                getWithAuthList("/api/v1/admin/categories/" + categoryId + "/schemas", adminToken);
         assertThat(listRes.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(listRes.getBody()).hasSize(1);
     }
@@ -138,20 +134,13 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
 
         // Create and activate
         postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", VALID_SCHEMA));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", VALID_SCHEMA));
 
-        postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/1/activate",
-            adminToken,
-            Map.of());
+        postWithAuth("/api/v1/admin/categories/" + categoryId + "/schemas/1/activate", adminToken, Map.of());
 
         // Try to activate again
-        ResponseEntity<Map> response = postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/1/activate",
-            adminToken,
-            Map.of());
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/admin/categories/" + categoryId + "/schemas/1/activate", adminToken, Map.of());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody()).containsEntry("code", "SCHEMA_ACTIVATION_CONFLICT");
@@ -161,13 +150,17 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
 
     private String createCategory(String adminToken) {
         ResponseEntity<Map> res = postWithAuth(
-            "/api/v1/admin/categories",
-            adminToken,
-            Map.of(
-                "name", "Schema Test " + UUID.randomUUID().toString().substring(0, 8),
-                "name_mn", "Схем Тест",
-                "icon_url", "https://cdn.tasky.local/icons/test.png",
-                "sort_order", 900));
+                "/api/v1/admin/categories",
+                adminToken,
+                Map.of(
+                        "name",
+                        "Schema Test " + UUID.randomUUID().toString().substring(0, 8),
+                        "name_mn",
+                        "Схем Тест",
+                        "icon_url",
+                        "https://cdn.tasky.local/icons/test.png",
+                        "sort_order",
+                        900));
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return String.valueOf(res.getBody().get("id"));
     }
@@ -175,14 +168,14 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
     private String adminToken() {
         Instant now = Instant.now();
         return Jwts.builder()
-            .subject(UUID.randomUUID().toString())
-            .claim("role", "ADMIN")
-            .claim("status", "ACTIVE")
-            .claim("token_type", "access")
-            .issuedAt(Date.from(now))
-            .expiration(Date.from(now.plusSeconds(3600)))
-            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
-            .compact();
+                .subject(UUID.randomUUID().toString())
+                .claim("role", "ADMIN")
+                .claim("status", "ACTIVE")
+                .claim("token_type", "access")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
     }
 
     private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, Object> body) {
@@ -190,24 +183,21 @@ class CategorySchemaIntegrationTests extends IntegrationTestBase {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
         headers.setBearerAuth(bearerToken);
-        return restTemplate.exchange(
-            url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
+        return restTemplate.exchange(url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
     }
 
     private ResponseEntity<Map> getWithAuth(String path, String bearerToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
         headers.setBearerAuth(bearerToken);
-        return restTemplate.exchange(
-            url(path), HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+        return restTemplate.exchange(url(path), HttpMethod.GET, new HttpEntity<>(headers), Map.class);
     }
 
     private ResponseEntity<List> getWithAuthList(String path, String bearerToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
         headers.setBearerAuth(bearerToken);
-        return restTemplate.exchange(
-            url(path), HttpMethod.GET, new HttpEntity<>(headers), List.class);
+        return restTemplate.exchange(url(path), HttpMethod.GET, new HttpEntity<>(headers), List.class);
     }
 
     private String url(String path) {

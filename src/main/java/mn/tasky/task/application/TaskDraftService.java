@@ -1,5 +1,8 @@
 package mn.tasky.task.application;
 
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
 import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
@@ -7,10 +10,6 @@ import mn.tasky.category.dto.CategoryState;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dto.TaskDraft;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Manages task draft lifecycle: creation with server-bound schema version,
@@ -24,9 +23,7 @@ public class TaskDraftService {
     private final CategorySchemaVersionDao categorySchemaVersionDao;
 
     public TaskDraftService(
-            TaskDraftDao taskDraftDao,
-            CategoryDao categoryDao,
-            CategorySchemaVersionDao categorySchemaVersionDao) {
+            TaskDraftDao taskDraftDao, CategoryDao categoryDao, CategorySchemaVersionDao categorySchemaVersionDao) {
         this.taskDraftDao = taskDraftDao;
         this.categoryDao = categoryDao;
         this.categorySchemaVersionDao = categorySchemaVersionDao;
@@ -45,8 +42,8 @@ public class TaskDraftService {
      *                                  or no active schema version exists
      */
     public TaskDraft createDraft(String customerId, String categoryId) {
-        CategoryState category = categoryDao.findById(categoryId)
-            .orElseThrow(() -> new IllegalArgumentException("Category not found."));
+        CategoryState category =
+                categoryDao.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Category not found."));
 
         if (!category.isActive()) {
             throw new IllegalStateException("Category is not active.");
@@ -56,14 +53,16 @@ public class TaskDraftService {
             throw new IllegalStateException("Intake is not enabled for this category.");
         }
 
-        CategorySchemaVersion activeSchema = categorySchemaVersionDao.findActiveByCategoryId(categoryId)
-            .orElseThrow(() -> new IllegalStateException("No active schema version for this category."));
+        CategorySchemaVersion activeSchema = categorySchemaVersionDao
+                .findActiveByCategoryId(categoryId)
+                .orElseThrow(() -> new IllegalStateException("No active schema version for this category."));
 
         String id = UUID.randomUUID().toString();
         taskDraftDao.insert(id, customerId, categoryId, null, activeSchema.version(), null);
 
-        return taskDraftDao.findById(id)
-            .orElseThrow(() -> new IllegalStateException("Draft was inserted but could not be retrieved."));
+        return taskDraftDao
+                .findById(id)
+                .orElseThrow(() -> new IllegalStateException("Draft was inserted but could not be retrieved."));
     }
 
     /**
@@ -74,8 +73,9 @@ public class TaskDraftService {
      * @return the draft if found and not expired
      */
     public Optional<TaskDraft> getDraft(String draftId) {
-        return taskDraftDao.findById(draftId)
-            .filter(draft -> draft.expiresAt() == null || draft.expiresAt().isAfter(Instant.now()));
+        return taskDraftDao
+                .findById(draftId)
+                .filter(draft -> draft.expiresAt() == null || draft.expiresAt().isAfter(Instant.now()));
     }
 
     /**
@@ -90,8 +90,8 @@ public class TaskDraftService {
      * @throws IllegalStateException    if the draft has expired
      */
     public TaskDraft updateDraft(String draftId, String intakeAnswersJson, String summaryDraft) {
-        TaskDraft existing = taskDraftDao.findById(draftId)
-            .orElseThrow(() -> new IllegalArgumentException("Draft not found."));
+        TaskDraft existing =
+                taskDraftDao.findById(draftId).orElseThrow(() -> new IllegalArgumentException("Draft not found."));
 
         if (existing.expiresAt() != null && !existing.expiresAt().isAfter(Instant.now())) {
             throw new IllegalStateException("Draft has expired.");
@@ -99,7 +99,8 @@ public class TaskDraftService {
 
         taskDraftDao.update(draftId, intakeAnswersJson, summaryDraft);
 
-        return taskDraftDao.findById(draftId)
-            .orElseThrow(() -> new IllegalStateException("Draft was updated but could not be retrieved."));
+        return taskDraftDao
+                .findById(draftId)
+                .orElseThrow(() -> new IllegalStateException("Draft was updated but could not be retrieved."));
     }
 }

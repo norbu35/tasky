@@ -1,5 +1,8 @@
 package mn.tasky.notification.application;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import mn.tasky.notification.dao.DeviceTokenDao;
 import mn.tasky.notification.dao.NotificationLogDao;
 import mn.tasky.notification.dto.DeviceToken;
@@ -7,10 +10,6 @@ import mn.tasky.notification.dto.NotificationLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service responsible for managing user device tokens and sending push notifications.
@@ -37,13 +36,8 @@ public class NotificationService {
      * @param platform The platform of the device (e.g., "IOS", "ANDROID").
      */
     public void registerDevice(String userId, String token, String platform) {
-        deviceTokenDao.upsert(userId,
-            token,
-            platform,
-            Instant.now());
-        log.info("Registered device for user {}: platform={}",
-            userId,
-            platform);
+        deviceTokenDao.upsert(userId, token, platform, Instant.now());
+        log.info("Registered device for user {}: platform={}", userId, platform);
     }
 
     /**
@@ -53,10 +47,8 @@ public class NotificationService {
      * @param token  The device token to remove.
      */
     public void unregisterDevice(String userId, String token) {
-        deviceTokenDao.delete(userId,
-            token);
-        log.info("Unregistered device for user {}",
-            userId);
+        deviceTokenDao.delete(userId, token);
+        log.info("Unregistered device for user {}", userId);
     }
 
     /**
@@ -73,9 +65,7 @@ public class NotificationService {
         List<DeviceToken> tokens = deviceTokenDao.findByUserId(userId);
 
         if (tokens.isEmpty()) {
-            log.warn("No device tokens for user {}, push not sent: type={}",
-                userId,
-                type);
+            log.warn("No device tokens for user {}, push not sent: type={}", userId, type);
             if ("HIRED".equals(type) || "BOOKING_CONFIRMED".equals(type)) {
                 sendSmsFallback(userId);
             }
@@ -84,22 +74,14 @@ public class NotificationService {
 
         for (DeviceToken t : tokens) {
             log.info(
-                "Sending push to user {} on platform {}: notification_type={} title={} body={}",
-                userId,
-                t.platform(),
-                type,
-                title,
-                body);
-            notificationLogDao.insert(UUID.randomUUID()
-                    .toString(),
-                userId,
-                type,
-                "PUSH",
-                "SENT",
-                null,
-                null,
-                null,
-                Instant.now());
+                    "Sending push to user {} on platform {}: notification_type={} title={} body={}",
+                    userId,
+                    t.platform(),
+                    type,
+                    title,
+                    body);
+            notificationLogDao.insert(
+                    UUID.randomUUID().toString(), userId, type, "PUSH", "SENT", null, null, null, Instant.now());
         }
     }
 
@@ -109,18 +91,9 @@ public class NotificationService {
      * @param userId The ID of the user to receive the SMS.
      */
     public void sendSmsFallback(String userId) {
-        log.info("Sending SMS fallback to user {}",
-            userId);
-        notificationLogDao.insert(UUID.randomUUID()
-                .toString(),
-            userId,
-            "FALLBACK",
-            "SMS",
-            "SENT",
-            null,
-            null,
-            null,
-            Instant.now());
+        log.info("Sending SMS fallback to user {}", userId);
+        notificationLogDao.insert(
+                UUID.randomUUID().toString(), userId, "FALLBACK", "SMS", "SENT", null, null, null, Instant.now());
     }
 
     /**

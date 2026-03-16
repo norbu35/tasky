@@ -4,6 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfile;
@@ -23,19 +36,23 @@ import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
-import mn.tasky.task.dto.*;
+import mn.tasky.task.dto.CreateTask;
+import mn.tasky.task.dto.TaskAcceptResult;
+import mn.tasky.task.dto.TaskApplicationState;
+import mn.tasky.task.dto.TaskApplicationsListResult;
+import mn.tasky.task.dto.TaskApplyResult;
+import mn.tasky.task.dto.TaskCancelResult;
+import mn.tasky.task.dto.TaskCreateResult;
+import mn.tasky.task.dto.TaskDraft;
+import mn.tasky.task.dto.TaskPage;
+import mn.tasky.task.dto.TaskState;
+import mn.tasky.task.dto.TaskUpdateResult;
+import mn.tasky.task.dto.UpdateTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.*;
 
 /**
  * Service for task lifecycle operations: creation, listing, applications, acceptance,
@@ -46,14 +63,8 @@ public class TaskService {
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final Map<String, String> PHOTO_EXTENSION_BY_CONTENT_TYPE =
-        Map.of("image/jpeg",
-            "jpg",
-            "image/png",
-            "png");
-    private static final Set<String> TASK_STATUSES = Set.of("OPEN",
-        "ASSIGNED",
-        "COMPLETED",
-        "CANCELLED");
+            Map.of("image/jpeg", "jpg", "image/png", "png");
+    private static final Set<String> TASK_STATUSES = Set.of("OPEN", "ASSIGNED", "COMPLETED", "CANCELLED");
 
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
@@ -79,31 +90,31 @@ public class TaskService {
     private final int taskMatchNotificationLimit;
 
     @SuppressFBWarnings(
-        value = "CT_CONSTRUCTOR_THROW",
-        justification = "Upload signing secret is mandatory and validated during startup for fail-fast safety.")
+            value = "CT_CONSTRUCTOR_THROW",
+            justification = "Upload signing secret is mandatory and validated during startup for fail-fast safety.")
     public TaskService(
-        AuthService authService,
-        CategoryService categoryService,
-        BookingService bookingService,
-        MessagingService messagingService,
-        NotificationService notificationService,
-        AnalyticsService analyticsService,
-        DomainEventOutboxService domainEventOutboxService,
-        ScopeSummaryGenerator scopeSummaryGenerator,
-        TaskDao taskDao,
-        TaskPhotoDao taskPhotoDao,
-        TaskApplicationDao taskApplicationDao,
-        CategorySchemaVersionDao categorySchemaVersionDao,
-        TaskDraftDao taskDraftDao,
-        ObjectMapper objectMapper,
-        @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}")
-        String taskPhotoUploadBaseUrl,
-        @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
-        @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds,
-        @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}")
-        String uploadUrlSigningSecret,
-        @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
-        @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
+            AuthService authService,
+            CategoryService categoryService,
+            BookingService bookingService,
+            MessagingService messagingService,
+            NotificationService notificationService,
+            AnalyticsService analyticsService,
+            DomainEventOutboxService domainEventOutboxService,
+            ScopeSummaryGenerator scopeSummaryGenerator,
+            TaskDao taskDao,
+            TaskPhotoDao taskPhotoDao,
+            TaskApplicationDao taskApplicationDao,
+            CategorySchemaVersionDao categorySchemaVersionDao,
+            TaskDraftDao taskDraftDao,
+            ObjectMapper objectMapper,
+            @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}")
+                    String taskPhotoUploadBaseUrl,
+            @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
+            @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds,
+            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}")
+                    String uploadUrlSigningSecret,
+            @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
+            @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
         this.authService = authService;
         this.categoryService = categoryService;
         this.bookingService = bookingService;
@@ -140,24 +151,19 @@ public class TaskService {
      */
     public TaskCreateResult createTask(String customerId, CreateTask command) {
         Optional<CategoryState> categoryOpt = categoryService.getCategory(command.categoryId());
-        if (categoryOpt.isEmpty() || !categoryOpt.get()
-            .isActive()) {
-            return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY,
-                "Category not found or inactive.");
+        if (categoryOpt.isEmpty() || !categoryOpt.get().isActive()) {
+            return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY, "Category not found or inactive.");
         }
         CategoryState category = categoryOpt.get();
 
-        if (command.photoKeys()
-            .size() > 3) {
-            return TaskCreateResult.error(TaskCreateResult.TOO_MANY_PHOTOS,
-                "Maximum 3 photos allowed.");
+        if (command.photoKeys().size() > 3) {
+            return TaskCreateResult.error(TaskCreateResult.TOO_MANY_PHOTOS, "Maximum 3 photos allowed.");
         }
 
         String sanitizedDescription = TextSanitizer.plainText(command.description());
         String sanitizedLocationText = TextSanitizer.plainText(command.locationText());
         if (!StringUtils.hasText(sanitizedDescription)) {
-            return TaskCreateResult.error(TaskCreateResult.INVALID_DESCRIPTION,
-                "Description cannot be empty.");
+            return TaskCreateResult.error(TaskCreateResult.INVALID_DESCRIPTION, "Description cannot be empty.");
         }
 
         Instant scheduledAt;
@@ -165,12 +171,10 @@ public class TaskService {
             scheduledAt = Instant.parse(command.scheduledAt());
             if (scheduledAt.isBefore(Instant.now())) {
                 return TaskCreateResult.error(
-                    TaskCreateResult.INVALID_SCHEDULE,
-                    "Schedule date must be in the future.");
+                        TaskCreateResult.INVALID_SCHEDULE, "Schedule date must be in the future.");
             }
         } catch (Exception e) {
-            return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEDULE,
-                "Invalid schedule date format.");
+            return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEDULE, "Invalid schedule date format.");
         }
 
         // --- Intake validation ---
@@ -183,8 +187,7 @@ public class TaskService {
         if (StringUtils.hasText(command.draftId())) {
             Optional<TaskDraft> draftOpt = taskDraftDao.findById(command.draftId());
             if (draftOpt.isEmpty()) {
-                return TaskCreateResult.error(TaskCreateResult.DRAFT_NOT_FOUND,
-                    "Draft not found.");
+                return TaskCreateResult.error(TaskCreateResult.DRAFT_NOT_FOUND, "Draft not found.");
             }
             draft = draftOpt.get();
             // Draft's bound version takes precedence
@@ -198,15 +201,16 @@ public class TaskService {
         if (intakeSchemaVersion != null) {
             // Check intake is enabled for this category
             if (!Boolean.TRUE.equals(category.intakeEnabled())) {
-                return TaskCreateResult.error(TaskCreateResult.INTAKE_NOT_ENABLED,
-                    "Intake is not enabled for this category.");
+                return TaskCreateResult.error(
+                        TaskCreateResult.INTAKE_NOT_ENABLED, "Intake is not enabled for this category.");
             }
 
-            Optional<CategorySchemaVersion> schemaOpt = categorySchemaVersionDao
-                .findByCategoryIdAndVersion(command.categoryId(), intakeSchemaVersion);
+            Optional<CategorySchemaVersion> schemaOpt =
+                    categorySchemaVersionDao.findByCategoryIdAndVersion(command.categoryId(), intakeSchemaVersion);
             if (schemaOpt.isEmpty()) {
-                return TaskCreateResult.error(TaskCreateResult.INVALID_SCHEMA_VERSION,
-                    "Schema version " + intakeSchemaVersion + " not found for this category.");
+                return TaskCreateResult.error(
+                        TaskCreateResult.INVALID_SCHEMA_VERSION,
+                        "Schema version " + intakeSchemaVersion + " not found for this category.");
             }
             CategorySchemaVersion schemaVersion = schemaOpt.get();
 
@@ -214,14 +218,13 @@ public class TaskService {
             if (StringUtils.hasText(intakeAnswersJson)) {
                 String validationError = validateIntakeAnswers(schemaVersion.schemaJson(), intakeAnswersJson);
                 if (validationError != null) {
-                    return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED,
-                        validationError);
+                    return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED, validationError);
                 }
             }
 
             // Generate scope summary
             ScopeSummaryGenerator.SummaryResult summaryResult =
-                scopeSummaryGenerator.generate(schemaVersion.schemaJson(), intakeAnswersJson);
+                    scopeSummaryGenerator.generate(schemaVersion.schemaJson(), intakeAnswersJson);
 
             // User-provided summary override
             if (StringUtils.hasText(command.scopeSummary())) {
@@ -231,62 +234,54 @@ public class TaskService {
             }
         }
 
-        String id = UUID.randomUUID()
-            .toString();
+        String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
 
         taskDao.insert(
-            id,
-            customerId,
-            command.categoryId(),
-            sanitizedDescription,
-            command.budget(),
-            command.locationLat(),
-            command.locationLng(),
-            sanitizedLocationText,
-            "OPEN",
-            scheduledAt,
-            intakeAnswersJson,
-            intakeSchemaVersion,
-            scopeSummarySource,
-            now,
-            now);
+                id,
+                customerId,
+                command.categoryId(),
+                sanitizedDescription,
+                command.budget(),
+                command.locationLat(),
+                command.locationLng(),
+                sanitizedLocationText,
+                "OPEN",
+                scheduledAt,
+                intakeAnswersJson,
+                intakeSchemaVersion,
+                scopeSummarySource,
+                now,
+                now);
 
         // Insert photo keys
         List<String> photoKeys = List.copyOf(command.photoKeys());
         for (int i = 0; i < photoKeys.size(); i++) {
-            taskPhotoDao.insert(UUID.randomUUID()
-                    .toString(),
-                id,
-                photoKeys.get(i),
-                i);
+            taskPhotoDao.insert(UUID.randomUUID().toString(), id, photoKeys.get(i), i);
         }
 
         TaskState task = new TaskState(
-            id,
-            customerId,
-            command.categoryId(),
-            sanitizedDescription,
-            command.budget(),
-            command.locationLat(),
-            command.locationLng(),
-            sanitizedLocationText,
-            "OPEN",
-            scheduledAt,
-            photoKeys,
-            intakeAnswersJson,
-            intakeSchemaVersion,
-            scopeSummarySource,
-            now,
-            now);
+                id,
+                customerId,
+                command.categoryId(),
+                sanitizedDescription,
+                command.budget(),
+                command.locationLat(),
+                command.locationLng(),
+                sanitizedLocationText,
+                "OPEN",
+                scheduledAt,
+                photoKeys,
+                intakeAnswersJson,
+                intakeSchemaVersion,
+                scopeSummarySource,
+                now,
+                now);
 
         analyticsService.track(
-            AnalyticsService.EVENT_TASK_POSTED,
-            customerId,
-            Map.of(AnalyticsService.PROPERTY_TASK_ID,
-                id,
-                "category_id",
-                command.categoryId()));
+                AnalyticsService.EVENT_TASK_POSTED,
+                customerId,
+                Map.of(AnalyticsService.PROPERTY_TASK_ID, id, "category_id", command.categoryId()));
 
         notifyNearbyTaskers(task);
         return TaskCreateResult.success(task);
@@ -302,8 +297,7 @@ public class TaskService {
             if (!schemaArray.isArray()) {
                 return "Schema is not a valid JSON array.";
             }
-            Map<String, Object> answers = objectMapper.readValue(
-                answersJson, new TypeReference<>() {});
+            Map<String, Object> answers = objectMapper.readValue(answersJson, new TypeReference<>() {});
             JsonNode answersNode = objectMapper.readTree(answersJson);
 
             List<String> errors = new ArrayList<>();
@@ -315,7 +309,8 @@ public class TaskService {
                 }
                 String label = field.has("label") ? field.get("label").asText() : key;
                 String type = field.has("type") ? field.get("type").asText() : "text";
-                boolean required = field.has("required") && field.get("required").asBoolean();
+                boolean required =
+                        field.has("required") && field.get("required").asBoolean();
 
                 Object answerValue = answers.get(key);
                 JsonNode answerNode = answersNode.get(key);
@@ -370,10 +365,12 @@ public class TaskService {
                                 numVal = Double.parseDouble(String.valueOf(answerValue));
                             }
                             if (field.has("min") && numVal < field.get("min").asDouble()) {
-                                errors.add(label + ": value must be at least " + field.get("min").asText() + ".");
+                                errors.add(label + ": value must be at least "
+                                        + field.get("min").asText() + ".");
                             }
                             if (field.has("max") && numVal > field.get("max").asDouble()) {
-                                errors.add(label + ": value must be at most " + field.get("max").asText() + ".");
+                                errors.add(label + ": value must be at most "
+                                        + field.get("max").asText() + ".");
                             }
                         } catch (NumberFormatException e) {
                             errors.add(label + ": value must be numeric.");
@@ -384,8 +381,10 @@ public class TaskService {
                             // valid
                         } else {
                             String strVal = String.valueOf(answerValue).toLowerCase(Locale.ROOT);
-                            if (!"yes".equals(strVal) && !"no".equals(strVal)
-                                && !"true".equals(strVal) && !"false".equals(strVal)) {
+                            if (!"yes".equals(strVal)
+                                    && !"no".equals(strVal)
+                                    && !"true".equals(strVal)
+                                    && !"false".equals(strVal)) {
                                 errors.add(label + ": value must be yes/no or true/false.");
                             }
                         }
@@ -409,18 +408,18 @@ public class TaskService {
     private void notifyNearbyTaskers(TaskState task) {
         double radiusMeters = taskMatchNotificationRadiusKm * 1000.0d;
         List<String> candidates = taskApplicationDao.findNearbyTaskerCandidates(
-            task.categoryId(),
-            task.locationLat(),
-            task.locationLng(),
-            radiusMeters,
-            task.customerId(),
-            taskMatchNotificationLimit);
+                task.categoryId(),
+                task.locationLat(),
+                task.locationLng(),
+                radiusMeters,
+                task.customerId(),
+                taskMatchNotificationLimit);
         for (String taskerId : candidates) {
             notificationService.sendPush(
-                taskerId,
-                "New task nearby",
-                "A new task matching your recent work area is available.",
-                "MATCHING_TASK_NEARBY");
+                    taskerId,
+                    "New task nearby",
+                    "A new task matching your recent work area is available.",
+                    "MATCHING_TASK_NEARBY");
         }
     }
 
@@ -431,33 +430,31 @@ public class TaskService {
      * @return The task if found.
      */
     public Optional<TaskState> getTask(String id) {
-        return taskDao.findById(id)
-            .map(this::populatePhotoKeys);
+        return taskDao.findById(id).map(this::populatePhotoKeys);
     }
 
     private TaskState populatePhotoKeys(TaskState task) {
-        if (task.photoKeys() != null && !task.photoKeys()
-            .isEmpty()) {
+        if (task.photoKeys() != null && !task.photoKeys().isEmpty()) {
             return task;
         }
         List<String> keys = taskPhotoDao.findKeysByTaskId(task.id());
         return new TaskState(
-            task.id(),
-            task.customerId(),
-            task.categoryId(),
-            task.description(),
-            task.budget(),
-            task.locationLat(),
-            task.locationLng(),
-            task.locationText(),
-            task.status(),
-            task.scheduledAt(),
-            keys,
-            task.intakeAnswersJson(),
-            task.intakeSchemaVersion(),
-            task.scopeSummarySource(),
-            task.createdAt(),
-            task.updatedAt());
+                task.id(),
+                task.customerId(),
+                task.categoryId(),
+                task.description(),
+                task.budget(),
+                task.locationLat(),
+                task.locationLng(),
+                task.locationText(),
+                task.status(),
+                task.scheduledAt(),
+                keys,
+                task.intakeAnswersJson(),
+                task.intakeSchemaVersion(),
+                task.scopeSummarySource(),
+                task.createdAt(),
+                task.updatedAt());
     }
 
     /**
@@ -471,11 +468,8 @@ public class TaskService {
         if (existing.isEmpty()) {
             return Optional.empty();
         }
-        taskDao.updateStatus(taskId,
-            "ASSIGNED",
-            Instant.now());
-        return taskDao.findById(taskId)
-            .map(this::populatePhotoKeys);
+        taskDao.updateStatus(taskId, "ASSIGNED", Instant.now());
+        return taskDao.findById(taskId).map(this::populatePhotoKeys);
     }
 
     /**
@@ -489,11 +483,8 @@ public class TaskService {
         if (existing.isEmpty()) {
             return Optional.empty();
         }
-        taskDao.updateStatus(taskId,
-            "OPEN",
-            Instant.now());
-        return taskDao.findById(taskId)
-            .map(this::populatePhotoKeys);
+        taskDao.updateStatus(taskId, "OPEN", Instant.now());
+        return taskDao.findById(taskId).map(this::populatePhotoKeys);
     }
 
     /**
@@ -507,11 +498,8 @@ public class TaskService {
         if (existing.isEmpty()) {
             return Optional.empty();
         }
-        taskDao.updateStatus(taskId,
-            "COMPLETED",
-            Instant.now());
-        return taskDao.findById(taskId)
-            .map(this::populatePhotoKeys);
+        taskDao.updateStatus(taskId, "COMPLETED", Instant.now());
+        return taskDao.findById(taskId).map(this::populatePhotoKeys);
     }
 
     /**
@@ -525,11 +513,8 @@ public class TaskService {
         if (existing.isEmpty()) {
             return Optional.empty();
         }
-        taskDao.updateStatus(taskId,
-            "CANCELLED",
-            Instant.now());
-        return taskDao.findById(taskId)
-            .map(this::populatePhotoKeys);
+        taskDao.updateStatus(taskId, "CANCELLED", Instant.now());
+        return taskDao.findById(taskId).map(this::populatePhotoKeys);
     }
 
     /**
@@ -552,31 +537,17 @@ public class TaskService {
         List<TaskState> tasks;
         if (lat != null && lng != null && radiusKm != null) {
             double meters = radiusKm * 1000;
-            tasks = taskDao.findOpenWithinRadius(categoryId,
-                lat,
-                lng,
-                meters,
-                cursorCreatedAt,
-                cursorId,
-                limit + 1);
+            tasks = taskDao.findOpenWithinRadius(categoryId, lat, lng, meters, cursorCreatedAt, cursorId, limit + 1);
         } else {
-            tasks = taskDao.findOpen(categoryId,
-                cursorCreatedAt,
-                cursorId,
-                limit + 1);
+            tasks = taskDao.findOpen(categoryId, cursorCreatedAt, cursorId, limit + 1);
         }
 
         boolean hasMore = tasks.size() > limit;
-        List<TaskState> pageData = hasMore ? tasks.subList(0,
-            limit) : tasks;
-        pageData = pageData.stream()
-            .map(this::populatePhotoKeys)
-            .toList();
+        List<TaskState> pageData = hasMore ? tasks.subList(0, limit) : tasks;
+        pageData = pageData.stream().map(this::populatePhotoKeys).toList();
         String nextCursor = hasMore ? encodeCursor(pageData.getLast()) : null;
 
-        return new TaskPage(List.copyOf(pageData),
-            nextCursor,
-            hasMore);
+        return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
     }
 
     private TaskCursor decodeCursor(String cursor) {
@@ -584,27 +555,20 @@ public class TaskService {
             return null;
         }
         try {
-            String decoded = new String(Base64.getUrlDecoder()
-                .decode(cursor),
-                StandardCharsets.UTF_8);
-            String[] parts = decoded.split("\\|",
-                2);
+            String decoded = new String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8);
+            String[] parts = decoded.split("\\|", 2);
             if (parts.length != 2) {
                 throw new IllegalArgumentException("Cursor payload is malformed.");
             }
-            return new TaskCursor(Instant.parse(parts[0]),
-                UUID.fromString(parts[1]));
+            return new TaskCursor(Instant.parse(parts[0]), UUID.fromString(parts[1]));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Cursor is invalid.",
-                e);
+            throw new IllegalArgumentException("Cursor is invalid.", e);
         }
     }
 
     private String encodeCursor(TaskState lastTask) {
         String payload = lastTask.createdAt() + "|" + lastTask.id();
-        return Base64.getUrlEncoder()
-            .withoutPadding()
-            .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -628,36 +592,22 @@ public class TaskService {
         UUID cursorId = cursorState != null ? cursorState.id() : null;
 
         List<TaskState> tasks = "tasker".equals(normalizedRole)
-            ? taskDao.findByTasker(userId,
-            normalizedStatus,
-            cursorCreatedAt,
-            cursorId,
-            limit + 1)
-            : taskDao.findByCustomer(userId,
-            normalizedStatus,
-            cursorCreatedAt,
-            cursorId,
-            limit + 1);
+                ? taskDao.findByTasker(userId, normalizedStatus, cursorCreatedAt, cursorId, limit + 1)
+                : taskDao.findByCustomer(userId, normalizedStatus, cursorCreatedAt, cursorId, limit + 1);
 
         boolean hasMore = tasks.size() > limit;
-        List<TaskState> pageData = hasMore ? tasks.subList(0,
-            limit) : tasks;
-        pageData = pageData.stream()
-            .map(this::populatePhotoKeys)
-            .toList();
+        List<TaskState> pageData = hasMore ? tasks.subList(0, limit) : tasks;
+        pageData = pageData.stream().map(this::populatePhotoKeys).toList();
         String nextCursor = hasMore ? encodeCursor(pageData.getLast()) : null;
 
-        return new TaskPage(List.copyOf(pageData),
-            nextCursor,
-            hasMore);
+        return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
     }
 
     private String normalizeMyTasksRole(String role) {
         if (!StringUtils.hasText(role)) {
             return "customer";
         }
-        String normalized = role.trim()
-            .toLowerCase(Locale.ROOT);
+        String normalized = role.trim().toLowerCase(Locale.ROOT);
         if (!"customer".equals(normalized) && !"tasker".equals(normalized)) {
             throw new IllegalArgumentException("Role filter is invalid.");
         }
@@ -668,8 +618,7 @@ public class TaskService {
         if (!StringUtils.hasText(status)) {
             return null;
         }
-        String normalized = status.trim()
-            .toUpperCase(Locale.ROOT);
+        String normalized = status.trim().toUpperCase(Locale.ROOT);
         if (!TASK_STATUSES.contains(normalized)) {
             throw new IllegalArgumentException("Status filter is invalid.");
         }
@@ -690,8 +639,7 @@ public class TaskService {
         }
         TaskState task = taskOpt.get();
 
-        if (!task.customerId()
-            .equals(customerId)) {
+        if (!task.customerId().equals(customerId)) {
             return TaskCancelResult.FORBIDDEN_RESULT;
         }
 
@@ -699,13 +647,9 @@ public class TaskService {
             return TaskCancelResult.INVALID_STATUS_RESULT;
         }
 
-        taskDao.updateStatus(taskId,
-            "CANCELLED",
-            Instant.now());
+        taskDao.updateStatus(taskId, "CANCELLED", Instant.now());
         TaskState cancelled =
-            taskDao.findById(taskId)
-                .map(this::populatePhotoKeys)
-                .orElse(task);
+                taskDao.findById(taskId).map(this::populatePhotoKeys).orElse(task);
         return TaskCancelResult.success(cancelled);
     }
 
@@ -726,8 +670,7 @@ public class TaskService {
         }
         TaskState task = taskOpt.get();
 
-        if (!"TASKER".equals(taskerRole) || task.customerId()
-            .equals(taskerId)) {
+        if (!"TASKER".equals(taskerRole) || task.customerId().equals(taskerId)) {
             return TaskApplyResult.FORBIDDEN_RESULT;
         }
 
@@ -744,56 +687,44 @@ public class TaskService {
             return TaskApplyResult.FORBIDDEN_RESULT;
         }
 
-        if (taskApplicationDao.existsByTaskIdAndTaskerId(taskId,
-            taskerId)) {
+        if (taskApplicationDao.existsByTaskIdAndTaskerId(taskId, taskerId)) {
             return TaskApplyResult.DUPLICATE_APPLICATION_RESULT;
         }
 
-        String applicationId = UUID.randomUUID()
-            .toString();
+        String applicationId = UUID.randomUUID().toString();
         String sanitizedMessage = TextSanitizer.plainText(message);
-        taskApplicationDao.insert(applicationId,
-            taskId,
-            taskerId,
-            sanitizedMessage,
-            "APPLIED",
-            Instant.now());
+        taskApplicationDao.insert(applicationId, taskId, taskerId, sanitizedMessage, "APPLIED", Instant.now());
 
         TaskApplicationState application = new TaskApplicationState(
-            applicationId,
-            taskId,
-            taskerId,
-            profile.fullName(),
-            profile.avatarUrl(),
-            profile.ratingAvg(),
-            profile.completedTasks(),
-            profile.isPro(),
-            sanitizedMessage,
-            "APPLIED",
-            null,
-            null,
-            null,
-            null,
-            Instant.now());
-
-        String conversationId = messagingService.startConversation(taskId,
-            taskerId,
-            task.customerId());
-        notificationService.sendPush(
-            task.customerId(),
-            "New Applicant",
-            "A tasker has applied to your task.",
-            "TASKER_APPLIED");
-        analyticsService.track(
-            AnalyticsService.EVENT_APPLICATION_SUBMITTED,
-            taskerId,
-            Map.of(
-                AnalyticsService.PROPERTY_TASK_ID,
+                applicationId,
                 taskId,
-                "application_id",
-                application.id(),
-                "conversation_id",
-                conversationId));
+                taskerId,
+                profile.fullName(),
+                profile.avatarUrl(),
+                profile.ratingAvg(),
+                profile.completedTasks(),
+                profile.isPro(),
+                sanitizedMessage,
+                "APPLIED",
+                null,
+                null,
+                null,
+                null,
+                Instant.now());
+
+        String conversationId = messagingService.startConversation(taskId, taskerId, task.customerId());
+        notificationService.sendPush(
+                task.customerId(), "New Applicant", "A tasker has applied to your task.", "TASKER_APPLIED");
+        analyticsService.track(
+                AnalyticsService.EVENT_APPLICATION_SUBMITTED,
+                taskerId,
+                Map.of(
+                        AnalyticsService.PROPERTY_TASK_ID,
+                        taskId,
+                        "application_id",
+                        application.id(),
+                        "conversation_id",
+                        conversationId));
 
         return TaskApplyResult.success(application);
     }
@@ -806,10 +737,7 @@ public class TaskService {
      * @return Applications list result.
      */
     public TaskApplicationsListResult listTaskApplications(String userId, String taskId) {
-        return listTaskApplications(userId,
-            taskId,
-            null,
-            50);
+        return listTaskApplications(userId, taskId, null, 50);
     }
 
     /**
@@ -828,14 +756,11 @@ public class TaskService {
         }
         TaskState task = taskOpt.get();
 
-        if (!task.customerId()
-            .equals(userId)) {
+        if (!task.customerId().equals(userId)) {
             return TaskApplicationsListResult.FORBIDDEN_RESULT;
         }
 
-        List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId,
-            cursor,
-            limit);
+        List<TaskApplicationState> applications = taskApplicationDao.findByTaskId(taskId, cursor, limit);
         return TaskApplicationsListResult.success(List.copyOf(applications));
     }
 
@@ -861,15 +786,14 @@ public class TaskService {
      * @return Acceptance result with booking on success.
      */
     public TaskAcceptResult acceptApplication(
-        String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
+            String customerId, String taskId, String applicationId, boolean liabilityDisclaimerAccepted) {
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
         }
         TaskState task = taskOpt.get();
 
-        if (!task.customerId()
-            .equals(customerId)) {
+        if (!task.customerId().equals(customerId)) {
             return TaskAcceptResult.FORBIDDEN_RESULT;
         }
 
@@ -886,8 +810,7 @@ public class TaskService {
         }
 
         Optional<TaskApplicationState> selectedOpt = taskApplicationDao.findById(applicationId);
-        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get()
-            .taskId())) {
+        if (selectedOpt.isEmpty() || !taskId.equals(selectedOpt.get().taskId())) {
             return TaskAcceptResult.NOT_FOUND_RESULT;
         }
         TaskApplicationState selected = selectedOpt.get();
@@ -895,36 +818,28 @@ public class TaskService {
             return TaskAcceptResult.CONFLICT_RESULT;
         }
 
-        taskApplicationDao.updateStatus(selected.id(),
-            "ACCEPTED");
-        taskApplicationDao.rejectOthers(taskId,
-            selected.id());
+        taskApplicationDao.updateStatus(selected.id(), "ACCEPTED");
+        taskApplicationDao.rejectOthers(taskId, selected.id());
 
         BookingState booking =
-            bookingService.createBooking(task.id(),
-                selected.taskerId(),
-                task.customerId(),
-                task.budget(),
-                true);
-        taskDao.updateStatus(task.id(),
-            "ASSIGNED",
-            Instant.now());
+                bookingService.createBooking(task.id(), selected.taskerId(), task.customerId(), task.budget(), true);
+        taskDao.updateStatus(task.id(), "ASSIGNED", Instant.now());
 
         domainEventOutboxService.publish(
-            OutboxEventTypes.TASK_APPLICATION_ACCEPTED,
-            "BOOKING",
-            booking.id(),
-            Map.of(
-                AnalyticsService.PROPERTY_TASK_ID,
-                task.id(),
-                AnalyticsService.PROPERTY_BOOKING_ID,
+                OutboxEventTypes.TASK_APPLICATION_ACCEPTED,
+                "BOOKING",
                 booking.id(),
-                "customer_id",
-                customerId,
-                "tasker_id",
-                selected.taskerId(),
-                "application_id",
-                applicationId));
+                Map.of(
+                        AnalyticsService.PROPERTY_TASK_ID,
+                        task.id(),
+                        AnalyticsService.PROPERTY_BOOKING_ID,
+                        booking.id(),
+                        "customer_id",
+                        customerId,
+                        "tasker_id",
+                        selected.taskerId(),
+                        "application_id",
+                        applicationId));
 
         return TaskAcceptResult.success(booking);
     }
@@ -946,62 +861,52 @@ public class TaskService {
         String storageKey = "uploads/tasks/" + userId + "/" + UUID.randomUUID() + "." + extension;
 
         String uploadUrl = buildPresignedUploadUrl(
-            taskPhotoUploadBaseUrl,
-            storageKey,
-            normalizedContentType,
-            taskPhotoMaxBytes,
-            taskPhotoUploadUrlTtlSeconds);
+                taskPhotoUploadBaseUrl,
+                storageKey,
+                normalizedContentType,
+                taskPhotoMaxBytes,
+                taskPhotoUploadUrlTtlSeconds);
 
-        return Optional.of(new PresignedUpload(uploadUrl,
-            storageKey));
+        return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
 
     private String buildPresignedUploadUrl(
-        String baseUrl, String storageKey, String contentType, long maxBytes, long ttlSeconds) {
+            String baseUrl, String storageKey, String contentType, long maxBytes, long ttlSeconds) {
         String normalizedBase = normalizeBaseUrl(baseUrl);
-        long expiresAt = Instant.now()
-            .plusSeconds(ttlSeconds)
-            .getEpochSecond();
+        long expiresAt = Instant.now().plusSeconds(ttlSeconds).getEpochSecond();
         String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
         String signature = computeUploadSignature(payload);
 
         return normalizedBase + "/presigned-upload?key="
-            + URLEncoder.encode(storageKey,
-            StandardCharsets.UTF_8)
-            + "&content_type="
-            + URLEncoder.encode(contentType,
-            StandardCharsets.UTF_8)
-            + "&max_bytes="
-            + maxBytes
-            + "&expires_in="
-            + ttlSeconds
-            + "&expires_at="
-            + expiresAt
-            + "&signature="
-            + signature;
+                + URLEncoder.encode(storageKey, StandardCharsets.UTF_8)
+                + "&content_type="
+                + URLEncoder.encode(contentType, StandardCharsets.UTF_8)
+                + "&max_bytes="
+                + maxBytes
+                + "&expires_in="
+                + ttlSeconds
+                + "&expires_at="
+                + expiresAt
+                + "&signature="
+                + signature;
     }
 
     private String normalizeBaseUrl(String baseUrl) {
-        return baseUrl.endsWith("/") ? baseUrl.substring(0,
-            baseUrl.length() - 1) : baseUrl;
+        return baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
     }
 
     private String computeUploadSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes,
-                HMAC_ALGORITHM));
+            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes, HMAC_ALGORITHM));
             byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(digest.length * 2);
             for (byte b : digest) {
-                builder.append(String.format(Locale.ROOT,
-                    "%02x",
-                    b));
+                builder.append(String.format(Locale.ROOT, "%02x", b));
             }
             return builder.toString();
         } catch (Exception exception) {
-            throw new IllegalStateException("Failed to sign upload URL payload",
-                exception);
+            throw new IllegalStateException("Failed to sign upload URL payload", exception);
         }
     }
 
@@ -1015,9 +920,7 @@ public class TaskService {
         if (storageKeys == null || storageKeys.isEmpty()) {
             return List.of();
         }
-        return storageKeys.stream()
-            .map(this::buildPhotoAccessUrl)
-            .toList();
+        return storageKeys.stream().map(this::buildPhotoAccessUrl).toList();
     }
 
     /**
@@ -1028,8 +931,7 @@ public class TaskService {
      */
     public String buildPhotoAccessUrl(String storageKey) {
         String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
-        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey,
-            StandardCharsets.UTF_8);
+        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey, StandardCharsets.UTF_8);
     }
 
     /**
@@ -1042,15 +944,13 @@ public class TaskService {
      * @return Updated task or validation/authorization failure details.
      */
     public TaskUpdateResult updateTask(String customerId, String taskId, UpdateTask command) {
-        Optional<TaskState> existingOpt = taskDao.findById(taskId)
-            .map(this::populatePhotoKeys);
+        Optional<TaskState> existingOpt = taskDao.findById(taskId).map(this::populatePhotoKeys);
         if (existingOpt.isEmpty()) {
             return TaskUpdateResult.NOT_FOUND_RESULT;
         }
 
         TaskState existing = existingOpt.get();
-        if (!existing.customerId()
-            .equals(customerId)) {
+        if (!existing.customerId().equals(customerId)) {
             return TaskUpdateResult.FORBIDDEN_RESULT;
         }
         if (!"OPEN".equals(existing.status())) {
@@ -1091,30 +991,19 @@ public class TaskService {
 
         boolean replacePhotos = command.photoKeys() != null;
         List<String> photoKeys = replacePhotos
-            ? List.copyOf(command.photoKeys())
-            : (existing.photoKeys() == null ? List.of() : List.copyOf(existing.photoKeys()));
+                ? List.copyOf(command.photoKeys())
+                : (existing.photoKeys() == null ? List.of() : List.copyOf(existing.photoKeys()));
         if (photoKeys.size() > 3) {
             return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
         }
 
         Instant now = Instant.now();
-        taskDao.updateDetails(taskId,
-            description,
-            budget,
-            locationLat,
-            locationLng,
-            locationText,
-            scheduledAt,
-            now);
+        taskDao.updateDetails(taskId, description, budget, locationLat, locationLng, locationText, scheduledAt, now);
 
         if (replacePhotos) {
             taskPhotoDao.deleteByTaskId(taskId);
             for (int i = 0; i < photoKeys.size(); i++) {
-                taskPhotoDao.insert(UUID.randomUUID()
-                        .toString(),
-                    taskId,
-                    photoKeys.get(i),
-                    i);
+                taskPhotoDao.insert(UUID.randomUUID().toString(), taskId, photoKeys.get(i), i);
             }
         }
 
@@ -1123,27 +1012,26 @@ public class TaskService {
         Instant finalScheduledAt = scheduledAt;
 
         TaskState updated = taskDao.findById(taskId)
-            .map(this::populatePhotoKeys)
-            .orElseGet(() -> new TaskState(
-                existing.id(),
-                existing.customerId(),
-                existing.categoryId(),
-                finalDescription,
-                budget,
-                locationLat,
-                locationLng,
-                finalLocationText,
-                existing.status(),
-                finalScheduledAt,
-                photoKeys,
-                existing.intakeAnswersJson(),
-                existing.intakeSchemaVersion(),
-                existing.scopeSummarySource(),
-                existing.createdAt(),
-                now));
+                .map(this::populatePhotoKeys)
+                .orElseGet(() -> new TaskState(
+                        existing.id(),
+                        existing.customerId(),
+                        existing.categoryId(),
+                        finalDescription,
+                        budget,
+                        locationLat,
+                        locationLng,
+                        finalLocationText,
+                        existing.status(),
+                        finalScheduledAt,
+                        photoKeys,
+                        existing.intakeAnswersJson(),
+                        existing.intakeSchemaVersion(),
+                        existing.scopeSummarySource(),
+                        existing.createdAt(),
+                        now));
         return TaskUpdateResult.success(updated);
     }
 
-    private record TaskCursor(Instant createdAt, UUID id) {
-    }
+    private record TaskCursor(Instant createdAt, UUID id) {}
 }

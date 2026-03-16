@@ -6,6 +6,5 @@ public final class OutboxEventTypes {
     public static final String PAYMENT_CONFIRMED = "PAYMENT_CONFIRMED";
     public static final String BOOKING_COMPLETED = "BOOKING_COMPLETED";
 
-    private OutboxEventTypes() {
-    }
+    private OutboxEventTypes() {}
 }

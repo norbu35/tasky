@@ -1,5 +1,14 @@
 package mn.tasky.payment.application;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.time.Instant;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
@@ -14,16 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.time.Instant;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service responsible for payment intent lifecycle and verified gateway callbacks.
@@ -46,14 +45,14 @@ public class PaymentService {
     private volatile byte[] qpayWebhookSecretBytes;
 
     public PaymentService(
-        BookingService bookingService,
-        TaskService taskService,
-        DomainEventOutboxService domainEventOutboxService,
-        AnalyticsService analyticsService,
-        PaymentIntentDao paymentIntentDao,
-        FeatureToggleService featureToggleService,
-        @Value("${tasky.qpay.webhook-secret:}") String qpayWebhookSecret,
-        @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds) {
+            BookingService bookingService,
+            TaskService taskService,
+            DomainEventOutboxService domainEventOutboxService,
+            AnalyticsService analyticsService,
+            PaymentIntentDao paymentIntentDao,
+            FeatureToggleService featureToggleService,
+            @Value("${tasky.qpay.webhook-secret:}") String qpayWebhookSecret,
+            @Value("${tasky.qpay.max-callback-age-seconds:300}") long maxCallbackAgeSeconds) {
         this.bookingService = bookingService;
         this.taskService = taskService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -68,8 +67,7 @@ public class PaymentService {
         byte[] bytes = this.qpayWebhookSecretBytes;
         if (bytes == null) {
             if (!StringUtils.hasText(qpayWebhookSecret)) {
-                throw new IllegalStateException(
-                    "tasky.qpay.webhook-secret must be configured when escrow is enabled.");
+                throw new IllegalStateException("tasky.qpay.webhook-secret must be configured when escrow is enabled.");
             }
             bytes = qpayWebhookSecret.getBytes(StandardCharsets.UTF_8);
             this.qpayWebhookSecretBytes = bytes;
@@ -86,26 +84,22 @@ public class PaymentService {
      */
     public PaymentIntent initiatePayment(String bookingId) {
         ensureMonetizationEnabled();
-        String paymentId = UUID.randomUUID()
-            .toString();
-        paymentIntentDao.insert(paymentId,
-            bookingId);
+        String paymentId = UUID.randomUUID().toString();
+        paymentIntentDao.insert(paymentId, bookingId);
 
         Optional<BookingState> booking = bookingService.getBooking(bookingId);
         booking.ifPresent(b -> analyticsService.track(
-            AnalyticsService.EVENT_PAYMENT_INITIATED,
-            b.customerId(),
-            Map.of(
-                AnalyticsService.PROPERTY_BOOKING_ID,
-                bookingId,
-                AnalyticsService.PROPERTY_TASK_ID,
-                b.taskId(),
-                "payment_id",
-                paymentId)));
+                AnalyticsService.EVENT_PAYMENT_INITIATED,
+                b.customerId(),
+                Map.of(
+                        AnalyticsService.PROPERTY_BOOKING_ID,
+                        bookingId,
+                        AnalyticsService.PROPERTY_TASK_ID,
+                        b.taskId(),
+                        "payment_id",
+                        paymentId)));
 
-        return new PaymentIntent(paymentId,
-            "https://qpay.mn/pay/" + paymentId,
-            "BASE64_QR_CODE_" + paymentId);
+        return new PaymentIntent(paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId);
     }
 
     private void ensureMonetizationEnabled() {
@@ -122,11 +116,9 @@ public class PaymentService {
      */
     public Optional<PaymentIntent> findPaymentIntent(String paymentId) {
         return paymentIntentDao
-            .findBookingIdByPaymentId(paymentId)
-            .map(ignored -> new PaymentIntent(
-                paymentId,
-                "https://qpay.mn/pay/" + paymentId,
-                "BASE64_QR_CODE_" + paymentId));
+                .findBookingIdByPaymentId(paymentId)
+                .map(ignored -> new PaymentIntent(
+                        paymentId, "https://qpay.mn/pay/" + paymentId, "BASE64_QR_CODE_" + paymentId));
     }
 
     /**
@@ -146,12 +138,8 @@ public class PaymentService {
      */
     public boolean processCallback(String paymentId, String status, long timestamp, String signature) {
         ensureMonetizationEnabled();
-        if (!isValidSignature(paymentId,
-            status,
-            timestamp,
-            signature)) {
-            log.warn("Rejected QPay callback due to invalid signature for payment {}",
-                paymentId);
+        if (!isValidSignature(paymentId, status, timestamp, signature)) {
+            log.warn("Rejected QPay callback due to invalid signature for payment {}", paymentId);
             return false;
         }
 
@@ -178,29 +166,28 @@ public class PaymentService {
         BookingState booking = bookingOpt.get();
         if ("ASSIGNED".equals(booking.status())) {
             bookingService.transitionToPaid(bookingId);
-            if (taskService.transitionToAssigned(booking.taskId())
-                .isEmpty()) {
+            if (taskService.transitionToAssigned(booking.taskId()).isEmpty()) {
                 log.warn(
-                    "Task not found when assigning after payment: bookingId={} taskId={}",
-                    bookingId,
-                    booking.taskId());
+                        "Task not found when assigning after payment: bookingId={} taskId={}",
+                        bookingId,
+                        booking.taskId());
             }
 
             domainEventOutboxService.publish(
-                OutboxEventTypes.PAYMENT_CONFIRMED,
-                "PAYMENT",
-                paymentId,
-                Map.of(
-                    "payment_id",
+                    OutboxEventTypes.PAYMENT_CONFIRMED,
+                    "PAYMENT",
                     paymentId,
-                    "booking_id",
-                    bookingId,
-                    "task_id",
-                    booking.taskId(),
-                    "customer_id",
-                    booking.customerId(),
-                    "tasker_id",
-                    booking.taskerId()));
+                    Map.of(
+                            "payment_id",
+                            paymentId,
+                            "booking_id",
+                            bookingId,
+                            "task_id",
+                            booking.taskId(),
+                            "customer_id",
+                            booking.customerId(),
+                            "tasker_id",
+                            booking.taskerId()));
         }
 
         return true;
@@ -208,44 +195,37 @@ public class PaymentService {
 
     private boolean isValidSignature(String paymentId, String status, long timestamp, String providedSignature) {
         if (!StringUtils.hasText(paymentId)
-            || !StringUtils.hasText(status)
-            || !StringUtils.hasText(providedSignature)
-            || timestamp <= 0) {
+                || !StringUtils.hasText(status)
+                || !StringUtils.hasText(providedSignature)
+                || timestamp <= 0) {
             return false;
         }
         if (!isRecentTimestamp(timestamp)) {
             return false;
         }
         String expected = computeSignature(paymentId + "|" + status + "|" + timestamp);
-        String normalizedProvided = providedSignature.trim()
-            .toLowerCase(Locale.ROOT);
+        String normalizedProvided = providedSignature.trim().toLowerCase(Locale.ROOT);
         return MessageDigest.isEqual(
-            expected.getBytes(StandardCharsets.UTF_8),
-            normalizedProvided.getBytes(StandardCharsets.UTF_8));
+                expected.getBytes(StandardCharsets.UTF_8), normalizedProvided.getBytes(StandardCharsets.UTF_8));
     }
 
     private boolean isRecentTimestamp(long epochSeconds) {
-        long now = Instant.now()
-            .getEpochSecond();
+        long now = Instant.now().getEpochSecond();
         return Math.abs(now - epochSeconds) <= maxCallbackAgeSeconds;
     }
 
     private String computeSignature(String payload) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(getWebhookSecretBytes(),
-                HMAC_ALGORITHM));
+            mac.init(new SecretKeySpec(getWebhookSecretBytes(), HMAC_ALGORITHM));
             byte[] signature = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder(signature.length * 2);
             for (byte b : signature) {
-                builder.append(String.format(Locale.ROOT,
-                    "%02x",
-                    b));
+                builder.append(String.format(Locale.ROOT, "%02x", b));
             }
             return builder.toString();
         } catch (Exception ex) {
-            throw new IllegalStateException("Failed to calculate QPay signature",
-                ex);
+            throw new IllegalStateException("Failed to calculate QPay signature", ex);
         }
     }
 }

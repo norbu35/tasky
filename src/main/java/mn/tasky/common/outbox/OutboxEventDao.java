@@ -1,19 +1,18 @@
 package mn.tasky.common.outbox;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
 @RegisterConstructorMapper(OutboxEvent.class)
 public interface OutboxEventDao {
 
     @SqlUpdate(
-        """
+            """
             INSERT INTO domain_outbox_events
                 (id, event_type, aggregate_type, aggregate_id, payload, status, attempts, available_at, created_at)
             VALUES
@@ -21,18 +20,18 @@ public interface OutboxEventDao {
                  :status, :attempts, :availableAt, :createdAt)
             """)
     void insert(
-        @Bind("id") UUID id,
-        @Bind("eventType") String eventType,
-        @Bind("aggregateType") String aggregateType,
-        @Bind("aggregateId") UUID aggregateId,
-        @Bind("payload") String payload,
-        @Bind("status") String status,
-        @Bind("attempts") int attempts,
-        @Bind("availableAt") Instant availableAt,
-        @Bind("createdAt") Instant createdAt);
+            @Bind("id") UUID id,
+            @Bind("eventType") String eventType,
+            @Bind("aggregateType") String aggregateType,
+            @Bind("aggregateId") UUID aggregateId,
+            @Bind("payload") String payload,
+            @Bind("status") String status,
+            @Bind("attempts") int attempts,
+            @Bind("availableAt") Instant availableAt,
+            @Bind("createdAt") Instant createdAt);
 
     @SqlQuery(
-        """
+            """
             WITH candidates AS (
                 SELECT id
                 FROM domain_outbox_events
@@ -61,10 +60,10 @@ public interface OutboxEventDao {
                       e.last_error
             """)
     List<OutboxEvent> claimBatch(
-        @Bind("now") Instant now, @Bind("claimUntil") Instant claimUntil, @Bind("limit") int limit);
+            @Bind("now") Instant now, @Bind("claimUntil") Instant claimUntil, @Bind("limit") int limit);
 
     @SqlUpdate(
-        """
+            """
             UPDATE domain_outbox_events
             SET status = 'PROCESSED',
                 processed_at = :processedAt,
@@ -74,7 +73,7 @@ public interface OutboxEventDao {
     int markProcessed(@Bind("id") UUID id, @Bind("processedAt") Instant processedAt);
 
     @SqlUpdate(
-        """
+            """
             UPDATE domain_outbox_events
             SET status = 'FAILED',
                 attempts = attempts + 1,

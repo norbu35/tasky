@@ -1,12 +1,11 @@
 package mn.tasky.analytics.application;
 
-import mn.tasky.analytics.domain.KpiReport;
-import mn.tasky.analytics.dto.Event;
-import org.springframework.stereotype.Service;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import mn.tasky.analytics.domain.KpiReport;
+import mn.tasky.analytics.dto.Event;
+import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for generating Key Performance Indicator (KPI) reports
@@ -39,38 +38,25 @@ public class KpiReportService {
      */
     public KpiReport buildReport(List<Event> events) {
         Set<String> postedTaskIds =
-            referenceIds(events,
-                AnalyticsService.EVENT_TASK_POSTED,
-                AnalyticsService.PROPERTY_TASK_ID);
+                referenceIds(events, AnalyticsService.EVENT_TASK_POSTED, AnalyticsService.PROPERTY_TASK_ID);
         Set<String> confirmedTaskIds =
-            referenceIds(events,
-                AnalyticsService.EVENT_BOOKING_CONFIRMED,
-                AnalyticsService.PROPERTY_TASK_ID);
+                referenceIds(events, AnalyticsService.EVENT_BOOKING_CONFIRMED, AnalyticsService.PROPERTY_TASK_ID);
         Set<String> confirmedBookingIds =
-            referenceIds(events,
-                AnalyticsService.EVENT_BOOKING_CONFIRMED,
-                AnalyticsService.PROPERTY_BOOKING_ID);
+                referenceIds(events, AnalyticsService.EVENT_BOOKING_CONFIRMED, AnalyticsService.PROPERTY_BOOKING_ID);
         Set<String> completedBookingIds =
-            referenceIds(events,
-                AnalyticsService.EVENT_BOOKING_COMPLETED,
-                AnalyticsService.PROPERTY_BOOKING_ID);
+                referenceIds(events, AnalyticsService.EVENT_BOOKING_COMPLETED, AnalyticsService.PROPERTY_BOOKING_ID);
         Set<String> disputedBookingIds =
-            referenceIds(events,
-                AnalyticsService.EVENT_DISPUTE_RAISED,
-                AnalyticsService.PROPERTY_BOOKING_ID);
+                referenceIds(events, AnalyticsService.EVENT_DISPUTE_RAISED, AnalyticsService.PROPERTY_BOOKING_ID);
 
         return new KpiReport(
-            postedTaskIds.size(),
-            confirmedTaskIds.size(),
-            confirmedBookingIds.size(),
-            completedBookingIds.size(),
-            disputedBookingIds.size(),
-            ratio(confirmedTaskIds.size(),
-                postedTaskIds.size()),
-            ratio(completedBookingIds.size(),
-                confirmedBookingIds.size()),
-            ratio(disputedBookingIds.size(),
-                completedBookingIds.size()));
+                postedTaskIds.size(),
+                confirmedTaskIds.size(),
+                confirmedBookingIds.size(),
+                completedBookingIds.size(),
+                disputedBookingIds.size(),
+                ratio(confirmedTaskIds.size(), postedTaskIds.size()),
+                ratio(completedBookingIds.size(), confirmedBookingIds.size()),
+                ratio(disputedBookingIds.size(), completedBookingIds.size()));
     }
 
     private Set<String> referenceIds(List<Event> events, String eventName, String propertyKey) {
@@ -79,8 +65,7 @@ public class KpiReportService {
             if (!eventName.equals(event.name())) {
                 continue;
             }
-            Object value = event.properties()
-                .get(propertyKey);
+            Object value = event.properties().get(propertyKey);
             if (value != null) {
                 ids.add(value.toString());
             }

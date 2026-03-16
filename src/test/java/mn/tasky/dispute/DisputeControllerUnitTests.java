@@ -1,5 +1,12 @@
 package mn.tasky.dispute;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
@@ -20,14 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.Instant;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class DisputeControllerUnitTests {
 
@@ -47,178 +46,124 @@ class DisputeControllerUnitTests {
 
     @BeforeEach
     void setUp() {
-        controller = new DisputeController(disputeService,
-            analyticsService,
-            bookingService,
-            idempotencyService);
+        controller = new DisputeController(disputeService, analyticsService, bookingService, idempotencyService);
     }
 
     @Test
     void raiseDisputeReturnsInProgressWhenClaimActive() {
         JwtPrincipal principal = userPrincipal();
-        when(idempotencyService.claim(principal.userId(),
-            IdempotencyOperations.RAISE_DISPUTE,
-            "idem-1"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS,
-                null));
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-1"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS, null));
 
         ResponseEntity<?> response =
-            controller.raiseDispute(principal,
-                uuid(1),
-                new DisputeRequest("reason"),
-                "idem-1");
+                controller.raiseDispute(principal, uuid(1), new DisputeRequest("reason"), "idem-1");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-            "IDEMPOTENCY_IN_PROGRESS");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_IN_PROGRESS");
     }
 
     private JwtPrincipal userPrincipal() {
-        return new JwtPrincipal(uuid(200),
-            "CUSTOMER",
-            "ACTIVE");
+        return new JwtPrincipal(uuid(200), "CUSTOMER", "ACTIVE");
     }
 
     private String uuid(int suffix) {
-        return String.format("00000000-0000-0000-0000-%012d",
-            suffix);
+        return String.format("00000000-0000-0000-0000-%012d", suffix);
     }
 
     @Test
     void raiseDisputeReturnsReplayMissingWhenCompletedRecordCannotBeLoaded() {
         JwtPrincipal principal = userPrincipal();
         IdempotencyRecord completed = new IdempotencyRecord(
-            UUID.fromString(uuid(10)),
-            UUID.fromString(uuid(11)),
-            IdempotencyOperations.RAISE_DISPUTE,
-            "idem-2",
-            "COMPLETED",
-            "DISPUTE",
-            UUID.fromString(uuid(12)),
-            Instant.now(),
-            Instant.now());
-        when(idempotencyService.claim(principal.userId(),
-            IdempotencyOperations.RAISE_DISPUTE,
-            "idem-2"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED,
-                completed));
+                UUID.fromString(uuid(10)),
+                UUID.fromString(uuid(11)),
+                IdempotencyOperations.RAISE_DISPUTE,
+                "idem-2",
+                "COMPLETED",
+                "DISPUTE",
+                UUID.fromString(uuid(12)),
+                Instant.now(),
+                Instant.now());
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-2"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, completed));
         when(disputeService.getDispute(uuid(12))).thenReturn(Optional.empty());
 
         ResponseEntity<?> response =
-            controller.raiseDispute(principal,
-                uuid(2),
-                new DisputeRequest("reason"),
-                "idem-2");
+                controller.raiseDispute(principal, uuid(2), new DisputeRequest("reason"), "idem-2");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-            "IDEMPOTENCY_REPLAY_MISSING");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
     }
 
     @Test
     void raiseDisputeReturnsForbiddenForNonParticipant() {
         JwtPrincipal principal = userPrincipal();
-        when(idempotencyService.claim(principal.userId(),
-            IdempotencyOperations.RAISE_DISPUTE,
-            "idem-3"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
-                null));
-        when(disputeService.raiseDispute(principal.userId(),
-            uuid(3),
-            "reason"))
-            .thenReturn(DisputeRaiseResult.error("FORBIDDEN"));
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-3"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(disputeService.raiseDispute(principal.userId(), uuid(3), "reason"))
+                .thenReturn(DisputeRaiseResult.error("FORBIDDEN"));
 
         ResponseEntity<?> response =
-            controller.raiseDispute(principal,
-                uuid(3),
-                new DisputeRequest("reason"),
-                "idem-3");
+                controller.raiseDispute(principal, uuid(3), new DisputeRequest("reason"), "idem-3");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("code",
-            "FORBIDDEN");
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "FORBIDDEN");
     }
 
     @Test
     void raiseDisputeSuccessTracksAnalytics() {
         JwtPrincipal principal = userPrincipal();
         Dispute dispute = dispute("OPEN");
-        when(idempotencyService.claim(principal.userId(),
-            IdempotencyOperations.RAISE_DISPUTE,
-            "idem-4"))
-            .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW,
-                null));
-        when(disputeService.raiseDispute(principal.userId(),
-            dispute.bookingId(),
-            "reason"))
-            .thenReturn(DisputeRaiseResult.success(dispute));
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-4"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(disputeService.raiseDispute(principal.userId(), dispute.bookingId(), "reason"))
+                .thenReturn(DisputeRaiseResult.success(dispute));
         when(bookingService.getBooking(dispute.bookingId()))
-            .thenReturn(Optional.of(new BookingState(
-                dispute.bookingId(),
-                uuid(30),
-                uuid(31),
-                uuid(32),
-                10000,
-                "ASSIGNED",
-                null,
-                true,
-                null,
-                "DIRECT",
-                false,
-                null,
-                Instant.now(),
-                Instant.now())));
+                .thenReturn(Optional.of(new BookingState(
+                        dispute.bookingId(),
+                        uuid(30),
+                        uuid(31),
+                        uuid(32),
+                        10000,
+                        "ASSIGNED",
+                        null,
+                        true,
+                        null,
+                        "DIRECT",
+                        false,
+                        null,
+                        Instant.now(),
+                        Instant.now())));
 
         ResponseEntity<?> response =
-            controller.raiseDispute(principal,
-                dispute.bookingId(),
-                new DisputeRequest("reason"),
-                "idem-4");
+                controller.raiseDispute(principal, dispute.bookingId(), new DisputeRequest("reason"), "idem-4");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     private Dispute dispute(String status) {
         Instant now = Instant.parse("2026-02-17T00:00:00Z");
-        return new Dispute(uuid(20),
-            uuid(21),
-            uuid(22),
-            "reason",
-            status,
-            null,
-            null,
-            null,
-            now,
-            null);
+        return new Dispute(uuid(20), uuid(21), uuid(22), "reason", status, null, null, null, now, null);
     }
 
     @Test
     void getDisputeReturnsNotFoundWhenUserCannotAccess() {
-        JwtPrincipal principal = new JwtPrincipal(uuid(100),
-            "CUSTOMER",
-            "ACTIVE");
-        when(disputeService.getDisputeForUser(uuid(40),
-            principal.userId())).thenReturn(Optional.empty());
+        JwtPrincipal principal = new JwtPrincipal(uuid(100), "CUSTOMER", "ACTIVE");
+        when(disputeService.getDisputeForUser(uuid(40), principal.userId())).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = controller.getDispute(principal,
-            uuid(40));
+        ResponseEntity<?> response = controller.getDispute(principal, uuid(40));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     void getDisputeAsAdminUsesGlobalLookup() {
-        JwtPrincipal admin = new JwtPrincipal(uuid(101),
-            "ADMIN",
-            "ACTIVE");
+        JwtPrincipal admin = new JwtPrincipal(uuid(101), "ADMIN", "ACTIVE");
         Dispute dispute = dispute("RESOLVED_TASKER");
         when(disputeService.getDispute(dispute.id())).thenReturn(Optional.of(dispute));
 
-        ResponseEntity<?> response = controller.getDispute(admin,
-            dispute.id());
+        ResponseEntity<?> response = controller.getDispute(admin, dispute.id());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat((Map<String, Object>) response.getBody()).containsEntry("id",
-            dispute.id());
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("id", dispute.id());
     }
 }

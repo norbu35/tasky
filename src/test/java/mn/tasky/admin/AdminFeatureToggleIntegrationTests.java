@@ -1,7 +1,13 @@
 package mn.tasky.admin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import mn.tasky.common.IntegrationTestBase;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.DisplayName;
@@ -12,13 +18,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
@@ -39,8 +38,7 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
     @DisplayName("LAUNCH-013-GET returns all seeded toggles (4 items, all disabled)")
     void listTogglesReturnsSeededData() {
         // Reset all toggles to disabled in case previous test runs left state behind
-        jdbi.useHandle(handle ->
-            handle.execute("UPDATE feature_toggles SET is_enabled = false"));
+        jdbi.useHandle(handle -> handle.execute("UPDATE feature_toggles SET is_enabled = false"));
 
         String token = adminToken();
 
@@ -49,8 +47,8 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         List<Map> data = (List<Map>) response.getBody().get("data");
         assertThat(data).hasSize(4);
-        assertThat(data).allSatisfy(toggle ->
-            assertThat(toggle.get("isEnabled")).isEqualTo(false));
+        assertThat(data)
+                .allSatisfy(toggle -> assertThat(toggle.get("isEnabled")).isEqualTo(false));
     }
 
     @Test
@@ -59,9 +57,9 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
         String token = adminToken();
 
         ResponseEntity<Map> response = putWithAuth(
-            "/api/v1/admin/features/toggles",
-            token,
-            Map.of("feature_name", "lead_fee_enabled", "is_enabled", true));
+                "/api/v1/admin/features/toggles",
+                token,
+                Map.of("feature_name", "lead_fee_enabled", "is_enabled", true));
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().get("isEnabled")).isEqualTo(true);
@@ -74,14 +72,12 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
         String token = adminToken();
 
         // First enable it
-        putWithAuth("/api/v1/admin/features/toggles", token,
-            Map.of("feature_name", "escrow_enabled", "is_enabled", true));
+        putWithAuth(
+                "/api/v1/admin/features/toggles", token, Map.of("feature_name", "escrow_enabled", "is_enabled", true));
 
         // Then disable it
         ResponseEntity<Map> response = putWithAuth(
-            "/api/v1/admin/features/toggles",
-            token,
-            Map.of("feature_name", "escrow_enabled", "is_enabled", false));
+                "/api/v1/admin/features/toggles", token, Map.of("feature_name", "escrow_enabled", "is_enabled", false));
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody().get("isEnabled")).isEqualTo(false);
@@ -93,12 +89,12 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
     void auditEventWrittenOnUpdate() {
         String token = adminToken();
 
-        putWithAuth("/api/v1/admin/features/toggles", token,
-            Map.of("feature_name", "subscription_enabled", "is_enabled", true));
+        putWithAuth(
+                "/api/v1/admin/features/toggles",
+                token,
+                Map.of("feature_name", "subscription_enabled", "is_enabled", true));
 
-        int count = jdbi.withHandle(handle ->
-            handle.createQuery(
-                    "SELECT count(*) FROM audit_events "
+        int count = jdbi.withHandle(handle -> handle.createQuery("SELECT count(*) FROM audit_events "
                         + "WHERE action = 'FEATURE_TOGGLE_UPDATED' "
                         + "AND resource_type = 'FEATURE_TOGGLE'")
                 .mapTo(Integer.class)
@@ -108,22 +104,21 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
 
     private String adminToken() {
         return Jwts.builder()
-            .subject(ADMIN_ID)
-            .claim("role", "ADMIN")
-            .claim("status", "ACTIVE")
-            .claim("token_type", "access")
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + 3600000))
-            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
-            .compact();
+                .subject(ADMIN_ID)
+                .claim("role", "ADMIN")
+                .claim("status", "ACTIVE")
+                .claim("token_type", "access")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                .compact();
     }
 
     private ResponseEntity<Map> getWithAuth(String path, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-        return restTemplate.exchange("http://localhost:" + port + path,
-            HttpMethod.GET, entity, Map.class);
+        return restTemplate.exchange("http://localhost:" + port + path, HttpMethod.GET, entity, Map.class);
     }
 
     private ResponseEntity<Map> putWithAuth(String path, String token, Object body) {
@@ -131,7 +126,6 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
         HttpEntity<Object> entity = new HttpEntity<>(body, headers);
-        return restTemplate.exchange("http://localhost:" + port + path,
-            HttpMethod.PUT, entity, Map.class);
+        return restTemplate.exchange("http://localhost:" + port + path, HttpMethod.PUT, entity, Map.class);
     }
 }

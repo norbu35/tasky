@@ -1,7 +1,13 @@
 package mn.tasky.task;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import mn.tasky.common.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,13 +16,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TaskIntakeIntegrationTests extends IntegrationTestBase {
@@ -29,7 +28,8 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
 
-    private static final String VALID_SCHEMA = """
+    private static final String VALID_SCHEMA =
+            """
         [
           {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan","Erdenet"]},
           {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Medium","Large"]},
@@ -38,7 +38,8 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
         """;
 
     @Test
-    @DisplayName("Create task with intake answers persists intake_answers_json, intake_schema_version, scope_summary_source=TEMPLATE")
+    @DisplayName(
+            "Create task with intake answers persists intake_answers_json, intake_schema_version, scope_summary_source=TEMPLATE")
     void createTaskWithIntakeAnswers() {
         String adminToken = adminToken();
         AuthContext customer = authenticate("60");
@@ -112,14 +113,15 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
         String categoryId = createCategoryWithActiveSchema(adminToken);
 
         // Create a draft (binds to version 1)
-        ResponseEntity<Map> draftRes = postWithAuth(
-            "/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
+        ResponseEntity<Map> draftRes =
+                postWithAuth("/api/v1/tasks/drafts", customer.accessToken(), Map.of("category_id", categoryId));
         assertThat(draftRes.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String draftId = String.valueOf(draftRes.getBody().get("id"));
         assertThat(draftRes.getBody().get("intake_schema_version")).isEqualTo(1);
 
         // Create schema version 2 with different required fields
-        String schemaV2 = """
+        String schemaV2 =
+                """
             [
               {"key":"location","label":"Location","type":"dropdown","required":true,"options":["UB","Darkhan","Erdenet"]},
               {"key":"size","label":"Size","type":"single_select","required":true,"options":["Small","Medium","Large"]},
@@ -127,15 +129,10 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
             ]
             """;
         postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", schemaV2));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", schemaV2));
 
         // Activate version 2
-        postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/2/activate",
-            adminToken,
-            Map.of());
+        postWithAuth("/api/v1/admin/categories/" + categoryId + "/schemas/2/activate", adminToken, Map.of());
 
         // Create task referencing draft (should validate against version 1, not version 2)
         // Version 1 requires 'location' and 'size', NOT 'floor'
@@ -165,17 +162,15 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
         String phone = "+976" + prefix + "000000";
         post("/api/v1/auth/otp/request", Map.of("phone", phone));
 
-        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify",
-            Map.of("phone", phone, "code", "123456"));
+        ResponseEntity<Map> verifyResponse = post("/api/v1/auth/otp/verify", Map.of("phone", phone, "code", "123456"));
 
         assertThat(verifyResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> user = (Map<String, Object>) verifyResponse.getBody().get("user");
+        Map<String, Object> user =
+                (Map<String, Object>) verifyResponse.getBody().get("user");
         return new AuthContext(
-            String.valueOf(verifyResponse.getBody().get("access_token")),
-            String.valueOf(user.get("id")),
-            phone);
+                String.valueOf(verifyResponse.getBody().get("access_token")), String.valueOf(user.get("id")), phone);
     }
 
     private record AuthContext(String accessToken, String userId, String phone) {}
@@ -187,28 +182,27 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
 
         // Create schema version
         postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas",
-            adminToken,
-            Map.of("schema_json", VALID_SCHEMA));
+                "/api/v1/admin/categories/" + categoryId + "/schemas", adminToken, Map.of("schema_json", VALID_SCHEMA));
 
         // Activate schema version 1
-        postWithAuth(
-            "/api/v1/admin/categories/" + categoryId + "/schemas/1/activate",
-            adminToken,
-            Map.of());
+        postWithAuth("/api/v1/admin/categories/" + categoryId + "/schemas/1/activate", adminToken, Map.of());
 
         return categoryId;
     }
 
     private String createCategory(String adminToken) {
         ResponseEntity<Map> res = postWithAuth(
-            "/api/v1/admin/categories",
-            adminToken,
-            Map.of(
-                "name", "Intake Test " + UUID.randomUUID().toString().substring(0, 8),
-                "name_mn", "Intake Тест",
-                "icon_url", "https://cdn.tasky.local/icons/test.png",
-                "sort_order", 950));
+                "/api/v1/admin/categories",
+                adminToken,
+                Map.of(
+                        "name",
+                        "Intake Test " + UUID.randomUUID().toString().substring(0, 8),
+                        "name_mn",
+                        "Intake Тест",
+                        "icon_url",
+                        "https://cdn.tasky.local/icons/test.png",
+                        "sort_order",
+                        950));
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         return String.valueOf(res.getBody().get("id"));
     }
@@ -218,14 +212,14 @@ class TaskIntakeIntegrationTests extends IntegrationTestBase {
     private String adminToken() {
         Instant now = Instant.now();
         return Jwts.builder()
-            .subject(UUID.randomUUID().toString())
-            .claim("role", "ADMIN")
-            .claim("status", "ACTIVE")
-            .claim("token_type", "access")
-            .issuedAt(Date.from(now))
-            .expiration(Date.from(now.plusSeconds(3600)))
-            .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
-            .compact();
+                .subject(UUID.randomUUID().toString())
+                .claim("role", "ADMIN")
+                .claim("status", "ACTIVE")
+                .claim("token_type", "access")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
     }
 
     // --- HTTP helpers ---

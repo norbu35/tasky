@@ -1,4 +1,3 @@
 package mn.tasky.auth.dto;
 
-public record ProfileUpdate(String fullName, String avatarUrl) {
-}
+public record ProfileUpdate(String fullName, String avatarUrl) {}
