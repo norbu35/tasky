@@ -138,7 +138,8 @@ class PayoutIntegrationTests extends IntegrationTestBase {
             "Төлбөрийн ангилал",
             "https://example.com/icon.png",
             true,
-            1);
+            1,
+            null, null, null, null);
 
         String taskId = UUID.randomUUID()
             .toString();
@@ -153,6 +154,9 @@ class PayoutIntegrationTests extends IntegrationTestBase {
             "Ulaanbaatar",
             "ASSIGNED",
             now.plusSeconds(3600),
+            null,
+            null,
+            null,
             now,
             now);
 
@@ -166,6 +170,10 @@ class PayoutIntegrationTests extends IntegrationTestBase {
             "COMPLETED",
             null,
             true,
+            null,
+            "DIRECT",
+            false,
+            null,
             now,
             now);
         return bookingId;

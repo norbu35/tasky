@@ -75,6 +75,7 @@ public class BookingService {
         Instant now = Instant.now();
         String id = UUID.randomUUID()
             .toString();
+        Instant disclaimerAcceptedAt = liabilityDisclaimerAccepted ? now : null;
         BookingState booking = new BookingState(
             id,
             taskId,
@@ -84,6 +85,10 @@ public class BookingService {
             "ASSIGNED",
             null,
             liabilityDisclaimerAccepted,
+            null,
+            "DIRECT",
+            false,
+            disclaimerAcceptedAt,
             now,
             now);
         bookingDao.insert(
@@ -95,6 +100,10 @@ public class BookingService {
             "ASSIGNED",
             null,
             liabilityDisclaimerAccepted,
+            null,
+            "DIRECT",
+            false,
+            disclaimerAcceptedAt,
             now,
             now);
         log.info(
@@ -227,6 +236,10 @@ public class BookingService {
             newStatus,
             fee,
             current.liabilityDisclaimerAccepted(),
+            current.confirmedScheduledAt(),
+            current.settlementMode(),
+            current.lateCancelIncident(),
+            current.liabilityDisclaimerAcceptedAt(),
             current.createdAt(),
             now);
         return BookingTransitionResult.success(updated);

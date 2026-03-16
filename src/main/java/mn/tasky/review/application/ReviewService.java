@@ -41,8 +41,12 @@ public class ReviewService {
      * @param comment   An optional text review/comment.
      * @return A {@link ReviewSubmitResult} containing the created Review or an error.
      */
-    public ReviewSubmitResult submitReview(String authorId, String bookingId, int rating, String comment) {
-        if (rating < 1 || rating > 5) {
+    public ReviewSubmitResult submitReview(
+        String authorId, String bookingId,
+        Integer qualityRating, Integer punctualityRating,
+        Integer communicationRating, Integer clarityRating,
+        Integer respectfulnessRating, String comment) {
+        if (qualityRating == null || qualityRating < 1 || qualityRating > 5) {
             return new ReviewSubmitResult(null,
                 "INVALID_RATING");
         }
@@ -71,7 +75,7 @@ public class ReviewService {
                 "NOT_PARTICIPANT");
         }
 
-        if (reviewDao.existsByBookingIdAndAuthorId(bookingId,
+        if (reviewDao.existsByBookingIdAndReviewerId(bookingId,
             authorId)) {
             return new ReviewSubmitResult(null,
                 "ALREADY_REVIEWED");
@@ -85,19 +89,27 @@ public class ReviewService {
             bookingId,
             authorId,
             targetUserId,
-            rating,
+            qualityRating,
+            punctualityRating,
+            communicationRating,
+            clarityRating,
+            respectfulnessRating,
             sanitizedComment,
             now);
         reviewDao.insert(id,
             bookingId,
             authorId,
             targetUserId,
-            rating,
+            qualityRating,
+            punctualityRating,
+            communicationRating,
+            clarityRating,
+            respectfulnessRating,
             sanitizedComment,
             now);
 
         authService.updateUserStats(targetUserId,
-            rating,
+            qualityRating,
             false);
 
         return new ReviewSubmitResult(review,
@@ -113,7 +125,7 @@ public class ReviewService {
      * @return A list of {@link Review} objects.
      */
     public List<Review> listReviews(String userId, String cursor, int limit) {
-        return reviewDao.findByTargetUserId(userId,
+        return reviewDao.findByRevieweeId(userId,
             cursor,
             limit);
     }

@@ -765,7 +765,7 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()
-            .get("status")).isEqualTo("PENDING");
+            .get("status")).isEqualTo("APPLIED");
         assertThat(response.getBody()
             .get("message")).isEqualTo("I can do this job!");
     }

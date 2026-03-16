@@ -80,13 +80,15 @@ class AdminDisputeControllerUnitTests {
             conversation.id(),
             booking.taskerId(),
             "Uploaded proof image",
+            false,
+            null,
             Instant.parse("2026-02-17T00:10:00Z"));
 
         when(disputeService.getDispute(dispute.id())).thenReturn(Optional.of(dispute));
         when(bookingService.getBooking(dispute.bookingId())).thenReturn(Optional.of(booking));
         when(conversationDao.findByTaskAndParticipants(booking.taskId(),
-            booking.taskerId(),
-            booking.customerId()))
+            booking.customerId(),
+            booking.taskerId()))
             .thenReturn(Optional.of(conversation));
         when(messageDao.findByConversationId(conversation.id(),
             null,
@@ -130,6 +132,10 @@ class AdminDisputeControllerUnitTests {
             "ASSIGNED",
             null,
             true,
+            null,
+            "DIRECT",
+            false,
+            null,
             now,
             now);
     }

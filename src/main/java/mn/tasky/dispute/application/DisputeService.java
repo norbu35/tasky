@@ -208,18 +208,18 @@ public class DisputeService {
         disputeDao.update(disputeId,
             newStatus,
             outcome,
-            adminId,
+            null,
             sanitizedNotes,
             now);
 
         Dispute resolved = new Dispute(
             dispute.id(),
             dispute.bookingId(),
-            dispute.raiserId(),
+            dispute.raisedBy(),
             dispute.reason(),
             newStatus,
             outcome,
-            adminId,
+            null,
             sanitizedNotes,
             dispute.createdAt(),
             now);

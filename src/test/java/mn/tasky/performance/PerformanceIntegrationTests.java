@@ -52,7 +52,8 @@ class PerformanceIntegrationTests extends IntegrationTestBase {
                     java.time.Instant.now()
                         .plusSeconds(3600)
                         .toString(),
-                    java.util.List.of()));
+                    java.util.List.of(),
+                    null, null, null, null));
         }
 
         // 2. Measure latency

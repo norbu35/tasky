@@ -334,7 +334,11 @@ public class TaskController {
                 body.locationLng(),
                 body.locationText(),
                 body.scheduledAt(),
-                body.photoKeys() != null ? body.photoKeys() : List.of()));
+                body.photoKeys() != null ? body.photoKeys() : List.of(),
+                null,
+                null,
+                null,
+                null));
 
         if (result.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED)

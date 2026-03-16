@@ -70,10 +70,10 @@ public class MessagingController {
             c.id());
         res.put("task_id",
             c.taskId());
-        res.put("participant_1_id",
-            c.participant1Id());
-        res.put("participant_2_id",
-            c.participant2Id());
+        res.put("customer_id",
+            c.customerId());
+        res.put("tasker_id",
+            c.taskerId());
         res.put("created_at",
             c.createdAt()
                 .toString());

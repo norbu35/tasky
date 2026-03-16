@@ -47,8 +47,8 @@ class BookingServiceTests {
             String status = invocation.getArgument(5);
             Integer cancellationFee = invocation.getArgument(6);
             boolean disclaimer = invocation.getArgument(7);
-            Instant createdAt = invocation.getArgument(8);
-            Instant updatedAt = invocation.getArgument(9);
+            Instant createdAt = invocation.getArgument(12);
+            Instant updatedAt = invocation.getArgument(13);
             store.put(
                 id,
                 new BookingState(
@@ -60,6 +60,10 @@ class BookingServiceTests {
                     status,
                     cancellationFee,
                     disclaimer,
+                    null,
+                    "DIRECT",
+                    false,
+                    null,
                     createdAt,
                     updatedAt));
             return null;
@@ -74,6 +78,10 @@ class BookingServiceTests {
                 anyString(),
                 any(),
                 anyBoolean(),
+                any(),
+                any(),
+                anyBoolean(),
+                any(),
                 any(Instant.class),
                 any(Instant.class));
 
@@ -103,6 +111,10 @@ class BookingServiceTests {
                         newStatus,
                         fee,
                         disclaimer,
+                        existing.confirmedScheduledAt(),
+                        existing.settlementMode(),
+                        existing.lateCancelIncident(),
+                        existing.liabilityDisclaimerAcceptedAt(),
                         existing.createdAt(),
                         updatedAt));
             }

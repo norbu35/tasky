@@ -73,8 +73,8 @@ CREATE TABLE booking_reviews (
 -- ============================================================
 ALTER TABLE conversations RENAME COLUMN participant1_id TO customer_id;
 ALTER TABLE conversations RENAME COLUMN participant2_id TO tasker_id;
-DROP INDEX IF EXISTS conversations_task_id_participant1_id_participant2_id_key;
 ALTER TABLE conversations DROP CONSTRAINT IF EXISTS conversations_task_id_participant1_id_participant2_id_key;
+DROP INDEX IF EXISTS conversations_task_id_participant1_id_participant2_id_key;
 ALTER TABLE conversations ADD CONSTRAINT conversations_task_customer_tasker_unique
     UNIQUE (task_id, customer_id, tasker_id);
 
@@ -97,12 +97,11 @@ ALTER TABLE notification_log ADD COLUMN IF NOT EXISTS error_code TEXT;
 ALTER TABLE disputes RENAME COLUMN raiser_id TO raised_by;
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS wrongful_party_user_id UUID REFERENCES users(id);
 ALTER TABLE disputes ADD COLUMN IF NOT EXISTS resolution_action TEXT;
--- Migrate existing data BEFORE adding new constraints (old values would violate them)
-UPDATE disputes SET status = 'RESOLVED' WHERE status IN ('RESOLVED_TASKER', 'RESOLVED_CUSTOMER', 'ESCALATED');
+-- Migrate resolution_action from old outcome column before dropping it
 UPDATE disputes SET resolution_action = outcome WHERE outcome IS NOT NULL;
 ALTER TABLE disputes DROP CONSTRAINT IF EXISTS disputes_status_check;
 ALTER TABLE disputes ADD CONSTRAINT disputes_status_check
-    CHECK (status IN ('OPEN', 'RESOLVED', 'CLOSED_INSUFFICIENT_EVIDENCE'));
+    CHECK (status IN ('OPEN', 'RESOLVED_TASKER', 'RESOLVED_CUSTOMER', 'ESCALATED', 'CLOSED_INSUFFICIENT_EVIDENCE'));
 ALTER TABLE disputes ADD CONSTRAINT disputes_resolution_action_check
     CHECK (resolution_action IS NULL OR resolution_action IN ('RESOLVE_CUSTOMER', 'RESOLVE_TASKER', 'ESCALATE', 'REFUND', 'RELEASE'));
 ALTER TABLE disputes DROP COLUMN IF EXISTS outcome;
@@ -137,11 +136,9 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS confirmed_scheduled_at TIMESTAMPTZ
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS settlement_mode TEXT NOT NULL DEFAULT 'DIRECT';
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS late_cancel_incident BOOLEAN NOT NULL DEFAULT false;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS liability_disclaimer_accepted_at TIMESTAMPTZ;
--- Migrate existing data BEFORE adding new constraint (PAID is removed)
-UPDATE bookings SET status = 'ASSIGNED' WHERE status = 'PAID';
 ALTER TABLE bookings DROP CONSTRAINT IF EXISTS bookings_status_check;
 ALTER TABLE bookings ADD CONSTRAINT bookings_status_check
-    CHECK (status IN ('ASSIGNED', 'COMPLETED', 'CANCELLED', 'NO_SHOW'));
+    CHECK (status IN ('ASSIGNED', 'PAID', 'COMPLETED', 'CANCELLED', 'NO_SHOW'));
 ALTER TABLE bookings ADD CONSTRAINT bookings_settlement_mode_check
     CHECK (settlement_mode IN ('DIRECT', 'LEAD_UNLOCK', 'ESCROW'));
 

@@ -99,6 +99,8 @@ class MessagingControllerUnitTests {
                 uuid(5),
                 principal.userId(),
                 "saved",
+                false,
+                null,
                 Instant.parse("2026-02-17T00:00:00Z"));
         when(messagingService.sendMessage(principal.userId(),
             message.conversationId(),

@@ -45,6 +45,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             uuid(),
             0,
+            null, null, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -64,6 +65,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
+            null, null, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -78,6 +80,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
+            null, null, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -94,6 +97,10 @@ class ReviewServiceTests {
             status,
             null,
             false,
+            null,
+            "DIRECT",
+            false,
+            null,
             Instant.now(),
             Instant.now());
     }
@@ -106,6 +113,7 @@ class ReviewServiceTests {
         ReviewSubmitResult result = reviewService.submitReview(uuid(),
             bookingId,
             5,
+            null, null, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -117,13 +125,14 @@ class ReviewServiceTests {
         String bookingId = uuid();
         BookingState booking = booking("COMPLETED");
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
-        when(reviewDao.existsByBookingIdAndAuthorId(bookingId,
+        when(reviewDao.existsByBookingIdAndReviewerId(bookingId,
             booking.customerId()))
             .thenReturn(true);
 
         ReviewSubmitResult result = reviewService.submitReview(booking.customerId(),
             bookingId,
             5,
+            null, null, null, null,
             "comment");
 
         assertThat(result.isSuccess()).isFalse();
@@ -135,7 +144,7 @@ class ReviewServiceTests {
         String bookingId = uuid();
         BookingState booking = booking("COMPLETED");
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
-        when(reviewDao.existsByBookingIdAndAuthorId(bookingId,
+        when(reviewDao.existsByBookingIdAndReviewerId(bookingId,
             booking.customerId()))
             .thenReturn(false);
 
@@ -143,6 +152,7 @@ class ReviewServiceTests {
             reviewService.submitReview(booking.customerId(),
                 bookingId,
                 5,
+                null, null, null, null,
                 "  <b>Great</b>   job  ");
 
         assertThat(result.isSuccess()).isTrue();
@@ -150,7 +160,7 @@ class ReviewServiceTests {
         assertThat(result.review()
             .comment()).isEqualTo("Great job");
         assertThat(result.review()
-            .targetUserId()).isEqualTo(booking.taskerId());
+            .revieweeId()).isEqualTo(booking.taskerId());
 
         verify(reviewDao)
             .insert(
@@ -159,6 +169,10 @@ class ReviewServiceTests {
                 eq(booking.customerId()),
                 eq(booking.taskerId()),
                 eq(5),
+                any(),
+                any(),
+                any(),
+                any(),
                 eq("Great job"),
                 any(Instant.class));
         verify(authService).updateUserStats(eq(booking.taskerId()),
@@ -172,7 +186,7 @@ class ReviewServiceTests {
         reviewService.listReviews(userId,
             null,
             20);
-        verify(reviewDao).findByTargetUserId(userId,
+        verify(reviewDao).findByRevieweeId(userId,
             null,
             20);
     }
@@ -182,18 +196,19 @@ class ReviewServiceTests {
         String bookingId = uuid();
         BookingState booking = booking("COMPLETED");
         when(bookingService.getBooking(bookingId)).thenReturn(Optional.of(booking));
-        when(reviewDao.existsByBookingIdAndAuthorId(bookingId,
+        when(reviewDao.existsByBookingIdAndReviewerId(bookingId,
             booking.taskerId()))
             .thenReturn(false);
 
         ReviewSubmitResult result = reviewService.submitReview(booking.taskerId(),
             bookingId,
             4,
+            null, null, null, null,
             "Done");
 
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.review()
-            .targetUserId()).isEqualTo(booking.customerId());
+            .revieweeId()).isEqualTo(booking.customerId());
         verify(authService).updateUserStats(eq(booking.customerId()),
             anyInt(),
             anyBoolean());
@@ -204,6 +219,7 @@ class ReviewServiceTests {
         reviewService.submitReview(uuid(),
             uuid(),
             9,
+            null, null, null, null,
             "bad");
 
         verify(bookingService,
@@ -214,7 +230,11 @@ class ReviewServiceTests {
                 anyString(),
                 anyString(),
                 anyString(),
-                anyInt(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
                 anyString(),
                 any(Instant.class));
     }

@@ -162,6 +162,10 @@ class DisputeControllerUnitTests {
                 "ASSIGNED",
                 null,
                 true,
+                null,
+                "DIRECT",
+                false,
+                null,
                 Instant.now(),
                 Instant.now())));
 

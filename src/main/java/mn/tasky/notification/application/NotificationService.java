@@ -96,6 +96,9 @@ public class NotificationService {
                 type,
                 "PUSH",
                 "SENT",
+                null,
+                null,
+                null,
                 Instant.now());
         }
     }
@@ -114,6 +117,9 @@ public class NotificationService {
             "FALLBACK",
             "SMS",
             "SENT",
+            null,
+            null,
+            null,
             Instant.now());
     }
 

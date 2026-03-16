@@ -102,8 +102,8 @@ public class AdminDisputeController {
 
                         conversationDao
                             .findByTaskAndParticipants(booking.taskId(),
-                                booking.taskerId(),
-                                booking.customerId())
+                                booking.customerId(),
+                                booking.taskerId())
                             .ifPresent(conversation -> {
                                 body.put("conversation_id",
                                     conversation.id());

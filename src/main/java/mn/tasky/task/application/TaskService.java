@@ -165,6 +165,9 @@ public class TaskService {
             sanitizedLocationText,
             "OPEN",
             scheduledAt,
+            command.intakeAnswersJson(),
+            command.intakeSchemaVersion(),
+            command.scopeSummary(),
             now,
             now);
 
@@ -190,6 +193,9 @@ public class TaskService {
             "OPEN",
             scheduledAt,
             photoKeys,
+            command.intakeAnswersJson(),
+            command.intakeSchemaVersion(),
+            command.scopeSummary(),
             now,
             now);
 
@@ -252,6 +258,9 @@ public class TaskService {
             task.status(),
             task.scheduledAt(),
             keys,
+            task.intakeAnswersJson(),
+            task.intakeSchemaVersion(),
+            task.scopeSummarySource(),
             task.createdAt(),
             task.updatedAt());
     }
@@ -552,7 +561,7 @@ public class TaskService {
             taskId,
             taskerId,
             sanitizedMessage,
-            "PENDING",
+            "APPLIED",
             Instant.now());
 
         TaskApplicationState application = new TaskApplicationState(
@@ -565,7 +574,11 @@ public class TaskService {
             profile.completedTasks(),
             profile.isPro(),
             sanitizedMessage,
-            "PENDING",
+            "APPLIED",
+            null,
+            null,
+            null,
+            null,
             Instant.now());
 
         String conversationId = messagingService.startConversation(taskId,
@@ -683,7 +696,7 @@ public class TaskService {
             return TaskAcceptResult.NOT_FOUND_RESULT;
         }
         TaskApplicationState selected = selectedOpt.get();
-        if (!"PENDING".equals(selected.status())) {
+        if (!"APPLIED".equals(selected.status())) {
             return TaskAcceptResult.CONFLICT_RESULT;
         }
 
@@ -928,6 +941,9 @@ public class TaskService {
                 existing.status(),
                 finalScheduledAt,
                 photoKeys,
+                existing.intakeAnswersJson(),
+                existing.intakeSchemaVersion(),
+                existing.scopeSummarySource(),
                 existing.createdAt(),
                 now));
         return TaskUpdateResult.success(updated);

@@ -107,6 +107,10 @@ class DisputeServiceTests {
             status,
             null,
             false,
+            null,
+            "DIRECT",
+            false,
+            null,
             Instant.now(),
             Instant.now());
     }
@@ -168,6 +172,10 @@ class DisputeServiceTests {
             "ASSIGNED",
             null,
             false,
+            null,
+            "DIRECT",
+            false,
+            null,
             Instant.now(),
             Instant.now());
         when(bookingService.getBooking(dispute.bookingId())).thenReturn(Optional.of(booking));
@@ -256,7 +264,7 @@ class DisputeServiceTests {
                 eq(open.id()),
                 eq("RESOLVED_CUSTOMER"),
                 eq("RESOLVE_CUSTOMER"),
-                eq(ADMIN_ID),
+                eq(null),
                 eq("Reviewed evidence"),
                 any(Instant.class));
     }

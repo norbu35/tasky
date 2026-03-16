@@ -124,14 +124,22 @@ public class CategoryService {
             command.iconUrl()
                 .trim(),
             true,
-            command.sortOrder());
+            command.sortOrder(),
+            null,
+            null,
+            null,
+            null);
         categoryDao.insert(
             created.id(),
             created.name(),
             created.nameMn(),
             created.iconUrl(),
             created.isActive(),
-            created.sortOrder());
+            created.sortOrder(),
+            created.intakeEnabled(),
+            created.intakeSchemaVersion(),
+            created.intakeSchemaJson(),
+            created.lastKnownGoodSchemaVersion());
         return created;
     }
 
@@ -158,14 +166,22 @@ public class CategoryService {
             command.iconUrl() != null ? command.iconUrl()
                 .trim() : current.iconUrl(),
             command.isActive() != null ? command.isActive() : current.isActive(),
-            command.sortOrder() != null ? command.sortOrder() : current.sortOrder());
+            command.sortOrder() != null ? command.sortOrder() : current.sortOrder(),
+            current.intakeEnabled(),
+            current.intakeSchemaVersion(),
+            current.intakeSchemaJson(),
+            current.lastKnownGoodSchemaVersion());
         categoryDao.update(
             updated.id(),
             updated.name(),
             updated.nameMn(),
             updated.iconUrl(),
             updated.isActive(),
-            updated.sortOrder());
+            updated.sortOrder(),
+            updated.intakeEnabled(),
+            updated.intakeSchemaVersion(),
+            updated.intakeSchemaJson(),
+            updated.lastKnownGoodSchemaVersion());
         return Optional.of(updated);
     }
 

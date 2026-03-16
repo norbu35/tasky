@@ -163,6 +163,10 @@ class BookingControllerUnitTests {
             status,
             null,
             true,
+            null,
+            "DIRECT",
+            false,
+            null,
             now,
             now);
     }
@@ -336,6 +340,9 @@ class BookingControllerUnitTests {
             status,
             now.plusSeconds(3600),
             List.of(),
+            null,
+            null,
+            null,
             now,
             now);
     }

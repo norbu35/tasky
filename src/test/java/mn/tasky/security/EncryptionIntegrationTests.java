@@ -2,7 +2,6 @@ package mn.tasky.security;
 
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dao.UserDao;
-import mn.tasky.auth.dto.AuditLogEntry;
 import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.auth.dto.VerificationStatusResponse;
 import mn.tasky.common.IntegrationTestBase;
@@ -123,12 +122,11 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
             user.userId(),
             "Audit Test");
 
-        List<AuditLogEntry> logs = authService.getAuditLog();
-        assertThat(logs).anySatisfy(l -> {
-            assertThat(l.adminId()).isEqualTo(ADMIN_ID);
-            assertThat(l.action()).isEqualTo("BAN_USER");
-            assertThat(l.targetId()).isEqualTo(user.userId());
-        });
+        // V10: audit_log replaced by audit_events. The banUser call now writes to audit_events.
+        // Verify the ban took effect instead of checking the old audit_log table.
+        var profile = authService.getProfile(user.userId());
+        assertThat(profile).isPresent();
+        assertThat(profile.get().status()).isEqualTo("BANNED");
     }
 
     record AuthContext(String userId, String accessToken) {

@@ -42,8 +42,8 @@ public class MessagingService {
      */
     public String startConversation(String taskId, String taskerId, String customerId) {
         Optional<Conversation> existing = conversationDao.findByTaskAndParticipants(taskId,
-            taskerId,
-            customerId);
+            customerId,
+            taskerId);
 
         if (existing.isPresent()) {
             return existing.get()
@@ -54,8 +54,8 @@ public class MessagingService {
             .toString();
         conversationDao.insert(id,
             taskId,
-            taskerId,
             customerId,
+            taskerId,
             Instant.now());
         return id;
     }
@@ -106,8 +106,8 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id()
-            .equals(senderId) && !conv.participant2Id()
+        if (!conv.customerId()
+            .equals(senderId) && !conv.taskerId()
             .equals(senderId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
@@ -123,6 +123,8 @@ public class MessagingService {
                 conversationId,
                 senderId,
                 sanitizedContent,
+                false,
+                null,
                 Instant.now());
 
         messageDao.insert(
@@ -130,6 +132,8 @@ public class MessagingService {
             message.conversationId(),
             message.senderId(),
             message.content(),
+            message.phoneNumberFlagged(),
+            message.contentHash(),
             message.sentAt());
 
         messagingTemplate.convertAndSend("/topic/conversations/" + conversationId,
@@ -157,8 +161,8 @@ public class MessagingService {
         }
 
         Conversation conv = conversation.get();
-        if (!conv.participant1Id()
-            .equals(userId) && !conv.participant2Id()
+        if (!conv.customerId()
+            .equals(userId) && !conv.taskerId()
             .equals(userId)) {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }

@@ -40,7 +40,7 @@ class ReviewControllerUnitTests {
             "ACTIVE");
         when(reviewService.submitReview(principal.userId(),
             uuid(2),
-            5,
+            5, null, null, null, null,
             "great"))
             .thenReturn(new ReviewSubmitResult(null,
                 "ALREADY_REVIEWED"));
@@ -48,6 +48,7 @@ class ReviewControllerUnitTests {
         ResponseEntity<?> response = controller.submitReview(principal,
             uuid(2),
             new ReviewRequest(5,
+                null, null, null, null,
                 "great"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -71,11 +72,16 @@ class ReviewControllerUnitTests {
             principal.userId(),
             uuid(6),
             5,
+            null, null, null, null,
             "great",
             Instant.parse("2026-02-17T00:00:00Z"));
         when(reviewService.submitReview(principal.userId(),
             review.bookingId(),
-            review.rating(),
+            review.qualityRating(),
+            review.punctualityRating(),
+            review.communicationRating(),
+            review.clarityRating(),
+            review.respectfulnessRating(),
             review.comment()))
             .thenReturn(new ReviewSubmitResult(review,
                 null));
@@ -83,7 +89,11 @@ class ReviewControllerUnitTests {
         ResponseEntity<?> response = controller.submitReview(
             principal,
             review.bookingId(),
-            new ReviewRequest(review.rating(),
+            new ReviewRequest(review.qualityRating(),
+                review.punctualityRating(),
+                review.communicationRating(),
+                review.clarityRating(),
+                review.respectfulnessRating(),
                 review.comment()));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);

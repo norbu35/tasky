@@ -37,7 +37,11 @@ public class ReviewController {
 
         var result = reviewService.submitReview(principal.userId(),
             id,
-            body.rating(),
+            body.qualityRating(),
+            body.punctualityRating(),
+            body.communicationRating(),
+            body.clarityRating(),
+            body.respectfulnessRating(),
             body.comment());
 
         if (!result.isSuccess()) {
@@ -83,12 +87,20 @@ public class ReviewController {
             review.id());
         res.put("booking_id",
             review.bookingId());
-        res.put("author_id",
-            review.authorId());
-        res.put("target_user_id",
-            review.targetUserId());
-        res.put("rating",
-            review.rating());
+        res.put("reviewer_id",
+            review.reviewerId());
+        res.put("reviewee_id",
+            review.revieweeId());
+        res.put("quality_rating",
+            review.qualityRating());
+        res.put("punctuality_rating",
+            review.punctualityRating());
+        res.put("communication_rating",
+            review.communicationRating());
+        res.put("clarity_rating",
+            review.clarityRating());
+        res.put("respectfulness_rating",
+            review.respectfulnessRating());
         res.put("comment",
             review.comment());
         res.put("created_at",

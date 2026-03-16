@@ -112,7 +112,8 @@ class TaskControllerUnitTests {
             106.9,
             "Ulaanbaatar city",
             "2026-02-18T00:00:00Z",
-            List.of());
+            List.of(),
+            null, null, null, null);
     }
 
     private MockHttpServletRequest request() {
@@ -240,6 +241,9 @@ class TaskControllerUnitTests {
             "OPEN",
             now.plusSeconds(3600),
             photoKeys,
+            null,
+            null,
+            null,
             now,
             now);
     }

@@ -237,6 +237,8 @@ public class AuthService {
             null,
             "CUSTOMER",
             "PENDING",
+            "FACEBOOK",
+            now,
             now);
     }
 
@@ -326,7 +328,9 @@ public class AuthService {
             user.facebookId(),
             user.role(),
             effectiveStatus,
-            user.createdAt());
+            user.primaryAuth(),
+            user.createdAt(),
+            user.updatedAt());
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -369,7 +373,9 @@ public class AuthService {
                 facebookUser.facebookId(),
                 facebookUser.role(),
                 facebookUser.status(),
-                facebookUser.createdAt()));
+                facebookUser.primaryAuth(),
+                facebookUser.createdAt(),
+                facebookUser.updatedAt()));
     }
 
     private boolean constantTimeEquals(String left, String right) {
@@ -483,7 +489,9 @@ public class AuthService {
             user.facebookId(),
             user.role(),
             effectiveStatus,
-            user.createdAt());
+            user.primaryAuth(),
+            user.createdAt(),
+            user.updatedAt());
         return issueSession(effectiveUser);
     }
 
@@ -527,6 +535,8 @@ public class AuthService {
             facebookId,
             "CUSTOMER",
             "PENDING",
+            "FACEBOOK",
+            now,
             now);
     }
 
@@ -557,7 +567,9 @@ public class AuthService {
                 user.facebookId(),
                 normalizedRole,
                 user.status(),
-                user.createdAt());
+                user.primaryAuth(),
+                user.createdAt(),
+                user.updatedAt());
         }
 
         String effectiveStatus = resolveUserStatus(user.id(),
@@ -572,7 +584,9 @@ public class AuthService {
             user.facebookId(),
             user.role(),
             effectiveStatus,
-            user.createdAt());
+            user.primaryAuth(),
+            user.createdAt(),
+            user.updatedAt());
         return issueSession(effectiveUser);
     }
 
@@ -618,7 +632,9 @@ public class AuthService {
             user.facebookId(),
             user.role(),
             effectiveStatus,
-            user.createdAt());
+            user.primaryAuth(),
+            user.createdAt(),
+            user.updatedAt());
         AuthSession rotated = issueSession(effectiveUser);
         return Optional.of(new AuthTokens(rotated.accessToken(),
             rotated.refreshToken()));
@@ -676,7 +692,9 @@ public class AuthService {
             user.facebookId(),
             user.role(),
             effectiveStatus,
-            user.createdAt());
+            user.primaryAuth(),
+            user.createdAt(),
+            user.updatedAt());
         return Optional.of(toProfile(effectiveUser,
             profile));
     }
@@ -722,7 +740,9 @@ public class AuthService {
                 user.facebookId(),
                 "TASKER",
                 user.status(),
-                user.createdAt());
+                user.primaryAuth(),
+                user.createdAt(),
+                user.updatedAt());
 
         AuthSession session = issueSession(updated);
         return Optional.of(new RoleActivationResult(session.accessToken(),
@@ -846,6 +866,9 @@ public class AuthService {
             "PENDING",
             now,
             null,
+            null,
+            null,
+            null,
             null);
         VerificationRequest request =
             new VerificationRequest(id,
@@ -937,7 +960,10 @@ public class AuthService {
             request.submittedAt()
                 .toString(),
             request.reviewedAt() != null ? request.reviewedAt()
-                .toString() : null);
+                .toString() : null,
+            null,
+            null,
+            null);
     }
 
     private String buildPresignedGetUrl(String baseUrl, String storageKey) {
@@ -1069,6 +1095,7 @@ public class AuthService {
                 .toString(),
             userId,
             null,
+            null,
             now);
 
         ModerationPolicy policy = moderationPolicy();
@@ -1172,7 +1199,9 @@ public class AuthService {
                     user.facebookId(),
                     user.role(),
                     effectiveStatus,
-                    user.createdAt());
+                    user.primaryAuth(),
+                    user.createdAt(),
+                    user.updatedAt());
                 return toProfile(
                     effectiveUser,
                     profileDao.findByUserId(user.id())

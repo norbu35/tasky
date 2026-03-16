@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,10 +62,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> failResponse = postWithAuth(
             "/api/v1/bookings/" + booking.id() + "/reviews",
             customer.accessToken(),
-            Map.of("rating",
-                5,
-                "comment",
-                "Great!"));
+            reviewBody(5, "Great!"));
         assertThat(failResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(failResponse.getBody()
             .get("code")).isEqualTo("BOOKING_NOT_COMPLETED");
@@ -78,10 +76,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> successResponse = postWithAuth(
             "/api/v1/bookings/" + booking.id() + "/reviews",
             customer.accessToken(),
-            Map.of("rating",
-                5,
-                "comment",
-                "Great!"));
+            reviewBody(5, "Great!"));
         assertThat(successResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
@@ -122,7 +117,8 @@ class ReviewIntegrationTests extends IntegrationTestBase {
                         .plus(1,
                             ChronoUnit.DAYS)
                         .toString(),
-                    List.of()))
+                    List.of(),
+                    null, null, null, null))
             .task()
             .id();
     }
@@ -187,10 +183,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
             postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/reviews",
                 customer.accessToken(),
-                Map.of("rating",
-                    5,
-                    "comment",
-                    "Comment " + i));
+                reviewBody(5, "Comment " + i));
         }
 
         // List with limit 2
@@ -248,10 +241,7 @@ class ReviewIntegrationTests extends IntegrationTestBase {
             postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/reviews",
                 customer.accessToken(),
-                Map.of("rating",
-                    5,
-                    "comment",
-                    "Good job " + i));
+                reviewBody(5, "Good job " + i));
         }
 
         Optional<UserProfile> profileOpt = authService.getProfile(tasker.userId());
@@ -260,6 +250,17 @@ class ReviewIntegrationTests extends IntegrationTestBase {
         assertThat(profile.completedTasks()).isEqualTo(6);
         assertThat(profile.ratingAvg()).isEqualTo(5.0);
         assertThat(profile.isPro()).isTrue();
+    }
+
+    private Map<String, Object> reviewBody(int rating, String comment) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("qualityRating", rating);
+        body.put("punctualityRating", rating);
+        body.put("communicationRating", rating);
+        body.put("clarityRating", rating);
+        body.put("respectfulnessRating", rating);
+        body.put("comment", comment);
+        return body;
     }
 
     record AuthContext(String userId, String accessToken) {
