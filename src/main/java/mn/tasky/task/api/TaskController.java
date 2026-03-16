@@ -13,6 +13,7 @@ import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.*;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,7 @@ public class TaskController {
     private static final SecureRandom LOCATION_FUZZ_RANDOM = new SecureRandom();
 
     private final TaskService taskService;
+    private final TaskDraftService taskDraftService;
     private final CategoryService categoryService;
     private final AuthService authService;
     private final BookingService bookingService;
@@ -47,11 +49,13 @@ public class TaskController {
 
     public TaskController(
         TaskService taskService,
+        TaskDraftService taskDraftService,
         CategoryService categoryService,
         AuthService authService,
         BookingService bookingService,
         IdempotencyService idempotencyService) {
         this.taskService = taskService;
+        this.taskDraftService = taskDraftService;
         this.categoryService = categoryService;
         this.authService = authService;
         this.bookingService = bookingService;
@@ -799,5 +803,69 @@ public class TaskController {
                     "Unsupported content type. Use image/jpeg or image/png.",
                     "trace_id",
                     resolveTraceId(request))));
+    }
+
+    // --- Task Draft Endpoints ---
+
+    @PostMapping("/drafts")
+    public ResponseEntity<?> createDraft(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @Valid @RequestBody CreateDraftRequest body,
+        HttpServletRequest request) {
+        try {
+            TaskDraft draft = taskDraftService.createDraft(principal.userId(), body.categoryId());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(TaskDraftResponse.from(draft));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                    "code", "CATEGORY_NOT_FOUND",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                    "code", "DRAFT_CREATION_CONFLICT",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        }
+    }
+
+    @GetMapping("/drafts/{id}")
+    public ResponseEntity<?> getDraft(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        HttpServletRequest request) {
+        return taskDraftService.getDraft(id)
+            .<ResponseEntity<?>>map(draft -> ResponseEntity.ok(TaskDraftResponse.from(draft)))
+            .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                    "code", "NOT_FOUND",
+                    "message", "Draft not found or has expired.",
+                    "trace_id", resolveTraceId(request))));
+    }
+
+    @PutMapping("/drafts/{id}")
+    public ResponseEntity<?> updateDraft(
+        @AuthenticationPrincipal JwtPrincipal principal,
+        @PathVariable String id,
+        @Valid @RequestBody UpdateDraftRequest body,
+        HttpServletRequest request) {
+        try {
+            TaskDraft updated = taskDraftService.updateDraft(id, body.intakeAnswers(), body.summaryDraft());
+            return ResponseEntity.ok(TaskDraftResponse.from(updated));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                    "code", "NOT_FOUND",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                    "code", "DRAFT_EXPIRED",
+                    "message", e.getMessage(),
+                    "trace_id", resolveTraceId(request)));
+        }
     }
 }

@@ -10,6 +10,7 @@ import mn.tasky.common.idempotency.IdempotencyService;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.task.api.TaskController;
+import mn.tasky.task.application.TaskDraftService;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,9 @@ class TaskControllerUnitTests {
     private BookingService bookingService;
 
     @Mock
+    private TaskDraftService taskDraftService;
+
+    @Mock
     private IdempotencyService idempotencyService;
 
     private TaskController controller;
@@ -55,6 +59,7 @@ class TaskControllerUnitTests {
     @BeforeEach
     void setUp() {
         controller = new TaskController(taskService,
+            taskDraftService,
             categoryService,
             authService,
             bookingService,
