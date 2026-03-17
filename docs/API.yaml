@@ -1491,6 +1491,29 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
+    delete:
+      tags: [ Users ]
+      summary: Request account deletion
+      description: |
+        Marks the account for deletion. Identity data is anonymized after 90-day retention period.
+      operationId: requestAccountDeletion
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Account deletion requested.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ message ]
+                properties:
+                  message:
+                    type: string
+                    example: Account deletion requested. Data will be removed after 90-day retention period.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /users/me/role/tasker:
     post:
       tags: [ Users ]
@@ -2755,6 +2778,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /bookings/{id}/rebook:
+    post:
+      tags: [ Bookings ]
+      summary: Rebook from completed booking
+      description: |
+        Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
+        Intake answers use the current active schema version.
+      operationId: rebookFromBooking
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '201':
+          description: New task created from completed booking.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Booking is not in COMPLETED status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   # ─── Payments ───────────────────────────────────────────────
   /payments/bookings/{id}/initiate:
     post:
@@ -3588,6 +3643,37 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   # ─── Admin ──────────────────────────────────────────────────
+  /admin/messages/flagged:
+    get:
+      tags: [ Admin ]
+      summary: List phone-flagged messages
+      description: Returns paginated messages where phone_number_flagged is true.
+      operationId: adminListFlaggedMessages
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/CursorParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Paginated list of phone-flagged messages.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ data, cursor ]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  cursor:
+                    $ref: '#/components/schemas/CursorPagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /admin/users:
     get:
       tags: [ Admin ]
