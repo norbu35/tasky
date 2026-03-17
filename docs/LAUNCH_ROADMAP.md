@@ -61,7 +61,7 @@ Build once core flow is stable and founder ops patterns are established.
 | No-applicant rescue flow (120min detection) | REQ-BOOK-09 | >3 tasks with zero applicants in a week |
 | Phone leak detection in messages | REQ-LEAK-04 | Baseline leakage rate measurement begins |
 | Repeat booking shortcut | REQ-BOOK-07 | First repeat customer (30-day cohort data) |
-| Concierge dispatch endpoint | REQ-ADMIN-07 | Founder needs programmatic task assignment (currently uses direct DB) |
+| ~~Concierge dispatch endpoint~~ | ~~REQ-ADMIN-07~~ | **DONE** — implemented as `POST /admin/tasks/{id}/concierge-assign` |
 
 ### Tier 3 — Pre-Phase-2
 
