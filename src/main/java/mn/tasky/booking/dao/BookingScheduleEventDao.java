@@ -73,4 +73,14 @@ public interface BookingScheduleEventDao {
 
     @SqlUpdate("UPDATE booking_schedule_events SET event_type = :eventType WHERE id = :id")
     void updateStatus(@Bind("id") UUID id, @Bind("eventType") String eventType);
+
+    default Optional<BookingScheduleEvent> findById(String id) {
+        return findById(required(id, "id"));
+    }
+
+    @SqlQuery("SELECT * FROM booking_schedule_events WHERE id = :id")
+    Optional<BookingScheduleEvent> findById(@Bind("id") UUID id);
+
+    @SqlQuery("SELECT * FROM booking_schedule_events WHERE event_type = 'REQUESTED'")
+    List<BookingScheduleEvent> findAllPendingRequests();
 }

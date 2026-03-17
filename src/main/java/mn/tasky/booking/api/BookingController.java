@@ -6,18 +6,23 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
+import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
+import mn.tasky.booking.dto.RescheduleRequest;
+import mn.tasky.booking.dto.RescheduleRespondRequest;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.idempotency.IdempotencyClaim;
@@ -38,6 +43,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,6 +57,7 @@ public class BookingController {
     private static final Logger log = LoggerFactory.getLogger(BookingController.class);
 
     private final BookingService bookingService;
+    private final BookingScheduleService scheduleService;
     private final BookingTimelineService timelineService;
     private final NoShowService noShowService;
     private final TaskService taskService;
@@ -61,6 +68,7 @@ public class BookingController {
 
     public BookingController(
             BookingService bookingService,
+            BookingScheduleService scheduleService,
             BookingTimelineService timelineService,
             NoShowService noShowService,
             TaskService taskService,
@@ -69,6 +77,7 @@ public class BookingController {
             NotificationService notificationService,
             IdempotencyService idempotencyService) {
         this.bookingService = bookingService;
+        this.scheduleService = scheduleService;
         this.timelineService = timelineService;
         this.noShowService = noShowService;
         this.taskService = taskService;
@@ -509,5 +518,143 @@ public class BookingController {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.NO_SHOW_FLAG, idempotencyKey);
             throw exception;
         }
+    }
+
+    @PostMapping("/{id}/reschedule")
+    public ResponseEntity<?> requestReschedule(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @Valid @RequestBody RescheduleRequest body,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
+        IdempotencyClaim claim = idempotencyService.claim(
+                principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
+            return idempotencyInProgress(request);
+        }
+        if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
+            if (claim.record() == null || claim.record().resourceId() == null) {
+                return idempotencyReplayMissing(request);
+            }
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(toScheduleEventResponse(claim.record().resourceId().toString()));
+        }
+
+        try {
+            Instant proposedAt = Instant.parse(body.proposedScheduledAt());
+            BookingScheduleEvent event =
+                    scheduleService.requestReschedule(id, principal.userId(), proposedAt, body.reason());
+
+            idempotencyService.completeWithResource(
+                    principal.userId(),
+                    IdempotencyOperations.RESCHEDULE_REQUEST,
+                    idempotencyKey,
+                    "BOOKING_SCHEDULE_EVENT",
+                    event.id());
+            return ResponseEntity.status(HttpStatus.CREATED).body(toScheduleEventResponse(event));
+        } catch (IllegalArgumentException e) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "code", "NOT_FOUND",
+                            "message", e.getMessage(),
+                            "trace_id", resolveTraceId(request)));
+        } catch (IllegalStateException e) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code", "INVALID_STATUS",
+                            "message", e.getMessage(),
+                            "trace_id", resolveTraceId(request)));
+        } catch (RuntimeException exception) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            throw exception;
+        }
+    }
+
+    @PostMapping("/{id}/reschedule/{eventId}/respond")
+    public ResponseEntity<?> respondToReschedule(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @PathVariable String eventId,
+            @Valid @RequestBody RescheduleRespondRequest body,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
+        IdempotencyClaim claim = idempotencyService.claim(
+                principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
+            return idempotencyInProgress(request);
+        }
+        if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
+            if (claim.record() == null || claim.record().resourceId() == null) {
+                return idempotencyReplayMissing(request);
+            }
+            return ResponseEntity.ok(toScheduleEventResponse(claim.record().resourceId().toString()));
+        }
+
+        try {
+            BookingScheduleEvent event =
+                    scheduleService.respondToReschedule(id, eventId, principal.userId(), body.action());
+
+            idempotencyService.completeWithResource(
+                    principal.userId(),
+                    IdempotencyOperations.RESCHEDULE_RESPOND,
+                    idempotencyKey,
+                    "BOOKING_SCHEDULE_EVENT",
+                    event.id());
+            return ResponseEntity.ok(toScheduleEventResponse(event));
+        } catch (IllegalArgumentException e) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "code", "NOT_FOUND",
+                            "message", e.getMessage(),
+                            "trace_id", resolveTraceId(request)));
+        } catch (IllegalStateException e) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code", "INVALID_STATUS",
+                            "message", e.getMessage(),
+                            "trace_id", resolveTraceId(request)));
+        } catch (RuntimeException exception) {
+            idempotencyService.abandon(
+                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            throw exception;
+        }
+    }
+
+    @GetMapping("/{id}/schedule-events")
+    public ResponseEntity<?> getScheduleEvents(
+            @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
+        List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id);
+        List<Map<String, Object>> data = events.stream()
+                .map(this::toScheduleEventResponse)
+                .toList();
+        return ResponseEntity.ok(Map.of("data", data));
+    }
+
+    private Map<String, Object> toScheduleEventResponse(BookingScheduleEvent event) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", event.id());
+        response.put("booking_id", event.bookingId());
+        response.put("actor_user_id", event.actorUserId());
+        response.put("event_type", event.eventType());
+        response.put("proposed_scheduled_at",
+                event.proposedScheduledAt() != null ? event.proposedScheduledAt().toString() : null);
+        response.put("reason", event.reason());
+        response.put("created_at", event.createdAt().toString());
+        return response;
+    }
+
+    private Map<String, Object> toScheduleEventResponse(String eventId) {
+        return scheduleService.getScheduleEvent(eventId)
+                .map(this::toScheduleEventResponse)
+                .orElse(Map.of("id", eventId));
     }
 }

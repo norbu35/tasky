@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.api.BookingController;
+import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
@@ -64,6 +65,9 @@ class BookingControllerUnitTests {
     private IdempotencyService idempotencyService;
 
     @Mock
+    private BookingScheduleService scheduleService;
+
+    @Mock
     private BookingTimelineService timelineService;
 
     @Mock
@@ -75,6 +79,7 @@ class BookingControllerUnitTests {
     void setUp() {
         controller = new BookingController(
                 bookingService,
+                scheduleService,
                 timelineService,
                 noShowService,
                 taskService,

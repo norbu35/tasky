@@ -213,4 +213,15 @@ public interface BookingDao {
             @Bind("id") UUID id,
             @Bind("status") String status,
             @Bind("updatedAt") Instant updatedAt);
+
+    default void updateConfirmedSchedule(String bookingId, Instant confirmedScheduledAt) {
+        updateConfirmedSchedule(required(bookingId, "bookingId"), confirmedScheduledAt, Instant.now());
+    }
+
+    @SqlUpdate("UPDATE bookings SET confirmed_scheduled_at = :confirmedScheduledAt, "
+            + "updated_at = :updatedAt WHERE id = :id")
+    void updateConfirmedSchedule(
+            @Bind("id") UUID id,
+            @Bind("confirmedScheduledAt") Instant confirmedScheduledAt,
+            @Bind("updatedAt") Instant updatedAt);
 }

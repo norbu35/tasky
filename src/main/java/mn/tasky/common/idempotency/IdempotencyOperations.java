@@ -13,6 +13,8 @@ public final class IdempotencyOperations {
     public static final String PROCESS_PAYOUT = "wallet.process_payout";
     public static final String CONCIERGE_ASSIGN = "admin.concierge_assign";
     public static final String NO_SHOW_FLAG = "booking.no_show_flag";
+    public static final String RESCHEDULE_REQUEST = "booking.reschedule_request";
+    public static final String RESCHEDULE_RESPOND = "booking.reschedule_respond";
 
     private IdempotencyOperations() {}
 }
