@@ -75,6 +75,13 @@ Single Flyway migration creating 7 new tables.
 - `idx_review_enforcement_cases_user_status` ON `review_enforcement_cases (user_id, status)` WHERE `status != 'COMPLETED'`
 - `idx_tasker_badges_tasker` ON `tasker_badges (tasker_id)` WHERE `revoked_at IS NULL`
 
+### Layer 1.5: API.yaml Update
+Before any controller work, update `docs/API.yaml` to add:
+- `POST /bookings/{id}/rebook` — repeat booking endpoint (not currently in spec)
+- `GET /admin/messages/flagged` — admin phone-flagged messages endpoint (not currently in spec)
+
+Then regenerate OpenAPI interfaces: `./gradlew openApiGenerate`
+
 ### Layer 2: DAO/DTO Alignment
 Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existing String ID + `@RegisterConstructorMapper` patterns.
 
@@ -84,8 +91,8 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
 
 1. **NO_SHOW Adjudication**
    - `NoShowReminderScheduler` — `@Scheduled(fixedDelay=60000)` polls ASSIGNED bookings past `confirmed_scheduled_at + 10m`, emits NO_SHOW_REMINDER_SENT notification + timeline event
-   - `POST /bookings/{id}/no-show/flag` — validates: booking ASSIGNED, time >= schedule +15m, no activity in trailing 30m (check `booking_timeline_events` and `messages` for recent entries), no accepted reschedule supersedes schedule. On success: atomic transaction sets `bookings.status=NO_SHOW`, `tasks.status=NO_SHOW`, writes timeline event NO_SHOW_CONFIRMED + audit event. Idempotent via Idempotency-Key.
-   - Strike integration: if tasker is flagged party, insert into `tasker_strikes`. Check strike count in rolling window against moderation policy for auto-suspension.
+   - `POST /bookings/{id}/no-show/flag` — validates: booking ASSIGNED, time >= schedule +15m, no activity in trailing 30m (check `booking_timeline_events` and `messages` for recent entries), no accepted reschedule supersedes schedule. **Party determination:** the caller (authenticated user) is the party who showed up; the OTHER booking participant is the no-show party. `actor_user_id` in the audit/timeline event identifies the flagger. On success: atomic transaction sets `bookings.status=NO_SHOW`, `tasks.status=NO_SHOW`, writes timeline event NO_SHOW_CONFIRMED (metadata includes `flagged_by` and `no_show_party` user IDs) + audit event. Idempotent via Idempotency-Key.
+   - Strike integration: the no-show party (opposite of caller) receives the strike — insert into `tasker_strikes` if no-show party is the tasker. Check strike count in rolling window against moderation policy for auto-suspension.
 
 2. **Reschedule Flow**
    - `BookingScheduleService` — manages reschedule lifecycle
@@ -112,19 +119,19 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
 6. **Review Enforcement Soft Gates**
    - On BOOKING_COMPLETED outbox event → create `review_enforcement_cases` for both customer and tasker (status: PENDING), AND immediately send review prompt notification to both parties (this is the "immediate" prompt per REQ-SAFE-11 cadence: immediate + 24h + 72h)
    - `ReviewReminderScheduler` — `@Scheduled(fixedDelay=3600000)` (hourly) checks cases:
-     - PENDING + triggered_at > 24h ago → send reminder, update to REMINDED_24H
-     - REMINDED_24H + triggered_at > 72h ago → send reminder, update to REMINDED_72H
+     - PENDING cases where `now() - triggered_at >= 24h` → send 24h reminder, update to REMINDED_24H
+     - REMINDED_24H cases where `now() - triggered_at >= 72h` → send 72h reminder, update to REMINDED_72H
    - On review submission → resolve matching enforcement case (status: COMPLETED)
 
 7. **Review Enforcement Hard Locks**
    - Before task creation (`TaskService.createTask()`) and application (`TaskService.applyToTask()`): check `review_enforcement_cases` for the user
    - Hard lock triggers: user has open enforcement case AND (has open dispute OR 2+ consecutive EXPIRED cases OR active investigation flag)
    - If locked: return `403 REVIEW_LOCK_ACTIVE`
-   - Cases auto-expire after 7 days if no review submitted (status: EXPIRED)
+   - `ReviewEnforcementExpiryScheduler` — runs hourly, expires PENDING/REMINDED_24H/REMINDED_72H cases where `now() - triggered_at >= 7 days` (status: EXPIRED). Prevents permanent lock on users who simply don't review.
 
 8. **Dispute Evidence**
    - Update `DisputeService.raiseDispute()` to persist evidence array to `dispute_evidence` table
-   - If zero evidence provided at dispute creation: set grace period flag, `@Scheduled` checks disputes with no evidence after 24h → auto-close as `CLOSED_INSUFFICIENT_EVIDENCE`
+   - If zero evidence provided at dispute creation: the `DisputeEvidenceGraceScheduler` detects this by querying OPEN disputes where `disputes.created_at + 24h < now()` AND `dispute_evidence` count for that dispute = 0. No extra column needed — grace expiry is inferred from `created_at + 24h`. On expiry: auto-close as `CLOSED_INSUFFICIENT_EVIDENCE`.
    - Evidence storage: PHOTO type uses storage_key (presigned URL pattern), CHAT_EXCERPT and WRITTEN_TIMELINE use text_payload
 
 9. **Reliability Score**
@@ -136,6 +143,7 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
      - `review_avg` = average of all review averages
      - `score` = 0.4 * completion_rate + 0.2 * (punctuality_rate / 5.0) + 0.2 * (1 - cancellation_rate) + 0.2 * (review_avg / 5.0)
      - All components normalized to 0-1 range before weighting
+   - **Minimum sample size:** Score is not computed (remains NULL) until tasker has >= 5 terminal bookings (completed + cancelled + no_show) in the window. This prevents cold-start bias where 1 booking = perfect score.
    - Upserts into `tasker_reliability_scores`
    - Consumed by future Phase 2 applicant ranking
 
@@ -145,12 +153,13 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
     - PRO badge revoked when: `completed_tasks` stays >= 15 but `rating_avg` drops below 4.0 (hysteresis to prevent flapping)
     - Writes to `tasker_badges` (assign_at / revoked_at)
     - `Profile` response reads from `tasker_badges` instead of computing on-the-fly
+    - `BadgeRevocationScheduler` — `@Scheduled(cron="0 0 4 * * *")` daily at 4am sweeps all active PRO badges, checks if holder still meets criteria (>= 15 tasks, >= 4.0 rating). Revokes if conditions no longer met. Safety net for edge cases where review signals are missed.
 
 **Stream 3: Information Controls**
 
 11. **Phone Leak Detection**
     - In `MessagingService.sendMessage()`, after content hash computation:
-      - Run regex patterns: `\+?976\s?\d{4}\s?\d{4}`, `\d{8}` (8 consecutive digits), common obfuscation (`nine seven six`)
+      - Run regex patterns: `\+?976\s?\d{4}\s?\d{4}`, `\b\d{8}\b` (8 consecutive digits with word boundaries — avoids matching prices/IDs), common obfuscation (`nine seven six`)
       - If match: set `phone_number_flagged=true` on message, emit analytics event `message_phone_number_flagged`
       - Phase 0-1: advisory only — message still sends, admin can query flagged messages
     - `GET /admin/messages/flagged` — admin endpoint to list flagged messages (new)
@@ -176,7 +185,7 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
     - `FacebookCircuitBreaker` — simple state machine (CLOSED/OPEN/HALF_OPEN) with configurable thresholds
     - CLOSED → OPEN: 3 consecutive Facebook API failures within 60s
     - OPEN: `FacebookAuthController` returns `503 AUTH_PROVIDER_UNAVAILABLE`. Existing valid JWTs continue working (no change to `JwtAuthenticationFilter`).
-    - HALF_OPEN: `@Scheduled(fixedDelay=30000)` probe calls Facebook debug_token with a test token → on success, transition to CLOSED
+    - HALF_OPEN: `@Scheduled(fixedDelay=60000)` probe calls Facebook Graph API `/app` endpoint using the app access token (which doesn't expire and doesn't require a user token) → on success, transition to CLOSED. 60s interval to avoid Facebook rate limiting.
     - Health indicator: expose circuit breaker state on `/actuator/health` as `facebookAuth: UP/DOWN`
 
 15. **Verification Access Audit**
@@ -187,7 +196,7 @@ Create DAO/DTO pairs for all 7 new tables. Register in JdbiConfig. Follow existi
     - `DataRetentionService` — `@Scheduled(cron="0 0 3 * * *")` daily at 3am
     - Find users with status BANNED or deactivation-requested where `updated_at + 90 days < now()`. Clarification: identity data for active, non-banned users is retained indefinitely. The 90-day deletion applies only after account deactivation or ban.
     - For each: delete S3 objects (ID card front/back via storage keys), anonymize verification records (null out `id_card_front_key`, `id_card_back_key`, set `dan_reference=null`), write audit event `IDENTITY_DATA_DELETED`
-    - `DELETE /users/me` endpoint — marks account for deletion (sets status to a new `DEACTIVATION_REQUESTED` value or uses existing `BANNED`). Actual deletion happens after 90-day retention period via the scheduled job.
+    - `DELETE /users/me` endpoint — marks account for self-deletion by setting `users.status = 'BANNED'` (reuses existing status to avoid CHECK constraint change) and `users.updated_at = now()`. A `metadata_json` field on the corresponding `audit_events` entry records `{"reason": "USER_SELF_DELETE_REQUEST"}` to distinguish from admin bans. Actual data deletion happens after 90-day retention period via the scheduled job.
 
 ## 4. Scheduler Summary
 
@@ -200,9 +209,10 @@ All `@Scheduled` jobs in one place:
 | `RescueScheduler` | Every 5min | Detect OPEN tasks with 0 applications at 120min |
 | `ReviewReminderScheduler` | Every 1h | Send +24h and +72h review reminders |
 | `DisputeEvidenceGraceScheduler` | Every 1h | Auto-close disputes with no evidence after 24h |
-| `FacebookCircuitBreakerProbe` | Every 30s | Test Facebook API in OPEN/HALF_OPEN state |
+| `FacebookCircuitBreakerProbe` | Every 60s | Test Facebook `/app` endpoint in OPEN/HALF_OPEN state |
 | `DataRetentionScheduler` | Daily 3am | Delete expired identity data |
 | `ReviewEnforcementExpiryScheduler` | Every 1h | Expire enforcement cases after 7 days |
+| `BadgeRevocationScheduler` | Daily 4am | Sweep active PRO badges, revoke if criteria no longer met |
 
 ## 5. Test Strategy
 
@@ -220,7 +230,7 @@ All `@Scheduled` jobs in one place:
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| `@Scheduled` jobs overlap or run long | Medium | Each job acquires a simple DB advisory lock before processing. Short-circuit if lock not acquired. |
+| `@Scheduled` jobs overlap or run long | Medium | Each job calls `pg_try_advisory_lock(hash)` with a unique per-job constant (use `'job_name'.hashCode()` as the lock ID). If lock not acquired, skip this cycle. Release in finally block via `pg_advisory_unlock(hash)`. Convention: `NoShowReminderScheduler` = `hash("noshow_reminder")`, etc. This is safe for single-instance and prevents overlap if multi-instance is ever deployed. |
 | NO_SHOW dual inactivity check is too aggressive | Medium | 30-minute window is configurable. Start generous, tighten with data. |
 | Phone regex false positives | Low | Advisory only in Phase 0-1. Track false positive rate via analytics before escalation. |
 | Data retention job deletes wrong files | High | Dry-run mode by default (log what would be deleted). Enable actual deletion via feature toggle. |
