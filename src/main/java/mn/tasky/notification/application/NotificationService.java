@@ -2,18 +2,28 @@ package mn.tasky.notification.application;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.auth.dao.UserDao;
+import mn.tasky.auth.dto.AuthUser;
+import mn.tasky.common.security.CryptoService;
 import mn.tasky.notification.dao.DeviceTokenDao;
 import mn.tasky.notification.dao.NotificationLogDao;
 import mn.tasky.notification.dto.DeviceToken;
 import mn.tasky.notification.dto.NotificationLog;
+import mn.tasky.notification.provider.NotificationResult;
+import mn.tasky.notification.provider.PushNotificationProvider;
+import mn.tasky.notification.provider.SmsNotificationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * Service responsible for managing user device tokens and sending push notifications.
- * Includes fallback mechanisms for critical notifications.
+ * Delegates actual delivery to {@link PushNotificationProvider} and {@link SmsNotificationProvider}
+ * implementations and records every attempt in the notification log with an idempotent event_key.
  */
 @Service
 public class NotificationService {
@@ -21,10 +31,24 @@ public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
     private final DeviceTokenDao deviceTokenDao;
     private final NotificationLogDao notificationLogDao;
+    private final PushNotificationProvider pushProvider;
+    private final SmsNotificationProvider smsProvider;
+    private final UserDao userDao;
+    private final CryptoService cryptoService;
 
-    public NotificationService(DeviceTokenDao deviceTokenDao, NotificationLogDao notificationLogDao) {
+    public NotificationService(
+            DeviceTokenDao deviceTokenDao,
+            NotificationLogDao notificationLogDao,
+            PushNotificationProvider pushProvider,
+            SmsNotificationProvider smsProvider,
+            UserDao userDao,
+            CryptoService cryptoService) {
         this.deviceTokenDao = deviceTokenDao;
         this.notificationLogDao = notificationLogDao;
+        this.pushProvider = pushProvider;
+        this.smsProvider = smsProvider;
+        this.userDao = userDao;
+        this.cryptoService = cryptoService;
     }
 
     /**
@@ -53,6 +77,7 @@ public class NotificationService {
 
     /**
      * Sends a push notification to all registered devices for a given user.
+     * Uses a non-deterministic event_key when no contextual booking ID is available.
      * If the user has no registered devices and the notification is critical
      * (e.g., "HIRED", "BOOKING_CONFIRMED"), it triggers an SMS fallback.
      *
@@ -62,38 +87,110 @@ public class NotificationService {
      * @param type   The type/category of the notification.
      */
     public void sendPush(String userId, String title, String body, String type) {
+        String eventKey = type + "_" + userId + "_" + UUID.randomUUID();
+        sendPushWithEventKey(userId, title, body, type, eventKey);
+    }
+
+    /**
+     * Sends a push notification with a deterministic event_key for idempotency.
+     * Duplicate event_keys are silently skipped to prevent duplicate notifications.
+     *
+     * @param userId   The ID of the user.
+     * @param title    The notification title.
+     * @param body     The notification body/message.
+     * @param type     The type/category of the notification.
+     * @param eventKey Deterministic key used for idempotency checks.
+     */
+    public void sendPushWithEventKey(String userId, String title, String body, String type, String eventKey) {
+        if (notificationLogDao.existsByEventKey(eventKey)) {
+            log.info("Duplicate event_key={} for user {}, skipping notification", eventKey, userId);
+            return;
+        }
+
         List<DeviceToken> tokens = deviceTokenDao.findByUserId(userId);
 
         if (tokens.isEmpty()) {
             log.warn("No device tokens for user {}, push not sent: type={}", userId, type);
             if ("HIRED".equals(type) || "BOOKING_CONFIRMED".equals(type)) {
-                sendSmsFallback(userId);
+                sendSmsFallback(userId, type, title, body, eventKey);
             }
             return;
         }
 
+        Map<String, String> data = Map.of("type", type);
         for (DeviceToken t : tokens) {
-            log.info(
-                    "Sending push to user {} on platform {}: notification_type={} title={} body={}",
-                    userId,
-                    t.platform(),
-                    type,
-                    title,
-                    body);
+            NotificationResult result = pushProvider.sendPush(t.token(), t.platform(), title, body, data);
+            String status = result.success() ? "SENT" : "FAILED";
             notificationLogDao.insert(
-                    UUID.randomUUID().toString(), userId, type, "PUSH", "SENT", null, null, null, Instant.now());
+                    UUID.randomUUID().toString(),
+                    userId,
+                    type,
+                    "PUSH",
+                    status,
+                    eventKey,
+                    result.providerMessageId(),
+                    result.errorCode(),
+                    Instant.now());
         }
     }
 
     /**
-     * Sends an SMS fallback to a user for critical notifications.
+     * Sends an SMS fallback to a user for critical notifications when no device tokens exist.
+     * Looks up the user's phone number via the user DAO and decrypts it before sending.
      *
-     * @param userId The ID of the user to receive the SMS.
+     * @param userId   The ID of the user to receive the SMS.
+     * @param type     The notification type that triggered the fallback.
+     * @param title    The notification title.
+     * @param body     The notification body.
+     * @param eventKey The event key for idempotency.
      */
-    public void sendSmsFallback(String userId) {
-        log.info("Sending SMS fallback to user {}", userId);
+    private void sendSmsFallback(String userId, String type, String title, String body, String eventKey) {
+        String smsEventKey = eventKey + "_SMS_FALLBACK";
+
+        if (notificationLogDao.existsByEventKey(smsEventKey)) {
+            log.info("Duplicate SMS fallback event_key={} for user {}, skipping", smsEventKey, userId);
+            return;
+        }
+
+        Optional<AuthUser> userOpt = userDao.findById(userId);
+        String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
+
+        if (!StringUtils.hasText(phone)) {
+            log.warn("Cannot send SMS fallback for user {}: no phone number available", userId);
+            notificationLogDao.insert(
+                    UUID.randomUUID().toString(),
+                    userId,
+                    type,
+                    "SMS",
+                    "FAILED",
+                    smsEventKey,
+                    null,
+                    "NO_PHONE",
+                    Instant.now());
+            return;
+        }
+
+        String formattedMessage = title + ": " + body;
+        NotificationResult result = smsProvider.sendSms(phone, formattedMessage);
+        String status = result.success() ? "SENT" : "FAILED";
         notificationLogDao.insert(
-                UUID.randomUUID().toString(), userId, "FALLBACK", "SMS", "SENT", null, null, null, Instant.now());
+                UUID.randomUUID().toString(),
+                userId,
+                type,
+                "SMS",
+                status,
+                smsEventKey,
+                result.providerMessageId(),
+                result.errorCode(),
+                Instant.now());
+        log.info("SMS fallback sent to user {}: type={} status={}", userId, type, status);
+    }
+
+    private String decryptPhone(String encryptedPhone) {
+        if (!StringUtils.hasText(encryptedPhone)) {
+            return null;
+        }
+        return cryptoService.decrypt(encryptedPhone);
     }
 
     /**

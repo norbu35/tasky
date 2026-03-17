@@ -81,12 +81,12 @@ class NotificationIntegrationTests extends IntegrationTestBase {
         // No devices registered for tasker initially
         notificationService.sendPush(tasker.userId(), "Test", "Test Body", "HIRED");
 
-        // Should trigger SMS fallback
+        // Should trigger SMS fallback — type preserves original notification type
         List<NotificationLog> logs = notificationService.getLogs();
         assertThat(logs).anySatisfy(l -> {
             assertThat(l.userId()).isEqualTo(tasker.userId());
             assertThat(l.channel()).isEqualTo("SMS");
-            assertThat(l.type()).isEqualTo("FALLBACK");
+            assertThat(l.type()).isEqualTo("HIRED");
         });
 
         // Register device for customer

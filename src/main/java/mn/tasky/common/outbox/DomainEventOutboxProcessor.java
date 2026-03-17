@@ -115,7 +115,8 @@ public class DomainEventOutboxProcessor {
         String applicationId = requiredString(payload, "application_id");
 
         String conversationId = messagingService.startConversation(taskId, taskerId, customerId);
-        notificationService.sendPush(taskerId, "You are hired!", "Your application has been accepted.", "HIRED");
+        notificationService.sendPushWithEventKey(
+                taskerId, "You are hired!", "Your application has been accepted.", "HIRED", "HIRED_" + bookingId);
 
         analyticsService.track(
                 AnalyticsService.EVENT_TASKER_ACCEPTED,
@@ -156,13 +157,18 @@ public class DomainEventOutboxProcessor {
         String customerId = requiredString(payload, "customer_id");
         String taskerId = requiredString(payload, "tasker_id");
 
-        notificationService.sendPush(
-                taskerId, "Booking Confirmed", "Payment received for booking #" + bookingId, "BOOKING_CONFIRMED");
-        notificationService.sendPush(
+        notificationService.sendPushWithEventKey(
+                taskerId,
+                "Booking Confirmed",
+                "Payment received for booking #" + bookingId,
+                "BOOKING_CONFIRMED",
+                "BOOKING_CONFIRMED_TASKER_" + bookingId);
+        notificationService.sendPushWithEventKey(
                 customerId,
                 "Booking Confirmed",
                 "Your payment for booking #" + bookingId + " was successful.",
-                "BOOKING_CONFIRMED");
+                "BOOKING_CONFIRMED",
+                "BOOKING_CONFIRMED_CUSTOMER_" + bookingId);
         analyticsService.track(
                 AnalyticsService.EVENT_PAYMENT_CONFIRMED,
                 customerId,
@@ -185,8 +191,12 @@ public class DomainEventOutboxProcessor {
         int price = requiredInt(payload);
 
         walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeePercent);
-        notificationService.sendPush(
-                taskerId, "Job Complete", "The customer has marked the job as complete.", "JOB_COMPLETED");
+        notificationService.sendPushWithEventKey(
+                taskerId,
+                "Job Complete",
+                "The customer has marked the job as complete.",
+                "JOB_COMPLETED",
+                "BOOKING_COMPLETED_" + bookingId);
         analyticsService.track(
                 AnalyticsService.EVENT_BOOKING_COMPLETED,
                 customerId,
