@@ -17,6 +17,7 @@ import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
+import mn.tasky.booking.application.RepeatBookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingScheduleEvent;
 import mn.tasky.booking.dto.BookingState;
@@ -60,6 +61,7 @@ public class BookingController {
     private final BookingScheduleService scheduleService;
     private final BookingTimelineService timelineService;
     private final NoShowService noShowService;
+    private final RepeatBookingService repeatBookingService;
     private final TaskService taskService;
     private final AuthService authService;
     private final DomainEventOutboxService domainEventOutboxService;
@@ -71,6 +73,7 @@ public class BookingController {
             BookingScheduleService scheduleService,
             BookingTimelineService timelineService,
             NoShowService noShowService,
+            RepeatBookingService repeatBookingService,
             TaskService taskService,
             AuthService authService,
             DomainEventOutboxService domainEventOutboxService,
@@ -80,6 +83,7 @@ public class BookingController {
         this.scheduleService = scheduleService;
         this.timelineService = timelineService;
         this.noShowService = noShowService;
+        this.repeatBookingService = repeatBookingService;
         this.taskService = taskService;
         this.authService = authService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -174,8 +178,7 @@ public class BookingController {
 
             if (result.isSuccess()) {
                 handleTaskCancellationSideEffects(result.booking(), principal.userId());
-                timelineService.recordEvent(
-                        id, BookingTimelineService.BOOKING_CANCELLED, principal.userId(), null);
+                timelineService.recordEvent(id, BookingTimelineService.BOOKING_CANCELLED, principal.userId(), null);
                 idempotencyService.completeWithResource(
                         principal.userId(),
                         IdempotencyOperations.CANCEL_BOOKING,
@@ -286,8 +289,7 @@ public class BookingController {
                             booking.taskId());
                 }
 
-                timelineService.recordEvent(
-                        id, BookingTimelineService.BOOKING_COMPLETED, principal.userId(), null);
+                timelineService.recordEvent(id, BookingTimelineService.BOOKING_COMPLETED, principal.userId(), null);
 
                 domainEventOutboxService.publish(
                         OutboxEventTypes.BOOKING_COMPLETED,
@@ -512,7 +514,8 @@ public class BookingController {
                                 "code", "RESCHEDULE_SUPERSEDES",
                                 "message", "An accepted reschedule with a future time supersedes this request.",
                                 "trace_id", resolveTraceId(request)));
-                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .build();
             };
         } catch (RuntimeException exception) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.NO_SHOW_FLAG, idempotencyKey);
@@ -527,8 +530,8 @@ public class BookingController {
             @Valid @RequestBody RescheduleRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        IdempotencyClaim claim = idempotencyService.claim(
-                principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+        IdempotencyClaim claim =
+                idempotencyService.claim(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
@@ -553,24 +556,21 @@ public class BookingController {
                     event.id());
             return ResponseEntity.status(HttpStatus.CREATED).body(toScheduleEventResponse(event));
         } catch (IllegalArgumentException e) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND",
                             "message", e.getMessage(),
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "INVALID_STATUS",
                             "message", e.getMessage(),
                             "trace_id", resolveTraceId(request)));
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
             throw exception;
         }
     }
@@ -583,8 +583,8 @@ public class BookingController {
             @Valid @RequestBody RescheduleRespondRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
-        IdempotencyClaim claim = idempotencyService.claim(
-                principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+        IdempotencyClaim claim =
+                idempotencyService.claim(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
         if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
             return idempotencyInProgress(request);
         }
@@ -592,7 +592,8 @@ public class BookingController {
             if (claim.record() == null || claim.record().resourceId() == null) {
                 return idempotencyReplayMissing(request);
             }
-            return ResponseEntity.ok(toScheduleEventResponse(claim.record().resourceId().toString()));
+            return ResponseEntity.ok(
+                    toScheduleEventResponse(claim.record().resourceId().toString()));
         }
 
         try {
@@ -607,35 +608,73 @@ public class BookingController {
                     event.id());
             return ResponseEntity.ok(toScheduleEventResponse(event));
         } catch (IllegalArgumentException e) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND",
                             "message", e.getMessage(),
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "INVALID_STATUS",
                             "message", e.getMessage(),
                             "trace_id", resolveTraceId(request)));
         } catch (RuntimeException exception) {
-            idempotencyService.abandon(
-                    principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
             throw exception;
         }
+    }
+
+    @PostMapping("/{id}/rebook")
+    public ResponseEntity<?> rebook(
+            @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
+        RepeatBookingService.RebookResult result = repeatBookingService.rebook(id, principal.userId());
+
+        if (result.isSuccess()) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("id", result.task().id());
+            body.put("customer_id", result.task().customerId());
+            body.put("category_id", result.task().categoryId());
+            body.put("description", result.task().description());
+            body.put("budget", result.task().budget());
+            body.put("location_lat", result.task().locationLat());
+            body.put("location_lng", result.task().locationLng());
+            body.put("location_text", result.task().locationText());
+            body.put("status", result.task().status());
+            body.put("created_at", result.task().createdAt().toString());
+            body.put("updated_at", result.task().updatedAt().toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(body);
+        }
+
+        return switch (result.errorCode()) {
+            case RepeatBookingService.RebookResult.NOT_FOUND,
+                    RepeatBookingService.RebookResult.TASK_NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "code", "NOT_FOUND",
+                            "message", result.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case RepeatBookingService.RebookResult.NOT_COMPLETED -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "code", "NOT_COMPLETED",
+                            "message", result.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            case RepeatBookingService.RebookResult.FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "code", "FORBIDDEN",
+                            "message", result.errorMessage(),
+                            "trace_id", resolveTraceId(request)));
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        };
     }
 
     @GetMapping("/{id}/schedule-events")
     public ResponseEntity<?> getScheduleEvents(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
         List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id);
-        List<Map<String, Object>> data = events.stream()
-                .map(this::toScheduleEventResponse)
-                .toList();
+        List<Map<String, Object>> data =
+                events.stream().map(this::toScheduleEventResponse).toList();
         return ResponseEntity.ok(Map.of("data", data));
     }
 
@@ -645,15 +684,19 @@ public class BookingController {
         response.put("booking_id", event.bookingId());
         response.put("actor_user_id", event.actorUserId());
         response.put("event_type", event.eventType());
-        response.put("proposed_scheduled_at",
-                event.proposedScheduledAt() != null ? event.proposedScheduledAt().toString() : null);
+        response.put(
+                "proposed_scheduled_at",
+                event.proposedScheduledAt() != null
+                        ? event.proposedScheduledAt().toString()
+                        : null);
         response.put("reason", event.reason());
         response.put("created_at", event.createdAt().toString());
         return response;
     }
 
     private Map<String, Object> toScheduleEventResponse(String eventId) {
-        return scheduleService.getScheduleEvent(eventId)
+        return scheduleService
+                .getScheduleEvent(eventId)
                 .map(this::toScheduleEventResponse)
                 .orElse(Map.of("id", eventId));
     }

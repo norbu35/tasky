@@ -16,6 +16,7 @@ import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
+import mn.tasky.booking.application.RepeatBookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -73,6 +74,9 @@ class BookingControllerUnitTests {
     @Mock
     private NoShowService noShowService;
 
+    @Mock
+    private RepeatBookingService repeatBookingService;
+
     private BookingController controller;
 
     @BeforeEach
@@ -82,6 +86,7 @@ class BookingControllerUnitTests {
                 scheduleService,
                 timelineService,
                 noShowService,
+                repeatBookingService,
                 taskService,
                 authService,
                 domainEventOutboxService,

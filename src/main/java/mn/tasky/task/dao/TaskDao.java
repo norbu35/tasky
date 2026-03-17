@@ -279,6 +279,16 @@ public interface TaskDao {
             @Bind("cursorId") UUID cursorId,
             @Bind("limit") int limit);
 
+    @SqlQuery("SELECT id, customer_id, category_id, description, budget, "
+            + "location_lat, location_lng, location_text, status, scheduled_at, "
+            + "intake_answers_json, intake_schema_version, scope_summary_source, "
+            + "created_at, updated_at "
+            + "FROM tasks WHERE status = 'OPEN' "
+            + "AND created_at < :cutoff "
+            + "ORDER BY created_at ASC "
+            + "LIMIT :limit")
+    List<TaskState> findOpenOlderThan(@Bind("cutoff") Instant cutoff, @Bind("limit") int limit);
+
     default List<TaskState> findByCustomer(
             String customerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
         return findByCustomer(required(customerId, "customerId"), status, cursorCreatedAt, cursorId, limit);
