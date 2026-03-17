@@ -12,6 +12,7 @@ import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.application.ScopeSummaryGenerator;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -36,6 +37,7 @@ class TaskServiceUnitTests {
                 mock(NotificationService.class),
                 mock(AnalyticsService.class),
                 mock(DomainEventOutboxService.class),
+                mock(ReviewEnforcementService.class),
                 mock(ScopeSummaryGenerator.class),
                 mock(TaskDao.class),
                 mock(TaskPhotoDao.class),

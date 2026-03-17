@@ -40,8 +40,7 @@ public interface ReviewEnforcementCaseDao {
         return findByBookingAndUser(required(bookingId, "bookingId"), required(userId, "userId"));
     }
 
-    @SqlQuery("SELECT * FROM review_enforcement_cases "
-            + "WHERE booking_id = :bookingId AND user_id = :userId")
+    @SqlQuery("SELECT * FROM review_enforcement_cases " + "WHERE booking_id = :bookingId AND user_id = :userId")
     Optional<ReviewEnforcementCase> findByBookingAndUser(
             @Bind("bookingId") UUID bookingId, @Bind("userId") UUID userId);
 
@@ -49,10 +48,8 @@ public interface ReviewEnforcementCaseDao {
         updateStatus(required(id, "id"), status, resolvedAt);
     }
 
-    @SqlUpdate("UPDATE review_enforcement_cases "
-            + "SET status = :status, resolved_at = :resolvedAt WHERE id = :id")
-    void updateStatus(
-            @Bind("id") UUID id, @Bind("status") String status, @Bind("resolvedAt") Instant resolvedAt);
+    @SqlUpdate("UPDATE review_enforcement_cases " + "SET status = :status, resolved_at = :resolvedAt WHERE id = :id")
+    void updateStatus(@Bind("id") UUID id, @Bind("status") String status, @Bind("resolvedAt") Instant resolvedAt);
 
     default int countConsecutiveExpired(String userId) {
         return countConsecutiveExpired(required(userId, "userId"));
@@ -79,4 +76,19 @@ public interface ReviewEnforcementCaseDao {
             + "WHERE user_id = :userId AND investigation_active = true "
             + "AND status NOT IN ('COMPLETED', 'EXPIRED'))")
     boolean hasInvestigationActive(@Bind("userId") UUID userId);
+
+    @SqlQuery("SELECT * FROM review_enforcement_cases "
+            + "WHERE status = 'PENDING' AND triggered_at <= :cutoff "
+            + "ORDER BY triggered_at ASC")
+    List<ReviewEnforcementCase> findPendingOlderThan(@Bind("cutoff") Instant cutoff);
+
+    @SqlQuery("SELECT * FROM review_enforcement_cases "
+            + "WHERE status = 'REMINDED_24H' AND triggered_at <= :cutoff "
+            + "ORDER BY triggered_at ASC")
+    List<ReviewEnforcementCase> findReminded24hOlderThan(@Bind("cutoff") Instant cutoff);
+
+    @SqlQuery("SELECT * FROM review_enforcement_cases "
+            + "WHERE status IN ('PENDING', 'REMINDED_24H', 'REMINDED_72H') AND triggered_at <= :cutoff "
+            + "ORDER BY triggered_at ASC")
+    List<ReviewEnforcementCase> findExpirableOlderThan(@Bind("cutoff") Instant cutoff);
 }

@@ -32,6 +32,7 @@ import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
@@ -87,6 +88,7 @@ public class TaskService {
     private final long taskPhotoMaxBytes;
     private final long taskPhotoUploadUrlTtlSeconds;
     private final byte[] uploadUrlSigningSecretBytes;
+    private final ReviewEnforcementService reviewEnforcementService;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
@@ -101,6 +103,7 @@ public class TaskService {
             NotificationService notificationService,
             AnalyticsService analyticsService,
             DomainEventOutboxService domainEventOutboxService,
+            ReviewEnforcementService reviewEnforcementService,
             ScopeSummaryGenerator scopeSummaryGenerator,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
@@ -123,6 +126,7 @@ public class TaskService {
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.domainEventOutboxService = domainEventOutboxService;
+        this.reviewEnforcementService = reviewEnforcementService;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
@@ -151,6 +155,12 @@ public class TaskService {
      * @return Success or validation failure details.
      */
     public TaskCreateResult createTask(String customerId, CreateTask command) {
+        if (reviewEnforcementService.isUserLocked(customerId)) {
+            return TaskCreateResult.error(
+                    TaskCreateResult.REVIEW_LOCK_ACTIVE,
+                    "You must complete pending reviews before creating a new task.");
+        }
+
         Optional<CategoryState> categoryOpt = categoryService.getCategory(command.categoryId());
         if (categoryOpt.isEmpty() || !categoryOpt.get().isActive()) {
             return TaskCreateResult.error(TaskCreateResult.INVALID_CATEGORY, "Category not found or inactive.");
@@ -680,6 +690,10 @@ public class TaskService {
      * @return Result containing created application or error state.
      */
     public TaskApplyResult applyToTask(String taskerId, String taskerRole, String taskId, String message) {
+        if (reviewEnforcementService.isUserLocked(taskerId)) {
+            return new TaskApplyResult(null, TaskApplyResult.REVIEW_LOCK_ACTIVE);
+        }
+
         Optional<TaskState> taskOpt = taskDao.findById(taskId);
         if (taskOpt.isEmpty()) {
             return TaskApplyResult.NOT_FOUND_RESULT;

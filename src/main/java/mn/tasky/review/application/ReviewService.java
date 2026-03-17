@@ -21,11 +21,17 @@ public class ReviewService {
     private final BookingService bookingService;
     private final AuthService authService;
     private final ReviewDao reviewDao;
+    private final ReviewEnforcementService reviewEnforcementService;
 
-    public ReviewService(BookingService bookingService, AuthService authService, ReviewDao reviewDao) {
+    public ReviewService(
+            BookingService bookingService,
+            AuthService authService,
+            ReviewDao reviewDao,
+            ReviewEnforcementService reviewEnforcementService) {
         this.bookingService = bookingService;
         this.authService = authService;
         this.reviewDao = reviewDao;
+        this.reviewEnforcementService = reviewEnforcementService;
     }
 
     /**
@@ -131,6 +137,8 @@ public class ReviewService {
                 now);
 
         authService.updateUserStats(targetUserId, reviewAverage, false);
+
+        reviewEnforcementService.resolveCase(bookingId, authorId);
 
         return new ReviewSubmitResult(review, null);
     }

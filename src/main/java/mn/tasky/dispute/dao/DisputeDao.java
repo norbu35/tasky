@@ -99,6 +99,16 @@ public interface DisputeDao {
         return findPending((UUID) null, 100);
     }
 
+    default boolean existsOpenForUser(String userId) {
+        return existsOpenForUser(required(userId, "userId"));
+    }
+
+    @SqlQuery("SELECT EXISTS("
+            + "SELECT 1 FROM disputes d "
+            + "JOIN bookings b ON b.id = d.booking_id "
+            + "WHERE d.status = 'OPEN' AND (b.customer_id = :userId OR b.tasker_id = :userId))")
+    boolean existsOpenForUser(@Bind("userId") UUID userId);
+
     default void update(
             String id,
             String status,

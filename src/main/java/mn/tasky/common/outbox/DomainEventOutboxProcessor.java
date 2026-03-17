@@ -9,6 +9,7 @@ import java.util.Map;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
+import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.wallet.application.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class DomainEventOutboxProcessor {
     private final NotificationService notificationService;
     private final AnalyticsService analyticsService;
     private final WalletService walletService;
+    private final ReviewEnforcementService reviewEnforcementService;
     private final int batchSize;
     private final long retryDelaySeconds;
     private final long processingLeaseSeconds;
@@ -40,6 +42,7 @@ public class DomainEventOutboxProcessor {
             NotificationService notificationService,
             AnalyticsService analyticsService,
             WalletService walletService,
+            ReviewEnforcementService reviewEnforcementService,
             @Value("${tasky.outbox.processor.batch-size:25}") int batchSize,
             @Value("${tasky.outbox.processor.retry-delay-seconds:15}") long retryDelaySeconds,
             @Value("${tasky.outbox.processor.processing-lease-seconds:60}") long processingLeaseSeconds,
@@ -50,6 +53,7 @@ public class DomainEventOutboxProcessor {
         this.notificationService = notificationService;
         this.analyticsService = analyticsService;
         this.walletService = walletService;
+        this.reviewEnforcementService = reviewEnforcementService;
         this.batchSize = batchSize;
         this.retryDelaySeconds = retryDelaySeconds;
         this.processingLeaseSeconds = processingLeaseSeconds;
@@ -187,6 +191,8 @@ public class DomainEventOutboxProcessor {
                                 taskId,
                                 "tasker_id",
                                 taskerId)));
+
+        reviewEnforcementService.createCasesForBooking(bookingId, customerId, taskerId);
     }
 
     private String requiredString(Map<String, Object> payload, String key) {
