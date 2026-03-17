@@ -187,4 +187,15 @@ public interface BookingDao {
             @Bind("status") String status,
             @Bind("cursor") UUID cursor,
             @Bind("limit") int limit);
+
+    default int countByTaskerAndStatusSince(String taskerId, String status, Instant since) {
+        return countByTaskerAndStatusSince(required(taskerId, "taskerId"), status, since);
+    }
+
+    @SqlQuery("SELECT COUNT(*) FROM bookings "
+            + "WHERE tasker_id = :taskerId AND status = :status AND created_at >= :since")
+    int countByTaskerAndStatusSince(
+            @Bind("taskerId") UUID taskerId,
+            @Bind("status") String status,
+            @Bind("since") Instant since);
 }

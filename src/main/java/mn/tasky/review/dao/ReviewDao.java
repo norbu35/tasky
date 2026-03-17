@@ -97,4 +97,13 @@ public interface ReviewDao {
     @SqlQuery(
             "SELECT EXISTS(SELECT 1 FROM booking_reviews WHERE booking_id = :bookingId AND reviewer_id = :reviewerId)")
     boolean existsByBookingIdAndReviewerId(@Bind("bookingId") UUID bookingId, @Bind("reviewerId") UUID reviewerId);
+
+    default java.util.Optional<Double> averagePunctualityByRevieweeSince(String revieweeId, Instant since) {
+        return averagePunctualityByRevieweeSince(required(revieweeId, "revieweeId"), since);
+    }
+
+    @SqlQuery("SELECT AVG(punctuality_rating) FROM booking_reviews "
+            + "WHERE reviewee_id = :revieweeId AND created_at >= :since AND punctuality_rating IS NOT NULL")
+    java.util.Optional<Double> averagePunctualityByRevieweeSince(
+            @Bind("revieweeId") UUID revieweeId, @Bind("since") Instant since);
 }

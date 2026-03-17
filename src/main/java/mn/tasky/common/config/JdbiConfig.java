@@ -11,9 +11,13 @@ import mn.tasky.auth.dao.StrikeDao;
 import mn.tasky.auth.dao.SuspensionEventDao;
 import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dao.VerificationDao;
+import mn.tasky.auth.dao.BadgeDao;
+import mn.tasky.auth.dao.ReliabilityScoreDao;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
+import mn.tasky.booking.dao.BookingScheduleEventDao;
+import mn.tasky.booking.dao.BookingTimelineEventDao;
 import mn.tasky.category.dao.CategoryDao;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.audit.AuditEventDao;
@@ -21,15 +25,18 @@ import mn.tasky.common.feature.FeatureToggleDao;
 import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
 import mn.tasky.dispute.dao.DisputeDao;
+import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.dao.DeviceTokenDao;
 import mn.tasky.notification.dao.NotificationLogDao;
 import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.review.dao.ReviewDao;
+import mn.tasky.review.dao.ReviewEnforcementCaseDao;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskDraftDao;
+import mn.tasky.task.dao.TaskRescueEventDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.wallet.dao.CreditedBookingDao;
 import mn.tasky.wallet.dao.LedgerEntryDao;
@@ -109,6 +116,16 @@ public class JdbiConfig {
         return jdbi.onDemand(SuspensionEventDao.class);
     }
 
+    @Bean
+    public ReliabilityScoreDao reliabilityScoreDao(Jdbi jdbi) {
+        return jdbi.onDemand(ReliabilityScoreDao.class);
+    }
+
+    @Bean
+    public BadgeDao badgeDao(Jdbi jdbi) {
+        return jdbi.onDemand(BadgeDao.class);
+    }
+
     // Category DAOs
     @Bean
     public CategoryDao categoryDao(Jdbi jdbi) {
@@ -141,6 +158,11 @@ public class JdbiConfig {
         return jdbi.onDemand(TaskApplicationDao.class);
     }
 
+    @Bean
+    public TaskRescueEventDao taskRescueEventDao(Jdbi jdbi) {
+        return jdbi.onDemand(TaskRescueEventDao.class);
+    }
+
     // Booking DAO
     @Bean
     public BookingDao bookingDao(Jdbi jdbi) {
@@ -155,6 +177,16 @@ public class JdbiConfig {
     @Bean
     public BookingReliabilityIncidentDao bookingReliabilityIncidentDao(Jdbi jdbi) {
         return jdbi.onDemand(BookingReliabilityIncidentDao.class);
+    }
+
+    @Bean
+    public BookingScheduleEventDao bookingScheduleEventDao(Jdbi jdbi) {
+        return jdbi.onDemand(BookingScheduleEventDao.class);
+    }
+
+    @Bean
+    public BookingTimelineEventDao bookingTimelineEventDao(Jdbi jdbi) {
+        return jdbi.onDemand(BookingTimelineEventDao.class);
     }
 
     // Wallet DAOs
@@ -200,16 +232,26 @@ public class JdbiConfig {
         return jdbi.onDemand(NotificationLogDao.class);
     }
 
-    // Dispute DAO
+    // Dispute DAOs
     @Bean
     public DisputeDao disputeDao(Jdbi jdbi) {
         return jdbi.onDemand(DisputeDao.class);
     }
 
-    // Review DAO
+    @Bean
+    public DisputeEvidenceDao disputeEvidenceDao(Jdbi jdbi) {
+        return jdbi.onDemand(DisputeEvidenceDao.class);
+    }
+
+    // Review DAOs
     @Bean
     public ReviewDao reviewDao(Jdbi jdbi) {
         return jdbi.onDemand(ReviewDao.class);
+    }
+
+    @Bean
+    public ReviewEnforcementCaseDao reviewEnforcementCaseDao(Jdbi jdbi) {
+        return jdbi.onDemand(ReviewEnforcementCaseDao.class);
     }
 
     // Analytics DAO

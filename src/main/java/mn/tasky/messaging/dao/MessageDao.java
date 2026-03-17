@@ -66,4 +66,13 @@ public interface MessageDao {
             + "ORDER BY id LIMIT :limit")
     List<Message> findByConversationIdAfterCursor(
             @Bind("conversationId") UUID conversationId, @Bind("cursor") UUID cursor, @Bind("limit") int limit);
+
+    default boolean existsRecentByConversationId(String conversationId, Instant since) {
+        return existsRecentByConversationId(required(conversationId, "conversationId"), since);
+    }
+
+    @SqlQuery("SELECT EXISTS(SELECT 1 FROM messages "
+            + "WHERE conversation_id = :conversationId AND sent_at >= :since)")
+    boolean existsRecentByConversationId(
+            @Bind("conversationId") UUID conversationId, @Bind("since") Instant since);
 }
