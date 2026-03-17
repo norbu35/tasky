@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -49,6 +50,7 @@ public class BookingController {
     private static final Logger log = LoggerFactory.getLogger(BookingController.class);
 
     private final BookingService bookingService;
+    private final BookingTimelineService timelineService;
     private final TaskService taskService;
     private final AuthService authService;
     private final DomainEventOutboxService domainEventOutboxService;
@@ -57,12 +59,14 @@ public class BookingController {
 
     public BookingController(
             BookingService bookingService,
+            BookingTimelineService timelineService,
             TaskService taskService,
             AuthService authService,
             DomainEventOutboxService domainEventOutboxService,
             NotificationService notificationService,
             IdempotencyService idempotencyService) {
         this.bookingService = bookingService;
+        this.timelineService = timelineService;
         this.taskService = taskService;
         this.authService = authService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -157,6 +161,8 @@ public class BookingController {
 
             if (result.isSuccess()) {
                 handleTaskCancellationSideEffects(result.booking(), principal.userId());
+                timelineService.recordEvent(
+                        id, BookingTimelineService.BOOKING_CANCELLED, principal.userId(), null);
                 idempotencyService.completeWithResource(
                         principal.userId(),
                         IdempotencyOperations.CANCEL_BOOKING,
@@ -266,6 +272,9 @@ public class BookingController {
                             booking.id(),
                             booking.taskId());
                 }
+
+                timelineService.recordEvent(
+                        id, BookingTimelineService.BOOKING_COMPLETED, principal.userId(), null);
 
                 domainEventOutboxService.publish(
                         OutboxEventTypes.BOOKING_COMPLETED,

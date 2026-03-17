@@ -13,6 +13,7 @@ import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.api.BookingController;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -61,12 +62,16 @@ class BookingControllerUnitTests {
     @Mock
     private IdempotencyService idempotencyService;
 
+    @Mock
+    private BookingTimelineService timelineService;
+
     private BookingController controller;
 
     @BeforeEach
     void setUp() {
         controller = new BookingController(
                 bookingService,
+                timelineService,
                 taskService,
                 authService,
                 domainEventOutboxService,
