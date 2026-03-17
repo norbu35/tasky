@@ -71,8 +71,24 @@ public interface MessageDao {
         return existsRecentByConversationId(required(conversationId, "conversationId"), since);
     }
 
-    @SqlQuery("SELECT EXISTS(SELECT 1 FROM messages "
-            + "WHERE conversation_id = :conversationId AND sent_at >= :since)")
-    boolean existsRecentByConversationId(
-            @Bind("conversationId") UUID conversationId, @Bind("since") Instant since);
+    @SqlQuery(
+            "SELECT EXISTS(SELECT 1 FROM messages " + "WHERE conversation_id = :conversationId AND sent_at >= :since)")
+    boolean existsRecentByConversationId(@Bind("conversationId") UUID conversationId, @Bind("since") Instant since);
+
+    default List<Message> findFlagged(String cursor, int limit) {
+        return findFlagged(optional(cursor), limit);
+    }
+
+    default List<Message> findFlagged(UUID cursor, int limit) {
+        if (cursor == null) {
+            return findFlaggedFirstPage(limit);
+        }
+        return findFlaggedAfterCursor(cursor, limit);
+    }
+
+    @SqlQuery("SELECT * FROM messages WHERE phone_number_flagged = true ORDER BY id LIMIT :limit")
+    List<Message> findFlaggedFirstPage(@Bind("limit") int limit);
+
+    @SqlQuery("SELECT * FROM messages WHERE phone_number_flagged = true AND id > :cursor ORDER BY id LIMIT :limit")
+    List<Message> findFlaggedAfterCursor(@Bind("cursor") UUID cursor, @Bind("limit") int limit);
 }

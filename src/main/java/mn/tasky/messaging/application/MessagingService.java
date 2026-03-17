@@ -8,6 +8,8 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Map;
+import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
@@ -23,15 +25,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessagingService {
 
+    private static final String EVENT_MESSAGE_PHONE_NUMBER_FLAGGED = "message_phone_number_flagged";
+
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationDao conversationDao;
     private final MessageDao messageDao;
+    private final PhoneLeakDetector phoneLeakDetector;
+    private final AnalyticsService analyticsService;
 
     public MessagingService(
-            SimpMessagingTemplate messagingTemplate, ConversationDao conversationDao, MessageDao messageDao) {
+            SimpMessagingTemplate messagingTemplate,
+            ConversationDao conversationDao,
+            MessageDao messageDao,
+            PhoneLeakDetector phoneLeakDetector,
+            AnalyticsService analyticsService) {
         this.messagingTemplate = messagingTemplate;
         this.conversationDao = conversationDao;
         this.messageDao = messageDao;
+        this.phoneLeakDetector = phoneLeakDetector;
+        this.analyticsService = analyticsService;
     }
 
     /**
@@ -109,8 +121,10 @@ public class MessagingService {
         Instant sentAt = Instant.now();
         String contentHash = computeContentHash(conversationId, senderId, sanitizedContent, sentAt);
 
+        boolean phoneNumberFlagged = phoneLeakDetector.containsPhoneNumber(sanitizedContent);
+
         Message message = new Message(
-                UUID.randomUUID().toString(), conversationId, senderId, sanitizedContent, false, contentHash, sentAt);
+                UUID.randomUUID().toString(), conversationId, senderId, sanitizedContent, phoneNumberFlagged, contentHash, sentAt);
 
         messageDao.insert(
                 message.id(),
@@ -120,6 +134,13 @@ public class MessagingService {
                 message.phoneNumberFlagged(),
                 message.contentHash(),
                 message.sentAt());
+
+        if (phoneNumberFlagged) {
+            analyticsService.track(
+                    EVENT_MESSAGE_PHONE_NUMBER_FLAGGED,
+                    senderId,
+                    Map.of("conversation_id", conversationId));
+        }
 
         messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
 
