@@ -76,6 +76,9 @@ public class AdminDisputeController {
                 .<ResponseEntity<?>>map(dispute -> {
                     Map<String, Object> body = new LinkedHashMap<>();
                     body.put("dispute", admin(dispute));
+                    body.put("evidence", disputeService.getDisputeEvidence(dispute.id()).stream()
+                            .map(DisputeResponseMapper::evidence)
+                            .toList());
 
                     bookingService.getBooking(dispute.bookingId()).ifPresent(booking -> {
                         Map<String, Object> bookingBody = new LinkedHashMap<>();

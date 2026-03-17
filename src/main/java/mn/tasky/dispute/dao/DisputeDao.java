@@ -99,6 +99,11 @@ public interface DisputeDao {
         return findPending((UUID) null, 100);
     }
 
+    @SqlQuery("SELECT id, booking_id, raised_by, reason, status, resolution_action, "
+            + "wrongful_party_user_id, resolution_notes, created_at, resolved_at "
+            + "FROM disputes WHERE status = 'OPEN' AND created_at < :cutoff")
+    List<Dispute> findOpenOlderThan(@Bind("cutoff") Instant cutoff);
+
     default boolean existsOpenForUser(String userId) {
         return existsOpenForUser(required(userId, "userId"));
     }

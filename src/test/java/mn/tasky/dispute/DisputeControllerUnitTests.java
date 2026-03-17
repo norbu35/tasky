@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,7 +57,7 @@ class DisputeControllerUnitTests {
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS, null));
 
         ResponseEntity<?> response =
-                controller.raiseDispute(principal, uuid(1), new DisputeRequest("reason"), "idem-1");
+                controller.raiseDispute(principal, uuid(1), new DisputeRequest("reason", null), "idem-1");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_IN_PROGRESS");
@@ -88,7 +89,7 @@ class DisputeControllerUnitTests {
         when(disputeService.getDispute(uuid(12))).thenReturn(Optional.empty());
 
         ResponseEntity<?> response =
-                controller.raiseDispute(principal, uuid(2), new DisputeRequest("reason"), "idem-2");
+                controller.raiseDispute(principal, uuid(2), new DisputeRequest("reason", null), "idem-2");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
@@ -99,11 +100,11 @@ class DisputeControllerUnitTests {
         JwtPrincipal principal = userPrincipal();
         when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-3"))
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(disputeService.raiseDispute(principal.userId(), uuid(3), "reason"))
+        when(disputeService.raiseDispute(principal.userId(), uuid(3), "reason", null))
                 .thenReturn(DisputeRaiseResult.error("FORBIDDEN"));
 
         ResponseEntity<?> response =
-                controller.raiseDispute(principal, uuid(3), new DisputeRequest("reason"), "idem-3");
+                controller.raiseDispute(principal, uuid(3), new DisputeRequest("reason", null), "idem-3");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "FORBIDDEN");
@@ -115,7 +116,7 @@ class DisputeControllerUnitTests {
         Dispute dispute = dispute("OPEN");
         when(idempotencyService.claim(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, "idem-4"))
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
-        when(disputeService.raiseDispute(principal.userId(), dispute.bookingId(), "reason"))
+        when(disputeService.raiseDispute(principal.userId(), dispute.bookingId(), "reason", null))
                 .thenReturn(DisputeRaiseResult.success(dispute));
         when(bookingService.getBooking(dispute.bookingId()))
                 .thenReturn(Optional.of(new BookingState(
@@ -135,7 +136,7 @@ class DisputeControllerUnitTests {
                         Instant.now())));
 
         ResponseEntity<?> response =
-                controller.raiseDispute(principal, dispute.bookingId(), new DisputeRequest("reason"), "idem-4");
+                controller.raiseDispute(principal, dispute.bookingId(), new DisputeRequest("reason", null), "idem-4");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -160,6 +161,7 @@ class DisputeControllerUnitTests {
         JwtPrincipal admin = new JwtPrincipal(uuid(101), "ADMIN", "ACTIVE");
         Dispute dispute = dispute("RESOLVED_TASKER");
         when(disputeService.getDispute(dispute.id())).thenReturn(Optional.of(dispute));
+        when(disputeService.getDisputeEvidence(dispute.id())).thenReturn(List.of());
 
         ResponseEntity<?> response = controller.getDispute(admin, dispute.id());
 

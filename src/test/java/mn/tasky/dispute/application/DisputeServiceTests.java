@@ -14,6 +14,7 @@ import java.util.UUID;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.dispute.dao.DisputeDao;
+import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
@@ -34,11 +35,14 @@ class DisputeServiceTests {
     @Mock
     private DisputeDao disputeDao;
 
+    @Mock
+    private DisputeEvidenceDao disputeEvidenceDao;
+
     private DisputeService disputeService;
 
     @BeforeEach
     void setUp() {
-        disputeService = new DisputeService(bookingService, disputeDao);
+        disputeService = new DisputeService(bookingService, disputeDao, disputeEvidenceDao);
     }
 
     @Test

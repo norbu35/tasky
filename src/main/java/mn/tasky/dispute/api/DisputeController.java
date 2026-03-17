@@ -1,6 +1,7 @@
 package mn.tasky.dispute.api;
 
 import static mn.tasky.dispute.api.DisputeResponseMapper.summary;
+import static mn.tasky.dispute.api.DisputeResponseMapper.summaryWithEvidence;
 
 import jakarta.validation.Valid;
 import java.util.LinkedHashMap;
@@ -82,7 +83,7 @@ public class DisputeController {
         }
 
         try {
-            var result = disputeService.raiseDispute(principal.userId(), id, body.reason());
+            var result = disputeService.raiseDispute(principal.userId(), id, body.reason(), body.evidence());
             if (!result.isSuccess()) {
                 idempotencyService.abandon(principal.userId(), IdempotencyOperations.RAISE_DISPUTE, idempotencyKey);
                 return switch (result.error()) {
@@ -135,7 +136,8 @@ public class DisputeController {
     public ResponseEntity<?> getDispute(@AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
         boolean admin = "ADMIN".equals(principal.role());
         return (admin ? disputeService.getDispute(id) : disputeService.getDisputeForUser(id, principal.userId()))
-                .<ResponseEntity<?>>map(d -> ResponseEntity.ok(summary(d)))
+                .<ResponseEntity<?>>map(d -> ResponseEntity.ok(
+                        summaryWithEvidence(d, disputeService.getDisputeEvidence(d.id()))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

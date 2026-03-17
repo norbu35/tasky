@@ -1,6 +1,17 @@
 package mn.tasky.dispute.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.List;
+import org.springframework.lang.Nullable;
 
-public record DisputeRequest(@NotBlank @Size(min = 10, max = 2000) String reason) {}
+public record DisputeRequest(
+        @NotBlank @Size(min = 10, max = 2000) String reason,
+        @Nullable @Valid List<EvidenceItem> evidence) {
+
+    public record EvidenceItem(
+            @NotBlank String type,
+            @Nullable String storageKey,
+            @Nullable String textPayload) {}
+}

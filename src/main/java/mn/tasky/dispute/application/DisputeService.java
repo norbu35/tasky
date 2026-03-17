@@ -7,9 +7,14 @@ import java.util.UUID;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.dispute.dao.DisputeDao;
+import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
+import mn.tasky.dispute.dto.DisputeEvidence;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
+import mn.tasky.dispute.dto.DisputeRequest;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,14 +24,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class DisputeService {
 
+    private static final Logger log = LoggerFactory.getLogger(DisputeService.class);
     private static final long COMPLETED_DISPUTE_WINDOW_HOURS = 24L;
 
     private final BookingService bookingService;
     private final DisputeDao disputeDao;
+    private final DisputeEvidenceDao disputeEvidenceDao;
 
-    public DisputeService(BookingService bookingService, DisputeDao disputeDao) {
+    public DisputeService(BookingService bookingService, DisputeDao disputeDao, DisputeEvidenceDao disputeEvidenceDao) {
         this.bookingService = bookingService;
         this.disputeDao = disputeDao;
+        this.disputeEvidenceDao = disputeEvidenceDao;
     }
 
     /**
@@ -40,6 +48,21 @@ public class DisputeService {
      * @return A {@link DisputeRaiseResult} indicating success or failure with an error code.
      */
     public DisputeRaiseResult raiseDispute(String userId, String bookingId, String reason) {
+        return raiseDispute(userId, bookingId, reason, null);
+    }
+
+    /**
+     * Raises a new dispute for a given booking, optionally with evidence items.
+     * Evidence can be provided at creation time or added later within the 24h grace period.
+     *
+     * @param userId         The ID of the user raising the dispute.
+     * @param bookingId      The ID of the booking being disputed.
+     * @param reason         The reason for the dispute.
+     * @param evidenceItems  Optional list of evidence items to attach.
+     * @return A {@link DisputeRaiseResult} indicating success or failure with an error code.
+     */
+    public DisputeRaiseResult raiseDispute(
+            String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems) {
         String sanitizedReason = TextSanitizer.plainText(reason);
         if (sanitizedReason == null || sanitizedReason.isBlank()) {
             return DisputeRaiseResult.error("INVALID_REASON");
@@ -76,6 +99,18 @@ public class DisputeService {
         Dispute dispute = new Dispute(id, bookingId, userId, sanitizedReason, "OPEN", null, null, null, now, null);
         disputeDao.insert(id, bookingId, userId, sanitizedReason, "OPEN", null, null, null, now, null);
 
+        if (evidenceItems != null) {
+            for (DisputeRequest.EvidenceItem item : evidenceItems) {
+                String evidenceId = UUID.randomUUID().toString();
+                String storageKey = "PHOTO".equals(item.type()) ? item.storageKey() : null;
+                String textPayload =
+                        "CHAT_EXCERPT".equals(item.type()) || "WRITTEN_TIMELINE".equals(item.type())
+                                ? TextSanitizer.plainText(item.textPayload())
+                                : null;
+                disputeEvidenceDao.insert(evidenceId, id, item.type(), storageKey, textPayload);
+            }
+        }
+
         return DisputeRaiseResult.success(dispute);
     }
 
@@ -107,6 +142,16 @@ public class DisputeService {
      */
     public Optional<Dispute> getDispute(String disputeId) {
         return disputeDao.findById(disputeId);
+    }
+
+    /**
+     * Retrieves evidence items attached to a dispute.
+     *
+     * @param disputeId The ID of the dispute.
+     * @return A list of {@link DisputeEvidence} items.
+     */
+    public List<DisputeEvidence> getDisputeEvidence(String disputeId) {
+        return disputeEvidenceDao.findByDisputeId(disputeId);
     }
 
     /**
