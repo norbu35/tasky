@@ -88,11 +88,10 @@ public class NoShowService {
      * Sends a no-show reminder to both booking participants and records the timeline event.
      */
     public void sendReminder(BookingState booking) {
-        timelineService.recordEvent(
-                booking.id(), BookingTimelineService.NO_SHOW_REMINDER_SENT, null, null);
+        timelineService.recordEvent(booking.id(), BookingTimelineService.NO_SHOW_REMINDER_SENT, null, null);
 
         String title = "Attendance Reminder";
-        String body = "Your booking is scheduled for now \u2014 please confirm attendance.";
+        String body = "Your booking is scheduled for now -- please confirm attendance.";
 
         notificationService.sendPush(booking.customerId(), title, body, "NO_SHOW_REMINDER");
         notificationService.sendPush(booking.taskerId(), title, body, "NO_SHOW_REMINDER");
@@ -142,8 +141,8 @@ public class NoShowService {
             return NoShowFlagResult.error("ACTIVITY_DETECTED");
         }
 
-        Optional<Conversation> conversationOpt = conversationDao.findByTaskAndParticipants(
-                booking.taskId(), booking.customerId(), booking.taskerId());
+        Optional<Conversation> conversationOpt =
+                conversationDao.findByTaskAndParticipants(booking.taskId(), booking.customerId(), booking.taskerId());
         if (conversationOpt.isPresent()) {
             if (messageDao.existsRecentByConversationId(conversationOpt.get().id(), activityCutoff)) {
                 return NoShowFlagResult.error("ACTIVITY_DETECTED");
@@ -170,18 +169,12 @@ public class NoShowService {
         taskService.transitionToNoShow(booking.taskId());
 
         // c. Write timeline event
-        String metadata = String.format(
-                "{\"flagged_by\":\"%s\",\"no_show_party\":\"%s\"}", flaggingUserId, noShowPartyId);
-        timelineService.recordEvent(
-                bookingId, BookingTimelineService.NO_SHOW_CONFIRMED, flaggingUserId, metadata);
+        String metadata =
+                String.format("{\"flagged_by\":\"%s\",\"no_show_party\":\"%s\"}", flaggingUserId, noShowPartyId);
+        timelineService.recordEvent(bookingId, BookingTimelineService.NO_SHOW_CONFIRMED, flaggingUserId, metadata);
 
         // d. Write audit event
-        auditEventDao.insert(
-                flaggingUserId,
-                "NO_SHOW_FLAGGED",
-                "BOOKING",
-                bookingId,
-                metadata);
+        auditEventDao.insert(flaggingUserId, "NO_SHOW_FLAGGED", "BOOKING", bookingId, metadata);
 
         // f. If no-show party is the tasker, add strike
         if (booking.taskerId().equals(noShowPartyId)) {
@@ -190,11 +183,7 @@ public class NoShowService {
 
         // Return updated booking
         BookingState updated = bookingDao.findById(bookingId).orElse(booking);
-        log.info(
-                "Booking {} flagged as NO_SHOW by {} — no-show party: {}",
-                bookingId,
-                flaggingUserId,
-                noShowPartyId);
+        log.info("Booking {} flagged as NO_SHOW by {} — no-show party: {}", bookingId, flaggingUserId, noShowPartyId);
         return NoShowFlagResult.success(updated);
     }
 

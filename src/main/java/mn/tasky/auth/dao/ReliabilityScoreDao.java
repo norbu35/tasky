@@ -21,15 +21,24 @@ public interface ReliabilityScoreDao {
             Double cancellationRate,
             Double reviewAvg,
             int windowDays) {
-        upsert(required(taskerId, "taskerId"), score, completionRate, punctualityRate, cancellationRate, reviewAvg,
+        upsert(
+                required(taskerId, "taskerId"),
+                score,
+                completionRate,
+                punctualityRate,
+                cancellationRate,
+                reviewAvg,
                 windowDays);
     }
 
     @SqlUpdate("INSERT INTO tasker_reliability_scores "
-            + "(tasker_id, score, completion_rate, punctuality_rate, cancellation_rate, review_avg, window_days, computed_at) "
-            + "VALUES (:taskerId, :score, :completionRate, :punctualityRate, :cancellationRate, :reviewAvg, :windowDays, now()) "
+            + "(tasker_id, score, completion_rate, punctuality_rate, "
+            + "cancellation_rate, review_avg, window_days, computed_at) "
+            + "VALUES (:taskerId, :score, :completionRate, :punctualityRate, "
+            + ":cancellationRate, :reviewAvg, :windowDays, now()) "
             + "ON CONFLICT (tasker_id) DO UPDATE SET "
-            + "score = :score, completion_rate = :completionRate, punctuality_rate = :punctualityRate, "
+            + "score = :score, completion_rate = :completionRate, "
+            + "punctuality_rate = :punctualityRate, "
             + "cancellation_rate = :cancellationRate, review_avg = :reviewAvg, "
             + "window_days = :windowDays, computed_at = now()")
     void upsert(
