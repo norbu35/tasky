@@ -103,4 +103,19 @@ public interface VerificationDao {
             @Bind("status") String status,
             @Bind("adminNotes") String adminNotes,
             @Bind("reviewedAt") Instant reviewedAt);
+
+    default List<VerificationRequest> findByUserId(String userId) {
+        return findByUserId(required(userId, "userId"));
+    }
+
+    @SqlQuery("SELECT * FROM verifications WHERE user_id = :userId")
+    List<VerificationRequest> findByUserId(@Bind("userId") UUID userId);
+
+    default void anonymize(String id) {
+        anonymize(required(id, "id"));
+    }
+
+    @SqlUpdate("UPDATE verifications SET id_card_front_key = NULL, id_card_back_key = NULL, "
+            + "dan_reference = NULL WHERE id = :id")
+    void anonymize(@Bind("id") UUID id);
 }

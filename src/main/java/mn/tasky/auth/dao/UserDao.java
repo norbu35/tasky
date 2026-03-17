@@ -97,4 +97,8 @@ public interface UserDao {
 
     @SqlQuery("SELECT id, phone, facebook_id, role, status, primary_auth, created_at, updated_at FROM users")
     List<AuthUser> findAll();
+
+    @SqlQuery("SELECT id, phone, facebook_id, role, status, primary_auth, created_at, updated_at "
+            + "FROM users WHERE status = 'BANNED' AND updated_at < :cutoff")
+    List<AuthUser> findBannedUpdatedBefore(@Bind("cutoff") Instant cutoff);
 }

@@ -12,8 +12,11 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.VerificationDetail;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
+import mn.tasky.common.audit.AuditEventDao;
+import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +32,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminVerificationController {
 
     private final AuthService authService;
+    private final AuditEventDao auditEventDao;
 
-    public AdminVerificationController(AuthService authService) {
+    public AdminVerificationController(AuthService authService, AuditEventDao auditEventDao) {
         this.authService = authService;
+        this.auditEventDao = auditEventDao;
     }
 
     @GetMapping("/pending")
@@ -48,6 +53,36 @@ public class AdminVerificationController {
 
         return ResponseEntity.ok(
                 new PagedResponse<>(data, CursorPagination.from(pending, clampedLimit, VerificationDetail::id)));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDetail(
+            @PathVariable String id, @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
+        return authService
+                .getVerificationDetail(id)
+                .<ResponseEntity<?>>map(detail -> {
+                    auditEventDao.insert(
+                            principal.userId(),
+                            "VERIFICATION_MEDIA_VIEWED",
+                            "VERIFICATION",
+                            detail.id(),
+                            "{\"field\":\"id_card_front\"}");
+                    auditEventDao.insert(
+                            principal.userId(),
+                            "VERIFICATION_MEDIA_VIEWED",
+                            "VERIFICATION",
+                            detail.id(),
+                            "{\"field\":\"id_card_back\"}");
+                    return ResponseEntity.ok(toDetailBody(detail));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of(
+                                "code",
+                                "NOT_FOUND",
+                                "message",
+                                "Verification not found.",
+                                "trace_id",
+                                resolveTraceId(request))));
     }
 
     private VerificationDetailResponse toDetailBody(VerificationDetail detail) {

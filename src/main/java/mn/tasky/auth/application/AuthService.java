@@ -623,8 +623,8 @@ public class AuthService {
     }
 
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {
-        boolean isPro = badgeDao.findActiveByTaskerId(user.id()).stream()
-                .anyMatch(badge -> "PRO".equals(badge.badgeType()));
+        boolean isPro =
+                badgeDao.findActiveByTaskerId(user.id()).stream().anyMatch(badge -> "PRO".equals(badge.badgeType()));
         return new UserProfile(
                 user.id(),
                 decryptPhone(user.phone()),
@@ -792,6 +792,16 @@ public class AuthService {
                 .findLatestByUserId(userId)
                 .map(this::toVerificationStatus)
                 .orElseGet(() -> new VerificationStatusResponse("NOT_SUBMITTED", null, null, null));
+    }
+
+    /**
+     * Returns a single verification detail by ID, including presigned URLs.
+     *
+     * @param verificationId Verification identifier.
+     * @return Verification detail when found.
+     */
+    public Optional<VerificationDetail> getVerificationDetail(String verificationId) {
+        return verificationDao.findById(verificationId).map(this::toVerificationDetail);
     }
 
     /**

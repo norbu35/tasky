@@ -6,8 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.UserProfile;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.user.dto.AvatarUploadUrlRequest;
 import mn.tasky.user.dto.ProfileResponse;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,9 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserProfileController {
 
     private final AuthService authService;
+    private final UserDao userDao;
+    private final AuditEventDao auditEventDao;
 
-    public UserProfileController(AuthService authService) {
+    public UserProfileController(AuthService authService, UserDao userDao, AuditEventDao auditEventDao) {
         this.authService = authService;
+        this.userDao = userDao;
+        this.auditEventDao = auditEventDao;
     }
 
     @GetMapping("/me")
@@ -112,5 +119,20 @@ public class UserProfileController {
                 .<ResponseEntity<?>>map(upload ->
                         ResponseEntity.ok(Map.of("upload_url", upload.uploadUrl(), "storage_key", upload.storageKey())))
                 .orElseGet(() -> unauthorizedResponse(request));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(@AuthenticationPrincipal JwtPrincipal principal) {
+        userDao.updateStatus(principal.userId(), "BANNED");
+
+        auditEventDao.insert(
+                principal.userId(),
+                "USER_SELF_DELETE_REQUEST",
+                "USER",
+                principal.userId(),
+                "{\"reason\":\"USER_SELF_DELETE_REQUEST\"}");
+
+        return ResponseEntity.ok(
+                Map.of("message", "Account deletion requested. Data will be removed after 90-day retention period."));
     }
 }
