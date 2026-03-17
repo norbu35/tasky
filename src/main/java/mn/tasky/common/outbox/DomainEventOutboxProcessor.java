@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import mn.tasky.analytics.application.AnalyticsService;
+import mn.tasky.auth.application.BadgeEvaluationService;
+import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
@@ -30,6 +32,8 @@ public class DomainEventOutboxProcessor {
     private final AnalyticsService analyticsService;
     private final WalletService walletService;
     private final ReviewEnforcementService reviewEnforcementService;
+    private final ReliabilityScoreService reliabilityScoreService;
+    private final BadgeEvaluationService badgeEvaluationService;
     private final int batchSize;
     private final long retryDelaySeconds;
     private final long processingLeaseSeconds;
@@ -43,6 +47,8 @@ public class DomainEventOutboxProcessor {
             AnalyticsService analyticsService,
             WalletService walletService,
             ReviewEnforcementService reviewEnforcementService,
+            ReliabilityScoreService reliabilityScoreService,
+            BadgeEvaluationService badgeEvaluationService,
             @Value("${tasky.outbox.processor.batch-size:25}") int batchSize,
             @Value("${tasky.outbox.processor.retry-delay-seconds:15}") long retryDelaySeconds,
             @Value("${tasky.outbox.processor.processing-lease-seconds:60}") long processingLeaseSeconds,
@@ -54,6 +60,8 @@ public class DomainEventOutboxProcessor {
         this.analyticsService = analyticsService;
         this.walletService = walletService;
         this.reviewEnforcementService = reviewEnforcementService;
+        this.reliabilityScoreService = reliabilityScoreService;
+        this.badgeEvaluationService = badgeEvaluationService;
         this.batchSize = batchSize;
         this.retryDelaySeconds = retryDelaySeconds;
         this.processingLeaseSeconds = processingLeaseSeconds;
@@ -193,6 +201,9 @@ public class DomainEventOutboxProcessor {
                                 taskerId)));
 
         reviewEnforcementService.createCasesForBooking(bookingId, customerId, taskerId);
+
+        reliabilityScoreService.recompute(taskerId);
+        badgeEvaluationService.evaluate(taskerId);
     }
 
     private String requiredString(Map<String, Object> payload, String key) {

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.BadgeEvaluationService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.review.dao.ReviewDao;
@@ -22,16 +23,19 @@ public class ReviewService {
     private final AuthService authService;
     private final ReviewDao reviewDao;
     private final ReviewEnforcementService reviewEnforcementService;
+    private final BadgeEvaluationService badgeEvaluationService;
 
     public ReviewService(
             BookingService bookingService,
             AuthService authService,
             ReviewDao reviewDao,
-            ReviewEnforcementService reviewEnforcementService) {
+            ReviewEnforcementService reviewEnforcementService,
+            BadgeEvaluationService badgeEvaluationService) {
         this.bookingService = bookingService;
         this.authService = authService;
         this.reviewDao = reviewDao;
         this.reviewEnforcementService = reviewEnforcementService;
+        this.badgeEvaluationService = badgeEvaluationService;
     }
 
     /**
@@ -139,6 +143,8 @@ public class ReviewService {
         authService.updateUserStats(targetUserId, reviewAverage, false);
 
         reviewEnforcementService.resolveCase(bookingId, authorId);
+
+        badgeEvaluationService.evaluate(targetUserId);
 
         return new ReviewSubmitResult(review, null);
     }

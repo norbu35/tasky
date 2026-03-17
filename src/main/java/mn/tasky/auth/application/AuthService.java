@@ -20,6 +20,7 @@ import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.auth.AccountRestrictedException;
+import mn.tasky.auth.dao.BadgeDao;
 import mn.tasky.auth.dao.ModerationPolicyDao;
 import mn.tasky.auth.dao.OtpChallengeDao;
 import mn.tasky.auth.dao.ProfileDao;
@@ -101,6 +102,7 @@ public class AuthService {
     private final StrikeDao strikeDao;
     private final ModerationPolicyDao moderationPolicyDao;
     private final SuspensionEventDao suspensionEventDao;
+    private final BadgeDao badgeDao;
 
     @SuppressFBWarnings(
             value = "CT_CONSTRUCTOR_THROW",
@@ -120,6 +122,7 @@ public class AuthService {
             StrikeDao strikeDao,
             ModerationPolicyDao moderationPolicyDao,
             SuspensionEventDao suspensionEventDao,
+            BadgeDao badgeDao,
             @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
@@ -147,6 +150,7 @@ public class AuthService {
         this.strikeDao = strikeDao;
         this.moderationPolicyDao = moderationPolicyDao;
         this.suspensionEventDao = suspensionEventDao;
+        this.badgeDao = badgeDao;
         this.devAuthEnabled = devAuthEnabled;
         this.otpEnabled = otpEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
@@ -619,7 +623,8 @@ public class AuthService {
     }
 
     private UserProfile toProfile(AuthUser user, UserProfileState profile) {
-        boolean isPro = profile.completedTasks() >= 15 && profile.ratingAvg() >= 4.5d;
+        boolean isPro = badgeDao.findActiveByTaskerId(user.id()).stream()
+                .anyMatch(badge -> "PRO".equals(badge.badgeType()));
         return new UserProfile(
                 user.id(),
                 decryptPhone(user.phone()),

@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.BadgeEvaluationService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.review.dao.ReviewDao;
@@ -40,11 +41,15 @@ class ReviewServiceTests {
     @Mock
     private ReviewEnforcementService reviewEnforcementService;
 
+    @Mock
+    private BadgeEvaluationService badgeEvaluationService;
+
     private ReviewService reviewService;
 
     @BeforeEach
     void setUp() {
-        reviewService = new ReviewService(bookingService, authService, reviewDao, reviewEnforcementService);
+        reviewService = new ReviewService(
+                bookingService, authService, reviewDao, reviewEnforcementService, badgeEvaluationService);
     }
 
     @Test
