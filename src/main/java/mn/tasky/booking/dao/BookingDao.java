@@ -198,4 +198,19 @@ public interface BookingDao {
             @Bind("taskerId") UUID taskerId,
             @Bind("status") String status,
             @Bind("since") Instant since);
+
+    @SqlQuery("SELECT * FROM bookings WHERE status = 'ASSIGNED' "
+            + "AND confirmed_scheduled_at IS NOT NULL "
+            + "AND confirmed_scheduled_at < :threshold")
+    List<BookingState> findAssignedPastSchedule(@Bind("threshold") Instant threshold);
+
+    default void updateStatus(String id, String status, Instant updatedAt) {
+        updateStatus(required(id, "id"), status, updatedAt);
+    }
+
+    @SqlUpdate("UPDATE bookings SET status = :status, updated_at = :updatedAt WHERE id = :id")
+    void updateStatus(
+            @Bind("id") UUID id,
+            @Bind("status") String status,
+            @Bind("updatedAt") Instant updatedAt);
 }

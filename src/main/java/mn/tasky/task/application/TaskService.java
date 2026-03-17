@@ -519,6 +519,21 @@ public class TaskService {
     }
 
     /**
+     * Sets task status to {@code NO_SHOW} when task exists.
+     *
+     * @param taskId Task identifier.
+     * @return Updated task when found.
+     */
+    public Optional<TaskState> transitionToNoShow(String taskId) {
+        Optional<TaskState> existing = taskDao.findById(taskId);
+        if (existing.isEmpty()) {
+            return Optional.empty();
+        }
+        taskDao.updateStatus(taskId, "NO_SHOW", Instant.now());
+        return taskDao.findById(taskId).map(this::populatePhotoKeys);
+    }
+
+    /**
      * Lists open tasks with cursor pagination and optional geo-radius filtering.
      *
      * @param categoryId Optional category filter.

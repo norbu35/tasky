@@ -14,6 +14,7 @@ import java.util.Optional;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
+import mn.tasky.booking.application.NoShowService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -51,6 +52,7 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final BookingTimelineService timelineService;
+    private final NoShowService noShowService;
     private final TaskService taskService;
     private final AuthService authService;
     private final DomainEventOutboxService domainEventOutboxService;
@@ -60,6 +62,7 @@ public class BookingController {
     public BookingController(
             BookingService bookingService,
             BookingTimelineService timelineService,
+            NoShowService noShowService,
             TaskService taskService,
             AuthService authService,
             DomainEventOutboxService domainEventOutboxService,
@@ -67,6 +70,7 @@ public class BookingController {
             IdempotencyService idempotencyService) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
+        this.noShowService = noShowService;
         this.taskService = taskService;
         this.authService = authService;
         this.domainEventOutboxService = domainEventOutboxService;
@@ -423,6 +427,86 @@ public class BookingController {
             };
         } catch (RuntimeException exception) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.MARK_BOOKING_DONE, idempotencyKey);
+            throw exception;
+        }
+    }
+
+    @PostMapping("/{id}/no-show/flag")
+    public ResponseEntity<?> flagNoShow(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+            HttpServletRequest request) {
+        IdempotencyClaim claim =
+                idempotencyService.claim(principal.userId(), IdempotencyOperations.NO_SHOW_FLAG, idempotencyKey);
+        if (claim.status() == IdempotencyClaim.Status.IN_PROGRESS) {
+            return idempotencyInProgress(request);
+        }
+        if (claim.status() == IdempotencyClaim.Status.COMPLETED) {
+            if (claim.record() == null || claim.record().resourceId() == null) {
+                return idempotencyReplayMissing(request);
+            }
+            String bookingId = claim.record().resourceId().toString();
+            return bookingService
+                    .getBooking(bookingId)
+                    .<ResponseEntity<?>>map(booking -> ResponseEntity.ok(withCancellationFee(booking)))
+                    .orElseGet(() -> idempotencyReplayMissing(request));
+        }
+
+        try {
+            NoShowService.NoShowFlagResult result = noShowService.flagNoShow(id, principal.userId());
+
+            if (result.success()) {
+                idempotencyService.completeWithResource(
+                        principal.userId(),
+                        IdempotencyOperations.NO_SHOW_FLAG,
+                        idempotencyKey,
+                        "BOOKING",
+                        result.booking().id());
+                return ResponseEntity.ok(withCancellationFee(result.booking()));
+            }
+
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.NO_SHOW_FLAG, idempotencyKey);
+            return switch (result.errorCode()) {
+                case "NOT_FOUND" -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of(
+                                "code", "NOT_FOUND",
+                                "message", "Booking not found.",
+                                "trace_id", resolveTraceId(request)));
+                case "FORBIDDEN" -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of(
+                                "code", "FORBIDDEN",
+                                "message", "You are not a participant of this booking.",
+                                "trace_id", resolveTraceId(request)));
+                case "INVALID_STATUS" -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code", "INVALID_STATUS",
+                                "message", "Booking must be ASSIGNED to flag no-show.",
+                                "trace_id", resolveTraceId(request)));
+                case "TOO_EARLY" -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code", "TOO_EARLY",
+                                "message", "Cannot flag no-show before 15 minutes past scheduled time.",
+                                "trace_id", resolveTraceId(request)));
+                case "NO_SCHEDULE" -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code", "NO_SCHEDULE",
+                                "message", "Booking has no confirmed schedule.",
+                                "trace_id", resolveTraceId(request)));
+                case "ACTIVITY_DETECTED" -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code", "ACTIVITY_DETECTED",
+                                "message", "Recent activity detected; no-show cannot be flagged.",
+                                "trace_id", resolveTraceId(request)));
+                case "RESCHEDULE_SUPERSEDES" -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code", "RESCHEDULE_SUPERSEDES",
+                                "message", "An accepted reschedule with a future time supersedes this request.",
+                                "trace_id", resolveTraceId(request)));
+                default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            };
+        } catch (RuntimeException exception) {
+            idempotencyService.abandon(principal.userId(), IdempotencyOperations.NO_SHOW_FLAG, idempotencyKey);
             throw exception;
         }
     }

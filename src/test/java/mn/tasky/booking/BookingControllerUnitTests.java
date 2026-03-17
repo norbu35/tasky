@@ -14,6 +14,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.api.BookingController;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.application.BookingTimelineService;
+import mn.tasky.booking.application.NoShowService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
@@ -65,6 +66,9 @@ class BookingControllerUnitTests {
     @Mock
     private BookingTimelineService timelineService;
 
+    @Mock
+    private NoShowService noShowService;
+
     private BookingController controller;
 
     @BeforeEach
@@ -72,6 +76,7 @@ class BookingControllerUnitTests {
         controller = new BookingController(
                 bookingService,
                 timelineService,
+                noShowService,
                 taskService,
                 authService,
                 domainEventOutboxService,

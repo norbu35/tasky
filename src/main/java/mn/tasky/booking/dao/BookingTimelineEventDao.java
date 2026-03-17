@@ -49,4 +49,13 @@ public interface BookingTimelineEventDao {
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM booking_timeline_events "
             + "WHERE booking_id = :bookingId AND created_at >= :since)")
     boolean existsRecentByBookingId(@Bind("bookingId") UUID bookingId, @Bind("since") Instant since);
+
+    default boolean existsByBookingIdAndEventType(String bookingId, String eventType) {
+        return existsByBookingIdAndEventType(required(bookingId, "bookingId"), eventType);
+    }
+
+    @SqlQuery("SELECT EXISTS(SELECT 1 FROM booking_timeline_events "
+            + "WHERE booking_id = :bookingId AND event_type = :eventType)")
+    boolean existsByBookingIdAndEventType(
+            @Bind("bookingId") UUID bookingId, @Bind("eventType") String eventType);
 }
