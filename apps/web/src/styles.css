@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "../../../packages/design-tokens/tokens.css";
 
 @tailwind base;
@@ -24,6 +25,22 @@
     --input: var(--tasky-color-input);
     --ring: var(--tasky-color-ring);
     --radius: var(--tasky-radius);
+    --destructive: var(--tasky-color-destructive);
+    --destructive-foreground: var(--tasky-color-destructive-foreground);
+
+    /* Figma semantic bridges */
+    --primary-deep: var(--tasky-color-primary-deep);
+    --trust: var(--tasky-color-trust);
+    --trust-foreground: var(--tasky-color-trust-foreground);
+    --trust-muted: var(--tasky-color-trust-muted);
+    --status-open: var(--tasky-color-status-open);
+    --status-open-foreground: var(--tasky-color-status-open-foreground);
+    --status-assigned: var(--tasky-color-status-assigned);
+    --status-assigned-foreground: var(--tasky-color-status-assigned-foreground);
+    --verified: var(--tasky-color-verified);
+    --subtle-violet: var(--tasky-color-subtle-violet);
+    --chip-inactive: var(--tasky-color-chip-inactive);
+    --nav-inactive: var(--tasky-color-nav-inactive);
 }
 
 * {

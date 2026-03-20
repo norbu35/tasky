@@ -16,9 +16,14 @@ const config: Config = {
                     DEFAULT: "hsl(var(--primary))",
                     foreground: "hsl(var(--primary-foreground))"
                 },
+                "primary-deep": "hsl(var(--primary-deep))",
                 secondary: {
                     DEFAULT: "hsl(var(--secondary))",
                     foreground: "hsl(var(--secondary-foreground))"
+                },
+                destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))"
                 },
                 muted: {
                     DEFAULT: "hsl(var(--muted))",
@@ -35,16 +40,34 @@ const config: Config = {
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
                     foreground: "hsl(var(--popover-foreground))"
-                }
+                },
+                trust: {
+                    DEFAULT: "hsl(var(--trust))",
+                    foreground: "hsl(var(--trust-foreground))",
+                    muted: "hsl(var(--trust-muted))"
+                },
+                status: {
+                    open: "hsl(var(--status-open))",
+                    "open-foreground": "hsl(var(--status-open-foreground))",
+                    assigned: "hsl(var(--status-assigned))",
+                    "assigned-foreground": "hsl(var(--status-assigned-foreground))"
+                },
+                verified: "hsl(var(--verified))",
+                "subtle-violet": "hsl(var(--subtle-violet))",
+                "chip-inactive": "hsl(var(--chip-inactive))",
+                "nav-inactive": "hsl(var(--nav-inactive))"
             },
             borderRadius: {
                 lg: "var(--radius)",
                 md: "calc(var(--radius) - 2px)",
-                sm: "calc(var(--radius) - 4px)"
+                sm: "calc(var(--radius) - 4px)",
+                xl: "12px",
+                "2xl": "16px",
+                full: "9999px"
             },
             fontFamily: {
-                sans: ["Inter", "sans-serif"],
-                display: ["Manrope", "sans-serif"]
+                sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                display: ["Manrope", "system-ui", "sans-serif"]
             }
         }
     },
