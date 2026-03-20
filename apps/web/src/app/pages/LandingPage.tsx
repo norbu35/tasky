@@ -6,20 +6,20 @@ import {
   CheckCircle, Search, Sparkles,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import { LanguageSwitcher } from "../layout/LanguageSwitcher";
 
+
 const CATEGORIES = [
-  { icon: "🧹", name: "Гэр цэвэрлэгээ", nameEn: "Cleaning", count: "450+ Taskers" },
-  { icon: "🔧", name: "Сантехник", nameEn: "Plumbing", count: "230+ Taskers" },
-  { icon: "📦", name: "Нүүлгэлт", nameEn: "Moving", count: "180+ Taskers" },
-  { icon: "✨", name: "See All", nameEn: "See All", count: "50+ Services" },
+  { icon: "🧹", name: "Гэр цэвэрлэгээ", count: "450+ Taskers" },
+  { icon: "🔧", name: "Сантехник", count: "230+ Taskers" },
+  { icon: "📦", name: "Нүүлгэлт", count: "180+ Taskers" },
+  { icon: "✨", name: "See All", count: "50+ Services" },
 ];
 
 const TRUST_PILLARS = [
-  { icon: ShieldCheck, title: "Verified Taskers", desc: "Every Tasker is identity-verified before joining the platform." },
-  { icon: CreditCard, title: "Fixed Pricing", desc: "Set your budget upfront — no haggling, no surprises." },
-  { icon: Star, title: "Secure Payment", desc: "Funds are held safely until you confirm the job is done." },
+  { id: "verifiedTaskers", icon: ShieldCheck, title: "Verified Taskers", desc: "Every Tasker is identity-verified before joining the platform." },
+  { id: "fixedPricing", icon: CreditCard, title: "Fixed Pricing", desc: "Set your budget upfront — no haggling, no surprises." },
+  { id: "securePayment", icon: Star, title: "Secure Payment", desc: "Funds are held safely until you confirm the job is done." },
 ];
 
 const HOW_STEPS = [
@@ -80,15 +80,15 @@ export function LandingPage() {
             </p>
 
             {/* Search bar */}
-            <div className="relative mt-6 max-w-sm mx-auto">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                className="pl-10 pr-4 h-12 rounded-2xl border-border bg-card shadow-sm text-sm"
-                placeholder={t("landing.searchPlaceholder", "What do you need help with?")}
-                onFocus={() => navigate("/auth")}
-                readOnly
-              />
-            </div>
+            <button
+              type="button"
+              aria-label={t("landing.searchPlaceholder", "What do you need help with?")}
+              onClick={() => navigate("/auth")}
+              className="relative mt-6 max-w-sm mx-auto w-full flex items-center gap-2 h-12 rounded-2xl border border-border bg-card shadow-sm px-4 text-sm text-muted-foreground hover:border-primary/50 transition-colors"
+            >
+              <Search className="w-4 h-4 flex-shrink-0" />
+              <span>{t("landing.searchPlaceholder", "What do you need help with?")}</span>
+            </button>
 
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-center">
               <Button
@@ -117,9 +117,9 @@ export function LandingPage() {
             {t("landing.categoriesTitle", "Popular Categories")}
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES.map((cat, i) => (
               <motion.button
-                key={cat.name}
+                key={i}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/auth")}
@@ -141,14 +141,14 @@ export function LandingPage() {
             {t("landing.whyTitle", "Why choose Tasky?")}
           </h2>
           <div className="space-y-4">
-            {TRUST_PILLARS.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4 items-start">
+            {TRUST_PILLARS.map(({ id, icon: Icon, title, desc }) => (
+              <div key={id} className="flex gap-4 items-start">
                 <div className="flex-shrink-0 w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">{t(`landing.pillar.${title}`, title)}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{t(`landing.pillarDesc.${title}`, desc)}</div>
+                  <div className="text-sm font-semibold">{t(`landing.pillar.${id}`, title)}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{t(`landing.pillarDesc.${id}`, desc)}</div>
                 </div>
               </div>
             ))}
