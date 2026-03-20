@@ -9,7 +9,7 @@ export function Header() {
   const { t } = useTranslation();
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <header aria-label="Site header" className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 h-16 sm:px-6">
         <div className="flex items-center gap-2">
           <Shield className="w-6 h-6 text-primary" />
