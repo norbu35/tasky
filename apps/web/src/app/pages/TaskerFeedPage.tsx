@@ -88,6 +88,7 @@ export function TaskerFeedPage() {
                 <div className="flex gap-2 overflow-x-auto pb-1 mb-4 scrollbar-none">
                   <button
                     type="button"
+                    aria-pressed={!filters.categoryId}
                     onClick={() => setFilters((prev) => ({ ...prev, categoryId: "" }))}
                     className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
                       !filters.categoryId
@@ -101,6 +102,7 @@ export function TaskerFeedPage() {
                     <button
                       key={c.id}
                       type="button"
+                      aria-pressed={filters.categoryId === c.id}
                       onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
                       className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
                         filters.categoryId === c.id
@@ -108,7 +110,7 @@ export function TaskerFeedPage() {
                           : "bg-card text-muted-foreground border-border hover:border-primary/50"
                       }`}
                     >
-                      {i18n.language === "mn" ? c.name_mn : c.name}
+                      {i18n.resolvedLanguage === "mn" ? c.name_mn : c.name}
                     </button>
                   ))}
                 </div>
