@@ -1,0 +1,27 @@
+rules:
+  - id: no-string-concat-in-sql-query
+    pattern: |
+      @SqlQuery("..." + $VAR + "...")
+    message: "Use @Bind parameters instead of string concatenation in SQL queries"
+    languages: [java]
+    severity: ERROR
+
+  - id: no-string-concat-in-sql-update
+    pattern: |
+      @SqlUpdate("..." + $VAR + "...")
+    message: "Use @Bind parameters instead of string concatenation in SQL updates"
+    languages: [java]
+    severity: ERROR
+
+  - id: freetext-requires-sanitizer
+    patterns:
+      - pattern: |
+          $DAO.$METHOD(..., $INPUT, ...);
+      - pattern-not-inside: |
+          ... TextSanitizer.plainText($INPUT) ...
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: "insert|update"
+    message: "User-supplied freetext should be sanitized via TextSanitizer.plainText() before persistence"
+    languages: [java]
+    severity: WARNING
