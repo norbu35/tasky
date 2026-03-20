@@ -8,15 +8,15 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record CreateTaskRequest(
-        @JsonProperty("category_id") @NotBlank String categoryId,
+        @JsonProperty("category_id") @NotBlank @Size(max = 512) String categoryId,
         @NotBlank @Size(min = 10, max = 2000) String description,
         @Min(5000) int budget,
         @JsonProperty("location_lat") @NotNull double locationLat,
         @JsonProperty("location_lng") @NotNull double locationLng,
         @JsonProperty("location_text") @NotBlank @Size(min = 5, max = 500) String locationText,
-        @JsonProperty("scheduled_at") @NotBlank String scheduledAt,
+        @JsonProperty("scheduled_at") @NotBlank @Size(max = 64) String scheduledAt,
         @JsonProperty("photo_keys") @Size(max = 3) List<String> photoKeys,
-        @JsonProperty("intake_answers") String intakeAnswersJson,
+        @JsonProperty("intake_answers") @Size(max = 5000) String intakeAnswersJson,
         @JsonProperty("intake_schema_version") Integer intakeSchemaVersion,
-        @JsonProperty("scope_summary") String scopeSummary,
-        @JsonProperty("draft_id") String draftId) {}
+        @JsonProperty("scope_summary") @Size(max = 2000) String scopeSummary,
+        @JsonProperty("draft_id") @Size(max = 512) String draftId) {}

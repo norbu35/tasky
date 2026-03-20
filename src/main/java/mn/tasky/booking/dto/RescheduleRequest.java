@@ -6,5 +6,5 @@ import jakarta.validation.constraints.Size;
 import org.springframework.lang.Nullable;
 
 public record RescheduleRequest(
-        @NotNull @JsonProperty("proposed_scheduled_at") String proposedScheduledAt,
+        @NotNull @Size(max = 64) @JsonProperty("proposed_scheduled_at") String proposedScheduledAt,
         @Nullable @Size(max = 2000) String reason) {}

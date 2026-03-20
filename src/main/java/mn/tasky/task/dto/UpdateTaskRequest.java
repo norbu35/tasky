@@ -11,5 +11,5 @@ public record UpdateTaskRequest(
         @JsonProperty("location_lat") Double locationLat,
         @JsonProperty("location_lng") Double locationLng,
         @JsonProperty("location_text") @Size(min = 5, max = 500) String locationText,
-        @JsonProperty("scheduled_at") String scheduledAt,
+        @JsonProperty("scheduled_at") @Size(max = 64) String scheduledAt,
         @JsonProperty("photo_keys") @Size(max = 3) List<String> photoKeys) {}

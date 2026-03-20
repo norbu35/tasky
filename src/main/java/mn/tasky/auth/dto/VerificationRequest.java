@@ -1,13 +1,14 @@
 package mn.tasky.auth.dto;
 
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
 
 public record VerificationRequest(
-        String id,
-        String userId,
-        String idCardFrontKey,
-        String idCardBackKey,
-        String status,
+        @Size(max = 512) String id,
+        @Size(max = 512) String userId,
+        @Size(max = 512) String idCardFrontKey,
+        @Size(max = 512) String idCardBackKey,
+        @Size(max = 64) String status,
         Instant submittedAt,
-        String adminNotes,
+        @Size(max = 2000) String adminNotes,
         Instant reviewedAt) {}

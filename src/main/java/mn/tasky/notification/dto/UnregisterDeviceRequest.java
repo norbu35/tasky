@@ -1,3 +1,5 @@
 package mn.tasky.notification.dto;
 
-public record UnregisterDeviceRequest(String token) {}
+import jakarta.validation.constraints.Size;
+
+public record UnregisterDeviceRequest(@Size(max = 512) String token) {}
