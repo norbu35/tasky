@@ -79,6 +79,25 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: "1"
 
+  semgrep-sast:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep (OWASP + Java + custom rules)
+        run: |
+          semgrep scan \
+            --config p/owasp-top-ten \
+            --config p/java \
+            --config config/semgrep/tasky-rules.yaml \
+            --error \
+            src/main/java/mn/tasky/
+
   container-security:
     runs-on: ubuntu-latest
     permissions:
