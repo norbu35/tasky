@@ -15,6 +15,7 @@ import mn.tasky.booking.dto.BookingTransitionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for managing bookings between customers and taskers.
@@ -242,6 +243,7 @@ public class BookingService {
      * @param bookingId The ID of the booking to complete.
      * @return The {@link BookingTransitionResult} describing success or failure.
      */
+    @Transactional
     public BookingTransitionResult completeBooking(String userId, String bookingId) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
         if (bookingOpt.isEmpty()) {
@@ -269,6 +271,7 @@ public class BookingService {
      * @param scheduledAt The scheduled time of the underlying task, used to calculate late cancellations.
      * @return The {@link BookingTransitionResult} describing success or failure.
      */
+    @Transactional
     public BookingTransitionResult cancelBooking(String userId, String bookingId, Instant scheduledAt) {
         Optional<BookingState> bookingOpt = bookingDao.findById(bookingId);
         if (bookingOpt.isEmpty()) {

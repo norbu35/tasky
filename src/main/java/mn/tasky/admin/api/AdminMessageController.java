@@ -35,8 +35,7 @@ public class AdminMessageController {
      */
     @GetMapping("/flagged")
     public ResponseEntity<?> listFlagged(
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "50") int limit) {
+            @RequestParam(required = false) String cursor, @RequestParam(defaultValue = "50") int limit) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
         List<Message> results = messageDao.findFlagged(cursor, clampedLimit + 1);
         boolean hasMore = results.size() > clampedLimit;

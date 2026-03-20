@@ -16,6 +16,7 @@ import mn.tasky.dispute.dto.DisputeResolutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for managing disputes raised by taskers or customers
@@ -61,6 +62,7 @@ public class DisputeService {
      * @param evidenceItems  Optional list of evidence items to attach.
      * @return A {@link DisputeRaiseResult} indicating success or failure with an error code.
      */
+    @Transactional
     public DisputeRaiseResult raiseDispute(
             String userId, String bookingId, String reason, List<DisputeRequest.EvidenceItem> evidenceItems) {
         String sanitizedReason = TextSanitizer.plainText(reason);
@@ -103,10 +105,9 @@ public class DisputeService {
             for (DisputeRequest.EvidenceItem item : evidenceItems) {
                 String evidenceId = UUID.randomUUID().toString();
                 String storageKey = "PHOTO".equals(item.type()) ? item.storageKey() : null;
-                String textPayload =
-                        "CHAT_EXCERPT".equals(item.type()) || "WRITTEN_TIMELINE".equals(item.type())
-                                ? TextSanitizer.plainText(item.textPayload())
-                                : null;
+                String textPayload = "CHAT_EXCERPT".equals(item.type()) || "WRITTEN_TIMELINE".equals(item.type())
+                        ? TextSanitizer.plainText(item.textPayload())
+                        : null;
                 disputeEvidenceDao.insert(evidenceId, id, item.type(), storageKey, textPayload);
             }
         }

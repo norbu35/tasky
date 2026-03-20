@@ -40,18 +40,22 @@ public class BadgeEvaluationService {
      * @param taskerId the tasker's user ID
      */
     public void evaluate(String taskerId) {
-        UserProfileState profile = profileDao.findByUserId(taskerId)
-                .orElse(UserProfileState.defaultState());
+        UserProfileState profile = profileDao.findByUserId(taskerId).orElse(UserProfileState.defaultState());
 
-        if (profile.completedTasks() >= PRO_MIN_COMPLETED_TASKS
-                && profile.ratingAvg() >= PRO_ASSIGN_RATING_THRESHOLD) {
+        if (profile.completedTasks() >= PRO_MIN_COMPLETED_TASKS && profile.ratingAvg() >= PRO_ASSIGN_RATING_THRESHOLD) {
             badgeDao.assign(taskerId, BADGE_PRO);
-            log.info("Assigned PRO badge to tasker {} (completed={}, rating={})",
-                    taskerId, profile.completedTasks(), profile.ratingAvg());
+            log.info(
+                    "Assigned PRO badge to tasker {} (completed={}, rating={})",
+                    taskerId,
+                    profile.completedTasks(),
+                    profile.ratingAvg());
         } else if (profile.ratingAvg() < PRO_REVOKE_RATING_THRESHOLD) {
             badgeDao.revoke(taskerId, BADGE_PRO);
-            log.info("Revoked PRO badge from tasker {} (rating={} < {})",
-                    taskerId, profile.ratingAvg(), PRO_REVOKE_RATING_THRESHOLD);
+            log.info(
+                    "Revoked PRO badge from tasker {} (rating={} < {})",
+                    taskerId,
+                    profile.ratingAvg(),
+                    PRO_REVOKE_RATING_THRESHOLD);
         }
         // Between 4.0 and 4.5: no action (hysteresis — keep current state)
     }
@@ -68,16 +72,19 @@ public class BadgeEvaluationService {
             if (!BADGE_PRO.equals(badge.badgeType())) {
                 continue;
             }
-            UserProfileState profile = profileDao.findByUserId(badge.taskerId())
-                    .orElse(UserProfileState.defaultState());
+            UserProfileState profile =
+                    profileDao.findByUserId(badge.taskerId()).orElse(UserProfileState.defaultState());
 
             boolean qualifies = profile.completedTasks() >= PRO_MIN_COMPLETED_TASKS
                     && profile.ratingAvg() >= PRO_REVOKE_RATING_THRESHOLD;
 
             if (!qualifies) {
                 badgeDao.revoke(badge.taskerId(), BADGE_PRO);
-                log.info("Sweep revoked PRO badge from tasker {} (completed={}, rating={})",
-                        badge.taskerId(), profile.completedTasks(), profile.ratingAvg());
+                log.info(
+                        "Sweep revoked PRO badge from tasker {} (completed={}, rating={})",
+                        badge.taskerId(),
+                        profile.completedTasks(),
+                        profile.ratingAvg());
             }
         }
     }

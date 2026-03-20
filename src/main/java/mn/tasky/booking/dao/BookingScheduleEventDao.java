@@ -46,8 +46,7 @@ public interface BookingScheduleEventDao {
         return findByBookingId(required(bookingId, "bookingId"));
     }
 
-    @SqlQuery("SELECT * FROM booking_schedule_events WHERE booking_id = :bookingId "
-            + "ORDER BY created_at DESC")
+    @SqlQuery("SELECT * FROM booking_schedule_events WHERE booking_id = :bookingId " + "ORDER BY created_at DESC")
     List<BookingScheduleEvent> findByBookingId(@Bind("bookingId") UUID bookingId);
 
     default Optional<BookingScheduleEvent> findLatestAcceptedByBookingId(String bookingId) {
@@ -63,8 +62,7 @@ public interface BookingScheduleEventDao {
         return findPendingRequestsByBookingId(required(bookingId, "bookingId"));
     }
 
-    @SqlQuery("SELECT * FROM booking_schedule_events "
-            + "WHERE booking_id = :bookingId AND event_type = 'REQUESTED'")
+    @SqlQuery("SELECT * FROM booking_schedule_events " + "WHERE booking_id = :bookingId AND event_type = 'REQUESTED'")
     List<BookingScheduleEvent> findPendingRequestsByBookingId(@Bind("bookingId") UUID bookingId);
 
     default void updateStatus(String id, String eventType) {

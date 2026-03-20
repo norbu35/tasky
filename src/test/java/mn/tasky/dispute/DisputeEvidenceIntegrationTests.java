@@ -2,9 +2,6 @@ package mn.tasky.dispute;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -55,16 +52,19 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
 
         Map<String, Object> body = Map.of(
-                "reason", "Work was not completed as agreed upon",
-                "evidence", List.of(
+                "reason",
+                "Work was not completed as agreed upon",
+                "evidence",
+                List.of(
                         Map.of("type", "PHOTO", "storageKey", "uploads/dispute/photo1.jpg"),
-                        Map.of("type", "WRITTEN_TIMELINE", "textPayload",
+                        Map.of(
+                                "type",
+                                "WRITTEN_TIMELINE",
+                                "textPayload",
                                 "Day 1: Tasker arrived late. Day 2: Work incomplete.")));
 
-        ResponseEntity<Map> response = postWithAuth(
-                "/api/v1/bookings/" + booking.id() + "/disputes",
-                customer.accessToken(),
-                body);
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), body);
 
         assertThat(response.getStatusCode().value()).isEqualTo(201);
         String disputeId = (String) response.getBody().get("id");
@@ -89,8 +89,7 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
         assertThat(timelineEvidence.storageKey()).isNull();
 
         // Verify evidence returned on GET dispute
-        ResponseEntity<Map> detailResponse = getWithAuth(
-                "/api/v1/disputes/" + disputeId, customer.accessToken());
+        ResponseEntity<Map> detailResponse = getWithAuth("/api/v1/disputes/" + disputeId, customer.accessToken());
         assertThat(detailResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Map> returnedEvidence = (List<Map>) detailResponse.getBody().get("evidence");
         assertThat(returnedEvidence).hasSize(2);
@@ -119,8 +118,7 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
         assertThat(evidenceList).isEmpty();
 
         // Verify dispute is still OPEN (not immediately closed)
-        ResponseEntity<Map> detailResponse = getWithAuth(
-                "/api/v1/disputes/" + disputeId, customer.accessToken());
+        ResponseEntity<Map> detailResponse = getWithAuth("/api/v1/disputes/" + disputeId, customer.accessToken());
         assertThat(detailResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(detailResponse.getBody().get("status")).isEqualTo("OPEN");
     }
@@ -145,13 +143,20 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
                 "/api/v1/tasks",
                 token,
                 Map.of(
-                        "category_id", categoryId,
-                        "description", "Evidence integration task description",
-                        "budget", 100000,
-                        "location_lat", 47.9,
-                        "location_lng", 106.9,
-                        "location_text", "Ulaanbaatar",
-                        "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString()));
+                        "category_id",
+                        categoryId,
+                        "description",
+                        "Evidence integration task description",
+                        "budget",
+                        100000,
+                        "location_lat",
+                        47.9,
+                        "location_lng",
+                        106.9,
+                        "location_text",
+                        "Ulaanbaatar",
+                        "scheduled_at",
+                        Instant.now().plus(1, ChronoUnit.DAYS).toString()));
 
         return response.getBody().get("id").toString();
     }

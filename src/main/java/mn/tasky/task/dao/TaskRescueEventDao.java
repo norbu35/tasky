@@ -13,8 +13,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 @RegisterConstructorMapper(TaskRescueEvent.class)
 public interface TaskRescueEventDao {
 
-    default void insert(
-            String id, String taskId, Instant triggeredAt, String triggerWindow, String actionsJson) {
+    default void insert(String id, String taskId, Instant triggeredAt, String triggerWindow, String actionsJson) {
         insert(required(id, "id"), required(taskId, "taskId"), triggeredAt, triggerWindow, actionsJson);
     }
 

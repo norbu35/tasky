@@ -7,11 +7,10 @@ import java.util.List;
 import org.springframework.lang.Nullable;
 
 public record DisputeRequest(
-        @NotBlank @Size(min = 10, max = 2000) String reason,
-        @Nullable @Valid List<EvidenceItem> evidence) {
+        @NotBlank @Size(min = 10, max = 2000) String reason, @Nullable @Valid List<EvidenceItem> evidence) {
 
     public record EvidenceItem(
             @NotBlank String type,
-            @Nullable String storageKey,
-            @Nullable String textPayload) {}
+            @Nullable @Size(max = 512) String storageKey,
+            @Nullable @Size(max = 5000) String textPayload) {}
 }

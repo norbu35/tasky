@@ -34,7 +34,9 @@ public final class DisputeResponseMapper {
 
     public static Map<String, Object> summaryWithEvidence(Dispute dispute, List<DisputeEvidence> evidenceList) {
         Map<String, Object> response = summary(dispute);
-        response.put("evidence", evidenceList.stream().map(DisputeResponseMapper::evidence).toList());
+        response.put(
+                "evidence",
+                evidenceList.stream().map(DisputeResponseMapper::evidence).toList());
         return response;
     }
 

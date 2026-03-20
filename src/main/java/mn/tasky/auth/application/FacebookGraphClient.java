@@ -12,6 +12,9 @@ import org.springframework.web.client.RestClientResponseException;
 
 /**
  * Thin client for Facebook Graph API token validation and profile fetch.
+ *
+ * <p>All outbound calls are guarded by a {@link FacebookCircuitBreaker}. When the breaker is
+ * OPEN or HALF_OPEN the methods throw immediately without touching the network.
  */
 @Service
 public class FacebookGraphClient {
@@ -23,15 +26,18 @@ public class FacebookGraphClient {
     private final RestClient restClient;
     private final String appId;
     private final String appSecret;
+    private final FacebookCircuitBreaker circuitBreaker;
 
     public FacebookGraphClient(
             RestClient.Builder restClientBuilder,
             @Value("${tasky.facebook.app-id:}") String appId,
             @Value("${tasky.facebook.app-secret:}") String appSecret,
-            @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl) {
+            @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl,
+            FacebookCircuitBreaker circuitBreaker) {
         this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl).build();
         this.appId = appId;
         this.appSecret = appSecret;
+        this.circuitBreaker = circuitBreaker;
     }
 
     /**
@@ -42,6 +48,11 @@ public class FacebookGraphClient {
      *                               or the token app does not match this configured app.
      */
     public void debugToken(String userToken) {
+        if (circuitBreaker.isOpen()) {
+            throw new FacebookAuthException(
+                    PROVIDER_UNAVAILABLE_CODE, "Facebook authentication is temporarily unavailable");
+        }
+
         if (!StringUtils.hasText(appId) || !StringUtils.hasText(appSecret)) {
             throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook OAuth is not configured.");
         }
@@ -60,11 +71,14 @@ public class FacebookGraphClient {
                     .body(DebugTokenResponse.class);
         } catch (RestClientResponseException exception) {
             if (exception.getStatusCode().is4xxClientError()) {
+                // Client errors (bad token, etc.) are not provider failures — do not trip breaker.
                 throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook token is invalid.", exception);
             }
+            circuitBreaker.recordFailure();
             throw new FacebookAuthException(
                     PROVIDER_UNAVAILABLE_CODE, "Facebook authentication provider is unavailable.", exception);
         } catch (RestClientException exception) {
+            circuitBreaker.recordFailure();
             throw new FacebookAuthException(
                     PROVIDER_UNAVAILABLE_CODE, "Facebook authentication provider is unavailable.", exception);
         }
@@ -78,6 +92,8 @@ public class FacebookGraphClient {
         if (!appId.equals(response.data().appId())) {
             throw new FacebookAuthException(TOKEN_MISMATCH_CODE, "Facebook token does not match this app.");
         }
+
+        circuitBreaker.recordSuccess();
     }
 
     /**
@@ -88,6 +104,11 @@ public class FacebookGraphClient {
      * @throws FacebookAuthException when the token cannot be used to fetch a valid profile.
      */
     public FacebookProfile fetchProfile(String userToken) {
+        if (circuitBreaker.isOpen()) {
+            throw new FacebookAuthException(
+                    PROVIDER_UNAVAILABLE_CODE, "Facebook authentication is temporarily unavailable");
+        }
+
         MeResponse response;
         try {
             response = restClient
@@ -101,11 +122,14 @@ public class FacebookGraphClient {
                     .body(MeResponse.class);
         } catch (RestClientResponseException exception) {
             if (exception.getStatusCode().is4xxClientError()) {
+                // Client errors are not provider failures — do not trip breaker.
                 throw new FacebookAuthException(TOKEN_INVALID_CODE, "Facebook token is invalid.", exception);
             }
+            circuitBreaker.recordFailure();
             throw new FacebookAuthException(
                     PROVIDER_UNAVAILABLE_CODE, "Facebook authentication provider is unavailable.", exception);
         } catch (RestClientException exception) {
+            circuitBreaker.recordFailure();
             throw new FacebookAuthException(
                     PROVIDER_UNAVAILABLE_CODE, "Facebook authentication provider is unavailable.", exception);
         }
@@ -119,6 +143,7 @@ public class FacebookGraphClient {
             pictureUrl = response.picture().data().url();
         }
 
+        circuitBreaker.recordSuccess();
         return new FacebookProfile(response.id(), response.name(), pictureUrl);
     }
 

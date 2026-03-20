@@ -15,14 +15,8 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 @RegisterConstructorMapper(BookingTimelineEvent.class)
 public interface BookingTimelineEventDao {
 
-    default void insert(
-            String id, String bookingId, String eventType, String actorUserId, String metadataJson) {
-        insert(
-                required(id, "id"),
-                required(bookingId, "bookingId"),
-                eventType,
-                optional(actorUserId),
-                metadataJson);
+    default void insert(String id, String bookingId, String eventType, String actorUserId, String metadataJson) {
+        insert(required(id, "id"), required(bookingId, "bookingId"), eventType, optional(actorUserId), metadataJson);
     }
 
     @SqlUpdate("INSERT INTO booking_timeline_events (id, booking_id, event_type, actor_user_id, metadata_json) "
@@ -38,8 +32,7 @@ public interface BookingTimelineEventDao {
         return findByBookingId(required(bookingId, "bookingId"));
     }
 
-    @SqlQuery("SELECT * FROM booking_timeline_events WHERE booking_id = :bookingId "
-            + "ORDER BY created_at DESC")
+    @SqlQuery("SELECT * FROM booking_timeline_events WHERE booking_id = :bookingId " + "ORDER BY created_at DESC")
     List<BookingTimelineEvent> findByBookingId(@Bind("bookingId") UUID bookingId);
 
     default boolean existsRecentByBookingId(String bookingId, Instant since) {
@@ -56,6 +49,5 @@ public interface BookingTimelineEventDao {
 
     @SqlQuery("SELECT EXISTS(SELECT 1 FROM booking_timeline_events "
             + "WHERE booking_id = :bookingId AND event_type = :eventType)")
-    boolean existsByBookingIdAndEventType(
-            @Bind("bookingId") UUID bookingId, @Bind("eventType") String eventType);
+    boolean existsByBookingIdAndEventType(@Bind("bookingId") UUID bookingId, @Bind("eventType") String eventType);
 }

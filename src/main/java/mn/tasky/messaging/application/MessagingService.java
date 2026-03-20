@@ -6,9 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.Map;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.dao.ConversationDao;
@@ -124,7 +124,13 @@ public class MessagingService {
         boolean phoneNumberFlagged = phoneLeakDetector.containsPhoneNumber(sanitizedContent);
 
         Message message = new Message(
-                UUID.randomUUID().toString(), conversationId, senderId, sanitizedContent, phoneNumberFlagged, contentHash, sentAt);
+                UUID.randomUUID().toString(),
+                conversationId,
+                senderId,
+                sanitizedContent,
+                phoneNumberFlagged,
+                contentHash,
+                sentAt);
 
         messageDao.insert(
                 message.id(),
@@ -137,9 +143,7 @@ public class MessagingService {
 
         if (phoneNumberFlagged) {
             analyticsService.track(
-                    EVENT_MESSAGE_PHONE_NUMBER_FLAGGED,
-                    senderId,
-                    Map.of("conversation_id", conversationId));
+                    EVENT_MESSAGE_PHONE_NUMBER_FLAGGED, senderId, Map.of("conversation_id", conversationId));
         }
 
         messagingTemplate.convertAndSend("/topic/conversations/" + conversationId, message);
@@ -170,6 +174,15 @@ public class MessagingService {
             throw new IllegalArgumentException("User is not a participant in this conversation");
         }
 
+        return messageDao.findByConversationId(conversationId, cursor, limit);
+    }
+
+    public Optional<Conversation> findConversationByTaskAndParticipants(
+            String taskId, String customerId, String taskerId) {
+        return conversationDao.findByTaskAndParticipants(taskId, customerId, taskerId);
+    }
+
+    public List<Message> listMessagesForConversation(String conversationId, String cursor, int limit) {
         return messageDao.findByConversationId(conversationId, cursor, limit);
     }
 

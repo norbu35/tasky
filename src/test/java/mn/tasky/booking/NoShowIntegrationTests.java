@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 import mn.tasky.auth.dao.StrikeDao;
 import mn.tasky.booking.application.BookingService;
-import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
@@ -111,8 +110,7 @@ class NoShowIntegrationTests extends IntegrationTestBase {
                 bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, pastSchedule);
 
         // Send a message to create recent activity
-        String conversationId =
-                messagingService.startConversation(taskId, tasker.userId(), customer.userId());
+        String conversationId = messagingService.startConversation(taskId, tasker.userId(), customer.userId());
         messagingService.sendMessage(customer.userId(), conversationId, "Are you on the way?");
 
         ResponseEntity<Map> response = postWithAuthAndIdempotency(
@@ -139,16 +137,10 @@ class NoShowIntegrationTests extends IntegrationTestBase {
         String idempotencyKey = UUID.randomUUID().toString();
 
         ResponseEntity<Map> first = postWithAuthAndIdempotency(
-                "/api/v1/bookings/" + booking.id() + "/no-show/flag",
-                customer.accessToken(),
-                null,
-                idempotencyKey);
+                "/api/v1/bookings/" + booking.id() + "/no-show/flag", customer.accessToken(), null, idempotencyKey);
 
         ResponseEntity<Map> replay = postWithAuthAndIdempotency(
-                "/api/v1/bookings/" + booking.id() + "/no-show/flag",
-                customer.accessToken(),
-                null,
-                idempotencyKey);
+                "/api/v1/bookings/" + booking.id() + "/no-show/flag", customer.accessToken(), null, idempotencyKey);
 
         assertThat(first.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(replay.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -207,13 +199,20 @@ class NoShowIntegrationTests extends IntegrationTestBase {
                 "/api/v1/tasks",
                 token,
                 Map.of(
-                        "category_id", catId,
-                        "description", "No-show integration test task",
-                        "budget", 50000,
-                        "location_lat", 47.9,
-                        "location_lng", 106.9,
-                        "location_text", "Ulaanbaatar",
-                        "scheduled_at", scheduledAt.toString()));
+                        "category_id",
+                        catId,
+                        "description",
+                        "No-show integration test task",
+                        "budget",
+                        50000,
+                        "location_lat",
+                        47.9,
+                        "location_lng",
+                        106.9,
+                        "location_text",
+                        "Ulaanbaatar",
+                        "scheduled_at",
+                        scheduledAt.toString()));
         return res.getBody().get("id").toString();
     }
 

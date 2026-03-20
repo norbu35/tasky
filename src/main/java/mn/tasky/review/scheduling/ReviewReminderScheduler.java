@@ -15,8 +15,7 @@ public class ReviewReminderScheduler {
     private final ReviewEnforcementService reviewEnforcementService;
     private final SchedulerLockRunner lockRunner;
 
-    public ReviewReminderScheduler(
-            ReviewEnforcementService reviewEnforcementService, SchedulerLockRunner lockRunner) {
+    public ReviewReminderScheduler(ReviewEnforcementService reviewEnforcementService, SchedulerLockRunner lockRunner) {
         this.reviewEnforcementService = reviewEnforcementService;
         this.lockRunner = lockRunner;
     }

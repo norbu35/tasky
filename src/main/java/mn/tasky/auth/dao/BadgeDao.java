@@ -27,8 +27,8 @@ public interface BadgeDao {
         revoke(required(taskerId, "taskerId"), badgeType);
     }
 
-    @SqlUpdate("UPDATE tasker_badges SET revoked_at = now() "
-            + "WHERE tasker_id = :taskerId AND badge_type = :badgeType")
+    @SqlUpdate(
+            "UPDATE tasker_badges SET revoked_at = now() " + "WHERE tasker_id = :taskerId AND badge_type = :badgeType")
     void revoke(@Bind("taskerId") UUID taskerId, @Bind("badgeType") String badgeType);
 
     default List<TaskerBadge> findActiveByTaskerId(String taskerId) {

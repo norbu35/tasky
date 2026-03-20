@@ -16,7 +16,6 @@ import mn.tasky.review.dao.ReviewEnforcementCaseDao;
 import mn.tasky.review.dto.ReviewEnforcementCase;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.CreateTask;
-import mn.tasky.task.dto.TaskApplyResult;
 import mn.tasky.task.dto.TaskCreateResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +60,7 @@ class ReviewEnforcementIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("enf-tasker-1");
 
         String taskId = createTaskForCustomer(customer, "enforcement-create");
-        BookingState booking =
-                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
         bookingService.transitionToPaid(booking.id());
         bookingService.completeBooking(customer.userId(), booking.id());
 
@@ -87,8 +85,7 @@ class ReviewEnforcementIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("enf-tasker-2");
 
         String taskId = createTaskForCustomer(customer, "enforcement-resolve");
-        BookingState booking =
-                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
         bookingService.transitionToPaid(booking.id());
         bookingService.completeBooking(customer.userId(), booking.id());
 
@@ -120,8 +117,7 @@ class ReviewEnforcementIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("enf-tasker-3");
 
         String taskId = createTaskForCustomer(customer, "enforcement-lock");
-        BookingState booking =
-                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
         bookingService.transitionToPaid(booking.id());
         bookingService.completeBooking(customer.userId(), booking.id());
 
@@ -171,8 +167,7 @@ class ReviewEnforcementIntegrationTests extends IntegrationTestBase {
         AuthContext tasker = authenticate("enf-tasker-4");
 
         String taskId = createTaskForCustomer(customer, "enforcement-no-lock");
-        BookingState booking =
-                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
         bookingService.transitionToPaid(booking.id());
         bookingService.completeBooking(customer.userId(), booking.id());
 

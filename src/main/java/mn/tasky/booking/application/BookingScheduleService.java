@@ -67,13 +67,10 @@ public class BookingScheduleService {
 
         String metadataJson = "{\"proposed_at\":\"" + proposedScheduledAt + "\",\"reason\":\""
                 + (reason != null ? reason.replace("\"", "\\\"") : "") + "\"}";
-        timelineService.recordEvent(
-                bookingId, BookingTimelineService.RESCHEDULE_REQUESTED, actorUserId, metadataJson);
+        timelineService.recordEvent(bookingId, BookingTimelineService.RESCHEDULE_REQUESTED, actorUserId, metadataJson);
 
         // Notify the other participant
-        String recipientId = booking.customerId().equals(actorUserId)
-                ? booking.taskerId()
-                : booking.customerId();
+        String recipientId = booking.customerId().equals(actorUserId) ? booking.taskerId() : booking.customerId();
         notificationService.sendPush(
                 recipientId,
                 "Reschedule requested",
@@ -113,15 +110,12 @@ public class BookingScheduleService {
             throw new IllegalArgumentException("Event does not belong to the specified booking.");
         }
 
-        String recipientId = booking.customerId().equals(actorUserId)
-                ? booking.taskerId()
-                : booking.customerId();
+        String recipientId = booking.customerId().equals(actorUserId) ? booking.taskerId() : booking.customerId();
 
         if ("ACCEPT".equals(action)) {
             bookingDao.updateConfirmedSchedule(bookingId, event.proposedScheduledAt());
             scheduleEventDao.updateStatus(eventId, "ACCEPTED");
-            timelineService.recordEvent(
-                    bookingId, BookingTimelineService.RESCHEDULE_ACCEPTED, actorUserId, null);
+            timelineService.recordEvent(bookingId, BookingTimelineService.RESCHEDULE_ACCEPTED, actorUserId, null);
             notificationService.sendPush(
                     recipientId,
                     "Reschedule accepted",
@@ -129,8 +123,7 @@ public class BookingScheduleService {
                     "RESCHEDULE_ACCEPTED");
         } else if ("DECLINE".equals(action)) {
             scheduleEventDao.updateStatus(eventId, "DECLINED");
-            timelineService.recordEvent(
-                    bookingId, BookingTimelineService.RESCHEDULE_DECLINED, actorUserId, null);
+            timelineService.recordEvent(bookingId, BookingTimelineService.RESCHEDULE_DECLINED, actorUserId, null);
             notificationService.sendPush(
                     recipientId,
                     "Reschedule declined",
@@ -177,7 +170,8 @@ public class BookingScheduleService {
                     scheduleEventDao.updateStatus(event.id(), "EXPIRED");
                     timelineService.recordEvent(
                             event.bookingId(), BookingTimelineService.RESCHEDULE_EXPIRED, null, null);
-                    log.info("Expired stale reschedule request: eventId={} bookingId={}", event.id(), event.bookingId());
+                    log.info(
+                            "Expired stale reschedule request: eventId={} bookingId={}", event.id(), event.bookingId());
                 }
             });
         }

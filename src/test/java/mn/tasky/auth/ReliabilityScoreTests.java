@@ -14,9 +14,9 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Optional;
+import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.auth.dao.ProfileDao;
 import mn.tasky.auth.dao.ReliabilityScoreDao;
-import mn.tasky.auth.application.ReliabilityScoreService;
 import mn.tasky.auth.dto.UserProfileState;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.review.dao.ReviewDao;
@@ -56,8 +56,7 @@ class ReliabilityScoreTests {
 
         service.recompute(TASKER_ID);
 
-        verify(reliabilityScoreDao, never())
-                .upsert(anyString(), anyDouble(), any(), any(), any(), any(), anyInt());
+        verify(reliabilityScoreDao, never()).upsert(anyString(), anyDouble(), any(), any(), any(), any(), anyInt());
     }
 
     @Test
@@ -88,11 +87,7 @@ class ReliabilityScoreTests {
         // score = 0.4*0.8 + 0.2*0.8 + 0.2*0.9 + 0.2*0.9
         //       = 0.32 + 0.16 + 0.18 + 0.18 = 0.84
         ArgumentCaptor<Double> scoreCaptor = ArgumentCaptor.forClass(Double.class);
-        verify(reliabilityScoreDao).upsert(
-                eq(TASKER_ID),
-                scoreCaptor.capture(),
-                any(), any(), any(), any(),
-                eq(90));
+        verify(reliabilityScoreDao).upsert(eq(TASKER_ID), scoreCaptor.capture(), any(), any(), any(), any(), eq(90));
 
         assertThat(scoreCaptor.getValue()).isCloseTo(0.84, within(0.001));
     }
@@ -114,11 +109,7 @@ class ReliabilityScoreTests {
         service.recompute(TASKER_ID);
 
         // Should upsert since total == 5 (not < 5)
-        verify(reliabilityScoreDao).upsert(
-                eq(TASKER_ID),
-                anyDouble(),
-                any(), any(), any(), any(),
-                eq(90));
+        verify(reliabilityScoreDao).upsert(eq(TASKER_ID), anyDouble(), any(), any(), any(), any(), eq(90));
     }
 
     @Test
@@ -140,11 +131,7 @@ class ReliabilityScoreTests {
         // completion_rate = 1.0, punctuality = 0.0, cancellation = 1.0, review = 0.0
         // score = 0.4*1.0 + 0.2*0.0 + 0.2*1.0 + 0.2*0.0 = 0.6
         ArgumentCaptor<Double> scoreCaptor = ArgumentCaptor.forClass(Double.class);
-        verify(reliabilityScoreDao).upsert(
-                eq(TASKER_ID),
-                scoreCaptor.capture(),
-                any(), any(), any(), any(),
-                eq(90));
+        verify(reliabilityScoreDao).upsert(eq(TASKER_ID), scoreCaptor.capture(), any(), any(), any(), any(), eq(90));
 
         assertThat(scoreCaptor.getValue()).isCloseTo(0.6, within(0.001));
     }

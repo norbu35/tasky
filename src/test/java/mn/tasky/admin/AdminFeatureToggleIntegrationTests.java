@@ -39,7 +39,7 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
     private Jdbi jdbi;
 
     @Test
-    @DisplayName("LAUNCH-013-GET returns all seeded toggles (4 items, all disabled)")
+    @DisplayName("LAUNCH-013-GET returns all seeded toggles (5 items, all disabled)")
     void listTogglesReturnsSeededData() {
         // Reset all toggles to disabled in case previous test runs left state behind
         jdbi.useHandle(handle -> handle.execute("UPDATE feature_toggles SET is_enabled = false"));
@@ -50,7 +50,10 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         List<Map> data = (List<Map>) response.getBody().get("data");
-        assertThat(data).hasSize(4);
+        assertThat(data).hasSize(5); // 4 from V10 + data_retention_dry_run from V12
+        assertThat(data)
+                .extracting(toggle -> toggle.get("featureName"))
+                .contains("data_retention_dry_run");
         assertThat(data)
                 .allSatisfy(toggle -> assertThat(toggle.get("isEnabled")).isEqualTo(false));
     }

@@ -55,27 +55,28 @@ public class ReliabilityScoreService {
         int total = completed + cancelled + noShow;
 
         if (total < MIN_SAMPLE_SIZE) {
-            log.debug("Skipping reliability score for tasker {} — only {} bookings in window (min {})",
-                    taskerId, total, MIN_SAMPLE_SIZE);
+            log.debug(
+                    "Skipping reliability score for tasker {} — only {} bookings in window (min {})",
+                    taskerId,
+                    total,
+                    MIN_SAMPLE_SIZE);
             return;
         }
 
         double completionRate = (double) completed / total;
-        double punctualityRate = reviewDao.averagePunctualityByRevieweeSince(taskerId, since)
-                .orElse(0.0) / 5.0;
+        double punctualityRate =
+                reviewDao.averagePunctualityByRevieweeSince(taskerId, since).orElse(0.0) / 5.0;
         double cancellationRateRaw = (double) cancelled / total;
         double cancellationRate = 1.0 - cancellationRateRaw;
 
         // Use profile's rating_avg / 5.0 as pragmatic approximation for review component
-        double ratingAvg = profileDao.findByUserId(taskerId)
+        double ratingAvg = profileDao
+                .findByUserId(taskerId)
                 .map(UserProfileState::ratingAvg)
                 .orElse(0.0);
         double reviewAvg = ratingAvg / 5.0;
 
-        double score = 0.4 * completionRate
-                + 0.2 * punctualityRate
-                + 0.2 * cancellationRate
-                + 0.2 * reviewAvg;
+        double score = 0.4 * completionRate + 0.2 * punctualityRate + 0.2 * cancellationRate + 0.2 * reviewAvg;
 
         reliabilityScoreDao.upsert(
                 taskerId,
@@ -86,7 +87,13 @@ public class ReliabilityScoreService {
                 ratingAvg,
                 WINDOW_DAYS);
 
-        log.info("Reliability score for tasker {}: {} (completed={}, cancelled={}, noShow={}, total={})",
-                taskerId, score, completed, cancelled, noShow, total);
+        log.info(
+                "Reliability score for tasker {}: {} (completed={}, cancelled={}, noShow={}, total={})",
+                taskerId,
+                score,
+                completed,
+                cancelled,
+                noShow,
+                total);
     }
 }

@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 public class PhoneLeakDetector {
 
     // +97699001122 or 97699001122 — Mongolian international prefix with optional space separators
-    private static final Pattern MONGOLIAN_INTERNATIONAL =
-            Pattern.compile("\\+?976\\s?\\d{4}\\s?\\d{4}");
+    private static final Pattern MONGOLIAN_INTERNATIONAL = Pattern.compile("\\+?976\\s?\\d{4}\\s?\\d{4}");
 
     // 8-digit local number (99001122) — word boundaries prevent matching longer digit strings
     private static final Pattern LOCAL_EIGHT_DIGIT = Pattern.compile("\\b\\d{8}\\b");

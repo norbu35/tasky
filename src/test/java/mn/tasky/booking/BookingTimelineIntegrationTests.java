@@ -90,12 +90,9 @@ class BookingTimelineIntegrationTests extends IntegrationTestBase {
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
 
         // Record multiple events directly via the service
-        timelineService.recordEvent(
-                booking.id(), BookingTimelineService.RESCHEDULE_REQUESTED, customer.userId(), null);
-        timelineService.recordEvent(
-                booking.id(), BookingTimelineService.RESCHEDULE_ACCEPTED, tasker.userId(), null);
-        timelineService.recordEvent(
-                booking.id(), BookingTimelineService.BOOKING_COMPLETED, customer.userId(), null);
+        timelineService.recordEvent(booking.id(), BookingTimelineService.RESCHEDULE_REQUESTED, customer.userId(), null);
+        timelineService.recordEvent(booking.id(), BookingTimelineService.RESCHEDULE_ACCEPTED, tasker.userId(), null);
+        timelineService.recordEvent(booking.id(), BookingTimelineService.BOOKING_COMPLETED, customer.userId(), null);
 
         List<BookingTimelineEvent> events = timelineService.getEvents(booking.id());
         assertThat(events).hasSize(3);
@@ -107,7 +104,8 @@ class BookingTimelineIntegrationTests extends IntegrationTestBase {
 
         // Verify descending timestamp order
         for (int i = 0; i < events.size() - 1; i++) {
-            assertThat(events.get(i).createdAt()).isAfterOrEqualTo(events.get(i + 1).createdAt());
+            assertThat(events.get(i).createdAt())
+                    .isAfterOrEqualTo(events.get(i + 1).createdAt());
         }
     }
 
@@ -136,13 +134,20 @@ class BookingTimelineIntegrationTests extends IntegrationTestBase {
                 "/api/v1/tasks",
                 token,
                 Map.of(
-                        "category_id", catId,
-                        "description", "Timeline integration test task",
-                        "budget", 50000,
-                        "location_lat", 47.9,
-                        "location_lng", 106.9,
-                        "location_text", "Ulaanbaatar",
-                        "scheduled_at", scheduledAt.toString()));
+                        "category_id",
+                        catId,
+                        "description",
+                        "Timeline integration test task",
+                        "budget",
+                        50000,
+                        "location_lat",
+                        47.9,
+                        "location_lng",
+                        106.9,
+                        "location_text",
+                        "Ulaanbaatar",
+                        "scheduled_at",
+                        scheduledAt.toString()));
         return res.getBody().get("id").toString();
     }
 

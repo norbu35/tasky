@@ -17,8 +17,7 @@ import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.dispute.api.DisputeResponseMapper;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
-import mn.tasky.messaging.dao.ConversationDao;
-import mn.tasky.messaging.dao.MessageDao;
+import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.messaging.dto.Message;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,20 +38,17 @@ public class AdminDisputeController {
 
     private final DisputeService disputeService;
     private final BookingService bookingService;
-    private final ConversationDao conversationDao;
-    private final MessageDao messageDao;
+    private final MessagingService messagingService;
     private final IdempotencyService idempotencyService;
 
     public AdminDisputeController(
             DisputeService disputeService,
             BookingService bookingService,
-            ConversationDao conversationDao,
-            MessageDao messageDao,
+            MessagingService messagingService,
             IdempotencyService idempotencyService) {
         this.disputeService = disputeService;
         this.bookingService = bookingService;
-        this.conversationDao = conversationDao;
-        this.messageDao = messageDao;
+        this.messagingService = messagingService;
         this.idempotencyService = idempotencyService;
     }
 
@@ -76,9 +72,11 @@ public class AdminDisputeController {
                 .<ResponseEntity<?>>map(dispute -> {
                     Map<String, Object> body = new LinkedHashMap<>();
                     body.put("dispute", admin(dispute));
-                    body.put("evidence", disputeService.getDisputeEvidence(dispute.id()).stream()
-                            .map(DisputeResponseMapper::evidence)
-                            .toList());
+                    body.put(
+                            "evidence",
+                            disputeService.getDisputeEvidence(dispute.id()).stream()
+                                    .map(DisputeResponseMapper::evidence)
+                                    .toList());
 
                     bookingService.getBooking(dispute.bookingId()).ifPresent(booking -> {
                         Map<String, Object> bookingBody = new LinkedHashMap<>();
@@ -90,12 +88,14 @@ public class AdminDisputeController {
                         bookingBody.put("updated_at", booking.updatedAt().toString());
                         body.put("booking", bookingBody);
 
-                        conversationDao
-                                .findByTaskAndParticipants(booking.taskId(), booking.customerId(), booking.taskerId())
+                        messagingService
+                                .findConversationByTaskAndParticipants(
+                                        booking.taskId(), booking.customerId(), booking.taskerId())
                                 .ifPresent(conversation -> {
                                     body.put("conversation_id", conversation.id());
                                     List<Map<String, Object>> evidence =
-                                            messageDao.findByConversationId(conversation.id(), null, 50).stream()
+                                            messagingService
+                                                    .listMessagesForConversation(conversation.id(), null, 50).stream()
                                                     .map(this::toMessageResponse)
                                                     .toList();
                                     body.put("evidence_messages", evidence);

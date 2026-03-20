@@ -195,9 +195,7 @@ public interface BookingDao {
     @SqlQuery("SELECT COUNT(*) FROM bookings "
             + "WHERE tasker_id = :taskerId AND status = :status AND created_at >= :since")
     int countByTaskerAndStatusSince(
-            @Bind("taskerId") UUID taskerId,
-            @Bind("status") String status,
-            @Bind("since") Instant since);
+            @Bind("taskerId") UUID taskerId, @Bind("status") String status, @Bind("since") Instant since);
 
     @SqlQuery("SELECT * FROM bookings WHERE status = 'ASSIGNED' "
             + "AND confirmed_scheduled_at IS NOT NULL "
@@ -209,10 +207,7 @@ public interface BookingDao {
     }
 
     @SqlUpdate("UPDATE bookings SET status = :status, updated_at = :updatedAt WHERE id = :id")
-    void updateStatus(
-            @Bind("id") UUID id,
-            @Bind("status") String status,
-            @Bind("updatedAt") Instant updatedAt);
+    void updateStatus(@Bind("id") UUID id, @Bind("status") String status, @Bind("updatedAt") Instant updatedAt);
 
     default void updateConfirmedSchedule(String bookingId, Instant confirmedScheduledAt) {
         updateConfirmedSchedule(required(bookingId, "bookingId"), confirmedScheduledAt, Instant.now());

@@ -55,8 +55,8 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
 
         String taskId = createTask(customer.accessToken());
         Instant futureSchedule = Instant.now().plus(2, ChronoUnit.DAYS);
-        BookingState booking = bookingService.createBooking(
-                taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
+        BookingState booking =
+                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
 
         Instant proposedAt = Instant.now().plus(3, ChronoUnit.DAYS);
         ResponseEntity<Map> response = postWithAuthAndIdempotency(
@@ -79,8 +79,8 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
 
         String taskId = createTask(customer.accessToken());
         Instant futureSchedule = Instant.now().plus(2, ChronoUnit.DAYS);
-        BookingState booking = bookingService.createBooking(
-                taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
+        BookingState booking =
+                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
 
         Instant proposedAt = Instant.now().plus(3, ChronoUnit.DAYS);
         ResponseEntity<Map> requestResponse = postWithAuthAndIdempotency(
@@ -118,8 +118,8 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
 
         String taskId = createTask(customer.accessToken());
         Instant futureSchedule = Instant.now().plus(2, ChronoUnit.DAYS);
-        BookingState booking = bookingService.createBooking(
-                taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
+        BookingState booking =
+                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
 
         Instant proposedAt = Instant.now().plus(3, ChronoUnit.DAYS);
         ResponseEntity<Map> requestResponse = postWithAuthAndIdempotency(
@@ -154,8 +154,8 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
 
         String taskId = createTask(customer.accessToken());
         Instant futureSchedule = Instant.now().plus(2, ChronoUnit.DAYS);
-        BookingState booking = bookingService.createBooking(
-                taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
+        BookingState booking =
+                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
 
         // Cancel the booking first
         postWithAuthAndIdempotency(
@@ -183,8 +183,8 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
 
         String taskId = createTask(customer.accessToken());
         Instant futureSchedule = Instant.now().plus(2, ChronoUnit.DAYS);
-        BookingState booking = bookingService.createBooking(
-                taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
+        BookingState booking =
+                bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000, false, futureSchedule);
 
         Instant proposedAt = Instant.now().plus(3, ChronoUnit.DAYS);
         ResponseEntity<Map> requestResponse = postWithAuthAndIdempotency(
@@ -206,12 +206,12 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
         scheduleService.expireStaleRequests();
 
         // Verify event is now EXPIRED
-        ResponseEntity<Map> eventsResponse = getWithAuth(
-                "/api/v1/bookings/" + booking.id() + "/schedule-events",
-                customer.accessToken());
+        ResponseEntity<Map> eventsResponse =
+                getWithAuth("/api/v1/bookings/" + booking.id() + "/schedule-events", customer.accessToken());
 
         assertThat(eventsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<Map<String, Object>> events = (List<Map<String, Object>>) eventsResponse.getBody().get("data");
+        List<Map<String, Object>> events =
+                (List<Map<String, Object>>) eventsResponse.getBody().get("data");
         assertThat(events).isNotEmpty();
         Map<String, Object> expiredEvent = events.stream()
                 .filter(e -> eventId.equals(e.get("id")))
@@ -245,13 +245,20 @@ class RescheduleIntegrationTests extends IntegrationTestBase {
                 "/api/v1/tasks",
                 token,
                 Map.of(
-                        "category_id", catId,
-                        "description", "Reschedule integration test task",
-                        "budget", 50000,
-                        "location_lat", 47.9,
-                        "location_lng", 106.9,
-                        "location_text", "Ulaanbaatar",
-                        "scheduled_at", scheduledAt.toString()));
+                        "category_id",
+                        catId,
+                        "description",
+                        "Reschedule integration test task",
+                        "budget",
+                        50000,
+                        "location_lat",
+                        47.9,
+                        "location_lng",
+                        106.9,
+                        "location_text",
+                        "Ulaanbaatar",
+                        "scheduled_at",
+                        scheduledAt.toString()));
         return res.getBody().get("id").toString();
     }
 

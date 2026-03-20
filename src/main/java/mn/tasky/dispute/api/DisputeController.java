@@ -136,8 +136,8 @@ public class DisputeController {
     public ResponseEntity<?> getDispute(@AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
         boolean admin = "ADMIN".equals(principal.role());
         return (admin ? disputeService.getDispute(id) : disputeService.getDisputeForUser(id, principal.userId()))
-                .<ResponseEntity<?>>map(d -> ResponseEntity.ok(
-                        summaryWithEvidence(d, disputeService.getDisputeEvidence(d.id()))))
+                .<ResponseEntity<?>>map(
+                        d -> ResponseEntity.ok(summaryWithEvidence(d, disputeService.getDisputeEvidence(d.id()))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

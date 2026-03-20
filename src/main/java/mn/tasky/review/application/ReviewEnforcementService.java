@@ -11,6 +11,7 @@ import mn.tasky.review.dto.ReviewEnforcementCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Manages review enforcement lifecycle: case creation on booking completion,
@@ -51,6 +52,7 @@ public class ReviewEnforcementService {
      * Creates PENDING enforcement cases for both booking participants and sends
      * an immediate review prompt notification to each.
      */
+    @Transactional
     public void createCasesForBooking(String bookingId, String customerId, String taskerId) {
         String customerCaseId = UUID.randomUUID().toString();
         String taskerCaseId = UUID.randomUUID().toString();
@@ -71,15 +73,13 @@ public class ReviewEnforcementService {
      * indicating they have submitted their review.
      */
     public void resolveCase(String bookingId, String userId) {
-        reviewEnforcementCaseDao
-                .findByBookingAndUser(bookingId, userId)
-                .ifPresent(enforcementCase -> {
-                    if (!STATUS_COMPLETED.equals(enforcementCase.status())) {
-                        reviewEnforcementCaseDao.updateStatus(enforcementCase.id(), STATUS_COMPLETED, Instant.now());
-                        log.info("Resolved enforcement case={} for user={} booking={}", enforcementCase.id(), userId,
-                                bookingId);
-                    }
-                });
+        reviewEnforcementCaseDao.findByBookingAndUser(bookingId, userId).ifPresent(enforcementCase -> {
+            if (!STATUS_COMPLETED.equals(enforcementCase.status())) {
+                reviewEnforcementCaseDao.updateStatus(enforcementCase.id(), STATUS_COMPLETED, Instant.now());
+                log.info(
+                        "Resolved enforcement case={} for user={} booking={}", enforcementCase.id(), userId, bookingId);
+            }
+        });
     }
 
     /**
@@ -117,6 +117,7 @@ public class ReviewEnforcementService {
      * PENDING cases older than 24h are moved to REMINDED_24H.
      * REMINDED_24H cases older than 72h are moved to REMINDED_72H.
      */
+    @Transactional
     public void sendReminders() {
         Instant now = Instant.now();
 
