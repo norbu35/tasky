@@ -62,38 +62,32 @@ export function CustomerDashboardPage() {
     return (
         <ScreenFrame>
             <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-end gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">{t("customerDashboard.title", "My Tasks")}</h1>
-                        <p className="text-muted-foreground mt-1">{t("customerDashboard.subtitle", "Manage the tasks you have posted.")}</p>
-                    </div>
-                    <Button onClick={() => navigate("/customer/tasks/new")} className="gap-2">
-                        <Plus className="w-4 h-4"/>
-                        <span className="hidden sm:inline">{t("customerDashboard.postNewTask", "Post new task")}</span>
-                        <span className="sm:hidden">{t("customerDashboard.post", "Post")}</span>
-                    </Button>
-                </div>
-
                 {/* Greeting header */}
-                <div className="space-y-1 mb-6">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-                  </p>
-                  <h1 className="text-2xl font-display font-bold">
-                    {t("customerDashboard.greeting", "Sain baina uu")},{" "}
-                    <span className="text-primary">
-                      {profile?.full_name?.split(" ")[0] ?? t("customerDashboard.friend", "there")}
-                    </span>
-                    {"!"}
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    {isLoading
-                      ? t("customerDashboard.loadingTasks", "Loading your tasks...")
-                      : t("customerDashboard.activeTasksToday", {
-                          count: tasksPage?.data?.filter((t) => t.status === "ASSIGNED" || t.status === "OPEN").length ?? 0,
-                          defaultValue: "You have {{count}} active task(s) today.",
-                        })}
-                  </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                      {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+                    </p>
+                    <h1 className="text-2xl font-display font-bold">
+                      {t("customerDashboard.greeting", "Sain baina uu")},{" "}
+                      <span className="text-primary">
+                        {profile?.full_name?.split(" ")[0] ?? t("customerDashboard.friend", "there")}
+                      </span>
+                      {"!"}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                      {isLoading
+                        ? t("customerDashboard.loadingTasks", "Loading your tasks...")
+                        : t("customerDashboard.activeTasksToday", {
+                            count: tasksPage?.data?.filter((t) => t.status === "ASSIGNED" || t.status === "OPEN").length ?? 0,
+                            defaultValue: "You have {{count}} active task(s) today.",
+                          })}
+                    </p>
+                  </div>
+                  <Button onClick={() => navigate("/customer/tasks/new")} className="gap-2 flex-shrink-0">
+                    <Plus className="w-4 h-4"/>
+                    <span className="hidden sm:inline">{t("customerDashboard.postNewTask", "Post new task")}</span>
+                  </Button>
                 </div>
 
                 {error ? (
