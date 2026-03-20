@@ -40,6 +40,16 @@ describe("BottomNavBar", () => {
     expect(screen.getByText("Profile")).toBeInTheDocument();
   });
 
+  it("renders nothing for ADMIN role", () => {
+    vi.mocked(useAppContext).mockReturnValue({ profile: { role: "ADMIN" } } as ReturnType<typeof useAppContext>);
+    const { container } = render(
+      <MemoryRouter>
+        <BottomNavBar />
+      </MemoryRouter>
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it("renders nothing when profile is null (guest)", () => {
     vi.mocked(useAppContext).mockReturnValue({ profile: null } as ReturnType<typeof useAppContext>);
     const { container } = render(
