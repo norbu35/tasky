@@ -30,6 +30,12 @@ management:
     health:
       probes:
         enabled: true
+      show-details: when-authorized
+      group:
+        readiness:
+          include: db,facebookAuth,outbox
+        liveness:
+          include: ping
     prometheus:
       access: read_only
   endpoints:
