@@ -2,6 +2,7 @@ package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.lang.reflect.Field;
 import java.time.Instant;
 import mn.tasky.auth.application.FacebookCircuitBreaker;
@@ -22,7 +23,7 @@ class FacebookCircuitBreakerTests {
 
     @BeforeEach
     void setUp() {
-        breaker = new FacebookCircuitBreaker();
+        breaker = new FacebookCircuitBreaker(new SimpleMeterRegistry());
     }
 
     // ------------------------------------------------------------------

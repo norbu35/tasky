@@ -1,5 +1,6 @@
 package mn.tasky.auth.application;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,9 +29,15 @@ public class FacebookCircuitBreaker {
     private static final int FAILURE_WINDOW_SECONDS = 60;
     private static final Duration FAILURE_WINDOW = Duration.ofSeconds(FAILURE_WINDOW_SECONDS);
 
+    private final MeterRegistry meterRegistry;
+
     private volatile State state = State.CLOSED;
     private final AtomicInteger consecutiveFailures = new AtomicInteger(0);
     private volatile Instant windowStart = Instant.now();
+
+    public FacebookCircuitBreaker(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
 
     public State getState() {
         return state;
@@ -43,8 +50,12 @@ public class FacebookCircuitBreaker {
 
     /** Resets the circuit to CLOSED and clears the failure counter. */
     public synchronized void recordSuccess() {
+        State oldState = state;
         state = State.CLOSED;
         consecutiveFailures.set(0);
+        if (oldState != State.CLOSED) {
+            meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", oldState.name(), "to", State.CLOSED.name()).increment();
+        }
     }
 
     /**
@@ -71,13 +82,18 @@ public class FacebookCircuitBreaker {
 
         int failures = consecutiveFailures.incrementAndGet();
         if (failures >= FAILURE_THRESHOLD) {
+            State oldState = state;
             state = State.OPEN;
+            if (oldState != State.OPEN) {
+                meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", oldState.name(), "to", State.OPEN.name()).increment();
+            }
         }
     }
 
-    /** Transitions OPEN → HALF_OPEN so the probe can attempt a single test call. */
+    /** Transitions OPEN -> HALF_OPEN so the probe can attempt a single test call. */
     public synchronized void tryHalfOpen() {
         if (state == State.OPEN) {
+            meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", State.OPEN.name(), "to", State.HALF_OPEN.name()).increment();
             state = State.HALF_OPEN;
         }
     }

@@ -1,5 +1,7 @@
 package mn.tasky.common.health;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -14,12 +16,13 @@ public class OutboxHealthIndicator implements HealthIndicator {
     private static final Duration MAX_LAG = Duration.ofMinutes(5);
     private final Jdbi jdbi;
 
-    public OutboxHealthIndicator(Jdbi jdbi) {
+    public OutboxHealthIndicator(Jdbi jdbi, MeterRegistry meterRegistry) {
         this.jdbi = jdbi;
+        Gauge.builder("tasky.outbox.lag_seconds", this, OutboxHealthIndicator::computeLagSeconds)
+                .register(meterRegistry);
     }
 
-    @Override
-    public Health health() {
+    double computeLagSeconds() {
         Optional<Instant> oldest = jdbi.withHandle(handle ->
                 handle.createQuery(
                                 "SELECT MIN(created_at) FROM domain_outbox_events "
@@ -28,16 +31,23 @@ public class OutboxHealthIndicator implements HealthIndicator {
                         .findOne());
 
         if (oldest.isEmpty()) {
+            return 0.0;
+        }
+        return (double) Duration.between(oldest.get(), Instant.now()).getSeconds();
+    }
+
+    @Override
+    public Health health() {
+        double lagSeconds = computeLagSeconds();
+        if (lagSeconds == 0.0) {
             return Health.up().withDetail("lag_seconds", 0).build();
         }
 
-        long lagSeconds = Duration.between(oldest.get(), Instant.now()).getSeconds();
         if (lagSeconds > MAX_LAG.getSeconds()) {
             return Health.down()
-                    .withDetail("lag_seconds", lagSeconds)
-                    .withDetail("oldest_pending", oldest.get().toString())
+                    .withDetail("lag_seconds", (long) lagSeconds)
                     .build();
         }
-        return Health.up().withDetail("lag_seconds", lagSeconds).build();
+        return Health.up().withDetail("lag_seconds", (long) lagSeconds).build();
     }
 }

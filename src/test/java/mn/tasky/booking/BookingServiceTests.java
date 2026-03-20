@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -161,7 +162,7 @@ class BookingServiceTests {
         when(bookingCompletionSignalDao.findByBookingId(anyString())).thenReturn(Optional.empty());
 
         bookingService =
-                new BookingService(authService, bookingDao, bookingReliabilityIncidentDao, bookingCompletionSignalDao);
+                new BookingService(authService, bookingDao, bookingReliabilityIncidentDao, bookingCompletionSignalDao, new SimpleMeterRegistry());
     }
 
     @Test

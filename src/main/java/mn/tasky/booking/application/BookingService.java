@@ -1,5 +1,6 @@
 package mn.tasky.booking.application;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -31,16 +32,19 @@ public class BookingService {
     private final BookingDao bookingDao;
     private final BookingReliabilityIncidentDao bookingReliabilityIncidentDao;
     private final BookingCompletionSignalDao bookingCompletionSignalDao;
+    private final MeterRegistry meterRegistry;
 
     public BookingService(
             AuthService authService,
             BookingDao bookingDao,
             BookingReliabilityIncidentDao bookingReliabilityIncidentDao,
-            BookingCompletionSignalDao bookingCompletionSignalDao) {
+            BookingCompletionSignalDao bookingCompletionSignalDao,
+            MeterRegistry meterRegistry) {
         this.authService = authService;
         this.bookingDao = bookingDao;
         this.bookingReliabilityIncidentDao = bookingReliabilityIncidentDao;
         this.bookingCompletionSignalDao = bookingCompletionSignalDao;
+        this.meterRegistry = meterRegistry;
     }
 
     /**
@@ -212,9 +216,11 @@ public class BookingService {
             return BookingTransitionResult.INVALID_TRANSITION_RESULT;
         }
 
+        String oldStatus = current.status();
         Instant now = Instant.now();
         Integer fee = current.cancellationFee();
         bookingDao.update(bookingId, newStatus, fee, current.liabilityDisclaimerAccepted(), now);
+        meterRegistry.counter("tasky.booking.transitions", "from", oldStatus, "to", newStatus).increment();
         log.info("Booking {} transitioned from {} to {}", bookingId, current.status(), newStatus);
 
         BookingState updated = new BookingState(

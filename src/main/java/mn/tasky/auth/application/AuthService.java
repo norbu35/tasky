@@ -1,6 +1,7 @@
 package mn.tasky.auth.application;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -103,6 +104,7 @@ public class AuthService {
     private final ModerationPolicyDao moderationPolicyDao;
     private final SuspensionEventDao suspensionEventDao;
     private final BadgeDao badgeDao;
+    private final MeterRegistry meterRegistry;
 
     @SuppressFBWarnings(
             value = "CT_CONSTRUCTOR_THROW",
@@ -123,6 +125,7 @@ public class AuthService {
             ModerationPolicyDao moderationPolicyDao,
             SuspensionEventDao suspensionEventDao,
             BadgeDao badgeDao,
+            MeterRegistry meterRegistry,
             @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
@@ -151,6 +154,7 @@ public class AuthService {
         this.moderationPolicyDao = moderationPolicyDao;
         this.suspensionEventDao = suspensionEventDao;
         this.badgeDao = badgeDao;
+        this.meterRegistry = meterRegistry;
         this.devAuthEnabled = devAuthEnabled;
         this.otpEnabled = otpEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
@@ -278,12 +282,14 @@ public class AuthService {
         String blindIndex = cryptoService.blindIndex(phone);
         Optional<OtpChallenge> challengeOpt = otpChallengeDao.findByPhoneBlindIdx(blindIndex);
         if (challengeOpt.isEmpty()) {
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
             return Optional.empty();
         }
 
         OtpChallenge challenge = challengeOpt.get();
         if (challenge.expiresAt().isBefore(Instant.now())) {
             otpChallengeDao.delete(blindIndex);
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
             return Optional.empty();
         }
 
@@ -294,6 +300,7 @@ public class AuthService {
             } else {
                 otpChallengeDao.incrementAttempts(blindIndex);
             }
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
             return Optional.empty();
         }
 
@@ -301,6 +308,7 @@ public class AuthService {
         AuthUser user = resolveOtpUser(phone, blindIndex, facebookAccessToken);
         String effectiveStatus = resolveUserStatus(user.id(), user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
@@ -313,6 +321,7 @@ public class AuthService {
                 user.primaryAuth(),
                 user.createdAt(),
                 user.updatedAt());
+        meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "success").increment();
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -430,25 +439,34 @@ public class AuthService {
      */
     public AuthSession facebookLogin(String accessToken) {
         String token = accessToken.strip();
-        facebookGraphClient.debugToken(token);
-        FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
+        try {
+            facebookGraphClient.debugToken(token);
+            FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
 
-        AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
-        String effectiveStatus = resolveUserStatus(user.id(), user.status());
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
-            throw new AccountRestrictedException("This account is suspended or banned.");
+            AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
+            String effectiveStatus = resolveUserStatus(user.id(), user.status());
+            if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+                meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure").increment();
+                throw new AccountRestrictedException("This account is suspended or banned.");
+            }
+
+            AuthUser effectiveUser = new AuthUser(
+                    user.id(),
+                    user.phone(),
+                    user.facebookId(),
+                    user.role(),
+                    effectiveStatus,
+                    user.primaryAuth(),
+                    user.createdAt(),
+                    user.updatedAt());
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "success").increment();
+            return issueSession(effectiveUser);
+        } catch (AccountRestrictedException e) {
+            throw e;
+        } catch (Exception e) {
+            meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure").increment();
+            throw e;
         }
-
-        AuthUser effectiveUser = new AuthUser(
-                user.id(),
-                user.phone(),
-                user.facebookId(),
-                user.role(),
-                effectiveStatus,
-                user.primaryAuth(),
-                user.createdAt(),
-                user.updatedAt());
-        return issueSession(effectiveUser);
     }
 
     private AuthUser ensureUserByFacebookId(String facebookId, FacebookGraphClient.FacebookProfile profile) {
