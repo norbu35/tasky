@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,8 +37,8 @@ class ApiExceptionHandlerTests {
                 new RateLimitExceededException("OTP_RATE_LIMIT", "Too many attempts."), request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
-        assertThat(response.getBody()).containsEntry("code", "OTP_RATE_LIMIT");
-        assertThat(response.getBody()).containsEntry("trace_id", "trace-1");
+        assertThat(response.getBody().code()).isEqualTo("OTP_RATE_LIMIT");
+        assertThat(response.getBody().traceId()).isEqualTo("trace-1");
     }
 
     private MockHttpServletRequest requestWithTraceId(String traceId) {
@@ -56,9 +57,9 @@ class ApiExceptionHandlerTests {
         var response = handler.handleMethodArgumentNotValid(exception, new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).containsEntry("code", "VALIDATION_ERROR");
-        assertThat(response.getBody().get("message")).isEqualTo("rating must be between 1 and 5");
-        assertThat(response.getBody().get("trace_id")).isNotBlank();
+        assertThat(response.getBody().code()).isEqualTo("VALIDATION_ERROR");
+        assertThat(response.getBody().message()).isEqualTo("rating must be between 1 and 5");
+        assertThat(response.getBody().traceId()).isNotBlank();
     }
 
     private MethodParameter methodParameter() throws Exception {
@@ -80,8 +81,8 @@ class ApiExceptionHandlerTests {
         var response = handler.handleConstraintViolation(exception, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).containsEntry("code", "VALIDATION_ERROR");
-        assertThat(response.getBody().get("message")).isEqualTo("limit must be greater than 0");
+        assertThat(response.getBody().code()).isEqualTo("VALIDATION_ERROR");
+        assertThat(response.getBody().message()).isEqualTo("limit must be greater than 0");
     }
 
     @Test
@@ -91,8 +92,8 @@ class ApiExceptionHandlerTests {
                 new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).containsEntry("code", "INVALID_JSON");
-        assertThat(response.getBody()).containsEntry("message", "Malformed JSON request.");
+        assertThat(response.getBody().code()).isEqualTo("INVALID_JSON");
+        assertThat(response.getBody().message()).isEqualTo("Malformed JSON request.");
     }
 
     @Test
@@ -101,8 +102,8 @@ class ApiExceptionHandlerTests {
                 new IllegalArgumentException((String) null), new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody()).containsEntry("code", "INVALID_ARGUMENT");
-        assertThat(response.getBody()).containsEntry("message", "Invalid request argument.");
+        assertThat(response.getBody().code()).isEqualTo("INVALID_ARGUMENT");
+        assertThat(response.getBody().message()).isEqualTo("Invalid request argument.");
     }
 
     @Test
@@ -112,8 +113,8 @@ class ApiExceptionHandlerTests {
                 requestWithTraceId("trace-provider-down"));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-        assertThat(response.getBody()).containsEntry("code", "AUTH_PROVIDER_UNAVAILABLE");
-        assertThat(response.getBody()).containsEntry("trace_id", "trace-provider-down");
+        assertThat(response.getBody().code()).isEqualTo("AUTH_PROVIDER_UNAVAILABLE");
+        assertThat(response.getBody().traceId()).isEqualTo("trace-provider-down");
     }
 
     @Test
@@ -123,7 +124,40 @@ class ApiExceptionHandlerTests {
                 new MockHttpServletRequest());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        assertThat(response.getBody()).containsEntry("code", "FACEBOOK_TOKEN_INVALID");
+        assertThat(response.getBody().code()).isEqualTo("FACEBOOK_TOKEN_INVALID");
+    }
+
+    @Test
+    void handleAccessDeniedReturnsForbidden() {
+        MockHttpServletRequest request = requestWithTraceId("trace-forbidden");
+
+        var response = handler.handleForbidden(new AccessDeniedException("Denied"), request);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody().code()).isEqualTo("FORBIDDEN");
+        assertThat(response.getBody().message()).isEqualTo("Access denied");
+        assertThat(response.getBody().traceId()).isEqualTo("trace-forbidden");
+    }
+
+    @Test
+    void handleUnexpectedExceptionReturnsInternalServerError() {
+        MockHttpServletRequest request = requestWithTraceId("trace-unexpected");
+
+        var response = handler.handleUnexpected(new RuntimeException("something broke"), request);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody().code()).isEqualTo("INTERNAL_ERROR");
+        assertThat(response.getBody().message()).isEqualTo("An unexpected error occurred");
+        assertThat(response.getBody().traceId()).isEqualTo("trace-unexpected");
+    }
+
+    @Test
+    void handleUnexpectedExceptionGeneratesTraceIdWhenMissing() {
+        var response = handler.handleUnexpected(new RuntimeException("oops"), new MockHttpServletRequest());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody().code()).isEqualTo("INTERNAL_ERROR");
+        assertThat(response.getBody().traceId()).isNotBlank();
     }
 
     @SuppressWarnings("unused")
