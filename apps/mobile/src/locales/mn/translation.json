@@ -66,5 +66,17 @@
     "saveChanges": "Хадгалах",
     "signOut": "Гарах",
     "language": "Хэл"
+  },
+  "review": {
+    "rateExperience": "Туршлагаа үнэлнэ үү",
+    "qualityOfWork": "Ажлын чанар",
+    "punctuality": "Цаг баримтлал",
+    "communication": "Харилцаа",
+    "taskDescriptionClarity": "Ажлын тайлбарын тодорхой байдал",
+    "respectfulness": "Хүндэтгэл",
+    "commentPlaceholder": "Туршлагаа хуваалцана уу...",
+    "submitReview": "Үнэлгээ илгээх",
+    "skipForNow": "Одоохондоо алгасах",
+    "mandatoryNote": "Үнэлгээ заавал шаардлагатай бөгөөд дараагийн захиалгын өмнө шаардагдана."
   }
 }

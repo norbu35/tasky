@@ -11,6 +11,7 @@ export type Review = components["schemas"]["Review"];
 export type Dispute = components["schemas"]["Dispute"];
 export type Conversation = components["schemas"]["Conversation"];
 export type Message = components["schemas"]["Message"];
+export type BookingScheduleEvent = components["schemas"]["BookingScheduleEvent"];
 
 export interface AuthTokens {
     accessToken: string;
@@ -47,6 +48,8 @@ export interface MobileApiClient {
 
     getMyProfile(accessToken: string): Promise<Profile>;
 
+    getPublicProfile(accessToken: string, userId: string): Promise<Profile>;
+
     updateMyProfile(
         accessToken: string,
         payload: { full_name?: string; avatar_url?: string | null }
@@ -79,6 +82,8 @@ export interface MobileApiClient {
 
     applyToTask(accessToken: string, taskId: string, message: string): Promise<TaskApplication>;
 
+    listApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>>;
+
     acceptApplication(
         accessToken: string,
         taskId: string,
@@ -101,10 +106,24 @@ export interface MobileApiClient {
 
     completeBooking(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
 
+    rescheduleBooking(
+        accessToken: string,
+        bookingId: string,
+        payload: { proposed_scheduled_at: string; reason?: string },
+        idempotencyKey: string
+    ): Promise<BookingScheduleEvent>;
+
     submitReview(
         accessToken: string,
         bookingId: string,
-        payload: { rating: number; comment?: string | null }
+        payload: {
+            quality_rating?: number;
+            punctuality_rating?: number;
+            communication_rating?: number;
+            clarity_rating?: number;
+            respectfulness_rating?: number;
+            comment?: string | null;
+        }
     ): Promise<Review>;
 
     getUserReviews(accessToken: string, userId: string): Promise<CursorPage<Review>>;
@@ -240,6 +259,10 @@ export class HttpMobileApiClient implements MobileApiClient {
         return this.requestJson<Profile>("/users/me", {method: "GET"}, accessToken);
     }
 
+    getPublicProfile(accessToken: string, userId: string): Promise<Profile> {
+        return this.requestJson<Profile>(`/users/${userId}`, { method: "GET" }, accessToken);
+    }
+
     updateMyProfile(
         accessToken: string,
         payload: { full_name?: string; avatar_url?: string | null }
@@ -327,6 +350,15 @@ export class HttpMobileApiClient implements MobileApiClient {
                 body: JSON.stringify({message})
             },
             accessToken
+        );
+    }
+
+    listApplications(accessToken: string, taskId: string): Promise<CursorPage<TaskApplication>> {
+        return this.requestJson<CursorPage<TaskApplication>>(
+            `/tasks/${taskId}/applications`,
+            { method: "GET" },
+            accessToken,
+            { limit: 100 }
         );
     }
 
@@ -418,10 +450,34 @@ export class HttpMobileApiClient implements MobileApiClient {
         );
     }
 
+    rescheduleBooking(
+        accessToken: string,
+        bookingId: string,
+        payload: { proposed_scheduled_at: string; reason?: string },
+        idempotencyKey: string
+    ): Promise<BookingScheduleEvent> {
+        return this.requestJson<BookingScheduleEvent>(
+            `/bookings/${bookingId}/reschedule`,
+            {
+                method: "POST",
+                headers: { "Idempotency-Key": idempotencyKey },
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
+    }
+
     submitReview(
         accessToken: string,
         bookingId: string,
-        payload: { rating: number; comment?: string | null }
+        payload: {
+            quality_rating?: number;
+            punctuality_rating?: number;
+            communication_rating?: number;
+            clarity_rating?: number;
+            respectfulness_rating?: number;
+            comment?: string | null;
+        }
     ): Promise<Review> {
         return this.requestJson<Review>(
             `/bookings/${bookingId}/reviews`,

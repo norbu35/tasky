@@ -1,96 +1,170 @@
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+    FlatList,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+    TextInput,
+    Platform,
+} from 'react-native';
+import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Search, MapPin, Clock, Briefcase, Wrench, Truck, Zap } from 'lucide-react-native';
 import { useTasks } from '../hooks/useTasks';
-import { useState } from 'react';
-import MapView, { Marker } from 'react-native-maps';
 import { TaskDetailsModal } from './TaskDetailsModal';
 import { TaskCardSkeleton } from './TaskCardSkeleton';
 import { PublicTask } from '../../../lib/mobileApiClient';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '../../../components/ui';
+import { CategoryChip, TrustBanner, StatusBadge } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 
-const { width, height } = Dimensions.get('window');
+const { colors, radius, typography, shadows } = mobileTheme;
+
+const CATEGORIES = [
+    { key: 'all', icon: null },
+    { key: 'cleaning', icon: Briefcase },
+    { key: 'repair', icon: Wrench },
+    { key: 'moving', icon: Truck },
+    { key: 'electric', icon: Zap },
+];
+
+function CategoryIcon({ category }: { category?: string }) {
+    const iconColor = colors.primaryDeep;
+    const size = 22;
+    switch (category?.toLowerCase()) {
+        case 'cleaning': return <Briefcase size={size} color={iconColor} />;
+        case 'repair': case 'handyman': return <Wrench size={size} color={iconColor} />;
+        case 'moving': return <Truck size={size} color={iconColor} />;
+        case 'electrician': case 'electric': return <Zap size={size} color={iconColor} />;
+        default: return <Briefcase size={size} color={iconColor} />;
+    }
+}
+
+function TaskCard({ task, onPress }: { task: PublicTask; onPress: () => void }) {
+    const { t } = useTranslation();
+    return (
+        <Pressable onPress={onPress} style={styles.taskCard}>
+            <View style={styles.taskCardHeader}>
+                <View style={styles.categoryIconContainer}>
+                    <CategoryIcon category={task.category?.name} />
+                </View>
+                <StatusBadge status="open" />
+            </View>
+
+            <Text style={styles.taskTitle} numberOfLines={2}>
+                {task.description}
+            </Text>
+
+            <Text style={styles.taskPrice}>
+                ₮{task.budget?.toLocaleString()}
+            </Text>
+
+            <View style={styles.taskMeta}>
+                <View style={styles.metaItem}>
+                    <MapPin size={12} color={colors.mutedForeground} />
+                    <Text style={styles.metaText}>{task.approximate_location || t('taskFeed.unknownLocation')}</Text>
+                </View>
+                <View style={styles.metaItem}>
+                    <Clock size={12} color={colors.mutedForeground} />
+                    <Text style={styles.metaText}>{task.scheduled_at ? new Date(task.scheduled_at).toLocaleDateString('en', { weekday: 'short', hour: 'numeric', minute: '2-digit' }) : t('taskFeed.flexible')}</Text>
+                </View>
+            </View>
+        </Pressable>
+    );
+}
 
 export function TaskFeed() {
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
     const { data, isLoading } = useTasks();
     const [selectedTask, setSelectedTask] = useState<PublicTask | null>(null);
-    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+    const [activeCategory, setActiveCategory] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const tasks = data?.data ?? [];
 
-    const ulaanbaatarRegion = {
-        latitude: 47.9200,
-        longitude: 106.9200,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-    };
+    const renderItem = useCallback(({ item }: { item: PublicTask }) => (
+        <TaskCard task={item} onPress={() => setSelectedTask(item)} />
+    ), []);
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.toggleRow}>
-                <Button
-                    label={t("taskFeed.listMode")}
-                    variant={viewMode === 'list' ? 'default' : 'outline'}
-                    size="sm"
-                    onPress={() => setViewMode('list')}
-                    style={styles.toggleBtn}
-                />
-                <Button
-                    label={t("taskFeed.mapMode")}
-                    variant={viewMode === 'map' ? 'default' : 'outline'}
-                    size="sm"
-                    onPress={() => setViewMode('map')}
-                    style={styles.toggleBtn}
+    const ListHeader = (
+        <>
+            {/* Search & Greeting */}
+            <View style={styles.heroSection}>
+                <Text style={styles.heroTitle}>
+                    {t('taskFeed.heroLine1', 'Find your next')}{'\n'}
+                    <Text style={styles.heroAccent}>{t('taskFeed.heroLine2', 'Service Task')}</Text>
+                </Text>
+
+                <View style={styles.searchContainer}>
+                    <Search size={18} color={`rgba(74,68,85,0.5)`} style={styles.searchIcon} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder={t('taskFeed.searchPlaceholder', 'Search for jobs...')}
+                        placeholderTextColor="rgba(74,68,85,0.5)"
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                    />
+                </View>
+            </View>
+
+            {/* Category Chips */}
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.chipRow}
+                style={styles.chipScroll}
+            >
+                {CATEGORIES.map(cat => (
+                    <CategoryChip
+                        key={cat.key}
+                        label={t(`categories.${cat.key}`, cat.key.charAt(0).toUpperCase() + cat.key.slice(1))}
+                        isActive={activeCategory === cat.key}
+                        onPress={() => setActiveCategory(cat.key)}
+                    />
+                ))}
+            </ScrollView>
+
+            {/* Trust Banner */}
+            <View style={styles.bannerContainer}>
+                <TrustBanner
+                    title={t('taskFeed.verifiedTasker', 'Verified Tasker')}
+                    description={t('taskFeed.trustBannerDesc', 'Get premium badges for high quality work.')}
                 />
             </View>
 
+            {/* Section Header */}
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>{t('taskFeed.availableTasks', 'Available Tasks')}</Text>
+                <Pressable>
+                    <Text style={styles.seeMapLink}>{t('taskFeed.seeMap', 'See map')}</Text>
+                </Pressable>
+            </View>
+        </>
+    );
+
+    return (
+        <View style={[styles.container, { paddingTop: insets.top }]}>
             {isLoading ? (
-                <View style={styles.list}>
-                    <TaskCardSkeleton />
-                    <TaskCardSkeleton />
-                    <TaskCardSkeleton />
-                    <TaskCardSkeleton />
-                    <TaskCardSkeleton />
+                <View style={styles.skeletonList}>
+                    {ListHeader}
+                    <View style={styles.contentPadding}>
+                        <TaskCardSkeleton />
+                        <TaskCardSkeleton />
+                        <TaskCardSkeleton />
+                    </View>
                 </View>
-            ) : viewMode === 'list' ? (
+            ) : (
                 <FlatList
                     data={tasks}
                     keyExtractor={(item) => item.id}
-                    contentContainerStyle={styles.list}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => setSelectedTask(item)}>
-                            <Card style={styles.cardSpacing}>
-                                <CardHeader>
-                                    <View style={styles.cardHeaderRow}>
-                                        <CardTitle style={styles.title}>{item.description}</CardTitle>
-                                        <Text style={styles.price}>{item.budget} {t("taskFeed.currencySuffix")}</Text>
-                                    </View>
-                                </CardHeader>
-                                <CardContent>
-                                    <Text style={styles.loc}>{item.approximate_location}</Text>
-                                </CardContent>
-                            </Card>
-                        </TouchableOpacity>
-                    )}
+                    renderItem={renderItem}
+                    ListHeaderComponent={ListHeader}
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
                 />
-            ) : (
-                <MapView
-                    style={styles.map}
-                    initialRegion={ulaanbaatarRegion}
-                >
-                    {tasks.map((t_item) => (
-                        t_item.approximate_lat && t_item.approximate_lng ? (
-                            <Marker
-                                key={t_item.id}
-                                coordinate={{ latitude: t_item.approximate_lat, longitude: t_item.approximate_lng }}
-                                title={`${t_item.budget} ${t("taskFeed.currencySuffix")}`}
-                                description={t_item.description}
-                                onPress={() => setSelectedTask(t_item)}
-                            />
-                        ) : null
-                    ))}
-                </MapView>
             )}
 
             <TaskDetailsModal
@@ -105,51 +179,141 @@ export function TaskFeed() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: mobileTheme.colors.background,
+        backgroundColor: colors.background,
     },
-    toggleRow: {
-        flexDirection: 'row',
-        paddingHorizontal: 16,
+    listContent: {
+        paddingBottom: 128,
+    },
+    skeletonList: {
+        flex: 1,
+    },
+    contentPadding: {
+        paddingHorizontal: 24,
+    },
+
+    // Hero
+    heroSection: {
+        paddingHorizontal: 24,
         paddingTop: 16,
-        paddingBottom: 8,
-        gap: 8,
+        gap: 24,
     },
-    toggleBtn: {
+    heroTitle: {
+        fontSize: typography.heroTitle,
+        fontWeight: '800',
+        color: colors.foreground,
+        lineHeight: 36,
+        letterSpacing: -0.75,
+    },
+    heroAccent: {
+        color: colors.primaryDeep,
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.muted,
+        borderRadius: radius.md,
+        height: 56,
+        paddingHorizontal: 16,
+    },
+    searchIcon: {
+        marginRight: 12,
+    },
+    searchInput: {
         flex: 1,
+        fontSize: typography.body,
+        color: colors.foreground,
     },
-    map: {
-        width,
-        flex: 1,
+
+    // Chips
+    chipScroll: {
+        marginTop: 24,
     },
-    list: {
-        padding: 16,
+    chipRow: {
+        paddingHorizontal: 24,
+        gap: 12,
     },
-    cardSpacing: {
-        marginBottom: 12,
+
+    // Banner
+    bannerContainer: {
+        paddingHorizontal: 24,
+        marginTop: 16,
     },
-    cardHeaderRow: {
+
+    // Section
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 24,
+        marginTop: 24,
+        marginBottom: 16,
+    },
+    sectionTitle: {
+        fontSize: typography.title,
+        fontWeight: '700',
+        color: colors.foreground,
+    },
+    seeMapLink: {
+        fontSize: typography.label,
+        fontWeight: '700',
+        color: colors.primaryDeep,
+    },
+
+    // Task Card
+    taskCard: {
+        backgroundColor: colors.card,
+        borderRadius: radius.md,
+        marginHorizontal: 24,
+        marginBottom: 16,
+        padding: 20,
+        shadowColor: shadows.card.color,
+        shadowOffset: shadows.card.offset,
+        shadowOpacity: shadows.card.opacity,
+        shadowRadius: shadows.card.radius,
+        elevation: shadows.card.elevation,
+    },
+    taskCardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+        marginBottom: 16,
     },
-    title: {
+    categoryIconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: radius.md,
+        backgroundColor: colors.subtleViolet,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    taskTitle: {
+        fontSize: typography.subtitle,
+        fontWeight: '700',
+        color: colors.foreground,
+        lineHeight: 23,
+    },
+    taskPrice: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: colors.primaryDeep,
+        marginTop: 4,
+    },
+    taskMeta: {
+        flexDirection: 'row',
+        marginTop: 17,
+        paddingTop: 17,
+        borderTopWidth: 1,
+        borderTopColor: '#EEEEEE',
+    },
+    metaItem: {
         flex: 1,
-        marginRight: 8,
-        fontSize: 16,
-        fontWeight: '600',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
     },
-    price: {
-        color: mobileTheme.colors.primary,
-        fontWeight: 'bold',
-        fontSize: 16,
+    metaText: {
+        fontSize: typography.caption,
+        fontWeight: '500',
+        color: colors.mutedForeground,
     },
-    loc: {
-        color: mobileTheme.colors.mutedForeground,
-        fontSize: 14,
-    },
-    empty: {
-        textAlign: 'center',
-        marginTop: 40,
-        color: mobileTheme.colors.mutedForeground,
-    }
 });

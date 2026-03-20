@@ -66,5 +66,17 @@
     "saveChanges": "Save Changes",
     "signOut": "Sign Out",
     "language": "Language"
+  },
+  "review": {
+    "rateExperience": "Rate your experience",
+    "qualityOfWork": "Quality of work",
+    "punctuality": "Punctuality",
+    "communication": "Communication",
+    "taskDescriptionClarity": "Task description clarity",
+    "respectfulness": "Respectfulness",
+    "commentPlaceholder": "Share your experience...",
+    "submitReview": "Submit Review",
+    "skipForNow": "Skip for now",
+    "mandatoryNote": "Reviews are mandatory and will be required before your next booking."
   }
 }
