@@ -42,3 +42,6 @@ artifacts/checks/*
 # Scraper output (keep directory placeholder)
 data/unegui/*
 !data/unegui/.gitkeep
+
+# Git worktrees
+.worktrees/
