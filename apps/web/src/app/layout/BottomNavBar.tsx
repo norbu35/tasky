@@ -22,7 +22,7 @@ export function BottomNavBar() {
   const { t } = useTranslation();
 
   if (!profile) return null;
-
+  if (profile.role !== "CUSTOMER" && profile.role !== "TASKER") return null;
   const tabs = profile.role === "CUSTOMER" ? CUSTOMER_TABS : TASKER_TABS;
 
   return (

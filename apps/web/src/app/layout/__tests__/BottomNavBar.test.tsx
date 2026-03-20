@@ -27,6 +27,19 @@ describe("BottomNavBar", () => {
     expect(screen.getByText("Profile")).toBeInTheDocument();
   });
 
+  it("renders 4 tasker tabs", () => {
+    vi.mocked(useAppContext).mockReturnValue({ profile: { role: "TASKER" } } as ReturnType<typeof useAppContext>);
+    render(
+      <MemoryRouter>
+        <BottomNavBar />
+      </MemoryRouter>
+    );
+    expect(screen.getByText("Find Work")).toBeInTheDocument();
+    expect(screen.getByText("My Jobs")).toBeInTheDocument();
+    expect(screen.getByText("Inbox")).toBeInTheDocument();
+    expect(screen.getByText("Profile")).toBeInTheDocument();
+  });
+
   it("renders nothing when profile is null (guest)", () => {
     vi.mocked(useAppContext).mockReturnValue({ profile: null } as ReturnType<typeof useAppContext>);
     const { container } = render(
