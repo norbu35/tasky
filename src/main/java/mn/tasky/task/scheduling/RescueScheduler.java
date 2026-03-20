@@ -6,12 +6,12 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
 import mn.tasky.task.dao.TaskRescueEventDao;
 import mn.tasky.task.dto.TaskState;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,24 +40,22 @@ public class RescueScheduler {
     private final TaskApplicationDao taskApplicationDao;
     private final TaskRescueEventDao taskRescueEventDao;
     private final NotificationService notificationService;
-    private final SchedulerLockRunner lockRunner;
 
     public RescueScheduler(
             TaskDao taskDao,
             TaskApplicationDao taskApplicationDao,
             TaskRescueEventDao taskRescueEventDao,
-            NotificationService notificationService,
-            SchedulerLockRunner lockRunner) {
+            NotificationService notificationService) {
         this.taskDao = taskDao;
         this.taskApplicationDao = taskApplicationDao;
         this.taskRescueEventDao = taskRescueEventDao;
         this.notificationService = notificationService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(fixedDelay = 300000)
+    @SchedulerLock(name = "task_rescue", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void checkRescue() {
-        lockRunner.runWithLock("task_rescue", this::processRescue);
+        processRescue();
     }
 
     void processRescue() {

@@ -1,7 +1,7 @@
 package mn.tasky.auth.scheduling;
 
 import mn.tasky.auth.application.DataRetentionService;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,14 @@ import org.springframework.stereotype.Component;
 public class DataRetentionScheduler {
 
     private final DataRetentionService dataRetentionService;
-    private final SchedulerLockRunner lockRunner;
 
-    public DataRetentionScheduler(DataRetentionService dataRetentionService, SchedulerLockRunner lockRunner) {
+    public DataRetentionScheduler(DataRetentionService dataRetentionService) {
         this.dataRetentionService = dataRetentionService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(cron = "0 0 3 * * *")
+    @SchedulerLock(name = "data_retention_sweep", lockAtMostFor = "10m", lockAtLeastFor = "1m")
     public void processRetention() {
-        lockRunner.runWithLock("data_retention_sweep", dataRetentionService::processRetention);
+        dataRetentionService.processRetention();
     }
 }

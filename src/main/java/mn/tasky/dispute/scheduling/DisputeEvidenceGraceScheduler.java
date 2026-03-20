@@ -2,10 +2,10 @@ package mn.tasky.dispute.scheduling;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,18 +23,16 @@ public class DisputeEvidenceGraceScheduler {
 
     private final DisputeDao disputeDao;
     private final DisputeEvidenceDao disputeEvidenceDao;
-    private final SchedulerLockRunner lockRunner;
 
-    public DisputeEvidenceGraceScheduler(
-            DisputeDao disputeDao, DisputeEvidenceDao disputeEvidenceDao, SchedulerLockRunner lockRunner) {
+    public DisputeEvidenceGraceScheduler(DisputeDao disputeDao, DisputeEvidenceDao disputeEvidenceDao) {
         this.disputeDao = disputeDao;
         this.disputeEvidenceDao = disputeEvidenceDao;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(fixedDelay = 3600000)
+    @SchedulerLock(name = "dispute_evidence_grace", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void closeStaleDisputes() {
-        lockRunner.runWithLock("dispute_evidence_grace", this::processStaleDisputes);
+        processStaleDisputes();
     }
 
     private void processStaleDisputes() {

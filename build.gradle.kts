@@ -49,6 +49,10 @@ dependencies {
     implementation("org.jdbi:jdbi3-jackson2:$jdbiVersion")
     implementation("org.jdbi:jdbi3-spring5:$jdbiVersion")
 
+    // ShedLock — distributed scheduler locks
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.16.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.16.0")
+
     // Database
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")

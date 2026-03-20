@@ -1,7 +1,7 @@
 package mn.tasky.review.scheduling;
 
-import mn.tasky.common.scheduling.SchedulerLockRunner;
 import mn.tasky.review.application.ReviewEnforcementService;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,14 @@ import org.springframework.stereotype.Component;
 public class ReviewReminderScheduler {
 
     private final ReviewEnforcementService reviewEnforcementService;
-    private final SchedulerLockRunner lockRunner;
 
-    public ReviewReminderScheduler(ReviewEnforcementService reviewEnforcementService, SchedulerLockRunner lockRunner) {
+    public ReviewReminderScheduler(ReviewEnforcementService reviewEnforcementService) {
         this.reviewEnforcementService = reviewEnforcementService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(fixedDelay = 3600000)
+    @SchedulerLock(name = "review_reminder", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void sendReminders() {
-        lockRunner.runWithLock("review_reminder", reviewEnforcementService::sendReminders);
+        reviewEnforcementService.sendReminders();
     }
 }

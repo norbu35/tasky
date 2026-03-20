@@ -1,7 +1,7 @@
 package mn.tasky.booking.scheduling;
 
 import mn.tasky.booking.application.NoShowService;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,17 +13,14 @@ import org.springframework.stereotype.Component;
 public class NoShowReminderScheduler {
 
     private final NoShowService noShowService;
-    private final SchedulerLockRunner lockRunner;
 
-    public NoShowReminderScheduler(NoShowService noShowService, SchedulerLockRunner lockRunner) {
+    public NoShowReminderScheduler(NoShowService noShowService) {
         this.noShowService = noShowService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(fixedDelay = 60000)
+    @SchedulerLock(name = "noshow_reminder", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void checkReminders() {
-        lockRunner.runWithLock("noshow_reminder", () -> {
-            noShowService.findBookingsNeedingReminder().forEach(noShowService::sendReminder);
-        });
+        noShowService.findBookingsNeedingReminder().forEach(noShowService::sendReminder);
     }
 }

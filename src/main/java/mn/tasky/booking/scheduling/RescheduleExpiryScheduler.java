@@ -1,7 +1,7 @@
 package mn.tasky.booking.scheduling;
 
 import mn.tasky.booking.application.BookingScheduleService;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +13,14 @@ import org.springframework.stereotype.Component;
 public class RescheduleExpiryScheduler {
 
     private final BookingScheduleService scheduleService;
-    private final SchedulerLockRunner lockRunner;
 
-    public RescheduleExpiryScheduler(BookingScheduleService scheduleService, SchedulerLockRunner lockRunner) {
+    public RescheduleExpiryScheduler(BookingScheduleService scheduleService) {
         this.scheduleService = scheduleService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(fixedDelay = 300000)
+    @SchedulerLock(name = "reschedule_expiry", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void checkExpiry() {
-        lockRunner.runWithLock("reschedule_expiry", scheduleService::expireStaleRequests);
+        scheduleService.expireStaleRequests();
     }
 }

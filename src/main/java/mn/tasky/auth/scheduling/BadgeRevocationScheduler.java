@@ -1,7 +1,7 @@
 package mn.tasky.auth.scheduling;
 
 import mn.tasky.auth.application.BadgeEvaluationService;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +14,14 @@ import org.springframework.stereotype.Component;
 public class BadgeRevocationScheduler {
 
     private final BadgeEvaluationService badgeEvaluationService;
-    private final SchedulerLockRunner lockRunner;
 
-    public BadgeRevocationScheduler(BadgeEvaluationService badgeEvaluationService, SchedulerLockRunner lockRunner) {
+    public BadgeRevocationScheduler(BadgeEvaluationService badgeEvaluationService) {
         this.badgeEvaluationService = badgeEvaluationService;
-        this.lockRunner = lockRunner;
     }
 
     @Scheduled(cron = "0 0 4 * * *")
+    @SchedulerLock(name = "badge_revocation_sweep", lockAtMostFor = "10m", lockAtLeastFor = "1m")
     public void sweepBadges() {
-        lockRunner.runWithLock("badge_revocation_sweep", badgeEvaluationService::sweepAllBadges);
+        badgeEvaluationService.sweepAllBadges();
     }
 }

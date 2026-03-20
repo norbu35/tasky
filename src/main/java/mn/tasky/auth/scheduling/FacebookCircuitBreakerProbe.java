@@ -1,7 +1,7 @@
 package mn.tasky.auth.scheduling;
 
 import mn.tasky.auth.application.FacebookCircuitBreaker;
-import mn.tasky.common.scheduling.SchedulerLockRunner;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,38 +18,33 @@ import org.springframework.web.client.RestClientException;
  * ({@code appId|appSecret}). A successful response closes the circuit; any error leaves the
  * breaker in its current state (HALF_OPEN → stays HALF_OPEN, which {@code isOpen()} still
  * treats as non-CLOSED so user-facing calls remain blocked until the next probe succeeds).
- *
- * <p>Uses {@link SchedulerLockRunner} to prevent concurrent probe executions on the same JVM.
  */
 @Component
 public class FacebookCircuitBreakerProbe {
 
     private static final Logger log = LoggerFactory.getLogger(FacebookCircuitBreakerProbe.class);
-    private static final String JOB_NAME = "facebook_circuit_breaker_probe";
 
     private final FacebookCircuitBreaker circuitBreaker;
-    private final SchedulerLockRunner lockRunner;
     private final RestClient restClient;
     private final String appId;
     private final String appSecret;
 
     public FacebookCircuitBreakerProbe(
             FacebookCircuitBreaker circuitBreaker,
-            SchedulerLockRunner lockRunner,
             RestClient.Builder restClientBuilder,
             @Value("${tasky.facebook.app-id:}") String appId,
             @Value("${tasky.facebook.app-secret:}") String appSecret,
             @Value("${tasky.facebook.graph-api-base-url:https://graph.facebook.com}") String graphApiBaseUrl) {
         this.circuitBreaker = circuitBreaker;
-        this.lockRunner = lockRunner;
         this.restClient = restClientBuilder.baseUrl(graphApiBaseUrl).build();
         this.appId = appId;
         this.appSecret = appSecret;
     }
 
     @Scheduled(fixedRate = 60_000)
+    @SchedulerLock(name = "facebook_circuit_breaker_probe", lockAtMostFor = "50s", lockAtLeastFor = "10s")
     public void probe() {
-        lockRunner.runWithLock(JOB_NAME, this::doProbe);
+        doProbe();
     }
 
     private void doProbe() {
