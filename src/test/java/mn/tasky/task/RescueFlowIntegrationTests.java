@@ -57,8 +57,8 @@ class RescueFlowIntegrationTests extends IntegrationTestBase {
 
         assertThat(taskRescueEventDao.existsByTaskId(taskId)).isFalse();
 
-        // Run rescue processing directly
-        rescueScheduler.checkRescue();
+        // Run rescue processing directly (bypasses ShedLock and operating-hours guard)
+        rescueScheduler.processRescue();
 
         // Verify rescue event was created
         assertThat(taskRescueEventDao.existsByTaskId(taskId)).isTrue();
@@ -73,12 +73,12 @@ class RescueFlowIntegrationTests extends IntegrationTestBase {
         Instant oldCreatedAt = Instant.now().minus(3, ChronoUnit.HOURS);
         backdateTaskCreatedAt(taskId, oldCreatedAt);
 
-        // Run rescue twice
-        rescueScheduler.checkRescue();
+        // Run rescue twice (bypasses ShedLock and operating-hours guard)
+        rescueScheduler.processRescue();
         assertThat(taskRescueEventDao.existsByTaskId(taskId)).isTrue();
 
         // Second run should be idempotent — no duplicate, no exception
-        rescueScheduler.checkRescue();
+        rescueScheduler.processRescue();
         assertThat(taskRescueEventDao.existsByTaskId(taskId)).isTrue();
     }
 

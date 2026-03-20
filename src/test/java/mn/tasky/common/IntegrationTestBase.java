@@ -1,6 +1,9 @@
 package mn.tasky.common;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -26,5 +29,28 @@ public abstract class IntegrationTestBase {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
+    }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void cleanTestState() {
+        // Truncate all transactional tables before each test so that Gradle-daemon
+        // or @DirtiesContext context restarts never carry over state from prior runs.
+        // Seed/config tables (categories, category_schema_versions, moderation_policy,
+        // feature_toggles) and the Flyway history table are intentionally excluded.
+        // The table list is resolved dynamically so schema changes don't break this.
+        jdbcTemplate.execute(
+                "DO $$ DECLARE t text; BEGIN "
+                        + "SELECT string_agg(quote_ident(tablename), ', ') INTO t "
+                        + "FROM pg_tables WHERE schemaname = 'public' "
+                        + "AND tablename NOT IN ("
+                        + "'flyway_schema_history','categories','category_schema_versions',"
+                        + "'moderation_policy','feature_toggles',"
+                        + "'spatial_ref_sys');"
+                        + "IF t IS NOT NULL THEN "
+                        + "EXECUTE 'TRUNCATE TABLE ' || t || ' RESTART IDENTITY CASCADE'; "
+                        + "END IF; END $$");
     }
 }

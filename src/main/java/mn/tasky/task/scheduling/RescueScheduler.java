@@ -55,10 +55,6 @@ public class RescueScheduler {
     @Scheduled(fixedDelay = 300000)
     @SchedulerLock(name = "task_rescue", lockAtMostFor = "5m", lockAtLeastFor = "30s")
     public void checkRescue() {
-        processRescue();
-    }
-
-    void processRescue() {
         ZonedDateTime now = ZonedDateTime.now(UB_ZONE);
         int hour = now.getHour();
 
@@ -67,6 +63,10 @@ public class RescueScheduler {
             return;
         }
 
+        processRescue();
+    }
+
+    public void processRescue() {
         String triggerWindow = "DAYTIME";
 
         Instant cutoff = Instant.now().minus(RESCUE_THRESHOLD_MINUTES, ChronoUnit.MINUTES);
