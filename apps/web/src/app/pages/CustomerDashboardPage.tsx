@@ -59,6 +59,12 @@ export function CustomerDashboardPage() {
         enabled: !!session
     });
 
+    const openTasks = tasksPage?.data?.filter((task) => task.status === "OPEN") ?? [];
+    const activeTasks = tasksPage?.data?.filter((task) => task.status === "ASSIGNED") ?? [];
+    const pastTasks = tasksPage?.data?.filter(
+        (task) => task.status === "COMPLETED" || task.status === "CANCELLED" || task.status === "NO_SHOW"
+    ) ?? [];
+
     return (
         <ScreenFrame>
             <div className="flex flex-col gap-6">
@@ -79,12 +85,16 @@ export function CustomerDashboardPage() {
                       {isLoading
                         ? t("customerDashboard.loadingTasks", "Loading your tasks...")
                         : t("customerDashboard.activeTasksToday", {
-                            count: tasksPage?.data?.filter((t) => t.status === "ASSIGNED" || t.status === "OPEN").length ?? 0,
+                            count: openTasks.length + activeTasks.length,
                             defaultValue: "You have {{count}} active task(s) today.",
                           })}
                     </p>
                   </div>
-                  <Button onClick={() => navigate("/customer/tasks/new")} className="gap-2 flex-shrink-0">
+                  <Button
+                    aria-label={t("customerDashboard.postNewTask", "Post new task")}
+                    onClick={() => navigate("/customer/tasks/new")}
+                    className="gap-2 flex-shrink-0"
+                  >
                     <Plus className="w-4 h-4"/>
                     <span className="hidden sm:inline">{t("customerDashboard.postNewTask", "Post new task")}</span>
                   </Button>
@@ -138,12 +148,11 @@ export function CustomerDashboardPage() {
 
                         <TabsContent value="open" className="mt-0">
                             <div className="grid gap-3">
-                                {tasksPage.data.filter(t => t.status === "OPEN").map((task) => (
+                                {openTasks.map((task) => (
                                     <TaskCard key={task.id} task={task}/>
                                 ))}
-                                {tasksPage.data.filter(t => t.status === "OPEN").length === 0 && (
-                                    <div
-                                        className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
+                                {openTasks.length === 0 && (
+                                    <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
                                         {t("customerDashboard.emptyOpen", "No open task requests.")}
                                     </div>
                                 )}
@@ -152,12 +161,11 @@ export function CustomerDashboardPage() {
 
                         <TabsContent value="active" className="mt-0">
                             <div className="grid gap-3">
-                                {tasksPage.data.filter(t => t.status === "ASSIGNED").map((task) => (
+                                {activeTasks.map((task) => (
                                     <TaskCard key={task.id} task={task}/>
                                 ))}
-                                {tasksPage.data.filter(t => t.status === "ASSIGNED").length === 0 && (
-                                    <div
-                                        className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
+                                {activeTasks.length === 0 && (
+                                    <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
                                         {t("customerDashboard.emptyActive", "No active bookings.")}
                                     </div>
                                 )}
@@ -166,12 +174,11 @@ export function CustomerDashboardPage() {
 
                         <TabsContent value="past" className="mt-0">
                             <div className="grid gap-3">
-                                {tasksPage.data.filter(t => t.status === "COMPLETED" || t.status === "CANCELLED").map((task) => (
+                                {pastTasks.map((task) => (
                                     <TaskCard key={task.id} task={task}/>
                                 ))}
-                                {tasksPage.data.filter(t => t.status === "COMPLETED" || t.status === "CANCELLED").length === 0 && (
-                                    <div
-                                        className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
+                                {pastTasks.length === 0 && (
+                                    <div className="col-span-full py-8 text-center text-muted-foreground border border-dashed rounded-lg">
                                         {t("customerDashboard.emptyPast", "No past tasks.")}
                                     </div>
                                 )}
