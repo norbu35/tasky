@@ -1,10 +1,12 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useBookings } from '../hooks/useBookings';
 
 export function BookingList() {
+    const { t } = useTranslation();
     const {data, isLoading} = useBookings();
 
-    if (isLoading) return <Text style={{padding: 20}}>Loading bookings...</Text>;
+    if (isLoading) return <Text style={{padding: 20}}>{t('bookingList.loading')}</Text>;
 
     return (
         <FlatList
@@ -14,10 +16,10 @@ export function BookingList() {
             renderItem={({item}) => (
                 <View style={styles.card}>
                     <Text style={styles.status}>{item.status}</Text>
-                    <Text style={styles.id}>Task ID: {item.task_id.slice(0, 8)}...</Text>
+                    <Text style={styles.id}>{t('bookingList.taskId')}: {item.task_id.slice(0, 8)}...</Text>
                 </View>
             )}
-            ListEmptyComponent={<Text style={styles.empty}>No bookings yet</Text>}
+            ListEmptyComponent={<Text style={styles.empty}>{t('bookingList.empty')}</Text>}
         />
     );
 }

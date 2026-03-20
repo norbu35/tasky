@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { createMobileApiClient, PublicTask } from '../../../lib/mobileApiClient';
 import { Button } from '../../../components/ui';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function TaskDetailsModal({ task, visible, onClose }: Props) {
+    const { t } = useTranslation();
     const { profile, session } = useAuthStore();
     const router = useRouter();
     const [isVerifying, setIsVerifying] = useState(false);
@@ -32,25 +34,23 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
         }
 
         if (profile.role !== 'TASKER' && profile.role !== 'ADMIN') {
-            Alert.alert("Action Required", "Only Taskers can apply for tasks.");
+            Alert.alert(t('taskDetails.actionRequired'), t('taskDetails.onlyTaskers'));
             return;
         }
 
         if (profile.status === 'PENDING') {
-            // Intercept and launch Verification Flow
             setIsVerifying(true);
             return;
         }
 
-        // Proceed to apply
         setIsApplying(true);
         try {
             const client = createMobileApiClient();
             await client.applyToTask(session.accessToken, task.id, "I am ready to help with this task!");
-            Alert.alert("Success", "You have successfully applied to this task.");
+            Alert.alert(t('taskDetails.success'), t('taskDetails.applied'));
             onClose();
         } catch (err: any) {
-            Alert.alert("Application Failed", err.message || "Could not apply.");
+            Alert.alert(t('taskDetails.failed'), err.message || t('common.error'));
         } finally {
             setIsApplying(false);
         }
@@ -59,7 +59,7 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Task Details</Text>
+                <Text style={styles.headerTitle}>{t('taskDetails.title')}</Text>
             </View>
             <ScrollView style={styles.container}>
                 <Text style={styles.category}>{task.category?.name_mn || task.category?.name}</Text>
@@ -76,23 +76,23 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
                 )}
 
                 <View style={styles.metaBox}>
-                    <Text style={styles.metaLabel}>Budget</Text>
+                    <Text style={styles.metaLabel}>{t('taskDetails.budget')}</Text>
                     <Text style={styles.price}>{task.budget} MNT</Text>
                 </View>
 
                 <View style={styles.metaBox}>
-                    <Text style={styles.metaLabel}>Approximate Location</Text>
+                    <Text style={styles.metaLabel}>{t('taskDetails.location')}</Text>
                     <Text style={styles.metaValue}>{task.approximate_location}</Text>
                 </View>
 
                 <View style={styles.actions}>
                     <Button
-                        label="Apply Now"
+                        label={t('taskDetails.applyNow')}
                         onPress={handleApply}
                         isLoading={isApplying}
                     />
                     <Button
-                        label="Close"
+                        label={t('taskDetails.close')}
                         variant="ghost"
                         onPress={onClose}
                         disabled={isApplying}
@@ -106,8 +106,7 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
                 onClose={() => setIsVerifying(false)}
                 onSuccess={() => {
                     setIsVerifying(false);
-                    // The backend now has their ID, they wait for admin approval
-                    Alert.alert("Review Pending", "You will be notified once an admin approves your profile. Then you can apply.");
+                    Alert.alert(t('taskDetails.reviewPending'), t('taskDetails.reviewPendingBody'));
                 }}
             />
         </Modal>

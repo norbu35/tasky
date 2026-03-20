@@ -345,13 +345,15 @@ function Dropdown({
 function YesNoToggle({
     value,
     onChange,
+    t,
 }: {
     value: boolean;
     onChange: (v: boolean) => void;
+    t: (key: string) => string;
 }) {
     return (
         <View style={styles.yesNoRow}>
-            <Text style={styles.yesNoLabel}>{value ? 'Yes' : 'No'}</Text>
+            <Text style={styles.yesNoLabel}>{value ? t('common.yes') : t('common.no')}</Text>
             <Switch
                 value={value}
                 onValueChange={onChange}
@@ -615,6 +617,7 @@ export function TaskPostWizard() {
                             <YesNoToggle
                                 value={(intakeAnswers[q.id] as boolean) ?? false}
                                 onChange={(v) => setAnswer(q.id, v)}
+                                t={t}
                             />
                         )}
 

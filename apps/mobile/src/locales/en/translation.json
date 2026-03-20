@@ -17,7 +17,9 @@
     "inbox": "Inbox",
     "explore": "Explore",
     "bookings": "Bookings",
-    "messages": "Messages"
+    "messages": "Messages",
+    "findWork": "FIND WORK",
+    "myJobs": "MY JOBS"
   },
   "common": {
     "loading": "Loading...",
@@ -25,7 +27,19 @@
     "retry": "Retry",
     "cancel": "Cancel",
     "next": "Next",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "optional": "optional",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "save": "Save"
+  },
+  "status": {
+    "open": "OPEN",
+    "assigned": "ASSIGNED",
+    "completed": "COMPLETED",
+    "cancelled": "CANCELLED",
+    "no_show": "NO SHOW"
   },
   "messaging": {
     "inboxTitle": "Inbox",
@@ -65,7 +79,15 @@
     "fullName": "Full Name",
     "saveChanges": "Save Changes",
     "signOut": "Sign Out",
-    "language": "Language"
+    "language": "Language",
+    "reviews": "reviews",
+    "tasks": "Tasks",
+    "response": "Status",
+    "joined": "Joined",
+    "bio": "Bio",
+    "recentReviews": "Recent Reviews",
+    "viewAll": "View All",
+    "bookSession": "BOOK A SESSION"
   },
   "review": {
     "rateExperience": "Rate your experience",
@@ -78,5 +100,144 @@
     "submitReview": "Submit Review",
     "skipForNow": "Skip for now",
     "mandatoryNote": "Reviews are mandatory and will be required before your next booking."
+  },
+  "booking": {
+    "confirmTitle": "Confirm Booking",
+    "reviews": "reviews",
+    "summaryTitle": "Booking Summary",
+    "date": "Date",
+    "time": "Time",
+    "budget": "Budget",
+    "liabilityTitle": "Liability Disclaimer",
+    "liabilityBody": "Tasky acts solely as a connector between task posters and taskers. Tasky does not process payments, employ taskers, or guarantee work quality. All arrangements, payments, and liability for task completion are between the poster and the tasker directly.",
+    "acceptLiability": "I accept the liability terms",
+    "confirmAction": "Confirm Booking"
+  },
+  "reschedule": {
+    "title": "Propose New Schedule",
+    "currentSchedule": "Current Schedule",
+    "newDate": "New Date",
+    "datePlaceholder": "Select new date",
+    "newTime": "New Time",
+    "timePlaceholder": "Select new time",
+    "reason": "Reason",
+    "reasonPlaceholder": "Why do you need to reschedule?",
+    "submit": "Send Request"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "emptyTitle": "No notifications yet",
+    "emptySubtitle": "When you get notifications, they'll show up here."
+  },
+  "bookingList": {
+    "loading": "Loading bookings...",
+    "empty": "No bookings yet",
+    "taskId": "Task ID"
+  },
+  "taskDetails": {
+    "title": "Task Details",
+    "budget": "Budget",
+    "location": "Approximate Location",
+    "applyNow": "Apply Now",
+    "close": "Close",
+    "actionRequired": "Action Required",
+    "onlyTaskers": "Only Taskers can apply for tasks.",
+    "success": "Success",
+    "applied": "You have successfully applied to this task.",
+    "failed": "Application Failed",
+    "reviewPending": "Review Pending",
+    "reviewPendingBody": "You will be notified once an admin approves your profile. Then you can apply."
+  },
+  "taskDetail": {
+    "reviews": "reviews",
+    "verified": "VERIFIED",
+    "messageTasker": "Message Tasker",
+    "dateTime": "DATE & TIME",
+    "totalBudget": "TOTAL BUDGET",
+    "serviceAddress": "SERVICE ADDRESS",
+    "mapPreview": "Map Preview",
+    "markComplete": "MARK AS COMPLETE",
+    "reschedule": "Reschedule Task"
+  },
+  "applicants": {
+    "title": "Applicants",
+    "recommended": "Recommended",
+    "otherApplicants": "Other Applicants",
+    "reviews": "reviews",
+    "accept": "ACCEPT",
+    "viewProfile": "View Profile",
+    "emptyTitle": "No applicants yet",
+    "emptySubtitle": "Once taskers apply to your task, they will appear here."
+  },
+  "taskPost": {
+    "title": "Post a New Task",
+    "step": "Step {{current}} of {{total}}",
+    "headline": "What do you need help with?",
+    "subtitle": "Select a category to find the best local professionals for your task.",
+    "verifiedPros": "Verified Professionals",
+    "trustDesc": "All service providers are background checked for your safety.",
+    "intakeTitle": "Tell us more",
+    "intakeSubtitle": "Answer a few questions so we can match you with the right professional.",
+    "detailsTitle": "Where, when & budget",
+    "detailsSubtitle": "Provide the practical details for your task.",
+    "location": "Location",
+    "locationPlaceholder": "Enter address or area",
+    "pinDrop": "Drop pin on map",
+    "schedule": "Schedule",
+    "date": "Date",
+    "time": "Time",
+    "budget": "Budget",
+    "photos": "Photos",
+    "addPhotos": "Add Photos",
+    "reviewTitle": "Review & Post",
+    "reviewSubtitle": "Review your task details before posting.",
+    "scopeSummary": "Scope Summary",
+    "scopeHint": "Auto-generated from your answers. You can edit below.",
+    "scopePlaceholder": "Describe the scope of your task...",
+    "taskDetails": "Task Details",
+    "categoryLabel": "Category",
+    "notSet": "Not set",
+    "flexible": "Flexible",
+    "photoCount": "{{count}} attached",
+    "none": "None",
+    "back": "BACK",
+    "next": "NEXT",
+    "post": "POST TASK"
+  },
+  "categories": {
+    "cleaning": "Cleaning",
+    "cleaningDesc": "Deep, regular, or move-out",
+    "handyman": "Handyman",
+    "handymanDesc": "Repairs and installations",
+    "moving": "Moving",
+    "movingDesc": "Furniture, boxes, delivery",
+    "laundry": "Laundry",
+    "laundryDesc": "Wash, fold, and iron",
+    "electrician": "Electrician",
+    "electricianDesc": "Wiring, lighting, outlets",
+    "gardening": "Gardening",
+    "gardeningDesc": "Mowing, weeding, planting"
+  },
+  "intake": {
+    "cleaning_type": "Type of cleaning",
+    "room_count": "Number of rooms",
+    "has_pets": "Are there pets at home?",
+    "supplies_provided": "Will you provide cleaning supplies?",
+    "job_type": "Type of work",
+    "item_count": "Number of items / areas",
+    "tools_provided": "Will you provide tools?",
+    "move_size": "Move size",
+    "floor_level": "Floor level",
+    "has_elevator": "Is there an elevator?",
+    "helpers_needed": "Helpers needed",
+    "service_type": "Service type",
+    "load_count": "Estimated loads",
+    "pickup_needed": "Need pickup & delivery?",
+    "work_type": "Type of work",
+    "point_count": "Number of points / fixtures",
+    "urgent": "Is this urgent?",
+    "garden_services": "Services needed",
+    "area_size": "Garden size",
+    "recurring": "Would you like recurring service?"
   }
 }
