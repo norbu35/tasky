@@ -81,6 +81,7 @@ dependencies {
     testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
     testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
 
     // Static analysis
     errorprone("com.google.errorprone:error_prone_core:2.36.0")
@@ -243,4 +244,10 @@ tasks.test {
 
 tasks.named("check") {
     dependsOn(tasks.jacocoTestCoverageVerification)
+}
+
+tasks.register("precommit") {
+    description = "Quick local quality check before committing (~20-30s)"
+    group = "verification"
+    dependsOn("spotlessCheck", "checkstyleMain", "compileJava", "compileTestJava")
 }
