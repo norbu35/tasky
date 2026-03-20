@@ -3,6 +3,7 @@ package mn.tasky.common.config;
 import java.util.ArrayList;
 import java.util.List;
 import mn.tasky.common.security.JwtAuthenticationFilter;
+import mn.tasky.common.security.RateLimitFilter;
 import mn.tasky.common.security.RestAccessDeniedHandler;
 import mn.tasky.common.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 
     private final List<String> allowedOrigins;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitFilter rateLimitFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final boolean devAuthEnabled;
@@ -31,11 +33,13 @@ public class SecurityConfig {
             @Value("${tasky.cors.allowed-origins:http://localhost:5173}") String allowedOrigins,
             @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             JwtAuthenticationFilter jwtAuthenticationFilter,
+            RateLimitFilter rateLimitFilter,
             RestAuthenticationEntryPoint restAuthenticationEntryPoint,
             RestAccessDeniedHandler restAccessDeniedHandler) {
         this.allowedOrigins = List.of(allowedOrigins.trim().split("\\s*,\\s*"));
         this.devAuthEnabled = devAuthEnabled;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.rateLimitFilter = rateLimitFilter;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.restAccessDeniedHandler = restAccessDeniedHandler;
     }
@@ -74,6 +78,7 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(rateLimitFilter, JwtAuthenticationFilter.class)
                 .build();
     }
 
