@@ -9,7 +9,13 @@
     "verifyLogin": "Баталгаажуулах",
     "loginRequired": "Нэвтэрч орно уу",
     "loginReason": "Та энэ хэсгийг үзэхийн тулд нэвтрэх шаардлагатай.",
-    "loginButton": "Нэвтрэх / Бүртгүүлэх"
+    "loginButton": "Нэвтрэх / Бүртгүүлэх",
+    "continueFacebook": "Facebook-ээр үргэлжлүүлэх",
+    "continuePhone": "Утасны дугаараар нэвтрэх (OTP)",
+    "or": "ЭСВЭЛ",
+    "comingSoon": "Удахгүй нэмэгдэнэ",
+    "facebookComingSoon": "Facebook OAuth интеграц хийгдэж байна.",
+    "loginToViewProfile": "Профайлаа үзэж засахын тулд нэвтэрч орно уу."
   },
   "nav": {
     "profile": "Профайл",
@@ -32,7 +38,8 @@
     "yes": "Тийм",
     "no": "Үгүй",
     "close": "Хаах",
-    "save": "Хадгалах"
+    "save": "Хадгалах",
+    "back": "Буцах"
   },
   "status": {
     "open": "НЭЭЛТТЭЙ",
@@ -43,7 +50,9 @@
   },
   "messaging": {
     "inboxTitle": "Зурвас",
-    "noConversations": "Зурвас олдсонгүй."
+    "noConversations": "Зурвас олдсонгүй.",
+    "taskDiscussion": "Ажлын хэлэлцүүлэг",
+    "bookingRef": "Захиалга #{{id}}"
   },
   "onboarding": {
     "slide1_title": "Tasky програмд тавтай морил",
@@ -72,7 +81,16 @@
     "listMode": "Жагсаалт",
     "mapMode": "Газрын зураг",
     "loadingTasks": "Ажлууд уншиж байна...",
-    "currencySuffix": "₮"
+    "currencySuffix": "₮",
+    "heroLine1": "Дараагийн",
+    "heroLine2": "Үйлчилгээний ажлаа ол",
+    "searchPlaceholder": "Ажил хайх...",
+    "unknownLocation": "Байршил тодорхойгүй",
+    "flexible": "Уян хатан",
+    "verifiedTasker": "Баталгаажсан гүйцэтгэгч",
+    "trustBannerDesc": "Чанарын ажлаараа premium тэмдэглэгээ авна уу.",
+    "availableTasks": "Нээлттэй ажлууд",
+    "seeMap": "Газрын зураг харах"
   },
   "profile": {
     "title": "Профайл",
@@ -205,18 +223,45 @@
     "post": "АЖИЛ ОРУУЛАХ"
   },
   "categories": {
+    "all": "Бүгд",
     "cleaning": "Цэвэрлэгээ",
     "cleaningDesc": "Гүнзгий, ердийн, эсвэл нүүлгэн шилжүүлэлт",
     "handyman": "Засварчин",
     "handymanDesc": "Засвар болон суурилуулалт",
+    "repair": "Засвар",
     "moving": "Нүүлгэн шилжүүлэлт",
     "movingDesc": "Тавилга, хайрцаг, хүргэлт",
     "laundry": "Угаалга",
     "laundryDesc": "Угаах, эвхэх, хандуулах",
     "electrician": "Цахилгаанчин",
     "electricianDesc": "Кабель, гэрэлтүүлэг, залгуур",
+    "electric": "Цахилгаан",
     "gardening": "Цэцэрлэгжүүлэлт",
     "gardeningDesc": "Хадах, суулгах, тариалах"
+  },
+  "verification": {
+    "title": "Иргэний үнэмлэх баталгаажуулалт",
+    "description": "Манай нийгэмлэгийг хамгаалахын тулд бүх гүйцэтгэгчид анхны ажилд өргөдөл гаргахаасаа өмнө иргэний үнэмлэхийг баталгаажуулах шаардлагатай.",
+    "frontId": "1. Иргэний үнэмлэхийн ард тал",
+    "backId": "2. Иргэний үнэмлэхийн өвөр тал",
+    "selfie": "3. Үнэмлэхтэй хамт зураг",
+    "submit": "Хянуулахаар илгээх",
+    "retakePhoto": "Зураг дахин авах",
+    "takePhoto": "Зураг авах",
+    "permissionRequired": "Зөвшөөрөл шаардлагатай",
+    "permissionMessage": "Иргэний үнэмлэхийг баталгаажуулахын тулд камер ашиглах зөвшөөрлийг олгоно уу.",
+    "missingPhotos": "Зураг дутуу байна",
+    "allPhotosRequired": "Бүх шаардлагатай зургуудыг авна уу.",
+    "success": "Амжилттай",
+    "uploadSuccess": "Таны баримт бичгийг хянуулахаар илгээлээ.",
+    "uploadFailed": "Илгээлт амжилтгүй",
+    "uploadError": "Алдаа гарлаа."
+  },
+  "chat": {
+    "back": "← Буцах",
+    "title": "Ажлын чат",
+    "placeholder": "Зурвас бичих...",
+    "send": "Илгээх"
   },
   "intake": {
     "cleaning_type": "Цэвэрлэгээний төрөл",

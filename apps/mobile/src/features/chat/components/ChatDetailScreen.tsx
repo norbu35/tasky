@@ -16,6 +16,7 @@ import SockJS from 'sockjs-client';
 import { createMobileApiClient, Message } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { useTranslation } from 'react-i18next';
 
 const {colors} = mobileTheme;
 
@@ -27,6 +28,7 @@ export function ChatDetailScreen() {
     const {id} = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const {session, profile} = useAuthStore();
+    const {t} = useTranslation();
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [draft, setDraft] = useState('');
@@ -102,9 +104,9 @@ export function ChatDetailScreen() {
         >
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <Text style={styles.backText}>← Back</Text>
+                    <Text style={styles.backText}>{t('chat.back')}</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Task Chat</Text>
+                <Text style={styles.headerTitle}>{t('chat.title')}</Text>
                 <View style={{width: 60}}/>
             </View>
 
@@ -136,11 +138,11 @@ export function ChatDetailScreen() {
                     style={styles.input}
                     value={draft}
                     onChangeText={setDraft}
-                    placeholder="Type a message..."
+                    placeholder={t('chat.placeholder')}
                     placeholderTextColor={colors.mutedForeground}
                 />
                 <TouchableOpacity style={styles.sendBtn} onPress={sendMessage} disabled={draft.trim().length === 0}>
-                    <Text style={styles.sendBtnText}>Send</Text>
+                    <Text style={styles.sendBtnText}>{t('chat.send')}</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

@@ -9,7 +9,13 @@
     "verifyLogin": "Verify & Login",
     "loginRequired": "Log in to continue",
     "loginReason": "You need to be logged in to view this content.",
-    "loginButton": "Log In or Sign Up"
+    "loginButton": "Log In or Sign Up",
+    "continueFacebook": "Continue with Facebook",
+    "continuePhone": "Login with Phone (OTP)",
+    "or": "OR",
+    "comingSoon": "Coming Soon",
+    "facebookComingSoon": "Facebook OAuth integration is pending backend callback support.",
+    "loginToViewProfile": "You need to be logged in to view and edit your profile."
   },
   "nav": {
     "profile": "Profile",
@@ -32,7 +38,8 @@
     "yes": "Yes",
     "no": "No",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "back": "Back"
   },
   "status": {
     "open": "OPEN",
@@ -43,7 +50,9 @@
   },
   "messaging": {
     "inboxTitle": "Inbox",
-    "noConversations": "No conversations found."
+    "noConversations": "No conversations found.",
+    "taskDiscussion": "Task Discussion",
+    "bookingRef": "Booking #{{id}}"
   },
   "onboarding": {
     "slide1_title": "Welcome to Tasky",
@@ -72,7 +81,16 @@
     "listMode": "List",
     "mapMode": "Map",
     "loadingTasks": "Loading tasks...",
-    "currencySuffix": "MNT"
+    "currencySuffix": "MNT",
+    "heroLine1": "Find your next",
+    "heroLine2": "Service Task",
+    "searchPlaceholder": "Search for jobs...",
+    "unknownLocation": "Unknown location",
+    "flexible": "Flexible",
+    "verifiedTasker": "Verified Tasker",
+    "trustBannerDesc": "Get premium badges for high quality work.",
+    "availableTasks": "Available Tasks",
+    "seeMap": "See map"
   },
   "profile": {
     "title": "Profile",
@@ -205,18 +223,45 @@
     "post": "POST TASK"
   },
   "categories": {
+    "all": "All",
     "cleaning": "Cleaning",
     "cleaningDesc": "Deep, regular, or move-out",
     "handyman": "Handyman",
     "handymanDesc": "Repairs and installations",
+    "repair": "Repair",
     "moving": "Moving",
     "movingDesc": "Furniture, boxes, delivery",
     "laundry": "Laundry",
     "laundryDesc": "Wash, fold, and iron",
     "electrician": "Electrician",
     "electricianDesc": "Wiring, lighting, outlets",
+    "electric": "Electric",
     "gardening": "Gardening",
     "gardeningDesc": "Mowing, weeding, planting"
+  },
+  "verification": {
+    "title": "Identity Verification",
+    "description": "To protect our community, all Taskers must verify their identity before applying to their first task.",
+    "frontId": "1. Front of ID Card",
+    "backId": "2. Back of ID Card",
+    "selfie": "3. Selfie holding ID",
+    "submit": "Submit for Review",
+    "retakePhoto": "Retake Photo",
+    "takePhoto": "Take Photo",
+    "permissionRequired": "Permission Required",
+    "permissionMessage": "Please grant camera access to verify your identity.",
+    "missingPhotos": "Missing Photos",
+    "allPhotosRequired": "Please capture all required photos.",
+    "success": "Success",
+    "uploadSuccess": "Your identity documents have been submitted for review.",
+    "uploadFailed": "Upload Failed",
+    "uploadError": "Something went wrong."
+  },
+  "chat": {
+    "back": "← Back",
+    "title": "Task Chat",
+    "placeholder": "Type a message...",
+    "send": "Send"
   },
   "intake": {
     "cleaning_type": "Type of cleaning",

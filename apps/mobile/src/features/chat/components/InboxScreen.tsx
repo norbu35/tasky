@@ -68,8 +68,8 @@ export function InboxScreen() {
                             <Text style={styles.avatarText}>{item.task_title?.charAt(0) || "T"}</Text>
                         </View>
                         <View style={styles.content}>
-                            <Text style={styles.taskTitle}>{item.task_title || "Task Discussion"}</Text>
-                            <Text style={styles.subtext}>Booking #{(item as any).booking_id?.substring(0, 8)}</Text>
+                            <Text style={styles.taskTitle}>{item.task_title || t('messaging.taskDiscussion')}</Text>
+                            <Text style={styles.subtext}>{t('messaging.bookingRef', { id: (item as any).booking_id?.substring(0, 8) })}</Text>
                         </View>
                     </TouchableOpacity>
                 )}

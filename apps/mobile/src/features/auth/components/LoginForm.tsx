@@ -31,7 +31,7 @@ export function LoginForm() {
     };
 
     const handleFacebookLogin = () => {
-        Alert.alert("Coming Soon", "Facebook OAuth integration is pending backend callback support.");
+        Alert.alert(t('auth.comingSoon'), t('auth.facebookComingSoon'));
     };
 
     const busy = requestOtp.isPending || verifyOtp.isPending || devLogin.isPending;
@@ -50,7 +50,7 @@ export function LoginForm() {
 
                     <View style={styles.divider}>
                         <View style={styles.line} />
-                        <Text style={styles.dividerText}>OR</Text>
+                        <Text style={styles.dividerText}>{t('auth.or')}</Text>
                         <View style={styles.line} />
                     </View>
 

@@ -29,7 +29,7 @@ export function VerificationModal({visible, onClose, onSuccess}: Props) {
     const pickImage = async (type: PhotoType) => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert("Permission Required", "Please grant camera access to verify your identity.");
+            Alert.alert(t('verification.permissionRequired'), t('verification.permissionMessage'));
             return;
         }
 
@@ -66,7 +66,7 @@ export function VerificationModal({visible, onClose, onSuccess}: Props) {
 
     const handleSubmit = async () => {
         if (!frontUri || !backUri || !selfieUri) {
-            Alert.alert("Missing Photos", "Please capture all required photos.");
+            Alert.alert(t('verification.missingPhotos'), t('verification.allPhotosRequired'));
             return;
         }
 
@@ -104,10 +104,10 @@ export function VerificationModal({visible, onClose, onSuccess}: Props) {
                 selfie_key: selfieReq.storage_key,
             });
 
-            Alert.alert("Success", "Your identity documents have been submitted for review.");
+            Alert.alert(t('verification.success'), t('verification.uploadSuccess'));
             onSuccess();
         } catch (err: any) {
-            Alert.alert("Upload Failed", err.message || "Something went wrong.");
+            Alert.alert(t('verification.uploadFailed'), err.message || t('verification.uploadError'));
         } finally {
             setIsUploading(false);
         }
@@ -116,40 +116,37 @@ export function VerificationModal({visible, onClose, onSuccess}: Props) {
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
             <View style={styles.header}>
-                <Text style={styles.title}>Identity Verification</Text>
+                <Text style={styles.title}>{t('verification.title')}</Text>
             </View>
             <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.description}>
-                    To protect our community, all Taskers must verify their identity before applying to their first
-                    task.
-                </Text>
+                <Text style={styles.description}>{t('verification.description')}</Text>
 
                 <PhotoSection
-                    title="1. Front of ID Card"
+                    title={t('verification.frontId')}
                     uri={frontUri}
                     onPress={() => pickImage('FRONT')}
                 />
 
                 <PhotoSection
-                    title="2. Back of ID Card"
+                    title={t('verification.backId')}
                     uri={backUri}
                     onPress={() => pickImage('BACK')}
                 />
 
                 <PhotoSection
-                    title="3. Selfie holding ID"
+                    title={t('verification.selfie')}
                     uri={selfieUri}
                     onPress={() => pickImage('SELFIE')}
                 />
 
                 <Button
-                    label="Submit for Review"
+                    label={t('verification.submit')}
                     onPress={handleSubmit}
                     isLoading={isUploading}
                     style={styles.submitBtn}
                 />
                 <Button
-                    label="Cancel"
+                    label={t('common.cancel')}
                     variant="ghost"
                     onPress={onClose}
                     disabled={isUploading}
@@ -161,17 +158,18 @@ export function VerificationModal({visible, onClose, onSuccess}: Props) {
 }
 
 function PhotoSection({title, uri, onPress}: { title: string, uri: string | null, onPress: () => void }) {
+    const {t} = useTranslation();
     return (
         <View style={styles.section}>
             <Text style={styles.sectionTitle}>{title}</Text>
             {uri ? (
                 <View>
                     <Image source={{uri}} style={styles.preview}/>
-                    <Button label="Retake Photo" variant="secondary" size="sm" onPress={onPress}
+                    <Button label={t('verification.retakePhoto')} variant="secondary" size="sm" onPress={onPress}
                             style={styles.retakeBtn}/>
                 </View>
             ) : (
-                <Button label="Take Photo" variant="outline" onPress={onPress}/>
+                <Button label={t('verification.takePhoto')} variant="outline" onPress={onPress}/>
             )}
         </View>
     );
