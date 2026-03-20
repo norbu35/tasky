@@ -22,8 +22,7 @@ import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.dispute.application.DisputeService;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
-import mn.tasky.messaging.dao.ConversationDao;
-import mn.tasky.messaging.dao.MessageDao;
+import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.messaging.dto.Conversation;
 import mn.tasky.messaging.dto.Message;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,10 +43,7 @@ class AdminDisputeControllerUnitTests {
     private BookingService bookingService;
 
     @Mock
-    private ConversationDao conversationDao;
-
-    @Mock
-    private MessageDao messageDao;
+    private MessagingService messagingService;
 
     @Mock
     private IdempotencyService idempotencyService;
@@ -57,7 +53,7 @@ class AdminDisputeControllerUnitTests {
     @BeforeEach
     void setUp() {
         controller = new AdminDisputeController(
-                disputeService, bookingService, conversationDao, messageDao, idempotencyService);
+                disputeService, bookingService, messagingService, idempotencyService);
     }
 
     @Test
@@ -81,9 +77,10 @@ class AdminDisputeControllerUnitTests {
 
         when(disputeService.getDispute(dispute.id())).thenReturn(Optional.of(dispute));
         when(bookingService.getBooking(dispute.bookingId())).thenReturn(Optional.of(booking));
-        when(conversationDao.findByTaskAndParticipants(booking.taskId(), booking.customerId(), booking.taskerId()))
+        when(messagingService.findConversationByTaskAndParticipants(
+                        booking.taskId(), booking.customerId(), booking.taskerId()))
                 .thenReturn(Optional.of(conversation));
-        when(messageDao.findByConversationId(conversation.id(), null, 50)).thenReturn(List.of(message));
+        when(messagingService.listMessagesForConversation(conversation.id(), null, 50)).thenReturn(List.of(message));
 
         ResponseEntity<?> response = controller.getDispute(dispute.id());
 
