@@ -1,5 +1,6 @@
 package mn.tasky.notification.provider;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -22,6 +23,18 @@ public class LoggingPushProvider implements PushNotificationProvider {
             String deviceToken, String platform, String title, String body, Map<String, String> data) {
         String messageId = "LOG-" + UUID.randomUUID();
         log.info("PUSH [{}] token={} title={} body={} data={}", platform, deviceToken, title, body, data);
+        return new NotificationResult(true, messageId, null);
+    }
+
+    @Override
+    public void subscribeToTopics(String deviceToken, List<String> topics) {
+        log.info("TOPIC-SUBSCRIBE token={} topics={}", deviceToken, topics);
+    }
+
+    @Override
+    public NotificationResult sendToTopic(String topic, String title, String body, Map<String, String> data) {
+        String messageId = "LOG-TOPIC-" + java.util.UUID.randomUUID();
+        log.info("TOPIC-SEND [{}] title={} body={} data={}", topic, title, body, data);
         return new NotificationResult(true, messageId, null);
     }
 }
