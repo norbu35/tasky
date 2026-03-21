@@ -376,17 +376,17 @@ export function LandingPage() {
 
         {/* App Download Banner */}
         <section className="px-6 py-24 bg-gradient-to-b from-transparent to-primary/5">
-          <div className="max-w-5xl mx-auto bg-primary-deep text-primary-foreground rounded-[2.5rem] p-10 sm:p-16 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-12">
+          <div className="max-w-5xl mx-auto bg-primary-deep text-primary-foreground rounded-[2.5rem] p-10 sm:p-16 relative overflow-hidden shadow-2xl">
             <div className="absolute top-[-50%] right-[-10%] w-[400px] h-[400px] bg-primary rounded-full blur-[100px] opacity-70 z-0" />
 
-            <div className="relative z-10 text-center md:text-left flex-1 space-y-6">
+            <div className="relative z-10 text-center space-y-6 max-w-2xl mx-auto">
               <h2 className="text-3xl sm:text-5xl font-display font-bold leading-tight">
                 {t("landing.appTitle", "Take back your free time, anywhere.")}
               </h2>
-              <p className="text-lg text-primary-foreground/80 max-w-md mx-auto md:mx-0">
+              <p className="text-lg text-primary-foreground/80 max-w-md mx-auto">
                 {t("landing.appDesc", "Download the Tasky mobile app to post jobs, track Taskers, and handle everything on the go.")}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
                 <Button variant="secondary" size="lg" className="h-14 px-6 border border-white/20 text-white hover:bg-white/10 hover:text-white bg-black/40 backdrop-blur-sm gap-3">
                   <Smartphone className="w-6 h-6" />
                   <div className="text-left leading-tight">
@@ -401,25 +401,6 @@ export function LandingPage() {
                     <div className="font-bold">Google Play</div>
                   </div>
                 </Button>
-              </div>
-            </div>
-
-            <div className="relative z-10 w-full max-w-[280px] hidden md:block">
-              {/* Abstract App Mockup Graphic */}
-              <div className="bg-background rounded-[2rem] border-[8px] border-foreground/10 p-4 shadow-2xl rotate-[-5deg] hover:rotate-0 transition-transform duration-500">
-                <div className="bg-muted rounded-xl h-[400px] flex flex-col p-4 space-y-4">
-                  <div className="h-12 bg-primary/20 rounded-lg animate-pulse" />
-                  <div className="h-24 bg-card rounded-lg border border-border shadow-sm p-3">
-                     <div className="w-10 h-10 bg-secondary/20 rounded-full mb-2" />
-                     <div className="h-3 w-1/2 bg-muted-foreground/20 rounded-full mb-1" />
-                     <div className="h-3 w-3/4 bg-muted-foreground/20 rounded-full" />
-                  </div>
-                  <div className="h-24 bg-card rounded-lg border border-border shadow-sm p-3">
-                     <div className="w-10 h-10 bg-primary/20 rounded-full mb-2" />
-                     <div className="h-3 w-1/2 bg-muted-foreground/20 rounded-full mb-1" />
-                     <div className="h-3 w-3/4 bg-muted-foreground/20 rounded-full" />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
