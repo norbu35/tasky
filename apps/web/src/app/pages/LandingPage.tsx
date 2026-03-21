@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle, Shield, ShieldCheck, MapPin, Star, Sparkles, Hammer, Truck, Wrench, Download, Smartphone, BadgeCheck, Banknote, Facebook, Twitter, Instagram, GraduationCap } from "lucide-react";
+import { ArrowRight, Shield, ShieldCheck, Star, Wrench, Download, Smartphone, BadgeCheck, Banknote, Facebook, Twitter, Instagram, GraduationCap } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { LanguageSwitcher } from "../layout/LanguageSwitcher";
 import { CustomerAdvantageVisual, TaskerAdvantageVisual } from "../../components/landing/ComparisonVisuals";
