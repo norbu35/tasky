@@ -95,7 +95,7 @@ PR notes.
 
 ### Frontend Design System Governance
 
-1. Web UI primitives MUST use `shadcn/ui` as the base component system.
+1. Web UI primitives use **Radix UI + Tailwind**, following shadcn file conventions. Components live in `apps/web/src/components/ui/` and are hand-authored — the shadcn CLI is not in use. Do not add Material UI, Chakra, or any other component runtime.
 2. Mobile MUST use platform-native components driven by the same shared design tokens and state semantics used by web.
 3. Additional web component frameworks are forbidden unless approved by ADR.
 4. UI changes are not complete without accessibility evidence (keyboard behavior and contrast checks for web flows
@@ -128,7 +128,7 @@ PR notes.
 1. Java 21
 2. Spring Boot 3.x
 3. PostgreSQL + PostGIS
-4. Spring Security (JWT based on SMS OTP auth)
+4. Spring Security (JWT; Facebook OAuth is the primary auth method; SMS OTP is feature-gated and disabled by default — Phase 2+ migration path only)
 5. Docker and containerized local development
 
 ### Web Client
@@ -136,7 +136,7 @@ PR notes.
 1. React 18+
 2. TypeScript
 3. Vite
-4. `shadcn/ui`-based component system and shared API SDK consumption
+4. Radix UI + Tailwind component system (shadcn conventions, not CLI-managed) and shared API SDK consumption
 
 ### Mobile Client
 

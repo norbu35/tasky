@@ -61,9 +61,8 @@ Cross-domain communication uses internal Java method calls only — no network h
 
 ### 3.2 Frontend Stack
 
-* **Web**: React 18, Vite, TailwindCSS, TanStack Query, `shadcn/ui` (built on Radix primitives).
-* **Mobile**: React Native (Expo), NativeWind, React Navigation, token-driven native component library (no direct
-  `shadcn` runtime usage).
+* **Web**: React 18, Vite, TailwindCSS, TanStack Query, Radix UI primitives + Tailwind (shadcn file conventions; not CLI-managed).
+* **Mobile**: React Native (Expo), NativeWind, React Navigation, token-driven native component library (Radix/shadcn not used on mobile).
 * **API Client**: TypeScript SDK generated from OpenAPI.
 
 ### 3.3 Infrastructure Services (AWS & Containers)
@@ -100,7 +99,7 @@ Cross-domain communication uses internal Java method calls only — no network h
 ### 3.4 Frontend Design System Architecture
 
 * **Component Source of Truth (Web)**:
-    * Base primitives are generated/managed via `shadcn/ui` in `apps/web/src/components/ui`.
+    * Base primitives are hand-authored Radix UI + Tailwind components in `apps/web/src/components/ui`, following shadcn file conventions. The shadcn CLI is not in use.
     * Product-level components are composed from those primitives in feature folders.
     * Additional third-party UI frameworks (MUI, Ant, Chakra, etc.) are forbidden for web runtime components.
 * **Token Source of Truth (Cross-Platform)**:
@@ -493,9 +492,8 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 #### Web (`apps/web`)
 
 * Framework: React + Vite + Tailwind CSS.
-* **Primitives (Atoms):** Always use `shadcn/ui`. Do not introduce Material UI, Chakra, or any other third-party UI
-  framework.
-* Styling pipeline: `shadcn/ui` components use Tailwind utility classes pulling values from `@tasky/design-tokens`.
+* **Primitives (Atoms):** Always use the Radix UI + Tailwind components in `apps/web/src/components/ui/`. Do not introduce Material UI, Chakra, or any other third-party UI framework.
+* Styling pipeline: components use Tailwind utility classes pulling values from `@tasky/design-tokens`.
 * State management: standard React hooks + Tailwind state variants (`hover:`, `focus:`, `disabled:`).
 * Accessibility: visible focus states and minimum AA contrast on all touched flows.
 
@@ -533,7 +531,7 @@ token adapter, component parity, and this table.
 
 ```
 apps/web/src/components/
-  ui/       ← shadcn/ui primitive components only
+  ui/       ← Radix UI + Tailwind primitive components (shadcn conventions)
   feature/  ← domain-specific components composed of UI primitives
 
 apps/mobile/src/components/
@@ -545,7 +543,7 @@ apps/mobile/src/components/
 
 #### Phase 1 — Web Design Foundation (TASK-070)
 
-1. Initialize and standardize `shadcn/ui` primitives.
+1. Establish and standardize Radix UI + Tailwind primitive components in `apps/web/src/components/ui/`.
 2. Define token source of truth and wire to Tailwind/theme variables.
 3. Implement at least one feature screen using primitives only.
 
