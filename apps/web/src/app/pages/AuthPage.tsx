@@ -2,7 +2,7 @@ import type { paths } from "@tasky/sdk";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Loader2, Shield, ShieldAlert, User, Wrench } from "lucide-react";
+import { AlertTriangle, ArrowRight, Loader2, Shield, ShieldAlert, User, Wrench } from "lucide-react";
 
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
@@ -75,6 +75,7 @@ export function AuthPage() {
     const [facebookReady, setFacebookReady] = useState<boolean>(() =>
         typeof window !== "undefined" && typeof window.FB !== "undefined"
     );
+    const [facebookOutage, setFacebookOutage] = useState(false);
 
     const returnPath =
         typeof location.state === "object" && location.state !== null && "from" in location.state
@@ -125,6 +126,24 @@ export function AuthPage() {
             document.body.appendChild(script);
         }
     }, [facebookAppId]);
+
+    useEffect(() => {
+        const apiBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ?? "";
+        const check = async () => {
+            try {
+                const res = await fetch(`${apiBase}/api/v1/auth/facebook/status`);
+                if (res.ok) {
+                    const data = await res.json() as { available: boolean };
+                    setFacebookOutage(!data.available);
+                }
+            } catch {
+                // silently ignore — banner stays in last known state
+            }
+        };
+        void check();
+        const id = setInterval(() => void check(), 30_000);
+        return () => clearInterval(id);
+    }, []);
 
     const handleFacebookLogin = async (): Promise<void> => {
         if (!window.FB) {
@@ -181,17 +200,26 @@ export function AuthPage() {
     return (
         <main className="min-h-screen w-full flex bg-background font-sans overflow-hidden">
             <div
-                className="hidden lg:flex flex-col justify-between w-1/2 bg-primary p-12 text-primary-foreground relative overflow-hidden">
+                className="hidden lg:flex flex-col justify-between w-1/2 p-12 text-white relative overflow-hidden">
+                
+                {/* Background Image & Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-deep/95 via-primary/90 to-primary-deep/95 z-0" />
+                <img 
+                    src="/images/auth-bg.png" 
+                    alt="Premium abstract interior" 
+                    className="absolute inset-0 w-full h-full object-cover z-[-1] opacity-60 mix-blend-overlay" 
+                />
+                
                 <div
-                    className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-accent/20 blur-[100px]" />
+                    className="absolute top-[-10%] left-[-30%] w-[50vw] h-[50vw] rounded-full bg-accent/40 blur-[130px] z-0 mix-blend-screen" />
                 <div
-                    className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-secondary/10 blur-[120px]" />
+                    className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-secondary/20 blur-[100px] z-0 mix-blend-screen" />
 
-                <div className="relative z-10 flex items-center gap-3">
-                    <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
-                        <Shield className="w-8 h-8 text-accent" />
+                <div className="relative z-10 flex items-center gap-4">
+                    <div className="p-3.5 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl">
+                        <Shield className="w-8 h-8 text-accent" strokeWidth={2.5} />
                     </div>
-                    <span className="text-3xl font-display font-bold tracking-tight">Tasky</span>
+                    <span className="text-3xl font-display font-extrabold tracking-tight">Tasky</span>
                 </div>
 
                 <div className="relative z-10 max-w-lg mt-auto mb-20 space-y-6">
@@ -233,24 +261,30 @@ export function AuthPage() {
                     </div>
 
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        initial={{ opacity: 0, scale: 0.95, y: 15 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+                        transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <Card
-                            className="border-border/50 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-2xl bg-card/80">
-                            <CardHeader className="space-y-3 pb-6 border-b border-border/50 bg-muted/30">
+                            className="border-none shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
+                            <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
                                 <h1 className="sr-only">Facebook Login</h1>
-                                <CardTitle className="text-2xl font-display">{t("auth.welcomeBack", "Welcome back")}</CardTitle>
-                                <CardDescription className="text-base">
+                                <CardTitle className="text-3xl font-display font-bold tracking-tight">{t("auth.welcomeBack", "Welcome back")}</CardTitle>
+                                <CardDescription className="text-base font-medium text-muted-foreground leading-relaxed">
                                     {t("auth.continueDesc", "Continue with Facebook to log in or create your Tasky account.")}
                                 </CardDescription>
                             </CardHeader>
 
-                            <CardContent className="pt-8 grid gap-4">
+                            <CardContent className="pt-10 px-10 grid gap-5">
+                                {facebookOutage && (
+                                    <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                                        <span>{t("auth.facebookOutage", "Facebook login is temporarily unavailable. We're working on it.")}</span>
+                                    </div>
+                                )}
                                 <Button
-                                    className="w-full h-12 text-base rounded-xl font-semibold shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-primary/30"
-                                    disabled={loading || !facebookReady}
+                                    className="w-full h-14 text-base rounded-2xl font-bold shadow-xl shadow-primary/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-primary/30 bg-gradient-to-r from-primary-deep to-primary"
+                                    disabled={loading || !facebookReady || facebookOutage}
                                     onClick={handleFacebookLogin}
                                     type="button"
                                     aria-label="Continue with Facebook"

@@ -3,7 +3,6 @@ package mn.tasky.auth.application;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -18,8 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.auth.AccountRestrictedException;
 import mn.tasky.auth.dao.BadgeDao;
 import mn.tasky.auth.dao.ModerationPolicyDao;
@@ -48,6 +45,7 @@ import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
+import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.dto.ParsedRefreshToken;
@@ -65,7 +63,6 @@ import org.springframework.util.StringUtils;
 @Service
 public class AuthService {
 
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final ModerationPolicy DEFAULT_MODERATION_POLICY =
             new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
 
@@ -81,17 +78,11 @@ public class AuthService {
     private final SmsService smsService;
     private final FacebookGraphClient facebookGraphClient;
     private final Environment environment;
+    private final S3PresignedUrlService storageService;
     private final boolean devAuthEnabled;
     private final boolean otpEnabled;
     private final long otpTtlSeconds;
     private final String otpTestCode;
-    private final String avatarUploadBaseUrl;
-    private final long avatarMaxBytes;
-    private final long avatarUploadUrlTtlSeconds;
-    private final String verificationUploadBaseUrl;
-    private final long verificationMaxBytes;
-    private final long verificationUploadUrlTtlSeconds;
-    private final byte[] uploadUrlSigningSecretBytes;
     private final SecureRandom secureRandom = new SecureRandom();
 
     private final UserDao userDao;
@@ -106,15 +97,13 @@ public class AuthService {
     private final BadgeDao badgeDao;
     private final MeterRegistry meterRegistry;
 
-    @SuppressFBWarnings(
-            value = "CT_CONSTRUCTOR_THROW",
-            justification = "Fail-fast configuration validation is intentional; class is non-finalizer managed.")
     public AuthService(
             JwtTokenService jwtTokenService,
             CryptoService cryptoService,
             SmsService smsService,
             FacebookGraphClient facebookGraphClient,
             Environment environment,
+            S3PresignedUrlService storageService,
             UserDao userDao,
             ProfileDao profileDao,
             OtpChallengeDao otpChallengeDao,
@@ -129,21 +118,13 @@ public class AuthService {
             @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
-            @Value("${tasky.auth.otp-test-code:}") String otpTestCode,
-            @Value("${tasky.storage.avatar-upload-base-url:https://upload.tasky.local}") String avatarUploadBaseUrl,
-            @Value("${tasky.storage.avatar-max-bytes:5242880}") long avatarMaxBytes,
-            @Value("${tasky.storage.avatar-upload-url-ttl-seconds:900}") long avatarUploadUrlTtlSeconds,
-            @Value("${tasky.storage.verification-upload-base-url:https://upload.tasky.local}")
-                    String verificationUploadBaseUrl,
-            @Value("${tasky.storage.verification-max-bytes:10485760}") long verificationMaxBytes,
-            @Value("${tasky.storage.verification-upload-url-ttl-seconds:900}") long verificationUploadUrlTtlSeconds,
-            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}")
-                    String uploadUrlSigningSecret) {
+            @Value("${tasky.auth.otp-test-code:}") String otpTestCode) {
         this.jwtTokenService = jwtTokenService;
         this.cryptoService = cryptoService;
         this.smsService = smsService;
         this.facebookGraphClient = facebookGraphClient;
         this.environment = environment;
+        this.storageService = storageService;
         this.userDao = userDao;
         this.profileDao = profileDao;
         this.otpChallengeDao = otpChallengeDao;
@@ -159,16 +140,6 @@ public class AuthService {
         this.otpEnabled = otpEnabled;
         this.otpTtlSeconds = otpTtlSeconds;
         this.otpTestCode = otpTestCode;
-        this.avatarUploadBaseUrl = avatarUploadBaseUrl;
-        this.avatarMaxBytes = avatarMaxBytes;
-        this.avatarUploadUrlTtlSeconds = avatarUploadUrlTtlSeconds;
-        this.verificationUploadBaseUrl = verificationUploadBaseUrl;
-        this.verificationMaxBytes = verificationMaxBytes;
-        this.verificationUploadUrlTtlSeconds = verificationUploadUrlTtlSeconds;
-        if (!StringUtils.hasText(uploadUrlSigningSecret)) {
-            throw new IllegalStateException("tasky.storage.upload-signing-secret must be " + "configured.");
-        }
-        this.uploadUrlSigningSecretBytes = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
     }
 
     @PostConstruct
@@ -708,51 +679,10 @@ public class AuthService {
         }
 
         String storageKey = "uploads/verification/" + userId + "/" + UUID.randomUUID() + "." + extension;
-        String uploadUrl = buildPresignedUploadUrl(
-                verificationUploadBaseUrl,
-                storageKey,
-                normalizedContentType,
-                verificationMaxBytes,
-                verificationUploadUrlTtlSeconds);
-
+        String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
 
-    private String buildPresignedUploadUrl(
-            String baseUrl, String storageKey, String contentType, long maxBytes, long ttlSeconds) {
-        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-        long expiresAt = Instant.now().plusSeconds(ttlSeconds).getEpochSecond();
-        String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
-        String signature = computeUploadSignature(payload);
-
-        return normalizedBase + "/presigned-upload?key="
-                + URLEncoder.encode(storageKey, StandardCharsets.UTF_8)
-                + "&content_type="
-                + URLEncoder.encode(contentType, StandardCharsets.UTF_8)
-                + "&max_bytes="
-                + maxBytes
-                + "&expires_in="
-                + ttlSeconds
-                + "&expires_at="
-                + expiresAt
-                + "&signature="
-                + signature;
-    }
-
-    private String computeUploadSignature(String payload) {
-        try {
-            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes, HMAC_ALGORITHM));
-            byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder(digest.length * 2);
-            for (byte b : digest) {
-                builder.append(String.format(Locale.ROOT, "%02x", b));
-            }
-            return builder.toString();
-        } catch (Exception exception) {
-            throw new IllegalStateException("Failed to sign upload URL payload", exception);
-        }
-    }
 
     /**
      * Submits a tasker verification request.
@@ -850,8 +780,8 @@ public class AuthService {
         String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
         String name = profile != null ? profile.fullName() : null;
 
-        String frontUrl = buildPresignedGetUrl(verificationUploadBaseUrl, request.idCardFrontKey());
-        String backUrl = buildPresignedGetUrl(verificationUploadBaseUrl, request.idCardBackKey());
+        String frontUrl = storageService.generateDownloadUrl(request.idCardFrontKey());
+        String backUrl = storageService.generateDownloadUrl(request.idCardBackKey());
 
         return new VerificationDetail(
                 request.id(),
@@ -869,11 +799,6 @@ public class AuthService {
                 null);
     }
 
-    private String buildPresignedGetUrl(String baseUrl, String storageKey) {
-        String normalizedBase = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-
-        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey, StandardCharsets.UTF_8);
-    }
 
     /**
      * Checks whether a verification request exists.
@@ -1236,13 +1161,7 @@ public class AuthService {
         }
 
         String storageKey = "uploads/avatars/" + userId + "/" + UUID.randomUUID() + "." + extension;
-        String uploadUrl = buildUploadUrl(storageKey, normalizedContentType);
-
+        String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
-    }
-
-    private String buildUploadUrl(String storageKey, String contentType) {
-        return buildPresignedUploadUrl(
-                avatarUploadBaseUrl, storageKey, contentType, avatarMaxBytes, avatarUploadUrlTtlSeconds);
     }
 }

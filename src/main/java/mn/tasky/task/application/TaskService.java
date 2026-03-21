@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,8 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.UserProfile;
@@ -27,6 +24,7 @@ import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.dto.PresignedUpload;
+import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.validation.TextSanitizer;
@@ -63,7 +61,6 @@ import org.springframework.util.StringUtils;
 @Service
 public class TaskService {
 
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final Map<String, String> PHOTO_EXTENSION_BY_CONTENT_TYPE =
             Map.of("image/jpeg", "jpg", "image/png", "png");
     private static final Set<String> TASK_STATUSES = Set.of("OPEN", "ASSIGNED", "COMPLETED", "CANCELLED");
@@ -84,17 +81,11 @@ public class TaskService {
     private final CategorySchemaVersionDao categorySchemaVersionDao;
     private final TaskDraftDao taskDraftDao;
     private final ObjectMapper objectMapper;
-    private final String taskPhotoUploadBaseUrl;
-    private final long taskPhotoMaxBytes;
-    private final long taskPhotoUploadUrlTtlSeconds;
-    private final byte[] uploadUrlSigningSecretBytes;
+    private final S3PresignedUrlService storageService;
     private final ReviewEnforcementService reviewEnforcementService;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
 
-    @SuppressFBWarnings(
-            value = "CT_CONSTRUCTOR_THROW",
-            justification = "Upload signing secret is mandatory and validated during startup for fail-fast safety.")
     public TaskService(
             AuthService authService,
             CategoryService categoryService,
@@ -105,18 +96,13 @@ public class TaskService {
             DomainEventOutboxService domainEventOutboxService,
             ReviewEnforcementService reviewEnforcementService,
             ScopeSummaryGenerator scopeSummaryGenerator,
+            S3PresignedUrlService storageService,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
             TaskApplicationDao taskApplicationDao,
             CategorySchemaVersionDao categorySchemaVersionDao,
             TaskDraftDao taskDraftDao,
             ObjectMapper objectMapper,
-            @Value("${tasky.storage.task-photo-upload-base-url:https://upload.tasky.local}")
-                    String taskPhotoUploadBaseUrl,
-            @Value("${tasky.storage.task-photo-max-bytes:5242880}") long taskPhotoMaxBytes,
-            @Value("${tasky.storage.task-photo-upload-url-ttl-seconds:900}") long taskPhotoUploadUrlTtlSeconds,
-            @Value("${tasky.storage.upload-signing-secret:${tasky.security.jwt-secret:}}")
-                    String uploadUrlSigningSecret,
             @Value("${tasky.notifications.task-match-radius-km:10}") double taskMatchNotificationRadiusKm,
             @Value("${tasky.notifications.task-match-limit:50}") int taskMatchNotificationLimit) {
         this.authService = authService;
@@ -128,19 +114,13 @@ public class TaskService {
         this.domainEventOutboxService = domainEventOutboxService;
         this.reviewEnforcementService = reviewEnforcementService;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
+        this.storageService = storageService;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
         this.taskApplicationDao = taskApplicationDao;
         this.categorySchemaVersionDao = categorySchemaVersionDao;
         this.taskDraftDao = taskDraftDao;
         this.objectMapper = objectMapper;
-        this.taskPhotoUploadBaseUrl = taskPhotoUploadBaseUrl;
-        this.taskPhotoMaxBytes = taskPhotoMaxBytes;
-        this.taskPhotoUploadUrlTtlSeconds = taskPhotoUploadUrlTtlSeconds;
-        if (!StringUtils.hasText(uploadUrlSigningSecret)) {
-            throw new IllegalStateException("tasky.storage.upload-signing-secret must be " + "configured.");
-        }
-        this.uploadUrlSigningSecretBytes = uploadUrlSigningSecret.getBytes(StandardCharsets.UTF_8);
         this.taskMatchNotificationRadiusKm = taskMatchNotificationRadiusKm;
         this.taskMatchNotificationLimit = taskMatchNotificationLimit;
     }
@@ -890,55 +870,8 @@ public class TaskService {
         }
 
         String storageKey = "uploads/tasks/" + userId + "/" + UUID.randomUUID() + "." + extension;
-
-        String uploadUrl = buildPresignedUploadUrl(
-                taskPhotoUploadBaseUrl,
-                storageKey,
-                normalizedContentType,
-                taskPhotoMaxBytes,
-                taskPhotoUploadUrlTtlSeconds);
-
+        String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
-    }
-
-    private String buildPresignedUploadUrl(
-            String baseUrl, String storageKey, String contentType, long maxBytes, long ttlSeconds) {
-        String normalizedBase = normalizeBaseUrl(baseUrl);
-        long expiresAt = Instant.now().plusSeconds(ttlSeconds).getEpochSecond();
-        String payload = storageKey + "|" + contentType + "|" + maxBytes + "|" + expiresAt;
-        String signature = computeUploadSignature(payload);
-
-        return normalizedBase + "/presigned-upload?key="
-                + URLEncoder.encode(storageKey, StandardCharsets.UTF_8)
-                + "&content_type="
-                + URLEncoder.encode(contentType, StandardCharsets.UTF_8)
-                + "&max_bytes="
-                + maxBytes
-                + "&expires_in="
-                + ttlSeconds
-                + "&expires_at="
-                + expiresAt
-                + "&signature="
-                + signature;
-    }
-
-    private String normalizeBaseUrl(String baseUrl) {
-        return baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
-    }
-
-    private String computeUploadSignature(String payload) {
-        try {
-            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(uploadUrlSigningSecretBytes, HMAC_ALGORITHM));
-            byte[] digest = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder(digest.length * 2);
-            for (byte b : digest) {
-                builder.append(String.format(Locale.ROOT, "%02x", b));
-            }
-            return builder.toString();
-        } catch (Exception exception) {
-            throw new IllegalStateException("Failed to sign upload URL payload", exception);
-        }
     }
 
     /**
@@ -961,8 +894,7 @@ public class TaskService {
      * @return Presigned read URL.
      */
     public String buildPhotoAccessUrl(String storageKey) {
-        String normalizedBase = normalizeBaseUrl(taskPhotoUploadBaseUrl);
-        return normalizedBase + "/presigned-get?key=" + URLEncoder.encode(storageKey, StandardCharsets.UTF_8);
+        return storageService.generateDownloadUrl(storageKey);
     }
 
     /**

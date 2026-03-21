@@ -14,3 +14,13 @@ tasky:
     enabled: false
   auth:
     otp-test-code: ""
+  storage:
+    endpoint: ${MINIO_ENDPOINT}
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+    bucket: ${MINIO_BUCKET}
+  push:
+    provider: ${TASKY_PUSH_PROVIDER:expo}
+    expo-access-token: ${TASKY_EXPO_ACCESS_TOKEN:}
+  features:
+    data-retention-dry-run: false

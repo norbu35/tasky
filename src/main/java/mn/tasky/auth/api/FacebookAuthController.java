@@ -4,11 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.auth.application.FacebookCircuitBreaker;
 import mn.tasky.auth.application.FacebookRateLimitService;
 import mn.tasky.auth.dto.AuthSession;
 import mn.tasky.auth.dto.FacebookLoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +23,23 @@ public class FacebookAuthController {
 
     private final AuthService authService;
     private final FacebookRateLimitService facebookRateLimitService;
+    private final FacebookCircuitBreaker circuitBreaker;
 
-    public FacebookAuthController(AuthService authService, FacebookRateLimitService facebookRateLimitService) {
+    public FacebookAuthController(
+            AuthService authService,
+            FacebookRateLimitService facebookRateLimitService,
+            FacebookCircuitBreaker circuitBreaker) {
         this.authService = authService;
         this.facebookRateLimitService = facebookRateLimitService;
+        this.circuitBreaker = circuitBreaker;
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Object>> status() {
+        boolean available = !circuitBreaker.isOpen();
+        return ResponseEntity.ok(Map.of(
+                "available", available,
+                "state", circuitBreaker.getState().name()));
     }
 
     @PostMapping

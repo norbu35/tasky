@@ -55,6 +55,7 @@ public class SecurityConfig {
                 "/api/v1/auth/otp/request",
                 "/api/v1/auth/otp/verify",
                 "/api/v1/auth/token/refresh",
+                "/api/v1/auth/facebook/status",
                 "/api/v1/payments/qpay/callback",
                 "/ws"));
         if (devAuthEnabled) {
@@ -67,6 +68,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(restAccessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(publicPaths.toArray(String[]::new))
                         .permitAll()
+                        .requestMatchers("/actuator/**")
+                        .hasRole("ADMIN")
                         .requestMatchers("/api/v1/security/customer/**")
                         .hasRole("CUSTOMER")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tasks")
