@@ -325,17 +325,11 @@ export function LandingPage() {
         </section>
 
         {/* Trust & Safety Section */}
-        <section className="px-6 py-24 bg-card border-t border-border/30 relative overflow-hidden">
-          {/* Decorative flair */}
-          <div className="absolute top-20 left-10 w-48 h-48 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-20 right-10 w-64 h-64 bg-primary/5 rounded-[3rem] rotate-12 blur-3xl pointer-events-none" />
-
+        <section className="px-6 py-24 bg-card border-t border-accent/20">
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mb-16 relative">
-              <div className="relative inline-block">
+              <div>
                 <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-trust relative z-10" />
-                <div className="absolute top-2 left-1/2 -translate-x-4 w-12 h-12 bg-trust/20 rounded-full blur-md" />
-                <div className="absolute -bottom-2 -right-4 w-4 h-4 bg-primary/30 rounded-full" />
               </div>
               <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4">{t("landing.trustTitle", "Built on Trust & Local Safety")}</h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
