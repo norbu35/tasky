@@ -20,7 +20,6 @@ tasky:
     secret-key: ${MINIO_SECRET_KEY}
     bucket: ${MINIO_BUCKET}
   push:
-    provider: ${TASKY_PUSH_PROVIDER:expo}
-    expo-access-token: ${TASKY_EXPO_ACCESS_TOKEN:}
+    provider: ${TASKY_PUSH_PROVIDER:firebase}
   features:
     data-retention-dry-run: false
