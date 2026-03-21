@@ -144,7 +144,7 @@ Cross-domain communication uses internal Java method calls only — no network h
   ROLLED_BACK), `is_last_known_good`, `created_by`, `created_at`, `activated_at`
 * `task_applications`: `task_id`, `tasker_id`, `status` (APPLIED, SELECTED, ACCEPTED, DECLINED, EXPIRED),
   `relevance_score`, `recommended`, `selected_at`, `respond_by_at`, `created_at`
-* `instant_match_offers` *(Phase 3+)*: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status`
+* `instant_match_offers` *(Phase 3+ — not yet created)*: `id`, `task_id`, `tasker_id`, `offer_rank`, `expires_at`, `status`
   (PENDING, ACCEPTED, DECLINED, EXPIRED), `created_at`
 * `bookings`: `id`, `task_id`, `tasker_id`, `status` (ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `price`,
   `confirmed_scheduled_at`, `liability_disclaimer_accepted`, `liability_disclaimer_accepted_at`, `settlement_mode`
@@ -204,6 +204,10 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`
   — full outbox pattern with retry and scheduling; processed by `DomainEventOutboxProcessor`
 * `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
+  — four toggles are seeded at migration time: `escrow_enabled` (Phase 3+, gated in wallet/payment/payout controllers),
+  `lead_fee_enabled` (Phase 2, seeded for readiness — no code consumer yet), `subscription_enabled` (Phase 3+, seeded
+  for readiness — no code consumer yet), `ai_scope_summary_enabled` (Phase 3+ optional, seeded for readiness — no code
+  consumer yet)
 
 ### 4.2 Data Flow Patterns
 
@@ -315,6 +319,11 @@ Standardized error response:
       * Tasker phone is never exposed to customers in API responses.
       * Customer phone is masked until selected Tasker completes lead unlock in paid phases.
       * Exact task address is hidden pre-confirmation (and pre-payment commitment in escrow phases).
+      * **Phase 0-1 current behavior**: `GET /tasks/{id}` reveals `location_text` (exact address) to any tasker
+        whose booking is in `ASSIGNED`, `PAID`, or `COMPLETED` status. No payment gate exists because Phase 0-1
+        uses direct settlement only.
+      * **Phase 2 activation gap**: When `lead_fee_enabled` is turned on, `TaskController.getTask()` must be updated
+        to gate address reveal behind a successful lead-unlock event. This is a required Phase 2 activation work item.
   * **OAuth Outage Posture (Phase 0-1)**: Login/signup endpoints fail closed when OAuth provider is down; existing
     already-issued valid tokens remain usable until expiry.
   * **Liability Disclaimer Contract**: applicant accept endpoint rejects requests without
@@ -419,7 +428,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
     * Reliability score is recomputed on cancellation/no-show/completion signals and consumed by applicant ranking.
     * Pro badge assignment is deterministic from completion/rating thresholds and evaluated in background jobs.
 * **Admin Contract**:
-    * Admin user search supports name and Facebook ID in Phase 0-1, and phone criteria in Phase 2+.
+    * Admin user search is phone-only in Phase 0-1 (exact normalized match, required). Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
     * Category management supports intake schema create/update/activate/version/rollback with audit logs.
     * Feature toggles (lead fee, subscription, escrow) must be runtime-switchable without redeploy and fully audited.
 

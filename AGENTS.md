@@ -446,4 +446,4 @@ Full agent startup protocol, parallel execution rules, workspace utilization mod
 reference commands are in `docs/agent/RUNBOOK.md`.
 
 **Frontend tasks only:** Before writing any UI code, read `docs/ARCHITECTURE.md` §7 for design system rules, file
-structure, parity baseline, and TID test naming requirements.
+structure, and parity baseline.
