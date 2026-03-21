@@ -1,6 +1,6 @@
-import { Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import { Platform } from 'react-native';
 
 // Android notification channel — mirrors the previous expo-notifications channel.
 // Called once on app start before token acquisition.
@@ -18,16 +18,11 @@ async function ensureAndroidChannel(): Promise<void> {
 }
 
 async function requestPermission(): Promise<boolean> {
-    if (Platform.OS === 'ios') {
-        const authStatus = await messaging().requestPermission();
-        return (
-            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-            authStatus === messaging.AuthorizationStatus.PROVISIONAL
-        );
-    }
-    // Android 13+ permission is handled automatically by the Firebase SDK
-    // when the first notification arrives; no explicit request needed here.
-    return true;
+    const authStatus = await messaging().requestPermission();
+    return (
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL
+    );
 }
 
 interface PushRegistrationResult {

@@ -25,6 +25,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
             title: remoteMessage.data?.title as string | undefined,
             body: remoteMessage.data?.body as string | undefined,
             android: { channelId: 'default' },
+            ios: {},
         });
     }
 });
