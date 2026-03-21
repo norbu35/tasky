@@ -3600,7 +3600,7 @@ paths:
               properties:
                 token:
                   type: string
-                  description: FCM or Expo push token.
+                  description: FCM registration token obtained via `@react-native-firebase/messaging` `getToken()`. Expo push tokens are not accepted.
                 platform:
                   type: string
                   enum: [ IOS, ANDROID, WEB ]

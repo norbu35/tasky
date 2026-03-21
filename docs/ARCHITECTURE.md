@@ -24,7 +24,7 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
     * **QPay (Phase 2+)**: Credit pack purchases in Phase 2 and escrow settlement rails in Phase 3+.
   * **SMS Gateway (Phase 2+)**: OTP delivery and critical fallback notifications.
     * **Google Maps / Mapbox**: Geocoding and static maps.
-    * **Push Provider (FCM/Expo)**: Mobile notifications.
+    * **Push Provider (Firebase Cloud Messaging)**: Mobile notifications via FCM for Android; FCM → APNs bridge for iOS. Expo Push relay is explicitly not used.
   * **LLM Provider (Phase 3+ optional)**: Async task scope summary polish only; never blocking task posting.
 
 ### 2.2 Modular Monolith Structure
@@ -71,10 +71,22 @@ occurs via internal service interfaces (Java method calls), not network calls, t
       Backend stores the key/URL only.
     * **Security**: Buckets must be private. Public access is blocked. Downloads for sensitive data (IDs) use Presigned
       GET URLs.
+* **Push Notifications (FCM)**:
+    * **Provider**: Firebase Cloud Messaging (FCM) via Firebase Admin SDK on the backend. Expo Push relay is not used.
+    * **Mobile**: `@react-native-firebase/messaging` for token acquisition and topic subscriptions; `@notifee/react-native` for local notification display and Android channels. `expo-notifications` is retained only for permission requests.
+    * **Individual delivery**: `FirebasePushProvider` calls `FirebaseMessaging.send()` per device token stored in `device_tokens`.
+    * **Topic fan-out** (Phase 1+): Subscribe devices server-side via Firebase Admin SDK on Tasker profile save. Topic taxonomy:
+        * `taskers.district.{slug}` — all Taskers in a geo district
+        * `taskers.category.{slug}` — all Taskers in a skill category
+        * `taskers.district.{slug}.{category}` — compound precision targeting (primary supply activation topic)
+        * `taskers.concierge-pool` — founder-operated concierge dispatch
+        * `customers.churned.{category}` — inactive Customer reactivation
+        * `platform.all` — system-wide announcements
+    * **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
+    * **Current state (Phase 0-1)**: `ExpoPushProvider` is wired as a transitional placeholder. Migration to `FirebasePushProvider` is a Phase 1 task (ADR-0002).
 * **Async Processing**:
     * **Mechanism**: Spring `@Async` + `ApplicationEventPublisher` for decoupling.
-    * **Persistence**: For critical tasks (e.g., SMS, Payouts), use a simple Postgres-backed queue table (`job_queue`)
-      to ensure at-least-once delivery if the app restarts.
+    * **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery with retry logic (`DomainEventOutboxProcessor`).
 * **Geospatial**:
     * **Engine**: PostGIS running in the Postgres container.
     * **Indexing**: GiST index on `tasks.location_point` is mandatory.
