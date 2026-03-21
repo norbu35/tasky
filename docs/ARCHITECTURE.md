@@ -127,8 +127,9 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `users`: `id (UUID)`, `facebook_id (nullable, UK)`, `phone (nullable, UK)`, `primary_auth` (FACEBOOK, PHONE_OTP),
   `role`, `status` (PENDING, VERIFIED, BANNED, SUSPENDED), `suspension_end_at`, `created_at`, `updated_at`
 * `profiles`: `user_id (FK)`, `full_name`, `avatar_url`, `rating_avg`
-* `verifications`: `user_id (FK)`, `id_card_front`, `id_card_back`, `status`, `admin_notes`, `submitted_at`,
+* `verifications`: `user_id (FK)`, `id_card_front_key`, `id_card_back_key`, `status`, `admin_notes`, `submitted_at`,
   `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
+  — columns store S3/MinIO object keys, not URLs; download links are generated via presigned GET URLs on demand
 
 #### Marketplace Module
 
@@ -201,7 +202,8 @@ Cross-domain communication uses internal Java method calls only — no network h
 
 #### Infrastructure Tables
 
-* `job_queue`: `id`, `type`, `payload (JSONB)`, `status`, `attempts`, `next_run_at`, `created_at`
+* `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`
+  — full outbox pattern with retry and scheduling; processed by `DomainEventOutboxProcessor`
 * `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
 
 ### 4.2 Data Flow Patterns
