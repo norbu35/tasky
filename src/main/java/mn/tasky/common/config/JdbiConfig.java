@@ -29,7 +29,9 @@ import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.dao.DeviceTokenDao;
+import mn.tasky.notification.dao.DistrictDao;
 import mn.tasky.notification.dao.NotificationLogDao;
+import mn.tasky.notification.dao.TaskerServiceAreaDao;
 import mn.tasky.payment.dao.PaymentIntentDao;
 import mn.tasky.review.dao.ReviewDao;
 import mn.tasky.review.dao.ReviewEnforcementCaseDao;
@@ -230,6 +232,16 @@ public class JdbiConfig {
     @Bean
     public NotificationLogDao notificationLogDao(Jdbi jdbi) {
         return jdbi.onDemand(NotificationLogDao.class);
+    }
+
+    @Bean
+    public DistrictDao districtDao(Jdbi jdbi) {
+        return jdbi.onDemand(DistrictDao.class);
+    }
+
+    @Bean
+    public TaskerServiceAreaDao taskerServiceAreaDao(Jdbi jdbi) {
+        return jdbi.onDemand(TaskerServiceAreaDao.class);
     }
 
     // Dispute DAOs
