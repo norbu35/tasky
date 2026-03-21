@@ -48,6 +48,7 @@ public abstract class IntegrationTestBase {
                         + "AND tablename NOT IN ("
                         + "'flyway_schema_history','categories','category_schema_versions',"
                         + "'moderation_policy','feature_toggles',"
+                        + "'districts',"
                         + "'spatial_ref_sys');"
                         + "IF t IS NOT NULL THEN "
                         + "EXECUTE 'TRUNCATE TABLE ' || t || ' RESTART IDENTITY CASCADE'; "

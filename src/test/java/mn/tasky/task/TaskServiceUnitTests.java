@@ -13,6 +13,7 @@ import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
+import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.task.application.ScopeSummaryGenerator;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dao.TaskApplicationDao;
@@ -39,16 +40,13 @@ class TaskServiceUnitTests {
                 mock(DomainEventOutboxService.class),
                 mock(ReviewEnforcementService.class),
                 mock(ScopeSummaryGenerator.class),
+                mock(S3PresignedUrlService.class),
                 mock(TaskDao.class),
                 mock(TaskPhotoDao.class),
                 mock(TaskApplicationDao.class),
                 mock(CategorySchemaVersionDao.class),
                 mock(TaskDraftDao.class),
                 new ObjectMapper(),
-                "https://upload.tasky.local",
-                5242880,
-                900,
-                "test-signing-secret-that-is-long-enough",
                 10.0,
                 50);
     }
