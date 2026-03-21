@@ -32,13 +32,18 @@ Tasky acts as a trusted intermediary between **Customers** (Demand) and **Tasker
 The backend is a single deployable unit (`tasky-server`) organized by business domains. Cross-domain communication
 occurs via internal service interfaces (Java method calls), not network calls, to preserve simplicity.
 
-**Modules:**
+**Logical domains and their Java packages** (`mn.tasky.<package>`):
 
-1. **`identity`**: Auth, User Profiles, KYC/Verification.
-2. **`marketplace`**: Task Posting (including schema-driven intake), Search, Booking State Machine.
-3. **`wallet`** *(Phase 2+)*: Credit Ledger (Phase 2), Internal Wallet/Escrow/Payouts (Phase 3+), QPay Integration.
-4. **`communication`**: Notifications (Push/SMS), In-app Messaging.
-5. **`support`**: Disputes, Moderation, Admin Tools.
+| Domain | Packages | Responsibility |
+|---|---|---|
+| **identity** | `auth`, `user`, `security`, `verification` | Auth (Facebook OAuth, OTP), user profiles, JWT filter, KYC/verification queue |
+| **marketplace** | `task`, `category`, `booking` | Task posting & intake schemas, category management, booking state machine, applications |
+| **wallet** *(Phase 2+)* | `wallet`, `payment` | Credit ledger (Phase 2), internal wallet/escrow/payouts (Phase 3+), QPay integration |
+| **communication** | `messaging`, `notification` | In-app WebSocket messaging, push notifications (FCM), SMS fallback |
+| **support** | `dispute`, `review`, `admin`, `analytics` | Disputes & evidence, review enforcement, admin tools, analytics event tracking |
+| **common** | `common` | Cross-cutting: security filters, pagination, error handling, crypto, outbox, health, storage |
+
+Cross-domain communication uses internal Java method calls only — no network hops between domains.
 
 ---
 
