@@ -1,6 +1,7 @@
 package mn.tasky.notification.application;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,8 +10,11 @@ import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.notification.dao.DeviceTokenDao;
+import mn.tasky.notification.dao.DistrictDao;
 import mn.tasky.notification.dao.NotificationLogDao;
+import mn.tasky.notification.dao.TaskerServiceAreaDao;
 import mn.tasky.notification.dto.DeviceToken;
+import mn.tasky.notification.dto.District;
 import mn.tasky.notification.dto.NotificationLog;
 import mn.tasky.notification.provider.NotificationResult;
 import mn.tasky.notification.provider.PushNotificationProvider;
@@ -35,6 +39,8 @@ public class NotificationService {
     private final SmsNotificationProvider smsProvider;
     private final UserDao userDao;
     private final CryptoService cryptoService;
+    private final TaskerServiceAreaDao serviceAreaDao;
+    private final DistrictDao districtDao;
 
     public NotificationService(
             DeviceTokenDao deviceTokenDao,
@@ -42,13 +48,17 @@ public class NotificationService {
             PushNotificationProvider pushProvider,
             SmsNotificationProvider smsProvider,
             UserDao userDao,
-            CryptoService cryptoService) {
+            CryptoService cryptoService,
+            TaskerServiceAreaDao serviceAreaDao,
+            DistrictDao districtDao) {
         this.deviceTokenDao = deviceTokenDao;
         this.notificationLogDao = notificationLogDao;
         this.pushProvider = pushProvider;
         this.smsProvider = smsProvider;
         this.userDao = userDao;
         this.cryptoService = cryptoService;
+        this.serviceAreaDao = serviceAreaDao;
+        this.districtDao = districtDao;
     }
 
     /**
@@ -62,6 +72,7 @@ public class NotificationService {
     public void registerDevice(String userId, String token, String platform) {
         deviceTokenDao.upsert(userId, token, platform, Instant.now());
         log.info("Registered device for user {}: platform={}", userId, platform);
+        subscribeToFcmTopics(userId, token);
     }
 
     /**
@@ -132,6 +143,32 @@ public class NotificationService {
                     result.errorCode(),
                     Instant.now());
         }
+    }
+
+    private void subscribeToFcmTopics(String userId, String token) {
+        var user = userDao.findById(userId).orElse(null);
+        if (user == null) return;
+
+        List<String> topics = new ArrayList<>();
+        topics.add("platform.all");
+
+        if ("TASKER".equals(user.role())) {
+            List<District> districts = serviceAreaDao.findByUserId(userId);
+            for (District d : districts) {
+                topics.add("taskers.district." + d.slug());
+            }
+
+            List<String> categorySlugs = districtDao.findAllActiveCategorySlugs();
+            for (String catSlug : categorySlugs) {
+                topics.add("taskers.category." + catSlug);
+                for (District d : districts) {
+                    topics.add("taskers.district." + d.slug() + "." + catSlug);
+                }
+            }
+        }
+
+        pushProvider.subscribeToTopics(token, topics);
+        log.info("FCM topic subscriptions queued for user {}: {} topics", userId, topics.size());
     }
 
     /**
