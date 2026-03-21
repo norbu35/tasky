@@ -229,12 +229,9 @@ export function LandingPage() {
         {/* How it Works Section */}
         <section className="px-6 py-24 bg-gradient-to-b from-transparent to-muted/20 border-t border-border/30">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20 relative">
-              <div className="absolute md:-top-8 md:right-[20%] w-8 h-8 rounded-full bg-trust/20 blur-sm animate-bounce" style={{ animationDuration: '3s' }} />
-              <div className="absolute -bottom-8 md:left-[20%] w-4 h-4 rounded-sm bg-primary/20 rotate-45" />
-              <h2 className="text-3xl sm:text-5xl font-display font-bold mb-6 tracking-tight relative inline-block">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl sm:text-5xl font-display font-bold mb-6 tracking-tight">
                 {t("landing.howItWorksTitle", "How Tasky Works")}
-                <div className="absolute -right-6 -top-2 w-3 h-3 rounded-full bg-accent" />
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">{t("landing.howItWorksSub", "A simple, secure, and transparent ecosystem designed to bridge trust between customers and vetted professionals.")}</p>
             </div>
