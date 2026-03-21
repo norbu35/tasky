@@ -124,7 +124,7 @@ Cross-domain communication uses internal Java method calls only — no network h
 #### Identity Module
 
 * `users`: `id (UUID)`, `facebook_id (nullable, UK)`, `phone (nullable, UK)`, `primary_auth` (FACEBOOK, PHONE_OTP),
-  `role`, `status` (PENDING, VERIFIED, BANNED, SUSPENDED), `suspension_end_at`, `created_at`, `updated_at`
+  `role`, `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED), `suspension_end_at`, `created_at`, `updated_at`
 * `profiles`: `user_id (FK)`, `full_name`, `avatar_url`, `rating_avg`
 * `verifications`: `user_id (FK)`, `id_card_front_key`, `id_card_back_key`, `status`, `admin_notes`, `submitted_at`,
   `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
@@ -182,7 +182,7 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `conversations`: `id`, `task_id (FK)`, `customer_id (FK)`, `tasker_id (FK)`, `created_at`
 * `messages`: `id`, `conversation_id (FK)`, `sender_id (FK)`, `content`, `phone_number_flagged`, `content_hash`,
   `created_at`
-* `device_tokens`: `user_id (FK)`, `token`, `platform` (IOS, ANDROID, WEB), `created_at`
+* `device_tokens`: `user_id (FK)`, `token`, `platform` CHECK (IOS, ANDROID, WEB), `created_at`
 * `notification_log`: `id`, `user_id`, `type`, `channel` (PUSH, SMS), `status`, `event_key`, `provider_message_id`,
   `error_code`, `created_at`
 
@@ -322,7 +322,7 @@ Standardized error response:
 * **Rate Limiting**:
     * **OTP Endpoints**: Config-defined per phone and per request-source limits with lockout on repeated failed OTP
       verification attempts.
-    * **General API**: Token bucket, configured by environment/profile.
+    * **General API**: Sliding window (1-minute window), DB-backed via `rate_limit_counters` table (`RateLimitFilter`). Defaults: 100 rpm authenticated, 30 rpm unauthenticated. Configurable per environment.
 * **Data Privacy**:
     * **Gov IDs**: Stored in a strict **Private S3 Bucket**. API never exposes public links. Admin viewing uses
       short-lived Presigned GET URLs.
