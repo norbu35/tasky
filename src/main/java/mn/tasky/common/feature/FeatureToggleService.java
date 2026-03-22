@@ -1,6 +1,8 @@
 package mn.tasky.common.feature;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import mn.tasky.common.audit.AuditEventDao;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +11,13 @@ public class FeatureToggleService {
 
     private final FeatureToggleDao featureToggleDao;
     private final AuditEventDao auditEventDao;
+    private final ObjectMapper objectMapper;
 
-    public FeatureToggleService(FeatureToggleDao featureToggleDao, AuditEventDao auditEventDao) {
+    public FeatureToggleService(
+            FeatureToggleDao featureToggleDao, AuditEventDao auditEventDao, ObjectMapper objectMapper) {
         this.featureToggleDao = featureToggleDao;
         this.auditEventDao = auditEventDao;
+        this.objectMapper = objectMapper;
     }
 
     public List<FeatureToggle> listAll() {
@@ -34,10 +39,18 @@ public class FeatureToggleService {
                 "FEATURE_TOGGLE_UPDATED",
                 "FEATURE_TOGGLE",
                 null,
-                "{\"feature_name\":\"" + featureName + "\",\"is_enabled\":" + enabled + "}");
+                safeJson(Map.of("feature_name", featureName, "is_enabled", enabled)));
 
         return featureToggleDao
                 .findByName(featureName)
                 .orElseThrow(() -> new IllegalArgumentException("Feature toggle not found: " + featureName));
+    }
+
+    private String safeJson(Map<String, Object> data) {
+        try {
+            return objectMapper.writeValueAsString(data);
+        } catch (Exception e) {
+            return "{}";
+        }
     }
 }

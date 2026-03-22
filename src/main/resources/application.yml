@@ -24,6 +24,10 @@ spring:
 
 server:
   port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
 
 management:
   endpoint:
