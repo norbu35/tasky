@@ -26,9 +26,12 @@ public class S3PresignedUrlService {
     private static final Duration DEFAULT_UPLOAD_TTL = Duration.ofMinutes(15);
     private static final Duration DEFAULT_DOWNLOAD_TTL = Duration.ofHours(1);
 
-    private static final java.util.regex.Pattern VALID_KEY_PATTERN =
+    private static final java.util.regex.Pattern VALID_UPLOAD_KEY_PATTERN =
             java.util.regex.Pattern.compile(
                     "^uploads/(tasks|avatars|evidence|verification)/[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
+
+    private static final java.util.regex.Pattern VALID_DOWNLOAD_KEY_PATTERN =
+            java.util.regex.Pattern.compile("^[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
 
     private final S3Presigner presigner;
     private final String bucket;
@@ -55,8 +58,14 @@ public class S3PresignedUrlService {
                 .build();
     }
 
-    private void validateKey(String key) {
-        if (key == null || key.contains("..") || !VALID_KEY_PATTERN.matcher(key).matches()) {
+    private void validateUploadKey(String key) {
+        if (key == null || key.contains("..") || !VALID_UPLOAD_KEY_PATTERN.matcher(key).matches()) {
+            throw new IllegalArgumentException("Invalid storage key");
+        }
+    }
+
+    private void validateDownloadKey(String key) {
+        if (key == null || key.contains("..") || !VALID_DOWNLOAD_KEY_PATTERN.matcher(key).matches()) {
             throw new IllegalArgumentException("Invalid storage key");
         }
     }
@@ -69,7 +78,7 @@ public class S3PresignedUrlService {
      * @return Presigned upload URL valid for {@code uploadTtl}.
      */
     public String generateUploadUrl(String key, String contentType) {
-        validateKey(key);
+        validateUploadKey(key);
         PutObjectRequest putRequest =
                 PutObjectRequest.builder().bucket(bucket).key(key).contentType(contentType).build();
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
@@ -86,7 +95,7 @@ public class S3PresignedUrlService {
      * @return Presigned download URL valid for {@code downloadTtl}.
      */
     public String generateDownloadUrl(String key) {
-        validateKey(key);
+        validateDownloadKey(key);
         GetObjectRequest getRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(downloadTtl)
