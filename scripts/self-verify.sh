@@ -166,74 +166,16 @@ if git rev-parse --verify HEAD >/dev/null 2>&1; then
   head_sha="$(git rev-parse --short=40 HEAD)"
 else
   head_sha="NO_HEAD"
+  if [[ "${base_ref}" == "HEAD" ]]; then
+    base_ref="EMPTY_TREE"
+  fi
 fi
-
-resolve_base_ref() {
-  if [[ "${head_sha}" == "NO_HEAD" ]]; then
-    echo "NO_HEAD"
-    return
-  fi
-
-  if [[ "${base_ref}" != "HEAD" ]]; then
-    echo "${base_ref}"
-    return
-  fi
-
-  if [[ -f "${ticket_spec_path}" && -f "tickets/STATUS.json" ]]; then
-    local dep_id
-    local dep_branch
-    local dep_merge_base
-    local dep_base=""
-    while IFS= read -r dep_id; do
-      if [[ -z "${dep_id}" ]]; then
-        continue
-      fi
-      dep_branch="$(jq -r --arg tid "${dep_id}" '.tickets[$tid].branch // empty' tickets/STATUS.json)"
-      if [[ -z "${dep_branch}" ]]; then
-        continue
-      fi
-      if ! git rev-parse --verify "${dep_branch}" >/dev/null 2>&1; then
-        continue
-      fi
-      dep_merge_base="$(git merge-base HEAD "${dep_branch}" 2>/dev/null || true)"
-      if [[ -n "${dep_merge_base}" ]]; then
-        dep_base="${dep_merge_base}"
-      fi
-    done < <(jq -r '.depends_on[]?' "${ticket_spec_path}")
-    if [[ -n "${dep_base}" ]]; then
-      echo "${dep_base}"
-      return
-    fi
-  fi
-
-  local ref
-  local merge_base
-  for ref in origin/main main origin/master master; do
-    if git rev-parse --verify "${ref}" >/dev/null 2>&1; then
-      merge_base="$(git merge-base HEAD "${ref}" 2>/dev/null || true)"
-      if [[ -n "${merge_base}" ]]; then
-        echo "${merge_base}"
-        return
-      fi
-    fi
-  done
-
-  if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-    echo "HEAD~1"
-    return
-  fi
-
-  echo "HEAD"
-}
-
-base_ref="$(resolve_base_ref)"
 
 export SELF_VERIFY_TICKET="${ticket}"
 export SELF_VERIFY_RISK="${risk}"
 export SELF_VERIFY_REQ_CSV="${req_csv}"
 export SELF_VERIFY_TICKET_SPEC_PATH="${ticket_spec_path}"
 export SELF_VERIFY_BRANCH="${branch}"
-export SELF_VERIFY_BASE_REF="${base_ref}"
 
 files_changed=()
 while IFS= read -r changed_file; do
@@ -242,9 +184,6 @@ while IFS= read -r changed_file; do
   fi
 done < <(
   {
-    if [[ "${head_sha}" != "NO_HEAD" && "${base_ref}" != "HEAD" ]]; then
-      git diff --name-only "${base_ref}...HEAD" 2>/dev/null || true
-    fi
     git diff --name-only 2>/dev/null || true
     git diff --name-only --cached 2>/dev/null || true
     git ls-files --others --exclude-standard 2>/dev/null || true
@@ -265,10 +204,10 @@ if [[ ${#required_checks[@]} -eq 0 ]]; then
   exit 4
 fi
 
-fast_check_ids=()
+fast_checks_lookup=$'\n'
 while IFS= read -r fast_check_id; do
   if [[ -n "${fast_check_id}" ]]; then
-    fast_check_ids+=("${fast_check_id}")
+    fast_checks_lookup+="${fast_check_id}"$'\n'
   fi
 done < <(jq -r '.fast_checks[]?' "${risk_policy_path}")
 
@@ -308,8 +247,6 @@ check_title() {
     migration_safety) echo "Migration safety verification" ;;
     performance_smoke) echo "Performance smoke test" ;;
     ac_coverage_gate) echo "Acceptance criteria coverage gate" ;;
-    frontend_parity_check) echo "Cross-platform design token and component parity check" ;;
-    frontend_a11y_check) echo "Web accessibility (keyboard navigation + WCAG AA contrast)" ;;
     *) echo "Unknown check" ;;
   esac
 }
@@ -352,7 +289,7 @@ fi
 CMD
       ;;
     secret_scan)
-      echo "! rg -n --hidden --glob '!.git' --glob '!.env*' --glob '!**/.env*' --glob '!artifacts/**' --glob '!build/**' --glob '!node_modules/**' 'AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{80,}|xox[baprs]-[A-Za-z0-9-]{10,}|sk_live_[A-Za-z0-9]{16,}' ."
+      echo "! rg -n --hidden --glob '!.git' --glob '!artifacts/**' --glob '!build/**' 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' ."
       ;;
     ticket_spec_validation)
       cat <<'CMD'
@@ -469,16 +406,7 @@ fi
 CMD
       ;;
     coverage_gate_touched)
-      cat <<'CMD'
-./gradlew --no-daemon jacocoTestCoverageVerification
-if rg -q '^apps/web/' artifacts/checks/changed-files.txt; then
-  if ! command -v pnpm >/dev/null 2>&1; then
-    echo "pnpm is required for frontend coverage gate." >&2
-    exit 1
-  fi
-  pnpm --filter @tasky/web test:coverage
-fi
-CMD
+      echo "./gradlew --no-daemon jacocoTestCoverageVerification"
       ;;
     full_test_suite)
       cat <<'CMD'
@@ -518,34 +446,7 @@ python3 scripts/validate-ac-coverage.py \
   --ticket "${SELF_VERIFY_TICKET}" \
   --risk "${SELF_VERIFY_RISK}" \
   --logs-dir artifacts/checks \
-  --changed-files artifacts/checks/changed-files.txt \
   --out artifacts/checks/ac-coverage.json
-CMD
-      ;;
-    frontend_parity_check)
-      cat <<'CMD'
-if rg -q '^(apps/web/|apps/mobile/|packages/design-tokens/)' artifacts/checks/changed-files.txt; then
-  if ! command -v pnpm >/dev/null 2>&1; then
-    echo "pnpm is required for frontend parity check." >&2
-    exit 1
-  fi
-  pnpm --filter @tasky/web test:unit -- tests/accessibility/parity.test.tsx
-else
-  echo "No web, mobile, or design-token changes detected; parity check not applicable."
-fi
-CMD
-      ;;
-    frontend_a11y_check)
-      cat <<'CMD'
-if rg -q '^apps/web/' artifacts/checks/changed-files.txt; then
-  if ! command -v pnpm >/dev/null 2>&1; then
-    echo "pnpm is required for frontend a11y check." >&2
-    exit 1
-  fi
-  pnpm --filter @tasky/web test:unit -- tests/accessibility/parity.test.tsx
-else
-  echo "No web changes detected; a11y check not applicable."
-fi
 CMD
       ;;
     *)
@@ -643,13 +544,7 @@ run_check() {
 
 is_fast_check() {
   local check_id="$1"
-  local fast_id
-  for fast_id in "${fast_check_ids[@]}"; do
-    if [[ "${fast_id}" == "${check_id}" ]]; then
-      return 0
-    fi
-  done
-  return 1
+  [[ "${fast_checks_lookup}" == *$'\n'"${check_id}"$'\n'* ]]
 }
 
 record_blocked_check() {

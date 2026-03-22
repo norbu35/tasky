@@ -1,4 +1,5 @@
 import { designTokens } from "../../../../packages/design-tokens/tokens";
+import { motionTokens } from "../../../../packages/design-tokens/src/motion";
 
 export const mobileTheme = {
     colors: {
@@ -41,7 +42,8 @@ export const mobileTheme = {
     radius: designTokens.radius,
     spacing: designTokens.spacing,
     typography: designTokens.typography,
-    shadows: designTokens.shadows
+    shadows: designTokens.shadows,
+    motion: motionTokens,
 } as const;
 
 export type MobileTheme = typeof mobileTheme;

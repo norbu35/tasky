@@ -1,11 +1,12 @@
-import messaging from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance } from '@notifee/react-native';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
-// Android notification channel — mirrors the previous expo-notifications channel.
-// Called once on app start before token acquisition.
+const isExpoGo = Constants.executionEnvironment === 'storeClient';
+
 async function ensureAndroidChannel(): Promise<void> {
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android' || isExpoGo) return;
+    const notifee = require('@notifee/react-native').default;
+    const { AndroidImportance } = require('@notifee/react-native');
     await notifee.createChannel({
         id: 'default',
         name: 'Default',
@@ -18,6 +19,8 @@ async function ensureAndroidChannel(): Promise<void> {
 }
 
 async function requestPermission(): Promise<boolean> {
+    if (isExpoGo) return false;
+    const messaging = require('@react-native-firebase/messaging').default;
     const authStatus = await messaging().requestPermission();
     return (
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -31,6 +34,9 @@ interface PushRegistrationResult {
 }
 
 export async function registerForPushNotificationsAsync(): Promise<PushRegistrationResult> {
+    if (isExpoGo) {
+        return { error: 'Push notifications not available in Expo Go' };
+    }
     try {
         await ensureAndroidChannel();
 
@@ -39,6 +45,7 @@ export async function registerForPushNotificationsAsync(): Promise<PushRegistrat
             return { error: 'Permission not granted to get push token for push notification!' };
         }
 
+        const messaging = require('@react-native-firebase/messaging').default;
         const token = await messaging().getToken();
         return { token };
     } catch (e: unknown) {

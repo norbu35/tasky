@@ -7,7 +7,7 @@ import type { AuthTokens, Profile, Task } from "../../src/lib/apiClient";
 
 describe("Tasks Integration", () => {
     it("TID-TASK-080-WEB-TASK-APPLICATION-FLOW supports task create, privacy-safe feed browsing, and tasker apply", async () => {
-        const createdTask: Task = {
+        const createdTask = {
             id: "task-created-1",
             category_id: baseCategory.id,
             customer_id: baseUser.id,
@@ -20,7 +20,7 @@ describe("Tasks Integration", () => {
             scheduled_at: "2026-02-16T00:00:00Z",
             photos: [],
             created_at: "2026-02-14T00:00:00Z"
-        };
+        } as any as Task;
 
         const customerApi = buildApiClientMock({
             createTask: vi.fn().mockResolvedValue(createdTask),
@@ -62,12 +62,12 @@ describe("Tasks Integration", () => {
 
         customerRender.unmount();
 
-        const taskerProfile: Profile = {
+        const taskerProfile = {
             ...baseProfile,
             role: "TASKER",
             status: "VERIFIED",
             full_name: "Verified Tasker"
-        };
+        } as any as Profile;
 
         const taskerSession: AuthTokens = {
             ...baseSession,

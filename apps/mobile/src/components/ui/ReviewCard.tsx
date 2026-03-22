@@ -29,8 +29,8 @@ export function ReviewCard({ reviewerInitials, reviewerName, rating, comment, ti
                         <Star
                             key={i}
                             size={12}
-                            color={i < rating ? '#F59E0B' : colors.chipInactive}
-                            fill={i < rating ? '#F59E0B' : 'none'}
+                            color={i < rating ? colors.accent : colors.chipInactive}
+                            fill={i < rating ? colors.accent : 'none'}
                         />
                     ))}
                 </View>

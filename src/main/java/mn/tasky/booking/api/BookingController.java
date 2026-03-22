@@ -672,7 +672,7 @@ public class BookingController {
     @GetMapping("/{id}/schedule-events")
     public ResponseEntity<?> getScheduleEvents(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
-        List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id);
+        List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id, principal.userId());
         List<Map<String, Object>> data =
                 events.stream().map(this::toScheduleEventResponse).toList();
         return ResponseEntity.ok(Map.of("data", data));

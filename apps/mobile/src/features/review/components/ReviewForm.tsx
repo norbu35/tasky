@@ -15,7 +15,7 @@ import { ProfileAvatar } from '../../../components/ui';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
-const STAR_COLOR_ACTIVE = '#F59E0B';
+const STAR_COLOR_ACTIVE = colors.accent;
 const STAR_COUNT = 5;
 
 type RevieweeRole = 'customer' | 'tasker';
