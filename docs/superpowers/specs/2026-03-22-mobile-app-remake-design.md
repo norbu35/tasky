@@ -10,6 +10,8 @@
 
 The Tasky mobile app (Expo 52 / React Native 0.76) has ~15 screens built with ~3 wired to the backend API. The design artifact stack specifies 81 total screens (65 Phase 0-1, 9 Phase 2, 7 Phase 3+) with full component contracts, state matrices, journey catalogs, and per-screen YAML specs.
 
+**Existing wired screens:** TaskFeed (Browse), BookingList, and ProfileView are currently connected to the backend API via `useTasks`, `useBookings`, and `useProfile` hooks. All other screens use hardcoded/mock data or are unbuilt.
+
 **Goal:** Rewrite the UI layer of the mobile app to match the design spec, keeping the existing infrastructure (auth, API client, hooks, stores), and build out all remaining Phase 0-1 screens. The result is a compilable, navigable, visually consistent app with 65 screens covering both Customer and Tasker roles.
 
 **Approach:** Feature-Domain Batches with Shared Foundation (Approach B). A foundation session establishes shared infrastructure and visual system, then parallel agent batches build screens by feature domain across 4 subsequent sessions.
@@ -54,9 +56,11 @@ The Tasky mobile app (Expo 52 / React Native 0.76) has ~15 screens built with ~3
 | `space-lg` | 16px | Section separation within a screen |
 | `space-xl` | 24px | Between content blocks, major sections |
 | `space-2xl` | 32px | Screen top/bottom breathing room |
-| `space-3xl` | 48px | Hero areas, celebration screens |
+| `space-3xl` | 40px | Hero areas, celebration screens |
 
 **Rule:** All spacing uses these tokens. No magic numbers in screen code.
+
+**Precedence:** When this spec and the design artifacts (`design-system-additions.yaml`, `tokens.ts`) conflict on specific values, the design artifacts are authoritative. This spec describes intent and structure; the token files define exact values.
 
 ### 3.2 Card System — Hybrid Split-Card
 
@@ -68,21 +72,27 @@ The signature card pattern:
 
 ### 3.3 Elevation Tiers
 
-| Level | Shadow | Usage |
-|-------|--------|-------|
-| `elevation-0` | none | Inline elements, flat surfaces |
-| `elevation-1` | `0 2px 8px rgba(26,28,28,0.06)` | Cards, list items |
-| `elevation-2` | `0 4px 16px rgba(26,28,28,0.10)` | Bottom sheets, modals |
-| `elevation-3` | `0 8px 32px rgba(26,28,28,0.14)` | FAB, floating elements |
+Uses the existing shadow tokens from `tokens.ts`:
+
+| Level | Token | React Native Shadow | Usage |
+|-------|-------|---------------------|-------|
+| `elevation-0` | — | none | Inline elements, flat surfaces |
+| `elevation-1` | `shadows.card` | `offset: {0,1}, opacity: 0.05, radius: 2` | Cards, list items |
+| `elevation-2` | `shadows.elevated` | `offset: {0,4}, opacity: 0.10, radius: 6` | Bottom sheets, modals, sticky bars |
+| `elevation-3` | `shadows.navBar` | `offset: {0,-4}, opacity: 0.04, radius: 24` | FAB, tab bar, floating elements |
 
 ### 3.4 Animation Presets
 
-| Preset | Config | Usage |
-|--------|--------|-------|
-| `spring-press` | `damping: 15, stiffness: 150` | Button/card press feedback |
-| `spring-enter` | `damping: 20, stiffness: 120` | Screen content entrance |
-| `spring-sheet` | `damping: 25, stiffness: 180` | Bottom sheet open/close |
-| `timing-fade` | `duration: 200ms, easing: ease-out` | Opacity transitions, skeleton shimmer |
+Uses the motion system from `design-system-additions.yaml`:
+
+| Preset | Duration | Easing | Usage |
+|--------|----------|--------|-------|
+| `press` | instant (80ms) | standard `(0.4,0,0.2,1)` | Button/card press feedback, scale(0.98) + opacity(0.85) |
+| `enter` | normal (250ms) | decelerate `(0,0,0.2,1)` | Screen content entrance, fade + translateY |
+| `sheet` | normal (250ms) | spring `(0.34,1.56,0.64,1)` | Bottom sheet open/close |
+| `fade` | fast (150ms) | standard `(0.4,0,0.2,1)` | Opacity transitions, state changes |
+| `skeleton` | skeleton (1500ms) | standard | Shimmer loop for loading skeletons |
+| `celebration` | slow (400ms) | decelerate | Success checkmark SVG path draw |
 
 ### 3.5 Screen Template Visual Specs
 
@@ -92,9 +102,9 @@ The signature card pattern:
 
 **FormWizard:** Step indicator (dots or numbered) with `accent` for active, fields stacked with `space-lg` gap, sticky bottom Next/Back bar, inline validation errors in `danger` below fields.
 
-**ModalSheet:** Backdrop `rgba(0,0,0,0.4)`, white sheet with `radius-lg` top corners and drag handle, max 70% screen height (scrollable if overflow), action buttons at bottom with `space-md` gap.
+**ModalSheet:** Backdrop `rgba(16, 38, 56, 0.35)` (branded primaryDeep scrim, not generic black), white sheet with `radius-lg` top corners and drag handle, max 70% screen height (scrollable if overflow), action buttons at bottom with `space-md` gap. Full-screen modals use `rgba(16, 38, 56, 0.50)` scrim.
 
-**SuccessCelebration:** Centered layout with `space-3xl` top padding, hand-drawn checkmark SVG animation (path draw 600ms), headline in `primary-deep`, body in `primary`, "what happens next" section in `accent`, CTA at bottom.
+**SuccessCelebration:** Centered layout with `space-3xl` top padding, hand-drawn checkmark SVG animation (path draw, slow/400ms duration), headline in `primary-deep`, body in `primary`, "what happens next" section in `accent`, CTA at bottom.
 
 **Auth:** Centered content, single CTA, trust messaging, `primary-deep` headline.
 
@@ -267,7 +277,9 @@ Each screen-building agent receives this context:
 4. **Design system** — `design-system-additions.yaml` + `BRAND.md` v2.0
 5. **API wiring spec** — relevant hooks and endpoint contracts
 6. **Journey catalog** — the journeys that traverse its screens (for navigation correctness)
-7. **Localization files** — `en/translation.json` and `mn/translation.json`
+7. **Screen graph** — `screen-graph.yaml` (navigation adjacency, transition types, guards)
+8. **State matrix** — `state-matrix.yaml` (cross-cutting state coverage for validation)
+9. **Localization files** — `en/translation.json` and `mn/translation.json`
 
 ---
 
@@ -280,6 +292,7 @@ Each screen-building agent receives this context:
 | Backend endpoints missing | High for some | Hook-ready tier — typed hooks that work when endpoints arrive |
 | Agent exceeds context window | Low | Each batch is 4-8 screens, well within limits |
 | SecurityConfig gutted by subagent | Known risk | Verify SecurityConfig.java unchanged after each session (per memory) |
+| Session gate partial failure | Medium | If a batch fails its gate, other batches in the same session may proceed if they have no dependency on the failing batch. The failing batch enters a fix-and-retry cycle before the next session starts. |
 
 ---
 
