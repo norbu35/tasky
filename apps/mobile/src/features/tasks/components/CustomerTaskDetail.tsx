@@ -12,7 +12,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, MoreVertical, Calendar, Banknote, MapPin, Star, ShieldCheck, MessageSquare } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBadge, ProfileAvatar, Button } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 import { useBookings } from '../../bookings/hooks/useBookings';
 import { useCompleteBooking } from '../../bookings/hooks/useCompleteBooking';
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 64,
         paddingHorizontal: 24,
-        backgroundColor: 'rgba(249,249,249,0.7)',
+        backgroundColor: colors.background,
     },
     headerButton: {
         width: 40,
@@ -367,11 +367,7 @@ const styles = StyleSheet.create({
         borderColor: colors.card,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 3,
+        ...elevations.elevated,
     },
     mapPlaceholder: {
         fontSize: typography.caption,
@@ -387,11 +383,7 @@ const styles = StyleSheet.create({
     primaryAction: {
         borderRadius: radius.md,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        ...elevations.elevated,
     },
     primaryActionGradient: {
         paddingVertical: 16,

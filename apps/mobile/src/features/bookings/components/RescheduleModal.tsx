@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, overlays } from '../../../design/tokenAdapter';
 import { Button, Input } from '../../../components/ui';
 
 const { colors, radius, spacing, typography } = mobileTheme;
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     backdrop: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(16, 24, 34, 0.38)',
+        backgroundColor: overlays.sheet,
     },
     sheet: {
         backgroundColor: colors.card,

@@ -3,6 +3,9 @@ import { StyleSheet, Text, View, Alert } from 'react-native';
 import { Button, FormField, Input } from '../../../components/ui';
 import { useRequestOtp, useVerifyOtp, useDevLogin } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { mobileTheme } from '../../../design/tokenAdapter';
+
+const { colors, spacing, typography } = mobileTheme;
 
 export function LoginForm() {
     const [phone, setPhone] = useState('+976');
@@ -126,48 +129,49 @@ export function LoginForm() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        padding: spacing.xl,
         justifyContent: 'center',
         flex: 1,
     },
     title: {
-        fontSize: 24,
+        fontSize: typography.heading,
         fontWeight: 'bold',
-        marginBottom: 30,
+        marginBottom: spacing['2xl'],
         textAlign: 'center',
+        color: colors.foreground,
     },
     optionsContainer: {
         width: '100%',
     },
     fbButton: {
-        backgroundColor: '#1877F2', // Official Facebook Blue
-        marginBottom: 20,
+        backgroundColor: colors.accent, // Facebook-style CTA
+        marginBottom: spacing.xl,
     },
     devButton: {
-        marginTop: 40,
-        backgroundColor: '#f59e0b', // Amber to distinguish it
+        marginTop: spacing['2xl'],
+        backgroundColor: colors.secondary,
     },
     divider: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 20,
+        marginVertical: spacing.xl,
     },
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: '#e5e7eb',
+        backgroundColor: colors.border,
     },
     dividerText: {
-        marginHorizontal: 10,
-        color: '#6b7280',
+        marginHorizontal: spacing.md,
+        color: colors.mutedForeground,
         fontWeight: '500',
     },
     actions: {
-        marginTop: 20,
+        marginTop: spacing.xl,
     },
     error: {
-        color: 'red',
-        marginTop: 10,
+        color: colors.danger,
+        marginTop: spacing.md,
         textAlign: 'center',
     }
 });

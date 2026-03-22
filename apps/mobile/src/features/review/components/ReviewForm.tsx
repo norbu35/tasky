@@ -1,33 +1,22 @@
 import React, { useState, useCallback } from 'react';
 import {
     Pressable,
-    ScrollView,
     StyleSheet,
     Text,
     TextInput,
     View,
 } from 'react-native';
 import { Star } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../../design/tokenAdapter';
-import { ProfileAvatar } from '../../../components/ui';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
+import { useSubmitReview } from '../hooks/useSubmitReview';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
 const STAR_COLOR_ACTIVE = colors.accent;
 const STAR_COUNT = 5;
-
-type RevieweeRole = 'customer' | 'tasker';
-
-interface ReviewFormProps {
-    revieweeRole: RevieweeRole;
-    revieweeName: string;
-    revieweeAvatar?: string | null;
-    bookingId: string;
-    onSubmit?: (payload: ReviewPayload) => void;
-    onSkip?: () => void;
-}
 
 interface CategoryRating {
     key: string;
@@ -41,27 +30,24 @@ export interface ReviewPayload {
     comment: string;
 }
 
-function getCategoriesForRole(role: RevieweeRole): CategoryRating[] {
-    if (role === 'tasker') {
-        // Customer reviewing a Tasker
-        return [
-            { key: 'qualityOfWork', labelKey: 'review.qualityOfWork', value: 0 },
-            { key: 'punctuality', labelKey: 'review.punctuality', value: 0 },
-            { key: 'communication', labelKey: 'review.communication', value: 0 },
-        ];
-    }
-    // Tasker reviewing a Customer
-    return [
-        { key: 'taskDescriptionClarity', labelKey: 'review.taskDescriptionClarity', value: 0 },
-        { key: 'respectfulness', labelKey: 'review.respectfulness', value: 0 },
-        { key: 'punctuality', labelKey: 'review.punctuality', value: 0 },
-    ];
-}
+const TASKER_CATEGORIES: CategoryRating[] = [
+    { key: 'qualityOfWork', labelKey: 'shared.review.qualityOfWork', value: 0 },
+    { key: 'punctuality', labelKey: 'shared.review.punctuality', value: 0 },
+    { key: 'communication', labelKey: 'shared.review.communication', value: 0 },
+];
+
+const CUSTOMER_CATEGORIES: CategoryRating[] = [
+    { key: 'taskDescriptionClarity', labelKey: 'shared.review.taskClarity', value: 0 },
+    { key: 'respectfulness', labelKey: 'shared.review.respectfulness', value: 0 },
+    { key: 'punctuality', labelKey: 'shared.review.punctuality', value: 0 },
+];
 
 function StarRatingInput({
+    categoryKey,
     value,
     onChange,
 }: {
+    categoryKey: string;
     value: number;
     onChange: (rating: number) => void;
 }) {
@@ -73,6 +59,7 @@ function StarRatingInput({
                 return (
                     <Pressable
                         key={starIndex}
+                        testID={`rating-${categoryKey}-star-${starIndex}`}
                         onPress={() => onChange(starIndex)}
                         hitSlop={6}
                         style={styles.starHit}
@@ -89,18 +76,24 @@ function StarRatingInput({
     );
 }
 
-export function ReviewForm({
-    revieweeRole,
-    revieweeName,
-    revieweeAvatar,
-    bookingId,
-    onSubmit,
-    onSkip,
-}: ReviewFormProps) {
+/**
+ * Full-screen Review Form component (SCR-SHARED-017).
+ * Uses FormWizardTemplate with useSubmitReview hook.
+ */
+export default function ReviewFormScreen() {
     const { t } = useTranslation();
+    const { bookingId = '', role = 'tasker' } = useLocalSearchParams<{
+        bookingId: string;
+        role: string;
+        name: string;
+    }>();
+
+    const submitReview = useSubmitReview();
+
+    const initialCategories = role === 'customer' ? CUSTOMER_CATEGORIES : TASKER_CATEGORIES;
 
     const [categories, setCategories] = useState<CategoryRating[]>(
-        () => getCategoriesForRole(revieweeRole),
+        () => initialCategories.map((c) => ({ ...c })),
     );
     const [comment, setComment] = useState('');
 
@@ -120,23 +113,25 @@ export function ReviewForm({
             ratings[c.key] = c.value;
         }
 
-        onSubmit?.({ bookingId, ratings, comment: comment.trim() });
-    }, [allRated, categories, comment, bookingId, onSubmit]);
+        submitReview.mutate({
+            bookingId,
+            ratings,
+            comment: comment.trim(),
+        });
+    }, [allRated, categories, comment, bookingId, submitReview]);
 
     return (
-        <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
+        <FormWizardTemplate
+            testID="review-form"
+            currentStep={0}
+            totalSteps={1}
+            onNext={handleSubmit}
+            nextLabel={t('shared.review.submit')}
+            nextDisabled={!allRated}
+            nextLoading={submitReview.isPending}
+            showBack={false}
         >
-            {/* Header */}
-            <Text style={styles.title}>{t('review.rateExperience')}</Text>
-
-            {/* Reviewee identity */}
-            <View style={styles.revieweeSection}>
-                <ProfileAvatar uri={revieweeAvatar} name={revieweeName} size="lg" />
-                <Text style={styles.revieweeName}>{revieweeName}</Text>
-            </View>
+            <Text style={styles.title}>{t('shared.review.title')}</Text>
 
             {/* Category ratings */}
             <View style={styles.categoriesCard}>
@@ -144,6 +139,7 @@ export function ReviewForm({
                     <View key={category.key} style={styles.categoryRow}>
                         <Text style={styles.categoryLabel}>{t(category.labelKey)}</Text>
                         <StarRatingInput
+                            categoryKey={category.key}
                             value={category.value}
                             onChange={(rating) => handleRatingChange(category.key, rating)}
                         />
@@ -151,12 +147,13 @@ export function ReviewForm({
                 ))}
             </View>
 
-            {/* Freetext comment */}
+            {/* Comment */}
             <View style={styles.commentCard}>
                 <TextInput
+                    testID="review-comment-input"
                     style={styles.commentInput}
-                    placeholder={t('review.commentPlaceholder')}
-                    placeholderTextColor={colors.textTertiary}
+                    placeholder={t('shared.review.commentPlaceholder')}
+                    placeholderTextColor={colors.mutedForeground}
                     multiline
                     textAlignVertical="top"
                     value={comment}
@@ -164,87 +161,30 @@ export function ReviewForm({
                     maxLength={500}
                 />
             </View>
-
-            {/* Submit button (primary gradient) */}
-            <Pressable
-                onPress={handleSubmit}
-                disabled={!allRated}
-                style={({ pressed }) => [
-                    styles.submitPressable,
-                    !allRated && styles.submitDisabled,
-                    pressed && allRated && styles.submitPressed,
-                ]}
-            >
-                <LinearGradient
-                    colors={[colors.primaryDeep, colors.primary]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.submitGradient}
-                >
-                    <Text style={styles.submitText}>{t('review.submitReview')}</Text>
-                </LinearGradient>
-            </Pressable>
-
-            {/* Skip link with mandatory note */}
-            <View style={styles.skipSection}>
-                <Pressable onPress={onSkip} hitSlop={8}>
-                    <Text style={styles.skipText}>{t('review.skipForNow')}</Text>
-                </Pressable>
-                <Text style={styles.mandatoryNote}>{t('review.mandatoryNote')}</Text>
-            </View>
-        </ScrollView>
+        </FormWizardTemplate>
     );
 }
 
 const styles = StyleSheet.create({
-    scroll: {
-        flex: 1,
-        backgroundColor: colors.background,
-    },
-    container: {
-        paddingHorizontal: spacing.lg,
-        paddingTop: spacing.xl,
-        paddingBottom: spacing.xl * 2,
-        alignItems: 'center',
-    },
     title: {
         fontSize: typography.title,
         fontWeight: '700',
         color: colors.foreground,
         textAlign: 'center',
-        marginBottom: spacing.lg,
     },
-
-    // Reviewee
-    revieweeSection: {
-        alignItems: 'center',
-        gap: spacing.sm,
-        marginBottom: spacing.xl,
-    },
-    revieweeName: {
-        fontSize: typography.body,
-        fontWeight: '600',
-        color: colors.foreground,
-    },
-
-    // Categories card
     categoriesCard: {
         width: '100%',
         backgroundColor: colors.card,
         borderRadius: radius.lg,
         padding: spacing.lg,
         gap: spacing.lg,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
+        ...elevations.card,
     },
     categoryRow: {
         gap: spacing.xs,
     },
     categoryLabel: {
-        fontSize: typography.label,
+        fontSize: typography.body,
         fontWeight: '600',
         color: colors.foreground,
     },
@@ -256,18 +196,11 @@ const styles = StyleSheet.create({
     starHit: {
         padding: 2,
     },
-
-    // Comment card
     commentCard: {
         width: '100%',
         backgroundColor: colors.card,
         borderRadius: radius.lg,
-        marginTop: spacing.md,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
+        ...elevations.card,
     },
     commentInput: {
         minHeight: 100,
@@ -275,50 +208,5 @@ const styles = StyleSheet.create({
         fontSize: typography.body,
         color: colors.foreground,
         lineHeight: 22,
-    },
-
-    // Submit
-    submitPressable: {
-        width: '100%',
-        marginTop: spacing.xl,
-        borderRadius: radius.md,
-        overflow: 'hidden',
-    },
-    submitGradient: {
-        paddingVertical: 14,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: radius.md,
-    },
-    submitText: {
-        fontSize: typography.body,
-        fontWeight: '700',
-        color: colors.primaryForeground,
-        letterSpacing: 0.5,
-    },
-    submitDisabled: {
-        opacity: 0.5,
-    },
-    submitPressed: {
-        opacity: 0.9,
-    },
-
-    // Skip
-    skipSection: {
-        alignItems: 'center',
-        marginTop: spacing.lg,
-        gap: spacing.xs,
-    },
-    skipText: {
-        fontSize: typography.label,
-        fontWeight: '600',
-        color: colors.primaryDeep,
-    },
-    mandatoryNote: {
-        fontSize: typography.micro,
-        color: colors.textTertiary,
-        textAlign: 'center',
-        paddingHorizontal: spacing.md,
-        lineHeight: 16,
     },
 });

@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderTopLeftRadius: radius.md,
         borderTopRightRadius: radius.md,
-        shadowColor: '#1A1C1C',
+        shadowColor: colors.foreground,
         shadowOffset: { width: 0, height: -4 },
         shadowOpacity: 0.04,
         shadowRadius: 24,

@@ -7,9 +7,9 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 
-const { colors } = mobileTheme;
+const { colors, spacing, radius } = mobileTheme;
 
 export function TaskCardSkeleton() {
   const opacity = useSharedValue(0.3);
@@ -42,34 +42,30 @@ export function TaskCardSkeleton() {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: colors.card,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderRadius: radius.md,
+    ...elevations.card,
   },
   titleSkeleton: {
     height: 20,
     backgroundColor: colors.muted,
-    borderRadius: 4,
-    marginBottom: 8,
+    borderRadius: radius.xs,
+    marginBottom: spacing.sm,
     width: '80%',
   },
   priceSkeleton: {
     height: 18,
     backgroundColor: colors.muted,
-    borderRadius: 4,
-    marginBottom: 8,
+    borderRadius: radius.xs,
+    marginBottom: spacing.sm,
     width: '40%',
   },
   locSkeleton: {
     height: 14,
     backgroundColor: colors.muted,
-    borderRadius: 4,
+    borderRadius: radius.xs,
     width: '60%',
   },
 });
