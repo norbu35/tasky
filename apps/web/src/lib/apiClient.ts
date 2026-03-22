@@ -139,6 +139,9 @@ export interface ApiClient {
             location_text: string;
             scheduled_at: string;
             photo_keys?: string[];
+            intake_answers?: Record<string, unknown>;
+            intake_schema_version?: number;
+            scope_summary?: string;
         }
     ): Promise<Task>;
 
@@ -431,6 +434,9 @@ export class HttpApiClient implements ApiClient {
             location_text: string;
             scheduled_at: string;
             photo_keys?: string[];
+            intake_answers?: Record<string, unknown>;
+            intake_schema_version?: number;
+            scope_summary?: string;
         }
     ): Promise<Task> {
         return this.requestJson<Task>(
