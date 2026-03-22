@@ -974,6 +974,63 @@ public class AuthService {
         }
     }
 
+    /**
+     * Searches users by full name prefix and returns cursor-paged profile results.
+     */
+    public UserProfilePage searchUsersByName(String name, String cursor, int limit) {
+        if (!StringUtils.hasText(name) || name.trim().length() < 2) {
+            return new UserProfilePage(List.of(), null, false);
+        }
+        String pattern = name.trim() + "%";
+        UUID cursorId = parseUserSearchCursor(cursor);
+
+        List<AuthUser> candidates = cursorId == null
+                ? userDao.searchByName(pattern, limit + 1)
+                : userDao.searchByNameAfterCursor(pattern, cursorId, limit + 1);
+
+        List<UserProfile> profiles = candidates.stream()
+                .map(user -> {
+                    String effectiveStatus = resolveUserStatus(user.id(), user.status());
+                    AuthUser effective = new AuthUser(
+                            user.id(), user.phone(), user.facebookId(), user.role(),
+                            effectiveStatus, user.primaryAuth(), user.createdAt(), user.updatedAt());
+                    return toProfile(effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
+                })
+                .toList();
+
+        boolean hasMore = profiles.size() > limit;
+        List<UserProfile> pageData = hasMore ? profiles.subList(0, limit) : profiles;
+        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
+        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
+    }
+
+    /**
+     * Searches users by exact Facebook ID and returns cursor-paged profile results.
+     */
+    public UserProfilePage searchUsersByFacebookId(String facebookId, String cursor, int limit) {
+        if (!StringUtils.hasText(facebookId)) {
+            return new UserProfilePage(List.of(), null, false);
+        }
+        UUID cursorId = parseUserSearchCursor(cursor);
+        List<UserProfile> candidates = userDao.findByFacebookId(facebookId.trim())
+                .map(user -> {
+                    String effectiveStatus = resolveUserStatus(user.id(), user.status());
+                    AuthUser effective = new AuthUser(
+                            user.id(), user.phone(), user.facebookId(), user.role(),
+                            effectiveStatus, user.primaryAuth(), user.createdAt(), user.updatedAt());
+                    return toProfile(effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
+                })
+                .stream()
+                .filter(p -> cursorId == null || UUID.fromString(p.id()).compareTo(cursorId) > 0)
+                .limit(limit + 1L)
+                .toList();
+
+        boolean hasMore = candidates.size() > limit;
+        List<UserProfile> pageData = hasMore ? candidates.subList(0, limit) : candidates;
+        String nextCursor = hasMore && !pageData.isEmpty() ? pageData.getLast().id() : null;
+        return new UserProfilePage(List.copyOf(pageData), nextCursor, hasMore);
+    }
+
     private List<UserProfile> searchUsersByPhoneExact(String phone) {
         String normalizedPhone = normalizePhone(phone);
         if (!StringUtils.hasText(normalizedPhone)) {
