@@ -37,7 +37,7 @@ public class DomainEventOutboxProcessor {
     private final int batchSize;
     private final long retryDelaySeconds;
     private final long processingLeaseSeconds;
-    private final double platformFeePercent;
+    private final int platformFeeBasisPoints;
 
     public DomainEventOutboxProcessor(
             OutboxEventDao outboxEventDao,
@@ -52,7 +52,7 @@ public class DomainEventOutboxProcessor {
             @Value("${tasky.outbox.processor.batch-size:25}") int batchSize,
             @Value("${tasky.outbox.processor.retry-delay-seconds:15}") long retryDelaySeconds,
             @Value("${tasky.outbox.processor.processing-lease-seconds:60}") long processingLeaseSeconds,
-            @Value("${tasky.wallet.platform-fee-percent:0.15}") double platformFeePercent) {
+            @Value("${tasky.wallet.platform-fee-basis-points:1500}") int platformFeeBasisPoints) {
         this.outboxEventDao = outboxEventDao;
         this.objectMapper = objectMapper;
         this.messagingService = messagingService;
@@ -65,7 +65,7 @@ public class DomainEventOutboxProcessor {
         this.batchSize = batchSize;
         this.retryDelaySeconds = retryDelaySeconds;
         this.processingLeaseSeconds = processingLeaseSeconds;
-        this.platformFeePercent = platformFeePercent;
+        this.platformFeeBasisPoints = platformFeeBasisPoints;
     }
 
     @Scheduled(fixedDelayString = "${tasky.outbox.processor.poll-interval-ms:1000}")
@@ -190,7 +190,7 @@ public class DomainEventOutboxProcessor {
         String taskerId = requiredString(payload, "tasker_id");
         int price = requiredInt(payload);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeePercent);
+        walletService.creditTaskCompletion(taskerId, bookingId, price, platformFeeBasisPoints);
         notificationService.sendPushWithEventKey(
                 taskerId,
                 "Job Complete",

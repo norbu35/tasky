@@ -11,7 +11,10 @@ import mn.tasky.wallet.dao.WalletDao;
 import mn.tasky.wallet.dto.LedgerEntry;
 import mn.tasky.wallet.dto.PayoutRequest;
 import mn.tasky.wallet.dto.WalletBalance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service managing user wallets, financial transactions, holds, and payouts.
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WalletService {
+
+    private static final Logger log = LoggerFactory.getLogger(WalletService.class);
 
     private final WalletDao walletDao;
     private final LedgerEntryDao ledgerEntryDao;
@@ -36,13 +41,6 @@ public class WalletService {
         this.creditedBookingDao = creditedBookingDao;
     }
 
-    /**
-     * Retrieves the current balance and pending payouts for a given user.
-     * Ensures the wallet exists before querying.
-     *
-     * @param userId The ID of the user.
-     * @return A {@link WalletBalance} object representing the user's funds.
-     */
     public WalletBalance getBalance(String userId) {
         walletDao.ensureExists(userId, Instant.now());
         Long balance = walletDao.getBalance(userId);
@@ -50,31 +48,17 @@ public class WalletService {
         return new WalletBalance(balance != null ? balance : 0L, pendingPayout, "MNT");
     }
 
-    /**
-     * Lists all ledger entries (transactions) for a specific user.
-     *
-     * @param userId The ID of the user.
-     * @return A list of {@link LedgerEntry} objects.
-     */
     public List<LedgerEntry> listTransactions(String userId) {
         return ledgerEntryDao.findByUserId(userId);
     }
 
-    /**
-     * Credits the tasker's wallet upon task completion, deducting the platform fee.
-     * Records the deposit for the tasker and the fee for the platform.
-     *
-     * @param taskerId    The ID of the tasker receiving the funds.
-     * @param bookingId   The ID of the completed booking.
-     * @param totalAmount The total amount paid by the customer.
-     * @param feePercent  The platform fee percentage (e.g., 0.15 for 15%).
-     */
-    public void creditTaskCompletion(String taskerId, String bookingId, int totalAmount, double feePercent) {
+    @Transactional
+    public void creditTaskCompletion(String taskerId, String bookingId, int totalAmount, int feeBasisPoints) {
         if (creditedBookingDao.tryInsert(bookingId) == 0) {
             return;
         }
 
-        int feeAmount = (int) Math.round(totalAmount * feePercent);
+        int feeAmount = (int) ((long) totalAmount * feeBasisPoints / 10_000);
         int creditAmount = totalAmount - feeAmount;
 
         Instant now = Instant.now();
@@ -98,124 +82,75 @@ public class WalletService {
                 bookingId,
                 "Platform fee for booking #" + bookingId,
                 now);
+
+        log.info("wallet_credit taskerId={} bookingId={} creditAmount={} feeAmount={}", taskerId, bookingId, creditAmount, feeAmount);
     }
 
-    /**
-     * Holds a specified amount of funds in the user's wallet, reducing their available balance.
-     * Used typically during disputes or pending operations.
-     *
-     * @param userId      The ID of the user.
-     * @param amount      The amount to hold.
-     * @param referenceId A reference ID (e.g., dispute ID).
-     * @param description A description of why funds are held.
-     */
+    @Transactional
     public void holdFunds(String userId, int amount, String referenceId, String description) {
         walletDao.ensureExists(userId, Instant.now());
-        Long currentBalance = walletDao.getBalance(userId);
-        if (currentBalance == null || currentBalance < amount) {
+        Instant now = Instant.now();
+        int rows = walletDao.debitBalance(userId, amount, now);
+        if (rows == 0) {
             throw new IllegalArgumentException("Insufficient balance to hold");
         }
-
-        Instant now = Instant.now();
-        walletDao.addBalance(userId, -amount, now);
         walletDao.addHeldBalance(userId, amount, now);
-
         ledgerEntryDao.insert(UUID.randomUUID().toString(), userId, -amount, "HOLD", referenceId, description, now);
+        log.info("wallet_hold userId={} amount={} referenceId={}", userId, amount, referenceId);
     }
 
-    /**
-     * Releases previously held funds back into the user's available balance.
-     *
-     * @param userId      The ID of the user.
-     * @param amount      The amount to release.
-     * @param referenceId A reference ID.
-     * @param description A description of the release.
-     */
+    @Transactional
     public void releaseFunds(String userId, int amount, String referenceId, String description) {
-        Long currentHeld = walletDao.getHeldBalance(userId);
-        if (currentHeld == null || currentHeld < amount) {
+        Instant now = Instant.now();
+        int rows = walletDao.debitHeldBalance(userId, amount, now);
+        if (rows == 0) {
             throw new IllegalArgumentException("Insufficient held balance to release");
         }
-
-        Instant now = Instant.now();
-        walletDao.addHeldBalance(userId, -amount, now);
         walletDao.addBalance(userId, amount, now);
-
         ledgerEntryDao.insert(UUID.randomUUID().toString(), userId, amount, "RELEASE", referenceId, description, now);
+        log.info("wallet_release userId={} amount={} referenceId={}", userId, amount, referenceId);
     }
 
-    /**
-     * Confiscates currently held funds, permanently removing them from the user's account.
-     * Typically used when a dispute is resolved against the user.
-     *
-     * @param userId      The ID of the user.
-     * @param amount      The amount to confiscate.
-     * @param referenceId A reference ID.
-     * @param description A description of the confiscation.
-     */
+    @Transactional
     public void confiscateFunds(String userId, int amount, String referenceId, String description) {
-        Long currentHeld = walletDao.getHeldBalance(userId);
-        if (currentHeld == null || currentHeld < amount) {
+        Instant now = Instant.now();
+        int rows = walletDao.debitHeldBalance(userId, amount, now);
+        if (rows == 0) {
             throw new IllegalArgumentException("Insufficient held balance to confiscate");
         }
-
-        Instant now = Instant.now();
-        walletDao.addHeldBalance(userId, -amount, now);
-
         ledgerEntryDao.insert(
                 UUID.randomUUID().toString(), userId, -amount, "CONFISCATE", referenceId, description, now);
+        log.info("wallet_confiscate userId={} amount={} referenceId={}", userId, amount, referenceId);
     }
 
-    /**
-     * Initiates a request to withdraw funds from the wallet.
-     * Deducts the requested amount from the available balance and creates a pending payout request.
-     *
-     * @param userId The ID of the user requesting the payout.
-     * @param amount The amount to withdraw.
-     * @return The ID of the generated payout request.
-     */
+    @Transactional
     public String requestPayout(String userId, int amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Payout amount must be greater than zero");
         }
 
         walletDao.ensureExists(userId, Instant.now());
-        Long currentBalance = walletDao.getBalance(userId);
-        if (currentBalance == null || currentBalance < amount) {
+        Instant now = Instant.now();
+        int rows = walletDao.debitBalance(userId, amount, now);
+        if (rows == 0) {
             throw new IllegalArgumentException("Insufficient balance for payout");
         }
 
-        walletDao.addBalance(userId, -amount, Instant.now());
-
         String payoutId = UUID.randomUUID().toString();
-        payoutRequestDao.insert(payoutId, userId, amount, "PENDING", Instant.now());
+        payoutRequestDao.insert(payoutId, userId, amount, "PENDING", now);
+        log.info("wallet_payout_requested userId={} amount={} payoutId={}", userId, amount, payoutId);
         return payoutId;
     }
 
-    /**
-     * Retrieves all payout requests that are currently in a PENDING state.
-     *
-     * @return A list of pending {@link PayoutRequest} objects.
-     */
     public List<PayoutRequest> listPendingPayouts() {
         return payoutRequestDao.findPending();
     }
 
-    /**
-     * Retrieves a specific payout request by its ID.
-     *
-     * @param payoutId The ID of the payout request.
-     * @return An Optional containing the {@link PayoutRequest} if found.
-     */
     public Optional<PayoutRequest> getPayout(String payoutId) {
         return payoutRequestDao.findById(payoutId);
     }
 
-    /**
-     * Processes a pending payout request, marking it as PROCESSED and creating a ledger entry.
-     *
-     * @param payoutId The ID of the payout request to process.
-     */
+    @Transactional
     public void processPayout(String payoutId) {
         Optional<PayoutRequest> payoutOpt = payoutRequestDao.findById(payoutId);
         if (payoutOpt.isEmpty()) {
@@ -237,16 +172,10 @@ public class WalletService {
                 payout.id(),
                 "Payout processed",
                 now);
+        log.info("wallet_payout_processed payoutId={} userId={} amount={}", payoutId, payout.userId(), payout.amount());
     }
 
-    /**
-     * Credits a refund to the user's wallet.
-     *
-     * @param userId      The ID of the user receiving the refund.
-     * @param amount      The refunded amount.
-     * @param bookingId   The ID of the associated booking.
-     * @param description A description of the refund.
-     */
+    @Transactional
     public void creditRefund(String userId, int amount, String bookingId, String description) {
         if (amount <= 0) {
             return;
@@ -255,15 +184,10 @@ public class WalletService {
         Instant now = Instant.now();
         walletDao.addBalance(userId, amount, now);
         ledgerEntryDao.insert(UUID.randomUUID().toString(), userId, amount, "REFUND", bookingId, description, now);
+        log.info("wallet_refund userId={} amount={} bookingId={}", userId, amount, bookingId);
     }
 
-    /**
-     * Credits a late cancellation fee to the user's wallet.
-     *
-     * @param userId    The ID of the user receiving the cancellation fee.
-     * @param amount    The fee amount.
-     * @param bookingId The ID of the canceled booking.
-     */
+    @Transactional
     public void creditCancellationFee(String userId, int amount, String bookingId) {
         if (amount <= 0) {
             return;
@@ -279,5 +203,6 @@ public class WalletService {
                 bookingId,
                 "Late cancellation fee for booking #" + bookingId,
                 now);
+        log.info("wallet_cancellation_fee userId={} amount={} bookingId={}", userId, amount, bookingId);
     }
 }

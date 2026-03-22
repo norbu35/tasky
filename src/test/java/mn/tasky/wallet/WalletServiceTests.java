@@ -49,7 +49,7 @@ class WalletServiceTests {
         String bookingId = uuid(2);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(1);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
+        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 1000);
 
         verify(walletDao).ensureExists(eq(taskerId), any());
         verify(walletDao).addBalance(eq(taskerId), eq(9000L), any());
@@ -83,7 +83,7 @@ class WalletServiceTests {
         String bookingId = uuid(4);
         when(creditedBookingDao.tryInsert(bookingId)).thenReturn(0);
 
-        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 0.10);
+        walletService.creditTaskCompletion(taskerId, bookingId, 10000, 1000);
 
         verify(walletDao, never())
                 .addBalance(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyLong(), any());

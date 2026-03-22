@@ -75,7 +75,7 @@ class PayoutIntegrationTests extends IntegrationTestBase {
 
         // Credit wallet first
         walletService.creditTaskCompletion(
-                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 0.1); // 9000 credit
+                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 1000); // 9000 credit
 
         // Request payout
         ResponseEntity<Map> response = postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", 5000));
@@ -198,7 +198,7 @@ class PayoutIntegrationTests extends IntegrationTestBase {
         String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
 
         walletService.creditTaskCompletion(
-                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 0.1); // 9000 credit
+                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 1000); // 9000 credit
 
         ResponseEntity<Map> response = postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", 10000));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -213,7 +213,7 @@ class PayoutIntegrationTests extends IntegrationTestBase {
         String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
 
         walletService.creditTaskCompletion(
-                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 0.1);
+                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 1000);
 
         ResponseEntity<Map> zeroAmount = postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", 0));
         assertThat(zeroAmount.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -230,8 +230,8 @@ class PayoutIntegrationTests extends IntegrationTestBase {
         String taskerToken = tokenFor("TASKER", "ACTIVE", tasker.userId());
 
         String bookingId = createBooking(customer.userId(), tasker.userId());
-        walletService.creditTaskCompletion(tasker.userId(), bookingId, 10000, 0.1);
-        walletService.creditTaskCompletion(tasker.userId(), bookingId, 10000, 0.1);
+        walletService.creditTaskCompletion(tasker.userId(), bookingId, 10000, 1000);
+        walletService.creditTaskCompletion(tasker.userId(), bookingId, 10000, 1000);
 
         ResponseEntity<Map> balanceResponse = getWithAuth("/api/v1/wallet", taskerToken);
         assertThat(((Number) balanceResponse.getBody().get("balance")).intValue())
@@ -248,7 +248,7 @@ class PayoutIntegrationTests extends IntegrationTestBase {
         String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
 
         walletService.creditTaskCompletion(
-                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 0.1);
+                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 1000);
         String payoutId = (String) postWithAuth("/api/v1/wallet/payouts", taskerToken, Map.of("amount", 5000))
                 .getBody()
                 .get("id");

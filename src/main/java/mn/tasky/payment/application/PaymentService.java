@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 /**
@@ -136,6 +137,7 @@ public class PaymentService {
      * {@code false} when rejected or not applicable.
      * @throws IllegalStateException if monetization is disabled.
      */
+    @Transactional
     public boolean processCallback(String paymentId, String status, long timestamp, String signature) {
         ensureMonetizationEnabled();
         if (!isValidSignature(paymentId, status, timestamp, signature)) {
