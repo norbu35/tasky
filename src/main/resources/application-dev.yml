@@ -8,15 +8,15 @@ tasky:
   dev-auth:
     enabled: true
   auth:
-    otp-test-code: "123456"
+    otp-test-code: ${TASKY_OTP_TEST_CODE:}
   facebook:
-    app-id: "934714008897101"
-    app-secret: "1d9b7d23a7c9e15ab95fd3af378cf293"
+    app-id: ${TASKY_FACEBOOK_APP_ID:dev-placeholder}
+    app-secret: ${TASKY_FACEBOOK_APP_SECRET:dev-placeholder}
   security:
-    jwt-secret: "dev-only-jwt-secret-not-for-production-use-replace-me-1234567890"
-    encryption-key: "xBN9U7Shl9TxpE+B4H8C68T0oPuEht0SGeyQf4o/yag="
-    blind-index-key: "dev-only-blind-index-key-not-for-production-use-replace-me-12345"
+    jwt-secret: ${TASKY_JWT_SECRET:dev-only-jwt-secret-not-for-production-use-replace-me-1234567890}
+    encryption-key: ${TASKY_ENCRYPTION_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
+    blind-index-key: ${TASKY_BLIND_INDEX_KEY:dev-only-blind-index-key-not-for-production-use-replace-me-12345}
     access-token-ttl-seconds: 3600
     refresh-token-ttl-seconds: 2592000
   qpay:
-    webhook-secret: "dev-only-qpay-webhook-secret-not-for-production-use-replace-me"
+    webhook-secret: ${TASKY_QPAY_WEBHOOK_SECRET:dev-only-qpay-webhook-secret-not-for-production-use-replace-me}
