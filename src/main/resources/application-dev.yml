@@ -15,7 +15,7 @@ tasky:
   security:
     jwt-secret: ${TASKY_JWT_SECRET:dev-only-jwt-secret-not-for-production-use-replace-me-1234567890}
     encryption-key: ${TASKY_ENCRYPTION_KEY:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
-    blind-index-key: ${TASKY_BLIND_INDEX_KEY:dev-only-blind-index-key-not-for-production-use-replace-me-12345}
+    blind-index-key: ${TASKY_BLIND_INDEX_KEY:BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBQ=}
     access-token-ttl-seconds: 3600
     refresh-token-ttl-seconds: 2592000
   qpay:
