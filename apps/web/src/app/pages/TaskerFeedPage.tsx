@@ -4,7 +4,6 @@ import { useCategoriesQuery, useTasksQuery } from "@tasky/core";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useAppContext } from "../context/AppContext";
@@ -75,72 +74,46 @@ export function TaskerFeedPage() {
     return (
         <ScreenFrame>
             <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-display font-bold tracking-tight">{t("taskerFeed.title", "Open task feed")}</h1>
-                        <p className="text-muted-foreground mt-1">
-                            {t("taskerFeed.subtitle", "Browse available tasks near your location and apply to them.")}
-                        </p>
-                    </div>
+                {/* Page header */}
+                <div className="mb-4">
+                  <h1 className="text-2xl font-display font-bold tracking-tight">
+                    {t("taskerFeed.title", "Available Tasks")}
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t("taskerFeed.subtitle", "Find nearby opportunities in Ulaanbaatar based on your skills.")}
+                  </p>
                 </div>
 
-                <Card className="border-border shadow-md bg-card/50 backdrop-blur-sm">
-                    <CardContent className="pt-6 grid gap-4">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="feed-category"
-                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.categoryLabel", "Category")}</Label>
-                                <select
-                                    id="feed-category"
-                                    className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                    value={filters.categoryId}
-                                    onChange={(event) => setFilters(prev => ({
-                                        ...prev,
-                                        categoryId: event.target.value
-                                    }))}
-                                    disabled={loadingCategories}
-                                >
-                                    <option value="">{t("taskerFeed.allCategories", "All categories")}</option>
-                                    {categories.map((c: Category) => (
-                                        <option key={c.id} value={c.id}>
-                                            {i18n.language === "mn" ? c.name_mn : c.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="feed-lat"
-                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.latLabel", "Latitude")}</Label>
-                                <Input
-                                    id="feed-lat"
-                                    value={filters.lat}
-                                    onChange={(e) => setFilters(prev => ({...prev, lat: e.target.value}))}
-                                    className="rounded-xl bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="feed-lng"
-                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.lngLabel", "Longitude")}</Label>
-                                <Input
-                                    id="feed-lng"
-                                    value={filters.lng}
-                                    onChange={(e) => setFilters(prev => ({...prev, lng: e.target.value}))}
-                                    className="rounded-xl bg-background"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="feed-radius"
-                                       className="text-xs uppercase font-semibold text-muted-foreground tracking-wider">{t("taskerFeed.radiusLabel", "Radius (km)")}</Label>
-                                <Input
-                                    id="feed-radius"
-                                    value={filters.radiusKm}
-                                    onChange={(e) => setFilters(prev => ({...prev, radiusKm: e.target.value}))}
-                                    className="rounded-xl bg-background"
-                                />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                {/* Category filter chips */}
+                <div className="flex gap-2 overflow-x-auto pb-1 mb-4 scrollbar-none">
+                  <button
+                    type="button"
+                    aria-pressed={!filters.categoryId}
+                    onClick={() => setFilters((prev) => ({ ...prev, categoryId: "" }))}
+                    className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+                      !filters.categoryId
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card text-muted-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {t("taskerFeed.allCategories", "All")}
+                  </button>
+                  {categories.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-pressed={filters.categoryId === c.id}
+                      onClick={() => setFilters((prev) => ({ ...prev, categoryId: c.id }))}
+                      className={`flex-shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+                        filters.categoryId === c.id
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-card text-muted-foreground border-border hover:border-primary/50"
+                      }`}
+                    >
+                      {i18n.resolvedLanguage === "mn" ? c.name_mn : c.name}
+                    </button>
+                  ))}
+                </div>
 
                 {tasksError &&
                     <p className="text-sm text-destructive font-medium p-4 bg-destructive/10 rounded-xl">{parseError(tasksError)}</p>}

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type Conversation, type Message } from "../../lib/apiClient";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Switch } from "../../components/ui/switch";
-import { Label } from "../../components/ui/label";
 import { useAppContext } from "../context/AppContext";
 import { ScreenFrame } from "../layout/ScreenFrame";
 import { parseError } from "../utils/errorHandling";
@@ -155,18 +153,20 @@ export function MessagingNotificationsPage() {
     return (
         <ScreenFrame>
             <div className="max-w-6xl mx-auto h-[calc(100vh-140px)] flex flex-col items-center">
-                <div className="w-full flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-bold tracking-tight">{t("messaging.inboxTitle", "Inbox")}</h1>
-                    <div className="flex items-center gap-2 border px-3 py-1.5 rounded-full bg-card">
-                        <Label htmlFor="push-toggle"
-                               className="text-sm font-medium cursor-pointer flex gap-1 items-center">
-                            {pushEnabled ? <Bell className="w-4 h-4 text-green-600"/> :
-                                <BellOff className="w-4 h-4 text-muted-foreground"/>}
-                            {t("messaging.notificationsLabel", "Notifications")}
-                        </Label>
-                        <Switch id="push-toggle" checked={pushEnabled} onCheckedChange={handlePushToggle}
-                                disabled={working}/>
-                    </div>
+                <div className="w-full flex items-center justify-between mb-4">
+                  <h1 className="text-2xl font-display font-bold">
+                    {t("messaging.inboxTitle", "Messages")}
+                  </h1>
+                  <button
+                    type="button"
+                    aria-label={t("messaging.notificationsLabel", "Notifications")}
+                    onClick={() => void handlePushToggle(!pushEnabled)}
+                    className="p-2 rounded-full hover:bg-muted transition-colors"
+                  >
+                    {pushEnabled
+                      ? <Bell className="w-5 h-5 text-primary" />
+                      : <BellOff className="w-5 h-5 text-muted-foreground" />}
+                  </button>
                 </div>
 
                 {statusMessage && (

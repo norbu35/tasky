@@ -1,0 +1,56 @@
+import { NavLink } from "react-router-dom";
+import { Home, Briefcase, MessageSquare, User, Search } from "lucide-react";
+import { useAppContext } from "../context/AppContext";
+import { useTranslation } from "react-i18next";
+
+const CUSTOMER_TABS = [
+  { to: "/customer/dashboard", icon: Home, label: "nav.home", fallback: "Home" },
+  { to: "/customer/tasks", icon: Briefcase, label: "nav.tasks", fallback: "Tasks" },
+  { to: "/communication", icon: MessageSquare, label: "nav.inbox", fallback: "Inbox" },
+  { to: "/profile", icon: User, label: "nav.profile", fallback: "Profile" },
+];
+
+const TASKER_TABS = [
+  { to: "/tasker/tasks", icon: Search, label: "nav.findWork", fallback: "Find Work" },
+  { to: "/tasker/my-tasks", icon: Briefcase, label: "nav.myJobs", fallback: "My Jobs" },
+  { to: "/communication", icon: MessageSquare, label: "nav.inbox", fallback: "Inbox" },
+  { to: "/profile", icon: User, label: "nav.profile", fallback: "Profile" },
+];
+
+export function BottomNavBar() {
+  const { profile } = useAppContext();
+  const { t } = useTranslation();
+
+  if (!profile) return null;
+  if (profile.role !== "CUSTOMER" && profile.role !== "TASKER") return null;
+  const tabs = profile.role === "CUSTOMER" ? CUSTOMER_TABS : TASKER_TABS;
+
+  return (
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 backdrop-blur-md"
+      aria-label="Bottom navigation"
+    >
+      <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">
+        {tabs.map(({ to, icon: Icon, label, fallback }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              [
+                "flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors min-w-0",
+                isActive
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground",
+              ].join(" ")
+            }
+          >
+            <Icon className="w-5 h-5" />
+            <span className="text-[10px] font-semibold tracking-wide truncate">
+              {t(label, fallback)}
+            </span>
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+}
