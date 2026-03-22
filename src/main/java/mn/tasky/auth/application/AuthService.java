@@ -177,7 +177,8 @@ public class AuthService {
         String blindIndex = cryptoService.blindIndex(phone);
         String otpCode = generateOtpCode();
 
-        otpChallengeDao.upsert(blindIndex, otpCode, Instant.now().plusSeconds(otpTtlSeconds));
+        String codeHash = cryptoService.blindIndex(otpCode);
+        otpChallengeDao.upsert(blindIndex, codeHash, Instant.now().plusSeconds(otpTtlSeconds));
         smsService.sendOtp(phone, otpCode);
 
         return maskPhone(phone);
@@ -264,7 +265,8 @@ public class AuthService {
             return Optional.empty();
         }
 
-        if (!constantTimeEquals(challenge.code(), code)) {
+        String submittedHash = cryptoService.blindIndex(code);
+        if (!constantTimeEquals(challenge.code(), submittedHash)) {
             int attempts = challenge.attempts() + 1;
             if (attempts >= 3) {
                 otpChallengeDao.delete(blindIndex);
@@ -411,8 +413,11 @@ public class AuthService {
     public AuthSession facebookLogin(String accessToken) {
         String token = accessToken.strip();
         try {
-            facebookGraphClient.debugToken(token);
+            String debugTokenUserId = facebookGraphClient.debugToken(token);
             FacebookGraphClient.FacebookProfile profile = facebookGraphClient.fetchProfile(token);
+            if (debugTokenUserId != null && !debugTokenUserId.equals(profile.facebookId())) {
+                throw new IllegalArgumentException("Facebook token user mismatch.");
+            }
 
             AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
             String effectiveStatus = resolveUserStatus(user.id(), user.status());

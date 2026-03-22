@@ -47,7 +47,7 @@ public class FacebookGraphClient {
      * @throws FacebookAuthException when OAuth config is missing, the token is invalid,
      *                               or the token app does not match this configured app.
      */
-    public void debugToken(String userToken) {
+    public String debugToken(String userToken) {
         if (circuitBreaker.isOpen()) {
             throw new FacebookAuthException(
                     PROVIDER_UNAVAILABLE_CODE, "Facebook authentication is temporarily unavailable");
@@ -94,6 +94,7 @@ public class FacebookGraphClient {
         }
 
         circuitBreaker.recordSuccess();
+        return response.data().userId();
     }
 
     /**
@@ -153,7 +154,10 @@ public class FacebookGraphClient {
     private record DebugTokenResponse(DebugTokenData data) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record DebugTokenData(@JsonProperty("is_valid") Boolean isValid, @JsonProperty("app_id") String appId) {}
+    private record DebugTokenData(
+            @JsonProperty("is_valid") Boolean isValid,
+            @JsonProperty("app_id") String appId,
+            @JsonProperty("user_id") String userId) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record MeResponse(String id, String name, Picture picture) {}
