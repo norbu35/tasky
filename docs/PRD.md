@@ -578,7 +578,7 @@ flow — B2B is a thin coordination layer, not a parallel system.
   require lint/validation checks, preview against sample payloads, canary activation controls, and rollback to the last
   known good schema version.
 * **REQ-ADMIN-06**: Admin MUST have a **Feature Toggle** panel to control monetization phase activation (lead-fee,
-  subscription, escrow) without code deployment.
+  promoted-listings, b2b, subscription, escrow) without code deployment.
 * **REQ-ADMIN-07**: **Concierge Dispatch Mode** *(Phase 0-1)*: Admin/founder can manually assign a Tasker to a task,
   overriding the normal application flow. Used for the first ~30 bookings to guarantee fulfillment quality within
   founder ops capacity. `[Gemini1 — Wizard of Oz]`
@@ -740,12 +740,8 @@ flow — B2B is a thin coordination layer, not a parallel system.
   balance transitions to <=1 credit.
 * **REQ-PAY-22**: Credits never expire automatically and cannot be converted to cash; cancellation refunds return
   credits only; legal review is required for stored-value regulatory classification.
-* **REQ-PAY-30**: Eligible Pro Badge Taskers can subscribe monthly; active subscription suppresses lead-fee debits and
-  applies premium-ranking visibility flag.
 * **REQ-PAY-31**: QPay integration returns valid QR/deeplink payload for booking payment attempts; failed generation
   returns retryable error without mutating booking state.
-* **REQ-PAY-32**: Escrow flow records `PAID -> HELD -> RELEASED`; funds release occurs 4 hours after completion unless
-  manual early release action is approved and logged.
 * **REQ-PAY-33**: On booking completion under escrow, a wallet `PENDING_CREDIT` entry is created once per booking and
   linked to booking transaction ID.
 * **REQ-PAY-34**: Platform fee is deducted using active configurable rate before net crediting Tasker wallet; payout
@@ -850,8 +846,8 @@ flow — B2B is a thin coordination layer, not a parallel system.
 * **REQ-ADMIN-05**: Category Management supports add/edit/deactivate/reorder operations plus `intake_schema`
   create/update/activate/version actions, with schema lint/preview checks, canary activation, rollback to
   last-known-good version, audit logging, and immediate propagation to task-posting category picker.
-* **REQ-ADMIN-06**: Feature Toggle panel can enable/disable lead-fee, subscription, and escrow independently without
-  redeploy; toggle changes are audited with actor and timestamp.
+* **REQ-ADMIN-06**: Feature Toggle panel can enable/disable lead-fee, promoted-listings, b2b, subscription, and escrow
+  independently without redeploy; toggle changes are audited with actor and timestamp.
 * **REQ-ADMIN-07**: In Phase 0-1, admin can manually assign Tasker to task via concierge flow; assignment writes
   override reason and actor ID and respects verification eligibility checks.
 
@@ -1004,12 +1000,12 @@ Use this to recalculate the Phase 3 revenue gate as real unit economics change:
 Worked example for the current gate (diversified revenue):
 
 - `TargetNetRevenue = 6,000,000 MNT`
-- Revenue mix: promoted listings (~900K) + lead credits (~1.7M) + B2B trial (0) +
-  consumer subs (~1.45M) + Pro badges (~600K) = ~4.65M from non-credit sources
-- Remaining from lead credits: `RequiredCreditRevenue = 6,000,000 - 4,650,000 = 1,350,000 MNT`
+- Phase 2 revenue mix: promoted listings (~900K) + B2B trial (0) = ~900K from
+  non-credit sources (only Phase 2 products count toward Phase 3 gate)
+- Remaining from lead credits: `RequiredCreditRevenue = 6,000,000 - 900,000 = 5,100,000 MNT`
 - If `AvgCreditPrice = 2,500 MNT` (blended across tiers) and `AvgVariableCost = 500 MNT`
 - Then `UnitContributionMargin = 2,000 MNT`
-- `RequiredPaidCreditUnlocks = ceil(1,350,000 / 2,000) = 675 credit unlocks/month` (~23/day)
+- `RequiredPaidCreditUnlocks = ceil(5,100,000 / 2,000) = 2,550 credit unlocks/month` (~85/day)
 - Note: this example uses conservative month-10 projections from the debate
   composite blueprint. Actual mix will vary.
 
@@ -1334,8 +1330,9 @@ decisions under deterministic system and human control.
 ## 13. Open Questions
 
 1. What is the grace-period length for mandatory OTP migration of Phase 0-1 Facebook users in early Phase 2 rollout?
-2. What is the exact ramp-up ladder for lead-unlock credits by category and district (start value, step size, and review
-   cadence)?
+2. ~~What is the exact ramp-up ladder for lead-unlock credits by category and district?~~ **Resolved**: REQ-PAY-27
+   defines category-tiered pricing (Cleaning/Moving 1,500 MNT, Plumbing/Electrical 3,000 MNT, Renovation/Tutoring
+   5,000 MNT). Tier-to-category mapping is admin-configurable.
 3. What legal and compliance constraints apply to stored-value credits beyond current assumptions, and which controls
    are mandatory before scale?
 4. What minimum alert/ops tooling is required before demand-side Facebook scraping can be enabled, given ToS enforcement
