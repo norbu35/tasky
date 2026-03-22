@@ -20,6 +20,7 @@ jest.mock('expo-router', () => ({
 const baseUser: User = {
     id: 'user-1',
     phone: '+97699001122',
+    primary_auth: 'PHONE_OTP',
     role: 'CUSTOMER',
     status: 'PENDING',
     created_at: '2026-02-14T00:00:00Z',
@@ -33,7 +34,7 @@ const baseSession: AuthTokens = {
 
 const baseProfile: Profile = {
     id: 'user-1',
-    phone: '+97699001122',
+    phone_masked: '+97699****22',
     role: 'CUSTOMER',
     status: 'PENDING',
     full_name: 'Test Customer',
