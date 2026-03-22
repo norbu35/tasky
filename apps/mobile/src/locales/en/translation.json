@@ -15,7 +15,45 @@
     "or": "OR",
     "comingSoon": "Coming Soon",
     "facebookComingSoon": "Facebook OAuth integration is pending backend callback support.",
-    "loginToViewProfile": "You need to be logged in to view and edit your profile."
+    "loginToViewProfile": "You need to be logged in to view and edit your profile.",
+    "splash": {
+      "loading": "Loading..."
+    },
+    "login": {
+      "title": "Welcome to Tasky",
+      "subtitle": "Mongolia's trusted service marketplace",
+      "facebookButton": "Continue with Facebook",
+      "error": "Login failed. Please try again."
+    },
+    "onboarding": {
+      "slide1Title": "Find Trusted Help",
+      "slide1Body": "Every Tasker is ID-verified",
+      "slide2Title": "Book with Confidence",
+      "slide2Body": "Fixed prices, no surprises",
+      "slide3Title": "Get It Done",
+      "slide3Body": "Real-time booking, dispute protection",
+      "skip": "Skip",
+      "next": "Next",
+      "getStarted": "Get Started"
+    },
+    "roleSelection": {
+      "title": "How will you use Tasky?",
+      "customerTitle": "I need help",
+      "customerDescription": "Find verified Taskers for your jobs",
+      "taskerTitle": "I want to work",
+      "taskerDescription": "Get matched with jobs near you",
+      "confirm": "Continue"
+    },
+    "permissions": {
+      "cameraTitle": "Camera Access",
+      "cameraDescription": "Take photos for task posts and verification",
+      "locationTitle": "Location Access",
+      "locationDescription": "Find tasks and Taskers near you",
+      "notificationsTitle": "Notifications",
+      "notificationsDescription": "Get updates on bookings and messages",
+      "allow": "Allow",
+      "skipPermission": "Skip for now"
+    }
   },
   "nav": {
     "profile": "Profile",
@@ -25,21 +63,29 @@
     "bookings": "Bookings",
     "messages": "Messages",
     "findWork": "FIND WORK",
-    "myJobs": "MY JOBS"
+    "myJobs": "MY JOBS",
+    "myTasks": "MY TASKS",
+    "myBookings": "BOOKINGS"
   },
   "common": {
     "loading": "Loading...",
-    "error": "An error occurred",
-    "retry": "Retry",
+    "error": "Something went wrong",
+    "retry": "Try Again",
     "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "done": "Done",
+    "back": "Back",
     "next": "Next",
+    "close": "Close",
+    "search": "Search",
+    "seeAll": "See All",
+    "offline": "You're offline",
     "getStarted": "Get Started",
     "optional": "optional",
     "yes": "Yes",
-    "no": "No",
-    "close": "Close",
-    "save": "Save",
-    "back": "Back"
+    "no": "No"
   },
   "status": {
     "open": "OPEN",
@@ -284,5 +330,271 @@
     "garden_services": "Services needed",
     "area_size": "Garden size",
     "recurring": "Would you like recurring service?"
+  },
+  "customer": {
+    "taskList": {
+      "title": "My Tasks",
+      "emptyTitle": "No tasks yet",
+      "emptyDescription": "Post your first task and find trusted help",
+      "emptyCta": "Post a Task",
+      "filterAll": "All",
+      "filterOpen": "Open",
+      "filterAssigned": "Assigned",
+      "filterCompleted": "Completed"
+    },
+    "postTask": {
+      "categoryTitle": "What do you need help with?",
+      "intakeTitle": "Describe your task",
+      "intakeDescription": "Description",
+      "intakePlaceholder": "What needs to be done?",
+      "photosTitle": "Add Photos",
+      "photosDescription": "Help Taskers understand the job",
+      "photosAdd": "Add Photo",
+      "locationTitle": "Where?",
+      "locationPlaceholder": "Enter location",
+      "scheduleTitle": "When & Budget",
+      "scheduleDate": "Date",
+      "scheduleTime": "Time",
+      "budgetLabel": "Budget",
+      "budgetPlaceholder": "₮ Amount",
+      "reviewTitle": "Review & Post",
+      "postButton": "Post Task",
+      "posting": "Posting...",
+      "successTitle": "Task Posted!",
+      "successBody": "Taskers in your area will be notified",
+      "successNext1": "You'll get applications soon",
+      "successNext2": "Review Tasker profiles and ratings",
+      "successCta": "View My Tasks"
+    },
+    "taskDetail": {
+      "applicants": "Applicants",
+      "noApplicants": "No applicants yet",
+      "viewApplicants": "View Applicants",
+      "cancel": "Cancel Task",
+      "messageTasker": "Message Tasker",
+      "markComplete": "Mark Complete",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "applicants": {
+      "title": "Applicants",
+      "emptyTitle": "No applicants yet",
+      "emptyDescription": "Taskers are being notified",
+      "accept": "Accept",
+      "viewProfile": "View Profile",
+      "recommended": "Recommended"
+    },
+    "bookings": {
+      "title": "My Bookings",
+      "emptyTitle": "No bookings yet",
+      "emptyDescription": "Accept a Tasker to create your first booking",
+      "confirmTitle": "Confirm Booking",
+      "disclaimer": "Tasky connects you with independent service providers",
+      "confirmButton": "Confirm Booking",
+      "confirmedTitle": "Booking Confirmed!",
+      "confirmedBody": "Your Tasker is on the way",
+      "confirmedCta": "View Booking",
+      "timeline": "Timeline",
+      "reschedule": "Reschedule",
+      "rescheduleTitle": "Propose New Time",
+      "rescheduleDate": "New Date",
+      "rescheduleTime": "New Time",
+      "rescheduleReason": "Reason (optional)",
+      "rescheduleSubmit": "Send Request",
+      "cancelBooking": "Cancel Booking",
+      "cancelFree": "Free cancellation",
+      "cancelLateWarning": "Late cancellation may affect your account",
+      "cancelConfirm": "Yes, Cancel",
+      "noShowTitle": "Tasker didn't show up?",
+      "noShowFlag": "Flag No-Show",
+      "completionTitle": "Was the job completed?",
+      "completionConfirm": "Yes, it's done",
+      "completionDeny": "No, there's an issue",
+      "rebook": "Book Again",
+      "addToCalendar": "Add to Calendar"
+    },
+    "disputes": {
+      "raiseTitle": "Report an Issue",
+      "reason": "What happened?",
+      "evidence": "Add Evidence",
+      "evidenceDescription": "Upload photos to support your claim",
+      "submit": "Submit Dispute",
+      "statusTitle": "Dispute Status",
+      "statusOpen": "Under Review",
+      "statusEscalated": "Escalated",
+      "statusResolved": "Resolved"
+    },
+    "noApplicantRescue": {
+      "title": "No applicants yet",
+      "adjustBudget": "Increase Budget",
+      "adjustSchedule": "Change Schedule",
+      "requestConcierge": "Request Help"
+    },
+    "taskerProfile": {
+      "reviews": "Reviews",
+      "completedJobs": "Jobs Completed",
+      "rating": "Rating",
+      "responseTime": "Response Time",
+      "verified": "Identity Verified"
+    }
+  },
+  "tasker": {
+    "browse": {
+      "title": "Find Work",
+      "emptyTitle": "No tasks nearby",
+      "emptyDescription": "Check back soon or expand your search area",
+      "filterCategory": "Category",
+      "filterDistance": "Distance",
+      "apply": "Apply",
+      "applied": "Applied",
+      "capReached": "Application limit reached"
+    },
+    "taskDetail": {
+      "applyButton": "Apply for Task",
+      "applying": "Applying...",
+      "getVerified": "Get Verified to Apply",
+      "alreadyApplied": "Application Sent",
+      "applicationSentTitle": "Application Sent!",
+      "applicationSentBody": "The customer will review your profile",
+      "applicationSentCta": "Browse More Tasks"
+    },
+    "verification": {
+      "gateTitle": "Get Verified",
+      "gateBody": "Verified Taskers get 3x more bookings",
+      "gateCta": "Start Verification",
+      "consentTitle": "Verification Consent",
+      "consentBody": "We'll verify your identity using your national ID",
+      "consentAgree": "I Agree",
+      "uploadTitle": "Upload ID Documents",
+      "uploadFront": "ID Card Front",
+      "uploadBack": "ID Card Back",
+      "uploadSelfie": "Take a Selfie",
+      "uploadCapture": "Take Photo",
+      "uploadGallery": "Choose from Gallery",
+      "submitButton": "Submit for Review",
+      "submitting": "Submitting...",
+      "submittedTitle": "Documents Submitted!",
+      "submittedBody": "We'll review within 24 hours",
+      "submittedCta": "Browse Tasks",
+      "pendingTitle": "Under Review",
+      "pendingBody": "Your documents are being reviewed",
+      "pendingSla": "Usually takes less than 24 hours",
+      "approvedTitle": "Verified!",
+      "approvedBody": "You can now apply for tasks",
+      "approvedCta": "Start Browsing",
+      "rejectedTitle": "Verification Unsuccessful",
+      "rejectedBody": "Please check the reason below and resubmit",
+      "rejectedResubmit": "Resubmit Documents"
+    },
+    "jobs": {
+      "title": "My Jobs",
+      "emptyTitle": "No jobs yet",
+      "emptyDescription": "Apply to tasks to get your first job",
+      "markDone": "Mark as Done",
+      "cancelJob": "Cancel Job",
+      "cancelWarning": "Cancelling affects your reliability score",
+      "cancelConfirm": "Yes, Cancel",
+      "noShowFlag": "Customer No-Show",
+      "stats": "My Stats"
+    },
+    "stats": {
+      "title": "My Stats",
+      "jobsCompleted": "Jobs Completed",
+      "averageRating": "Average Rating",
+      "responseTime": "Response Time",
+      "reliability": "Reliability Score"
+    }
+  },
+  "shared": {
+    "inbox": {
+      "title": "Inbox",
+      "emptyTitle": "No conversations",
+      "emptyDescription": "Messages from bookings will appear here",
+      "phoneWarning": "Sharing phone numbers outside the app is not recommended",
+      "sendPlaceholder": "Type a message..."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "emptyTitle": "No notifications",
+      "emptyDescription": "You're all caught up"
+    },
+    "profile": {
+      "title": "Profile",
+      "editProfile": "Edit Profile",
+      "settings": "Settings",
+      "editTitle": "Edit Profile",
+      "fullName": "Full Name",
+      "bio": "Bio",
+      "changeAvatar": "Change Photo",
+      "save": "Save Changes",
+      "saving": "Saving..."
+    },
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "notifications": "Notifications",
+      "switchRole": "Switch Role",
+      "switchRoleConfirm": "Switch to {{role}}?",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "helpSupport": "Help & Support",
+      "deleteAccount": "Delete Account",
+      "deleteConfirmTitle": "Delete your account?",
+      "deleteConfirmBody": "This action cannot be undone",
+      "deleteConfirmButton": "Delete Account",
+      "deleteBlockedBookings": "Please complete or cancel active bookings first"
+    },
+    "review": {
+      "title": "Leave a Review",
+      "qualityOfWork": "Quality of Work",
+      "punctuality": "Punctuality",
+      "communication": "Communication",
+      "taskClarity": "Task Description Clarity",
+      "respectfulness": "Respectfulness",
+      "commentPlaceholder": "Share your experience (optional)",
+      "submit": "Submit Review",
+      "submitting": "Submitting...",
+      "reminderTitle": "How was your experience?",
+      "reminderBody": "Your review helps build trust in the community",
+      "reminderCta": "Leave a Review",
+      "reminderLater": "Later",
+      "hardLockTitle": "Review Required",
+      "hardLockBody": "Please resolve pending reviews to continue"
+    },
+    "account": {
+      "suspendedTitle": "Account Suspended",
+      "suspendedBody": "Your account has been temporarily suspended",
+      "suspendedExpiry": "Suspension ends: {{date}}",
+      "suspendedAppeal": "Submit Appeal",
+      "bannedTitle": "Account Banned",
+      "bannedBody": "Your account has been permanently banned"
+    }
+  },
+  "infra": {
+    "networkError": {
+      "noConnection": "No internet connection",
+      "slowConnection": "Connection is slow",
+      "retry": "Try Again"
+    },
+    "appUpdate": {
+      "softTitle": "Update Available",
+      "softBody": "A new version is available",
+      "softUpdate": "Update",
+      "softDismiss": "Not Now",
+      "forceTitle": "Update Required",
+      "forceBody": "Please update to continue using Tasky",
+      "forceUpdate": "Update Now"
+    },
+    "sessionExpired": {
+      "title": "Session Expired",
+      "body": "Please log in again to continue",
+      "loginButton": "Log In"
+    },
+    "terms": {
+      "title": "Terms of Service"
+    },
+    "help": {
+      "title": "Help & Support"
+    }
   }
 }

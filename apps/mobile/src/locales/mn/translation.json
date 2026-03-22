@@ -15,7 +15,45 @@
     "or": "ЭСВЭЛ",
     "comingSoon": "Удахгүй нэмэгдэнэ",
     "facebookComingSoon": "Facebook OAuth интеграц хийгдэж байна.",
-    "loginToViewProfile": "Профайлаа үзэж засахын тулд нэвтэрч орно уу."
+    "loginToViewProfile": "Профайлаа үзэж засахын тулд нэвтэрч орно уу.",
+    "splash": {
+      "loading": "Ачааллаж байна..."
+    },
+    "login": {
+      "title": "Tasky-д тавтай морилно уу",
+      "subtitle": "Монголын найдвартай үйлчилгээний зах зээл",
+      "facebookButton": "Facebook-ээр үргэлжлүүлэх",
+      "error": "Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу."
+    },
+    "onboarding": {
+      "slide1Title": "Итгэлтэй тусламж олох",
+      "slide1Body": "Бүх гүйцэтгэгч иргэний үнэмлэхээр баталгаажсан",
+      "slide2Title": "Итгэлтэйгээр захиалах",
+      "slide2Body": "Тогтмол үнэ, гэнэтийн зардалгүй",
+      "slide3Title": "Ажлаа гүйцэтгүүл",
+      "slide3Body": "Бодит цагийн захиалга, маргааны хамгаалалт",
+      "skip": "Алгасах",
+      "next": "Дараах",
+      "getStarted": "Эхлэх"
+    },
+    "roleSelection": {
+      "title": "Tasky-г хэрхэн ашиглах вэ?",
+      "customerTitle": "Надад тусламж хэрэгтэй",
+      "customerDescription": "Баталгаажсан гүйцэтгэгчдийг ажлын тулд олох",
+      "taskerTitle": "Би ажиллахыг хүсч байна",
+      "taskerDescription": "Ойролцоох ажлуудтай нийлүүлэх",
+      "confirm": "Үргэлжлүүлэх"
+    },
+    "permissions": {
+      "cameraTitle": "Камер ашиглах зөвшөөрөл",
+      "cameraDescription": "Ажлын зар болон баталгаажуулалтад зураг авах",
+      "locationTitle": "Байршил ашиглах зөвшөөрөл",
+      "locationDescription": "Ойролцоох ажлууд болон гүйцэтгэгчдийг олох",
+      "notificationsTitle": "Мэдэгдэл",
+      "notificationsDescription": "Захиалга болон мессежийн шинэчлэлт авах",
+      "allow": "Зөвшөөрөх",
+      "skipPermission": "Одоохондоо алгасах"
+    }
   },
   "nav": {
     "profile": "Профайл",
@@ -25,21 +63,29 @@
     "bookings": "Захиалга",
     "messages": "Зурвас",
     "findWork": "АЖИЛ ХАЙХ",
-    "myJobs": "МИНИЙ АЖЛУУД"
+    "myJobs": "МИНИЙ АЖЛУУД",
+    "myTasks": "МИНИЙ ДААЛГАВАР",
+    "myBookings": "ЗАХИАЛГА"
   },
   "common": {
-    "loading": "Уншиж байна...",
+    "loading": "Ачааллаж байна...",
     "error": "Алдаа гарлаа",
-    "retry": "Дахих",
+    "retry": "Дахин оролдох",
     "cancel": "Цуцлах",
+    "confirm": "Баталгаажуулах",
+    "save": "Хадгалах",
+    "delete": "Устгах",
+    "done": "Дуусгах",
+    "back": "Буцах",
     "next": "Дараах",
+    "close": "Хаах",
+    "search": "Хайх",
+    "seeAll": "Бүгдийг харах",
+    "offline": "Интернэт холболт байхгүй байна",
     "getStarted": "Эхлэх",
     "optional": "заавал биш",
     "yes": "Тийм",
-    "no": "Үгүй",
-    "close": "Хаах",
-    "save": "Хадгалах",
-    "back": "Буцах"
+    "no": "Үгүй"
   },
   "status": {
     "open": "НЭЭЛТТЭЙ",
@@ -284,5 +330,271 @@
     "garden_services": "Хэрэгтэй үйлчилгээ",
     "area_size": "Цэцэрлэгийн хэмжээ",
     "recurring": "Тогтмол үйлчилгээ авах уу?"
+  },
+  "customer": {
+    "taskList": {
+      "title": "Миний даалгаврууд",
+      "emptyTitle": "Даалгавар байхгүй байна",
+      "emptyDescription": "Анхны даалгавраа оруулаад итгэлтэй тусламж ол",
+      "emptyCta": "Даалгавар оруулах",
+      "filterAll": "Бүгд",
+      "filterOpen": "Нээлттэй",
+      "filterAssigned": "Томилогдсон",
+      "filterCompleted": "Дууссан"
+    },
+    "postTask": {
+      "categoryTitle": "Танд юунд тусламж хэрэгтэй вэ?",
+      "intakeTitle": "Даалгавраа тайлбарлана уу",
+      "intakeDescription": "Тайлбар",
+      "intakePlaceholder": "Юу хийх шаардлагатай вэ?",
+      "photosTitle": "Зураг нэмэх",
+      "photosDescription": "Гүйцэтгэгч ажлыг ойлгоход туслах",
+      "photosAdd": "Зураг нэмэх",
+      "locationTitle": "Хаана?",
+      "locationPlaceholder": "Байршил оруулна уу",
+      "scheduleTitle": "Хэзээ & Үнэ",
+      "scheduleDate": "Огноо",
+      "scheduleTime": "Цаг",
+      "budgetLabel": "Үнэ",
+      "budgetPlaceholder": "₮ Дүн",
+      "reviewTitle": "Хянаад оруулах",
+      "postButton": "Даалгавар оруулах",
+      "posting": "Оруулж байна...",
+      "successTitle": "Даалгавар орлоо!",
+      "successBody": "Ойролцоох гүйцэтгэгчдэд мэдэгдэл илгээгдлээ",
+      "successNext1": "Удахгүй өргөдлүүд ирнэ",
+      "successNext2": "Гүйцэтгэгчийн профайл болон үнэлгээг үзнэ үү",
+      "successCta": "Миний даалгавруудыг харах"
+    },
+    "taskDetail": {
+      "applicants": "Өргөдөл гаргагчид",
+      "noApplicants": "Одоохондоо өргөдөл байхгүй",
+      "viewApplicants": "Өргөдлүүдийг харах",
+      "cancel": "Даалгавар цуцлах",
+      "messageTasker": "Гүйцэтгэгчид мессеж",
+      "markComplete": "Дуусгасан гэж тэмдэглэх",
+      "completed": "Дууссан",
+      "cancelled": "Цуцлагдсан"
+    },
+    "applicants": {
+      "title": "Өргөдөл гаргагчид",
+      "emptyTitle": "Одоохондоо өргөдөл байхгүй",
+      "emptyDescription": "Гүйцэтгэгчдэд мэдэгдэл илгээгдэж байна",
+      "accept": "Зөвшөөрөх",
+      "viewProfile": "Профайл харах",
+      "recommended": "Санал болгосон"
+    },
+    "bookings": {
+      "title": "Миний захиалгууд",
+      "emptyTitle": "Захиалга байхгүй байна",
+      "emptyDescription": "Анхны захиалгаа үүсгэхийн тулд гүйцэтгэгч зөвшөөрнө үү",
+      "confirmTitle": "Захиалга баталгаажуулах",
+      "disclaimer": "Tasky таныг бие даасан үйлчилгээ үзүүлэгчидтэй холбодог",
+      "confirmButton": "Захиалга баталгаажуулах",
+      "confirmedTitle": "Захиалга баталгаажлаа!",
+      "confirmedBody": "Таны гүйцэтгэгч замдаа гарлаа",
+      "confirmedCta": "Захиалгаа харах",
+      "timeline": "Хуваарь",
+      "reschedule": "Цагийг өөрчлөх",
+      "rescheduleTitle": "Шинэ цаг санал болгох",
+      "rescheduleDate": "Шинэ огноо",
+      "rescheduleTime": "Шинэ цаг",
+      "rescheduleReason": "Шалтгаан (заавал биш)",
+      "rescheduleSubmit": "Хүсэлт илгээх",
+      "cancelBooking": "Захиалга цуцлах",
+      "cancelFree": "Үнэгүй цуцлалт",
+      "cancelLateWarning": "Оройн цуцлалт нь таны бүртгэлд нөлөөлж болзошгүй",
+      "cancelConfirm": "Тийм, цуцлах",
+      "noShowTitle": "Гүйцэтгэгч ирсэнгүй үү?",
+      "noShowFlag": "Ирээгүй гэж тэмдэглэх",
+      "completionTitle": "Ажил гүйцэтгэгдсэн үү?",
+      "completionConfirm": "Тийм, дуусгалаа",
+      "completionDeny": "Үгүй, асуудал байна",
+      "rebook": "Дахин захиалах",
+      "addToCalendar": "Хуанлид нэмэх"
+    },
+    "disputes": {
+      "raiseTitle": "Асуудал мэдэгдэх",
+      "reason": "Юу болсон бэ?",
+      "evidence": "Нотлох баримт нэмэх",
+      "evidenceDescription": "Нэхэмжлэлийг дэмжих зургуудыг оруулна уу",
+      "submit": "Маргаан илгээх",
+      "statusTitle": "Маргааны статус",
+      "statusOpen": "Хянагдаж байна",
+      "statusEscalated": "Дээшлүүлэгдсэн",
+      "statusResolved": "Шийдвэрлэгдсэн"
+    },
+    "noApplicantRescue": {
+      "title": "Одоохондоо өргөдөл байхгүй",
+      "adjustBudget": "Үнийг нэмэгдүүлэх",
+      "adjustSchedule": "Хуваарь өөрчлөх",
+      "requestConcierge": "Тусламж хүсэх"
+    },
+    "taskerProfile": {
+      "reviews": "Үнэлгээ",
+      "completedJobs": "Гүйцэтгэсэн ажлууд",
+      "rating": "Үнэлгээний дундаж",
+      "responseTime": "Хариу өгөх хугацаа",
+      "verified": "Баталгаажсан"
+    }
+  },
+  "tasker": {
+    "browse": {
+      "title": "Ажил хайх",
+      "emptyTitle": "Ойролцоо ажил байхгүй байна",
+      "emptyDescription": "Удахгүй дахин шалгах эсвэл хайлтын хүрээг өргөтгөх",
+      "filterCategory": "Ангилал",
+      "filterDistance": "Зай",
+      "apply": "Өргөдөл гаргах",
+      "applied": "Өргөдөл гаргасан",
+      "capReached": "Өргөдлийн хязгаарт хүрлээ"
+    },
+    "taskDetail": {
+      "applyButton": "Ажилд өргөдөл гаргах",
+      "applying": "Өргөдөл гаргаж байна...",
+      "getVerified": "Өргөдөл гаргахын тулд баталгаажна уу",
+      "alreadyApplied": "Өргөдөл илгээгдлээ",
+      "applicationSentTitle": "Өргөдөл илгээгдлээ!",
+      "applicationSentBody": "Захиалагч таны профайлыг хянана",
+      "applicationSentCta": "Бусад ажлуудыг харах"
+    },
+    "verification": {
+      "gateTitle": "Баталгаажуулах",
+      "gateBody": "Баталгаажсан гүйцэтгэгчид 3 дахин илүү захиалга авдаг",
+      "gateCta": "Баталгаажуулалт эхлүүлэх",
+      "consentTitle": "Баталгаажуулалтын зөвшөөрөл",
+      "consentBody": "Бид таны иргэний үнэмлэхийг ашиглан таны хувийн мэдээллийг баталгаажуулна",
+      "consentAgree": "Зөвшөөрч байна",
+      "uploadTitle": "Иргэний үнэмлэхийн зургийг оруулах",
+      "uploadFront": "Иргэний үнэмлэхийн өмнө тал",
+      "uploadBack": "Иргэний үнэмлэхийн ард тал",
+      "uploadSelfie": "Өөрийн зураг авах",
+      "uploadCapture": "Зураг авах",
+      "uploadGallery": "Галлерейгаас сонгох",
+      "submitButton": "Хянуулахаар илгээх",
+      "submitting": "Илгээж байна...",
+      "submittedTitle": "Баримт бичгүүд илгээгдлээ!",
+      "submittedBody": "24 цагийн дотор хянана",
+      "submittedCta": "Ажлуудыг харах",
+      "pendingTitle": "Хянагдаж байна",
+      "pendingBody": "Таны баримт бичгүүд шалгагдаж байна",
+      "pendingSla": "Ихэвчлэн 24 цагаас бага хугацаа шаарддаг",
+      "approvedTitle": "Баталгаажлаа!",
+      "approvedBody": "Одоо ажилд өргөдөл гаргаж болно",
+      "approvedCta": "Ажил хайж эхлэх",
+      "rejectedTitle": "Баталгаажуулалт амжилтгүй болсон",
+      "rejectedBody": "Доорх шалтгааныг шалгаад дахин илгээнэ үү",
+      "rejectedResubmit": "Баримт бичгийг дахин илгээх"
+    },
+    "jobs": {
+      "title": "Миний ажлууд",
+      "emptyTitle": "Ажил байхгүй байна",
+      "emptyDescription": "Анхны ажлаа авахын тулд өргөдөл гаргана уу",
+      "markDone": "Дууссан гэж тэмдэглэх",
+      "cancelJob": "Ажил цуцлах",
+      "cancelWarning": "Цуцлалт таны найдвартай байдлын оноонд нөлөөлнө",
+      "cancelConfirm": "Тийм, цуцлах",
+      "noShowFlag": "Захиалагч ирсэнгүй",
+      "stats": "Миний статистик"
+    },
+    "stats": {
+      "title": "Миний статистик",
+      "jobsCompleted": "Гүйцэтгэсэн ажлууд",
+      "averageRating": "Дундаж үнэлгээ",
+      "responseTime": "Хариу өгөх хугацаа",
+      "reliability": "Найдвартай байдлын оноо"
+    }
+  },
+  "shared": {
+    "inbox": {
+      "title": "Мессеж",
+      "emptyTitle": "Харилцаа байхгүй байна",
+      "emptyDescription": "Захиалгатай холбоотой мессежүүд энд харагдана",
+      "phoneWarning": "Аппаас гадуур утасны дугаар хуваалцахыг зөвлөхгүй",
+      "sendPlaceholder": "Мессеж бичих..."
+    },
+    "notifications": {
+      "title": "Мэдэгдлүүд",
+      "emptyTitle": "Мэдэгдэл байхгүй байна",
+      "emptyDescription": "Та бүх зүйлтэй танилцсан байна"
+    },
+    "profile": {
+      "title": "Профайл",
+      "editProfile": "Профайл засах",
+      "settings": "Тохиргоо",
+      "editTitle": "Профайл засах",
+      "fullName": "Бүтэн нэр",
+      "bio": "Танилцуулга",
+      "changeAvatar": "Зураг солих",
+      "save": "Өөрчлөлт хадгалах",
+      "saving": "Хадгалж байна..."
+    },
+    "settings": {
+      "title": "Тохиргоо",
+      "language": "Хэл",
+      "notifications": "Мэдэгдэл",
+      "switchRole": "Үүрэг солих",
+      "switchRoleConfirm": "{{role}} болж солих уу?",
+      "termsOfService": "Үйлчилгээний нөхцөл",
+      "privacyPolicy": "Нууцлалын бодлого",
+      "helpSupport": "Тусламж & Дэмжлэг",
+      "deleteAccount": "Бүртгэл устгах",
+      "deleteConfirmTitle": "Бүртгэлээ устгах уу?",
+      "deleteConfirmBody": "Энэ үйлдлийг буцаах боломжгүй",
+      "deleteConfirmButton": "Бүртгэл устгах",
+      "deleteBlockedBookings": "Идэвхтэй захиалгуудаа эхлэн дуусгах эсвэл цуцлана уу"
+    },
+    "review": {
+      "title": "Үнэлгээ үлдээх",
+      "qualityOfWork": "Ажлын чанар",
+      "punctuality": "Цаг баримтлал",
+      "communication": "Харилцаа",
+      "taskClarity": "Ажлын тайлбарын тодорхой байдал",
+      "respectfulness": "Хүндэтгэл",
+      "commentPlaceholder": "Туршлагаа хуваалцана уу (заавал биш)",
+      "submit": "Үнэлгээ илгээх",
+      "submitting": "Илгээж байна...",
+      "reminderTitle": "Туршлага ямар байсан бэ?",
+      "reminderBody": "Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг",
+      "reminderCta": "Үнэлгээ үлдээх",
+      "reminderLater": "Дараа нь",
+      "hardLockTitle": "Үнэлгээ шаардлагатай",
+      "hardLockBody": "Үргэлжлүүлэхийн тулд хүлээгдэж буй үнэлгээгээ шийдвэрлэнэ үү"
+    },
+    "account": {
+      "suspendedTitle": "Бүртгэл түр хааглагдсан",
+      "suspendedBody": "Таны бүртгэл түр зуур хааглагдсан байна",
+      "suspendedExpiry": "Хаалт дуусах: {{date}}",
+      "suspendedAppeal": "Гомдол гаргах",
+      "bannedTitle": "Бүртгэл хориглогдсон",
+      "bannedBody": "Таны бүртгэл бүрмөсөн хориглогдсон байна"
+    }
+  },
+  "infra": {
+    "networkError": {
+      "noConnection": "Интернэт холболт байхгүй байна",
+      "slowConnection": "Холболт удаан байна",
+      "retry": "Дахин оролдох"
+    },
+    "appUpdate": {
+      "softTitle": "Шинэчлэлт байна",
+      "softBody": "Шинэ хувилбар гарсан байна",
+      "softUpdate": "Шинэчлэх",
+      "softDismiss": "Одоо биш",
+      "forceTitle": "Шинэчлэлт шаардлагатай",
+      "forceBody": "Tasky ашиглахын тулд шинэчлэнэ үү",
+      "forceUpdate": "Одоо шинэчлэх"
+    },
+    "sessionExpired": {
+      "title": "Сесс дууссан",
+      "body": "Үргэлжлүүлэхийн тулд дахин нэвтэрнэ үү",
+      "loginButton": "Нэвтрэх"
+    },
+    "terms": {
+      "title": "Үйлчилгээний нөхцөл"
+    },
+    "help": {
+      "title": "Тусламж & Дэмжлэг"
+    }
   }
 }
