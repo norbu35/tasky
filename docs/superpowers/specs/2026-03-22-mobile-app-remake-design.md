@@ -8,7 +8,7 @@
 
 ## 1. Context & Goal
 
-The Tasky mobile app (Expo 52 / React Native 0.76) has ~15 screens built with ~3 wired to the backend API. The design artifact stack specifies 81 total screens (65 Phase 0-1, 9 Phase 2, 7 Phase 3+) with full component contracts, state matrices, journey catalogs, and per-screen YAML specs.
+The Tasky mobile app (Expo 52 / React Native 0.76) has ~15 screens built with ~3 wired to the backend API. The design artifact stack specifies 81 total screens (65 Phase 0-1, 10 Phase 2, 6 Phase 3+) with full component contracts, state matrices, journey catalogs, and per-screen YAML specs.
 
 **Existing wired screens:** TaskFeed (Browse), BookingList, and ProfileView are currently connected to the backend API via `useTasks`, `useBookings`, and `useProfile` hooks. All other screens use hardcoded/mock data or are unbuilt.
 
@@ -89,10 +89,11 @@ Uses the motion system from `design-system-additions.yaml`:
 |--------|----------|--------|-------|
 | `press` | instant (80ms) | standard `(0.4,0,0.2,1)` | Button/card press feedback, scale(0.98) + opacity(0.85) |
 | `enter` | normal (250ms) | decelerate `(0,0,0.2,1)` | Screen content entrance, fade + translateY |
-| `sheet` | normal (250ms) | spring `(0.34,1.56,0.64,1)` | Bottom sheet open/close |
+| `sheet-open` | slow (400ms) | decelerate `(0,0,0.2,1)` | Bottom sheet opening |
+| `sheet-close` | normal (250ms) | accelerate `(0.4,0,1,1)` | Bottom sheet closing |
 | `fade` | fast (150ms) | standard `(0.4,0,0.2,1)` | Opacity transitions, state changes |
 | `skeleton` | skeleton (1500ms) | standard | Shimmer loop for loading skeletons |
-| `celebration` | slow (400ms) | decelerate | Success checkmark SVG path draw |
+| `celebration` | slow (400ms) | spring `(0.34,1.56,0.64,1)` | Success checkmark SVG path draw |
 
 ### 3.5 Screen Template Visual Specs
 
