@@ -80,7 +80,28 @@ function buildApiClientMock(): ApiClient {
         sendMessage: vi.fn(),
         registerDevice: vi.fn(),
         unregisterDevice: vi.fn(),
-        devLogin: vi.fn()
+        devLogin: vi.fn(),
+        adminSearchUsers: vi.fn(),
+        adminBanUser: vi.fn(),
+        adminUnbanUser: vi.fn(),
+        adminListFlaggedMessages: vi.fn(),
+        adminListPendingVerifications: vi.fn(),
+        adminApproveVerification: vi.fn(),
+        adminRejectVerification: vi.fn(),
+        adminListDisputes: vi.fn(),
+        adminGetDispute: vi.fn(),
+        adminResolveDispute: vi.fn(),
+        adminGetStrikePolicy: vi.fn(),
+        adminUpdateStrikePolicy: vi.fn(),
+        adminListFeatureToggles: vi.fn(),
+        adminUpdateFeatureToggle: vi.fn(),
+        adminConciergeAssignTask: vi.fn(),
+        adminListCategories: vi.fn(),
+        adminCreateCategory: vi.fn(),
+        adminUpdateCategory: vi.fn(),
+        adminListCategorySchemas: vi.fn(),
+        adminCreateCategorySchema: vi.fn(),
+        adminActivateCategorySchema: vi.fn()
     };
 }
 
