@@ -165,6 +165,27 @@ export interface MobileApiClient {
         accessToken: string,
         payload: { id_card_front_key: string; id_card_back_key: string; selfie_key: string }
     ): Promise<void>;
+
+    flagNoShow(accessToken: string, bookingId: string): Promise<void>;
+
+    deleteMyAccount(accessToken: string): Promise<void>;
+
+    getMyStats(accessToken: string): Promise<{
+        jobs_completed: number;
+        average_rating: number;
+        response_time_minutes: number;
+        reliability_score: number;
+    }>;
+
+    listMyTasks(accessToken: string): Promise<CursorPage<Task>>;
+
+    markBookingDone(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
+
+    getBookingTimeline(accessToken: string, bookingId: string): Promise<Array<{
+        event: string;
+        timestamp: string;
+        actor: string;
+    }>>;
 }
 
 export class ApiError extends Error {
@@ -604,6 +625,66 @@ export class HttpMobileApiClient implements MobileApiClient {
                 method: "POST",
                 body: JSON.stringify(payload)
             },
+            accessToken
+        );
+    }
+
+    flagNoShow(accessToken: string, bookingId: string): Promise<void> {
+        return this.requestVoid(
+            `/bookings/${bookingId}/no-show`,
+            {method: "POST"},
+            accessToken
+        );
+    }
+
+    deleteMyAccount(accessToken: string): Promise<void> {
+        return this.requestVoid("/users/me", {method: "DELETE"}, accessToken);
+    }
+
+    getMyStats(accessToken: string): Promise<{
+        jobs_completed: number;
+        average_rating: number;
+        response_time_minutes: number;
+        reliability_score: number;
+    }> {
+        return this.requestJson<{
+            jobs_completed: number;
+            average_rating: number;
+            response_time_minutes: number;
+            reliability_score: number;
+        }>("/users/me/stats", {method: "GET"}, accessToken);
+    }
+
+    listMyTasks(accessToken: string): Promise<CursorPage<Task>> {
+        return this.requestJson<CursorPage<Task>>(
+            "/tasks/mine",
+            {method: "GET"},
+            accessToken,
+            {limit: 100}
+        );
+    }
+
+    markBookingDone(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking> {
+        return this.requestJson<Booking>(
+            `/bookings/${bookingId}/mark-done`,
+            {
+                method: "PUT",
+                headers: {
+                    "Idempotency-Key": idempotencyKey
+                }
+            },
+            accessToken
+        );
+    }
+
+    getBookingTimeline(accessToken: string, bookingId: string): Promise<Array<{
+        event: string;
+        timestamp: string;
+        actor: string;
+    }>> {
+        return this.requestJson<Array<{ event: string; timestamp: string; actor: string }>>(
+            `/bookings/${bookingId}/timeline`,
+            {method: "GET"},
             accessToken
         );
     }
