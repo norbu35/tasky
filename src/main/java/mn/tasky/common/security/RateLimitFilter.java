@@ -82,6 +82,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
             limit = unauthenticatedRpm;
         }
 
+        if (!authenticated && "/api/v1/payments/qpay/callback".equals(request.getRequestURI())) {
+            rateKey = "api-qpay-callback:" + resolveClientIp(request);
+            limit = 10;
+        }
+
         Instant now = Instant.now();
         Instant cutoff = now.minus(WINDOW);
         Instant expiresAt = now.plus(WINDOW);

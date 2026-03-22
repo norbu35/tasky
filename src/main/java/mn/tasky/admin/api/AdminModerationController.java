@@ -5,7 +5,10 @@ import mn.tasky.admin.dto.StrikePolicyRequest;
 import mn.tasky.admin.dto.StrikePolicyResponse;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.ModerationPolicy;
+import mn.tasky.common.audit.AuditEventDao;
+import mn.tasky.common.security.JwtPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminModerationController {
 
     private final AuthService authService;
+    private final AuditEventDao auditEventDao;
 
-    public AdminModerationController(AuthService authService) {
+    public AdminModerationController(AuthService authService, AuditEventDao auditEventDao) {
         this.authService = authService;
+        this.auditEventDao = auditEventDao;
     }
 
     @GetMapping("/strike-policy")
@@ -41,7 +46,8 @@ public class AdminModerationController {
     }
 
     @PutMapping("/strike-policy")
-    public ResponseEntity<?> updateStrikePolicy(@Valid @RequestBody StrikePolicyRequest body) {
+    public ResponseEntity<?> updateStrikePolicy(
+            @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody StrikePolicyRequest body) {
         if (body.repeatSuspensionDays() < body.firstSuspensionDays()) {
             return ResponseEntity.badRequest()
                     .body(java.util.Map.of(
@@ -66,6 +72,8 @@ public class AdminModerationController {
                 body.repeatSuspensionDays(),
                 body.repeatOffenseWindowDays(),
                 body.autoUnsuspendEnabled());
+        auditEventDao.insert(
+                principal.userId(), "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
         return ResponseEntity.ok(toResponse(updated));
     }
 }

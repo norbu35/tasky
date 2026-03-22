@@ -121,7 +121,7 @@ public class AdminPayoutController {
             return ResponseEntity.ok(Map.of("status", "PROCESSED"));
         } catch (IllegalArgumentException e) {
             idempotencyService.abandon(actorId, IdempotencyOperations.PROCESS_PAYOUT, idempotencyKey);
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("error", "Payout processing failed."));
         } catch (RuntimeException e) {
             idempotencyService.abandon(actorId, IdempotencyOperations.PROCESS_PAYOUT, idempotencyKey);
             throw e;

@@ -123,7 +123,7 @@ public class UserProfileController {
 
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteMyAccount(@AuthenticationPrincipal JwtPrincipal principal) {
-        userDao.updateStatus(principal.userId(), "BANNED");
+        userDao.updateStatus(principal.userId(), "DELETED");
 
         auditEventDao.insert(
                 principal.userId(),

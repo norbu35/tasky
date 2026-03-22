@@ -1,6 +1,8 @@
 package mn.tasky.admin.api;
 
+import jakarta.validation.Valid;
 import java.util.Map;
+import mn.tasky.admin.dto.UpdateFeatureToggleRequest;
 import mn.tasky.common.feature.FeatureToggle;
 import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.security.JwtPrincipal;
@@ -31,11 +33,9 @@ public class AdminFeatureToggleController {
 
     @PutMapping
     public ResponseEntity<?> update(
-            @AuthenticationPrincipal JwtPrincipal principal, @RequestBody Map<String, Object> body) {
-        String featureName = (String) body.get("feature_name");
-        boolean isEnabled = (Boolean) body.get("is_enabled");
-
-        FeatureToggle updated = featureToggleService.update(featureName, isEnabled, principal.userId());
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @Valid @RequestBody UpdateFeatureToggleRequest body) {
+        FeatureToggle updated = featureToggleService.update(body.featureName(), body.isEnabled(), principal.userId());
 
         return ResponseEntity.ok(updated);
     }
