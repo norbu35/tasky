@@ -1,15 +1,17 @@
 import { Tabs } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { StyleSheet, Platform, View, Text } from 'react-native';
-import { Search, ClipboardList, MessageSquare, User } from 'lucide-react-native';
+import { StyleSheet, Platform, View } from 'react-native';
+import { Search, ClipboardList, MessageSquare, User, ListChecks } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { FAB } from '../../components/ui/FAB';
 import { useTranslation } from 'react-i18next';
+import { useRole } from '../../providers/RoleProvider';
 
 const { colors, radius, typography } = mobileTheme;
 
 export default function TabsLayout() {
     const { t } = useTranslation();
+    const { isCustomer } = useRole();
 
     return (
         <View style={{ flex: 1 }}>
@@ -34,14 +36,17 @@ export default function TabsLayout() {
                 <Tabs.Screen
                     name="index"
                     options={{
-                        title: t('nav.findWork', 'FIND WORK'),
-                        tabBarIcon: ({ color, size }) => <Search color={color} size={size - 4} />,
+                        title: isCustomer ? t('nav.myTasks', 'MY TASKS') : t('nav.findWork', 'FIND WORK'),
+                        tabBarIcon: ({ color, size }) =>
+                            isCustomer
+                                ? <ListChecks color={color} size={size - 4} />
+                                : <Search color={color} size={size - 4} />,
                     }}
                 />
                 <Tabs.Screen
                     name="bookings"
                     options={{
-                        title: t('nav.myJobs', 'MY JOBS'),
+                        title: isCustomer ? t('nav.bookings', 'BOOKINGS') : t('nav.myJobs', 'MY JOBS'),
                         tabBarIcon: ({ color, size }) => <ClipboardList color={color} size={size - 4} />,
                     }}
                 />
@@ -59,8 +64,12 @@ export default function TabsLayout() {
                         tabBarIcon: ({ color, size }) => <User color={color} size={size - 4} />,
                     }}
                 />
+                <Tabs.Screen
+                    name="tasks"
+                    options={{ href: null }}
+                />
             </Tabs>
-            <FAB />
+            {isCustomer && <FAB />}
         </View>
     );
 }

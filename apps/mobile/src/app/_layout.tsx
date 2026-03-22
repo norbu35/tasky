@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { NotificationProvider } from '../store/NotificationContext';
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
+import { RoleProvider } from '../providers/RoleProvider';
 
 import '../utils/i18n';
 
@@ -60,8 +61,10 @@ export default function RootLayout() {
             <SafeAreaProvider>
                 <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
-                        <Stack screenOptions={{ headerShown: false }} />
-                        <StatusBar style="auto" />
+                        <RoleProvider>
+                            <Stack screenOptions={{ headerShown: false }} />
+                            <StatusBar style="auto" />
+                        </RoleProvider>
                     </QueryClientProvider>
                 </NotificationProvider>
             </SafeAreaProvider>
