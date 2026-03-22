@@ -35,6 +35,7 @@ public class DomainEventOutboxProcessor {
     private final ReliabilityScoreService reliabilityScoreService;
     private final BadgeEvaluationService badgeEvaluationService;
     private final int batchSize;
+    private static final int MAX_ATTEMPTS = 10;
     private final long retryDelaySeconds;
     private final long processingLeaseSeconds;
     private final int platformFeeBasisPoints;
@@ -73,6 +74,12 @@ public class DomainEventOutboxProcessor {
         Instant now = Instant.now();
         List<OutboxEvent> events = outboxEventDao.claimBatch(now, now.plusSeconds(processingLeaseSeconds), batchSize);
         for (OutboxEvent event : events) {
+            if (event.attempts() >= MAX_ATTEMPTS) {
+                log.error("Outbox event exceeded max retries, marking failed: id={} type={} attempts={}",
+                        event.id(), event.eventType(), event.attempts());
+                outboxEventDao.markFailed(event.id(), null, "Exceeded max retry attempts (" + MAX_ATTEMPTS + ")");
+                continue;
+            }
             try {
                 dispatch(event);
                 outboxEventDao.markProcessed(event.id(), Instant.now());
