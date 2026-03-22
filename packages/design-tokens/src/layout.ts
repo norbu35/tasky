@@ -24,8 +24,9 @@ export const radius = {
 
 export const typography = {
   fontFamily: {
-    sans: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
-    display: "'Manrope', system-ui, -apple-system, sans-serif",
+    sans: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
+    display: "'Manrope', Roboto, system-ui, -apple-system, sans-serif",
+    // Roboto is listed as fallback for full Mongolian Cyrillic glyph support (Ү/Ө)
   },
   fontSize: {
     xs: '12px',
@@ -42,4 +43,16 @@ export const typography = {
     semibold: '600',
     bold: '700',
   },
+  // Cyrillic-optimized spacing — more generous than Latin defaults
+  lineHeight: {
+    tight: '1.3',
+    normal: '1.6',   // body text; prevents Cyrillic "fence" letterforms from colliding
+    loose: '1.8',
+  },
+  letterSpacing: {
+    tight: '-0.01em',
+    normal: '0em',
+    // never use wide tracking on Cyrillic body text
+  },
+  minBodySize: '16px',  // strict accessibility floor per research
 };

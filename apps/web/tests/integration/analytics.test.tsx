@@ -10,7 +10,7 @@ describe("Analytics Integration", () => {
     it("TID-TASK-090-OBS-CLIENT-EVENTS emits aligned client events with platform, locale, and actor role", async () => {
         const analytics = createMemoryClientAnalyticsTracker();
 
-        const createdTask: Task = {
+        const createdTask = {
             id: "task-analytics-1",
             category_id: baseCategory.id,
             customer_id: baseUser.id,
@@ -23,7 +23,7 @@ describe("Analytics Integration", () => {
             scheduled_at: "2026-02-16T00:00:00Z",
             photos: [],
             created_at: "2026-02-14T00:00:00Z"
-        };
+        } as any as Task;
 
         const customerApi = buildApiClientMock({
             createTask: vi.fn().mockResolvedValue(createdTask),
@@ -67,12 +67,12 @@ describe("Analytics Integration", () => {
 
         customerRender.unmount();
 
-        const taskerProfile: Profile = {
+        const taskerProfile = {
             ...baseProfile,
             role: "TASKER",
             status: "VERIFIED",
             full_name: "Analytics Tasker"
-        };
+        } as any as Profile;
         const taskerSession: AuthTokens = {
             ...baseSession,
             user: {

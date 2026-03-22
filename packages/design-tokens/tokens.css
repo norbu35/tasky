@@ -1,58 +1,75 @@
 :root {
-    /* Figma-aligned Light Theme */
-    --tasky-color-background: 0 0% 98%;
-    --tasky-color-foreground: 0 0% 9%;
-    --tasky-color-card: 0 0% 100%;
-    --tasky-color-card-foreground: 0 0% 9%;
-    --tasky-color-popover: 0 0% 100%;
-    --tasky-color-popover-foreground: 0 0% 9%;
-    --tasky-color-primary: 263 70% 50%;
-    --tasky-color-primary-foreground: 0 0% 100%;
-    --tasky-color-secondary: 251 91% 95%;
-    --tasky-color-secondary-foreground: 264 67% 35%;
-    --tasky-color-muted: 0 0% 95%;
-    --tasky-color-muted-foreground: 265 8% 40%;
-    --tasky-color-accent: 38 92% 50%;
-    --tasky-color-accent-foreground: 0 0% 0%;
-    --tasky-color-border: 240 6% 90%;
-    --tasky-color-input: 240 6% 90%;
-    --tasky-color-ring: 263 70% 50%;
-    --tasky-color-destructive: 0 84% 60%;
-    --tasky-color-destructive-foreground: 0 0% 100%;
-    --tasky-radius: 1rem;
+  /* Palette: Deep Green #163838, Gold #89752A, Blue #3F53A2, Terracotta #A93700, Cream #FAFAF5 */
+  --tasky-color-background: 60 33.3% 97.1%;
+  --tasky-color-foreground: 180 43.6% 15.3%;
+  --tasky-color-card: 0 0% 100%;
+  --tasky-color-card-foreground: 180 43.6% 15.3%;
+  --tasky-color-popover: 0 0% 100%;
+  --tasky-color-popover-foreground: 180 43.6% 15.3%;
+  --tasky-color-primary: 180 43.6% 15.3%;
+  --tasky-color-primary-foreground: 60 33.3% 97.1%;
+  --tasky-color-secondary: 47.4 53.1% 35.1%;
+  --tasky-color-secondary-foreground: 0 0% 100%;
+  --tasky-color-muted: 60 17% 95%;
+  --tasky-color-muted-foreground: 180 5% 27%;
+  --tasky-color-accent: 19.5 100% 33.1%;
+  --tasky-color-accent-foreground: 60 33.3% 97.1%;
+  --tasky-color-border: 171 7% 77%;
+  --tasky-color-input: 60 9% 88%;
+  --tasky-color-ring: 180 43.6% 15.3%;
+  --tasky-color-destructive: 0 84% 60%;
+  --tasky-color-destructive-foreground: 0 0% 100%;
+  --tasky-radius: 0.5rem;
 
-    /* Figma semantic tokens */
-    --tasky-color-primary-deep: 275 100% 36%;
-    --tasky-color-trust: 33 100% 86%;
-    --tasky-color-trust-foreground: 30 100% 8%;
-    --tasky-color-trust-muted: 30 100% 20%;
-    --tasky-color-status-open: 152 76% 90%;
-    --tasky-color-status-open-foreground: 162 93% 24%;
-    --tasky-color-status-assigned: 263 70% 50%;
-    --tasky-color-status-assigned-foreground: 0 0% 100%;
-    --tasky-color-verified: 160 59% 45%;
-    --tasky-color-subtle-violet: 249 42% 92%;
-    --tasky-color-chip-inactive: 0 0% 89%;
-    --tasky-color-nav-inactive: 220 9% 46%;
+  /* Semantic tokens */
+  --tasky-color-primary-deep: 180 50% 10%;
+  --tasky-color-trust: 227.9 44% 44.1%;
+  --tasky-color-trust-foreground: 0 0% 100%;
+  --tasky-color-trust-muted: 227.9 44% 80%;
+  --tasky-color-status-open: 60 17% 90%;
+  --tasky-color-status-open-foreground: 180 5% 27%;
+  --tasky-color-status-assigned: 180 43.6% 15.3%;
+  --tasky-color-status-assigned-foreground: 0 0% 100%;
+  --tasky-color-verified: 160 45% 42%;
+  --tasky-color-subtle-violet: 60 17% 95%;
+  --tasky-color-chip-inactive: 171 7% 90%;
+  --tasky-color-nav-inactive: 180 5% 40%;
 }
 
 .dark {
-    /* Premium Dark Space Theme */
-    --tasky-color-background: 222.2 84% 4.9%;
-    --tasky-color-foreground: 210 40% 98%;
-    --tasky-color-card: 222 47% 11%;
-    --tasky-color-card-foreground: 210 40% 98%;
-    --tasky-color-popover: 222 47% 11%;
-    --tasky-color-popover-foreground: 210 40% 98%;
-    --tasky-color-primary: 252 100% 73%;
-    --tasky-color-primary-foreground: 222.2 47.4% 11.2%;
-    --tasky-color-secondary: 217.2 32.6% 17.5%;
-    --tasky-color-secondary-foreground: 210 40% 98%;
-    --tasky-color-muted: 217.2 32.6% 17.5%;
-    --tasky-color-muted-foreground: 215 20.2% 65.1%;
-    --tasky-color-accent: 316 70% 50%;
-    --tasky-color-accent-foreground: 210 40% 98%;
-    --tasky-color-border: 217.2 32.6% 17.5%;
-    --tasky-color-input: 217.2 32.6% 17.5%;
-    --tasky-color-ring: 252 100% 73%;
+  /* Dark theme — deep teal base with warm cream foreground */
+  /* Derived: hues preserved, L→55-60% for visibility, S reduced 5-10% to avoid glare */
+  --tasky-color-background: 180 30% 5%;
+  --tasky-color-foreground: 47 70% 88%;
+  --tasky-color-card: 180 25% 9%;
+  --tasky-color-card-foreground: 47 70% 88%;
+  --tasky-color-popover: 180 25% 9%;
+  --tasky-color-popover-foreground: 47 70% 88%;
+  --tasky-color-primary: 180 40% 55%;
+  --tasky-color-primary-foreground: 180 50% 6%;
+  --tasky-color-secondary: 47 48% 55%;
+  --tasky-color-secondary-foreground: 0 0% 100%;
+  --tasky-color-muted: 180 15% 12%;
+  --tasky-color-muted-foreground: 180 10% 55%;
+  --tasky-color-accent: 20 85% 55%;
+  --tasky-color-accent-foreground: 0 0% 100%;
+  --tasky-color-border: 180 15% 16%;
+  --tasky-color-input: 180 15% 16%;
+  --tasky-color-ring: 180 40% 55%;
+  --tasky-color-destructive: 0 72% 55%;
+  --tasky-color-destructive-foreground: 0 0% 100%;
+
+  /* Dark semantic tokens */
+  --tasky-color-primary-deep: 180 35% 40%;
+  --tasky-color-trust: 228 45% 60%;
+  --tasky-color-trust-foreground: 0 0% 100%;
+  --tasky-color-trust-muted: 228 30% 30%;
+  --tasky-color-status-open: 180 20% 16%;
+  --tasky-color-status-open-foreground: 180 30% 65%;
+  --tasky-color-status-assigned: 180 40% 55%;
+  --tasky-color-status-assigned-foreground: 180 50% 6%;
+  --tasky-color-verified: 160 42% 55%;
+  --tasky-color-subtle-violet: 180 15% 12%;
+  --tasky-color-chip-inactive: 180 10% 20%;
+  --tasky-color-nav-inactive: 180 8% 50%;
 }

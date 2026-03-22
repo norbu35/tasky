@@ -106,7 +106,7 @@ function ApplicantCard({
                 <View style={styles.cardInfo}>
                     <Text style={styles.cardName}>{applicant.name}</Text>
                     <View style={styles.ratingRow}>
-                        <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                        <Star size={12} color={colors.accent} fill={colors.accent} />
                         <Text style={styles.ratingValue}>{applicant.rating}</Text>
                         <Text style={styles.ratingCount}>
                             ({applicant.reviewCount} {reviewsLabel})
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     recommendedText: {
         fontSize: typography.micro,
         fontWeight: '700',
-        color: '#5D3900',
+        color: colors.accentForeground,
         letterSpacing: -0.5,
         textTransform: 'uppercase',
     },

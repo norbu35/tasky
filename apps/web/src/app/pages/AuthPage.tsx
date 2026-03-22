@@ -303,7 +303,7 @@ export function AuthPage() {
                                         <div className="w-full border-t border-border/50"></div>
                                     </div>
                                     <div className="relative flex justify-center text-xs uppercase">
-                                        <span className="bg-card px-2 text-muted-foreground font-medium tracking-wider">Later</span>
+                                        <span className="bg-card px-2 text-muted-foreground font-medium tracking-wider">{t("auth.later", "Later")}</span>
                                     </div>
                                 </div>
 
@@ -341,7 +341,7 @@ export function AuthPage() {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="h-px bg-border flex-1" />
-                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Developer Bypass</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("auth.devBypass", "Developer Bypass")}</span>
                                 <div className="h-px bg-border flex-1" />
                             </div>
                             <div className="grid grid-cols-3 gap-3">
@@ -370,7 +370,7 @@ export function AuthPage() {
                                     disabled={loading}
                                 >
                                     <ShieldAlert className="w-5 h-5 text-muted-foreground" />
-                                    <span className="text-xs">Admin</span>
+                                    <span className="text-xs">{t("auth.loginAsAdmin", "Admin")}</span>
                                 </Button>
                             </div>
                         </motion.div>

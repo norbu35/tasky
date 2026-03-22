@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -7,6 +8,7 @@ interface ErrorAlertProps {
 }
 
 export function ErrorAlert({ message, onRetry }: ErrorAlertProps) {
+    const { t } = useTranslation();
     return (
         <div className="flex items-center gap-4 p-4 rounded-xl border border-destructive/30 bg-destructive/5">
             <AlertTriangle className="text-destructive shrink-0" size={20} />
@@ -14,7 +16,7 @@ export function ErrorAlert({ message, onRetry }: ErrorAlertProps) {
                 <p className="text-sm font-medium text-foreground">{message}</p>
             </div>
             {onRetry && (
-                <Button variant="ghost" size="sm" onClick={onRetry}>Retry</Button>
+                <Button variant="ghost" size="sm" onClick={onRetry}>{t("common.retry", "Retry")}</Button>
             )}
         </div>
     );

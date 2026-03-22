@@ -94,11 +94,11 @@ function getNotificationIcon(type: NotificationType) {
 function getIconBackground(type: NotificationType): string {
     switch (type) {
         case 'success':
-            return '#D1FAE5';
+            return colors.statusOpen;
         case 'warning':
-            return '#FEF3C7';
+            return colors.trust;
         case 'message':
-            return colors.secondary;
+            return colors.muted;
         case 'info':
         default:
             return colors.subtleViolet;
@@ -191,7 +191,7 @@ export function NotificationCenter({
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#F9F9F9',
+        backgroundColor: colors.background,
     },
     header: {
         paddingHorizontal: spacing.lg,

@@ -239,7 +239,7 @@ export function BookingSafetyPage() {
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem
                                                                 onClick={() => openDialog("DISPUTE", booking)}
-                                                                className="text-amber-600 focus:text-amber-600">
+                                                                className="text-accent focus:text-accent">
                                                                 <ShieldAlert
                                                                     className="mr-2 h-4 w-4"/> {t("bookingSafety.raiseDispute", "Raise Dispute")}
                                                             </DropdownMenuItem>

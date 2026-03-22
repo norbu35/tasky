@@ -20,16 +20,16 @@ export function localDateTimeInput(hoursAhead: number): string {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-export const baseUser: User = {
+export const baseUser = {
     id: "user-1",
     phone: "+97699001122",
     facebook_id: "fb-user-1",
     role: "CUSTOMER",
     status: "PENDING",
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as User;
 
-export const baseProfile: Profile = {
+export const baseProfile = {
     id: "user-1",
     phone: "+97699001122",
     role: "CUSTOMER",
@@ -40,24 +40,24 @@ export const baseProfile: Profile = {
     completed_tasks: 0,
     is_pro: false,
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as Profile;
 
-export const baseSession: AuthTokens = {
+export const baseSession = {
     accessToken: "access-token",
     refreshToken: "refresh-token",
     user: baseUser
-};
+} as any as AuthTokens;
 
-export const baseCategory: Category = {
+export const baseCategory = {
     id: "cat-cleaning",
     name: "Cleaning",
     name_mn: "Цэвэрлэгээ",
     icon_url: "https://example.test/icon.png",
     is_active: true,
     sort_order: 1
-};
+} as any as Category;
 
-export const baseBooking: Booking = {
+export const baseBooking = {
     id: "booking-1",
     task_id: "task-1",
     tasker_id: "tasker-1",
@@ -66,9 +66,9 @@ export const baseBooking: Booking = {
     status: "ASSIGNED",
     cancellation_fee: null,
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as Booking;
 
-export const baseReview: Review = {
+export const baseReview = {
     id: "review-1",
     booking_id: "booking-1",
     reviewer_id: "customer-1",
@@ -76,9 +76,9 @@ export const baseReview: Review = {
     rating: 5,
     comment: "Great work",
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as Review;
 
-export const baseDispute: Dispute = {
+export const baseDispute = {
     id: "dispute-1",
     booking_id: "booking-1",
     raised_by: "customer-1",
@@ -89,17 +89,17 @@ export const baseDispute: Dispute = {
     resolution_notes: null,
     created_at: "2026-02-14T00:00:00Z",
     resolved_at: null
-};
+} as any as Dispute;
 
-export const baseMessage: Message = {
+export const baseMessage = {
     id: "msg-1",
     conversation_id: "conv-1",
     sender_id: "customer-1",
     content: "Hello tasker",
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as Message;
 
-export const baseConversation: Conversation = {
+export const baseConversation = {
     id: "conv-1",
     task_id: "task-1",
     task_title: "Apartment cleaning",
@@ -108,4 +108,4 @@ export const baseConversation: Conversation = {
     last_message: baseMessage,
     unread_count: 0,
     created_at: "2026-02-14T00:00:00Z"
-};
+} as any as Conversation;

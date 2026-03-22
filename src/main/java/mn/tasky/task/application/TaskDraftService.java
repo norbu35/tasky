@@ -72,10 +72,11 @@ public class TaskDraftService {
      * @param draftId the draft ID to look up
      * @return the draft if found and not expired
      */
-    public Optional<TaskDraft> getDraft(String draftId) {
+    public Optional<TaskDraft> getDraft(String draftId, String requestingUserId) {
         return taskDraftDao
                 .findById(draftId)
-                .filter(draft -> draft.expiresAt() == null || draft.expiresAt().isAfter(Instant.now()));
+                .filter(draft -> draft.expiresAt() == null || draft.expiresAt().isAfter(Instant.now()))
+                .filter(draft -> draft.customerId().equals(requestingUserId));
     }
 
     /**
@@ -89,9 +90,13 @@ public class TaskDraftService {
      * @throws IllegalArgumentException if the draft does not exist
      * @throws IllegalStateException    if the draft has expired
      */
-    public TaskDraft updateDraft(String draftId, String intakeAnswersJson, String summaryDraft) {
+    public TaskDraft updateDraft(String draftId, String requestingUserId, String intakeAnswersJson, String summaryDraft) {
         TaskDraft existing =
                 taskDraftDao.findById(draftId).orElseThrow(() -> new IllegalArgumentException("Draft not found."));
+
+        if (!existing.customerId().equals(requestingUserId)) {
+            throw new IllegalArgumentException("Draft not found.");
+        }
 
         if (existing.expiresAt() != null && !existing.expiresAt().isAfter(Instant.now())) {
             throw new IllegalStateException("Draft has expired.");

@@ -50,9 +50,7 @@ public class BookingScheduleService {
      */
     public BookingScheduleEvent requestReschedule(
             String bookingId, String actorUserId, Instant proposedScheduledAt, String reason) {
-        BookingState booking = bookingDao
-                .findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + bookingId));
+        BookingState booking = requireParticipant(bookingId, actorUserId);
 
         if (!"ASSIGNED".equals(booking.status())) {
             throw new IllegalStateException("Booking must be ASSIGNED to request reschedule.");
@@ -90,9 +88,7 @@ public class BookingScheduleService {
     @Transactional
     public BookingScheduleEvent respondToReschedule(
             String bookingId, String eventId, String actorUserId, String action) {
-        BookingState booking = bookingDao
-                .findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + bookingId));
+        BookingState booking = requireParticipant(bookingId, actorUserId);
 
         if (!"ASSIGNED".equals(booking.status())) {
             throw new IllegalStateException("Booking must be ASSIGNED to respond to reschedule.");
@@ -139,7 +135,8 @@ public class BookingScheduleService {
     /**
      * Lists all schedule events for a booking, ordered by created_at descending.
      */
-    public List<BookingScheduleEvent> listScheduleEvents(String bookingId) {
+    public List<BookingScheduleEvent> listScheduleEvents(String bookingId, String requestingUserId) {
+        requireParticipant(bookingId, requestingUserId);
         return scheduleEventDao.findByBookingId(bookingId);
     }
 
@@ -148,6 +145,16 @@ public class BookingScheduleService {
      */
     public Optional<BookingScheduleEvent> getScheduleEvent(String eventId) {
         return scheduleEventDao.findById(eventId);
+    }
+
+    private BookingState requireParticipant(String bookingId, String userId) {
+        BookingState booking = bookingDao
+                .findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + bookingId));
+        if (!booking.customerId().equals(userId) && !booking.taskerId().equals(userId)) {
+            throw new IllegalArgumentException("Booking not found: " + bookingId);
+        }
+        return booking;
     }
 
     /**

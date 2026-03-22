@@ -9,6 +9,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { GlobalErrorFallback } from "./components/GlobalErrorFallback";
 import type { AppContextValue } from "./types";
 import { parseError } from "./utils/errorHandling";
+import { useTranslation } from "react-i18next";
 
 export function AppShell({
                              apiClient,
@@ -50,6 +51,8 @@ export function AppShell({
         void refreshProfile();
     }, [refreshProfile]);
 
+    const { t } = useTranslation();
+
     const signOut = useCallback(() => {
         setSession(null);
         setProfile(null);
@@ -60,12 +63,12 @@ export function AppShell({
     useEffect(() => {
         const handleUnauthorized = () => {
             signOut();
-            toast.error("Session expired. Please log in again.");
+            toast.error(t("errors.sessionExpired", "Session expired. Please log in again."));
         };
 
         window.addEventListener("tasky:unauthorized", handleUnauthorized);
         return () => window.removeEventListener("tasky:unauthorized", handleUnauthorized);
-    }, [signOut]);
+    }, [signOut, t]);
 
     const updateSessionUser = useCallback((user: User) => {
         setSession((previous) => {

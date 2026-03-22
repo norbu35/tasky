@@ -128,7 +128,7 @@ class TaskDraftServiceUnitTests {
     void getDraftNotFound() {
         when(taskDraftDao.findById("draft-x")).thenReturn(Optional.empty());
 
-        assertThat(service.getDraft("draft-x")).isEmpty();
+        assertThat(service.getDraft("draft-x", "c1")).isEmpty();
     }
 
     @Test
@@ -137,7 +137,7 @@ class TaskDraftServiceUnitTests {
         TaskDraft draft = new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now(), null);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(draft));
 
-        assertThat(service.getDraft("d1")).contains(draft);
+        assertThat(service.getDraft("d1", "c1")).contains(draft);
     }
 
     @Test
@@ -147,7 +147,7 @@ class TaskDraftServiceUnitTests {
         TaskDraft draft = new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now(), future);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(draft));
 
-        assertThat(service.getDraft("d1")).contains(draft);
+        assertThat(service.getDraft("d1", "c1")).contains(draft);
     }
 
     @Test
@@ -158,7 +158,16 @@ class TaskDraftServiceUnitTests {
                 new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now().minusSeconds(7200), past);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(draft));
 
-        assertThat(service.getDraft("d1")).isEmpty();
+        assertThat(service.getDraft("d1", "c1")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getDraft returns empty when requesting user is not the owner")
+    void getDraftWrongUser() {
+        TaskDraft draft = new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now(), null);
+        when(taskDraftDao.findById("d1")).thenReturn(Optional.of(draft));
+
+        assertThat(service.getDraft("d1", "other-user")).isEmpty();
     }
 
     // --- updateDraft tests ---
@@ -168,7 +177,18 @@ class TaskDraftServiceUnitTests {
     void updateDraftNotFound() {
         when(taskDraftDao.findById("draft-x")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.updateDraft("draft-x", "{}", "summary"))
+        assertThatThrownBy(() -> service.updateDraft("draft-x", "c1", "{}", "summary"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Draft not found.");
+    }
+
+    @Test
+    @DisplayName("updateDraft throws when requesting user is not the owner")
+    void updateDraftWrongUser() {
+        TaskDraft existing = new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now(), null);
+        when(taskDraftDao.findById("d1")).thenReturn(Optional.of(existing));
+
+        assertThatThrownBy(() -> service.updateDraft("d1", "other-user", "{}", "summary"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Draft not found.");
     }
@@ -181,7 +201,7 @@ class TaskDraftServiceUnitTests {
                 new TaskDraft("d1", "c1", "cat-1", null, 1, null, Instant.now().minusSeconds(7200), past);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(expired));
 
-        assertThatThrownBy(() -> service.updateDraft("d1", "{}", "summary"))
+        assertThatThrownBy(() -> service.updateDraft("d1", "c1", "{}", "summary"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Draft has expired.");
     }
@@ -194,7 +214,7 @@ class TaskDraftServiceUnitTests {
         TaskDraft updated = new TaskDraft("d1", "c1", "cat-1", "{\"a\":1}", 1, "My summary", Instant.now(), future);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(existing)).thenReturn(Optional.of(updated));
 
-        TaskDraft result = service.updateDraft("d1", "{\"a\":1}", "My summary");
+        TaskDraft result = service.updateDraft("d1", "c1", "{\"a\":1}", "My summary");
 
         assertThat(result).isEqualTo(updated);
         verify(taskDraftDao).update("d1", "{\"a\":1}", "My summary");
@@ -207,7 +227,7 @@ class TaskDraftServiceUnitTests {
         TaskDraft updated = new TaskDraft("d1", "c1", "cat-1", "{}", 1, "s", Instant.now(), null);
         when(taskDraftDao.findById("d1")).thenReturn(Optional.of(existing)).thenReturn(Optional.of(updated));
 
-        TaskDraft result = service.updateDraft("d1", "{}", "s");
+        TaskDraft result = service.updateDraft("d1", "c1", "{}", "s");
 
         assertThat(result).isEqualTo(updated);
     }

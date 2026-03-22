@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, ShieldCheck, Star, Wrench, Download, Smartphone, BadgeCheck, Banknote, Facebook, Twitter, Instagram, GraduationCap } from "lucide-react";
+import { ArrowRight, Shield, ShieldCheck, Star, Wrench, Download, Smartphone, BadgeCheck, Banknote, Facebook, Twitter, Instagram } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { LanguageSwitcher } from "../layout/LanguageSwitcher";
 import { CustomerAdvantageVisual, TaskerAdvantageVisual } from "../../components/landing/ComparisonVisuals";
@@ -22,30 +22,31 @@ const CATEGORY_COLORS: Record<SampleTask["category"], string> = {
   childcare: "bg-verified",
 };
 
-const SAMPLE_TASKS: SampleTask[] = [
-  { title: "Deep clean 2-bedroom apartment", price: "₮65,000", district: "Bayangol", category: "cleaning" },
-  { title: "Fix bathroom pipe leak", price: "₮40,000", district: "Sukhbaatar", category: "repair" },
-  { title: "Move studio to 1-bedroom", price: "₮85,000", district: "Chingeltei", category: "moving" },
-  { title: "Install ceiling light fixtures", price: "₮30,000", district: "Khan-Uul", category: "electric" },
-  { title: "Weekly apartment cleaning", price: "₮45,000", district: "Bayanzurkh", category: "cleaning" },
-  { title: "Assemble IKEA furniture", price: "₮25,000", district: "Sukhbaatar", category: "repair" },
-  { title: "Move office — 3 rooms", price: "₮120,000", district: "Songinokhairkhan", category: "moving" },
-  { title: "Babysitter for 2 children (4hrs)", price: "₮35,000", district: "Khan-Uul", category: "childcare" },
-];
-
 function AnimatedTaskFeed() {
+  const { t } = useTranslation();
   const [visibleStart, setVisibleStart] = useState(0);
+
+  const sampleTasks: SampleTask[] = [
+    { title: t("landing.task1", "Deep clean 2-bedroom apartment"), price: "₮65,000", district: t("landing.distBayangol", "Bayangol"), category: "cleaning" },
+    { title: t("landing.task2", "Fix bathroom pipe leak"), price: "₮40,000", district: t("landing.distSukhbaatar", "Sukhbaatar"), category: "repair" },
+    { title: t("landing.task3", "Move studio to 1-bedroom"), price: "₮85,000", district: t("landing.distChingeltei", "Chingeltei"), category: "moving" },
+    { title: t("landing.task4", "Install ceiling light fixtures"), price: "₮30,000", district: t("landing.distKhanUul", "Khan-Uul"), category: "electric" },
+    { title: t("landing.task5", "Weekly apartment cleaning"), price: "₮45,000", district: t("landing.distBayanzurkh", "Bayanzurkh"), category: "cleaning" },
+    { title: t("landing.task6", "Assemble IKEA furniture"), price: "₮25,000", district: t("landing.distSukhbaatar", "Sukhbaatar"), category: "repair" },
+    { title: t("landing.task7", "Move office — 3 rooms"), price: "₮120,000", district: t("landing.distSonginokhairkhan", "Songinokhairkhan"), category: "moving" },
+    { title: t("landing.task8", "Babysitter for 2 children (4hrs)"), price: "₮35,000", district: t("landing.distKhanUul", "Khan-Uul"), category: "childcare" },
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setVisibleStart((prev) => (prev + 1) % SAMPLE_TASKS.length);
+      setVisibleStart((prev) => (prev + 1) % sampleTasks.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [sampleTasks.length]);
 
   const visibleTasks = Array.from({ length: 3 }, (_, i) => {
-    const index = (visibleStart + i) % SAMPLE_TASKS.length;
-    return { ...SAMPLE_TASKS[index], index };
+    const index = (visibleStart + i) % sampleTasks.length;
+    return { ...sampleTasks[index], index };
   });
 
   return (
@@ -67,7 +68,7 @@ function AnimatedTaskFeed() {
               <p className="text-xs text-white/50">{task.price} · {task.district}</p>
             </div>
             <span className="text-[10px] font-bold bg-verified text-white px-2 py-1 rounded flex-shrink-0">
-              Verified
+              {t("landing.verified", "Verified")}
             </span>
           </motion.div>
         ))}
@@ -120,6 +121,9 @@ export function LandingPage() {
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight leading-[1.05] text-primary-foreground">
                 {t("landing.heroTitle1", "Trusted help,")}<br />
                 {t("landing.heroTitle2", "fixed price.")}
+                <svg className="inline-block ml-3 w-8 h-8 sm:w-10 sm:h-10 -translate-y-2" viewBox="0 0 40 40" fill="none">
+                  <path d="M 8 20 L 16 28 L 32 10" stroke="#3B9B7A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </h1>
 
               <p className="text-lg text-primary-foreground/60 max-w-lg mx-auto lg:mx-0">
@@ -159,66 +163,70 @@ export function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
               <div className="max-w-xl">
-                <h2 className="text-4xl font-black text-foreground tracking-tighter mb-4 uppercase">{t("landing.featuredServices", "Featured Services")}</h2>
-                <p className="text-muted-foreground leading-relaxed">{t("landing.featuredDesc", "Curated professional tiers designed for the most demanding standards.")}</p>
+                <h2 className="text-4xl font-black text-foreground tracking-tighter mb-4 uppercase">
+                  {t("landing.featuredServices", "What do you need done?")}
+                  <svg className="inline-block ml-2 w-7 h-7 -translate-y-1 opacity-70" viewBox="0 0 40 40" fill="none">
+                    <path d="M 8 20 L 16 28 L 32 10" stroke="#3B9B7A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">{t("landing.featuredDesc", "Post a task in any category. Set your budget. Get matched with verified Taskers nearby.")}</p>
               </div>
               <div className="h-[2px] flex-grow mx-12 bg-border opacity-30 hidden md:block"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Premium Cleaning */}
+              {/* Deep Cleaning */}
               <div className="md:col-span-2 group relative overflow-hidden rounded-xl aspect-[16/9] md:aspect-auto md:h-[500px] bg-card transition-all hover:shadow-2xl cursor-pointer" onClick={() => navigate("/auth")}>
-                <img alt="Professional cleaning service" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="/images/feat-cleaning.png"/>
+                <img alt="Apartment cleaning service" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="/images/feat-cleaning.png"/>
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/40 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-8 sm:p-10 w-full">
-                  <h3 className="text-3xl font-bold text-primary-foreground mb-2">{t("landing.featCleaning", "Premium Cleaning")}</h3>
-                  <p className="text-primary-foreground/80 max-w-sm mb-6">{t("landing.featCleaningDesc", "Meticulous residential and commercial maintenance following international hygiene protocols.")}</p>
+                  <h3 className="text-3xl font-bold text-primary-foreground mb-2">{t("landing.featCleaning", "Deep Cleaning")}</h3>
+                  <p className="text-primary-foreground/80 max-w-sm mb-6">{t("landing.featCleaningDesc", "Apartments, offices, move-out cleans. Set your budget, pick a time, get matched.")}</p>
                   <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
-                      {t("landing.exploreService", "Explore Service")} <ArrowRight className="w-4 h-4" />
+                      {t("landing.postTask", "Post a Task")} <ArrowRight className="w-4 h-4" />
                   </span>
                 </div>
               </div>
 
-              {/* Educational Childcare */}
+              {/* Handyman & Repairs */}
               <div className="group relative overflow-hidden rounded-xl bg-card hover:shadow-2xl transition-all cursor-pointer border border-border/50" onClick={() => navigate("/auth")}>
                 <div className="p-8 sm:p-10 h-full flex flex-col justify-between">
                   <div>
                     <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-8">
-                      <GraduationCap className="w-6 h-6 text-accent" />
+                      <Wrench className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">{t("landing.featChildcare", "Educational Childcare")}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-8">{t("landing.featChildcareDesc", "Heritage-based learning environments combined with modern pedagogical excellence.")}</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">{t("landing.featRepair", "Handyman & Repairs")}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-8">{t("landing.featRepairDesc", "Plumbing, furniture assembly, appliance fixes. All Taskers are ID-verified.")}</p>
                   </div>
-                  <img alt="Childcare education" className="w-full h-48 object-cover rounded-lg" src="/images/feat-childcare.png"/>
+                  <img alt="Handyman repair work" className="w-full h-48 object-cover rounded-lg" src="/images/feat-repair.png"/>
                 </div>
               </div>
 
-              {/* Technical Maintenance */}
-              <div className="group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-2xl transition-all cursor-pointer" onClick={() => navigate("/auth")}>
+              {/* Electrician */}
+              <div className="group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-2xl transition-all cursor-pointer" onClick={() => navigate("/auth")}>
                 <div className="p-8 sm:p-10">
                   <Wrench className="w-10 h-10 mb-6 text-accent" />
-                  <h3 className="text-2xl font-bold mb-4">{t("landing.featTechnical", "Technical Maintenance")}</h3>
-                  <p className="text-primary-foreground/80 text-sm leading-relaxed mb-10">{t("landing.featTechnicalDesc", "Certified technicians specializing in HVAC, plumbing, and precision infrastructure care.")}</p>
+                  <h3 className="text-2xl font-bold mb-4">{t("landing.featElectric", "Electrician")}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-10">{t("landing.featElectricDesc", "Light fixtures, wiring, panel work. Fixed price upfront — no hourly surprises.")}</p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-primary-deep rounded-full text-[10px] font-bold uppercase tracking-wider">{t("landing.tagHVAC", "HVAC Certified")}</span>
-                    <span className="px-3 py-1 bg-primary-deep rounded-full text-[10px] font-bold uppercase tracking-wider">{t("landing.tagElectrical", "Electrical Tier 1")}</span>
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider">{t("landing.tagVerified", "ID Verified")}</span>
+                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider">{t("landing.tagFixed", "Fixed Price")}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Cultural Logistics */}
-              <div className="md:col-span-2 group relative overflow-hidden rounded-xl bg-card border border-border/50 text-foreground hover:shadow-2xl transition-all cursor-pointer" onClick={() => navigate("/auth")}>
+              {/* Movers & Help */}
+              <div className="md:col-span-2 group relative overflow-hidden rounded-xl bg-primary text-primary-foreground hover:shadow-2xl transition-all cursor-pointer" onClick={() => navigate("/auth")}>
                 <div className="p-8 sm:p-10 grid md:grid-cols-2 gap-8 items-center h-full">
                   <div>
-                    <h3 className="text-3xl font-black tracking-tighter uppercase mb-4">{t("landing.featLogistics", "Cultural Logistics")}</h3>
-                    <p className="text-muted-foreground mb-6 leading-relaxed">{t("landing.featLogisticsDesc", "Specialized relocation and event management that honors Mongolian traditions with modern efficiency.")}</p>
-                    <Button className="px-6 py-5 bg-secondary text-secondary-foreground font-bold rounded-md hover:bg-secondary/90" onClick={(e) => { e.stopPropagation(); navigate("/auth"); }}>
-                      {t("landing.requestConsultation", "Request Consultation")}
+                    <h3 className="text-3xl font-black tracking-tighter uppercase mb-4">{t("landing.featMoving", "Movers & Help")}</h3>
+                    <p className="text-primary-foreground/80 mb-6 leading-relaxed">{t("landing.featMovingDesc", "Studio to apartment, office relocations, heavy lifting. Post your move, set the budget, and pick from verified Taskers.")}</p>
+                    <Button className="px-6 py-5 bg-accent text-accent-foreground font-bold rounded-md hover:bg-accent/90" onClick={(e) => { e.stopPropagation(); navigate("/auth"); }}>
+                      {t("landing.postTask", "Post a Task")}
                     </Button>
                   </div>
                   <div className="relative h-full flex items-center">
-                    <div className="absolute -inset-4 bg-secondary/5 blur-3xl rounded-full"></div>
-                    <img alt="Logistics management" className="relative z-10 w-full h-48 md:h-56 object-cover rounded-lg grayscale hover:grayscale-0 transition-all duration-500" src="/images/feat-logistics.png"/>
+                    <img alt="Moving service" className="relative z-10 w-full h-48 md:h-56 object-cover rounded-lg" src="/images/feat-moving.png"/>
                   </div>
                 </div>
               </div>
@@ -227,7 +235,7 @@ export function LandingPage() {
         </section>
 
         {/* How it Works Section */}
-        <section className="px-6 py-24 bg-gradient-to-b from-transparent to-muted/20 border-t border-border/30">
+        <section className="px-6 py-24 bg-background border-t border-border/30">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-3xl sm:text-5xl font-display font-bold mb-6 tracking-tight">
@@ -255,27 +263,26 @@ export function LandingPage() {
                 </div>
 
                 <div className="space-y-8 relative z-10">
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-white shadow-sm">1</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.cStep1Title", "Post your requirements")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.cStep1Desc", "Describe what you need done, set your budget, and choose a time & location.")}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-white shadow-sm">2</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.cStep2Title", "Choose the best fit")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.cStep2Desc", "Review profiles, ratings, and past work of interested Taskers before hiring.")}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-white shadow-sm">3</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.cStep3Title", "Pay securely")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.cStep3Desc", "Your money is held safely in escrow until the job is completed to your satisfaction.")}</p>
-                    </div>
-                  </div>
+                  {[
+                    { num: 1, title: t("landing.cStep1Title", "Post your requirements"), desc: t("landing.cStep1Desc", "Describe what you need done, set your budget, and choose a time & location."), bg: "bg-primary/10", text: "text-primary", hoverBg: "group-hover:bg-primary" },
+                    { num: 2, title: t("landing.cStep2Title", "Choose the best fit"), desc: t("landing.cStep2Desc", "Review profiles, ratings, and past work of interested Taskers before hiring."), bg: "bg-trust/10", text: "text-trust", hoverBg: "group-hover:bg-trust" },
+                    { num: 3, title: t("landing.cStep3Title", "Pay securely"), desc: t("landing.cStep3Desc", "Your money is held safely in escrow until the job is completed to your satisfaction."), bg: "bg-verified/10", text: "text-verified", hoverBg: "group-hover:bg-verified" },
+                  ].map((step) => (
+                    <motion.div
+                      key={step.num}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ duration: 0.5, delay: step.num * 0.15, ease: "easeOut" }}
+                      className="flex gap-5 group"
+                    >
+                      <div className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-110 ${step.hoverBg} group-hover:text-white shadow-sm`}>{step.num}</div>
+                      <div className="pt-1">
+                        <h4 className="text-xl font-bold mb-2 font-display">{step.title}</h4>
+                        <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
 
@@ -297,96 +304,123 @@ export function LandingPage() {
                 </div>
 
                 <div className="space-y-8 relative z-10">
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-secondary group-hover:text-white shadow-sm">1</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.tStep1Title", "Find local jobs")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.tStep1Desc", "Browse a live feed of tasks near you that match your skills.")}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-secondary group-hover:text-white shadow-sm">2</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.tStep2Title", "Send proposals")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.tStep2Desc", "Apply to tasks you want to do with a quick message to the customer.")}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-5 group">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary font-bold text-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-secondary group-hover:text-white shadow-sm">3</div>
-                    <div className="pt-1">
-                      <h4 className="text-xl font-bold mb-2 font-display">{t("landing.tStep3Title", "Guaranteed payment")}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{t("landing.tStep3Desc", "Focus on the work knowing that the customer has already funded the task.")}</p>
-                    </div>
-                  </div>
+                  {[
+                    { num: 1, title: t("landing.tStep1Title", "Find local jobs"), desc: t("landing.tStep1Desc", "Browse a live feed of tasks near you that match your skills."), bg: "bg-secondary/10", text: "text-secondary", hoverBg: "group-hover:bg-secondary" },
+                    { num: 2, title: t("landing.tStep2Title", "Send proposals"), desc: t("landing.tStep2Desc", "Apply to tasks you want to do with a quick message to the customer."), bg: "bg-accent/10", text: "text-accent", hoverBg: "group-hover:bg-accent" },
+                    { num: 3, title: t("landing.tStep3Title", "Guaranteed payment"), desc: t("landing.tStep3Desc", "Focus on the work knowing that the customer has already funded the task."), bg: "bg-verified/10", text: "text-verified", hoverBg: "group-hover:bg-verified" },
+                  ].map((step) => (
+                    <motion.div
+                      key={step.num}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ duration: 0.5, delay: step.num * 0.15, ease: "easeOut" }}
+                      className="flex gap-5 group"
+                    >
+                      <div className={`flex-shrink-0 w-14 h-14 rounded-2xl ${step.bg} flex items-center justify-center ${step.text} font-bold text-xl transition-all duration-300 group-hover:scale-110 ${step.hoverBg} group-hover:text-white shadow-sm`}>{step.num}</div>
+                      <div className="pt-1">
+                        <h4 className="text-xl font-bold mb-2 font-display">{step.title}</h4>
+                        <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Trust & Safety Section */}
-        <section className="px-6 py-24 bg-card border-t border-accent/20">
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-16 relative">
-              <div>
-                <ShieldCheck className="w-16 h-16 mx-auto mb-6 text-trust relative z-10" />
-              </div>
-              <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4">{t("landing.trustTitle", "Built on Trust & Local Safety")}</h2>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                {t("landing.trustDesc", "We've reinvented the domestic service experience so you never have to guess who is showing up at your door.")}
+        {/* Trust & Safety Section — Split Screen */}
+        <section className="w-full">
+          <div className="grid md:grid-cols-2 min-h-[500px]">
+            {/* Left — The Pain */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="bg-primary-deep text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
+            >
+              <p className="text-sm font-bold uppercase tracking-widest text-accent mb-8">
+                {t("landing.trustReality", "The reality")}
               </p>
-            </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-6">
+                {t("landing.trustPainLine", "10 phone calls. 3 no-shows. 1 stranger at your door.")}
+              </h2>
+              <p className="text-lg text-primary-foreground/50 max-w-md">
+                {t("landing.trustPainDesc", "That's the Facebook group experience.")}
+              </p>
+            </motion.div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {/* Identity Verified */}
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
-                  <BadgeCheck className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold font-display">{t("landing.trustId", "Identity Verified")}</h3>
-                <p className="text-muted-foreground">{t("landing.trustIdDesc", "Every Tasker passes a strict manual ID & Selfie verification before they can accept tasks.")}</p>
+            {/* Right — The Relief */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-background text-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
+            >
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold leading-[1.1] tracking-tight mb-10">
+                {t("landing.trustRelief", "Or just use Tasky.")}
+                <svg className="inline-block ml-2 w-8 h-8 sm:w-10 sm:h-10 -translate-y-1" viewBox="0 0 40 40" fill="none">
+                  <path d="M 8 20 L 16 28 L 32 10" stroke="#3B9B7A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </h3>
+
+              <div className="space-y-6 mb-12">
+                {[
+                  { icon: <BadgeCheck className="w-5 h-5" />, color: "text-verified bg-verified/10", text: t("landing.trustProof1", "Every Tasker is ID-verified before their first job") },
+                  { icon: <Banknote className="w-5 h-5" />, color: "text-accent bg-accent/10", text: t("landing.trustProof2", "Fixed price upfront. No haggling, no surprises.") },
+                  { icon: <Star className="w-5 h-5" />, color: "text-secondary bg-secondary/10", text: t("landing.trustProof3", "Mandatory reviews build real, portable reputation") },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.4, delay: 0.3 + i * 0.15 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${item.color}`}>
+                      {item.icon}
+                    </div>
+                    <p className="text-base font-medium pt-2">{item.text}</p>
+                  </motion.div>
+                ))}
               </div>
 
-              {/* Zero Hidden Fees */}
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
-                  <Banknote className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold font-display">{t("landing.trustFees", "Zero Platform Fees")}</h3>
-                <p className="text-muted-foreground">{t("landing.trustFeesDesc", "You pay your Tasker directly. No hidden service charges or surprise middleman fees.")}</p>
-              </div>
-
-              {/* Reputation & Support */}
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-primary-deep/10 rounded-full flex items-center justify-center mx-auto text-primary-deep">
-                  <Star className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold font-display">{t("landing.trustSupport", "Guaranteed Accountability")}</h3>
-                <p className="text-muted-foreground">{t("landing.trustSupportDesc", "Mandatory bilateral reviews ensure genuine platform-exclusive reputation.")}</p>
-              </div>
-            </div>
-            <div className="mt-16 text-center">
-              <Button size="lg" className="h-14 px-10 text-lg font-bold shadow-xl shadow-primary/20 bg-gradient-to-r from-primary-deep to-primary" onClick={() => navigate("/auth")}>
-                 {t("landing.joinTrust", "Join the Trusted Network")}
-                 <ArrowRight className="ml-2 w-5 h-5" />
+              <Button size="lg" className="w-fit h-14 px-10 text-lg font-bold shadow-xl shadow-primary/20 bg-gradient-to-r from-primary-deep to-primary" onClick={() => navigate("/auth")}>
+                {t("landing.joinTrust", "Join the Trusted Network")}
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* App Download Banner */}
-        <section className="px-6 py-24 bg-gradient-to-b from-transparent to-primary/5">
-          <div className="max-w-5xl mx-auto bg-primary-deep text-primary-foreground rounded-[2.5rem] p-10 sm:p-16 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-[-50%] right-[-10%] w-[400px] h-[400px] bg-primary rounded-full blur-[100px] opacity-70 z-0" />
+        <section className="relative w-full bg-primary-deep text-primary-foreground overflow-hidden">
+          <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary rounded-full blur-[120px] opacity-50 z-0 pointer-events-none" />
 
-            <div className="relative z-10 text-center space-y-6 max-w-2xl mx-auto">
-              <h2 className="text-3xl sm:text-5xl font-display font-bold leading-tight">
+          <div className="w-full flex flex-col md:flex-row items-center">
+            {/* Image Side */}
+            <div className="w-full md:w-1/2 relative h-[400px] sm:h-[500px] md:h-[600px]">
+              <div className="absolute inset-0 bg-primary-deep/20 mix-blend-multiply z-10" />
+              <img src="/images/download_app.png" alt="Tasky App Lifestyle" className="w-full h-full object-cover" />
+            </div>
+
+            {/* Content Side */}
+            <div className="w-full md:w-1/2 px-8 py-20 lg:px-24 xl:px-32 relative z-10 space-y-8 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-accent font-semibold text-sm">
+                 <Smartphone className="w-4 h-4" />
+                 <span>{t("landing.mobileApp", "Mobile App")}</span>
+              </div>
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-display font-bold leading-tight">
                 {t("landing.appTitle", "Take back your free time, anywhere.")}
               </h2>
-              <p className="text-lg text-primary-foreground/80 max-w-md mx-auto">
+              <p className="text-lg text-primary-foreground/80 max-w-lg mx-auto md:mx-0">
                 {t("landing.appDesc", "Download the Tasky mobile app to post jobs, track Taskers, and handle everything on the go.")}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
                 <Button variant="secondary" size="lg" className="h-14 px-6 border border-white/20 text-white hover:bg-white/10 hover:text-white bg-black/40 backdrop-blur-sm gap-3">
                   <Smartphone className="w-6 h-6" />
                   <div className="text-left leading-tight">
@@ -407,72 +441,68 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-border/10 bg-zinc-950 text-zinc-400 py-16 px-6 sm:py-24 relative overflow-hidden mt-auto">
-        {/* Subtle background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-        <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] opacity-20 pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 relative z-10">
+      <footer className="bg-background text-muted-foreground border-t border-border/40 py-16 px-6 sm:py-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-2 text-foreground">
               <Shield className="w-8 h-8 text-primary" />
               <span className="font-display font-bold text-2xl tracking-tight">Tasky</span>
             </div>
             <p className="text-sm leading-relaxed max-w-sm">
               {t("landing.footerDesc", "Mongolia's premier platform for trusted domestic services. Connecting verified professionals with homes that need them, safely and efficiently.")}
             </p>
-            <div className="flex gap-4 pt-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Facebook className="w-5 h-5" />
+            <div className="flex gap-3 pt-4">
+              <a href="#" className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                <Twitter className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Instagram className="w-5 h-5" />
+              <a href="#" className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
+                <Instagram className="w-4 h-4" />
               </a>
             </div>
           </div>
 
           {/* Services Column */}
           <div className="space-y-4">
-            <h4 className="text-white font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerServices", "Services")}</h4>
+            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerServices", "Services")}</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.catCleaning", "Deep Cleaning")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.catHandyman", "Handyman Repairs")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.catMoving", "Movers & Help")}</Link></li>
-              <li><Link to="#" className="text-zinc-600 cursor-not-allowed">{t("landing.catPlumbing", "Plumbing")} (Soon)</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.catCleaning", "Deep Cleaning")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.catHandyman", "Handyman Repairs")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.catMoving", "Movers & Help")}</Link></li>
+              <li><span className="text-muted-foreground/40 cursor-not-allowed">{t("landing.catPlumbing", "Plumbing")} (Soon)</span></li>
             </ul>
           </div>
 
           {/* Company Column */}
           <div className="space-y-4">
-            <h4 className="text-white font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerCompany", "Company")}</h4>
+            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerCompany", "Company")}</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.about", "About Us")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.careers", "Careers")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.blog", "Blog")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.contact", "Contact")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.about", "About Us")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.careers", "Careers")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.blog", "Blog")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.contact", "Contact")}</Link></li>
             </ul>
           </div>
 
           {/* Legal Column */}
           <div className="space-y-4">
-            <h4 className="text-white font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerLegal", "Legal")}</h4>
+            <h4 className="text-foreground font-bold font-display tracking-wide uppercase text-sm">{t("landing.footerLegal", "Legal")}</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.terms", "Terms of Service")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.privacy", "Privacy Policy")}</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">{t("landing.trustSupport", "Trust & Safety")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.terms", "Terms of Service")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.privacy", "Privacy Policy")}</Link></li>
+              <li><Link to="#" className="hover:text-foreground transition-colors">{t("landing.trustSupport", "Trust & Safety")}</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
           <p>{t("auth.copyright", "© 2026 Tasky Network. All rights reserved.")}</p>
           <div className="flex items-center gap-2">
             <span>{t("landing.madeWith", "Crafted with")}</span>
-            <span className="text-accent animate-pulse">❤</span>
+            <span className="text-accent">❤</span>
             <span>{t("landing.inUlaanbaatar", "in Ulaanbaatar")}</span>
           </div>
         </div>

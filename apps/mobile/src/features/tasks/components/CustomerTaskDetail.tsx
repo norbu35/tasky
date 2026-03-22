@@ -96,7 +96,7 @@ export function CustomerTaskDetail() {
                             <View style={styles.taskerDetails}>
                                 <Text style={styles.taskerName}>{booking.tasker?.full_name ?? ''}</Text>
                                 <View style={styles.ratingRow}>
-                                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                                    <Star size={12} color={colors.accent} fill={colors.accent} />
                                     <Text style={styles.ratingValue}>{booking.tasker?.rating_avg ?? 0}</Text>
                                     <Text style={styles.ratingCount}>({booking.tasker?.completed_tasks ?? 0} {t('taskDetail.reviews', 'reviews')})</Text>
                                 </View>
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     verifiedText: {
         fontSize: typography.micro,
         fontWeight: '700',
-        color: '#5D3900',
+        color: colors.accentForeground,
         letterSpacing: -0.5,
         textTransform: 'uppercase',
     },

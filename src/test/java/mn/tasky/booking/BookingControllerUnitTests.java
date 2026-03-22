@@ -861,7 +861,7 @@ class BookingControllerUnitTests {
                 Instant.now(),
                 "reason",
                 Instant.now());
-        when(scheduleService.listScheduleEvents(bookingId)).thenReturn(List.of(event));
+        when(scheduleService.listScheduleEvents(bookingId, principal.userId())).thenReturn(List.of(event));
 
         ResponseEntity<?> response = controller.getScheduleEvents(principal, bookingId);
 
