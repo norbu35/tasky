@@ -47,3 +47,6 @@ export const mobileTheme = {
 } as const;
 
 export type MobileTheme = typeof mobileTheme;
+
+export { animationPresets, durations, easings, interactiveStates } from './animations';
+export { elevations, overlays } from './elevations';
