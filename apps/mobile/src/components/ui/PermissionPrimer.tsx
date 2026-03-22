@@ -33,6 +33,7 @@ export function PermissionPrimer({
             <Text style={styles.description}>{description}</Text>
             <View style={styles.actions}>
                 <Button
+                    testID="permission-allow-button"
                     label={t('common.allow')}
                     variant="default"
                     onPress={onGrant}
@@ -40,6 +41,7 @@ export function PermissionPrimer({
                     accessibilityLabel={t('common.allow')}
                 />
                 <Button
+                    testID="permission-skip-button"
                     label={t('common.skip')}
                     variant="ghost"
                     onPress={onSkip}
