@@ -63,26 +63,38 @@ public class ChannelInterceptorConfig implements WebSocketMessageBrokerConfigure
                             principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + principal.role())));
                     accessor.setUser(auth);
                 } else if (StompCommand.SUBSCRIBE.equals(command)) {
-                    assertAuthorizedConversationSubscription(accessor);
+                    assertAuthorizedSubscription(accessor);
+                } else if (StompCommand.SEND.equals(command)) {
+                    String destination = accessor.getDestination();
+                    if (destination == null || !destination.matches("/app/conversations/[^/]+/messages")) {
+                        throw new IllegalArgumentException("Forbidden: send not allowed");
+                    }
+                    requireJwtPrincipal(accessor);
                 }
                 return message;
             }
         });
     }
 
-    private void assertAuthorizedConversationSubscription(StompHeaderAccessor accessor) {
+    private void assertAuthorizedSubscription(StompHeaderAccessor accessor) {
         String destination = accessor.getDestination();
-        if (destination == null || !destination.startsWith("/topic/conversations/")) {
+        if (destination == null) {
+            throw new IllegalArgumentException("Forbidden: null destination");
+        }
+
+        if (destination.startsWith("/topic/conversations/")) {
+            String conversationId = destination.substring("/topic/conversations/".length());
+            JwtPrincipal principal = requireJwtPrincipal(accessor);
+            assertUserNotRestricted(principal);
+            boolean isParticipant = messagingService.listConversations(principal.userId()).stream()
+                    .anyMatch(c -> c.id().equals(conversationId));
+            if (!isParticipant) {
+                throw new IllegalArgumentException("Forbidden");
+            }
             return;
         }
-        String conversationId = destination.substring("/topic/conversations/".length());
-        JwtPrincipal principal = requireJwtPrincipal(accessor);
-        assertUserNotRestricted(principal);
-        boolean isParticipant = messagingService.listConversations(principal.userId()).stream()
-                .anyMatch(c -> c.id().equals(conversationId));
-        if (!isParticipant) {
-            throw new IllegalArgumentException("Forbidden");
-        }
+
+        throw new IllegalArgumentException("Forbidden: subscription not allowed");
     }
 
     private JwtPrincipal requireJwtPrincipal(StompHeaderAccessor accessor) {
