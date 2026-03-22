@@ -720,8 +720,10 @@ flow — B2B is a thin coordination layer, not a parallel system.
   prior selected applicant cannot auto-relock contact without reselection.
 * **REQ-PAY-13**: If customer cancels after successful lead unlock, identical credit amount is refunded to Tasker ledger
   and marked as `REFUND` transaction with booking reference.
-* **REQ-PAY-14**: Lead-unlock price table is admin-configurable by category/district with minimum start value 1 credit;
-  all price changes are versioned with effective timestamp.
+* **REQ-PAY-14**: Lead-unlock pricing follows category-tiered model (REQ-PAY-27);
+  tier-to-category mapping is admin-configurable; all price changes are versioned
+  with effective timestamp; optional flat introductory rate may precede tiered
+  activation.
 * **REQ-PAY-15**: Credit charges are allowed only on `LEAD_UNLOCK_ACCEPTED`; attempts to charge on browse/apply/create
   events are blocked and logged as policy violations.
 * **REQ-PAY-16**: Customer can always choose any eligible applicant regardless of ranking position; UI tests verify no
@@ -756,12 +758,43 @@ flow — B2B is a thin coordination layer, not a parallel system.
   processing attempts are blocked.
 * **REQ-PAY-38**: When escrow is active, exact address remains locked until payment commitment is successful;
   pre-payment address fetch returns `403 ADDRESS_LOCKED`.
-* **REQ-PAY-40**: Tasky Plus subscribers receive priority queueing and SLA tracking that shows <1 hour match guarantee
-  eligibility; non-subscribers cannot access Plus-only queue.
-* **REQ-PAY-41**: B2B plans support recurring scheduling, organization billing profile, and seat-based admin controls;
-  contract tests verify tenant isolation from consumer accounts.
-* **REQ-PAY-42**: In Phase 4, checkout supports QPay plus SocialPay/bank-transfer rails with per-rail success/failure
-  telemetry and fallback messaging.
+* **REQ-PAY-23**: Promoted listing purchase creates time-bounded sort boost;
+  feed query respects boost expiry; QPay one-time payment verified before
+  activation; maximum one active promotion per task enforced.
+* **REQ-PAY-24**: Urgent boost appears above promoted listings in feed and
+  push; 3-day expiry enforced; QPay one-time payment verified.
+* **REQ-PAY-25**: Business account CRUD operations enforce owner-is-CUSTOMER
+  constraint; locations store PostGIS coordinates; member roles limited to
+  OWNER and MANAGER; membership check enforced on all B2B endpoints.
+* **REQ-PAY-26**: Tasks with `business_account_id` appear in business task
+  listing; priority weight boost is applied in matching query; standard
+  task/booking flow is unchanged for B2B tasks.
+* **REQ-PAY-27**: Lead-unlock credit cost varies by category tier; tier
+  mapping is admin-configurable; category change on a task recalculates
+  unlock cost.
+* **REQ-PAY-28**: Grandfathered flag is set for eligible taskers; 5% discount
+  applied at checkout for all paid products; flag is permanent and
+  non-revocable.
+* **REQ-PAY-30**: Subscription requires active Pro Badge; two tiers with
+  distinct free-lead-unlock counts; QPay recurring billing; badge loss
+  blocks renewal but does not cancel active period.
+* **REQ-PAY-32**: Escrow is opt-in; threshold is admin-configurable; direct
+  settlement remains default; deposit percentage is 10-20% of booking value.
+* **REQ-PAY-39**: B2B plans bill monthly on configured cycle day; QPay
+  payment link generated per cycle; plan pricing is admin-configurable;
+  suspended accounts retain data but lose priority dispatch.
+* **REQ-PAY-40**: Tasky Plus subscribers receive priority queueing and SLA
+  tracking that shows <1 hour match guarantee eligibility; non-subscribers
+  cannot access Plus-only queue.
+* **REQ-PAY-41**: B2B Managed (Shape B) activation requires 20+ paying
+  B2B Lite accounts for 3+ months; recurring schedule templates support
+  weekly/biweekly/monthly patterns; PMS webhook integration tested against
+  Guesty and Hostaway APIs.
+* **REQ-PAY-42**: In Phase 4, checkout supports QPay plus SocialPay/bank-
+  transfer rails with per-rail success/failure telemetry and fallback
+  messaging.
+* **REQ-PAY-43**: Family Plan billing via QPay recurring; priority matching
+  routes to Pro-subscribed providers; saved favorites persisted per household.
 
 #### 7.12.6 Trust & Safety
 
@@ -956,7 +989,7 @@ Initial demand marketing district: **Sukhbaatar**.
 | Time to first match | Median time from task creation to first qualified application                           | Used for district/category expansion decisions                       |
 | Leakage indicator   | Bookings with phone-sharing signal / total bookings                                     | Advisory in Phase 0-1, enforcement in Phase 2+                       |
 | Scope clarity       | Median pre-booking clarification message count per `ASSIGNED` booking                   | Alert and operations review if >2.0 for 2 consecutive weeks          |
-| Monthly net revenue | Gross platform revenue minus direct variable platform costs (payment rails, SMS, infra) | Must be >= 12,000,000 MNT for 3 consecutive months before Phase 3    |
+| Monthly net revenue | Gross platform revenue minus direct variable platform costs (payment rails, SMS, infra) | Must be >= 6,000,000 MNT for 2 consecutive months before Phase 3     |
 
 ### 9.3 Phase 3 Trigger Formula (Adjustable)
 
@@ -968,12 +1001,17 @@ Use this to recalculate the Phase 3 revenue gate as real unit economics change:
 - `RequiredPaidTransactions = ceil(TargetNetRevenue / UnitContributionMargin)`
 - `UnitContributionMargin = AvgRevenuePerPaidTransaction - AvgVariableCostPerPaidTransaction`
 
-Worked example for the current gate:
+Worked example for the current gate (diversified revenue):
 
-- `TargetNetRevenue = 12,000,000 MNT`
-- If `AvgRevenuePerPaidTransaction = 6,000 MNT` and `AvgVariableCostPerPaidTransaction = 1,500 MNT`
-- Then `UnitContributionMargin = 4,500 MNT`
-- `RequiredPaidTransactions = ceil(12,000,000 / 4,500) = 2,667 paid transactions/month` (~89/day)
+- `TargetNetRevenue = 6,000,000 MNT`
+- Revenue mix: promoted listings (~900K) + lead credits (~1.7M) + B2B trial (0) +
+  consumer subs (~1.45M) + Pro badges (~600K) = ~4.65M from non-credit sources
+- Remaining from lead credits: `RequiredCreditRevenue = 6,000,000 - 4,650,000 = 1,350,000 MNT`
+- If `AvgCreditPrice = 2,500 MNT` (blended across tiers) and `AvgVariableCost = 500 MNT`
+- Then `UnitContributionMargin = 2,000 MNT`
+- `RequiredPaidCreditUnlocks = ceil(1,350,000 / 2,000) = 675 credit unlocks/month` (~23/day)
+- Note: this example uses conservative month-10 projections from the debate
+  composite blueprint. Actual mix will vary.
 
 ---
 
@@ -1047,7 +1085,7 @@ until funding or team expansion occurs:
 | **2-Year Labour Law Contractor Reclassification**          | High     | Low–Med    | Legal disclaimer in ToS. Engagement duration tracking with admin alerts. Legal review at 18-month mark. `[Research: labour law]`                                                             |
 | **Seasonal Demand Collapse** (summer)                      | Medium   | High       | Seasonal category expansion (tutoring, digital tasks in summer). Adjust marketing spend seasonally. `[F10]`                                                                                  |
 | **Rating Inflation** in high-context culture               | Medium   | High       | Mandatory reviews reduce non-participation. Structured rating prompts (specific criteria, not just stars). Sentiment analysis on review text. `[F8]`                                         |
-| **Market Size Ceiling** (UB ~500K–600K households)         | High     | High       | Phase 4 city expansion (Darkhan, Erdenet). Higher-value category expansion. B2B recurring services. `[F12]`                                                                                  |
+| **Market Size Ceiling** (UB ~500K–600K households)         | High     | High       | B2B Lite from Phase 2 (supply lock-in + revenue diversification). Phase 4 city expansion (Darkhan, Erdenet). Higher-value category expansion. B2B Managed services. `[F12]`                  |
 | **Solo Developer Burnout**                                 | High     | High       | AI automation for support, QA, marketing. Strict scope discipline. Manual ops only where unavoidable. `[Gemini1]`                                                                            |
 | **Leakage Spike at Take Rate Introduction**                | High     | High       | Do not introduce take rate until ≥40% of active customers have completed 3+ bookings. Grandfather early Taskers at lower rate. `[Payment behaviour]`                                         |
 | **Credit / Referral Abuse**                                | High     | Medium     | Credit velocity limits, referral graph anomaly detection, per-user monthly reward caps, and manual review queue for suspicious clusters.                                                     |
