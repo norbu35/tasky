@@ -19,7 +19,8 @@ export interface VerificationDetail {
     user_name: string;
     id_card_front_url: string;
     id_card_back_url: string;
-    status: string;
+    selfie_url?: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
     admin_notes: string | null;
     submitted_at: string;
     reviewed_at: string | null;
