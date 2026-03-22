@@ -140,7 +140,30 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
         }),
         registerDevice: vi.fn().mockResolvedValue("Device registered."),
         unregisterDevice: vi.fn().mockResolvedValue(undefined),
-        devLogin: vi.fn().mockResolvedValue(baseSession)
+        devLogin: vi.fn().mockResolvedValue(baseSession),
+
+        // Admin methods
+        adminSearchUsers: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+        adminBanUser: vi.fn().mockResolvedValue(baseUser),
+        adminUnbanUser: vi.fn().mockResolvedValue(baseUser),
+        adminListFlaggedMessages: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+        adminListPendingVerifications: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+        adminApproveVerification: vi.fn().mockResolvedValue({ id: "v-1", user_id: "u-1", status: "APPROVED", submitted_at: "2026-01-01T00:00:00Z" }),
+        adminRejectVerification: vi.fn().mockResolvedValue({ id: "v-1", user_id: "u-1", status: "REJECTED", submitted_at: "2026-01-01T00:00:00Z" }),
+        adminListDisputes: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+        adminGetDispute: vi.fn().mockResolvedValue({ dispute: baseDispute, booking: baseBooking, conversation_id: null, evidence_messages: [] }),
+        adminResolveDispute: vi.fn().mockResolvedValue(baseDispute),
+        adminGetStrikePolicy: vi.fn().mockResolvedValue({ strikeWindowDays: 30, strikeThreshold: 3, firstSuspensionDays: 7, repeatSuspensionDays: 30, repeatOffenseWindowDays: 90, autoUnsuspendEnabled: true, updatedAt: "2026-01-01T00:00:00Z" }),
+        adminUpdateStrikePolicy: vi.fn().mockResolvedValue({ strikeWindowDays: 30, strikeThreshold: 3, firstSuspensionDays: 7, repeatSuspensionDays: 30, repeatOffenseWindowDays: 90, autoUnsuspendEnabled: true, updatedAt: "2026-01-01T00:00:00Z" }),
+        adminListFeatureToggles: vi.fn().mockResolvedValue({ data: [] }),
+        adminUpdateFeatureToggle: vi.fn().mockResolvedValue({ feature_name: "lead_fee_enabled", is_enabled: false, updated_by: null, updated_at: "2026-01-01T00:00:00Z" }),
+        adminConciergeAssignTask: vi.fn().mockResolvedValue(baseBooking),
+        adminListCategories: vi.fn().mockResolvedValue({ data: [baseCategory], cursor: { next: null, prev: null } }),
+        adminCreateCategory: vi.fn().mockResolvedValue(baseCategory),
+        adminUpdateCategory: vi.fn().mockResolvedValue(baseCategory),
+        adminListCategorySchemas: vi.fn().mockResolvedValue({ data: [] }),
+        adminCreateCategorySchema: vi.fn().mockResolvedValue({ version: 1, status: "DRAFT" }),
+        adminActivateCategorySchema: vi.fn().mockResolvedValue({ version: 1, status: "ACTIVE" })
     };
 
     return {...mock, ...overrides};
