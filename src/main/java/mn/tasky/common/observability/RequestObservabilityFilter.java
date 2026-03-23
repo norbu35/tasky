@@ -66,9 +66,15 @@ public class RequestObservabilityFilter extends OncePerRequestFilter {
         }
     }
 
+    private static final java.util.regex.Pattern SAFE_ID_PATTERN =
+            java.util.regex.Pattern.compile("^[a-zA-Z0-9._-]{1,128}$");
+
     private String resolveOrCreateId(String value) {
         if (StringUtils.hasText(value)) {
-            return value.trim();
+            String trimmed = value.trim();
+            if (SAFE_ID_PATTERN.matcher(trimmed).matches()) {
+                return trimmed;
+            }
         }
         return UUID.randomUUID().toString();
     }

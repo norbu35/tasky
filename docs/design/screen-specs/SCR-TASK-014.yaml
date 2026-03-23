@@ -1,0 +1,151 @@
+# Screen Spec: No-Show Flag (Tasker)
+screen_id: SCR-TASK-014
+name: "No-Show Flag (Tasker)"
+route: null
+role: [tasker]
+phase: "0-1"
+template: modal_sheet
+figma_page: "Tasker/No-Show Flag Tasker"
+feature: "tasker-bookings"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle_bar + title + content + action_buttons)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet for no-show flag flow — reminder, flag, and confirmation"
+    props:
+      visible: true
+      title: "Захиалагч ирээгүй"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to flag the customer as no-show"
+    props:
+      label: "Ирээгүй гэж тэмдэглэх"
+      variant: danger
+      size: xl
+    variant: danger
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA to dismiss and wait longer"
+    props:
+      label: "Хүлээх"
+      variant: outline
+      size: lg
+    variant: outline
+
+states:
+  - id: pre_reminder_10min
+    description: "Schedule +10min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm status"
+    components_visible: [handle_bar, reminder_icon, reminder_heading, reminder_description, update_status_button, dismiss_button]
+    components_hidden: [flag_button, flagging_spinner, success_content]
+
+  - id: flag_available_15min
+    description: "Schedule +15min — no check-in from customer in past 30min; flag button becomes available"
+    components_visible: [handle_bar, flag_icon, flag_heading, flag_description, no_show_warning, flag_button, wait_button]
+    components_hidden: [reminder_content, flagging_spinner, success_content]
+
+  - id: flagging
+    description: "No-show flag is being submitted to API"
+    components_visible: [handle_bar, flag_heading, flagging_spinner]
+    components_hidden: [flag_button, wait_button, reminder_content, success_content]
+
+  - id: flagged_success
+    description: "No-show flag submitted successfully — confirmation shown with next steps"
+    components_visible: [handle_bar, success_icon, flagged_heading, flagged_description, done_button]
+    components_hidden: [flag_button, wait_button, reminder_content, flagging_spinner]
+
+copy:
+  - key: reminder_heading
+    mn: "Захиалагчтайгаа уулзсан уу?"
+    en: "Have you met the customer?"
+    max_chars: 30
+
+  - key: reminder_description
+    mn: "Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү."
+    en: "10 minutes past scheduled time. Please update your arrival status."
+    max_chars: 70
+
+  - key: update_status_button
+    mn: "Би ирсэн"
+    en: "I'm here"
+    max_chars: 12
+
+  - key: flag_heading
+    mn: "Захиалагч ирээгүй"
+    en: "Customer did not show up"
+    max_chars: 30
+
+  - key: flag_description
+    mn: "Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна."
+    en: "15 minutes past scheduled time and the customer has not checked in."
+    max_chars: 80
+
+  - key: no_show_warning
+    mn: "Ирээгүй тэмдэглэсний дараа захиалгыг хянуулна. Худал мэдээлэл өгвөл хариуцлага хүлээнэ."
+    en: "After flagging, the booking enters review. False reports carry consequences."
+    max_chars: 100
+
+  - key: flag_button
+    mn: "Ирээгүй гэж тэмдэглэх"
+    en: "Flag No-Show"
+    max_chars: 25
+
+  - key: wait_button
+    mn: "Хүлээх"
+    en: "Wait"
+    max_chars: 10
+
+  - key: flagged_heading
+    mn: "Ирээгүй тэмдэглэгдлээ"
+    en: "No-Show Flagged"
+    max_chars: 25
+
+  - key: flagged_description
+    mn: "Захиалга хянагдахаар илгээгдлээ. Дараагийн алхмын талаар мэдэгдэл авна."
+    en: "Booking sent for review. You'll be notified about next steps."
+    max_chars: 70
+
+  - key: done_button
+    mn: "Ойлголоо"
+    en: "Got it"
+    max_chars: 10
+
+  - key: dismiss_button
+    mn: "Хаах"
+    en: "Dismiss"
+    max_chars: 10
+
+api_endpoints:
+  - method: POST
+    path: "/bookings/:id/no-show"
+    purpose: "Flag the counterparty (customer) as no-show for admin reliability review"
+
+analytics_events:
+  - event: "no_show_reminder_tasker_viewed"
+    trigger: "Pre-reminder sheet shown at schedule +10min"
+  - event: "no_show_flag_available_tasker"
+    trigger: "Flag button becomes available at schedule +15min"
+  - event: "no_show_flag_tasker_tapped"
+    trigger: "Tasker taps Flag No-Show button"
+  - event: "no_show_flag_tasker_confirmed"
+    trigger: "No-show flag API call succeeds"
+  - event: "no_show_flag_tasker_waited"
+    trigger: "Tasker taps Wait to dismiss and keep waiting"
+
+acceptance_criteria:
+  - "This is a bottom sheet overlay, not a standalone route"
+  - "Pre-reminder appears at scheduled start +10 minutes (REQ-BOOK-11)"
+  - "Flag button becomes available only at scheduled start +15 minutes"
+  - "Flag is permitted only if system verifies neither party has posted a status update/check-in in the preceding 30 minutes (REQ-BOOK-11)"
+  - "No mutually accepted in-app reschedule must have superseded the current schedule"
+  - "Warning text informs tasker that false reports carry consequences"
+  - "Flag triggers POST /bookings/:id/no-show and booking transitions to NO_SHOW"
+  - "Repeated no-shows (>=2 in trailing 28 days) trigger strike review per REQ-BOOK-11"
+  - "Success state confirms flag was submitted and booking is under review"
+  - "Done button dismisses sheet and returns to Booking Detail (SCR-TASK-013)"
+  - "Wait button dismisses the sheet without flagging"
+  - "Scrim overlay behind sheet per modal_sheet template"

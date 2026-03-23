@@ -12,7 +12,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, MoreVertical, Calendar, Banknote, MapPin, Star, ShieldCheck, MessageSquare } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBadge, ProfileAvatar, Button } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 import { useBookings } from '../../bookings/hooks/useBookings';
 import { useCompleteBooking } from '../../bookings/hooks/useCompleteBooking';
@@ -96,7 +96,7 @@ export function CustomerTaskDetail() {
                             <View style={styles.taskerDetails}>
                                 <Text style={styles.taskerName}>{booking.tasker?.full_name ?? ''}</Text>
                                 <View style={styles.ratingRow}>
-                                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                                    <Star size={12} color={colors.accent} fill={colors.accent} />
                                     <Text style={styles.ratingValue}>{booking.tasker?.rating_avg ?? 0}</Text>
                                     <Text style={styles.ratingCount}>({booking.tasker?.completed_tasks ?? 0} {t('taskDetail.reviews', 'reviews')})</Text>
                                 </View>
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 64,
         paddingHorizontal: 24,
-        backgroundColor: 'rgba(249,249,249,0.7)',
+        backgroundColor: colors.background,
     },
     headerButton: {
         width: 40,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     verifiedText: {
         fontSize: typography.micro,
         fontWeight: '700',
-        color: '#5D3900',
+        color: colors.accentForeground,
         letterSpacing: -0.5,
         textTransform: 'uppercase',
     },
@@ -367,11 +367,7 @@ const styles = StyleSheet.create({
         borderColor: colors.card,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 3,
+        ...elevations.elevated,
     },
     mapPlaceholder: {
         fontSize: typography.caption,
@@ -387,11 +383,7 @@ const styles = StyleSheet.create({
     primaryAction: {
         borderRadius: radius.md,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        ...elevations.elevated,
     },
     primaryActionGradient: {
         paddingVertical: 16,

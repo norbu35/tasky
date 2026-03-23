@@ -41,7 +41,7 @@ public class CryptoService {
 
         byte[] decodedKey = Base64.getDecoder().decode(base64Key);
         this.secretKey = new SecretKeySpec(decodedKey, "AES");
-        this.blindIndexKey = new SecretKeySpec(blindIndexKey.getBytes(StandardCharsets.UTF_8), BLIND_INDEX_ALGORITHM);
+        this.blindIndexKey = new SecretKeySpec(Base64.getDecoder().decode(blindIndexKey), BLIND_INDEX_ALGORITHM);
     }
 
     @PostConstruct

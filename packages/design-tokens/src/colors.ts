@@ -1,31 +1,33 @@
+// Тэнгэр (Sky) palette — aligned with tokens.ts and tokens.css
+// This file is the legacy shadcn-compatible export; prefer tokens.ts for new code.
 export const colors = {
   primary: {
-    DEFAULT: '#6D28D9', // Deep Violet 700
-    foreground: '#FFFFFF',
+    DEFAULT: '#1B3A5C', // Deep Sky Blue
+    foreground: '#F9F8F5', // Clean Off-White
   },
   secondary: {
-    DEFAULT: '#EDE9FE', // Soft Violet 100
-    foreground: '#4C1D95', // Deep Violet 900
+    DEFAULT: '#C49A3C', // Steppe Gold
+    foreground: '#FFFFFF',
   },
   destructive: {
     DEFAULT: '#EF4444', // Red 500
     foreground: '#FFFFFF',
   },
   muted: {
-    DEFAULT: '#F4F4F5', // Zinc 100
-    foreground: '#71717A', // Zinc 500
+    DEFAULT: '#F3F1EC', // Light Warm
+    foreground: '#576473', // Muted Blue
   },
   accent: {
-    DEFAULT: '#F59E0B', // Electric Amber 500
-    foreground: '#000000',
+    DEFAULT: '#6BA3BE', // Open Sky
+    foreground: '#FFFFFF',
   },
-  background: '#FAFAFA', // Zinc 50
-  foreground: '#171717', // Zinc 900
+  background: '#F9F8F5', // Clean Off-White
+  foreground: '#1B3A5C', // Deep Sky Blue
   card: {
     DEFAULT: '#FFFFFF',
-    foreground: '#171717',
+    foreground: '#1B3A5C',
   },
-  border: '#E4E4E7', // Zinc 200
-  input: '#E4E4E7',
-  ring: '#6D28D9',
+  border: '#C7D0D9', // Soft Blue-Grey
+  input: '#DBE0E5',
+  ring: '#1B3A5C',
 };

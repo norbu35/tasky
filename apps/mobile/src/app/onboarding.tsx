@@ -1,197 +1,215 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Dimensions, NativeSyntheticEvent, NativeScrollEvent, TouchableOpacity } from 'react-native';
+import {
+    Dimensions,
+    FlatList,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { CheckCircle, Search, ShieldCheck } from 'lucide-react-native';
 import { useAppStore } from '../store/appStore';
 import { mobileTheme } from '../design/tokenAdapter';
 import { Button } from '../components/ui';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CheckCircle, Search, ShieldCheck } from 'lucide-react-native';
-import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { width, height } = Dimensions.get('window');
-const { colors } = mobileTheme;
+const { width } = Dimensions.get('window');
+const { colors, spacing, typography } = mobileTheme;
 
 const SLIDES = [
-  {
-    id: '1',
-    titleKey: 'onboarding.slide1_title',
-    descKey: 'onboarding.slide1_desc',
-    icon: Search,
-  },
-  {
-    id: '2',
-    titleKey: 'onboarding.slide2_title',
-    descKey: 'onboarding.slide2_desc',
-    icon: CheckCircle,
-  },
-  {
-    id: '3',
-    titleKey: 'onboarding.slide3_title',
-    descKey: 'onboarding.slide3_desc',
-    icon: ShieldCheck,
-  }
+    {
+        id: '1',
+        titleKey: 'auth.onboarding.slide1Title',
+        bodyKey: 'auth.onboarding.slide1Body',
+        icon: Search,
+    },
+    {
+        id: '2',
+        titleKey: 'auth.onboarding.slide2Title',
+        bodyKey: 'auth.onboarding.slide2Body',
+        icon: CheckCircle,
+    },
+    {
+        id: '3',
+        titleKey: 'auth.onboarding.slide3Title',
+        bodyKey: 'auth.onboarding.slide3Body',
+        icon: ShieldCheck,
+    },
 ];
 
 export default function OnboardingScreen() {
-  const { t, i18n } = useTranslation();
-  const router = useRouter();
-  const completeOnboarding = useAppStore((state) => state.completeOnboarding);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef<FlatList>(null);
+    const { t } = useTranslation();
+    const router = useRouter();
+    const completeOnboarding = useAppStore((state) => state.completeOnboarding);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const flatListRef = useRef<FlatList>(null);
 
-  const toggleLanguage = async () => {
-    const nextLang = i18n.language === 'en' ? 'mn' : 'en';
-    await i18n.changeLanguage(nextLang);
-    await AsyncStorage.setItem('appLanguage', nextLang);
-  };
+    const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const x = e.nativeEvent.contentOffset.x;
+        const index = Math.round(x / width);
+        if (index !== currentIndex) {
+            setCurrentIndex(index);
+        }
+    };
 
-  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const x = e.nativeEvent.contentOffset.x;
-    const index = Math.round(x / width);
-    if (index !== currentIndex) {
-      setCurrentIndex(index);
-    }
-  };
+    const handleNext = () => {
+        if (currentIndex < SLIDES.length - 1) {
+            flatListRef.current?.scrollToIndex({
+                index: currentIndex + 1,
+                animated: true,
+            });
+        } else {
+            handleFinish();
+        }
+    };
 
-  const handleNext = () => {
-    if (currentIndex < SLIDES.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
-    } else {
-      completeOnboarding();
-      router.replace('/');
-    }
-  };
+    const handleSkip = () => {
+        handleFinish();
+    };
 
-  const renderItem = ({ item }: { item: typeof SLIDES[0] }) => {
-    const Icon = item.icon;
+    const handleFinish = () => {
+        completeOnboarding();
+        router.replace('/(auth)/role-select');
+    };
+
+    const isLastSlide = currentIndex === SLIDES.length - 1;
+
+    const renderItem = ({ item }: { item: (typeof SLIDES)[0] }) => {
+        const Icon = item.icon;
+        return (
+            <View style={styles.slide}>
+                <View style={styles.iconContainer}>
+                    <Icon size={120} color={colors.primary} strokeWidth={1} />
+                </View>
+                <Text style={styles.title}>{t(item.titleKey)}</Text>
+                <Text style={styles.description}>{t(item.bodyKey)}</Text>
+            </View>
+        );
+    };
+
     return (
-      <View style={styles.slide}>
-        <View style={styles.iconContainer}>
-          <Icon size={120} color={colors.primary} strokeWidth={1} />
-        </View>
-        <Text style={styles.title}>{t(item.titleKey)}</Text>
-        <Text style={styles.description}>{t(item.descKey)}</Text>
-      </View>
-    );
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        data={SLIDES}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        bounces={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-      />
-
-      {/* Subtle Language Switcher Top Right */}
-      <View style={styles.langContainer}>
-        <TouchableOpacity onPress={toggleLanguage} style={styles.langButton}>
-          <Text style={styles.langText}>{i18n.language === 'en' ? 'MN' : 'EN'}</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <View style={styles.pagination}>
-          {SLIDES.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                {
-                  backgroundColor: currentIndex === index ? colors.primary : colors.border,
-                  width: currentIndex === index ? 24 : 8,
-                }
-              ]}
+        <SafeAreaView style={styles.container} testID="onboarding-screen">
+            <FlatList
+                ref={flatListRef}
+                data={SLIDES}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                bounces={false}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
             />
-          ))}
-        </View>
-        <Button
-          label={currentIndex === SLIDES.length - 1 ? t("common.getStarted") : t("common.next")}
-          onPress={handleNext}
-          style={styles.button}
-        />
-      </View>
-    </SafeAreaView>
-  );
+
+            {!isLastSlide && (
+                <View style={styles.skipContainer}>
+                    <Button
+                        testID="onboarding-skip"
+                        label={t('auth.onboarding.skip', 'Skip')}
+                        variant="ghost"
+                        onPress={handleSkip}
+                    />
+                </View>
+            )}
+
+            <View style={styles.footer}>
+                <View style={styles.pagination}>
+                    {SLIDES.map((_, index) => (
+                        <View
+                            key={index}
+                            testID={`pagination-dot-${index}`}
+                            style={[
+                                styles.dot,
+                                {
+                                    backgroundColor:
+                                        currentIndex === index
+                                            ? colors.primary
+                                            : colors.border,
+                                    width: currentIndex === index ? 24 : 8,
+                                },
+                            ]}
+                        />
+                    ))}
+                </View>
+                <Button
+                    testID="onboarding-next"
+                    label={
+                        isLastSlide
+                            ? t('auth.onboarding.getStarted', 'Get Started')
+                            : t('auth.onboarding.next', 'Next')
+                    }
+                    onPress={handleNext}
+                    style={styles.button}
+                />
+            </View>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  langContainer: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-    zIndex: 10,
-  },
-  langButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.border + '30',
-  },
-  langText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: colors.mutedForeground,
-  },
-  slide: {
-    width,
-    alignItems: 'center',
-    padding: 40,
-    paddingTop: height * 0.15,
-  },
-  iconContainer: {
-    marginBottom: 60,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: colors.primary + '10',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.foreground,
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 18,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 26,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 50,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 40,
-  },
-  pagination: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30,
-    gap: 8,
-  },
-  dot: {
-    height: 8,
-    borderRadius: 4,
-  },
-  button: {
-    width: '100%',
-    height: 56,
-  }
+    container: {
+        flex: 1,
+        backgroundColor: colors.background,
+    },
+    skipContainer: {
+        position: 'absolute',
+        top: spacing.xl,
+        right: spacing.lg,
+        zIndex: 10,
+    },
+    slide: {
+        width,
+        alignItems: 'center',
+        paddingHorizontal: spacing.xl,
+        paddingTop: spacing['3xl'],
+        justifyContent: 'center',
+    },
+    iconContainer: {
+        marginBottom: spacing['2xl'],
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        backgroundColor: colors.subtleViolet,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: typography.heading,
+        fontWeight: '700',
+        color: colors.foreground,
+        marginBottom: spacing.md,
+        textAlign: 'center',
+    },
+    description: {
+        fontSize: typography.body,
+        color: colors.mutedForeground,
+        textAlign: 'center',
+        lineHeight: typography.body * 1.6,
+    },
+    footer: {
+        position: 'absolute',
+        bottom: spacing['3xl'],
+        left: 0,
+        right: 0,
+        paddingHorizontal: spacing.xl,
+    },
+    pagination: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: spacing.xl,
+        gap: spacing.sm,
+    },
+    dot: {
+        height: 8,
+        borderRadius: 4,
+    },
+    button: {
+        width: '100%',
+        minHeight: 56,
+    },
 });

@@ -29,7 +29,7 @@ import {
     Check,
 } from 'lucide-react-native';
 import { Button, TrustBanner } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 import { useCreateTask } from '../hooks/useCreateTask';
 import { useCategories } from '../hooks/useCategories';
@@ -948,7 +948,7 @@ const styles = StyleSheet.create({
 
     /* Header */
     header: {
-        backgroundColor: 'rgba(249,249,249,0.7)',
+        backgroundColor: colors.background,
     },
     headerContent: {
         flexDirection: 'row',
@@ -976,7 +976,7 @@ const styles = StyleSheet.create({
     },
     progressTrack: {
         height: 4,
-        backgroundColor: '#EEEEEE',
+        backgroundColor: colors.border,
     },
     progressFill: {
         height: 4,
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: radius.sm,
-        backgroundColor: 'rgba(83,0,183,0.1)',
+        backgroundColor: colors.subtleViolet,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
         borderBottomColor: colors.border,
     },
     dropdownRowSelected: {
-        backgroundColor: 'rgba(83,0,183,0.06)',
+        backgroundColor: colors.muted,
     },
     dropdownText: {
         fontSize: typography.label,
@@ -1280,7 +1280,7 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         borderStyle: 'dashed',
         borderColor: colors.primaryDeep,
-        backgroundColor: 'rgba(83,0,183,0.04)',
+        backgroundColor: colors.muted,
     },
     addPhotosText: {
         fontSize: typography.body,
@@ -1345,11 +1345,7 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: colors.card,
         padding: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 24,
-        elevation: 4,
+        ...elevations.navBar,
     },
     footerButtons: {
         flexDirection: 'row',

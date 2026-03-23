@@ -32,12 +32,26 @@ public class AdminUserController {
 
     @GetMapping
     public ResponseEntity<?> search(
-            @RequestParam String phone,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String facebook_id,
+            @RequestParam(required = false) String phone,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "50") int limit) {
         int clampedLimit = Math.max(1, Math.min(limit, 100));
         try {
-            UserProfilePage page = authService.searchUsersByPhone(phone, cursor, clampedLimit);
+            UserProfilePage page;
+            if (name != null && !name.isBlank()) {
+                page = authService.searchUsersByName(name, cursor, clampedLimit);
+            } else if (facebook_id != null && !facebook_id.isBlank()) {
+                page = authService.searchUsersByFacebookId(facebook_id, cursor, clampedLimit);
+            } else if (phone != null && !phone.isBlank()) {
+                page = authService.searchUsersByPhone(phone, cursor, clampedLimit);
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(Map.of(
+                                "code", "MISSING_SEARCH_PARAM",
+                                "message", "Provide at least one of: name, facebook_id, phone."));
+            }
             CursorPagination pagination = new CursorPagination(page.nextCursor(), page.hasMore());
             return ResponseEntity.ok(new PagedResponse<>(page.data(), pagination));
         } catch (IllegalArgumentException exception) {

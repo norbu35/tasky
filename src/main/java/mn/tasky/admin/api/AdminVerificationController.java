@@ -100,7 +100,10 @@ public class AdminVerificationController {
     }
 
     @PostMapping("/{id}/approve")
-    public ResponseEntity<?> approve(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<?> approve(
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            HttpServletRequest request) {
         return authService
                 .approveVerification(id)
                 .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))
@@ -128,7 +131,10 @@ public class AdminVerificationController {
 
     @PostMapping("/{id}/reject")
     public ResponseEntity<?> reject(
-            @PathVariable String id, @Valid @RequestBody RejectVerificationRequest body, HttpServletRequest request) {
+            @AuthenticationPrincipal JwtPrincipal principal,
+            @PathVariable String id,
+            @Valid @RequestBody RejectVerificationRequest body,
+            HttpServletRequest request) {
         return authService
                 .rejectVerification(id, body.reason())
                 .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))

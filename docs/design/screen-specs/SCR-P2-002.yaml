@@ -1,0 +1,197 @@
+# Screen Spec: Credits — QPay Payment
+screen_id: SCR-P2-002
+name: "Credits — QPay Payment"
+route: "/(tasker)/credits/pay"
+role: [tasker]
+phase: "2"
+template: detail
+figma_page: "Phase 2/Credits QPay Payment"
+feature: "credits"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header -> scrollview(qr_section + status_section) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-CARD
+    usage: "Container card displaying QPay QR code image and payment instructions"
+    props:
+      onPress: null
+    variant: elevated
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA for QPay deeplink to open QPay app directly"
+    props:
+      label: "QPay аппаар нээх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary back button to return to credits screen"
+    props:
+      label: "Буцах"
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-STATUSBADGE
+    usage: "Payment status indicator badge (pending, success, failed)"
+    props:
+      status: "pending"
+    variant: open
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Success animation on payment confirmation"
+    props:
+      size: 64
+      color: "verified"
+    variant: default
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error state for payment failure"
+    props:
+      illustration: "payment_failed"
+      headline: "Төлбөр амжилтгүй"
+      description: "Төлбөр хийхэд алдаа гарлаа"
+      ctaLabel: "Дахин оролдох"
+    variant: error
+
+states:
+  - id: qr_display
+    description: "QPay QR code generated and displayed; user scans with QPay app"
+    components_visible: [COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: deeplink_redirect
+    description: "User tapped 'Open in QPay'; app switch in progress"
+    components_visible: [COMP-CARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: payment_pending
+    description: "Payment initiated; polling for confirmation"
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE]
+
+  - id: payment_success
+    description: "Payment confirmed; credits added to balance"
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-EMPTYSTATE]
+
+  - id: payment_failed
+    description: "Payment was rejected or errored"
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK]
+
+  - id: payment_timeout
+    description: "Payment not confirmed within expected window (3 minutes)"
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.ghost]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK]
+
+copy:
+  - key: nav_title
+    mn: "Төлбөр"
+    en: "Payment"
+    max_chars: 20
+
+  - key: qr_heading
+    mn: "QPay-ээр төлбөр хийх"
+    en: "Pay with QPay"
+    max_chars: 30
+
+  - key: qr_instruction
+    mn: "QPay аппаар доорх QR кодыг уншуулна уу"
+    en: "Scan the QR code below with your QPay app"
+    max_chars: 60
+
+  - key: amount_label
+    mn: "Төлбөрийн дүн"
+    en: "Amount"
+    max_chars: 20
+
+  - key: amount_value
+    mn: "₮{amount}"
+    en: "₮{amount}"
+    max_chars: 15
+
+  - key: cta_open_qpay
+    mn: "QPay аппаар нээх"
+    en: "Open in QPay"
+    max_chars: 20
+
+  - key: status_pending
+    mn: "Төлбөр хүлээгдэж байна..."
+    en: "Payment pending..."
+    max_chars: 30
+
+  - key: status_success_headline
+    mn: "Төлбөр амжилттай!"
+    en: "Payment successful!"
+    max_chars: 25
+
+  - key: status_success_description
+    mn: "{count} кредит нэмэгдлээ"
+    en: "{count} credits added"
+    max_chars: 30
+
+  - key: status_failed_headline
+    mn: "Төлбөр амжилтгүй"
+    en: "Payment failed"
+    max_chars: 25
+
+  - key: status_failed_description
+    mn: "Төлбөр хийхэд алдаа гарлаа. Дахин оролдоно уу"
+    en: "Payment failed. Please try again"
+    max_chars: 60
+
+  - key: status_timeout_headline
+    mn: "Төлбөр хугацаа хэтэрсэн"
+    en: "Payment timed out"
+    max_chars: 30
+
+  - key: status_timeout_description
+    mn: "Төлбөрийг баталгаажуулж чадсангүй. Дахин оролдоно уу"
+    en: "Could not confirm payment. Please try again"
+    max_chars: 60
+
+  - key: cta_retry
+    mn: "Дахин оролдох"
+    en: "Try again"
+    max_chars: 20
+
+  - key: cta_back
+    mn: "Буцах"
+    en: "Back"
+    max_chars: 10
+
+api_endpoints:
+  - method: POST
+    path: "/credits/purchase"
+    purpose: "Initiate credit purchase and generate QPay payment link"
+  - method: GET
+    path: "/payments/:id/status"
+    purpose: "Poll payment status until confirmed, failed, or timed out"
+
+analytics_events:
+  - event: "credits_payment_started"
+    trigger: "QPay QR code displayed"
+  - event: "credits_qpay_deeplink"
+    trigger: "User taps 'Open in QPay' button"
+  - event: "credits_payment_success"
+    trigger: "Payment confirmed and credits added"
+  - event: "credits_payment_failed"
+    trigger: "Payment failed or was rejected"
+  - event: "credits_payment_timeout"
+    trigger: "Payment not confirmed within 3 minutes"
+
+acceptance_criteria:
+  - "QR display state shows QPay QR code in elevated card with scan instructions"
+  - "QPay deeplink button opens the QPay app via platform deeplink"
+  - "Payment pending state polls GET /payments/:id/status every 3 seconds"
+  - "Payment success state shows animated checkmark and credits-added count"
+  - "Payment failed state shows error illustration with retry CTA"
+  - "Payment timeout triggers after 3 minutes of no confirmation"
+  - "Back button returns to SCR-P2-001 (Credits Balance)"
+  - "Amount displayed uses price_display typography (Manrope bold 20px) with ₮ prefix"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

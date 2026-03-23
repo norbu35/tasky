@@ -99,11 +99,11 @@ export function TaskFeed() {
                 </Text>
 
                 <View style={styles.searchContainer}>
-                    <Search size={18} color={`rgba(74,68,85,0.5)`} style={styles.searchIcon} />
+                    <Search size={18} color={colors.mutedForeground} style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
                         placeholder={t('taskFeed.searchPlaceholder', 'Search for jobs...')}
-                        placeholderTextColor="rgba(74,68,85,0.5)"
+                        placeholderTextColor={colors.mutedForeground}
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
         marginTop: 17,
         paddingTop: 17,
         borderTopWidth: 1,
-        borderTopColor: '#EEEEEE',
+        borderTopColor: colors.border,
     },
     metaItem: {
         flex: 1,

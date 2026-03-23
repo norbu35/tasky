@@ -58,6 +58,19 @@ public interface UserDao {
             + "facebook_id = :facebookId")
     Optional<AuthUser> findByFacebookId(@Bind("facebookId") String facebookId);
 
+    @SqlQuery("SELECT u.id, u.phone, u.facebook_id, u.role, u.status, u.primary_auth, u.created_at, u.updated_at "
+            + "FROM users u JOIN profiles p ON u.id = p.user_id "
+            + "WHERE LOWER(p.full_name) LIKE LOWER(:pattern) "
+            + "ORDER BY u.id LIMIT :limit")
+    List<AuthUser> searchByName(@Bind("pattern") String pattern, @Bind("limit") int limit);
+
+    @SqlQuery("SELECT u.id, u.phone, u.facebook_id, u.role, u.status, u.primary_auth, u.created_at, u.updated_at "
+            + "FROM users u JOIN profiles p ON u.id = p.user_id "
+            + "WHERE LOWER(p.full_name) LIKE LOWER(:pattern) AND u.id > :cursorId "
+            + "ORDER BY u.id LIMIT :limit")
+    List<AuthUser> searchByNameAfterCursor(
+            @Bind("pattern") String pattern, @Bind("cursorId") UUID cursorId, @Bind("limit") int limit);
+
     default void updateStatus(String id, String status) {
         updateStatus(required(id, "id"), status);
     }

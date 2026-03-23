@@ -1,0 +1,202 @@
+# Screen Spec: Auth — Login
+screen_id: SCR-SHARED-002
+name: "Auth — Login"
+route: "/auth/login"
+role: [customer, tasker]
+phase: "0-1"
+template: auth
+figma_page: "Shared/Auth Login"
+feature: "auth"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> centered_content(logo + heading + description + login_buttons) -> bottom_links(terms + privacy)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA for Facebook login; secondary CTA for OTP login (Phase 2+)"
+    props:
+      label: "Facebook-ээр нэвтрэх"
+      variant: primary
+      size: xl
+      loading: false
+      icon: "facebook"
+      iconPosition: "left"
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary OTP login button shown only in Phase 2+"
+    props:
+      label: "Утасны дугаараар нэвтрэх"
+      variant: outline
+      size: xl
+      loading: false
+      icon: "phone"
+      iconPosition: "left"
+    variant: outline
+
+  - id: COMP-INPUT
+    usage: "Phone number input field, visible only in otp_form state (Phase 2+)"
+    props:
+      placeholder: "Утасны дугаар"
+      label: "Утасны дугаар"
+      leftIcon: "phone"
+      maxLength: 8
+    variant: default
+
+  - id: COMP-FORMFIELD
+    usage: "Wraps phone input with label and error messaging"
+    props:
+      label: "Утасны дугаар"
+      required: true
+    variant: default
+
+  - id: COMP-LANGUAGESWITCHER
+    usage: "Language toggle at top-right corner for mn/en switching"
+    props:
+      currentLang: "mn"
+    variant: default
+
+states:
+  - id: default
+    description: "Login screen displayed with Facebook login button; OTP button shown in Phase 2+"
+    components_visible: [logo, heading, description, facebook_button, language_switcher, terms_link, privacy_link]
+    components_hidden: [otp_button_phase1, phone_input, otp_loading]
+
+  - id: facebook_loading
+    description: "Facebook OAuth in progress after user taps the Facebook login button"
+    components_visible: [logo, heading, facebook_button_loading, language_switcher]
+    components_hidden: [otp_button, phone_input, description]
+
+  - id: otp_form
+    description: "Phone number entry form shown after tapping OTP login (Phase 2+)"
+    components_visible: [logo, heading, phone_input, submit_button, back_link, language_switcher]
+    components_hidden: [facebook_button, description]
+
+  - id: error_auth_failed
+    description: "Authentication failed due to server error or invalid credentials"
+    components_visible: [logo, heading, description, facebook_button, error_message, language_switcher]
+    components_hidden: [phone_input]
+
+  - id: error_network
+    description: "Network error prevents authentication request from completing"
+    components_visible: [logo, heading, description, facebook_button, network_error_message, retry_hint, language_switcher]
+    components_hidden: [phone_input]
+
+  - id: error_facebook_unavailable
+    description: "Facebook SDK unavailable or user cancelled Facebook OAuth flow"
+    components_visible: [logo, heading, description, facebook_button_retry, facebook_error_message, language_switcher]
+    components_hidden: [phone_input]
+
+  - id: offline
+    description: "Device is offline; login actions disabled with offline banner"
+    components_visible: [logo, heading, description, facebook_button_disabled, offline_banner, language_switcher]
+    components_hidden: [phone_input]
+
+copy:
+  - key: heading
+    mn: "Tasky-д тавтай морил"
+    en: "Welcome to Tasky"
+    max_chars: 30
+
+  - key: description
+    mn: "Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай"
+    en: "Connect with trusted taskers and book tasks easily"
+    max_chars: 80
+
+  - key: facebook_button_label
+    mn: "Facebook-ээр нэвтрэх"
+    en: "Login with Facebook"
+    max_chars: 25
+
+  - key: otp_button_label
+    mn: "Утасны дугаараар нэвтрэх"
+    en: "Login with Phone"
+    max_chars: 25
+
+  - key: phone_input_label
+    mn: "Утасны дугаар"
+    en: "Phone number"
+    max_chars: 20
+
+  - key: phone_input_placeholder
+    mn: "9911 2233"
+    en: "9911 2233"
+    max_chars: 12
+
+  - key: submit_otp_label
+    mn: "Код авах"
+    en: "Get Code"
+    max_chars: 15
+
+  - key: error_auth_failed
+    mn: "Нэвтрэх боломжгүй байна. Дахин оролдоно уу."
+    en: "Login failed. Please try again."
+    max_chars: 50
+
+  - key: error_facebook_unavailable
+    mn: "Facebook холболт амжилтгүй боллоо"
+    en: "Facebook connection failed"
+    max_chars: 40
+
+  - key: error_network
+    mn: "Интернэт холболтоо шалгана уу"
+    en: "Please check your internet connection"
+    max_chars: 45
+
+  - key: offline_banner
+    mn: "Офлайн байна"
+    en: "You are offline"
+    max_chars: 20
+
+  - key: terms_link
+    mn: "Үйлчилгээний нөхцөл"
+    en: "Terms of Service"
+    max_chars: 25
+
+  - key: privacy_link
+    mn: "Нууцлалын бодлого"
+    en: "Privacy Policy"
+    max_chars: 20
+
+api_endpoints:
+  - method: POST
+    path: "/auth/facebook"
+    purpose: "Authenticate user via Facebook OAuth token"
+  - method: POST
+    path: "/auth/otp/request"
+    purpose: "Request OTP code sent to provided phone number (Phase 2+)"
+
+analytics_events:
+  - event: "login_screen_viewed"
+    trigger: "Login screen becomes visible"
+  - event: "facebook_login_tapped"
+    trigger: "User taps the Facebook login button"
+  - event: "facebook_login_success"
+    trigger: "Facebook OAuth completes successfully"
+  - event: "facebook_login_failed"
+    trigger: "Facebook OAuth fails or user cancels"
+  - event: "otp_login_tapped"
+    trigger: "User taps the OTP login button (Phase 2+)"
+  - event: "otp_code_requested"
+    trigger: "User submits phone number for OTP"
+  - event: "language_switched"
+    trigger: "User toggles language between mn and en"
+
+acceptance_criteria:
+  - "Facebook login button is always visible in default state"
+  - "OTP login button is only visible when Phase 2+ is active"
+  - "Tapping Facebook button shows loading state on the button with spinner replacing label"
+  - "On successful Facebook auth for a new user, the app navigates to Onboarding Carousel (SCR-SHARED-005)"
+  - "On successful Facebook auth for a returning customer, the app navigates to My Tasks (SCR-CUST-001)"
+  - "On successful Facebook auth for a returning tasker, the app navigates to Task Feed (SCR-TASK-001)"
+  - "In Phase 2+, tapping OTP button transitions to otp_form state with phone input"
+  - "Phone input validates 8-digit Mongolian phone number format"
+  - "On successful OTP request, the app pushes to OTP Verification (SCR-SHARED-003)"
+  - "Facebook error shows specific error message with retry option"
+  - "Network error shows message advising user to check connection"
+  - "Language switcher toggles between Mongolian and English"
+  - "Terms of Service and Privacy Policy links are visible and tappable"
+  - "All error messages display inline, not as toasts"
+  - "Offline state disables login buttons and shows offline banner"

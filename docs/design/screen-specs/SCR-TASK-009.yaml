@@ -1,0 +1,155 @@
+# Screen Spec: Verification — Rejected
+screen_id: SCR-TASK-009
+name: "Verification — Rejected"
+route: "/(tasker)/verification/rejected"
+role: [tasker]
+phase: "0-1"
+template: error_state
+figma_page: "Tasker/Verification Rejected"
+feature: "verification"
+
+layout:
+  template: error_state
+  density: comfortable
+  structure: "safe_area -> centered(error_icon + heading + rejection_reason + resubmit_guidance + resubmit_cta + dan_alternative_link)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA to resubmit ID photos after correcting issues"
+    props:
+      label: "Дахин илгээх"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA to try DAN fast-path (Phase 2+ only)"
+    props:
+      label: "E-Mongolia-р оролдох"
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-BUTTON
+    usage: "Ghost link to return to task feed"
+    props:
+      label: "Даалгавар үзэх"
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error state illustration with rejection icon"
+    props:
+      illustration: "verification_rejected"
+      headline: "Баталгаажуулалт цуцлагдлаа"
+      description: ""
+    variant: error
+
+states:
+  - id: default_with_reason
+    description: "Rejection displayed with specific reason from admin review and resubmit CTA"
+    components_visible: [error_icon, heading, rejection_reason, resubmit_guidance, resubmit_button, browse_link]
+    components_hidden: [dan_alternative_button]
+
+  - id: resubmit_prompt
+    description: "Explicit resubmit prompt with guidance on what to fix"
+    components_visible: [error_icon, heading, rejection_reason, fix_instructions, resubmit_button, browse_link]
+    components_hidden: [dan_alternative_button]
+
+  - id: dan_alternative
+    description: "Optional state (Phase 2+) — DAN fast-path offered as alternative to re-uploading photos"
+    components_visible: [error_icon, heading, rejection_reason, resubmit_button, dan_alternative_button, browse_link]
+    components_hidden: []
+
+copy:
+  - key: heading
+    mn: "Баталгаажуулалт цуцлагдлаа"
+    en: "Verification Rejected"
+    max_chars: 30
+
+  - key: rejection_reason_label
+    mn: "Шалтгаан"
+    en: "Reason"
+    max_chars: 10
+
+  - key: reason_blurry
+    mn: "Зураг бүдэг байна. Тод гэрэлтэй газар дахин авна уу."
+    en: "Photos are blurry. Please retake in good lighting."
+    max_chars: 55
+
+  - key: reason_mismatch
+    mn: "Иргэний үнэмлэх болон амьд зураг таарахгүй байна."
+    en: "ID card and selfie do not match."
+    max_chars: 50
+
+  - key: reason_expired_id
+    mn: "Иргэний үнэмлэхний хугацаа дууссан байна."
+    en: "ID card has expired."
+    max_chars: 45
+
+  - key: reason_incomplete
+    mn: "Мэдээлэл бүрэн харагдахгүй байна. Бүх талыг тод зурагла."
+    en: "Information not fully visible. Please photograph all sides clearly."
+    max_chars: 70
+
+  - key: resubmit_guidance
+    mn: "Доорх зааврын дагуу зургуудаа дахин оруулна уу"
+    en: "Please resubmit your photos following the instructions below"
+    max_chars: 60
+
+  - key: fix_tip_lighting
+    mn: "Гэрэлтэй газар зурагла"
+    en: "Take photos in good lighting"
+    max_chars: 30
+
+  - key: fix_tip_flat
+    mn: "Иргэний үнэмлэхийг хавтгай дээр тавь"
+    en: "Place ID on a flat surface"
+    max_chars: 40
+
+  - key: fix_tip_face
+    mn: "Амьд зургийг нүүрээ тодорхой харуулж ав"
+    en: "Take selfie with clear face visibility"
+    max_chars: 45
+
+  - key: resubmit_button
+    mn: "Дахин илгээх"
+    en: "Resubmit"
+    max_chars: 15
+
+  - key: dan_alternative_button
+    mn: "E-Mongolia-р оролдох"
+    en: "Try E-Mongolia"
+    max_chars: 20
+
+  - key: browse_link
+    mn: "Даалгавар үзэх"
+    en: "Browse Tasks"
+    max_chars: 20
+
+api_endpoints:
+  - method: GET
+    path: "/verification/status"
+    purpose: "Fetch rejection status and reason from admin review"
+
+analytics_events:
+  - event: "verification_rejected_viewed"
+    trigger: "Rejected screen becomes visible"
+  - event: "verification_resubmit_tapped"
+    trigger: "User taps Resubmit button to re-enter upload flow"
+  - event: "verification_dan_alternative_tapped"
+    trigger: "User taps E-Mongolia alternative (Phase 2+)"
+  - event: "verification_rejected_browse_tapped"
+    trigger: "User taps Browse Tasks to return to feed"
+
+acceptance_criteria:
+  - "Rejection screen displays specific reason from admin review (REQ-SAFE-01)"
+  - "Reason text is dynamically populated from /verification/status response"
+  - "Resubmit CTA navigates to ID Upload (SCR-TASK-005) to re-enter the upload flow"
+  - "In Phase 2+, DAN alternative button navigates to DAN Fast-Path (SCR-TASK-006)"
+  - "DAN alternative button is hidden in Phase 0-1"
+  - "Guidance tips help user fix specific issues (lighting, flat surface, face visibility)"
+  - "Back button returns to Task Feed (SCR-TASK-001)"
+  - "This screen is reached via push notification for rejection"
+  - "Comfortable density for empathetic error messaging"

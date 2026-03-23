@@ -560,14 +560,14 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND",
-                            "message", e.getMessage(),
+                            "message", "Booking not found.",
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "INVALID_STATUS",
-                            "message", e.getMessage(),
+                            "message", "Operation not allowed in current booking status.",
                             "trace_id", resolveTraceId(request)));
         } catch (RuntimeException exception) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_REQUEST, idempotencyKey);
@@ -612,14 +612,14 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND",
-                            "message", e.getMessage(),
+                            "message", "Booking or event not found.",
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "INVALID_STATUS",
-                            "message", e.getMessage(),
+                            "message", "Operation not allowed in current booking status.",
                             "trace_id", resolveTraceId(request)));
         } catch (RuntimeException exception) {
             idempotencyService.abandon(principal.userId(), IdempotencyOperations.RESCHEDULE_RESPOND, idempotencyKey);
@@ -672,7 +672,7 @@ public class BookingController {
     @GetMapping("/{id}/schedule-events")
     public ResponseEntity<?> getScheduleEvents(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id) {
-        List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id);
+        List<BookingScheduleEvent> events = scheduleService.listScheduleEvents(id, principal.userId());
         List<Map<String, Object>> data =
                 events.stream().map(this::toScheduleEventResponse).toList();
         return ResponseEntity.ok(Map.of("data", data));

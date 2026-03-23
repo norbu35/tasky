@@ -1,0 +1,88 @@
+# Screen Spec: Verification Submitted — Success
+screen_id: SCR-TASK-010
+name: "Verification Submitted — Success"
+route: "/(tasker)/verification/submitted"
+role: [tasker]
+phase: "0-1"
+template: success_celebration
+figma_page: "Tasker/Verification Submitted"
+feature: "verification"
+
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: "safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)"
+
+components:
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Animated checkmark celebrating successful submission of verification documents"
+    props:
+      size: "xl"
+      color: "verified"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to continue to the pending review screen"
+    props:
+      label: "Үргэлжлүүлэх"
+      variant: primary
+      size: xl
+    variant: primary
+
+states:
+  - id: default
+    description: "Verification documents submitted successfully — celebration with next steps guidance"
+    components_visible: [animated_checkmark, heading, description, next_steps, continue_button]
+    components_hidden: []
+
+copy:
+  - key: heading
+    mn: "Амжилттай илгээгдлээ!"
+    en: "Successfully Submitted!"
+    max_chars: 25
+
+  - key: description
+    mn: "Таны баталгаажуулалтын мэдээлэл амжилттай илгээгдлээ. Манай баг 24 цагийн дотор хянана."
+    en: "Your verification documents have been submitted. Our team will review within 24 hours."
+    max_chars: 100
+
+  - key: next_steps_heading
+    mn: "Дараа нь юу болох вэ?"
+    en: "What happens next?"
+    max_chars: 25
+
+  - key: next_step_review
+    mn: "Манай баг таны мэдээллийг 24 цагийн дотор хянана"
+    en: "Our team will review your information within 24 hours"
+    max_chars: 60
+
+  - key: next_step_notification
+    mn: "Үр дүнг мэдэгдэл хэлбэрээр авна"
+    en: "You'll receive a notification with the result"
+    max_chars: 50
+
+  - key: next_step_browse
+    mn: "Хүлээх хугацаанд даалгаврууд үзэх боломжтой"
+    en: "You can browse tasks while you wait"
+    max_chars: 50
+
+  - key: continue_button
+    mn: "Үргэлжлүүлэх"
+    en: "Continue"
+    max_chars: 15
+
+api_endpoints: []
+
+analytics_events:
+  - event: "verification_submitted_viewed"
+    trigger: "Submitted success screen becomes visible"
+  - event: "verification_submitted_continue_tapped"
+    trigger: "User taps Continue to go to pending screen"
+
+acceptance_criteria:
+  - "Animated checkmark plays spring animation on screen entry"
+  - "Success messaging confirms documents were submitted"
+  - "Next steps section explains the 24-hour review SLA and notification promise"
+  - "Tapping 'Үргэлжлүүлэх' navigates to Verification Pending (SCR-TASK-007) via replace"
+  - "This screen provides the 'what happens next' guidance required by success_celebration template"
+  - "Comfortable density for celebratory emotional impact"

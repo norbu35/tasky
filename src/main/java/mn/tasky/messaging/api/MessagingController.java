@@ -84,7 +84,7 @@ public class MessagingController {
 
             return ResponseEntity.ok(new PagedResponse<>(data, CursorPagination.from(messages, limit, Message::id)));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", e.getMessage()));
+            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", "Access denied."));
         }
     }
 
@@ -111,7 +111,7 @@ public class MessagingController {
             }
             return ResponseEntity.status(201).body(toMessageResponse(messageOpt.get()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", e.getMessage()));
+            return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN", "message", "Access denied."));
         }
     }
 }

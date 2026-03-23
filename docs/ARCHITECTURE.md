@@ -134,7 +134,8 @@ Cross-domain communication uses internal Java method calls only — no network h
 
 * `tasks`: `id`, `customer_id`, `category_id (FK)`, `description`, `budget`, `location_point (GEOMETRY)`,
   `location_text`, `status` (OPEN, ASSIGNED, COMPLETED, CANCELLED, NO_SHOW), `scheduled_at`, `intake_answers_json`
-  (JSONB), `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM)
+  (JSONB), `intake_schema_version`, `scope_summary_source` (TEMPLATE, USER_EDITED, LLM),
+  `business_account_id (FK, nullable)` *(Phase 2+ B2B Lite — tags task as belonging to a business account)*
 * `task_drafts`: `id`, `customer_id`, `category_id`, `intake_answers_json (JSONB)`, `intake_schema_version`,
   `summary_draft`, `created_at`, `expires_at`
 * `task_photos`: `id`, `task_id (FK)`, `storage_key`, `sort_order`
@@ -174,8 +175,12 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `payout_requests` *(Phase 3+)*: `id`, `user_id`, `amount`, `bank_account`, `status`, `requested_at`, `processed_at`,
   `processed_by`
 * `tasker_subscriptions` *(Phase 3+)*: `id`, `tasker_id`, `status`, `started_at`, `expires_at`, `plan_code`
-* `business_accounts` *(Phase 4)*: `id`, `name`, `billing_profile_json (JSONB)`, `status`, `created_at`
-* `business_members` *(Phase 4)*: `id`, `business_account_id`, `user_id`, `role`, `created_at`
+* `business_accounts` *(Phase 2+)*: `id`, `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`,
+  `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED), `created_at`
+* `business_locations` *(Phase 2+)*: `id`, `business_account_id (FK)`, `label`, `address_text`,
+  `location_point (GEOMETRY)`, `is_active`
+* `business_members` *(Phase 2+)*: `id`, `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER),
+  `joined_at`, UNIQUE(`business_account_id`, `user_id`)
 
 #### Communication Module
 
@@ -204,10 +209,11 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`
   — full outbox pattern with retry and scheduling; processed by `DomainEventOutboxProcessor`
 * `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
-  — four toggles are seeded at migration time: `escrow_enabled` (Phase 3+, gated in wallet/payment/payout controllers),
+  — six toggles are seeded at migration time: `escrow_enabled` (Phase 3+, gated in wallet/payment/payout controllers),
   `lead_fee_enabled` (Phase 2, seeded for readiness — no code consumer yet), `subscription_enabled` (Phase 3+, seeded
   for readiness — no code consumer yet), `ai_scope_summary_enabled` (Phase 3+ optional, seeded for readiness — no code
-  consumer yet)
+  consumer yet), `promoted_listings_enabled` (Phase 2, gated in task feed sort and QPay purchase flow),
+  `b2b_enabled` (Phase 2+, gated in business account CRUD and B2B task tagging)
 
 ### 4.2 Data Flow Patterns
 
@@ -654,7 +660,7 @@ only when mapped to schema, flow, security/ops policy, and test strategy below.
 | Phase 0-1 direct settlement + legal disclaimer persistence        | §4.1 `bookings.settlement_mode` + disclaimer fields, §4.2 monetization flow, §5.3 liability contract                                   |
 | Phase 2 lead-unlock pricing and debit policy                      | §4.1 `lead_unlock_prices`, `credit_transactions`, §5.7 monetization contract                                                           |
 | Phase 3 subscription and escrow walleting                         | §4.1 wallet + subscription tables, §4.2 monetization flow, §6.1 idempotency                                                            |
-| Phase 4 B2B and alternate rails preparedness                      | §4.1 `business_accounts`/`business_members`, §4.2 monetization flow, §6.2 per-rail telemetry                                           |
+| Phase 2 B2B Lite and Phase 4 alternate rails preparedness         | §4.1 `business_accounts`/`business_locations`/`business_members`, §4.2 monetization flow, §6.2 per-rail telemetry                      |
 | Mandatory bilateral reviews                                       | §4.1 `booking_reviews` + `review_enforcement_cases`, §4.2 reviews/disputes flow                                                        |
 | Reliability score and Pro badge automation                        | §4.1 `tasker_reliability_scores` + `tasker_badges`, §4.2 reviews/disputes flow, §5.7 trust scoring contract                            |
 | Disputes with evidence                                            | §4.1 `disputes` + `dispute_evidence`, §6.1 idempotency scope                                                                           |

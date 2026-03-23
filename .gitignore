@@ -1,5 +1,6 @@
 # macOS / IDE
 .DS_Store
+.superpowers/
 .idea/*
 !.idea/codeStyles
 .vscode/

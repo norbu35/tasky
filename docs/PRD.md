@@ -110,7 +110,8 @@ technical capability.
 | Advanced dynamic pricing and promotions engine | Phase 4      |
 | Multi-country compliance layers                | Post-Phase 4 |
 | Full microservices decomposition               | Post-Phase 4 |
-| B2B recurring service products                 | Phase 4      |
+| B2B Lite (bulk-buyer subscriptions)            | Phase 2      |
+| B2B Managed (SaaS platform, Shape B)           | Post-Phase 4 |
 
 ## 6. User Flows / Stories
 
@@ -368,8 +369,9 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   applicant. No credit is charged when the selected Tasker declines or times out.
 * **REQ-PAY-13**: If a booking is cancelled by the Customer after lead unlock, the spent credits MUST be refunded to the
   Tasker's credit balance.
-* **REQ-PAY-14**: Lead-unlock credit pricing MUST follow a ramp-up policy in Phase 2 (starting at 1 credit),
-  configurable by admin as trust and demand stabilize.
+* **REQ-PAY-14**: Lead-unlock credit pricing MUST follow category-tiered pricing
+  as defined in REQ-PAY-27. The initial ramp-up period MAY use a flat introductory
+  rate before tiered pricing activates, configurable by admin.
 * **REQ-PAY-15**: Credit charge points in Phase 2 are restricted to accepted lead unlock events only; the platform MUST
   NOT charge credits for browsing or applying.
 * **REQ-PAY-16**: Customer retains full selection agency from the applicant list (algorithm-ranked in Phase 2).
@@ -390,13 +392,67 @@ low-friction matching while standardizing monetization on confirmed lead intent.
 * **REQ-PAY-22**: Credits are non-expiring and non-refundable for cash (refunds from cancelled bookings return credits,
   not MNT). Legal review required for stored-value regulatory classification.
 
+##### Phase 2 Promoted Listings & Visibility Products
+
+* **REQ-PAY-23**: **Promoted Listing "Онцлох"**: Task owners MAY purchase a 7-day
+  visibility boost at 15,000 MNT via QPay one-time payment. Promoted tasks receive
+  a sort-order boost in category feed and a visual "Онцлох" label. Maximum one
+  active promotion per task. Feature-gated behind `promoted_listings_enabled` toggle.
+* **REQ-PAY-24**: **Urgent Boost "Яаралтай"**: Task owners MAY purchase a 3-day
+  high-priority boost at 25,000 MNT via QPay one-time payment. Urgent tasks appear
+  above promoted tasks in feed and push notifications. Visual "Яаралтай" label.
+  Feature-gated behind `promoted_listings_enabled` toggle.
+
+##### Phase 2 B2B Lite (Domain Model)
+
+B2B Lite targets Airbnb/Booking.com hosts, offices, and restaurants as high-volume
+bulk buyers of the existing marketplace. B2B tasks reuse the standard task/booking
+flow — B2B is a thin coordination layer, not a parallel system.
+
+* **REQ-PAY-25**: **Business Accounts**: System MUST support business account
+  registration with: account name, owner (FK → users, CUSTOMER role), locations
+  (label, address, PostGIS coordinates), and members (OWNER, MANAGER roles).
+  Business account CRUD is feature-gated behind `b2b_enabled` toggle.
+* **REQ-PAY-26**: **B2B Task Tagging & Priority Dispatch**: Tasks created by
+  business members on behalf of a business account MUST be tagged with
+  `business_account_id`. B2B tasks receive a configurable priority weight boost
+  in the matching/ranking algorithm. The standard task/booking flow is reused —
+  no separate B2B booking path. Business members can list all tasks for their
+  account.
+* **REQ-PAY-27**: **Category-Tiered Lead Credit Pricing**: Lead-unlock credit
+  cost MUST vary by category tier. Initial tiers: Cleaning/Moving 1,500 MNT,
+  Plumbing/Electrical 3,000 MNT, Renovation/Tutoring 5,000 MNT. Tier-to-category
+  mapping is admin-configurable. REQ-PAY-14 (ramp-up policy) is refined by
+  this requirement to use tiered pricing instead of flat ramp-up.
+* **REQ-PAY-28**: **Grandfathering**: Taskers who completed 5+ bookings before
+  the first paid product launch receive a permanent 5% discount on all future
+  paid products (subscriptions, credit packs). Implemented as a `grandfathered`
+  flag on user profile. Discount is applied at checkout.
+
 #### Phase 3 — Subscription + Escrow
 
-* **REQ-PAY-30**: Top-rated Taskers (Pro Badge holders) MUST be offered a **Monthly Subscription** tier: flat monthly
-  fee in exchange for zero lead-fee credit costs, algorithmic priority in search results, and Premium badge visibility.
+* **REQ-PAY-30**: **Tasky Pro Subscription**: Taskers holding the earned Pro Badge
+  (REQ-SAFE-04) are eligible for a monthly subscription with two tiers:
+    * **Standard** (9,900 MNT/month): 3 free lead unlocks per month, priority
+      ranking in search results, Pro Subscriber visual indicator.
+    * **Premium** (29,000 MNT/month): 10 free lead unlocks per month,
+      top-of-category placement, analytics dashboard (application success rate,
+      profile views, earnings summary), portfolio showcase (up to 10 photos).
+  Subscription requires the earned Pro Badge as an eligibility gate. Pro Badge
+  uses hysteresis thresholds: assigned at >=4.5 avg rating, revoked at <4.0
+  (already implemented in `BadgeEvaluationService.java`). Taskers who lose
+  Pro Badge status retain their active subscription until the current billing
+  period ends, then cannot renew until Pro Badge is re-earned. Subscription
+  billing via QPay recurring.
+  Feature-gated behind `subscription_enabled` toggle.
 * **REQ-PAY-31**: Integration with **QPay** to generate QR/Deeplink for Customer payment at booking confirmation.
-* **REQ-PAY-32**: System MUST support **escrow** flow: Customer pays at booking confirmation → funds held by platform →
-  released to Tasker's wallet 4 hours after Customer marks completion (or earlier if manually confirmed). `[F6]`
+* **REQ-PAY-32**: System MUST support **opt-in escrow** flow: For bookings above
+  a configurable threshold (initial: 300,000 MNT), Customer MAY choose deposit
+  protection at booking confirmation. When opted in: Customer pays 10-20% deposit
+  via QPay → funds held by platform → released to Tasker's wallet 4 hours after
+  Customer marks completion (or earlier if manually confirmed). Escrow is NOT
+  the default settlement mode. Direct settlement remains available for all
+  bookings. `[F6]`
 * **REQ-PAY-33**: System MUST record a "Pending Credit" to Tasker's internal wallet upon job completion.
 * **REQ-PAY-34**: System MUST deduct a configurable Platform Fee (initial: 5% for Phase 1/2 cohort Taskers, 10–15% for
   new Taskers post-Phase 3) before crediting Tasker.
@@ -406,14 +462,31 @@ low-friction matching while standardizing monetization on confirmed lead intent.
 * **REQ-PAY-37**: Payout schedule is fixed: Tuesdays and Fridays. Tasker requests payout, admin processes on next
   scheduled day.
 * **REQ-PAY-38**: Exact task address MUST be gated behind payment commitment (escrow deposit) once escrow is active.
+* **REQ-PAY-39**: **B2B Subscription Billing**: Business accounts (REQ-PAY-25) MUST
+  be offered monthly subscription plans:
+    * **Host Lite** (99,000 MNT/location/month): Single-unit Airbnb hosts and
+      guesthouses. Priority dispatch for tasks from this account.
+    * **Ops Standard** (249,000 MNT/location/month): Offices, restaurants, and
+      heavy-use hosts. Priority dispatch plus dedicated concierge escalation path.
+  Billing occurs on the account's `billing_cycle_day` (1-28) via QPay payment link.
+  Plan pricing is stored as `PricingPlan` rows and is admin-configurable.
+  Feature-gated behind `b2b_enabled` toggle.
 
 #### Phase 4 — Recurring Revenue & Ecosystem
 
-* **REQ-PAY-40** *(Phase 4)*: **Tasky Plus (Customer Subscription)**: Monthly subscription waiving lead-matching wait
-  times and guaranteeing priority matching (< 1 hour).
-* **REQ-PAY-41** *(Phase 4)*: **Tasky for Business (B2B)**: Commercial subscription tiers for SMEs and offices to
-  schedule recurring temporary hires using Premium Taskers.
-* **REQ-PAY-42** *(Phase 4)*: SocialPay and bank-transfer alternatives alongside QPay.
+* **REQ-PAY-40** *(Phase 4)*: **Tasky Plus (Customer Subscription)**: Monthly
+  subscription for priority matching (< 1 hour guarantee), waived trust fees,
+  saved favorites, and home service history.
+* **REQ-PAY-41** *(Phase 4)*: **B2B Managed (Shape B)**: Contingent on B2B Lite
+  (REQ-PAY-25/26/39) validation. Adds recurring schedule templates, SLA
+  guarantees, PMS integrations (Guesty, Hostaway), and Multi-Site plan (599,000
+  MNT/company/month, up to 5 locations). Requires demonstrated Shape A traction:
+  20+ paying B2B accounts for 3+ consecutive months.
+* **REQ-PAY-42** *(Phase 4)*: SocialPay and bank-transfer alternatives alongside
+  QPay.
+* **REQ-PAY-43** *(Phase 4)*: **Family Plan** (19,900 MNT/month): Priority
+  matching to Pro-subscribed providers, saved provider favorites, household
+  service history.
 
 ### 7.6 Trust & Safety
 
@@ -505,7 +578,7 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   require lint/validation checks, preview against sample payloads, canary activation controls, and rollback to the last
   known good schema version.
 * **REQ-ADMIN-06**: Admin MUST have a **Feature Toggle** panel to control monetization phase activation (lead-fee,
-  subscription, escrow) without code deployment.
+  promoted-listings, b2b, subscription, escrow) without code deployment.
 * **REQ-ADMIN-07**: **Concierge Dispatch Mode** *(Phase 0-1)*: Admin/founder can manually assign a Tasker to a task,
   overriding the normal application flow. Used for the first ~30 bookings to guarantee fulfillment quality within
   founder ops capacity. `[Gemini1 — Wizard of Oz]`
@@ -647,8 +720,10 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   prior selected applicant cannot auto-relock contact without reselection.
 * **REQ-PAY-13**: If customer cancels after successful lead unlock, identical credit amount is refunded to Tasker ledger
   and marked as `REFUND` transaction with booking reference.
-* **REQ-PAY-14**: Lead-unlock price table is admin-configurable by category/district with minimum start value 1 credit;
-  all price changes are versioned with effective timestamp.
+* **REQ-PAY-14**: Lead-unlock pricing follows category-tiered model (REQ-PAY-27);
+  tier-to-category mapping is admin-configurable; all price changes are versioned
+  with effective timestamp; optional flat introductory rate may precede tiered
+  activation.
 * **REQ-PAY-15**: Credit charges are allowed only on `LEAD_UNLOCK_ACCEPTED`; attempts to charge on browse/apply/create
   events are blocked and logged as policy violations.
 * **REQ-PAY-16**: Customer can always choose any eligible applicant regardless of ranking position; UI tests verify no
@@ -665,12 +740,8 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   balance transitions to <=1 credit.
 * **REQ-PAY-22**: Credits never expire automatically and cannot be converted to cash; cancellation refunds return
   credits only; legal review is required for stored-value regulatory classification.
-* **REQ-PAY-30**: Eligible Pro Badge Taskers can subscribe monthly; active subscription suppresses lead-fee debits and
-  applies premium-ranking visibility flag.
 * **REQ-PAY-31**: QPay integration returns valid QR/deeplink payload for booking payment attempts; failed generation
   returns retryable error without mutating booking state.
-* **REQ-PAY-32**: Escrow flow records `PAID -> HELD -> RELEASED`; funds release occurs 4 hours after completion unless
-  manual early release action is approved and logged.
 * **REQ-PAY-33**: On booking completion under escrow, a wallet `PENDING_CREDIT` entry is created once per booking and
   linked to booking transaction ID.
 * **REQ-PAY-34**: Platform fee is deducted using active configurable rate before net crediting Tasker wallet; payout
@@ -683,12 +754,43 @@ low-friction matching while standardizing monetization on confirmed lead intent.
   processing attempts are blocked.
 * **REQ-PAY-38**: When escrow is active, exact address remains locked until payment commitment is successful;
   pre-payment address fetch returns `403 ADDRESS_LOCKED`.
-* **REQ-PAY-40**: Tasky Plus subscribers receive priority queueing and SLA tracking that shows <1 hour match guarantee
-  eligibility; non-subscribers cannot access Plus-only queue.
-* **REQ-PAY-41**: B2B plans support recurring scheduling, organization billing profile, and seat-based admin controls;
-  contract tests verify tenant isolation from consumer accounts.
-* **REQ-PAY-42**: In Phase 4, checkout supports QPay plus SocialPay/bank-transfer rails with per-rail success/failure
-  telemetry and fallback messaging.
+* **REQ-PAY-23**: Promoted listing purchase creates time-bounded sort boost;
+  feed query respects boost expiry; QPay one-time payment verified before
+  activation; maximum one active promotion per task enforced.
+* **REQ-PAY-24**: Urgent boost appears above promoted listings in feed and
+  push; 3-day expiry enforced; QPay one-time payment verified.
+* **REQ-PAY-25**: Business account CRUD operations enforce owner-is-CUSTOMER
+  constraint; locations store PostGIS coordinates; member roles limited to
+  OWNER and MANAGER; membership check enforced on all B2B endpoints.
+* **REQ-PAY-26**: Tasks with `business_account_id` appear in business task
+  listing; priority weight boost is applied in matching query; standard
+  task/booking flow is unchanged for B2B tasks.
+* **REQ-PAY-27**: Lead-unlock credit cost varies by category tier; tier
+  mapping is admin-configurable; category change on a task recalculates
+  unlock cost.
+* **REQ-PAY-28**: Grandfathered flag is set for eligible taskers; 5% discount
+  applied at checkout for all paid products; flag is permanent and
+  non-revocable.
+* **REQ-PAY-30**: Subscription requires active Pro Badge; two tiers with
+  distinct free-lead-unlock counts; QPay recurring billing; badge loss
+  blocks renewal but does not cancel active period.
+* **REQ-PAY-32**: Escrow is opt-in; threshold is admin-configurable; direct
+  settlement remains default; deposit percentage is 10-20% of booking value.
+* **REQ-PAY-39**: B2B plans bill monthly on configured cycle day; QPay
+  payment link generated per cycle; plan pricing is admin-configurable;
+  suspended accounts retain data but lose priority dispatch.
+* **REQ-PAY-40**: Tasky Plus subscribers receive priority queueing and SLA
+  tracking that shows <1 hour match guarantee eligibility; non-subscribers
+  cannot access Plus-only queue.
+* **REQ-PAY-41**: B2B Managed (Shape B) activation requires 20+ paying
+  B2B Lite accounts for 3+ months; recurring schedule templates support
+  weekly/biweekly/monthly patterns; PMS webhook integration tested against
+  Guesty and Hostaway APIs.
+* **REQ-PAY-42**: In Phase 4, checkout supports QPay plus SocialPay/bank-
+  transfer rails with per-rail success/failure telemetry and fallback
+  messaging.
+* **REQ-PAY-43**: Family Plan billing via QPay recurring; priority matching
+  routes to Pro-subscribed providers; saved favorites persisted per household.
 
 #### 7.12.6 Trust & Safety
 
@@ -744,8 +846,8 @@ low-friction matching while standardizing monetization on confirmed lead intent.
 * **REQ-ADMIN-05**: Category Management supports add/edit/deactivate/reorder operations plus `intake_schema`
   create/update/activate/version actions, with schema lint/preview checks, canary activation, rollback to
   last-known-good version, audit logging, and immediate propagation to task-posting category picker.
-* **REQ-ADMIN-06**: Feature Toggle panel can enable/disable lead-fee, subscription, and escrow independently without
-  redeploy; toggle changes are audited with actor and timestamp.
+* **REQ-ADMIN-06**: Feature Toggle panel can enable/disable lead-fee, promoted-listings, b2b, subscription, and escrow
+  independently without redeploy; toggle changes are audited with actor and timestamp.
 * **REQ-ADMIN-07**: In Phase 0-1, admin can manually assign Tasker to task via concierge flow; assignment writes
   override reason and actor ID and respects verification eligibility checks.
 
@@ -883,7 +985,7 @@ Initial demand marketing district: **Sukhbaatar**.
 | Time to first match | Median time from task creation to first qualified application                           | Used for district/category expansion decisions                       |
 | Leakage indicator   | Bookings with phone-sharing signal / total bookings                                     | Advisory in Phase 0-1, enforcement in Phase 2+                       |
 | Scope clarity       | Median pre-booking clarification message count per `ASSIGNED` booking                   | Alert and operations review if >2.0 for 2 consecutive weeks          |
-| Monthly net revenue | Gross platform revenue minus direct variable platform costs (payment rails, SMS, infra) | Must be >= 12,000,000 MNT for 3 consecutive months before Phase 3    |
+| Monthly net revenue | Gross platform revenue minus direct variable platform costs (payment rails, SMS, infra) | Must be >= 6,000,000 MNT for 2 consecutive months before Phase 3     |
 
 ### 9.3 Phase 3 Trigger Formula (Adjustable)
 
@@ -895,12 +997,17 @@ Use this to recalculate the Phase 3 revenue gate as real unit economics change:
 - `RequiredPaidTransactions = ceil(TargetNetRevenue / UnitContributionMargin)`
 - `UnitContributionMargin = AvgRevenuePerPaidTransaction - AvgVariableCostPerPaidTransaction`
 
-Worked example for the current gate:
+Worked example for the current gate (diversified revenue):
 
-- `TargetNetRevenue = 12,000,000 MNT`
-- If `AvgRevenuePerPaidTransaction = 6,000 MNT` and `AvgVariableCostPerPaidTransaction = 1,500 MNT`
-- Then `UnitContributionMargin = 4,500 MNT`
-- `RequiredPaidTransactions = ceil(12,000,000 / 4,500) = 2,667 paid transactions/month` (~89/day)
+- `TargetNetRevenue = 6,000,000 MNT`
+- Phase 2 revenue mix: promoted listings (~900K) + B2B trial (0) = ~900K from
+  non-credit sources (only Phase 2 products count toward Phase 3 gate)
+- Remaining from lead credits: `RequiredCreditRevenue = 6,000,000 - 900,000 = 5,100,000 MNT`
+- If `AvgCreditPrice = 2,500 MNT` (blended across tiers) and `AvgVariableCost = 500 MNT`
+- Then `UnitContributionMargin = 2,000 MNT`
+- `RequiredPaidCreditUnlocks = ceil(5,100,000 / 2,000) = 2,550 credit unlocks/month` (~85/day)
+- Note: this example uses conservative month-10 projections from the debate
+  composite blueprint. Actual mix will vary.
 
 ---
 
@@ -974,7 +1081,7 @@ until funding or team expansion occurs:
 | **2-Year Labour Law Contractor Reclassification**          | High     | Low–Med    | Legal disclaimer in ToS. Engagement duration tracking with admin alerts. Legal review at 18-month mark. `[Research: labour law]`                                                             |
 | **Seasonal Demand Collapse** (summer)                      | Medium   | High       | Seasonal category expansion (tutoring, digital tasks in summer). Adjust marketing spend seasonally. `[F10]`                                                                                  |
 | **Rating Inflation** in high-context culture               | Medium   | High       | Mandatory reviews reduce non-participation. Structured rating prompts (specific criteria, not just stars). Sentiment analysis on review text. `[F8]`                                         |
-| **Market Size Ceiling** (UB ~500K–600K households)         | High     | High       | Phase 4 city expansion (Darkhan, Erdenet). Higher-value category expansion. B2B recurring services. `[F12]`                                                                                  |
+| **Market Size Ceiling** (UB ~500K–600K households)         | High     | High       | B2B Lite from Phase 2 (supply lock-in + revenue diversification). Phase 4 city expansion (Darkhan, Erdenet). Higher-value category expansion. B2B Managed services. `[F12]`                  |
 | **Solo Developer Burnout**                                 | High     | High       | AI automation for support, QA, marketing. Strict scope discipline. Manual ops only where unavoidable. `[Gemini1]`                                                                            |
 | **Leakage Spike at Take Rate Introduction**                | High     | High       | Do not introduce take rate until ≥40% of active customers have completed 3+ bookings. Grandfather early Taskers at lower rate. `[Payment behaviour]`                                         |
 | **Credit / Referral Abuse**                                | High     | Medium     | Credit velocity limits, referral graph anomaly detection, per-user monthly reward caps, and manual review queue for suspicious clusters.                                                     |
@@ -1079,68 +1186,87 @@ monetization.
 - Repeat customer rate (30-day) > 25%
 - Verification SLA adherence > 90%
 
-### 12.4 Phase 2 — Soft Monetization (Standard Lead-Fee + SMS OTP + QPay + DAN)
+### 12.4 Phase 2 — Soft Monetization (Lead-Fee + Promoted Listings + B2B Lite)
 
-**Goal:** Introduce first revenue stream with standardized lead-unlock credits while keeping core matching free.
-**Revenue:** Credit purchases from Taskers. Target: cover infrastructure costs.
-**Duration:** Until escrow readiness criteria are met.
+**Goal:** Introduce first revenue streams through promoted listings, category-tiered
+lead credits, and B2B Lite domain model while keeping core matching free.
+**Revenue:** Promoted listing purchases + credit purchases from Taskers + B2B trial
+accounts (free in Phase 2, paid in Phase 3). Target: cover infrastructure costs.
+**Duration:** Until Phase 3 readiness criteria are met.
 
-| Area              | Additions over Phase 1                                                                                                                                                                         |
-|:------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Matching**      | Algorithm-assisted application model live (REQ-BOOK-01/02 Phase 2). Proactive push to best-matching Taskers. Applicant list sorted by relevance score with "Recommended" labels.               |
-| **Auth**          | SMS OTP activated as primary login method for Phase 2+. Existing Facebook-auth users must register and verify phone OTP. New users can register with OTP without connected Facebook ID. `[F5]` |
-| **Verification**  | E-Mongolia DAN API integration enabled as fast-path identity verification in Phase 2. Manual review remains as fallback path.                                                                  |
-| **Credits**       | Credit system live. QPay merchant integration for credit pack purchases. 5 free credits on Tasker signup.                                                                                      |
-| **Monetization**  | Standard lead-fee model: Core matching remains free. Taskers pay credits only when accepting a selected lead to unlock Customer contact information (15-minute accept/decline window).         |
-| **Notifications** | SMS fallback for critical events (Hired, Booking Confirmed) when app is not open.                                                                                                              |
-| **Incentives**    | QPay digital payment incentives: MNT 5,000–10,000 booking credit for first digital payment. "Secure Booking" badge. `[Payment]`                                                                |
-| **Referrals**     | Referral program goes live (REQ-REF-01..04): shareable link/code, attribution tracking, and priority-boost reward at launch.                                                                   |
-| **Task Intake**   | Structured intake coverage expanded to all active categories. Optional AI summary polish may be tested behind feature toggle with deterministic fallback retained as default.                  |
-| **Admin**         | Credit pack pricing configuration, unlock price ramp-up configuration, revenue reporting, and SMS cost monitoring.                                                                             |
-| **Geography**     | Expand to remaining central UB districts if liquidity thresholds met.                                                                                                                          |
-| **Categories**    | Add remaining seed categories based on demand signals (Furniture Assembly, Tutoring, Digital Tasks).                                                                                           |
+| Area                | Additions over Phase 1                                                                                                                                                                                                                   |
+|:--------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Matching**        | Algorithm-assisted application model live (REQ-BOOK-01/02 Phase 2). Proactive push to best-matching Taskers. Applicant list sorted by relevance score with "Recommended" labels.                                                         |
+| **Auth**            | SMS OTP activated as primary login method for Phase 2+. Existing Facebook-auth users must register and verify phone OTP. New users can register with OTP without connected Facebook ID. `[F5]`                                           |
+| **Verification**    | E-Mongolia DAN API integration enabled as fast-path identity verification in Phase 2. Manual review remains as fallback path.                                                                                                            |
+| **Promoted**        | Promoted listing "Онцлох" (15K MNT/7d) and Urgent Boost "Яаралтай" (25K MNT/3d) live. QPay one-time payment. Ships early in Phase 2 (months 4-6) as lowest-engineering-cost revenue.                                                   |
+| **Credits**         | Credit system live. QPay merchant integration for credit pack purchases. Category-tiered pricing (REQ-PAY-27): Cleaning/Moving 1.5K, Plumbing/Electrical 3K, Renovation/Tutoring 5K MNT. 5 free credits on Tasker signup.                |
+| **Monetization**    | Standard lead-fee model: Core matching remains free. Taskers pay credits only when accepting a selected lead to unlock Customer contact information (15-minute accept/decline window).                                                    |
+| **B2B Lite**        | Months 5-6: founder outreach to Airbnb/Booking.com hosts. Months 6-7: manual concierge for 5-10 accounts (no engineering). Months 8-10: B2B system module ships (accounts, locations, members, task tagging, priority dispatch).          |
+| **Grandfathering**  | Phase 0 taskers with 5+ completed bookings receive permanent 5% discount on all future paid products (REQ-PAY-28).                                                                                                                       |
+| **Notifications**   | SMS fallback for critical events (Hired, Booking Confirmed) when app is not open.                                                                                                                                                        |
+| **Incentives**      | QPay digital payment incentives: MNT 5,000-10,000 booking credit for first digital payment. "Secure Booking" badge. `[Payment]`                                                                                                         |
+| **Referrals**       | Referral program goes live (REQ-REF-01..04): shareable link/code, attribution tracking, and priority-boost reward at launch.                                                                                                             |
+| **Task Intake**     | Structured intake coverage expanded to all active categories. Optional AI summary polish may be tested behind feature toggle with deterministic fallback retained as default.                                                             |
+| **Admin**           | Credit pack pricing configuration, category-tier mapping, promoted listing management, B2B account management, revenue reporting, and SMS cost monitoring.                                                                               |
+| **Geography**       | Expand to remaining central UB districts if liquidity thresholds met.                                                                                                                                                                    |
+| **Categories**      | Add remaining seed categories based on demand signals (Furniture Assembly, Tutoring, Digital Tasks).                                                                                                                                     |
 
 **Exit Criteria for Phase 3:**
 
-- Monthly net revenue (after direct payment/SMS/infra costs) of **>= 12,000,000 MNT** for 3 consecutive months (see
-  Section 9.3 formula)
-    - Rationale: at ~3,560 MNT/USD, this is roughly USD 3.3k/month and provides a practical operating buffer before
-      escrow/wallet complexity is enabled.
+- Monthly net revenue (after direct payment/SMS/infra costs) of **>= 6,000,000 MNT**
+  for 2 consecutive months
+    - Rationale: diversified revenue (promoted listings + lead credits + B2B trial
+      data) makes 6M achievable. Sufficient operating buffer before escrow/wallet
+      complexity is enabled.
 - Lead unlock acceptance rate > 85% with no sustained complaint spike
 - QPay payment habit established (>30% of bookings settled via QPay)
 - 500+ total completed bookings
 - Pro Badge Taskers: 10+ (eligible for subscription tier)
+- 10+ active B2B accounts (free trial or manual concierge)
 
-### 12.5 Phase 3 — Subscription + Escrow
+### 12.5 Phase 3 — Subscription + Opt-In Escrow + B2B Billing
 
-**Goal:** Lock in elite supply with subscriptions. Transition to on-platform escrow as default payment.
-**Revenue:** Subscriptions (Tasker MRR) + Platform fee on escrow transactions.
+**Goal:** Lock in elite supply with Tasky Pro subscriptions. Activate B2B paid
+billing. Introduce opt-in escrow for high-value bookings.
+**Revenue:** Tasky Pro subscriptions (Tasker MRR) + B2B subscriptions + platform
+fee on escrow transactions + continued promoted listings and lead credits.
 
-| Area             | Additions over Phase 2                                                                                                                                                           |
-|:-----------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Matching**     | Instant Match option live (REQ-BOOK-08) for high-liquidity categories. "Match me now" button with 5-minute accept/decline window. Fallback to application flow after 3 declines. |
-| **Monetization** | Tasker subscription tier live (monthly fee → zero lead fees + Premium badge + priority ranking).                                                                                 |
-| **Payment**      | Escrow flow live: Customer pays at booking → funds held → released after completion. Platform fee deducted (5% for early cohort, 10–15% for new Taskers).                        |
-| **Payouts**      | Tasker wallet with payout requests. Admin payout processing (Tuesdays and Fridays). Manual bank transfer initially.                                                              |
-| **Anti-leakage** | Exact address gated behind escrow payment commitment. Phone number detection in messages becomes enforced (warning + admin flag).                                                |
-| **Dispute**      | Monetary dispute resolution: "Refund Customer" / "Release to Tasker" actions in admin panel.                                                                                     |
-| **Geography**    | Full UB coverage. Begin market assessment for city 2 (Darkhan or Erdenet).                                                                                                       |
-| **Trust**        | Completion guarantee pilot: unsatisfactory work → partial refund or free redo (limited to escrow bookings).                                                                      |
+| Area             | Additions over Phase 2                                                                                                                                                                        |
+|:-----------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Matching**     | Instant Match option live (REQ-BOOK-08) for high-liquidity categories. "Match me now" button with 5-minute accept/decline window. Fallback to application flow after 3 declines.              |
+| **Subscription** | Tasky Pro Subscription live (REQ-PAY-30): Standard (9,900 MNT/mo) and Premium (29,000 MNT/mo). Eligibility requires earned Pro Badge. QPay recurring billing.                                |
+| **B2B Billing**  | B2B subscription plans live (REQ-PAY-39): Host Lite (99K/location/mo) and Ops Standard (249K/location/mo). Monthly billing via QPay. Conversion of Phase 2 trial accounts to paid.            |
+| **Payment**      | Opt-in escrow flow live (REQ-PAY-32): Customer chooses deposit protection for bookings >300K MNT. 10-20% deposit held, released after completion. Direct settlement remains default.          |
+| **Payouts**      | Tasker wallet with payout requests. Admin payout processing (Tuesdays and Fridays). Manual bank transfer initially.                                                                           |
+| **Anti-leakage** | Exact address gated behind escrow payment commitment for escrow bookings. Phone number detection in messages becomes enforced (warning + admin flag).                                         |
+| **Dispute**      | Monetary dispute resolution: "Refund Customer" / "Release to Tasker" actions in admin panel.                                                                                                  |
+| **Geography**    | Full UB coverage. Begin market assessment for city 2 (Darkhan or Erdenet).                                                                                                                    |
+| **Trust**        | Completion guarantee pilot: unsatisfactory work → partial refund or free redo (limited to escrow bookings).                                                                                   |
+
+**Exit Criteria for Phase 4:**
+
+- 20+ paying B2B subscription accounts for 3+ consecutive months
+- Tasky Pro subscriber count: 30+ (Standard + Premium combined)
+- Escrow opt-in rate: >15% of eligible bookings (>300K MNT)
+- Monthly revenue: 12M+ MNT from diversified streams
 
 ### 12.6 Phase 4 — Recurring Revenue & Expansion
 
-**Goal:** Diversify revenue beyond transactions. Expand beyond UB.
-**Revenue:** Customer subscriptions + B2B contracts + transaction fees.
+**Goal:** Diversify revenue with consumer subscriptions and B2B expansion. Expand
+beyond UB. Evaluate B2B Managed (Shape B) based on Shape A traction.
+**Revenue:** Tasky Plus + B2B expansion (Multi-Site) + Family Plan + transaction fees.
 
-| Area             | Additions over Phase 3                                                                                            |
-|:-----------------|:------------------------------------------------------------------------------------------------------------------|
-| **Customer Sub** | Tasky Plus: monthly subscription for priority matching (< 1 hour guarantee) and waived trust fees.                |
-| **B2B**          | Tasky for Business: commercial subscription for SMEs to schedule recurring temporary hires.                       |
-| **Geography**    | Launch in Darkhan and/or Erdenet using Phase 0 playbook (district-first, concierge, 3 categories).                |
-| **Categories**   | Higher-value categories: renovation, deep electrical, ger district specialised services, expat concierge. `[F12]` |
-| **Payment**      | SocialPay and bank-transfer alternatives alongside QPay.                                                          |
-| **Pricing**      | Dynamic pricing experimentation engine (surge, seasonal, category-based).                                         |
-| **Insurance**    | Investigate platform insurance/guarantee product for high-value bookings.                                         |
+| Area             | Additions over Phase 3                                                                                                                                                  |
+|:-----------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Customer Sub** | Tasky Plus (REQ-PAY-40): monthly subscription for priority matching (< 1 hour guarantee) and waived trust fees.                                                         |
+| **Family Plan**  | Family Plan (REQ-PAY-43): 19,900 MNT/month for household service history, saved favorites, priority routing to Pro-subscribed providers.                                |
+| **B2B Managed**  | Contingent on B2B Lite validation (REQ-PAY-41). If 20+ paying accounts sustained: recurring schedule templates, SLA guarantees, Multi-Site plan (599K MNT/company/mo).  |
+| **Geography**    | Launch in Darkhan and/or Erdenet using Phase 0 playbook (district-first, concierge, 3 categories).                                                                      |
+| **Categories**   | Higher-value categories: renovation, deep electrical, ger district specialised services, expat concierge. `[F12]`                                                       |
+| **Payment**      | SocialPay and bank-transfer alternatives alongside QPay (REQ-PAY-42).                                                                                                   |
+| **Pricing**      | Dynamic pricing experimentation engine (surge, seasonal, category-based).                                                                                               |
+| **Insurance**    | Investigate platform insurance/guarantee product for high-value bookings.                                                                                               |
 
 ### 12.7 Seasonal Calendar `[F10]`
 
@@ -1204,8 +1330,9 @@ decisions under deterministic system and human control.
 ## 13. Open Questions
 
 1. What is the grace-period length for mandatory OTP migration of Phase 0-1 Facebook users in early Phase 2 rollout?
-2. What is the exact ramp-up ladder for lead-unlock credits by category and district (start value, step size, and review
-   cadence)?
+2. ~~What is the exact ramp-up ladder for lead-unlock credits by category and district?~~ **Resolved**: REQ-PAY-27
+   defines category-tiered pricing (Cleaning/Moving 1,500 MNT, Plumbing/Electrical 3,000 MNT, Renovation/Tutoring
+   5,000 MNT). Tier-to-category mapping is admin-configurable.
 3. What legal and compliance constraints apply to stored-value credits beyond current assumptions, and which controls
    are mandatory before scale?
 4. What minimum alert/ops tooling is required before demand-side Facebook scraping can be enabled, given ToS enforcement

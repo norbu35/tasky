@@ -12,7 +12,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Star, Award, Inbox } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProfileAvatar } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 import { useApplications } from '../hooks/useApplications';
 import { useAcceptApplication } from '../../bookings/hooks/useAcceptApplication';
@@ -106,7 +106,7 @@ function ApplicantCard({
                 <View style={styles.cardInfo}>
                     <Text style={styles.cardName}>{applicant.name}</Text>
                     <View style={styles.ratingRow}>
-                        <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                        <Star size={12} color={colors.accent} fill={colors.accent} />
                         <Text style={styles.ratingValue}>{applicant.rating}</Text>
                         <Text style={styles.ratingCount}>
                             ({applicant.reviewCount} {reviewsLabel})
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 64,
         paddingHorizontal: 24,
-        backgroundColor: 'rgba(249,249,249,0.7)',
+        backgroundColor: colors.background,
     },
     headerButton: {
         width: 40,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     recommendedText: {
         fontSize: typography.micro,
         fontWeight: '700',
-        color: '#5D3900',
+        color: colors.accentForeground,
         letterSpacing: -0.5,
         textTransform: 'uppercase',
     },
@@ -415,11 +415,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: radius.md,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        ...elevations.elevated,
     },
     acceptGradient: {
         paddingVertical: 14,

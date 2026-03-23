@@ -29,16 +29,19 @@ public class DataRetentionService {
     private final VerificationDao verificationDao;
     private final AuditEventDao auditEventDao;
     private final FeatureToggleService featureToggleService;
+    private final mn.tasky.common.storage.S3StorageService s3StorageService;
 
     public DataRetentionService(
             UserDao userDao,
             VerificationDao verificationDao,
             AuditEventDao auditEventDao,
-            FeatureToggleService featureToggleService) {
+            FeatureToggleService featureToggleService,
+            mn.tasky.common.storage.S3StorageService s3StorageService) {
         this.userDao = userDao;
         this.verificationDao = verificationDao;
         this.auditEventDao = auditEventDao;
         this.featureToggleService = featureToggleService;
+        this.s3StorageService = s3StorageService;
     }
 
     /**
@@ -83,6 +86,12 @@ public class DataRetentionService {
                 continue;
             }
 
+            if (v.idCardFrontKey() != null) {
+                s3StorageService.deleteObject(v.idCardFrontKey());
+            }
+            if (v.idCardBackKey() != null) {
+                s3StorageService.deleteObject(v.idCardBackKey());
+            }
             verificationDao.anonymize(v.id());
 
             auditEventDao.insert(

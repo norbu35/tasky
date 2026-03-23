@@ -707,13 +707,13 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "CATEGORY_NOT_FOUND",
-                            "message", e.getMessage(),
+                            "message", "Category not found.",
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "DRAFT_CREATION_CONFLICT",
-                            "message", e.getMessage(),
+                            "message", "Draft could not be created.",
                             "trace_id", resolveTraceId(request)));
         }
     }
@@ -722,7 +722,7 @@ public class TaskController {
     public ResponseEntity<?> getDraft(
             @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
         return taskDraftService
-                .getDraft(id)
+                .getDraft(id, principal.userId())
                 .<ResponseEntity<?>>map(draft -> ResponseEntity.ok(TaskDraftResponse.from(draft)))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of(
@@ -738,19 +738,19 @@ public class TaskController {
             @Valid @RequestBody UpdateDraftRequest body,
             HttpServletRequest request) {
         try {
-            TaskDraft updated = taskDraftService.updateDraft(id, body.intakeAnswers(), body.summaryDraft());
+            TaskDraft updated = taskDraftService.updateDraft(id, principal.userId(), body.intakeAnswers(), body.summaryDraft());
             return ResponseEntity.ok(TaskDraftResponse.from(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of(
                             "code", "NOT_FOUND",
-                            "message", e.getMessage(),
+                            "message", "Draft not found.",
                             "trace_id", resolveTraceId(request)));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of(
                             "code", "DRAFT_EXPIRED",
-                            "message", e.getMessage(),
+                            "message", "Draft has expired.",
                             "trace_id", resolveTraceId(request)));
         }
     }

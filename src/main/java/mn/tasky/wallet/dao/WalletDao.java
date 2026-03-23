@@ -47,4 +47,20 @@ public interface WalletDao {
     @SqlUpdate("UPDATE wallets SET held_balance_mnt = held_balance_mnt + :amount, updated_at = :now "
             + "WHERE user_id = :userId")
     void addHeldBalance(@Bind("userId") UUID userId, @Bind("amount") long amount, @Bind("now") Instant now);
+
+    default int debitBalance(String userId, long amount, Instant now) {
+        return debitBalance(required(userId, "userId"), amount, now);
+    }
+
+    @SqlUpdate("UPDATE wallets SET balance_mnt = balance_mnt - :amount, updated_at = :now "
+            + "WHERE user_id = :userId AND balance_mnt >= :amount")
+    int debitBalance(@Bind("userId") UUID userId, @Bind("amount") long amount, @Bind("now") Instant now);
+
+    default int debitHeldBalance(String userId, long amount, Instant now) {
+        return debitHeldBalance(required(userId, "userId"), amount, now);
+    }
+
+    @SqlUpdate("UPDATE wallets SET held_balance_mnt = held_balance_mnt - :amount, updated_at = :now "
+            + "WHERE user_id = :userId AND held_balance_mnt >= :amount")
+    int debitHeldBalance(@Bind("userId") UUID userId, @Bind("amount") long amount, @Bind("now") Instant now);
 }

@@ -1,0 +1,160 @@
+# Screen Spec: Account Deletion Confirmation
+screen_id: SCR-SHARED-015
+name: "Account Deletion Confirmation"
+route: "/profile/settings/delete"
+role: [customer, tasker]
+phase: "0-1"
+template: modal_sheet
+figma_page: "Shared/Account Deletion Confirmation"
+feature: "settings"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle_bar + warning_icon + title + body_text + action_buttons)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet container for the deletion confirmation flow"
+    props:
+      visible: true
+      onClose: "handleDismiss"
+      title: "Бүртгэл устгах"
+      primaryAction: "Устгах"
+      secondaryAction: "Болих"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Danger-styled primary button to confirm account deletion"
+    props:
+      label: "Бүртгэлээ устгах"
+      variant: danger
+      size: lg
+      loading: false
+    variant: danger
+
+  - id: COMP-BUTTON
+    usage: "Ghost-styled secondary button to cancel and dismiss sheet"
+    props:
+      label: "Болих"
+      variant: ghost
+      size: lg
+    variant: ghost
+
+states:
+  - id: default
+    description: "Initial deletion confirmation sheet shown with warning message and two action buttons"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+  - id: confirming
+    description: "User tapped Confirm; a secondary confirmation prompt appears asking to type confirmation text"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+  - id: deleting
+    description: "DELETE /users/me is in flight; danger button shows loading spinner, interactions disabled"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+  - id: blocked_active_bookings
+    description: "Deletion blocked because user has active bookings; message explains they must complete or cancel first"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+  - id: blocked_open_disputes
+    description: "Deletion blocked because user has open disputes; message explains they must resolve disputes first"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+copy:
+  - key: sheet_title
+    mn: "Бүртгэл устгах"
+    en: "Delete Account"
+    max_chars: 20
+
+  - key: warning_body
+    mn: "Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана."
+    en: "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
+    max_chars: 200
+
+  - key: confirm_instruction
+    mn: "Баталгаажуулахын тулд 'УСТГАХ' гэж бичнэ үү"
+    en: "Type 'DELETE' to confirm"
+    max_chars: 50
+
+  - key: cta_delete
+    mn: "Бүртгэлээ устгах"
+    en: "Delete My Account"
+    max_chars: 20
+
+  - key: cta_cancel
+    mn: "Болих"
+    en: "Cancel"
+    max_chars: 10
+
+  - key: blocked_bookings_title
+    mn: "Устгах боломжгүй"
+    en: "Cannot delete"
+    max_chars: 20
+
+  - key: blocked_bookings_body
+    mn: "Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай."
+    en: "You have active bookings. You must complete or cancel all bookings before deleting your account."
+    max_chars: 200
+
+  - key: blocked_disputes_title
+    mn: "Устгах боломжгүй"
+    en: "Cannot delete"
+    max_chars: 20
+
+  - key: blocked_disputes_body
+    mn: "Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай."
+    en: "You have open disputes. You must resolve all disputes before deleting your account."
+    max_chars: 200
+
+  - key: cta_go_to_bookings
+    mn: "Захиалгууд руу очих"
+    en: "Go to Bookings"
+    max_chars: 25
+
+  - key: cta_go_to_disputes
+    mn: "Маргаанууд руу очих"
+    en: "Go to Disputes"
+    max_chars: 25
+
+  - key: cta_understood
+    mn: "Ойлголоо"
+    en: "Understood"
+    max_chars: 15
+
+api_endpoints:
+  - method: DELETE
+    path: "/users/me"
+    purpose: "Permanently delete the authenticated user's account and all associated data"
+
+analytics_events:
+  - event: "account_deletion_sheet_opened"
+    trigger: "Deletion confirmation sheet becomes visible"
+  - event: "account_deletion_confirmed"
+    trigger: "User confirms deletion and DELETE /users/me is called"
+  - event: "account_deletion_cancelled"
+    trigger: "User taps Cancel or drags sheet to dismiss"
+  - event: "account_deletion_blocked_bookings"
+    trigger: "Deletion attempt blocked due to active bookings"
+  - event: "account_deletion_blocked_disputes"
+    trigger: "Deletion attempt blocked due to open disputes"
+
+acceptance_criteria:
+  - "Sheet opens as a modal bottom sheet with drag-to-dismiss handle bar"
+  - "Default state shows warning icon, title, body text, and two action buttons (Delete + Cancel)"
+  - "Tapping Delete transitions to confirming state with secondary confirmation input"
+  - "User must type confirmation text before the final delete button becomes enabled"
+  - "During deletion, the button shows a loading spinner and all interactions are disabled"
+  - "Successful deletion replaces (replace) the navigation stack to SCR-SHARED-002 (Login)"
+  - "If user has active bookings, shows blocked_active_bookings state with explanation and link to bookings"
+  - "If user has open disputes, shows blocked_open_disputes state with explanation and link to disputes"
+  - "Cancel button or drag-to-dismiss returns (dismiss) to SCR-SHARED-014"
+  - "Deletion blocked states do not show the delete button; only 'Understood' or navigation CTAs"
+  - "Danger button uses danger variant styling per component contract"
+  - "Scrim uses branded primaryDeep at 35% opacity per design system"

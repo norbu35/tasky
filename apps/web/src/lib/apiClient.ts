@@ -12,6 +12,68 @@ export type Dispute = components["schemas"]["Dispute"];
 export type Conversation = components["schemas"]["Conversation"];
 export type Message = components["schemas"]["Message"];
 
+export interface VerificationDetail {
+    id: string;
+    user_id: string;
+    user_phone: string;
+    user_name: string;
+    id_card_front_url: string;
+    id_card_back_url: string;
+    selfie_url?: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    admin_notes: string | null;
+    submitted_at: string;
+    reviewed_at: string | null;
+}
+
+export interface FeatureToggle {
+    feature_name: string;
+    is_enabled: boolean;
+    updated_by: string;
+    updated_at: string;
+}
+
+export interface StrikePolicy {
+    strikeWindowDays: number;
+    strikeThreshold: number;
+    firstSuspensionDays: number;
+    repeatSuspensionDays: number;
+    repeatOffenseWindowDays: number;
+    autoUnsuspendEnabled: boolean;
+    updatedAt?: string;
+}
+
+export interface StrikePolicyUpdateRequest {
+    strikeWindowDays?: number;
+    strikeThreshold?: number;
+    firstSuspensionDays?: number;
+    repeatSuspensionDays?: number;
+    repeatOffenseWindowDays?: number;
+    autoUnsuspendEnabled?: boolean;
+}
+
+export interface AdminDisputeDetail {
+    dispute: Record<string, unknown>;
+    booking: Record<string, unknown>;
+    conversation_id: string | null;
+    evidence_messages: unknown[];
+}
+
+export interface CategorySchemaVersion {
+    version: number;
+    status: string;
+    schema_json: Record<string, unknown>;
+    created_at: string;
+}
+
+export interface AdminCategoryPayload {
+    name: string;
+    name_mn: string;
+    icon_url: string;
+    sort_order: number;
+    intake_enabled: boolean;
+}
+
 export interface AuthTokens {
     accessToken: string;
     refreshToken: string;
@@ -77,6 +139,9 @@ export interface ApiClient {
             location_text: string;
             scheduled_at: string;
             photo_keys?: string[];
+            intake_answers?: Record<string, unknown>;
+            intake_schema_version?: number;
+            scope_summary?: string;
         }
     ): Promise<Task>;
 
@@ -141,6 +206,84 @@ export interface ApiClient {
     unregisterDevice(accessToken: string, token: string): Promise<void>;
 
     devLogin(phone: string, role: "CUSTOMER" | "TASKER" | "ADMIN"): Promise<AuthTokens>;
+
+    // ─── Admin Methods ───────────────────────────────────────────────
+
+    adminSearchUsers(accessToken: string, phone: string): Promise<CursorPage<User>>;
+
+    adminBanUser(accessToken: string, userId: string, reason: string): Promise<User>;
+
+    adminUnbanUser(accessToken: string, userId: string): Promise<User>;
+
+    adminListFlaggedMessages(accessToken: string): Promise<CursorPage<Message>>;
+
+    adminListPendingVerifications(accessToken: string): Promise<VerificationDetail[]>;
+
+    adminApproveVerification(accessToken: string, verificationId: string): Promise<VerificationDetail>;
+
+    adminRejectVerification(accessToken: string, verificationId: string, reason: string): Promise<VerificationDetail>;
+
+    adminListDisputes(accessToken: string): Promise<CursorPage<Dispute>>;
+
+    adminGetDispute(accessToken: string, disputeId: string): Promise<AdminDisputeDetail>;
+
+    adminResolveDispute(
+        accessToken: string,
+        disputeId: string,
+        resolution: string,
+        notes: string,
+        idempotencyKey: string
+    ): Promise<Dispute>;
+
+    adminGetStrikePolicy(accessToken: string): Promise<StrikePolicy>;
+
+    adminUpdateStrikePolicy(
+        accessToken: string,
+        payload: Partial<StrikePolicyUpdateRequest>
+    ): Promise<StrikePolicy>;
+
+    adminListFeatureToggles(accessToken: string): Promise<FeatureToggle[]>;
+
+    adminUpdateFeatureToggle(
+        accessToken: string,
+        featureName: string,
+        isEnabled: boolean
+    ): Promise<FeatureToggle>;
+
+    adminConciergeAssignTask(
+        accessToken: string,
+        taskId: string,
+        taskerId: string,
+        overrideReason: string,
+        liabilityDisclaimerAccepted: boolean,
+        idempotencyKey: string
+    ): Promise<Booking>;
+
+    adminListCategories(accessToken: string): Promise<CursorPage<Category>>;
+
+    adminCreateCategory(accessToken: string, payload: AdminCategoryPayload): Promise<Category>;
+
+    adminUpdateCategory(
+        accessToken: string,
+        categoryId: string,
+        payload: Partial<AdminCategoryPayload>
+    ): Promise<Category>;
+
+    adminListCategorySchemas(accessToken: string, categoryId: string): Promise<CategorySchemaVersion[]>;
+
+    adminCreateCategorySchema(
+        accessToken: string,
+        categoryId: string,
+        schemaJson: Record<string, unknown>,
+        activateAs?: string
+    ): Promise<CategorySchemaVersion>;
+
+    adminActivateCategorySchema(
+        accessToken: string,
+        categoryId: string,
+        version: number,
+        mode: string
+    ): Promise<CategorySchemaVersion>;
 }
 
 export class ApiError extends Error {
@@ -291,6 +434,9 @@ export class HttpApiClient implements ApiClient {
             location_text: string;
             scheduled_at: string;
             photo_keys?: string[];
+            intake_answers?: Record<string, unknown>;
+            intake_schema_version?: number;
+            scope_summary?: string;
         }
     ): Promise<Task> {
         return this.requestJson<Task>(
@@ -541,6 +687,251 @@ export class HttpApiClient implements ApiClient {
             refreshToken: response.refresh_token,
             user: response.user
         }));
+    }
+
+    // ─── Admin Methods ───────────────────────────────────────────────
+
+    adminSearchUsers(accessToken: string, phone: string): Promise<CursorPage<User>> {
+        return this.requestJson<CursorPage<User>>(
+            "/admin/users",
+            {method: "GET"},
+            accessToken,
+            {phone}
+        );
+    }
+
+    adminBanUser(accessToken: string, userId: string, reason: string): Promise<User> {
+        return this.requestJson<User>(
+            `/admin/users/${userId}/ban`,
+            {
+                method: "POST",
+                body: JSON.stringify({reason})
+            },
+            accessToken
+        );
+    }
+
+    adminUnbanUser(accessToken: string, userId: string): Promise<User> {
+        return this.requestJson<User>(
+            `/admin/users/${userId}/unban`,
+            {method: "POST"},
+            accessToken
+        );
+    }
+
+    adminListFlaggedMessages(accessToken: string): Promise<CursorPage<Message>> {
+        return this.requestJson<CursorPage<Message>>(
+            "/admin/messages/flagged",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminListPendingVerifications(accessToken: string): Promise<VerificationDetail[]> {
+        return this.requestJson<VerificationDetail[]>(
+            "/admin/verifications/pending",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminApproveVerification(accessToken: string, verificationId: string): Promise<VerificationDetail> {
+        return this.requestJson<VerificationDetail>(
+            `/admin/verifications/${verificationId}/approve`,
+            {method: "POST"},
+            accessToken
+        );
+    }
+
+    adminRejectVerification(accessToken: string, verificationId: string, reason: string): Promise<VerificationDetail> {
+        return this.requestJson<VerificationDetail>(
+            `/admin/verifications/${verificationId}/reject`,
+            {
+                method: "POST",
+                body: JSON.stringify({reason})
+            },
+            accessToken
+        );
+    }
+
+    adminListDisputes(accessToken: string): Promise<CursorPage<Dispute>> {
+        return this.requestJson<CursorPage<Dispute>>(
+            "/admin/disputes",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminGetDispute(accessToken: string, disputeId: string): Promise<AdminDisputeDetail> {
+        return this.requestJson<AdminDisputeDetail>(
+            `/admin/disputes/${disputeId}`,
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminResolveDispute(
+        accessToken: string,
+        disputeId: string,
+        resolution: string,
+        notes: string,
+        idempotencyKey: string
+    ): Promise<Dispute> {
+        return this.requestJson<Dispute>(
+            `/admin/disputes/${disputeId}/resolve`,
+            {
+                method: "POST",
+                headers: {
+                    "Idempotency-Key": idempotencyKey
+                },
+                body: JSON.stringify({resolution, notes})
+            },
+            accessToken
+        );
+    }
+
+    adminGetStrikePolicy(accessToken: string): Promise<StrikePolicy> {
+        return this.requestJson<StrikePolicy>(
+            "/admin/moderation/strike-policy",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminUpdateStrikePolicy(
+        accessToken: string,
+        payload: Partial<StrikePolicyUpdateRequest>
+    ): Promise<StrikePolicy> {
+        return this.requestJson<StrikePolicy>(
+            "/admin/moderation/strike-policy",
+            {
+                method: "PUT",
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
+    }
+
+    adminListFeatureToggles(accessToken: string): Promise<FeatureToggle[]> {
+        return this.requestJson<FeatureToggle[]>(
+            "/admin/features/toggles",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminUpdateFeatureToggle(
+        accessToken: string,
+        featureName: string,
+        isEnabled: boolean
+    ): Promise<FeatureToggle> {
+        return this.requestJson<FeatureToggle>(
+            "/admin/features/toggles",
+            {
+                method: "PUT",
+                body: JSON.stringify({feature_name: featureName, is_enabled: isEnabled})
+            },
+            accessToken
+        );
+    }
+
+    adminConciergeAssignTask(
+        accessToken: string,
+        taskId: string,
+        taskerId: string,
+        overrideReason: string,
+        liabilityDisclaimerAccepted: boolean,
+        idempotencyKey: string
+    ): Promise<Booking> {
+        return this.requestJson<Booking>(
+            `/admin/tasks/${taskId}/concierge-assign`,
+            {
+                method: "POST",
+                headers: {
+                    "Idempotency-Key": idempotencyKey
+                },
+                body: JSON.stringify({
+                    tasker_id: taskerId,
+                    override_reason: overrideReason,
+                    liability_disclaimer_accepted: liabilityDisclaimerAccepted
+                })
+            },
+            accessToken
+        );
+    }
+
+    adminListCategories(accessToken: string): Promise<CursorPage<Category>> {
+        return this.requestJson<CursorPage<Category>>(
+            "/admin/categories",
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminCreateCategory(accessToken: string, payload: AdminCategoryPayload): Promise<Category> {
+        return this.requestJson<Category>(
+            "/admin/categories",
+            {
+                method: "POST",
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
+    }
+
+    adminUpdateCategory(
+        accessToken: string,
+        categoryId: string,
+        payload: Partial<AdminCategoryPayload>
+    ): Promise<Category> {
+        return this.requestJson<Category>(
+            `/admin/categories/${categoryId}`,
+            {
+                method: "PUT",
+                body: JSON.stringify(payload)
+            },
+            accessToken
+        );
+    }
+
+    adminListCategorySchemas(accessToken: string, categoryId: string): Promise<CategorySchemaVersion[]> {
+        return this.requestJson<CategorySchemaVersion[]>(
+            `/admin/categories/${categoryId}/schemas`,
+            {method: "GET"},
+            accessToken
+        );
+    }
+
+    adminCreateCategorySchema(
+        accessToken: string,
+        categoryId: string,
+        schemaJson: Record<string, unknown>,
+        activateAs?: string
+    ): Promise<CategorySchemaVersion> {
+        return this.requestJson<CategorySchemaVersion>(
+            `/admin/categories/${categoryId}/schemas`,
+            {
+                method: "POST",
+                body: JSON.stringify({schema_json: schemaJson, activate_as: activateAs})
+            },
+            accessToken
+        );
+    }
+
+    adminActivateCategorySchema(
+        accessToken: string,
+        categoryId: string,
+        version: number,
+        mode: string
+    ): Promise<CategorySchemaVersion> {
+        return this.requestJson<CategorySchemaVersion>(
+            `/admin/categories/${categoryId}/schemas/${version}/activate`,
+            {
+                method: "POST",
+                body: JSON.stringify({mode})
+            },
+            accessToken
+        );
     }
 
     private async requestJson<T>(

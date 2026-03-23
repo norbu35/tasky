@@ -1,0 +1,119 @@
+<h2>Web App Visual Direction</h2>
+<p class="subtitle">The Figma designs define a mobile-first visual language. How should the web app adapt it?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #F9F9F9; padding: 24px;">
+      <!-- Mockup A: Figma-faithful -->
+      <div style="font-family: 'Manrope', sans-serif; max-width: 480px; margin: 0 auto;">
+        <div style="background: rgba(249,249,249,0.7); backdrop-filter: blur(6px); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 9999px; background: #6D28D9; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">T</div>
+            <div>
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(74,68,85,0.6); font-weight: 700;">Location</div>
+              <div style="font-size: 14px; font-weight: 700; color: #1A1C1C;">Ulaanbaatar</div>
+            </div>
+          </div>
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: #F3F3F3; display: flex; align-items: center; justify-content: center; font-size: 18px;">⚙</div>
+        </div>
+        <div style="padding: 24px;">
+          <div style="font-size: 30px; font-weight: 800; color: #1A1C1C; line-height: 1.2; letter-spacing: -0.75px;">Find your next<br><span style="color: #5300B7;">Service Task</span></div>
+          <div style="margin-top: 24px; background: #F3F3F3; border-radius: 12px; height: 56px; display: flex; align-items: center; padding: 0 16px; color: rgba(74,68,85,0.5); font-size: 16px;">🔍 Search for jobs...</div>
+          <div style="display: flex; gap: 12px; margin-top: 24px; overflow-x: auto;">
+            <div style="background: #6D28D9; color: white; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600; white-space: nowrap;">All</div>
+            <div style="background: #E2E2E2; color: #4A4455; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600; white-space: nowrap;">Cleaning</div>
+            <div style="background: #E2E2E2; color: #4A4455; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600; white-space: nowrap;">Repair</div>
+          </div>
+          <div style="margin-top: 24px; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: #E4E0F5; display: flex; align-items: center; justify-content: center;">🧹</div>
+              <div style="background: #D1FAE5; color: #047857; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 1px; height: fit-content;">OPEN</div>
+            </div>
+            <div style="margin-top: 16px; font-size: 18px; font-weight: 700; color: #1A1C1C;">Deep Clean 3-room Apartment</div>
+            <div style="font-size: 24px; font-weight: 700; color: #5300B7; margin-top: 4px;">₮50,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Mobile-width centered (Figma-faithful)</h3>
+      <p>Keep the exact Figma layout in a ~480px centered column. Feels like a mobile app in the browser. Minimal web adaptation needed — same components, same spacing.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Pixel-perfect Figma match</li><li>Fastest to ship</li><li>Consistent cross-platform feel</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Wastes screen real estate</li><li>Feels like a phone app on desktop</li><li>No advantage of wider viewport</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #F9F9F9; padding: 24px;">
+      <!-- Mockup B: Desktop-adapted -->
+      <div style="font-family: 'Manrope', sans-serif; max-width: 900px; margin: 0 auto;">
+        <div style="background: rgba(249,249,249,0.7); backdrop-filter: blur(6px); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="font-size: 20px; font-weight: 800; color: #5300B7; letter-spacing: -0.5px;">Tasky</div>
+            <nav style="display: flex; gap: 4px;">
+              <a style="background: #6D28D9; color: white; padding: 6px 16px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; text-decoration: none;">Find Work</a>
+              <a style="color: #6B7280; padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; text-decoration: none;">My Jobs</a>
+              <a style="color: #6B7280; padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; text-decoration: none;">Inbox</a>
+            </nav>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 14px; color: #4A4455;">Ulaanbaatar</div>
+            <div style="width: 40px; height: 40px; border-radius: 9999px; background: #6D28D9; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">T</div>
+          </div>
+        </div>
+        <div style="padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+          <div>
+            <div style="font-size: 30px; font-weight: 800; color: #1A1C1C; line-height: 1.2; letter-spacing: -0.75px;">Find your next<br><span style="color: #5300B7;">Service Task</span></div>
+            <div style="margin-top: 24px; background: #F3F3F3; border-radius: 12px; height: 56px; display: flex; align-items: center; padding: 0 16px; color: rgba(74,68,85,0.5); font-size: 16px;">🔍 Search for jobs...</div>
+            <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+              <div style="background: #6D28D9; color: white; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600;">All</div>
+              <div style="background: #E2E2E2; color: #4A4455; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600;">Cleaning</div>
+              <div style="background: #E2E2E2; color: #4A4455; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600;">Repair</div>
+              <div style="background: #E2E2E2; color: #4A4455; padding: 10px 24px; border-radius: 9999px; font-size: 14px; font-weight: 600;">Moving</div>
+            </div>
+            <div style="margin-top: 16px; background: rgba(255,221,184,0.3); border: 1px solid #FFDDB8; border-radius: 12px; padding: 17px; display: flex; gap: 16px; align-items: center;">
+              <div style="width: 37px; height: 40px; background: #FFDDB8; border-radius: 8px; display: flex; align-items: center; justify-content: center;">🛡</div>
+              <div><div style="font-size: 12px; font-weight: 700; color: #653E00; text-transform: uppercase; letter-spacing: 0.6px;">Verified Tasker</div><div style="font-size: 14px; color: #2A1700; line-height: 1.4;">Get premium badges for high quality work.</div></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="display: flex; justify-content: space-between;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #E4E0F5; display: flex; align-items: center; justify-content: center;">🧹</div>
+                <div style="background: #D1FAE5; color: #047857; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 1px; height: fit-content;">OPEN</div>
+              </div>
+              <div style="margin-top: 16px; font-size: 18px; font-weight: 700; color: #1A1C1C;">Deep Clean 3-room Apartment</div>
+              <div style="font-size: 24px; font-weight: 700; color: #5300B7; margin-top: 4px;">₮50,000</div>
+              <div style="display: flex; margin-top: 17px; padding-top: 17px; border-top: 1px solid #eee;">
+                <div style="flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4A4455;">📍 Bayangol District</div>
+                <div style="flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4A4455;">🕐 Today, 2 PM</div>
+              </div>
+            </div>
+            <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              <div style="display: flex; justify-content: space-between;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #E4E0F5; display: flex; align-items: center; justify-content: center;">🔧</div>
+                <div style="background: #D1FAE5; color: #047857; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 1px; height: fit-content;">OPEN</div>
+              </div>
+              <div style="margin-top: 16px; font-size: 18px; font-weight: 700; color: #1A1C1C;">Fix Leaking Kitchen Faucet</div>
+              <div style="font-size: 24px; font-weight: 700; color: #5300B7; margin-top: 4px;">₮35,000</div>
+              <div style="display: flex; margin-top: 17px; padding-top: 17px; border-top: 1px solid #eee;">
+                <div style="flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4A4455;">📍 Sukhbaatar</div>
+                <div style="flex: 1; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4A4455;">🕐 Tomorrow, 10 AM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Desktop-adapted (Recommended)</h3>
+      <p>Same Figma design language (colors, typography, components) but adapted for wider viewports: horizontal nav, 2-column layouts, side-by-side content. Responsive down to mobile.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Uses screen real estate well</li><li>Feels native to desktop browsers</li><li>Same tokens, fonts, components as mobile</li><li>Proper responsive behavior</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More layout work than option A</li><li>Layouts diverge from Figma (which is mobile-only)</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

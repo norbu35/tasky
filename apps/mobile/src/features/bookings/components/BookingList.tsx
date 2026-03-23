@@ -1,6 +1,9 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useBookings } from '../hooks/useBookings';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
+
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export function BookingList() {
     const { t } = useTranslation();
@@ -26,31 +29,28 @@ export function BookingList() {
 
 const styles = StyleSheet.create({
     list: {
-        padding: 16,
+        padding: spacing.lg,
     },
     card: {
-        backgroundColor: 'white',
-        padding: 16,
-        marginBottom: 12,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
+        backgroundColor: colors.card,
+        padding: spacing.lg,
+        marginBottom: spacing.md,
+        borderRadius: radius.md,
+        ...elevations.card,
     },
     status: {
-        fontSize: 16,
+        fontSize: typography.body,
         fontWeight: 'bold',
-        marginBottom: 8,
+        marginBottom: spacing.sm,
+        color: colors.foreground,
     },
     id: {
-        color: '#666',
-        fontSize: 12,
+        color: colors.mutedForeground,
+        fontSize: typography.caption,
     },
     empty: {
         textAlign: 'center',
-        marginTop: 40,
-        color: '#999',
+        marginTop: spacing['2xl'],
+        color: colors.textSecondary,
     }
 });

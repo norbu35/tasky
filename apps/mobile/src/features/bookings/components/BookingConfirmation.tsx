@@ -206,7 +206,7 @@ export function BookingConfirmation({
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#F9F9F9',
+        backgroundColor: colors.background,
     },
     scrollView: {
         flex: 1,

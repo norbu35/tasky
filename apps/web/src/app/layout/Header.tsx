@@ -1,113 +1,64 @@
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Menu, X } from "lucide-react";
+import { Shield, User } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAppContext } from "../context/AppContext";
-
-const TASKER_LINKS = [
-    { to: "/tasker/tasks", label: "nav.findWork", fallback: "Find Work" },
-    { to: "/tasker/my-tasks", label: "nav.myJobs", fallback: "My Jobs" },
-    { to: "/communication", label: "nav.inbox", fallback: "Inbox" },
-];
-
-const CUSTOMER_LINKS = [
-    { to: "/customer/dashboard", label: "nav.dashboard", fallback: "Dashboard" },
-    { to: "/customer/tasks", label: "nav.tasks", fallback: "Tasks" },
-    { to: "/communication", label: "nav.inbox", fallback: "Inbox" },
-];
-
-const COMMON_LINKS = [
-    { to: "/profile", label: "nav.profile", fallback: "Profile" },
-];
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export function Header() {
-    const { profile, signOut } = useAppContext();
-    const { t } = useTranslation();
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const [devRole, setDevRole] = useState<string | null>(null);
+  const { profile, signOut } = useAppContext();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-    const effectiveRole = devRole ?? profile?.role;
-    const roleLinks = effectiveRole === "TASKER" ? TASKER_LINKS
-        : effectiveRole === "CUSTOMER" ? CUSTOMER_LINKS
-        : [];
-    const allLinks = [...roleLinks, ...COMMON_LINKS];
+  return (
+    <motion.header 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="fixed left-4 right-4 sm:left-auto sm:right-auto sm:top-6 sm:w-[calc(100%-3rem)] sm:max-w-5xl sm:mx-auto top-4 z-50 rounded-2xl border border-border/40 bg-background/70 backdrop-blur-xl shadow-lg shadow-black/5"
+    >
+      <div className="flex items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
+        {/* Logo */}
+        <div 
+          className="flex items-center gap-2.5 cursor-pointer group"
+          onClick={() => navigate("/")}
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-deep to-primary flex items-center justify-center text-primary-foreground shadow-sm group-hover:shadow-md transition-all">
+            <Shield className="w-4 h-4" strokeWidth={3} />
+          </div>
+          <span className="text-xl font-extrabold font-display tracking-tight text-foreground">
+            Tasky
+          </span>
+        </div>
 
-    const linkClass = ({ isActive }: { isActive: boolean }): string =>
-        [
-            "rounded-xl px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors whitespace-nowrap",
-            isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-nav-inactive hover:bg-muted"
-        ].join(" ");
+        {/* Actions */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
+          
+          <div className="w-[1px] h-6 bg-border/50 hidden sm:block mx-1"></div>
 
-    return (
-        <>
-            <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-border/40 bg-background/75 backdrop-blur-md">
-                <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 h-16">
-                    <div className="flex items-center gap-4">
-                        <span className="text-xl font-extrabold font-display text-primary-deep tracking-tight">
-                            Tasky
-                        </span>
-                        <LanguageSwitcher />
-                    </div>
-
-                    <nav className="hidden md:flex items-center gap-1" aria-label="Primary navigation">
-                        {allLinks.map(link => (
-                            <NavLink key={link.to} className={linkClass} to={link.to}>
-                                {t(link.label, link.fallback)}
-                            </NavLink>
-                        ))}
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        {profile && (
-                            <div className="hidden sm:flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
-                                    {profile.full_name?.charAt(0) ?? "?"}
-                                </div>
-                            </div>
-                        )}
-                        <Button variant="ghost" size="sm" className="text-xs font-semibold" onClick={signOut}>
-                            {t("nav.logout", "Sign out")}
-                        </Button>
-                        <button
-                            className="md:hidden p-2 rounded-lg hover:bg-muted"
-                            onClick={() => setMobileOpen(!mobileOpen)}
-                            aria-label="Toggle menu"
-                        >
-                            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-                        </button>
-                    </div>
-                </div>
-
-                {mobileOpen && (
-                    <nav className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-md px-6 py-3 flex flex-col gap-1" aria-label="Mobile navigation">
-                        {allLinks.map(link => (
-                            <NavLink
-                                key={link.to}
-                                className={linkClass}
-                                to={link.to}
-                                onClick={() => setMobileOpen(false)}
-                            >
-                                {t(link.label, link.fallback)}
-                            </NavLink>
-                        ))}
-                    </nav>
-                )}
-            </header>
-
-            {import.meta.env.DEV && (
-                <button
-                    className="fixed bottom-4 right-4 z-50 bg-foreground/10 backdrop-blur-sm text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-foreground/20 transition-colors"
-                    onClick={() => setDevRole(prev =>
-                        prev === "TASKER" ? "CUSTOMER" : prev === "CUSTOMER" ? null : "TASKER"
-                    )}
-                >
-                    {devRole ? `Dev: ${devRole}` : "Dev: auto"}
-                </button>
-            )}
-        </>
-    );
+          {profile ? (
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="hidden sm:flex text-sm font-medium h-9 px-4 rounded-xl text-muted-foreground hover:text-foreground" onClick={() => navigate("/dashboard")}>
+                <User className="w-4 h-4 mr-2" />
+                {t("nav.profile", "Profile")}
+              </Button>
+              <Button variant="secondary" size="sm" className="text-sm font-semibold h-9 px-4 rounded-xl" onClick={signOut}>
+                {t("nav.logout", "Sign out")}
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              className="text-sm font-semibold h-9 px-5 rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-sm" 
+              onClick={() => navigate("/auth")}
+            >
+              {t("auth.login", "Login")}
+            </Button>
+          )}
+        </div>
+      </div>
+    </motion.header>
+  );
 }

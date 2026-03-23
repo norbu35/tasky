@@ -1,0 +1,108 @@
+# Screen Spec: Credits — Low Balance Alert
+screen_id: SCR-P2-004
+name: "Credits — Low Balance Alert"
+route: null
+role: [tasker]
+phase: "2"
+template: modal_sheet
+figma_page: "Phase 2/Credits Low Balance Alert"
+feature: "credits"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle + icon + message + actions)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet container for low balance warning"
+    props:
+      visible: true
+      title: "Кредит бага байна"
+      onClose: "dismiss"
+    variant: default
+
+  - id: COMP-CREDITBALANCE
+    usage: "Inline balance display showing current low/zero credit count"
+    props:
+      balance: 1
+    variant: inline
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to navigate to credit purchase screen"
+    props:
+      label: "Кредит авах"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary dismiss button"
+    props:
+      label: "Дараа нь"
+      variant: ghost
+      size: md
+    variant: ghost
+
+states:
+  - id: alert_1_credit
+    description: "Tasker has exactly 1 credit remaining; warning to top up"
+    components_visible: [COMP-MODALSHEET, COMP-CREDITBALANCE, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: alert_0_credits
+    description: "Tasker has 0 credits; cannot accept leads until purchase"
+    components_visible: [COMP-MODALSHEET, COMP-CREDITBALANCE, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+copy:
+  - key: sheet_title_low
+    mn: "Кредит бага байна"
+    en: "Low credits"
+    max_chars: 25
+
+  - key: sheet_title_empty
+    mn: "Кредит дууссан"
+    en: "No credits remaining"
+    max_chars: 25
+
+  - key: description_1_credit
+    mn: "Танд 1 кредит үлдлээ. Санал хүлээн авахын тулд кредит нэмнэ үү"
+    en: "You have 1 credit left. Top up to keep accepting leads"
+    max_chars: 80
+
+  - key: description_0_credits
+    mn: "Танд кредит үлдээгүй байна. Шинэ санал хүлээн авахын тулд кредит худалдаж аваарай"
+    en: "You have no credits. Purchase credits to accept new leads"
+    max_chars: 100
+
+  - key: cta_buy
+    mn: "Кредит авах"
+    en: "Buy credits"
+    max_chars: 20
+
+  - key: cta_later
+    mn: "Дараа нь"
+    en: "Later"
+    max_chars: 15
+
+api_endpoints: []
+
+analytics_events:
+  - event: "low_balance_alert_shown"
+    trigger: "Low balance sheet displayed (with type: 1_credit or 0_credits)"
+  - event: "low_balance_buy_tapped"
+    trigger: "User taps 'Buy credits' to navigate to SCR-P2-001"
+  - event: "low_balance_dismissed"
+    trigger: "User taps 'Later' or drags to dismiss"
+
+acceptance_criteria:
+  - "Alert triggers automatically when tasker balance drops to 1 or 0 credits"
+  - "1-credit state shows warning with amber visual cue and remaining count"
+  - "0-credit state shows urgent prompt with CreditBalance zero state (danger color)"
+  - "Tapping 'Buy credits' pushes to SCR-P2-001 (Credits Balance & Purchase)"
+  - "Sheet is dismissible via drag-to-close and 'Later' button"
+  - "Alert does not re-trigger within the same session after dismissal"
+  - "Sheet renders at z-index 30 with branded scrim (primaryDeep at 35%)"
+  - "Maximum 2 action buttons per modal sheet template rules"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

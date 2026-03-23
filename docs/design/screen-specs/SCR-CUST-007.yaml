@@ -1,0 +1,182 @@
+# Screen Spec: Post Task — Review & Submit
+screen_id: SCR-CUST-007
+name: "Post Task — Review & Submit"
+route: "/(customer)/tasks/new/review"
+role: [customer]
+phase: "0-1"
+template: detail
+figma_page: "Customer/Post Task Review Submit"
+feature: "task_posting"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 6/7) -> scrollview(summary_sections) -> sticky_bottom_cta(submit)"
+
+components:
+  - id: COMP-STEPINDICATOR
+    usage: "Shows step 6 of 7 in the Post Task wizard flow"
+    props:
+      currentStep: 6
+      totalSteps: 7
+      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+    variant: horizontal
+
+  - id: COMP-CARD
+    usage: "Summary sections displaying category, intake answers, photos, location, schedule, and budget"
+    props:
+      onPress: null
+    variant: outlined
+
+  - id: COMP-STATUSBADGE
+    usage: "Category badge displayed in the summary header"
+    props:
+      status: "open"
+      size: "sm"
+    variant: open
+
+  - id: COMP-BUTTON
+    usage: "Primary submit CTA at bottom; secondary edit links on each summary section"
+    props:
+      label: "Даалгавар оруулах"
+      variant: primary
+      size: xl
+      loading: false
+    variant: primary
+
+  - id: COMP-TOAST
+    usage: "Error toast when task submission fails"
+    props:
+      message: "Даалгавар оруулахад алдаа гарлаа"
+      variant: error
+      duration: 6000
+    variant: error
+
+states:
+  - id: review
+    description: "All task data displayed in summary sections; user reviews before submitting"
+    components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: editing_summary
+    description: "User tapped edit on the Job Scope Summary; text becomes editable per REQ-TASK-07"
+    components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: submitting
+    description: "POST /tasks in progress; submit button shows loading spinner"
+    components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: submit_error
+    description: "POST /tasks failed; error toast with retry action shown"
+    components_visible: [COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON, COMP-TOAST]
+    components_hidden: []
+
+copy:
+  - key: page_title
+    mn: "Хянах ба илгээх"
+    en: "Review & Submit"
+    max_chars: 25
+
+  - key: step_label
+    mn: "Хянах"
+    en: "Review"
+    max_chars: 15
+
+  - key: section_category
+    mn: "Ангилал"
+    en: "Category"
+    max_chars: 15
+
+  - key: section_details
+    mn: "Даалгаврын дэлгэрэнгүй"
+    en: "Task Details"
+    max_chars: 25
+
+  - key: section_scope_summary
+    mn: "Ажлын товч тайлбар"
+    en: "Job Scope Summary"
+    max_chars: 25
+
+  - key: section_photos
+    mn: "Зурагнууд"
+    en: "Photos"
+    max_chars: 15
+
+  - key: section_location
+    mn: "Байршил"
+    en: "Location"
+    max_chars: 15
+
+  - key: section_schedule
+    mn: "Хуваарь"
+    en: "Schedule"
+    max_chars: 15
+
+  - key: section_budget
+    mn: "Төсөв"
+    en: "Budget"
+    max_chars: 15
+
+  - key: edit_link
+    mn: "Засах"
+    en: "Edit"
+    max_chars: 10
+
+  - key: scope_summary_edit_hint
+    mn: "Товч тайлбарыг засах боломжтой"
+    en: "You can edit the summary"
+    max_chars: 40
+
+  - key: payment_note
+    mn: "Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно"
+    en: "Payment is arranged directly with the Tasker"
+    max_chars: 60
+
+  - key: cta_submit
+    mn: "Даалгавар оруулах"
+    en: "Post Task"
+    max_chars: 20
+
+  - key: cta_back
+    mn: "Буцах"
+    en: "Back"
+    max_chars: 10
+
+  - key: error_submit
+    mn: "Даалгавар оруулахад алдаа гарлаа. Дахин оролдоно уу"
+    en: "Failed to post task. Please try again"
+    max_chars: 60
+
+api_endpoints:
+  - method: POST
+    path: "/tasks"
+    purpose: "Submit the complete task with all collected data (category, intake answers, photos, location, schedule, budget)"
+
+analytics_events:
+  - event: "task_review_viewed"
+    trigger: "Review screen becomes visible with complete task summary"
+  - event: "task_scope_summary_edited"
+    trigger: "User edits the auto-generated Job Scope Summary"
+  - event: "task_submitted"
+    trigger: "User taps Post Task and POST /tasks succeeds; includes task_id"
+  - event: "task_submit_failed"
+    trigger: "POST /tasks failed; includes error type"
+  - event: "task_review_section_edit_tapped"
+    trigger: "User taps Edit on a summary section; includes section name"
+
+acceptance_criteria:
+  - "StepIndicator shows step 6 of 7 with 'Хянах' label highlighted"
+  - "Summary displays all collected data in outlined Card sections: category, intake answers, photos, location, schedule, budget"
+  - "Job Scope Summary section is auto-generated from intake answers per REQ-TASK-07 and is editable by the customer"
+  - "Each section has an Edit link that navigates back to the corresponding wizard step"
+  - "Budget is displayed in ₮ format with comma separator (e.g., ₮50,000)"
+  - "Location shows the pin text description and approximate area"
+  - "Photos show thumbnail previews of uploaded images"
+  - "Payment note per REQ-PAY-03 informs that payment is direct between parties"
+  - "Submit button enters loading state during POST /tasks"
+  - "On success, screen replaces to Task Posted Success SCR-CUST-008"
+  - "On failure, error toast appears with retry action"
+  - "Back button pops to Schedule & Budget SCR-CUST-006"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

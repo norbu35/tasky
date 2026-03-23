@@ -1,0 +1,125 @@
+# Screen Spec: Onboarding Carousel
+screen_id: SCR-SHARED-005
+name: "Onboarding Carousel"
+route: "/onboarding"
+role: [customer, tasker]
+phase: "0-1"
+template: auth
+figma_page: "Shared/Onboarding Carousel"
+feature: "onboarding"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> carousel(illustration + heading + description) -> page_dots -> bottom_cta(next_or_skip)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA changes from 'Дараагийх' on slides 1-2 to 'Эхлэх' on slide 3"
+    props:
+      label: "Дараагийх"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Skip link at top-right to bypass remaining slides"
+    props:
+      label: "Алгасах"
+      variant: ghost
+      size: sm
+    variant: ghost
+
+  - id: COMP-PROGRESSTRACKER
+    usage: "Page dots indicating current slide position (3 total)"
+    props:
+      current: 1
+      total: 3
+    variant: default
+
+states:
+  - id: slide_1
+    description: "First onboarding slide: value proposition about finding trusted taskers"
+    components_visible: [illustration_1, heading_1, description_1, page_dots, next_button, skip_link]
+    components_hidden: [illustration_2, illustration_3, heading_2, heading_3, description_2, description_3, start_button]
+
+  - id: slide_2
+    description: "Second onboarding slide: value proposition about easy booking process"
+    components_visible: [illustration_2, heading_2, description_2, page_dots, next_button, skip_link]
+    components_hidden: [illustration_1, illustration_3, heading_1, heading_3, description_1, description_3, start_button]
+
+  - id: slide_3
+    description: "Third and final onboarding slide: value proposition about safe transactions; CTA becomes 'Эхлэх'"
+    components_visible: [illustration_3, heading_3, description_3, page_dots, start_button]
+    components_hidden: [illustration_1, illustration_2, heading_1, heading_2, description_1, description_2, next_button, skip_link]
+
+copy:
+  - key: skip_label
+    mn: "Алгасах"
+    en: "Skip"
+    max_chars: 10
+
+  - key: next_label
+    mn: "Дараагийх"
+    en: "Next"
+    max_chars: 15
+
+  - key: start_label
+    mn: "Эхлэх"
+    en: "Get Started"
+    max_chars: 15
+
+  - key: slide_1_heading
+    mn: "Найдвартай гүйцэтгэгч олох"
+    en: "Find Trusted Taskers"
+    max_chars: 30
+
+  - key: slide_1_description
+    mn: "Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой"
+    en: "Connect with verified and reliable taskers"
+    max_chars: 70
+
+  - key: slide_2_heading
+    mn: "Захиалга хийх амархан"
+    en: "Easy Booking"
+    max_chars: 25
+
+  - key: slide_2_description
+    mn: "Ажлаа нийтлэж, хэдхэн товшилтоор захиалга хийгээрэй"
+    en: "Post your task and book in just a few taps"
+    max_chars: 70
+
+  - key: slide_3_heading
+    mn: "Аюулгүй, итгэлтэй"
+    en: "Safe & Secure"
+    max_chars: 25
+
+  - key: slide_3_description
+    mn: "Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг"
+    en: "A community protected by reviews and verification"
+    max_chars: 80
+
+api_endpoints: []
+
+analytics_events:
+  - event: "onboarding_started"
+    trigger: "Onboarding carousel becomes visible (slide 1)"
+  - event: "onboarding_slide_viewed"
+    trigger: "Each slide becomes active; includes slide_number property"
+  - event: "onboarding_next_tapped"
+    trigger: "User taps Next button"
+  - event: "onboarding_skipped"
+    trigger: "User taps Skip link; includes current_slide property"
+  - event: "onboarding_completed"
+    trigger: "User taps 'Get Started' on slide 3"
+
+acceptance_criteria:
+  - "Carousel displays 3 slides with swipe gesture and Next button navigation"
+  - "Page dots accurately reflect the current slide position"
+  - "Skip link is visible on slides 1 and 2 but hidden on slide 3"
+  - "CTA label changes from 'Дараагийх' (Next) to 'Эхлэх' (Get Started) on the final slide"
+  - "Tapping Skip or Get Started replaces to Role Selection (SCR-SHARED-006)"
+  - "Swipe left advances to next slide; swipe right returns to previous slide"
+  - "Illustrations are centered above heading and description text"
+  - "No API calls are made on this screen"
+  - "Animations between slides use page_enter/page_exit transitions"

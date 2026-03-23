@@ -78,6 +78,8 @@ public class JwtTokenService {
     }
 
     private Claims parseClaims(String token) {
+        // TODO PHASE-B: add .requireIssuer("tasky-server").requireAudience("tasky-api")
+        // after all pre-existing tokens have expired (~2026-04-22)
         return Jwts.parser()
                 .verifyWith(signingKey)
                 .build()
@@ -89,6 +91,8 @@ public class JwtTokenService {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(principal.userId())
+                .issuer("tasky-server")
+                .audience().add("tasky-api").and()
                 .claim("role", principal.role())
                 .claim("status", principal.status())
                 .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
@@ -105,6 +109,8 @@ public class JwtTokenService {
 
         String token = Jwts.builder()
                 .subject(userId)
+                .issuer("tasky-server")
+                .audience().add("tasky-api").and()
                 .id(tokenId)
                 .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
                 .issuedAt(Date.from(now))

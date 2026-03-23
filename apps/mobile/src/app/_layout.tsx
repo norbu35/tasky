@@ -5,44 +5,55 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { NotificationProvider } from '../store/NotificationContext';
 import { useEffect } from 'react';
-import messaging from '@react-native-firebase/messaging';
-import notifee from '@notifee/react-native';
+import Constants from 'expo-constants';
+import { RoleProvider } from '../providers/RoleProvider';
 
 import '../utils/i18n';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// Background / quit-state FCM handler.
-// MUST be registered at module scope (outside any component) and before any
-// other code runs. FCM delivers data-only payloads here when the app is not
-// in the foreground.
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    // For notification messages (title + body present), FCM shows a system
-    // tray notification automatically on Android. For data-only payloads,
-    // display a local notification via Notifee.
-    if (!remoteMessage.notification) {
-        await notifee.displayNotification({
-            title: remoteMessage.data?.title as string | undefined,
-            body: remoteMessage.data?.body as string | undefined,
-            android: { channelId: 'default' },
-            ios: {},
+// Firebase native modules only work in EAS/bare builds, not Expo Go.
+const isExpoGo = Constants.executionEnvironment === 'storeClient';
+
+if (!isExpoGo) {
+    try {
+        const messaging = require('@react-native-firebase/messaging').default;
+        const notifee = require('@notifee/react-native').default;
+
+        messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
+            if (!remoteMessage.notification) {
+                await notifee.displayNotification({
+                    title: remoteMessage.data?.title,
+                    body: remoteMessage.data?.body,
+                    android: { channelId: 'default' },
+                    ios: {},
+                });
+            }
         });
+    } catch (_) {
+        // Firebase not available — running in Expo Go
     }
-});
+}
 
 export default function RootLayout() {
     useEffect(() => {
-        // Foreground FCM handler: when the app is open, FCM does NOT auto-display
-        // a system notification. We must display it manually via Notifee.
-        const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-            await notifee.displayNotification({
-                title: remoteMessage.notification?.title ?? remoteMessage.data?.title as string | undefined,
-                body: remoteMessage.notification?.body ?? remoteMessage.data?.body as string | undefined,
-                android: { channelId: 'default' },
-                ios: {},
+        if (isExpoGo) return;
+        try {
+            const messaging = require('@react-native-firebase/messaging').default;
+            const notifee = require('@notifee/react-native').default;
+
+            const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+                await notifee.displayNotification({
+                    title: remoteMessage.notification?.title ?? remoteMessage.data?.title,
+                    body: remoteMessage.notification?.body ?? remoteMessage.data?.body,
+                    android: { channelId: 'default' },
+                    ios: {},
+                });
             });
-        });
-        return unsubscribe;
+            return unsubscribe;
+        } catch (_) {
+            // Firebase not available
+        }
     }, []);
 
     return (
@@ -50,8 +61,10 @@ export default function RootLayout() {
             <SafeAreaProvider>
                 <NotificationProvider>
                     <QueryClientProvider client={queryClient}>
-                        <Stack screenOptions={{ headerShown: false }} />
-                        <StatusBar style="auto" />
+                        <RoleProvider>
+                            <Stack screenOptions={{ headerShown: false }} />
+                            <StatusBar style="auto" />
+                        </RoleProvider>
                     </QueryClientProvider>
                 </NotificationProvider>
             </SafeAreaProvider>

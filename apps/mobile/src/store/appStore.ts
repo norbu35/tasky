@@ -6,6 +6,8 @@ interface AppState {
     hasSeenOnboarding: boolean;
     completeOnboarding: () => void;
     resetOnboarding: () => void; // for debugging
+    currentRole: 'customer' | 'tasker';
+    setRole: (role: 'customer' | 'tasker') => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -14,6 +16,8 @@ export const useAppStore = create<AppState>()(
             hasSeenOnboarding: false,
             completeOnboarding: () => set({ hasSeenOnboarding: true }),
             resetOnboarding: () => set({ hasSeenOnboarding: false }),
+            currentRole: 'customer',
+            setRole: (role) => set({ currentRole: role }),
         }),
         {
             name: 'tasky-app-storage',

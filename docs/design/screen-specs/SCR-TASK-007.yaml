@@ -1,0 +1,133 @@
+# Screen Spec: Verification — Pending
+screen_id: SCR-TASK-007
+name: "Verification — Pending"
+route: "/(tasker)/verification/pending"
+role: [tasker]
+phase: "0-1"
+template: empty_state
+figma_page: "Tasker/Verification Pending"
+feature: "verification"
+
+layout:
+  template: empty_state
+  density: comfortable
+  structure: "safe_area -> centered(pending_illustration + heading + description + sla_info + browse_cta)"
+
+components:
+  - id: COMP-EMPTYSTATE
+    usage: "Pending verification state with hourglass illustration and SLA messaging"
+    props:
+      illustration: "pending_review"
+      headline: "Баталгаажуулалт хянагдаж байна"
+      description: "Таны мэдээлэл 24 цагийн дотор хянагдана"
+      ctaLabel: "Даалгавар үзэх"
+    variant: activation
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to browse tasks while waiting (tasker can view but not apply)"
+    props:
+      label: "Даалгавар үзэх"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-PROGRESSTRACKER
+    usage: "Visual progress showing verification is in-progress with estimated time"
+    props:
+      current: 1
+      total: 2
+      milestones: ["Илгээсэн", "Хянагдаж байна"]
+    variant: default
+
+states:
+  - id: default_pending
+    description: "Verification is under admin review — SLA messaging and browse CTA shown"
+    components_visible: [pending_illustration, heading, description, sla_info, progress_tracker, browse_cta]
+    components_hidden: [sla_approaching_warning]
+
+  - id: sla_approaching
+    description: "24-hour SLA deadline is approaching — additional urgency messaging shown"
+    components_visible: [pending_illustration, heading, description, sla_approaching_warning, progress_tracker, browse_cta]
+    components_hidden: []
+
+  - id: sla_breached
+    description: "Optional state — 24-hour SLA has passed without decision; contact support hint shown"
+    components_visible: [pending_illustration, heading, sla_breached_message, contact_support_link, browse_cta]
+    components_hidden: [sla_info, sla_approaching_warning]
+
+copy:
+  - key: heading
+    mn: "Баталгаажуулалт хянагдаж байна"
+    en: "Verification under review"
+    max_chars: 35
+
+  - key: description
+    mn: "Таны иргэний үнэмлэх болон зургийг манай баг хянаж байна. Энэ нь ихэвчлэн 24 цагийн дотор хийгдэнэ."
+    en: "Our team is reviewing your ID and photos. This usually takes up to 24 hours."
+    max_chars: 100
+
+  - key: sla_info
+    mn: "Хүлээгдэж буй хугацаа: 24 цаг хүртэл"
+    en: "Expected wait: up to 24 hours"
+    max_chars: 35
+
+  - key: sla_approaching_warning
+    mn: "Хянах хугацаа дуусах дөхөж байна. Удахгүй хариу авна."
+    en: "Review deadline approaching. You'll hear back soon."
+    max_chars: 55
+
+  - key: sla_breached_message
+    mn: "Хянах хугацаа хэтэрсэн байна. Тусламж авахын тулд бидэнтэй холбогдоно уу."
+    en: "Review time exceeded. Please contact us for help."
+    max_chars: 60
+
+  - key: browse_cta
+    mn: "Даалгавар үзэх"
+    en: "Browse Tasks"
+    max_chars: 20
+
+  - key: contact_support
+    mn: "Тусламж авах"
+    en: "Contact Support"
+    max_chars: 20
+
+  - key: notification_hint
+    mn: "Баталгаажуулалтын үр дүнг мэдэгдэл хэлбэрээр авна"
+    en: "You'll receive a notification when the review is complete"
+    max_chars: 65
+
+  - key: progress_submitted
+    mn: "Илгээсэн"
+    en: "Submitted"
+    max_chars: 12
+
+  - key: progress_reviewing
+    mn: "Хянагдаж байна"
+    en: "Under Review"
+    max_chars: 18
+
+api_endpoints:
+  - method: GET
+    path: "/verification/status"
+    purpose: "Poll verification status to detect approval or rejection"
+
+analytics_events:
+  - event: "verification_pending_viewed"
+    trigger: "Pending screen becomes visible"
+  - event: "verification_pending_browse_tapped"
+    trigger: "User taps Browse Tasks CTA to return to feed"
+  - event: "verification_sla_approaching"
+    trigger: "SLA approaching state becomes visible"
+  - event: "verification_sla_breached"
+    trigger: "SLA breached state becomes visible"
+
+acceptance_criteria:
+  - "Pending screen displays hourglass illustration with clear SLA messaging (24-hour SLA per REQ-SAFE-01)"
+  - "Progress tracker shows verification submission is in review"
+  - "Browse Tasks CTA navigates to Task Feed (SCR-TASK-001) where tasker can view but not apply"
+  - "Push notification for approval navigates to Verification Approved (SCR-TASK-008)"
+  - "Push notification for rejection navigates to Verification Rejected (SCR-TASK-009)"
+  - "SLA approaching state shows when within last 4 hours of the 24-hour window"
+  - "Optional SLA breached state shows contact support option if 24 hours have passed"
+  - "Comfortable density with breathing room for reassuring messaging"
+  - "Notification hint informs user they will be notified of the result"

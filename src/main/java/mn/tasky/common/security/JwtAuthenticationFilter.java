@@ -83,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String effectiveStatus =
                 authService.currentUserStatus(principal.userId()).orElse(principal.status());
 
-        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
+        if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus) || "DELETED".equals(effectiveStatus)) {
             responseWriter.write(
                     request,
                     response,

@@ -1,0 +1,226 @@
+# Screen Spec: Profile — My Profile
+screen_id: SCR-SHARED-012
+name: "Profile — My Profile"
+route: "/profile"
+role: [customer, tasker]
+phase: "0-1"
+template: detail
+figma_page: "Shared/Profile — My Profile"
+feature: "profile"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header -> scrollview(hero_avatar + stats_summary + info_sections + reviews) -> sticky_bottom_cta(edit)"
+
+components:
+  - id: COMP-PROFILEAVATAR
+    usage: "Large centered avatar at top of profile hero section"
+    props:
+      imageUrl: "https://cdn.tasky.mn/avatars/user123.jpg"
+      size: lg
+      isVerified: true
+      isPro: false
+    variant: lg
+
+  - id: COMP-VERIFICATIONBADGE
+    usage: "Displayed overlaid on avatar for verified taskers"
+    props:
+      isVerified: true
+      isPro: false
+      size: avatar_badge
+    variant: default
+
+  - id: COMP-STATUSBADGE
+    usage: "Shows role badge (customer or tasker) below name"
+    props:
+      status: "assigned"
+      size: sm
+    variant: assigned
+
+  - id: COMP-STARRATING
+    usage: "Display average rating below name for tasker view"
+    props:
+      value: 4.7
+      readonly: true
+      size: md
+    variant: display
+
+  - id: COMP-REVIEWCARD
+    usage: "Recent reviews section for tasker profile view"
+    props:
+      review: { rating: 5, text: "Маш сайн ажилласан", author: "Болд" }
+      isFeatured: false
+    variant: default
+
+  - id: COMP-STATCARD
+    usage: "Statistics summary cards for tasker view (completed jobs, rating)"
+    props:
+      label: "Гүйцэтгэсэн"
+      value: "47"
+      trend: "+3"
+      icon: "briefcase"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Edit Profile CTA in sticky bottom bar"
+    props:
+      label: "Профайл засах"
+      variant: primary
+      size: lg
+      onPress: "navigate(/profile/edit)"
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Settings gear icon in nav header"
+    props:
+      label: ""
+      variant: ghost
+      size: md
+      icon: "settings"
+      onPress: "navigate(/profile/settings)"
+    variant: ghost
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton matching profile layout while data loads"
+    props:
+      variant: profile
+      count: 1
+    variant: profile
+
+  - id: COMP-TRUSTBANNER
+    usage: "Trust indicator shown on tasker profile view"
+    props:
+      verifiedCount: 234
+      completedCount: 1890
+    variant: default
+
+states:
+  - id: loading_initial
+    description: "Profile data is being fetched from GET /users/me"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-REVIEWCARD, COMP-STATCARD, COMP-BUTTON, COMP-TRUSTBANNER]
+
+  - id: customer_view
+    description: "User is logged in as customer; shows avatar, name, email, member-since, and edit CTA"
+    components_visible: [COMP-PROFILEAVATAR, COMP-BUTTON]
+    components_hidden: [COMP-STARRATING, COMP-STATCARD, COMP-REVIEWCARD, COMP-TRUSTBANNER, COMP-VERIFICATIONBADGE, COMP-LOADINGSKELETON]
+
+  - id: tasker_view
+    description: "User is logged in as tasker; shows avatar with verification badge, stats, rating, reviews, and trust banner"
+    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-STATCARD, COMP-REVIEWCARD, COMP-TRUSTBANNER, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: error_network
+    description: "GET /users/me failed due to network error; full-screen error with retry"
+    components_visible: [COMP-BUTTON]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-REVIEWCARD, COMP-STATCARD, COMP-TRUSTBANNER, COMP-LOADINGSKELETON]
+
+copy:
+  - key: nav_title
+    mn: "Миний профайл"
+    en: "My Profile"
+    max_chars: 30
+
+  - key: section_about
+    mn: "Миний тухай"
+    en: "About Me"
+    max_chars: 20
+
+  - key: section_reviews
+    mn: "Сэтгэгдлүүд"
+    en: "Reviews"
+    max_chars: 20
+
+  - key: section_stats
+    mn: "Статистик"
+    en: "Statistics"
+    max_chars: 20
+
+  - key: label_member_since
+    mn: "Бүртгүүлсэн огноо"
+    en: "Member since"
+    max_chars: 30
+
+  - key: label_email
+    mn: "Имэйл хаяг"
+    en: "Email"
+    max_chars: 20
+
+  - key: label_phone
+    mn: "Утасны дугаар"
+    en: "Phone number"
+    max_chars: 20
+
+  - key: label_completed_jobs
+    mn: "Гүйцэтгэсэн ажил"
+    en: "Completed jobs"
+    max_chars: 25
+
+  - key: label_avg_rating
+    mn: "Дундаж үнэлгээ"
+    en: "Average rating"
+    max_chars: 25
+
+  - key: cta_edit_profile
+    mn: "Профайл засах"
+    en: "Edit Profile"
+    max_chars: 20
+
+  - key: cta_settings
+    mn: "Тохиргоо"
+    en: "Settings"
+    max_chars: 15
+
+  - key: cta_view_stats
+    mn: "Статистик харах"
+    en: "View Stats"
+    max_chars: 20
+
+  - key: error_network_title
+    mn: "Алдаа гарлаа"
+    en: "Something went wrong"
+    max_chars: 30
+
+  - key: error_network_body
+    mn: "Сүлжээний алдаа гарлаа. Дахин оролдоно уу."
+    en: "A network error occurred. Please try again."
+    max_chars: 80
+
+  - key: cta_retry
+    mn: "Дахин оролдох"
+    en: "Retry"
+    max_chars: 20
+
+  - key: label_no_reviews
+    mn: "Сэтгэгдэл одоогоор алга"
+    en: "No reviews yet"
+    max_chars: 30
+
+api_endpoints:
+  - method: GET
+    path: "/users/me"
+    purpose: "Fetch the authenticated user's profile data including role, avatar, stats, and reviews"
+
+analytics_events:
+  - event: "profile_viewed"
+    trigger: "Screen loads successfully with user data"
+  - event: "profile_edit_tapped"
+    trigger: "User taps the Edit Profile CTA"
+  - event: "profile_settings_tapped"
+    trigger: "User taps the settings icon in nav header"
+  - event: "profile_stats_tapped"
+    trigger: "Tasker taps View Stats to navigate to stats dashboard"
+
+acceptance_criteria:
+  - "Profile displays loading skeleton while GET /users/me is in flight"
+  - "Customer view shows avatar, display name, email, member-since date, and Edit Profile CTA"
+  - "Tasker view shows avatar with verification badge, average star rating, completed jobs stat card, recent reviews, and trust banner"
+  - "Tapping Edit Profile navigates (push) to SCR-SHARED-013"
+  - "Tapping Settings icon navigates (push) to SCR-SHARED-014"
+  - "Tapping View Stats navigates (push) to SCR-TASK-016 (tasker only)"
+  - "Network error state shows centered error message with retry button"
+  - "Retry button re-triggers GET /users/me"
+  - "All text renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - "Profile avatar shows initials fallback when no image URL is available"
+  - "This screen is the root of the profile tab in both customer and tasker tab bars"

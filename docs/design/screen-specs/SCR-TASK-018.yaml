@@ -1,0 +1,127 @@
+# Screen Spec: Privacy Policy
+screen_id: SCR-TASK-018
+name: "Privacy Policy"
+route: "/legal/privacy"
+role: [tasker]
+phase: "0-1"
+template: detail
+figma_page: "Tasker/Privacy Policy"
+feature: "legal"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(policy_content)"
+
+components:
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton placeholder matching text content layout during policy load"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+states:
+  - id: loading
+    description: "Privacy policy content loading — text skeleton placeholder shown"
+    components_visible: [nav_header, loading_skeleton]
+    components_hidden: [policy_content]
+
+  - id: loaded
+    description: "Privacy policy content fully loaded and displayed as scrollable text"
+    components_visible: [nav_header, policy_content]
+    components_hidden: [loading_skeleton]
+
+copy:
+  - key: page_title
+    mn: "Нууцлалын бодлого"
+    en: "Privacy Policy"
+    max_chars: 20
+
+  - key: section_data_collection
+    mn: "Мэдээлэл цуглуулах"
+    en: "Data Collection"
+    max_chars: 25
+
+  - key: section_data_usage
+    mn: "Мэдээллийн ашиглалт"
+    en: "Data Usage"
+    max_chars: 25
+
+  - key: section_data_storage
+    mn: "Мэдээлэл хадгалах"
+    en: "Data Storage"
+    max_chars: 20
+
+  - key: section_data_sharing
+    mn: "Мэдээлэл хуваалцах"
+    en: "Data Sharing"
+    max_chars: 20
+
+  - key: section_identity_data
+    mn: "Таниулах баталгаажуулалтын мэдээлэл"
+    en: "Identity Verification Data"
+    max_chars: 40
+
+  - key: identity_data_description
+    mn: "Иргэний үнэмлэхний зураг болон амьд зургийг зөвхөн баталгаажуулалтын зорилгоор цуглуулна. Бүртгэл устгахад энэ мэдээлэл устгагдана."
+    en: "ID photos and selfies are collected solely for verification. This data is deleted when your account is deleted."
+    max_chars: 150
+
+  - key: section_user_rights
+    mn: "Хэрэглэгчийн эрх"
+    en: "User Rights"
+    max_chars: 20
+
+  - key: user_rights_description
+    mn: "Та өөрийн мэдээлэлд хандах, засах, устгах эрхтэй. Бүртгэл устгах хүсэлтийг тохиргооноос илгээнэ."
+    en: "You have the right to access, modify, and delete your data. Account deletion requests can be submitted from Settings."
+    max_chars: 130
+
+  - key: section_data_retention
+    mn: "Мэдээлэл хадгалах хугацаа"
+    en: "Data Retention"
+    max_chars: 30
+
+  - key: data_retention_description
+    mn: "Хэрэглэгчийн мэдээллийг бүртгэл хүчинтэй байх хугацаанд хадгална. Устгасны дараа мэдээллийг бодлогын дагуу устгана."
+    en: "User data is retained while the account is active. After deletion, data is removed per policy."
+    max_chars: 120
+
+  - key: section_contact
+    mn: "Холбоо барих"
+    en: "Contact"
+    max_chars: 15
+
+  - key: contact_description
+    mn: "Нууцлалын бодлогын талаар асуулт байвал бидэнтэй холбогдоно уу."
+    en: "Contact us with any questions about our privacy policy."
+    max_chars: 65
+
+  - key: last_updated
+    mn: "Сүүлд шинэчлэгдсэн: {date}"
+    en: "Last updated: {date}"
+    max_chars: 30
+
+api_endpoints: []
+
+analytics_events:
+  - event: "privacy_policy_viewed"
+    trigger: "Privacy Policy screen becomes visible"
+  - event: "privacy_policy_scrolled"
+    trigger: "User scrolls through policy content"
+  - event: "privacy_policy_section_viewed"
+    trigger: "User scrolls to a specific section of the policy"
+
+acceptance_criteria:
+  - "Privacy Policy is a scrollable text content screen"
+  - "Content is rendered in Mongolian as primary language with section headings"
+  - "Identity verification data section explains ID photo and selfie collection purpose (REQ-SAFE-07)"
+  - "Data retention section explains that data is stored while account is active (REQ-SAFE-09)"
+  - "User rights section explains right to access, modify, and delete data (REQ-SAFE-09)"
+  - "Account deletion process is referenced with link to Settings"
+  - "Last updated date is shown at bottom of policy"
+  - "Loading state uses detail skeleton matching text layout"
+  - "Back button returns to previous screen (Settings, Verification Consent, or Login)"
+  - "All body text uses 16px minimum for Mongolian Cyrillic readability"
+  - "Text alignment is flush-left per Mongolian Cyrillic content rules (never justified)"

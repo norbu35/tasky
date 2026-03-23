@@ -6,33 +6,15 @@
     "orientation": "portrait",
     "scheme": "tasky",
     "ios": {
-      "bundleIdentifier": "mn.tasky.mobile",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "mn.tasky.mobile"
     },
     "android": {
-      "package": "mn.tasky.mobile",
-      "googleServicesFile": "./google-services.json"
+      "package": "mn.tasky.mobile"
     },
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
     ],
-    "plugins": [
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging",
-      [
-        "@notifee/react-native",
-        {
-          "android": {
-            "defaultChannelId": "default"
-          }
-        }
-      ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
-      }
-    }
+    "plugins": []
   }
 }

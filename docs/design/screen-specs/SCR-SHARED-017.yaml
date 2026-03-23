@@ -1,0 +1,232 @@
+# Screen Spec: Review Form
+screen_id: SCR-SHARED-017
+name: "Review Form"
+route: "/reviews/new"
+role: [customer, tasker]
+phase: "0-1"
+template: form_wizard
+figma_page: "Shared/Review Form"
+feature: "reviews"
+
+layout:
+  template: form_wizard
+  density: default
+  structure: "safe_area -> nav_header(close + title) -> scrollview(counterparty_info + star_ratings_quality + star_ratings_punctuality + star_ratings_communication + text_input) -> bottom_nav(submit)"
+
+components:
+  - id: COMP-PROFILEAVATAR
+    usage: "Counterparty avatar shown at top of review form for context"
+    props:
+      imageUrl: "https://cdn.tasky.mn/avatars/counterparty.jpg"
+      size: md
+      isVerified: true
+      isPro: false
+    variant: md
+
+  - id: COMP-STARRATING
+    usage: "Interactive star rating input for quality dimension"
+    props:
+      value: 0
+      onChange: "handleQualityRating"
+      readonly: false
+      size: lg
+    variant: input
+
+  - id: COMP-STARRATING
+    usage: "Interactive star rating input for punctuality dimension"
+    props:
+      value: 0
+      onChange: "handlePunctualityRating"
+      readonly: false
+      size: lg
+    variant: input
+
+  - id: COMP-STARRATING
+    usage: "Interactive star rating input for communication dimension"
+    props:
+      value: 0
+      onChange: "handleCommunicationRating"
+      readonly: false
+      size: lg
+    variant: input
+
+  - id: COMP-FORMFIELD
+    usage: "Wrapper for optional freetext review comment"
+    props:
+      label: "Нэмэлт тайлбар (сонголтот)"
+      required: false
+    variant: default
+
+  - id: COMP-INPUT
+    usage: "Multiline text input for optional review comment"
+    props:
+      value: ""
+      placeholder: "Туршлагаасаа хуваалцана уу..."
+      maxLength: 500
+    variant: multiline
+
+  - id: COMP-BUTTON
+    usage: "Submit review button in bottom navigation bar"
+    props:
+      label: "Сэтгэгдэл илгээх"
+      variant: primary
+      size: lg
+      loading: false
+      disabled: true
+    variant: primary
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Animated success checkmark displayed after successful review submission"
+    props:
+      size: 80
+      color: "verified"
+    variant: default
+
+  - id: COMP-TOAST
+    usage: "Error toast when review submission fails"
+    props:
+      message: "Сэтгэгдэл илгээхэд алдаа гарлаа"
+      variant: error
+      duration: 6000
+    variant: error
+
+states:
+  - id: default
+    description: "Review form loaded showing counterparty info and empty star rating inputs; submit disabled"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: rating_quality
+    description: "User is interacting with the quality star rating; stars highlight on touch"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: rating_punctuality
+    description: "User is interacting with the punctuality star rating"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: rating_communication
+    description: "User is interacting with the communication star rating"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: text_entry
+    description: "User is typing optional freetext comment; keyboard visible, form scrolls to keep input visible"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: submitting
+    description: "POST /bookings/:id/reviews is in flight; submit button shows loading spinner"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-TOAST]
+
+  - id: success
+    description: "Review submitted successfully; animated checkmark plays, then navigates back"
+    components_visible: [COMP-ANIMATEDCHECKMARK]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+
+  - id: error_network
+    description: "Review submission failed due to network error; error toast shown with retry option"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST]
+    components_hidden: [COMP-ANIMATEDCHECKMARK]
+
+copy:
+  - key: nav_title
+    mn: "Сэтгэгдэл бичих"
+    en: "Write Review"
+    max_chars: 20
+
+  - key: counterparty_prompt_customer
+    mn: "Гүйцэтгэгчийг үнэлнэ үү"
+    en: "Rate the Tasker"
+    max_chars: 30
+
+  - key: counterparty_prompt_tasker
+    mn: "Захиалагчийг үнэлнэ үү"
+    en: "Rate the Customer"
+    max_chars: 30
+
+  - key: label_quality
+    mn: "Ажлын чанар"
+    en: "Quality of work"
+    max_chars: 20
+
+  - key: label_punctuality
+    mn: "Цаг баримтлал"
+    en: "Punctuality"
+    max_chars: 20
+
+  - key: label_communication
+    mn: "Харилцаа"
+    en: "Communication"
+    max_chars: 20
+
+  - key: label_comment
+    mn: "Нэмэлт тайлбар (сонголтот)"
+    en: "Additional comments (optional)"
+    max_chars: 40
+
+  - key: placeholder_comment
+    mn: "Туршлагаасаа хуваалцана уу..."
+    en: "Share your experience..."
+    max_chars: 40
+
+  - key: cta_submit
+    mn: "Сэтгэгдэл илгээх"
+    en: "Submit Review"
+    max_chars: 20
+
+  - key: success_headline
+    mn: "Баярлалаа!"
+    en: "Thank you!"
+    max_chars: 15
+
+  - key: success_body
+    mn: "Таны сэтгэгдэл амжилттай бүртгэгдлээ"
+    en: "Your review has been submitted successfully"
+    max_chars: 50
+
+  - key: error_submit
+    mn: "Сэтгэгдэл илгээхэд алдаа гарлаа. Дахин оролдоно уу."
+    en: "Failed to submit review. Please try again."
+    max_chars: 60
+
+  - key: validation_rating_required
+    mn: "Бүх үнэлгээг бөглөнө үү"
+    en: "Please rate all categories"
+    max_chars: 40
+
+api_endpoints:
+  - method: POST
+    path: "/bookings/:id/reviews"
+    purpose: "Submit a review for a completed booking with quality, punctuality, communication ratings and optional text"
+
+analytics_events:
+  - event: "review_form_opened"
+    trigger: "Review form screen loads with counterparty data"
+  - event: "review_quality_rated"
+    trigger: "User selects a quality star rating"
+  - event: "review_punctuality_rated"
+    trigger: "User selects a punctuality star rating"
+  - event: "review_communication_rated"
+    trigger: "User selects a communication star rating"
+  - event: "review_comment_entered"
+    trigger: "User types in the optional comment field"
+  - event: "review_submitted"
+    trigger: "User taps Submit and POST succeeds"
+  - event: "review_submit_failed"
+    trigger: "POST /bookings/:id/reviews returns an error"
+
+acceptance_criteria:
+  - "Form displays counterparty avatar, name, and three separate star rating inputs (quality, punctuality, communication)"
+  - "Submit button is disabled until all three rating dimensions have a value of at least 1 star"
+  - "Star ratings use whole-star input only (no half stars)"
+  - "Optional freetext field accepts up to 500 characters with character counter"
+  - "Submit button shows loading spinner during POST /bookings/:id/reviews"
+  - "Success state plays animated checkmark with spring animation, then auto-navigates back after 1.5s"
+  - "Customer review pops back to SCR-CUST-017; Tasker review pops back to SCR-TASK-013"
+  - "Network error shows error toast with retry action (6s duration)"
+  - "Keyboard-aware scrolling ensures text input is visible when keyboard appears"
+  - "All star rating labels render in body_default (16px) typography"
+  - "Review is mandatory per journey JRN-SHARED-07; form cannot be dismissed without submitting"

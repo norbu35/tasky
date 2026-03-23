@@ -12,7 +12,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, SlidersHorizontal, Star } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProfileAvatar, StatCard, ReviewCard, Button } from '../../../components/ui';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 import { useTaskerProfile } from '../hooks/useTaskerProfile';
 
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 64,
         paddingHorizontal: 24,
-        backgroundColor: 'rgba(249,249,249,0.7)',
+        backgroundColor: colors.background,
     },
     headerButton: {
         width: 40,
@@ -214,11 +214,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 8,
         marginTop: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        elevation: 1,
+        ...elevations.card,
     },
     trustRating: {
         fontSize: typography.body,
@@ -262,11 +258,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.card,
         borderRadius: radius.md,
         padding: 25,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        elevation: 1,
+        ...elevations.card,
     },
     bioText: {
         fontSize: typography.body,
@@ -283,11 +275,7 @@ const styles = StyleSheet.create({
     ctaButton: {
         borderRadius: radius.md,
         overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 5,
+        ...elevations.elevated,
     },
     ctaGradient: {
         paddingVertical: 16,

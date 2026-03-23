@@ -32,13 +32,9 @@ public class SystemInfoController {
         String status = messageSource.getMessage("system.version", null, locale);
 
         return Map.of(
-                "application",
-                applicationName,
                 "api_version",
                 apiVersion,
                 "status_localized",
-                status,
-                "timestamp_utc",
-                Instant.now().toString());
+                status);
     }
 }

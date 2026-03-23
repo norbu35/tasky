@@ -1,0 +1,259 @@
+# Screen Spec: Booking Detail (Tasker)
+screen_id: SCR-TASK-013
+name: "Booking Detail (Tasker)"
+route: "/(tasker)/jobs/:bookingId"
+role: [tasker]
+phase: "0-1"
+template: detail
+figma_page: "Tasker/Booking Detail Tasker"
+feature: "tasker-bookings"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(status_section + customer_info + task_description + exact_address + schedule + payment_note + action_section) -> sticky_bottom_cta(primary_action)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA — context-dependent: 'Mark Done' when work is complete, 'Message' when assigned"
+    props:
+      label: "Ажил дууссан"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA — Message customer"
+    props:
+      label: "Зурвас илгээх"
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-BUTTON
+    usage: "Danger ghost link to cancel the booking"
+    props:
+      label: "Захиалга цуцлах"
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-BUTTON
+    usage: "Ghost link to leave a review after completion"
+    props:
+      label: "Үнэлгээ өгөх"
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-STATUSBADGE
+    usage: "Booking status badge — Assigned, Completed, Cancelled, No-Show"
+    props:
+      status: "assigned"
+      size: "lg"
+    variant: assigned
+
+  - id: COMP-PROFILEAVATAR
+    usage: "Customer's profile avatar with verification indicator"
+    props:
+      imageUrl: "customer_avatar_url"
+      size: "lg"
+      isVerified: false
+    variant: lg
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Detail skeleton during initial load"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+states:
+  - id: loading_initial
+    description: "Booking detail loading — skeleton placeholder shown"
+    components_visible: [nav_header, loading_skeleton]
+    components_hidden: [booking_content, action_buttons]
+
+  - id: assigned
+    description: "Booking is assigned — customer info, task details, and exact address visible; Message and Cancel CTAs available"
+    components_visible: [nav_header, status_badge_assigned, customer_info, task_description, exact_address, schedule, payment_note, message_button, cancel_link]
+    components_hidden: [mark_done_button, review_button, completion_status, no_show_status]
+
+  - id: assigned_approaching
+    description: "Scheduled time is approaching — countdown or reminder prominently displayed alongside assigned content"
+    components_visible: [nav_header, status_badge_assigned, approaching_reminder, customer_info, task_description, exact_address, schedule_highlighted, payment_note, message_button, cancel_link]
+    components_hidden: [mark_done_button, review_button]
+
+  - id: mark_done_available
+    description: "Work is in progress or complete — 'Mark Done' primary CTA becomes available"
+    components_visible: [nav_header, status_badge_assigned, customer_info, task_description, exact_address, schedule, payment_note, mark_done_button, message_button]
+    components_hidden: [cancel_link, review_button]
+
+  - id: marked_done_awaiting
+    description: "Tasker has marked work done — awaiting customer confirmation"
+    components_visible: [nav_header, status_badge_assigned, awaiting_confirmation_banner, customer_info, task_description, schedule, payment_note, message_button]
+    components_hidden: [mark_done_button, cancel_link, review_button]
+
+  - id: completed
+    description: "Booking is completed — review CTA shown, all details in read-only mode"
+    components_visible: [nav_header, status_badge_completed, customer_info, task_description, schedule, payment_note, review_button]
+    components_hidden: [mark_done_button, cancel_link, exact_address, message_button]
+
+  - id: cancelled
+    description: "Booking was cancelled — cancellation reason and details shown"
+    components_visible: [nav_header, status_badge_cancelled, cancellation_info, customer_info, task_description, schedule]
+    components_hidden: [mark_done_button, cancel_link, review_button, message_button, exact_address, payment_note]
+
+  - id: no_show
+    description: "Booking ended in no-show — no-show details and resolution info shown"
+    components_visible: [nav_header, status_badge_no_show, no_show_info, customer_info, task_description, schedule]
+    components_hidden: [mark_done_button, cancel_link, review_button, message_button, exact_address, payment_note]
+
+  - id: error_network
+    description: "Network error loading booking detail — retry option"
+    components_visible: [nav_header, error_message, retry_button]
+    components_hidden: [booking_content, action_buttons, loading_skeleton]
+
+copy:
+  - key: page_title
+    mn: "Захиалгын дэлгэрэнгүй"
+    en: "Booking Detail"
+    max_chars: 25
+
+  - key: status_assigned
+    mn: "Хуваарилагдсан"
+    en: "Assigned"
+    max_chars: 15
+
+  - key: status_completed
+    mn: "Дууссан"
+    en: "Completed"
+    max_chars: 12
+
+  - key: status_cancelled
+    mn: "Цуцлагдсан"
+    en: "Cancelled"
+    max_chars: 12
+
+  - key: status_no_show
+    mn: "Ирээгүй"
+    en: "No-Show"
+    max_chars: 10
+
+  - key: customer_label
+    mn: "Захиалагч"
+    en: "Customer"
+    max_chars: 15
+
+  - key: task_description_label
+    mn: "Даалгаврын тайлбар"
+    en: "Task Description"
+    max_chars: 25
+
+  - key: exact_address_label
+    mn: "Тодорхой хаяг"
+    en: "Exact Address"
+    max_chars: 20
+
+  - key: exact_address_note
+    mn: "Энэ хаяг зөвхөн танд харагдана"
+    en: "This address is visible only to you"
+    max_chars: 40
+
+  - key: schedule_label
+    mn: "Хуваарь"
+    en: "Schedule"
+    max_chars: 10
+
+  - key: payment_note_heading
+    mn: "Төлбөрийн мэдээлэл"
+    en: "Payment Information"
+    max_chars: 25
+
+  - key: payment_note_direct
+    mn: "Төлбөр нь захиалагчтай шууд тохиролцоно. Tasky нь зуучлагч биш."
+    en: "Payment is arranged directly with the customer. Tasky is a connector, not a payment processor."
+    max_chars: 100
+
+  - key: mark_done_button
+    mn: "Ажил дууссан"
+    en: "Mark Done"
+    max_chars: 15
+
+  - key: message_button
+    mn: "Зурвас илгээх"
+    en: "Message"
+    max_chars: 15
+
+  - key: cancel_link
+    mn: "Захиалга цуцлах"
+    en: "Cancel Booking"
+    max_chars: 20
+
+  - key: review_button
+    mn: "Үнэлгээ өгөх"
+    en: "Leave Review"
+    max_chars: 15
+
+  - key: awaiting_confirmation
+    mn: "Захиалагч баталгаажуулахыг хүлээж байна"
+    en: "Waiting for customer to confirm completion"
+    max_chars: 50
+
+  - key: approaching_reminder
+    mn: "Хуваарьт цаг ойрхон байна!"
+    en: "Scheduled time is approaching!"
+    max_chars: 35
+
+  - key: budget_label
+    mn: "Төсөв"
+    en: "Budget"
+    max_chars: 10
+
+  - key: error_network
+    mn: "Интернэт холболтоо шалгана уу"
+    en: "Please check your internet connection"
+    max_chars: 45
+
+  - key: retry_button
+    mn: "Дахин оролдох"
+    en: "Retry"
+    max_chars: 15
+
+api_endpoints:
+  - method: GET
+    path: "/bookings/:id"
+    purpose: "Fetch full booking detail including customer info, task, address, schedule"
+  - method: PUT
+    path: "/bookings/:id/mark-done"
+    purpose: "Mark booking as done — triggers customer confirmation flow"
+
+analytics_events:
+  - event: "booking_detail_tasker_viewed"
+    trigger: "Booking Detail (Tasker) screen becomes visible"
+  - event: "booking_mark_done_tapped"
+    trigger: "Tasker taps Mark Done button"
+  - event: "booking_mark_done_confirmed"
+    trigger: "Mark Done API call succeeds"
+  - event: "booking_message_tapped"
+    trigger: "Tasker taps Message button"
+  - event: "booking_cancel_tapped"
+    trigger: "Tasker taps Cancel Booking link"
+  - event: "booking_review_tapped"
+    trigger: "Tasker taps Leave Review button after completion"
+
+acceptance_criteria:
+  - "Exact address is shown only after booking is ASSIGNED (REQ-SAFE-01, Section 6.2 step 5)"
+  - "Exact address section includes note that it is visible only to the tasker"
+  - "Payment note clearly states direct settlement between parties (REQ-PAY-03)"
+  - "Mark Done button triggers PUT /bookings/:id/mark-done"
+  - "After marking done, awaiting confirmation banner replaces Mark Done button"
+  - "Cancel link opens Booking Cancel modal (SCR-TASK-015)"
+  - "No-show flag modal (SCR-TASK-014) is triggered based on schedule timing"
+  - "Message button navigates to Chat Detail (SCR-SHARED-011)"
+  - "Leave Review button navigates to Review Form (SCR-SHARED-017) after completion"
+  - "Approaching reminder highlights when within 2 hours of scheduled time"
+  - "Completed state shows booking in read-only mode with review CTA"
+  - "Cancelled and No-Show states show relevant details and reason"
+  - "Back button returns to My Jobs (SCR-TASK-012)"
+  - "Budget displayed in price_display typography (₮XX,XXX format)"

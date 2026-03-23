@@ -24,6 +24,10 @@ spring:
 
 server:
   port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
 
 management:
   endpoint:
@@ -60,7 +64,7 @@ tasky:
     otp-ttl-seconds: ${TASKY_OTP_TTL_SECONDS:300}
     otp-test-code: ${TASKY_OTP_TEST_CODE:}
   dev-auth:
-    enabled: ${TASKY_DEV_AUTH_ENABLED:true}
+    enabled: ${TASKY_DEV_AUTH_ENABLED:false}
   security:
     jwt-secret: ${TASKY_JWT_SECRET}
     encryption-key: ${TASKY_ENCRYPTION_KEY}

@@ -1,0 +1,210 @@
+# Screen Spec: Instant Match — Tasker
+screen_id: SCR-P3-005
+name: "Instant Match — Tasker"
+route: null
+role: [tasker]
+phase: "3+"
+template: modal_sheet
+figma_page: "Phase 3+/Instant Match Tasker"
+feature: "instant_match"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle + match_details + timer + actions)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet container for instant match notification and accept/decline actions"
+    props:
+      visible: true
+      title: "Шинэ санал!"
+      onClose: null
+    variant: default
+
+  - id: COMP-SPLITCARD
+    usage: "Task summary card within the match sheet showing task details and budget"
+    props:
+      headerContent:
+        price: "₮45,000"
+      bodyContent:
+        title: "Task title"
+        category: "Category"
+      status: "open"
+    variant: task
+
+  - id: COMP-PROFILEAVATAR
+    usage: "Customer avatar displayed in the match notification"
+    props:
+      size: "md"
+    variant: md
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to accept the instant match"
+    props:
+      label: "Хүлээн авах"
+      variant: primary
+      size: lg
+      loading: false
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary button to decline the instant match"
+    props:
+      label: "Татгалзах"
+      variant: secondary
+      size: lg
+    variant: secondary
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Success animation when match is accepted"
+    props:
+      size: 64
+      color: "verified"
+    variant: default
+
+states:
+  - id: match_notification
+    description: "Tasker receives an instant match notification with task details and 5-minute timer"
+    components_visible: [COMP-MODALSHEET, COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON.primary, COMP-BUTTON.secondary]
+    components_hidden: [COMP-ANIMATEDCHECKMARK]
+
+  - id: accepting
+    description: "Tasker tapped accept; processing the match acceptance"
+    components_visible: [COMP-MODALSHEET, COMP-SPLITCARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-BUTTON.secondary, COMP-ANIMATEDCHECKMARK]
+
+  - id: accepted_success
+    description: "Match accepted successfully; new booking created"
+    components_visible: [COMP-MODALSHEET, COMP-ANIMATEDCHECKMARK]
+    components_hidden: [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON.primary, COMP-BUTTON.secondary]
+
+  - id: declined
+    description: "Tasker declined the match; sheet dismisses"
+    components_visible: [COMP-MODALSHEET]
+    components_hidden: [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON, COMP-ANIMATEDCHECKMARK]
+
+  - id: expired_5min
+    description: "5-minute response window expired; match auto-declined"
+    components_visible: [COMP-MODALSHEET]
+    components_hidden: [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON, COMP-ANIMATEDCHECKMARK]
+
+copy:
+  - key: sheet_title
+    mn: "Шинэ санал!"
+    en: "New match!"
+    max_chars: 15
+
+  - key: match_description
+    mn: "Танд шинэ шууд холболтын санал ирлээ. 5 минутын дотор хариулна уу"
+    en: "You have a new instant match offer. Respond within 5 minutes"
+    max_chars: 80
+
+  - key: timer_label
+    mn: "Үлдсэн хугацаа"
+    en: "Time remaining"
+    max_chars: 20
+
+  - key: timer_format
+    mn: "{minutes}:{seconds}"
+    en: "{minutes}:{seconds}"
+    max_chars: 10
+
+  - key: task_label
+    mn: "Даалгавар"
+    en: "Task"
+    max_chars: 15
+
+  - key: budget_label
+    mn: "Төсөв"
+    en: "Budget"
+    max_chars: 10
+
+  - key: location_label
+    mn: "Байршил"
+    en: "Location"
+    max_chars: 15
+
+  - key: schedule_label
+    mn: "Хугацаа"
+    en: "Schedule"
+    max_chars: 15
+
+  - key: customer_label
+    mn: "Захиалагч"
+    en: "Customer"
+    max_chars: 15
+
+  - key: cta_accept
+    mn: "Хүлээн авах"
+    en: "Accept"
+    max_chars: 15
+
+  - key: cta_decline
+    mn: "Татгалзах"
+    en: "Decline"
+    max_chars: 15
+
+  - key: accepting_label
+    mn: "Хүлээн авч байна..."
+    en: "Accepting..."
+    max_chars: 20
+
+  - key: accepted_headline
+    mn: "Амжилттай!"
+    en: "Match accepted!"
+    max_chars: 20
+
+  - key: accepted_description
+    mn: "Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу"
+    en: "New booking created. Check My Jobs for details"
+    max_chars: 60
+
+  - key: declined_message
+    mn: "Санал татгалзлаа"
+    en: "Match declined"
+    max_chars: 20
+
+  - key: expired_headline
+    mn: "Хугацаа дууслаа"
+    en: "Time expired"
+    max_chars: 20
+
+  - key: expired_description
+    mn: "Хариу өгөх хугацаа дууссан тул санал автоматаар цуцлагдлаа"
+    en: "Response window expired. Match was automatically declined"
+    max_chars: 80
+
+api_endpoints:
+  - method: POST
+    path: "/tasks/:id/instant-match/respond"
+    purpose: "Accept or decline an instant match offer"
+
+analytics_events:
+  - event: "instant_match_received"
+    trigger: "Instant match notification sheet displayed to tasker"
+  - event: "instant_match_accepted"
+    trigger: "Tasker taps 'Accept' and match is confirmed"
+  - event: "instant_match_declined"
+    trigger: "Tasker taps 'Decline'"
+  - event: "instant_match_expired"
+    trigger: "5-minute response window expires"
+  - event: "instant_match_timer_warning"
+    trigger: "Timer reaches 1 minute remaining"
+
+acceptance_criteria:
+  - "Match notification shows task summary in SplitCard format with budget, location, and schedule"
+  - "Customer avatar and name are displayed in the match notification"
+  - "Countdown timer is prominently displayed with 5:00 start time"
+  - "Timer updates every second in {minutes}:{seconds} format"
+  - "Timer turns danger color when under 1 minute remaining"
+  - "Accept button enters loading state during processing"
+  - "Accepted state shows animated checkmark with success message"
+  - "After accepted state, sheet auto-dismisses to SCR-TASK-012 (My Jobs) after 2 seconds"
+  - "Decline immediately dismisses the sheet"
+  - "Expired state shows timeout message and auto-dismisses after 3 seconds"
+  - "Sheet is not dismissible by drag-to-close while active"
+  - "Sheet renders at z-index 30 with branded scrim (primaryDeep at 35%)"
+  - "Budget uses price_display typography (Manrope bold 20px) with ₮ prefix"
+  - "Push notification deep-links to this screen with task_id parameter"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

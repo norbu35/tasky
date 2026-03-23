@@ -1,0 +1,116 @@
+# Screen Spec: Verification — Consent
+screen_id: SCR-TASK-004
+name: "Verification — Consent"
+route: "/(tasker)/verification/consent"
+role: [tasker]
+phase: "0-1"
+template: detail
+figma_page: "Tasker/Verification Consent"
+feature: "verification"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(consent_heading + data_usage_explanation + data_items_list + privacy_link) -> sticky_bottom_cta(agree_button)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA to accept consent and proceed to ID upload"
+    props:
+      label: "Зөвшөөрч, үргэлжлүүлэх"
+      variant: primary
+      size: xl
+      disabled: false
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Ghost link to view full privacy policy"
+    props:
+      label: "Нууцлалын бодлого унших"
+      variant: ghost
+      size: md
+    variant: ghost
+
+states:
+  - id: default
+    description: "Consent form displayed — user must read and accept before proceeding"
+    components_visible: [nav_header, consent_heading, data_usage_explanation, data_items_list, privacy_link, agree_button_disabled]
+    components_hidden: []
+
+  - id: agreed
+    description: "User has scrolled through consent and agree button becomes enabled"
+    components_visible: [nav_header, consent_heading, data_usage_explanation, data_items_list, privacy_link, agree_button_enabled]
+    components_hidden: []
+
+copy:
+  - key: page_title
+    mn: "Зөвшөөрөл"
+    en: "Consent"
+    max_chars: 15
+
+  - key: consent_heading
+    mn: "Иргэний үнэмлэхний мэдээлэл боловсруулах зөвшөөрөл"
+    en: "Consent to process identity information"
+    max_chars: 60
+
+  - key: data_usage_explanation
+    mn: "Таны иргэний үнэмлэх болон зургийг зөвхөн таныг баталгаажуулах зорилгоор ашиглана. Бид таны мэдээллийг хамгаалж, хуулийн дагуу хадгална."
+    en: "Your ID and photo will be used solely for verification purposes. We protect your data and store it in compliance with the law."
+    max_chars: 200
+
+  - key: data_item_id_card
+    mn: "Иргэний үнэмлэхний зураг (урд, ар тал)"
+    en: "ID card photos (front and back)"
+    max_chars: 50
+
+  - key: data_item_selfie
+    mn: "Амьд зураг (selfie)"
+    en: "Live photo (selfie)"
+    max_chars: 30
+
+  - key: data_item_purpose
+    mn: "Таниулах баталгаажуулалт"
+    en: "Identity verification"
+    max_chars: 30
+
+  - key: data_item_retention
+    mn: "Бүртгэл хүчинтэй байх хугацаанд хадгалагдана"
+    en: "Stored while your account is active"
+    max_chars: 50
+
+  - key: data_item_deletion
+    mn: "Бүртгэл устгахад мэдээлэл устгагдана"
+    en: "Deleted when your account is deleted"
+    max_chars: 45
+
+  - key: agree_button
+    mn: "Зөвшөөрч, үргэлжлүүлэх"
+    en: "Agree & Continue"
+    max_chars: 25
+
+  - key: privacy_link
+    mn: "Нууцлалын бодлого унших"
+    en: "Read Privacy Policy"
+    max_chars: 25
+
+api_endpoints: []
+
+analytics_events:
+  - event: "verification_consent_viewed"
+    trigger: "Consent screen becomes visible"
+  - event: "verification_consent_agreed"
+    trigger: "User taps Agree & Continue button"
+  - event: "verification_consent_privacy_tapped"
+    trigger: "User taps Privacy Policy link"
+  - event: "verification_consent_back"
+    trigger: "User taps back to return to Verification Gate"
+
+acceptance_criteria:
+  - "Consent screen displays clear explanation of what data is collected and why (REQ-SAFE-07)"
+  - "User must scroll through consent content before agree button becomes enabled"
+  - "Consent record includes policy version, timestamp, and user ID per REQ-SAFE-07"
+  - "Tapping 'Зөвшөөрч, үргэлжлүүлэх' navigates to ID Upload (SCR-TASK-005)"
+  - "Privacy Policy link navigates to Privacy Policy (SCR-TASK-018)"
+  - "Back button returns to Verification Gate (SCR-TASK-003)"
+  - "Data items list clearly shows: ID photos, selfie, purpose, retention period, deletion policy"
+  - "All text meets 16px minimum for Mongolian Cyrillic readability"
