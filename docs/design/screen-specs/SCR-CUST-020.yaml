@@ -1,0 +1,199 @@
+# Screen Spec: Reschedule
+screen_id: SCR-CUST-020
+name: "Reschedule"
+route: "/(customer)/bookings/:bookingId/reschedule"
+role: [customer]
+phase: "0-1"
+template: form_wizard
+figma_page: "Customer/Reschedule"
+feature: "booking"
+
+layout:
+  template: form_wizard
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(current_schedule + new_date_picker + reason_field) -> bottom_nav(back + submit)"
+
+components:
+  - id: COMP-DATEPICKER
+    usage: "Date and time picker for proposed new schedule"
+    props:
+      value: null
+      minDate: "tomorrow"
+      mode: date_time
+    variant: date_time
+
+  - id: COMP-FORMFIELD
+    usage: "Wrapper for reason text input with label and optional helper text"
+    props:
+      label: "Шалтгаан"
+      required: false
+      helperText: "Заавал биш"
+    variant: default
+
+  - id: COMP-INPUT
+    usage: "Optional reason text field for the reschedule request"
+    props:
+      placeholder: "Цаг өөрчлөх шалтгаан..."
+      maxLength: 200
+    variant: multiline
+
+  - id: COMP-BUTTON
+    usage: "Submit button to send reschedule request; back button to return"
+    props:
+      label: "Хүсэлт илгээх"
+      variant: primary
+      size: lg
+      loading: false
+    variant: primary
+
+  - id: COMP-STATUSBADGE
+    usage: "Status indicator for reschedule request state (awaiting, accepted, declined, expired)"
+    props:
+      status: open
+      size: sm
+    variant: open
+
+states:
+  - id: request_form
+    description: "Form shown with current schedule displayed, new date/time picker, and optional reason field"
+    components_visible: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-STATUSBADGE]
+
+  - id: submitting
+    description: "Reschedule request being sent via POST /bookings/:id/reschedule; submit button in loading state"
+    components_visible: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON]
+    components_hidden: [COMP-STATUSBADGE]
+
+  - id: awaiting_response
+    description: "Reschedule request submitted; waiting for tasker to accept or decline. Status badge shows 'Awaiting'"
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT]
+
+  - id: accepted
+    description: "Tasker accepted the reschedule; new schedule confirmed. Status badge shows 'Accepted'"
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT]
+
+  - id: declined
+    description: "Tasker declined the reschedule request; original schedule remains. Status badge shows 'Declined'"
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT]
+
+  - id: expired
+    description: "Reschedule request expired without response before the current scheduled start time; original schedule remains"
+    components_visible: [COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT]
+
+copy:
+  - key: page_title
+    mn: "Цаг өөрчлөх"
+    en: "Reschedule"
+    max_chars: 20
+
+  - key: section_current
+    mn: "Одоогийн товлосон цаг"
+    en: "Current Schedule"
+    max_chars: 30
+
+  - key: section_new
+    mn: "Шинэ товлосон цаг"
+    en: "New Schedule"
+    max_chars: 30
+
+  - key: label_reason
+    mn: "Шалтгаан"
+    en: "Reason"
+    max_chars: 15
+
+  - key: placeholder_reason
+    mn: "Цаг өөрчлөх шалтгаан..."
+    en: "Reason for rescheduling..."
+    max_chars: 40
+
+  - key: helper_reason
+    mn: "Заавал биш"
+    en: "Optional"
+    max_chars: 15
+
+  - key: cta_submit
+    mn: "Хүсэлт илгээх"
+    en: "Send Request"
+    max_chars: 20
+
+  - key: cta_back
+    mn: "Буцах"
+    en: "Back"
+    max_chars: 20
+
+  - key: status_awaiting
+    mn: "Хүлээж байна"
+    en: "Awaiting Response"
+    max_chars: 25
+
+  - key: status_accepted
+    mn: "Зөвшөөрсөн"
+    en: "Accepted"
+    max_chars: 15
+
+  - key: status_declined
+    mn: "Татгалзсан"
+    en: "Declined"
+    max_chars: 15
+
+  - key: status_expired
+    mn: "Хугацаа дууссан"
+    en: "Expired"
+    max_chars: 15
+
+  - key: note_schedule_authority
+    mn: "Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно"
+    en: "Schedule changes take effect only after counterparty acceptance"
+    max_chars: 80
+
+  - key: accepted_message
+    mn: "Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ."
+    en: "New schedule confirmed. No-show timers have been reset."
+    max_chars: 80
+
+  - key: declined_message
+    mn: "Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр."
+    en: "Request declined. Original schedule remains active."
+    max_chars: 80
+
+  - key: expired_message
+    mn: "Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр."
+    en: "Request expired. Original schedule remains active."
+    max_chars: 80
+
+api_endpoints:
+  - method: POST
+    path: "/bookings/:id/reschedule"
+    purpose: "Submit reschedule request with proposed date/time and optional reason"
+  - method: PUT
+    path: "/bookings/:id/reschedule/:rescheduleId"
+    purpose: "Accept or decline a reschedule request (used by counterparty)"
+
+analytics_events:
+  - event: "reschedule_form_viewed"
+    trigger: "Reschedule screen becomes visible"
+  - event: "reschedule_request_submitted"
+    trigger: "User taps 'Send Request' and request is sent"
+  - event: "reschedule_accepted"
+    trigger: "Tasker accepted the reschedule (push notification updates screen)"
+  - event: "reschedule_declined"
+    trigger: "Tasker declined the reschedule"
+  - event: "reschedule_expired"
+    trigger: "Reschedule request expired without response"
+
+acceptance_criteria:
+  - "Current schedule is displayed at the top for reference"
+  - "Date picker minimum date is tomorrow per design system rule"
+  - "Date format follows YYYY.MM.DD Mongolian convention"
+  - "Reason field is optional with 200 character limit"
+  - "Submit button sends POST /bookings/:id/reschedule and enters loading state"
+  - "After submission, screen transitions to awaiting_response state with status badge"
+  - "Schedule authority note is always visible per REQ-BOOK-13: chat agreements do not change policy timers"
+  - "On acceptance, no-show reminder timers reset to the new confirmed schedule per REQ-BOOK-12"
+  - "On decline or expiry, original schedule remains active with explanatory message"
+  - "Back button navigates via pop to Booking Detail (SCR-CUST-017)"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

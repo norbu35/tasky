@@ -1,0 +1,57 @@
+# Screen Spec: Splash / Launch Screen
+screen_id: SCR-SHARED-001
+name: "Splash / Launch Screen"
+route: "/"
+role: [customer, tasker]
+phase: "0-1"
+template: auth
+figma_page: "Shared/Splash Launch Screen"
+feature: "auth"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> centered_content(logo + tagline) -> bottom_loading_indicator"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Not visible on splash; navigation is automatic after token check"
+    props: {}
+    variant: null
+
+states:
+  - id: default
+    description: "App launches; logo and tagline displayed while JWT check begins"
+    components_visible: [logo, tagline, loading_indicator]
+    components_hidden: []
+
+  - id: loading
+    description: "JWT validation in progress; spinner or progress indicator below logo"
+    components_visible: [logo, tagline, loading_indicator]
+    components_hidden: []
+
+copy:
+  - key: tagline
+    mn: "Найдвартай гүйцэтгэгч, хялбар захиалга"
+    en: "Trusted taskers, easy booking"
+    max_chars: 40
+
+api_endpoints: []
+
+analytics_events:
+  - event: "app_launched"
+    trigger: "Splash screen becomes visible"
+  - event: "auth_check_started"
+    trigger: "JWT validation begins"
+  - event: "auth_check_completed"
+    trigger: "JWT validation finishes; includes result (valid/invalid/expired)"
+
+acceptance_criteria:
+  - "Splash screen displays the Tasky logo centered vertically"
+  - "A loading indicator appears below the logo during JWT validation"
+  - "If a valid JWT exists and role is CUSTOMER, the app replaces to My Tasks (SCR-CUST-001)"
+  - "If a valid JWT exists and role is TASKER, the app replaces to Task Feed (SCR-TASK-001)"
+  - "If a valid JWT exists, Phase 2 is active, and OTP migration is needed, the app replaces to OTP Migration Gate (SCR-SHARED-004)"
+  - "If no valid JWT exists, the app replaces to Login (SCR-SHARED-002)"
+  - "Splash screen is purely client-side with no API calls"
+  - "Total splash duration does not exceed 2 seconds on a cold start"

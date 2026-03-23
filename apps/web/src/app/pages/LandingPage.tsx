@@ -105,7 +105,10 @@ export function LandingPage() {
       <main className="pb-20">
         {/* Hero Section — Dark Teal */}
         <section className="relative min-h-screen flex items-center bg-gradient-to-br from-primary-deep via-primary to-primary-deep overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 py-32 lg:py-0 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Metallic Gradient Streak Overlay */}
+          <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_35%,rgba(255,255,255,0.4)_40%,transparent_55%)] mix-blend-overlay opacity-50"></div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 lg:py-0 w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -339,7 +342,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
-              className="bg-primary-deep text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
+              className="bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground flex flex-col justify-center px-8 py-20 sm:px-12 lg:px-20 xl:px-28"
             >
               <p className="text-sm font-bold uppercase tracking-widest text-accent mb-8">
                 {t("landing.trustReality", "The reality")}
@@ -397,8 +400,89 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* The Tasky Promise Section */}
+        <section className="px-6 py-24 bg-muted/30 border-t border-border/30 overflow-hidden">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left Image (Now forced to the Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+              className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl border border-border/50 order-2"
+            >
+              <img src="/images/promise-handshake.png" alt="Customer and Tasker Shaking Hands" className="w-full h-full object-cover" />
+            </motion.div>
+
+            {/* Right Pillars (Now forced to the Left) */}
+            <div className="order-1">
+              <div className="mb-10 text-center lg:text-left">
+                <h2 className="text-3xl sm:text-5xl font-display font-bold mb-5 tracking-tight">
+                  {t("landing.promiseTitle", "The Tasky Promise")}
+                </h2>
+                <p className="text-lg text-muted-foreground font-medium">
+                  {t("landing.promiseSub", "We built Tasky because finding help shouldn’t feel like a gamble. Accountability is built into our foundation.")}
+                </p>
+              </div>
+
+              <div className="space-y-4 relative z-10">
+                {/* Pillar 1: Identity */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5 }}
+                  className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-verified/10 text-verified rounded-xl flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-display font-bold mb-1">{t("landing.pillar1Title", "100% ID Verified")}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-sm">{t("landing.pillar1Desc", "Every single Tasker must pass a strict identity check before joining. No anonymous profiles. Zero burner accounts.")}</p>
+                  </div>
+                </motion.div>
+
+                {/* Pillar 2: Reputation */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: 0.15 }}
+                  className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+                    <Star className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-display font-bold mb-1">{t("landing.pillar2Title", "Power of the Rating")}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-sm">{t("landing.pillar2Desc", "Taskers are financially incentivized to do a great job. A high rating is their livelihood—they have every reason to be punctual and polite.")}</p>
+                  </div>
+                </motion.div>
+
+                {/* Pillar 3: Support */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="flex gap-4 sm:gap-5 bg-card/60 rounded-2xl p-5 sm:p-6 border border-border/50 hover:bg-card hover:shadow-sm transition-all items-start"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
+                    <Shield className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-display font-bold mb-1">{t("landing.pillar3Title", "Ulaanbaatar-Based Support")}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-sm">{t("landing.pillar3Desc", "If a Tasker no-shows or work isn't up to standard, our local Ulaanbaatar support team is here to mediate and resolve the issue.")}</p>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* App Download Banner */}
-        <section className="relative w-full bg-primary-deep text-primary-foreground overflow-hidden">
+        <section className="relative w-full bg-gradient-to-br from-primary-deep via-primary to-primary-deep text-primary-foreground overflow-hidden">
           <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary rounded-full blur-[120px] opacity-50 z-0 pointer-events-none" />
 
           <div className="w-full flex flex-col md:flex-row items-center">

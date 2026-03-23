@@ -1,0 +1,133 @@
+# Screen Spec: Role Selection
+screen_id: SCR-SHARED-006
+name: "Role Selection"
+route: "/onboarding/role"
+role: [customer, tasker]
+phase: "0-1"
+template: auth
+figma_page: "Shared/Role Selection"
+feature: "onboarding"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> centered_content(heading + description + role_cards) -> bottom_cta(confirm_button)"
+
+components:
+  - id: COMP-CARD
+    usage: "Two role selection cards: Customer and Tasker; tapping selects one"
+    props:
+      onPress: "selectRole"
+    variant: outlined
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to confirm role selection"
+    props:
+      label: "Үргэлжлүүлэх"
+      variant: primary
+      size: xl
+      disabled: true
+    variant: primary
+
+  - id: COMP-MODALSHEET
+    usage: "Confirmation bottom sheet verifying role choice before committing"
+    props:
+      title: "Та итгэлтэй байна уу?"
+      visible: false
+    variant: default
+
+states:
+  - id: default
+    description: "Role selection displayed with Customer and Tasker cards; neither selected"
+    components_visible: [heading, description, customer_card, tasker_card, confirm_button_disabled]
+    components_hidden: [confirmation_sheet]
+
+  - id: confirming
+    description: "User selected a role and tapped confirm; confirmation sheet appears"
+    components_visible: [heading, customer_card, tasker_card, confirmation_sheet]
+    components_hidden: [confirm_button, description]
+
+copy:
+  - key: heading
+    mn: "Та хэн бэ?"
+    en: "Who are you?"
+    max_chars: 15
+
+  - key: description
+    mn: "Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой."
+    en: "Choose your role. You can change it later."
+    max_chars: 60
+
+  - key: customer_card_title
+    mn: "Захиалагч"
+    en: "Customer"
+    max_chars: 15
+
+  - key: customer_card_description
+    mn: "Ажил нийтлэж, гүйцэтгэгч хайх"
+    en: "Post tasks and find taskers"
+    max_chars: 40
+
+  - key: tasker_card_title
+    mn: "Гүйцэтгэгч"
+    en: "Tasker"
+    max_chars: 15
+
+  - key: tasker_card_description
+    mn: "Ажилд бүртгүүлж, орлого олох"
+    en: "Apply to tasks and earn money"
+    max_chars: 40
+
+  - key: confirm_button_label
+    mn: "Үргэлжлүүлэх"
+    en: "Continue"
+    max_chars: 20
+
+  - key: confirm_sheet_title
+    mn: "Та итгэлтэй байна уу?"
+    en: "Are you sure?"
+    max_chars: 25
+
+  - key: confirm_sheet_message
+    mn: "{role} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой."
+    en: "Confirm you want to be a {role}. You can switch later in Settings."
+    max_chars: 80
+
+  - key: confirm_sheet_primary
+    mn: "Тийм, баталгаажуулах"
+    en: "Yes, confirm"
+    max_chars: 20
+
+  - key: confirm_sheet_secondary
+    mn: "Буцах"
+    en: "Go back"
+    max_chars: 10
+
+api_endpoints:
+  - method: PUT
+    path: "/users/me/role"
+    purpose: "Set the selected role (customer or tasker) for the user"
+
+analytics_events:
+  - event: "role_selection_viewed"
+    trigger: "Role selection screen becomes visible"
+  - event: "role_card_tapped"
+    trigger: "User taps a role card; includes selected_role property"
+  - event: "role_confirm_tapped"
+    trigger: "User taps Continue button after selecting a role"
+  - event: "role_confirmed"
+    trigger: "User confirms role in the confirmation sheet"
+  - event: "role_confirm_cancelled"
+    trigger: "User cancels role confirmation and returns to selection"
+
+acceptance_criteria:
+  - "Two role cards are displayed: Customer and Tasker"
+  - "Only one card can be selected at a time; selection is visually highlighted"
+  - "Continue button is disabled until a role card is selected"
+  - "Tapping Continue opens a confirmation bottom sheet"
+  - "Confirmation sheet has primary (confirm) and secondary (go back) actions"
+  - "On confirmation, PUT /users/me/role is called"
+  - "On success, the app replaces to Permission Primer Camera (SCR-SHARED-007)"
+  - "User can switch role later from Settings (SCR-SHARED-014)"
+  - "Each card includes an icon, title, and description"
+  - "Selected card has primary border highlight"

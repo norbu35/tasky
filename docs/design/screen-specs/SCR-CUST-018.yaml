@@ -1,0 +1,87 @@
+# Screen Spec: Confirm Completion — Decision
+screen_id: SCR-CUST-018
+name: "Confirm Completion — Decision"
+route: null
+role: [customer]
+phase: "0-1"
+template: modal_sheet
+figma_page: "Customer/Confirm Completion Decision"
+feature: "booking"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle_bar + title + confirmation_text + primary_action + secondary_action)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet overlay for completion confirmation decision"
+    props:
+      visible: true
+      title: "Ажил дууссаныг баталгаажуулах уу?"
+      primaryAction: "Баталгаажуулах"
+      secondaryAction: "Буцах"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary confirm button and secondary cancel button inside the modal sheet"
+    props:
+      label: "Баталгаажуулах"
+      variant: primary
+      size: lg
+      loading: false
+    variant: primary
+
+states:
+  - id: default
+    description: "Modal sheet appears asking customer to confirm that the tasker's work is complete; shows confirmation text and two CTAs"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+  - id: confirming
+    description: "User tapped confirm; PUT /bookings/:id/complete in progress; primary button shows loading spinner"
+    components_visible: [COMP-MODALSHEET, COMP-BUTTON]
+    components_hidden: []
+
+copy:
+  - key: title
+    mn: "Ажил дууссаныг баталгаажуулах уу?"
+    en: "Confirm the work is complete?"
+    max_chars: 40
+
+  - key: description
+    mn: "Баталгаажуулсны дараа та үнэлгээ өгөх боломжтой болно. Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно."
+    en: "After confirming, you can leave a review. Payment is settled directly with the Tasker."
+    max_chars: 120
+
+  - key: cta_confirm
+    mn: "Баталгаажуулах"
+    en: "Confirm Complete"
+    max_chars: 20
+
+  - key: cta_cancel
+    mn: "Буцах"
+    en: "Go Back"
+    max_chars: 20
+
+api_endpoints:
+  - method: PUT
+    path: "/bookings/:id/complete"
+    purpose: "Mark booking as completed by customer, transitioning status to COMPLETED"
+
+analytics_events:
+  - event: "confirm_completion_shown"
+    trigger: "Modal sheet appears after user taps Confirm Complete on booking detail"
+  - event: "confirm_completion_confirmed"
+    trigger: "User taps 'Confirm Complete' button inside the modal"
+  - event: "confirm_completion_cancelled"
+    trigger: "User taps 'Go Back' or dismisses the sheet"
+
+acceptance_criteria:
+  - "Modal sheet slides up with branded scrim overlay"
+  - "Title and description text render in Mongolian Cyrillic at 16px minimum"
+  - "Tapping 'Confirm Complete' triggers PUT /bookings/:id/complete and shows loading state on button"
+  - "On success, sheet dismisses and navigates via replace to Review Form (SCR-SHARED-017)"
+  - "Tapping 'Go Back' dismisses the sheet and returns to Booking Detail (SCR-CUST-017)"
+  - "Drag-to-dismiss via handle bar is supported"
+  - "Payment settlement note is included in the confirmation description for Phase 0-2"

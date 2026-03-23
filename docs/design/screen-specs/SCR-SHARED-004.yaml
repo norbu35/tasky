@@ -1,0 +1,159 @@
+# Screen Spec: Auth — OTP Migration Gate
+screen_id: SCR-SHARED-004
+name: "Auth — OTP Migration Gate"
+route: "/auth/otp-migration"
+role: [customer, tasker]
+phase: "2"
+template: auth
+figma_page: "Shared/Auth OTP Migration Gate"
+feature: "auth"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> centered_content(icon + heading + description + phone_input) -> bottom_cta(submit_button)"
+
+components:
+  - id: COMP-INPUT
+    usage: "Phone number entry field for adding OTP to existing Facebook-only account"
+    props:
+      placeholder: "9911 2233"
+      label: "Утасны дугаар"
+      leftIcon: "phone"
+      maxLength: 8
+    variant: default
+
+  - id: COMP-FORMFIELD
+    usage: "Wraps phone input with label, error, and helper text"
+    props:
+      label: "Утасны дугаар"
+      required: true
+      helperText: "Facebook нэвтрэлтэд утасны дугаар нэмнэ"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to submit phone number and request OTP"
+    props:
+      label: "Код авах"
+      variant: primary
+      size: xl
+      loading: false
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Skip option as ghost button (allows deferring migration)"
+    props:
+      label: "Дараа хийх"
+      variant: ghost
+      size: md
+    variant: ghost
+
+states:
+  - id: default
+    description: "Migration gate displayed on first Phase 2 session for Facebook-only users"
+    components_visible: [shield_icon, heading, description, phone_input_empty, submit_button_disabled, skip_link]
+    components_hidden: [error_message, verifying_spinner]
+
+  - id: phone_entry
+    description: "User is entering their phone number"
+    components_visible: [shield_icon, heading, description, phone_input_active, submit_button_enabled, skip_link]
+    components_hidden: [error_message, verifying_spinner]
+
+  - id: verifying
+    description: "Phone number submitted; OTP request in progress"
+    components_visible: [shield_icon, heading, phone_input_disabled, submit_button_loading]
+    components_hidden: [error_message, skip_link, description]
+
+  - id: error_invalid_phone
+    description: "Phone number format is invalid or already registered"
+    components_visible: [shield_icon, heading, description, phone_input_error, invalid_phone_error, submit_button_disabled, skip_link]
+    components_hidden: [verifying_spinner]
+
+  - id: error_network
+    description: "Network error prevents OTP request from completing"
+    components_visible: [shield_icon, heading, description, phone_input, network_error_message, submit_button, skip_link]
+    components_hidden: [verifying_spinner]
+
+copy:
+  - key: heading
+    mn: "Утасны дугаар нэмэх"
+    en: "Add Phone Number"
+    max_chars: 25
+
+  - key: description
+    mn: "Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү"
+    en: "Add your phone number to improve account security"
+    max_chars: 80
+
+  - key: phone_input_label
+    mn: "Утасны дугаар"
+    en: "Phone number"
+    max_chars: 20
+
+  - key: phone_input_placeholder
+    mn: "9911 2233"
+    en: "9911 2233"
+    max_chars: 12
+
+  - key: phone_input_helper
+    mn: "Facebook нэвтрэлтэд утасны дугаар нэмнэ"
+    en: "Adding phone number to your Facebook login"
+    max_chars: 50
+
+  - key: submit_button_label
+    mn: "Код авах"
+    en: "Get Code"
+    max_chars: 15
+
+  - key: skip_label
+    mn: "Дараа хийх"
+    en: "Do it later"
+    max_chars: 15
+
+  - key: error_invalid_phone
+    mn: "Утасны дугаар буруу байна"
+    en: "Invalid phone number"
+    max_chars: 30
+
+  - key: error_phone_registered
+    mn: "Энэ дугаар бүртгэлтэй байна"
+    en: "This number is already registered"
+    max_chars: 40
+
+  - key: error_network
+    mn: "Интернэт холболтоо шалгана уу"
+    en: "Please check your internet connection"
+    max_chars: 45
+
+api_endpoints:
+  - method: POST
+    path: "/auth/otp/request"
+    purpose: "Request OTP code for migration of Facebook-only account"
+  - method: POST
+    path: "/auth/otp/verify"
+    purpose: "Verify OTP to complete phone number migration"
+
+analytics_events:
+  - event: "otp_migration_screen_viewed"
+    trigger: "Migration gate screen becomes visible"
+  - event: "otp_migration_phone_entered"
+    trigger: "User finishes entering phone number"
+  - event: "otp_migration_submitted"
+    trigger: "User taps Get Code button"
+  - event: "otp_migration_skipped"
+    trigger: "User taps 'Do it later' to skip migration"
+  - event: "otp_migration_error"
+    trigger: "Phone submission fails (invalid or network error)"
+
+acceptance_criteria:
+  - "Migration gate appears automatically on first Phase 2 session for Facebook-only users"
+  - "Phone input validates 8-digit Mongolian phone number format"
+  - "Submit button is disabled until a valid phone number is entered"
+  - "Tapping submit shows loading state and disables input"
+  - "On successful OTP request, the app pushes to OTP Verification (SCR-SHARED-003)"
+  - "Invalid phone number shows inline error below the input field"
+  - "Already-registered phone number shows specific error message"
+  - "Network error shows inline message with retry hint"
+  - "Skip link allows user to defer migration and proceed to their home screen"
+  - "Shield icon reinforces the security purpose of the migration"
+  - "Screen is not dismissible via back gesture; only skip link or successful migration"

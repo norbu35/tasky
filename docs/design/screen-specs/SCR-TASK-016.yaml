@@ -1,0 +1,226 @@
+# Screen Spec: Tasker Stats Dashboard
+screen_id: SCR-TASK-016
+name: "Tasker Stats Dashboard"
+route: "/(tasker)/stats"
+role: [tasker]
+phase: "0-1"
+template: detail
+figma_page: "Tasker/Tasker Stats"
+feature: "tasker-profile"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(stats_grid + rating_breakdown + reliability_section + activity_section)"
+
+components:
+  - id: COMP-STATCARD
+    usage: "Completed jobs count stat card"
+    props:
+      label: "Дууссан ажил"
+      value: "23"
+      trend: "+5"
+      icon: "briefcase"
+    variant: default
+
+  - id: COMP-STATCARD
+    usage: "Overall rating stat card"
+    props:
+      label: "Ерөнхий үнэлгээ"
+      value: "4.7"
+      trend: null
+      icon: "star"
+    variant: default
+
+  - id: COMP-STATCARD
+    usage: "Completion rate stat card"
+    props:
+      label: "Гүйцэтгэлийн хувь"
+      value: "96%"
+      trend: "+2%"
+      icon: "check-circle"
+    variant: default
+
+  - id: COMP-STATCARD
+    usage: "Application success rate stat card (Phase 2+)"
+    props:
+      label: "Анкетын амжилт"
+      value: "42%"
+      trend: "+8%"
+      icon: "target"
+    variant: default
+
+  - id: COMP-STATCARD
+    usage: "Cancellation count stat card for reliability awareness"
+    props:
+      label: "Цуцлалт (30 хоногт)"
+      value: "0"
+      trend: null
+      icon: "alert-circle"
+    variant: default
+
+  - id: COMP-STARRATING
+    usage: "Per-category rating breakdown display — task clarity, respectfulness, punctuality"
+    props:
+      value: 4.7
+      readonly: true
+      size: "md"
+    variant: display
+
+  - id: COMP-VERIFICATIONBADGE
+    usage: "Verification and Pro Badge status display in stats header"
+    props:
+      isVerified: true
+      isPro: false
+      size: "md"
+    variant: default
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton placeholders matching StatCard grid during load"
+    props:
+      variant: card
+      count: 5
+    variant: card
+
+states:
+  - id: loading_initial
+    description: "Stats loading — skeleton placeholders matching StatCard grid"
+    components_visible: [nav_header, loading_skeleton]
+    components_hidden: [stats_grid, rating_breakdown, reliability_section, activity_section]
+
+  - id: loaded
+    description: "Stats fully loaded and displayed in grid layout"
+    components_visible: [nav_header, stats_grid, rating_breakdown, reliability_section, activity_section, badge_status]
+    components_hidden: [loading_skeleton, error_message]
+
+  - id: error_network
+    description: "Network error loading stats — retry option"
+    components_visible: [nav_header, error_message, retry_button]
+    components_hidden: [stats_grid, loading_skeleton, rating_breakdown, reliability_section]
+
+copy:
+  - key: page_title
+    mn: "Миний статистик"
+    en: "My Stats"
+    max_chars: 20
+
+  - key: stats_section_heading
+    mn: "Ерөнхий үзүүлэлтүүд"
+    en: "Overview"
+    max_chars: 25
+
+  - key: completed_jobs_label
+    mn: "Дууссан ажил"
+    en: "Completed Jobs"
+    max_chars: 20
+
+  - key: overall_rating_label
+    mn: "Ерөнхий үнэлгээ"
+    en: "Overall Rating"
+    max_chars: 20
+
+  - key: completion_rate_label
+    mn: "Гүйцэтгэлийн хувь"
+    en: "Completion Rate"
+    max_chars: 20
+
+  - key: application_success_label
+    mn: "Анкетын амжилт"
+    en: "Application Success"
+    max_chars: 20
+
+  - key: cancellation_count_label
+    mn: "Цуцлалт (30 хоногт)"
+    en: "Cancellations (30d)"
+    max_chars: 25
+
+  - key: rating_breakdown_heading
+    mn: "Үнэлгээний задаргаа"
+    en: "Rating Breakdown"
+    max_chars: 25
+
+  - key: rating_task_clarity
+    mn: "Даалгаврын тодорхой байдал"
+    en: "Task Clarity"
+    max_chars: 30
+
+  - key: rating_respectfulness
+    mn: "Хүндэтгэлтэй хандлага"
+    en: "Respectfulness"
+    max_chars: 25
+
+  - key: rating_punctuality
+    mn: "Цаг баримтлал"
+    en: "Punctuality"
+    max_chars: 20
+
+  - key: reliability_heading
+    mn: "Найдвартай байдал"
+    en: "Reliability"
+    max_chars: 20
+
+  - key: reliability_score_label
+    mn: "Найдвартай байдлын оноо"
+    en: "Reliability Score"
+    max_chars: 25
+
+  - key: reliability_description
+    mn: "Гүйцэтгэлийн хувь, цаг баримтлал, үнэлгээ, цуцлалтын түүх дээр суурилсан"
+    en: "Based on completion rate, punctuality, ratings, and cancellation history"
+    max_chars: 80
+
+  - key: pro_badge_status
+    mn: "Pro Badge"
+    en: "Pro Badge"
+    max_chars: 12
+
+  - key: pro_badge_eligible
+    mn: "15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна"
+    en: "Earn Pro Badge with 15+ jobs and 4.5+ rating"
+    max_chars: 55
+
+  - key: pro_badge_earned
+    mn: "Pro Badge олдсон!"
+    en: "Pro Badge earned!"
+    max_chars: 20
+
+  - key: activity_heading
+    mn: "Идэвхжил"
+    en: "Activity"
+    max_chars: 15
+
+  - key: error_network
+    mn: "Интернэт холболтоо шалгана уу"
+    en: "Please check your internet connection"
+    max_chars: 45
+
+  - key: retry_button
+    mn: "Дахин оролдох"
+    en: "Retry"
+    max_chars: 15
+
+api_endpoints:
+  - method: GET
+    path: "/users/me/stats"
+    purpose: "Fetch tasker statistics including ratings, completion rate, cancellation count, reliability score"
+
+analytics_events:
+  - event: "tasker_stats_viewed"
+    trigger: "Tasker Stats Dashboard becomes visible"
+  - event: "tasker_stats_rating_breakdown_viewed"
+    trigger: "User scrolls to rating breakdown section"
+  - event: "tasker_stats_reliability_viewed"
+    trigger: "User scrolls to reliability section"
+
+acceptance_criteria:
+  - "Stats display in StatCard grid layout with label, value, and trend"
+  - "StatCard components show loading skeleton during initial fetch"
+  - "Overall rating displayed with per-category breakdown (task clarity, respectfulness, punctuality) per REQ-SAFE-02"
+  - "Tasker Reliability Score is surfaced per REQ-SAFE-06"
+  - "Reliability description explains score inputs (completion rate, punctuality, ratings, cancellations)"
+  - "Application success rate and unlock conversion metrics shown per REQ-PAY-18"
+  - "Cancellation count shows rolling 30-day count for strike awareness"
+  - "Pro Badge status shows earned/eligible per REQ-SAFE-04 (>15 jobs, >4.5 rating)"
+  - "Back button returns to My Profile (SCR-SHARED-012)"
+  - "Network error displays retry button"
+  - "All StatCard values use appropriate typography (price_display for numbers)"

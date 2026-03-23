@@ -341,7 +341,15 @@
     "vizMatching": "Precision Matching",
     "vizNoMatch": "NO MATCHES",
     "vizRetrying": "RETRYING...",
-    "vizTooFar": "90km!"
+    "vizTooFar": "90km!",
+    "promiseTitle": "The Tasky Promise",
+    "promiseSub": "We built Tasky because finding help shouldn’t feel like a gamble. Accountability is built into our foundation.",
+    "pillar1Title": "100% ID Verified",
+    "pillar1Desc": "Every single Tasker must pass a strict identity check before joining. No anonymous profiles. Zero burner accounts.",
+    "pillar2Title": "Power of the Rating",
+    "pillar2Desc": "Taskers are financially incentivized to do a great job. A high rating is their livelihood—they have every reason to be punctual and polite.",
+    "pillar3Title": "Ulaanbaatar-Based Support",
+    "pillar3Desc": "If a Tasker no-shows or work isn't up to standard, our local Ulaanbaatar support team is here to mediate and resolve the issue."
   },
   "common": {
     "loadingTitle": "Loading",

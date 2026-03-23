@@ -1,0 +1,713 @@
+# Component Usage Contract — Tasky Mobile
+# Canonical components, variants, templates, composition rules
+# Source: existing codebase components + new components from spec
+
+# ═══════════════════════════════════════════════════
+# EXISTING COMPONENTS (from packages/ui/src/components/)
+# ═══════════════════════════════════════════════════
+
+existing_components:
+
+  - id: COMP-BUTTON
+    name: Button
+    path: "packages/ui/src/components/Button.tsx"
+    variants:
+      - primary       # filled, primary color
+      - secondary     # outlined, secondary color
+      - outline       # outlined, primary color
+      - ghost         # text-only, no background
+      - danger        # filled, danger color
+    sizes: [sm, md, lg, xl]
+    props: [label, variant, size, onPress, disabled, loading, icon, iconPosition]
+    states: [default, pressed, disabled, loading]
+    animation: "spring (Reanimated)"
+    tokens:
+      colors: [primary, secondary, danger, background]
+      typography: [button_label]
+      spacing: [sm, md, lg]
+      radius: [sm, md]
+    rules:
+      - "Always full-width in forms and bottom CTAs"
+      - "Never stack more than 2 buttons side-by-side"
+      - "Destructive actions use danger variant only"
+      - "Loading state replaces label with spinner, keeps width"
+
+  - id: COMP-INPUT
+    name: Input
+    path: "packages/ui/src/components/Input.tsx"
+    variants:
+      - default
+      - multiline
+    props: [value, onChangeText, placeholder, label, error, disabled, secureTextEntry, leftIcon, rightIcon, maxLength]
+    states: [default, focused, filled, invalid, disabled]
+    tokens:
+      colors: [primary, danger, textTertiary, muted]
+      typography: [body_default, label, caption]
+      spacing: [sm, md]
+      radius: [sm]
+    rules:
+      - "Error message always below field, inline (not toast)"
+      - "16px minimum font size for input text (Cyrillic)"
+      - "Always pair with FormField for label + error"
+
+  - id: COMP-FORMFIELD
+    name: FormField
+    path: "packages/ui/src/components/FormField.tsx"
+    variants: [default]
+    props: [label, error, helperText, required, children]
+    states: [default, error, helper]
+    tokens:
+      typography: [label, caption]
+      colors: [danger, textTertiary]
+      spacing: [xs, sm]
+    rules:
+      - "Wraps Input, DatePicker, MapPicker, and all form elements"
+      - "Error replaces helper text when present"
+
+  - id: COMP-CARD
+    name: Card
+    path: "packages/ui/src/components/Card.tsx"
+    sub_components:
+      - Card.Container
+      - Card.Header
+      - Card.Body
+      - Card.Footer
+      - Card.Image
+      - Card.Badge
+    variants: [default, elevated, outlined]
+    props: [onPress, disabled, children]
+    states: [default, pressed]
+    tokens:
+      colors: [background, primary]
+      shadows: [card, elevated]
+      spacing: [md, lg]
+      radius: [md, lg]
+    rules:
+      - "Cards are always tappable (navigate to detail)"
+      - "Use SplitCard (new) for task/booking cards, plain Card for generic"
+
+  - id: COMP-FAB
+    name: FAB
+    path: "packages/ui/src/components/FAB.tsx"
+    variants: [default]
+    props: [onPress, icon, label]
+    states: [default, pressed, hidden_on_scroll]
+    animation: "fab_appear / fab_disappear"
+    tokens:
+      colors: [accent]
+      shadows: [elevated]
+      icon_sizes: [fab]
+    rules:
+      - "Only on Customer 'My Tasks' tab"
+      - "Hides on scroll down, appears on scroll up"
+      - "Auth check before action"
+
+  - id: COMP-MODALSHEET
+    name: ModalSheet
+    path: "packages/ui/src/components/ModalSheet.tsx"
+    variants: [default]
+    props: [visible, onClose, title, children, primaryAction, secondaryAction]
+    states: [default, open, closing]
+    animation: "sheet_open / sheet_close"
+    tokens:
+      overlays: [scrim.sheet]
+      elevation: [sheet]
+      radius: [lg]
+      spacing: [lg, xl]
+    rules:
+      - "All destructive confirmations use ModalSheet"
+      - "Max 2 action buttons (primary + secondary)"
+      - "Handle bar always visible for drag-to-dismiss"
+
+  - id: COMP-TOAST
+    name: Toast
+    path: "packages/ui/src/components/Toast.tsx"
+    variants:
+      - info
+      - success
+      - error
+    props: [message, variant, duration, action]
+    states: [entering, visible, exiting]
+    animation: "toast_slide_in / toast_slide_out"
+    tokens:
+      elevation: [toast]
+      colors: [primary, verified, danger]
+      typography: [body_default]
+    rules:
+      - "Auto-dismiss after 4s (info/success) or 6s (error)"
+      - "Error toasts include optional retry action"
+      - "Never overlap with ModalSheet"
+
+  - id: COMP-STATUSBADGE
+    name: StatusBadge
+    path: "packages/ui/src/components/StatusBadge.tsx"
+    variants:
+      - open       # primary color
+      - assigned   # trust color
+      - completed  # verified color
+      - cancelled  # danger color
+      - no_show    # danger color
+    props: [status, size]
+    states: [default]
+    animation: "badge_pop"
+    tokens:
+      colors: [primary, trust, verified, danger]
+      typography: [badge_text]
+    rules:
+      - "Status text always in Mongolian as primary"
+      - "Color mapping is semantic and non-overridable"
+
+  - id: COMP-CATEGORYCHIP
+    name: CategoryChip
+    path: "packages/ui/src/components/CategoryChip.tsx"
+    variants: [active, inactive]
+    props: [category, isActive, onPress]
+    states: [default, active, pressed]
+    tokens:
+      colors: [primary, muted]
+      typography: [label]
+      radius: [full]
+      spacing: [sm, md]
+    rules:
+      - "Used in filter bars and category selection"
+      - "Horizontal scroll when many categories"
+
+  - id: COMP-TRUSTBANNER
+    name: TrustBanner
+    path: "packages/ui/src/components/TrustBanner.tsx"
+    variants: [default, compact]
+    props: [verifiedCount, completedCount]
+    states: [default]
+    tokens:
+      colors: [trust, verified]
+      typography: [caption, body_emphasis]
+    rules:
+      - "Shown on task feed and detail screens"
+      - "Compact variant for inline use in cards"
+
+  - id: COMP-STATCARD
+    name: StatCard
+    path: "packages/ui/src/components/StatCard.tsx"
+    variants: [default]
+    props: [label, value, trend, icon]
+    states: [default, loading]
+    tokens:
+      typography: [price_display, label]
+      colors: [primary, verified, danger]
+      shadows: [card]
+    rules:
+      - "Used in Tasker Stats Dashboard"
+      - "Loading state shows skeleton"
+
+  - id: COMP-REVIEWCARD
+    name: ReviewCard
+    path: "packages/ui/src/components/ReviewCard.tsx"
+    variants: [default, featured]
+    props: [review, isFeatured]
+    states: [default]
+    tokens:
+      typography: [body_default, caption, label]
+      colors: [secondary]
+    rules:
+      - "Star rating shown inline"
+      - "Featured variant has highlighted border"
+
+  - id: COMP-PROFILEAVATAR
+    name: ProfileAvatar
+    path: "packages/ui/src/components/ProfileAvatar.tsx"
+    variants: [xs, sm, md, lg]
+    props: [imageUrl, size, isVerified, isPro]
+    states: [default, loading, fallback_initials]
+    tokens:
+      icon_sizes: [avatar_badge]
+      colors: [verified, secondary]
+    rules:
+      - "Verification badge anchored bottom-right"
+      - "Pro badge shown as secondary indicator"
+      - "Fallback: initials on primary background"
+
+  - id: COMP-LANGUAGESWITCHER
+    name: LanguageSwitcher
+    path: "packages/ui/src/components/LanguageSwitcher.tsx"
+    variants: [default]
+    props: [currentLang, onSwitch]
+    states: [en, mn]
+    tokens:
+      typography: [label]
+    rules:
+      - "mn is always default"
+      - "Toggle in settings only"
+
+  - id: COMP-LOGINREQUIREDCTA
+    name: LoginRequiredCTA
+    path: "packages/ui/src/components/LoginRequiredCTA.tsx"
+    variants: [default]
+    props: [message, onLogin]
+    states: [default]
+    tokens:
+      typography: [section_heading, body_default]
+      colors: [primary]
+    rules:
+      - "Full-screen auth gate for protected actions"
+
+# ═══════════════════════════════════════════════════
+# NEW COMPONENTS (specified by design system)
+# ═══════════════════════════════════════════════════
+
+new_components:
+
+  - id: COMP-SPLITCARD
+    name: SplitCard
+    description: "Hybrid two-tone card: dark teal header (person + price), light body (task details)"
+    variants: [task, booking, application]
+    props: [headerContent, bodyContent, onPress, status, isPromoted, isUrgent]
+    states: [default, pressed, promoted, urgent]
+    tokens:
+      colors: [primaryDeep, background, accent, secondary]
+      typography: [card_title, body_default, price_display, badge_text]
+      shadows: [card, elevated]
+      radius: [lg]
+    rules:
+      - "Header: dark teal background, white text, person avatar, price"
+      - "Body: light background, task details, status badge"
+      - "Promoted tasks get secondary accent border"
+      - "Urgent tasks get accent highlight + label"
+    composition:
+      header: [ProfileAvatar, price_display, StatusBadge]
+      body: [card_title, body_default, CategoryChip, TrustBanner.compact]
+
+  - id: COMP-STEPINDICATOR
+    name: StepIndicator
+    description: "Multi-step form progress indicator"
+    variants: [horizontal, minimal]
+    props: [currentStep, totalSteps, labels]
+    states: [default]
+    tokens:
+      colors: [primary, muted, verified]
+      typography: [caption]
+      spacing: [sm]
+    rules:
+      - "Used in Post Task wizard and Verification flow"
+      - "Completed steps show checkmark"
+      - "Current step highlighted"
+
+  - id: COMP-SEARCHBAR
+    name: SearchBar
+    description: "Text search input with filter trigger"
+    variants: [default, with_filter]
+    props: [value, onChangeText, placeholder, onFilterPress]
+    states: [default, focused, active_filter]
+    tokens:
+      colors: [muted, primary]
+      typography: [body_default]
+      radius: [md]
+      icon_sizes: [input_icon]
+    rules:
+      - "Always at top of feed/list screens"
+      - "Filter icon triggers FilterBar sheet"
+
+  - id: COMP-FILTERBAR
+    name: FilterBar
+    description: "Horizontal scrolling filter chips with sheet for advanced filters"
+    variants: [inline, sheet]
+    props: [filters, activeFilters, onFilterChange, onClear]
+    states: [default, sheet_open, filters_active]
+    tokens:
+      colors: [primary, muted]
+      typography: [label]
+      spacing: [sm, md]
+    rules:
+      - "Inline chips for category/distance quick filters"
+      - "Sheet for advanced multi-select"
+      - "Clear all button when filters active"
+    composition:
+      chips: [CategoryChip]
+      sheet: [ModalSheet]
+
+  - id: COMP-DATEPICKER
+    name: DatePicker
+    description: "Date and time selector for scheduling"
+    variants: [date_only, date_time]
+    props: [value, onChange, minDate, mode]
+    states: [default, open, selected]
+    tokens:
+      colors: [primary, muted]
+      typography: [body_default, label]
+    rules:
+      - "Minimum date is always tomorrow"
+      - "Format: YYYY.MM.DD (Mongolian convention)"
+      - "Wrap in FormField for labels"
+
+  - id: COMP-MAPPICKER
+    name: MapPicker
+    description: "Map-based location pin selector"
+    variants: [default]
+    props: [location, onLocationChange, textDescription]
+    states: [default, pin_placed, permission_denied]
+    tokens:
+      colors: [accent, primary]
+      typography: [body_default, caption]
+    rules:
+      - "Pin drop on map + text description field"
+      - "Show approximate area to Taskers (fuzzed 500m)"
+      - "Requires location permission"
+
+  - id: COMP-EMPTYSTATE
+    name: EmptyState
+    description: "Illustration + headline + description + CTA for empty lists"
+    variants: [activation, no_results, error]
+    props: [illustration, headline, description, ctaLabel, onCtaPress]
+    states: [default]
+    tokens:
+      typography: [section_heading, body_default, button_label]
+      colors: [primary, textTertiary]
+      density: [comfortable]
+    rules:
+      - "Activation variant includes actionable CTA (not just 'nothing here')"
+      - "Comfortable density for breathing room"
+      - "Illustration centered above text"
+
+  - id: COMP-LOADINGSKELETON
+    name: LoadingSkeleton
+    description: "Content-matching skeleton loading placeholder"
+    variants: [card, list_row, detail, profile]
+    props: [variant, count]
+    states: [loading]
+    animation: "skeleton_pulse"
+    tokens:
+      colors: [muted]
+    rules:
+      - "Skeleton shape must match content layout"
+      - "Pulse animation at 1500ms (tuned for Mongolia bandwidth)"
+      - "Never show generic spinner — always skeleton"
+
+  - id: COMP-ANIMATEDCHECKMARK
+    name: AnimatedCheckmark
+    description: "Animated success checkmark for celebration screens"
+    variants: [default]
+    props: [size, color]
+    states: [idle, animating, complete]
+    animation: "success_checkmark"
+    tokens:
+      colors: [verified]
+    rules:
+      - "Used on all success/celebration screens"
+      - "Spring animation with bounce"
+
+  - id: COMP-LISTROW
+    name: ListRow
+    description: "Standard list row with disclosure indicator"
+    variants: [default, destructive, toggle]
+    props: [label, value, onPress, icon, showDisclosure, isDestructive]
+    states: [default, pressed]
+    tokens:
+      typography: [body_default, body_emphasis]
+      colors: [primary, danger, textTertiary]
+      spacing: [md, lg]
+    rules:
+      - "Used in Settings and grouped list screens"
+      - "44pt minimum touch target"
+      - "Destructive variant in danger color"
+
+  - id: COMP-TOGGLE
+    name: Toggle
+    description: "On/off switch for settings"
+    variants: [default]
+    props: [value, onValueChange, disabled]
+    states: [on, off, disabled]
+    tokens:
+      colors: [primary, muted]
+    rules:
+      - "Used in Settings for notifications, language"
+      - "Accessible: announced as switch"
+
+  - id: COMP-PHOTOPICKER
+    name: PhotoPicker
+    description: "Multi-photo upload with preview grid"
+    variants: [default]
+    props: [photos, onAdd, onRemove, maxPhotos]
+    states: [empty, uploading, has_photos, max_reached, error]
+    tokens:
+      colors: [primary, danger, muted]
+      radius: [md]
+      spacing: [sm]
+    rules:
+      - "Max 3 photos for tasks"
+      - "Camera permission primer on first use"
+      - "Upload via presigned URL"
+      - "Show upload progress per photo"
+
+  - id: COMP-STARRATING
+    name: StarRating
+    description: "Interactive star rating input and display"
+    variants: [input, display, compact]
+    props: [value, onChange, readonly, size]
+    states: [default, selected, readonly]
+    tokens:
+      colors: [secondary]
+      icon_sizes: [md, lg]
+    rules:
+      - "Input variant for review forms"
+      - "Display variant for profiles and cards"
+      - "Half-star display supported, whole-star input only"
+
+  - id: COMP-VERIFICATIONBADGE
+    name: VerificationBadge
+    description: "Verified identity badge icon"
+    variants: [default, pro]
+    props: [isVerified, isPro, size]
+    states: [default]
+    tokens:
+      colors: [verified, secondary]
+      icon_sizes: [avatar_badge, status]
+    rules:
+      - "Anchored to ProfileAvatar bottom-right"
+      - "Pro variant adds golden accent"
+      - "Never shown for unverified users"
+
+  - id: COMP-TIMELINEEVENT
+    name: TimelineEvent
+    description: "Vertical timeline entry for booking history"
+    variants: [default, current, future]
+    props: [event, timestamp, description, isCurrent]
+    states: [default]
+    tokens:
+      typography: [body_default, caption]
+      colors: [primary, verified, textTertiary]
+      spacing: [md]
+    rules:
+      - "Vertical line connecting events"
+      - "Current event highlighted with primary dot"
+      - "Future events shown dimmed"
+
+  - id: COMP-CREDITBALANCE
+    name: CreditBalance
+    description: "Credit balance display with purchase CTA"
+    variants: [header, inline]
+    props: [balance, onPurchase]
+    states: [default, low_balance, zero]
+    tokens:
+      typography: [price_display, label]
+      colors: [primary, danger, secondary]
+    rules:
+      - "Header variant: prominent in credits screen"
+      - "Inline variant: compact in lead unlock flow"
+      - "Low balance warning at 1 credit"
+
+  - id: COMP-PROGRESSTRACKER
+    name: ProgressTracker
+    description: "Visual progress bar with milestones"
+    variants: [default]
+    props: [current, total, milestones]
+    states: [default]
+    tokens:
+      colors: [primary, verified, muted]
+      typography: [caption]
+    rules:
+      - "Used in verification flow and onboarding"
+      - "Shows completion percentage"
+
+# ═══════════════════════════════════════════════════
+# SCREEN TEMPLATES
+# ═══════════════════════════════════════════════════
+
+templates:
+
+  - id: TPL-AUTH
+    name: auth
+    description: "Centered content, single CTA, trust messaging"
+    layout:
+      structure: "safe_area → centered_content → bottom_cta"
+      density: comfortable
+    slots:
+      - illustration_or_logo
+      - heading
+      - description_or_form
+      - primary_cta
+      - secondary_link
+    components: [Button, Input, FormField, LanguageSwitcher]
+    rules:
+      - "Always centered vertically"
+      - "Single primary CTA at bottom"
+      - "Trust messaging below CTA when applicable"
+
+  - id: TPL-FEED-LIST
+    name: feed_list
+    description: "Searchable scrollview, filter bar, cards, FAB overlay"
+    layout:
+      structure: "safe_area → sticky_header(search+filter) → scrollview(cards) → fab_overlay"
+      density: default
+    slots:
+      - search_bar
+      - filter_bar
+      - card_list
+      - empty_state
+      - loading_skeleton
+      - fab
+      - pull_to_refresh
+      - pagination_footer
+    components: [SearchBar, FilterBar, SplitCard, Card, FAB, EmptyState, LoadingSkeleton]
+    required_states: [loading, empty, populated, error, offline]
+    rules:
+      - "Pull-to-refresh on all list screens"
+      - "Infinite scroll pagination with footer spinner"
+      - "Empty state includes activation CTA"
+      - "FAB only on Customer My Tasks tab"
+
+  - id: TPL-DETAIL
+    name: detail
+    description: "Scrollable content with sticky bottom CTA bar"
+    layout:
+      structure: "safe_area → nav_header → scrollview(content) → sticky_bottom_cta"
+      density: default
+    slots:
+      - nav_header
+      - hero_section
+      - content_sections
+      - bottom_cta_bar
+    components: [Button, StatusBadge, ProfileAvatar, TrustBanner, StarRating, TimelineEvent]
+    rules:
+      - "Back button in nav header"
+      - "Sticky CTA bar at bottom for primary action"
+      - "Content scrolls independently"
+
+  - id: TPL-FORM-WIZARD
+    name: form_wizard
+    description: "Step indicator, form fields, next/back navigation"
+    layout:
+      structure: "safe_area → nav_header → step_indicator → scrollview(form) → bottom_nav(back+next)"
+      density: default
+    slots:
+      - step_indicator
+      - form_content
+      - back_button
+      - next_button
+    components: [StepIndicator, FormField, Input, DatePicker, MapPicker, PhotoPicker, Button]
+    required_states: [form_entry, validation_error]
+    rules:
+      - "Step indicator shows progress"
+      - "Inline validation per field"
+      - "Back/Next at bottom"
+      - "Keyboard-aware scrolling"
+
+  - id: TPL-SETTINGS
+    name: settings
+    description: "Grouped list rows with disclosure indicators"
+    layout:
+      structure: "safe_area → nav_header → scrollview(groups)"
+      density: default
+    slots:
+      - setting_groups
+      - list_rows
+    components: [ListRow, Toggle, LanguageSwitcher, Button]
+    rules:
+      - "Grouped by section with headers"
+      - "Disclosure indicator for drill-down rows"
+      - "Destructive actions at bottom in danger color"
+
+  - id: TPL-MODAL-SHEET
+    name: modal_sheet
+    description: "Bottom sheet with handle, content, action buttons"
+    layout:
+      structure: "scrim → sheet(handle + content + actions)"
+      density: default
+    slots:
+      - handle_bar
+      - title
+      - content
+      - primary_action
+      - secondary_action
+    components: [Button, ModalSheet]
+    rules:
+      - "Drag-to-dismiss via handle bar"
+      - "Max 2 action buttons"
+      - "Scrim overlay behind sheet"
+      - "All destructive confirmations use this template"
+
+  - id: TPL-EMPTY-STATE
+    name: empty_state
+    description: "Illustration, headline, description, CTA"
+    layout:
+      structure: "safe_area → centered(illustration + text + cta)"
+      density: comfortable
+    slots:
+      - illustration
+      - headline
+      - description
+      - cta_button
+    components: [EmptyState, Button]
+    rules:
+      - "Comfortable density"
+      - "CTA must be actionable, not just informational"
+
+  - id: TPL-ERROR-STATE
+    name: error_state
+    description: "Icon, message, retry CTA"
+    layout:
+      structure: "safe_area → centered(icon + message + retry)"
+      density: comfortable
+    slots:
+      - icon
+      - message
+      - retry_cta
+    components: [Button, EmptyState]
+    rules:
+      - "Retry CTA when applicable"
+      - "Show cached content when available"
+
+  - id: TPL-SUCCESS
+    name: success_celebration
+    description: "Animated checkmark, headline, next steps, CTAs"
+    layout:
+      structure: "safe_area → centered(checkmark + headline + next_steps + ctas)"
+      density: comfortable
+    slots:
+      - animated_checkmark
+      - headline
+      - next_steps_text
+      - primary_cta
+      - secondary_cta
+    components: [AnimatedCheckmark, Button]
+    rules:
+      - "All success moments include 'what happens next' guidance"
+      - "Primary CTA goes to next logical screen"
+      - "Secondary CTA goes to home/list"
+
+# ═══════════════════════════════════════════════════
+# COMPOSITION RULES
+# ═══════════════════════════════════════════════════
+
+composition_rules:
+  - rule: "All forms use FormField wrapper with inline error below field"
+  - rule: "Destructive actions always use ModalSheet confirmation with explicit copy"
+  - rule: "List → Detail flows always use push navigation (page_enter/page_exit)"
+  - rule: "Search/Filter/Sort follows: SearchBar → FilterBar → ModalSheet pattern"
+  - rule: "Pull-to-refresh on all feed_list and detail screens with async data"
+  - rule: "Pagination via infinite scroll with LoadingSkeleton footer"
+  - rule: "Empty states include activation CTAs (not just 'nothing here')"
+  - rule: "All success moments include 'what happens next' guidance"
+  - rule: "Loading states use LoadingSkeleton matching content layout (never spinner)"
+  - rule: "Error states use shared error component with retry CTA"
+  - rule: "Offline states show banner + cached content or full-screen EmptyState"
+
+# ═══════════════════════════════════════════════════
+# FORBIDDEN COMBINATIONS
+# ═══════════════════════════════════════════════════
+
+forbidden_combinations:
+  - combination: "Toast + ModalSheet simultaneously"
+    reason: "Visual conflict — Toast is z:50, ModalSheet z:30, but they compete for attention"
+  - combination: "FAB on non-Customer-My-Tasks screens"
+    reason: "FAB is exclusively for 'Post Task' action"
+  - combination: "danger Button without ModalSheet confirmation"
+    reason: "Destructive actions require explicit confirmation"
+  - combination: "Generic spinner as loading state"
+    reason: "Always use LoadingSkeleton matching content layout"
+  - combination: "price_display typography outside price/budget contexts"
+    reason: "Reserve Manrope bold 20px for monetary values only"
+  - combination: "caption typography for primary content"
+    reason: "14px is absolute minimum — use body_default (16px) for anything substantive"
+  - combination: "More than 2 Buttons in bottom CTA bar"
+    reason: "Max 2 buttons — primary + secondary"
+  - combination: "EmptyState without actionable CTA"
+    reason: "Every empty state must guide user to next action"

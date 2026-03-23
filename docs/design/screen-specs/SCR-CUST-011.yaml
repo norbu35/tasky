@@ -1,0 +1,218 @@
+# Screen Spec: Applicants List
+screen_id: SCR-CUST-011
+name: "Applicants List"
+route: "/(customer)/tasks/:taskId/applicants"
+role: [customer]
+phase: "0-1"
+template: feed_list
+figma_page: "Customer/Applicants List"
+feature: "matching"
+
+layout:
+  template: feed_list
+  density: default
+  structure: "safe_area -> nav_header(back + title + applicant_count) -> scrollview(applicant_cards) -> sticky_bottom_cta(accept)"
+
+components:
+  - id: COMP-SPLITCARD
+    usage: "Applicant cards showing Tasker avatar, name, rating, review count, and verification badge; Phase 2 adds Recommended label"
+    props:
+      headerContent: "{tasker_avatar, tasker_name, rating, review_count}"
+      bodyContent: "{verification_badge, category_match, distance, message_preview}"
+      status: "open"
+    variant: application
+
+  - id: COMP-PROFILEAVATAR
+    usage: "Tasker profile avatar in each applicant card header"
+    props:
+      imageUrl: "{tasker_avatar}"
+      size: "md"
+      isVerified: true
+    variant: md
+
+  - id: COMP-STARRATING
+    usage: "Tasker rating display (read-only) in each applicant card"
+    props:
+      value: 4.5
+      readonly: true
+      size: "md"
+    variant: display
+
+  - id: COMP-VERIFICATIONBADGE
+    usage: "Verified identity badge on each applicant's avatar"
+    props:
+      isVerified: true
+      size: "avatar_badge"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Accept button per applicant card; Phase 0-1 navigates directly to booking confirmation"
+    props:
+      label: "Сонгох"
+      variant: primary
+      size: md
+    variant: primary
+
+  - id: COMP-EMPTYSTATE
+    usage: "Empty state when no applicants have applied yet"
+    props:
+      illustration: "applicants_empty"
+      headline: "Одоогоор хүсэлт ирээгүй байна"
+      description: "Гүйцэтгэгчид хүсэлт илгээх болно. Мэдэгдэл авна"
+      ctaLabel: null
+    variant: no_results
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Card-shaped skeleton placeholders during initial load"
+    props:
+      variant: card
+      count: 3
+    variant: card
+
+  - id: COMP-MODALSHEET
+    usage: "Accept confirmation sheet before navigating to booking confirmation"
+    props:
+      visible: false
+      title: "Гүйцэтгэгч сонгох"
+      primaryAction: "Баталгаажуулах"
+      secondaryAction: "Буцах"
+    variant: default
+
+states:
+  - id: loading_initial
+    description: "GET /tasks/:id/applications in progress; skeleton cards shown"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-BUTTON, COMP-MODALSHEET]
+
+  - id: empty
+    description: "Zero applicants; empty state with waiting message and notification promise"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-SPLITCARD, COMP-LOADINGSKELETON, COMP-BUTTON, COMP-MODALSHEET]
+
+  - id: populated_phase01
+    description: "Phase 0-1: applicants listed in chronological order; each with Accept button"
+    components_visible: [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-STARRATING, COMP-VERIFICATIONBADGE, COMP-BUTTON]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-MODALSHEET]
+
+  - id: populated_phase2_ranked
+    description: "Phase 2: applicants sorted by relevance score; top-ranked applicants show 'Recommended' label per REQ-BOOK-02"
+    components_visible: [COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-STARRATING, COMP-VERIFICATIONBADGE, COMP-BUTTON]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-MODALSHEET]
+
+  - id: accept_confirm_sheet
+    description: "User tapped Accept on an applicant; confirmation sheet displayed before proceeding"
+    components_visible: [COMP-SPLITCARD, COMP-MODALSHEET]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
+
+  - id: error_network
+    description: "GET /tasks/:id/applications failed; error state with retry"
+    components_visible: []
+    components_hidden: [COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-BUTTON, COMP-MODALSHEET]
+
+copy:
+  - key: page_title
+    mn: "Хүсэлтүүд"
+    en: "Applications"
+    max_chars: 15
+
+  - key: applicant_count_header
+    mn: "{count} хүсэлт"
+    en: "{count} applications"
+    max_chars: 20
+
+  - key: recommended_label
+    mn: "Санал болгох"
+    en: "Recommended"
+    max_chars: 15
+
+  - key: rating_label
+    mn: "Үнэлгээ"
+    en: "Rating"
+    max_chars: 10
+
+  - key: reviews_count
+    mn: "{count} сэтгэгдэл"
+    en: "{count} reviews"
+    max_chars: 20
+
+  - key: verified_label
+    mn: "Баталгаажсан"
+    en: "Verified"
+    max_chars: 15
+
+  - key: empty_headline
+    mn: "Одоогоор хүсэлт ирээгүй байна"
+    en: "No applications yet"
+    max_chars: 40
+
+  - key: empty_description
+    mn: "Гүйцэтгэгчид таны даалгаврыг хянаж хүсэлт илгээх болно. Шинэ хүсэлт ирэхэд мэдэгдэл авна"
+    en: "Taskers are reviewing your task and will apply. You will be notified of new applications"
+    max_chars: 120
+
+  - key: cta_accept
+    mn: "Сонгох"
+    en: "Accept"
+    max_chars: 10
+
+  - key: cta_view_profile
+    mn: "Профайл харах"
+    en: "View Profile"
+    max_chars: 20
+
+  - key: confirm_title
+    mn: "Энэ гүйцэтгэгчийг сонгох уу?"
+    en: "Select this Tasker?"
+    max_chars: 30
+
+  - key: confirm_body
+    mn: "Сонгосны дараа захиалга баталгаажуулах хуудас руу шилжинэ"
+    en: "After selecting, you will proceed to booking confirmation"
+    max_chars: 80
+
+  - key: confirm_cta
+    mn: "Баталгаажуулах"
+    en: "Confirm"
+    max_chars: 20
+
+  - key: confirm_cancel
+    mn: "Буцах"
+    en: "Go Back"
+    max_chars: 10
+
+  - key: error_network
+    mn: "Хүсэлтүүдийг ачаалахад алдаа гарлаа"
+    en: "Failed to load applications"
+    max_chars: 40
+
+api_endpoints:
+  - method: GET
+    path: "/tasks/:id/applications"
+    purpose: "Fetch list of applicants for this task; Phase 2 includes relevance scores"
+
+analytics_events:
+  - event: "applicants_list_viewed"
+    trigger: "Screen becomes visible; includes task_id and applicant_count"
+  - event: "applicant_profile_tapped"
+    trigger: "User taps an applicant card to view profile; includes tasker_id"
+  - event: "applicant_accept_tapped"
+    trigger: "User taps Accept on an applicant; includes task_id and tasker_id"
+  - event: "applicant_accept_confirmed"
+    trigger: "User confirms acceptance in the bottom sheet"
+  - event: "applicant_accept_cancelled"
+    trigger: "User dismisses the accept confirmation sheet"
+
+acceptance_criteria:
+  - "Applicant cards use SplitCard application variant with Tasker avatar, name, rating, review count, and verification badge"
+  - "Each applicant card has a tappable area to view Tasker profile (push to SCR-CUST-013) and an Accept button"
+  - "Phase 0-1: applicants listed in chronological order"
+  - "Phase 2: applicants sorted by relevance score with 'Recommended' label on top-ranked per REQ-BOOK-02"
+  - "Tapping Accept opens confirmation bottom sheet before proceeding"
+  - "Confirming Accept navigates (push) to Booking Confirmation SCR-CUST-014 in Phase 0-1"
+  - "In Phase 2, confirming Accept triggers Tasker notification and waits for lead unlock per REQ-PAY-11"
+  - "Phase 2 timeout/decline triggers SCR-CUST-012 modal"
+  - "Empty state shows waiting message with notification promise"
+  - "Back button pops to Task Detail SCR-CUST-009"
+  - "Application cap info shown when task has reached max applications per REQ-PAY-17"
+  - "Network error shows error state with retry"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

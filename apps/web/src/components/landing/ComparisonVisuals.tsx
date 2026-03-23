@@ -108,11 +108,11 @@ export const CustomerAdvantageVisual = () => {
           {/* Verified Header */}
           <g className="tasky-fade-1">
             <circle cx="80" cy="40" r="15" fill="currentColor" className="text-primary/20" />
-            <circle cx="90" cy="50" r="6" fill="#3B9B7A" className="verified-dot" />
+            <circle cx="90" cy="50" r="6" fill="#469178" className="verified-dot" />
             <rect x="105" y="32" width="80" height="8" rx="4" fill="currentColor" className="text-primary/80" />
             <g transform="translate(105, 45) scale(0.6)">
               {[0, 1, 2, 3, 4].map((i) => (
-                <polygon key={i} points="10,1 12,7 19,7 13,11 15,18 10,14 5,18 7,11 1,7 8,7" fill="#89752A" transform={`translate(${i * 20}, 0)`} />
+                <polygon key={i} points="10,1 12,7 19,7 13,11 15,18 10,14 5,18 7,11 1,7 8,7" fill="#C49A3C" transform={`translate(${i * 20}, 0)`} />
               ))}
             </g>
           </g>
@@ -128,7 +128,7 @@ export const CustomerAdvantageVisual = () => {
           {/* Matching Confirmation */}
           <g className="tasky-fade-3">
             <rect x="65" y="165" width="170" height="40" rx="8" fill="currentColor" className="text-card stroke-border stroke-1" />
-            <path d="M 85 175 L 80 180 L 85 195 L 95 185 L 90 175 Z" fill="#3B9B7A" opacity="0.8" />
+            <path d="M 85 175 L 80 180 L 85 195 L 95 185 L 90 175 Z" fill="#469178" opacity="0.8" />
             <rect x="105" y="180" width="110" height="6" rx="3" fill="currentColor" className="text-muted-foreground" />
           </g>
 
@@ -281,15 +281,15 @@ export const TaskerAdvantageVisual = () => {
 
           {/* Matched Job Nodes — draw in sequentially */}
           <line x1="150" y1="150" x2="100" y2="90" stroke="currentColor" strokeWidth="2" className="text-accent/60 line-1" />
-          <circle cx="100" cy="90" r="6" fill="#3B9B7A" className="node-1" />
+          <circle cx="100" cy="90" r="6" fill="#469178" className="node-1" />
           <rect x="110" y="80" width="50" height="15" rx="4" fill="currentColor" className="text-accent/10" />
           <rect x="115" y="85" width="20" height="5" rx="2.5" fill="currentColor" className="text-accent/80" />
 
           <line x1="150" y1="150" x2="210" y2="110" stroke="currentColor" strokeWidth="2" className="text-accent/60 line-2" />
-          <circle cx="210" cy="110" r="6" fill="#3B9B7A" className="node-2" />
+          <circle cx="210" cy="110" r="6" fill="#469178" className="node-2" />
 
           <line x1="150" y1="150" x2="170" y2="230" stroke="currentColor" strokeWidth="2" className="text-accent/60 line-3" />
-          <circle cx="170" cy="230" r="6" fill="#3B9B7A" className="node-3" />
+          <circle cx="170" cy="230" r="6" fill="#469178" className="node-3" />
 
           {/* Pop-up Match Card — slides in last */}
           <g className="match-card">

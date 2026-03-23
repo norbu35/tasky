@@ -1,0 +1,165 @@
+# Screen Spec: Booking Cancel (Tasker)
+screen_id: SCR-TASK-015
+name: "Booking Cancel (Tasker)"
+route: null
+role: [tasker]
+phase: "0-1"
+template: modal_sheet
+figma_page: "Tasker/Booking Cancel Tasker"
+feature: "tasker-bookings"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle_bar + title + strike_warning_content + reason_selector + action_buttons)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet for tasker booking cancellation with strike warning system"
+    props:
+      visible: true
+      title: "Захиалга цуцлах"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary danger CTA to confirm cancellation"
+    props:
+      label: "Цуцлахыг баталгаажуулах"
+      variant: danger
+      size: xl
+    variant: danger
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA to go back and keep the booking"
+    props:
+      label: "Буцах"
+      variant: outline
+      size: lg
+    variant: outline
+
+states:
+  - id: default
+    description: "First cancellation or no recent strikes — standard cancellation warning with reason selection"
+    components_visible: [handle_bar, cancel_heading, cancel_description, reason_selector, impact_notice, cancel_button, back_button]
+    components_hidden: [strike_warning, suspension_warning, confirming_spinner]
+
+  - id: strike_warning_count
+    description: "Tasker has 1-2 cancellations in rolling 30 days — explicit strike count warning shown"
+    components_visible: [handle_bar, cancel_heading, strike_warning, strike_count_display, reason_selector, cancel_button, back_button]
+    components_hidden: [suspension_warning, confirming_spinner, default_description]
+
+  - id: strike_warning_suspension
+    description: "Tasker has 2 cancellations in rolling 30 days — next cancellation triggers 7-day suspension"
+    components_visible: [handle_bar, cancel_heading, suspension_warning, strike_count_display, reason_selector, cancel_button_danger_emphasized, back_button]
+    components_hidden: [strike_warning, confirming_spinner, default_description]
+
+  - id: confirming
+    description: "Cancellation is being submitted to the API"
+    components_visible: [handle_bar, cancel_heading, confirming_spinner]
+    components_hidden: [reason_selector, cancel_button, back_button, strike_warning, suspension_warning]
+
+copy:
+  - key: cancel_heading
+    mn: "Захиалга цуцлах уу?"
+    en: "Cancel this booking?"
+    max_chars: 25
+
+  - key: cancel_description
+    mn: "Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө."
+    en: "Cancelling will reopen the task. Cancellations affect your reliability score."
+    max_chars: 100
+
+  - key: impact_notice
+    mn: "Цуцлалт нь таны хайлтын эрэмбэлэлт болон найдвартай байдлын үнэлгээнд нөлөөлнө."
+    en: "Cancellations affect your search ranking and reliability score."
+    max_chars: 70
+
+  - key: strike_warning
+    mn: "Анхааруулга: Та сүүлийн 30 хоногт {count} удаа цуцалсан байна."
+    en: "Warning: You have cancelled {count} time(s) in the last 30 days."
+    max_chars: 65
+
+  - key: suspension_warning
+    mn: "Анхааруулга: Та сүүлийн 30 хоногт 2 удаа цуцалсан байна. Дахин нэг удаа цуцалвал таны бүртгэл 7 хоногоор түдгэлзэнэ!"
+    en: "Warning: You have 2 cancellations in 30 days. One more will result in a 7-day suspension!"
+    max_chars: 130
+
+  - key: strike_count_display
+    mn: "{count}/3 цуцлалт (30 хоногт)"
+    en: "{count}/3 cancellations (30 days)"
+    max_chars: 35
+
+  - key: reason_label
+    mn: "Цуцлах шалтгаан"
+    en: "Reason for cancellation"
+    max_chars: 25
+
+  - key: reason_schedule_conflict
+    mn: "Цагийн хуваарь таарахгүй болсон"
+    en: "Schedule conflict"
+    max_chars: 35
+
+  - key: reason_personal
+    mn: "Хувийн шалтгаан"
+    en: "Personal reasons"
+    max_chars: 20
+
+  - key: reason_emergency
+    mn: "Яаралтай нөхцөл байдал"
+    en: "Emergency"
+    max_chars: 25
+
+  - key: reason_other
+    mn: "Бусад"
+    en: "Other"
+    max_chars: 10
+
+  - key: cancel_confirm_button
+    mn: "Цуцлахыг баталгаажуулах"
+    en: "Confirm Cancellation"
+    max_chars: 25
+
+  - key: cancel_confirm_button_danger
+    mn: "Цуцлах (түдгэлзүүлэх эрсдэлтэй!)"
+    en: "Cancel (Risk of Suspension!)"
+    max_chars: 35
+
+  - key: back_button
+    mn: "Буцах"
+    en: "Go Back"
+    max_chars: 10
+
+api_endpoints:
+  - method: PUT
+    path: "/bookings/:id/cancel"
+    purpose: "Cancel the booking — task reverts to OPEN, strike count incremented"
+
+analytics_events:
+  - event: "booking_cancel_tasker_viewed"
+    trigger: "Booking Cancel (Tasker) sheet becomes visible"
+  - event: "booking_cancel_tasker_strike_warning"
+    trigger: "Strike warning state is displayed"
+  - event: "booking_cancel_tasker_suspension_warning"
+    trigger: "Suspension warning state is displayed (2/3 strikes)"
+  - event: "booking_cancel_tasker_confirmed"
+    trigger: "Tasker confirms cancellation"
+  - event: "booking_cancel_tasker_reason_selected"
+    trigger: "Tasker selects a cancellation reason"
+  - event: "booking_cancel_tasker_aborted"
+    trigger: "Tasker taps Go Back to keep the booking"
+
+acceptance_criteria:
+  - "This is a bottom sheet overlay, not a standalone route"
+  - "Cancellation reopens linked task to OPEN (REQ-BOOK-06)"
+  - "Strike warning system: 3 cancellations in any rolling 30-day window triggers 7-day suspension (REQ-BOOK-06)"
+  - "Default state shows standard cancellation warning when 0 recent strikes"
+  - "Strike warning count state shows '{count}/3 цуцлалт (30 хоногт)' when 1-2 recent cancellations exist"
+  - "Suspension warning state shows explicit '7 хоногоор түдгэлзэнэ' message when at 2/3 strikes"
+  - "At 2/3 strikes, confirm button text changes to 'Цуцлах (түдгэлзүүлэх эрсдэлтэй!)'"
+  - "Reason selector requires selection before confirm button enables"
+  - "Confirm button uses danger variant for destructive action"
+  - "Cancel triggers PUT /bookings/:id/cancel"
+  - "On confirmation, navigates to My Jobs (SCR-TASK-012) via replace"
+  - "Go Back dismisses sheet and returns to Booking Detail (SCR-TASK-013)"
+  - "Strike count is fetched from tasker_cancel_count_30d data dependency"
+  - "Scrim overlay behind sheet per modal_sheet template"

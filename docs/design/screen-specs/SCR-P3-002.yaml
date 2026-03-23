@@ -1,0 +1,211 @@
+# Screen Spec: Wallet — Request Payout
+screen_id: SCR-P3-002
+name: "Wallet — Request Payout"
+route: "/(tasker)/wallet/payout"
+role: [tasker]
+phase: "3+"
+template: form_wizard
+figma_page: "Phase 3+/Wallet Payout Request"
+feature: "wallet"
+
+layout:
+  template: form_wizard
+  density: default
+  structure: "safe_area -> nav_header -> scrollview(amount_form + bank_details) -> bottom_nav(back + submit)"
+
+components:
+  - id: COMP-FORMFIELD
+    usage: "Form field wrapper for payout amount input with label and validation"
+    props:
+      label: "Татах дүн"
+      required: true
+      helperText: "Хамгийн бага дүн: ₮10,000"
+    variant: default
+
+  - id: COMP-INPUT
+    usage: "Amount input field for specifying payout amount"
+    props:
+      value: ""
+      placeholder: "₮0"
+      label: "Татах дүн"
+      maxLength: 12
+    variant: default
+
+  - id: COMP-CARD
+    usage: "Card displaying available balance for reference during payout request"
+    props:
+      onPress: null
+    variant: outlined
+
+  - id: COMP-BUTTON
+    usage: "Primary submit button to confirm payout request"
+    props:
+      label: "Хүсэлт илгээх"
+      variant: primary
+      size: lg
+      loading: false
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary back/cancel button"
+    props:
+      label: "Буцах"
+      variant: ghost
+      size: md
+    variant: ghost
+
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Success animation when payout request is submitted"
+    props:
+      size: 64
+      color: "verified"
+    variant: default
+
+  - id: COMP-MODALSHEET
+    usage: "Confirmation sheet before submitting payout request"
+    props:
+      visible: false
+      title: "Баталгаажуулах"
+      primaryAction:
+        label: "Тийм, илгээх"
+    variant: default
+
+states:
+  - id: default
+    description: "Form displayed with available balance and empty amount field"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET]
+
+  - id: confirming
+    description: "User entered amount and tapped submit; confirmation sheet shown"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-MODALSHEET]
+    components_hidden: [COMP-ANIMATEDCHECKMARK]
+
+  - id: submitted
+    description: "Payout request submitted successfully"
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost]
+    components_hidden: [COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-MODALSHEET]
+
+  - id: error_below_minimum
+    description: "Entered amount is below minimum payout threshold (₮10,000)"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET]
+
+  - id: error_network
+    description: "Payout request failed due to network error"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: [COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET]
+
+copy:
+  - key: nav_title
+    mn: "Мөнгө татах"
+    en: "Request Payout"
+    max_chars: 20
+
+  - key: balance_available
+    mn: "Боломжит үлдэгдэл: ₮{amount}"
+    en: "Available balance: ₮{amount}"
+    max_chars: 40
+
+  - key: amount_label
+    mn: "Татах дүн"
+    en: "Payout amount"
+    max_chars: 20
+
+  - key: amount_placeholder
+    mn: "₮0"
+    en: "₮0"
+    max_chars: 10
+
+  - key: amount_helper
+    mn: "Хамгийн бага дүн: ₮10,000"
+    en: "Minimum amount: ₮10,000"
+    max_chars: 30
+
+  - key: error_below_minimum
+    mn: "Хамгийн бага татах дүн ₮10,000 байна"
+    en: "Minimum payout amount is ₮10,000"
+    max_chars: 40
+
+  - key: error_exceeds_balance
+    mn: "Татах дүн боломжит үлдэгдлээс хэтэрч байна"
+    en: "Amount exceeds available balance"
+    max_chars: 50
+
+  - key: error_network
+    mn: "Хүсэлт илгээхэд алдаа гарлаа. Дахин оролдоно уу"
+    en: "Failed to submit request. Please try again"
+    max_chars: 60
+
+  - key: confirm_title
+    mn: "Баталгаажуулах"
+    en: "Confirm"
+    max_chars: 20
+
+  - key: confirm_description
+    mn: "₮{amount} татах хүсэлт илгээх үү?"
+    en: "Request payout of ₮{amount}?"
+    max_chars: 40
+
+  - key: confirm_cta
+    mn: "Тийм, илгээх"
+    en: "Yes, submit"
+    max_chars: 20
+
+  - key: confirm_cancel
+    mn: "Буцах"
+    en: "Cancel"
+    max_chars: 10
+
+  - key: success_headline
+    mn: "Хүсэлт илгээгдлээ!"
+    en: "Request submitted!"
+    max_chars: 25
+
+  - key: success_description
+    mn: "₮{amount} татах хүсэлт амжилттай илгээгдлээ. 1-3 ажлын өдөрт шилжүүлэг хийгдэнэ"
+    en: "Payout request for ₮{amount} submitted. Transfer within 1-3 business days"
+    max_chars: 100
+
+  - key: cta_submit
+    mn: "Хүсэлт илгээх"
+    en: "Submit request"
+    max_chars: 20
+
+  - key: cta_back
+    mn: "Буцах"
+    en: "Back"
+    max_chars: 10
+
+api_endpoints:
+  - method: POST
+    path: "/wallet/payout-request"
+    purpose: "Submit a payout request for the specified amount"
+
+analytics_events:
+  - event: "payout_form_viewed"
+    trigger: "Payout request form loaded"
+  - event: "payout_amount_entered"
+    trigger: "User enters payout amount"
+  - event: "payout_confirm_shown"
+    trigger: "Confirmation sheet displayed"
+  - event: "payout_submitted"
+    trigger: "Payout request successfully submitted"
+  - event: "payout_validation_error"
+    trigger: "Amount below minimum or exceeds balance"
+  - event: "payout_submit_error"
+    trigger: "Network error on submission"
+
+acceptance_criteria:
+  - "Default state shows available balance card, amount input, and submit CTA"
+  - "Amount input is numeric-only with ₮ prefix formatting"
+  - "Inline validation shows error below field when amount < ₮10,000"
+  - "Inline validation shows error when amount exceeds available balance"
+  - "Tapping submit opens confirmation modal sheet before final submission"
+  - "Confirmation sheet shows exact amount being requested"
+  - "Submitted state shows animated checkmark with success message and processing timeline"
+  - "Network error shows inline error toast with retry guidance"
+  - "Back button returns to SCR-P3-001 (Wallet Balance)"
+  - "Keyboard-aware scrolling for amount input"
+  - "Currency values use price_display typography with ₮ prefix and comma separators"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

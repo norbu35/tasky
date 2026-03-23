@@ -1,0 +1,192 @@
+# Screen Spec: Referral — My Code & Stats
+screen_id: SCR-P2-005
+name: "Referral — My Code & Stats"
+route: "/referrals"
+role: [customer, tasker]
+phase: "2"
+template: detail
+figma_page: "Phase 2/Referral Code"
+feature: "referral"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header -> scrollview(code_hero + stats_section + referral_list) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-CARD
+    usage: "Hero card displaying the user's unique referral code with copy/share actions"
+    props:
+      onPress: "copy_code"
+    variant: elevated
+
+  - id: COMP-STATCARD
+    usage: "Stat cards showing referral count, successful conversions, and rewards earned"
+    props:
+      label: "Урьсан"
+      value: "5"
+      icon: "people"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to share referral code via native share sheet"
+    props:
+      label: "Хуваалцах"
+      variant: primary
+      size: lg
+      icon: "share"
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Detail skeleton for initial loading of referral data"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error state when referral data fails to load"
+    props:
+      illustration: "error_referral"
+      headline: "Ачааллах боломжгүй"
+      description: "Урилгын мэдээллийг ачааллахад алдаа гарлаа"
+      ctaLabel: "Дахин оролдох"
+    variant: error
+
+  - id: COMP-LISTROW
+    usage: "List of referred users with their status (pending, signed_up, completed_first_task)"
+    props:
+      label: "Referred user name"
+      value: "Бүртгүүлсэн"
+      showDisclosure: false
+    variant: default
+
+states:
+  - id: loading_initial
+    description: "Fetching referral code and stats from API"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW, COMP-EMPTYSTATE]
+
+  - id: loaded_with_referrals
+    description: "Referral code and stats loaded; user has referred at least one person"
+    components_visible: [COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: loaded_no_referrals
+    description: "Referral code loaded but user has not referred anyone yet"
+    components_visible: [COMP-CARD, COMP-STATCARD, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-LISTROW, COMP-EMPTYSTATE]
+
+  - id: sharing
+    description: "Native share sheet is open for sharing referral code"
+    components_visible: [COMP-CARD, COMP-STATCARD, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: error_network
+    description: "Failed to load referral data due to network error"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW, COMP-LOADINGSKELETON]
+
+copy:
+  - key: nav_title
+    mn: "Урилга"
+    en: "Referrals"
+    max_chars: 20
+
+  - key: code_heading
+    mn: "Миний урилгын код"
+    en: "My referral code"
+    max_chars: 25
+
+  - key: code_instruction
+    mn: "Найзуудтайгаа хуваалцаж урамшуулал аваарай"
+    en: "Share with friends and earn rewards"
+    max_chars: 60
+
+  - key: cta_copy
+    mn: "Код хуулах"
+    en: "Copy code"
+    max_chars: 15
+
+  - key: toast_copied
+    mn: "Код хуулагдлаа"
+    en: "Code copied"
+    max_chars: 20
+
+  - key: stat_invited
+    mn: "Урьсан"
+    en: "Invited"
+    max_chars: 15
+
+  - key: stat_signed_up
+    mn: "Бүртгүүлсэн"
+    en: "Signed up"
+    max_chars: 15
+
+  - key: stat_completed
+    mn: "Даалгавар гүйцэтгэсэн"
+    en: "Completed task"
+    max_chars: 25
+
+  - key: cta_share
+    mn: "Хуваалцах"
+    en: "Share"
+    max_chars: 15
+
+  - key: section_referrals
+    mn: "Урьсан хүмүүс"
+    en: "Referred people"
+    max_chars: 20
+
+  - key: referral_status_pending
+    mn: "Хүлээгдэж буй"
+    en: "Pending"
+    max_chars: 15
+
+  - key: referral_status_signed_up
+    mn: "Бүртгүүлсэн"
+    en: "Signed up"
+    max_chars: 15
+
+  - key: referral_status_completed
+    mn: "Даалгавар дууссан"
+    en: "Task completed"
+    max_chars: 20
+
+  - key: error_headline
+    mn: "Ачааллах боломжгүй"
+    en: "Unable to load"
+    max_chars: 30
+
+  - key: error_retry
+    mn: "Дахин оролдох"
+    en: "Try again"
+    max_chars: 20
+
+api_endpoints:
+  - method: GET
+    path: "/referrals/mine"
+    purpose: "Fetch referral code, stats, and list of referred users"
+
+analytics_events:
+  - event: "referral_screen_viewed"
+    trigger: "Referral screen loaded successfully"
+  - event: "referral_code_copied"
+    trigger: "User taps 'Copy code' button"
+  - event: "referral_shared"
+    trigger: "User completes share action via native share sheet"
+  - event: "referral_share_cancelled"
+    trigger: "User dismisses native share sheet without sharing"
+
+acceptance_criteria:
+  - "Loading state shows detail skeleton matching referral layout"
+  - "Referral code is displayed prominently in elevated hero card"
+  - "Tapping code copies it to clipboard and shows success toast"
+  - "Stat cards show invited count, signed-up count, and completed-task count"
+  - "Share CTA opens native platform share sheet with referral code and deep link"
+  - "Referred users list shows each person with their conversion status"
+  - "No-referrals state hides the referral list but still shows code and share CTA"
+  - "Network error shows error state with retry CTA"
+  - "Back button pops to previous screen"
+  - "Available to both customer and tasker roles"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

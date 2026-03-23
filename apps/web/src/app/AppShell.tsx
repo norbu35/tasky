@@ -119,6 +119,8 @@ export function AppShell({
 
     return (
         <AppContext.Provider value={value}>
+            {/* Sitewise Metallic Gradient Streak Overlay */}
+            <div className="pointer-events-none fixed inset-0 z-[9999] bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_35%,rgba(255,255,255,0.4)_40%,transparent_55%)] mix-blend-overlay opacity-10"></div>
             <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
                 <AppRoutes/>
             </ErrorBoundary>

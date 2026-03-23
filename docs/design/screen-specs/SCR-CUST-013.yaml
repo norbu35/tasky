@@ -1,0 +1,185 @@
+# Screen Spec: Tasker Public Profile
+screen_id: SCR-CUST-013
+name: "Tasker Public Profile"
+route: "/(customer)/taskers/:taskerId"
+role: [customer]
+phase: "0-1"
+template: detail
+figma_page: "Customer/Tasker Public Profile"
+feature: "profiles"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(avatar_hero + stats + categories + reviews) -> sticky_bottom_cta(message)"
+
+components:
+  - id: COMP-PROFILEAVATAR
+    usage: "Large Tasker avatar with verification badge at top of profile"
+    props:
+      imageUrl: "{tasker_avatar}"
+      size: "lg"
+      isVerified: true
+      isPro: false
+    variant: lg
+
+  - id: COMP-VERIFICATIONBADGE
+    usage: "Verified identity badge anchored to avatar bottom-right"
+    props:
+      isVerified: true
+      isPro: false
+      size: "avatar_badge"
+    variant: default
+
+  - id: COMP-STARRATING
+    usage: "Overall Tasker rating displayed below name"
+    props:
+      value: 4.7
+      readonly: true
+      size: "lg"
+    variant: display
+
+  - id: COMP-TRUSTBANNER
+    usage: "Trust metrics showing verified status, completion count, and rating"
+    props:
+      verifiedCount: 1
+      completedCount: 24
+    variant: default
+
+  - id: COMP-CATEGORYCHIP
+    usage: "Category chips showing which task categories the Tasker works in"
+    props:
+      category: "{category_name}"
+      isActive: false
+    variant: inactive
+
+  - id: COMP-REVIEWCARD
+    usage: "Recent review cards from past Customers"
+    props:
+      review: "{review_object}"
+      isFeatured: false
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Message CTA in sticky bottom bar"
+    props:
+      label: "Зурвас илгээх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Profile-shaped skeleton during initial load"
+    props:
+      variant: profile
+      count: 1
+    variant: profile
+
+states:
+  - id: loading_initial
+    description: "GET /users/:id/profile in progress; profile skeleton shown"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER, COMP-CATEGORYCHIP, COMP-REVIEWCARD, COMP-BUTTON]
+
+  - id: loaded
+    description: "Profile data loaded; all sections rendered with avatar, stats, categories, and reviews"
+    components_visible: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER, COMP-CATEGORYCHIP, COMP-REVIEWCARD, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: error_network
+    description: "GET /users/:id/profile failed; error state with retry"
+    components_visible: []
+    components_hidden: [COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER, COMP-CATEGORYCHIP, COMP-REVIEWCARD, COMP-LOADINGSKELETON]
+
+copy:
+  - key: page_title
+    mn: "Гүйцэтгэгчийн профайл"
+    en: "Tasker Profile"
+    max_chars: 25
+
+  - key: section_about
+    mn: "Танилцуулга"
+    en: "About"
+    max_chars: 15
+
+  - key: section_categories
+    mn: "Ажлын чиглэлүүд"
+    en: "Categories"
+    max_chars: 20
+
+  - key: section_reviews
+    mn: "Сэтгэгдлүүд"
+    en: "Reviews"
+    max_chars: 15
+
+  - key: section_stats
+    mn: "Статистик"
+    en: "Stats"
+    max_chars: 15
+
+  - key: stat_completed
+    mn: "Дууссан ажил"
+    en: "Completed Jobs"
+    max_chars: 20
+
+  - key: stat_rating
+    mn: "Үнэлгээ"
+    en: "Rating"
+    max_chars: 10
+
+  - key: stat_reviews
+    mn: "Сэтгэгдэл"
+    en: "Reviews"
+    max_chars: 15
+
+  - key: verified_since
+    mn: "Баталгаажсан: {date}"
+    en: "Verified since: {date}"
+    max_chars: 30
+
+  - key: member_since
+    mn: "Бүртгүүлсэн: {date}"
+    en: "Member since: {date}"
+    max_chars: 30
+
+  - key: no_reviews_yet
+    mn: "Одоогоор сэтгэгдэл байхгүй байна"
+    en: "No reviews yet"
+    max_chars: 40
+
+  - key: cta_message
+    mn: "Зурвас илгээх"
+    en: "Message"
+    max_chars: 20
+
+  - key: error_network
+    mn: "Профайл ачаалахад алдаа гарлаа"
+    en: "Failed to load profile"
+    max_chars: 40
+
+api_endpoints:
+  - method: GET
+    path: "/users/:id/profile"
+    purpose: "Fetch Tasker public profile including bio, categories, stats, reviews, and verification status"
+
+analytics_events:
+  - event: "tasker_profile_viewed"
+    trigger: "Screen becomes visible; includes tasker_id"
+  - event: "tasker_profile_message_tapped"
+    trigger: "User taps Message CTA; includes tasker_id"
+  - event: "tasker_profile_review_expanded"
+    trigger: "User expands a review card to read full text"
+
+acceptance_criteria:
+  - "Profile hero shows large Tasker avatar with VerificationBadge anchored bottom-right"
+  - "Name, overall rating (StarRating display), and member-since date displayed below avatar"
+  - "TrustBanner shows verified status, completed job count, and rating"
+  - "Categories section shows CategoryChip for each category the Tasker works in"
+  - "Reviews section lists recent ReviewCards from past Customers"
+  - "Empty reviews state shows 'No reviews yet' message"
+  - "Tasker phone number is NEVER shown per REQ-LEAK-01"
+  - "Message CTA in sticky bottom bar navigates (push) to Conversation List SCR-SHARED-010"
+  - "Back button pops to Applicants List SCR-CUST-011"
+  - "Profile skeleton matches profile layout during loading"
+  - "Network error shows error state with retry"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

@@ -1,0 +1,92 @@
+# Screen Spec: Verification Gate
+screen_id: SCR-TASK-003
+name: "Verification Gate"
+route: "/(tasker)/verification"
+role: [tasker]
+phase: "0-1"
+template: auth
+figma_page: "Tasker/Verification Gate"
+feature: "verification"
+
+layout:
+  template: auth
+  density: comfortable
+  structure: "safe_area -> centered_content(illustration + heading + description + benefits_list) -> bottom_cta(get_verified_button + maybe_later_link)"
+
+components:
+  - id: COMP-BUTTON
+    usage: "Primary CTA to begin the verification process"
+    props:
+      label: "Баталгаажуулалт эхлүүлэх"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary ghost link to skip and return to browsing"
+    props:
+      label: "Дараа хийе"
+      variant: ghost
+      size: md
+    variant: ghost
+
+states:
+  - id: encouraging_interstitial
+    description: "Encouraging interstitial screen explaining why verification matters and its benefits"
+    components_visible: [illustration, heading, description, benefits_list, get_verified_button, maybe_later_link]
+    components_hidden: []
+
+copy:
+  - key: heading
+    mn: "Баталгаажуулалт хийж, ажил аваарай!"
+    en: "Get verified and start earning!"
+    max_chars: 40
+
+  - key: description
+    mn: "Баталгаажсан гүйцэтгэгчид илүү олон захиалга авах боломжтой. Баталгаажуулалт нь 5 минут л авна."
+    en: "Verified taskers receive more bookings. Verification takes only 5 minutes."
+    max_chars: 100
+
+  - key: benefit_trust
+    mn: "Захиалагчид танд итгэлтэй хандана"
+    en: "Customers trust you more"
+    max_chars: 40
+
+  - key: benefit_apply
+    mn: "Даалгавруудад шууд анкет илгээх боломжтой"
+    en: "Apply to tasks instantly"
+    max_chars: 45
+
+  - key: benefit_priority
+    mn: "Хайлтад илүү дээгүүр гарна"
+    en: "Rank higher in search results"
+    max_chars: 40
+
+  - key: get_verified_cta
+    mn: "Баталгаажуулалт эхлүүлэх"
+    en: "Start Verification"
+    max_chars: 30
+
+  - key: maybe_later
+    mn: "Дараа хийе"
+    en: "Maybe later"
+    max_chars: 15
+
+api_endpoints: []
+
+analytics_events:
+  - event: "verification_gate_viewed"
+    trigger: "Verification Gate screen becomes visible"
+  - event: "verification_gate_start_tapped"
+    trigger: "User taps 'Баталгаажуулалт эхлүүлэх' to begin verification"
+  - event: "verification_gate_skipped"
+    trigger: "User taps 'Дараа хийе' to skip verification"
+
+acceptance_criteria:
+  - "Screen displays encouraging illustration, heading, and benefit list"
+  - "Tapping 'Баталгаажуулалт эхлүүлэх' navigates to Verification Consent (SCR-TASK-004)"
+  - "Tapping 'Дараа хийе' navigates back to Task Detail (SCR-TASK-002)"
+  - "Comfortable density with ample spacing for trust-building messaging"
+  - "Benefits list uses checkmark icons next to each benefit"
+  - "This is the tasker's first trust-building experience in the verification flow"
+  - "Screen is accessible from Task Detail (unverified apply) and Settings (role switch)"

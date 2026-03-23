@@ -1,0 +1,120 @@
+# Screen Spec: Permission Primer — Location
+screen_id: SCR-SHARED-008
+name: "Permission Primer — Location"
+route: "/onboarding/permission-location"
+role: [customer, tasker]
+phase: "0-1"
+template: modal_sheet
+figma_page: "Shared/Permission Primer Location"
+feature: "onboarding"
+
+layout:
+  template: modal_sheet
+  density: comfortable
+  structure: "scrim -> sheet(handle_bar + icon + heading + description + primary_action + secondary_action)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet explaining why location permission is needed"
+    props:
+      visible: true
+      title: "Байршлын зөвшөөрөл"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to trigger the OS location permission dialog"
+    props:
+      label: "Зөвшөөрөх"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary action to skip location permission"
+    props:
+      label: "Дараа хийх"
+      variant: ghost
+      size: md
+    variant: ghost
+
+states:
+  - id: default
+    description: "Permission primer shown explaining why location access is needed"
+    components_visible: [location_icon, heading, description, allow_button, skip_link]
+    components_hidden: [granted_message, denied_message]
+
+  - id: granted
+    description: "Location permission granted by the OS; screen auto-advances"
+    components_visible: [location_icon, granted_message]
+    components_hidden: [heading, description, allow_button, skip_link, denied_message]
+
+  - id: denied
+    description: "Location permission denied by the OS; fallback guidance shown"
+    components_visible: [location_icon, denied_message, settings_hint, continue_button]
+    components_hidden: [heading, description, allow_button, skip_link, granted_message]
+
+copy:
+  - key: heading
+    mn: "Байршлын зөвшөөрөл"
+    en: "Location Permission"
+    max_chars: 25
+
+  - key: description
+    mn: "Ойролцоох даалгавруудыг харуулах, байршил тодорхойлоход хэрэгтэй"
+    en: "Needed to show nearby tasks and set task location"
+    max_chars: 80
+
+  - key: allow_button_label
+    mn: "Зөвшөөрөх"
+    en: "Allow"
+    max_chars: 15
+
+  - key: skip_label
+    mn: "Дараа хийх"
+    en: "Do it later"
+    max_chars: 15
+
+  - key: granted_message
+    mn: "Байршил зөвшөөрөгдлөө"
+    en: "Location access granted"
+    max_chars: 30
+
+  - key: denied_message
+    mn: "Байршлын зөвшөөрөл хаагдсан"
+    en: "Location permission denied"
+    max_chars: 35
+
+  - key: settings_hint
+    mn: "Тохиргооноос байршлыг нээх боломжтой"
+    en: "You can enable location in Settings"
+    max_chars: 50
+
+  - key: continue_label
+    mn: "Үргэлжлүүлэх"
+    en: "Continue"
+    max_chars: 15
+
+api_endpoints: []
+
+analytics_events:
+  - event: "permission_primer_location_viewed"
+    trigger: "Location permission primer becomes visible"
+  - event: "permission_location_allow_tapped"
+    trigger: "User taps Allow button"
+  - event: "permission_location_granted"
+    trigger: "OS returns granted status for location"
+  - event: "permission_location_denied"
+    trigger: "OS returns denied status for location"
+  - event: "permission_location_skipped"
+    trigger: "User taps 'Do it later'"
+
+acceptance_criteria:
+  - "Bottom sheet displays location icon, explanation heading, and description"
+  - "Allow button triggers the OS native location permission dialog"
+  - "If granted, screen auto-advances to Permission Primer Notifications (SCR-SHARED-009)"
+  - "If denied, fallback message shows with a hint to open device Settings"
+  - "Skip link allows user to proceed without granting permission"
+  - "Skipping also advances to Permission Primer Notifications (SCR-SHARED-009)"
+  - "Sheet has drag handle but is not dismissible by dragging (onboarding context)"
+  - "No API calls are made on this screen"
+  - "Location is essential for Tasker feed proximity filtering and Customer task pinning"

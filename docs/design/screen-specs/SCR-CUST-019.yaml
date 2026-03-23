@@ -1,0 +1,136 @@
+# Screen Spec: Booking Timeline
+screen_id: SCR-CUST-019
+name: "Booking Timeline"
+route: "/(customer)/bookings/:bookingId/timeline"
+role: [customer]
+phase: "0-1"
+template: detail
+figma_page: "Customer/Booking Timeline"
+feature: "booking"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(timeline_events)"
+
+components:
+  - id: COMP-TIMELINEEVENT
+    usage: "Vertical timeline entries showing immutable booking event history (created, assigned, reschedule requests, mark done, completed, cancelled, no-show)"
+    props:
+      event: "Захиалга үүсгэсэн"
+      timestamp: "2026-03-22 09:00"
+      description: "Хэрэглэгч захиалга баталгаажуулсан"
+      isCurrent: false
+    variant: default
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton placeholders matching timeline layout during data fetch"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+  - id: COMP-TOAST
+    usage: "Error toast on network failure"
+    props:
+      message: "Алдаа гарлаа"
+      variant: error
+    variant: error
+
+states:
+  - id: loading_initial
+    description: "First load; skeleton timeline shown while GET /bookings/:id/timeline is in progress"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-TIMELINEEVENT, COMP-TOAST]
+
+  - id: loaded
+    description: "Timeline events fetched and rendered as vertical connected nodes"
+    components_visible: [COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: error_network
+    description: "Network error on timeline fetch; error toast with retry"
+    components_visible: [COMP-TOAST]
+    components_hidden: [COMP-TIMELINEEVENT, COMP-LOADINGSKELETON]
+
+copy:
+  - key: page_title
+    mn: "Захиалгын түүх"
+    en: "Booking Timeline"
+    max_chars: 25
+
+  - key: event_booking_created
+    mn: "Захиалга үүсгэсэн"
+    en: "Booking created"
+    max_chars: 30
+
+  - key: event_booking_assigned
+    mn: "Гүйцэтгэгч томилогдсон"
+    en: "Tasker assigned"
+    max_chars: 30
+
+  - key: event_reschedule_requested
+    mn: "Цаг өөрчлөх хүсэлт илгээсэн"
+    en: "Reschedule requested"
+    max_chars: 35
+
+  - key: event_reschedule_accepted
+    mn: "Цаг өөрчлөлт зөвшөөрсөн"
+    en: "Reschedule accepted"
+    max_chars: 35
+
+  - key: event_reschedule_declined
+    mn: "Цаг өөрчлөлт татгалзсан"
+    en: "Reschedule declined"
+    max_chars: 35
+
+  - key: event_reschedule_expired
+    mn: "Цаг өөрчлөх хүсэлт дууссан"
+    en: "Reschedule request expired"
+    max_chars: 35
+
+  - key: event_tasker_marked_done
+    mn: "Гүйцэтгэгч дуусгасан гэж тэмдэглэсэн"
+    en: "Tasker marked as done"
+    max_chars: 40
+
+  - key: event_customer_confirmed
+    mn: "Хэрэглэгч баталгаажуулсан"
+    en: "Customer confirmed completion"
+    max_chars: 35
+
+  - key: event_cancelled
+    mn: "Захиалга цуцалсан"
+    en: "Booking cancelled"
+    max_chars: 30
+
+  - key: event_no_show
+    mn: "Ирээгүй гэж тэмдэглэсэн"
+    en: "Flagged as no-show"
+    max_chars: 30
+
+  - key: error_toast
+    mn: "Түүх ачааллахад алдаа гарлаа"
+    en: "Failed to load timeline"
+    max_chars: 40
+
+api_endpoints:
+  - method: GET
+    path: "/bookings/:id/timeline"
+    purpose: "Fetch immutable ordered list of booking lifecycle events with timestamps"
+
+analytics_events:
+  - event: "booking_timeline_viewed"
+    trigger: "Screen becomes visible with timeline data loaded"
+
+acceptance_criteria:
+  - "Initial load shows skeleton placeholders matching timeline layout"
+  - "Timeline renders as a vertical connected list with dots and lines"
+  - "Current/latest event is highlighted with primary color dot"
+  - "Past events show default dots; future events are dimmed"
+  - "Each event shows event type label, timestamp, and optional description"
+  - "Timeline events are immutable and include reschedule request, accept, decline, and expiry actions per REQ-BOOK-13"
+  - "Timestamps display in YYYY.MM.DD HH:MM format per Mongolian convention"
+  - "Back button navigates via pop to Booking Detail (SCR-CUST-017)"
+  - "Network error shows error toast with retry action"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

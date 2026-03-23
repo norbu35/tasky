@@ -1,0 +1,158 @@
+# Screen Spec: Customer Bookings List
+screen_id: SCR-CUST-016
+name: "Customer Bookings List"
+route: "/(customer)/bookings"
+role: [customer]
+phase: "0-1"
+template: feed_list
+figma_page: "Customer/Customer Bookings List"
+feature: "booking"
+
+layout:
+  template: feed_list
+  density: default
+  structure: "safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_cards) -> pull_to_refresh"
+
+components:
+  - id: COMP-SPLITCARD
+    usage: "Booking card showing tasker avatar, task title, scheduled date, price, and status badge in two-tone layout"
+    props:
+      headerContent: "ProfileAvatar + price_display"
+      bodyContent: "card_title + schedule + StatusBadge"
+      status: assigned
+    variant: booking
+
+  - id: COMP-STATUSBADGE
+    usage: "Status pill on each booking card showing current booking state"
+    props:
+      status: assigned
+      size: sm
+    variant: assigned
+
+  - id: COMP-EMPTYSTATE
+    usage: "Shown when customer has no bookings yet; includes activation CTA to browse tasks"
+    props:
+      illustration: "calendar_empty"
+      headline: "Захиалга байхгүй байна"
+      description: "Даалгавар нийтэлж, гүйцэтгэгч сонгоорой"
+      ctaLabel: "Даалгавар нийтлэх"
+    variant: activation
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton placeholders matching booking card layout during initial load and refresh"
+    props:
+      variant: card
+      count: 4
+    variant: card
+
+  - id: COMP-TOAST
+    usage: "Error toast shown on network failure during refresh"
+    props:
+      message: "Алдаа гарлаа"
+      variant: error
+    variant: error
+
+states:
+  - id: loading_initial
+    description: "First load; skeleton cards displayed while GET /bookings/mine is in progress"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-TOAST]
+
+  - id: empty
+    description: "API returned zero bookings; activation empty state shown"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-SPLITCARD, COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: populated_active
+    description: "Active tab selected; booking cards filtered to ASSIGNED status shown"
+    components_visible: [COMP-SPLITCARD, COMP-STATUSBADGE]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: populated_completed
+    description: "Completed tab selected; booking cards filtered to COMPLETED, CANCELLED, NO_SHOW statuses shown"
+    components_visible: [COMP-SPLITCARD, COMP-STATUSBADGE]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: loading_refresh
+    description: "Pull-to-refresh triggered; inline refresh indicator visible above card list"
+    components_visible: [COMP-SPLITCARD, COMP-STATUSBADGE]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
+
+  - id: error_network
+    description: "Network request failed; error toast shown with retry option"
+    components_visible: [COMP-TOAST]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: offline_cached
+    description: "Device is offline; cached booking cards shown with offline banner at top"
+    components_visible: [COMP-SPLITCARD, COMP-STATUSBADGE]
+    components_hidden: [COMP-EMPTYSTATE, COMP-LOADINGSKELETON]
+
+copy:
+  - key: page_title
+    mn: "Захиалгууд"
+    en: "Bookings"
+    max_chars: 20
+
+  - key: tab_active
+    mn: "Идэвхтэй"
+    en: "Active"
+    max_chars: 15
+
+  - key: tab_completed
+    mn: "Дууссан"
+    en: "Completed"
+    max_chars: 15
+
+  - key: empty_headline
+    mn: "Захиалга байхгүй байна"
+    en: "No bookings yet"
+    max_chars: 30
+
+  - key: empty_description
+    mn: "Даалгавар нийтэлж, гүйцэтгэгч сонгоорой"
+    en: "Post a task and select a Tasker to get started"
+    max_chars: 60
+
+  - key: empty_cta
+    mn: "Даалгавар нийтлэх"
+    en: "Post a Task"
+    max_chars: 20
+
+  - key: offline_banner
+    mn: "Офлайн горим — хуучин мэдээлэл харагдаж байна"
+    en: "Offline mode — showing cached data"
+    max_chars: 60
+
+  - key: error_toast
+    mn: "Захиалгууд ачааллахад алдаа гарлаа"
+    en: "Failed to load bookings"
+    max_chars: 40
+
+api_endpoints:
+  - method: GET
+    path: "/bookings/mine"
+    purpose: "Fetch list of customer bookings with status filter"
+
+analytics_events:
+  - event: "bookings_list_viewed"
+    trigger: "Screen becomes visible"
+  - event: "bookings_tab_switched"
+    trigger: "User switches between Active and Completed tabs"
+  - event: "booking_card_tapped"
+    trigger: "User taps a booking card to navigate to detail"
+  - event: "bookings_pull_to_refresh"
+    trigger: "User pulls to refresh the list"
+  - event: "bookings_empty_cta_tapped"
+    trigger: "User taps 'Post a Task' from empty state"
+
+acceptance_criteria:
+  - "Initial load shows skeleton cards matching booking card layout"
+  - "Active tab shows only ASSIGNED bookings; Completed tab shows COMPLETED, CANCELLED, and NO_SHOW bookings"
+  - "Each booking card shows tasker avatar, task title, scheduled date/time, budget, and status badge"
+  - "Tapping a booking card navigates via push to Booking Detail (SCR-CUST-017)"
+  - "Pull-to-refresh re-fetches booking list"
+  - "Empty state includes activation CTA that navigates to Post Task flow (SCR-CUST-002)"
+  - "Offline state shows cached bookings with an offline banner"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - "This screen is the root of the bookings tab in customer bottom navigation"

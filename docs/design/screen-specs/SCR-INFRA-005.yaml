@@ -1,0 +1,144 @@
+# Screen Spec: Help & Support / FAQ
+screen_id: SCR-INFRA-005
+name: "Help & Support / FAQ"
+route: "/help"
+role: [customer, tasker]
+phase: "0-1"
+template: feed_list
+figma_page: "Infrastructure/Help & Support"
+feature: "support"
+
+layout:
+  template: feed_list
+  density: default
+  structure: "safe_area -> sticky_header(search) -> scrollview(faq_sections) -> empty/error"
+
+components:
+  - id: COMP-SEARCHBAR
+    usage: "Search bar at top to filter FAQ questions by keyword"
+    props:
+      placeholder: "Асуулт хайх..."
+      value: ""
+    variant: default
+
+  - id: COMP-LOADINGSKELETON
+    usage: "List skeleton placeholder while FAQ content loads"
+    props:
+      variant: list_row
+      count: 6
+    variant: list_row
+
+  - id: COMP-LISTROW
+    usage: "Each FAQ item as a tappable list row with disclosure indicator"
+    props:
+      label: "FAQ question"
+      showDisclosure: true
+    variant: default
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error state when FAQ content fails to load"
+    props:
+      illustration: "error_support"
+      headline: "Ачааллах боломжгүй"
+      description: "Тусламжийн мэдээллийг ачааллахад алдаа гарлаа"
+      ctaLabel: "Дахин оролдох"
+    variant: error
+
+  - id: COMP-BUTTON
+    usage: "Back navigation button in nav header"
+    props:
+      label: "Буцах"
+      variant: ghost
+      icon: "arrow_left"
+      iconPosition: "left"
+    variant: ghost
+
+states:
+  - id: loading
+    description: "FAQ content is loading"
+    components_visible: [COMP-SEARCHBAR, COMP-LOADINGSKELETON]
+    components_hidden: [COMP-LISTROW, COMP-EMPTYSTATE]
+
+  - id: loaded
+    description: "FAQ sections and questions are loaded and displayed"
+    components_visible: [COMP-SEARCHBAR, COMP-LISTROW]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: error_network
+    description: "FAQ content failed to load due to network error"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-SEARCHBAR, COMP-LOADINGSKELETON, COMP-LISTROW]
+
+copy:
+  - key: nav_title
+    mn: "Тусламж"
+    en: "Help & Support"
+    max_chars: 20
+
+  - key: search_placeholder
+    mn: "Асуулт хайх..."
+    en: "Search questions..."
+    max_chars: 30
+
+  - key: section_general
+    mn: "Ерөнхий"
+    en: "General"
+    max_chars: 20
+
+  - key: section_tasks
+    mn: "Даалгаврын тухай"
+    en: "About Tasks"
+    max_chars: 20
+
+  - key: section_bookings
+    mn: "Захиалгын тухай"
+    en: "About Bookings"
+    max_chars: 20
+
+  - key: section_payments
+    mn: "Төлбөрийн тухай"
+    en: "About Payments"
+    max_chars: 20
+
+  - key: section_account
+    mn: "Бүртгэлийн тухай"
+    en: "About Account"
+    max_chars: 20
+
+  - key: error_headline
+    mn: "Ачааллах боломжгүй"
+    en: "Unable to load"
+    max_chars: 30
+
+  - key: error_description
+    mn: "Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу"
+    en: "Failed to load help content. Please try again"
+    max_chars: 80
+
+  - key: error_retry
+    mn: "Дахин оролдох"
+    en: "Try again"
+    max_chars: 20
+
+api_endpoints: []
+
+analytics_events:
+  - event: "help_viewed"
+    trigger: "Help & Support screen loaded successfully"
+  - event: "help_search"
+    trigger: "User types in FAQ search bar"
+  - event: "help_faq_tapped"
+    trigger: "User taps a specific FAQ question"
+  - event: "help_load_error"
+    trigger: "FAQ content failed to load"
+
+acceptance_criteria:
+  - "Loading state shows 6 list row skeletons matching FAQ layout"
+  - "Loaded state displays FAQ grouped by section with expandable questions"
+  - "Search bar filters FAQ items by keyword in real-time"
+  - "Each FAQ item is tappable with disclosure indicator, expanding answer inline"
+  - "Network error state shows error illustration with retry CTA"
+  - "Back button in nav header pops to previous screen"
+  - "FAQ content supports both Mongolian and English based on app language"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - "44pt minimum touch target on all tappable FAQ rows"

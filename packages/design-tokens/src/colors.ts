@@ -1,12 +1,12 @@
-// Steppe Diffusion palette — aligned with tokens.ts and tokens.css
+// Тэнгэр (Sky) palette — aligned with tokens.ts and tokens.css
 // This file is the legacy shadcn-compatible export; prefer tokens.ts for new code.
 export const colors = {
   primary: {
-    DEFAULT: '#163838', // Deep Teal
-    foreground: '#FAFAF5', // Cream
+    DEFAULT: '#1B3A5C', // Deep Sky Blue
+    foreground: '#F9F8F5', // Clean Off-White
   },
   secondary: {
-    DEFAULT: '#89752A', // Golden Olive
+    DEFAULT: '#C49A3C', // Steppe Gold
     foreground: '#FFFFFF',
   },
   destructive: {
@@ -14,20 +14,20 @@ export const colors = {
     foreground: '#FFFFFF',
   },
   muted: {
-    DEFAULT: '#F2F1EB', // Cream Grey
-    foreground: '#424846', // Muted Teal
+    DEFAULT: '#F3F1EC', // Light Warm
+    foreground: '#576473', // Muted Blue
   },
   accent: {
-    DEFAULT: '#A93700', // Terracotta
-    foreground: '#FAFAF5', // Cream
+    DEFAULT: '#6BA3BE', // Open Sky
+    foreground: '#FFFFFF',
   },
-  background: '#FAFAF5', // Warm Cream
-  foreground: '#163838', // Deep Teal
+  background: '#F9F8F5', // Clean Off-White
+  foreground: '#1B3A5C', // Deep Sky Blue
   card: {
     DEFAULT: '#FFFFFF',
-    foreground: '#163838',
+    foreground: '#1B3A5C',
   },
-  border: '#BDC5C3', // Teal-Grey
-  input: '#E2E1DA',
-  ring: '#163838',
+  border: '#C7D0D9', // Soft Blue-Grey
+  input: '#DBE0E5',
+  ring: '#1B3A5C',
 };

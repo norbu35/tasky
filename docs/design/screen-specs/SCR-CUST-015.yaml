@@ -1,0 +1,75 @@
+# Screen Spec: Booking Confirmed — Success
+screen_id: SCR-CUST-015
+name: "Booking Confirmed — Success"
+route: "/(customer)/bookings/confirmed"
+role: [customer]
+phase: "0-1"
+template: success_celebration
+figma_page: "Customer/Booking Confirmed Success"
+feature: "booking"
+
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: "safe_area -> centered(animated_checkmark + headline + next_steps + ctas)"
+
+components:
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Animated success checkmark displayed after booking is confirmed"
+    props:
+      size: 96
+      color: verified
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to view the new booking detail; secondary CTA to return to bookings list"
+    props:
+      label: "Захиалга харах"
+      variant: primary
+      size: lg
+    variant: primary
+
+states:
+  - id: default
+    description: "Booking successfully created; celebration screen shown with animated checkmark, headline, next-steps guidance, and two CTAs"
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON]
+    components_hidden: []
+
+copy:
+  - key: headline
+    mn: "Захиалга баталгаажлаа!"
+    en: "Booking confirmed!"
+    max_chars: 30
+
+  - key: next_steps
+    mn: "Таны гүйцэтгэгч товлосон цагт ирнэ. Чат хэсгээс холбогдох боломжтой."
+    en: "Your Tasker will arrive at the scheduled time. You can contact them via chat."
+    max_chars: 100
+
+  - key: cta_view_booking
+    mn: "Захиалга харах"
+    en: "View Booking"
+    max_chars: 20
+
+  - key: cta_done
+    mn: "Болсон"
+    en: "Done"
+    max_chars: 20
+
+api_endpoints: []
+
+analytics_events:
+  - event: "booking_confirmed_success_shown"
+    trigger: "Success screen displayed after booking creation"
+  - event: "booking_confirmed_view_tapped"
+    trigger: "User taps 'View Booking' CTA"
+  - event: "booking_confirmed_done_tapped"
+    trigger: "User taps 'Done' CTA"
+
+acceptance_criteria:
+  - "Animated checkmark plays spring animation on screen entry"
+  - "Headline and next-steps text render in Mongolian Cyrillic at 16px minimum body size"
+  - "'View Booking' CTA navigates via replace to Booking Detail (SCR-CUST-017)"
+  - "'Done' CTA navigates via replace to Customer Bookings List (SCR-CUST-016)"
+  - "Screen uses comfortable density with generous spacing"
+  - "Add-to-calendar deep link is available if device supports it"

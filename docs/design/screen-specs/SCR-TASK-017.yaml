@@ -1,0 +1,249 @@
+# Screen Spec: Lead Unlock — Accept/Decline
+screen_id: SCR-TASK-017
+name: "Lead Unlock — Accept/Decline"
+route: null
+role: [tasker]
+phase: "2"
+template: modal_sheet
+figma_page: "Tasker/Lead Unlock"
+feature: "monetization"
+
+layout:
+  template: modal_sheet
+  density: default
+  structure: "scrim -> sheet(handle_bar + title + lead_details + credit_cost + balance_display + timer + action_buttons)"
+
+components:
+  - id: COMP-MODALSHEET
+    usage: "Bottom sheet for lead unlock accept/decline flow with credit deduction"
+    props:
+      visible: true
+      title: "Захиалагч таныг сонголоо!"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to accept the lead and spend credits"
+    props:
+      label: "Зөвшөөрч, кредит зарцуулах"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA to decline the lead without spending credits"
+    props:
+      label: "Татгалзах"
+      variant: outline
+      size: lg
+    variant: outline
+
+  - id: COMP-BUTTON
+    usage: "CTA shown when credits are insufficient — redirect to purchase"
+    props:
+      label: "Кредит худалдаж авах"
+      variant: primary
+      size: xl
+    variant: primary
+
+  - id: COMP-CREDITBALANCE
+    usage: "Inline credit balance display showing current balance and cost to unlock"
+    props:
+      balance: 3
+      onPurchase: true
+    variant: inline
+
+  - id: COMP-PROFILEAVATAR
+    usage: "Customer avatar shown in lead notification (blurred or partial until unlock)"
+    props:
+      imageUrl: "customer_avatar_url"
+      size: "md"
+      isVerified: false
+    variant: md
+
+states:
+  - id: notification_received
+    description: "Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed"
+    components_visible: [handle_bar, notification_heading, task_summary, credit_cost, credit_balance, countdown_timer, accept_button, decline_button]
+    components_hidden: [accepting_spinner, success_content, insufficient_content, expired_content]
+
+  - id: accepting
+    description: "Accept in progress — credits being deducted via API"
+    components_visible: [handle_bar, notification_heading, accepting_spinner, accepting_message]
+    components_hidden: [accept_button, decline_button, credit_cost, countdown_timer, success_content, insufficient_content]
+
+  - id: accepted_credits_deducted
+    description: "Lead accepted — credits deducted, customer contact info unlocked"
+    components_visible: [handle_bar, success_icon, accepted_heading, accepted_description, contact_info_unlocked, view_booking_button]
+    components_hidden: [accept_button, decline_button, accepting_spinner, credit_cost, countdown_timer, insufficient_content]
+
+  - id: declined
+    description: "Lead declined — no credits charged, confirmation shown"
+    components_visible: [handle_bar, declined_heading, declined_description, done_button]
+    components_hidden: [accept_button, decline_button, credit_cost, countdown_timer, success_content, insufficient_content]
+
+  - id: insufficient_credits
+    description: "Credit balance is less than lead cost — purchase redirect offered"
+    components_visible: [handle_bar, notification_heading, task_summary, credit_cost, insufficient_warning, buy_credits_button, decline_button, countdown_timer]
+    components_hidden: [accept_button, accepting_spinner, success_content]
+
+  - id: expired_15min
+    description: "15-minute acceptance window expired — auto-declined, no credits charged"
+    components_visible: [handle_bar, expired_heading, expired_description, done_button]
+    components_hidden: [accept_button, decline_button, credit_cost, countdown_timer, accepting_spinner, success_content, insufficient_content]
+
+copy:
+  - key: notification_heading
+    mn: "Захиалагч таныг сонголоо!"
+    en: "A customer selected you!"
+    max_chars: 30
+
+  - key: task_summary_label
+    mn: "Даалгавар"
+    en: "Task"
+    max_chars: 10
+
+  - key: credit_cost_label
+    mn: "Кредит зарцуулалт"
+    en: "Credit Cost"
+    max_chars: 20
+
+  - key: credit_cost_value
+    mn: "{cost} кредит"
+    en: "{cost} credit(s)"
+    max_chars: 15
+
+  - key: credit_balance_label
+    mn: "Таны үлдэгдэл"
+    en: "Your Balance"
+    max_chars: 15
+
+  - key: credit_balance_value
+    mn: "{balance} кредит"
+    en: "{balance} credit(s)"
+    max_chars: 15
+
+  - key: countdown_label
+    mn: "Хүлээх хугацаа"
+    en: "Time remaining"
+    max_chars: 20
+
+  - key: countdown_format
+    mn: "{minutes}:{seconds}"
+    en: "{minutes}:{seconds}"
+    max_chars: 8
+
+  - key: accept_button
+    mn: "Зөвшөөрч, кредит зарцуулах"
+    en: "Accept & Spend Credits"
+    max_chars: 30
+
+  - key: decline_button
+    mn: "Татгалзах"
+    en: "Decline"
+    max_chars: 12
+
+  - key: accepting_message
+    mn: "Кредит зарцуулж байна..."
+    en: "Processing..."
+    max_chars: 25
+
+  - key: accepted_heading
+    mn: "Амжилттай!"
+    en: "Success!"
+    max_chars: 15
+
+  - key: accepted_description
+    mn: "Захиалагчийн холбоо барих мэдээлэл нээгдлээ. {cost} кредит зарцуулагдлаа."
+    en: "Customer contact info unlocked. {cost} credit(s) spent."
+    max_chars: 70
+
+  - key: contact_info_label
+    mn: "Холбоо барих"
+    en: "Contact Info"
+    max_chars: 15
+
+  - key: view_booking_button
+    mn: "Захиалга харах"
+    en: "View Booking"
+    max_chars: 18
+
+  - key: declined_heading
+    mn: "Татгалзсан"
+    en: "Declined"
+    max_chars: 12
+
+  - key: declined_description
+    mn: "Кредит зарцуулагдаагүй. Дараагийн боломжийг хүлээнэ үү."
+    en: "No credits charged. Wait for the next opportunity."
+    max_chars: 60
+
+  - key: insufficient_warning
+    mn: "Кредит хүрэлцэхгүй байна. Зарцуулах: {cost} кредит, Үлдэгдэл: {balance} кредит."
+    en: "Insufficient credits. Cost: {cost}, Balance: {balance}."
+    max_chars: 75
+
+  - key: buy_credits_button
+    mn: "Кредит худалдаж авах"
+    en: "Buy Credits"
+    max_chars: 25
+
+  - key: expired_heading
+    mn: "Хугацаа дууслаа"
+    en: "Time Expired"
+    max_chars: 18
+
+  - key: expired_description
+    mn: "15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй."
+    en: "The 15-minute window has expired. Auto-declined. No credits charged."
+    max_chars: 80
+
+  - key: done_button
+    mn: "Ойлголоо"
+    en: "Got it"
+    max_chars: 10
+
+  - key: refund_notice
+    mn: "Захиалагч цуцалвал кредит буцаагдана"
+    en: "Credits refunded if customer cancels"
+    max_chars: 45
+
+api_endpoints:
+  - method: POST
+    path: "/applications/:id/accept"
+    purpose: "Accept lead — deduct credits and unlock customer contact information"
+  - method: POST
+    path: "/applications/:id/decline"
+    purpose: "Decline lead — no credits charged, customer prompted to select next applicant"
+
+analytics_events:
+  - event: "lead_unlock_viewed"
+    trigger: "Lead Unlock sheet becomes visible"
+  - event: "lead_unlock_accepted"
+    trigger: "Tasker taps Accept & Spend Credits"
+  - event: "lead_unlock_declined"
+    trigger: "Tasker taps Decline"
+  - event: "lead_unlock_insufficient_credits"
+    trigger: "Insufficient credits state displayed"
+  - event: "lead_unlock_buy_credits_tapped"
+    trigger: "Tasker taps Buy Credits from insufficient state"
+  - event: "lead_unlock_expired"
+    trigger: "15-minute window expires without action"
+  - event: "lead_unlock_timer_viewed"
+    trigger: "Countdown timer starts with remaining time visible"
+
+acceptance_criteria:
+  - "This is a bottom sheet overlay triggered by push notification, not a standalone route"
+  - "15-minute countdown timer is prominently displayed (REQ-PAY-11, REQ-BOOK-10)"
+  - "Credit cost is shown alongside current balance using CreditBalance component"
+  - "Accept button deducts credits and unlocks customer contact info (REQ-PAY-11)"
+  - "Decline results in no credit charge (REQ-PAY-12)"
+  - "If customer cancels after lead unlock, credits are refunded (REQ-PAY-13)"
+  - "Refund notice is visible in the notification state"
+  - "Insufficient credits state shows balance vs cost and redirects to Credits Purchase (SCR-P2-001)"
+  - "Buy Credits button navigates to Credits Balance & Purchase (SCR-P2-001) via push"
+  - "Expired state auto-declines and confirms no credits were charged (REQ-PAY-12)"
+  - "On accept success, dismissed to My Jobs (SCR-TASK-012)"
+  - "On decline or expiry, dismissed to My Jobs (SCR-TASK-012)"
+  - "Lead cost follows category-tiered pricing (REQ-PAY-27)"
+  - "Core matching (browse/apply) remains free — credits only on accept (REQ-PAY-10, REQ-PAY-15)"
+  - "Scrim overlay behind sheet per modal_sheet template"

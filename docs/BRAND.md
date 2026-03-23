@@ -43,23 +43,23 @@ Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified id
 
 ---
 
-## Color Palette — "Steppe Diffusion"
+## Color Palette — "Тэнгэр" (Sky)
 
-Five anchors: Deep Teal `#163838` · Terracotta `#A93700` · Golden Olive `#89752A` · Indigo `#3F53A2` · Cream `#FAFAF5`
+Four anchors: Deep Sky Blue `#1B3A5C` · Steppe Gold `#C49A3C` · Open Sky `#6BA3BE` · Clean Off-White `#F9F8F5`
 
 | Token | Hex | Role | Rationale |
 |-------|-----|------|-----------|
-| `primary` | `#163838` | Deep Teal | Authority and trust. Grounded, not corporate. Also used as body text color. |
-| `primary-deep` | `#0D2626` | Darker Teal | Hero text, prominent headers, high-authority UI. |
-| `secondary` | `#A93700` | Terracotta | Second action color — secondary CTAs, warm interactive surfaces. Earth-toned energy. |
-| `accent` | `#89752A` | Golden Olive | Highlights, star ratings, tags, warm accents. |
-| `background` | `#FAFAF5` | Warm Cream | Inviting, warm surface. Easy on the eyes for long browsing sessions. |
-| `trust` | `#3F53A2` | Indigo | Trust badges, authority indicators. Cool digital confidence. |
-| `verified` | `#3B9B7A` | Sage Emerald | Verification badge. Derived from primary hue (180) shifted toward green (160) — reads as "safe" while harmonizing with the teal family. |
+| `primary` | `#1B3A5C` | Deep Sky Blue | Authority and trust. Resonates with Mongolia's "Мөнх хөх тэнгэр" (Eternal Blue Sky). Also used as body text color. |
+| `primary-deep` | `#102638` | Deeper Sky | Hero text, prominent headers, high-authority UI. |
+| `secondary` | `#C49A3C` | Steppe Gold | Star ratings, pricing, warm CTAs. Evokes the Mongolian steppe and adds warmth to the blue authority. |
+| `accent` | `#6BA3BE` | Open Sky | Highlights, links, interactive accents. Light, airy, modern. |
+| `background` | `#F9F8F5` | Clean Off-White | Clean, bright surface. Professional without being sterile. |
+| `trust` | `#3568A1` | Blue | Trust badges, authority indicators. Derived from primary hue at higher saturation. |
+| `verified` | `#469178` | Sage Emerald | Verification badge. Semantic green for "safe/confirmed" — independent of brand palette. |
 | `danger` | `#EF4444` | Red | Errors and destructive actions only. Never used for branding. |
 
 ### Dark theme
-Deep teal base (`180 30% 5%`) with warm cream foreground (`47 70% 88%`). Brand colors increase lightness to ~55% and slightly desaturate to avoid glare on dark surfaces. The terracotta secondary and golden olive accent remain warm and recognizable.
+Deep sky base (`212 35% 6%`) with warm foreground (`40 30% 88%`). Brand colors increase lightness to ~55-60% and slightly desaturate to avoid glare on dark surfaces. The steppe gold secondary warms up slightly and the open sky accent remains recognizable.
 
 ---
 
@@ -82,14 +82,14 @@ Deep teal base (`180 30% 5%`) with warm cream foreground (`47 70% 88%`). Brand c
 
 ## Logo Principles
 
-- **Wordmark:** "Tasky" in Manrope 700, `primary-deep` (`#0D2626`)
+- **Wordmark:** "Tasky" in Manrope 700, `primary-deep` (`#102638`)
 - **Don't use:** literal houses, hammers, generic checkmark shields, culturally specific symbols
 
 ---
 
 ## Recognition Marker — Hand-drawn Checkmark
 
-A gestural, slightly imperfect single-stroke checkmark in `verified` sage emerald (`#3B9B7A`). This is Tasky's signature mark — used across all surfaces to create brand recognition.
+A gestural, slightly imperfect single-stroke checkmark in `verified` sage emerald (`#469178`). This is Tasky's signature mark — used across all surfaces to create brand recognition.
 
 **The mark:** A hand-drawn checkmark rendered as an SVG path with `stroke-linecap: round` and `stroke-linejoin: round`. Not a geometric checkbox — a confident, human stroke with slight thickness variation.
 
@@ -106,7 +106,7 @@ A gestural, slightly imperfect single-stroke checkmark in `verified` sage emeral
 - Photo overlays on marketing imagery
 
 **Rules:**
-- Always `verified` color (`#3B9B7A`) — never primary, accent, or secondary
+- Always `verified` color (`#469178`) — never primary, accent, or secondary
 - Never fill the checkmark — stroke only
 - Minimum size: 16px
 - On dark backgrounds: use at 100% opacity. On light backgrounds: 60-80% opacity for subtlety.
@@ -120,8 +120,8 @@ The DAN state-identification badge is the primary trust signal on every Tasker p
 
 | State | Color Token | Label |
 |-------|------------|-------|
-| Verified | `verified` (#3B9B7A) | "Баталгаажсан" / Verified |
-| Pending | `accent` (#89752A) | "Хянагдаж байна" / Under Review |
+| Verified | `verified` (#469178) | "Баталгаажсан" / Verified |
+| Pending | `accent` (#6BA3BE) | "Хянагдаж байна" / Under Review |
 | Unverified | `chip-inactive` | (no badge shown) |
 
 The badge must appear:
@@ -134,7 +134,7 @@ The badge must appear:
 ## Photography & Illustration
 
 - **Photography:** Real urban homes and professional workers. Warm-lit, candid, not staged global stock.
-- **Illustration:** Flat geometric using `primary-deep` + `accent` palette. No gradients in illustrations — gradients are reserved for UI chrome.
+- **Illustration:** Flat geometric using `primary-deep` + `secondary` palette. No gradients in illustrations — gradients are reserved for UI chrome.
 - **Asset naming:** `hero-illustration.webp`, `auth-bg.webp`, `category-{slug}.webp`
 - **Performance:** All images served as `.webp`. Target < 150 KB for above-the-fold assets (20 Mbps mobile constraint).
 

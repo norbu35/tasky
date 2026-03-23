@@ -1,0 +1,189 @@
+# Screen Spec: Wallet — Balance & Payouts
+screen_id: SCR-P3-001
+name: "Wallet — Balance & Payouts"
+route: "/(tasker)/wallet"
+role: [tasker]
+phase: "3+"
+template: detail
+figma_page: "Phase 3+/Wallet Balance"
+feature: "wallet"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header -> scrollview(balance_hero + transaction_list) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-CARD
+    usage: "Hero card displaying current wallet balance with prominent amount"
+    props:
+      onPress: null
+    variant: elevated
+
+  - id: COMP-STATCARD
+    usage: "Summary stat cards for total earned, pending payouts, and completed payouts"
+    props:
+      label: "Нийт орлого"
+      value: "₮450,000"
+      icon: "wallet"
+    variant: default
+
+  - id: COMP-LISTROW
+    usage: "Recent wallet transactions showing earnings and payout entries"
+    props:
+      label: "Transaction description"
+      value: "₮25,000"
+      showDisclosure: false
+    variant: default
+
+  - id: COMP-STATUSBADGE
+    usage: "Badge showing pending payout status on payout entries"
+    props:
+      status: "assigned"
+      size: "sm"
+    variant: assigned
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to request a payout"
+    props:
+      label: "Мөнгө татах"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Detail skeleton for initial load of wallet data"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error state when wallet data fails to load"
+    props:
+      illustration: "error_wallet"
+      headline: "Ачааллах боломжгүй"
+      description: "Хэтэвчний мэдээллийг ачааллахад алдаа гарлаа"
+      ctaLabel: "Дахин оролдох"
+    variant: error
+
+states:
+  - id: loading_initial
+    description: "Fetching wallet balance and recent transactions from API"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON, COMP-EMPTYSTATE]
+
+  - id: loaded
+    description: "Wallet balance and transaction history loaded; no pending payouts"
+    components_visible: [COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE, COMP-STATUSBADGE]
+
+  - id: loaded_pending_payout
+    description: "Wallet loaded with a pending payout request visible in transaction list"
+    components_visible: [COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-STATUSBADGE, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: error_network
+    description: "Failed to load wallet data due to network error"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON, COMP-LOADINGSKELETON]
+
+copy:
+  - key: nav_title
+    mn: "Хэтэвч"
+    en: "Wallet"
+    max_chars: 15
+
+  - key: balance_label
+    mn: "Боломжит үлдэгдэл"
+    en: "Available balance"
+    max_chars: 25
+
+  - key: balance_value
+    mn: "₮{amount}"
+    en: "₮{amount}"
+    max_chars: 15
+
+  - key: stat_total_earned
+    mn: "Нийт орлого"
+    en: "Total earned"
+    max_chars: 20
+
+  - key: stat_pending_payout
+    mn: "Хүлээгдэж буй"
+    en: "Pending payout"
+    max_chars: 20
+
+  - key: stat_completed_payout
+    mn: "Татсан дүн"
+    en: "Paid out"
+    max_chars: 20
+
+  - key: section_transactions
+    mn: "Сүүлийн гүйлгээнүүд"
+    en: "Recent transactions"
+    max_chars: 25
+
+  - key: type_earning
+    mn: "Орлого — {taskTitle}"
+    en: "Earning — {taskTitle}"
+    max_chars: 50
+
+  - key: type_payout
+    mn: "Мөнгө татсан"
+    en: "Payout"
+    max_chars: 20
+
+  - key: status_pending
+    mn: "Хүлээгдэж буй"
+    en: "Pending"
+    max_chars: 15
+
+  - key: status_completed
+    mn: "Дууссан"
+    en: "Completed"
+    max_chars: 15
+
+  - key: cta_payout
+    mn: "Мөнгө татах"
+    en: "Request payout"
+    max_chars: 20
+
+  - key: error_headline
+    mn: "Ачааллах боломжгүй"
+    en: "Unable to load"
+    max_chars: 30
+
+  - key: error_retry
+    mn: "Дахин оролдох"
+    en: "Try again"
+    max_chars: 20
+
+api_endpoints:
+  - method: GET
+    path: "/wallet/balance"
+    purpose: "Fetch current available wallet balance and summary stats"
+  - method: GET
+    path: "/wallet/transactions"
+    purpose: "Fetch recent wallet transactions (earnings and payouts)"
+
+analytics_events:
+  - event: "wallet_viewed"
+    trigger: "Wallet screen loaded successfully"
+  - event: "wallet_payout_tapped"
+    trigger: "User taps 'Request payout' CTA"
+  - event: "wallet_transaction_viewed"
+    trigger: "User scrolls through transaction list"
+
+acceptance_criteria:
+  - "Loading state shows detail skeleton matching wallet layout"
+  - "Balance hero card shows available balance using price_display typography (Manrope bold 20px)"
+  - "Stat cards show total earned, pending payouts, and completed payouts"
+  - "Transaction list shows recent earnings and payouts in chronological order"
+  - "Pending payout entries display an 'assigned' status badge"
+  - "Request payout CTA navigates to SCR-P3-002 (Request Payout)"
+  - "Payout button is disabled when available balance is zero"
+  - "Network error shows error state with retry CTA"
+  - "Pull-to-refresh supported for async detail screens"
+  - "Currency values use ₮ prefix with comma thousand separators"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

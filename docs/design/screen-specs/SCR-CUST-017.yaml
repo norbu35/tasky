@@ -1,0 +1,312 @@
+# Screen Spec: Booking Detail (Customer)
+screen_id: SCR-CUST-017
+name: "Booking Detail (Customer)"
+route: "/(customer)/bookings/:bookingId"
+role: [customer]
+phase: "0-1"
+template: detail
+figma_page: "Customer/Booking Detail Customer"
+feature: "booking"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(tasker_section + task_summary + schedule + actions) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-PROFILEAVATAR
+    usage: "Tasker avatar with verification badge in the hero section"
+    props:
+      imageUrl: "tasker.avatarUrl"
+      size: lg
+      isVerified: true
+    variant: lg
+
+  - id: COMP-STATUSBADGE
+    usage: "Booking status badge displayed prominently below the tasker info"
+    props:
+      status: assigned
+      size: md
+    variant: assigned
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA in sticky bottom bar; changes per state (Message, Confirm Complete, Rebook, Report Issue)"
+    props:
+      label: "Зурвас илгээх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Detail skeleton placeholder during initial data fetch"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+  - id: COMP-TOAST
+    usage: "Error toast on network failure"
+    props:
+      message: "Алдаа гарлаа"
+      variant: error
+    variant: error
+
+  - id: COMP-TIMELINEEVENT
+    usage: "Quick timeline preview showing latest booking event; tappable to view full timeline"
+    props:
+      event: "Захиалга баталгаажсан"
+      timestamp: "2026-03-22 10:00"
+      isCurrent: true
+    variant: current
+
+states:
+  - id: loading_initial
+    description: "First load; detail skeleton shown while GET /bookings/:id is in progress"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT, COMP-TOAST]
+
+  - id: assigned
+    description: "Booking is ASSIGNED; tasker info, task summary, schedule, and action buttons visible. CTA bar shows 'Message' and secondary actions (Reschedule, Cancel, Timeline)"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: assigned_approaching
+    description: "Booking is ASSIGNED and scheduled time is within 4 hours; late-cancel warning context shown, reschedule still available"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: tasker_marked_done
+    description: "Tasker has marked the job done; primary CTA changes to 'Confirm Complete'. Report Issue action also available"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: completed
+    description: "Booking is COMPLETED; review prompt shown if not yet reviewed. Actions: Leave Review, View Timeline"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: completed_rebook_cta
+    description: "Booking is COMPLETED and review is submitted; Rebook CTA becomes primary action"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: cancelled
+    description: "Booking is CANCELLED; status badge shows cancelled, no further actions except View Timeline and Report Issue"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: no_show
+    description: "Booking ended in NO_SHOW; status badge shows no-show, timeline visible, Report Issue available"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: escrow_pending
+    description: "Phase 3+ optional: escrow payment initiated but not yet confirmed; escrow status indicator shown"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: escrow_held
+    description: "Phase 3+ optional: escrow deposit is held by platform; release info visible"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: escrow_released
+    description: "Phase 3+ optional: escrow funds released to tasker after completion confirmation"
+    components_visible: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-TOAST]
+
+  - id: error_network
+    description: "Network error on data fetch; error toast with retry"
+    components_visible: [COMP-TOAST]
+    components_hidden: [COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT, COMP-LOADINGSKELETON]
+
+copy:
+  - key: page_title
+    mn: "Захиалгын дэлгэрэнгүй"
+    en: "Booking Detail"
+    max_chars: 30
+
+  - key: section_tasker
+    mn: "Гүйцэтгэгч"
+    en: "Tasker"
+    max_chars: 20
+
+  - key: section_task_summary
+    mn: "Даалгаврын товч"
+    en: "Task Summary"
+    max_chars: 20
+
+  - key: section_schedule
+    mn: "Товлосон цаг"
+    en: "Scheduled Time"
+    max_chars: 20
+
+  - key: section_location
+    mn: "Байршил"
+    en: "Location"
+    max_chars: 20
+
+  - key: section_budget
+    mn: "Төсөв"
+    en: "Budget"
+    max_chars: 20
+
+  - key: section_timeline
+    mn: "Түүх"
+    en: "Timeline"
+    max_chars: 20
+
+  - key: cta_message
+    mn: "Зурвас илгээх"
+    en: "Message"
+    max_chars: 20
+
+  - key: cta_confirm_complete
+    mn: "Дуусгасныг баталгаажуулах"
+    en: "Confirm Complete"
+    max_chars: 30
+
+  - key: cta_rebook
+    mn: "Дахин захиалах"
+    en: "Rebook"
+    max_chars: 20
+
+  - key: cta_reschedule
+    mn: "Цаг өөрчлөх"
+    en: "Reschedule"
+    max_chars: 20
+
+  - key: cta_cancel
+    mn: "Захиалга цуцлах"
+    en: "Cancel Booking"
+    max_chars: 20
+
+  - key: cta_report_issue
+    mn: "Асуудал мэдэгдэх"
+    en: "Report Issue"
+    max_chars: 20
+
+  - key: cta_timeline
+    mn: "Түүх харах"
+    en: "View Timeline"
+    max_chars: 20
+
+  - key: cta_leave_review
+    mn: "Үнэлгээ өгөх"
+    en: "Leave Review"
+    max_chars: 20
+
+  - key: cta_pay_escrow
+    mn: "Эскроу төлбөр хийх"
+    en: "Pay with Escrow"
+    max_chars: 20
+
+  - key: status_assigned
+    mn: "Баталгаажсан"
+    en: "Assigned"
+    max_chars: 15
+
+  - key: status_tasker_marked_done
+    mn: "Дууссан гэж тэмдэглэсэн"
+    en: "Marked as done"
+    max_chars: 30
+
+  - key: status_completed
+    mn: "Дууссан"
+    en: "Completed"
+    max_chars: 15
+
+  - key: status_cancelled
+    mn: "Цуцалсан"
+    en: "Cancelled"
+    max_chars: 15
+
+  - key: status_no_show
+    mn: "Ирээгүй"
+    en: "No-Show"
+    max_chars: 15
+
+  - key: payment_note
+    mn: "Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно"
+    en: "Payment is settled directly with the Tasker"
+    max_chars: 60
+
+  - key: approaching_warning
+    mn: "Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ"
+    en: "Less than 4 hours until scheduled time"
+    max_chars: 60
+
+  - key: escrow_pending_label
+    mn: "Эскроу төлбөр хүлээгдэж байна"
+    en: "Escrow payment pending"
+    max_chars: 40
+
+  - key: escrow_held_label
+    mn: "Эскроу барьцаа хадгалагдаж байна"
+    en: "Escrow deposit held"
+    max_chars: 40
+
+  - key: escrow_released_label
+    mn: "Эскроу суллагдсан"
+    en: "Escrow released"
+    max_chars: 30
+
+  - key: review_prompt
+    mn: "Үнэлгээ өгнө үү"
+    en: "Please leave a review"
+    max_chars: 30
+
+  - key: error_toast
+    mn: "Захиалгын мэдээлэл ачааллахад алдаа гарлаа"
+    en: "Failed to load booking details"
+    max_chars: 50
+
+api_endpoints:
+  - method: GET
+    path: "/bookings/:id"
+    purpose: "Fetch booking detail including tasker profile, task summary, schedule, status, and timeline preview"
+
+analytics_events:
+  - event: "booking_detail_viewed"
+    trigger: "Screen becomes visible with booking data loaded"
+  - event: "booking_detail_message_tapped"
+    trigger: "User taps 'Message' to open chat with tasker"
+  - event: "booking_detail_confirm_complete_tapped"
+    trigger: "User taps 'Confirm Complete' when tasker marked done"
+  - event: "booking_detail_rebook_tapped"
+    trigger: "User taps 'Rebook' on a completed booking"
+  - event: "booking_detail_reschedule_tapped"
+    trigger: "User taps 'Reschedule'"
+  - event: "booking_detail_cancel_tapped"
+    trigger: "User taps 'Cancel Booking'"
+  - event: "booking_detail_report_issue_tapped"
+    trigger: "User taps 'Report Issue'"
+  - event: "booking_detail_timeline_tapped"
+    trigger: "User taps 'View Timeline'"
+  - event: "booking_detail_tasker_profile_tapped"
+    trigger: "User taps tasker avatar/name to view profile"
+  - event: "booking_detail_escrow_pay_tapped"
+    trigger: "Phase 3+: user taps 'Pay with Escrow'"
+
+acceptance_criteria:
+  - "Initial load shows detail skeleton matching content layout"
+  - "Assigned state shows tasker avatar with verification badge, task title, schedule, location, and budget"
+  - "Assigned state CTA bar contains Message (primary) and secondary actions: Reschedule, Cancel, Timeline"
+  - "Assigned_approaching state shows a warning banner when scheduled time is within 4 hours"
+  - "Tasker_marked_done state changes primary CTA to 'Confirm Complete' and shows 'Report Issue' as secondary"
+  - "Tapping 'Confirm Complete' opens Confirm Completion modal (SCR-CUST-018)"
+  - "Completed state shows review prompt if not yet reviewed, with 'Leave Review' CTA navigating to SCR-SHARED-017"
+  - "Completed_rebook_cta state shows 'Rebook' as primary CTA navigating to Rebook Shortcut (SCR-CUST-023)"
+  - "Cancelled state shows cancelled status badge with no modify actions; only Timeline and Report Issue available"
+  - "No-show state shows no-show status badge with Timeline and Report Issue available"
+  - "Escrow states (pending, held, released) are optional Phase 3+ and show appropriate escrow status indicators"
+  - "Payment settlement note is always visible in Phase 0-2 (direct settlement)"
+  - "Tapping tasker avatar navigates to Tasker Public Profile (SCR-CUST-013)"
+  - "Tapping 'Message' navigates to Chat Detail (SCR-SHARED-011)"
+  - "Tapping 'Reschedule' navigates to Reschedule screen (SCR-CUST-020)"
+  - "Tapping 'Cancel Booking' opens Booking Cancel modal (SCR-CUST-022)"
+  - "Tapping 'Report Issue' navigates to Dispute Raise (SCR-CUST-024)"
+  - "Tapping 'View Timeline' navigates to Booking Timeline (SCR-CUST-019)"
+  - "No-show flag trigger is handled via modal (SCR-CUST-021) when conditions met per PRD Section 6.4.3"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"
+  - "Network error shows error toast with retry action"

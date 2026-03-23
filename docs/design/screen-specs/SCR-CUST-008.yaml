@@ -1,0 +1,77 @@
+# Screen Spec: Task Posted — Success
+screen_id: SCR-CUST-008
+name: "Task Posted — Success"
+route: "/(customer)/tasks/new/success"
+role: [customer]
+phase: "0-1"
+template: success_celebration
+figma_page: "Customer/Task Posted Success"
+feature: "task_posting"
+
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: "safe_area -> centered(animated_checkmark + headline + next_steps + ctas)"
+
+components:
+  - id: COMP-ANIMATEDCHECKMARK
+    usage: "Animated success checkmark with spring bounce animation"
+    props:
+      size: "lg"
+      color: "verified"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to view the posted task; secondary CTA to return to task list"
+    props:
+      label: "Даалгаврыг харах"
+      variant: primary
+      size: xl
+    variant: primary
+
+states:
+  - id: default
+    description: "Task posted successfully; celebration screen with checkmark, headline, guidance, and CTAs"
+    components_visible: [COMP-ANIMATEDCHECKMARK, COMP-BUTTON]
+    components_hidden: []
+
+copy:
+  - key: headline
+    mn: "Даалгавар амжилттай орлоо!"
+    en: "Task posted successfully!"
+    max_chars: 30
+
+  - key: next_steps
+    mn: "Гүйцэтгэгчид таны даалгаврыг харж, хүсэлт илгээх боломжтой. Шинэ хүсэлт ирэхэд мэдэгдэл авна"
+    en: "Taskers can now see your task and apply. You will be notified when new applications arrive"
+    max_chars: 120
+
+  - key: cta_view_task
+    mn: "Даалгаврыг харах"
+    en: "View Task"
+    max_chars: 20
+
+  - key: cta_done
+    mn: "Дууслаа"
+    en: "Done"
+    max_chars: 10
+
+api_endpoints: []
+
+analytics_events:
+  - event: "task_posted_success_viewed"
+    trigger: "Success screen becomes visible after task creation"
+  - event: "task_posted_view_task_tapped"
+    trigger: "User taps 'View Task' to see the posted task detail"
+  - event: "task_posted_done_tapped"
+    trigger: "User taps 'Done' to return to task list"
+
+acceptance_criteria:
+  - "StepIndicator is not shown on success screen (wizard is complete)"
+  - "AnimatedCheckmark plays spring bounce animation on screen entry"
+  - "Headline confirms task was posted successfully"
+  - "Next steps text explains that Taskers can now apply and user will receive notifications"
+  - "Primary CTA 'View Task' replaces to Task Detail SCR-CUST-009 with the new task_id"
+  - "Secondary CTA 'Done' replaces to My Tasks SCR-CUST-001"
+  - "Comfortable density spacing for celebratory breathing room"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

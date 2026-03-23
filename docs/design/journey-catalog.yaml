@@ -1,0 +1,876 @@
+# Journey Catalog — Tasky Mobile
+# Formalized user flows with all paths per goal
+# Depends on: domain-lifecycles.yaml, PRD Section 6
+
+journeys:
+
+  # ═══════════════════════════════════════════════════
+  # SHARED JOURNEYS
+  # ═══════════════════════════════════════════════════
+
+  - id: JRN-SHARED-01
+    name: "First Launch & Onboarding"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "New user completes signup and reaches home screen"
+    entry: SCR-SHARED-001
+    exit: [SCR-CUST-001, SCR-TASK-001]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-001
+        action: "App launches, splash animation"
+        next: SCR-SHARED-002
+      - step: 2
+        screen: SCR-SHARED-002
+        action: "Tap 'Login with Facebook'"
+        next: SCR-SHARED-005
+        lifecycle: "USER-T01 (user_signs_up)"
+      - step: 3
+        screen: SCR-SHARED-005
+        action: "Swipe through 3 onboarding slides"
+        next: SCR-SHARED-006
+      - step: 4
+        screen: SCR-SHARED-006
+        action: "Select role (Customer or Tasker)"
+        next: SCR-SHARED-007
+        lifecycle: "USER-T02 or USER-T04"
+      - step: 5
+        screen: SCR-SHARED-007
+        action: "Grant/skip camera permission"
+        next: SCR-SHARED-008
+      - step: 6
+        screen: SCR-SHARED-008
+        action: "Grant/skip location permission"
+        next: SCR-SHARED-009
+      - step: 7
+        screen: SCR-SHARED-009
+        action: "Grant/skip notification permission"
+        next: "SCR-CUST-001 or SCR-TASK-001"
+    alternate_paths:
+      - id: JRN-SHARED-01-A1
+        name: "Facebook OAuth failure"
+        branch_at: 2
+        condition: "Facebook OAuth unavailable or user cancels"
+        screens: [SCR-SHARED-002]
+        outcome: "Error state on login screen; retry or wait"
+      - id: JRN-SHARED-01-A2
+        name: "Returning user"
+        branch_at: 1
+        condition: "Valid JWT exists"
+        screens: [SCR-SHARED-001]
+        outcome: "Skip to home screen directly"
+
+  - id: JRN-SHARED-02
+    name: "Phase 2 OTP Migration"
+    actor: [customer, tasker]
+    phase: "2"
+    goal: "Existing Facebook-only user adds phone OTP"
+    entry: SCR-SHARED-004
+    exit: ["previous screen"]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-004
+        action: "Migration gate shown on first Phase 2 session"
+        next: SCR-SHARED-004
+      - step: 2
+        screen: SCR-SHARED-004
+        action: "Enter phone number"
+        next: SCR-SHARED-003
+        lifecycle: "USER-T13 (phase2_otp_migration)"
+      - step: 3
+        screen: SCR-SHARED-003
+        action: "Enter OTP code"
+        next: "previous screen"
+    alternate_paths:
+      - id: JRN-SHARED-02-A1
+        name: "OTP verification fails"
+        branch_at: 3
+        condition: "Wrong code or expired"
+        screens: [SCR-SHARED-003]
+        outcome: "Error message, resend option after cooldown"
+
+  - id: JRN-SHARED-03
+    name: "Phase 2 OTP Login (New User)"
+    actor: [customer, tasker]
+    phase: "2"
+    goal: "New user signs up with phone OTP"
+    entry: SCR-SHARED-002
+    exit: [SCR-SHARED-005]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-002
+        action: "Tap 'Login with Phone'"
+        next: SCR-SHARED-002
+      - step: 2
+        screen: SCR-SHARED-002
+        action: "Enter phone number"
+        next: SCR-SHARED-003
+      - step: 3
+        screen: SCR-SHARED-003
+        action: "Enter OTP code, verified"
+        next: SCR-SHARED-005
+        lifecycle: "USER-T01 (user_signs_up)"
+    alternate_paths:
+      - id: JRN-SHARED-03-A1
+        name: "OTP expired"
+        branch_at: 3
+        condition: "Code expired"
+        screens: [SCR-SHARED-003]
+        outcome: "Resend after cooldown"
+
+  - id: JRN-SHARED-04
+    name: "Messaging"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "Exchange messages about a booking"
+    entry: SCR-SHARED-010
+    exit: [SCR-SHARED-011]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-010
+        action: "Open conversation list"
+        next: SCR-SHARED-011
+      - step: 2
+        screen: SCR-SHARED-011
+        action: "Read/send messages"
+        next: SCR-SHARED-011
+    alternate_paths:
+      - id: JRN-SHARED-04-A1
+        name: "Phone number detected"
+        branch_at: 2
+        condition: "Message contains phone pattern"
+        screens: [SCR-SHARED-011]
+        outcome: "Phone-number flagging warning shown"
+      - id: JRN-SHARED-04-A2
+        name: "Empty inbox"
+        branch_at: 1
+        condition: "No conversations"
+        screens: [SCR-SHARED-010]
+        outcome: "Empty state with guidance"
+
+  - id: JRN-SHARED-05
+    name: "Profile Management"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "View and edit profile"
+    entry: SCR-SHARED-012
+    exit: [SCR-SHARED-012]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-012
+        action: "View profile"
+        next: SCR-SHARED-013
+      - step: 2
+        screen: SCR-SHARED-013
+        action: "Edit name, avatar, etc."
+        next: SCR-SHARED-012
+    alternate_paths:
+      - id: JRN-SHARED-05-A1
+        name: "Avatar upload fails"
+        branch_at: 2
+        condition: "Upload error"
+        screens: [SCR-SHARED-013]
+        outcome: "Error toast, retry"
+
+  - id: JRN-SHARED-06
+    name: "Settings & Account"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "Manage settings, role switch, or delete account"
+    entry: SCR-SHARED-014
+    exit: [SCR-SHARED-014, SCR-SHARED-015, SCR-TASK-003]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-014
+        action: "View settings"
+        next: SCR-SHARED-014
+    alternate_paths:
+      - id: JRN-SHARED-06-A1
+        name: "Role switch to Tasker"
+        branch_at: 1
+        condition: "User taps role switch, not yet Tasker-verified"
+        screens: [SCR-SHARED-014, SCR-TASK-003]
+        outcome: "Redirected to verification gate"
+        lifecycle: "USER-T04 (role_switch_to_tasker)"
+      - id: JRN-SHARED-06-A2
+        name: "Account deletion"
+        branch_at: 1
+        condition: "User taps delete account"
+        screens: [SCR-SHARED-014, SCR-SHARED-015]
+        outcome: "Confirmation sheet → deletion or blocked by active bookings"
+        lifecycle: "USER-T14 (account_deletion)"
+
+  - id: JRN-SHARED-07
+    name: "Review Submission"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "Submit mandatory review after booking completion"
+    entry: SCR-SHARED-017
+    exit: [SCR-SHARED-017]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-017
+        action: "Rate categories + optional freetext"
+        next: SCR-SHARED-017
+      - step: 2
+        screen: SCR-SHARED-017
+        action: "Submit review"
+        next: "return to booking detail"
+    alternate_paths:
+      - id: JRN-SHARED-07-A1
+        name: "Review reminder sequence"
+        branch_at: 0
+        condition: "User doesn't review immediately"
+        screens: [SCR-SHARED-018]
+        outcome: "24h reminder → 72h reminder → hard lock if risk-triggered"
+      - id: JRN-SHARED-07-A2
+        name: "Hard lock"
+        branch_at: 0
+        condition: "Risk conditions: open dispute, 2 missed reviews, investigation"
+        screens: [SCR-SHARED-019]
+        outcome: "Cannot post/apply until review submitted"
+
+  # ═══════════════════════════════════════════════════
+  # CUSTOMER JOURNEYS
+  # ═══════════════════════════════════════════════════
+
+  - id: JRN-CUST-01
+    name: "Post a Task"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Create and publish a new task"
+    entry: SCR-CUST-001
+    exit: [SCR-CUST-008]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-001
+        action: "Tap FAB 'Post Task'"
+        next: SCR-CUST-002
+      - step: 2
+        screen: SCR-CUST-002
+        action: "Select category"
+        next: SCR-CUST-003
+      - step: 3
+        screen: SCR-CUST-003
+        action: "Complete intake form"
+        next: SCR-CUST-004
+        lifecycle: "TASK-T01 (prepare)"
+      - step: 4
+        screen: SCR-CUST-004
+        action: "Upload photos (0-3)"
+        next: SCR-CUST-005
+      - step: 5
+        screen: SCR-CUST-005
+        action: "Pin location on map"
+        next: SCR-CUST-006
+      - step: 6
+        screen: SCR-CUST-006
+        action: "Set schedule and budget"
+        next: SCR-CUST-007
+      - step: 7
+        screen: SCR-CUST-007
+        action: "Review summary, edit if needed, submit"
+        next: SCR-CUST-008
+        lifecycle: "TASK-T01 (customer_publishes_task)"
+      - step: 8
+        screen: SCR-CUST-008
+        action: "Success — task posted"
+        next: SCR-CUST-009
+    alternate_paths:
+      - id: JRN-CUST-01-A1
+        name: "Validation error"
+        branch_at: 7
+        condition: "Invalid form data"
+        screens: [SCR-CUST-007]
+        outcome: "Inline errors, user corrects"
+      - id: JRN-CUST-01-A2
+        name: "Photo upload fails"
+        branch_at: 4
+        condition: "Network error on upload"
+        screens: [SCR-CUST-004]
+        outcome: "Error state, retry"
+      - id: JRN-CUST-01-A3
+        name: "Location permission denied"
+        branch_at: 5
+        condition: "No location permission"
+        screens: [SCR-CUST-005]
+        outcome: "Manual pin placement"
+      - id: JRN-CUST-01-A4
+        name: "Skip photos"
+        branch_at: 4
+        condition: "User chooses no photos"
+        screens: [SCR-CUST-004, SCR-CUST-005]
+        outcome: "Proceed to location without photos"
+
+  - id: JRN-CUST-02
+    name: "Review Applicants & Confirm Booking (Phase 0-1)"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Select a Tasker and create a booking"
+    entry: SCR-CUST-009
+    exit: [SCR-CUST-015]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-009
+        action: "View task detail, tap 'View Applicants'"
+        next: SCR-CUST-011
+      - step: 2
+        screen: SCR-CUST-011
+        action: "Browse applicants, view profiles"
+        next: SCR-CUST-013
+      - step: 3
+        screen: SCR-CUST-013
+        action: "View Tasker profile, reviews"
+        next: SCR-CUST-011
+      - step: 4
+        screen: SCR-CUST-011
+        action: "Tap 'Accept' on preferred applicant"
+        next: SCR-CUST-014
+        lifecycle: "APP-T02 (customer_accepts_directly)"
+      - step: 5
+        screen: SCR-CUST-014
+        action: "Accept liability disclaimer, confirm booking"
+        next: SCR-CUST-015
+        lifecycle: "TASK-T02 (customer_accepts_applicant)"
+      - step: 6
+        screen: SCR-CUST-015
+        action: "Success — booking confirmed"
+        next: SCR-CUST-017
+    alternate_paths:
+      - id: JRN-CUST-02-A1
+        name: "No applicants yet"
+        branch_at: 2
+        condition: "Empty applicant list"
+        screens: [SCR-CUST-011]
+        outcome: "Empty state with 'waiting' message"
+      - id: JRN-CUST-02-A2
+        name: "No applicant rescue"
+        branch_at: 1
+        condition: "120min with 0 applicants"
+        screens: [SCR-CUST-026]
+        outcome: "Rescue flow: adjust budget/schedule, concierge"
+        lifecycle: "TASK-T10 (no_applicant_rescue)"
+
+  - id: JRN-CUST-03
+    name: "Review Applicants & Confirm Booking (Phase 2 — Lead Unlock)"
+    actor: [customer]
+    phase: "2"
+    goal: "Select a Tasker who then accepts with lead credits"
+    entry: SCR-CUST-011
+    exit: [SCR-CUST-015]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-011
+        action: "Browse applicants sorted by relevance, 'Recommended' label"
+        next: SCR-CUST-011
+      - step: 2
+        screen: SCR-CUST-011
+        action: "Tap 'Select' on preferred applicant"
+        next: SCR-CUST-011
+        lifecycle: "APP-T03 (customer_selects_applicant)"
+        note: "Tasker receives 15-min accept/decline notification"
+      - step: 3
+        screen: SCR-CUST-011
+        action: "Wait for Tasker to accept"
+        next: SCR-CUST-014
+        lifecycle: "APP-T04 (tasker_accepts_and_unlocks)"
+      - step: 4
+        screen: SCR-CUST-014
+        action: "Confirm booking"
+        next: SCR-CUST-015
+    alternate_paths:
+      - id: JRN-CUST-03-A1
+        name: "Tasker declines"
+        branch_at: 3
+        condition: "Selected Tasker declines"
+        screens: [SCR-CUST-012, SCR-CUST-011]
+        outcome: "Decline notification, select next applicant"
+        lifecycle: "APP-T05 (tasker_declines_selection)"
+      - id: JRN-CUST-03-A2
+        name: "Tasker timeout"
+        branch_at: 3
+        condition: "15-min window expires"
+        screens: [SCR-CUST-012, SCR-CUST-011]
+        outcome: "Timeout notification, select next applicant"
+        lifecycle: "APP-T06 (selection_window_expires)"
+
+  - id: JRN-CUST-04
+    name: "Manage Active Booking"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Track booking, handle reschedule, confirm completion"
+    entry: SCR-CUST-016
+    exit: [SCR-CUST-017]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-016
+        action: "View bookings list"
+        next: SCR-CUST-017
+      - step: 2
+        screen: SCR-CUST-017
+        action: "View booking detail"
+        next: SCR-CUST-017
+      - step: 3
+        screen: SCR-CUST-017
+        action: "Tasker marks done → confirm completion"
+        next: SCR-CUST-018
+        lifecycle: "BOOK-T02 (tasker_marks_done)"
+      - step: 4
+        screen: SCR-CUST-018
+        action: "Tap 'Confirm Complete'"
+        next: SCR-SHARED-017
+        lifecycle: "BOOK-T03 (customer_confirms_completion)"
+    alternate_paths:
+      - id: JRN-CUST-04-A1
+        name: "Reschedule"
+        branch_at: 2
+        condition: "Customer requests reschedule"
+        screens: [SCR-CUST-020]
+        outcome: "Submit request, wait for Tasker response"
+        lifecycle: "BOOK-T07/T08/T09"
+      - id: JRN-CUST-04-A2
+        name: "Customer cancels"
+        branch_at: 2
+        condition: "Customer cancels booking"
+        screens: [SCR-CUST-022]
+        outcome: "Free or late cancel warning"
+        lifecycle: "BOOK-T04 (customer_cancels)"
+      - id: JRN-CUST-04-A3
+        name: "No-show"
+        branch_at: 2
+        condition: "Tasker doesn't show up"
+        screens: [SCR-CUST-021]
+        outcome: "Flag no-show after 15min"
+        lifecycle: "BOOK-T06 (counterparty_flags_no_show)"
+      - id: JRN-CUST-04-A4
+        name: "View timeline"
+        branch_at: 2
+        condition: "Customer taps timeline"
+        screens: [SCR-CUST-019]
+        outcome: "View immutable booking event history"
+
+  - id: JRN-CUST-05
+    name: "Rebook Tasker"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Quickly rebook a previously hired Tasker"
+    entry: SCR-CUST-017
+    exit: [SCR-CUST-015]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-017
+        action: "Tap 'Rebook' on completed booking"
+        next: SCR-CUST-023
+        lifecycle: "BOOK-T11 (rebook_shortcut)"
+      - step: 2
+        screen: SCR-CUST-023
+        action: "Review prefilled task, edit if needed"
+        next: SCR-CUST-014
+      - step: 3
+        screen: SCR-CUST-014
+        action: "Confirm booking"
+        next: SCR-CUST-015
+
+  - id: JRN-CUST-06
+    name: "Raise & Track Dispute"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Report an issue with a booking"
+    entry: SCR-CUST-017
+    exit: [SCR-CUST-025]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-017
+        action: "Tap 'Report Issue'"
+        next: SCR-CUST-024
+      - step: 2
+        screen: SCR-CUST-024
+        action: "Submit dispute with evidence"
+        next: SCR-CUST-025
+        lifecycle: "DISP-T01 (party_raises_dispute)"
+      - step: 3
+        screen: SCR-CUST-025
+        action: "Track dispute status"
+        next: SCR-CUST-025
+    alternate_paths:
+      - id: JRN-CUST-06-A1
+        name: "Insufficient evidence"
+        branch_at: 2
+        condition: "No evidence uploaded"
+        screens: [SCR-CUST-024]
+        outcome: "Validation error — at least 1 artifact required"
+      - id: JRN-CUST-06-A2
+        name: "Auto-close"
+        branch_at: 3
+        condition: "Evidence not provided within 24h"
+        screens: [SCR-CUST-025]
+        outcome: "Dispute auto-closed"
+        lifecycle: "DISP-T07 (evidence_timeout)"
+
+  - id: JRN-CUST-07
+    name: "Cancel Open Task"
+    actor: [customer]
+    phase: "0-1"
+    goal: "Cancel a task before booking"
+    entry: SCR-CUST-009
+    exit: [SCR-CUST-001]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-009
+        action: "Tap 'Cancel Task'"
+        next: SCR-CUST-010
+      - step: 2
+        screen: SCR-CUST-010
+        action: "Confirm cancellation"
+        next: SCR-CUST-001
+        lifecycle: "TASK-T06 (customer_cancels_open_task)"
+
+  - id: JRN-CUST-08
+    name: "Instant Match (Phase 3+)"
+    actor: [customer]
+    phase: "3+"
+    goal: "Auto-match with best Tasker"
+    entry: SCR-CUST-009
+    exit: [SCR-CUST-015]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-009
+        action: "Tap 'Match me now'"
+        next: SCR-CUST-027
+      - step: 2
+        screen: SCR-CUST-027
+        action: "System auto-assigns top Tasker"
+        next: SCR-CUST-014
+        lifecycle: "TASK-T04 (instant_match_accepted)"
+      - step: 3
+        screen: SCR-CUST-014
+        action: "Confirm booking"
+        next: SCR-CUST-015
+    alternate_paths:
+      - id: JRN-CUST-08-A1
+        name: "3 declines fallback"
+        branch_at: 2
+        condition: "3 consecutive Tasker declines/timeouts"
+        screens: [SCR-CUST-027, SCR-CUST-011]
+        outcome: "Fall back to open application"
+        lifecycle: "TASK-T11 (instant_match_fallback)"
+
+  # ═══════════════════════════════════════════════════
+  # TASKER JOURNEYS
+  # ═══════════════════════════════════════════════════
+
+  - id: JRN-TASK-01
+    name: "Tasker Verification"
+    actor: [tasker]
+    phase: "0-1"
+    goal: "Complete identity verification to unlock applications"
+    entry: SCR-TASK-002
+    exit: [SCR-TASK-008, SCR-TASK-010]
+    happy_path:
+      - step: 1
+        screen: SCR-TASK-002
+        action: "Tap 'Apply' while unverified"
+        next: SCR-TASK-003
+      - step: 2
+        screen: SCR-TASK-003
+        action: "View verification encouragement"
+        next: SCR-TASK-004
+      - step: 3
+        screen: SCR-TASK-004
+        action: "Accept verification consent"
+        next: SCR-TASK-005
+      - step: 4
+        screen: SCR-TASK-005
+        action: "Upload ID front, back, selfie"
+        next: SCR-TASK-010
+        lifecycle: "VER-T01 (tasker_submits_id)"
+      - step: 5
+        screen: SCR-TASK-010
+        action: "Success — submitted"
+        next: SCR-TASK-007
+      - step: 6
+        screen: SCR-TASK-007
+        action: "Wait for admin review (24h SLA)"
+        next: SCR-TASK-008
+        lifecycle: "VER-T02 (admin_approves)"
+    alternate_paths:
+      - id: JRN-TASK-01-A1
+        name: "Rejected"
+        branch_at: 6
+        condition: "Admin rejects ID"
+        screens: [SCR-TASK-009]
+        outcome: "Rejection reason shown, resubmit prompt"
+        lifecycle: "VER-T03 (admin_rejects)"
+      - id: JRN-TASK-01-A2
+        name: "Resubmit after rejection"
+        branch_at: 6
+        condition: "Tasker fixes and resubmits"
+        screens: [SCR-TASK-009, SCR-TASK-005]
+        outcome: "Re-enters verification queue"
+        lifecycle: "VER-T04 (tasker_resubmits)"
+      - id: JRN-TASK-01-A3
+        name: "DAN fast-path (Phase 2)"
+        branch_at: 2
+        condition: "Phase 2, E-Mongolia available"
+        screens: [SCR-TASK-006]
+        outcome: "Auto-verified via DAN"
+        lifecycle: "VER-T05 (dan_fast_path)"
+
+  - id: JRN-TASK-02
+    name: "Browse & Apply to Task"
+    actor: [tasker]
+    phase: "0-1"
+    goal: "Find and apply to a task"
+    entry: SCR-TASK-001
+    exit: [SCR-TASK-011]
+    happy_path:
+      - step: 1
+        screen: SCR-TASK-001
+        action: "Browse task feed, filter by category/distance"
+        next: SCR-TASK-002
+      - step: 2
+        screen: SCR-TASK-002
+        action: "View task detail"
+        next: SCR-TASK-002
+      - step: 3
+        screen: SCR-TASK-002
+        action: "Tap 'Apply'"
+        next: SCR-TASK-011
+        lifecycle: "APP-T01 (tasker_applies)"
+    alternate_paths:
+      - id: JRN-TASK-02-A1
+        name: "Unverified"
+        branch_at: 3
+        condition: "Tasker not verified"
+        screens: [SCR-TASK-002, SCR-TASK-003]
+        outcome: "Redirected to verification gate"
+      - id: JRN-TASK-02-A2
+        name: "Application cap reached"
+        branch_at: 3
+        condition: "Task at max applications"
+        screens: [SCR-TASK-002]
+        outcome: "Cap reached state shown"
+      - id: JRN-TASK-02-A3
+        name: "Already applied"
+        branch_at: 3
+        condition: "Tasker already applied"
+        screens: [SCR-TASK-002]
+        outcome: "Already applied state shown"
+      - id: JRN-TASK-02-A4
+        name: "Empty feed"
+        branch_at: 1
+        condition: "No tasks in area"
+        screens: [SCR-TASK-001]
+        outcome: "Empty activation state"
+
+  - id: JRN-TASK-03
+    name: "Lead Unlock Accept/Decline (Phase 2)"
+    actor: [tasker]
+    phase: "2"
+    goal: "Accept or decline selected lead"
+    entry: SCR-TASK-017
+    exit: [SCR-TASK-012, SCR-TASK-017]
+    happy_path:
+      - step: 1
+        screen: SCR-TASK-017
+        action: "Receive selection notification"
+        next: SCR-TASK-017
+      - step: 2
+        screen: SCR-TASK-017
+        action: "Tap 'Accept' — credits deducted"
+        next: SCR-TASK-012
+        lifecycle: "APP-T04 (tasker_accepts_and_unlocks)"
+    alternate_paths:
+      - id: JRN-TASK-03-A1
+        name: "Decline"
+        branch_at: 2
+        condition: "Tasker taps Decline"
+        screens: [SCR-TASK-017]
+        outcome: "No credits charged"
+        lifecycle: "APP-T05 (tasker_declines_selection)"
+      - id: JRN-TASK-03-A2
+        name: "Insufficient credits"
+        branch_at: 2
+        condition: "Balance < lead cost"
+        screens: [SCR-TASK-017, SCR-P2-001]
+        outcome: "Redirect to credit purchase"
+      - id: JRN-TASK-03-A3
+        name: "Timeout"
+        branch_at: 2
+        condition: "15-min window expires"
+        screens: [SCR-TASK-017]
+        outcome: "Auto-declined, no credits"
+        lifecycle: "APP-T06 (selection_window_expires)"
+
+  - id: JRN-TASK-04
+    name: "Manage Active Booking (Tasker)"
+    actor: [tasker]
+    phase: "0-1"
+    goal: "Complete assigned work and mark done"
+    entry: SCR-TASK-012
+    exit: [SCR-SHARED-017]
+    happy_path:
+      - step: 1
+        screen: SCR-TASK-012
+        action: "View My Jobs list"
+        next: SCR-TASK-013
+      - step: 2
+        screen: SCR-TASK-013
+        action: "View booking detail with exact address"
+        next: SCR-TASK-013
+      - step: 3
+        screen: SCR-TASK-013
+        action: "Tap 'Mark Done'"
+        next: SCR-TASK-013
+        lifecycle: "BOOK-T02 (tasker_marks_done)"
+      - step: 4
+        screen: SCR-TASK-013
+        action: "Wait for customer confirmation"
+        next: SCR-SHARED-017
+        lifecycle: "BOOK-T03 (customer_confirms_completion)"
+    alternate_paths:
+      - id: JRN-TASK-04-A1
+        name: "Tasker cancels"
+        branch_at: 2
+        condition: "Tasker cancels booking"
+        screens: [SCR-TASK-015]
+        outcome: "Strike warning, booking cancelled, task re-opens"
+        lifecycle: "BOOK-T05 (tasker_cancels)"
+      - id: JRN-TASK-04-A2
+        name: "No-show (Tasker flags customer)"
+        branch_at: 2
+        condition: "Customer doesn't show"
+        screens: [SCR-TASK-014]
+        outcome: "Flag no-show after 15min"
+        lifecycle: "BOOK-T06 (counterparty_flags_no_show)"
+
+  - id: JRN-TASK-05
+    name: "Credit Purchase"
+    actor: [tasker]
+    phase: "2"
+    goal: "Buy lead-unlock credits via QPay"
+    entry: SCR-P2-001
+    exit: [SCR-P2-001]
+    happy_path:
+      - step: 1
+        screen: SCR-P2-001
+        action: "View balance, select credit pack"
+        next: SCR-P2-002
+      - step: 2
+        screen: SCR-P2-002
+        action: "Scan QPay QR or deeplink"
+        next: SCR-P2-002
+      - step: 3
+        screen: SCR-P2-002
+        action: "Payment confirmed"
+        next: SCR-P2-001
+    alternate_paths:
+      - id: JRN-TASK-05-A1
+        name: "Payment fails"
+        branch_at: 3
+        condition: "QPay error"
+        screens: [SCR-P2-002]
+        outcome: "Payment failed state, retry"
+      - id: JRN-TASK-05-A2
+        name: "View transaction history"
+        branch_at: 1
+        condition: "Tap history"
+        screens: [SCR-P2-003]
+        outcome: "View credit transaction log"
+
+  - id: JRN-TASK-06
+    name: "Wallet & Payout (Phase 3+)"
+    actor: [tasker]
+    phase: "3+"
+    goal: "View earnings and request payout"
+    entry: SCR-P3-001
+    exit: [SCR-P3-001]
+    happy_path:
+      - step: 1
+        screen: SCR-P3-001
+        action: "View wallet balance"
+        next: SCR-P3-002
+      - step: 2
+        screen: SCR-P3-002
+        action: "Request payout"
+        next: SCR-P3-001
+
+  - id: JRN-TASK-07
+    name: "Tasker Pro Subscription (Phase 3+)"
+    actor: [tasker]
+    phase: "3+"
+    goal: "Subscribe to Tasker Pro for benefits"
+    entry: SCR-P3-004
+    exit: [SCR-P3-004]
+    happy_path:
+      - step: 1
+        screen: SCR-P3-004
+        action: "View plans (Standard/Premium)"
+        next: SCR-P3-004
+      - step: 2
+        screen: SCR-P3-004
+        action: "Subscribe via QPay"
+        next: SCR-P3-004
+    alternate_paths:
+      - id: JRN-TASK-07-A1
+        name: "Ineligible"
+        branch_at: 1
+        condition: "No Pro Badge (rating < 4.5)"
+        screens: [SCR-P3-004]
+        outcome: "Ineligible state with criteria shown"
+
+  # ═══════════════════════════════════════════════════
+  # INFRASTRUCTURE JOURNEYS
+  # ═══════════════════════════════════════════════════
+
+  - id: JRN-INFRA-01
+    name: "Error Recovery"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "Recover from network/session errors"
+    entry: SCR-INFRA-001
+    exit: ["previous screen"]
+    paths:
+      - name: "Network error"
+        screens: [SCR-INFRA-001]
+        outcome: "Retry button, show cached content if available"
+      - name: "Session expired"
+        screens: [SCR-INFRA-003]
+        outcome: "Bottom sheet → re-login flow"
+      - name: "App update required"
+        screens: [SCR-INFRA-002]
+        outcome: "Soft: dismissible. Force: blocks until update"
+
+  - id: JRN-INFRA-02
+    name: "Suspended/Banned Account"
+    actor: [customer, tasker]
+    phase: "0-1"
+    goal: "Inform user of account restriction"
+    entry: SCR-SHARED-020
+    exit: [SCR-SHARED-020, SCR-SHARED-021]
+    paths:
+      - name: "Suspended"
+        screens: [SCR-SHARED-020]
+        outcome: "Show expiry, appeal option"
+        lifecycle: "USER-T05/T06"
+      - name: "Banned"
+        screens: [SCR-SHARED-021]
+        outcome: "No app access"
+        lifecycle: "USER-T09/T10/T11"
+
+# ─── Summary ────────────────────────────────────────
+summary:
+  total_journeys: 20
+  by_actor:
+    shared: 7
+    customer: 8
+    tasker: 7
+    infrastructure: 2
+  by_phase:
+    "0-1": 15
+    "2": 4
+    "3+": 3
+  coverage:
+    lifecycle_entities_covered: [task, booking, application, verification, dispute, user]
+    all_screens_reachable: true
+    all_terminal_states_reachable: true

@@ -1,0 +1,152 @@
+# Screen Spec: Post Task — Photo Upload
+screen_id: SCR-CUST-004
+name: "Post Task — Photo Upload"
+route: "/(customer)/tasks/new/photos"
+role: [customer]
+phase: "0-1"
+template: form_wizard
+figma_page: "Customer/Post Task Photo Upload"
+feature: "task_posting"
+
+layout:
+  template: form_wizard
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> step_indicator(step 3/7) -> scrollview(photo_grid + helper) -> bottom_nav(back + next)"
+
+components:
+  - id: COMP-STEPINDICATOR
+    usage: "Shows step 3 of 7 in the Post Task wizard flow"
+    props:
+      currentStep: 3
+      totalSteps: 7
+      labels: ["Ангилал", "Маягт", "Зураг", "Байршил", "Хуваарь", "Хянах", "Дуусгах"]
+    variant: horizontal
+
+  - id: COMP-PHOTOPICKER
+    usage: "Multi-photo upload grid with add, preview, remove, and progress per photo"
+    props:
+      photos: []
+      maxPhotos: 3
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Back and Next/Skip navigation buttons in bottom bar"
+    props:
+      label: "Үргэлжлүүлэх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-TOAST
+    usage: "Error toast when photo upload fails"
+    props:
+      message: "Зураг оруулахад алдаа гарлаа"
+      variant: error
+      duration: 6000
+    variant: error
+
+states:
+  - id: empty
+    description: "No photos added yet; photo picker shows add-photo placeholder with camera icon"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: uploading
+    description: "One or more photos uploading via presigned URL; progress indicators shown per photo"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: uploaded_1
+    description: "1 photo uploaded successfully; add-photo placeholder remains for 2 more"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: uploaded_2
+    description: "2 photos uploaded successfully; add-photo placeholder remains for 1 more"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: uploaded_3_max
+    description: "3 photos uploaded; maximum reached; add-photo placeholder hidden"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON]
+    components_hidden: [COMP-TOAST]
+
+  - id: upload_error
+    description: "Photo upload failed due to network or server error; error toast with retry"
+    components_visible: [COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON, COMP-TOAST]
+    components_hidden: []
+
+copy:
+  - key: page_title
+    mn: "Зураг оруулах"
+    en: "Add Photos"
+    max_chars: 20
+
+  - key: step_label
+    mn: "Зураг"
+    en: "Photos"
+    max_chars: 15
+
+  - key: instruction
+    mn: "Даалгавартай холбоотой зураг оруулна уу (3 хүртэл)"
+    en: "Add photos related to your task (up to 3)"
+    max_chars: 60
+
+  - key: helper_optional
+    mn: "Зураг оруулах шаардлагагүй — алгасаж болно"
+    en: "Photos are optional — you can skip"
+    max_chars: 60
+
+  - key: cta_next
+    mn: "Үргэлжлүүлэх"
+    en: "Continue"
+    max_chars: 20
+
+  - key: cta_skip
+    mn: "Алгасах"
+    en: "Skip"
+    max_chars: 10
+
+  - key: cta_back
+    mn: "Буцах"
+    en: "Back"
+    max_chars: 10
+
+  - key: max_reached
+    mn: "Хамгийн ихдээ 3 зураг оруулах боломжтой"
+    en: "Maximum 3 photos allowed"
+    max_chars: 50
+
+  - key: error_upload
+    mn: "Зураг оруулахад алдаа гарлаа. Дахин оролдоно уу"
+    en: "Photo upload failed. Please try again"
+    max_chars: 50
+
+api_endpoints:
+  - method: POST
+    path: "/tasks/photos/upload-url"
+    purpose: "Request presigned URL for direct photo upload to S3/MinIO per REQ-TASK-04"
+
+analytics_events:
+  - event: "photo_upload_started"
+    trigger: "User selects a photo from camera or gallery"
+  - event: "photo_upload_completed"
+    trigger: "Photo upload to presigned URL completes successfully"
+  - event: "photo_upload_failed"
+    trigger: "Photo upload fails; includes error type"
+  - event: "photo_removed"
+    trigger: "User taps remove on an uploaded photo"
+  - event: "photos_skipped"
+    trigger: "User taps Skip/Continue with zero photos"
+
+acceptance_criteria:
+  - "StepIndicator shows step 3 of 7 with 'Зураг' label highlighted"
+  - "PhotoPicker shows empty state with camera icon add-photo placeholder"
+  - "Tapping add-photo triggers camera permission primer on first use, then camera/gallery picker"
+  - "Upload progress is shown per photo via presigned URL flow per REQ-TASK-04"
+  - "Each uploaded photo shows preview thumbnail with remove button"
+  - "Maximum 3 photos enforced; add-photo placeholder hidden when max reached"
+  - "Photos can be skipped — Next proceeds to Location SCR-CUST-005 even with 0 photos"
+  - "Back button pops to Intake Form SCR-CUST-003"
+  - "Upload error shows error toast with retry action"
+  - "All copy renders correctly in Mongolian Cyrillic at 16px minimum body size"

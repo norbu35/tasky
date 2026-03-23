@@ -461,7 +461,7 @@ export function AdminCategoriesPage() {
       const updated = await apiClient.adminUpdateCategory(
         session.accessToken,
         category.id,
-        { is_active: !category.is_active }
+        { isActive: !category.is_active }
       );
       setCategories((prev) =>
         prev.map((c) => (c.id === updated.id ? updated : c))
