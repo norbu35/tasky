@@ -1,23 +1,40 @@
-import { Shield, User } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useAppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+
+const CUSTOMER_NAV = [
+  { to: '/customer/dashboard', label: 'nav.home', fallback: 'Home' },
+  { to: '/customer/tasks', label: 'nav.tasks', fallback: 'Tasks' },
+  { to: '/messaging', label: 'nav.inbox', fallback: 'Inbox' },
+  { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
+];
+
+const TASKER_NAV = [
+  { to: '/tasker/feed', label: 'nav.findWork', fallback: 'Find Work' },
+  { to: '/tasker/tasks', label: 'nav.myJobs', fallback: 'My Jobs' },
+  { to: '/messaging', label: 'nav.inbox', fallback: 'Inbox' },
+  { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
+];
 
 export function Header() {
   const { profile, signOut } = useAppContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const navLinks =
+    profile?.role === 'CUSTOMER' ? CUSTOMER_NAV : profile?.role === 'TASKER' ? TASKER_NAV : null;
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed left-4 right-4 sm:left-auto sm:right-auto sm:top-6 sm:w-[calc(100%-3rem)] sm:max-w-5xl sm:mx-auto top-4 z-50 rounded-2xl border border-border/40 bg-background/70 backdrop-blur-xl shadow-lg shadow-black/5"
+      className="fixed top-0 left-0 right-0 z-50 rounded-b-xl border border-border/40 bg-background/70 backdrop-blur-xl shadow-lg shadow-black/5 md:top-4 md:left-4 md:right-4 md:rounded-2xl md:left-auto md:right-auto md:w-[calc(100%-2rem)] md:max-w-6xl md:mx-auto"
     >
-      <div className="flex items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
+      <div className="flex items-center justify-between px-4 md:px-6 h-14 md:h-16">
         {/* Logo */}
         <div
           className="flex items-center gap-2.5 cursor-pointer group"
@@ -31,34 +48,42 @@ export function Header() {
           </span>
         </div>
 
+        {/* Desktop nav links */}
+        {navLinks && (
+          <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+            {navLinks.map(({ to, label, fallback }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-primary font-semibold text-sm'
+                    : 'text-muted-foreground hover:text-foreground text-sm'
+                }
+              >
+                {t(label, fallback)}
+              </NavLink>
+            ))}
+          </nav>
+        )}
+
         {/* Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden sm:block">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="hidden md:block">
             <LanguageSwitcher />
           </div>
 
-          <div className="w-[1px] h-6 bg-border/50 hidden sm:block mx-1"></div>
+          <div className="w-[1px] h-6 bg-border/50 hidden md:block mx-1"></div>
 
           {profile ? (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hidden sm:flex text-sm font-medium h-9 px-4 rounded-xl text-muted-foreground hover:text-foreground"
-                onClick={() => navigate('/dashboard')}
-              >
-                <User className="w-4 h-4 mr-2" />
-                {t('nav.profile', 'Profile')}
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="text-sm font-semibold h-9 px-4 rounded-xl"
-                onClick={signOut}
-              >
-                {t('nav.logout', 'Sign out')}
-              </Button>
-            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="text-sm font-semibold h-9 px-4 rounded-xl"
+              onClick={signOut}
+            >
+              {t('nav.logout', 'Sign out')}
+            </Button>
           ) : (
             <Button
               className="text-sm font-semibold h-9 px-5 rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-sm"

@@ -163,8 +163,8 @@ export function VerificationPage() {
   // ── Loading State ──────────────────────────────────────────────────
   if (pageState === 'loading') {
     return (
-      <ScreenFrame>
-        <div className="max-w-2xl mx-auto w-full py-6 flex items-center justify-center min-h-[300px]">
+      <ScreenFrame maxWidth="narrow">
+        <div className="w-full py-6 flex items-center justify-center min-h-[300px]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </ScreenFrame>
@@ -174,8 +174,8 @@ export function VerificationPage() {
   // ── Approved State ──────────────────────────────────────────────────
   if (pageState === 'approved') {
     return (
-      <ScreenFrame>
-        <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
+      <ScreenFrame maxWidth="narrow">
+        <div className="w-full py-6 space-y-6">
           <div className="flex items-center gap-3 px-2">
             <ShieldCheck className="w-8 h-8 text-primary" />
             <div>
@@ -212,8 +212,8 @@ export function VerificationPage() {
   // ── Pending State ──────────────────────────────────────────────────
   if (pageState === 'pending') {
     return (
-      <ScreenFrame>
-        <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
+      <ScreenFrame maxWidth="narrow">
+        <div className="w-full py-6 space-y-6">
           <div className="flex items-center gap-3 px-2">
             <ShieldCheck className="w-8 h-8 text-primary" />
             <div>
@@ -255,8 +255,8 @@ export function VerificationPage() {
 
   // ── Rejected + Form State ──────────────────────────────────────────
   return (
-    <ScreenFrame>
-      <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
+    <ScreenFrame maxWidth="narrow">
+      <div className="w-full py-6 space-y-6">
         <div className="flex items-center gap-3 px-2">
           <ShieldCheck className="w-8 h-8 text-primary" />
           <div>

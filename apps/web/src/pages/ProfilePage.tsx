@@ -131,8 +131,8 @@ export function ProfilePage() {
   const statusVerified = profile?.status === 'VERIFIED';
 
   return (
-    <ScreenFrame>
-      <div className="max-w-2xl mx-auto w-full py-6 space-y-6">
+    <ScreenFrame maxWidth="narrow">
+      <div className="w-full py-6 space-y-6">
         <div className="flex items-center gap-3 px-2">
           <User className="w-8 h-8 text-primary" />
           <div>

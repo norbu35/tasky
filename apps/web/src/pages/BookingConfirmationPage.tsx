@@ -61,7 +61,7 @@ export function BookingConfirmationPage() {
 
   if (!taskId || !applicationId) {
     return (
-      <ScreenFrame>
+      <ScreenFrame maxWidth="narrow">
         <Alert variant="destructive">
           <AlertTitle>{t('bookingConfirmation.invalidRequestTitle', 'Invalid Request')}</AlertTitle>
           <AlertDescription>
@@ -83,8 +83,8 @@ export function BookingConfirmationPage() {
 
   if (successBooking) {
     return (
-      <ScreenFrame>
-        <div className="max-w-xl mx-auto flex flex-col items-center justify-center text-center py-12">
+      <ScreenFrame maxWidth="narrow">
+        <div className="flex flex-col items-center justify-center text-center py-12">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
             <CheckCircle2 className="w-10 h-10 text-green-600" />
           </div>
@@ -150,8 +150,8 @@ export function BookingConfirmationPage() {
   }
 
   return (
-    <ScreenFrame>
-      <div className="max-w-3xl mx-auto">
+    <ScreenFrame maxWidth="narrow">
+      <div>
         <Button variant="ghost" className="mb-6 -ml-2" onClick={() => navigate(-1)}>
           <ChevronLeft className="w-4 h-4 mr-1" />
           {t('bookingConfirmation.back', 'Back')}

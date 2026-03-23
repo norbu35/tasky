@@ -75,8 +75,8 @@ export function TaskerFeedPage() {
   };
 
   return (
-    <ScreenFrame>
-      <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <ScreenFrame maxWidth="wide">
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Page header */}
         <div className="mb-4">
           <h1 className="text-2xl font-display font-bold tracking-tight">
@@ -132,7 +132,7 @@ export function TaskerFeedPage() {
           </p>
         )}
 
-        <div className="grid gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {loadingTasks && (
             <div className="flex py-12 items-center justify-center text-muted-foreground flex-col gap-4">
               <Loader2 className="w-8 h-8 animate-spin" />

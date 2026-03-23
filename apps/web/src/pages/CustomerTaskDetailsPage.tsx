@@ -106,8 +106,8 @@ export function CustomerTaskDetailsPage() {
   }
 
   return (
-    <ScreenFrame>
-      <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+    <ScreenFrame maxWidth="wide">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
           <Button variant="ghost" onClick={() => navigate('/customer/tasks')}>
             <ChevronLeft className="w-5 h-5" />
@@ -117,99 +117,107 @@ export function CustomerTaskDetailsPage() {
           </h1>
         </div>
 
-        <Card className="shadow-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <CardTitle className="text-xl">
-                  {task.category
-                    ? i18n.language === 'mn'
-                      ? task.category.name_mn
-                      : task.category.name
-                    : t('category.' + task.category_id)}
-                </CardTitle>
-                <CardDescription className="mt-1 flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  {task.location_text}
-                </CardDescription>
-              </div>
-              <Badge
-                className="text-sm px-3 py-1"
-                variant={task.status === 'OPEN' ? 'default' : 'secondary'}
-              >
-                {task.status}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="grid sm:grid-cols-2 gap-4 pb-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm text-foreground">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span>{new Date(task.scheduled_at).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-foreground">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <span>{new Date(task.scheduled_at).toLocaleTimeString()}</span>
-              </div>
-            </div>
-            <div className="space-y-3 sm:text-right">
-              <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
-                {t('customerTaskDetails.budgetLabel', 'Budget')}
-              </div>
-              <div className="text-2xl font-bold text-foreground">
-                ₮{task.budget.toLocaleString()}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold mt-4">
-            {t('customerTaskDetails.applicantsTitle', 'Applicants')}
-          </h2>
-
-          {isAssigned ? (
-            <Card className="border-primary bg-primary/5">
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                <UserCheck className="w-12 h-12 text-primary mb-4" />
-                <CardTitle className="mb-2">
-                  {t('customerTaskDetails.taskAssignedTitle', 'Task is assigned')}
-                </CardTitle>
-                <CardDescription className="mb-4">
-                  {t(
-                    'customerTaskDetails.taskAssignedDesc',
-                    'You have already accepted a Tasker for this task.',
-                  )}
-                </CardDescription>
-                <Button onClick={() => navigate('/booking/safety')}>
-                  {t('customerTaskDetails.goToBookingManagement', 'Go to Booking Management')}
-                </Button>
+        <div className="flex flex-col lg:flex-row lg:gap-8">
+          <div className="lg:w-3/5">
+            <Card className="shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-xl">
+                      {task.category
+                        ? i18n.language === 'mn'
+                          ? task.category.name_mn
+                          : task.category.name
+                        : t('category.' + task.category_id)}
+                    </CardTitle>
+                    <CardDescription className="mt-1 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {task.location_text}
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    className="text-sm px-3 py-1"
+                    variant={task.status === 'OPEN' ? 'default' : 'secondary'}
+                  >
+                    {task.status}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="grid sm:grid-cols-2 gap-4 pb-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span>{new Date(task.scheduled_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-foreground">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span>{new Date(task.scheduled_at).toLocaleTimeString()}</span>
+                  </div>
+                </div>
+                <div className="space-y-3 sm:text-right">
+                  <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
+                    {t('customerTaskDetails.budgetLabel', 'Budget')}
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    ₮{task.budget.toLocaleString()}
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          ) : applicationsError ? (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {applicationsError.message ??
-                  t('customerTaskDetails.failedToLoadApplications', 'Failed to load applications')}
-              </AlertDescription>
-            </Alert>
-          ) : applicationsLoading ? (
+          </div>
+          <div className="lg:w-2/5">
             <div className="space-y-4">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Skeleton key={i} className="h-32 w-full" />
-              ))}
+              <h2 className="text-xl font-semibold mt-4 lg:mt-0">
+                {t('customerTaskDetails.applicantsTitle', 'Applicants')}
+              </h2>
+
+              {isAssigned ? (
+                <Card className="border-primary bg-primary/5">
+                  <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+                    <UserCheck className="w-12 h-12 text-primary mb-4" />
+                    <CardTitle className="mb-2">
+                      {t('customerTaskDetails.taskAssignedTitle', 'Task is assigned')}
+                    </CardTitle>
+                    <CardDescription className="mb-4">
+                      {t(
+                        'customerTaskDetails.taskAssignedDesc',
+                        'You have already accepted a Tasker for this task.',
+                      )}
+                    </CardDescription>
+                    <Button onClick={() => navigate('/booking/safety')}>
+                      {t('customerTaskDetails.goToBookingManagement', 'Go to Booking Management')}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : applicationsError ? (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    {applicationsError.message ??
+                      t(
+                        'customerTaskDetails.failedToLoadApplications',
+                        'Failed to load applications',
+                      )}
+                  </AlertDescription>
+                </Alert>
+              ) : applicationsLoading ? (
+                <div className="space-y-4">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <Skeleton key={i} className="h-32 w-full" />
+                  ))}
+                </div>
+              ) : !applicationsPage?.data || applicationsPage.data.length === 0 ? (
+                <Card className="border-dashed p-8 text-center text-muted-foreground">
+                  {t('customerTaskDetails.waitingForTaskers', 'Waiting for Taskers to apply...')}
+                </Card>
+              ) : (
+                <div className="grid gap-4">
+                  {applicationsPage.data.map((app) => (
+                    <ApplicationCard key={app.id} application={app} taskId={task.id} />
+                  ))}
+                </div>
+              )}
             </div>
-          ) : !applicationsPage?.data || applicationsPage.data.length === 0 ? (
-            <Card className="border-dashed p-8 text-center text-muted-foreground">
-              {t('customerTaskDetails.waitingForTaskers', 'Waiting for Taskers to apply...')}
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {applicationsPage.data.map((app) => (
-                <ApplicationCard key={app.id} application={app} taskId={task.id} />
-              ))}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </ScreenFrame>

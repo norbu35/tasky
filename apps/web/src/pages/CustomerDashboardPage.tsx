@@ -69,7 +69,7 @@ export function CustomerDashboardPage() {
     ) ?? [];
 
   return (
-    <ScreenFrame>
+    <ScreenFrame maxWidth="wide">
       <div className="flex flex-col gap-6">
         {/* Greeting header */}
         <div className="flex items-start justify-between gap-4">
@@ -166,7 +166,7 @@ export function CustomerDashboardPage() {
             </TabsList>
 
             <TabsContent value="open" className="mt-0">
-              <div className="grid gap-3">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {openTasks.map((task) => (
                   <TaskCard key={task.id} task={task} />
                 ))}
@@ -179,7 +179,7 @@ export function CustomerDashboardPage() {
             </TabsContent>
 
             <TabsContent value="active" className="mt-0">
-              <div className="grid gap-3">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {activeTasks.map((task) => (
                   <TaskCard key={task.id} task={task} />
                 ))}
@@ -192,7 +192,7 @@ export function CustomerDashboardPage() {
             </TabsContent>
 
             <TabsContent value="past" className="mt-0">
-              <div className="grid gap-3">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {pastTasks.map((task) => (
                   <TaskCard key={task.id} task={task} />
                 ))}

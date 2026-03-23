@@ -159,7 +159,7 @@ export function MessagingNotificationsPage() {
 
   return (
     <ScreenFrame>
-      <div className="max-w-6xl mx-auto h-[calc(100vh-140px)] flex flex-col items-center">
+      <div className="h-[calc(100vh-140px)] flex flex-col items-center">
         <div className="w-full flex items-center justify-between mb-4">
           <h1 className="text-2xl font-display font-bold">
             {t('messaging.inboxTitle', 'Messages')}
