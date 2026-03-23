@@ -37,7 +37,6 @@ public class S3StorageService {
                 .region(Region.US_EAST_1)
                 .serviceConfiguration(
                         S3Configuration.builder().pathStyleAccessEnabled(true).build())
-                .forcePathStyle(true)
                 .build();
     }
 

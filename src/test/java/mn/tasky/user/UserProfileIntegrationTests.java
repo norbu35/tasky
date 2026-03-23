@@ -122,11 +122,8 @@ class UserProfileIntegrationTests extends IntegrationTestBase {
 
         assertThat(storageKey).startsWith("uploads/avatars/" + auth.userId() + "/");
         assertThat(storageKey).endsWith(".png");
-        assertThat(uploadUrl).contains("content_type=image%2Fpng");
-        assertThat(uploadUrl).contains("max_bytes=5242880");
-        assertThat(uploadUrl).contains("expires_in=900");
-        assertThat(uploadUrl).contains("expires_at=");
-        assertThat(uploadUrl).contains("signature=");
+        assertThat(uploadUrl).startsWith("http");
+        assertThat(uploadUrl).contains("X-Amz-Signature");
 
         ResponseEntity<Map> badContentTypeResponse = postWithAuth(
                 "/api/v1/users/me/avatar/upload-url", auth.accessToken(), Map.of("content_type", "application/pdf"));

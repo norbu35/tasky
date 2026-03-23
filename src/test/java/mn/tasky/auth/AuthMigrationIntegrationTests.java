@@ -1,7 +1,6 @@
 package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -138,7 +137,7 @@ class AuthMigrationIntegrationTests extends IntegrationTestBase {
     }
 
     private void stubFacebookToken(String accessToken, String facebookId) {
-        doNothing().when(facebookGraphClient).debugToken(accessToken);
+        when(facebookGraphClient.debugToken(accessToken)).thenReturn(facebookId);
         when(facebookGraphClient.fetchProfile(accessToken))
                 .thenReturn(new FacebookGraphClient.FacebookProfile(
                         facebookId,

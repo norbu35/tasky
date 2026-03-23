@@ -6,7 +6,7 @@ export const colors = {
     foreground: '#F9F8F5', // Clean Off-White
   },
   secondary: {
-    DEFAULT: '#C49A3C', // Steppe Gold
+    DEFAULT: '#8B6914', // Dark Steppe Gold
     foreground: '#FFFFFF',
   },
   destructive: {

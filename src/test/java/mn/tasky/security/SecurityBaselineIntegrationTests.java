@@ -1,7 +1,6 @@
 package mn.tasky.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Jwts;
@@ -114,7 +113,7 @@ class SecurityBaselineIntegrationTests extends IntegrationTestBase {
     void facebookAuthRateLimited() {
         String accessToken = "facebook-security-token";
         String rateLimitIp = "203.0.113.42";
-        doNothing().when(facebookGraphClient).debugToken(accessToken);
+        when(facebookGraphClient.debugToken(accessToken)).thenReturn("fb-user-security");
         when(facebookGraphClient.fetchProfile(accessToken))
                 .thenReturn(new FacebookGraphClient.FacebookProfile("fb-user-security", "Security Test", null));
 

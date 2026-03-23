@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AppContext } from '../../context/AppContext';
 import type { AppContextValue } from '../../context/AppContext';
@@ -139,9 +140,11 @@ function renderPage(apiClient?: ApiClient) {
   const api = apiClient ?? createMockApiClient();
   const ctx = createAppContext(api);
   render(
-    <AppContext.Provider value={ctx}>
-      <CustomerTaskPage />
-    </AppContext.Provider>,
+    <MemoryRouter>
+      <AppContext.Provider value={ctx}>
+        <CustomerTaskPage />
+      </AppContext.Provider>
+    </MemoryRouter>,
   );
   return { api, ctx };
 }

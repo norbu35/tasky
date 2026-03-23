@@ -8,7 +8,7 @@ export const designTokens = {
         primary: {hsl: "211.5 48% 23.3%", hex: "#1B3A5C"},
         primaryForeground: {hsl: "40 25% 97%", hex: "#F9F8F5"},
         primaryDeep: {hsl: "212 55% 14%", hex: "#102638"},
-        secondary: {hsl: "41.5 53.5% 50.2%", hex: "#C49A3C"},
+        secondary: {hsl: "42.9 74.8% 31.2%", hex: "#8B6914"},
         secondaryForeground: {hsl: "0 0% 100%", hex: "#FFFFFF"},
         muted: {hsl: "40 20% 94%", hex: "#F3F1EC"},
         mutedForeground: {hsl: "211 15% 40%", hex: "#576473"},

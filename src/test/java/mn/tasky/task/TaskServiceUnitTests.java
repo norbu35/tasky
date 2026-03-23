@@ -1,7 +1,9 @@
 package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mn.tasky.analytics.application.AnalyticsService;
@@ -27,9 +29,16 @@ import org.junit.jupiter.api.Test;
 class TaskServiceUnitTests {
 
     private TaskService taskService;
+    private S3PresignedUrlService s3Mock;
 
     @BeforeEach
     void setUp() {
+        s3Mock = mock(S3PresignedUrlService.class);
+        when(s3Mock.generateUploadUrl(anyString(), anyString()))
+                .thenReturn("https://storage.example.com/presigned-upload");
+        when(s3Mock.generateDownloadUrl(anyString()))
+                .thenAnswer(inv -> "https://storage.example.com/presigned-get/" + inv.getArgument(0));
+
         taskService = new TaskService(
                 mock(AuthService.class),
                 mock(CategoryService.class),
@@ -40,7 +49,7 @@ class TaskServiceUnitTests {
                 mock(DomainEventOutboxService.class),
                 mock(ReviewEnforcementService.class),
                 mock(ScopeSummaryGenerator.class),
-                mock(S3PresignedUrlService.class),
+                s3Mock,
                 mock(TaskDao.class),
                 mock(TaskPhotoDao.class),
                 mock(TaskApplicationDao.class),

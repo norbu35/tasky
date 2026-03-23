@@ -29,7 +29,7 @@ tasky:
   security:
     jwt-secret: "test-jwt-signing-secret-should-be-at-least-32-bytes"
     encryption-key: "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY="
-    blind-index-key: "test-blind-index-secret-should-be-at-least-32-bytes"
+    blind-index-key: "dGVzdC1ibGluZC1pbmRleC1zZWNyZXQtMzJieXRlcyE="
   qpay:
     webhook-secret: "test-qpay-webhook-secret-should-be-at-least-32-bytes"
   cors:

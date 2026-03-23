@@ -17,10 +17,16 @@ const mockApiClient: Partial<ApiClient> = {
   adminActivateCategorySchema: vi.fn(),
 };
 
+const mockSession = {
+  accessToken: 'test-token',
+  refreshToken: 'rt',
+  user: { id: '1', role: 'ADMIN' },
+};
+
 vi.mock('../../../context/AppContext', () => ({
   useAppContext: vi.fn(() => ({
     apiClient: mockApiClient,
-    session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
+    session: mockSession,
   })),
 }));
 

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ApiClient, User, Message } from '../../../lib/apiClient';
 
@@ -204,10 +205,9 @@ describe('AdminUsersPage', () => {
   it('flagged messages tab shows messages', async () => {
     renderPage();
 
-    // Radix Tabs use pointer events internally; dispatch pointerdown then click
+    const user = userEvent.setup();
     const flaggedTab = screen.getByRole('tab', { name: /flagged/i });
-    fireEvent.pointerDown(flaggedTab, { button: 0, pointerId: 1 });
-    fireEvent.click(flaggedTab);
+    await user.click(flaggedTab);
 
     await waitFor(() => {
       expect(mockApiClient.adminListFlaggedMessages).toHaveBeenCalledWith('test-token');

@@ -76,7 +76,7 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
         List<VerificationDetail> pending = authService.listPendingVerifications(10);
         assertThat(pending).anySatisfy(v -> {
             assertThat(v.userId()).isEqualTo(user.userId());
-            assertThat(v.idCardFrontUrl()).contains("presigned-get");
+            assertThat(v.idCardFrontUrl()).contains("X-Amz-Signature");
         });
     }
 

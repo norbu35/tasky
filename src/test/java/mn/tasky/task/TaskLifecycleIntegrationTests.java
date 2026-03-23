@@ -195,7 +195,7 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> preResponse = postWithAuth(
                 "/api/v1/tasks/photos/upload-url", customer.accessToken(), Map.of("content_type", "image/jpeg"));
         assertThat(preResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(preResponse.getBody().get("upload_url").toString()).contains("presigned-upload");
+        assertThat(preResponse.getBody().get("upload_url").toString()).contains("X-Amz-Signature");
         assertThat(preResponse.getBody().get("storage_key").toString()).startsWith("uploads/tasks/");
 
         // Post-create upload URL
