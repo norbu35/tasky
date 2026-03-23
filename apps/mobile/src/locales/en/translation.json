@@ -559,7 +559,9 @@
       "reminderCta": "Leave a Review",
       "reminderLater": "Later",
       "hardLockTitle": "Review Required",
-      "hardLockBody": "Please resolve pending reviews to continue"
+      "hardLockBody": "Please resolve pending reviews to continue",
+      "successTitle": "Thank you!",
+      "successBody": "Your review has been submitted."
     },
     "account": {
       "suspendedTitle": "Account Suspended",

@@ -105,6 +105,13 @@ export default function BookingDetailScreen() {
     router.push(`/(customer)/bookings/${bookingId}/reschedule`);
   }, [router, bookingId]);
 
+  const handleLeaveReview = useCallback(() => {
+    router.push({
+      pathname: '/(shared)/review/[bookingId]',
+      params: { bookingId, role: 'customer' },
+    });
+  }, [router, bookingId]);
+
   return (
     <DetailTemplate
       headerTitle={t('customer.bookings.detailTitle', 'Booking Detail')}
@@ -195,6 +202,18 @@ export default function BookingDetailScreen() {
                   </Text>
                 </Pressable>
               </>
+            )}
+
+            {status === 'COMPLETED' && (
+              <Pressable
+                style={styles.actionLink}
+                onPress={handleLeaveReview}
+                testID="booking-detail-screen-review-link"
+              >
+                <Text style={styles.actionLinkText}>
+                  {t('shared.review.title', 'Leave a Review')}
+                </Text>
+              </Pressable>
             )}
           </View>
 

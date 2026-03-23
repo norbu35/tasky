@@ -2,13 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Booking } from '../lib/apiClient';
 import { Button } from '../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
@@ -50,8 +44,12 @@ export function BookingSafetyPage() {
   >(null);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
-  // Form states
-  const [rating, setRating] = useState(5);
+  // Form states — multi-category review ratings
+  const [qualityRating, setQualityRating] = useState(5);
+  const [punctualityRating, setPunctualityRating] = useState(5);
+  const [communicationRating, setCommunicationRating] = useState(5);
+  const [clarityRating, setClarityRating] = useState(5);
+  const [respectfulnessRating, setRespectfulnessRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [disputeCategory, setDisputeCategory] = useState('');
   const [disputeReason, setDisputeReason] = useState('');
@@ -77,7 +75,11 @@ export function BookingSafetyPage() {
     setActionDialog(null);
     setSelectedBooking(null);
     setReviewComment('');
-    setRating(5);
+    setQualityRating(5);
+    setPunctualityRating(5);
+    setCommunicationRating(5);
+    setClarityRating(5);
+    setRespectfulnessRating(5);
     setDisputeCategory('');
     setDisputeReason('');
   };
@@ -119,10 +121,20 @@ export function BookingSafetyPage() {
     onError: (err) => toast.error(parseError(err)),
   });
 
+  const isUserCustomer =
+    selectedBooking != null && session != null
+      ? session.user.id === selectedBooking.customer_id
+      : true;
+
   const reviewMutation = useMutation({
     mutationFn: async (bookingId: string) => {
+      const userIsCustomer = session!.user.id === selectedBooking!.customer_id;
       return apiClient.submitReview(session!.accessToken, bookingId, {
-        rating,
+        quality_rating: userIsCustomer ? qualityRating : 0,
+        punctuality_rating: punctualityRating,
+        communication_rating: userIsCustomer ? communicationRating : 0,
+        clarity_rating: userIsCustomer ? 0 : clarityRating,
+        respectfulness_rating: userIsCustomer ? 0 : respectfulnessRating,
         comment: reviewComment.trim() || null,
       });
     },
@@ -378,21 +390,97 @@ export function BookingSafetyPage() {
           <DialogHeader>
             <DialogTitle>{t('bookingSafety.reviewTitle', 'Leave a Review')}</DialogTitle>
             <DialogDescription>
-              {t('bookingSafety.reviewDesc', 'Rate your experience with the Tasker.')}
+              {isUserCustomer
+                ? t('bookingSafety.reviewDescCustomer', 'Rate your experience with the Tasker.')
+                : t('bookingSafety.reviewDescTasker', 'Rate your experience with the Customer.')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="rating">{t('bookingSafety.ratingLabel', 'Rating (1-5)')}</Label>
-              <Input
-                id="rating"
-                type="number"
-                min={1}
-                max={5}
-                value={rating}
-                onChange={(e) => setRating(parseInt(e.target.value) || 5)}
-              />
-            </div>
+            {isUserCustomer ? (
+              <>
+                <div className="grid gap-2">
+                  <Label htmlFor="qualityRating">
+                    {t('bookingSafety.qualityRatingLabel', 'Quality (1-5)')}
+                  </Label>
+                  <Input
+                    id="qualityRating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={qualityRating}
+                    onChange={(e) => setQualityRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="punctualityRating">
+                    {t('bookingSafety.punctualityRatingLabel', 'Punctuality (1-5)')}
+                  </Label>
+                  <Input
+                    id="punctualityRating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={punctualityRating}
+                    onChange={(e) => setPunctualityRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="communicationRating">
+                    {t('bookingSafety.communicationRatingLabel', 'Communication (1-5)')}
+                  </Label>
+                  <Input
+                    id="communicationRating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={communicationRating}
+                    onChange={(e) => setCommunicationRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="grid gap-2">
+                  <Label htmlFor="clarityRating">
+                    {t('bookingSafety.clarityRatingLabel', 'Clarity (1-5)')}
+                  </Label>
+                  <Input
+                    id="clarityRating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={clarityRating}
+                    onChange={(e) => setClarityRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="respectfulnessRating">
+                    {t('bookingSafety.respectfulnessRatingLabel', 'Respectfulness (1-5)')}
+                  </Label>
+                  <Input
+                    id="respectfulnessRating"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={respectfulnessRating}
+                    onChange={(e) => setRespectfulnessRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="punctualityRatingTasker">
+                    {t('bookingSafety.punctualityRatingLabel', 'Punctuality (1-5)')}
+                  </Label>
+                  <Input
+                    id="punctualityRatingTasker"
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={punctualityRating}
+                    onChange={(e) => setPunctualityRating(parseInt(e.target.value) || 5)}
+                  />
+                </div>
+              </>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="comment">{t('bookingSafety.commentLabel', 'Comment')}</Label>
               <Textarea
@@ -400,6 +488,7 @@ export function BookingSafetyPage() {
                 placeholder={t('bookingSafety.commentPlaceholder', 'How was the service?')}
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
+                maxLength={1000}
               />
             </div>
           </div>

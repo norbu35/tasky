@@ -124,7 +124,12 @@ export default function BookingDetailTaskerScreen() {
               <Button
                 label={t('tasker.jobs.leaveReview', 'Leave Review')}
                 variant="outline"
-                onPress={() => router.push(`/(shared)/review/${booking.id}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(shared)/review/[bookingId]',
+                    params: { bookingId: booking.id, role: 'tasker' },
+                  })
+                }
                 testID="booking-detail-tasker-review"
               />
             </View>

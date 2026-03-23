@@ -218,7 +218,7 @@ function resolveApiUrl(baseUrl: string, path: string): URL {
   return new URL(relativePath, normalizedBase);
 }
 
-function buildBaseUrl(): string {
+export function buildBaseUrl(): string {
   const maybeGlobal = globalThis as { __TASKY_API_BASE_URL__?: string };
   if (
     typeof maybeGlobal.__TASKY_API_BASE_URL__ === 'string' &&

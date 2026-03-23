@@ -10,3 +10,4 @@ export { BookingSafetyPage } from './BookingSafetyPage';
 export { MessagingNotificationsPage } from './MessagingNotificationsPage';
 export * from './TaskerTasksPage';
 export * from './LandingPage';
+export { VerificationPage } from './VerificationPage';

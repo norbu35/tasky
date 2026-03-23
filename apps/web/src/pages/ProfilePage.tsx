@@ -2,13 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Camera, Loader2, Save, ShieldAlert, ShieldCheck, Sparkles, User } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useAppContext } from '../context/AppContext';

@@ -18,7 +18,7 @@ interface ReviewFormInput {
   comment?: string;
 }
 
-export function useSubmitReview() {
+export function useSubmitReview(onSuccess?: () => void) {
   const session = useAuthStore((s) => s.session);
   const token = session?.accessToken;
   const queryClient = useQueryClient();
@@ -45,6 +45,7 @@ export function useSubmitReview() {
       void queryClient.invalidateQueries({ queryKey: ['booking'] });
       void queryClient.invalidateQueries({ queryKey: ['bookings'] });
       void queryClient.invalidateQueries({ queryKey: ['taskerProfile'] });
+      onSuccess?.();
     },
   });
 }

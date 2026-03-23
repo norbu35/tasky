@@ -13,17 +13,15 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { createMobileApiClient, Message } from '../../../lib/mobileApiClient';
+import { buildBaseUrl, createMobileApiClient, Message } from '../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../store/authStore';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTranslation } from 'react-i18next';
 
 const { colors } = mobileTheme;
 
-// Get your local IP address for the Android emulator or iOS simulator. Using localhost might map to the device itself.
-// 10.0.2.2 is standard for Android Emulator pointing to host localhost. For iOS simulator, localhost works.
-const API_URL =
-  Platform.OS === 'android' ? 'http://10.0.2.2:8080/api/v1' : 'http://localhost:8080/api/v1';
+// Base URL resolved from globalThis.__TASKY_API_BASE_URL__ (falls back to localhost:8080).
+const API_BASE_URL = buildBaseUrl();
 
 export function ChatDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,7 +53,7 @@ export function ChatDetailScreen() {
     loadMessages();
 
     if (id && session) {
-      const socketUrl = `${API_URL.replace('/api/v1', '')}/ws`;
+      const socketUrl = `${API_BASE_URL.replace('/api/v1', '')}/ws`;
 
       const client = new Client({
         webSocketFactory: () => new SockJS(socketUrl),

@@ -41,7 +41,7 @@ class AdminUserControllerUnitTests {
         when(authService.searchUsersByPhone("9911", u1.id(), 2))
                 .thenReturn(new UserProfilePage(List.of(u2, u3), null, false));
 
-        ResponseEntity<?> response = controller.search("9911", u1.id(), 2);
+        ResponseEntity<?> response = controller.search(null, null, "9911", u1.id(), 2);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         PagedResponse<?> body = (PagedResponse<?>) response.getBody();
@@ -66,7 +66,7 @@ class AdminUserControllerUnitTests {
         when(authService.searchUsersByPhone("9911", "not-a-uuid", 2))
                 .thenThrow(new IllegalArgumentException("Cursor is invalid."));
 
-        ResponseEntity<?> response = controller.search("9911", "not-a-uuid", 2);
+        ResponseEntity<?> response = controller.search(null, null, "9911", "not-a-uuid", 2);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "INVALID_CURSOR");

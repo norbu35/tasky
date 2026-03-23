@@ -26,6 +26,13 @@ export interface VerificationDetail {
   reviewed_at: string | null;
 }
 
+export interface VerificationStatus {
+  status: 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  admin_notes: string | null;
+  submitted_at: string | null;
+  reviewed_at: string | null;
+}
+
 export interface FeatureToggle {
   feature_name: string;
   is_enabled: boolean;
@@ -72,6 +79,7 @@ export interface AdminCategoryPayload {
   icon_url: string;
   sort_order: number;
   intake_enabled: boolean;
+  is_active?: boolean;
 }
 
 export interface AuthTokens {
@@ -178,7 +186,14 @@ export interface ApiClient {
   submitReview(
     accessToken: string,
     bookingId: string,
-    payload: { rating: number; comment?: string | null },
+    payload: {
+      quality_rating: number;
+      punctuality_rating: number;
+      communication_rating: number;
+      clarity_rating: number;
+      respectfulness_rating: number;
+      comment?: string | null;
+    },
   ): Promise<Review>;
 
   getUserReviews(accessToken: string, userId: string): Promise<CursorPage<Review>>;
@@ -206,6 +221,25 @@ export interface ApiClient {
   unregisterDevice(accessToken: string, token: string): Promise<void>;
 
   devLogin(phone: string, role: 'CUSTOMER' | 'TASKER' | 'ADMIN'): Promise<AuthTokens>;
+
+  // ─── Verification Methods ─────────────────────────────────────────
+
+  getVerificationUploadUrl(
+    accessToken: string,
+    contentType: string,
+  ): Promise<{ uploadUrl: string; storageKey: string }>;
+
+  submitVerification(
+    accessToken: string,
+    payload: {
+      id_card_front_key: string;
+      id_card_back_key: string;
+      consent_policy_version: string;
+      consent_accepted: boolean;
+    },
+  ): Promise<VerificationStatus>;
+
+  getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
 
   // ─── Admin Methods ───────────────────────────────────────────────
 
@@ -585,7 +619,14 @@ export class HttpApiClient implements ApiClient {
   submitReview(
     accessToken: string,
     bookingId: string,
-    payload: { rating: number; comment?: string | null },
+    payload: {
+      quality_rating: number;
+      punctuality_rating: number;
+      communication_rating: number;
+      clarity_rating: number;
+      respectfulness_rating: number;
+      comment?: string | null;
+    },
   ): Promise<Review> {
     return this.requestJson<Review>(
       `/bookings/${bookingId}/reviews`,
@@ -692,6 +733,52 @@ export class HttpApiClient implements ApiClient {
       refreshToken: response.refresh_token,
       user: response.user,
     }));
+  }
+
+  // ─── Verification Methods ─────────────────────────────────────────
+
+  getVerificationUploadUrl(
+    accessToken: string,
+    contentType: string,
+  ): Promise<{ uploadUrl: string; storageKey: string }> {
+    return this.requestJson<{ upload_url: string; storage_key: string }>(
+      '/verification/upload-url',
+      {
+        method: 'POST',
+        body: JSON.stringify({ content_type: contentType }),
+      },
+      accessToken,
+    ).then((response) => ({
+      uploadUrl: response.upload_url,
+      storageKey: response.storage_key,
+    }));
+  }
+
+  submitVerification(
+    accessToken: string,
+    payload: {
+      id_card_front_key: string;
+      id_card_back_key: string;
+      consent_policy_version: string;
+      consent_accepted: boolean;
+    },
+  ): Promise<VerificationStatus> {
+    return this.requestJson<VerificationStatus>(
+      '/verification/submit',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+      accessToken,
+    );
+  }
+
+  getVerificationStatus(accessToken: string): Promise<VerificationStatus> {
+    return this.requestJson<VerificationStatus>(
+      '/verification/status',
+      { method: 'GET' },
+      accessToken,
+    );
   }
 
   // ─── Admin Methods ───────────────────────────────────────────────

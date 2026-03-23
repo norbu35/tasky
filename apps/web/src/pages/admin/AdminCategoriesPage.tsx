@@ -445,7 +445,7 @@ export function AdminCategoriesPage() {
     if (!session) return;
     try {
       const updated = await apiClient.adminUpdateCategory(session.accessToken, category.id, {
-        isActive: !category.is_active,
+        is_active: !category.is_active,
       });
       setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
       toast.success(

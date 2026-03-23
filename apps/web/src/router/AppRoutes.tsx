@@ -13,6 +13,7 @@ import {
   TaskerFeedPage,
   TaskerTasksPage,
   LandingPage,
+  VerificationPage,
 } from '../pages';
 import {
   AdminVerificationsPage,
@@ -136,6 +137,16 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
         path="/tasker/my-tasks"
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleGuard role="TASKER">
+              <VerificationPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        }
+        path="/verification"
       />
       <Route
         element={

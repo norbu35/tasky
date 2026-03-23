@@ -20,6 +20,7 @@ import mn.tasky.auth.dto.AuthUser;
 import mn.tasky.auth.dto.VerificationRequest;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.feature.FeatureToggleService;
+import mn.tasky.common.storage.S3StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ class DataRetentionTests {
     private VerificationDao verificationDao;
     private AuditEventDao auditEventDao;
     private FeatureToggleService featureToggleService;
+    private S3StorageService s3StorageService;
     private DataRetentionService service;
 
     private static final String USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -41,7 +43,9 @@ class DataRetentionTests {
         verificationDao = mock(VerificationDao.class);
         auditEventDao = mock(AuditEventDao.class);
         featureToggleService = mock(FeatureToggleService.class);
-        service = new DataRetentionService(userDao, verificationDao, auditEventDao, featureToggleService);
+        s3StorageService = mock(S3StorageService.class);
+        service = new DataRetentionService(
+                userDao, verificationDao, auditEventDao, featureToggleService, s3StorageService);
     }
 
     @Test

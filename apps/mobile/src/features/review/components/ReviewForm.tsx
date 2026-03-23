@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Star } from 'lucide-react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { FormWizardTemplate } from '../../../components/templates/FormWizardTemplate';
@@ -11,6 +11,7 @@ const { colors, radius, spacing, typography } = mobileTheme;
 
 const STAR_COLOR_ACTIVE = colors.accent;
 const STAR_COUNT = 5;
+const COMMENT_MAX_LENGTH = 1000;
 
 interface CategoryRating {
   key: string;
@@ -24,13 +25,15 @@ export interface ReviewPayload {
   comment: string;
 }
 
-const TASKER_CATEGORIES: CategoryRating[] = [
+/** Categories a customer rates about a tasker */
+const RATE_TASKER_CATEGORIES: CategoryRating[] = [
   { key: 'qualityOfWork', labelKey: 'shared.review.qualityOfWork', value: 0 },
   { key: 'punctuality', labelKey: 'shared.review.punctuality', value: 0 },
   { key: 'communication', labelKey: 'shared.review.communication', value: 0 },
 ];
 
-const CUSTOMER_CATEGORIES: CategoryRating[] = [
+/** Categories a tasker rates about a customer */
+const RATE_CUSTOMER_CATEGORIES: CategoryRating[] = [
   { key: 'taskDescriptionClarity', labelKey: 'shared.review.taskClarity', value: 0 },
   { key: 'respectfulness', labelKey: 'shared.review.respectfulness', value: 0 },
   { key: 'punctuality', labelKey: 'shared.review.punctuality', value: 0 },
@@ -73,18 +76,31 @@ function StarRatingInput({
 /**
  * Full-screen Review Form component (SCR-SHARED-017).
  * Uses FormWizardTemplate with useSubmitReview hook.
+ *
+ * `role` param indicates the current user role:
+ *  - customer -> rates the tasker (quality, punctuality, communication)
+ *  - tasker   -> rates the customer (clarity, respectfulness, punctuality)
  */
 export default function ReviewFormScreen() {
   const { t } = useTranslation();
-  const { bookingId = '', role = 'tasker' } = useLocalSearchParams<{
+  const router = useRouter();
+  const { bookingId = '', role = 'customer' } = useLocalSearchParams<{
     bookingId: string;
     role: string;
-    name: string;
   }>();
 
-  const submitReview = useSubmitReview();
+  const handleSuccess = useCallback(() => {
+    Alert.alert(
+      t('shared.review.successTitle', 'Thank you!'),
+      t('shared.review.successBody', 'Your review has been submitted.'),
+      [{ text: 'OK', onPress: () => router.back() }],
+    );
+  }, [t, router]);
 
-  const initialCategories = role === 'customer' ? CUSTOMER_CATEGORIES : TASKER_CATEGORIES;
+  const submitReview = useSubmitReview(handleSuccess);
+
+  // Customer reviews the tasker; tasker reviews the customer
+  const initialCategories = role === 'customer' ? RATE_TASKER_CATEGORIES : RATE_CUSTOMER_CATEGORIES;
 
   const [categories, setCategories] = useState<CategoryRating[]>(() =>
     initialCategories.map((c) => ({ ...c })),
@@ -150,7 +166,7 @@ export default function ReviewFormScreen() {
           textAlignVertical="top"
           value={comment}
           onChangeText={setComment}
-          maxLength={500}
+          maxLength={COMMENT_MAX_LENGTH}
         />
       </View>
     </FormWizardTemplate>

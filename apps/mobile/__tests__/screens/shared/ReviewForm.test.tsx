@@ -60,9 +60,10 @@ describe('ReviewFormScreen (SCR-SHARED-017)', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    expect(screen.getByText('shared.review.qualityOfWork')).toBeTruthy();
+    // role=tasker means tasker rates the customer → RATE_CUSTOMER_CATEGORIES
+    expect(screen.getByText('shared.review.taskClarity')).toBeTruthy();
+    expect(screen.getByText('shared.review.respectfulness')).toBeTruthy();
     expect(screen.getByText('shared.review.punctuality')).toBeTruthy();
-    expect(screen.getByText('shared.review.communication')).toBeTruthy();
   });
 
   it('renders the comment text field', () => {
@@ -76,10 +77,10 @@ describe('ReviewFormScreen (SCR-SHARED-017)', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    // Tap 5 stars for each category
-    fireEvent.press(screen.getByTestId('rating-qualityOfWork-star-5'));
+    // role=tasker means tasker rates the customer → RATE_CUSTOMER_CATEGORIES
+    fireEvent.press(screen.getByTestId('rating-taskDescriptionClarity-star-5'));
+    fireEvent.press(screen.getByTestId('rating-respectfulness-star-5'));
     fireEvent.press(screen.getByTestId('rating-punctuality-star-5'));
-    fireEvent.press(screen.getByTestId('rating-communication-star-5'));
 
     // Type a comment
     const commentInput = screen.getByTestId('review-comment-input');
@@ -91,9 +92,9 @@ describe('ReviewFormScreen (SCR-SHARED-017)', () => {
     expect(mockMutate).toHaveBeenCalledWith({
       bookingId: 'booking-123',
       ratings: {
-        qualityOfWork: 5,
+        taskDescriptionClarity: 5,
+        respectfulness: 5,
         punctuality: 5,
-        communication: 5,
       },
       comment: 'Great work!',
     });
