@@ -37,7 +37,7 @@ management:
       show-details: when-authorized
       group:
         readiness:
-          include: db,facebookAuth,outbox
+          include: db,facebook,outbox
         liveness:
           include: ping
     prometheus:
