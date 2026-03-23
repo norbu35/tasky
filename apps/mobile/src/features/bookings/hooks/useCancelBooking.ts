@@ -5,22 +5,22 @@ import { createMobileApiClient } from '../../../lib/mobileApiClient';
 const api = createMobileApiClient();
 
 interface CancelBookingParams {
-    bookingId: string;
-    idempotencyKey: string;
+  bookingId: string;
+  idempotencyKey: string;
 }
 
 export function useCancelBooking() {
-    const session = useAuthStore((s) => s.session);
-    const token = session?.accessToken;
-    const queryClient = useQueryClient();
+  const session = useAuthStore((s) => s.session);
+  const token = session?.accessToken;
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: (params: CancelBookingParams) =>
-            api.cancelBooking(token!, params.bookingId, params.idempotencyKey),
-        onSuccess: () => {
-            void queryClient.invalidateQueries({ queryKey: ['bookings'] });
-            void queryClient.invalidateQueries({ queryKey: ['booking'] });
-            void queryClient.invalidateQueries({ queryKey: ['tasks'] });
-        },
-    });
+  return useMutation({
+    mutationFn: (params: CancelBookingParams) =>
+      api.cancelBooking(token!, params.bookingId, params.idempotencyKey),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      void queryClient.invalidateQueries({ queryKey: ['booking'] });
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
 }

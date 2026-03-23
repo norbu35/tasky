@@ -161,8 +161,12 @@ class BookingServiceTests {
                 .thenReturn(1);
         when(bookingCompletionSignalDao.findByBookingId(anyString())).thenReturn(Optional.empty());
 
-        bookingService =
-                new BookingService(authService, bookingDao, bookingReliabilityIncidentDao, bookingCompletionSignalDao, new SimpleMeterRegistry());
+        bookingService = new BookingService(
+                authService,
+                bookingDao,
+                bookingReliabilityIncidentDao,
+                bookingCompletionSignalDao,
+                new SimpleMeterRegistry());
     }
 
     @Test

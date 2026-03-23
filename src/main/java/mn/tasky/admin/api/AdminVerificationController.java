@@ -101,9 +101,7 @@ public class AdminVerificationController {
 
     @PostMapping("/{id}/approve")
     public ResponseEntity<?> approve(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @PathVariable String id,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal JwtPrincipal principal, @PathVariable String id, HttpServletRequest request) {
         return authService
                 .approveVerification(id)
                 .<ResponseEntity<?>>map(detail -> ResponseEntity.ok(toDetailBody(detail)))

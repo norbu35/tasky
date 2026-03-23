@@ -738,7 +738,8 @@ public class TaskController {
             @Valid @RequestBody UpdateDraftRequest body,
             HttpServletRequest request) {
         try {
-            TaskDraft updated = taskDraftService.updateDraft(id, principal.userId(), body.intakeAnswers(), body.summaryDraft());
+            TaskDraft updated =
+                    taskDraftService.updateDraft(id, principal.userId(), body.intakeAnswers(), body.summaryDraft());
             return ResponseEntity.ok(TaskDraftResponse.from(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

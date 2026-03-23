@@ -41,8 +41,7 @@ public class ServiceAreaController {
 
     @PutMapping
     public ResponseEntity<?> setServiceAreas(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @RequestBody Map<String, List<String>> body) {
+            @AuthenticationPrincipal JwtPrincipal principal, @RequestBody Map<String, List<String>> body) {
         if (!"TASKER".equals(principal.role())) {
             return ResponseEntity.status(403).body(Map.of("code", "FORBIDDEN"));
         }

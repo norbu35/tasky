@@ -84,6 +84,10 @@ public class ReviewService {
 
         // Role-specific rating validation (REQ-SAFE-02)
         double reviewAverage;
+        Integer effectiveClarityRating = clarityRating;
+        Integer effectiveRespectfulnessRating = respectfulnessRating;
+        Integer effectiveQualityRating = qualityRating;
+        Integer effectiveCommunicationRating = communicationRating;
         if (isCustomerReviewingTasker) {
             // Customer reviewing Tasker: quality + punctuality + communication required
             if (!isValidRating(qualityRating)
@@ -92,8 +96,8 @@ public class ReviewService {
                 return new ReviewSubmitResult(null, "INVALID_RATING");
             }
             // Null out fields not applicable to this direction
-            clarityRating = null;
-            respectfulnessRating = null;
+            effectiveClarityRating = null;
+            effectiveRespectfulnessRating = null;
             reviewAverage = (qualityRating + punctualityRating + communicationRating) / 3.0;
         } else {
             // Tasker reviewing Customer: clarity + respectfulness + punctuality required
@@ -103,8 +107,8 @@ public class ReviewService {
                 return new ReviewSubmitResult(null, "INVALID_RATING");
             }
             // Null out fields not applicable to this direction
-            qualityRating = null;
-            communicationRating = null;
+            effectiveQualityRating = null;
+            effectiveCommunicationRating = null;
             reviewAverage = (clarityRating + respectfulnessRating + punctualityRating) / 3.0;
         }
 
@@ -120,11 +124,11 @@ public class ReviewService {
                 bookingId,
                 authorId,
                 targetUserId,
-                qualityRating,
+                effectiveQualityRating,
                 punctualityRating,
-                communicationRating,
-                clarityRating,
-                respectfulnessRating,
+                effectiveCommunicationRating,
+                effectiveClarityRating,
+                effectiveRespectfulnessRating,
                 sanitizedComment,
                 now);
         reviewDao.insert(
@@ -132,11 +136,11 @@ public class ReviewService {
                 bookingId,
                 authorId,
                 targetUserId,
-                qualityRating,
+                effectiveQualityRating,
                 punctualityRating,
-                communicationRating,
-                clarityRating,
-                respectfulnessRating,
+                effectiveCommunicationRating,
+                effectiveClarityRating,
+                effectiveRespectfulnessRating,
                 sanitizedComment,
                 now);
 

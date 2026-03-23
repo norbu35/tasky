@@ -90,7 +90,8 @@ public class TaskDraftService {
      * @throws IllegalArgumentException if the draft does not exist
      * @throws IllegalStateException    if the draft has expired
      */
-    public TaskDraft updateDraft(String draftId, String requestingUserId, String intakeAnswersJson, String summaryDraft) {
+    public TaskDraft updateDraft(
+            String draftId, String requestingUserId, String intakeAnswersJson, String summaryDraft) {
         TaskDraft existing =
                 taskDraftDao.findById(draftId).orElseThrow(() -> new IllegalArgumentException("Draft not found."));
 

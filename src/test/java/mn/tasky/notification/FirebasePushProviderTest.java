@@ -45,8 +45,8 @@ class FirebasePushProviderTest {
     void sendPush_firebaseThrows_returnsFailure() throws Exception {
         when(firebaseMessaging.send(any())).thenThrow(new RuntimeException("FCM unavailable"));
 
-        NotificationResult result = provider.sendPush(
-                "fcm-token-xyz", "IOS", "New Task", "A task is waiting", Map.of());
+        NotificationResult result =
+                provider.sendPush("fcm-token-xyz", "IOS", "New Task", "A task is waiting", Map.of());
 
         assertThat(result.success()).isFalse();
         assertThat(result.errorCode()).isEqualTo("DELIVERY_FAILURE");
@@ -68,7 +68,10 @@ class FirebasePushProviderTest {
         when(firebaseMessaging.send(any())).thenReturn("projects/tasky/messages/topic-msg-1");
 
         NotificationResult result = provider.sendToTopic(
-                "taskers.district.bayangol.cleaning", "New Task", "Cleaning job in Bayangol", Map.of("type", "NEW_TASK"));
+                "taskers.district.bayangol.cleaning",
+                "New Task",
+                "Cleaning job in Bayangol",
+                Map.of("type", "NEW_TASK"));
 
         assertThat(result.success()).isTrue();
     }

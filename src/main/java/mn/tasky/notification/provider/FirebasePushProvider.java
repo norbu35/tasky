@@ -37,8 +37,7 @@ public class FirebasePushProvider implements PushNotificationProvider {
 
     private final FirebaseMessaging messaging;
 
-    public FirebasePushProvider(
-            @Value("${FIREBASE_SERVICE_ACCOUNT_JSON:}") String serviceAccountJson) {
+    public FirebasePushProvider(@Value("${FIREBASE_SERVICE_ACCOUNT_JSON:}") String serviceAccountJson) {
         this.messaging = initFirebase(serviceAccountJson);
     }
 
@@ -53,7 +52,8 @@ public class FirebasePushProvider implements PushNotificationProvider {
         try {
             Message.Builder builder = Message.builder()
                     .setToken(deviceToken)
-                    .setNotification(Notification.builder().setTitle(title).setBody(body).build())
+                    .setNotification(
+                            Notification.builder().setTitle(title).setBody(body).build())
                     .putAllData(data);
 
             if ("ANDROID".equalsIgnoreCase(platform)) {
@@ -85,8 +85,11 @@ public class FirebasePushProvider implements PushNotificationProvider {
             try {
                 var response = messaging.subscribeToTopic(List.of(deviceToken), topic);
                 if (response.getFailureCount() > 0) {
-                    log.warn("FCM topic subscription failed: topic={} token={} errors={}",
-                            topic, deviceToken, response.getErrors());
+                    log.warn(
+                            "FCM topic subscription failed: topic={} token={} errors={}",
+                            topic,
+                            deviceToken,
+                            response.getErrors());
                 } else {
                     log.debug("FCM subscribed: topic={} token={}", topic, deviceToken);
                 }
@@ -97,12 +100,12 @@ public class FirebasePushProvider implements PushNotificationProvider {
     }
 
     @Override
-    public NotificationResult sendToTopic(
-            String topic, String title, String body, Map<String, String> data) {
+    public NotificationResult sendToTopic(String topic, String title, String body, Map<String, String> data) {
         try {
             Message message = Message.builder()
                     .setTopic(topic)
-                    .setNotification(Notification.builder().setTitle(title).setBody(body).build())
+                    .setNotification(
+                            Notification.builder().setTitle(title).setBody(body).build())
                     .putAllData(data)
                     .build();
             String messageId = messaging.send(message);
@@ -123,9 +126,8 @@ public class FirebasePushProvider implements PushNotificationProvider {
             if (FirebaseApp.getApps().isEmpty()) {
                 GoogleCredentials credentials = GoogleCredentials.fromStream(
                         new ByteArrayInputStream(serviceAccountJson.getBytes(StandardCharsets.UTF_8)));
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(credentials)
-                        .build();
+                FirebaseOptions options =
+                        FirebaseOptions.builder().setCredentials(credentials).build();
                 FirebaseApp.initializeApp(options);
             }
             return FirebaseMessaging.getInstance();

@@ -38,8 +38,7 @@ public class FacebookAuthController {
     public ResponseEntity<Map<String, Object>> status() {
         boolean available = !circuitBreaker.isOpen();
         return ResponseEntity.ok(Map.of(
-                "available", available,
-                "state", circuitBreaker.getState().name()));
+                "available", available, "state", circuitBreaker.getState().name()));
     }
 
     @PostMapping

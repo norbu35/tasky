@@ -143,10 +143,9 @@ public class NoShowService {
 
         Optional<Conversation> conversationOpt =
                 conversationDao.findByTaskAndParticipants(booking.taskId(), booking.customerId(), booking.taskerId());
-        if (conversationOpt.isPresent()) {
-            if (messageDao.existsRecentByConversationId(conversationOpt.get().id(), activityCutoff)) {
-                return NoShowFlagResult.error("ACTIVITY_DETECTED");
-            }
+        if (conversationOpt.isPresent()
+                && messageDao.existsRecentByConversationId(conversationOpt.get().id(), activityCutoff)) {
+            return NoShowFlagResult.error("ACTIVITY_DETECTED");
         }
 
         // 4. No ACCEPTED reschedule with proposed_scheduled_at > now

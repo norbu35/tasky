@@ -10,110 +10,110 @@ const mockBack = jest.fn();
 const mockPush = jest.fn();
 
 jest.mock('expo-router', () => ({
-    useRouter: () => ({
-        replace: mockReplace,
-        back: mockBack,
-        push: mockPush,
-    }),
+  useRouter: () => ({
+    replace: mockReplace,
+    back: mockBack,
+    push: mockPush,
+  }),
 }));
 
 const baseUser: User = {
-    id: 'user-1',
-    phone: '+97699001122',
-    primary_auth: 'PHONE_OTP',
-    role: 'CUSTOMER',
-    status: 'PENDING',
-    created_at: '2026-02-14T00:00:00Z',
+  id: 'user-1',
+  phone: '+97699001122',
+  primary_auth: 'PHONE_OTP',
+  role: 'CUSTOMER',
+  status: 'PENDING',
+  created_at: '2026-02-14T00:00:00Z',
 };
 
 const baseSession: AuthTokens = {
-    accessToken: 'access-token',
-    refreshToken: 'refresh-token',
-    user: baseUser,
+  accessToken: 'access-token',
+  refreshToken: 'refresh-token',
+  user: baseUser,
 };
 
 const baseProfile: Profile = {
-    id: 'user-1',
-    phone_masked: '+97699****22',
-    role: 'CUSTOMER',
-    status: 'PENDING',
-    full_name: 'Test Customer',
-    avatar_url: null,
-    rating_avg: 0,
-    completed_tasks: 0,
-    is_pro: false,
-    created_at: '2026-02-14T00:00:00Z',
+  id: 'user-1',
+  phone_masked: '+97699****22',
+  role: 'CUSTOMER',
+  status: 'PENDING',
+  full_name: 'Test Customer',
+  avatar_url: null,
+  rating_avg: 0,
+  completed_tasks: 0,
+  is_pro: false,
+  created_at: '2026-02-14T00:00:00Z',
 };
 
 function GuardConsumer({ requireAuth }: { requireAuth?: boolean }) {
-    const { isAuthenticated, isRestricted } = useRouteGuard({ requireAuth });
-    return (
-        <>
-            <Text testID="is-authenticated">{String(isAuthenticated)}</Text>
-            <Text testID="is-restricted">{String(isRestricted)}</Text>
-        </>
-    );
+  const { isAuthenticated, isRestricted } = useRouteGuard({ requireAuth });
+  return (
+    <>
+      <Text testID="is-authenticated">{String(isAuthenticated)}</Text>
+      <Text testID="is-restricted">{String(isRestricted)}</Text>
+    </>
+  );
 }
 
 beforeEach(() => {
-    jest.clearAllMocks();
-    useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+  jest.clearAllMocks();
+  useAuthStore.setState({ session: null, profile: null, deviceToken: null });
 });
 
 describe('useRouteGuard', () => {
-    it('returns isAuthenticated true when session exists', () => {
-        useAuthStore.setState({ session: baseSession, profile: baseProfile });
+  it('returns isAuthenticated true when session exists', () => {
+    useAuthStore.setState({ session: baseSession, profile: baseProfile });
 
-        render(<GuardConsumer requireAuth />);
+    render(<GuardConsumer requireAuth />);
 
-        expect(screen.getByTestId('is-authenticated')).toHaveTextContent('true');
+    expect(screen.getByTestId('is-authenticated')).toHaveTextContent('true');
+  });
+
+  it('returns isAuthenticated false when no session', () => {
+    render(<GuardConsumer requireAuth />);
+
+    expect(screen.getByTestId('is-authenticated')).toHaveTextContent('false');
+  });
+
+  it('redirects to /(auth) when requireAuth and no session', () => {
+    render(<GuardConsumer requireAuth />);
+
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)');
+  });
+
+  it('redirects to /account/banned when profile status is BANNED', () => {
+    useAuthStore.setState({
+      session: baseSession,
+      profile: { ...baseProfile, status: 'BANNED' },
     });
 
-    it('returns isAuthenticated false when no session', () => {
-        render(<GuardConsumer requireAuth />);
+    render(<GuardConsumer requireAuth />);
 
-        expect(screen.getByTestId('is-authenticated')).toHaveTextContent('false');
+    expect(mockReplace).toHaveBeenCalledWith('/account/banned');
+  });
+
+  it('redirects to /account/suspended when profile status is SUSPENDED', () => {
+    useAuthStore.setState({
+      session: baseSession,
+      profile: { ...baseProfile, status: 'SUSPENDED' },
     });
 
-    it('redirects to /(auth) when requireAuth and no session', () => {
-        render(<GuardConsumer requireAuth />);
+    render(<GuardConsumer requireAuth />);
 
-        expect(mockReplace).toHaveBeenCalledWith('/(auth)');
-    });
+    expect(mockReplace).toHaveBeenCalledWith('/account/suspended');
+  });
 
-    it('redirects to /account/banned when profile status is BANNED', () => {
-        useAuthStore.setState({
-            session: baseSession,
-            profile: { ...baseProfile, status: 'BANNED' },
-        });
+  it('does not redirect when authenticated and not restricted', () => {
+    useAuthStore.setState({ session: baseSession, profile: baseProfile });
 
-        render(<GuardConsumer requireAuth />);
+    render(<GuardConsumer requireAuth />);
 
-        expect(mockReplace).toHaveBeenCalledWith('/account/banned');
-    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
 
-    it('redirects to /account/suspended when profile status is SUSPENDED', () => {
-        useAuthStore.setState({
-            session: baseSession,
-            profile: { ...baseProfile, status: 'SUSPENDED' },
-        });
+  it('does not redirect to auth when requireAuth is false', () => {
+    render(<GuardConsumer requireAuth={false} />);
 
-        render(<GuardConsumer requireAuth />);
-
-        expect(mockReplace).toHaveBeenCalledWith('/account/suspended');
-    });
-
-    it('does not redirect when authenticated and not restricted', () => {
-        useAuthStore.setState({ session: baseSession, profile: baseProfile });
-
-        render(<GuardConsumer requireAuth />);
-
-        expect(mockReplace).not.toHaveBeenCalled();
-    });
-
-    it('does not redirect to auth when requireAuth is false', () => {
-        render(<GuardConsumer requireAuth={false} />);
-
-        expect(mockReplace).not.toHaveBeenCalled();
-    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
 });

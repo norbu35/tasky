@@ -147,7 +147,9 @@ public class NotificationService {
 
     private void subscribeToFcmTopics(String userId, String token) {
         var user = userDao.findById(userId).orElse(null);
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         List<String> topics = new ArrayList<>();
         topics.add("platform.all");

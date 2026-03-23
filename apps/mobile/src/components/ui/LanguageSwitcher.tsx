@@ -68,5 +68,5 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#FFFFFF',
-  }
+  },
 });

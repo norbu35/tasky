@@ -42,8 +42,7 @@ public interface PushNotificationProvider {
      * @param body  Notification body.
      * @param data  Arbitrary key-value data payload.
      */
-    default NotificationResult sendToTopic(
-            String topic, String title, String body, Map<String, String> data) {
+    default NotificationResult sendToTopic(String topic, String title, String body, Map<String, String> data) {
         return new NotificationResult(false, null, "TOPIC_NOT_SUPPORTED");
     }
 }

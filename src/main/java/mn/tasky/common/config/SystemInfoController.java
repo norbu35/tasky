@@ -1,6 +1,5 @@
 package mn.tasky.common.config;
 
-import java.time.Instant;
 import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +30,6 @@ public class SystemInfoController {
         Locale locale = LocaleContextHolder.getLocale();
         String status = messageSource.getMessage("system.version", null, locale);
 
-        return Map.of(
-                "api_version",
-                apiVersion,
-                "status_localized",
-                status);
+        return Map.of("api_version", apiVersion, "status_localized", status);
     }
 }

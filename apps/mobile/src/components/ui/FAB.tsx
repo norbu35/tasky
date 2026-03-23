@@ -1,11 +1,7 @@
 import React from 'react';
 import { StyleSheet, Platform, Pressable } from 'react-native';
 import { Plus } from 'lucide-react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/authStore';

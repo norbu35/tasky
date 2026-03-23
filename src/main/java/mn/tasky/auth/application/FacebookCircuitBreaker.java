@@ -31,30 +31,43 @@ public class FacebookCircuitBreaker {
 
     private final MeterRegistry meterRegistry;
 
-    private volatile State state = State.CLOSED;
+    private State state = State.CLOSED;
     private final AtomicInteger consecutiveFailures = new AtomicInteger(0);
-    private volatile Instant windowStart = Instant.now();
+    private Instant windowStart = Instant.now();
 
     public FacebookCircuitBreaker(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }
 
     public State getState() {
-        return state;
+        synchronized (this) {
+            return state;
+        }
     }
 
     /** Returns {@code true} when the circuit is OPEN or HALF_OPEN — i.e., not fully closed. */
     public boolean isOpen() {
-        return state != State.CLOSED;
+        synchronized (this) {
+            return state != State.CLOSED;
+        }
     }
 
     /** Resets the circuit to CLOSED and clears the failure counter. */
-    public synchronized void recordSuccess() {
-        State oldState = state;
-        state = State.CLOSED;
-        consecutiveFailures.set(0);
-        if (oldState != State.CLOSED) {
-            meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", oldState.name(), "to", State.CLOSED.name()).increment();
+    public void recordSuccess() {
+        synchronized (this) {
+            State oldState = state;
+            state = State.CLOSED;
+            consecutiveFailures.set(0);
+            if (oldState != State.CLOSED) {
+                meterRegistry
+                        .counter(
+                                "tasky.circuit_breaker.state_changes",
+                                "from",
+                                oldState.name(),
+                                "to",
+                                State.CLOSED.name())
+                        .increment();
+            }
         }
     }
 
@@ -64,37 +77,55 @@ public class FacebookCircuitBreaker {
      * counter is reset to 1 and a new window is started, so a stale burst cannot retroactively
      * open the circuit.
      */
-    public synchronized void recordFailure() {
-        Instant now = Instant.now();
+    public void recordFailure() {
+        synchronized (this) {
+            Instant now = Instant.now();
 
-        // Start a fresh window when the counter is at zero (first failure after success/reset).
-        if (consecutiveFailures.get() == 0) {
-            windowStart = now;
-        }
+            // Start a fresh window when the counter is at zero (first failure after success/reset).
+            if (consecutiveFailures.get() == 0) {
+                windowStart = now;
+            }
 
-        // Reset window if it expired before incrementing so that an old burst cannot trip the
-        // breaker with a single additional failure that falls outside the window.
-        if (Duration.between(windowStart, now).compareTo(FAILURE_WINDOW) >= 0) {
-            consecutiveFailures.set(1);
-            windowStart = now;
-            return;
-        }
+            // Reset window if it expired before incrementing so that an old burst cannot trip the
+            // breaker with a single additional failure that falls outside the window.
+            if (Duration.between(windowStart, now).compareTo(FAILURE_WINDOW) >= 0) {
+                consecutiveFailures.set(1);
+                windowStart = now;
+                return;
+            }
 
-        int failures = consecutiveFailures.incrementAndGet();
-        if (failures >= FAILURE_THRESHOLD) {
-            State oldState = state;
-            state = State.OPEN;
-            if (oldState != State.OPEN) {
-                meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", oldState.name(), "to", State.OPEN.name()).increment();
+            int failures = consecutiveFailures.incrementAndGet();
+            if (failures >= FAILURE_THRESHOLD) {
+                State oldState = state;
+                state = State.OPEN;
+                if (oldState != State.OPEN) {
+                    meterRegistry
+                            .counter(
+                                    "tasky.circuit_breaker.state_changes",
+                                    "from",
+                                    oldState.name(),
+                                    "to",
+                                    State.OPEN.name())
+                            .increment();
+                }
             }
         }
     }
 
     /** Transitions OPEN -> HALF_OPEN so the probe can attempt a single test call. */
-    public synchronized void tryHalfOpen() {
-        if (state == State.OPEN) {
-            meterRegistry.counter("tasky.circuit_breaker.state_changes", "from", State.OPEN.name(), "to", State.HALF_OPEN.name()).increment();
-            state = State.HALF_OPEN;
+    public void tryHalfOpen() {
+        synchronized (this) {
+            if (state == State.OPEN) {
+                meterRegistry
+                        .counter(
+                                "tasky.circuit_breaker.state_changes",
+                                "from",
+                                State.OPEN.name(),
+                                "to",
+                                State.HALF_OPEN.name())
+                        .increment();
+                state = State.HALF_OPEN;
+            }
         }
     }
 }

@@ -1,220 +1,227 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../../src/lib/mobileApiClient';
 
 jest.mock('expo-router', () => ({
-    useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
-    useLocalSearchParams: () => ({}),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useLocalSearchParams: () => ({}),
 }));
 
 jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-        t: (key: string, fallback?: string | Record<string, unknown>, opts?: Record<string, unknown>) => {
-            const fb = typeof fallback === 'string' ? fallback : key;
-            return fb;
-        },
-        i18n: { language: 'en' },
-    }),
+  useTranslation: () => ({
+    t: (
+      key: string,
+      fallback?: string | Record<string, unknown>,
+      _opts?: Record<string, unknown>,
+    ) => {
+      const fb = typeof fallback === 'string' ? fallback : key;
+      return fb;
+    },
+    i18n: { language: 'en' },
+  }),
 }));
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 jest.mock('lucide-react-native', () => {
-    const { Text } = require('react-native');
-    return new Proxy({}, {
-        get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
-    });
+  const { Text } = require('react-native');
+  return new Proxy(
+    {},
+    {
+      get: (_, name) => (props: any) => <Text testID={`icon-${String(name)}`} {...props} />,
+    },
+  );
 });
 
 jest.mock('../../../src/features/tasks/hooks/useTasks', () => ({
-    useTasks: jest.fn(),
+  useTasks: jest.fn(),
 }));
 
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
 
 const baseTask: PublicTask = {
-    id: 'task-1',
-    category: {
-        id: 'cat-cleaning',
-        name: 'Cleaning',
-        name_mn: 'Цэвэрлэгээ',
-        icon_url: 'https://example/icon.png',
-        is_active: true,
-        sort_order: 1,
-        intake_enabled: false,
-        intake_schema_version: 0,
-    },
-    customer: {
-        id: 'customer-1',
-        full_name: 'John Customer',
-        avatar_url: null,
-        rating_avg: 4.5,
-    },
-    description: 'Deep clean apartment',
-    budget: 50000,
-    approximate_location: 'Bayangol district',
-    approximate_lat: 47.91,
-    approximate_lng: 106.91,
-    status: 'OPEN',
-    scheduled_at: '2026-03-25T10:00:00Z',
-    photo_urls: [],
-    application_count: 3,
-    created_at: '2026-03-23T00:00:00Z',
+  id: 'task-1',
+  category: {
+    id: 'cat-cleaning',
+    name: 'Cleaning',
+    name_mn: 'Цэвэрлэгээ',
+    icon_url: 'https://example/icon.png',
+    is_active: true,
+    sort_order: 1,
+    intake_enabled: false,
+    intake_schema_version: 0,
+  },
+  customer: {
+    id: 'customer-1',
+    full_name: 'John Customer',
+    avatar_url: null,
+    rating_avg: 4.5,
+  },
+  description: 'Deep clean apartment',
+  budget: 50000,
+  approximate_location: 'Bayangol district',
+  approximate_lat: 47.91,
+  approximate_lng: 106.91,
+  status: 'OPEN',
+  scheduled_at: '2026-03-25T10:00:00Z',
+  photo_urls: [],
+  application_count: 3,
+  created_at: '2026-03-23T00:00:00Z',
 };
 
 const secondTask: PublicTask = {
-    ...baseTask,
-    id: 'task-2',
-    description: 'Fix kitchen sink',
-    budget: 80000,
-    category: {
-        ...baseTask.category,
-        id: 'cat-repair',
-        name: 'Repair',
-        name_mn: 'Засвар',
-    },
-    customer: {
-        ...baseTask.customer,
-        full_name: 'Jane Poster',
-    },
+  ...baseTask,
+  id: 'task-2',
+  description: 'Fix kitchen sink',
+  budget: 80000,
+  category: {
+    ...baseTask.category,
+    id: 'cat-repair',
+    name: 'Repair',
+    name_mn: 'Засвар',
+  },
+  customer: {
+    ...baseTask.customer,
+    full_name: 'Jane Poster',
+  },
 };
 
 beforeEach(() => {
-    jest.clearAllMocks();
+  jest.clearAllMocks();
 });
 
 describe('TaskFeedScreen (SCR-TASK-001)', () => {
-    it('renders loading skeleton when isLoading is true', () => {
-        mockUseTasks.mockReturnValue({
-            data: undefined,
-            isLoading: true,
-            isError: false,
-            isRefetching: false,
-            refetch: jest.fn(),
-        } as unknown as ReturnType<typeof useTasks>);
+  it('renders loading skeleton when isLoading is true', () => {
+    mockUseTasks.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
 
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
 
-        expect(screen.getByTestId('task-feed')).toBeTruthy();
+    expect(screen.getByTestId('task-feed')).toBeTruthy();
+  });
+
+  it('shows empty activation state when no tasks', () => {
+    mockUseTasks.mockReturnValue({
+      data: { data: [], cursor: { next: null, prev: null } },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    expect(screen.getByText('tasker.browse.emptyTitle')).toBeTruthy();
+  });
+
+  it('renders task cards with price and category', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    expect(screen.getByText('Deep clean apartment')).toBeTruthy();
+    expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
+    expect(screen.getByText('John Customer')).toBeTruthy();
+    expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
+  });
+
+  it('filter bar toggles work', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    const filterBar = screen.getByTestId('task-feed-filter-bar');
+    expect(filterBar).toBeTruthy();
+  });
+
+  it('calls refresh on pull-down', () => {
+    const refetchFn = jest.fn();
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: refetchFn,
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    // The FeedListTemplate provides onRefresh which calls refetch
+    // We verify the refetch function is wired up
+    expect(refetchFn).toBeDefined();
+  });
+
+  it('shows error state with retry', () => {
+    const refetchFn = jest.fn();
+    mockUseTasks.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      isRefetching: false,
+      refetch: refetchFn,
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    expect(screen.getByTestId('task-feed-error')).toBeTruthy();
+  });
+
+  it('navigates to task detail on card press', () => {
+    const mockPush = jest.fn();
+    jest.spyOn(require('expo-router'), 'useRouter').mockReturnValue({
+      push: mockPush,
+      replace: jest.fn(),
+      back: jest.fn(),
     });
 
-    it('shows empty activation state when no tasks', () => {
-        mockUseTasks.mockReturnValue({
-            data: { data: [], cursor: { next: null, prev: null } },
-            isLoading: false,
-            isError: false,
-            isRefetching: false,
-            refetch: jest.fn(),
-        } as unknown as ReturnType<typeof useTasks>);
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
 
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
 
-        expect(screen.getByText('tasker.browse.emptyTitle')).toBeTruthy();
-    });
-
-    it('renders task cards with price and category', () => {
-        mockUseTasks.mockReturnValue({
-            data: {
-                data: [baseTask, secondTask],
-                cursor: { next: null, prev: null },
-            },
-            isLoading: false,
-            isError: false,
-            isRefetching: false,
-            refetch: jest.fn(),
-        } as unknown as ReturnType<typeof useTasks>);
-
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
-
-        expect(screen.getByText('Deep clean apartment')).toBeTruthy();
-        expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
-        expect(screen.getByText('John Customer')).toBeTruthy();
-        expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
-    });
-
-    it('filter bar toggles work', () => {
-        mockUseTasks.mockReturnValue({
-            data: {
-                data: [baseTask, secondTask],
-                cursor: { next: null, prev: null },
-            },
-            isLoading: false,
-            isError: false,
-            isRefetching: false,
-            refetch: jest.fn(),
-        } as unknown as ReturnType<typeof useTasks>);
-
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
-
-        const filterBar = screen.getByTestId('task-feed-filter-bar');
-        expect(filterBar).toBeTruthy();
-    });
-
-    it('calls refresh on pull-down', () => {
-        const refetchFn = jest.fn();
-        mockUseTasks.mockReturnValue({
-            data: {
-                data: [baseTask],
-                cursor: { next: null, prev: null },
-            },
-            isLoading: false,
-            isError: false,
-            isRefetching: false,
-            refetch: refetchFn,
-        } as unknown as ReturnType<typeof useTasks>);
-
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
-
-        // The FeedListTemplate provides onRefresh which calls refetch
-        // We verify the refetch function is wired up
-        expect(refetchFn).toBeDefined();
-    });
-
-    it('shows error state with retry', () => {
-        const refetchFn = jest.fn();
-        mockUseTasks.mockReturnValue({
-            data: undefined,
-            isLoading: false,
-            isError: true,
-            isRefetching: false,
-            refetch: refetchFn,
-        } as unknown as ReturnType<typeof useTasks>);
-
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
-
-        expect(screen.getByTestId('task-feed-error')).toBeTruthy();
-    });
-
-    it('navigates to task detail on card press', () => {
-        const mockPush = jest.fn();
-        jest.spyOn(require('expo-router'), 'useRouter').mockReturnValue({
-            push: mockPush,
-            replace: jest.fn(),
-            back: jest.fn(),
-        });
-
-        mockUseTasks.mockReturnValue({
-            data: {
-                data: [baseTask],
-                cursor: { next: null, prev: null },
-            },
-            isLoading: false,
-            isError: false,
-            isRefetching: false,
-            refetch: jest.fn(),
-        } as unknown as ReturnType<typeof useTasks>);
-
-        const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-        render(<TaskFeedScreen />);
-
-        fireEvent.press(screen.getByTestId('task-card-task-1'));
-        expect(mockPush).toHaveBeenCalledWith('/task/task-1');
-    });
+    fireEvent.press(screen.getByTestId('task-card-task-1'));
+    expect(mockPush).toHaveBeenCalledWith('/task/task-1');
+  });
 });

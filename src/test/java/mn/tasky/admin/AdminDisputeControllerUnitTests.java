@@ -52,8 +52,7 @@ class AdminDisputeControllerUnitTests {
 
     @BeforeEach
     void setUp() {
-        controller = new AdminDisputeController(
-                disputeService, bookingService, messagingService, idempotencyService);
+        controller = new AdminDisputeController(disputeService, bookingService, messagingService, idempotencyService);
     }
 
     @Test
@@ -80,7 +79,8 @@ class AdminDisputeControllerUnitTests {
         when(messagingService.findConversationByTaskAndParticipants(
                         booking.taskId(), booking.customerId(), booking.taskerId()))
                 .thenReturn(Optional.of(conversation));
-        when(messagingService.listMessagesForConversation(conversation.id(), null, 50)).thenReturn(List.of(message));
+        when(messagingService.listMessagesForConversation(conversation.id(), null, 50))
+                .thenReturn(List.of(message));
 
         ResponseEntity<?> response = controller.getDispute(dispute.id());
 

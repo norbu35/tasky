@@ -23,10 +23,9 @@ public class OutboxHealthIndicator implements HealthIndicator {
     }
 
     double computeLagSeconds() {
-        Optional<Instant> oldest = jdbi.withHandle(handle ->
-                handle.createQuery(
-                                "SELECT MIN(created_at) FROM domain_outbox_events "
-                                        + "WHERE status IN ('PENDING', 'PROCESSING') AND available_at <= now()")
+        Optional<Instant> oldest =
+                jdbi.withHandle(handle -> handle.createQuery("SELECT MIN(created_at) FROM domain_outbox_events "
+                                + "WHERE status IN ('PENDING', 'PROCESSING') AND available_at <= now()")
                         .mapTo(Instant.class)
                         .findOne());
 
@@ -44,9 +43,7 @@ public class OutboxHealthIndicator implements HealthIndicator {
         }
 
         if (lagSeconds > MAX_LAG.getSeconds()) {
-            return Health.down()
-                    .withDetail("lag_seconds", (long) lagSeconds)
-                    .build();
+            return Health.down().withDetail("lag_seconds", (long) lagSeconds).build();
         }
         return Health.up().withDetail("lag_seconds", (long) lagSeconds).build();
     }

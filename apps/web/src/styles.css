@@ -1,53 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-@import "../../../packages/design-tokens/tokens.css";
+@import '../../../packages/design-tokens/tokens.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    color-scheme: light;
-    --background: var(--tasky-color-background);
-    --foreground: var(--tasky-color-foreground);
-    --card: var(--tasky-color-card);
-    --card-foreground: var(--tasky-color-card-foreground);
-    --popover: var(--tasky-color-popover);
-    --popover-foreground: var(--tasky-color-popover-foreground);
-    --primary: var(--tasky-color-primary);
-    --primary-foreground: var(--tasky-color-primary-foreground);
-    --secondary: var(--tasky-color-secondary);
-    --secondary-foreground: var(--tasky-color-secondary-foreground);
-    --muted: var(--tasky-color-muted);
-    --muted-foreground: var(--tasky-color-muted-foreground);
-    --accent: var(--tasky-color-accent);
-    --accent-foreground: var(--tasky-color-accent-foreground);
-    --border: var(--tasky-color-border);
-    --input: var(--tasky-color-input);
-    --ring: var(--tasky-color-ring);
-    --radius: var(--tasky-radius);
-    --destructive: var(--tasky-color-destructive);
-    --destructive-foreground: var(--tasky-color-destructive-foreground);
+  color-scheme: light;
+  --background: var(--tasky-color-background);
+  --foreground: var(--tasky-color-foreground);
+  --card: var(--tasky-color-card);
+  --card-foreground: var(--tasky-color-card-foreground);
+  --popover: var(--tasky-color-popover);
+  --popover-foreground: var(--tasky-color-popover-foreground);
+  --primary: var(--tasky-color-primary);
+  --primary-foreground: var(--tasky-color-primary-foreground);
+  --secondary: var(--tasky-color-secondary);
+  --secondary-foreground: var(--tasky-color-secondary-foreground);
+  --muted: var(--tasky-color-muted);
+  --muted-foreground: var(--tasky-color-muted-foreground);
+  --accent: var(--tasky-color-accent);
+  --accent-foreground: var(--tasky-color-accent-foreground);
+  --border: var(--tasky-color-border);
+  --input: var(--tasky-color-input);
+  --ring: var(--tasky-color-ring);
+  --radius: var(--tasky-radius);
+  --destructive: var(--tasky-color-destructive);
+  --destructive-foreground: var(--tasky-color-destructive-foreground);
 
-    /* Figma semantic bridges */
-    --primary-deep: var(--tasky-color-primary-deep);
-    --trust: var(--tasky-color-trust);
-    --trust-foreground: var(--tasky-color-trust-foreground);
-    --trust-muted: var(--tasky-color-trust-muted);
-    --status-open: var(--tasky-color-status-open);
-    --status-open-foreground: var(--tasky-color-status-open-foreground);
-    --status-assigned: var(--tasky-color-status-assigned);
-    --status-assigned-foreground: var(--tasky-color-status-assigned-foreground);
-    --verified: var(--tasky-color-verified);
-    --subtle-violet: var(--tasky-color-subtle-violet);
-    --chip-inactive: var(--tasky-color-chip-inactive);
-    --nav-inactive: var(--tasky-color-nav-inactive);
+  /* Figma semantic bridges */
+  --primary-deep: var(--tasky-color-primary-deep);
+  --trust: var(--tasky-color-trust);
+  --trust-foreground: var(--tasky-color-trust-foreground);
+  --trust-muted: var(--tasky-color-trust-muted);
+  --status-open: var(--tasky-color-status-open);
+  --status-open-foreground: var(--tasky-color-status-open-foreground);
+  --status-assigned: var(--tasky-color-status-assigned);
+  --status-assigned-foreground: var(--tasky-color-status-assigned-foreground);
+  --verified: var(--tasky-color-verified);
+  --subtle-violet: var(--tasky-color-subtle-violet);
+  --chip-inactive: var(--tasky-color-chip-inactive);
+  --nav-inactive: var(--tasky-color-nav-inactive);
 }
 
 * {
-    @apply border-border;
+  @apply border-border;
 }
 
 body {
-    margin: 0;
-    @apply bg-background text-foreground antialiased font-sans;
+  margin: 0;
+  @apply bg-background text-foreground antialiased font-sans;
 }

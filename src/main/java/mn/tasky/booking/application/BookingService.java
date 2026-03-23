@@ -220,7 +220,9 @@ public class BookingService {
         Instant now = Instant.now();
         Integer fee = current.cancellationFee();
         bookingDao.update(bookingId, newStatus, fee, current.liabilityDisclaimerAccepted(), now);
-        meterRegistry.counter("tasky.booking.transitions", "from", oldStatus, "to", newStatus).increment();
+        meterRegistry
+                .counter("tasky.booking.transitions", "from", oldStatus, "to", newStatus)
+                .increment();
         log.info("Booking {} transitioned from {} to {}", bookingId, current.status(), newStatus);
 
         BookingState updated = new BookingState(

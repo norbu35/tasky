@@ -3,7 +3,6 @@ package mn.tasky.task.application;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,9 +23,9 @@ import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.dto.PresignedUpload;
-import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
+import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
@@ -172,7 +171,7 @@ public class TaskService {
         String intakeAnswersJson = command.intakeAnswersJson();
         Integer intakeSchemaVersion = command.intakeSchemaVersion();
         String scopeSummarySource = command.scopeSummary();
-        TaskDraft draft = null;
+        TaskDraft draft;
 
         // If draftId is provided, resolve schema version from the draft
         if (StringUtils.hasText(command.draftId())) {
@@ -206,11 +205,11 @@ public class TaskService {
             CategorySchemaVersion schemaVersion = schemaOpt.get();
 
             // Validate intake answers against schema
-            if (StringUtils.hasText(intakeAnswersJson)) {
-                String validationError = validateIntakeAnswers(schemaVersion.schemaJson(), intakeAnswersJson);
-                if (validationError != null) {
-                    return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED, validationError);
-                }
+            String validationError = StringUtils.hasText(intakeAnswersJson)
+                    ? validateIntakeAnswers(schemaVersion.schemaJson(), intakeAnswersJson)
+                    : null;
+            if (validationError != null) {
+                return TaskCreateResult.error(TaskCreateResult.INTAKE_VALIDATION_FAILED, validationError);
             }
 
             // Generate scope summary
@@ -307,11 +306,9 @@ public class TaskService {
                 JsonNode answerNode = answersNode.get(key);
 
                 // Required field check
-                if (required) {
-                    if (answerValue == null || (answerValue instanceof String s && s.isBlank())) {
-                        errors.add(label + " is required.");
-                        continue;
-                    }
+                if (required && (answerValue == null || (answerValue instanceof String s && s.isBlank()))) {
+                    errors.add(label + " is required.");
+                    continue;
                 }
 
                 // Skip further validation if answer is not provided

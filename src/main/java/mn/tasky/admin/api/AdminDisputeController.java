@@ -95,7 +95,8 @@ public class AdminDisputeController {
                                     body.put("conversation_id", conversation.id());
                                     List<Map<String, Object>> evidence =
                                             messagingService
-                                                    .listMessagesForConversation(conversation.id(), null, 50).stream()
+                                                    .listMessagesForConversation(conversation.id(), null, 50)
+                                                    .stream()
                                                     .map(this::toMessageResponse)
                                                     .toList();
                                     body.put("evidence_messages", evidence);

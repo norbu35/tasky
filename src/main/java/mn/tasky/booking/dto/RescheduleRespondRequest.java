@@ -5,4 +5,5 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RescheduleRespondRequest(
-        @NotNull @Size(max = 64) @Pattern(regexp = "ACCEPT|DECLINE", message = "action must be ACCEPT or DECLINE") String action) {}
+        @NotNull @Size(max = 64) @Pattern(regexp = "ACCEPT|DECLINE", message = "action must be ACCEPT or DECLINE")
+                String action) {}

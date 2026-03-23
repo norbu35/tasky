@@ -83,7 +83,12 @@ public class WalletService {
                 "Platform fee for booking #" + bookingId,
                 now);
 
-        log.info("wallet_credit taskerId={} bookingId={} creditAmount={} feeAmount={}", taskerId, bookingId, creditAmount, feeAmount);
+        log.info(
+                "wallet_credit taskerId={} bookingId={} creditAmount={} feeAmount={}",
+                taskerId,
+                bookingId,
+                creditAmount,
+                feeAmount);
     }
 
     @Transactional

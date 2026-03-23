@@ -5,14 +5,14 @@ import { createMobileApiClient } from '../../../lib/mobileApiClient';
 const api = createMobileApiClient();
 
 export function useDeleteAccount() {
-    const session = useAuthStore((s) => s.session);
-    const token = session?.accessToken;
-    const signOut = useAuthStore((s) => s.signOut);
+  const session = useAuthStore((s) => s.session);
+  const token = session?.accessToken;
+  const signOut = useAuthStore((s) => s.signOut);
 
-    return useMutation({
-        mutationFn: () => api.deleteMyAccount(token!),
-        onSuccess: () => {
-            signOut();
-        },
-    });
+  return useMutation({
+    mutationFn: () => api.deleteMyAccount(token!),
+    onSuccess: () => {
+      signOut();
+    },
+  });
 }

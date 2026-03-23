@@ -10,6 +10,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.{ts,tsx}\" \"__tests__/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" \"__tests__/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\" \"__tests__/**/*.{ts,tsx}\"",
     "test": "pnpm run test:unit",
     "test:unit": "jest --runInBand",
     "test:e2e:smoke": "bash scripts/run-e2e-smoke.sh",
@@ -59,6 +61,7 @@
     "eslint-config-expo": "10.0.0",
     "jest": "29.7.0",
     "jest-expo": "~52.0.4",
+    "prettier": "^3.8.1",
     "react-test-renderer": "18.3.1",
     "typescript": "5.9.2"
   }

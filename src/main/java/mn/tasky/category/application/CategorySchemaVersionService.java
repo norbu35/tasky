@@ -192,7 +192,7 @@ public class CategorySchemaVersionService {
         try {
             root = objectMapper.readTree(schemaJson);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Schema JSON is not valid JSON: " + e.getMessage());
+            throw new IllegalArgumentException("Schema JSON is not valid JSON: " + e.getMessage(), e);
         }
 
         if (!root.isArray()) {

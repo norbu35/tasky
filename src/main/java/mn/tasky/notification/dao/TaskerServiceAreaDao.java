@@ -14,7 +14,8 @@ public interface TaskerServiceAreaDao {
         return findByUserId(UUID.fromString(userId));
     }
 
-    @SqlQuery("""
+    @SqlQuery(
+            """
         SELECT d.id, d.name, d.name_mn, d.slug
         FROM districts d
         JOIN tasker_service_districts tsd ON tsd.district_id = d.id
@@ -35,7 +36,8 @@ public interface TaskerServiceAreaDao {
         insertBySlug(UUID.fromString(userId), slug);
     }
 
-    @SqlUpdate("""
+    @SqlUpdate(
+            """
         INSERT INTO tasker_service_districts (user_id, district_id)
         SELECT :userId, id FROM districts WHERE slug = :slug AND is_active = true
         ON CONFLICT DO NOTHING

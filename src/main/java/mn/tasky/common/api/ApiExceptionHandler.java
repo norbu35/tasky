@@ -24,14 +24,12 @@ public class ApiExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler(RateLimitExceededException.class)
-    public ResponseEntity<ErrorResponse> handleRateLimit(
-            RateLimitExceededException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleRateLimit(RateLimitExceededException ex, HttpServletRequest request) {
         return error(HttpStatus.TOO_MANY_REQUESTS, ex.code(), ex.getMessage(), request);
     }
 
     @ExceptionHandler(FacebookAuthException.class)
-    public ResponseEntity<ErrorResponse> handleFacebookAuth(
-            FacebookAuthException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleFacebookAuth(FacebookAuthException ex, HttpServletRequest request) {
         HttpStatus status = "AUTH_PROVIDER_UNAVAILABLE".equals(ex.code())
                 ? HttpStatus.SERVICE_UNAVAILABLE
                 : HttpStatus.UNAUTHORIZED;
@@ -86,8 +84,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleForbidden(
-            AccessDeniedException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleForbidden(AccessDeniedException ex, HttpServletRequest request) {
         return error(HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied", request);
     }
 
@@ -102,7 +99,6 @@ public class ApiExceptionHandler {
         Object traceId = request.getAttribute(RequestObservabilityFilter.TRACE_ID_ATTRIBUTE);
         String resolvedTraceId =
                 traceId != null ? traceId.toString() : UUID.randomUUID().toString();
-        return ResponseEntity.status(status)
-                .body(new ErrorResponse(code, message, resolvedTraceId));
+        return ResponseEntity.status(status).body(new ErrorResponse(code, message, resolvedTraceId));
     }
 }

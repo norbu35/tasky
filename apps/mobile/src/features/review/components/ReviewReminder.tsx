@@ -9,71 +9,67 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 const { colors, spacing, typography } = mobileTheme;
 
 interface ReviewReminderProps {
-    isOpen: boolean;
-    onDismiss: () => void;
-    bookingId: string;
+  isOpen: boolean;
+  onDismiss: () => void;
+  bookingId: string;
 }
 
 export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderProps) {
-    const { t } = useTranslation();
-    const router = useRouter();
+  const { t } = useTranslation();
+  const router = useRouter();
 
-    const handleReviewNow = () => {
-        onDismiss();
-        router.push(`/reviews/new?bookingId=${bookingId}`);
-    };
+  const handleReviewNow = () => {
+    onDismiss();
+    router.push(`/reviews/new?bookingId=${bookingId}`);
+  };
 
-    return (
-        <ModalSheetTemplate
-            isOpen={isOpen}
-            onClose={onDismiss}
-            testID="review-reminder"
-        >
-            <View style={styles.content}>
-                <Text style={styles.title}>{t('shared.review.reminderTitle')}</Text>
-                <Text style={styles.body}>{t('shared.review.reminderBody')}</Text>
+  return (
+    <ModalSheetTemplate isOpen={isOpen} onClose={onDismiss} testID="review-reminder">
+      <View style={styles.content}>
+        <Text style={styles.title}>{t('shared.review.reminderTitle')}</Text>
+        <Text style={styles.body}>{t('shared.review.reminderBody')}</Text>
 
-                <Button
-                    label={t('shared.review.reminderCta')}
-                    onPress={handleReviewNow}
-                    style={styles.ctaButton}
-                    testID="review-reminder-cta"
-                />
+        <Button
+          label={t('shared.review.reminderCta')}
+          onPress={handleReviewNow}
+          style={styles.ctaButton}
+          testID="review-reminder-cta"
+        />
 
-                <Button
-                    label={t('shared.review.reminderLater')}
-                    variant="ghost"
-                    onPress={onDismiss}
-                    style={styles.laterButton}
-                    testID="review-reminder-later"
-                />
-            </View>
-        </ModalSheetTemplate>
-    );
+        <Button
+          label={t('shared.review.reminderLater')}
+          variant="ghost"
+          onPress={onDismiss}
+          style={styles.laterButton}
+          testID="review-reminder-later"
+        />
+      </View>
+    </ModalSheetTemplate>
+  );
 }
 
 const styles = StyleSheet.create({
-    content: {
-        alignItems: 'center',
-        gap: spacing.md,
-    },
-    title: {
-        fontSize: typography.title,
-        fontWeight: '700',
-        color: colors.foreground,
-        textAlign: 'center',
-    },
-    body: {
-        fontSize: typography.body,
-        color: colors.mutedForeground,
-        textAlign: 'center',
-        lineHeight: typography.body * 1.5,
-    },
-    ctaButton: {
-        alignSelf: 'stretch',
-        marginTop: spacing.sm,
-    },
-    laterButton: {
-        alignSelf: 'stretch',
-    },
+  content: {
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  title: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.foreground,
+    textAlign: 'center',
+  },
+  body: {
+    fontSize: typography.body,
+    color: colors.mutedForeground,
+    textAlign: 'center',
+    lineHeight: typography.body * 1.5,
+  },
+  ctaButton: {
+    alignSelf: 'stretch',
+    marginTop: spacing.sm,
+  },
+  laterButton: {
+    alignSelf: 'stretch',
+  },
 });

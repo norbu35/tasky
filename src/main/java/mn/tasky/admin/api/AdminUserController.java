@@ -33,7 +33,7 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<?> search(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String facebook_id,
+            @RequestParam(value = "facebook_id", required = false) String facebookId,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "50") int limit) {
@@ -42,8 +42,8 @@ public class AdminUserController {
             UserProfilePage page;
             if (name != null && !name.isBlank()) {
                 page = authService.searchUsersByName(name, cursor, clampedLimit);
-            } else if (facebook_id != null && !facebook_id.isBlank()) {
-                page = authService.searchUsersByFacebookId(facebook_id, cursor, clampedLimit);
+            } else if (facebookId != null && !facebookId.isBlank()) {
+                page = authService.searchUsersByFacebookId(facebookId, cursor, clampedLimit);
             } else if (phone != null && !phone.isBlank()) {
                 page = authService.searchUsersByPhone(phone, cursor, clampedLimit);
             } else {

@@ -40,7 +40,8 @@ class ServiceAreaIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> getRes = getWithAuth("/api/v1/taskers/me/service-areas", tasker.accessToken());
         assertThat(getRes.getStatusCode().value()).isEqualTo(200);
 
-        List<Map<String, Object>> data = (List<Map<String, Object>>) getRes.getBody().get("data");
+        List<Map<String, Object>> data =
+                (List<Map<String, Object>>) getRes.getBody().get("data");
         assertThat(data).hasSize(2);
         List<String> slugs = data.stream().map(d -> (String) d.get("slug")).toList();
         assertThat(slugs).containsExactlyInAnyOrder("bayangol", "sukhbaatar");
@@ -56,8 +57,7 @@ class ServiceAreaIntegrationTests extends IntegrationTestBase {
     }
 
     private AuthContext devLogin(String phone, String role) {
-        ResponseEntity<Map> response = post(
-                "/api/v1/auth/dev/login", Map.of("phone", phone, "role", role));
+        ResponseEntity<Map> response = post("/api/v1/auth/dev/login", Map.of("phone", phone, "role", role));
         String accessToken = (String) response.getBody().get("access_token");
         String userId = (String) ((Map) response.getBody().get("user")).get("id");
         return new AuthContext(userId, accessToken);

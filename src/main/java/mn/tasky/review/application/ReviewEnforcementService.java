@@ -100,16 +100,9 @@ public class ReviewEnforcementService {
         }
 
         // Risk signal 2: 2+ consecutive expired cases
-        if (reviewEnforcementCaseDao.countConsecutiveExpired(userId) >= 2) {
-            return true;
-        }
-
         // Risk signal 3: any case with investigation_active flag
-        if (reviewEnforcementCaseDao.hasInvestigationActive(userId)) {
-            return true;
-        }
-
-        return false;
+        return reviewEnforcementCaseDao.countConsecutiveExpired(userId) >= 2
+                || reviewEnforcementCaseDao.hasInvestigationActive(userId);
     }
 
     /**

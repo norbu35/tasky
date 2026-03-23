@@ -54,10 +54,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
     // -----------------------------------------------------------------------
 
     static Stream<Arguments> publicGetEndpoints() {
-        return Stream.of(
-                Arguments.of("/actuator/health"),
-                Arguments.of("/api/v1/system/version")
-        );
+        return Stream.of(Arguments.of("/actuator/health"), Arguments.of("/api/v1/system/version"));
     }
 
     @ParameterizedTest(name = "GET {0} is accessible without auth")
@@ -81,8 +78,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
                 Arguments.of("/api/v1/security/customer/ping", HttpMethod.GET),
                 Arguments.of("/api/v1/security/tasker/ping", HttpMethod.GET),
                 Arguments.of("/api/v1/security/admin/ping", HttpMethod.GET),
-                Arguments.of("/api/v1/admin/categories", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/admin/categories", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "{1} {0} returns 401 without auth")
@@ -103,8 +99,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         return Stream.of(
                 Arguments.of("/api/v1/tasks", HttpMethod.GET),
                 Arguments.of("/api/v1/bookings", HttpMethod.GET),
-                Arguments.of("/api/v1/security/customer/ping", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/security/customer/ping", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "CUSTOMER: {1} {0} is allowed")
@@ -123,8 +118,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         return Stream.of(
                 Arguments.of("/api/v1/security/tasker/ping", HttpMethod.GET),
                 Arguments.of("/api/v1/security/admin/ping", HttpMethod.GET),
-                Arguments.of("/api/v1/admin/categories", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/admin/categories", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "CUSTOMER: {1} {0} is forbidden")
@@ -133,9 +127,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
     void customerForbiddenFromRestrictedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("CUSTOMER");
         ResponseEntity<Map> response = exchange(path, method, token);
-        assertThat(response.getStatusCode())
-                .as("CUSTOMER %s %s", method, path)
-                .isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getStatusCode()).as("CUSTOMER %s %s", method, path).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     // -----------------------------------------------------------------------
@@ -146,8 +138,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         return Stream.of(
                 Arguments.of("/api/v1/tasks", HttpMethod.GET),
                 Arguments.of("/api/v1/bookings", HttpMethod.GET),
-                Arguments.of("/api/v1/security/tasker/ping", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/security/tasker/ping", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "TASKER: {1} {0} is allowed")
@@ -166,8 +157,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         return Stream.of(
                 Arguments.of("/api/v1/security/customer/ping", HttpMethod.GET),
                 Arguments.of("/api/v1/security/admin/ping", HttpMethod.GET),
-                Arguments.of("/api/v1/admin/categories", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/admin/categories", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "TASKER: {1} {0} is forbidden")
@@ -176,9 +166,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
     void taskerForbiddenFromRestrictedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("TASKER");
         ResponseEntity<Map> response = exchange(path, method, token);
-        assertThat(response.getStatusCode())
-                .as("TASKER %s %s", method, path)
-                .isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getStatusCode()).as("TASKER %s %s", method, path).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     // -----------------------------------------------------------------------
@@ -190,8 +178,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
                 Arguments.of("/api/v1/tasks", HttpMethod.GET),
                 Arguments.of("/api/v1/bookings", HttpMethod.GET),
                 Arguments.of("/api/v1/security/admin/ping", HttpMethod.GET),
-                Arguments.of("/api/v1/admin/categories", HttpMethod.GET)
-        );
+                Arguments.of("/api/v1/admin/categories", HttpMethod.GET));
     }
 
     @ParameterizedTest(name = "ADMIN: {1} {0} is allowed")
@@ -228,11 +215,11 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     static Stream<Arguments> createTaskMatrix() {
         return Stream.of(
-                Arguments.of(null, HttpStatus.UNAUTHORIZED),     // unauthenticated
-                Arguments.of("CUSTOMER", HttpStatus.OK),          // allowed (may 422 from missing body)
-                Arguments.of("TASKER", HttpStatus.FORBIDDEN),     // role mismatch
-                Arguments.of("ADMIN", HttpStatus.FORBIDDEN)       // admin cannot create tasks
-        );
+                Arguments.of(null, HttpStatus.UNAUTHORIZED), // unauthenticated
+                Arguments.of("CUSTOMER", HttpStatus.OK), // allowed (may 422 from missing body)
+                Arguments.of("TASKER", HttpStatus.FORBIDDEN), // role mismatch
+                Arguments.of("ADMIN", HttpStatus.FORBIDDEN) // admin cannot create tasks
+                );
     }
 
     // -----------------------------------------------------------------------
@@ -260,10 +247,6 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
         if (bearerToken != null) {
             headers.setBearerAuth(bearerToken);
         }
-        return restTemplate.exchange(
-                "http://localhost:" + port + path,
-                method,
-                new HttpEntity<>(headers),
-                Map.class);
+        return restTemplate.exchange("http://localhost:" + port + path, method, new HttpEntity<>(headers), Map.class);
     }
 }

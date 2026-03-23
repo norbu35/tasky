@@ -16,58 +16,62 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
 if (!isExpoGo) {
-    try {
-        const messaging = require('@react-native-firebase/messaging').default;
-        const notifee = require('@notifee/react-native').default;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const messaging = require('@react-native-firebase/messaging').default;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const notifee = require('@notifee/react-native').default;
 
-        messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
-            if (!remoteMessage.notification) {
-                await notifee.displayNotification({
-                    title: remoteMessage.data?.title,
-                    body: remoteMessage.data?.body,
-                    android: { channelId: 'default' },
-                    ios: {},
-                });
-            }
+    messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
+      if (!remoteMessage.notification) {
+        await notifee.displayNotification({
+          title: remoteMessage.data?.title,
+          body: remoteMessage.data?.body,
+          android: { channelId: 'default' },
+          ios: {},
         });
-    } catch (_) {
-        // Firebase not available — running in Expo Go
-    }
+      }
+    });
+  } catch {
+    // Firebase not available — running in Expo Go
+  }
 }
 
 export default function RootLayout() {
-    useEffect(() => {
-        if (isExpoGo) return;
-        try {
-            const messaging = require('@react-native-firebase/messaging').default;
-            const notifee = require('@notifee/react-native').default;
+  useEffect(() => {
+    if (isExpoGo) return;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const messaging = require('@react-native-firebase/messaging').default;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const notifee = require('@notifee/react-native').default;
 
-            const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-                await notifee.displayNotification({
-                    title: remoteMessage.notification?.title ?? remoteMessage.data?.title,
-                    body: remoteMessage.notification?.body ?? remoteMessage.data?.body,
-                    android: { channelId: 'default' },
-                    ios: {},
-                });
-            });
-            return unsubscribe;
-        } catch (_) {
-            // Firebase not available
-        }
-    }, []);
+      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        await notifee.displayNotification({
+          title: remoteMessage.notification?.title ?? remoteMessage.data?.title,
+          body: remoteMessage.notification?.body ?? remoteMessage.data?.body,
+          android: { channelId: 'default' },
+          ios: {},
+        });
+      });
+      return unsubscribe;
+    } catch {
+      // Firebase not available
+    }
+  }, []);
 
-    return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaProvider>
-                <NotificationProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <RoleProvider>
-                            <Stack screenOptions={{ headerShown: false }} />
-                            <StatusBar style="auto" />
-                        </RoleProvider>
-                    </QueryClientProvider>
-                </NotificationProvider>
-            </SafeAreaProvider>
-        </GestureHandlerRootView>
-    );
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <NotificationProvider>
+          <QueryClientProvider client={queryClient}>
+            <RoleProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+              <StatusBar style="auto" />
+            </RoleProvider>
+          </QueryClientProvider>
+        </NotificationProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
 }

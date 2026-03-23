@@ -51,9 +51,7 @@ class AdminFeatureToggleIntegrationTests extends IntegrationTestBase {
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         List<Map> data = (List<Map>) response.getBody().get("data");
         assertThat(data).hasSize(5); // 4 from V10 + data_retention_dry_run from V12
-        assertThat(data)
-                .extracting(toggle -> toggle.get("featureName"))
-                .contains("data_retention_dry_run");
+        assertThat(data).extracting(toggle -> toggle.get("featureName")).contains("data_retention_dry_run");
         assertThat(data)
                 .allSatisfy(toggle -> assertThat(toggle.get("isEnabled")).isEqualTo(false));
     }

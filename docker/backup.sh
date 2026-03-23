@@ -8,6 +8,7 @@
 #
 # Restore:
 #   docker exec -i tasky-postgres \
+'`
 #     pg_restore -U tasky -d tasky --clean --if-exists < backup-file.dump
 #
 #   Or for plain-SQL format:

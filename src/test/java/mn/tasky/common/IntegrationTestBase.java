@@ -41,17 +41,16 @@ public abstract class IntegrationTestBase {
         // Seed/config tables (categories, category_schema_versions, moderation_policy,
         // feature_toggles) and the Flyway history table are intentionally excluded.
         // The table list is resolved dynamically so schema changes don't break this.
-        jdbcTemplate.execute(
-                "DO $$ DECLARE t text; BEGIN "
-                        + "SELECT string_agg(quote_ident(tablename), ', ') INTO t "
-                        + "FROM pg_tables WHERE schemaname = 'public' "
-                        + "AND tablename NOT IN ("
-                        + "'flyway_schema_history','categories','category_schema_versions',"
-                        + "'moderation_policy','feature_toggles',"
-                        + "'districts',"
-                        + "'spatial_ref_sys');"
-                        + "IF t IS NOT NULL THEN "
-                        + "EXECUTE 'TRUNCATE TABLE ' || t || ' RESTART IDENTITY CASCADE'; "
-                        + "END IF; END $$");
+        jdbcTemplate.execute("DO $$ DECLARE t text; BEGIN "
+                + "SELECT string_agg(quote_ident(tablename), ', ') INTO t "
+                + "FROM pg_tables WHERE schemaname = 'public' "
+                + "AND tablename NOT IN ("
+                + "'flyway_schema_history','categories','category_schema_versions',"
+                + "'moderation_policy','feature_toggles',"
+                + "'districts',"
+                + "'spatial_ref_sys');"
+                + "IF t IS NOT NULL THEN "
+                + "EXECUTE 'TRUNCATE TABLE ' || t || ' RESTART IDENTITY CASCADE'; "
+                + "END IF; END $$");
     }
 }

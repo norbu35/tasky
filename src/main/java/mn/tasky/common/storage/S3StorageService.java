@@ -33,8 +33,7 @@ public class S3StorageService {
         this.bucket = bucket;
         this.s3Client = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .region(Region.US_EAST_1)
                 .serviceConfiguration(
                         S3Configuration.builder().pathStyleAccessEnabled(true).build())
@@ -52,7 +51,8 @@ public class S3StorageService {
             return;
         }
         try {
-            s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(key).build());
+            s3Client.deleteObject(
+                    DeleteObjectRequest.builder().bucket(bucket).key(key).build());
             log.info("s3_object_deleted bucket={} key={}", bucket, key);
         } catch (S3Exception e) {
             log.error("Failed to delete S3 object bucket={} key={}: {}", bucket, key, e.getMessage());

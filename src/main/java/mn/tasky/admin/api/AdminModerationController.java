@@ -72,8 +72,7 @@ public class AdminModerationController {
                 body.repeatSuspensionDays(),
                 body.repeatOffenseWindowDays(),
                 body.autoUnsuspendEnabled());
-        auditEventDao.insert(
-                principal.userId(), "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
+        auditEventDao.insert(principal.userId(), "MODERATION_POLICY_UPDATED", "MODERATION_POLICY", null, null);
         return ResponseEntity.ok(toResponse(updated));
     }
 }

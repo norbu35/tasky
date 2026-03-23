@@ -1,6 +1,5 @@
 package mn.tasky.auth.application;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -45,11 +44,11 @@ import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.security.CryptoService;
-import mn.tasky.common.storage.S3PresignedUrlService;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.dto.ParsedRefreshToken;
 import mn.tasky.common.security.dto.RefreshToken;
+import mn.tasky.common.storage.S3PresignedUrlService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -254,14 +253,18 @@ public class AuthService {
         String blindIndex = cryptoService.blindIndex(phone);
         Optional<OtpChallenge> challengeOpt = otpChallengeDao.findByPhoneBlindIdx(blindIndex);
         if (challengeOpt.isEmpty()) {
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
+                    .increment();
             return Optional.empty();
         }
 
         OtpChallenge challenge = challengeOpt.get();
         if (challenge.expiresAt().isBefore(Instant.now())) {
             otpChallengeDao.delete(blindIndex);
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
+                    .increment();
             return Optional.empty();
         }
 
@@ -273,7 +276,9 @@ public class AuthService {
             } else {
                 otpChallengeDao.incrementAttempts(blindIndex);
             }
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
+                    .increment();
             return Optional.empty();
         }
 
@@ -281,7 +286,9 @@ public class AuthService {
         AuthUser user = resolveOtpUser(phone, blindIndex, facebookAccessToken);
         String effectiveStatus = resolveUserStatus(user.id(), user.status());
         if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "failure").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "otp", "result", "failure")
+                    .increment();
             throw new AccountRestrictedException("This account is suspended or banned.");
         }
 
@@ -294,7 +301,9 @@ public class AuthService {
                 user.primaryAuth(),
                 user.createdAt(),
                 user.updatedAt());
-        meterRegistry.counter("tasky.auth.login_attempts", "method", "otp", "result", "success").increment();
+        meterRegistry
+                .counter("tasky.auth.login_attempts", "method", "otp", "result", "success")
+                .increment();
         return Optional.of(issueSession(effectiveUser));
     }
 
@@ -422,7 +431,9 @@ public class AuthService {
             AuthUser user = ensureUserByFacebookId(profile.facebookId(), profile);
             String effectiveStatus = resolveUserStatus(user.id(), user.status());
             if ("BANNED".equals(effectiveStatus) || "SUSPENDED".equals(effectiveStatus)) {
-                meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure").increment();
+                meterRegistry
+                        .counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure")
+                        .increment();
                 throw new AccountRestrictedException("This account is suspended or banned.");
             }
 
@@ -435,12 +446,16 @@ public class AuthService {
                     user.primaryAuth(),
                     user.createdAt(),
                     user.updatedAt());
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "success").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "facebook", "result", "success")
+                    .increment();
             return issueSession(effectiveUser);
         } catch (AccountRestrictedException e) {
             throw e;
         } catch (Exception e) {
-            meterRegistry.counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure").increment();
+            meterRegistry
+                    .counter("tasky.auth.login_attempts", "method", "facebook", "result", "failure")
+                    .increment();
             throw e;
         }
     }
@@ -688,7 +703,6 @@ public class AuthService {
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
 
-
     /**
      * Submits a tasker verification request.
      *
@@ -803,7 +817,6 @@ public class AuthService {
                 null,
                 null);
     }
-
 
     /**
      * Checks whether a verification request exists.
@@ -992,9 +1005,16 @@ public class AuthService {
                 .map(user -> {
                     String effectiveStatus = resolveUserStatus(user.id(), user.status());
                     AuthUser effective = new AuthUser(
-                            user.id(), user.phone(), user.facebookId(), user.role(),
-                            effectiveStatus, user.primaryAuth(), user.createdAt(), user.updatedAt());
-                    return toProfile(effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
+                            user.id(),
+                            user.phone(),
+                            user.facebookId(),
+                            user.role(),
+                            effectiveStatus,
+                            user.primaryAuth(),
+                            user.createdAt(),
+                            user.updatedAt());
+                    return toProfile(
+                            effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
                 })
                 .toList();
 
@@ -1012,13 +1032,21 @@ public class AuthService {
             return new UserProfilePage(List.of(), null, false);
         }
         UUID cursorId = parseUserSearchCursor(cursor);
-        List<UserProfile> candidates = userDao.findByFacebookId(facebookId.trim())
+        List<UserProfile> candidates = userDao
+                .findByFacebookId(facebookId.trim())
                 .map(user -> {
                     String effectiveStatus = resolveUserStatus(user.id(), user.status());
                     AuthUser effective = new AuthUser(
-                            user.id(), user.phone(), user.facebookId(), user.role(),
-                            effectiveStatus, user.primaryAuth(), user.createdAt(), user.updatedAt());
-                    return toProfile(effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
+                            user.id(),
+                            user.phone(),
+                            user.facebookId(),
+                            user.role(),
+                            effectiveStatus,
+                            user.primaryAuth(),
+                            user.createdAt(),
+                            user.updatedAt());
+                    return toProfile(
+                            effective, profileDao.findByUserId(user.id()).orElse(UserProfileState.defaultState()));
                 })
                 .stream()
                 .filter(p -> cursorId == null || UUID.fromString(p.id()).compareTo(cursorId) > 0)
@@ -1117,12 +1145,11 @@ public class AuthService {
      * @return {@code true} when OTP is enabled and user has Facebook identity without a linked phone.
      */
     public boolean requiresOtpMigration(String userId) {
-        if (!otpEnabled) {
-            return false;
-        }
-        return userDao.findById(userId)
-                .map(user -> StringUtils.hasText(user.facebookId()) && !StringUtils.hasText(decryptPhone(user.phone())))
-                .orElse(false);
+        return otpEnabled
+                && userDao.findById(userId)
+                        .map(user -> StringUtils.hasText(user.facebookId())
+                                && !StringUtils.hasText(decryptPhone(user.phone())))
+                        .orElse(false);
     }
 
     /**

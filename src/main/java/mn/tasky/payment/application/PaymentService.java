@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import mn.tasky.analytics.application.AnalyticsService;
@@ -43,7 +44,7 @@ public class PaymentService {
     private final FeatureToggleService featureToggleService;
     private final String qpayWebhookSecret;
     private final long maxCallbackAgeSeconds;
-    private volatile byte[] qpayWebhookSecretBytes;
+    private final AtomicReference<byte[]> qpayWebhookSecretBytes = new AtomicReference<>();
 
     public PaymentService(
             BookingService bookingService,
@@ -65,13 +66,13 @@ public class PaymentService {
     }
 
     private byte[] getWebhookSecretBytes() {
-        byte[] bytes = this.qpayWebhookSecretBytes;
+        byte[] bytes = this.qpayWebhookSecretBytes.get();
         if (bytes == null) {
             if (!StringUtils.hasText(qpayWebhookSecret)) {
                 throw new IllegalStateException("tasky.qpay.webhook-secret must be configured when escrow is enabled.");
             }
             bytes = qpayWebhookSecret.getBytes(StandardCharsets.UTF_8);
-            this.qpayWebhookSecretBytes = bytes;
+            this.qpayWebhookSecretBytes.set(bytes);
         }
         return bytes;
     }

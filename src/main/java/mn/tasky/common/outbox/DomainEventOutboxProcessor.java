@@ -75,8 +75,11 @@ public class DomainEventOutboxProcessor {
         List<OutboxEvent> events = outboxEventDao.claimBatch(now, now.plusSeconds(processingLeaseSeconds), batchSize);
         for (OutboxEvent event : events) {
             if (event.attempts() >= MAX_ATTEMPTS) {
-                log.error("Outbox event exceeded max retries, marking failed: id={} type={} attempts={}",
-                        event.id(), event.eventType(), event.attempts());
+                log.error(
+                        "Outbox event exceeded max retries, marking failed: id={} type={} attempts={}",
+                        event.id(),
+                        event.eventType(),
+                        event.attempts());
                 outboxEventDao.markFailed(event.id(), null, "Exceeded max retry attempts (" + MAX_ATTEMPTS + ")");
                 continue;
             }

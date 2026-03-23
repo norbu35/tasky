@@ -18,141 +18,141 @@ import { mobileTheme } from '../../design/tokenAdapter';
 const { colors, spacing, typography } = mobileTheme;
 
 export default function MyProfileScreen() {
-    const session = useAuthStore((state) => state.session);
-    const { t } = useTranslation();
-    const router = useRouter();
+  const session = useAuthStore((state) => state.session);
+  const { t } = useTranslation();
 
-    if (!session) {
-        return <LoginRequiredCTA message={t('auth.loginToViewProfile')} />;
-    }
+  if (!session) {
+    return <LoginRequiredCTA message={t('auth.loginToViewProfile')} />;
+  }
 
-    return <AuthenticatedProfile />;
+  return <AuthenticatedProfile />;
 }
 
 function AuthenticatedProfile() {
-    const { t } = useTranslation();
-    const router = useRouter();
-    const { data: profile, isLoading, isError, refetch } = useMyProfile();
-    const { isTasker } = useRole();
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { data: profile, isLoading, isError, refetch } = useMyProfile();
+  const { isTasker } = useRole();
 
-    return (
-        <DetailTemplate
-            headerTitle={t('shared.profile.title', 'My Profile')}
-            rightAction={{
-                icon: <Settings size={24} color={colors.primary} />,
-                onPress: () => router.push('/(shared)/profile/settings'),
-            }}
-            ctaLabel={t('shared.profile.editProfile', 'Edit Profile')}
-            ctaOnPress={() => router.push('/(shared)/profile/edit')}
-            isLoading={isLoading}
-            isError={isError}
-            onRetry={refetch}
-            errorMessage={t('shared.profile.errorNetwork', 'Something went wrong')}
-            testID="my-profile-screen"
-        >
-            {profile && (
-                <View style={styles.content}>
-                    {/* Hero Section */}
-                    <View style={styles.heroSection}>
-                        <ProfileAvatar
-                            uri={profile.avatar_url}
-                            name={profile.full_name}
-                            size="xl"
-                            showVerified={isTasker && profile.status === 'VERIFIED'}
-                        />
-                        <Text style={styles.name}>{profile.full_name}</Text>
-                        {isTasker && profile.status === 'VERIFIED' && (
-                            <VerifiedBadge status="verified" size="md" testID="verified-badge" />
-                        )}
-                        {isTasker && (
-                            <RatingStars value={Math.round(profile.rating_avg)} readonly size={20} />
-                        )}
-                    </View>
-
-                    {/* Stats Section */}
-                    <View style={styles.statsRow}>
-                        <StatCard
-                            value={String(profile.completed_tasks)}
-                            label={t('shared.profile.completedJobs', 'Completed')}
-                        />
-                        {isTasker && (
-                            <StatCard
-                                value={String(profile.rating_avg)}
-                                label={t('shared.profile.avgRating', 'Rating')}
-                            />
-                        )}
-                    </View>
-
-                    {/* Info Section */}
-                    <View style={styles.infoSection}>
-                        <Text style={styles.sectionTitle}>
-                            {t('shared.profile.aboutMe', 'About Me')}
-                        </Text>
-                        {profile.phone_masked && (
-                            <View style={styles.infoRow}>
-                                <Text style={styles.infoLabel}>{t('shared.profile.phone', 'Phone')}</Text>
-                                <Text style={styles.infoValue}>{profile.phone_masked}</Text>
-                            </View>
-                        )}
-                        <View style={styles.infoRow}>
-                            <Text style={styles.infoLabel}>{t('shared.profile.memberSince', 'Member since')}</Text>
-                            <Text style={styles.infoValue}>
-                                {new Date(profile.created_at).toLocaleDateString()}
-                            </Text>
-                        </View>
-                    </View>
-
-                    {/* Trust Banner for Taskers */}
-                    {isTasker && (
-                        <TrustBanner
-                            title={t('shared.profile.trustTitle', 'Verified Tasker')}
-                            description={t('shared.profile.trustDescription', 'Identity verified and background checked')}
-                        />
-                    )}
-                </View>
+  return (
+    <DetailTemplate
+      headerTitle={t('shared.profile.title', 'My Profile')}
+      rightAction={{
+        icon: <Settings size={24} color={colors.primary} />,
+        onPress: () => router.push('/(shared)/profile/settings'),
+      }}
+      ctaLabel={t('shared.profile.editProfile', 'Edit Profile')}
+      ctaOnPress={() => router.push('/(shared)/profile/edit')}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      errorMessage={t('shared.profile.errorNetwork', 'Something went wrong')}
+      testID="my-profile-screen"
+    >
+      {profile && (
+        <View style={styles.content}>
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            <ProfileAvatar
+              uri={profile.avatar_url}
+              name={profile.full_name}
+              size="xl"
+              showVerified={isTasker && profile.status === 'VERIFIED'}
+            />
+            <Text style={styles.name}>{profile.full_name}</Text>
+            {isTasker && profile.status === 'VERIFIED' && (
+              <VerifiedBadge status="verified" size="md" testID="verified-badge" />
             )}
-        </DetailTemplate>
-    );
+            {isTasker && <RatingStars value={Math.round(profile.rating_avg)} readonly size={20} />}
+          </View>
+
+          {/* Stats Section */}
+          <View style={styles.statsRow}>
+            <StatCard
+              value={String(profile.completed_tasks)}
+              label={t('shared.profile.completedJobs', 'Completed')}
+            />
+            {isTasker && (
+              <StatCard
+                value={String(profile.rating_avg)}
+                label={t('shared.profile.avgRating', 'Rating')}
+              />
+            )}
+          </View>
+
+          {/* Info Section */}
+          <View style={styles.infoSection}>
+            <Text style={styles.sectionTitle}>{t('shared.profile.aboutMe', 'About Me')}</Text>
+            {profile.phone_masked && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>{t('shared.profile.phone', 'Phone')}</Text>
+                <Text style={styles.infoValue}>{profile.phone_masked}</Text>
+              </View>
+            )}
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>
+                {t('shared.profile.memberSince', 'Member since')}
+              </Text>
+              <Text style={styles.infoValue}>
+                {new Date(profile.created_at).toLocaleDateString()}
+              </Text>
+            </View>
+          </View>
+
+          {/* Trust Banner for Taskers */}
+          {isTasker && (
+            <TrustBanner
+              title={t('shared.profile.trustTitle', 'Verified Tasker')}
+              description={t(
+                'shared.profile.trustDescription',
+                'Identity verified and background checked',
+              )}
+            />
+          )}
+        </View>
+      )}
+    </DetailTemplate>
+  );
 }
 
 const styles = StyleSheet.create({
-    content: {
-        gap: spacing.xl,
-    },
-    heroSection: {
-        alignItems: 'center',
-        gap: spacing.md,
-    },
-    name: {
-        fontSize: typography.title,
-        fontWeight: '700',
-        color: colors.foreground,
-        textAlign: 'center',
-    },
-    statsRow: {
-        flexDirection: 'row',
-        gap: spacing.md,
-    },
-    infoSection: {
-        gap: spacing.md,
-    },
-    sectionTitle: {
-        fontSize: typography.subtitle,
-        fontWeight: '600',
-        color: colors.primary,
-    },
-    infoRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: spacing.sm,
-    },
-    infoLabel: {
-        fontSize: typography.body,
-        color: colors.textSecondary,
-    },
-    infoValue: {
-        fontSize: typography.body,
-        color: colors.foreground,
-        fontWeight: '500',
-    },
+  content: {
+    gap: spacing.xl,
+  },
+  heroSection: {
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  name: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.foreground,
+    textAlign: 'center',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  infoSection: {
+    gap: spacing.md,
+  },
+  sectionTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.sm,
+  },
+  infoLabel: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+  },
+  infoValue: {
+    fontSize: typography.body,
+    color: colors.foreground,
+    fontWeight: '500',
+  },
 });

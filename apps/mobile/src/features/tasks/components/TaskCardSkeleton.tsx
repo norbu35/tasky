@@ -16,14 +16,11 @@ export function TaskCardSkeleton() {
 
   useEffect(() => {
     opacity.value = withRepeat(
-      withSequence(
-        withTiming(0.7, { duration: 800 }),
-        withTiming(0.3, { duration: 800 })
-      ),
+      withSequence(withTiming(0.7, { duration: 800 }), withTiming(0.3, { duration: 800 })),
       -1,
-      true
+      true,
     );
-  }, []);
+  }, [opacity]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

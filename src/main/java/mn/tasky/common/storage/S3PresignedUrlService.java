@@ -26,9 +26,8 @@ public class S3PresignedUrlService {
     private static final Duration DEFAULT_UPLOAD_TTL = Duration.ofMinutes(15);
     private static final Duration DEFAULT_DOWNLOAD_TTL = Duration.ofHours(1);
 
-    private static final java.util.regex.Pattern VALID_UPLOAD_KEY_PATTERN =
-            java.util.regex.Pattern.compile(
-                    "^uploads/(tasks|avatars|evidence|verification)/[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
+    private static final java.util.regex.Pattern VALID_UPLOAD_KEY_PATTERN = java.util.regex.Pattern.compile(
+            "^uploads/(tasks|avatars|evidence|verification)/[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
 
     private static final java.util.regex.Pattern VALID_DOWNLOAD_KEY_PATTERN =
             java.util.regex.Pattern.compile("^[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
@@ -50,8 +49,7 @@ public class S3PresignedUrlService {
         this.downloadTtl = Duration.ofSeconds(downloadTtlSeconds);
         this.presigner = S3Presigner.builder()
                 .endpointOverride(URI.create(endpoint))
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .region(Region.US_EAST_1)
                 .serviceConfiguration(
                         S3Configuration.builder().pathStyleAccessEnabled(true).build())
@@ -59,13 +57,17 @@ public class S3PresignedUrlService {
     }
 
     private void validateUploadKey(String key) {
-        if (key == null || key.contains("..") || !VALID_UPLOAD_KEY_PATTERN.matcher(key).matches()) {
+        if (key == null
+                || key.contains("..")
+                || !VALID_UPLOAD_KEY_PATTERN.matcher(key).matches()) {
             throw new IllegalArgumentException("Invalid storage key");
         }
     }
 
     private void validateDownloadKey(String key) {
-        if (key == null || key.contains("..") || !VALID_DOWNLOAD_KEY_PATTERN.matcher(key).matches()) {
+        if (key == null
+                || key.contains("..")
+                || !VALID_DOWNLOAD_KEY_PATTERN.matcher(key).matches()) {
             throw new IllegalArgumentException("Invalid storage key");
         }
     }
@@ -79,8 +81,11 @@ public class S3PresignedUrlService {
      */
     public String generateUploadUrl(String key, String contentType) {
         validateUploadKey(key);
-        PutObjectRequest putRequest =
-                PutObjectRequest.builder().bucket(bucket).key(key).contentType(contentType).build();
+        PutObjectRequest putRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(contentType)
+                .build();
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                 .signatureDuration(uploadTtl)
                 .putObjectRequest(putRequest)
@@ -96,7 +101,8 @@ public class S3PresignedUrlService {
      */
     public String generateDownloadUrl(String key) {
         validateDownloadKey(key);
-        GetObjectRequest getRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
+        GetObjectRequest getRequest =
+                GetObjectRequest.builder().bucket(bucket).key(key).build();
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(downloadTtl)
                 .getObjectRequest(getRequest)

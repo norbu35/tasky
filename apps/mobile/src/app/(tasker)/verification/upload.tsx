@@ -15,207 +15,193 @@ const STEPS = ['FRONT', 'BACK', 'SELFIE'] as const;
 type DocumentSide = (typeof STEPS)[number];
 
 const STEP_LABELS: Record<DocumentSide, string> = {
-    FRONT: 'tasker.verification.uploadFront',
-    BACK: 'tasker.verification.uploadBack',
-    SELFIE: 'tasker.verification.uploadSelfie',
+  FRONT: 'tasker.verification.uploadFront',
+  BACK: 'tasker.verification.uploadBack',
+  SELFIE: 'tasker.verification.uploadSelfie',
 };
 
 export default function UploadScreen() {
-    const { t } = useTranslation();
-    const router = useRouter();
-    const { submitVerification, isSubmitting } = useVerification();
-    const { uploadPhoto } = useVerificationUpload();
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { submitVerification, isSubmitting } = useVerification();
+  const { uploadPhoto } = useVerificationUpload();
 
-    const [currentStep, setCurrentStep] = useState(0);
-    const [photos, setPhotos] = useState<Record<DocumentSide, string | null>>({
-        FRONT: null,
-        BACK: null,
-        SELFIE: null,
+  const [currentStep, setCurrentStep] = useState(0);
+  const [photos, setPhotos] = useState<Record<DocumentSide, string | null>>({
+    FRONT: null,
+    BACK: null,
+    SELFIE: null,
+  });
+  const [storageKeys, setStorageKeys] = useState<Record<DocumentSide, string | null>>({
+    FRONT: null,
+    BACK: null,
+    SELFIE: null,
+  });
+
+  const currentSide = STEPS[currentStep];
+  const currentPhoto = photos[currentSide];
+  const hasPhoto = !!currentPhoto;
+
+  const captureFromCamera = useCallback(async () => {
+    await ImagePicker.requestCameraPermissionsAsync();
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
     });
-    const [storageKeys, setStorageKeys] = useState<Record<DocumentSide, string | null>>({
-        FRONT: null,
-        BACK: null,
-        SELFIE: null,
+    if (!result.canceled && result.assets[0]) {
+      const uri = result.assets[0].uri;
+      setPhotos((prev) => ({ ...prev, [currentSide]: uri }));
+      try {
+        const key = await uploadPhoto(uri, currentSide);
+        setStorageKeys((prev) => ({ ...prev, [currentSide]: key }));
+      } catch {
+        // Upload error handled silently; key remains null
+      }
+    }
+  }, [currentSide, uploadPhoto]);
+
+  const captureFromGallery = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
     });
+    if (!result.canceled && result.assets[0]) {
+      const uri = result.assets[0].uri;
+      setPhotos((prev) => ({ ...prev, [currentSide]: uri }));
+      try {
+        const key = await uploadPhoto(uri, currentSide);
+        setStorageKeys((prev) => ({ ...prev, [currentSide]: key }));
+      } catch {
+        // Upload error handled silently
+      }
+    }
+  }, [currentSide, uploadPhoto]);
 
-    const currentSide = STEPS[currentStep];
-    const currentPhoto = photos[currentSide];
-    const hasPhoto = !!currentPhoto;
-
-    const captureFromCamera = useCallback(async () => {
-        await ImagePicker.requestCameraPermissionsAsync();
-        const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.8,
+  const handleNext = useCallback(async () => {
+    if (currentStep < STEPS.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      // Final step: submit
+      try {
+        await submitVerification({
+          id_card_front_key: storageKeys.FRONT ?? '',
+          id_card_back_key: storageKeys.BACK ?? '',
+          selfie_key: storageKeys.SELFIE ?? '',
         });
-        if (!result.canceled && result.assets[0]) {
-            const uri = result.assets[0].uri;
-            setPhotos((prev) => ({ ...prev, [currentSide]: uri }));
-            try {
-                const key = await uploadPhoto(uri, currentSide);
-                setStorageKeys((prev) => ({ ...prev, [currentSide]: key }));
-            } catch {
-                // Upload error handled silently; key remains null
-            }
-        }
-    }, [currentSide, uploadPhoto]);
+        router.replace('/(tasker)/verification/submitted');
+      } catch {
+        // Submit error handled silently
+      }
+    }
+  }, [currentStep, storageKeys, submitVerification, router]);
 
-    const captureFromGallery = useCallback(async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0.8,
-        });
-        if (!result.canceled && result.assets[0]) {
-            const uri = result.assets[0].uri;
-            setPhotos((prev) => ({ ...prev, [currentSide]: uri }));
-            try {
-                const key = await uploadPhoto(uri, currentSide);
-                setStorageKeys((prev) => ({ ...prev, [currentSide]: key }));
-            } catch {
-                // Upload error handled silently
-            }
-        }
-    }, [currentSide, uploadPhoto]);
+  const handleBack = useCallback(() => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    } else {
+      router.back();
+    }
+  }, [currentStep, router]);
 
-    const handleNext = useCallback(async () => {
-        if (currentStep < STEPS.length - 1) {
-            setCurrentStep((prev) => prev + 1);
-        } else {
-            // Final step: submit
-            try {
-                await submitVerification({
-                    id_card_front_key: storageKeys.FRONT ?? '',
-                    id_card_back_key: storageKeys.BACK ?? '',
-                    selfie_key: storageKeys.SELFIE ?? '',
-                });
-                router.replace('/(tasker)/verification/submitted');
-            } catch {
-                // Submit error handled silently
-            }
-        }
-    }, [currentStep, storageKeys, submitVerification, router]);
+  const isLastStep = currentStep === STEPS.length - 1;
+  const nextLabel = isLastStep ? t('tasker.verification.submitButton') : t('common.next');
 
-    const handleBack = useCallback(() => {
-        if (currentStep > 0) {
-            setCurrentStep((prev) => prev - 1);
-        } else {
-            router.back();
-        }
-    }, [currentStep, router]);
+  return (
+    <FormWizardTemplate
+      currentStep={currentStep}
+      totalSteps={STEPS.length}
+      onNext={handleNext}
+      onBack={handleBack}
+      nextLabel={nextLabel}
+      nextDisabled={!hasPhoto}
+      nextLoading={isSubmitting}
+      testID="upload-wizard"
+    >
+      <Text style={styles.stepLabel}>{t(STEP_LABELS[currentSide])}</Text>
 
-    const isLastStep = currentStep === STEPS.length - 1;
-    const nextLabel = isLastStep
-        ? t('tasker.verification.submitButton')
-        : t('common.next');
+      {currentPhoto ? (
+        <View style={styles.previewContainer}>
+          <Image source={{ uri: currentPhoto }} style={styles.preview} testID="photo-preview" />
+        </View>
+      ) : (
+        <View style={styles.placeholderContainer}>
+          <Camera size={48} color={colors.muted} />
+          <Text style={styles.placeholderText}>{t('tasker.verification.uploadCapture')}</Text>
+        </View>
+      )}
 
-    return (
-        <FormWizardTemplate
-            currentStep={currentStep}
-            totalSteps={STEPS.length}
-            onNext={handleNext}
-            onBack={handleBack}
-            nextLabel={nextLabel}
-            nextDisabled={!hasPhoto}
-            nextLoading={isSubmitting}
-            testID="upload-wizard"
+      <View style={styles.captureButtons}>
+        <Pressable
+          style={styles.captureBtn}
+          onPress={captureFromCamera}
+          testID="capture-camera-btn"
         >
-            <Text style={styles.stepLabel}>
-                {t(STEP_LABELS[currentSide])}
-            </Text>
+          <Camera size={20} color={colors.primary} />
+          <Text style={styles.captureBtnText}>{t('tasker.verification.uploadCapture')}</Text>
+        </Pressable>
 
-            {currentPhoto ? (
-                <View style={styles.previewContainer}>
-                    <Image
-                        source={{ uri: currentPhoto }}
-                        style={styles.preview}
-                        testID="photo-preview"
-                    />
-                </View>
-            ) : (
-                <View style={styles.placeholderContainer}>
-                    <Camera size={48} color={colors.muted} />
-                    <Text style={styles.placeholderText}>
-                        {t('tasker.verification.uploadCapture')}
-                    </Text>
-                </View>
-            )}
-
-            <View style={styles.captureButtons}>
-                <Pressable
-                    style={styles.captureBtn}
-                    onPress={captureFromCamera}
-                    testID="capture-camera-btn"
-                >
-                    <Camera size={20} color={colors.primary} />
-                    <Text style={styles.captureBtnText}>
-                        {t('tasker.verification.uploadCapture')}
-                    </Text>
-                </Pressable>
-
-                <Pressable
-                    style={styles.captureBtn}
-                    onPress={captureFromGallery}
-                    testID="capture-gallery-btn"
-                >
-                    <ImageIcon size={20} color={colors.primary} />
-                    <Text style={styles.captureBtnText}>
-                        {t('tasker.verification.uploadGallery')}
-                    </Text>
-                </Pressable>
-            </View>
-        </FormWizardTemplate>
-    );
+        <Pressable
+          style={styles.captureBtn}
+          onPress={captureFromGallery}
+          testID="capture-gallery-btn"
+        >
+          <ImageIcon size={20} color={colors.primary} />
+          <Text style={styles.captureBtnText}>{t('tasker.verification.uploadGallery')}</Text>
+        </Pressable>
+      </View>
+    </FormWizardTemplate>
+  );
 }
 
 const styles = StyleSheet.create({
-    stepLabel: {
-        fontSize: typography.subtitle,
-        fontWeight: '600',
-        color: colors.primary,
-        textAlign: 'center',
-        marginBottom: spacing.lg,
-    },
-    previewContainer: {
-        alignItems: 'center',
-        marginBottom: spacing.lg,
-    },
-    preview: {
-        width: 280,
-        height: 200,
-        borderRadius: radius.md,
-        backgroundColor: colors.muted,
-    },
-    placeholderContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 200,
-        backgroundColor: colors.muted,
-        borderRadius: radius.md,
-        marginBottom: spacing.lg,
-    },
-    placeholderText: {
-        fontSize: typography.body,
-        color: colors.textSecondary,
-        marginTop: spacing.sm,
-    },
-    captureButtons: {
-        flexDirection: 'row',
-        gap: spacing.md,
-        justifyContent: 'center',
-    },
-    captureBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.sm,
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.md,
-        borderRadius: radius.md,
-        borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: colors.card,
-    },
-    captureBtnText: {
-        fontSize: typography.body,
-        color: colors.primary,
-    },
+  stepLabel: {
+    fontSize: typography.subtitle,
+    fontWeight: '600',
+    color: colors.primary,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+  },
+  previewContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  preview: {
+    width: 280,
+    height: 200,
+    borderRadius: radius.md,
+    backgroundColor: colors.muted,
+  },
+  placeholderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 200,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    marginBottom: spacing.lg,
+  },
+  placeholderText: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+  },
+  captureButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    justifyContent: 'center',
+  },
+  captureBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+  },
+  captureBtnText: {
+    fontSize: typography.body,
+    color: colors.primary,
+  },
 });

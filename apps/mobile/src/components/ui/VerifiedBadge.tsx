@@ -10,66 +10,61 @@ type VerificationStatus = 'verified' | 'pending' | 'unverified';
 type BadgeSize = 'sm' | 'md';
 
 interface VerifiedBadgeProps {
-    status: VerificationStatus;
-    size?: BadgeSize;
-    testID?: string;
+  status: VerificationStatus;
+  size?: BadgeSize;
+  testID?: string;
 }
 
 const iconSizeMap: Record<BadgeSize, number> = {
-    sm: 12,
-    md: 16,
+  sm: 12,
+  md: 16,
 };
 
 export function VerifiedBadge({ status, size = 'sm', testID }: VerifiedBadgeProps) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    if (status === 'unverified') return null;
+  if (status === 'unverified') return null;
 
-    const isVerified = status === 'verified';
-    const iconColor = isVerified ? colors.verified : colors.accent;
-    const iconSize = iconSizeMap[size];
-    const Icon = isVerified ? ShieldCheck : Shield;
+  const isVerified = status === 'verified';
+  const iconSize = iconSizeMap[size];
+  const Icon = isVerified ? ShieldCheck : Shield;
 
-    return (
-        <View
-            style={[
-                styles.badge,
-                size === 'md' ? styles.badgeMd : styles.badgeSm,
-                { backgroundColor: isVerified ? colors.verified : colors.accent },
-            ]}
-            testID={testID}
-            accessibilityLabel={t(`verification.${status}`)}
-        >
-            <Icon size={iconSize} color={colors.primaryForeground} />
-            {size === 'md' && (
-                <Text style={styles.text}>
-                    {t(`verification.${status}`)}
-                </Text>
-            )}
-        </View>
-    );
+  return (
+    <View
+      style={[
+        styles.badge,
+        size === 'md' ? styles.badgeMd : styles.badgeSm,
+        { backgroundColor: isVerified ? colors.verified : colors.accent },
+      ]}
+      testID={testID}
+      accessibilityLabel={t(`verification.${status}`)}
+    >
+      <Icon size={iconSize} color={colors.primaryForeground} />
+      {size === 'md' && <Text style={styles.text}>{t(`verification.${status}`)}</Text>}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    badge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderRadius: radius.full,
-        alignSelf: 'flex-start',
-    },
-    badgeSm: {
-        paddingHorizontal: spacing.sm,
-        paddingVertical: 2,
-        gap: spacing.xs,
-    },
-    badgeMd: {
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
-        gap: spacing.xs,
-    },
-    text: {
-        fontSize: typography.micro,
-        fontWeight: '700',
-        color: colors.primaryForeground,
-    },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radius.full,
+    alignSelf: 'flex-start',
+  },
+  badgeSm: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    gap: spacing.xs,
+  },
+  badgeMd: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    gap: spacing.xs,
+  },
+  text: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+  },
 });

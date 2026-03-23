@@ -33,8 +33,7 @@ public class AdminFeatureToggleController {
 
     @PutMapping
     public ResponseEntity<?> update(
-            @AuthenticationPrincipal JwtPrincipal principal,
-            @Valid @RequestBody UpdateFeatureToggleRequest body) {
+            @AuthenticationPrincipal JwtPrincipal principal, @Valid @RequestBody UpdateFeatureToggleRequest body) {
         FeatureToggle updated = featureToggleService.update(body.featureName(), body.isEnabled(), principal.userId());
 
         return ResponseEntity.ok(updated);

@@ -6,6 +6,8 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "format:check": "pnpm -r format:check",
     "typecheck": "pnpm -r typecheck",
     "sdk:generate": "pnpm --filter @tasky/sdk generate"
   }
