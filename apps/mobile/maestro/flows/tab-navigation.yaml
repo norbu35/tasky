@@ -1,0 +1,32 @@
+appId: mn.tasky.mobile
+---
+# Tab Navigation Flow
+# Verifies that all bottom tabs are tappable and render expected content.
+# Assumes the user is already logged in (customer role).
+
+- launchApp
+
+# Wait for the main tab bar to load
+- extendedWaitUntil:
+    visible: "MY TASKS"
+    timeout: 10000
+
+# Verify first tab (MY TASKS) is active by default
+- assertVisible: "MY TASKS"
+
+# Navigate to BOOKINGS tab
+- tapOn: "BOOKINGS"
+- assertVisible: "BOOKINGS"
+
+# Navigate to INBOX tab
+- tapOn: "INBOX"
+- assertVisible: "INBOX"
+
+# Navigate to PROFILE tab
+- tapOn: "PROFILE"
+- assertVisible:
+    id: "my-profile-screen"
+
+# Navigate back to MY TASKS tab
+- tapOn: "MY TASKS"
+- assertVisible: "MY TASKS"
