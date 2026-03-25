@@ -1,0 +1,162 @@
+screen_id: SCR-INFRA-001
+name: Network Error / Offline
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: error_state
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Network Error / Offline" (SCR-INFRA-001) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: error_state — Centered error icon, message text, and retry CTA button. Comfortable density.
+
+  Layout structure: safe_area -> centered(icon + message + retry)
+
+  Components used:
+    • COMP-EMPTYSTATE (error): Full-screen error state with illustration, headline, description, and retry CTA
+    • COMP-BUTTON (primary): Primary retry button at the bottom of the error state
+    • COMP-TOAST (success): Success toast when connectivity is restored
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Device has no network connectivity (airplane mode, no signal)
+  Key copy (Mongolian primary):
+    • headline_no_connection: "Интернэт холболтгүй байна" (No internet connection)
+    • headline_slow_connection: "Холболт удаан байна" (Connection is slow)
+    • description_no_connection: "Сүлжээний холболтоо шалгаад дахин оролдоно уу" (Please check your connection and try again)
+    • description_slow_connection: "Сүлжээний холболт удаан байна. Түр хүлээнэ үү" (Connection is slow. Please wait a moment)
+    • cta_retry: "Дахин оролдох" (Try again)
+    • toast_restored: "Холболт сэргэлээ" (Connection restored)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: error_state
+  density: comfortable
+  structure: safe_area -> centered(icon + message + retry)
+components:
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Full-screen error state with illustration, headline, description, and retry CTA
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary retry button at the bottom of the error state
+  - component: COMP-TOAST
+    variant: success
+    usage: Success toast when connectivity is restored
+states:
+  - id: no_connection
+    description: Device has no network connectivity (airplane mode, no signal)
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: slow_connection
+    description: Network requests are timing out due to very slow connection
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: retry_loading
+    description: User tapped retry, request is in progress
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: restored
+    description: Connectivity detected again; auto-navigate back to previous screen
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-EMPTYSTATE
+copy:
+  - key: headline_no_connection
+    mn: Интернэт холболтгүй байна
+    en: No internet connection
+  - key: headline_slow_connection
+    mn: Холболт удаан байна
+    en: Connection is slow
+  - key: description_no_connection
+    mn: Сүлжээний холболтоо шалгаад дахин оролдоно уу
+    en: Please check your connection and try again
+  - key: description_slow_connection
+    mn: Сүлжээний холболт удаан байна. Түр хүлээнэ үү
+    en: Connection is slow. Please wait a moment
+  - key: cta_retry
+    mn: Дахин оролдох
+    en: Try again
+  - key: toast_restored
+    mn: Холболт сэргэлээ
+    en: Connection restored
+acceptance_criteria:
+  - No connection state shows wifi-off illustration, headline, description, and retry button
+  - Slow connection state shows timeout-specific copy after requests fail for >10 seconds
+  - Retry button enters loading state and re-attempts the failed request
+  - When connectivity is restored, user is auto-navigated to the previous screen with success toast
+  - Cached content is shown beneath the error banner when available
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: network_error_shown
+    trigger: Screen displayed due to connectivity loss
+  - event: network_retry_tapped
+    trigger: User taps retry button
+  - event: network_restored
+    trigger: Connectivity restored and user navigated back
+state_prompts:
+  - state_id: no_connection
+    prompt: >-
+      Generate the "no_connection" state of "Network Error / Offline".
+
+      Device has no network connectivity (airplane mode, no signal)
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: slow_connection
+    prompt: >-
+      Generate the "slow_connection" state of "Network Error / Offline".
+
+      Network requests are timing out due to very slow connection
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: retry_loading
+    prompt: >-
+      Generate the "retry_loading" state of "Network Error / Offline".
+
+      User tapped retry, request is in progress
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: restored
+    prompt: >-
+      Generate the "restored" state of "Network Error / Offline".
+
+      Connectivity detected again; auto-navigate back to previous screen
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

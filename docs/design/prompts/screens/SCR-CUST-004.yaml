@@ -1,0 +1,232 @@
+screen_id: SCR-CUST-004
+name: Post Task — Photo Upload
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/tasks/new/photos
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Photo Upload" (SCR-CUST-004) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 3/7) -> scrollview(photo_grid + helper)
+  -> bottom_nav(back + next)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 3 of 7 in the Post Task wizard flow
+    • COMP-PHOTOPICKER (default): Multi-photo upload grid with add, preview, remove, and progress per photo
+    • COMP-BUTTON (primary): Back and Next/Skip navigation buttons in bottom bar
+    • COMP-TOAST (error): Error toast when photo upload fails
+  This screen has 6 states — generate the primary/default state:
+    Primary state: No photos added yet; photo picker shows add-photo placeholder with camera icon
+  Key copy (Mongolian primary):
+    • page_title: "Зураг оруулах" (Add Photos)
+    • step_label: "Зураг" (Photos)
+    • instruction: "Даалгавартай холбоотой зураг оруулна уу (3 хүртэл)" (Add photos related to your task (up to 3))
+    • helper_optional: "Зураг оруулах шаардлагагүй — алгасаж болно" (Photos are optional — you can skip)
+    • cta_next: "Үргэлжлүүлэх" (Continue)
+    • cta_skip: "Алгасах" (Skip)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(step 3/7) -> scrollview(photo_grid + helper) ->
+    bottom_nav(back + next)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 3 of 7 in the Post Task wizard flow
+  - component: COMP-PHOTOPICKER
+    variant: default
+    usage: Multi-photo upload grid with add, preview, remove, and progress per photo
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Back and Next/Skip navigation buttons in bottom bar
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast when photo upload fails
+states:
+  - id: empty
+    description: No photos added yet; photo picker shows add-photo placeholder with camera icon
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: uploading
+    description: One or more photos uploading via presigned URL; progress indicators shown per photo
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: uploaded_1
+    description: 1 photo uploaded successfully; add-photo placeholder remains for 2 more
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: uploaded_2
+    description: 2 photos uploaded successfully; add-photo placeholder remains for 1 more
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: uploaded_3_max
+    description: 3 photos uploaded; maximum reached; add-photo placeholder hidden
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: upload_error
+    description: Photo upload failed due to network or server error; error toast with retry
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden: []
+copy:
+  - key: page_title
+    mn: Зураг оруулах
+    en: Add Photos
+  - key: step_label
+    mn: Зураг
+    en: Photos
+  - key: instruction
+    mn: Даалгавартай холбоотой зураг оруулна уу (3 хүртэл)
+    en: Add photos related to your task (up to 3)
+  - key: helper_optional
+    mn: Зураг оруулах шаардлагагүй — алгасаж болно
+    en: Photos are optional — you can skip
+  - key: cta_next
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: cta_skip
+    mn: Алгасах
+    en: Skip
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: max_reached
+    mn: Хамгийн ихдээ 3 зураг оруулах боломжтой
+    en: Maximum 3 photos allowed
+  - key: error_upload
+    mn: Зураг оруулахад алдаа гарлаа. Дахин оролдоно уу
+    en: Photo upload failed. Please try again
+acceptance_criteria:
+  - StepIndicator shows step 3 of 7 with 'Зураг' label highlighted
+  - PhotoPicker shows empty state with camera icon add-photo placeholder
+  - Tapping add-photo triggers camera permission primer on first use, then camera/gallery picker
+  - Upload progress is shown per photo via presigned URL flow per REQ-TASK-04
+  - Each uploaded photo shows preview thumbnail with remove button
+  - Maximum 3 photos enforced; add-photo placeholder hidden when max reached
+  - Photos can be skipped — Next proceeds to Location SCR-CUST-005 even with 0 photos
+  - Back button pops to Intake Form SCR-CUST-003
+  - Upload error shows error toast with retry action
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /tasks/photos/upload-url
+    purpose: Request presigned URL for direct photo upload to S3/MinIO per REQ-TASK-04
+analytics_events:
+  - event: photo_upload_started
+    trigger: User selects a photo from camera or gallery
+  - event: photo_upload_completed
+    trigger: Photo upload to presigned URL completes successfully
+  - event: photo_upload_failed
+    trigger: Photo upload fails; includes error type
+  - event: photo_removed
+    trigger: User taps remove on an uploaded photo
+  - event: photos_skipped
+    trigger: User taps Skip/Continue with zero photos
+state_prompts:
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Post Task — Photo Upload".
+
+      No photos added yet; photo picker shows add-photo placeholder with camera icon
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploading
+    prompt: >-
+      Generate the "uploading" state of "Post Task — Photo Upload".
+
+      One or more photos uploading via presigned URL; progress indicators shown per photo
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploaded_1
+    prompt: >-
+      Generate the "uploaded_1" state of "Post Task — Photo Upload".
+
+      1 photo uploaded successfully; add-photo placeholder remains for 2 more
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploaded_2
+    prompt: >-
+      Generate the "uploaded_2" state of "Post Task — Photo Upload".
+
+      2 photos uploaded successfully; add-photo placeholder remains for 1 more
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploaded_3_max
+    prompt: >-
+      Generate the "uploaded_3_max" state of "Post Task — Photo Upload".
+
+      3 photos uploaded; maximum reached; add-photo placeholder hidden
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: upload_error
+    prompt: >-
+      Generate the "upload_error" state of "Post Task — Photo Upload".
+
+      Photo upload failed due to network or server error; error toast with retry
+
+      Visible elements: COMP-STEPINDICATOR, COMP-PHOTOPICKER, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

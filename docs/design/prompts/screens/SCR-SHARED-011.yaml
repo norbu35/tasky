@@ -1,0 +1,300 @@
+screen_id: SCR-SHARED-011
+name: Inbox — Chat Detail
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: detail
+route: /inbox/:conversationId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Inbox — Chat Detail" (SCR-SHARED-011) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + counterparty_name + avatar) -> scrollview(messages) ->
+  sticky_bottom(input_bar)
+
+  Components used:
+    • COMP-PROFILEAVATAR (sm): Counterparty avatar in nav header; tappable to view profile
+    • COMP-INPUT (default): Message text input field in the sticky bottom bar
+    • COMP-BUTTON (primary): Send button in the message input bar
+    • COMP-LOADINGSKELETON (list_row): Skeleton loading state for message bubbles
+    • COMP-TOAST (error): Warning toast when phone number pattern is detected in a message
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Chat messages are loading for the first time
+  Key copy (Mongolian primary):
+    • input_placeholder: "Мессеж бичих..." (Type a message...)
+    • phone_warning_banner: "Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна" (For your safety, we advise not sharing phone numbers or personal information)
+    • send_failed_message: "Мессеж илгээгдсэнгүй. Товшиж дахин оролдоно уу." (Message not sent. Tap to retry.)
+    • error_message: "Мессежүүдийг ачаалж чадсангүй" (Failed to load messages)
+    • retry_label: "Дахин оролдох" (Retry)
+    • offline_banner: "Офлайн байна. Мессеж илгээх боломжгүй." (You are offline. Cannot send messages.)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header(back + counterparty_name + avatar) -> scrollview(messages) -> sticky_bottom(input_bar)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: sm
+    usage: Counterparty avatar in nav header; tappable to view profile
+  - component: COMP-INPUT
+    variant: default
+    usage: Message text input field in the sticky bottom bar
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Send button in the message input bar
+  - component: COMP-LOADINGSKELETON
+    variant: list_row
+    usage: Skeleton loading state for message bubbles
+  - component: COMP-TOAST
+    variant: error
+    usage: Warning toast when phone number pattern is detected in a message
+states:
+  - id: loading_initial
+    description: Chat messages are loading for the first time
+    visible:
+      - nav_header
+      - loading_skeleton
+    hidden:
+      - message_list
+      - input_bar
+      - phone_warning
+      - error_message
+      - offline_banner
+      - send_failed
+  - id: populated
+    description: Messages loaded and displayed; input bar active
+    visible:
+      - nav_header
+      - message_list
+      - input_bar
+    hidden:
+      - loading_skeleton
+      - phone_warning
+      - error_message
+      - offline_banner
+      - send_failed
+  - id: sending
+    description: A message is being sent; optimistic rendering with pending indicator
+    visible:
+      - nav_header
+      - message_list
+      - input_bar_disabled
+      - sending_indicator
+    hidden:
+      - loading_skeleton
+      - phone_warning
+      - error_message
+      - offline_banner
+      - send_failed
+  - id: send_failed
+    description: Message failed to send; retry affordance shown on the failed message bubble
+    visible:
+      - nav_header
+      - message_list
+      - input_bar
+      - failed_message_retry
+    hidden:
+      - loading_skeleton
+      - phone_warning
+      - error_message
+      - offline_banner
+      - sending_indicator
+  - id: phone_warning
+    description: Phone number pattern detected in typed message; warning banner shown
+    visible:
+      - nav_header
+      - message_list
+      - input_bar
+      - phone_warning_banner
+    hidden:
+      - loading_skeleton
+      - error_message
+      - offline_banner
+      - send_failed
+      - sending_indicator
+  - id: error_network
+    description: Network error loading messages; retry available
+    visible:
+      - nav_header
+      - error_message
+      - retry_button
+    hidden:
+      - message_list
+      - input_bar
+      - loading_skeleton
+      - phone_warning
+      - offline_banner
+      - send_failed
+  - id: offline_cached
+    description: Device is offline; cached messages shown with disabled input
+    visible:
+      - nav_header
+      - message_list_cached
+      - offline_banner
+      - input_bar_disabled
+    hidden:
+      - loading_skeleton
+      - phone_warning
+      - error_message
+      - send_failed
+      - sending_indicator
+copy:
+  - key: input_placeholder
+    mn: Мессеж бичих...
+    en: Type a message...
+  - key: phone_warning_banner
+    mn: Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна
+    en: For your safety, we advise not sharing phone numbers or personal information
+  - key: send_failed_message
+    mn: Мессеж илгээгдсэнгүй. Товшиж дахин оролдоно уу.
+    en: Message not sent. Tap to retry.
+  - key: error_message
+    mn: Мессежүүдийг ачаалж чадсангүй
+    en: Failed to load messages
+  - key: retry_label
+    mn: Дахин оролдох
+    en: Retry
+  - key: offline_banner
+    mn: Офлайн байна. Мессеж илгээх боломжгүй.
+    en: You are offline. Cannot send messages.
+  - key: today_label
+    mn: Өнөөдөр
+    en: Today
+  - key: yesterday_label
+    mn: Өчигдөр
+    en: Yesterday
+acceptance_criteria:
+  - Messages are displayed in chronological order with date separators
+  - Own messages are right-aligned; counterparty messages are left-aligned
+  - Each message bubble shows timestamp
+  - Send button is disabled when input field is empty
+  - Sent messages appear optimistically before server confirmation
+  - Failed messages show a retry indicator; tapping retries the send
+  - Phone number regex pattern detection shows warning banner above input
+  - Warning banner does not block sending; it is advisory only
+  - Tapping counterparty avatar in nav header pushes to Tasker Public Profile (SCR-CUST-013) for customers
+  - Tapping task reference in a message pushes to Task Detail (SCR-CUST-009)
+  - Back button pops to Conversation List (SCR-SHARED-010)
+  - Loading state shows skeleton matching message bubble layout
+  - Network error shows error message with retry button
+  - Offline state shows cached messages with disabled input and offline banner
+  - Input field supports keyboard-aware scrolling; messages scroll above keyboard
+  - Message input max length is 500 characters
+  - Relative timestamps for messages within 24 hours; absolute YYYY.MM.DD for older
+api_endpoints:
+  - method: GET
+    path: /conversations/:id/messages
+    purpose: Fetch message history for the conversation
+  - method: POST
+    path: /conversations/:id/messages
+    purpose: Send a new message in the conversation
+analytics_events:
+  - event: chat_detail_viewed
+    trigger: Chat detail screen becomes visible; includes conversation_id
+  - event: message_sent
+    trigger: User successfully sends a message
+  - event: message_send_failed
+    trigger: Message fails to send
+  - event: message_retry_tapped
+    trigger: User taps retry on a failed message
+  - event: phone_number_warning_shown
+    trigger: Phone number pattern detected in typed message
+  - event: counterparty_profile_tapped
+    trigger: User taps counterparty avatar in nav header
+  - event: task_reference_tapped
+    trigger: User taps a task reference link within a message
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Inbox — Chat Detail".
+
+      Chat messages are loading for the first time
+
+      Visible elements: nav_header, loading_skeleton
+
+      Hidden elements: message_list, input_bar, phone_warning, error_message, offline_banner, send_failed
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "Inbox — Chat Detail".
+
+      Messages loaded and displayed; input bar active
+
+      Visible elements: nav_header, message_list, input_bar
+
+      Hidden elements: loading_skeleton, phone_warning, error_message, offline_banner, send_failed
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: sending
+    prompt: >-
+      Generate the "sending" state of "Inbox — Chat Detail".
+
+      A message is being sent; optimistic rendering with pending indicator
+
+      Visible elements: nav_header, message_list, input_bar_disabled, sending_indicator
+
+      Hidden elements: loading_skeleton, phone_warning, error_message, offline_banner, send_failed
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: send_failed
+    prompt: >-
+      Generate the "send_failed" state of "Inbox — Chat Detail".
+
+      Message failed to send; retry affordance shown on the failed message bubble
+
+      Visible elements: nav_header, message_list, input_bar, failed_message_retry
+
+      Hidden elements: loading_skeleton, phone_warning, error_message, offline_banner, sending_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: phone_warning
+    prompt: >-
+      Generate the "phone_warning" state of "Inbox — Chat Detail".
+
+      Phone number pattern detected in typed message; warning banner shown
+
+      Visible elements: nav_header, message_list, input_bar, phone_warning_banner
+
+      Hidden elements: loading_skeleton, error_message, offline_banner, send_failed, sending_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Inbox — Chat Detail".
+
+      Network error loading messages; retry available
+
+      Visible elements: nav_header, error_message, retry_button
+
+      Hidden elements: message_list, input_bar, loading_skeleton, phone_warning, offline_banner, send_failed
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline_cached
+    prompt: >-
+      Generate the "offline_cached" state of "Inbox — Chat Detail".
+
+      Device is offline; cached messages shown with disabled input
+
+      Visible elements: nav_header, message_list_cached, offline_banner, input_bar_disabled
+
+      Hidden elements: loading_skeleton, phone_warning, error_message, send_failed, sending_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,98 @@
+screen_id: SCR-SHARED-001
+name: Splash / Launch Screen
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: auth
+route: /
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Splash / Launch Screen" (SCR-SHARED-001) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(logo + tagline) -> bottom_loading_indicator
+
+  Components used:
+    • COMP-BUTTON (default): Not visible on splash; navigation is automatic after token check
+  This screen has 2 states — generate the primary/default state:
+    Primary state: App launches; logo and tagline displayed while JWT check begins
+  Key copy (Mongolian primary):
+    • tagline: "Найдвартай гүйцэтгэгч, хялбар захиалга" (Trusted taskers, easy booking)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: safe_area -> centered_content(logo + tagline) -> bottom_loading_indicator
+components:
+  - component: COMP-BUTTON
+    variant: default
+    usage: Not visible on splash; navigation is automatic after token check
+states:
+  - id: default
+    description: App launches; logo and tagline displayed while JWT check begins
+    visible:
+      - logo
+      - tagline
+      - loading_indicator
+    hidden: []
+  - id: loading
+    description: JWT validation in progress; spinner or progress indicator below logo
+    visible:
+      - logo
+      - tagline
+      - loading_indicator
+    hidden: []
+copy:
+  - key: tagline
+    mn: Найдвартай гүйцэтгэгч, хялбар захиалга
+    en: Trusted taskers, easy booking
+acceptance_criteria:
+  - Splash screen displays the Tasky logo centered vertically
+  - A loading indicator appears below the logo during JWT validation
+  - If a valid JWT exists and role is CUSTOMER, the app replaces to My Tasks (SCR-CUST-001)
+  - If a valid JWT exists and role is TASKER, the app replaces to Task Feed (SCR-TASK-001)
+  - >-
+    If a valid JWT exists, Phase 2 is active, and OTP migration is needed, the app replaces to OTP Migration Gate
+    (SCR-SHARED-004)
+  - If no valid JWT exists, the app replaces to Login (SCR-SHARED-002)
+  - Splash screen is purely client-side with no API calls
+  - Total splash duration does not exceed 2 seconds on a cold start
+api_endpoints: []
+analytics_events:
+  - event: app_launched
+    trigger: Splash screen becomes visible
+  - event: auth_check_started
+    trigger: JWT validation begins
+  - event: auth_check_completed
+    trigger: JWT validation finishes; includes result (valid/invalid/expired)
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Splash / Launch Screen".
+
+      App launches; logo and tagline displayed while JWT check begins
+
+      Visible elements: logo, tagline, loading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading
+    prompt: >-
+      Generate the "loading" state of "Splash / Launch Screen".
+
+      JWT validation in progress; spinner or progress indicator below logo
+
+      Visible elements: logo, tagline, loading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

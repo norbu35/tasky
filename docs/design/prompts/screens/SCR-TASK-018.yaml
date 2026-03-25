@@ -1,0 +1,151 @@
+screen_id: SCR-TASK-018
+name: Privacy Policy
+role:
+  - tasker
+phase: 0-1
+template: detail
+route: /legal/privacy
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Privacy Policy" (SCR-TASK-018) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(policy_content)
+
+  Components used:
+    • COMP-LOADINGSKELETON (detail): Skeleton placeholder matching text content layout during policy load
+  This screen has 2 states — generate the primary/default state:
+    Primary state: Privacy policy content loading — text skeleton placeholder shown
+  Key copy (Mongolian primary):
+    • page_title: "Нууцлалын бодлого" (Privacy Policy)
+    • section_data_collection: "Мэдээлэл цуглуулах" (Data Collection)
+    • section_data_usage: "Мэдээллийн ашиглалт" (Data Usage)
+    • section_data_storage: "Мэдээлэл хадгалах" (Data Storage)
+    • section_data_sharing: "Мэдээлэл хуваалцах" (Data Sharing)
+    • section_identity_data: "Таниулах баталгаажуулалтын мэдээлэл" (Identity Verification Data)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(policy_content)
+components:
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Skeleton placeholder matching text content layout during policy load
+states:
+  - id: loading
+    description: Privacy policy content loading — text skeleton placeholder shown
+    visible:
+      - nav_header
+      - loading_skeleton
+    hidden:
+      - policy_content
+  - id: loaded
+    description: Privacy policy content fully loaded and displayed as scrollable text
+    visible:
+      - nav_header
+      - policy_content
+    hidden:
+      - loading_skeleton
+copy:
+  - key: page_title
+    mn: Нууцлалын бодлого
+    en: Privacy Policy
+  - key: section_data_collection
+    mn: Мэдээлэл цуглуулах
+    en: Data Collection
+  - key: section_data_usage
+    mn: Мэдээллийн ашиглалт
+    en: Data Usage
+  - key: section_data_storage
+    mn: Мэдээлэл хадгалах
+    en: Data Storage
+  - key: section_data_sharing
+    mn: Мэдээлэл хуваалцах
+    en: Data Sharing
+  - key: section_identity_data
+    mn: Таниулах баталгаажуулалтын мэдээлэл
+    en: Identity Verification Data
+  - key: identity_data_description
+    mn: >-
+      Иргэний үнэмлэхний зураг болон амьд зургийг зөвхөн баталгаажуулалтын зорилгоор цуглуулна. Бүртгэл устгахад энэ
+      мэдээлэл устгагдана.
+    en: ID photos and selfies are collected solely for verification. This data is deleted when your account is deleted.
+  - key: section_user_rights
+    mn: Хэрэглэгчийн эрх
+    en: User Rights
+  - key: user_rights_description
+    mn: Та өөрийн мэдээлэлд хандах, засах, устгах эрхтэй. Бүртгэл устгах хүсэлтийг тохиргооноос илгээнэ.
+    en: >-
+      You have the right to access, modify, and delete your data. Account deletion requests can be submitted from
+      Settings.
+  - key: section_data_retention
+    mn: Мэдээлэл хадгалах хугацаа
+    en: Data Retention
+  - key: data_retention_description
+    mn: >-
+      Хэрэглэгчийн мэдээллийг бүртгэл хүчинтэй байх хугацаанд хадгална. Устгасны дараа мэдээллийг бодлогын дагуу
+      устгана.
+    en: User data is retained while the account is active. After deletion, data is removed per policy.
+  - key: section_contact
+    mn: Холбоо барих
+    en: Contact
+  - key: contact_description
+    mn: Нууцлалын бодлогын талаар асуулт байвал бидэнтэй холбогдоно уу.
+    en: Contact us with any questions about our privacy policy.
+  - key: last_updated
+    mn: 'Сүүлд шинэчлэгдсэн: {date}'
+    en: 'Last updated: {date}'
+acceptance_criteria:
+  - Privacy Policy is a scrollable text content screen
+  - Content is rendered in Mongolian as primary language with section headings
+  - Identity verification data section explains ID photo and selfie collection purpose (REQ-SAFE-07)
+  - Data retention section explains that data is stored while account is active (REQ-SAFE-09)
+  - User rights section explains right to access, modify, and delete data (REQ-SAFE-09)
+  - Account deletion process is referenced with link to Settings
+  - Last updated date is shown at bottom of policy
+  - Loading state uses detail skeleton matching text layout
+  - Back button returns to previous screen (Settings, Verification Consent, or Login)
+  - All body text uses 16px minimum for Mongolian Cyrillic readability
+  - Text alignment is flush-left per Mongolian Cyrillic content rules (never justified)
+api_endpoints: []
+analytics_events:
+  - event: privacy_policy_viewed
+    trigger: Privacy Policy screen becomes visible
+  - event: privacy_policy_scrolled
+    trigger: User scrolls through policy content
+  - event: privacy_policy_section_viewed
+    trigger: User scrolls to a specific section of the policy
+state_prompts:
+  - state_id: loading
+    prompt: >-
+      Generate the "loading" state of "Privacy Policy".
+
+      Privacy policy content loading — text skeleton placeholder shown
+
+      Visible elements: nav_header, loading_skeleton
+
+      Hidden elements: policy_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Privacy Policy".
+
+      Privacy policy content fully loaded and displayed as scrollable text
+
+      Visible elements: nav_header, policy_content
+
+      Hidden elements: loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

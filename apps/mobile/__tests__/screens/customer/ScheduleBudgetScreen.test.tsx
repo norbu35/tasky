@@ -13,6 +13,8 @@ jest.mock('expo-router', () => ({
     description: 'Fix my sink',
     photos: '[]',
     location: 'Behind State Dept Store',
+    lat: '47.92123',
+    lng: '106.91876',
   }),
 }));
 
@@ -24,6 +26,15 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+
+jest.mock('@react-native-community/datetimepicker', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  return ({ mode, testID, ...props }: any) => (
+    <View testID={testID ?? `schedule-${mode}-picker`} {...props} />
+  );
+});
 
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -67,29 +78,65 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('validates budget is a number', () => {
     render(<ScheduleBudgetScreen />);
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent.press(screen.getByTestId('schedule-time-input'));
+    fireEvent(
+      screen.getByTestId('schedule-time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2026, 3, 1, 10, 0),
+    );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), 'abc');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
+    expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
   });
 
   it('validates budget minimum', () => {
     render(<ScheduleBudgetScreen />);
-    fireEvent.changeText(screen.getByTestId('schedule-date-input'), '2026-04-01');
-    fireEvent.changeText(screen.getByTestId('schedule-time-input'), '10:00');
-    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '500');
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent.press(screen.getByTestId('schedule-time-input'));
+    fireEvent(
+      screen.getByTestId('schedule-time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2026, 3, 1, 10, 0),
+    );
+    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '4000');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
+    expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
+  });
+
+  it('requires a date and time selection', () => {
+    render(<ScheduleBudgetScreen />);
+    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
+    fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
+    expect(screen.getByText('Choose a date and time')).toBeTruthy();
   });
 
   it('navigates to review when valid', () => {
     render(<ScheduleBudgetScreen />);
-    fireEvent.changeText(screen.getByTestId('schedule-date-input'), '2026-04-01');
-    fireEvent.changeText(screen.getByTestId('schedule-time-input'), '10:00');
+    const expectedScheduledAt = new Date(2026, 3, 1, 10, 0).toISOString();
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent.press(screen.getByTestId('schedule-time-input'));
+    fireEvent(
+      screen.getByTestId('schedule-time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2026, 3, 1, 10, 0),
+    );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/review',
+        params: expect.objectContaining({
+          lat: '47.92123',
+          lng: '106.91876',
+          scheduledAt: expectedScheduledAt,
+        }),
       }),
     );
   });

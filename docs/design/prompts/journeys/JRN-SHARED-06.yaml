@@ -1,0 +1,39 @@
+journey_id: JRN-SHARED-06
+name: Settings & Account
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: Manage settings, role switch, or delete account
+entry_screen: SCR-SHARED-014
+exit_screens:
+  - SCR-SHARED-014
+  - SCR-SHARED-015
+  - SCR-TASK-003
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-014
+    screen_name: Profile — Settings
+    action: View settings
+    next: SCR-SHARED-014
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-06-A1
+    name: Role switch to Tasker
+    branch_at_step: 1
+    condition: User taps role switch, not yet Tasker-verified
+    screens:
+      - SCR-SHARED-014
+      - SCR-TASK-003
+    outcome: Redirected to verification gate
+  - id: JRN-SHARED-06-A2
+    name: Account deletion
+    branch_at_step: 1
+    condition: User taps delete account
+    screens:
+      - SCR-SHARED-014
+      - SCR-SHARED-015
+    outcome: Confirmation sheet → deletion or blocked by active bookings
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

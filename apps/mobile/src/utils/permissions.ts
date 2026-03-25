@@ -1,13 +1,13 @@
 /**
  * Thin wrappers around expo permission APIs.
- * Extracted so screens can be tested without installing expo-camera/location/notifications.
+ * Extracted so screens can be tested without installing optional native permission modules.
  */
 
 export async function requestCameraPermission(): Promise<{ status: string }> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ExpoCamera = require('expo-camera');
-    return await ExpoCamera.requestCameraPermissionsAsync();
+    const ImagePicker = require('expo-image-picker');
+    return await ImagePicker.requestCameraPermissionsAsync();
   } catch {
     return { status: 'unavailable' };
   }

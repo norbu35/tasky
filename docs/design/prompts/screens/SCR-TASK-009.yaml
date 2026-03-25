@@ -1,0 +1,188 @@
+screen_id: SCR-TASK-009
+name: Verification — Rejected
+role:
+  - tasker
+phase: 0-1
+template: error_state
+route: /(tasker)/verification/rejected
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification — Rejected" (SCR-TASK-009) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: error_state — Centered error icon, message text, and retry CTA button. Comfortable density.
+
+  Layout structure: safe_area -> centered(error_icon + heading + rejection_reason + resubmit_guidance + resubmit_cta +
+  dan_alternative_link)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA to resubmit ID photos after correcting issues
+    • COMP-BUTTON (outline): Secondary CTA to try DAN fast-path (Phase 2+ only)
+    • COMP-BUTTON (ghost): Ghost link to return to task feed
+    • COMP-EMPTYSTATE (error): Error state illustration with rejection icon
+  This screen has 3 states — generate the primary/default state:
+    Primary state: Rejection displayed with specific reason from admin review and resubmit CTA
+  Key copy (Mongolian primary):
+    • heading: "Баталгаажуулалт цуцлагдлаа" (Verification Rejected)
+    • rejection_reason_label: "Шалтгаан" (Reason)
+    • reason_blurry: "Зураг бүдэг байна. Тод гэрэлтэй газар дахин авна уу." (Photos are blurry. Please retake in good lighting.)
+    • reason_mismatch: "Иргэний үнэмлэх болон амьд зураг таарахгүй байна." (ID card and selfie do not match.)
+    • reason_expired_id: "Иргэний үнэмлэхний хугацаа дууссан байна." (ID card has expired.)
+    • reason_incomplete: "Мэдээлэл бүрэн харагдахгүй байна. Бүх талыг тод зурагла." (Information not fully visible. Please photograph all sides clearly.)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: error_state
+  density: comfortable
+  structure: >-
+    safe_area -> centered(error_icon + heading + rejection_reason + resubmit_guidance + resubmit_cta +
+    dan_alternative_link)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to resubmit ID photos after correcting issues
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary CTA to try DAN fast-path (Phase 2+ only)
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Ghost link to return to task feed
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state illustration with rejection icon
+states:
+  - id: default_with_reason
+    description: Rejection displayed with specific reason from admin review and resubmit CTA
+    visible:
+      - error_icon
+      - heading
+      - rejection_reason
+      - resubmit_guidance
+      - resubmit_button
+      - browse_link
+    hidden:
+      - dan_alternative_button
+  - id: resubmit_prompt
+    description: Explicit resubmit prompt with guidance on what to fix
+    visible:
+      - error_icon
+      - heading
+      - rejection_reason
+      - fix_instructions
+      - resubmit_button
+      - browse_link
+    hidden:
+      - dan_alternative_button
+  - id: dan_alternative
+    description: Optional state (Phase 2+) — DAN fast-path offered as alternative to re-uploading photos
+    visible:
+      - error_icon
+      - heading
+      - rejection_reason
+      - resubmit_button
+      - dan_alternative_button
+      - browse_link
+    hidden: []
+copy:
+  - key: heading
+    mn: Баталгаажуулалт цуцлагдлаа
+    en: Verification Rejected
+  - key: rejection_reason_label
+    mn: Шалтгаан
+    en: Reason
+  - key: reason_blurry
+    mn: Зураг бүдэг байна. Тод гэрэлтэй газар дахин авна уу.
+    en: Photos are blurry. Please retake in good lighting.
+  - key: reason_mismatch
+    mn: Иргэний үнэмлэх болон амьд зураг таарахгүй байна.
+    en: ID card and selfie do not match.
+  - key: reason_expired_id
+    mn: Иргэний үнэмлэхний хугацаа дууссан байна.
+    en: ID card has expired.
+  - key: reason_incomplete
+    mn: Мэдээлэл бүрэн харагдахгүй байна. Бүх талыг тод зурагла.
+    en: Information not fully visible. Please photograph all sides clearly.
+  - key: resubmit_guidance
+    mn: Доорх зааврын дагуу зургуудаа дахин оруулна уу
+    en: Please resubmit your photos following the instructions below
+  - key: fix_tip_lighting
+    mn: Гэрэлтэй газар зурагла
+    en: Take photos in good lighting
+  - key: fix_tip_flat
+    mn: Иргэний үнэмлэхийг хавтгай дээр тавь
+    en: Place ID on a flat surface
+  - key: fix_tip_face
+    mn: Амьд зургийг нүүрээ тодорхой харуулж ав
+    en: Take selfie with clear face visibility
+  - key: resubmit_button
+    mn: Дахин илгээх
+    en: Resubmit
+  - key: dan_alternative_button
+    mn: E-Mongolia-р оролдох
+    en: Try E-Mongolia
+  - key: browse_link
+    mn: Даалгавар үзэх
+    en: Browse Tasks
+acceptance_criteria:
+  - Rejection screen displays specific reason from admin review (REQ-SAFE-01)
+  - Reason text is dynamically populated from /verification/status response
+  - Resubmit CTA navigates to ID Upload (SCR-TASK-005) to re-enter the upload flow
+  - In Phase 2+, DAN alternative button navigates to DAN Fast-Path (SCR-TASK-006)
+  - DAN alternative button is hidden in Phase 0-1
+  - Guidance tips help user fix specific issues (lighting, flat surface, face visibility)
+  - Back button returns to Task Feed (SCR-TASK-001)
+  - This screen is reached via push notification for rejection
+  - Comfortable density for empathetic error messaging
+api_endpoints:
+  - method: GET
+    path: /verification/status
+    purpose: Fetch rejection status and reason from admin review
+analytics_events:
+  - event: verification_rejected_viewed
+    trigger: Rejected screen becomes visible
+  - event: verification_resubmit_tapped
+    trigger: User taps Resubmit button to re-enter upload flow
+  - event: verification_dan_alternative_tapped
+    trigger: User taps E-Mongolia alternative (Phase 2+)
+  - event: verification_rejected_browse_tapped
+    trigger: User taps Browse Tasks to return to feed
+state_prompts:
+  - state_id: default_with_reason
+    prompt: >-
+      Generate the "default_with_reason" state of "Verification — Rejected".
+
+      Rejection displayed with specific reason from admin review and resubmit CTA
+
+      Visible elements: error_icon, heading, rejection_reason, resubmit_guidance, resubmit_button, browse_link
+
+      Hidden elements: dan_alternative_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: resubmit_prompt
+    prompt: >-
+      Generate the "resubmit_prompt" state of "Verification — Rejected".
+
+      Explicit resubmit prompt with guidance on what to fix
+
+      Visible elements: error_icon, heading, rejection_reason, fix_instructions, resubmit_button, browse_link
+
+      Hidden elements: dan_alternative_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: dan_alternative
+    prompt: >-
+      Generate the "dan_alternative" state of "Verification — Rejected".
+
+      Optional state (Phase 2+) — DAN fast-path offered as alternative to re-uploading photos
+
+      Visible elements: error_icon, heading, rejection_reason, resubmit_button, dan_alternative_button, browse_link
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

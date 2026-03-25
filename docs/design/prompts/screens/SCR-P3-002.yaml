@@ -1,0 +1,261 @@
+screen_id: SCR-P3-002
+name: Wallet — Request Payout
+role:
+  - tasker
+phase: 3+
+template: form_wizard
+route: /(tasker)/wallet/payout
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Wallet — Request Payout" (SCR-P3-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header -> scrollview(amount_form + bank_details) -> bottom_nav(back + submit)
+
+  Components used:
+    • COMP-FORMFIELD (default): Form field wrapper for payout amount input with label and validation
+    • COMP-INPUT (default): Amount input field for specifying payout amount
+    • COMP-CARD (outlined): Card displaying available balance for reference during payout request
+    • COMP-BUTTON (primary): Primary submit button to confirm payout request
+    • COMP-BUTTON (ghost): Secondary back/cancel button
+    • COMP-ANIMATEDCHECKMARK (default): Success animation when payout request is submitted
+    • COMP-MODALSHEET (default): Confirmation sheet before submitting payout request
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Form displayed with available balance and empty amount field
+  Key copy (Mongolian primary):
+    • nav_title: "Мөнгө татах" (Request Payout)
+    • balance_available: "Боломжит үлдэгдэл: ₮{amount}" (Available balance: ₮{amount})
+    • amount_label: "Татах дүн" (Payout amount)
+    • amount_placeholder: "₮0" (₮0)
+    • amount_helper: "Хамгийн бага дүн: ₮10,000" (Minimum amount: ₮10,000)
+    • error_below_minimum: "Хамгийн бага татах дүн ₮10,000 байна" (Minimum payout amount is ₮10,000)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: safe_area -> nav_header -> scrollview(amount_form + bank_details) -> bottom_nav(back + submit)
+components:
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Form field wrapper for payout amount input with label and validation
+  - component: COMP-INPUT
+    variant: default
+    usage: Amount input field for specifying payout amount
+  - component: COMP-CARD
+    variant: outlined
+    usage: Card displaying available balance for reference during payout request
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary submit button to confirm payout request
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary back/cancel button
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Success animation when payout request is submitted
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Confirmation sheet before submitting payout request
+states:
+  - id: default
+    description: Form displayed with available balance and empty amount field
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-MODALSHEET
+  - id: confirming
+    description: User entered amount and tapped submit; confirmation sheet shown
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CARD
+      - COMP-MODALSHEET
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+  - id: submitted
+    description: Payout request submitted successfully
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-MODALSHEET
+  - id: error_below_minimum
+    description: Entered amount is below minimum payout threshold (₮10,000)
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-MODALSHEET
+  - id: error_network
+    description: Payout request failed due to network error
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-MODALSHEET
+copy:
+  - key: nav_title
+    mn: Мөнгө татах
+    en: Request Payout
+  - key: balance_available
+    mn: 'Боломжит үлдэгдэл: ₮{amount}'
+    en: 'Available balance: ₮{amount}'
+  - key: amount_label
+    mn: Татах дүн
+    en: Payout amount
+  - key: amount_placeholder
+    mn: ₮0
+    en: ₮0
+  - key: amount_helper
+    mn: 'Хамгийн бага дүн: ₮10,000'
+    en: 'Minimum amount: ₮10,000'
+  - key: error_below_minimum
+    mn: Хамгийн бага татах дүн ₮10,000 байна
+    en: Minimum payout amount is ₮10,000
+  - key: error_exceeds_balance
+    mn: Татах дүн боломжит үлдэгдлээс хэтэрч байна
+    en: Amount exceeds available balance
+  - key: error_network
+    mn: Хүсэлт илгээхэд алдаа гарлаа. Дахин оролдоно уу
+    en: Failed to submit request. Please try again
+  - key: confirm_title
+    mn: Баталгаажуулах
+    en: Confirm
+  - key: confirm_description
+    mn: ₮{amount} татах хүсэлт илгээх үү?
+    en: Request payout of ₮{amount}?
+  - key: confirm_cta
+    mn: Тийм, илгээх
+    en: Yes, submit
+  - key: confirm_cancel
+    mn: Буцах
+    en: Cancel
+  - key: success_headline
+    mn: Хүсэлт илгээгдлээ!
+    en: Request submitted!
+  - key: success_description
+    mn: ₮{amount} татах хүсэлт амжилттай илгээгдлээ. 1-3 ажлын өдөрт шилжүүлэг хийгдэнэ
+    en: Payout request for ₮{amount} submitted. Transfer within 1-3 business days
+  - key: cta_submit
+    mn: Хүсэлт илгээх
+    en: Submit request
+  - key: cta_back
+    mn: Буцах
+    en: Back
+acceptance_criteria:
+  - Default state shows available balance card, amount input, and submit CTA
+  - Amount input is numeric-only with ₮ prefix formatting
+  - Inline validation shows error below field when amount < ₮10,000
+  - Inline validation shows error when amount exceeds available balance
+  - Tapping submit opens confirmation modal sheet before final submission
+  - Confirmation sheet shows exact amount being requested
+  - Submitted state shows animated checkmark with success message and processing timeline
+  - Network error shows inline error toast with retry guidance
+  - Back button returns to SCR-P3-001 (Wallet Balance)
+  - Keyboard-aware scrolling for amount input
+  - Currency values use price_display typography with ₮ prefix and comma separators
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /wallet/payout-request
+    purpose: Submit a payout request for the specified amount
+analytics_events:
+  - event: payout_form_viewed
+    trigger: Payout request form loaded
+  - event: payout_amount_entered
+    trigger: User enters payout amount
+  - event: payout_confirm_shown
+    trigger: Confirmation sheet displayed
+  - event: payout_submitted
+    trigger: Payout request successfully submitted
+  - event: payout_validation_error
+    trigger: Amount below minimum or exceeds balance
+  - event: payout_submit_error
+    trigger: Network error on submission
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Wallet — Request Payout".
+
+      Form displayed with available balance and empty amount field
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Wallet — Request Payout".
+
+      User entered amount and tapped submit; confirmation sheet shown
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-MODALSHEET
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitted
+    prompt: >-
+      Generate the "submitted" state of "Wallet — Request Payout".
+
+      Payout request submitted successfully
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_below_minimum
+    prompt: >-
+      Generate the "error_below_minimum" state of "Wallet — Request Payout".
+
+      Entered amount is below minimum payout threshold (₮10,000)
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Wallet — Request Payout".
+
+      Payout request failed due to network error
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

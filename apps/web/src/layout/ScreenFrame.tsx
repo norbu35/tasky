@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Header } from './Header';
 import { BottomNavBar } from './BottomNavBar';
+import { DesktopSidebar } from './DesktopSidebar';
 
 export type MaxWidth = 'narrow' | 'default' | 'wide';
 
@@ -18,14 +19,18 @@ export function ScreenFrame({
   maxWidth?: MaxWidth;
 }) {
   return (
-    <main className="relative min-h-screen bg-background">
-      <Header />
-      <section
-        className={`mx-auto w-full ${maxWidthClass[maxWidth]} px-4 pb-28 md:pb-8 pt-16 md:pt-20 sm:px-6`}
-      >
-        {children}
-      </section>
-      <BottomNavBar />
-    </main>
+    <div className="flex min-h-screen bg-background">
+      <DesktopSidebar />
+
+      <div className="flex flex-1 flex-col min-w-0">
+        <Header />
+
+        <main className="flex-1 px-4 sm:px-6 md:px-8 pb-28 md:pb-8 pt-16 md:pt-8">
+          <div className={`mx-auto w-full ${maxWidthClass[maxWidth]}`}>{children}</div>
+        </main>
+
+        <BottomNavBar />
+      </div>
+    </div>
   );
 }

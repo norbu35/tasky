@@ -1,0 +1,150 @@
+# Tasky Mobile — Global Design Context
+# This file is the SINGLE source of truth for design system tokens
+# fed to Stitch as context alongside per-screen prompts.
+# Keep under 250 lines to avoid context overload.
+
+app:
+  name: Tasky
+  mission: "Mongolia's trust-first domestic service marketplace"
+  platform: "React Native (Expo) mobile app"
+  primary_locale: "mn (Mongolian Cyrillic)"
+  secondary_locale: "en (English)"
+  currency: "₮ (MNT, Mongolian Tugrik)"
+
+brand_personality:
+  - "Trustworthy — ID-verified taskers, protected payments, dispute recourse"
+  - "Local — Built for Ulaanbaatar, Mongolian-first"
+  - "Modern — Clean, fast, premium feel"
+  - "Fair — Fixed prices upfront, no pay-to-rank"
+
+voice_and_tone:
+  style: "Direct and warm, reassuring around money and safety"
+  bilingual: "Mongolian copy is written for Mongolian readers, not translated from English"
+
+# ─── Color Palette ──────────────────────────────
+colors:
+  primary:        { hex: "#1B3A5C", role: "Deep Sky Blue — authority, trust, body text, primary buttons" }
+  primary_deep:   { hex: "#102638", role: "Deeper Sky — hero text, prominent headers" }
+  secondary:      { hex: "#C49A3C", role: "Steppe Gold — star ratings, pricing, warm CTAs" }
+  accent:         { hex: "#6BA3BE", role: "Open Sky — highlights, links, interactive accents" }
+  background:     { hex: "#F9F8F5", role: "Clean Off-White — professional surface" }
+  trust:          { hex: "#3568A1", role: "Trust Blue — trust badges, authority indicators" }
+  verified:       { hex: "#469178", role: "Sage Emerald — verification badge, 'safe/confirmed'" }
+  danger:         { hex: "#EF4444", role: "Red — errors and destructive actions only" }
+  muted:          { hex: "#F3F1EC", role: "Muted background — disabled, inactive" }
+  text_tertiary:  { hex: "#808D99", role: "Secondary/helper text" }
+
+# ─── Typography ─────────────────────────────────
+typography:
+  display_font: "Manrope"
+  body_font: "Plus Jakarta Sans"
+  fallback_font: "Roboto"
+  variants:
+    hero_title:      { font: Manrope,           size: 30, weight: 700, line_height: 1.3 }
+    page_heading:    { font: Manrope,           size: 24, weight: 700, line_height: 1.3 }
+    section_heading: { font: Manrope,           size: 20, weight: 600, line_height: 1.3 }
+    card_title:      { font: Plus Jakarta Sans, size: 16, weight: 600, line_height: 1.3 }
+    body_default:    { font: Plus Jakarta Sans, size: 16, weight: 400, line_height: 1.6 }
+    body_emphasis:   { font: Plus Jakarta Sans, size: 16, weight: 600, line_height: 1.6 }
+    label:           { font: Plus Jakarta Sans, size: 14, weight: 500, line_height: 1.3 }
+    caption:         { font: Plus Jakarta Sans, size: 14, weight: 400, line_height: 1.4 }
+    button_label:    { font: Plus Jakarta Sans, size: 16, weight: 600, line_height: 1.0 }
+    nav_label:       { font: Plus Jakarta Sans, size: 11, weight: 500, line_height: 1.0 }
+    price_display:   { font: Manrope,           size: 20, weight: 700, line_height: 1.0 }
+    badge_text:      { font: Plus Jakarta Sans, size: 11, weight: 600, line_height: 1.0 }
+
+  mongolian_rules:
+    min_body_size: 16
+    min_secondary_size: 14
+    min_nav_size: 11
+    line_height_body: 1.6
+    letter_spacing: "0em — never widen for Cyrillic"
+    text_alignment: "flush-left — never justify"
+    expansion_factor: 1.2
+
+# ─── Spacing & Shape ────────────────────────────
+spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, 2xl: 32, 3xl: 40 }
+radius:  { xs: 6, sm: 8, md: 12, lg: 16, full: 9999 }
+shadows:
+  card:     "0 1px 2px rgba(0,0,0,0.05)"
+  elevated: "0 4px 6px rgba(0,0,0,0.10)"
+
+# ─── Component Vocabulary ───────────────────────
+# Canonical component names and one-line descriptions.
+# Full props/variants in component-contract.yaml.
+components:
+  COMP-BUTTON:          "Primary/secondary/outline/ghost/danger buttons with spring animation"
+  COMP-INPUT:           "Text input with label, error, icon slots"
+  COMP-FORMFIELD:       "Wrapper for form elements — label + error message"
+  COMP-CARD:            "Generic tappable card with header/body/footer"
+  COMP-SPLITCARD:       "Two-tone task/booking card — dark teal header, light body"
+  COMP-FAB:             "Floating action button — Post Task on customer My Tasks only"
+  COMP-MODALSHEET:      "Bottom sheet with handle bar, content, 2 action buttons max"
+  COMP-TOAST:           "Slide-in notification — info(4s), success(4s), error(6s)"
+  COMP-STATUSBADGE:     "Colored status pill — open/assigned/completed/cancelled/no_show"
+  COMP-CATEGORYCHIP:    "Rounded filter chip for categories — horizontal scroll"
+  COMP-TRUSTBANNER:     "Trust messaging — verified count + completed booking count"
+  COMP-STATCARD:        "Stats dashboard metric card with trend indicator"
+  COMP-REVIEWCARD:      "Review display with star rating and text"
+  COMP-PROFILEAVATAR:   "Circular avatar with verification badge anchor"
+  COMP-SEARCHBAR:       "Search input with filter trigger button"
+  COMP-FILTERBAR:       "Horizontal scrolling filter chips + advanced filter sheet"
+  COMP-DATEPICKER:      "Date/time selector — min date tomorrow, YYYY.MM.DD format"
+  COMP-MAPPICKER:       "Map-based pin-drop location selector"
+  COMP-EMPTYSTATE:      "Illustration + headline + description + CTA for empty/error states"
+  COMP-LOADINGSKELETON: "Content-matching skeleton placeholder — never generic spinner"
+  COMP-ANIMATEDCHECKMARK: "Spring-animated success checkmark for celebration screens"
+  COMP-LISTROW:         "Settings list row with disclosure indicator — 44pt touch target"
+  COMP-TOGGLE:          "On/off switch for settings"
+  COMP-PHOTOPICKER:     "Multi-photo upload grid — max 3 photos"
+  COMP-STARRATING:      "Star rating — input (whole) or display (half-star)"
+  COMP-VERIFICATIONBADGE: "Verified/Pro identity badge"
+  COMP-TIMELINEEVENT:   "Vertical timeline entry for booking history"
+  COMP-CREDITBALANCE:   "Credit balance display with low/zero warning"
+  COMP-STEPINDICATOR:   "Multi-step form progress indicator"
+  COMP-PROGRESSTRACKER: "Visual progress bar with milestones"
+  COMP-LANGUAGESWITCHER: "mn/en language toggle"
+  COMP-LOGINREQUIREDCTA: "Full-screen auth gate for protected actions"
+
+# ─── Screen Templates ───────────────────────────
+templates:
+  auth:                "Centered content, single CTA, trust messaging below"
+  feed_list:           "Sticky header (search+filter) → scrollview(cards) → FAB overlay"
+  detail:              "Nav header → scrollview(content) → sticky bottom CTA bar"
+  form_wizard:         "Step indicator → form fields → back/next bottom nav"
+  settings:            "Grouped list rows with disclosure indicators"
+  modal_sheet:         "Bottom sheet with handle + content + 2 action buttons"
+  empty_state:         "Centered illustration + headline + description + CTA"
+  error_state:         "Centered icon + message + retry CTA"
+  success_celebration: "Animated checkmark + headline + next steps + CTAs"
+
+# ─── Visual Rules ───────────────────────────────
+visual_rules:
+  - "Loading states always use skeleton placeholders matching content layout — NEVER generic spinners"
+  - "Destructive actions always require ModalSheet confirmation"
+  - "Empty states always include actionable CTA, not just 'nothing here'"
+  - "All success moments include 'what happens next' guidance"
+  - "Toast notifications: info/success auto-dismiss 4s, error 6s"
+  - "Toast and ModalSheet never shown simultaneously"
+  - "FAB only on Customer My Tasks tab — nowhere else"
+  - "price_display typography reserved for monetary values only"
+  - "Max 2 buttons in any bottom CTA bar"
+  - "44pt minimum touch target for all interactive elements"
+  - "Pull-to-refresh on all feed_list and detail screens with async data"
+  - "Infinite scroll pagination with footer skeleton"
+  - "Scrim uses branded primaryDeep at 50% opacity, not generic black"
+  - "Currency format: ₮{amount} with comma thousands separator"
+  - "Date format: YYYY.MM.DD (Mongolian convention)"
+
+# ─── Stitch Generation Notes ────────────────────
+stitch:
+  device_type: MOBILE
+  style_notes:
+    - "Clean, professional aesthetic — not playful or cartoonish"
+    - "Deep blue (#1B3A5C) as dominant UI color"
+    - "Gold (#C49A3C) as warm accent for prices and ratings"
+    - "Clean off-white (#F9F8F5) backgrounds, not pure white"
+    - "Generous whitespace — comfortable density for auth/success, default for data screens"
+    - "Rounded corners (12-16px radius) on cards and inputs"
+    - "Subtle shadows for depth — not flat, not heavy drop shadows"
+    - "Status badges use semantic colors: green=verified, blue=trust, red=danger"

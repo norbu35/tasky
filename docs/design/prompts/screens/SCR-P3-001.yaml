@@ -1,0 +1,227 @@
+screen_id: SCR-P3-001
+name: Wallet — Balance & Payouts
+role:
+  - tasker
+phase: 3+
+template: detail
+route: /(tasker)/wallet
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Wallet — Balance & Payouts" (SCR-P3-001) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(balance_hero + transaction_list) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Hero card displaying current wallet balance with prominent amount
+    • COMP-STATCARD (default): Summary stat cards for total earned, pending payouts, and completed payouts
+    • COMP-LISTROW (default): Recent wallet transactions showing earnings and payout entries
+    • COMP-STATUSBADGE (assigned): Badge showing pending payout status on payout entries
+    • COMP-BUTTON (primary): Primary CTA to request a payout
+    • COMP-LOADINGSKELETON (detail): Detail skeleton for initial load of wallet data
+    • COMP-EMPTYSTATE (error): Error state when wallet data fails to load
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Fetching wallet balance and recent transactions from API
+  Key copy (Mongolian primary):
+    • nav_title: "Хэтэвч" (Wallet)
+    • balance_label: "Боломжит үлдэгдэл" (Available balance)
+    • balance_value: "₮{amount}" (₮{amount})
+    • stat_total_earned: "Нийт орлого" (Total earned)
+    • stat_pending_payout: "Хүлээгдэж буй" (Pending payout)
+    • stat_completed_payout: "Татсан дүн" (Paid out)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(balance_hero + transaction_list) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Hero card displaying current wallet balance with prominent amount
+  - component: COMP-STATCARD
+    variant: default
+    usage: Summary stat cards for total earned, pending payouts, and completed payouts
+  - component: COMP-LISTROW
+    variant: default
+    usage: Recent wallet transactions showing earnings and payout entries
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Badge showing pending payout status on payout entries
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to request a payout
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton for initial load of wallet data
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when wallet data fails to load
+states:
+  - id: loading_initial
+    description: Fetching wallet balance and recent transactions from API
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+      - COMP-EMPTYSTATE
+  - id: loaded
+    description: Wallet balance and transaction history loaded; no pending payouts
+    visible:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+      - COMP-STATUSBADGE
+  - id: loaded_pending_payout
+    description: Wallet loaded with a pending payout request visible in transaction list
+    visible:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-LISTROW
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Failed to load wallet data due to network error
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Хэтэвч
+    en: Wallet
+  - key: balance_label
+    mn: Боломжит үлдэгдэл
+    en: Available balance
+  - key: balance_value
+    mn: ₮{amount}
+    en: ₮{amount}
+  - key: stat_total_earned
+    mn: Нийт орлого
+    en: Total earned
+  - key: stat_pending_payout
+    mn: Хүлээгдэж буй
+    en: Pending payout
+  - key: stat_completed_payout
+    mn: Татсан дүн
+    en: Paid out
+  - key: section_transactions
+    mn: Сүүлийн гүйлгээнүүд
+    en: Recent transactions
+  - key: type_earning
+    mn: Орлого — {taskTitle}
+    en: Earning — {taskTitle}
+  - key: type_payout
+    mn: Мөнгө татсан
+    en: Payout
+  - key: status_pending
+    mn: Хүлээгдэж буй
+    en: Pending
+  - key: status_completed
+    mn: Дууссан
+    en: Completed
+  - key: cta_payout
+    mn: Мөнгө татах
+    en: Request payout
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows detail skeleton matching wallet layout
+  - Balance hero card shows available balance using price_display typography (Manrope bold 20px)
+  - Stat cards show total earned, pending payouts, and completed payouts
+  - Transaction list shows recent earnings and payouts in chronological order
+  - Pending payout entries display an 'assigned' status badge
+  - Request payout CTA navigates to SCR-P3-002 (Request Payout)
+  - Payout button is disabled when available balance is zero
+  - Network error shows error state with retry CTA
+  - Pull-to-refresh supported for async detail screens
+  - Currency values use ₮ prefix with comma thousand separators
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /wallet/balance
+    purpose: Fetch current available wallet balance and summary stats
+  - method: GET
+    path: /wallet/transactions
+    purpose: Fetch recent wallet transactions (earnings and payouts)
+analytics_events:
+  - event: wallet_viewed
+    trigger: Wallet screen loaded successfully
+  - event: wallet_payout_tapped
+    trigger: User taps 'Request payout' CTA
+  - event: wallet_transaction_viewed
+    trigger: User scrolls through transaction list
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Wallet — Balance & Payouts".
+
+      Fetching wallet balance and recent transactions from API
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Wallet — Balance & Payouts".
+
+      Wallet balance and transaction history loaded; no pending payouts
+
+      Visible elements: COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE, COMP-STATUSBADGE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded_pending_payout
+    prompt: >-
+      Generate the "loaded_pending_payout" state of "Wallet — Balance & Payouts".
+
+      Wallet loaded with a pending payout request visible in transaction list
+
+      Visible elements: COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Wallet — Balance & Payouts".
+
+      Failed to load wallet data due to network error
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-CARD, COMP-STATCARD, COMP-LISTROW, COMP-BUTTON, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

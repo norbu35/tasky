@@ -1,0 +1,64 @@
+journey_id: JRN-CUST-02
+name: Review Applicants & Confirm Booking (Phase 0-1)
+actor:
+  - customer
+phase: 0-1
+goal: Select a Tasker and create a booking
+entry_screen: SCR-CUST-009
+exit_screens:
+  - SCR-CUST-015
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-009
+    screen_name: Task Detail (Customer)
+    action: View task detail, tap 'View Applicants'
+    next: SCR-CUST-011
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-011
+    screen_name: Applicants List
+    action: Browse applicants, view profiles
+    next: SCR-CUST-013
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-013
+    screen_name: Tasker Public Profile
+    action: View Tasker profile, reviews
+    next: SCR-CUST-011
+    lifecycle: null
+  - step: 4
+    screen_id: SCR-CUST-011
+    screen_name: Applicants List
+    action: Tap 'Accept' on preferred applicant
+    next: SCR-CUST-014
+    lifecycle: APP-T02 (customer_accepts_directly)
+  - step: 5
+    screen_id: SCR-CUST-014
+    screen_name: Booking Confirmation
+    action: Accept liability disclaimer, confirm booking
+    next: SCR-CUST-015
+    lifecycle: TASK-T02 (customer_accepts_applicant)
+  - step: 6
+    screen_id: SCR-CUST-015
+    screen_name: Booking Confirmed — Success
+    action: Success — booking confirmed
+    next: SCR-CUST-017
+    lifecycle: null
+alternate_paths:
+  - id: JRN-CUST-02-A1
+    name: No applicants yet
+    branch_at_step: 2
+    condition: Empty applicant list
+    screens:
+      - SCR-CUST-011
+    outcome: Empty state with 'waiting' message
+  - id: JRN-CUST-02-A2
+    name: No applicant rescue
+    branch_at_step: 1
+    condition: 120min with 0 applicants
+    screens:
+      - SCR-CUST-026
+    outcome: 'Rescue flow: adjust budget/schedule, concierge'
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -1,0 +1,251 @@
+screen_id: SCR-CUST-016
+name: Customer Bookings List
+role:
+  - customer
+phase: 0-1
+template: feed_list
+route: /(customer)/bookings
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Customer Bookings List" (SCR-CUST-016) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_cards) -> pull_to_refresh
+
+  Components used:
+    • COMP-SPLITCARD (booking): Booking card showing tasker avatar, task title, scheduled date, price, and status badge in two-tone layout
+    • COMP-STATUSBADGE (assigned): Status pill on each booking card showing current booking state
+    • COMP-EMPTYSTATE (activation): Shown when customer has no bookings yet; includes activation CTA to browse tasks
+    • COMP-LOADINGSKELETON (card): Skeleton placeholders matching booking card layout during initial load and refresh
+    • COMP-TOAST (error): Error toast shown on network failure during refresh
+  This screen has 7 states — generate the primary/default state:
+    Primary state: First load; skeleton cards displayed while GET /bookings/mine is in progress
+  Key copy (Mongolian primary):
+    • page_title: "Захиалгууд" (Bookings)
+    • tab_active: "Идэвхтэй" (Active)
+    • tab_completed: "Дууссан" (Completed)
+    • empty_headline: "Захиалга байхгүй байна" (No bookings yet)
+    • empty_description: "Даалгавар нийтэлж, гүйцэтгэгч сонгоорой" (Post a task and select a Tasker to get started)
+    • empty_cta: "Даалгавар нийтлэх" (Post a Task)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_cards) -> pull_to_refresh
+components:
+  - component: COMP-SPLITCARD
+    variant: booking
+    usage: Booking card showing tasker avatar, task title, scheduled date, price, and status badge in two-tone layout
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Status pill on each booking card showing current booking state
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Shown when customer has no bookings yet; includes activation CTA to browse tasks
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Skeleton placeholders matching booking card layout during initial load and refresh
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast shown on network failure during refresh
+states:
+  - id: loading_initial
+    description: First load; skeleton cards displayed while GET /bookings/mine is in progress
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-EMPTYSTATE
+      - COMP-TOAST
+  - id: empty
+    description: API returned zero bookings; activation empty state shown
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: populated_active
+    description: Active tab selected; booking cards filtered to ASSIGNED status shown
+    visible:
+      - COMP-SPLITCARD
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: populated_completed
+    description: Completed tab selected; booking cards filtered to COMPLETED, CANCELLED, NO_SHOW statuses shown
+    visible:
+      - COMP-SPLITCARD
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: loading_refresh
+    description: Pull-to-refresh triggered; inline refresh indicator visible above card list
+    visible:
+      - COMP-SPLITCARD
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: Network request failed; error toast shown with retry option
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: offline_cached
+    description: Device is offline; cached booking cards shown with offline banner at top
+    visible:
+      - COMP-SPLITCARD
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Захиалгууд
+    en: Bookings
+  - key: tab_active
+    mn: Идэвхтэй
+    en: Active
+  - key: tab_completed
+    mn: Дууссан
+    en: Completed
+  - key: empty_headline
+    mn: Захиалга байхгүй байна
+    en: No bookings yet
+  - key: empty_description
+    mn: Даалгавар нийтэлж, гүйцэтгэгч сонгоорой
+    en: Post a task and select a Tasker to get started
+  - key: empty_cta
+    mn: Даалгавар нийтлэх
+    en: Post a Task
+  - key: offline_banner
+    mn: Офлайн горим — хуучин мэдээлэл харагдаж байна
+    en: Offline mode — showing cached data
+  - key: error_toast
+    mn: Захиалгууд ачааллахад алдаа гарлаа
+    en: Failed to load bookings
+acceptance_criteria:
+  - Initial load shows skeleton cards matching booking card layout
+  - Active tab shows only ASSIGNED bookings; Completed tab shows COMPLETED, CANCELLED, and NO_SHOW bookings
+  - Each booking card shows tasker avatar, task title, scheduled date/time, budget, and status badge
+  - Tapping a booking card navigates via push to Booking Detail (SCR-CUST-017)
+  - Pull-to-refresh re-fetches booking list
+  - Empty state includes activation CTA that navigates to Post Task flow (SCR-CUST-002)
+  - Offline state shows cached bookings with an offline banner
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+  - This screen is the root of the bookings tab in customer bottom navigation
+api_endpoints:
+  - method: GET
+    path: /bookings/mine
+    purpose: Fetch list of customer bookings with status filter
+analytics_events:
+  - event: bookings_list_viewed
+    trigger: Screen becomes visible
+  - event: bookings_tab_switched
+    trigger: User switches between Active and Completed tabs
+  - event: booking_card_tapped
+    trigger: User taps a booking card to navigate to detail
+  - event: bookings_pull_to_refresh
+    trigger: User pulls to refresh the list
+  - event: bookings_empty_cta_tapped
+    trigger: User taps 'Post a Task' from empty state
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Customer Bookings List".
+
+      First load; skeleton cards displayed while GET /bookings/mine is in progress
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Customer Bookings List".
+
+      API returned zero bookings; activation empty state shown
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-SPLITCARD, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_active
+    prompt: >-
+      Generate the "populated_active" state of "Customer Bookings List".
+
+      Active tab selected; booking cards filtered to ASSIGNED status shown
+
+      Visible elements: COMP-SPLITCARD, COMP-STATUSBADGE
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_completed
+    prompt: >-
+      Generate the "populated_completed" state of "Customer Bookings List".
+
+      Completed tab selected; booking cards filtered to COMPLETED, CANCELLED, NO_SHOW statuses shown
+
+      Visible elements: COMP-SPLITCARD, COMP-STATUSBADGE
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "Customer Bookings List".
+
+      Pull-to-refresh triggered; inline refresh indicator visible above card list
+
+      Visible elements: COMP-SPLITCARD, COMP-STATUSBADGE
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Customer Bookings List".
+
+      Network request failed; error toast shown with retry option
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline_cached
+    prompt: >-
+      Generate the "offline_cached" state of "Customer Bookings List".
+
+      Device is offline; cached booking cards shown with offline banner at top
+
+      Visible elements: COMP-SPLITCARD, COMP-STATUSBADGE
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

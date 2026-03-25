@@ -1,0 +1,468 @@
+screen_id: SCR-CUST-017
+name: Booking Detail (Customer)
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/bookings/:bookingId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-04.yaml
+    - prompts/journeys/JRN-CUST-05.yaml
+    - prompts/journeys/JRN-CUST-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Booking Detail (Customer)" (SCR-CUST-017) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(tasker_section + task_summary + schedule +
+  actions) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Tasker avatar with verification badge in the hero section
+    • COMP-STATUSBADGE (assigned): Booking status badge displayed prominently below the tasker info
+    • COMP-BUTTON (primary): Primary CTA in sticky bottom bar; changes per state (Message, Confirm Complete, Rebook, Report Issue)
+    • COMP-LOADINGSKELETON (detail): Detail skeleton placeholder during initial data fetch
+    • COMP-TOAST (error): Error toast on network failure
+    • COMP-TIMELINEEVENT (current): Quick timeline preview showing latest booking event; tappable to view full timeline
+  This screen has 12 states — generate the primary/default state:
+    Primary state: First load; detail skeleton shown while GET /bookings/:id is in progress
+  Key copy (Mongolian primary):
+    • page_title: "Захиалгын дэлгэрэнгүй" (Booking Detail)
+    • section_tasker: "Гүйцэтгэгч" (Tasker)
+    • section_task_summary: "Даалгаврын товч" (Task Summary)
+    • section_schedule: "Товлосон цаг" (Scheduled Time)
+    • section_location: "Байршил" (Location)
+    • section_budget: "Төсөв" (Budget)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(tasker_section + task_summary + schedule + actions) ->
+    sticky_bottom_cta
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Tasker avatar with verification badge in the hero section
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Booking status badge displayed prominently below the tasker info
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA in sticky bottom bar; changes per state (Message, Confirm Complete, Rebook, Report Issue)
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton placeholder during initial data fetch
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast on network failure
+  - component: COMP-TIMELINEEVENT
+    variant: current
+    usage: Quick timeline preview showing latest booking event; tappable to view full timeline
+states:
+  - id: loading_initial
+    description: First load; detail skeleton shown while GET /bookings/:id is in progress
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+      - COMP-TOAST
+  - id: assigned
+    description: >-
+      Booking is ASSIGNED; tasker info, task summary, schedule, and action buttons visible. CTA bar shows 'Message' and
+      secondary actions (Reschedule, Cancel, Timeline)
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: assigned_approaching
+    description: >-
+      Booking is ASSIGNED and scheduled time is within 4 hours; late-cancel warning context shown, reschedule still
+      available
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: tasker_marked_done
+    description: Tasker has marked the job done; primary CTA changes to 'Confirm Complete'. Report Issue action also available
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: completed
+    description: 'Booking is COMPLETED; review prompt shown if not yet reviewed. Actions: Leave Review, View Timeline'
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: completed_rebook_cta
+    description: Booking is COMPLETED and review is submitted; Rebook CTA becomes primary action
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: cancelled
+    description: Booking is CANCELLED; status badge shows cancelled, no further actions except View Timeline and Report Issue
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: no_show
+    description: Booking ended in NO_SHOW; status badge shows no-show, timeline visible, Report Issue available
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: escrow_pending
+    description: 'Phase 3+ optional: escrow payment initiated but not yet confirmed; escrow status indicator shown'
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: escrow_held
+    description: 'Phase 3+ optional: escrow deposit is held by platform; release info visible'
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: escrow_released
+    description: 'Phase 3+ optional: escrow funds released to tasker after completion confirmation'
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: error_network
+    description: Network error on data fetch; error toast with retry
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TIMELINEEVENT
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Захиалгын дэлгэрэнгүй
+    en: Booking Detail
+  - key: section_tasker
+    mn: Гүйцэтгэгч
+    en: Tasker
+  - key: section_task_summary
+    mn: Даалгаврын товч
+    en: Task Summary
+  - key: section_schedule
+    mn: Товлосон цаг
+    en: Scheduled Time
+  - key: section_location
+    mn: Байршил
+    en: Location
+  - key: section_budget
+    mn: Төсөв
+    en: Budget
+  - key: section_timeline
+    mn: Түүх
+    en: Timeline
+  - key: cta_message
+    mn: Зурвас илгээх
+    en: Message
+  - key: cta_confirm_complete
+    mn: Дуусгасныг баталгаажуулах
+    en: Confirm Complete
+  - key: cta_rebook
+    mn: Дахин захиалах
+    en: Rebook
+  - key: cta_reschedule
+    mn: Цаг өөрчлөх
+    en: Reschedule
+  - key: cta_cancel
+    mn: Захиалга цуцлах
+    en: Cancel Booking
+  - key: cta_report_issue
+    mn: Асуудал мэдэгдэх
+    en: Report Issue
+  - key: cta_timeline
+    mn: Түүх харах
+    en: View Timeline
+  - key: cta_leave_review
+    mn: Үнэлгээ өгөх
+    en: Leave Review
+  - key: cta_pay_escrow
+    mn: Эскроу төлбөр хийх
+    en: Pay with Escrow
+  - key: status_assigned
+    mn: Баталгаажсан
+    en: Assigned
+  - key: status_tasker_marked_done
+    mn: Дууссан гэж тэмдэглэсэн
+    en: Marked as done
+  - key: status_completed
+    mn: Дууссан
+    en: Completed
+  - key: status_cancelled
+    mn: Цуцалсан
+    en: Cancelled
+  - key: status_no_show
+    mn: Ирээгүй
+    en: No-Show
+  - key: payment_note
+    mn: Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно
+    en: Payment is settled directly with the Tasker
+  - key: approaching_warning
+    mn: Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ
+    en: Less than 4 hours until scheduled time
+  - key: escrow_pending_label
+    mn: Эскроу төлбөр хүлээгдэж байна
+    en: Escrow payment pending
+  - key: escrow_held_label
+    mn: Эскроу барьцаа хадгалагдаж байна
+    en: Escrow deposit held
+  - key: escrow_released_label
+    mn: Эскроу суллагдсан
+    en: Escrow released
+  - key: review_prompt
+    mn: Үнэлгээ өгнө үү
+    en: Please leave a review
+  - key: error_toast
+    mn: Захиалгын мэдээлэл ачааллахад алдаа гарлаа
+    en: Failed to load booking details
+acceptance_criteria:
+  - Initial load shows detail skeleton matching content layout
+  - Assigned state shows tasker avatar with verification badge, task title, schedule, location, and budget
+  - 'Assigned state CTA bar contains Message (primary) and secondary actions: Reschedule, Cancel, Timeline'
+  - Assigned_approaching state shows a warning banner when scheduled time is within 4 hours
+  - Tasker_marked_done state changes primary CTA to 'Confirm Complete' and shows 'Report Issue' as secondary
+  - Tapping 'Confirm Complete' opens Confirm Completion modal (SCR-CUST-018)
+  - Completed state shows review prompt if not yet reviewed, with 'Leave Review' CTA navigating to SCR-SHARED-017
+  - Completed_rebook_cta state shows 'Rebook' as primary CTA navigating to Rebook Shortcut (SCR-CUST-023)
+  - Cancelled state shows cancelled status badge with no modify actions; only Timeline and Report Issue available
+  - No-show state shows no-show status badge with Timeline and Report Issue available
+  - Escrow states (pending, held, released) are optional Phase 3+ and show appropriate escrow status indicators
+  - Payment settlement note is always visible in Phase 0-2 (direct settlement)
+  - Tapping tasker avatar navigates to Tasker Public Profile (SCR-CUST-013)
+  - Tapping 'Message' navigates to Chat Detail (SCR-SHARED-011)
+  - Tapping 'Reschedule' navigates to Reschedule screen (SCR-CUST-020)
+  - Tapping 'Cancel Booking' opens Booking Cancel modal (SCR-CUST-022)
+  - Tapping 'Report Issue' navigates to Dispute Raise (SCR-CUST-024)
+  - Tapping 'View Timeline' navigates to Booking Timeline (SCR-CUST-019)
+  - No-show flag trigger is handled via modal (SCR-CUST-021) when conditions met per PRD Section 6.4.3
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+  - Network error shows error toast with retry action
+api_endpoints:
+  - method: GET
+    path: /bookings/:id
+    purpose: Fetch booking detail including tasker profile, task summary, schedule, status, and timeline preview
+analytics_events:
+  - event: booking_detail_viewed
+    trigger: Screen becomes visible with booking data loaded
+  - event: booking_detail_message_tapped
+    trigger: User taps 'Message' to open chat with tasker
+  - event: booking_detail_confirm_complete_tapped
+    trigger: User taps 'Confirm Complete' when tasker marked done
+  - event: booking_detail_rebook_tapped
+    trigger: User taps 'Rebook' on a completed booking
+  - event: booking_detail_reschedule_tapped
+    trigger: User taps 'Reschedule'
+  - event: booking_detail_cancel_tapped
+    trigger: User taps 'Cancel Booking'
+  - event: booking_detail_report_issue_tapped
+    trigger: User taps 'Report Issue'
+  - event: booking_detail_timeline_tapped
+    trigger: User taps 'View Timeline'
+  - event: booking_detail_tasker_profile_tapped
+    trigger: User taps tasker avatar/name to view profile
+  - event: booking_detail_escrow_pay_tapped
+    trigger: 'Phase 3+: user taps ''Pay with Escrow'''
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Booking Detail (Customer)".
+
+      First load; detail skeleton shown while GET /bookings/:id is in progress
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: assigned
+    prompt: >-
+      Generate the "assigned" state of "Booking Detail (Customer)".
+
+      Booking is ASSIGNED; tasker info, task summary, schedule, and action buttons visible. CTA bar shows 'Message' and
+      secondary actions (Reschedule, Cancel, Timeline)
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: assigned_approaching
+    prompt: >-
+      Generate the "assigned_approaching" state of "Booking Detail (Customer)".
+
+      Booking is ASSIGNED and scheduled time is within 4 hours; late-cancel warning context shown, reschedule still
+      available
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: tasker_marked_done
+    prompt: >-
+      Generate the "tasker_marked_done" state of "Booking Detail (Customer)".
+
+      Tasker has marked the job done; primary CTA changes to 'Confirm Complete'. Report Issue action also available
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: completed
+    prompt: >-
+      Generate the "completed" state of "Booking Detail (Customer)".
+
+      Booking is COMPLETED; review prompt shown if not yet reviewed. Actions: Leave Review, View Timeline
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: completed_rebook_cta
+    prompt: >-
+      Generate the "completed_rebook_cta" state of "Booking Detail (Customer)".
+
+      Booking is COMPLETED and review is submitted; Rebook CTA becomes primary action
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: cancelled
+    prompt: >-
+      Generate the "cancelled" state of "Booking Detail (Customer)".
+
+      Booking is CANCELLED; status badge shows cancelled, no further actions except View Timeline and Report Issue
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: no_show
+    prompt: >-
+      Generate the "no_show" state of "Booking Detail (Customer)".
+
+      Booking ended in NO_SHOW; status badge shows no-show, timeline visible, Report Issue available
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: escrow_pending
+    prompt: >-
+      Generate the "escrow_pending" state of "Booking Detail (Customer)".
+
+      Phase 3+ optional: escrow payment initiated but not yet confirmed; escrow status indicator shown
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: escrow_held
+    prompt: >-
+      Generate the "escrow_held" state of "Booking Detail (Customer)".
+
+      Phase 3+ optional: escrow deposit is held by platform; release info visible
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: escrow_released
+    prompt: >-
+      Generate the "escrow_released" state of "Booking Detail (Customer)".
+
+      Phase 3+ optional: escrow funds released to tasker after completion confirmation
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Booking Detail (Customer)".
+
+      Network error on data fetch; error toast with retry
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TIMELINEEVENT, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

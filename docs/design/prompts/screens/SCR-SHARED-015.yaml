@@ -1,0 +1,203 @@
+screen_id: SCR-SHARED-015
+name: Account Deletion Confirmation
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: modal_sheet
+route: /profile/settings/delete
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Account Deletion Confirmation" (SCR-SHARED-015) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + warning_icon + title + body_text + action_buttons)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet container for the deletion confirmation flow
+    • COMP-BUTTON (danger): Danger-styled primary button to confirm account deletion
+    • COMP-BUTTON (ghost): Ghost-styled secondary button to cancel and dismiss sheet
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Initial deletion confirmation sheet shown with warning message and two action buttons
+  Key copy (Mongolian primary):
+    • sheet_title: "Бүртгэл устгах" (Delete Account)
+    • warning_body: "Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана." (Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.)
+    • confirm_instruction: "Баталгаажуулахын тулд 'УСТГАХ' гэж бичнэ үү" (Type 'DELETE' to confirm)
+    • cta_delete: "Бүртгэлээ устгах" (Delete My Account)
+    • cta_cancel: "Болих" (Cancel)
+    • blocked_bookings_title: "Устгах боломжгүй" (Cannot delete)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + warning_icon + title + body_text + action_buttons)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet container for the deletion confirmation flow
+  - component: COMP-BUTTON
+    variant: danger
+    usage: Danger-styled primary button to confirm account deletion
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Ghost-styled secondary button to cancel and dismiss sheet
+states:
+  - id: default
+    description: Initial deletion confirmation sheet shown with warning message and two action buttons
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: confirming
+    description: User tapped Confirm; a secondary confirmation prompt appears asking to type confirmation text
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: deleting
+    description: DELETE /users/me is in flight; danger button shows loading spinner, interactions disabled
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: blocked_active_bookings
+    description: Deletion blocked because user has active bookings; message explains they must complete or cancel first
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: blocked_open_disputes
+    description: Deletion blocked because user has open disputes; message explains they must resolve disputes first
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: sheet_title
+    mn: Бүртгэл устгах
+    en: Delete Account
+  - key: warning_body
+    mn: >-
+      Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн
+      устгагдана.
+    en: >-
+      Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently
+      removed.
+  - key: confirm_instruction
+    mn: Баталгаажуулахын тулд 'УСТГАХ' гэж бичнэ үү
+    en: Type 'DELETE' to confirm
+  - key: cta_delete
+    mn: Бүртгэлээ устгах
+    en: Delete My Account
+  - key: cta_cancel
+    mn: Болих
+    en: Cancel
+  - key: blocked_bookings_title
+    mn: Устгах боломжгүй
+    en: Cannot delete
+  - key: blocked_bookings_body
+    mn: Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай.
+    en: You have active bookings. You must complete or cancel all bookings before deleting your account.
+  - key: blocked_disputes_title
+    mn: Устгах боломжгүй
+    en: Cannot delete
+  - key: blocked_disputes_body
+    mn: Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай.
+    en: You have open disputes. You must resolve all disputes before deleting your account.
+  - key: cta_go_to_bookings
+    mn: Захиалгууд руу очих
+    en: Go to Bookings
+  - key: cta_go_to_disputes
+    mn: Маргаанууд руу очих
+    en: Go to Disputes
+  - key: cta_understood
+    mn: Ойлголоо
+    en: Understood
+acceptance_criteria:
+  - Sheet opens as a modal bottom sheet with drag-to-dismiss handle bar
+  - Default state shows warning icon, title, body text, and two action buttons (Delete + Cancel)
+  - Tapping Delete transitions to confirming state with secondary confirmation input
+  - User must type confirmation text before the final delete button becomes enabled
+  - During deletion, the button shows a loading spinner and all interactions are disabled
+  - Successful deletion replaces (replace) the navigation stack to SCR-SHARED-002 (Login)
+  - If user has active bookings, shows blocked_active_bookings state with explanation and link to bookings
+  - If user has open disputes, shows blocked_open_disputes state with explanation and link to disputes
+  - Cancel button or drag-to-dismiss returns (dismiss) to SCR-SHARED-014
+  - Deletion blocked states do not show the delete button; only 'Understood' or navigation CTAs
+  - Danger button uses danger variant styling per component contract
+  - Scrim uses branded primaryDeep at 35% opacity per design system
+api_endpoints:
+  - method: DELETE
+    path: /users/me
+    purpose: Permanently delete the authenticated user's account and all associated data
+analytics_events:
+  - event: account_deletion_sheet_opened
+    trigger: Deletion confirmation sheet becomes visible
+  - event: account_deletion_confirmed
+    trigger: User confirms deletion and DELETE /users/me is called
+  - event: account_deletion_cancelled
+    trigger: User taps Cancel or drags sheet to dismiss
+  - event: account_deletion_blocked_bookings
+    trigger: Deletion attempt blocked due to active bookings
+  - event: account_deletion_blocked_disputes
+    trigger: Deletion attempt blocked due to open disputes
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Account Deletion Confirmation".
+
+      Initial deletion confirmation sheet shown with warning message and two action buttons
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Account Deletion Confirmation".
+
+      User tapped Confirm; a secondary confirmation prompt appears asking to type confirmation text
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: deleting
+    prompt: >-
+      Generate the "deleting" state of "Account Deletion Confirmation".
+
+      DELETE /users/me is in flight; danger button shows loading spinner, interactions disabled
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: blocked_active_bookings
+    prompt: >-
+      Generate the "blocked_active_bookings" state of "Account Deletion Confirmation".
+
+      Deletion blocked because user has active bookings; message explains they must complete or cancel first
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: blocked_open_disputes
+    prompt: >-
+      Generate the "blocked_open_disputes" state of "Account Deletion Confirmation".
+
+      Deletion blocked because user has open disputes; message explains they must resolve disputes first
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

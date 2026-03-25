@@ -1,0 +1,147 @@
+screen_id: SCR-TASK-004
+name: Verification — Consent
+role:
+  - tasker
+phase: 0-1
+template: detail
+route: /(tasker)/verification/consent
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification — Consent" (SCR-TASK-004) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(consent_heading + data_usage_explanation +
+  data_items_list + privacy_link) -> sticky_bottom_cta(agree_button)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA to accept consent and proceed to ID upload
+    • COMP-BUTTON (ghost): Ghost link to view full privacy policy
+  This screen has 2 states — generate the primary/default state:
+    Primary state: Consent form displayed — user must read and accept before proceeding
+  Key copy (Mongolian primary):
+    • page_title: "Зөвшөөрөл" (Consent)
+    • consent_heading: "Иргэний үнэмлэхний мэдээлэл боловсруулах зөвшөөрөл" (Consent to process identity information)
+    • data_usage_explanation: "Таны иргэний үнэмлэх болон зургийг зөвхөн таныг баталгаажуулах зорилгоор ашиглана. Бид таны мэдээллийг хамгаалж, хуулийн дагуу хадгална." (Your ID and photo will be used solely for verification purposes. We protect your data and store it in compliance with the law.)
+    • data_item_id_card: "Иргэний үнэмлэхний зураг (урд, ар тал)" (ID card photos (front and back))
+    • data_item_selfie: "Амьд зураг (selfie)" (Live photo (selfie))
+    • data_item_purpose: "Таниулах баталгаажуулалт" (Identity verification)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(consent_heading + data_usage_explanation + data_items_list +
+    privacy_link) -> sticky_bottom_cta(agree_button)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to accept consent and proceed to ID upload
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Ghost link to view full privacy policy
+states:
+  - id: default
+    description: Consent form displayed — user must read and accept before proceeding
+    visible:
+      - nav_header
+      - consent_heading
+      - data_usage_explanation
+      - data_items_list
+      - privacy_link
+      - agree_button_disabled
+    hidden: []
+  - id: agreed
+    description: User has scrolled through consent and agree button becomes enabled
+    visible:
+      - nav_header
+      - consent_heading
+      - data_usage_explanation
+      - data_items_list
+      - privacy_link
+      - agree_button_enabled
+    hidden: []
+copy:
+  - key: page_title
+    mn: Зөвшөөрөл
+    en: Consent
+  - key: consent_heading
+    mn: Иргэний үнэмлэхний мэдээлэл боловсруулах зөвшөөрөл
+    en: Consent to process identity information
+  - key: data_usage_explanation
+    mn: >-
+      Таны иргэний үнэмлэх болон зургийг зөвхөн таныг баталгаажуулах зорилгоор ашиглана. Бид таны мэдээллийг хамгаалж,
+      хуулийн дагуу хадгална.
+    en: >-
+      Your ID and photo will be used solely for verification purposes. We protect your data and store it in compliance
+      with the law.
+  - key: data_item_id_card
+    mn: Иргэний үнэмлэхний зураг (урд, ар тал)
+    en: ID card photos (front and back)
+  - key: data_item_selfie
+    mn: Амьд зураг (selfie)
+    en: Live photo (selfie)
+  - key: data_item_purpose
+    mn: Таниулах баталгаажуулалт
+    en: Identity verification
+  - key: data_item_retention
+    mn: Бүртгэл хүчинтэй байх хугацаанд хадгалагдана
+    en: Stored while your account is active
+  - key: data_item_deletion
+    mn: Бүртгэл устгахад мэдээлэл устгагдана
+    en: Deleted when your account is deleted
+  - key: agree_button
+    mn: Зөвшөөрч, үргэлжлүүлэх
+    en: Agree & Continue
+  - key: privacy_link
+    mn: Нууцлалын бодлого унших
+    en: Read Privacy Policy
+acceptance_criteria:
+  - Consent screen displays clear explanation of what data is collected and why (REQ-SAFE-07)
+  - User must scroll through consent content before agree button becomes enabled
+  - Consent record includes policy version, timestamp, and user ID per REQ-SAFE-07
+  - Tapping 'Зөвшөөрч, үргэлжлүүлэх' navigates to ID Upload (SCR-TASK-005)
+  - Privacy Policy link navigates to Privacy Policy (SCR-TASK-018)
+  - Back button returns to Verification Gate (SCR-TASK-003)
+  - 'Data items list clearly shows: ID photos, selfie, purpose, retention period, deletion policy'
+  - All text meets 16px minimum for Mongolian Cyrillic readability
+api_endpoints: []
+analytics_events:
+  - event: verification_consent_viewed
+    trigger: Consent screen becomes visible
+  - event: verification_consent_agreed
+    trigger: User taps Agree & Continue button
+  - event: verification_consent_privacy_tapped
+    trigger: User taps Privacy Policy link
+  - event: verification_consent_back
+    trigger: User taps back to return to Verification Gate
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Verification — Consent".
+
+      Consent form displayed — user must read and accept before proceeding
+
+      Visible elements: nav_header, consent_heading, data_usage_explanation, data_items_list, privacy_link,
+      agree_button_disabled
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: agreed
+    prompt: >-
+      Generate the "agreed" state of "Verification — Consent".
+
+      User has scrolled through consent and agree button becomes enabled
+
+      Visible elements: nav_header, consent_heading, data_usage_explanation, data_items_list, privacy_link,
+      agree_button_enabled
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,40 @@
+journey_id: JRN-SHARED-02
+name: Phase 2 OTP Migration
+actor:
+  - customer
+  - tasker
+phase: '2'
+goal: Existing Facebook-only user adds phone OTP
+entry_screen: SCR-SHARED-004
+exit_screens:
+  - previous screen
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-004
+    screen_name: Auth — OTP Migration Gate
+    action: Migration gate shown on first Phase 2 session
+    next: SCR-SHARED-004
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-004
+    screen_name: Auth — OTP Migration Gate
+    action: Enter phone number
+    next: SCR-SHARED-003
+    lifecycle: USER-T13 (phase2_otp_migration)
+  - step: 3
+    screen_id: SCR-SHARED-003
+    screen_name: Auth — OTP Verification
+    action: Enter OTP code
+    next: previous screen
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-02-A1
+    name: OTP verification fails
+    branch_at_step: 3
+    condition: Wrong code or expired
+    screens:
+      - SCR-SHARED-003
+    outcome: Error message, resend option after cooldown
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

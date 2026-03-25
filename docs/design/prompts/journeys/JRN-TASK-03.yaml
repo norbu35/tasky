@@ -1,0 +1,49 @@
+journey_id: JRN-TASK-03
+name: Lead Unlock Accept/Decline (Phase 2)
+actor:
+  - tasker
+phase: '2'
+goal: Accept or decline selected lead
+entry_screen: SCR-TASK-017
+exit_screens:
+  - SCR-TASK-012
+  - SCR-TASK-017
+happy_path:
+  - step: 1
+    screen_id: SCR-TASK-017
+    screen_name: Lead Unlock — Accept/Decline
+    action: Receive selection notification
+    next: SCR-TASK-017
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-TASK-017
+    screen_name: Lead Unlock — Accept/Decline
+    action: Tap 'Accept' — credits deducted
+    next: SCR-TASK-012
+    lifecycle: APP-T04 (tasker_accepts_and_unlocks)
+alternate_paths:
+  - id: JRN-TASK-03-A1
+    name: Decline
+    branch_at_step: 2
+    condition: Tasker taps Decline
+    screens:
+      - SCR-TASK-017
+    outcome: No credits charged
+  - id: JRN-TASK-03-A2
+    name: Insufficient credits
+    branch_at_step: 2
+    condition: Balance < lead cost
+    screens:
+      - SCR-TASK-017
+      - SCR-P2-001
+    outcome: Redirect to credit purchase
+  - id: JRN-TASK-03-A3
+    name: Timeout
+    branch_at_step: 2
+    condition: 15-min window expires
+    screens:
+      - SCR-TASK-017
+    outcome: Auto-declined, no credits
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

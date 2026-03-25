@@ -1,0 +1,240 @@
+screen_id: SCR-CUST-023
+name: Rebook Shortcut
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/rebook
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-05.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Rebook Shortcut" (SCR-CUST-023) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(tasker_card + prefilled_task_summary +
+  editable_fields) -> bottom_nav(back + submit)
+
+  Components used:
+    • COMP-SPLITCARD (booking): Read-only card showing the previously hired tasker's avatar, name, rating, and verification status
+    • COMP-DATEPICKER (date_time): Date and time picker prefilled from previous booking; editable for new schedule
+    • COMP-FORMFIELD (default): Wrapper for budget input with label
+    • COMP-INPUT (default): Budget input prefilled from previous task; editable
+    • COMP-BUTTON (primary): Submit button to create rebook task and proceed to booking confirmation
+    • COMP-TOAST (error): Error toast on network failure during submission
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Screen loads with tasker info card and task details prefilled from previous booking (category, description, location, schedule, budget)
+  Key copy (Mongolian primary):
+    • page_title: "Дахин захиалах" (Rebook)
+    • section_tasker: "Өмнөх гүйцэтгэгч" (Previous Tasker)
+    • section_task: "Даалгаврын мэдээлэл" (Task Details)
+    • label_schedule: "Шинэ товлосон цаг" (New Schedule)
+    • label_budget: "Төсөв" (Budget)
+    • prefilled_note: "Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой." (Prefilled from previous booking. You can edit.)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(tasker_card + prefilled_task_summary + editable_fields) ->
+    bottom_nav(back + submit)
+components:
+  - component: COMP-SPLITCARD
+    variant: booking
+    usage: Read-only card showing the previously hired tasker's avatar, name, rating, and verification status
+  - component: COMP-DATEPICKER
+    variant: date_time
+    usage: Date and time picker prefilled from previous booking; editable for new schedule
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wrapper for budget input with label
+  - component: COMP-INPUT
+    variant: default
+    usage: Budget input prefilled from previous task; editable
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Submit button to create rebook task and proceed to booking confirmation
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast on network failure during submission
+states:
+  - id: prefilled
+    description: >-
+      Screen loads with tasker info card and task details prefilled from previous booking (category, description,
+      location, schedule, budget)
+    visible:
+      - COMP-SPLITCARD
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: editing
+    description: User modifies prefilled fields (schedule or budget); inline validation active
+    visible:
+      - COMP-SPLITCARD
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: submitting
+    description: User taps submit; POST /tasks and POST /bookings in progress; button shows loading
+    visible:
+      - COMP-SPLITCARD
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: success
+    description: Rebook task created and booking ready; navigates to Booking Confirmation (SCR-CUST-014)
+    visible:
+      - COMP-SPLITCARD
+    hidden:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: error_network
+    description: Network error during submission; error toast with retry
+    visible:
+      - COMP-SPLITCARD
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden: []
+copy:
+  - key: page_title
+    mn: Дахин захиалах
+    en: Rebook
+  - key: section_tasker
+    mn: Өмнөх гүйцэтгэгч
+    en: Previous Tasker
+  - key: section_task
+    mn: Даалгаврын мэдээлэл
+    en: Task Details
+  - key: label_schedule
+    mn: Шинэ товлосон цаг
+    en: New Schedule
+  - key: label_budget
+    mn: Төсөв
+    en: Budget
+  - key: prefilled_note
+    mn: Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой.
+    en: Prefilled from previous booking. You can edit.
+  - key: cta_submit
+    mn: Захиалга үргэлжлүүлэх
+    en: Continue to Booking
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: error_toast
+    mn: Дахин захиалахад алдаа гарлаа
+    en: Failed to create rebook
+  - key: validation_budget_low
+    mn: Төсөв ₮1,001-ээс дээш байх ёстой
+    en: Budget must be above ₮1,001
+acceptance_criteria:
+  - 'Screen prefills task details from previous booking: category, description, location, schedule, and budget'
+  - Tasker info card is read-only showing avatar, name, rating, and verification badge
+  - Schedule date picker has minimum date of tomorrow
+  - Budget input validates minimum of ₮1,001 per REQ-TASK-01
+  - Submit creates both a new task and booking in sequence per REQ-BOOK-07
+  - On success, navigates via push to Booking Confirmation (SCR-CUST-014)
+  - Back button navigates via pop to Booking Detail (SCR-CUST-017)
+  - Network error shows error toast with retry
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+  - Date format follows YYYY.MM.DD Mongolian convention
+  - Currency format follows ₮XX,XXX convention
+api_endpoints:
+  - method: POST
+    path: /tasks
+    purpose: Create a new task from the rebook shortcut with prefilled data from previous booking
+  - method: POST
+    path: /bookings
+    purpose: Create booking directly with the previously hired tasker
+analytics_events:
+  - event: rebook_shortcut_viewed
+    trigger: Rebook screen becomes visible with prefilled data
+  - event: rebook_fields_edited
+    trigger: User modifies any prefilled field
+  - event: rebook_submitted
+    trigger: User taps submit and task/booking creation begins
+  - event: rebook_success
+    trigger: Rebook task and booking created successfully
+  - event: rebook_error
+    trigger: Network error during rebook submission
+state_prompts:
+  - state_id: prefilled
+    prompt: >-
+      Generate the "prefilled" state of "Rebook Shortcut".
+
+      Screen loads with tasker info card and task details prefilled from previous booking (category, description,
+      location, schedule, budget)
+
+      Visible elements: COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: editing
+    prompt: >-
+      Generate the "editing" state of "Rebook Shortcut".
+
+      User modifies prefilled fields (schedule or budget); inline validation active
+
+      Visible elements: COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitting
+    prompt: >-
+      Generate the "submitting" state of "Rebook Shortcut".
+
+      User taps submit; POST /tasks and POST /bookings in progress; button shows loading
+
+      Visible elements: COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Rebook Shortcut".
+
+      Rebook task created and booking ready; navigates to Booking Confirmation (SCR-CUST-014)
+
+      Visible elements: COMP-SPLITCARD
+
+      Hidden elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Rebook Shortcut".
+
+      Network error during submission; error toast with retry
+
+      Visible elements: COMP-SPLITCARD, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

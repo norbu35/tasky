@@ -1,0 +1,158 @@
+screen_id: SCR-SHARED-006
+name: Role Selection
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: auth
+route: /onboarding/role
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Role Selection" (SCR-SHARED-006) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(heading + description + role_cards) -> bottom_cta(confirm_button)
+
+  Components used:
+    • COMP-CARD (outlined): Two role selection cards: Customer and Tasker; tapping selects one
+    • COMP-BUTTON (primary): Primary CTA to confirm role selection
+    • COMP-MODALSHEET (default): Confirmation bottom sheet verifying role choice before committing
+  This screen has 2 states — generate the primary/default state:
+    Primary state: Role selection displayed with Customer and Tasker cards; neither selected
+  Key copy (Mongolian primary):
+    • heading: "Та хэн бэ?" (Who are you?)
+    • description: "Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой." (Choose your role. You can change it later.)
+    • customer_card_title: "Захиалагч" (Customer)
+    • customer_card_description: "Ажил нийтлэж, гүйцэтгэгч хайх" (Post tasks and find taskers)
+    • tasker_card_title: "Гүйцэтгэгч" (Tasker)
+    • tasker_card_description: "Ажилд бүртгүүлж, орлого олох" (Apply to tasks and earn money)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: safe_area -> centered_content(heading + description + role_cards) -> bottom_cta(confirm_button)
+components:
+  - component: COMP-CARD
+    variant: outlined
+    usage: 'Two role selection cards: Customer and Tasker; tapping selects one'
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to confirm role selection
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Confirmation bottom sheet verifying role choice before committing
+states:
+  - id: default
+    description: Role selection displayed with Customer and Tasker cards; neither selected
+    visible:
+      - heading
+      - description
+      - customer_card
+      - tasker_card
+      - confirm_button_disabled
+    hidden:
+      - confirmation_sheet
+  - id: confirming
+    description: User selected a role and tapped confirm; confirmation sheet appears
+    visible:
+      - heading
+      - customer_card
+      - tasker_card
+      - confirmation_sheet
+    hidden:
+      - confirm_button
+      - description
+copy:
+  - key: heading
+    mn: Та хэн бэ?
+    en: Who are you?
+  - key: description
+    mn: Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.
+    en: Choose your role. You can change it later.
+  - key: customer_card_title
+    mn: Захиалагч
+    en: Customer
+  - key: customer_card_description
+    mn: Ажил нийтлэж, гүйцэтгэгч хайх
+    en: Post tasks and find taskers
+  - key: tasker_card_title
+    mn: Гүйцэтгэгч
+    en: Tasker
+  - key: tasker_card_description
+    mn: Ажилд бүртгүүлж, орлого олох
+    en: Apply to tasks and earn money
+  - key: confirm_button_label
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: confirm_sheet_title
+    mn: Та итгэлтэй байна уу?
+    en: Are you sure?
+  - key: confirm_sheet_message
+    mn: '{role} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.'
+    en: Confirm you want to be a {role}. You can switch later in Settings.
+  - key: confirm_sheet_primary
+    mn: Тийм, баталгаажуулах
+    en: Yes, confirm
+  - key: confirm_sheet_secondary
+    mn: Буцах
+    en: Go back
+acceptance_criteria:
+  - 'Two role cards are displayed: Customer and Tasker'
+  - Only one card can be selected at a time; selection is visually highlighted
+  - Continue button is disabled until a role card is selected
+  - Tapping Continue opens a confirmation bottom sheet
+  - Confirmation sheet has primary (confirm) and secondary (go back) actions
+  - On confirmation, PUT /users/me/role is called
+  - On success, the app replaces to Permission Primer Camera (SCR-SHARED-007)
+  - User can switch role later from Settings (SCR-SHARED-014)
+  - Each card includes an icon, title, and description
+  - Selected card has primary border highlight
+api_endpoints:
+  - method: PUT
+    path: /users/me/role
+    purpose: Set the selected role (customer or tasker) for the user
+analytics_events:
+  - event: role_selection_viewed
+    trigger: Role selection screen becomes visible
+  - event: role_card_tapped
+    trigger: User taps a role card; includes selected_role property
+  - event: role_confirm_tapped
+    trigger: User taps Continue button after selecting a role
+  - event: role_confirmed
+    trigger: User confirms role in the confirmation sheet
+  - event: role_confirm_cancelled
+    trigger: User cancels role confirmation and returns to selection
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Role Selection".
+
+      Role selection displayed with Customer and Tasker cards; neither selected
+
+      Visible elements: heading, description, customer_card, tasker_card, confirm_button_disabled
+
+      Hidden elements: confirmation_sheet
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Role Selection".
+
+      User selected a role and tapped confirm; confirmation sheet appears
+
+      Visible elements: heading, customer_card, tasker_card, confirmation_sheet
+
+      Hidden elements: confirm_button, description
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

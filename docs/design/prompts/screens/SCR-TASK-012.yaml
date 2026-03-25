@@ -1,0 +1,290 @@
+screen_id: SCR-TASK-012
+name: Tasker Bookings (My Jobs)
+role:
+  - tasker
+phase: 0-1
+template: feed_list
+route: /(tasker)/jobs
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Tasker Bookings (My Jobs)" (SCR-TASK-012) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_split_cards) ->
+  pagination_footer
+
+  Components used:
+    • COMP-SPLITCARD (booking): Booking card — dark teal header with customer avatar + booking status, light body with task title, date, location
+    • COMP-SPLITCARD (booking): Completed booking card variant
+    • COMP-STATUSBADGE (assigned): Status badge on each booking card (Assigned, Completed, Cancelled, No-Show)
+    • COMP-EMPTYSTATE (activation): Empty state when tasker has no bookings yet — encourage applying
+    • COMP-LOADINGSKELETON (card): Skeleton placeholders matching SplitCard booking layout during load
+    • COMP-CATEGORYCHIP (active): Tab filter chips for Active vs Completed bookings
+  This screen has 7 states — generate the primary/default state:
+    Primary state: First load of bookings list — skeleton cards displayed
+  Key copy (Mongolian primary):
+    • page_title: "Миний ажлууд" (My Jobs)
+    • tab_active: "Идэвхтэй" (Active)
+    • tab_completed: "Дууссан" (Completed)
+    • empty_headline: "Одоогоор ажил байхгүй байна" (No jobs yet)
+    • empty_description: "Даалгавруудад анкет илгээж, эхний ажлаа аваарай" (Apply to tasks and get your first job)
+    • empty_cta: "Даалгавар хайх" (Browse Tasks)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(page_title + tab_filter) -> scrollview(booking_split_cards) -> pagination_footer
+components:
+  - component: COMP-SPLITCARD
+    variant: booking
+    usage: Booking card — dark teal header with customer avatar + booking status, light body with task title, date, location
+  - component: COMP-SPLITCARD
+    variant: booking
+    usage: Completed booking card variant
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Status badge on each booking card (Assigned, Completed, Cancelled, No-Show)
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Empty state when tasker has no bookings yet — encourage applying
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Skeleton placeholders matching SplitCard booking layout during load
+  - component: COMP-CATEGORYCHIP
+    variant: active
+    usage: Tab filter chips for Active vs Completed bookings
+states:
+  - id: loading_initial
+    description: First load of bookings list — skeleton cards displayed
+    visible:
+      - page_title
+      - tab_filter
+      - loading_skeleton
+    hidden:
+      - booking_cards
+      - empty_state
+      - pagination_footer
+  - id: empty
+    description: No bookings yet — activation empty state encouraging the tasker to apply to tasks
+    visible:
+      - page_title
+      - tab_filter
+      - empty_state
+    hidden:
+      - booking_cards
+      - loading_skeleton
+      - pagination_footer
+  - id: populated_active
+    description: Active bookings (ASSIGNED status) displayed in list
+    visible:
+      - page_title
+      - tab_filter_active
+      - booking_cards_active
+      - pagination_footer
+    hidden:
+      - empty_state
+      - loading_skeleton
+      - booking_cards_completed
+  - id: populated_completed
+    description: Completed bookings tab selected — past bookings displayed
+    visible:
+      - page_title
+      - tab_filter_completed
+      - booking_cards_completed
+      - pagination_footer
+    hidden:
+      - empty_state
+      - loading_skeleton
+      - booking_cards_active
+  - id: loading_refresh
+    description: Pull-to-refresh in progress — refresh indicator visible with existing cards
+    visible:
+      - page_title
+      - tab_filter
+      - booking_cards
+      - refresh_indicator
+    hidden:
+      - empty_state
+      - loading_skeleton
+  - id: error_network
+    description: Network error loading bookings — error message with retry
+    visible:
+      - page_title
+      - tab_filter
+      - error_message
+      - retry_button
+    hidden:
+      - booking_cards
+      - empty_state
+      - loading_skeleton
+  - id: offline_cached
+    description: Device is offline — offline banner with cached bookings if available
+    visible:
+      - page_title
+      - tab_filter
+      - offline_banner
+      - cached_booking_cards
+    hidden:
+      - loading_skeleton
+      - empty_state
+copy:
+  - key: page_title
+    mn: Миний ажлууд
+    en: My Jobs
+  - key: tab_active
+    mn: Идэвхтэй
+    en: Active
+  - key: tab_completed
+    mn: Дууссан
+    en: Completed
+  - key: empty_headline
+    mn: Одоогоор ажил байхгүй байна
+    en: No jobs yet
+  - key: empty_description
+    mn: Даалгавруудад анкет илгээж, эхний ажлаа аваарай
+    en: Apply to tasks and get your first job
+  - key: empty_cta
+    mn: Даалгавар хайх
+    en: Browse Tasks
+  - key: status_assigned
+    mn: Хуваарилагдсан
+    en: Assigned
+  - key: status_completed
+    mn: Дууссан
+    en: Completed
+  - key: status_cancelled
+    mn: Цуцлагдсан
+    en: Cancelled
+  - key: status_no_show
+    mn: Ирээгүй
+    en: No-Show
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: retry_button
+    mn: Дахин оролдох
+    en: Retry
+  - key: offline_banner
+    mn: Офлайн байна. Хадгалсан мэдээлэл харагдаж байна.
+    en: You are offline. Showing cached data.
+acceptance_criteria:
+  - My Jobs is the second tab in the tasker bottom navigation
+  - Bookings display as SplitCard components with status badge
+  - Tab filter switches between Active (ASSIGNED) and Completed bookings
+  - Each booking card shows task title, scheduled date, location, and status
+  - Empty state shows activation CTA to browse tasks
+  - Tapping a booking card navigates to Booking Detail Tasker (SCR-TASK-013)
+  - Pull-to-refresh reloads the bookings list
+  - Loading state uses card-matching skeleton placeholders
+  - Network error shows retry button
+  - Offline state shows banner with cached bookings if available
+  - Cancelled and No-Show bookings use danger-colored status badges
+api_endpoints:
+  - method: GET
+    path: /bookings/mine
+    purpose: Fetch paginated list of tasker's bookings with status filter
+analytics_events:
+  - event: my_jobs_viewed
+    trigger: My Jobs screen becomes visible
+  - event: my_jobs_tab_switched
+    trigger: User switches between Active and Completed tabs
+  - event: my_jobs_booking_tapped
+    trigger: User taps a booking card to view detail
+  - event: my_jobs_refreshed
+    trigger: User pulls to refresh the bookings list
+  - event: my_jobs_empty_browse_tapped
+    trigger: User taps Browse Tasks from empty state
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Tasker Bookings (My Jobs)".
+
+      First load of bookings list — skeleton cards displayed
+
+      Visible elements: page_title, tab_filter, loading_skeleton
+
+      Hidden elements: booking_cards, empty_state, pagination_footer
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Tasker Bookings (My Jobs)".
+
+      No bookings yet — activation empty state encouraging the tasker to apply to tasks
+
+      Visible elements: page_title, tab_filter, empty_state
+
+      Hidden elements: booking_cards, loading_skeleton, pagination_footer
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_active
+    prompt: >-
+      Generate the "populated_active" state of "Tasker Bookings (My Jobs)".
+
+      Active bookings (ASSIGNED status) displayed in list
+
+      Visible elements: page_title, tab_filter_active, booking_cards_active, pagination_footer
+
+      Hidden elements: empty_state, loading_skeleton, booking_cards_completed
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_completed
+    prompt: >-
+      Generate the "populated_completed" state of "Tasker Bookings (My Jobs)".
+
+      Completed bookings tab selected — past bookings displayed
+
+      Visible elements: page_title, tab_filter_completed, booking_cards_completed, pagination_footer
+
+      Hidden elements: empty_state, loading_skeleton, booking_cards_active
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "Tasker Bookings (My Jobs)".
+
+      Pull-to-refresh in progress — refresh indicator visible with existing cards
+
+      Visible elements: page_title, tab_filter, booking_cards, refresh_indicator
+
+      Hidden elements: empty_state, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Tasker Bookings (My Jobs)".
+
+      Network error loading bookings — error message with retry
+
+      Visible elements: page_title, tab_filter, error_message, retry_button
+
+      Hidden elements: booking_cards, empty_state, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline_cached
+    prompt: >-
+      Generate the "offline_cached" state of "Tasker Bookings (My Jobs)".
+
+      Device is offline — offline banner with cached bookings if available
+
+      Visible elements: page_title, tab_filter, offline_banner, cached_booking_cards
+
+      Hidden elements: loading_skeleton, empty_state
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

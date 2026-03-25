@@ -1,0 +1,171 @@
+screen_id: SCR-CUST-010
+name: Task Cancel Confirmation
+role:
+  - customer
+phase: 0-1
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-07.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Task Cancel Confirmation" (SCR-CUST-010) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + title + warning_content + actions)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet for task/booking cancellation confirmation with contextual warning
+    • COMP-BUTTON (danger): Danger-variant cancel button and secondary back/dismiss button
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Task is OPEN (no booking yet); free cancellation with no penalty warning
+  Key copy (Mongolian primary):
+    • title_open: "Даалгавар цуцлах уу?" (Cancel this task?)
+    • body_open: "Энэ даалгаврыг цуцлахад ямар нэг торгууль ногдохгүй" (Cancelling this task has no penalty)
+    • title_assigned_free: "Захиалга цуцлах уу?" (Cancel this booking?)
+    • body_assigned_free: "Хуваарьт цагаас 4+ цагийн өмнө цуцалж байгаа тул торгууль ногдохгүй" (Cancelling more than 4 hours before schedule incurs no penalty)
+    • title_assigned_late: "Хожуу цуцлалт" (Late Cancellation)
+    • body_assigned_late: "Хуваарьт цагаас 4 цагийн дотор цуцалж байна. Энэ нь найдвартай байдлын тэмдэглэлд бүртгэгдэнэ" (Cancelling within 4 hours of schedule. This will be recorded as a reliability incident)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + title + warning_content + actions)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet for task/booking cancellation confirmation with contextual warning
+  - component: COMP-BUTTON
+    variant: danger
+    usage: Danger-variant cancel button and secondary back/dismiss button
+states:
+  - id: open_task_cancel
+    description: Task is OPEN (no booking yet); free cancellation with no penalty warning
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: assigned_cancel_free
+    description: Task is ASSIGNED but cancellation is >4 hours before schedule; free cancellation
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: assigned_cancel_late_warning
+    description: >-
+      Task is ASSIGNED and cancellation is <4 hours before schedule; late cancellation warning with reliability incident
+      notice per REQ-BOOK-04
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: confirming
+    description: User confirmed cancellation; API call in progress (DELETE /tasks/:id or PUT /bookings/:id/cancel)
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: title_open
+    mn: Даалгавар цуцлах уу?
+    en: Cancel this task?
+  - key: body_open
+    mn: Энэ даалгаврыг цуцлахад ямар нэг торгууль ногдохгүй
+    en: Cancelling this task has no penalty
+  - key: title_assigned_free
+    mn: Захиалга цуцлах уу?
+    en: Cancel this booking?
+  - key: body_assigned_free
+    mn: Хуваарьт цагаас 4+ цагийн өмнө цуцалж байгаа тул торгууль ногдохгүй
+    en: Cancelling more than 4 hours before schedule incurs no penalty
+  - key: title_assigned_late
+    mn: Хожуу цуцлалт
+    en: Late Cancellation
+  - key: body_assigned_late
+    mn: Хуваарьт цагаас 4 цагийн дотор цуцалж байна. Энэ нь найдвартай байдлын тэмдэглэлд бүртгэгдэнэ
+    en: Cancelling within 4 hours of schedule. This will be recorded as a reliability incident
+  - key: late_warning_detail
+    mn: 28 хоногийн дотор 2 удаа хожуу цуцалбал зэрэглэлд нөлөөлнө
+    en: 2 late cancellations within 28 days will affect your ranking
+  - key: cta_cancel_confirm
+    mn: Тийм, цуцлах
+    en: Yes, Cancel
+  - key: cta_go_back
+    mn: Буцах
+    en: Go Back
+acceptance_criteria:
+  - Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss
+  - OPEN task cancellation shows no-penalty confirmation
+  - ASSIGNED free cancellation (>4 hours) shows no-penalty confirmation
+  - ASSIGNED late cancellation (<4 hours) shows danger-styled warning about reliability incident per REQ-BOOK-04
+  - Late cancellation warning explains 28-day trailing window and ranking penalty
+  - Cancel button uses danger variant per composition rules
+  - Confirm cancel button enters loading state during API call
+  - On open task cancel success, dismiss sheet and replace to My Tasks SCR-CUST-001
+  - On assigned booking cancel success, dismiss sheet and replace to My Tasks SCR-CUST-001
+  - Cancel aborted dismisses sheet back to Task Detail SCR-CUST-009
+  - Scrim uses branded primaryDeep at 35% opacity
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: DELETE
+    path: /tasks/:id
+    purpose: Cancel an OPEN task (no booking exists)
+  - method: PUT
+    path: /bookings/:id/cancel
+    purpose: Cancel an ASSIGNED booking (task has active booking)
+analytics_events:
+  - event: cancel_sheet_opened
+    trigger: Bottom sheet becomes visible; includes task_id and cancel_type (open/assigned_free/assigned_late)
+  - event: cancel_confirmed
+    trigger: User taps confirm cancel; includes task_id and cancel_type
+  - event: cancel_aborted
+    trigger: User dismisses sheet or taps Go Back
+state_prompts:
+  - state_id: open_task_cancel
+    prompt: >-
+      Generate the "open_task_cancel" state of "Task Cancel Confirmation".
+
+      Task is OPEN (no booking yet); free cancellation with no penalty warning
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: assigned_cancel_free
+    prompt: >-
+      Generate the "assigned_cancel_free" state of "Task Cancel Confirmation".
+
+      Task is ASSIGNED but cancellation is >4 hours before schedule; free cancellation
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: assigned_cancel_late_warning
+    prompt: >-
+      Generate the "assigned_cancel_late_warning" state of "Task Cancel Confirmation".
+
+      Task is ASSIGNED and cancellation is <4 hours before schedule; late cancellation warning with reliability incident
+      notice per REQ-BOOK-04
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Task Cancel Confirmation".
+
+      User confirmed cancellation; API call in progress (DELETE /tasks/:id or PUT /bookings/:id/cancel)
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

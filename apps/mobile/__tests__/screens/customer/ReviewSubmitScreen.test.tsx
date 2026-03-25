@@ -14,8 +14,9 @@ jest.mock('expo-router', () => ({
     description: 'Fix my sink',
     photos: '[]',
     location: 'Behind State Dept Store',
-    date: '2026-04-01',
-    time: '10:00',
+    lat: '47.92123',
+    lng: '106.91876',
+    scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
     budget: '50000',
   }),
 }));
@@ -90,7 +91,16 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     render(<ReviewSubmitScreen />);
     fireEvent.press(screen.getByText('Post Task'));
     await waitFor(() => {
-      expect(mockMutateAsync).toHaveBeenCalled();
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        budget: 50000,
+        category_id: 'cat-123',
+        description: 'Fix my sink',
+        location_lat: 47.92123,
+        location_lng: 106.91876,
+        location_text: 'Behind State Dept Store',
+        photo_keys: [],
+        scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
+      });
     });
   });
 

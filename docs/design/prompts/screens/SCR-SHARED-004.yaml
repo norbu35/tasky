@@ -1,0 +1,240 @@
+screen_id: SCR-SHARED-004
+name: Auth — OTP Migration Gate
+role:
+  - customer
+  - tasker
+phase: '2'
+template: auth
+route: /auth/otp-migration
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Auth — OTP Migration Gate" (SCR-SHARED-004) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(icon + heading + description + phone_input) ->
+  bottom_cta(submit_button)
+
+  Components used:
+    • COMP-INPUT (default): Phone number entry field for adding OTP to existing Facebook-only account
+    • COMP-FORMFIELD (default): Wraps phone input with label, error, and helper text
+    • COMP-BUTTON (primary): Primary CTA to submit phone number and request OTP
+    • COMP-BUTTON (ghost): Skip option as ghost button (allows deferring migration)
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Migration gate displayed on first Phase 2 session for Facebook-only users
+  Key copy (Mongolian primary):
+    • heading: "Утасны дугаар нэмэх" (Add Phone Number)
+    • description: "Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү" (Add your phone number to improve account security)
+    • phone_input_label: "Утасны дугаар" (Phone number)
+    • phone_input_placeholder: "9911 2233" (9911 2233)
+    • phone_input_helper: "Facebook нэвтрэлтэд утасны дугаар нэмнэ" (Adding phone number to your Facebook login)
+    • submit_button_label: "Код авах" (Get Code)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: safe_area -> centered_content(icon + heading + description + phone_input) -> bottom_cta(submit_button)
+components:
+  - component: COMP-INPUT
+    variant: default
+    usage: Phone number entry field for adding OTP to existing Facebook-only account
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps phone input with label, error, and helper text
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to submit phone number and request OTP
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Skip option as ghost button (allows deferring migration)
+states:
+  - id: default
+    description: Migration gate displayed on first Phase 2 session for Facebook-only users
+    visible:
+      - shield_icon
+      - heading
+      - description
+      - phone_input_empty
+      - submit_button_disabled
+      - skip_link
+    hidden:
+      - error_message
+      - verifying_spinner
+  - id: phone_entry
+    description: User is entering their phone number
+    visible:
+      - shield_icon
+      - heading
+      - description
+      - phone_input_active
+      - submit_button_enabled
+      - skip_link
+    hidden:
+      - error_message
+      - verifying_spinner
+  - id: verifying
+    description: Phone number submitted; OTP request in progress
+    visible:
+      - shield_icon
+      - heading
+      - phone_input_disabled
+      - submit_button_loading
+    hidden:
+      - error_message
+      - skip_link
+      - description
+  - id: error_invalid_phone
+    description: Phone number format is invalid or already registered
+    visible:
+      - shield_icon
+      - heading
+      - description
+      - phone_input_error
+      - invalid_phone_error
+      - submit_button_disabled
+      - skip_link
+    hidden:
+      - verifying_spinner
+  - id: error_network
+    description: Network error prevents OTP request from completing
+    visible:
+      - shield_icon
+      - heading
+      - description
+      - phone_input
+      - network_error_message
+      - submit_button
+      - skip_link
+    hidden:
+      - verifying_spinner
+copy:
+  - key: heading
+    mn: Утасны дугаар нэмэх
+    en: Add Phone Number
+  - key: description
+    mn: Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү
+    en: Add your phone number to improve account security
+  - key: phone_input_label
+    mn: Утасны дугаар
+    en: Phone number
+  - key: phone_input_placeholder
+    mn: 9911 2233
+    en: 9911 2233
+  - key: phone_input_helper
+    mn: Facebook нэвтрэлтэд утасны дугаар нэмнэ
+    en: Adding phone number to your Facebook login
+  - key: submit_button_label
+    mn: Код авах
+    en: Get Code
+  - key: skip_label
+    mn: Дараа хийх
+    en: Do it later
+  - key: error_invalid_phone
+    mn: Утасны дугаар буруу байна
+    en: Invalid phone number
+  - key: error_phone_registered
+    mn: Энэ дугаар бүртгэлтэй байна
+    en: This number is already registered
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+acceptance_criteria:
+  - Migration gate appears automatically on first Phase 2 session for Facebook-only users
+  - Phone input validates 8-digit Mongolian phone number format
+  - Submit button is disabled until a valid phone number is entered
+  - Tapping submit shows loading state and disables input
+  - On successful OTP request, the app pushes to OTP Verification (SCR-SHARED-003)
+  - Invalid phone number shows inline error below the input field
+  - Already-registered phone number shows specific error message
+  - Network error shows inline message with retry hint
+  - Skip link allows user to defer migration and proceed to their home screen
+  - Shield icon reinforces the security purpose of the migration
+  - Screen is not dismissible via back gesture; only skip link or successful migration
+api_endpoints:
+  - method: POST
+    path: /auth/otp/request
+    purpose: Request OTP code for migration of Facebook-only account
+  - method: POST
+    path: /auth/otp/verify
+    purpose: Verify OTP to complete phone number migration
+analytics_events:
+  - event: otp_migration_screen_viewed
+    trigger: Migration gate screen becomes visible
+  - event: otp_migration_phone_entered
+    trigger: User finishes entering phone number
+  - event: otp_migration_submitted
+    trigger: User taps Get Code button
+  - event: otp_migration_skipped
+    trigger: User taps 'Do it later' to skip migration
+  - event: otp_migration_error
+    trigger: Phone submission fails (invalid or network error)
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Auth — OTP Migration Gate".
+
+      Migration gate displayed on first Phase 2 session for Facebook-only users
+
+      Visible elements: shield_icon, heading, description, phone_input_empty, submit_button_disabled, skip_link
+
+      Hidden elements: error_message, verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: phone_entry
+    prompt: >-
+      Generate the "phone_entry" state of "Auth — OTP Migration Gate".
+
+      User is entering their phone number
+
+      Visible elements: shield_icon, heading, description, phone_input_active, submit_button_enabled, skip_link
+
+      Hidden elements: error_message, verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: verifying
+    prompt: >-
+      Generate the "verifying" state of "Auth — OTP Migration Gate".
+
+      Phone number submitted; OTP request in progress
+
+      Visible elements: shield_icon, heading, phone_input_disabled, submit_button_loading
+
+      Hidden elements: error_message, skip_link, description
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_invalid_phone
+    prompt: >-
+      Generate the "error_invalid_phone" state of "Auth — OTP Migration Gate".
+
+      Phone number format is invalid or already registered
+
+      Visible elements: shield_icon, heading, description, phone_input_error, invalid_phone_error,
+      submit_button_disabled, skip_link
+
+      Hidden elements: verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Auth — OTP Migration Gate".
+
+      Network error prevents OTP request from completing
+
+      Visible elements: shield_icon, heading, description, phone_input, network_error_message, submit_button, skip_link
+
+      Hidden elements: verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

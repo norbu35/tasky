@@ -1,0 +1,261 @@
+screen_id: SCR-CUST-014
+name: Booking Confirmation
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/bookings/confirm
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-02.yaml
+    - prompts/journeys/JRN-CUST-03.yaml
+    - prompts/journeys/JRN-CUST-05.yaml
+    - prompts/journeys/JRN-CUST-08.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Booking Confirmation" (SCR-CUST-014) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + disclaimer) ->
+  sticky_bottom_cta(confirm)
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Selected Tasker avatar shown in booking summary header
+    • COMP-VERIFICATIONBADGE (default): Verified identity badge on selected Tasker avatar
+    • COMP-STARRATING (display): Selected Tasker's rating displayed in summary
+    • COMP-CARD (outlined): Summary sections for Tasker info, task details, schedule, budget, and liability disclaimer
+    • COMP-BUTTON (primary): Primary confirm booking CTA; secondary back button
+    • COMP-TOAST (error): Error toast when booking confirmation fails
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Booking summary displayed with Tasker info, task details, and disclaimer requiring review
+  Key copy (Mongolian primary):
+    • page_title: "Захиалга баталгаажуулах" (Confirm Booking)
+    • section_tasker: "Гүйцэтгэгч" (Tasker)
+    • section_task: "Даалгавар" (Task)
+    • section_schedule: "Хуваарь" (Schedule)
+    • section_budget: "Төсөв" (Budget)
+    • section_disclaimer: "Хариуцлагын мэдэгдэл" (Liability Disclaimer)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(tasker_summary + task_summary + disclaimer) ->
+    sticky_bottom_cta(confirm)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Selected Tasker avatar shown in booking summary header
+  - component: COMP-VERIFICATIONBADGE
+    variant: default
+    usage: Verified identity badge on selected Tasker avatar
+  - component: COMP-STARRATING
+    variant: display
+    usage: Selected Tasker's rating displayed in summary
+  - component: COMP-CARD
+    variant: outlined
+    usage: Summary sections for Tasker info, task details, schedule, budget, and liability disclaimer
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary confirm booking CTA; secondary back button
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast when booking confirmation fails
+states:
+  - id: default
+    description: Booking summary displayed with Tasker info, task details, and disclaimer requiring review
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: disclaimer_review
+    description: >-
+      User scrolled to and is reading the liability disclaimer; confirm button becomes enabled after disclaimer
+      acknowledgment
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: confirming
+    description: POST /bookings in progress; confirm button shows loading spinner
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: error_network
+    description: POST /bookings failed; error toast with retry action
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden: []
+  - id: add_to_calendar_prompt
+    description: Booking confirmed; prompt to add scheduled time to device calendar before navigating to success
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+copy:
+  - key: page_title
+    mn: Захиалга баталгаажуулах
+    en: Confirm Booking
+  - key: section_tasker
+    mn: Гүйцэтгэгч
+    en: Tasker
+  - key: section_task
+    mn: Даалгавар
+    en: Task
+  - key: section_schedule
+    mn: Хуваарь
+    en: Schedule
+  - key: section_budget
+    mn: Төсөв
+    en: Budget
+  - key: section_disclaimer
+    mn: Хариуцлагын мэдэгдэл
+    en: Liability Disclaimer
+  - key: disclaimer_text
+    mn: >-
+      Tasky нь захиалагч болон гүйцэтгэгчийг холбох платформ юм. Төлбөрийг талууд шууд тохиролцоно. Платформ нь төлбөр
+      зуучлагч биш бөгөөд платформ дээрх захиалгаас гадуурх тохиролцоонд хариуцлага хүлээхгүй
+    en: >-
+      Tasky is a platform connecting Customers and Taskers. Payment is arranged directly between parties. The platform
+      is not a payment intermediary and bears no liability for arrangements made off-platform
+  - key: disclaimer_acknowledge
+    mn: Би энэ нөхцлийг зөвшөөрч байна
+    en: I agree to these terms
+  - key: payment_note
+    mn: Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно
+    en: Payment is arranged directly with the Tasker
+  - key: cta_confirm
+    mn: Захиалга баталгаажуулах
+    en: Confirm Booking
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: error_confirm
+    mn: Захиалга баталгаажуулахад алдаа гарлаа. Дахин оролдоно уу
+    en: Failed to confirm booking. Please try again
+  - key: calendar_prompt_title
+    mn: Календарьт нэмэх үү?
+    en: Add to calendar?
+  - key: calendar_prompt_body
+    mn: Хуваарьт цагийг календарьт нэмж сануулга авна уу
+    en: Add the scheduled time to your calendar for a reminder
+  - key: calendar_cta_add
+    mn: Нэмэх
+    en: Add
+  - key: calendar_cta_skip
+    mn: Алгасах
+    en: Skip
+acceptance_criteria:
+  - Summary shows selected Tasker with avatar, name, VerificationBadge, and StarRating
+  - Task summary shows category, title/description, location, schedule (YYYY.MM.DD), and budget (₮ format)
+  - Liability disclaimer section is prominently displayed and must be explicitly acknowledged per REQ-BOOK-03
+  - Confirm button is disabled until disclaimer is acknowledged
+  - Payment note per REQ-PAY-03 informs that payment is direct between parties
+  - Confirm button enters loading state during POST /bookings
+  - On success, screen replaces to Booking Confirmed Success SCR-CUST-015
+  - Add-to-calendar prompt appears after confirmation success before navigation
+  - On failure, error toast appears with retry action
+  - Back button pops to Applicants List SCR-CUST-011
+  - In Phase 2, booking is final only after Tasker accepts and spends lead-unlock credits per REQ-BOOK-03
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /bookings
+    purpose: Create booking by confirming the selected applicant with liability disclaimer acceptance per REQ-BOOK-03
+analytics_events:
+  - event: booking_confirmation_viewed
+    trigger: Screen becomes visible; includes task_id and selected_tasker_id
+  - event: disclaimer_acknowledged
+    trigger: User checks the disclaimer acknowledgment checkbox
+  - event: booking_confirmed
+    trigger: User taps Confirm Booking and POST /bookings succeeds; includes booking_id
+  - event: booking_confirm_failed
+    trigger: POST /bookings failed; includes error type
+  - event: calendar_add_tapped
+    trigger: User taps Add to calendar after confirmation
+  - event: calendar_skip_tapped
+    trigger: User skips calendar prompt
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Booking Confirmation".
+
+      Booking summary displayed with Tasker info, task details, and disclaimer requiring review
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: disclaimer_review
+    prompt: >-
+      Generate the "disclaimer_review" state of "Booking Confirmation".
+
+      User scrolled to and is reading the liability disclaimer; confirm button becomes enabled after disclaimer
+      acknowledgment
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Booking Confirmation".
+
+      POST /bookings in progress; confirm button shows loading spinner
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Booking Confirmation".
+
+      POST /bookings failed; error toast with retry action
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-CARD, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: add_to_calendar_prompt
+    prompt: >-
+      Generate the "add_to_calendar_prompt" state of "Booking Confirmation".
+
+      Booking confirmed; prompt to add scheduled time to device calendar before navigating to success
+
+      Visible elements: COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

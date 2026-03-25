@@ -1,0 +1,376 @@
+screen_id: SCR-P3-004
+name: Subscription — Tasker Pro
+role:
+  - tasker
+phase: 3+
+template: detail
+route: /(tasker)/subscription
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-07.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Subscription — Tasker Pro" (SCR-P3-004) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(plan_hero + benefits + plan_cards) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Plan cards showing Standard and Premium tiers with pricing and features
+    • COMP-VERIFICATIONBADGE (pro): Pro badge display showing current tier status
+    • COMP-STATUSBADGE (completed): Subscription status badge (active, cancelled, ineligible)
+    • COMP-BUTTON (primary): Primary CTA to subscribe to selected plan
+    • COMP-BUTTON (danger): Danger button to cancel existing subscription
+    • COMP-BUTTON (ghost): Ghost back button
+    • COMP-LOADINGSKELETON (detail): Detail skeleton for initial load
+    • COMP-MODALSHEET (default): Confirmation sheet for subscription actions (subscribe/cancel)
+    • COMP-EMPTYSTATE (no_results): Ineligible state when tasker does not meet Pro badge requirements
+    • COMP-EMPTYSTATE (error): Error state when subscription data fails to load
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Fetching subscription plans and current status from API
+  Key copy (Mongolian primary):
+    • nav_title: "Tasker Pro" (Tasker Pro)
+    • hero_heading: "Tasker Pro болоорой" (Become a Tasker Pro)
+    • hero_description: "Илүү олон захиалга аваарай. Шилдэг давуу эрхүүд таныг хүлээж байна" (Get more bookings with exclusive pro benefits)
+    • benefit_priority: "Тэргүүлсэн байрлал" (Priority placement)
+    • benefit_badge: "Pro тэмдэг" (Pro badge)
+    • benefit_credits: "Нэмэлт кредит" (Bonus credits)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(plan_hero + benefits + plan_cards) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Plan cards showing Standard and Premium tiers with pricing and features
+  - component: COMP-VERIFICATIONBADGE
+    variant: pro
+    usage: Pro badge display showing current tier status
+  - component: COMP-STATUSBADGE
+    variant: completed
+    usage: Subscription status badge (active, cancelled, ineligible)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to subscribe to selected plan
+  - component: COMP-BUTTON
+    variant: danger
+    usage: Danger button to cancel existing subscription
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Ghost back button
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton for initial load
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Confirmation sheet for subscription actions (subscribe/cancel)
+  - component: COMP-EMPTYSTATE
+    variant: no_results
+    usage: Ineligible state when tasker does not meet Pro badge requirements
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when subscription data fails to load
+states:
+  - id: loading_initial
+    description: Fetching subscription plans and current status from API
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: eligible_view_plans
+    description: Tasker is eligible (Pro badge earned); plan options displayed for subscription
+    visible:
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.danger
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: active_standard
+    description: Tasker has an active Standard tier subscription
+    visible:
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.danger
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: active_premium
+    description: Tasker has an active Premium tier subscription
+    visible:
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.danger
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-BUTTON.primary
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: ineligible_no_badge
+    description: Tasker does not have Pro badge (rating < 4.5); cannot subscribe
+    visible:
+      - COMP-EMPTYSTATE.no_results
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.danger
+      - COMP-MODALSHEET
+  - id: cancelled_resubscribe
+    description: Subscription was cancelled; option to resubscribe shown
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.danger
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: error_network
+    description: Failed to load subscription data due to network error
+    visible:
+      - COMP-EMPTYSTATE.error
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+      - COMP-VERIFICATIONBADGE
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-MODALSHEET
+copy:
+  - key: nav_title
+    mn: Tasker Pro
+    en: Tasker Pro
+  - key: hero_heading
+    mn: Tasker Pro болоорой
+    en: Become a Tasker Pro
+  - key: hero_description
+    mn: Илүү олон захиалга аваарай. Шилдэг давуу эрхүүд таныг хүлээж байна
+    en: Get more bookings with exclusive pro benefits
+  - key: benefit_priority
+    mn: Тэргүүлсэн байрлал
+    en: Priority placement
+  - key: benefit_badge
+    mn: Pro тэмдэг
+    en: Pro badge
+  - key: benefit_credits
+    mn: Нэмэлт кредит
+    en: Bonus credits
+  - key: benefit_support
+    mn: Тусгай дэмжлэг
+    en: Priority support
+  - key: plan_standard_name
+    mn: Стандарт
+    en: Standard
+  - key: plan_standard_price
+    mn: ₮{price}/сар
+    en: ₮{price}/month
+  - key: plan_premium_name
+    mn: Премиум
+    en: Premium
+  - key: plan_premium_price
+    mn: ₮{price}/сар
+    en: ₮{price}/month
+  - key: plan_premium_badge
+    mn: Шилдэг
+    en: Best
+  - key: status_active
+    mn: Идэвхтэй
+    en: Active
+  - key: status_cancelled
+    mn: Цуцлагдсан
+    en: Cancelled
+  - key: cta_subscribe
+    mn: Бүртгүүлэх
+    en: Subscribe
+  - key: cta_upgrade
+    mn: Дээшлүүлэх
+    en: Upgrade
+  - key: cta_cancel
+    mn: Бүртгэл цуцлах
+    en: Cancel subscription
+  - key: cta_resubscribe
+    mn: Дахин бүртгүүлэх
+    en: Resubscribe
+  - key: ineligible_headline
+    mn: Шаардлага хангаагүй
+    en: Not eligible yet
+  - key: ineligible_description
+    mn: Tasker Pro бүртгэлд нийцэхийн тулд 4.5 ба түүнээс дээш үнэлгээ шаардлагатай
+    en: You need a rating of 4.5 or above to qualify for Tasker Pro
+  - key: cancel_confirm_title
+    mn: Бүртгэл цуцлах уу?
+    en: Cancel subscription?
+  - key: cancel_confirm_description
+    mn: Бүртгэлээ цуцлавал Pro давуу эрхүүд сарын эцэс хүртэл хүчинтэй байна
+    en: If you cancel, Pro benefits remain active until end of billing period
+  - key: cancel_confirm_cta
+    mn: Тийм, цуцлах
+    en: Yes, cancel
+  - key: cancel_confirm_back
+    mn: Буцах
+    en: Go back
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows detail skeleton matching subscription layout
+  - Eligible state shows Standard and Premium plan cards with pricing and benefit comparison
+  - Premium plan card has a 'Best' badge label
+  - Active Standard state shows current plan status and option to upgrade to Premium
+  - Active Premium state shows current plan status and cancel option only
+  - Cancel action uses danger button variant and requires ModalSheet confirmation
+  - Ineligible state shows locked badge illustration with rating requirement
+  - Cancelled state shows resubscribe option with plan cards
+  - Pro badge (VerificationBadge pro variant) displayed for eligible/active taskers
+  - Plan prices use price_display typography (Manrope bold 20px) with ₮ prefix
+  - Network error shows error state with retry CTA
+  - Back button pops to previous screen
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /subscriptions/plans
+    purpose: Fetch available subscription plans with pricing and benefits
+  - method: POST
+    path: /subscriptions
+    purpose: Subscribe to a plan or upgrade existing subscription
+  - method: DELETE
+    path: /subscriptions
+    purpose: Cancel current subscription
+analytics_events:
+  - event: subscription_screen_viewed
+    trigger: 'Subscription screen loaded (with state: eligible, active, ineligible, cancelled)'
+  - event: subscription_plan_selected
+    trigger: User taps a plan card
+  - event: subscription_subscribed
+    trigger: User successfully subscribes to a plan
+  - event: subscription_upgraded
+    trigger: User upgrades from Standard to Premium
+  - event: subscription_cancel_tapped
+    trigger: User taps cancel button
+  - event: subscription_cancelled
+    trigger: User confirms cancellation
+  - event: subscription_resubscribed
+    trigger: Previously cancelled user resubscribes
+  - event: subscription_ineligible_viewed
+    trigger: Ineligible state shown (rating < 4.5)
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Subscription — Tasker Pro".
+
+      Fetching subscription plans and current status from API
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON, COMP-EMPTYSTATE,
+      COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: eligible_view_plans
+    prompt: >-
+      Generate the "eligible_view_plans" state of "Subscription — Tasker Pro".
+
+      Tasker is eligible (Pro badge earned); plan options displayed for subscription
+
+      Visible elements: COMP-CARD, COMP-VERIFICATIONBADGE, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-STATUSBADGE, COMP-BUTTON.danger, COMP-EMPTYSTATE, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: active_standard
+    prompt: >-
+      Generate the "active_standard" state of "Subscription — Tasker Pro".
+
+      Tasker has an active Standard tier subscription
+
+      Visible elements: COMP-CARD, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON.primary, COMP-BUTTON.danger,
+      COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: active_premium
+    prompt: >-
+      Generate the "active_premium" state of "Subscription — Tasker Pro".
+
+      Tasker has an active Premium tier subscription
+
+      Visible elements: COMP-CARD, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON.danger, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-BUTTON.primary, COMP-EMPTYSTATE, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: ineligible_no_badge
+    prompt: >-
+      Generate the "ineligible_no_badge" state of "Subscription — Tasker Pro".
+
+      Tasker does not have Pro badge (rating < 4.5); cannot subscribe
+
+      Visible elements: COMP-EMPTYSTATE.no_results, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON.primary,
+      COMP-BUTTON.danger, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: cancelled_resubscribe
+    prompt: >-
+      Generate the "cancelled_resubscribe" state of "Subscription — Tasker Pro".
+
+      Subscription was cancelled; option to resubscribe shown
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON.danger,
+      COMP-EMPTYSTATE, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Subscription — Tasker Pro".
+
+      Failed to load subscription data due to network error
+
+      Visible elements: COMP-EMPTYSTATE.error
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD, COMP-VERIFICATIONBADGE, COMP-STATUSBADGE, COMP-BUTTON,
+      COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

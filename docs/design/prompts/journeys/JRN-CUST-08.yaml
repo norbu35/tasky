@@ -1,0 +1,40 @@
+journey_id: JRN-CUST-08
+name: Instant Match (Phase 3+)
+actor:
+  - customer
+phase: 3+
+goal: Auto-match with best Tasker
+entry_screen: SCR-CUST-009
+exit_screens:
+  - SCR-CUST-015
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-009
+    screen_name: Task Detail (Customer)
+    action: Tap 'Match me now'
+    next: SCR-CUST-027
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-027
+    screen_name: Instant Match Customer
+    action: System auto-assigns top Tasker
+    next: SCR-CUST-014
+    lifecycle: TASK-T04 (instant_match_accepted)
+  - step: 3
+    screen_id: SCR-CUST-014
+    screen_name: Booking Confirmation
+    action: Confirm booking
+    next: SCR-CUST-015
+    lifecycle: null
+alternate_paths:
+  - id: JRN-CUST-08-A1
+    name: 3 declines fallback
+    branch_at_step: 2
+    condition: 3 consecutive Tasker declines/timeouts
+    screens:
+      - SCR-CUST-027
+      - SCR-CUST-011
+    outcome: Fall back to open application
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -1,0 +1,46 @@
+journey_id: JRN-TASK-05
+name: Credit Purchase
+actor:
+  - tasker
+phase: '2'
+goal: Buy lead-unlock credits via QPay
+entry_screen: SCR-P2-001
+exit_screens:
+  - SCR-P2-001
+happy_path:
+  - step: 1
+    screen_id: SCR-P2-001
+    screen_name: Credits — Balance & Purchase
+    action: View balance, select credit pack
+    next: SCR-P2-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-P2-002
+    screen_name: Credits — QPay Payment
+    action: Scan QPay QR or deeplink
+    next: SCR-P2-002
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-P2-002
+    screen_name: Credits — QPay Payment
+    action: Payment confirmed
+    next: SCR-P2-001
+    lifecycle: null
+alternate_paths:
+  - id: JRN-TASK-05-A1
+    name: Payment fails
+    branch_at_step: 3
+    condition: QPay error
+    screens:
+      - SCR-P2-002
+    outcome: Payment failed state, retry
+  - id: JRN-TASK-05-A2
+    name: View transaction history
+    branch_at_step: 1
+    condition: Tap history
+    screens:
+      - SCR-P2-003
+    outcome: View credit transaction log
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

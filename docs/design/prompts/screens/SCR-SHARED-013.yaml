@@ -1,0 +1,309 @@
+screen_id: SCR-SHARED-013
+name: Profile — Edit Profile
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: form_wizard
+route: /profile/edit
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-05.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Profile — Edit Profile" (SCR-SHARED-013) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(avatar_upload + form_fields) ->
+  bottom_nav(cancel + save)
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Editable avatar with camera overlay icon; tapping triggers photo picker
+    • COMP-PHOTOPICKER (default): Avatar photo selection from camera or gallery
+    • COMP-FORMFIELD (default): Wrapper for each editable profile field with label and inline error
+    • COMP-INPUT (default): Text input fields for name, bio, and phone number
+    • COMP-INPUT (multiline): Multiline text input for bio/about me field
+    • COMP-BUTTON (primary): Save button in bottom navigation bar
+    • COMP-BUTTON (ghost): Cancel button in bottom navigation bar
+    • COMP-LOADINGSKELETON (detail): Form skeleton while initial profile data loads
+    • COMP-TOAST (success): Success toast after profile saved; error toast on save failure
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Form loaded with current profile data pre-filled in fields
+  Key copy (Mongolian primary):
+    • nav_title: "Профайл засах" (Edit Profile)
+    • label_name: "Нэр" (Name)
+    • placeholder_name: "Нэрээ оруулна уу" (Enter your name)
+    • label_bio: "Миний тухай" (About me)
+    • placeholder_bio: "Өөрийнхөө тухай бичнэ үү" (Write about yourself)
+    • label_phone: "Утасны дугаар" (Phone number)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(avatar_upload + form_fields) -> bottom_nav(cancel + save)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Editable avatar with camera overlay icon; tapping triggers photo picker
+  - component: COMP-PHOTOPICKER
+    variant: default
+    usage: Avatar photo selection from camera or gallery
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wrapper for each editable profile field with label and inline error
+  - component: COMP-INPUT
+    variant: default
+    usage: Text input fields for name, bio, and phone number
+  - component: COMP-INPUT
+    variant: multiline
+    usage: Multiline text input for bio/about me field
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Save button in bottom navigation bar
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Cancel button in bottom navigation bar
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Form skeleton while initial profile data loads
+  - component: COMP-TOAST
+    variant: success
+    usage: Success toast after profile saved; error toast on save failure
+states:
+  - id: default
+    description: Form loaded with current profile data pre-filled in fields
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: editing
+    description: User has modified one or more fields; save button becomes enabled
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: uploading_avatar
+    description: Avatar photo is being uploaded via POST /users/me/avatar/upload-url; spinner overlays avatar
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: saving
+    description: PUT /users/me is in flight; save button shows loading spinner
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: validation_error
+    description: One or more fields failed client-side validation; inline errors shown below affected fields
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: success
+    description: Profile saved successfully; success toast shown, navigates back to My Profile
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: Save or avatar upload failed due to network error; error toast with retry
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Профайл засах
+    en: Edit Profile
+  - key: label_name
+    mn: Нэр
+    en: Name
+  - key: placeholder_name
+    mn: Нэрээ оруулна уу
+    en: Enter your name
+  - key: label_bio
+    mn: Миний тухай
+    en: About me
+  - key: placeholder_bio
+    mn: Өөрийнхөө тухай бичнэ үү
+    en: Write about yourself
+  - key: label_phone
+    mn: Утасны дугаар
+    en: Phone number
+  - key: placeholder_phone
+    mn: Утасны дугаараа оруулна уу
+    en: Enter phone number
+  - key: label_avatar
+    mn: Зураг солих
+    en: Change photo
+  - key: cta_save
+    mn: Хадгалах
+    en: Save
+  - key: cta_cancel
+    mn: Болих
+    en: Cancel
+  - key: error_name_required
+    mn: Нэрээ оруулна уу
+    en: Name is required
+  - key: error_name_too_long
+    mn: Нэр хэт урт байна
+    en: Name is too long
+  - key: error_bio_too_long
+    mn: Тайлбар хэт урт байна
+    en: Bio is too long
+  - key: toast_save_success
+    mn: Профайл амжилттай хадгалагдлаа
+    en: Profile saved successfully
+  - key: toast_save_error
+    mn: Хадгалахад алдаа гарлаа. Дахин оролдоно уу.
+    en: Failed to save. Please try again.
+  - key: toast_avatar_error
+    mn: Зураг оруулахад алдаа гарлаа
+    en: Failed to upload photo
+acceptance_criteria:
+  - Form pre-fills with current profile data from GET /users/me
+  - Save button is disabled until at least one field is modified
+  - Tapping avatar triggers camera/gallery picker for new photo
+  - Avatar upload shows progress spinner overlay on the avatar image
+  - Inline validation errors appear below the affected field on blur
+  - Name field is required; empty name shows error 'Нэрээ оруулна уу'
+  - Save button shows loading spinner during PUT /users/me
+  - Success toast appears and screen navigates back (pop) to SCR-SHARED-012 on save
+  - Network error on save shows error toast with retry action
+  - Cancel or back navigates (pop) to SCR-SHARED-012 without saving
+  - Keyboard-aware scrolling prevents form fields from being hidden behind keyboard
+  - All form labels render at 14px minimum (label typography)
+  - All input text renders at 16px minimum (body_default typography)
+api_endpoints:
+  - method: PUT
+    path: /users/me
+    purpose: Update the authenticated user's profile fields (name, bio, phone)
+  - method: POST
+    path: /users/me/avatar/upload-url
+    purpose: Request a presigned URL for avatar image upload to S3
+analytics_events:
+  - event: profile_edit_started
+    trigger: Screen loads with pre-filled form data
+  - event: profile_avatar_changed
+    trigger: User selects a new avatar photo
+  - event: profile_save_attempted
+    trigger: User taps Save button
+  - event: profile_save_success
+    trigger: PUT /users/me returns 200
+  - event: profile_save_failed
+    trigger: PUT /users/me returns an error
+  - event: profile_edit_cancelled
+    trigger: User taps Cancel or back button without saving
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Profile — Edit Profile".
+
+      Form loaded with current profile data pre-filled in fields
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: editing
+    prompt: >-
+      Generate the "editing" state of "Profile — Edit Profile".
+
+      User has modified one or more fields; save button becomes enabled
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploading_avatar
+    prompt: >-
+      Generate the "uploading_avatar" state of "Profile — Edit Profile".
+
+      Avatar photo is being uploaded via POST /users/me/avatar/upload-url; spinner overlays avatar
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: saving
+    prompt: >-
+      Generate the "saving" state of "Profile — Edit Profile".
+
+      PUT /users/me is in flight; save button shows loading spinner
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_error
+    prompt: >-
+      Generate the "validation_error" state of "Profile — Edit Profile".
+
+      One or more fields failed client-side validation; inline errors shown below affected fields
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Profile — Edit Profile".
+
+      Profile saved successfully; success toast shown, navigates back to My Profile
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Profile — Edit Profile".
+
+      Save or avatar upload failed due to network error; error toast with retry
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

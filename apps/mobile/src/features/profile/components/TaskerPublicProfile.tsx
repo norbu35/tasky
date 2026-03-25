@@ -154,7 +154,10 @@ export function TaskerPublicProfile() {
         </View>
 
         {/* CTA */}
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/create')}>
+        <Pressable
+          style={styles.ctaButton}
+          onPress={() => router.push('/(customer)/tasks/new/category')}
+        >
           <LinearGradient
             colors={[colors.primaryDeep, colors.primary]}
             start={{ x: 0, y: 0 }}

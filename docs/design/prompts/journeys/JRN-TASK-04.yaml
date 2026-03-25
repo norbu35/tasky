@@ -1,0 +1,52 @@
+journey_id: JRN-TASK-04
+name: Manage Active Booking (Tasker)
+actor:
+  - tasker
+phase: 0-1
+goal: Complete assigned work and mark done
+entry_screen: SCR-TASK-012
+exit_screens:
+  - SCR-SHARED-017
+happy_path:
+  - step: 1
+    screen_id: SCR-TASK-012
+    screen_name: Tasker Bookings (My Jobs)
+    action: View My Jobs list
+    next: SCR-TASK-013
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-TASK-013
+    screen_name: Booking Detail (Tasker)
+    action: View booking detail with exact address
+    next: SCR-TASK-013
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-TASK-013
+    screen_name: Booking Detail (Tasker)
+    action: Tap 'Mark Done'
+    next: SCR-TASK-013
+    lifecycle: BOOK-T02 (tasker_marks_done)
+  - step: 4
+    screen_id: SCR-TASK-013
+    screen_name: Booking Detail (Tasker)
+    action: Wait for customer confirmation
+    next: SCR-SHARED-017
+    lifecycle: BOOK-T03 (customer_confirms_completion)
+alternate_paths:
+  - id: JRN-TASK-04-A1
+    name: Tasker cancels
+    branch_at_step: 2
+    condition: Tasker cancels booking
+    screens:
+      - SCR-TASK-015
+    outcome: Strike warning, booking cancelled, task re-opens
+  - id: JRN-TASK-04-A2
+    name: No-show (Tasker flags customer)
+    branch_at_step: 2
+    condition: Customer doesn't show
+    screens:
+      - SCR-TASK-014
+    outcome: Flag no-show after 15min
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

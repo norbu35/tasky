@@ -1,0 +1,166 @@
+screen_id: SCR-CUST-019
+name: Booking Timeline
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/bookings/:bookingId/timeline
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Booking Timeline" (SCR-CUST-019) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(timeline_events)
+
+  Components used:
+    • COMP-TIMELINEEVENT (default): Vertical timeline entries showing immutable booking event history (created, assigned, reschedule requests, mark done, completed, cancelled, no-show)
+    • COMP-LOADINGSKELETON (detail): Skeleton placeholders matching timeline layout during data fetch
+    • COMP-TOAST (error): Error toast on network failure
+  This screen has 3 states — generate the primary/default state:
+    Primary state: First load; skeleton timeline shown while GET /bookings/:id/timeline is in progress
+  Key copy (Mongolian primary):
+    • page_title: "Захиалгын түүх" (Booking Timeline)
+    • event_booking_created: "Захиалга үүсгэсэн" (Booking created)
+    • event_booking_assigned: "Гүйцэтгэгч томилогдсон" (Tasker assigned)
+    • event_reschedule_requested: "Цаг өөрчлөх хүсэлт илгээсэн" (Reschedule requested)
+    • event_reschedule_accepted: "Цаг өөрчлөлт зөвшөөрсөн" (Reschedule accepted)
+    • event_reschedule_declined: "Цаг өөрчлөлт татгалзсан" (Reschedule declined)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(timeline_events)
+components:
+  - component: COMP-TIMELINEEVENT
+    variant: default
+    usage: >-
+      Vertical timeline entries showing immutable booking event history (created, assigned, reschedule requests, mark
+      done, completed, cancelled, no-show)
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Skeleton placeholders matching timeline layout during data fetch
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast on network failure
+states:
+  - id: loading_initial
+    description: First load; skeleton timeline shown while GET /bookings/:id/timeline is in progress
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-TIMELINEEVENT
+      - COMP-TOAST
+  - id: loaded
+    description: Timeline events fetched and rendered as vertical connected nodes
+    visible:
+      - COMP-TIMELINEEVENT
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: error_network
+    description: Network error on timeline fetch; error toast with retry
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-TIMELINEEVENT
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Захиалгын түүх
+    en: Booking Timeline
+  - key: event_booking_created
+    mn: Захиалга үүсгэсэн
+    en: Booking created
+  - key: event_booking_assigned
+    mn: Гүйцэтгэгч томилогдсон
+    en: Tasker assigned
+  - key: event_reschedule_requested
+    mn: Цаг өөрчлөх хүсэлт илгээсэн
+    en: Reschedule requested
+  - key: event_reschedule_accepted
+    mn: Цаг өөрчлөлт зөвшөөрсөн
+    en: Reschedule accepted
+  - key: event_reschedule_declined
+    mn: Цаг өөрчлөлт татгалзсан
+    en: Reschedule declined
+  - key: event_reschedule_expired
+    mn: Цаг өөрчлөх хүсэлт дууссан
+    en: Reschedule request expired
+  - key: event_tasker_marked_done
+    mn: Гүйцэтгэгч дуусгасан гэж тэмдэглэсэн
+    en: Tasker marked as done
+  - key: event_customer_confirmed
+    mn: Хэрэглэгч баталгаажуулсан
+    en: Customer confirmed completion
+  - key: event_cancelled
+    mn: Захиалга цуцалсан
+    en: Booking cancelled
+  - key: event_no_show
+    mn: Ирээгүй гэж тэмдэглэсэн
+    en: Flagged as no-show
+  - key: error_toast
+    mn: Түүх ачааллахад алдаа гарлаа
+    en: Failed to load timeline
+acceptance_criteria:
+  - Initial load shows skeleton placeholders matching timeline layout
+  - Timeline renders as a vertical connected list with dots and lines
+  - Current/latest event is highlighted with primary color dot
+  - Past events show default dots; future events are dimmed
+  - Each event shows event type label, timestamp, and optional description
+  - Timeline events are immutable and include reschedule request, accept, decline, and expiry actions per REQ-BOOK-13
+  - Timestamps display in YYYY.MM.DD HH:MM format per Mongolian convention
+  - Back button navigates via pop to Booking Detail (SCR-CUST-017)
+  - Network error shows error toast with retry action
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /bookings/:id/timeline
+    purpose: Fetch immutable ordered list of booking lifecycle events with timestamps
+analytics_events:
+  - event: booking_timeline_viewed
+    trigger: Screen becomes visible with timeline data loaded
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Booking Timeline".
+
+      First load; skeleton timeline shown while GET /bookings/:id/timeline is in progress
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-TIMELINEEVENT, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Booking Timeline".
+
+      Timeline events fetched and rendered as vertical connected nodes
+
+      Visible elements: COMP-TIMELINEEVENT
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Booking Timeline".
+
+      Network error on timeline fetch; error toast with retry
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-TIMELINEEVENT, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

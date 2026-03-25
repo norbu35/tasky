@@ -28,9 +28,9 @@ export function LoginForm() {
     verifyOtp.mutate({ phone, code });
   };
 
-  const handleDevBypass = () => {
-    // Dev Mode Bypass - Automatically injects a superuser testing footprint
-    devLogin.mutate({ phone: '+97699999999', role: 'CUSTOMER' });
+  const handleDevLoginAs = (role: 'CUSTOMER' | 'TASKER') => {
+    const phone = role === 'CUSTOMER' ? '+97699999999' : '+97699988888';
+    devLogin.mutate({ phone, role });
   };
 
   const handleFacebookLogin = () => {
@@ -64,13 +64,22 @@ export function LoginForm() {
           />
 
           {__DEV__ && (
-            <Button
-              label="Developer Bypass Login"
-              variant="secondary"
-              onPress={handleDevBypass}
-              style={styles.devButton}
-              isLoading={busy}
-            />
+            <>
+              <Button
+                label="Dev: Login as Customer"
+                variant="secondary"
+                onPress={() => handleDevLoginAs('CUSTOMER')}
+                style={styles.devButton}
+                isLoading={busy}
+              />
+              <Button
+                label="Dev: Login as Tasker"
+                variant="secondary"
+                onPress={() => handleDevLoginAs('TASKER')}
+                style={styles.devButtonTasker}
+                isLoading={busy}
+              />
+            </>
           )}
         </View>
       )}
@@ -153,6 +162,10 @@ const styles = StyleSheet.create({
   },
   devButton: {
     marginTop: spacing['2xl'],
+    backgroundColor: colors.secondary,
+  },
+  devButtonTasker: {
+    marginTop: spacing.sm,
     backgroundColor: colors.secondary,
   },
   divider: {

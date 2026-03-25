@@ -1,0 +1,66 @@
+journey_id: JRN-CUST-04
+name: Manage Active Booking
+actor:
+  - customer
+phase: 0-1
+goal: Track booking, handle reschedule, confirm completion
+entry_screen: SCR-CUST-016
+exit_screens:
+  - SCR-CUST-017
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-016
+    screen_name: Customer Bookings List
+    action: View bookings list
+    next: SCR-CUST-017
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-017
+    screen_name: Booking Detail (Customer)
+    action: View booking detail
+    next: SCR-CUST-017
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-017
+    screen_name: Booking Detail (Customer)
+    action: Tasker marks done → confirm completion
+    next: SCR-CUST-018
+    lifecycle: BOOK-T02 (tasker_marks_done)
+  - step: 4
+    screen_id: SCR-CUST-018
+    screen_name: Confirm Completion — Decision
+    action: Tap 'Confirm Complete'
+    next: SCR-SHARED-017
+    lifecycle: BOOK-T03 (customer_confirms_completion)
+alternate_paths:
+  - id: JRN-CUST-04-A1
+    name: Reschedule
+    branch_at_step: 2
+    condition: Customer requests reschedule
+    screens:
+      - SCR-CUST-020
+    outcome: Submit request, wait for Tasker response
+  - id: JRN-CUST-04-A2
+    name: Customer cancels
+    branch_at_step: 2
+    condition: Customer cancels booking
+    screens:
+      - SCR-CUST-022
+    outcome: Free or late cancel warning
+  - id: JRN-CUST-04-A3
+    name: No-show
+    branch_at_step: 2
+    condition: Tasker doesn't show up
+    screens:
+      - SCR-CUST-021
+    outcome: Flag no-show after 15min
+  - id: JRN-CUST-04-A4
+    name: View timeline
+    branch_at_step: 2
+    condition: Customer taps timeline
+    screens:
+      - SCR-CUST-019
+    outcome: View immutable booking event history
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

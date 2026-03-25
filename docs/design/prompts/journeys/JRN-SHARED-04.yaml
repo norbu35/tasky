@@ -1,0 +1,41 @@
+journey_id: JRN-SHARED-04
+name: Messaging
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: Exchange messages about a booking
+entry_screen: SCR-SHARED-010
+exit_screens:
+  - SCR-SHARED-011
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-010
+    screen_name: Inbox — Conversation List
+    action: Open conversation list
+    next: SCR-SHARED-011
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-011
+    screen_name: Inbox — Chat Detail
+    action: Read/send messages
+    next: SCR-SHARED-011
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-04-A1
+    name: Phone number detected
+    branch_at_step: 2
+    condition: Message contains phone pattern
+    screens:
+      - SCR-SHARED-011
+    outcome: Phone-number flagging warning shown
+  - id: JRN-SHARED-04-A2
+    name: Empty inbox
+    branch_at_step: 1
+    condition: No conversations
+    screens:
+      - SCR-SHARED-010
+    outcome: Empty state with guidance
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

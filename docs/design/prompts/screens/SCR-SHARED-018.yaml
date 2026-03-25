@@ -1,0 +1,123 @@
+screen_id: SCR-SHARED-018
+name: Review Reminder
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-07.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Review Reminder" (SCR-SHARED-018) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + icon + title + body_text + cta_button)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet overlay for review reminder; non-blocking, user can dismiss
+    • COMP-BUTTON (primary): Primary CTA to navigate to review form
+    • COMP-BUTTON (ghost): Secondary dismiss button to postpone review
+  This screen has 2 states — generate the primary/default state:
+    Primary state: First reminder shown 24 hours after booking completion; gentle tone encouraging review
+  Key copy (Mongolian primary):
+    • title_24h: "Сэтгэгдэл үлдээнэ үү" (Leave a review)
+    • body_24h: "Таны захиалга дуусснаас хойш нэг хоног өнгөрлөө. Гүйцэтгэгчдээ үнэлгээ өгнө үү!" (It's been a day since your booking completed. Please rate your Tasker!)
+    • title_72h: "Сэтгэгдэл шаардлагатай" (Review required)
+    • body_72h: "Та сэтгэгдлээ үлдээгээгүй байна. Шинэ даалгавар нийтлэх эсвэл ажилд орохын тулд сэтгэгдлээ бичнэ үү." (You haven't left your review yet. Please submit your review to continue posting tasks or applying to jobs.)
+    • cta_review_now: "Одоо үнэлэх" (Review Now)
+    • cta_later: "Дараа" (Later)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + icon + title + body_text + cta_button)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet overlay for review reminder; non-blocking, user can dismiss
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to navigate to review form
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary dismiss button to postpone review
+states:
+  - id: reminder_24h
+    description: First reminder shown 24 hours after booking completion; gentle tone encouraging review
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: reminder_72h
+    description: Second reminder shown 72 hours after booking completion; more urgent tone warning about review requirement
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: title_24h
+    mn: Сэтгэгдэл үлдээнэ үү
+    en: Leave a review
+  - key: body_24h
+    mn: Таны захиалга дуусснаас хойш нэг хоног өнгөрлөө. Гүйцэтгэгчдээ үнэлгээ өгнө үү!
+    en: It's been a day since your booking completed. Please rate your Tasker!
+  - key: title_72h
+    mn: Сэтгэгдэл шаардлагатай
+    en: Review required
+  - key: body_72h
+    mn: Та сэтгэгдлээ үлдээгээгүй байна. Шинэ даалгавар нийтлэх эсвэл ажилд орохын тулд сэтгэгдлээ бичнэ үү.
+    en: You haven't left your review yet. Please submit your review to continue posting tasks or applying to jobs.
+  - key: cta_review_now
+    mn: Одоо үнэлэх
+    en: Review Now
+  - key: cta_later
+    mn: Дараа
+    en: Later
+acceptance_criteria:
+  - Sheet appears as a non-blocking bottom sheet overlay on any screen 24h after booking completion
+  - 24h reminder uses gentle, encouraging tone
+  - 72h reminder uses more urgent tone mentioning that review is required to continue using the app
+  - Tapping 'Одоо үнэлэх' navigates (push) to SCR-SHARED-017 with the pending booking_id
+  - Tapping 'Дараа' or drag-to-dismiss closes the sheet; reminder will re-appear on next app session
+  - Sheet handle bar is visible for drag-to-dismiss gesture
+  - Scrim uses branded primaryDeep at 35% opacity
+  - This is a bottom sheet overlay, not a standalone route — it appears on top of the current screen
+  - 72h reminder cannot be permanently dismissed; it will keep appearing until the review is submitted
+api_endpoints: []
+analytics_events:
+  - event: review_reminder_shown
+    trigger: 'Review reminder bottom sheet appears (with reminder_type: 24h or 72h)'
+  - event: review_reminder_accepted
+    trigger: User taps 'Review Now' to go to review form
+  - event: review_reminder_dismissed
+    trigger: User taps 'Later' or drags sheet to dismiss
+state_prompts:
+  - state_id: reminder_24h
+    prompt: >-
+      Generate the "reminder_24h" state of "Review Reminder".
+
+      First reminder shown 24 hours after booking completion; gentle tone encouraging review
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: reminder_72h
+    prompt: >-
+      Generate the "reminder_72h" state of "Review Reminder".
+
+      Second reminder shown 72 hours after booking completion; more urgent tone warning about review requirement
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

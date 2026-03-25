@@ -1,0 +1,114 @@
+screen_id: SCR-CUST-018
+name: Confirm Completion — Decision
+role:
+  - customer
+phase: 0-1
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Confirm Completion — Decision" (SCR-CUST-018) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + title + confirmation_text + primary_action + secondary_action)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet overlay for completion confirmation decision
+    • COMP-BUTTON (primary): Primary confirm button and secondary cancel button inside the modal sheet
+  This screen has 2 states — generate the primary/default state:
+    Primary state: Modal sheet appears asking customer to confirm that the tasker's work is complete; shows confirmation text and two CTAs
+  Key copy (Mongolian primary):
+    • title: "Ажил дууссаныг баталгаажуулах уу?" (Confirm the work is complete?)
+    • description: "Баталгаажуулсны дараа та үнэлгээ өгөх боломжтой болно. Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно." (After confirming, you can leave a review. Payment is settled directly with the Tasker.)
+    • cta_confirm: "Баталгаажуулах" (Confirm Complete)
+    • cta_cancel: "Буцах" (Go Back)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + title + confirmation_text + primary_action + secondary_action)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet overlay for completion confirmation decision
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary confirm button and secondary cancel button inside the modal sheet
+states:
+  - id: default
+    description: >-
+      Modal sheet appears asking customer to confirm that the tasker's work is complete; shows confirmation text and two
+      CTAs
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: confirming
+    description: User tapped confirm; PUT /bookings/:id/complete in progress; primary button shows loading spinner
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: title
+    mn: Ажил дууссаныг баталгаажуулах уу?
+    en: Confirm the work is complete?
+  - key: description
+    mn: Баталгаажуулсны дараа та үнэлгээ өгөх боломжтой болно. Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно.
+    en: After confirming, you can leave a review. Payment is settled directly with the Tasker.
+  - key: cta_confirm
+    mn: Баталгаажуулах
+    en: Confirm Complete
+  - key: cta_cancel
+    mn: Буцах
+    en: Go Back
+acceptance_criteria:
+  - Modal sheet slides up with branded scrim overlay
+  - Title and description text render in Mongolian Cyrillic at 16px minimum
+  - Tapping 'Confirm Complete' triggers PUT /bookings/:id/complete and shows loading state on button
+  - On success, sheet dismisses and navigates via replace to Review Form (SCR-SHARED-017)
+  - Tapping 'Go Back' dismisses the sheet and returns to Booking Detail (SCR-CUST-017)
+  - Drag-to-dismiss via handle bar is supported
+  - Payment settlement note is included in the confirmation description for Phase 0-2
+api_endpoints:
+  - method: PUT
+    path: /bookings/:id/complete
+    purpose: Mark booking as completed by customer, transitioning status to COMPLETED
+analytics_events:
+  - event: confirm_completion_shown
+    trigger: Modal sheet appears after user taps Confirm Complete on booking detail
+  - event: confirm_completion_confirmed
+    trigger: User taps 'Confirm Complete' button inside the modal
+  - event: confirm_completion_cancelled
+    trigger: User taps 'Go Back' or dismisses the sheet
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Confirm Completion — Decision".
+
+      Modal sheet appears asking customer to confirm that the tasker's work is complete; shows confirmation text and two
+      CTAs
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: confirming
+    prompt: >-
+      Generate the "confirming" state of "Confirm Completion — Decision".
+
+      User tapped confirm; PUT /bookings/:id/complete in progress; primary button shows loading spinner
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

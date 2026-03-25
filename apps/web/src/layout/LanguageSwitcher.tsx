@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/ui/button';
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ className }: { className?: string }) {
   const { i18n } = useTranslation();
 
   const toggleLanguage = () => {
@@ -14,7 +14,7 @@ export function LanguageSwitcher() {
       variant="ghost"
       size="sm"
       onClick={toggleLanguage}
-      className="min-w-16 h-8 px-2 flex items-center gap-1.5"
+      className={`min-w-16 h-8 px-2 flex items-center gap-1.5${className ? ` ${className}` : ''}`}
     >
       <span className="text-xl leading-none pt-0.5">{i18n.language === 'en' ? '🇬🇧' : '🇲🇳'}</span>
       <span className="font-semibold">{i18n.language === 'en' ? 'EN' : 'МН'}</span>

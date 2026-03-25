@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
@@ -9,6 +10,14 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
+// Ulaanbaatar city centre
+const UB_CENTER = { latitude: 47.9184, longitude: 106.9177 };
+
+function parseCoordinateParam(value?: string): number | null {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 export default function LocationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -16,10 +25,27 @@ export default function LocationScreen() {
     categoryId: string;
     description: string;
     photos: string;
+    location?: string;
+    lat?: string;
+    lng?: string;
   }>();
-  const [locationText, setLocationText] = useState('');
+  const initialLat = parseCoordinateParam(params.lat);
+  const initialLng = parseCoordinateParam(params.lng);
+  const [locationText, setLocationText] = useState(params.location ?? '');
+  const [pin, setPin] = useState<{ latitude: number; longitude: number } | null>(
+    initialLat !== null && initialLng !== null
+      ? { latitude: initialLat, longitude: initialLng }
+      : null,
+  );
+  const [pinError, setPinError] = useState('');
 
   const handleNext = () => {
+    if (!pin) {
+      setPinError(t('customer.postTask.pinRequired', 'Pin the task location on the map'));
+      return;
+    }
+
+    setPinError('');
     router.push({
       pathname: '/(customer)/tasks/new/schedule',
       params: {
@@ -27,6 +53,8 @@ export default function LocationScreen() {
         description: params.description,
         photos: params.photos,
         location: locationText,
+        lat: String(pin.latitude),
+        lng: String(pin.longitude),
       },
     });
   };
@@ -45,6 +73,38 @@ export default function LocationScreen() {
       testID="location-screen"
     >
       <Text style={styles.title}>{t('customer.postTask.locationTitle', 'Where?')}</Text>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            ...UB_CENTER,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+          onPress={(e) => {
+            setPin(e.nativeEvent.coordinate);
+            if (pinError) {
+              setPinError('');
+            }
+          }}
+          testID="location-map"
+        >
+          <UrlTile
+            urlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maximumZ={19}
+            flipY={false}
+          />
+          {pin && <Marker coordinate={pin} />}
+        </MapView>
+        <Text style={[styles.mapHint, pinError ? styles.mapHintError : null]}>
+          {pinError ||
+            (pin
+              ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
+              : t('customer.postTask.tapToPin', 'Tap the map to pin the location'))}
+        </Text>
+      </View>
+
       <FormField
         label={t('customer.postTask.locationLabel', 'Location details')}
         helperText={t('customer.postTask.locationHelper', 'Provide details helpful for the Tasker')}
@@ -72,6 +132,25 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '600',
     color: colors.primaryDeep,
+    marginBottom: spacing.md,
+  },
+  mapContainer: {
+    marginBottom: spacing.lg,
+  },
+  map: {
+    width: '100%',
+    height: 220,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  mapHint: {
+    fontSize: typography.caption,
+    color: colors.mutedForeground,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+  },
+  mapHintError: {
+    color: colors.danger,
   },
   privacyNote: {
     fontSize: typography.caption,

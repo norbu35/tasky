@@ -1,0 +1,61 @@
+journey_id: JRN-TASK-02
+name: Browse & Apply to Task
+actor:
+  - tasker
+phase: 0-1
+goal: Find and apply to a task
+entry_screen: SCR-TASK-001
+exit_screens:
+  - SCR-TASK-011
+happy_path:
+  - step: 1
+    screen_id: SCR-TASK-001
+    screen_name: Browse — Task Feed
+    action: Browse task feed, filter by category/distance
+    next: SCR-TASK-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-TASK-002
+    screen_name: Task Detail (Tasker)
+    action: View task detail
+    next: SCR-TASK-002
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-TASK-002
+    screen_name: Task Detail (Tasker)
+    action: Tap 'Apply'
+    next: SCR-TASK-011
+    lifecycle: APP-T01 (tasker_applies)
+alternate_paths:
+  - id: JRN-TASK-02-A1
+    name: Unverified
+    branch_at_step: 3
+    condition: Tasker not verified
+    screens:
+      - SCR-TASK-002
+      - SCR-TASK-003
+    outcome: Redirected to verification gate
+  - id: JRN-TASK-02-A2
+    name: Application cap reached
+    branch_at_step: 3
+    condition: Task at max applications
+    screens:
+      - SCR-TASK-002
+    outcome: Cap reached state shown
+  - id: JRN-TASK-02-A3
+    name: Already applied
+    branch_at_step: 3
+    condition: Tasker already applied
+    screens:
+      - SCR-TASK-002
+    outcome: Already applied state shown
+  - id: JRN-TASK-02-A4
+    name: Empty feed
+    branch_at_step: 1
+    condition: No tasks in area
+    screens:
+      - SCR-TASK-001
+    outcome: Empty activation state
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

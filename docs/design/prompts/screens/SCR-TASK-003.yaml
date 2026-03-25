@@ -1,0 +1,112 @@
+screen_id: SCR-TASK-003
+name: Verification Gate
+role:
+  - tasker
+phase: 0-1
+template: auth
+route: /(tasker)/verification
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-06.yaml
+    - prompts/journeys/JRN-TASK-01.yaml
+    - prompts/journeys/JRN-TASK-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification Gate" (SCR-TASK-003) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(illustration + heading + description + benefits_list) ->
+  bottom_cta(get_verified_button + maybe_later_link)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA to begin the verification process
+    • COMP-BUTTON (ghost): Secondary ghost link to skip and return to browsing
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Encouraging interstitial screen explaining why verification matters and its benefits
+  Key copy (Mongolian primary):
+    • heading: "Баталгаажуулалт хийж, ажил аваарай!" (Get verified and start earning!)
+    • description: "Баталгаажсан гүйцэтгэгчид илүү олон захиалга авах боломжтой. Баталгаажуулалт нь 5 минут л авна." (Verified taskers receive more bookings. Verification takes only 5 minutes.)
+    • benefit_trust: "Захиалагчид танд итгэлтэй хандана" (Customers trust you more)
+    • benefit_apply: "Даалгавруудад шууд анкет илгээх боломжтой" (Apply to tasks instantly)
+    • benefit_priority: "Хайлтад илүү дээгүүр гарна" (Rank higher in search results)
+    • get_verified_cta: "Баталгаажуулалт эхлүүлэх" (Start Verification)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: >-
+    safe_area -> centered_content(illustration + heading + description + benefits_list) ->
+    bottom_cta(get_verified_button + maybe_later_link)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to begin the verification process
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary ghost link to skip and return to browsing
+states:
+  - id: encouraging_interstitial
+    description: Encouraging interstitial screen explaining why verification matters and its benefits
+    visible:
+      - illustration
+      - heading
+      - description
+      - benefits_list
+      - get_verified_button
+      - maybe_later_link
+    hidden: []
+copy:
+  - key: heading
+    mn: Баталгаажуулалт хийж, ажил аваарай!
+    en: Get verified and start earning!
+  - key: description
+    mn: Баталгаажсан гүйцэтгэгчид илүү олон захиалга авах боломжтой. Баталгаажуулалт нь 5 минут л авна.
+    en: Verified taskers receive more bookings. Verification takes only 5 minutes.
+  - key: benefit_trust
+    mn: Захиалагчид танд итгэлтэй хандана
+    en: Customers trust you more
+  - key: benefit_apply
+    mn: Даалгавруудад шууд анкет илгээх боломжтой
+    en: Apply to tasks instantly
+  - key: benefit_priority
+    mn: Хайлтад илүү дээгүүр гарна
+    en: Rank higher in search results
+  - key: get_verified_cta
+    mn: Баталгаажуулалт эхлүүлэх
+    en: Start Verification
+  - key: maybe_later
+    mn: Дараа хийе
+    en: Maybe later
+acceptance_criteria:
+  - Screen displays encouraging illustration, heading, and benefit list
+  - Tapping 'Баталгаажуулалт эхлүүлэх' navigates to Verification Consent (SCR-TASK-004)
+  - Tapping 'Дараа хийе' navigates back to Task Detail (SCR-TASK-002)
+  - Comfortable density with ample spacing for trust-building messaging
+  - Benefits list uses checkmark icons next to each benefit
+  - This is the tasker's first trust-building experience in the verification flow
+  - Screen is accessible from Task Detail (unverified apply) and Settings (role switch)
+api_endpoints: []
+analytics_events:
+  - event: verification_gate_viewed
+    trigger: Verification Gate screen becomes visible
+  - event: verification_gate_start_tapped
+    trigger: User taps 'Баталгаажуулалт эхлүүлэх' to begin verification
+  - event: verification_gate_skipped
+    trigger: User taps 'Дараа хийе' to skip verification
+state_prompts:
+  - state_id: encouraging_interstitial
+    prompt: >-
+      Generate the "encouraging_interstitial" state of "Verification Gate".
+
+      Encouraging interstitial screen explaining why verification matters and its benefits
+
+      Visible elements: illustration, heading, description, benefits_list, get_verified_button, maybe_later_link
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

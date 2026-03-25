@@ -1,0 +1,54 @@
+journey_id: JRN-CUST-03
+name: Review Applicants & Confirm Booking (Phase 2 — Lead Unlock)
+actor:
+  - customer
+phase: '2'
+goal: Select a Tasker who then accepts with lead credits
+entry_screen: SCR-CUST-011
+exit_screens:
+  - SCR-CUST-015
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-011
+    screen_name: Applicants List
+    action: Browse applicants sorted by relevance, 'Recommended' label
+    next: SCR-CUST-011
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-011
+    screen_name: Applicants List
+    action: Tap 'Select' on preferred applicant
+    next: SCR-CUST-011
+    lifecycle: APP-T03 (customer_selects_applicant)
+  - step: 3
+    screen_id: SCR-CUST-011
+    screen_name: Applicants List
+    action: Wait for Tasker to accept
+    next: SCR-CUST-014
+    lifecycle: APP-T04 (tasker_accepts_and_unlocks)
+  - step: 4
+    screen_id: SCR-CUST-014
+    screen_name: Booking Confirmation
+    action: Confirm booking
+    next: SCR-CUST-015
+    lifecycle: null
+alternate_paths:
+  - id: JRN-CUST-03-A1
+    name: Tasker declines
+    branch_at_step: 3
+    condition: Selected Tasker declines
+    screens:
+      - SCR-CUST-012
+      - SCR-CUST-011
+    outcome: Decline notification, select next applicant
+  - id: JRN-CUST-03-A2
+    name: Tasker timeout
+    branch_at_step: 3
+    condition: 15-min window expires
+    screens:
+      - SCR-CUST-012
+      - SCR-CUST-011
+    outcome: Timeout notification, select next applicant
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -1,0 +1,94 @@
+screen_id: SCR-CUST-015
+name: Booking Confirmed — Success
+role:
+  - customer
+phase: 0-1
+template: success_celebration
+route: /(customer)/bookings/confirmed
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Booking Confirmed — Success" (SCR-CUST-015) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: success_celebration — Animated checkmark with spring bounce, headline, "what happens next" text, primary +
+  secondary CTAs.
+
+  Layout structure: safe_area -> centered(animated_checkmark + headline + next_steps + ctas)
+
+  Components used:
+    • COMP-ANIMATEDCHECKMARK (default): Animated success checkmark displayed after booking is confirmed
+    • COMP-BUTTON (primary): Primary CTA to view the new booking detail; secondary CTA to return to bookings list
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Booking successfully created; celebration screen shown with animated checkmark, headline, next-steps guidance, and two CTAs
+  Key copy (Mongolian primary):
+    • headline: "Захиалга баталгаажлаа!" (Booking confirmed!)
+    • next_steps: "Таны гүйцэтгэгч товлосон цагт ирнэ. Чат хэсгээс холбогдох боломжтой." (Your Tasker will arrive at the scheduled time. You can contact them via chat.)
+    • cta_view_booking: "Захиалга харах" (View Booking)
+    • cta_done: "Болсон" (Done)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: safe_area -> centered(animated_checkmark + headline + next_steps + ctas)
+components:
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated success checkmark displayed after booking is confirmed
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to view the new booking detail; secondary CTA to return to bookings list
+states:
+  - id: default
+    description: >-
+      Booking successfully created; celebration screen shown with animated checkmark, headline, next-steps guidance, and
+      two CTAs
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: headline
+    mn: Захиалга баталгаажлаа!
+    en: Booking confirmed!
+  - key: next_steps
+    mn: Таны гүйцэтгэгч товлосон цагт ирнэ. Чат хэсгээс холбогдох боломжтой.
+    en: Your Tasker will arrive at the scheduled time. You can contact them via chat.
+  - key: cta_view_booking
+    mn: Захиалга харах
+    en: View Booking
+  - key: cta_done
+    mn: Болсон
+    en: Done
+acceptance_criteria:
+  - Animated checkmark plays spring animation on screen entry
+  - Headline and next-steps text render in Mongolian Cyrillic at 16px minimum body size
+  - '''View Booking'' CTA navigates via replace to Booking Detail (SCR-CUST-017)'
+  - '''Done'' CTA navigates via replace to Customer Bookings List (SCR-CUST-016)'
+  - Screen uses comfortable density with generous spacing
+  - Add-to-calendar deep link is available if device supports it
+api_endpoints: []
+analytics_events:
+  - event: booking_confirmed_success_shown
+    trigger: Success screen displayed after booking creation
+  - event: booking_confirmed_view_tapped
+    trigger: User taps 'View Booking' CTA
+  - event: booking_confirmed_done_tapped
+    trigger: User taps 'Done' CTA
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Booking Confirmed — Success".
+
+      Booking successfully created; celebration screen shown with animated checkmark, headline, next-steps guidance, and
+      two CTAs
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

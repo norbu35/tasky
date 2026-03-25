@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '../../../store/authStore';
+import { useAppStore } from '../../../store/appStore';
 import { createMobileApiClient } from '../../../lib/mobileApiClient';
 import { router } from 'expo-router';
 
@@ -40,13 +41,15 @@ export function useVerifyOtp() {
 export function useDevLogin() {
   const setSession = useAuthStore((state) => state.setSession);
   const setProfile = useAuthStore((state) => state.setProfile);
+  const setRole = useAppStore((state) => state.setRole);
 
   return useMutation({
     mutationFn: async ({ phone, role }: { phone: string; role: string }) => {
       return await api.devLogin(phone, role);
     },
-    onSuccess: async (session) => {
+    onSuccess: async (session, variables) => {
       setSession(session);
+      setRole(variables.role.toLowerCase() as 'customer' | 'tasker');
       try {
         const profile = await api.getMyProfile(session.accessToken);
         setProfile(profile);

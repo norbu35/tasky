@@ -1,0 +1,180 @@
+screen_id: SCR-CUST-003
+name: Post Task — Intake Form
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/tasks/new/intake
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Intake Form" (SCR-CUST-003) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 2/7) -> scrollview(dynamic_form) ->
+  bottom_nav(back + next)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 2 of 7 in the Post Task wizard flow
+    • COMP-FORMFIELD (default): Wraps each dynamic intake question with label, input, and inline error
+    • COMP-INPUT (default): Text/number input fields for intake questions that require free-text or numeric input
+    • COMP-CATEGORYCHIP (inactive): Single-select and multi-select options rendered as chips for structured intake questions
+    • COMP-BUTTON (primary): Back and Next navigation buttons in bottom bar
+    • COMP-LOADINGSKELETON (detail): Form skeleton shown while intake schema loads
+  This screen has 3 states — generate the primary/default state:
+    Primary state: GET /categories/:id in progress; loading the intake_schema for the selected category
+  Key copy (Mongolian primary):
+    • page_title: "Дэлгэрэнгүй мэдээлэл" (Task Details)
+    • step_label: "Маягт" (Form)
+    • instruction: "Даалгаврын дэлгэрэнгүй мэдээллийг бөглөнө үү" (Fill in the task details)
+    • cta_next: "Үргэлжлүүлэх" (Continue)
+    • cta_back: "Буцах" (Back)
+    • validation_required: "Энэ талбарыг бөглөнө үү" (This field is required)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(step 2/7) -> scrollview(dynamic_form) -> bottom_nav(back +
+    next)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 2 of 7 in the Post Task wizard flow
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps each dynamic intake question with label, input, and inline error
+  - component: COMP-INPUT
+    variant: default
+    usage: Text/number input fields for intake questions that require free-text or numeric input
+  - component: COMP-CATEGORYCHIP
+    variant: inactive
+    usage: Single-select and multi-select options rendered as chips for structured intake questions
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Back and Next navigation buttons in bottom bar
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Form skeleton shown while intake schema loads
+states:
+  - id: loading_schema
+    description: GET /categories/:id in progress; loading the intake_schema for the selected category
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON
+  - id: form_entry
+    description: Intake schema loaded; 3-5 structured questions rendered; user fills in answers
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: validation_error
+    description: User tapped Next but required fields are incomplete; inline errors shown per field
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Дэлгэрэнгүй мэдээлэл
+    en: Task Details
+  - key: step_label
+    mn: Маягт
+    en: Form
+  - key: instruction
+    mn: Даалгаврын дэлгэрэнгүй мэдээллийг бөглөнө үү
+    en: Fill in the task details
+  - key: cta_next
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: validation_required
+    mn: Энэ талбарыг бөглөнө үү
+    en: This field is required
+  - key: error_schema_load
+    mn: Маягт ачаалахад алдаа гарлаа
+    en: Failed to load form
+acceptance_criteria:
+  - StepIndicator shows step 2 of 7 with 'Маягт' label highlighted
+  - Intake form is dynamically rendered from the category intake_schema (JSON schema)
+  - >-
+    Each question uses appropriate input type: single-select chips, multi-select chips, dropdown, yes/no toggle, or
+    numeric counter per REQ-TASK-00
+  - All form fields are wrapped in FormField with label and inline error
+  - Validation errors appear inline below each field when Next is tapped with incomplete required fields
+  - Draft binds to intake_schema_version loaded at start per REQ-TASK-09
+  - Next button navigates (push) to Photo Upload SCR-CUST-004
+  - Back button pops to Category Selection SCR-CUST-002
+  - Keyboard-aware scrolling ensures active field is visible above keyboard
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /categories/:id
+    purpose: Fetch the intake_schema (3-5 structured questions) for the selected category
+analytics_events:
+  - event: intake_form_loaded
+    trigger: Intake schema loaded and form rendered; includes category_id and schema_version
+  - event: intake_form_completed
+    trigger: User taps Next with all fields valid
+  - event: intake_form_validation_error
+    trigger: User taps Next with invalid fields; includes field names
+state_prompts:
+  - state_id: loading_schema
+    prompt: >-
+      Generate the "loading_schema" state of "Post Task — Intake Form".
+
+      GET /categories/:id in progress; loading the intake_schema for the selected category
+
+      Visible elements: COMP-STEPINDICATOR, COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: form_entry
+    prompt: >-
+      Generate the "form_entry" state of "Post Task — Intake Form".
+
+      Intake schema loaded; 3-5 structured questions rendered; user fills in answers
+
+      Visible elements: COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_error
+    prompt: >-
+      Generate the "validation_error" state of "Post Task — Intake Form".
+
+      User tapped Next but required fields are incomplete; inline errors shown per field
+
+      Visible elements: COMP-STEPINDICATOR, COMP-FORMFIELD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,126 @@
+screen_id: SCR-INFRA-002
+name: App Update
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: error_state
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "App Update" (SCR-INFRA-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: error_state — Centered error icon, message text, and retry CTA button. Comfortable density.
+
+  Layout structure: safe_area -> centered(icon + message + cta)
+
+  Components used:
+    • COMP-EMPTYSTATE (error): Full-screen prompt with app icon illustration, update headline and description
+    • COMP-BUTTON (primary): Primary CTA to open App Store / Play Store for update
+    • COMP-BUTTON (ghost): Secondary dismiss button for soft update only (ghost variant)
+  This screen has 2 states — generate the primary/default state:
+    Primary state: A newer version is available but current version still supported; user can dismiss
+  Key copy (Mongolian primary):
+    • headline_soft: "Шинэ хувилбар гарлаа" (New version available)
+    • headline_force: "Шинэчлэлт шаардлагатай" (Update required)
+    • description_soft: "Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой" (A new version is available. Update for a better experience)
+    • description_force: "Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай" (An update is required to continue using the app)
+    • cta_update: "Шинэчлэх" (Update)
+    • cta_later: "Дараа нь" (Later)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: error_state
+  density: comfortable
+  structure: safe_area -> centered(icon + message + cta)
+components:
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Full-screen prompt with app icon illustration, update headline and description
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to open App Store / Play Store for update
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary dismiss button for soft update only (ghost variant)
+states:
+  - id: soft_update
+    description: A newer version is available but current version still supported; user can dismiss
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: force_update
+    description: Current version is below minimum supported; user must update to continue
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-BUTTON.ghost
+copy:
+  - key: headline_soft
+    mn: Шинэ хувилбар гарлаа
+    en: New version available
+  - key: headline_force
+    mn: Шинэчлэлт шаардлагатай
+    en: Update required
+  - key: description_soft
+    mn: Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой
+    en: A new version is available. Update for a better experience
+  - key: description_force
+    mn: Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай
+    en: An update is required to continue using the app
+  - key: cta_update
+    mn: Шинэчлэх
+    en: Update
+  - key: cta_later
+    mn: Дараа нь
+    en: Later
+acceptance_criteria:
+  - Soft update shows update CTA and a dismissible 'Later' ghost button
+  - Force update hides the dismiss button; user cannot proceed without updating
+  - Tapping 'Update' opens the platform-specific app store via external link
+  - Force update screen is shown at system z-index (60) above all other content
+  - Version check happens on every app launch via GET /system/version
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /system/version
+    purpose: Check minimum and latest app version on launch
+analytics_events:
+  - event: app_update_shown
+    trigger: 'Update screen displayed (with type: soft or force)'
+  - event: app_update_tapped
+    trigger: User taps 'Update' button to open store
+  - event: app_update_dismissed
+    trigger: User taps 'Later' on soft update
+state_prompts:
+  - state_id: soft_update
+    prompt: >-
+      Generate the "soft_update" state of "App Update".
+
+      A newer version is available but current version still supported; user can dismiss
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: force_update
+    prompt: >-
+      Generate the "force_update" state of "App Update".
+
+      Current version is below minimum supported; user must update to continue
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.primary
+
+      Hidden elements: COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

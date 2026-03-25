@@ -1,0 +1,192 @@
+screen_id: SCR-CUST-005
+name: Post Task — Location Pin
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/tasks/new/location
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Location Pin" (SCR-CUST-005) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 4/7) -> scrollview(map_picker +
+  text_field) -> bottom_nav(back + next)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 4 of 7 in the Post Task wizard flow
+    • COMP-MAPPICKER (default): Interactive map with draggable pin for setting task location
+    • COMP-FORMFIELD (default): Wraps the text description input for location landmark/details
+    • COMP-INPUT (default): Free-text input for location description (landmark, floor, apartment details)
+    • COMP-BUTTON (primary): Back and Next navigation buttons in bottom bar
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Map displayed centered on user's current location (if permitted) or Ulaanbaatar default; no pin placed yet
+  Key copy (Mongolian primary):
+    • page_title: "Байршил тодорхойлох" (Set Location)
+    • step_label: "Байршил" (Location)
+    • instruction: "Даалгаврын байршлыг газрын зурагт тэмдэглэнэ үү" (Pin the task location on the map)
+    • text_field_label: "Дэлгэрэнгүй байршил" (Location details)
+    • text_field_placeholder: "Жишээ нь: Их дэлгүүрийн ард, 5 давхарт" (e.g., Behind State Dept Store, 5th floor)
+    • text_field_helper: "Гүйцэтгэгчид ойлгомжтой мэдээлэл бичнэ үү" (Provide details helpful for the Tasker)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(step 4/7) -> scrollview(map_picker + text_field) ->
+    bottom_nav(back + next)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 4 of 7 in the Post Task wizard flow
+  - component: COMP-MAPPICKER
+    variant: default
+    usage: Interactive map with draggable pin for setting task location
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps the text description input for location landmark/details
+  - component: COMP-INPUT
+    variant: default
+    usage: Free-text input for location description (landmark, floor, apartment details)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Back and Next navigation buttons in bottom bar
+states:
+  - id: default
+    description: Map displayed centered on user's current location (if permitted) or Ulaanbaatar default; no pin placed yet
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-MAPPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: pin_placed
+    description: User has dropped a pin on the map; lat/lng captured; Next button enabled
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-MAPPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: text_entry
+    description: User is typing a location description in the text field; keyboard visible
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-MAPPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: permission_denied
+    description: Location permission denied; map shows Ulaanbaatar default with manual pin placement instruction
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-MAPPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: page_title
+    mn: Байршил тодорхойлох
+    en: Set Location
+  - key: step_label
+    mn: Байршил
+    en: Location
+  - key: instruction
+    mn: Даалгаврын байршлыг газрын зурагт тэмдэглэнэ үү
+    en: Pin the task location on the map
+  - key: text_field_label
+    mn: Дэлгэрэнгүй байршил
+    en: Location details
+  - key: text_field_placeholder
+    mn: 'Жишээ нь: Их дэлгүүрийн ард, 5 давхарт'
+    en: e.g., Behind State Dept Store, 5th floor
+  - key: text_field_helper
+    mn: Гүйцэтгэгчид ойлгомжтой мэдээлэл бичнэ үү
+    en: Provide details helpful for the Tasker
+  - key: permission_denied_hint
+    mn: Байршлын зөвшөөрөл өгөөгүй байна. Газрын зурагт гараар тэмдэглэнэ үү
+    en: Location permission denied. Please pin manually on the map
+  - key: privacy_note
+    mn: Гүйцэтгэгчид ойролцоо байршил харагдана. Яг хаяг захиалга баталсны дараа харагдана
+    en: Taskers see approximate location. Exact address shown after booking confirmation
+  - key: cta_next
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: cta_back
+    mn: Буцах
+    en: Back
+acceptance_criteria:
+  - StepIndicator shows step 4 of 7 with 'Байршил' label highlighted
+  - Map displays with draggable pin; defaults to current location if permission granted
+  - If location permission denied, map defaults to Ulaanbaatar center with manual pin instruction
+  - Text field below map accepts location landmark description (optional)
+  - Privacy note informs user that Taskers only see approximate location (500m radius) per REQ-TASK-03 and REQ-LEAK-03
+  - Next button is disabled until a pin is placed on the map
+  - Next button navigates (push) to Schedule & Budget SCR-CUST-006
+  - Back button pops to Photo Upload SCR-CUST-004
+  - Keyboard-aware scrolling ensures text field is visible when focused
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: location_pin_placed
+    trigger: User drops a pin on the map; includes lat/lng
+  - event: location_text_entered
+    trigger: User submits location description text
+  - event: location_permission_denied
+    trigger: Device location permission was denied
+  - event: location_step_completed
+    trigger: User taps Next with a valid pin placement
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Post Task — Location Pin".
+
+      Map displayed centered on user's current location (if permitted) or Ulaanbaatar default; no pin placed yet
+
+      Visible elements: COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: pin_placed
+    prompt: >-
+      Generate the "pin_placed" state of "Post Task — Location Pin".
+
+      User has dropped a pin on the map; lat/lng captured; Next button enabled
+
+      Visible elements: COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: text_entry
+    prompt: >-
+      Generate the "text_entry" state of "Post Task — Location Pin".
+
+      User is typing a location description in the text field; keyboard visible
+
+      Visible elements: COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: permission_denied
+    prompt: >-
+      Generate the "permission_denied" state of "Post Task — Location Pin".
+
+      Location permission denied; map shows Ulaanbaatar default with manual pin placement instruction
+
+      Visible elements: COMP-STEPINDICATOR, COMP-MAPPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

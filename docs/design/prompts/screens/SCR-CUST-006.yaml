@@ -1,0 +1,216 @@
+screen_id: SCR-CUST-006
+name: Post Task — Schedule & Budget
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/tasks/new/schedule
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Schedule & Budget" (SCR-CUST-006) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(date_picker +
+  budget_input) -> bottom_nav(back + next)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 5 of 7 in the Post Task wizard flow
+    • COMP-DATEPICKER (date_time): Date and time selector for scheduling the task; minimum date is tomorrow
+    • COMP-FORMFIELD (default): Wraps DatePicker and budget Input with labels and inline error
+    • COMP-INPUT (default): Numeric input for budget amount in MNT with currency prefix
+    • COMP-BUTTON (primary): Back and Next navigation buttons in bottom bar
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Empty form; date picker and budget input shown with defaults; Next disabled
+  Key copy (Mongolian primary):
+    • page_title: "Хуваарь ба төсөв" (Schedule & Budget)
+    • step_label: "Хуваарь" (Schedule)
+    • schedule_label: "Хэзээ хийлгэх вэ?" (When do you need this done?)
+    • schedule_helper: "Огноо болон цагийг сонгоно уу" (Select a date and time)
+    • budget_label: "Төсөв (₮)" (Budget (₮))
+    • budget_placeholder: "₮50,000" (₮50,000)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(date_picker + budget_input) ->
+    bottom_nav(back + next)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 5 of 7 in the Post Task wizard flow
+  - component: COMP-DATEPICKER
+    variant: date_time
+    usage: Date and time selector for scheduling the task; minimum date is tomorrow
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps DatePicker and budget Input with labels and inline error
+  - component: COMP-INPUT
+    variant: default
+    usage: Numeric input for budget amount in MNT with currency prefix
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Back and Next navigation buttons in bottom bar
+states:
+  - id: default
+    description: Empty form; date picker and budget input shown with defaults; Next disabled
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: date_picking
+    description: User has opened the date/time picker; calendar/time overlay visible
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: budget_entry
+    description: User is entering budget amount; keyboard visible with numeric keypad
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: validation_budget_low
+    description: Budget is below minimum threshold (1,001 MNT); inline error on budget field
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+  - id: validation_schedule_past
+    description: Selected date/time is in the past; inline error on schedule field
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: page_title
+    mn: Хуваарь ба төсөв
+    en: Schedule & Budget
+  - key: step_label
+    mn: Хуваарь
+    en: Schedule
+  - key: schedule_label
+    mn: Хэзээ хийлгэх вэ?
+    en: When do you need this done?
+  - key: schedule_helper
+    mn: Огноо болон цагийг сонгоно уу
+    en: Select a date and time
+  - key: budget_label
+    mn: Төсөв (₮)
+    en: Budget (₮)
+  - key: budget_placeholder
+    mn: ₮50,000
+    en: ₮50,000
+  - key: budget_helper
+    mn: 'Тогтсон дүн оруулна уу. Хамгийн бага: ₮1,001'
+    en: 'Enter a fixed amount. Minimum: ₮1,001'
+  - key: error_budget_low
+    mn: Төсөв хамгийн багадаа ₮1,001 байх ёстой
+    en: Budget must be at least ₮1,001
+  - key: error_schedule_past
+    mn: Өнгөрсөн огноо/цаг сонгож болохгүй
+    en: Cannot select a past date/time
+  - key: cta_next
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: cta_back
+    mn: Буцах
+    en: Back
+acceptance_criteria:
+  - StepIndicator shows step 5 of 7 with 'Хуваарь' label highlighted
+  - DatePicker enforces minimum date of tomorrow per component rules
+  - Date format displays as YYYY.MM.DD per Mongolian convention
+  - Budget input uses numeric keypad and formats with comma thousand separator
+  - Budget validation enforces minimum of ₮1,001 per REQ-TASK-01
+  - Inline validation error appears below budget field for amounts below minimum
+  - Inline validation error appears below schedule field for past dates
+  - Next button is disabled until both schedule and budget are valid
+  - Next button navigates (push) to Review & Submit SCR-CUST-007
+  - Back button pops to Location Pin SCR-CUST-005
+  - Keyboard-aware scrolling ensures budget field is visible when focused
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: schedule_date_selected
+    trigger: User selects a date/time from the picker
+  - event: budget_entered
+    trigger: User enters a budget amount; includes amount value
+  - event: schedule_budget_validation_error
+    trigger: Validation fails on Next; includes error type (budget_low or schedule_past)
+  - event: schedule_budget_completed
+    trigger: User taps Next with valid schedule and budget
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Post Task — Schedule & Budget".
+
+      Empty form; date picker and budget input shown with defaults; Next disabled
+
+      Visible elements: COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: date_picking
+    prompt: >-
+      Generate the "date_picking" state of "Post Task — Schedule & Budget".
+
+      User has opened the date/time picker; calendar/time overlay visible
+
+      Visible elements: COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: budget_entry
+    prompt: >-
+      Generate the "budget_entry" state of "Post Task — Schedule & Budget".
+
+      User is entering budget amount; keyboard visible with numeric keypad
+
+      Visible elements: COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_budget_low
+    prompt: >-
+      Generate the "validation_budget_low" state of "Post Task — Schedule & Budget".
+
+      Budget is below minimum threshold (1,001 MNT); inline error on budget field
+
+      Visible elements: COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_schedule_past
+    prompt: >-
+      Generate the "validation_schedule_past" state of "Post Task — Schedule & Budget".
+
+      Selected date/time is in the past; inline error on schedule field
+
+      Visible elements: COMP-STEPINDICATOR, COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,40 @@
+journey_id: JRN-SHARED-03
+name: Phase 2 OTP Login (New User)
+actor:
+  - customer
+  - tasker
+phase: '2'
+goal: New user signs up with phone OTP
+entry_screen: SCR-SHARED-002
+exit_screens:
+  - SCR-SHARED-005
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-002
+    screen_name: Auth — Login
+    action: Tap 'Login with Phone'
+    next: SCR-SHARED-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-002
+    screen_name: Auth — Login
+    action: Enter phone number
+    next: SCR-SHARED-003
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-SHARED-003
+    screen_name: Auth — OTP Verification
+    action: Enter OTP code, verified
+    next: SCR-SHARED-005
+    lifecycle: USER-T01 (user_signs_up)
+alternate_paths:
+  - id: JRN-SHARED-03-A1
+    name: OTP expired
+    branch_at_step: 3
+    condition: Code expired
+    screens:
+      - SCR-SHARED-003
+    outcome: Resend after cooldown
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

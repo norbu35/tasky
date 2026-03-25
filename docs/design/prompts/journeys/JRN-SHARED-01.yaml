@@ -1,0 +1,72 @@
+journey_id: JRN-SHARED-01
+name: First Launch & Onboarding
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: New user completes signup and reaches home screen
+entry_screen: SCR-SHARED-001
+exit_screens:
+  - SCR-CUST-001
+  - SCR-TASK-001
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-001
+    screen_name: Splash / Launch Screen
+    action: App launches, splash animation
+    next: SCR-SHARED-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-002
+    screen_name: Auth — Login
+    action: Tap 'Login with Facebook'
+    next: SCR-SHARED-005
+    lifecycle: USER-T01 (user_signs_up)
+  - step: 3
+    screen_id: SCR-SHARED-005
+    screen_name: Onboarding Carousel
+    action: Swipe through 3 onboarding slides
+    next: SCR-SHARED-006
+    lifecycle: null
+  - step: 4
+    screen_id: SCR-SHARED-006
+    screen_name: Role Selection
+    action: Select role (Customer or Tasker)
+    next: SCR-SHARED-007
+    lifecycle: USER-T02 or USER-T04
+  - step: 5
+    screen_id: SCR-SHARED-007
+    screen_name: Permission Primer — Camera
+    action: Grant/skip camera permission
+    next: SCR-SHARED-008
+    lifecycle: null
+  - step: 6
+    screen_id: SCR-SHARED-008
+    screen_name: Permission Primer — Location
+    action: Grant/skip location permission
+    next: SCR-SHARED-009
+    lifecycle: null
+  - step: 7
+    screen_id: SCR-SHARED-009
+    screen_name: Permission Primer — Notifications
+    action: Grant/skip notification permission
+    next: SCR-CUST-001 or SCR-TASK-001
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-01-A1
+    name: Facebook OAuth failure
+    branch_at_step: 2
+    condition: Facebook OAuth unavailable or user cancels
+    screens:
+      - SCR-SHARED-002
+    outcome: Error state on login screen; retry or wait
+  - id: JRN-SHARED-01-A2
+    name: Returning user
+    branch_at_step: 1
+    condition: Valid JWT exists
+    screens:
+      - SCR-SHARED-001
+    outcome: Skip to home screen directly
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.
