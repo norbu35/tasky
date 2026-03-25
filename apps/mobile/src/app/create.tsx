@@ -1,12 +1,11 @@
 import React from 'react';
-import { Stack as ExpoStack } from 'expo-router';
-import { TaskPostWizard } from '../features/tasks/components/TaskPostWizard';
+import { Redirect, Stack as ExpoStack } from 'expo-router';
 
 export default function CreateTaskScreen() {
   return (
     <>
       <ExpoStack.Screen options={{ headerShown: false, presentation: 'modal' }} />
-      <TaskPostWizard />
+      <Redirect href="/(customer)/tasks/new/category" />
     </>
   );
 }

@@ -1,0 +1,228 @@
+screen_id: SCR-SHARED-016
+name: Notification Center
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: feed_list
+route: /notifications
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Notification Center" (SCR-SHARED-016) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(notification_list + pull_to_refresh) ->
+  empty_state
+
+  Components used:
+    • COMP-CARD (default): Notification item card with icon, title, body text, and timestamp
+    • COMP-EMPTYSTATE (no_results): Empty state when no notifications exist
+    • COMP-LOADINGSKELETON (list_row): Skeleton list matching notification card layout while data loads
+    • COMP-STATUSBADGE (open): Unread indicator dot on notification cards
+  This screen has 5 states — generate the primary/default state:
+    Primary state: GET /notifications is in flight; skeleton list displayed
+  Key copy (Mongolian primary):
+    • nav_title: "Мэдэгдлүүд" (Notifications)
+    • empty_headline: "Мэдэгдэл алга" (No notifications)
+    • empty_description: "Танд одоогоор мэдэгдэл ирээгүй байна" (You have no notifications yet)
+    • notif_new_applicant: "Шинэ хүсэлт ирлээ" (New applicant)
+    • notif_booking_confirmed: "Захиалга баталгаажлаа" (Booking confirmed)
+    • notif_tasker_done: "Гүйцэтгэгч ажлаа дууслаа" (Tasker marked done)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(notification_list + pull_to_refresh) -> empty_state
+components:
+  - component: COMP-CARD
+    variant: default
+    usage: Notification item card with icon, title, body text, and timestamp
+  - component: COMP-EMPTYSTATE
+    variant: no_results
+    usage: Empty state when no notifications exist
+  - component: COMP-LOADINGSKELETON
+    variant: list_row
+    usage: Skeleton list matching notification card layout while data loads
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Unread indicator dot on notification cards
+states:
+  - id: loading_initial
+    description: GET /notifications is in flight; skeleton list displayed
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-EMPTYSTATE
+  - id: empty
+    description: GET /notifications returned zero results; empty state with illustration and message
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+  - id: populated
+    description: Notification list loaded with items; unread items have accent indicator dot
+    visible:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: loading_refresh
+    description: User pulled to refresh; pull-to-refresh spinner active while re-fetching
+    visible:
+      - COMP-CARD
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: GET /notifications failed due to network error; error state with retry
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+copy:
+  - key: nav_title
+    mn: Мэдэгдлүүд
+    en: Notifications
+  - key: empty_headline
+    mn: Мэдэгдэл алга
+    en: No notifications
+  - key: empty_description
+    mn: Танд одоогоор мэдэгдэл ирээгүй байна
+    en: You have no notifications yet
+  - key: notif_new_applicant
+    mn: Шинэ хүсэлт ирлээ
+    en: New applicant
+  - key: notif_booking_confirmed
+    mn: Захиалга баталгаажлаа
+    en: Booking confirmed
+  - key: notif_tasker_done
+    mn: Гүйцэтгэгч ажлаа дууслаа
+    en: Tasker marked done
+  - key: notif_new_message
+    mn: Шинэ зурвас ирлээ
+    en: New message
+  - key: notif_review_reminder
+    mn: Сэтгэгдэл үлдээнэ үү
+    en: Please leave a review
+  - key: notif_dispute_update
+    mn: Маргааны шинэчлэл
+    en: Dispute update
+  - key: notif_verification_approved
+    mn: Баталгаажуулалт зөвшөөрөгдлөө
+    en: Verification approved
+  - key: notif_verification_rejected
+    mn: Баталгаажуулалт татгалзагдлаа
+    en: Verification rejected
+  - key: label_today
+    mn: Өнөөдөр
+    en: Today
+  - key: label_earlier
+    mn: Өмнөх
+    en: Earlier
+  - key: error_title
+    mn: Алдаа гарлаа
+    en: Something went wrong
+  - key: error_body
+    mn: Мэдэгдлүүдийг ачаалахад алдаа гарлаа
+    en: Failed to load notifications
+  - key: cta_retry
+    mn: Дахин оролдох
+    en: Retry
+acceptance_criteria:
+  - Screen displays loading skeleton with 6 list row placeholders while data is fetching
+  - Empty state shows illustration with 'Мэдэгдэл алга' headline when no notifications exist
+  - Populated list shows notification cards grouped by 'Today' and 'Earlier' sections
+  - Unread notifications display an accent-colored indicator dot
+  - Tapping a task notification navigates (push) to SCR-CUST-009 (customer) or SCR-TASK-002 (tasker)
+  - Tapping a booking notification navigates (push) to SCR-CUST-017 (customer) or SCR-TASK-013 (tasker)
+  - Tapping a dispute notification navigates (push) to SCR-CUST-025
+  - Pull-to-refresh re-fetches GET /notifications
+  - Network error state shows error illustration with retry button
+  - Notification timestamps use relative format within 24h ('2 цагийн өмнө'), absolute after
+  - Pagination uses cursor-based infinite scroll with skeleton footer
+  - Back button navigates (pop) to the previous screen
+api_endpoints:
+  - method: GET
+    path: /notifications
+    purpose: Fetch paginated list of notifications for the authenticated user
+analytics_events:
+  - event: notifications_viewed
+    trigger: Notification center screen loads successfully
+  - event: notification_tapped
+    trigger: User taps a notification card to navigate to its target
+  - event: notifications_refreshed
+    trigger: User pulls to refresh the notification list
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Notification Center".
+
+      GET /notifications is in flight; skeleton list displayed
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Notification Center".
+
+      GET /notifications returned zero results; empty state with illustration and message
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "Notification Center".
+
+      Notification list loaded with items; unread items have accent indicator dot
+
+      Visible elements: COMP-CARD, COMP-STATUSBADGE
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "Notification Center".
+
+      User pulled to refresh; pull-to-refresh spinner active while re-fetching
+
+      Visible elements: COMP-CARD
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Notification Center".
+
+      GET /notifications failed due to network error; error state with retry
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,268 @@
+screen_id: SCR-CUST-020
+name: Reschedule
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/bookings/:bookingId/reschedule
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Reschedule" (SCR-CUST-020) in the Tasky app — Mongolia's domestic service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(current_schedule + new_date_picker +
+  reason_field) -> bottom_nav(back + submit)
+
+  Components used:
+    • COMP-DATEPICKER (date_time): Date and time picker for proposed new schedule
+    • COMP-FORMFIELD (default): Wrapper for reason text input with label and optional helper text
+    • COMP-INPUT (multiline): Optional reason text field for the reschedule request
+    • COMP-BUTTON (primary): Submit button to send reschedule request; back button to return
+    • COMP-STATUSBADGE (open): Status indicator for reschedule request state (awaiting, accepted, declined, expired)
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Form shown with current schedule displayed, new date/time picker, and optional reason field
+  Key copy (Mongolian primary):
+    • page_title: "Цаг өөрчлөх" (Reschedule)
+    • section_current: "Одоогийн товлосон цаг" (Current Schedule)
+    • section_new: "Шинэ товлосон цаг" (New Schedule)
+    • label_reason: "Шалтгаан" (Reason)
+    • placeholder_reason: "Цаг өөрчлөх шалтгаан..." (Reason for rescheduling...)
+    • helper_reason: "Заавал биш" (Optional)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(current_schedule + new_date_picker + reason_field) ->
+    bottom_nav(back + submit)
+components:
+  - component: COMP-DATEPICKER
+    variant: date_time
+    usage: Date and time picker for proposed new schedule
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wrapper for reason text input with label and optional helper text
+  - component: COMP-INPUT
+    variant: multiline
+    usage: Optional reason text field for the reschedule request
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Submit button to send reschedule request; back button to return
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Status indicator for reschedule request state (awaiting, accepted, declined, expired)
+states:
+  - id: request_form
+    description: Form shown with current schedule displayed, new date/time picker, and optional reason field
+    visible:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-STATUSBADGE
+  - id: submitting
+    description: Reschedule request being sent via POST /bookings/:id/reschedule; submit button in loading state
+    visible:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-STATUSBADGE
+  - id: awaiting_response
+    description: Reschedule request submitted; waiting for tasker to accept or decline. Status badge shows 'Awaiting'
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+  - id: accepted
+    description: Tasker accepted the reschedule; new schedule confirmed. Status badge shows 'Accepted'
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+  - id: declined
+    description: Tasker declined the reschedule request; original schedule remains. Status badge shows 'Declined'
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+  - id: expired
+    description: Reschedule request expired without response before the current scheduled start time; original schedule remains
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-DATEPICKER
+      - COMP-FORMFIELD
+      - COMP-INPUT
+copy:
+  - key: page_title
+    mn: Цаг өөрчлөх
+    en: Reschedule
+  - key: section_current
+    mn: Одоогийн товлосон цаг
+    en: Current Schedule
+  - key: section_new
+    mn: Шинэ товлосон цаг
+    en: New Schedule
+  - key: label_reason
+    mn: Шалтгаан
+    en: Reason
+  - key: placeholder_reason
+    mn: Цаг өөрчлөх шалтгаан...
+    en: Reason for rescheduling...
+  - key: helper_reason
+    mn: Заавал биш
+    en: Optional
+  - key: cta_submit
+    mn: Хүсэлт илгээх
+    en: Send Request
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: status_awaiting
+    mn: Хүлээж байна
+    en: Awaiting Response
+  - key: status_accepted
+    mn: Зөвшөөрсөн
+    en: Accepted
+  - key: status_declined
+    mn: Татгалзсан
+    en: Declined
+  - key: status_expired
+    mn: Хугацаа дууссан
+    en: Expired
+  - key: note_schedule_authority
+    mn: Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно
+    en: Schedule changes take effect only after counterparty acceptance
+  - key: accepted_message
+    mn: Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ.
+    en: New schedule confirmed. No-show timers have been reset.
+  - key: declined_message
+    mn: Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр.
+    en: Request declined. Original schedule remains active.
+  - key: expired_message
+    mn: Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр.
+    en: Request expired. Original schedule remains active.
+acceptance_criteria:
+  - Current schedule is displayed at the top for reference
+  - Date picker minimum date is tomorrow per design system rule
+  - Date format follows YYYY.MM.DD Mongolian convention
+  - Reason field is optional with 200 character limit
+  - Submit button sends POST /bookings/:id/reschedule and enters loading state
+  - After submission, screen transitions to awaiting_response state with status badge
+  - 'Schedule authority note is always visible per REQ-BOOK-13: chat agreements do not change policy timers'
+  - On acceptance, no-show reminder timers reset to the new confirmed schedule per REQ-BOOK-12
+  - On decline or expiry, original schedule remains active with explanatory message
+  - Back button navigates via pop to Booking Detail (SCR-CUST-017)
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /bookings/:id/reschedule
+    purpose: Submit reschedule request with proposed date/time and optional reason
+  - method: PUT
+    path: /bookings/:id/reschedule/:rescheduleId
+    purpose: Accept or decline a reschedule request (used by counterparty)
+analytics_events:
+  - event: reschedule_form_viewed
+    trigger: Reschedule screen becomes visible
+  - event: reschedule_request_submitted
+    trigger: User taps 'Send Request' and request is sent
+  - event: reschedule_accepted
+    trigger: Tasker accepted the reschedule (push notification updates screen)
+  - event: reschedule_declined
+    trigger: Tasker declined the reschedule
+  - event: reschedule_expired
+    trigger: Reschedule request expired without response
+state_prompts:
+  - state_id: request_form
+    prompt: >-
+      Generate the "request_form" state of "Reschedule".
+
+      Form shown with current schedule displayed, new date/time picker, and optional reason field
+
+      Visible elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-STATUSBADGE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitting
+    prompt: >-
+      Generate the "submitting" state of "Reschedule".
+
+      Reschedule request being sent via POST /bookings/:id/reschedule; submit button in loading state
+
+      Visible elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-STATUSBADGE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: awaiting_response
+    prompt: >-
+      Generate the "awaiting_response" state of "Reschedule".
+
+      Reschedule request submitted; waiting for tasker to accept or decline. Status badge shows 'Awaiting'
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: accepted
+    prompt: >-
+      Generate the "accepted" state of "Reschedule".
+
+      Tasker accepted the reschedule; new schedule confirmed. Status badge shows 'Accepted'
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: declined
+    prompt: >-
+      Generate the "declined" state of "Reschedule".
+
+      Tasker declined the reschedule request; original schedule remains. Status badge shows 'Declined'
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: expired
+    prompt: >-
+      Generate the "expired" state of "Reschedule".
+
+      Reschedule request expired without response before the current scheduled start time; original schedule remains
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-DATEPICKER, COMP-FORMFIELD, COMP-INPUT
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -9,7 +9,9 @@ The backend is production-ready for a controlled pilot with zero monetization an
 - Deterministic scope summary generation with key-value fallback
 - Task draft system with server-bound schema version
 - Application flow (APPLIED → SELECTED → ACCEPTED → DECLINED → EXPIRED)
-- Booking lifecycle (ASSIGNED → COMPLETED | CANCELLED)
+- Booking lifecycle (ASSIGNED → COMPLETED | CANCELLED | NO_SHOW)
+- Reschedule request/accept/decline flow with immutable schedule events
+- No-show reminder + adjudication flow
 - Liability disclaimer enforcement on booking acceptance
 
 ### Trust & Identity
@@ -26,6 +28,8 @@ The backend is production-ready for a controlled pilot with zero monetization an
 - Structured logging with correlation IDs
 - Cursor-based pagination on all list endpoints
 - AES-256-GCM phone encryption with blind indexing
+- Facebook OAuth circuit-breaker status endpoint and outage posture
+- Firebase Cloud Messaging push provider with topic subscription
 
 ### Admin
 - Verification queue (pending list, approve/reject)
@@ -46,7 +50,7 @@ Build as soon as live traffic reveals the need.
 
 | Item | PRD Requirement | Trigger | Founder Workaround |
 |---|---|---|---|
-| NO_SHOW status + adjudication | REQ-BOOK-11, REQ-TASK-02 | First reported no-show incident | Founder manually marks booking as cancelled and records incident |
+| ~~NO_SHOW status + adjudication~~ | ~~REQ-BOOK-11, REQ-TASK-02~~ | **DONE** — booking and task now transition to `NO_SHOW` with reminder and flag rules | Founder fallback no longer primary path |
 | Dispute evidence upload + 24h auto-close | REQ-SAFE-10 | First dispute where chat logs are insufficient | Founder reviews chat history directly in admin panel |
 | Review enforcement soft gates (reminders) | REQ-SAFE-02, REQ-SAFE-11 | Review completion rate drops below 70% | Founder sends manual reminder messages |
 
@@ -56,8 +60,8 @@ Build once core flow is stable and founder ops patterns are established.
 
 | Item | PRD Requirement | Trigger |
 |---|---|---|
-| Reschedule request/accept/decline flow | REQ-BOOK-12, REQ-BOOK-13 | First customer-reported scheduling conflict |
-| Booking timeline events (immutable audit) | REQ-BOOK-13 | Needed alongside reschedule flow |
+| ~~Reschedule request/accept/decline flow~~ | ~~REQ-BOOK-12, REQ-BOOK-13~~ | **DONE** — canonical reschedule workflow is implemented |
+| ~~Booking timeline events (immutable audit)~~ | ~~REQ-BOOK-13~~ | **DONE** — immutable booking timeline is implemented |
 | No-applicant rescue flow (120min detection) | REQ-BOOK-09 | >3 tasks with zero applicants in a week |
 | Phone leak detection in messages | REQ-LEAK-04 | Baseline leakage rate measurement begins |
 | Repeat booking shortcut | REQ-BOOK-07 | First repeat customer (30-day cohort data) |
@@ -69,12 +73,12 @@ Build before Phase 2 monetization gate (200+ completed bookings, 40% repeat cust
 
 | Item | PRD Requirement | Trigger |
 |---|---|---|
-| Reliability score computation | REQ-SAFE-06 | Needed for Phase 2 algorithm-assisted ranking |
-| Tasker badges table (persistent Pro badge) | REQ-SAFE-04 | >15 taskers eligible for Pro badge |
-| Facebook OAuth circuit breaker | REQ-AUTH-09, REQ-AUTH-10 | First Facebook outage incident |
-| Verification access audit logging | REQ-SAFE-08 | Before first compliance review |
-| Identity data lifecycle / deletion | REQ-SAFE-09 | Before first user deletion request or compliance review |
-| Actual FCM/APNs push integration | REQ-NOTIF-01 | Before scaling beyond founder's personal outreach |
+| ~~Reliability score computation~~ | ~~REQ-SAFE-06~~ | **DONE** — reliability scoring service is implemented |
+| ~~Tasker badges table (persistent Pro badge)~~ | ~~REQ-SAFE-04~~ | **DONE** — badge persistence and evaluation service are implemented |
+| ~~Facebook OAuth circuit breaker~~ | ~~REQ-AUTH-09, REQ-AUTH-10~~ | **DONE** — status endpoint and outage handling are implemented |
+| ~~Verification access audit logging~~ | ~~REQ-SAFE-08~~ | **DONE** — verification media views write audit events |
+| ~~Identity data lifecycle / deletion~~ | ~~REQ-SAFE-09~~ | **DONE** — retention and anonymization service is implemented |
+| ~~Actual FCM/APNs push integration~~ | ~~REQ-NOTIF-01~~ | **DONE** — Firebase push provider is implemented and configured |
 | Actual SMS sending integration | REQ-NOTIF-02 | Phase 2 OTP requirement |
 | Task rescue events persistence | REQ-BOOK-09 | Alongside rescue flow |
 | Review enforcement hard locks | REQ-SAFE-02 | Review rate still below 85% after soft gates |

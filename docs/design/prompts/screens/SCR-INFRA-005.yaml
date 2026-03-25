@@ -1,0 +1,173 @@
+screen_id: SCR-INFRA-005
+name: Help & Support / FAQ
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: feed_list
+route: /help
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Help & Support / FAQ" (SCR-INFRA-005) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(search) -> scrollview(faq_sections) -> empty/error
+
+  Components used:
+    • COMP-SEARCHBAR (default): Search bar at top to filter FAQ questions by keyword
+    • COMP-LOADINGSKELETON (list_row): List skeleton placeholder while FAQ content loads
+    • COMP-LISTROW (default): Each FAQ item as a tappable list row with disclosure indicator
+    • COMP-EMPTYSTATE (error): Error state when FAQ content fails to load
+    • COMP-BUTTON (ghost): Back navigation button in nav header
+  This screen has 3 states — generate the primary/default state:
+    Primary state: FAQ content is loading
+  Key copy (Mongolian primary):
+    • nav_title: "Тусламж" (Help & Support)
+    • search_placeholder: "Асуулт хайх..." (Search questions...)
+    • section_general: "Ерөнхий" (General)
+    • section_tasks: "Даалгаврын тухай" (About Tasks)
+    • section_bookings: "Захиалгын тухай" (About Bookings)
+    • section_payments: "Төлбөрийн тухай" (About Payments)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(search) -> scrollview(faq_sections) -> empty/error
+components:
+  - component: COMP-SEARCHBAR
+    variant: default
+    usage: Search bar at top to filter FAQ questions by keyword
+  - component: COMP-LOADINGSKELETON
+    variant: list_row
+    usage: List skeleton placeholder while FAQ content loads
+  - component: COMP-LISTROW
+    variant: default
+    usage: Each FAQ item as a tappable list row with disclosure indicator
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when FAQ content fails to load
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Back navigation button in nav header
+states:
+  - id: loading
+    description: FAQ content is loading
+    visible:
+      - COMP-SEARCHBAR
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-LISTROW
+      - COMP-EMPTYSTATE
+  - id: loaded
+    description: FAQ sections and questions are loaded and displayed
+    visible:
+      - COMP-SEARCHBAR
+      - COMP-LISTROW
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: FAQ content failed to load due to network error
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-SEARCHBAR
+      - COMP-LOADINGSKELETON
+      - COMP-LISTROW
+copy:
+  - key: nav_title
+    mn: Тусламж
+    en: Help & Support
+  - key: search_placeholder
+    mn: Асуулт хайх...
+    en: Search questions...
+  - key: section_general
+    mn: Ерөнхий
+    en: General
+  - key: section_tasks
+    mn: Даалгаврын тухай
+    en: About Tasks
+  - key: section_bookings
+    mn: Захиалгын тухай
+    en: About Bookings
+  - key: section_payments
+    mn: Төлбөрийн тухай
+    en: About Payments
+  - key: section_account
+    mn: Бүртгэлийн тухай
+    en: About Account
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_description
+    mn: Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу
+    en: Failed to load help content. Please try again
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows 6 list row skeletons matching FAQ layout
+  - Loaded state displays FAQ grouped by section with expandable questions
+  - Search bar filters FAQ items by keyword in real-time
+  - Each FAQ item is tappable with disclosure indicator, expanding answer inline
+  - Network error state shows error illustration with retry CTA
+  - Back button in nav header pops to previous screen
+  - FAQ content supports both Mongolian and English based on app language
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+  - 44pt minimum touch target on all tappable FAQ rows
+api_endpoints: []
+analytics_events:
+  - event: help_viewed
+    trigger: Help & Support screen loaded successfully
+  - event: help_search
+    trigger: User types in FAQ search bar
+  - event: help_faq_tapped
+    trigger: User taps a specific FAQ question
+  - event: help_load_error
+    trigger: FAQ content failed to load
+state_prompts:
+  - state_id: loading
+    prompt: >-
+      Generate the "loading" state of "Help & Support / FAQ".
+
+      FAQ content is loading
+
+      Visible elements: COMP-SEARCHBAR, COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-LISTROW, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Help & Support / FAQ".
+
+      FAQ sections and questions are loaded and displayed
+
+      Visible elements: COMP-SEARCHBAR, COMP-LISTROW
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Help & Support / FAQ".
+
+      FAQ content failed to load due to network error
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-SEARCHBAR, COMP-LOADINGSKELETON, COMP-LISTROW
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

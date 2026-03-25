@@ -1,0 +1,147 @@
+screen_id: SCR-CUST-002
+name: Post Task — Category Selection
+role:
+  - customer
+phase: 0-1
+template: feed_list
+route: /(customer)/tasks/new/category
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+    - prompts/journeys/JRN-B2B-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Category Selection" (SCR-CUST-002) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 1/7) -> scrollview(category_grid)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 1 of 7 in the Post Task wizard flow
+    • COMP-CATEGORYCHIP (inactive): Category selection items displayed in a grid; tapping selects and advances
+    • COMP-LOADINGSKELETON (card): Grid skeleton shown while categories load from API
+  This screen has 3 states — generate the primary/default state:
+    Primary state: GET /categories in progress; skeleton grid displayed
+  Key copy (Mongolian primary):
+    • page_title: "Ангилал сонгох" (Select Category)
+    • step_label: "Ангилал" (Category)
+    • instruction: "Ямар төрлийн ажил хийлгэх вэ?" (What type of task do you need?)
+    • error_load_failed: "Ангилал ачаалахад алдаа гарлаа" (Failed to load categories)
+    • cta_retry: "Дахин оролдох" (Try again)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> nav_header(back + title) -> step_indicator(step 1/7) -> scrollview(category_grid)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 1 of 7 in the Post Task wizard flow
+  - component: COMP-CATEGORYCHIP
+    variant: inactive
+    usage: Category selection items displayed in a grid; tapping selects and advances
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Grid skeleton shown while categories load from API
+states:
+  - id: loading_initial
+    description: GET /categories in progress; skeleton grid displayed
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CATEGORYCHIP
+  - id: loaded
+    description: Categories fetched and rendered as tappable chips/cards in grid
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-CATEGORYCHIP
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: GET /categories failed; error state with retry
+    visible:
+      - COMP-STEPINDICATOR
+    hidden:
+      - COMP-CATEGORYCHIP
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Ангилал сонгох
+    en: Select Category
+  - key: step_label
+    mn: Ангилал
+    en: Category
+  - key: instruction
+    mn: Ямар төрлийн ажил хийлгэх вэ?
+    en: What type of task do you need?
+  - key: error_load_failed
+    mn: Ангилал ачаалахад алдаа гарлаа
+    en: Failed to load categories
+  - key: cta_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - StepIndicator shows step 1 of 7 with 'Ангилал' label highlighted
+  - Categories are displayed in a scrollable grid from GET /categories
+  - Each category is a tappable chip/card with category name and icon
+  - Tapping a category navigates (push) to Intake Form SCR-CUST-003 with category_id
+  - Back button pops to My Tasks SCR-CUST-001
+  - Loading state shows skeleton grid matching category card layout
+  - Network error shows inline error with retry CTA
+  - Only active categories are shown; deactivated categories are hidden per REQ-TASK-11
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /categories
+    purpose: Fetch active task categories for selection grid
+analytics_events:
+  - event: post_task_started
+    trigger: Screen becomes visible (step 1 of wizard)
+  - event: category_selected
+    trigger: User taps a category to proceed; includes category_id
+  - event: post_task_abandoned
+    trigger: User taps back to exit the wizard at step 1
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Post Task — Category Selection".
+
+      GET /categories in progress; skeleton grid displayed
+
+      Visible elements: COMP-STEPINDICATOR, COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CATEGORYCHIP
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Post Task — Category Selection".
+
+      Categories fetched and rendered as tappable chips/cards in grid
+
+      Visible elements: COMP-STEPINDICATOR, COMP-CATEGORYCHIP
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Post Task — Category Selection".
+
+      GET /categories failed; error state with retry
+
+      Visible elements: COMP-STEPINDICATOR
+
+      Hidden elements: COMP-CATEGORYCHIP, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

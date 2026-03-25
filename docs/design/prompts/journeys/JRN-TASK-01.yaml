@@ -1,0 +1,73 @@
+journey_id: JRN-TASK-01
+name: Tasker Verification
+actor:
+  - tasker
+phase: 0-1
+goal: Complete identity verification to unlock applications
+entry_screen: SCR-TASK-002
+exit_screens:
+  - SCR-TASK-008
+  - SCR-TASK-010
+happy_path:
+  - step: 1
+    screen_id: SCR-TASK-002
+    screen_name: Task Detail (Tasker)
+    action: Tap 'Apply' while unverified
+    next: SCR-TASK-003
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-TASK-003
+    screen_name: Verification Gate
+    action: View verification encouragement
+    next: SCR-TASK-004
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-TASK-004
+    screen_name: Verification — Consent
+    action: Accept verification consent
+    next: SCR-TASK-005
+    lifecycle: null
+  - step: 4
+    screen_id: SCR-TASK-005
+    screen_name: Verification — ID Upload
+    action: Upload ID front, back, selfie
+    next: SCR-TASK-010
+    lifecycle: VER-T01 (tasker_submits_id)
+  - step: 5
+    screen_id: SCR-TASK-010
+    screen_name: Verification Submitted — Success
+    action: Success — submitted
+    next: SCR-TASK-007
+    lifecycle: null
+  - step: 6
+    screen_id: SCR-TASK-007
+    screen_name: Verification — Pending
+    action: Wait for admin review (24h SLA)
+    next: SCR-TASK-008
+    lifecycle: VER-T02 (admin_approves)
+alternate_paths:
+  - id: JRN-TASK-01-A1
+    name: Rejected
+    branch_at_step: 6
+    condition: Admin rejects ID
+    screens:
+      - SCR-TASK-009
+    outcome: Rejection reason shown, resubmit prompt
+  - id: JRN-TASK-01-A2
+    name: Resubmit after rejection
+    branch_at_step: 6
+    condition: Tasker fixes and resubmits
+    screens:
+      - SCR-TASK-009
+      - SCR-TASK-005
+    outcome: Re-enters verification queue
+  - id: JRN-TASK-01-A3
+    name: DAN fast-path (Phase 2)
+    branch_at_step: 2
+    condition: Phase 2, E-Mongolia available
+    screens:
+      - SCR-TASK-006
+    outcome: Auto-verified via DAN
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -1,0 +1,39 @@
+journey_id: JRN-B2B-03
+name: Manage Business Tasks
+actor:
+  - customer
+phase: '2'
+goal: Review account-scoped tasks and open a task detail
+entry_screen: SCR-B2B-001
+exit_screens:
+  - SCR-CUST-009
+happy_path:
+  - step: 1
+    screen_id: SCR-B2B-001
+    screen_name: Business Accounts
+    action: Open business account tasks
+    next: SCR-B2B-006
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-B2B-006
+    screen_name: Business Tasks
+    action: Browse business-scoped tasks
+    next: SCR-CUST-009
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-009
+    screen_name: Task Detail (Customer)
+    action: Open standard task detail with business context
+    next: SCR-CUST-009
+    lifecycle: null
+alternate_paths:
+  - id: JRN-B2B-03-A1
+    name: Empty business account
+    branch_at_step: 2
+    condition: Selected account has no tasks yet
+    screens:
+      - SCR-B2B-006
+    outcome: Prompt to post the first business task
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

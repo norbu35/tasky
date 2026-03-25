@@ -29,7 +29,7 @@ export function FAB() {
     if (!session) {
       router.push('/(auth)');
     } else {
-      router.push('/create'); // Routes to the root modal
+      router.push('/(customer)/tasks/new/category');
     }
   };
 

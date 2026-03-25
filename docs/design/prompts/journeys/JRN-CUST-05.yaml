@@ -1,0 +1,32 @@
+journey_id: JRN-CUST-05
+name: Rebook Tasker
+actor:
+  - customer
+phase: 0-1
+goal: Quickly rebook a previously hired Tasker
+entry_screen: SCR-CUST-017
+exit_screens:
+  - SCR-CUST-015
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-017
+    screen_name: Booking Detail (Customer)
+    action: Tap 'Rebook' on completed booking
+    next: SCR-CUST-023
+    lifecycle: BOOK-T11 (rebook_shortcut)
+  - step: 2
+    screen_id: SCR-CUST-023
+    screen_name: Rebook Shortcut
+    action: Review prefilled task, edit if needed
+    next: SCR-CUST-014
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-014
+    screen_name: Booking Confirmation
+    action: Confirm booking
+    next: SCR-CUST-015
+    lifecycle: null
+alternate_paths: []
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

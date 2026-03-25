@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-110",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-39",
+    "REQ-PAY-43"
+  ],
+  "depends_on": [
+    "TASK-100",
+    "TASK-105",
+    "TASK-108"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-110-01",
+      "type": "functional",
+      "statement": "Business subscription plans bill monthly on the configured `billing_cycle_day` via QPay payment link and persist plan, location, and billing-state history per account.",
+      "test_ids": [
+        "TID-TASK-110-API-B2B-SUBSCRIPTION-BILLING"
+      ]
+    },
+    {
+      "id": "AC-TASK-110-02",
+      "type": "functional",
+      "statement": "Family Plan subscription grants household service history, saved favorites, and priority matching to Pro-subscribed providers behind customer-facing entitlement checks.",
+      "test_ids": [
+        "TID-TASK-110-API-FAMILY-PLAN-ENTITLEMENTS"
+      ]
+    },
+    {
+      "id": "AC-TASK-110-03",
+      "type": "functional",
+      "statement": "Recurring billing, renewal failure handling, and entitlement revocation are auditable and feature-gated so disabled plans do not expose purchase or renewal surfaces.",
+      "test_ids": [
+        "TID-TASK-110-OBS-RECURRING-BILLING-AUDIT"
+      ]
+    }
+  ]
+}

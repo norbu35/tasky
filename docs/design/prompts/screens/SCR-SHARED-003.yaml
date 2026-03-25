@@ -1,0 +1,289 @@
+screen_id: SCR-SHARED-003
+name: Auth — OTP Verification
+role:
+  - customer
+  - tasker
+phase: '2'
+template: auth
+route: /auth/otp-verify
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-02.yaml
+    - prompts/journeys/JRN-SHARED-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Auth — OTP Verification" (SCR-SHARED-003) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> nav_header(back) -> centered_content(heading + description + otp_input + resend_link)
+  -> bottom_cta(verify_button)
+
+  Components used:
+    • COMP-INPUT (default): OTP code entry field; 4-digit numeric input with auto-advance
+    • COMP-FORMFIELD (default): Wraps OTP input with label, error, and helper text
+    • COMP-BUTTON (primary): Primary verify CTA at screen bottom
+    • COMP-BUTTON (ghost): Resend code link styled as ghost button with countdown timer
+  This screen has 7 states — generate the primary/default state:
+    Primary state: OTP screen loaded; phone number displayed; input field empty and focused
+  Key copy (Mongolian primary):
+    • heading: "Код баталгаажуулах" (Verify Code)
+    • description: "{phone_number} дугаар руу илгээсэн 4 оронтой кодыг оруулна уу" (Enter the 4-digit code sent to {phone_number})
+    • otp_input_label: "Баталгаажуулах код" (Verification code)
+    • otp_input_helper: "Таны утсанд илгээсэн 4 оронтой код" (4-digit code sent to your phone)
+    • verify_button_label: "Баталгаажуулах" (Verify)
+    • resend_label: "Код дахин илгээх" (Resend code)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: >-
+    safe_area -> nav_header(back) -> centered_content(heading + description + otp_input + resend_link) ->
+    bottom_cta(verify_button)
+components:
+  - component: COMP-INPUT
+    variant: default
+    usage: OTP code entry field; 4-digit numeric input with auto-advance
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps OTP input with label, error, and helper text
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary verify CTA at screen bottom
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Resend code link styled as ghost button with countdown timer
+states:
+  - id: default
+    description: OTP screen loaded; phone number displayed; input field empty and focused
+    visible:
+      - heading
+      - phone_display
+      - otp_input
+      - verify_button_disabled
+      - resend_link
+    hidden:
+      - error_message
+      - verifying_spinner
+  - id: code_entry
+    description: User is entering the OTP code digits
+    visible:
+      - heading
+      - phone_display
+      - otp_input_active
+      - verify_button_enabled
+      - resend_link
+    hidden:
+      - error_message
+      - verifying_spinner
+  - id: verifying
+    description: OTP code submitted; verification request in progress
+    visible:
+      - heading
+      - phone_display
+      - otp_input_disabled
+      - verify_button_loading
+    hidden:
+      - error_message
+      - resend_link
+  - id: error_wrong_code
+    description: User entered incorrect OTP code; field shows error and clears
+    visible:
+      - heading
+      - phone_display
+      - otp_input_error
+      - wrong_code_error
+      - verify_button_disabled
+      - resend_link
+    hidden:
+      - verifying_spinner
+  - id: error_expired
+    description: OTP code has expired; user must request a new code
+    visible:
+      - heading
+      - phone_display
+      - otp_input_disabled
+      - expired_error
+      - resend_link_enabled
+    hidden:
+      - verify_button
+      - verifying_spinner
+  - id: resend_cooldown
+    description: Resend requested; countdown timer shown (60s) before resend is available again
+    visible:
+      - heading
+      - phone_display
+      - otp_input
+      - verify_button
+      - resend_countdown
+    hidden:
+      - error_message
+      - resend_link_enabled
+  - id: error_network
+    description: Network error during OTP verification or resend request
+    visible:
+      - heading
+      - phone_display
+      - otp_input
+      - network_error_message
+      - verify_button
+      - resend_link
+    hidden:
+      - verifying_spinner
+copy:
+  - key: heading
+    mn: Код баталгаажуулах
+    en: Verify Code
+  - key: description
+    mn: '{phone_number} дугаар руу илгээсэн 4 оронтой кодыг оруулна уу'
+    en: Enter the 4-digit code sent to {phone_number}
+  - key: otp_input_label
+    mn: Баталгаажуулах код
+    en: Verification code
+  - key: otp_input_helper
+    mn: Таны утсанд илгээсэн 4 оронтой код
+    en: 4-digit code sent to your phone
+  - key: verify_button_label
+    mn: Баталгаажуулах
+    en: Verify
+  - key: resend_label
+    mn: Код дахин илгээх
+    en: Resend code
+  - key: resend_cooldown_label
+    mn: Дахин илгээх ({seconds} сек)
+    en: Resend in ({seconds}s)
+  - key: error_wrong_code
+    mn: Буруу код оруулсан байна. Дахин оролдоно уу.
+    en: Incorrect code. Please try again.
+  - key: error_expired
+    mn: Кодын хугацаа дууссан. Шинэ код авна уу.
+    en: Code expired. Please request a new one.
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+acceptance_criteria:
+  - The phone number that received the OTP is displayed on screen
+  - OTP input field auto-focuses on screen load
+  - Input accepts exactly 4 numeric digits
+  - Verify button is disabled until all 4 digits are entered
+  - Tapping Verify shows loading state on the button
+  - On success for a new user, the app replaces to Onboarding Carousel (SCR-SHARED-005)
+  - On success for a returning customer, the app replaces to My Tasks (SCR-CUST-001)
+  - On success for a returning tasker, the app replaces to Task Feed (SCR-TASK-001)
+  - Wrong code shows inline error below the input and clears the field
+  - Expired code disables the input and highlights the resend link
+  - Resend link is disabled for 60 seconds after each resend with countdown visible
+  - Network errors display inline message below the form
+  - Back navigation returns to the Login screen (SCR-SHARED-002) or OTP Migration Gate (SCR-SHARED-004)
+api_endpoints:
+  - method: POST
+    path: /auth/otp/verify
+    purpose: Verify the OTP code entered by the user
+  - method: POST
+    path: /auth/otp/request
+    purpose: Resend OTP code to the user's phone number
+analytics_events:
+  - event: otp_screen_viewed
+    trigger: OTP verification screen becomes visible
+  - event: otp_code_entered
+    trigger: User finishes entering 4-digit code
+  - event: otp_verify_tapped
+    trigger: User taps the Verify button
+  - event: otp_verify_success
+    trigger: OTP verification succeeds
+  - event: otp_verify_failed
+    trigger: OTP verification fails (wrong code or expired)
+  - event: otp_resend_tapped
+    trigger: User taps the resend code link
+  - event: otp_resend_success
+    trigger: Resend OTP request completes successfully
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Auth — OTP Verification".
+
+      OTP screen loaded; phone number displayed; input field empty and focused
+
+      Visible elements: heading, phone_display, otp_input, verify_button_disabled, resend_link
+
+      Hidden elements: error_message, verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: code_entry
+    prompt: >-
+      Generate the "code_entry" state of "Auth — OTP Verification".
+
+      User is entering the OTP code digits
+
+      Visible elements: heading, phone_display, otp_input_active, verify_button_enabled, resend_link
+
+      Hidden elements: error_message, verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: verifying
+    prompt: >-
+      Generate the "verifying" state of "Auth — OTP Verification".
+
+      OTP code submitted; verification request in progress
+
+      Visible elements: heading, phone_display, otp_input_disabled, verify_button_loading
+
+      Hidden elements: error_message, resend_link
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_wrong_code
+    prompt: >-
+      Generate the "error_wrong_code" state of "Auth — OTP Verification".
+
+      User entered incorrect OTP code; field shows error and clears
+
+      Visible elements: heading, phone_display, otp_input_error, wrong_code_error, verify_button_disabled, resend_link
+
+      Hidden elements: verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_expired
+    prompt: >-
+      Generate the "error_expired" state of "Auth — OTP Verification".
+
+      OTP code has expired; user must request a new code
+
+      Visible elements: heading, phone_display, otp_input_disabled, expired_error, resend_link_enabled
+
+      Hidden elements: verify_button, verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: resend_cooldown
+    prompt: >-
+      Generate the "resend_cooldown" state of "Auth — OTP Verification".
+
+      Resend requested; countdown timer shown (60s) before resend is available again
+
+      Visible elements: heading, phone_display, otp_input, verify_button, resend_countdown
+
+      Hidden elements: error_message, resend_link_enabled
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Auth — OTP Verification".
+
+      Network error during OTP verification or resend request
+
+      Visible elements: heading, phone_display, otp_input, network_error_message, verify_button, resend_link
+
+      Hidden elements: verifying_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

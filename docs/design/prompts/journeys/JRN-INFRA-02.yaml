@@ -1,0 +1,16 @@
+journey_id: JRN-INFRA-02
+name: Suspended/Banned Account
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: Inform user of account restriction
+entry_screen: SCR-SHARED-020
+exit_screens:
+  - SCR-SHARED-020
+  - SCR-SHARED-021
+happy_path: []
+alternate_paths: []
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

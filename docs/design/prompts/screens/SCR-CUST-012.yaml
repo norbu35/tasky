@@ -1,0 +1,129 @@
+screen_id: SCR-CUST-012
+name: Applicant Timeout/Decline
+role:
+  - customer
+phase: '2'
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Applicant Timeout/Decline" (SCR-CUST-012) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + icon + title + body + actions)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet notifying customer that the selected Tasker has timed out or declined
+    • COMP-BUTTON (primary): Primary CTA to select the next ranked applicant
+  This screen has 3 states — generate the primary/default state:
+    Primary state: Selected Tasker did not respond within 15-minute window per REQ-BOOK-10; timeout notification shown
+  Key copy (Mongolian primary):
+    • title_timeout: "Хугацаа дууслаа" (Time Expired)
+    • body_timeout: "Сонгосон гүйцэтгэгч 15 минутын дотор хариу өгсөнгүй. Дараагийн гүйцэтгэгчийг сонгоно уу" (The selected Tasker did not respond within 15 minutes. Please select the next Tasker)
+    • title_decline: "Гүйцэтгэгч татгалзлаа" (Tasker Declined)
+    • body_decline: "Сонгосон гүйцэтгэгч энэ удаа ажиллах боломжгүй байна. Дараагийн гүйцэтгэгчийг сонгоно уу" (The selected Tasker is unable to take this task. Please select the next Tasker)
+    • cta_select_next: "Дараагийнхыг сонгох" (Select Next)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + icon + title + body + actions)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet notifying customer that the selected Tasker has timed out or declined
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to select the next ranked applicant
+states:
+  - id: timeout_notification
+    description: Selected Tasker did not respond within 15-minute window per REQ-BOOK-10; timeout notification shown
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: decline_notification
+    description: Selected Tasker actively declined the lead; decline notification shown
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: select_next_prompt
+    description: Customer prompted to select the next applicant from the ranked list
+    visible:
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: title_timeout
+    mn: Хугацаа дууслаа
+    en: Time Expired
+  - key: body_timeout
+    mn: Сонгосон гүйцэтгэгч 15 минутын дотор хариу өгсөнгүй. Дараагийн гүйцэтгэгчийг сонгоно уу
+    en: The selected Tasker did not respond within 15 minutes. Please select the next Tasker
+  - key: title_decline
+    mn: Гүйцэтгэгч татгалзлаа
+    en: Tasker Declined
+  - key: body_decline
+    mn: Сонгосон гүйцэтгэгч энэ удаа ажиллах боломжгүй байна. Дараагийн гүйцэтгэгчийг сонгоно уу
+    en: The selected Tasker is unable to take this task. Please select the next Tasker
+  - key: cta_select_next
+    mn: Дараагийнхыг сонгох
+    en: Select Next
+acceptance_criteria:
+  - Bottom sheet uses ModalSheet with handle bar for drag-to-dismiss
+  - Timeout state shows that the 15-minute window expired per REQ-BOOK-10 and REQ-PAY-12
+  - Decline state shows that the Tasker actively declined; no credits charged per REQ-PAY-12
+  - Select Next CTA dismisses sheet and returns to Applicants List SCR-CUST-011
+  - After 3 total declines/timeouts, flow should fall back to open application per REQ-BOOK-10
+  - Scrim uses branded primaryDeep at 35% opacity
+  - This screen is Phase 2 only (lead-unlock flow)
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: applicant_timeout_shown
+    trigger: Timeout notification sheet displayed; includes task_id and timed_out_tasker_id
+  - event: applicant_decline_shown
+    trigger: Decline notification sheet displayed; includes task_id and declined_tasker_id
+  - event: select_next_applicant_tapped
+    trigger: User taps Select Next to return to applicant list
+state_prompts:
+  - state_id: timeout_notification
+    prompt: >-
+      Generate the "timeout_notification" state of "Applicant Timeout/Decline".
+
+      Selected Tasker did not respond within 15-minute window per REQ-BOOK-10; timeout notification shown
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: decline_notification
+    prompt: >-
+      Generate the "decline_notification" state of "Applicant Timeout/Decline".
+
+      Selected Tasker actively declined the lead; decline notification shown
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: select_next_prompt
+    prompt: >-
+      Generate the "select_next_prompt" state of "Applicant Timeout/Decline".
+
+      Customer prompted to select the next applicant from the ranked list
+
+      Visible elements: COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

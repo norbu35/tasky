@@ -1,0 +1,41 @@
+journey_id: JRN-SHARED-07
+name: Review Submission
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: Submit mandatory review after booking completion
+entry_screen: SCR-SHARED-017
+exit_screens:
+  - SCR-SHARED-017
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-017
+    screen_name: Review Form
+    action: Rate categories + optional freetext
+    next: SCR-SHARED-017
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-017
+    screen_name: Review Form
+    action: Submit review
+    next: return to booking detail
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-07-A1
+    name: Review reminder sequence
+    branch_at_step: 0
+    condition: User doesn't review immediately
+    screens:
+      - SCR-SHARED-018
+    outcome: 24h reminder → 72h reminder → hard lock if risk-triggered
+  - id: JRN-SHARED-07-A2
+    name: Hard lock
+    branch_at_step: 0
+    condition: 'Risk conditions: open dispute, 2 missed reviews, investigation'
+    screens:
+      - SCR-SHARED-019
+    outcome: Cannot post/apply until review submitted
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

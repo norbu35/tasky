@@ -1,0 +1,219 @@
+screen_id: SCR-CUST-007
+name: Post Task — Review & Submit
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/tasks/new/review
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task — Review & Submit" (SCR-CUST-007) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 6/7) -> scrollview(summary_sections) ->
+  sticky_bottom_cta(submit)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): Shows step 6 of 7 in the Post Task wizard flow
+    • COMP-CARD (outlined): Summary sections displaying category, intake answers, photos, location, schedule, and budget
+    • COMP-STATUSBADGE (open): Category badge displayed in the summary header
+    • COMP-BUTTON (primary): Primary submit CTA at bottom; secondary edit links on each summary section
+    • COMP-TOAST (error): Error toast when task submission fails
+  This screen has 4 states — generate the primary/default state:
+    Primary state: All task data displayed in summary sections; user reviews before submitting
+  Key copy (Mongolian primary):
+    • page_title: "Хянах ба илгээх" (Review & Submit)
+    • step_label: "Хянах" (Review)
+    • section_category: "Ангилал" (Category)
+    • section_details: "Даалгаврын дэлгэрэнгүй" (Task Details)
+    • section_scope_summary: "Ажлын товч тайлбар" (Job Scope Summary)
+    • section_photos: "Зурагнууд" (Photos)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(step 6/7) -> scrollview(summary_sections) ->
+    sticky_bottom_cta(submit)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: Shows step 6 of 7 in the Post Task wizard flow
+  - component: COMP-CARD
+    variant: outlined
+    usage: Summary sections displaying category, intake answers, photos, location, schedule, and budget
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Category badge displayed in the summary header
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary submit CTA at bottom; secondary edit links on each summary section
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast when task submission fails
+states:
+  - id: review
+    description: All task data displayed in summary sections; user reviews before submitting
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: editing_summary
+    description: User tapped edit on the Job Scope Summary; text becomes editable per REQ-TASK-07
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: submitting
+    description: POST /tasks in progress; submit button shows loading spinner
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: submit_error
+    description: POST /tasks failed; error toast with retry action shown
+    visible:
+      - COMP-STEPINDICATOR
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden: []
+copy:
+  - key: page_title
+    mn: Хянах ба илгээх
+    en: Review & Submit
+  - key: step_label
+    mn: Хянах
+    en: Review
+  - key: section_category
+    mn: Ангилал
+    en: Category
+  - key: section_details
+    mn: Даалгаврын дэлгэрэнгүй
+    en: Task Details
+  - key: section_scope_summary
+    mn: Ажлын товч тайлбар
+    en: Job Scope Summary
+  - key: section_photos
+    mn: Зурагнууд
+    en: Photos
+  - key: section_location
+    mn: Байршил
+    en: Location
+  - key: section_schedule
+    mn: Хуваарь
+    en: Schedule
+  - key: section_budget
+    mn: Төсөв
+    en: Budget
+  - key: edit_link
+    mn: Засах
+    en: Edit
+  - key: scope_summary_edit_hint
+    mn: Товч тайлбарыг засах боломжтой
+    en: You can edit the summary
+  - key: payment_note
+    mn: Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно
+    en: Payment is arranged directly with the Tasker
+  - key: cta_submit
+    mn: Даалгавар оруулах
+    en: Post Task
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: error_submit
+    mn: Даалгавар оруулахад алдаа гарлаа. Дахин оролдоно уу
+    en: Failed to post task. Please try again
+acceptance_criteria:
+  - StepIndicator shows step 6 of 7 with 'Хянах' label highlighted
+  - >-
+    Summary displays all collected data in outlined Card sections: category, intake answers, photos, location, schedule,
+    budget
+  - Job Scope Summary section is auto-generated from intake answers per REQ-TASK-07 and is editable by the customer
+  - Each section has an Edit link that navigates back to the corresponding wizard step
+  - Budget is displayed in ₮ format with comma separator (e.g., ₮50,000)
+  - Location shows the pin text description and approximate area
+  - Photos show thumbnail previews of uploaded images
+  - Payment note per REQ-PAY-03 informs that payment is direct between parties
+  - Submit button enters loading state during POST /tasks
+  - On success, screen replaces to Task Posted Success SCR-CUST-008
+  - On failure, error toast appears with retry action
+  - Back button pops to Schedule & Budget SCR-CUST-006
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /tasks
+    purpose: Submit the complete task with all collected data (category, intake answers, photos, location, schedule, budget)
+analytics_events:
+  - event: task_review_viewed
+    trigger: Review screen becomes visible with complete task summary
+  - event: task_scope_summary_edited
+    trigger: User edits the auto-generated Job Scope Summary
+  - event: task_submitted
+    trigger: User taps Post Task and POST /tasks succeeds; includes task_id
+  - event: task_submit_failed
+    trigger: POST /tasks failed; includes error type
+  - event: task_review_section_edit_tapped
+    trigger: User taps Edit on a summary section; includes section name
+state_prompts:
+  - state_id: review
+    prompt: >-
+      Generate the "review" state of "Post Task — Review & Submit".
+
+      All task data displayed in summary sections; user reviews before submitting
+
+      Visible elements: COMP-STEPINDICATOR, COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: editing_summary
+    prompt: >-
+      Generate the "editing_summary" state of "Post Task — Review & Submit".
+
+      User tapped edit on the Job Scope Summary; text becomes editable per REQ-TASK-07
+
+      Visible elements: COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitting
+    prompt: >-
+      Generate the "submitting" state of "Post Task — Review & Submit".
+
+      POST /tasks in progress; submit button shows loading spinner
+
+      Visible elements: COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submit_error
+    prompt: >-
+      Generate the "submit_error" state of "Post Task — Review & Submit".
+
+      POST /tasks failed; error toast with retry action shown
+
+      Visible elements: COMP-STEPINDICATOR, COMP-CARD, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

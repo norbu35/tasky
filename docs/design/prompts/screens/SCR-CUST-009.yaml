@@ -1,0 +1,364 @@
+screen_id: SCR-CUST-009
+name: Task Detail (Customer)
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/tasks/:taskId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-02.yaml
+    - prompts/journeys/JRN-CUST-07.yaml
+    - prompts/journeys/JRN-CUST-08.yaml
+    - prompts/journeys/JRN-CUST-09.yaml
+    - prompts/journeys/JRN-B2B-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Task Detail (Customer)" (SCR-CUST-009) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(task_info + applicant_summary + status_actions)
+  -> sticky_bottom_cta
+
+  Components used:
+    • COMP-STATUSBADGE (open): Task status indicator (open, assigned, completed, cancelled, no_show)
+    • COMP-CARD (outlined): Sections for task details, applicant summary, and booking info
+    • COMP-PROFILEAVATAR (lg): Assigned Tasker avatar shown when task is in assigned/completed state
+    • COMP-TRUSTBANNER (default): Trust metrics banner in the task detail (verified count, completion stats)
+    • COMP-BUTTON (primary): Context-dependent CTAs: View Applicants, Cancel, Message Tasker, Confirm Complete
+    • COMP-LOADINGSKELETON (detail): Detail-shaped skeleton placeholder during initial load
+    • COMP-TOAST (error): Error toast for network failures
+  This screen has 9 states — generate the primary/default state:
+    Primary state: GET /tasks/:id in progress; skeleton placeholder shown
+  Key copy (Mongolian primary):
+    • page_title: "Даалгаврын дэлгэрэнгүй" (Task Detail)
+    • section_details: "Дэлгэрэнгүй" (Details)
+    • section_location: "Байршил" (Location)
+    • section_schedule: "Хуваарь" (Schedule)
+    • section_budget: "Төсөв" (Budget)
+    • section_applicants: "Хүсэлтүүд" (Applications)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(task_info + applicant_summary + status_actions) ->
+    sticky_bottom_cta
+components:
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Task status indicator (open, assigned, completed, cancelled, no_show)
+  - component: COMP-CARD
+    variant: outlined
+    usage: Sections for task details, applicant summary, and booking info
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Assigned Tasker avatar shown when task is in assigned/completed state
+  - component: COMP-TRUSTBANNER
+    variant: default
+    usage: Trust metrics banner in the task detail (verified count, completion stats)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: 'Context-dependent CTAs: View Applicants, Cancel, Message Tasker, Confirm Complete'
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail-shaped skeleton placeholder during initial load
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast for network failures
+states:
+  - id: loading_initial
+    description: GET /tasks/:id in progress; skeleton placeholder shown
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-PROFILEAVATAR
+      - COMP-TRUSTBANNER
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: open_no_applicants
+    description: Task is OPEN with zero applicants; shows task info and waiting message
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: open_has_applicants
+    description: Task is OPEN with 1+ applicants; shows applicant count badge and View Applicants CTA
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-TRUSTBANNER
+      - COMP-BUTTON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: assigned
+    description: Task is ASSIGNED; shows assigned Tasker info, booking details, and Message Tasker CTA
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-PROFILEAVATAR
+      - COMP-TRUSTBANNER
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: tasker_marked_done
+    description: Tasker has marked task as done; Confirm Complete CTA shown prominently
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: completed
+    description: Task is COMPLETED; final summary shown with review prompt or rebook option
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-PROFILEAVATAR
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: cancelled
+    description: Task is CANCELLED; shows cancellation info with no active CTAs
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-TRUSTBANNER
+      - COMP-LOADINGSKELETON
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: no_show
+    description: Task ended as NO_SHOW; shows no-show status and relevant info
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-TRUSTBANNER
+      - COMP-LOADINGSKELETON
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: error_network
+    description: GET /tasks/:id failed; error toast with retry
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-CARD
+      - COMP-PROFILEAVATAR
+      - COMP-TRUSTBANNER
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Даалгаврын дэлгэрэнгүй
+    en: Task Detail
+  - key: section_details
+    mn: Дэлгэрэнгүй
+    en: Details
+  - key: section_location
+    mn: Байршил
+    en: Location
+  - key: section_schedule
+    mn: Хуваарь
+    en: Schedule
+  - key: section_budget
+    mn: Төсөв
+    en: Budget
+  - key: section_applicants
+    mn: Хүсэлтүүд
+    en: Applications
+  - key: applicant_count
+    mn: '{count} хүсэлт ирсэн'
+    en: '{count} applications received'
+  - key: no_applicants_yet
+    mn: Одоогоор хүсэлт ирээгүй байна. Гүйцэтгэгчид хүсэлт илгээх болно
+    en: No applications yet. Taskers will apply soon
+  - key: assigned_tasker
+    mn: Томилогдсон гүйцэтгэгч
+    en: Assigned Tasker
+  - key: tasker_marked_done_prompt
+    mn: Гүйцэтгэгч ажил дууслаа гэж мэдэгдлээ. Баталгаажуулна уу
+    en: Tasker has marked the task as done. Please confirm completion
+  - key: payment_note
+    mn: Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно
+    en: Payment is arranged directly with the Tasker
+  - key: cta_view_applicants
+    mn: Хүсэлтүүдийг харах
+    en: View Applicants
+  - key: cta_cancel_task
+    mn: Даалгавар цуцлах
+    en: Cancel Task
+  - key: cta_message_tasker
+    mn: Зурвас илгээх
+    en: Message Tasker
+  - key: cta_confirm_complete
+    mn: Дууссанг баталгаажуулах
+    en: Confirm Complete
+  - key: error_network
+    mn: Даалгаврыг ачаалахад алдаа гарлаа
+    en: Failed to load task detail
+acceptance_criteria:
+  - >-
+    Task detail displays category, description/scope summary, photos, approximate location, schedule (YYYY.MM.DD
+    format), and budget (₮ format)
+  - StatusBadge shows current task status with correct color mapping
+  - OPEN state with no applicants shows waiting message
+  - OPEN state with applicants shows count badge and View Applicants CTA navigating (push) to SCR-CUST-011
+  - ASSIGNED state shows assigned Tasker profile with avatar, name, verification badge, and rating
+  - ASSIGNED state shows Message Tasker CTA navigating (push) to SCR-SHARED-010
+  - Tasker marked done state shows prominent Confirm Complete CTA
+  - Cancel CTA opens modal sheet SCR-CUST-010 for cancellation confirmation
+  - COMPLETED state shows final task summary
+  - CANCELLED and NO_SHOW states show terminal information with no active CTAs
+  - Payment note per REQ-PAY-03 visible in open/assigned states
+  - Back button pops to My Tasks SCR-CUST-001
+  - Network error shows error toast with retry
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /tasks/:id
+    purpose: Fetch task detail including status, applicant count, assigned Tasker info
+  - method: PUT
+    path: /tasks/:id/complete
+    purpose: Mark task as completed (triggered from confirm completion flow)
+  - method: DELETE
+    path: /tasks/:id
+    purpose: Cancel an open task
+analytics_events:
+  - event: task_detail_viewed
+    trigger: Screen becomes visible; includes task_id and current status
+  - event: view_applicants_tapped
+    trigger: User taps View Applicants; includes task_id and applicant_count
+  - event: cancel_task_tapped
+    trigger: User taps Cancel Task
+  - event: message_tasker_tapped
+    trigger: User taps Message Tasker from assigned task detail
+  - event: confirm_complete_tapped
+    trigger: User taps Confirm Complete when Tasker has marked done
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Task Detail (Customer)".
+
+      GET /tasks/:id in progress; skeleton placeholder shown
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: open_no_applicants
+    prompt: >-
+      Generate the "open_no_applicants" state of "Task Detail (Customer)".
+
+      Task is OPEN with zero applicants; shows task info and waiting message
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD, COMP-BUTTON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: open_has_applicants
+    prompt: >-
+      Generate the "open_has_applicants" state of "Task Detail (Customer)".
+
+      Task is OPEN with 1+ applicants; shows applicant count badge and View Applicants CTA
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD, COMP-TRUSTBANNER, COMP-BUTTON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: assigned
+    prompt: >-
+      Generate the "assigned" state of "Task Detail (Customer)".
+
+      Task is ASSIGNED; shows assigned Tasker info, booking details, and Message Tasker CTA
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: tasker_marked_done
+    prompt: >-
+      Generate the "tasker_marked_done" state of "Task Detail (Customer)".
+
+      Tasker has marked task as done; Confirm Complete CTA shown prominently
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: completed
+    prompt: >-
+      Generate the "completed" state of "Task Detail (Customer)".
+
+      Task is COMPLETED; final summary shown with review prompt or rebook option
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: cancelled
+    prompt: >-
+      Generate the "cancelled" state of "Task Detail (Customer)".
+
+      Task is CANCELLED; shows cancellation info with no active CTAs
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-LOADINGSKELETON, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: no_show
+    prompt: >-
+      Generate the "no_show" state of "Task Detail (Customer)".
+
+      Task ended as NO_SHOW; shows no-show status and relevant info
+
+      Visible elements: COMP-STATUSBADGE, COMP-CARD
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-LOADINGSKELETON, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Task Detail (Customer)".
+
+      GET /tasks/:id failed; error toast with retry
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-STATUSBADGE, COMP-CARD, COMP-PROFILEAVATAR, COMP-TRUSTBANNER, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

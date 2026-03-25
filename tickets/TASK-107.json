@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-107",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-23",
+    "REQ-PAY-24"
+  ],
+  "depends_on": [
+    "TASK-021",
+    "TASK-022",
+    "TASK-031",
+    "TASK-097"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-107-01",
+      "type": "functional",
+      "statement": "Promoted listing purchase creates at most one active 7-day boost per task, verifies QPay payment, and surfaces the visual 'Онцлох' label in feed results.",
+      "test_ids": [
+        "TID-TASK-107-API-PROMOTED-LISTING-PURCHASE"
+      ]
+    },
+    {
+      "id": "AC-TASK-107-02",
+      "type": "functional",
+      "statement": "Urgent boost purchase creates a 3-day higher-priority boost that sorts above promoted tasks and is eligible for urgent push-notification treatment.",
+      "test_ids": [
+        "TID-TASK-107-DOMAIN-URGENT-BOOST-PRIORITY"
+      ]
+    },
+    {
+      "id": "AC-TASK-107-03",
+      "type": "functional",
+      "statement": "Both visibility products are gated behind `promoted_listings_enabled`, prevent duplicate overlapping activations, and expire automatically at the configured end time.",
+      "test_ids": [
+        "TID-TASK-107-API-PROMOTED-TOGGLE-EXPIRY"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+screen_id: SCR-TASK-016
+name: Tasker Stats Dashboard
+role:
+  - tasker
+phase: 0-1
+template: detail
+route: /(tasker)/stats
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Tasker Stats Dashboard" (SCR-TASK-016) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(stats_grid + rating_breakdown +
+  reliability_section + activity_section)
+
+  Components used:
+    • COMP-STATCARD (default): Completed jobs count stat card
+    • COMP-STATCARD (default): Overall rating stat card
+    • COMP-STATCARD (default): Completion rate stat card
+    • COMP-STATCARD (default): Application success rate stat card (Phase 2+)
+    • COMP-STATCARD (default): Cancellation count stat card for reliability awareness
+    • COMP-STARRATING (display): Per-category rating breakdown display — task clarity, respectfulness, punctuality
+    • COMP-VERIFICATIONBADGE (default): Verification and Pro Badge status display in stats header
+    • COMP-LOADINGSKELETON (card): Skeleton placeholders matching StatCard grid during load
+  This screen has 3 states — generate the primary/default state:
+    Primary state: Stats loading — skeleton placeholders matching StatCard grid
+  Key copy (Mongolian primary):
+    • page_title: "Миний статистик" (My Stats)
+    • stats_section_heading: "Ерөнхий үзүүлэлтүүд" (Overview)
+    • completed_jobs_label: "Дууссан ажил" (Completed Jobs)
+    • overall_rating_label: "Ерөнхий үнэлгээ" (Overall Rating)
+    • completion_rate_label: "Гүйцэтгэлийн хувь" (Completion Rate)
+    • application_success_label: "Анкетын амжилт" (Application Success)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(stats_grid + rating_breakdown + reliability_section +
+    activity_section)
+components:
+  - component: COMP-STATCARD
+    variant: default
+    usage: Completed jobs count stat card
+  - component: COMP-STATCARD
+    variant: default
+    usage: Overall rating stat card
+  - component: COMP-STATCARD
+    variant: default
+    usage: Completion rate stat card
+  - component: COMP-STATCARD
+    variant: default
+    usage: Application success rate stat card (Phase 2+)
+  - component: COMP-STATCARD
+    variant: default
+    usage: Cancellation count stat card for reliability awareness
+  - component: COMP-STARRATING
+    variant: display
+    usage: Per-category rating breakdown display — task clarity, respectfulness, punctuality
+  - component: COMP-VERIFICATIONBADGE
+    variant: default
+    usage: Verification and Pro Badge status display in stats header
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Skeleton placeholders matching StatCard grid during load
+states:
+  - id: loading_initial
+    description: Stats loading — skeleton placeholders matching StatCard grid
+    visible:
+      - nav_header
+      - loading_skeleton
+    hidden:
+      - stats_grid
+      - rating_breakdown
+      - reliability_section
+      - activity_section
+  - id: loaded
+    description: Stats fully loaded and displayed in grid layout
+    visible:
+      - nav_header
+      - stats_grid
+      - rating_breakdown
+      - reliability_section
+      - activity_section
+      - badge_status
+    hidden:
+      - loading_skeleton
+      - error_message
+  - id: error_network
+    description: Network error loading stats — retry option
+    visible:
+      - nav_header
+      - error_message
+      - retry_button
+    hidden:
+      - stats_grid
+      - loading_skeleton
+      - rating_breakdown
+      - reliability_section
+copy:
+  - key: page_title
+    mn: Миний статистик
+    en: My Stats
+  - key: stats_section_heading
+    mn: Ерөнхий үзүүлэлтүүд
+    en: Overview
+  - key: completed_jobs_label
+    mn: Дууссан ажил
+    en: Completed Jobs
+  - key: overall_rating_label
+    mn: Ерөнхий үнэлгээ
+    en: Overall Rating
+  - key: completion_rate_label
+    mn: Гүйцэтгэлийн хувь
+    en: Completion Rate
+  - key: application_success_label
+    mn: Анкетын амжилт
+    en: Application Success
+  - key: cancellation_count_label
+    mn: Цуцлалт (30 хоногт)
+    en: Cancellations (30d)
+  - key: rating_breakdown_heading
+    mn: Үнэлгээний задаргаа
+    en: Rating Breakdown
+  - key: rating_task_clarity
+    mn: Даалгаврын тодорхой байдал
+    en: Task Clarity
+  - key: rating_respectfulness
+    mn: Хүндэтгэлтэй хандлага
+    en: Respectfulness
+  - key: rating_punctuality
+    mn: Цаг баримтлал
+    en: Punctuality
+  - key: reliability_heading
+    mn: Найдвартай байдал
+    en: Reliability
+  - key: reliability_score_label
+    mn: Найдвартай байдлын оноо
+    en: Reliability Score
+  - key: reliability_description
+    mn: Гүйцэтгэлийн хувь, цаг баримтлал, үнэлгээ, цуцлалтын түүх дээр суурилсан
+    en: Based on completion rate, punctuality, ratings, and cancellation history
+  - key: pro_badge_status
+    mn: Pro Badge
+    en: Pro Badge
+  - key: pro_badge_eligible
+    mn: 15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна
+    en: Earn Pro Badge with 15+ jobs and 4.5+ rating
+  - key: pro_badge_earned
+    mn: Pro Badge олдсон!
+    en: Pro Badge earned!
+  - key: activity_heading
+    mn: Идэвхжил
+    en: Activity
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: retry_button
+    mn: Дахин оролдох
+    en: Retry
+acceptance_criteria:
+  - Stats display in StatCard grid layout with label, value, and trend
+  - StatCard components show loading skeleton during initial fetch
+  - Overall rating displayed with per-category breakdown (task clarity, respectfulness, punctuality) per REQ-SAFE-02
+  - Tasker Reliability Score is surfaced per REQ-SAFE-06
+  - Reliability description explains score inputs (completion rate, punctuality, ratings, cancellations)
+  - Application success rate and unlock conversion metrics shown per REQ-PAY-18
+  - Cancellation count shows rolling 30-day count for strike awareness
+  - Pro Badge status shows earned/eligible per REQ-SAFE-04 (>15 jobs, >4.5 rating)
+  - Back button returns to My Profile (SCR-SHARED-012)
+  - Network error displays retry button
+  - All StatCard values use appropriate typography (price_display for numbers)
+api_endpoints:
+  - method: GET
+    path: /users/me/stats
+    purpose: Fetch tasker statistics including ratings, completion rate, cancellation count, reliability score
+analytics_events:
+  - event: tasker_stats_viewed
+    trigger: Tasker Stats Dashboard becomes visible
+  - event: tasker_stats_rating_breakdown_viewed
+    trigger: User scrolls to rating breakdown section
+  - event: tasker_stats_reliability_viewed
+    trigger: User scrolls to reliability section
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Tasker Stats Dashboard".
+
+      Stats loading — skeleton placeholders matching StatCard grid
+
+      Visible elements: nav_header, loading_skeleton
+
+      Hidden elements: stats_grid, rating_breakdown, reliability_section, activity_section
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Tasker Stats Dashboard".
+
+      Stats fully loaded and displayed in grid layout
+
+      Visible elements: nav_header, stats_grid, rating_breakdown, reliability_section, activity_section, badge_status
+
+      Hidden elements: loading_skeleton, error_message
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Tasker Stats Dashboard".
+
+      Network error loading stats — retry option
+
+      Visible elements: nav_header, error_message, retry_button
+
+      Hidden elements: stats_grid, loading_skeleton, rating_breakdown, reliability_section
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

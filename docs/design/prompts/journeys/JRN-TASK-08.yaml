@@ -1,0 +1,39 @@
+journey_id: JRN-TASK-08
+name: AI Profile Polish
+actor:
+  - tasker
+phase: 0-1
+goal: Improve a tasker profile bio with AI assistance before saving
+entry_screen: SCR-SHARED-013
+exit_screens:
+  - SCR-SHARED-013
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-013
+    screen_name: Profile — Edit Profile
+    action: Tap 'AI polish'
+    next: SCR-TASK-019
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-TASK-019
+    screen_name: AI Profile Polish
+    action: Generate polished suggestion and compare before/after
+    next: SCR-TASK-019
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-TASK-019
+    screen_name: AI Profile Polish
+    action: Apply suggested text
+    next: SCR-SHARED-013
+    lifecycle: USER-T15 (tasker_polishes_profile)
+alternate_paths:
+  - id: JRN-TASK-08-A1
+    name: Network error
+    branch_at_step: 2
+    condition: Preview generation or save fails
+    screens:
+      - SCR-TASK-019
+    outcome: Retry without losing the original draft
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

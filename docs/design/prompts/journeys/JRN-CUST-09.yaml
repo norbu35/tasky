@@ -1,0 +1,46 @@
+journey_id: JRN-CUST-09
+name: Purchase Task Boost (Phase 2)
+actor:
+  - customer
+phase: '2'
+goal: Buy promoted or urgent visibility for an open task
+entry_screen: SCR-CUST-009
+exit_screens:
+  - SCR-CUST-009
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-009
+    screen_name: Task Detail (Customer)
+    action: Tap 'Boost Task'
+    next: SCR-CUST-028
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-028
+    screen_name: Task Boost Options
+    action: Select Promoted or Urgent and continue
+    next: SCR-CUST-029
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-029
+    screen_name: Task Boost Payment
+    action: Complete QPay payment and activate boost
+    next: SCR-CUST-009
+    lifecycle: TASK-T12 (task_boost_activated)
+alternate_paths:
+  - id: JRN-CUST-09-A1
+    name: Boost already active
+    branch_at_step: 2
+    condition: Task already has overlapping promoted or urgent status
+    screens:
+      - SCR-CUST-028
+    outcome: Duplicate boost blocked with clear notice
+  - id: JRN-CUST-09-A2
+    name: Payment timeout
+    branch_at_step: 3
+    condition: QPay payment not confirmed in time
+    screens:
+      - SCR-CUST-029
+    outcome: Retry or return without duplicate activation
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -14,6 +14,22 @@ function formatBudget(amount: string): string {
   return num.toLocaleString('en-US');
 }
 
+function formatSchedule(scheduledAt?: string): string {
+  if (!scheduledAt) {
+    return 'Flexible';
+  }
+
+  const parsed = new Date(scheduledAt);
+  if (Number.isNaN(parsed.getTime())) {
+    return scheduledAt;
+  }
+
+  return `${parsed.toLocaleDateString()} ${parsed.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  })}`;
+}
+
 function SummarySection({
   label,
   value,
@@ -49,8 +65,9 @@ export default function ReviewSubmitScreen() {
     description: string;
     photos: string;
     location: string;
-    date: string;
-    time: string;
+    lat: string;
+    lng: string;
+    scheduledAt: string;
     budget: string;
   }>();
 
@@ -58,14 +75,17 @@ export default function ReviewSubmitScreen() {
 
   const handleSubmit = async () => {
     try {
+      const locationLat = Number(params.lat);
+      const locationLng = Number(params.lng);
+
       await mutateAsync({
         category_id: params.categoryId ?? '',
         description: params.description ?? '',
         budget: Number(params.budget) || 0,
-        location_lat: 47.9184,
-        location_lng: 106.9177,
+        location_lat: Number.isFinite(locationLat) ? locationLat : 0,
+        location_lng: Number.isFinite(locationLng) ? locationLng : 0,
         location_text: params.location ?? '',
-        scheduled_at: `${params.date ?? ''}T${params.time ?? ''}:00Z`,
+        scheduled_at: params.scheduledAt ?? '',
         photo_keys: [],
       });
       router.replace('/(customer)/tasks/new/success');
@@ -101,11 +121,7 @@ export default function ReviewSubmitScreen() {
       />
       <SummarySection
         label={t('customer.postTask.scheduleDate', 'Schedule')}
-        value={
-          params.date && params.time
-            ? `${params.date} ${params.time}`
-            : t('customer.postTask.flexible', 'Flexible')
-        }
+        value={formatSchedule(params.scheduledAt) || t('customer.postTask.flexible', 'Flexible')}
         onEdit={() => router.back()}
         testID="review-section-schedule"
       />

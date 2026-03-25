@@ -1,0 +1,15 @@
+journey_id: JRN-INFRA-01
+name: Error Recovery
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: Recover from network/session errors
+entry_screen: SCR-INFRA-001
+exit_screens:
+  - previous screen
+happy_path: []
+alternate_paths: []
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

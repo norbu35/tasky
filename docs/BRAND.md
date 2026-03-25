@@ -8,7 +8,7 @@
 
 ## Mission
 
-> "Mongolia's trust-first domestic service marketplace — where state-backed identity meets community reputation."
+> "Mongolia's trust-first domestic service marketplace — where verified identity meets community reputation."
 
 Tasky solves what Facebook groups and Unegui.mn structurally cannot: verified identity, fair pricing, dispute protection, and reputation that travels with you.
 
@@ -114,15 +114,17 @@ A gestural, slightly imperfect single-stroke checkmark in `verified` sage emeral
 
 ---
 
-## Verification System (DAN/KHUR)
+## Verification System
 
-The DAN state-identification badge is the primary trust signal on every Tasker profile. Its visual treatment must communicate **government-grade authority**, not just platform self-certification.
+The verification badge is the primary trust signal on every Tasker profile. In the current baseline it reflects manual review of government ID evidence; a DAN/KHUR fast-path may be layered on in later phases. Its visual treatment must communicate **government-ID-backed confidence**, not just platform self-certification.
 
 | State | Color Token | Label |
 |-------|------------|-------|
 | Verified | `verified` (#469178) | "Баталгаажсан" / Verified |
 | Pending | `accent` (#6BA3BE) | "Хянагдаж байна" / Under Review |
 | Unverified | `chip-inactive` | (no badge shown) |
+
+Phase note: manual verification is canonical for Phase 0-1; DAN/E-Mongolia fast-path remains a later-phase enhancement.
 
 The badge must appear:
 1. On every search result card (anchored to the avatar)

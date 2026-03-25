@@ -1,0 +1,103 @@
+screen_id: SCR-TASK-010
+name: Verification Submitted — Success
+role:
+  - tasker
+phase: 0-1
+template: success_celebration
+route: /(tasker)/verification/submitted
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification Submitted — Success" (SCR-TASK-010) in the Tasky app — Mongolia's
+  domestic service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: success_celebration — Animated checkmark with spring bounce, headline, "what happens next" text, primary +
+  secondary CTAs.
+
+  Layout structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)
+
+  Components used:
+    • COMP-ANIMATEDCHECKMARK (default): Animated checkmark celebrating successful submission of verification documents
+    • COMP-BUTTON (primary): Primary CTA to continue to the pending review screen
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Verification documents submitted successfully — celebration with next steps guidance
+  Key copy (Mongolian primary):
+    • heading: "Амжилттай илгээгдлээ!" (Successfully Submitted!)
+    • description: "Таны баталгаажуулалтын мэдээлэл амжилттай илгээгдлээ. Манай баг 24 цагийн дотор хянана." (Your verification documents have been submitted. Our team will review within 24 hours.)
+    • next_steps_heading: "Дараа нь юу болох вэ?" (What happens next?)
+    • next_step_review: "Манай баг таны мэдээллийг 24 цагийн дотор хянана" (Our team will review your information within 24 hours)
+    • next_step_notification: "Үр дүнг мэдэгдэл хэлбэрээр авна" (You'll receive a notification with the result)
+    • next_step_browse: "Хүлээх хугацаанд даалгаврууд үзэх боломжтой" (You can browse tasks while you wait)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)
+components:
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated checkmark celebrating successful submission of verification documents
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to continue to the pending review screen
+states:
+  - id: default
+    description: Verification documents submitted successfully — celebration with next steps guidance
+    visible:
+      - animated_checkmark
+      - heading
+      - description
+      - next_steps
+      - continue_button
+    hidden: []
+copy:
+  - key: heading
+    mn: Амжилттай илгээгдлээ!
+    en: Successfully Submitted!
+  - key: description
+    mn: Таны баталгаажуулалтын мэдээлэл амжилттай илгээгдлээ. Манай баг 24 цагийн дотор хянана.
+    en: Your verification documents have been submitted. Our team will review within 24 hours.
+  - key: next_steps_heading
+    mn: Дараа нь юу болох вэ?
+    en: What happens next?
+  - key: next_step_review
+    mn: Манай баг таны мэдээллийг 24 цагийн дотор хянана
+    en: Our team will review your information within 24 hours
+  - key: next_step_notification
+    mn: Үр дүнг мэдэгдэл хэлбэрээр авна
+    en: You'll receive a notification with the result
+  - key: next_step_browse
+    mn: Хүлээх хугацаанд даалгаврууд үзэх боломжтой
+    en: You can browse tasks while you wait
+  - key: continue_button
+    mn: Үргэлжлүүлэх
+    en: Continue
+acceptance_criteria:
+  - Animated checkmark plays spring animation on screen entry
+  - Success messaging confirms documents were submitted
+  - Next steps section explains the 24-hour review SLA and notification promise
+  - Tapping 'Үргэлжлүүлэх' navigates to Verification Pending (SCR-TASK-007) via replace
+  - This screen provides the 'what happens next' guidance required by success_celebration template
+  - Comfortable density for celebratory emotional impact
+api_endpoints: []
+analytics_events:
+  - event: verification_submitted_viewed
+    trigger: Submitted success screen becomes visible
+  - event: verification_submitted_continue_tapped
+    trigger: User taps Continue to go to pending screen
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Verification Submitted — Success".
+
+      Verification documents submitted successfully — celebration with next steps guidance
+
+      Visible elements: animated_checkmark, heading, description, next_steps, continue_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,120 @@
+# Screen Spec: Business Tasks
+screen_id: SCR-B2B-006
+name: "Business Tasks"
+route: "/(customer)/business/accounts/:accountId/tasks"
+role: [customer]
+phase: "2"
+template: feed_list
+figma_page: "B2B/Business Tasks"
+feature: "b2b"
+
+layout:
+  template: feed_list
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(task_cards) -> sticky_bottom_cta(post_as_business)"
+
+components:
+  - id: COMP-SPLITCARD
+    usage: "Business-scoped task cards reusing the standard task card pattern with account context"
+    props:
+      status: "open"
+    variant: task
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to post a new business task"
+    props:
+      label: "Бизнесээр даалгавар нэмэх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Task list loading skeleton"
+    props:
+      variant: card
+      count: 4
+    variant: card
+
+  - id: COMP-EMPTYSTATE
+    usage: "Empty state when account has no tasks yet"
+    props:
+      illustration: "tasks_empty"
+      headline: "Даалгавар алга"
+      ctaLabel: "Эхний даалгавар"
+    variant: activation
+
+states:
+  - id: loading_initial
+    description: "Business task list is loading"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-SPLITCARD, COMP-BUTTON, COMP-EMPTYSTATE]
+
+  - id: empty
+    description: "Business account has no tasks yet"
+    components_visible: [COMP-EMPTYSTATE, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-SPLITCARD]
+
+  - id: populated_open
+    description: "Business task list shows open tasks only"
+    components_visible: [COMP-SPLITCARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: populated_mixed
+    description: "Business task list shows open, assigned, and completed tasks together"
+    components_visible: [COMP-SPLITCARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: error_network
+    description: "Business task list failed to load"
+    components_visible: [COMP-BUTTON.ghost]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-SPLITCARD]
+
+copy:
+  - key: nav_title
+    mn: "Бизнесийн даалгаврууд"
+    en: "Business Tasks"
+    max_chars: 24
+
+  - key: cta_post
+    mn: "Бизнесээр даалгавар нэмэх"
+    en: "Post task as business"
+    max_chars: 28
+
+  - key: empty_headline
+    mn: "Даалгавар алга"
+    en: "No tasks yet"
+    max_chars: 16
+
+  - key: business_tag
+    mn: "Бизнес"
+    en: "Business"
+    max_chars: 10
+
+  - key: retry_label
+    mn: "Дахин оролдох"
+    en: "Retry"
+    max_chars: 14
+
+  - key: list_notice
+    mn: "Энэ жагсаалт нь зөвхөн сонгосон бизнес бүртгэлийн task-уудыг харуулна"
+    en: "This list only shows tasks for the selected business account"
+    max_chars: 82
+
+api_endpoints:
+  - method: GET
+    path: "/business/accounts/:id/tasks"
+    purpose: "List tasks for the selected business account"
+
+analytics_events:
+  - event: "business_tasks_viewed"
+    trigger: "Business task list screen loads"
+  - event: "business_task_opened"
+    trigger: "User taps a business-scoped task card"
+  - event: "business_task_post_tapped"
+    trigger: "User taps post as business CTA"
+
+acceptance_criteria:
+  - "Business-scoped tasks reuse the standard task card visual pattern"
+  - "Opening a task routes to SCR-CUST-009 rather than a separate B2B detail surface"
+  - "Task list is account-scoped and tenant-isolated"
+  - "Post CTA routes to SCR-B2B-005"

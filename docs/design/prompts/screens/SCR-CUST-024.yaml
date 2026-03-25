@@ -1,0 +1,319 @@
+screen_id: SCR-CUST-024
+name: Dispute — Raise
+role:
+  - customer
+phase: 0-1
+template: form_wizard
+route: /(customer)/bookings/:bookingId/dispute
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Dispute — Raise" (SCR-CUST-024) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(booking_reference + reason_selector +
+  evidence_upload + description) -> bottom_nav(back + submit)
+
+  Components used:
+    • COMP-FORMFIELD (default): Wrapper for dispute reason selection, evidence upload section, and written description
+    • COMP-INPUT (multiline): Written timeline/description text area for dispute details
+    • COMP-PHOTOPICKER (default): Evidence photo upload (at least 1 artifact required per PRD Section 6.4.6)
+    • COMP-BUTTON (primary): Submit dispute button and back button
+    • COMP-TOAST (success): Success toast after dispute submission or error toast on failure
+  This screen has 8 states — generate the primary/default state:
+    Primary state: Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least one evidence artifact is required
+  Key copy (Mongolian primary):
+    • page_title: "Асуудал мэдэгдэх" (Report Issue)
+    • section_booking_ref: "Захиалгын мэдээлэл" (Booking Reference)
+    • label_reason: "Асуудлын шалтгаан" (Issue Type)
+    • label_evidence: "Нотлох баримт" (Evidence)
+    • evidence_helper: "Дор хаяж 1 нотлох баримт шаардлагатай: зураг, чатын хэсэг, эсвэл бичгэн тайлбар" (At least 1 evidence artifact required: photo, chat excerpt, or written timeline)
+    • label_description: "Дэлгэрэнгүй тайлбар" (Description)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(booking_reference + reason_selector + evidence_upload +
+    description) -> bottom_nav(back + submit)
+components:
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wrapper for dispute reason selection, evidence upload section, and written description
+  - component: COMP-INPUT
+    variant: multiline
+    usage: Written timeline/description text area for dispute details
+  - component: COMP-PHOTOPICKER
+    variant: default
+    usage: Evidence photo upload (at least 1 artifact required per PRD Section 6.4.6)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Submit dispute button and back button
+  - component: COMP-TOAST
+    variant: success
+    usage: Success toast after dispute submission or error toast on failure
+states:
+  - id: default
+    description: >-
+      Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least
+      one evidence artifact is required
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: evidence_photo
+    description: User is uploading photo evidence; upload progress shown per photo
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: evidence_chat
+    description: User selects chat excerpt as evidence; chat excerpt selector shown
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-PHOTOPICKER
+      - COMP-TOAST
+  - id: evidence_text
+    description: User writes a text-based timeline as evidence; description field active
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-PHOTOPICKER
+      - COMP-TOAST
+  - id: submitting
+    description: Dispute submission in progress via POST /disputes; submit button in loading state
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: success
+    description: Dispute submitted successfully; navigates to Dispute Status screen
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+  - id: validation_no_evidence
+    description: User attempted to submit without any evidence artifact; inline validation error shown on evidence section
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+    hidden:
+      - COMP-TOAST
+  - id: error_network
+    description: Network error during submission; error toast with retry
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-PHOTOPICKER
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden: []
+copy:
+  - key: page_title
+    mn: Асуудал мэдэгдэх
+    en: Report Issue
+  - key: section_booking_ref
+    mn: Захиалгын мэдээлэл
+    en: Booking Reference
+  - key: label_reason
+    mn: Асуудлын шалтгаан
+    en: Issue Type
+  - key: label_evidence
+    mn: Нотлох баримт
+    en: Evidence
+  - key: evidence_helper
+    mn: 'Дор хаяж 1 нотлох баримт шаардлагатай: зураг, чатын хэсэг, эсвэл бичгэн тайлбар'
+    en: 'At least 1 evidence artifact required: photo, chat excerpt, or written timeline'
+  - key: label_description
+    mn: Дэлгэрэнгүй тайлбар
+    en: Description
+  - key: placeholder_description
+    mn: Асуудлын дэлгэрэнгүй тайлбар...
+    en: Describe the issue in detail...
+  - key: evidence_photo_label
+    mn: Зураг нэмэх
+    en: Add Photo
+  - key: evidence_chat_label
+    mn: Чатын хэсэг сонгох
+    en: Select Chat Excerpt
+  - key: evidence_text_label
+    mn: Бичгэн тайлбар
+    en: Written Timeline
+  - key: cta_submit
+    mn: Маргаан илгээх
+    en: Submit Dispute
+  - key: cta_back
+    mn: Буцах
+    en: Back
+  - key: validation_no_evidence_error
+    mn: Дор хаяж 1 нотлох баримт шаардлагатай
+    en: At least 1 evidence artifact is required
+  - key: toast_success
+    mn: Маргаан амжилттай илгээлээ
+    en: Dispute submitted successfully
+  - key: toast_error
+    mn: Маргаан илгээхэд алдаа гарлаа
+    en: Failed to submit dispute
+  - key: evidence_deadline_note
+    mn: Нотлох баримт 24 цагийн дотор ирүүлээгүй бол маргаан автоматаар хаагдана
+    en: Dispute auto-closes if evidence is not provided within 24 hours
+  - key: eligibility_note
+    mn: 'Маргаан нээх боломжтой: ASSIGNED төлөвт эсвэл COMPLETED-аас хойш 24 цагийн дотор'
+    en: Disputes can be opened during ASSIGNED status or within 24 hours of COMPLETED
+acceptance_criteria:
+  - >-
+    Disputes can only be raised when booking is ASSIGNED or within 24 hours of COMPLETED per REQ-SAFE-03 and PRD Section
+    6.4.6
+  - 'At least one evidence artifact is required: photo, chat excerpt, or written timeline per REQ-SAFE-10'
+  - Submitting without evidence shows inline validation error on evidence section
+  - Photo evidence uses presigned URL upload with per-photo progress
+  - Chat excerpt selection allows highlighting relevant message range
+  - Written timeline has 500 character limit
+  - Submit button sends POST /disputes with all evidence artifacts and enters loading state
+  - On success, navigates via replace to Dispute Status (SCR-CUST-025)
+  - Evidence deadline note warns that dispute auto-closes after 24 hours if evidence not provided
+  - Back button navigates via pop to Booking Detail (SCR-CUST-017)
+  - Network error shows error toast with retry
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /disputes
+    purpose: Submit a new dispute with reason, evidence artifacts, and description
+analytics_events:
+  - event: dispute_raise_viewed
+    trigger: Dispute form screen becomes visible
+  - event: dispute_evidence_photo_added
+    trigger: User uploads a photo as evidence
+  - event: dispute_evidence_chat_selected
+    trigger: User selects a chat excerpt as evidence
+  - event: dispute_evidence_text_entered
+    trigger: User writes text-based evidence
+  - event: dispute_submitted
+    trigger: User taps submit and POST /disputes is sent
+  - event: dispute_validation_no_evidence
+    trigger: Submit attempted without any evidence artifact
+  - event: dispute_submit_error
+    trigger: Network error during dispute submission
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Dispute — Raise".
+
+      Form shown with booking reference at top, reason selector, evidence upload area, and description field. At least
+      one evidence artifact is required
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: evidence_photo
+    prompt: >-
+      Generate the "evidence_photo" state of "Dispute — Raise".
+
+      User is uploading photo evidence; upload progress shown per photo
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: evidence_chat
+    prompt: >-
+      Generate the "evidence_chat" state of "Dispute — Raise".
+
+      User selects chat excerpt as evidence; chat excerpt selector shown
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-PHOTOPICKER, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: evidence_text
+    prompt: >-
+      Generate the "evidence_text" state of "Dispute — Raise".
+
+      User writes a text-based timeline as evidence; description field active
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-PHOTOPICKER, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitting
+    prompt: >-
+      Generate the "submitting" state of "Dispute — Raise".
+
+      Dispute submission in progress via POST /disputes; submit button in loading state
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Dispute — Raise".
+
+      Dispute submitted successfully; navigates to Dispute Status screen
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_no_evidence
+    prompt: >-
+      Generate the "validation_no_evidence" state of "Dispute — Raise".
+
+      User attempted to submit without any evidence artifact; inline validation error shown on evidence section
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Dispute — Raise".
+
+      Network error during submission; error toast with retry
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-PHOTOPICKER, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

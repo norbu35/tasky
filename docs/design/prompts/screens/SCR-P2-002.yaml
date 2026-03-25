@@ -1,0 +1,264 @@
+screen_id: SCR-P2-002
+name: Credits — QPay Payment
+role:
+  - tasker
+phase: '2'
+template: detail
+route: /(tasker)/credits/pay
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-05.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Credits — QPay Payment" (SCR-P2-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(qr_section + status_section) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Container card displaying QPay QR code image and payment instructions
+    • COMP-BUTTON (primary): Primary CTA for QPay deeplink to open QPay app directly
+    • COMP-BUTTON (ghost): Secondary back button to return to credits screen
+    • COMP-STATUSBADGE (open): Payment status indicator badge (pending, success, failed)
+    • COMP-ANIMATEDCHECKMARK (default): Success animation on payment confirmation
+    • COMP-EMPTYSTATE (error): Error state for payment failure
+  This screen has 6 states — generate the primary/default state:
+    Primary state: QPay QR code generated and displayed; user scans with QPay app
+  Key copy (Mongolian primary):
+    • nav_title: "Төлбөр" (Payment)
+    • qr_heading: "QPay-ээр төлбөр хийх" (Pay with QPay)
+    • qr_instruction: "QPay аппаар доорх QR кодыг уншуулна уу" (Scan the QR code below with your QPay app)
+    • amount_label: "Төлбөрийн дүн" (Amount)
+    • amount_value: "₮{amount}" (₮{amount})
+    • cta_open_qpay: "QPay аппаар нээх" (Open in QPay)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(qr_section + status_section) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Container card displaying QPay QR code image and payment instructions
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA for QPay deeplink to open QPay app directly
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary back button to return to credits screen
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Payment status indicator badge (pending, success, failed)
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Success animation on payment confirmation
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state for payment failure
+states:
+  - id: qr_display
+    description: QPay QR code generated and displayed; user scans with QPay app
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: deeplink_redirect
+    description: User tapped 'Open in QPay'; app switch in progress
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: payment_pending
+    description: Payment initiated; polling for confirmation
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: payment_success
+    description: Payment confirmed; credits added to balance
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-EMPTYSTATE
+  - id: payment_failed
+    description: Payment was rejected or errored
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+  - id: payment_timeout
+    description: Payment not confirmed within expected window (3 minutes)
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+copy:
+  - key: nav_title
+    mn: Төлбөр
+    en: Payment
+  - key: qr_heading
+    mn: QPay-ээр төлбөр хийх
+    en: Pay with QPay
+  - key: qr_instruction
+    mn: QPay аппаар доорх QR кодыг уншуулна уу
+    en: Scan the QR code below with your QPay app
+  - key: amount_label
+    mn: Төлбөрийн дүн
+    en: Amount
+  - key: amount_value
+    mn: ₮{amount}
+    en: ₮{amount}
+  - key: cta_open_qpay
+    mn: QPay аппаар нээх
+    en: Open in QPay
+  - key: status_pending
+    mn: Төлбөр хүлээгдэж байна...
+    en: Payment pending...
+  - key: status_success_headline
+    mn: Төлбөр амжилттай!
+    en: Payment successful!
+  - key: status_success_description
+    mn: '{count} кредит нэмэгдлээ'
+    en: '{count} credits added'
+  - key: status_failed_headline
+    mn: Төлбөр амжилтгүй
+    en: Payment failed
+  - key: status_failed_description
+    mn: Төлбөр хийхэд алдаа гарлаа. Дахин оролдоно уу
+    en: Payment failed. Please try again
+  - key: status_timeout_headline
+    mn: Төлбөр хугацаа хэтэрсэн
+    en: Payment timed out
+  - key: status_timeout_description
+    mn: Төлбөрийг баталгаажуулж чадсангүй. Дахин оролдоно уу
+    en: Could not confirm payment. Please try again
+  - key: cta_retry
+    mn: Дахин оролдох
+    en: Try again
+  - key: cta_back
+    mn: Буцах
+    en: Back
+acceptance_criteria:
+  - QR display state shows QPay QR code in elevated card with scan instructions
+  - QPay deeplink button opens the QPay app via platform deeplink
+  - Payment pending state polls GET /payments/:id/status every 3 seconds
+  - Payment success state shows animated checkmark and credits-added count
+  - Payment failed state shows error illustration with retry CTA
+  - Payment timeout triggers after 3 minutes of no confirmation
+  - Back button returns to SCR-P2-001 (Credits Balance)
+  - Amount displayed uses price_display typography (Manrope bold 20px) with ₮ prefix
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /credits/purchase
+    purpose: Initiate credit purchase and generate QPay payment link
+  - method: GET
+    path: /payments/:id/status
+    purpose: Poll payment status until confirmed, failed, or timed out
+analytics_events:
+  - event: credits_payment_started
+    trigger: QPay QR code displayed
+  - event: credits_qpay_deeplink
+    trigger: User taps 'Open in QPay' button
+  - event: credits_payment_success
+    trigger: Payment confirmed and credits added
+  - event: credits_payment_failed
+    trigger: Payment failed or was rejected
+  - event: credits_payment_timeout
+    trigger: Payment not confirmed within 3 minutes
+state_prompts:
+  - state_id: qr_display
+    prompt: >-
+      Generate the "qr_display" state of "Credits — QPay Payment".
+
+      QPay QR code generated and displayed; user scans with QPay app
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: deeplink_redirect
+    prompt: >-
+      Generate the "deeplink_redirect" state of "Credits — QPay Payment".
+
+      User tapped 'Open in QPay'; app switch in progress
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_pending
+    prompt: >-
+      Generate the "payment_pending" state of "Credits — QPay Payment".
+
+      Payment initiated; polling for confirmation
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_success
+    prompt: >-
+      Generate the "payment_success" state of "Credits — QPay Payment".
+
+      Payment confirmed; credits added to balance
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_failed
+    prompt: >-
+      Generate the "payment_failed" state of "Credits — QPay Payment".
+
+      Payment was rejected or errored
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_timeout
+    prompt: >-
+      Generate the "payment_timeout" state of "Credits — QPay Payment".
+
+      Payment not confirmed within expected window (3 minutes)
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

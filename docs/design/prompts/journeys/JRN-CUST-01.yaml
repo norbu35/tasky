@@ -1,0 +1,91 @@
+journey_id: JRN-CUST-01
+name: Post a Task
+actor:
+  - customer
+phase: 0-1
+goal: Create and publish a new task
+entry_screen: SCR-CUST-001
+exit_screens:
+  - SCR-CUST-008
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-001
+    screen_name: My Tasks — Task List
+    action: Tap FAB 'Post Task'
+    next: SCR-CUST-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-002
+    screen_name: Post Task — Category Selection
+    action: Select category
+    next: SCR-CUST-003
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-003
+    screen_name: Post Task — Intake Form
+    action: Complete intake form
+    next: SCR-CUST-004
+    lifecycle: TASK-T01 (prepare)
+  - step: 4
+    screen_id: SCR-CUST-004
+    screen_name: Post Task — Photo Upload
+    action: Upload photos (0-3)
+    next: SCR-CUST-005
+    lifecycle: null
+  - step: 5
+    screen_id: SCR-CUST-005
+    screen_name: Post Task — Location Pin
+    action: Pin location on map
+    next: SCR-CUST-006
+    lifecycle: null
+  - step: 6
+    screen_id: SCR-CUST-006
+    screen_name: Post Task — Schedule & Budget
+    action: Set schedule and budget
+    next: SCR-CUST-007
+    lifecycle: null
+  - step: 7
+    screen_id: SCR-CUST-007
+    screen_name: Post Task — Review & Submit
+    action: Review summary, edit if needed, submit
+    next: SCR-CUST-008
+    lifecycle: TASK-T01 (customer_publishes_task)
+  - step: 8
+    screen_id: SCR-CUST-008
+    screen_name: Task Posted — Success
+    action: Success — task posted
+    next: SCR-CUST-009
+    lifecycle: null
+alternate_paths:
+  - id: JRN-CUST-01-A1
+    name: Validation error
+    branch_at_step: 7
+    condition: Invalid form data
+    screens:
+      - SCR-CUST-007
+    outcome: Inline errors, user corrects
+  - id: JRN-CUST-01-A2
+    name: Photo upload fails
+    branch_at_step: 4
+    condition: Network error on upload
+    screens:
+      - SCR-CUST-004
+    outcome: Error state, retry
+  - id: JRN-CUST-01-A3
+    name: Location permission denied
+    branch_at_step: 5
+    condition: No location permission
+    screens:
+      - SCR-CUST-005
+    outcome: Manual pin placement
+  - id: JRN-CUST-01-A4
+    name: Skip photos
+    branch_at_step: 4
+    condition: User chooses no photos
+    screens:
+      - SCR-CUST-004
+      - SCR-CUST-005
+    outcome: Proceed to location without photos
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

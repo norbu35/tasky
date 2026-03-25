@@ -1,0 +1,210 @@
+screen_id: SCR-B2B-003
+name: Business Location Editor
+role:
+  - customer
+phase: '2'
+template: form_wizard
+route: /(customer)/business/accounts/:accountId/locations/:locationId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-01.yaml
+    - prompts/journeys/JRN-B2B-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Business Location Editor" (SCR-B2B-003) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(location_fields + map_picker) ->
+  bottom_nav(cancel + save)
+
+  Components used:
+    • COMP-FORMFIELD (default): Wraps location label and address description fields
+    • COMP-INPUT (default): Text inputs for location label and address details
+    • COMP-MAPPICKER (default): Map picker for selecting exact business location coordinates
+    • COMP-BUTTON (primary): Primary save button
+    • COMP-BUTTON (ghost): Secondary cancel button
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Existing or new business location form is ready for editing
+  Key copy (Mongolian primary):
+    • nav_title: "Бизнесийн байршил" (Business Location)
+    • label_location_name: "Байршлын нэр" (Location label)
+    • label_address: "Тайлбарласан хаяг" (Address description)
+    • cta_save: "Байршил хадгалах" (Save location)
+    • validation_coordinates: "Газрын зураг дээр байршил сонгоно уу" (Choose a map location)
+    • validation_name: "Байршлын нэр оруулна уу" (Enter a location label)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(location_fields + map_picker) -> bottom_nav(cancel + save)
+components:
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps location label and address description fields
+  - component: COMP-INPUT
+    variant: default
+    usage: Text inputs for location label and address details
+  - component: COMP-MAPPICKER
+    variant: default
+    usage: Map picker for selecting exact business location coordinates
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary save button
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary cancel button
+states:
+  - id: default
+    description: Existing or new business location form is ready for editing
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-MAPPICKER
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: map_picking
+    description: User is actively positioning the map pin
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-MAPPICKER
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: saving
+    description: Business location save request is in flight
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-MAPPICKER
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: success
+    description: Location save completed successfully
+    visible:
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: validation_error
+    description: Required label or coordinates are missing
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-MAPPICKER
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+  - id: error_network
+    description: Location save failed due to network error
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-MAPPICKER
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden: []
+copy:
+  - key: nav_title
+    mn: Бизнесийн байршил
+    en: Business Location
+  - key: label_location_name
+    mn: Байршлын нэр
+    en: Location label
+  - key: label_address
+    mn: Тайлбарласан хаяг
+    en: Address description
+  - key: cta_save
+    mn: Байршил хадгалах
+    en: Save location
+  - key: validation_coordinates
+    mn: Газрын зураг дээр байршил сонгоно уу
+    en: Choose a map location
+  - key: validation_name
+    mn: Байршлын нэр оруулна уу
+    en: Enter a location label
+acceptance_criteria:
+  - Business location requires label, coordinates, and descriptive address text
+  - Coordinates are selected through the map picker, not by raw text entry only
+  - Successful save returns to SCR-B2B-002 for continued account setup
+api_endpoints:
+  - method: POST
+    path: /business/accounts/:id/locations
+    purpose: Create a business account location
+  - method: PUT
+    path: /business/accounts/:id/locations/:locationId
+    purpose: Update a business account location
+analytics_events:
+  - event: business_location_editor_viewed
+    trigger: Location editor opens
+  - event: business_location_pin_updated
+    trigger: Map pin is moved
+  - event: business_location_saved
+    trigger: Location save succeeds
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Business Location Editor".
+
+      Existing or new business location form is ready for editing
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: map_picking
+    prompt: >-
+      Generate the "map_picking" state of "Business Location Editor".
+
+      User is actively positioning the map pin
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: saving
+    prompt: >-
+      Generate the "saving" state of "Business Location Editor".
+
+      Business location save request is in flight
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Business Location Editor".
+
+      Location save completed successfully
+
+      Visible elements: COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_error
+    prompt: >-
+      Generate the "validation_error" state of "Business Location Editor".
+
+      Required label or coordinates are missing
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Business Location Editor".
+
+      Location save failed due to network error
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

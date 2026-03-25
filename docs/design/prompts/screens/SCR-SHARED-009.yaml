@@ -1,0 +1,175 @@
+screen_id: SCR-SHARED-009
+name: Permission Primer — Notifications
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: modal_sheet
+route: /onboarding/permission-notifications
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Permission Primer — Notifications" (SCR-SHARED-009) in the Tasky app — Mongolia's
+  domestic service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + icon + heading + description + primary_action + secondary_action)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet explaining why push notification permission is needed
+    • COMP-BUTTON (primary): Primary CTA to trigger the OS push notification permission dialog
+    • COMP-BUTTON (ghost): Secondary action to skip notification permission
+  This screen has 3 states — generate the primary/default state:
+    Primary state: Permission primer shown explaining why notifications are important
+  Key copy (Mongolian primary):
+    • heading: "Мэдэгдлийн зөвшөөрөл" (Notification Permission)
+    • description: "Шинэ өргөдөл, захиалгын мэдээллийг цаг тухайд нь авахын тулд мэдэгдлийг зөвшөөрнө үү" (Allow notifications to get timely updates on applications and bookings)
+    • allow_button_label: "Зөвшөөрөх" (Allow)
+    • skip_label: "Дараа хийх" (Do it later)
+    • granted_message: "Мэдэгдэл зөвшөөрөгдлөө" (Notifications enabled)
+    • denied_message: "Мэдэгдлийн зөвшөөрөл хаагдсан" (Notification permission denied)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: comfortable
+  structure: scrim -> sheet(handle_bar + icon + heading + description + primary_action + secondary_action)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet explaining why push notification permission is needed
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to trigger the OS push notification permission dialog
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary action to skip notification permission
+states:
+  - id: default
+    description: Permission primer shown explaining why notifications are important
+    visible:
+      - bell_icon
+      - heading
+      - description
+      - allow_button
+      - skip_link
+    hidden:
+      - granted_message
+      - denied_message
+  - id: granted
+    description: Notification permission granted by the OS; screen auto-advances to home
+    visible:
+      - bell_icon
+      - granted_message
+    hidden:
+      - heading
+      - description
+      - allow_button
+      - skip_link
+      - denied_message
+  - id: denied
+    description: Notification permission denied by the OS; fallback guidance shown
+    visible:
+      - bell_icon
+      - denied_message
+      - settings_hint
+      - continue_button
+    hidden:
+      - heading
+      - description
+      - allow_button
+      - skip_link
+      - granted_message
+copy:
+  - key: heading
+    mn: Мэдэгдлийн зөвшөөрөл
+    en: Notification Permission
+  - key: description
+    mn: Шинэ өргөдөл, захиалгын мэдээллийг цаг тухайд нь авахын тулд мэдэгдлийг зөвшөөрнө үү
+    en: Allow notifications to get timely updates on applications and bookings
+  - key: allow_button_label
+    mn: Зөвшөөрөх
+    en: Allow
+  - key: skip_label
+    mn: Дараа хийх
+    en: Do it later
+  - key: granted_message
+    mn: Мэдэгдэл зөвшөөрөгдлөө
+    en: Notifications enabled
+  - key: denied_message
+    mn: Мэдэгдлийн зөвшөөрөл хаагдсан
+    en: Notification permission denied
+  - key: settings_hint
+    mn: Тохиргооноос мэдэгдлийг нээх боломжтой
+    en: You can enable notifications in Settings
+  - key: continue_label
+    mn: Үргэлжлүүлэх
+    en: Continue
+acceptance_criteria:
+  - Bottom sheet displays bell icon, explanation heading, and description
+  - Allow button triggers the OS native push notification permission dialog
+  - If role is CUSTOMER, screen replaces to My Tasks (SCR-CUST-001) after grant/skip
+  - If role is TASKER, screen replaces to Task Feed (SCR-TASK-001) after grant/skip
+  - If denied, fallback message shows with a hint to open device Settings
+  - Skip link allows user to proceed without granting permission
+  - This is the final onboarding step; completing it marks onboarding as done
+  - Sheet has drag handle but is not dismissible by dragging (onboarding context)
+  - No API calls are made on this screen
+  - Notifications are critical for booking updates and application alerts
+api_endpoints: []
+analytics_events:
+  - event: permission_primer_notifications_viewed
+    trigger: Notification permission primer becomes visible
+  - event: permission_notifications_allow_tapped
+    trigger: User taps Allow button
+  - event: permission_notifications_granted
+    trigger: OS returns granted status for notifications
+  - event: permission_notifications_denied
+    trigger: OS returns denied status for notifications
+  - event: permission_notifications_skipped
+    trigger: User taps 'Do it later'
+  - event: onboarding_flow_completed
+    trigger: User exits notification primer and proceeds to home screen
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Permission Primer — Notifications".
+
+      Permission primer shown explaining why notifications are important
+
+      Visible elements: bell_icon, heading, description, allow_button, skip_link
+
+      Hidden elements: granted_message, denied_message
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: granted
+    prompt: >-
+      Generate the "granted" state of "Permission Primer — Notifications".
+
+      Notification permission granted by the OS; screen auto-advances to home
+
+      Visible elements: bell_icon, granted_message
+
+      Hidden elements: heading, description, allow_button, skip_link, denied_message
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: denied
+    prompt: >-
+      Generate the "denied" state of "Permission Primer — Notifications".
+
+      Notification permission denied by the OS; fallback guidance shown
+
+      Visible elements: bell_icon, denied_message, settings_hint, continue_button
+
+      Hidden elements: heading, description, allow_button, skip_link, granted_message
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

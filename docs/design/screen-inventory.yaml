@@ -1,5 +1,9 @@
-# Screen Inventory v3 — Tasky Mobile
-# 81 screens, ~140 states
+# Screen Inventory v3 — Tasky Mobile Core Pack
+# 91 screens in the current generation pack: 66 Phase 0-1, 18 Phase 2, 7 Phase 3+
+# `states[]` here is a summary/planning list. Exhaustive state coverage lives in
+# `state-matrix.yaml` and `screen-specs/SCR-*.yaml`.
+# This inventory does not yet include every PRD roadmap surface; see
+# `evaluation-report.md` for uncovered mobile modules.
 # Each screen: id, name, route, role, phase, template, states[], api_endpoints[]
 
 screens:
@@ -250,7 +254,7 @@ screens:
     api_endpoints: []
 
   # ═══════════════════════════════════════════════════
-  # CUSTOMER FLOW (25 screens)
+  # CUSTOMER FLOW (29 screens)
   # ═══════════════════════════════════════════════════
 
   - id: SCR-CUST-001
@@ -496,8 +500,26 @@ screens:
     states: [matching, matched, declined_retry, fallback_to_open]
     api_endpoints: [POST /tasks/:id/instant-match]
 
+  - id: SCR-CUST-028
+    name: "Task Boost Options"
+    route: "/(customer)/tasks/:taskId/boost"
+    role: [customer]
+    phase: "2"
+    template: detail
+    states: [loading_initial, options_available, promoted_selected, urgent_selected, already_active, error_network]
+    api_endpoints: [GET /tasks/:id/boost-options]
+
+  - id: SCR-CUST-029
+    name: "Task Boost Payment"
+    route: "/(customer)/tasks/:taskId/boost/pay"
+    role: [customer]
+    phase: "2"
+    template: detail
+    states: [qr_display, deeplink_redirect, payment_pending, payment_success, payment_failed, payment_timeout]
+    api_endpoints: [POST /tasks/:id/boost-purchases, GET /payments/:id/status]
+
   # ═══════════════════════════════════════════════════
-  # TASKER FLOW (18 screens)
+  # TASKER FLOW (19 screens)
   # ═══════════════════════════════════════════════════
 
   - id: SCR-TASK-001
@@ -651,7 +673,7 @@ screens:
     role: [tasker]
     phase: "2"
     template: modal_sheet
-    states: [notification, accepting, accepted, declined, insufficient_credits, expired]
+    states: [notification_received, grandfathered_discount_applied, accepting, accepted_credits_deducted, declined, insufficient_credits, expired_15min]
     api_endpoints: [POST /applications/:id/accept, POST /applications/:id/decline]
 
   - id: SCR-TASK-018
@@ -662,6 +684,82 @@ screens:
     template: detail
     states: [loading, loaded]
     api_endpoints: []
+
+  - id: SCR-TASK-019
+    name: "AI Profile Polish"
+    route: "/(tasker)/profile/polish"
+    role: [tasker]
+    phase: "0-1"
+    template: detail
+    states: [loading_initial, draft_ready, generating, suggestion_ready, apply_success, error_network]
+    api_endpoints: [POST /users/me/profile-polish-preview, PUT /users/me]
+
+  # ═══════════════════════════════════════════════════
+  # B2B SCREENS (7 screens)
+  # ═══════════════════════════════════════════════════
+
+  - id: SCR-B2B-001
+    name: "Business Accounts"
+    route: "/(customer)/business/accounts"
+    role: [customer]
+    phase: "2"
+    template: feed_list
+    states: [loading_initial, empty_activation, populated_owner, populated_member, error_network]
+    api_endpoints: [GET /business/accounts]
+
+  - id: SCR-B2B-002
+    name: "Business Account Editor"
+    route: "/(customer)/business/accounts/:accountId/edit"
+    role: [customer]
+    phase: "2"
+    template: form_wizard
+    states: [create_default, edit_default, saving, success, validation_error, error_network]
+    api_endpoints: [POST /business/accounts, PUT /business/accounts/:id]
+
+  - id: SCR-B2B-003
+    name: "Business Location Editor"
+    route: "/(customer)/business/accounts/:accountId/locations/:locationId"
+    role: [customer]
+    phase: "2"
+    template: form_wizard
+    states: [default, map_picking, saving, success, validation_error, error_network]
+    api_endpoints: [POST /business/accounts/:id/locations, PUT /business/accounts/:id/locations/:locationId]
+
+  - id: SCR-B2B-004
+    name: "Business Members"
+    route: "/(customer)/business/accounts/:accountId/members"
+    role: [customer]
+    phase: "2"
+    template: detail
+    states: [loading_initial, empty, populated, invite_sheet, role_updating, error_network]
+    api_endpoints: [GET /business/accounts/:id/members, POST /business/accounts/:id/members, PUT /business/accounts/:id/members/:memberId]
+
+  - id: SCR-B2B-005
+    name: "Post Task as Business"
+    route: "/(customer)/tasks/new/business-context"
+    role: [customer]
+    phase: "2"
+    template: detail
+    states: [loading_initial, account_selected, location_selected, ready_continue, error_network]
+    api_endpoints: [GET /business/accounts, GET /business/accounts/:id/locations]
+
+  - id: SCR-B2B-006
+    name: "Business Tasks"
+    route: "/(customer)/business/accounts/:accountId/tasks"
+    role: [customer]
+    phase: "2"
+    template: feed_list
+    states: [loading_initial, empty, populated_open, populated_mixed, error_network]
+    api_endpoints: [GET /business/accounts/:id/tasks]
+
+  - id: SCR-B2B-007
+    name: "Business Subscription Billing"
+    route: "/(customer)/business/accounts/:accountId/billing"
+    role: [customer]
+    phase: "3+"
+    template: detail
+    states: [loading_initial, eligible_view_plans, active_host_lite, active_ops_standard, renewal_failed, cancelled_resubscribe, error_network]
+    api_endpoints: [GET /business/accounts/:id/subscription, POST /business/accounts/:id/subscription]
 
   # ═══════════════════════════════════════════════════
   # PHASE 2 SCREENS (5 screens)
@@ -763,26 +861,27 @@ screens:
 
 # ─── Summary ────────────────────────────────────────
 summary:
-  total_screens: 81
+  total_screens: 91
   by_section:
     shared: 21
     infrastructure: 5
-    customer: 27
-    tasker: 18
+    customer: 29
+    tasker: 19
+    b2b: 7
     phase_2: 5
     phase_3_plus: 5
   by_phase:
-    "0-1": 65
-    "2": 9
+    "0-1": 66
+    "2": 18
     "3+": 7
   by_template:
-    auth: 6
-    feed_list: 11
-    detail: 20
-    form_wizard: 12
+    auth: 8
+    feed_list: 12
+    detail: 28
+    form_wizard: 13
     settings: 1
     modal_sheet: 17
     empty_state: 1
-    error_state: 5
-    success_celebration: 8
-  total_states: 142
+    error_state: 6
+    success_celebration: 5
+  total_states: 369

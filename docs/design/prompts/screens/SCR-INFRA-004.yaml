@@ -1,0 +1,139 @@
+screen_id: SCR-INFRA-004
+name: Terms of Service
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: detail
+route: /legal/terms
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Terms of Service" (SCR-INFRA-004) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(content) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-LOADINGSKELETON (detail): Detail skeleton placeholder while terms content loads
+    • COMP-BUTTON (ghost): Back navigation button in nav header
+    • COMP-EMPTYSTATE (error): Error state when terms content fails to load
+  This screen has 3 states — generate the primary/default state:
+    Primary state: Terms of service content is loading
+  Key copy (Mongolian primary):
+    • nav_title: "Үйлчилгээний нөхцөл" (Terms of Service)
+    • nav_back: "Буцах" (Back)
+    • error_headline: "Ачааллах боломжгүй" (Unable to load)
+    • error_description: "Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу" (Failed to load Terms of Service. Please try again)
+    • error_retry: "Дахин оролдох" (Try again)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(content) -> sticky_bottom_cta
+components:
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton placeholder while terms content loads
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Back navigation button in nav header
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when terms content fails to load
+states:
+  - id: loading
+    description: Terms of service content is loading
+    visible:
+      - COMP-LOADINGSKELETON
+      - COMP-BUTTON
+    hidden:
+      - COMP-EMPTYSTATE
+  - id: loaded
+    description: Terms content successfully loaded and displayed as rich text
+    visible:
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Terms content failed to load due to network error
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Үйлчилгээний нөхцөл
+    en: Terms of Service
+  - key: nav_back
+    mn: Буцах
+    en: Back
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_description
+    mn: Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу
+    en: Failed to load Terms of Service. Please try again
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows detail skeleton matching the terms layout
+  - Loaded state renders terms content as scrollable rich text
+  - Network error state shows error illustration with retry CTA
+  - Back button in nav header pops to previous screen
+  - Terms content supports both Mongolian and English based on app language
+  - Content scrolls independently with nav header fixed at top
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: terms_viewed
+    trigger: Terms of Service screen loaded successfully
+  - event: terms_load_error
+    trigger: Terms content failed to load
+state_prompts:
+  - state_id: loading
+    prompt: >-
+      Generate the "loading" state of "Terms of Service".
+
+      Terms of service content is loading
+
+      Visible elements: COMP-LOADINGSKELETON, COMP-BUTTON
+
+      Hidden elements: COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Terms of Service".
+
+      Terms content successfully loaded and displayed as rich text
+
+      Visible elements: COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Terms of Service".
+
+      Terms content failed to load due to network error
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

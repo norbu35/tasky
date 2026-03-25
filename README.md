@@ -10,7 +10,6 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `docs/PRD.md`                          | Product requirements and scope                                      |
 | `docs/ARCHITECTURE.md`                 | Technical architecture, data model, API guidelines, frontend system |
 | `docs/ARCHITECTURE_INDEX.md`           | Architecture reading router (topic -> canonical source, non-dup)    |
-| `docs/BACKLOG.md`                      | Atomic MVP ticket backlog with acceptance criteria and test IDs     |
 | `docs/METRICS.md`                      | Marketplace KPIs, funnel metrics, and event tracking schema         |
 | `docs/STRATEGY.md`                     | Business model and go-to-market plan                                |
 | `docs/adr/`                            | Architecture Decision Records                                       |
@@ -24,7 +23,9 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `packages/sdk`                         | Shared TypeScript SDK scaffold (generated from OpenAPI)             |
 | `packages/design-tokens`               | Shared cross-platform design token source                           |
 | `scripts/`                             | Verification and workflow tooling                                   |
-| `tickets/`                             | Machine-readable ticket specs (`TASK-*.json`) and `STATUS.json`     |
+| `tickets/`                             | Canonical delivery plan: machine-readable ticket specs and `STATUS.json` |
+
+`tickets/` is the planning source of truth. The legacy markdown backlog document is intentionally not restored.
 
 ## Prerequisites
 

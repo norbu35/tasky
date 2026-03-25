@@ -1,0 +1,211 @@
+screen_id: SCR-CUST-013
+name: Tasker Public Profile
+role:
+  - customer
+phase: 0-1
+template: detail
+route: /(customer)/taskers/:taskerId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Tasker Public Profile" (SCR-CUST-013) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(avatar_hero + stats + categories + reviews) ->
+  sticky_bottom_cta(message)
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Large Tasker avatar with verification badge at top of profile
+    • COMP-VERIFICATIONBADGE (default): Verified identity badge anchored to avatar bottom-right
+    • COMP-STARRATING (display): Overall Tasker rating displayed below name
+    • COMP-TRUSTBANNER (default): Trust metrics showing verified status, completion count, and rating
+    • COMP-CATEGORYCHIP (inactive): Category chips showing which task categories the Tasker works in
+    • COMP-REVIEWCARD (default): Recent review cards from past Customers
+    • COMP-BUTTON (primary): Message CTA in sticky bottom bar
+    • COMP-LOADINGSKELETON (profile): Profile-shaped skeleton during initial load
+  This screen has 3 states — generate the primary/default state:
+    Primary state: GET /users/:id/profile in progress; profile skeleton shown
+  Key copy (Mongolian primary):
+    • page_title: "Гүйцэтгэгчийн профайл" (Tasker Profile)
+    • section_about: "Танилцуулга" (About)
+    • section_categories: "Ажлын чиглэлүүд" (Categories)
+    • section_reviews: "Сэтгэгдлүүд" (Reviews)
+    • section_stats: "Статистик" (Stats)
+    • stat_completed: "Дууссан ажил" (Completed Jobs)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(avatar_hero + stats + categories + reviews) ->
+    sticky_bottom_cta(message)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Large Tasker avatar with verification badge at top of profile
+  - component: COMP-VERIFICATIONBADGE
+    variant: default
+    usage: Verified identity badge anchored to avatar bottom-right
+  - component: COMP-STARRATING
+    variant: display
+    usage: Overall Tasker rating displayed below name
+  - component: COMP-TRUSTBANNER
+    variant: default
+    usage: Trust metrics showing verified status, completion count, and rating
+  - component: COMP-CATEGORYCHIP
+    variant: inactive
+    usage: Category chips showing which task categories the Tasker works in
+  - component: COMP-REVIEWCARD
+    variant: default
+    usage: Recent review cards from past Customers
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Message CTA in sticky bottom bar
+  - component: COMP-LOADINGSKELETON
+    variant: profile
+    usage: Profile-shaped skeleton during initial load
+states:
+  - id: loading_initial
+    description: GET /users/:id/profile in progress; profile skeleton shown
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-TRUSTBANNER
+      - COMP-CATEGORYCHIP
+      - COMP-REVIEWCARD
+      - COMP-BUTTON
+  - id: loaded
+    description: Profile data loaded; all sections rendered with avatar, stats, categories, and reviews
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-TRUSTBANNER
+      - COMP-CATEGORYCHIP
+      - COMP-REVIEWCARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: GET /users/:id/profile failed; error state with retry
+    visible: []
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-TRUSTBANNER
+      - COMP-CATEGORYCHIP
+      - COMP-REVIEWCARD
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Гүйцэтгэгчийн профайл
+    en: Tasker Profile
+  - key: section_about
+    mn: Танилцуулга
+    en: About
+  - key: section_categories
+    mn: Ажлын чиглэлүүд
+    en: Categories
+  - key: section_reviews
+    mn: Сэтгэгдлүүд
+    en: Reviews
+  - key: section_stats
+    mn: Статистик
+    en: Stats
+  - key: stat_completed
+    mn: Дууссан ажил
+    en: Completed Jobs
+  - key: stat_rating
+    mn: Үнэлгээ
+    en: Rating
+  - key: stat_reviews
+    mn: Сэтгэгдэл
+    en: Reviews
+  - key: verified_since
+    mn: 'Баталгаажсан: {date}'
+    en: 'Verified since: {date}'
+  - key: member_since
+    mn: 'Бүртгүүлсэн: {date}'
+    en: 'Member since: {date}'
+  - key: no_reviews_yet
+    mn: Одоогоор сэтгэгдэл байхгүй байна
+    en: No reviews yet
+  - key: cta_message
+    mn: Зурвас илгээх
+    en: Message
+  - key: error_network
+    mn: Профайл ачаалахад алдаа гарлаа
+    en: Failed to load profile
+acceptance_criteria:
+  - Profile hero shows large Tasker avatar with VerificationBadge anchored bottom-right
+  - Name, overall rating (StarRating display), and member-since date displayed below avatar
+  - TrustBanner shows verified status, completed job count, and rating
+  - Categories section shows CategoryChip for each category the Tasker works in
+  - Reviews section lists recent ReviewCards from past Customers
+  - Empty reviews state shows 'No reviews yet' message
+  - Tasker phone number is NEVER shown per REQ-LEAK-01
+  - Message CTA in sticky bottom bar navigates (push) to Conversation List SCR-SHARED-010
+  - Back button pops to Applicants List SCR-CUST-011
+  - Profile skeleton matches profile layout during loading
+  - Network error shows error state with retry
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /users/:id/profile
+    purpose: Fetch Tasker public profile including bio, categories, stats, reviews, and verification status
+analytics_events:
+  - event: tasker_profile_viewed
+    trigger: Screen becomes visible; includes tasker_id
+  - event: tasker_profile_message_tapped
+    trigger: User taps Message CTA; includes tasker_id
+  - event: tasker_profile_review_expanded
+    trigger: User expands a review card to read full text
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Tasker Public Profile".
+
+      GET /users/:id/profile in progress; profile skeleton shown
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER, COMP-CATEGORYCHIP,
+      COMP-REVIEWCARD, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded
+    prompt: >-
+      Generate the "loaded" state of "Tasker Public Profile".
+
+      Profile data loaded; all sections rendered with avatar, stats, categories, and reviews
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER,
+      COMP-CATEGORYCHIP, COMP-REVIEWCARD, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Tasker Public Profile".
+
+      GET /users/:id/profile failed; error state with retry
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-TRUSTBANNER, COMP-CATEGORYCHIP,
+      COMP-REVIEWCARD, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

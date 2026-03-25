@@ -5,9 +5,16 @@
 4-phase go-to-market strategy for the Mongolian market. Core philosophy: **prioritize liquidity and trust over immediate
 revenue** to solve the marketplace cold-start problem.
 
+Phase numbering in this document follows the current PRD baseline. The zero-monetization launch window is the PRD's combined `Phase 0-1` period; PRD Section 12 further splits that window into Phase 0 and Phase 1 rollout stages.
+
+- `Phase 0-1`: liquidity and trust formation
+- `Phase 2`: soft monetization
+- `Phase 3`: subscription and escrow
+- `Phase 4`: recurring revenue expansion
+
 ---
 
-## Phase 1 — Liquidity (0% Commission)
+## Phase 0-1 — Liquidity (0% Commission)
 
 **Goal:** Build an initial pool of verified Taskers and real customer demand before any monetization.
 **Revenue:** $0
@@ -47,7 +54,7 @@ pool at zero ongoing cost when a task is posted nearby.
 - **Lead unlock charge point:** Credits are charged only when the selected Tasker accepts and unlocks Customer contact
   details.
 - **Ramp-up policy:** Unlock credit cost starts low and scales by admin policy as trust and demand stabilize.
-- **Phone auth migration:** SMS OTP becomes primary auth; Phase 1 Facebook-only users migrate by verifying phone OTP.
+- **Phone auth migration:** SMS OTP becomes primary auth; Phase 0-1 Facebook-only users migrate by verifying phone OTP.
 
 ---
 
@@ -74,7 +81,7 @@ pool at zero ongoing cost when a task is posted nearby.
 
 ---
 
-## Phase 1 Management Philosophy
+## Phase 0-1 Management Philosophy
 
 1. **Optimize for liquidity quality first.** North Star metric in the first 6 months is Category Liquidity Score.
    Revenue remains a lagging indicator.
@@ -97,7 +104,7 @@ Use AI as an execution multiplier, not as final authority:
 
 ---
 
-## Facebook Growth Tactics (Phase 1 Supplement)
+## Facebook Growth Tactics (Phase 0-1 Supplement)
 
 ### Supply-Side Cross-Posting
 

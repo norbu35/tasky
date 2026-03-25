@@ -1,0 +1,241 @@
+screen_id: SCR-CUST-001
+name: My Tasks — Task List
+role:
+  - customer
+phase: 0-1
+template: feed_list
+route: /(customer)/tasks
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "My Tasks — Task List" (SCR-CUST-001) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(page_title + notifications_bell) -> scrollview(task_cards) -> fab_overlay
+
+  Components used:
+    • COMP-SPLITCARD (task): Task cards in the feed showing task title, category, status, budget, and schedule
+    • COMP-STATUSBADGE (open): Inline status indicator on each task card (open, assigned, completed, cancelled)
+    • COMP-FAB (default): Floating action button for posting a new task; hides on scroll down, appears on scroll up
+    • COMP-EMPTYSTATE (activation): Shown when user has no tasks; activation variant with CTA to post first task
+    • COMP-LOADINGSKELETON (card): Card-shaped skeleton placeholders shown during initial load and pagination
+    • COMP-TOAST (error): Error toast for network failures and success toast after task actions
+  This screen has 6 states — generate the primary/default state:
+    Primary state: First load; API call GET /tasks/mine in progress
+  Key copy (Mongolian primary):
+    • page_title: "Миний даалгаврууд" (My Tasks)
+    • fab_label: "Даалгавар нэмэх" (Post Task)
+    • empty_headline: "Танд даалгавар байхгүй байна" (You have no tasks yet)
+    • empty_description: "Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой" (Post your first task and find a trusted tasker)
+    • empty_cta: "Даалгавар оруулах" (Post a Task)
+    • error_network: "Сүлжээний алдаа гарлаа. Дахин оролдоно уу" (Network error. Please try again)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(page_title + notifications_bell) -> scrollview(task_cards) -> fab_overlay
+components:
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: Task cards in the feed showing task title, category, status, budget, and schedule
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Inline status indicator on each task card (open, assigned, completed, cancelled)
+  - component: COMP-FAB
+    variant: default
+    usage: Floating action button for posting a new task; hides on scroll down, appears on scroll up
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Shown when user has no tasks; activation variant with CTA to post first task
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Card-shaped skeleton placeholders shown during initial load and pagination
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast for network failures and success toast after task actions
+states:
+  - id: loading_initial
+    description: First load; API call GET /tasks/mine in progress
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-EMPTYSTATE
+      - COMP-FAB
+      - COMP-TOAST
+  - id: empty_activation
+    description: User has zero tasks; show activation empty state with CTA to post first task
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-FAB
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: populated
+    description: User has one or more tasks; task cards rendered in reverse-chronological order
+    visible:
+      - COMP-SPLITCARD
+      - COMP-STATUSBADGE
+      - COMP-FAB
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: loading_refresh
+    description: Pull-to-refresh triggered; spinner at top while data reloads
+    visible:
+      - COMP-SPLITCARD
+      - COMP-FAB
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: GET /tasks/mine failed due to network error; error toast shown with retry
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+  - id: offline_cached
+    description: Device offline; cached task cards shown with offline banner at top
+    visible:
+      - COMP-SPLITCARD
+      - COMP-FAB
+    hidden:
+      - COMP-EMPTYSTATE
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Миний даалгаврууд
+    en: My Tasks
+  - key: fab_label
+    mn: Даалгавар нэмэх
+    en: Post Task
+  - key: empty_headline
+    mn: Танд даалгавар байхгүй байна
+    en: You have no tasks yet
+  - key: empty_description
+    mn: Эхний даалгавараа оруулаад найдвартай гүйцэтгэгч олоорой
+    en: Post your first task and find a trusted tasker
+  - key: empty_cta
+    mn: Даалгавар оруулах
+    en: Post a Task
+  - key: error_network
+    mn: Сүлжээний алдаа гарлаа. Дахин оролдоно уу
+    en: Network error. Please try again
+  - key: offline_banner
+    mn: Офлайн горимд байна
+    en: You are offline
+  - key: notifications_bell_label
+    mn: Мэдэгдэл
+    en: Notifications
+acceptance_criteria:
+  - Task list displays SplitCard for each task with dark teal header and light body
+  - Each task card shows category, title, budget (formatted as MNT with comma separator), schedule, and status badge
+  - FAB with plus icon is visible in bottom-right corner and hides on scroll down
+  - Empty state shows activation illustration, headline, description, and 'Post a Task' CTA
+  - Pull-to-refresh reloads the task list from GET /tasks/mine
+  - Tapping a task card navigates (push) to Task Detail SCR-CUST-009
+  - Tapping the FAB navigates (push) to Category Selection SCR-CUST-002
+  - Tapping the notifications bell navigates (push) to Notification Center SCR-SHARED-016
+  - Offline state shows cached tasks with an offline banner
+  - Network error shows error toast with retry action
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /tasks/mine
+    purpose: Fetch customer's task list with status, applicant counts, and booking info
+analytics_events:
+  - event: my_tasks_viewed
+    trigger: Screen becomes visible
+  - event: my_tasks_refreshed
+    trigger: Pull-to-refresh completes
+  - event: task_card_tapped
+    trigger: User taps a task card to view detail
+  - event: fab_post_task_tapped
+    trigger: User taps the FAB to start posting a new task
+  - event: notifications_bell_tapped
+    trigger: User taps the notifications bell icon
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "My Tasks — Task List".
+
+      First load; API call GET /tasks/mine in progress
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-FAB, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty_activation
+    prompt: >-
+      Generate the "empty_activation" state of "My Tasks — Task List".
+
+      User has zero tasks; show activation empty state with CTA to post first task
+
+      Visible elements: COMP-EMPTYSTATE, COMP-FAB
+
+      Hidden elements: COMP-SPLITCARD, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "My Tasks — Task List".
+
+      User has one or more tasks; task cards rendered in reverse-chronological order
+
+      Visible elements: COMP-SPLITCARD, COMP-STATUSBADGE, COMP-FAB
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "My Tasks — Task List".
+
+      Pull-to-refresh triggered; spinner at top while data reloads
+
+      Visible elements: COMP-SPLITCARD, COMP-FAB
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "My Tasks — Task List".
+
+      GET /tasks/mine failed due to network error; error toast shown with retry
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-SPLITCARD, COMP-EMPTYSTATE, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline_cached
+    prompt: >-
+      Generate the "offline_cached" state of "My Tasks — Task List".
+
+      Device offline; cached task cards shown with offline banner at top
+
+      Visible elements: COMP-SPLITCARD, COMP-FAB
+
+      Hidden elements: COMP-EMPTYSTATE, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -1,0 +1,113 @@
+screen_id: SCR-SHARED-021
+name: Banned Account
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: error_state
+route: /account/banned
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Banned Account" (SCR-SHARED-021) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: error_state — Centered error icon, message text, and retry CTA button. Comfortable density.
+
+  Layout structure: safe_area -> centered(ban_icon + title + body_text + reason + support_link + logout_cta)
+
+  Components used:
+    • COMP-EMPTYSTATE (error): Full-screen ban notice with ban illustration, explanation, and support contact information
+    • COMP-BUTTON (primary): Logout button as the only available action
+    • COMP-BUTTON (ghost): Contact support link styled as ghost button
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Terminal ban screen; no outgoing navigation except logout. Shows ban reason and support contact
+  Key copy (Mongolian primary):
+    • title_banned: "Бүртгэл хаагдсан" (Account Banned)
+    • body_banned: "Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй." (Your account has been permanently banned for violating our Terms of Service. This decision is final.)
+    • label_reason: "Шалтгаан" (Reason)
+    • body_support: "Асуулт байвал тусламжийн баг руу хандана уу." (If you have questions, please contact our support team.)
+    • cta_logout: "Гарах" (Logout)
+    • cta_contact_support: "Тусламж авах" (Contact Support)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: error_state
+  density: comfortable
+  structure: safe_area -> centered(ban_icon + title + body_text + reason + support_link + logout_cta)
+components:
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Full-screen ban notice with ban illustration, explanation, and support contact information
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Logout button as the only available action
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Contact support link styled as ghost button
+states:
+  - id: default
+    description: Terminal ban screen; no outgoing navigation except logout. Shows ban reason and support contact
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: title_banned
+    mn: Бүртгэл хаагдсан
+    en: Account Banned
+  - key: body_banned
+    mn: Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй.
+    en: Your account has been permanently banned for violating our Terms of Service. This decision is final.
+  - key: label_reason
+    mn: Шалтгаан
+    en: Reason
+  - key: body_support
+    mn: Асуулт байвал тусламжийн баг руу хандана уу.
+    en: If you have questions, please contact our support team.
+  - key: cta_logout
+    mn: Гарах
+    en: Logout
+  - key: cta_contact_support
+    mn: Тусламж авах
+    en: Contact Support
+  - key: support_email
+    mn: support@tasky.mn
+    en: support@tasky.mn
+acceptance_criteria:
+  - Screen is a terminal dead-end with no outgoing navigation to any app screen
+  - Ban reason is displayed if available from the user profile data
+  - Logout button clears JWT and navigates (replace) to SCR-SHARED-002 (Login)
+  - Contact Support opens external email client with pre-filled support@tasky.mn address
+  - No appeal option is available — ban is permanent and final
+  - Uses comfortable density for emotional weight
+  - Ban icon/illustration is centered above the text content
+  - All body text uses 16px minimum for Mongolian Cyrillic readability
+  - Screen auto-appears when GET /users/me returns a banned status on any app launch
+  - Navigation stack is fully replaced — back gesture and hardware back button do nothing
+api_endpoints:
+  - method: GET
+    path: /users/me
+    purpose: Fetch user profile to retrieve ban status and ban reason
+analytics_events:
+  - event: banned_screen_viewed
+    trigger: Banned account screen loads
+  - event: banned_logout_tapped
+    trigger: User taps the Logout button
+  - event: banned_support_tapped
+    trigger: User taps the Contact Support link
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Banned Account".
+
+      Terminal ban screen; no outgoing navigation except logout. Shows ban reason and support contact
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

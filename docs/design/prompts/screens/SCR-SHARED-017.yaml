@@ -1,0 +1,336 @@
+screen_id: SCR-SHARED-017
+name: Review Form
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: form_wizard
+route: /reviews/new
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-07.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Review Form" (SCR-SHARED-017) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(close + title) -> scrollview(counterparty_info + star_ratings_quality +
+  star_ratings_punctuality + star_ratings_communication + text_input) -> bottom_nav(submit)
+
+  Components used:
+    • COMP-PROFILEAVATAR (md): Counterparty avatar shown at top of review form for context
+    • COMP-STARRATING (input): Interactive star rating input for quality dimension
+    • COMP-STARRATING (input): Interactive star rating input for punctuality dimension
+    • COMP-STARRATING (input): Interactive star rating input for communication dimension
+    • COMP-FORMFIELD (default): Wrapper for optional freetext review comment
+    • COMP-INPUT (multiline): Multiline text input for optional review comment
+    • COMP-BUTTON (primary): Submit review button in bottom navigation bar
+    • COMP-ANIMATEDCHECKMARK (default): Animated success checkmark displayed after successful review submission
+    • COMP-TOAST (error): Error toast when review submission fails
+  This screen has 8 states — generate the primary/default state:
+    Primary state: Review form loaded showing counterparty info and empty star rating inputs; submit disabled
+  Key copy (Mongolian primary):
+    • nav_title: "Сэтгэгдэл бичих" (Write Review)
+    • counterparty_prompt_customer: "Гүйцэтгэгчийг үнэлнэ үү" (Rate the Tasker)
+    • counterparty_prompt_tasker: "Захиалагчийг үнэлнэ үү" (Rate the Customer)
+    • label_quality: "Ажлын чанар" (Quality of work)
+    • label_punctuality: "Цаг баримтлал" (Punctuality)
+    • label_communication: "Харилцаа" (Communication)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(close + title) -> scrollview(counterparty_info + star_ratings_quality +
+    star_ratings_punctuality + star_ratings_communication + text_input) -> bottom_nav(submit)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: md
+    usage: Counterparty avatar shown at top of review form for context
+  - component: COMP-STARRATING
+    variant: input
+    usage: Interactive star rating input for quality dimension
+  - component: COMP-STARRATING
+    variant: input
+    usage: Interactive star rating input for punctuality dimension
+  - component: COMP-STARRATING
+    variant: input
+    usage: Interactive star rating input for communication dimension
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wrapper for optional freetext review comment
+  - component: COMP-INPUT
+    variant: multiline
+    usage: Multiline text input for optional review comment
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Submit review button in bottom navigation bar
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated success checkmark displayed after successful review submission
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast when review submission fails
+states:
+  - id: default
+    description: Review form loaded showing counterparty info and empty star rating inputs; submit disabled
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: rating_quality
+    description: User is interacting with the quality star rating; stars highlight on touch
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: rating_punctuality
+    description: User is interacting with the punctuality star rating
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: rating_communication
+    description: User is interacting with the communication star rating
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: text_entry
+    description: User is typing optional freetext comment; keyboard visible, form scrolls to keep input visible
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: submitting
+    description: POST /bookings/:id/reviews is in flight; submit button shows loading spinner
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-TOAST
+  - id: success
+    description: Review submitted successfully; animated checkmark plays, then navigates back
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: error_network
+    description: Review submission failed due to network error; error toast shown with retry option
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+copy:
+  - key: nav_title
+    mn: Сэтгэгдэл бичих
+    en: Write Review
+  - key: counterparty_prompt_customer
+    mn: Гүйцэтгэгчийг үнэлнэ үү
+    en: Rate the Tasker
+  - key: counterparty_prompt_tasker
+    mn: Захиалагчийг үнэлнэ үү
+    en: Rate the Customer
+  - key: label_quality
+    mn: Ажлын чанар
+    en: Quality of work
+  - key: label_punctuality
+    mn: Цаг баримтлал
+    en: Punctuality
+  - key: label_communication
+    mn: Харилцаа
+    en: Communication
+  - key: label_comment
+    mn: Нэмэлт тайлбар (сонголтот)
+    en: Additional comments (optional)
+  - key: placeholder_comment
+    mn: Туршлагаасаа хуваалцана уу...
+    en: Share your experience...
+  - key: cta_submit
+    mn: Сэтгэгдэл илгээх
+    en: Submit Review
+  - key: success_headline
+    mn: Баярлалаа!
+    en: Thank you!
+  - key: success_body
+    mn: Таны сэтгэгдэл амжилттай бүртгэгдлээ
+    en: Your review has been submitted successfully
+  - key: error_submit
+    mn: Сэтгэгдэл илгээхэд алдаа гарлаа. Дахин оролдоно уу.
+    en: Failed to submit review. Please try again.
+  - key: validation_rating_required
+    mn: Бүх үнэлгээг бөглөнө үү
+    en: Please rate all categories
+acceptance_criteria:
+  - Form displays counterparty avatar, name, and three separate star rating inputs (quality, punctuality, communication)
+  - Submit button is disabled until all three rating dimensions have a value of at least 1 star
+  - Star ratings use whole-star input only (no half stars)
+  - Optional freetext field accepts up to 500 characters with character counter
+  - Submit button shows loading spinner during POST /bookings/:id/reviews
+  - Success state plays animated checkmark with spring animation, then auto-navigates back after 1.5s
+  - Customer review pops back to SCR-CUST-017; Tasker review pops back to SCR-TASK-013
+  - Network error shows error toast with retry action (6s duration)
+  - Keyboard-aware scrolling ensures text input is visible when keyboard appears
+  - All star rating labels render in body_default (16px) typography
+  - Review is mandatory per journey JRN-SHARED-07; form cannot be dismissed without submitting
+api_endpoints:
+  - method: POST
+    path: /bookings/:id/reviews
+    purpose: Submit a review for a completed booking with quality, punctuality, communication ratings and optional text
+analytics_events:
+  - event: review_form_opened
+    trigger: Review form screen loads with counterparty data
+  - event: review_quality_rated
+    trigger: User selects a quality star rating
+  - event: review_punctuality_rated
+    trigger: User selects a punctuality star rating
+  - event: review_communication_rated
+    trigger: User selects a communication star rating
+  - event: review_comment_entered
+    trigger: User types in the optional comment field
+  - event: review_submitted
+    trigger: User taps Submit and POST succeeds
+  - event: review_submit_failed
+    trigger: POST /bookings/:id/reviews returns an error
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Review Form".
+
+      Review form loaded showing counterparty info and empty star rating inputs; submit disabled
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: rating_quality
+    prompt: >-
+      Generate the "rating_quality" state of "Review Form".
+
+      User is interacting with the quality star rating; stars highlight on touch
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: rating_punctuality
+    prompt: >-
+      Generate the "rating_punctuality" state of "Review Form".
+
+      User is interacting with the punctuality star rating
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: rating_communication
+    prompt: >-
+      Generate the "rating_communication" state of "Review Form".
+
+      User is interacting with the communication star rating
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: text_entry
+    prompt: >-
+      Generate the "text_entry" state of "Review Form".
+
+      User is typing optional freetext comment; keyboard visible, form scrolls to keep input visible
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: submitting
+    prompt: >-
+      Generate the "submitting" state of "Review Form".
+
+      POST /bookings/:id/reviews is in flight; submit button shows loading spinner
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Review Form".
+
+      Review submitted successfully; animated checkmark plays, then navigates back
+
+      Visible elements: COMP-ANIMATEDCHECKMARK
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Review Form".
+
+      Review submission failed due to network error; error toast shown with retry option
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON, COMP-TOAST
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

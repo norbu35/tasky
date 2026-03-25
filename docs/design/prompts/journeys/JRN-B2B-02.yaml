@@ -1,0 +1,40 @@
+journey_id: JRN-B2B-02
+name: Post Task as Business
+actor:
+  - customer
+phase: '2'
+goal: Start the standard task-posting flow with business account context
+entry_screen: SCR-B2B-006
+exit_screens:
+  - SCR-CUST-008
+happy_path:
+  - step: 1
+    screen_id: SCR-B2B-006
+    screen_name: Business Tasks
+    action: Tap 'Post Task as Business'
+    next: SCR-B2B-005
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-B2B-005
+    screen_name: Post Task as Business
+    action: Select business account and location
+    next: SCR-CUST-002
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-CUST-002
+    screen_name: Post Task — Category Selection
+    action: Continue the standard task-posting flow
+    next: SCR-CUST-008
+    lifecycle: TASK-T13 (business_task_published)
+alternate_paths:
+  - id: JRN-B2B-02-A1
+    name: Location missing
+    branch_at_step: 2
+    condition: Selected account has no valid location
+    screens:
+      - SCR-B2B-005
+      - SCR-B2B-003
+    outcome: Owner adds a location before posting
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

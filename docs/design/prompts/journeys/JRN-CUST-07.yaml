@@ -1,0 +1,26 @@
+journey_id: JRN-CUST-07
+name: Cancel Open Task
+actor:
+  - customer
+phase: 0-1
+goal: Cancel a task before booking
+entry_screen: SCR-CUST-009
+exit_screens:
+  - SCR-CUST-001
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-009
+    screen_name: Task Detail (Customer)
+    action: Tap 'Cancel Task'
+    next: SCR-CUST-010
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-010
+    screen_name: Task Cancel Confirmation
+    action: Confirm cancellation
+    next: SCR-CUST-001
+    lifecycle: TASK-T06 (customer_cancels_open_task)
+alternate_paths: []
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

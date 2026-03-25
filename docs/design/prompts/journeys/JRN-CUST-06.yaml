@@ -1,0 +1,46 @@
+journey_id: JRN-CUST-06
+name: Raise & Track Dispute
+actor:
+  - customer
+phase: 0-1
+goal: Report an issue with a booking
+entry_screen: SCR-CUST-017
+exit_screens:
+  - SCR-CUST-025
+happy_path:
+  - step: 1
+    screen_id: SCR-CUST-017
+    screen_name: Booking Detail (Customer)
+    action: Tap 'Report Issue'
+    next: SCR-CUST-024
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-CUST-024
+    screen_name: Dispute — Raise
+    action: Submit dispute with evidence
+    next: SCR-CUST-025
+    lifecycle: DISP-T01 (party_raises_dispute)
+  - step: 3
+    screen_id: SCR-CUST-025
+    screen_name: Dispute — Status
+    action: Track dispute status
+    next: SCR-CUST-025
+    lifecycle: null
+alternate_paths:
+  - id: JRN-CUST-06-A1
+    name: Insufficient evidence
+    branch_at_step: 2
+    condition: No evidence uploaded
+    screens:
+      - SCR-CUST-024
+    outcome: Validation error — at least 1 artifact required
+  - id: JRN-CUST-06-A2
+    name: Auto-close
+    branch_at_step: 3
+    condition: Evidence not provided within 24h
+    screens:
+      - SCR-CUST-025
+    outcome: Dispute auto-closed
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

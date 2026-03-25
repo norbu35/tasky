@@ -17,7 +17,7 @@ When documents conflict, precedence from `AGENTS.md` applies.
 |-----------------------------------------------------------------------|---------------------------------------------|-------------------------------------------------|
 | Product scope, MVP boundaries, success metrics                        | `docs/PRD.md`                               | `docs/METRICS.md`, `docs/STRATEGY.md`           |
 | API contract (request/response schema, endpoint shape)                | `docs/API.yaml`                             | Module `AGENTS.md` for implementation notes     |
-| System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                      | `docs/diagrams/*`                               |
+| System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                      | `docs/design/domain-lifecycles.yaml`, `docs/design/journey-catalog.yaml` |
 | Module runtime behavior (auth, errors, idempotency, side effects)     | `src/main/java/mn/tasky/<module>/AGENTS.md` | Module controllers/services                     |
 | Quality gates and self-verification contract                          | `docs/quality/SELF_VERIFY_CONTRACT.md`      | `docs/quality/risk-checks.json`                 |
 | Agent operating workflow and ticket coordination                      | `docs/agent/RUNBOOK.md`                     | `tickets/STATUS.json`, `docs/agent/WORK_LOG.md` |
@@ -48,10 +48,10 @@ Each file below is the canonical contract for that backend module:
 
 Use these docs for end-to-end flow understanding; this index intentionally avoids restating flow logic:
 
-- Marketplace and booking state transitions: `docs/diagrams/marketplace-state-machines.md`
-- Business lifecycle narrative: `docs/diagrams/marketplace-business-flow.md`
-- Domain interactions: `docs/diagrams/domain-interaction-map.md`
-- Trust/safety lifecycle: `docs/diagrams/trust-safety-lifecycle.md`
+- Marketplace, booking, verification, dispute, and user state machines: `docs/design/domain-lifecycles.yaml`
+- Journey-level business flow and alternate paths: `docs/design/journey-catalog.yaml`
+- Screen and navigation graph: `docs/design/screen-graph.yaml`
+- State coverage and screen-level parity context: `docs/design/state-matrix.yaml`, `docs/design/screen-inventory.yaml`
 - Implementation-specific flow details: module `AGENTS.md` + `common/AGENTS.md` (outbox/idempotency/security)
 
 ## 5. Anti-Duplication Rule

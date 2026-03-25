@@ -1,0 +1,269 @@
+screen_id: SCR-P3-003
+name: Escrow — Payment Flow
+role:
+  - customer
+phase: 3+
+template: detail
+route: /(customer)/bookings/:bookingId/escrow
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Escrow — Payment Flow" (SCR-P3-003) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(escrow_info + payment_section) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Information card explaining escrow concept and benefits to the customer
+    • COMP-CARD (elevated): QPay QR code card for escrow payment (reused from credits payment pattern)
+    • COMP-BUTTON (primary): Primary CTA for opt-in to escrow or QPay deeplink
+    • COMP-BUTTON (ghost): Secondary skip button for opt-in prompt
+    • COMP-STATUSBADGE (assigned): Badge showing escrow payment status (pending, held, released)
+    • COMP-ANIMATEDCHECKMARK (default): Success animation when escrow payment is confirmed
+    • COMP-EMPTYSTATE (error): Error state when escrow payment fails
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Customer is offered the option to use escrow payment for this booking
+  Key copy (Mongolian primary):
+    • nav_title: "Эскроу төлбөр" (Escrow Payment)
+    • opt_in_heading: "Эскроу төлбөрөөр хамгаалалт нэмэх" (Add protection with escrow)
+    • opt_in_description: "Төлбөрийг аюулгүй данс руу байршуулна. Ажил дууссаны дараа л гүйцэтгэгч мөнгөө авна" (Funds held safely in escrow. Tasker gets paid only after task completion)
+    • opt_in_benefit_1: "Мөнгөн хамгаалалт" (Payment protection)
+    • opt_in_benefit_2: "Маргаан шийдвэрлэх боломж" (Dispute resolution support)
+    • opt_in_benefit_3: "Автомат шилжүүлэг" (Automatic release on completion)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(escrow_info + payment_section) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Information card explaining escrow concept and benefits to the customer
+  - component: COMP-CARD
+    variant: elevated
+    usage: QPay QR code card for escrow payment (reused from credits payment pattern)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA for opt-in to escrow or QPay deeplink
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary skip button for opt-in prompt
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Badge showing escrow payment status (pending, held, released)
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Success animation when escrow payment is confirmed
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when escrow payment fails
+states:
+  - id: opt_in_prompt
+    description: Customer is offered the option to use escrow payment for this booking
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: qpay_payment
+    description: Customer opted in; QPay QR code displayed for escrow deposit
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-BUTTON.ghost
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: payment_pending
+    description: Escrow payment initiated; polling for QPay confirmation
+    visible:
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: escrowed_confirmation
+    description: Payment confirmed; funds held in escrow until task completion
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-EMPTYSTATE
+  - id: error_payment_failed
+    description: QPay payment failed or was rejected
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON.primary
+copy:
+  - key: nav_title
+    mn: Эскроу төлбөр
+    en: Escrow Payment
+  - key: opt_in_heading
+    mn: Эскроу төлбөрөөр хамгаалалт нэмэх
+    en: Add protection with escrow
+  - key: opt_in_description
+    mn: Төлбөрийг аюулгүй данс руу байршуулна. Ажил дууссаны дараа л гүйцэтгэгч мөнгөө авна
+    en: Funds held safely in escrow. Tasker gets paid only after task completion
+  - key: opt_in_benefit_1
+    mn: Мөнгөн хамгаалалт
+    en: Payment protection
+  - key: opt_in_benefit_2
+    mn: Маргаан шийдвэрлэх боломж
+    en: Dispute resolution support
+  - key: opt_in_benefit_3
+    mn: Автомат шилжүүлэг
+    en: Automatic release on completion
+  - key: cta_opt_in
+    mn: Эскроу ашиглах
+    en: Use escrow
+  - key: cta_skip
+    mn: Үгүй, алгасах
+    en: No, skip
+  - key: escrow_amount_label
+    mn: Эскроу дүн
+    en: Escrow amount
+  - key: escrow_amount_value
+    mn: ₮{amount}
+    en: ₮{amount}
+  - key: qpay_instruction
+    mn: QPay аппаар доорх QR кодыг уншуулна уу
+    en: Scan the QR code below with your QPay app
+  - key: cta_open_qpay
+    mn: QPay аппаар нээх
+    en: Open in QPay
+  - key: status_pending
+    mn: Төлбөр хүлээгдэж байна...
+    en: Payment pending...
+  - key: status_escrowed
+    mn: Мөнгө аюулгүй хадгалагдлаа
+    en: Funds securely held
+  - key: escrowed_headline
+    mn: Эскроу амжилттай!
+    en: Escrow confirmed!
+  - key: escrowed_description
+    mn: ₮{amount} аюулгүй данс руу байршлаа. Ажил дууссаны дараа автоматаар шилжүүлнэ
+    en: ₮{amount} held in escrow. Will be released automatically upon task completion
+  - key: error_headline
+    mn: Төлбөр амжилтгүй
+    en: Payment failed
+  - key: error_description
+    mn: Эскроу төлбөр хийхэд алдаа гарлаа. Дахин оролдоно уу
+    en: Escrow payment failed. Please try again
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+  - key: cta_done
+    mn: Буцах
+    en: Done
+acceptance_criteria:
+  - Opt-in prompt clearly explains escrow benefits with 3 bullet points
+  - Escrow is opt-in only; customer can skip without penalty
+  - QPay QR code state reuses the same pattern as credit purchase (SCR-P2-002)
+  - Payment pending state polls GET /payments/:id/status every 3 seconds
+  - Escrowed confirmation shows animated checkmark with held amount
+  - Payment failed state shows error illustration with retry CTA
+  - Back/done button returns to SCR-CUST-017 (Booking Detail)
+  - Escrow amount matches the booking budget displayed in price_display typography
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /payments/escrow
+    purpose: Initiate escrow payment and generate QPay payment link
+  - method: GET
+    path: /payments/:id/status
+    purpose: Poll escrow payment status until confirmed or failed
+analytics_events:
+  - event: escrow_opt_in_shown
+    trigger: Escrow opt-in prompt displayed
+  - event: escrow_opted_in
+    trigger: Customer taps 'Use escrow'
+  - event: escrow_skipped
+    trigger: Customer taps 'No, skip'
+  - event: escrow_payment_started
+    trigger: QPay QR code displayed for escrow deposit
+  - event: escrow_qpay_deeplink
+    trigger: Customer taps 'Open in QPay'
+  - event: escrow_confirmed
+    trigger: Escrow payment confirmed and funds held
+  - event: escrow_payment_failed
+    trigger: Escrow payment failed
+state_prompts:
+  - state_id: opt_in_prompt
+    prompt: >-
+      Generate the "opt_in_prompt" state of "Escrow — Payment Flow".
+
+      Customer is offered the option to use escrow payment for this booking
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: qpay_payment
+    prompt: >-
+      Generate the "qpay_payment" state of "Escrow — Payment Flow".
+
+      Customer opted in; QPay QR code displayed for escrow deposit
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-BUTTON.ghost, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_pending
+    prompt: >-
+      Generate the "payment_pending" state of "Escrow — Payment Flow".
+
+      Escrow payment initiated; polling for QPay confirmation
+
+      Visible elements: COMP-STATUSBADGE
+
+      Hidden elements: COMP-CARD, COMP-BUTTON, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: escrowed_confirmation
+    prompt: >-
+      Generate the "escrowed_confirmation" state of "Escrow — Payment Flow".
+
+      Payment confirmed; funds held in escrow until task completion
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-STATUSBADGE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-BUTTON.primary, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_payment_failed
+    prompt: >-
+      Generate the "error_payment_failed" state of "Escrow — Payment Flow".
+
+      QPay payment failed or was rejected
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-BUTTON.primary
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

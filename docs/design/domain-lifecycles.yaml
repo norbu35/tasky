@@ -138,6 +138,28 @@ entities:
           - "notify customer"
         phase: "3+"
 
+      - id: TASK-T12
+        source: OPEN
+        target: OPEN
+        trigger: task_boost_activated
+        guard: "QPay payment verified, boost type in {PROMOTED, URGENT}, no overlapping active boost"
+        side_effects:
+          - "persist boost_type, activated_at, expires_at on task"
+          - "apply time-bounded feed sort priority and label"
+          - "emit monetization analytics event"
+        phase: "2"
+
+      - id: TASK-T13
+        source: null
+        target: OPEN
+        trigger: business_task_published
+        guard: "customer has OWNER or MANAGER role on selected business account and valid business location selected"
+        side_effects:
+          - "persist task with business_account_id and business_location_id"
+          - "apply B2B priority weighting in matching query"
+          - "route task into both standard customer views and business task views"
+        phase: "2"
+
     business_rules:
       - "Budget must be > 1,000 MNT (REQ-TASK-01)"
       - "Max 3 photos per task (REQ-TASK-04)"
@@ -763,6 +785,17 @@ entities:
           - "retain aggregated metrics"
         phase: "0-1"
 
+      - id: USER-T15
+        source: VERIFIED
+        target: VERIFIED
+        trigger: tasker_polishes_profile
+        guard: "role == TASKER, user explicitly accepts AI-suggested copy before save"
+        side_effects:
+          - "persist updated profile description"
+          - "retain editable pre-polish draft until confirmation"
+          - "emit profile quality analytics event"
+        phase: "0-1"
+
     business_rules:
       - "Duplicate prevention: one account per facebook_id (REQ-AUTH-02)"
       - "JWT issued on successful auth (REQ-AUTH-03)"
@@ -778,3 +811,80 @@ entities:
       - "Account deletion: soft delete, anonymize PII, retain metrics"
       - "Facebook OAuth outage: existing sessions survive, new login unavailable (REQ-AUTH-09/10)"
       - "Phase 0-1: Facebook only. Phase 2+: phone OTP primary (REQ-AUTH-05/08)"
+
+  # ═══════════════════════════════════════════════════
+  # 7. Business Account
+  # ═══════════════════════════════════════════════════
+  business_account:
+    description: "Customer-owned or customer-managed account used for business-scoped task posting and operations"
+    states:
+      - ACTIVE
+    initial: ACTIVE
+    terminal: []
+
+    transitions:
+      - id: B2B-T01
+        source: null
+        target: ACTIVE
+        trigger: business_account_created
+        guard: "b2b_enabled, requester is CUSTOMER role, name valid, at least one location saved"
+        side_effects:
+          - "create business account with OWNER membership"
+          - "persist primary business location"
+          - "allow owner to invite MANAGER members"
+        phase: "2"
+
+    business_rules:
+      - "Business accounts are tenant-isolated and keyed by business_account_id (REQ-PAY-26)"
+      - "Only OWNER and MANAGER memberships can act on behalf of the account"
+      - "Business-posted tasks reuse the standard task lifecycle with attached business context"
+      - "Business accounts are feature-gated behind b2b_enabled"
+
+  # ═══════════════════════════════════════════════════
+  # 8. Business Subscription
+  # ═══════════════════════════════════════════════════
+  business_subscription:
+    description: "Recurring B2B billing state for Host Lite and Ops Standard plans"
+    states:
+      - NOT_SUBSCRIBED
+      - ACTIVE
+      - PAST_DUE
+      - CANCELLED
+    initial: NOT_SUBSCRIBED
+    terminal: []
+
+    transitions:
+      - id: B2B-T02
+        source: NOT_SUBSCRIBED
+        target: ACTIVE
+        trigger: business_subscription_activated
+        guard: "QPay subscription payment verified for Host Lite or Ops Standard"
+        side_effects:
+          - "persist active plan_code and billing cycle day"
+          - "enable paid B2B billing entitlements for the account"
+        phase: "3+"
+
+      - id: B2B-T03
+        source: ACTIVE
+        target: PAST_DUE
+        trigger: business_subscription_renewal_failed
+        guard: "scheduled recurring payment could not be captured"
+        side_effects:
+          - "flag renewal_failed status"
+          - "prompt manual recovery or resubscribe"
+        phase: "3+"
+
+      - id: B2B-T04
+        source: ACTIVE
+        target: CANCELLED
+        trigger: business_subscription_cancelled
+        guard: "owner cancels or admin disables paid B2B plan"
+        side_effects:
+          - "retain plan history for audit"
+          - "offer resubscribe path until permanent expiry"
+        phase: "3+"
+
+    business_rules:
+      - "Host Lite and Ops Standard are plan variants of the same subscription lifecycle (REQ-PAY-39)"
+      - "Recurring billing is account-scoped, not user-scoped"
+      - "Renewal failure must surface a recoverable resubscribe path"

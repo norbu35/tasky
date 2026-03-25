@@ -1,0 +1,232 @@
+screen_id: SCR-TASK-006
+name: Verification — DAN Fast-Path
+role:
+  - tasker
+phase: '2'
+template: auth
+route: /(tasker)/verification/dan
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification — DAN Fast-Path" (SCR-TASK-006) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(e_mongolia_logo + heading + description + dan_button) ->
+  bottom_fallback(manual_link)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA to initiate DAN (E-Mongolia) verification
+    • COMP-BUTTON (ghost): Secondary ghost link to fall back to manual ID upload
+  This screen has 5 states — generate the primary/default state:
+    Primary state: DAN fast-path option displayed — user can verify via E-Mongolia or fall back to manual
+  Key copy (Mongolian primary):
+    • heading: "Хурдан баталгаажуулалт" (Fast Verification)
+    • description: "E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй." (Verify automatically via E-Mongolia (DAN) system. No photo upload required.)
+    • dan_button: "E-Mongolia-р баталгаажуулах" (Verify with E-Mongolia)
+    • manual_fallback: "Гар аргаар баталгаажуулах" (Verify manually instead)
+    • verifying_message: "Баталгаажуулж байна..." (Verifying...)
+    • success_heading: "Баталгаажуулалт амжилттай!" (Verification successful!)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: safe_area -> centered_content(e_mongolia_logo + heading + description + dan_button) -> bottom_fallback(manual_link)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to initiate DAN (E-Mongolia) verification
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary ghost link to fall back to manual ID upload
+states:
+  - id: default
+    description: DAN fast-path option displayed — user can verify via E-Mongolia or fall back to manual
+    visible:
+      - e_mongolia_logo
+      - heading
+      - description
+      - dan_button
+      - manual_fallback_link
+    hidden:
+      - verifying_spinner
+      - success_content
+      - error_content
+  - id: verifying
+    description: DAN verification in progress — loading state while E-Mongolia API is called
+    visible:
+      - e_mongolia_logo
+      - heading
+      - verifying_spinner
+      - verifying_message
+    hidden:
+      - dan_button
+      - manual_fallback_link
+      - success_content
+      - error_content
+  - id: success
+    description: DAN verification succeeded — tasker is auto-approved
+    visible:
+      - success_icon
+      - success_heading
+      - success_description
+      - browse_tasks_button
+    hidden:
+      - dan_button
+      - manual_fallback_link
+      - verifying_spinner
+      - error_content
+  - id: error_dan_failed
+    description: DAN verification failed — offer manual upload as fallback
+    visible:
+      - e_mongolia_logo
+      - heading
+      - error_message
+      - manual_upload_button
+      - retry_button
+    hidden:
+      - dan_button
+      - verifying_spinner
+      - success_content
+  - id: error_network
+    description: Network error during DAN verification — retry option
+    visible:
+      - e_mongolia_logo
+      - heading
+      - network_error_message
+      - retry_button
+    hidden:
+      - dan_button
+      - verifying_spinner
+      - success_content
+      - error_content
+copy:
+  - key: heading
+    mn: Хурдан баталгаажуулалт
+    en: Fast Verification
+  - key: description
+    mn: E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй.
+    en: Verify automatically via E-Mongolia (DAN) system. No photo upload required.
+  - key: dan_button
+    mn: E-Mongolia-р баталгаажуулах
+    en: Verify with E-Mongolia
+  - key: manual_fallback
+    mn: Гар аргаар баталгаажуулах
+    en: Verify manually instead
+  - key: verifying_message
+    mn: Баталгаажуулж байна...
+    en: Verifying...
+  - key: success_heading
+    mn: Баталгаажуулалт амжилттай!
+    en: Verification successful!
+  - key: success_description
+    mn: Таны хаяг E-Mongolia-р баталгаажлаа. Одоо даалгавруудад анкет илгээх боломжтой.
+    en: Your identity is verified via E-Mongolia. You can now apply to tasks.
+  - key: browse_tasks_button
+    mn: Даалгавар хайх
+    en: Browse Tasks
+  - key: error_dan_failed
+    mn: E-Mongolia баталгаажуулалт амжилтгүй боллоо. Гар аргаар баталгаажуулна уу.
+    en: E-Mongolia verification failed. Please verify manually.
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: retry_button
+    mn: Дахин оролдох
+    en: Retry
+  - key: manual_upload_button
+    mn: Зургаар баталгаажуулах
+    en: Upload ID Photos
+acceptance_criteria:
+  - DAN Fast-Path is only available in Phase 2+ (REQ-SAFE-05)
+  - E-Mongolia logo and branding are displayed prominently
+  - Tapping DAN verify button initiates POST /verification/dan/verify
+  - On success, navigates to Verification Approved (SCR-TASK-008) — tasker is auto-verified
+  - On DAN failure, shows error with manual upload fallback button that navigates to ID Upload (SCR-TASK-005)
+  - Manual fallback link navigates to ID Upload (SCR-TASK-005) to replace DAN with manual flow
+  - Back button returns to Verification Gate (SCR-TASK-003)
+  - Loading state shows spinner with 'Баталгаажуулж байна...' message
+  - Network error shows retry option
+api_endpoints:
+  - method: POST
+    path: /verification/dan/verify
+    purpose: Initiate DAN (E-Mongolia) identity verification for fast-path approval
+analytics_events:
+  - event: verification_dan_viewed
+    trigger: DAN Fast-Path screen becomes visible
+  - event: verification_dan_initiated
+    trigger: User taps E-Mongolia verify button
+  - event: verification_dan_success
+    trigger: DAN verification completes successfully
+  - event: verification_dan_failed
+    trigger: DAN verification fails
+  - event: verification_dan_manual_fallback
+    trigger: User taps manual fallback to switch to ID upload
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Verification — DAN Fast-Path".
+
+      DAN fast-path option displayed — user can verify via E-Mongolia or fall back to manual
+
+      Visible elements: e_mongolia_logo, heading, description, dan_button, manual_fallback_link
+
+      Hidden elements: verifying_spinner, success_content, error_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: verifying
+    prompt: >-
+      Generate the "verifying" state of "Verification — DAN Fast-Path".
+
+      DAN verification in progress — loading state while E-Mongolia API is called
+
+      Visible elements: e_mongolia_logo, heading, verifying_spinner, verifying_message
+
+      Hidden elements: dan_button, manual_fallback_link, success_content, error_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Verification — DAN Fast-Path".
+
+      DAN verification succeeded — tasker is auto-approved
+
+      Visible elements: success_icon, success_heading, success_description, browse_tasks_button
+
+      Hidden elements: dan_button, manual_fallback_link, verifying_spinner, error_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_dan_failed
+    prompt: >-
+      Generate the "error_dan_failed" state of "Verification — DAN Fast-Path".
+
+      DAN verification failed — offer manual upload as fallback
+
+      Visible elements: e_mongolia_logo, heading, error_message, manual_upload_button, retry_button
+
+      Hidden elements: dan_button, verifying_spinner, success_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Verification — DAN Fast-Path".
+
+      Network error during DAN verification — retry option
+
+      Visible elements: e_mongolia_logo, heading, network_error_message, retry_button
+
+      Hidden elements: dan_button, verifying_spinner, success_content, error_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

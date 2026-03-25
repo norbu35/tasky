@@ -1,0 +1,34 @@
+journey_id: JRN-SHARED-05
+name: Profile Management
+actor:
+  - customer
+  - tasker
+phase: 0-1
+goal: View and edit profile
+entry_screen: SCR-SHARED-012
+exit_screens:
+  - SCR-SHARED-012
+happy_path:
+  - step: 1
+    screen_id: SCR-SHARED-012
+    screen_name: Profile — My Profile
+    action: View profile
+    next: SCR-SHARED-013
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-SHARED-013
+    screen_name: Profile — Edit Profile
+    action: Edit name, avatar, etc.
+    next: SCR-SHARED-012
+    lifecycle: null
+alternate_paths:
+  - id: JRN-SHARED-05-A1
+    name: Avatar upload fails
+    branch_at_step: 2
+    condition: Upload error
+    screens:
+      - SCR-SHARED-013
+    outcome: Error toast, retry
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

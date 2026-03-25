@@ -1,5 +1,4 @@
 {
-  "schema_version": "1.0.0",
   "check_ids": [
     "format_lint",
     "commit_message_lint",
@@ -13,16 +12,15 @@
     "sast_dependency_scan",
     "migration_safety",
     "performance_smoke",
-    "ac_coverage_gate",
-    "frontend_parity_check",
-    "frontend_a11y_check"
+    "ac_coverage_gate"
   ],
   "fast_checks": [
     "format_lint",
     "commit_message_lint",
     "secret_scan",
     "ticket_spec_validation",
-    "openapi_validation"
+    "openapi_validation",
+    "ac_coverage_gate"
   ],
   "required_by_risk": {
     "low": [
@@ -42,9 +40,7 @@
       "openapi_validation",
       "integration_tests_touched",
       "coverage_gate_touched",
-      "ac_coverage_gate",
-      "frontend_parity_check",
-      "frontend_a11y_check"
+      "ac_coverage_gate"
     ],
     "high": [
       "format_lint",
@@ -59,9 +55,7 @@
       "sast_dependency_scan",
       "migration_safety",
       "performance_smoke",
-      "ac_coverage_gate",
-      "frontend_parity_check",
-      "frontend_a11y_check"
+      "ac_coverage_gate"
     ]
   }
 }

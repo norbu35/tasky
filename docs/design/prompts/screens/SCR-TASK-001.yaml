@@ -1,0 +1,376 @@
+screen_id: SCR-TASK-001
+name: Browse — Task Feed
+role:
+  - tasker
+phase: 0-1
+template: feed_list
+route: /(tasker)/browse
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Browse — Task Feed" (SCR-TASK-001) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(search_bar + filter_bar) -> scrollview(split_cards + trust_banner) ->
+  pagination_footer
+
+  Components used:
+    • COMP-SEARCHBAR (with_filter): Text search at top of feed for keyword filtering of task titles and descriptions
+    • COMP-FILTERBAR (inline): Horizontal scrolling category chips and distance filter below search bar
+    • COMP-SPLITCARD (task): Primary task card in feed — dark teal header with customer avatar + budget, light body with task title, category, location, and time
+    • COMP-SPLITCARD (task): Promoted task card with secondary accent border and 'Онцлох' label (Phase 2+)
+    • COMP-SPLITCARD (task): Urgent task card with accent highlight and 'Яаралтай' label (Phase 2+)
+    • COMP-TRUSTBANNER (default): Trust messaging banner shown at top of feed — verified tasker count and completed bookings
+    • COMP-EMPTYSTATE (no_results): Shown when no tasks match current filters or location
+    • COMP-LOADINGSKELETON (card): Skeleton placeholders matching SplitCard layout during initial load and pagination
+    • COMP-CATEGORYCHIP (inactive): Individual category filter chips within FilterBar for quick task filtering
+  This screen has 9 states — generate the primary/default state:
+    Primary state: First load of task feed — skeleton cards displayed while fetching from API
+  Key copy (Mongolian primary):
+    • page_title: "Даалгаврууд" (Tasks)
+    • search_placeholder: "Даалгавар хайх..." (Search tasks...)
+    • filter_category_label: "Ангилал" (Category)
+    • filter_distance_label: "Зай" (Distance)
+    • empty_headline: "Одоогоор даалгавар байхгүй байна" (No tasks available right now)
+    • empty_description: "Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу" (Try adjusting your filters or check back later)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(search_bar + filter_bar) -> scrollview(split_cards + trust_banner) -> pagination_footer
+components:
+  - component: COMP-SEARCHBAR
+    variant: with_filter
+    usage: Text search at top of feed for keyword filtering of task titles and descriptions
+  - component: COMP-FILTERBAR
+    variant: inline
+    usage: Horizontal scrolling category chips and distance filter below search bar
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: >-
+      Primary task card in feed — dark teal header with customer avatar + budget, light body with task title, category,
+      location, and time
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: Promoted task card with secondary accent border and 'Онцлох' label (Phase 2+)
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: Urgent task card with accent highlight and 'Яаралтай' label (Phase 2+)
+  - component: COMP-TRUSTBANNER
+    variant: default
+    usage: Trust messaging banner shown at top of feed — verified tasker count and completed bookings
+  - component: COMP-EMPTYSTATE
+    variant: no_results
+    usage: Shown when no tasks match current filters or location
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Skeleton placeholders matching SplitCard layout during initial load and pagination
+  - component: COMP-CATEGORYCHIP
+    variant: inactive
+    usage: Individual category filter chips within FilterBar for quick task filtering
+states:
+  - id: loading_initial
+    description: First load of task feed — skeleton cards displayed while fetching from API
+    visible:
+      - search_bar
+      - filter_bar
+      - loading_skeleton
+    hidden:
+      - split_cards
+      - empty_state
+      - trust_banner
+      - pagination_footer
+  - id: empty_activation
+    description: No open tasks in the tasker's area or category — activation empty state with guidance
+    visible:
+      - search_bar
+      - filter_bar
+      - empty_state
+    hidden:
+      - split_cards
+      - loading_skeleton
+      - pagination_footer
+      - trust_banner
+  - id: populated
+    description: Tasks loaded and displayed as SplitCard list with trust banner
+    visible:
+      - search_bar
+      - filter_bar
+      - split_cards
+      - trust_banner
+      - pagination_footer
+    hidden:
+      - empty_state
+      - loading_skeleton
+  - id: loading_refresh
+    description: Pull-to-refresh in progress — refresh indicator at top while existing cards remain visible
+    visible:
+      - search_bar
+      - filter_bar
+      - split_cards
+      - trust_banner
+      - refresh_indicator
+    hidden:
+      - empty_state
+      - loading_skeleton
+  - id: loading_pagination
+    description: Infinite scroll triggered — loading spinner at bottom of list while more tasks are fetched
+    visible:
+      - search_bar
+      - filter_bar
+      - split_cards
+      - trust_banner
+      - pagination_footer_spinner
+    hidden:
+      - empty_state
+      - loading_skeleton
+  - id: filtering_category
+    description: User selected a category chip — list filters with brief skeleton transition
+    visible:
+      - search_bar
+      - filter_bar_active
+      - loading_skeleton
+    hidden:
+      - split_cards
+      - empty_state
+      - trust_banner
+  - id: filtering_distance
+    description: User adjusted distance filter — list re-filters with brief skeleton transition
+    visible:
+      - search_bar
+      - filter_bar_active
+      - loading_skeleton
+    hidden:
+      - split_cards
+      - empty_state
+      - trust_banner
+  - id: error_network
+    description: Network request failed — error state with retry button
+    visible:
+      - search_bar
+      - filter_bar
+      - error_message
+      - retry_button
+    hidden:
+      - split_cards
+      - empty_state
+      - loading_skeleton
+      - trust_banner
+  - id: offline_cached
+    description: Device is offline — offline banner shown with previously cached tasks if available
+    visible:
+      - search_bar
+      - filter_bar
+      - offline_banner
+      - cached_split_cards
+    hidden:
+      - loading_skeleton
+      - empty_state
+copy:
+  - key: page_title
+    mn: Даалгаврууд
+    en: Tasks
+  - key: search_placeholder
+    mn: Даалгавар хайх...
+    en: Search tasks...
+  - key: filter_category_label
+    mn: Ангилал
+    en: Category
+  - key: filter_distance_label
+    mn: Зай
+    en: Distance
+  - key: empty_headline
+    mn: Одоогоор даалгавар байхгүй байна
+    en: No tasks available right now
+  - key: empty_description
+    mn: Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу
+    en: Try adjusting your filters or check back later
+  - key: empty_cta
+    mn: Шүүлтүүр цэвэрлэх
+    en: Clear filters
+  - key: empty_activation_headline
+    mn: Танай бүсэд даалгавар байхгүй байна
+    en: No tasks in your area yet
+  - key: empty_activation_description
+    mn: Мэдэгдэл идэвхжүүлснээр шинэ даалгавар гарахад танд мэдэгдэнэ
+    en: Enable notifications to get alerted when new tasks appear
+  - key: empty_activation_cta
+    mn: Мэдэгдэл идэвхжүүлэх
+    en: Enable notifications
+  - key: promoted_label
+    mn: Онцлох
+    en: Promoted
+  - key: urgent_label
+    mn: Яаралтай
+    en: Urgent
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: retry_button
+    mn: Дахин оролдох
+    en: Retry
+  - key: offline_banner
+    mn: Офлайн байна. Хадгалсан даалгаврууд харагдаж байна.
+    en: You are offline. Showing cached tasks.
+  - key: distance_km
+    mn: '{distance} км'
+    en: '{distance} km'
+  - key: time_ago
+    mn: '{time} өмнө'
+    en: '{time} ago'
+acceptance_criteria:
+  - Task feed displays open tasks as SplitCard components with dark teal header and light body
+  - Search bar is sticky at top and supports keyword filtering of task titles
+  - Category chips in FilterBar are horizontally scrollable
+  - Distance filter adjusts results based on tasker's current location
+  - Promoted tasks (Phase 2+) display 'Онцлох' label and secondary accent border
+  - Urgent tasks (Phase 2+) display 'Яаралтай' label and appear above promoted tasks
+  - Pull-to-refresh reloads the task list from the API
+  - Infinite scroll loads additional pages with footer spinner
+  - Empty activation state shows CTA to enable push notifications
+  - Loading state displays skeleton placeholders matching SplitCard layout
+  - Tapping a task card navigates to Task Detail (SCR-TASK-002)
+  - Network error shows retry button; tapping retry re-fetches tasks
+  - Offline state shows banner with cached tasks if available
+  - TrustBanner displays verified tasker count and completed booking count
+  - All text meets 16px minimum body size for Mongolian Cyrillic readability
+api_endpoints:
+  - method: GET
+    path: /tasks
+    purpose: Fetch paginated list of open tasks with optional category and location filters
+analytics_events:
+  - event: task_feed_viewed
+    trigger: Task Feed screen becomes visible
+  - event: task_feed_search
+    trigger: User enters text in search bar
+  - event: task_feed_filter_category
+    trigger: User taps a category chip to filter
+  - event: task_feed_filter_distance
+    trigger: User adjusts distance filter
+  - event: task_feed_filter_cleared
+    trigger: User clears all active filters
+  - event: task_card_tapped
+    trigger: User taps a task SplitCard to view detail
+  - event: task_feed_refreshed
+    trigger: User pulls to refresh the task feed
+  - event: task_feed_paginated
+    trigger: Infinite scroll triggers next page load
+  - event: task_feed_empty_state_viewed
+    trigger: Empty state is displayed to user
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Browse — Task Feed".
+
+      First load of task feed — skeleton cards displayed while fetching from API
+
+      Visible elements: search_bar, filter_bar, loading_skeleton
+
+      Hidden elements: split_cards, empty_state, trust_banner, pagination_footer
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty_activation
+    prompt: >-
+      Generate the "empty_activation" state of "Browse — Task Feed".
+
+      No open tasks in the tasker's area or category — activation empty state with guidance
+
+      Visible elements: search_bar, filter_bar, empty_state
+
+      Hidden elements: split_cards, loading_skeleton, pagination_footer, trust_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "Browse — Task Feed".
+
+      Tasks loaded and displayed as SplitCard list with trust banner
+
+      Visible elements: search_bar, filter_bar, split_cards, trust_banner, pagination_footer
+
+      Hidden elements: empty_state, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "Browse — Task Feed".
+
+      Pull-to-refresh in progress — refresh indicator at top while existing cards remain visible
+
+      Visible elements: search_bar, filter_bar, split_cards, trust_banner, refresh_indicator
+
+      Hidden elements: empty_state, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_pagination
+    prompt: >-
+      Generate the "loading_pagination" state of "Browse — Task Feed".
+
+      Infinite scroll triggered — loading spinner at bottom of list while more tasks are fetched
+
+      Visible elements: search_bar, filter_bar, split_cards, trust_banner, pagination_footer_spinner
+
+      Hidden elements: empty_state, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: filtering_category
+    prompt: >-
+      Generate the "filtering_category" state of "Browse — Task Feed".
+
+      User selected a category chip — list filters with brief skeleton transition
+
+      Visible elements: search_bar, filter_bar_active, loading_skeleton
+
+      Hidden elements: split_cards, empty_state, trust_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: filtering_distance
+    prompt: >-
+      Generate the "filtering_distance" state of "Browse — Task Feed".
+
+      User adjusted distance filter — list re-filters with brief skeleton transition
+
+      Visible elements: search_bar, filter_bar_active, loading_skeleton
+
+      Hidden elements: split_cards, empty_state, trust_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Browse — Task Feed".
+
+      Network request failed — error state with retry button
+
+      Visible elements: search_bar, filter_bar, error_message, retry_button
+
+      Hidden elements: split_cards, empty_state, loading_skeleton, trust_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline_cached
+    prompt: >-
+      Generate the "offline_cached" state of "Browse — Task Feed".
+
+      Device is offline — offline banner shown with previously cached tasks if available
+
+      Visible elements: search_bar, filter_bar, offline_banner, cached_split_cards
+
+      Hidden elements: loading_skeleton, empty_state
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

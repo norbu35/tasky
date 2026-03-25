@@ -1,0 +1,202 @@
+screen_id: SCR-B2B-001
+name: Business Accounts
+role:
+  - customer
+phase: '2'
+template: feed_list
+route: /(customer)/business/accounts
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-01.yaml
+    - prompts/journeys/JRN-B2B-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Business Accounts" (SCR-B2B-001) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(account_cards) ->
+  sticky_bottom_cta(create_account)
+
+  Components used:
+    • COMP-CARD (elevated): Business account cards showing name, role, location count, and billing status
+    • COMP-BUTTON (primary): Primary CTA to create a new business account
+    • COMP-LISTROW (default): Inline actions for tasks, billing, and membership from an account card
+    • COMP-LOADINGSKELETON (card): Loading skeleton matching account cards
+    • COMP-EMPTYSTATE (activation): Activation state when no business accounts exist yet
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Business accounts are loading
+  Key copy (Mongolian primary):
+    • nav_title: "Бизнес бүртгэлүүд" (Business Accounts)
+    • cta_create: "Бизнес бүртгэх" (Create account)
+    • label_locations: "Байршлууд" (Locations)
+    • label_role_owner: "Эзэмшигч" (Owner)
+    • label_role_manager: "Менежер" (Manager)
+    • empty_headline: "Бизнес бүртгэл алга" (No business accounts yet)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(account_cards) -> sticky_bottom_cta(create_account)
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Business account cards showing name, role, location count, and billing status
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to create a new business account
+  - component: COMP-LISTROW
+    variant: default
+    usage: Inline actions for tasks, billing, and membership from an account card
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Loading skeleton matching account cards
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Activation state when no business accounts exist yet
+states:
+  - id: loading_initial
+    description: Business accounts are loading
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-LISTROW
+      - COMP-EMPTYSTATE
+  - id: empty_activation
+    description: User has no business accounts yet
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+      - COMP-LISTROW
+  - id: populated_owner
+    description: User is owner of one or more business accounts
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-LISTROW
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: populated_member
+    description: User is manager/member on one or more accounts
+    visible:
+      - COMP-CARD
+      - COMP-LISTROW
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Business account list failed to load
+    visible:
+      - COMP-EMPTYSTATE.error
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-CARD
+      - COMP-LISTROW
+copy:
+  - key: nav_title
+    mn: Бизнес бүртгэлүүд
+    en: Business Accounts
+  - key: cta_create
+    mn: Бизнес бүртгэх
+    en: Create account
+  - key: label_locations
+    mn: Байршлууд
+    en: Locations
+  - key: label_role_owner
+    mn: Эзэмшигч
+    en: Owner
+  - key: label_role_manager
+    mn: Менежер
+    en: Manager
+  - key: empty_headline
+    mn: Бизнес бүртгэл алга
+    en: No business accounts yet
+acceptance_criteria:
+  - This screen is feature-gated behind b2b_enabled
+  - Owner and manager roles are shown clearly on each account card
+  - Customer can open tasks, billing, and membership management from each account card
+  - Create account CTA navigates to SCR-B2B-002
+api_endpoints:
+  - method: GET
+    path: /business/accounts
+    purpose: List business accounts the authenticated customer owns or manages
+analytics_events:
+  - event: business_accounts_viewed
+    trigger: Business account list loads
+  - event: business_account_create_tapped
+    trigger: Customer taps create account
+  - event: business_account_opened
+    trigger: Customer opens a business account card
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Business Accounts".
+
+      Business accounts are loading
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-BUTTON, COMP-LISTROW, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty_activation
+    prompt: >-
+      Generate the "empty_activation" state of "Business Accounts".
+
+      User has no business accounts yet
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD, COMP-LISTROW
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_owner
+    prompt: >-
+      Generate the "populated_owner" state of "Business Accounts".
+
+      User is owner of one or more business accounts
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary, COMP-LISTROW
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_member
+    prompt: >-
+      Generate the "populated_member" state of "Business Accounts".
+
+      User is manager/member on one or more accounts
+
+      Visible elements: COMP-CARD, COMP-LISTROW
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Business Accounts".
+
+      Business account list failed to load
+
+      Visible elements: COMP-EMPTYSTATE.error, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-CARD, COMP-LISTROW
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

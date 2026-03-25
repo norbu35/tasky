@@ -1,0 +1,115 @@
+screen_id: SCR-TASK-011
+name: Application Sent
+role:
+  - tasker
+phase: 0-1
+template: success_celebration
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Application Sent" (SCR-TASK-011) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: success_celebration — Animated checkmark with spring bounce, headline, "what happens next" text, primary +
+  secondary CTAs.
+
+  Layout structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta +
+  secondary_cta)
+
+  Components used:
+    • COMP-ANIMATEDCHECKMARK (default): Animated checkmark celebrating successful application submission
+    • COMP-BUTTON (primary): Primary CTA to continue browsing more tasks
+    • COMP-BUTTON (outline): Secondary CTA to view the applied task detail
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Application submitted successfully — inline celebration with CTAs to browse more or view task
+  Key copy (Mongolian primary):
+    • heading: "Анкет амжилттай илгээгдлээ!" (Application Sent!)
+    • description: "Таны анкет захиалагчид хүргэгдлээ. Захиалагч таныг сонговол мэдэгдэл авна." (Your application has been sent to the customer. You'll be notified if selected.)
+    • next_steps_heading: "Дараа нь юу болох вэ?" (What happens next?)
+    • next_step_customer_reviews: "Захиалагч анкетуудыг хянаж, сонголт хийнэ" (The customer will review applications and choose)
+    • next_step_notification: "Таныг сонговол мэдэгдэл авна" (You'll get a notification if selected)
+    • next_step_keep_applying: "Бусад даалгавруудад ч анкет илгээх боломжтой" (You can keep applying to other tasks)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta + secondary_cta)
+components:
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated checkmark celebrating successful application submission
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to continue browsing more tasks
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary CTA to view the applied task detail
+states:
+  - id: default
+    description: Application submitted successfully — inline celebration with CTAs to browse more or view task
+    visible:
+      - animated_checkmark
+      - heading
+      - description
+      - next_steps
+      - browse_more_button
+      - view_task_button
+    hidden: []
+copy:
+  - key: heading
+    mn: Анкет амжилттай илгээгдлээ!
+    en: Application Sent!
+  - key: description
+    mn: Таны анкет захиалагчид хүргэгдлээ. Захиалагч таныг сонговол мэдэгдэл авна.
+    en: Your application has been sent to the customer. You'll be notified if selected.
+  - key: next_steps_heading
+    mn: Дараа нь юу болох вэ?
+    en: What happens next?
+  - key: next_step_customer_reviews
+    mn: Захиалагч анкетуудыг хянаж, сонголт хийнэ
+    en: The customer will review applications and choose
+  - key: next_step_notification
+    mn: Таныг сонговол мэдэгдэл авна
+    en: You'll get a notification if selected
+  - key: next_step_keep_applying
+    mn: Бусад даалгавруудад ч анкет илгээх боломжтой
+    en: You can keep applying to other tasks
+  - key: browse_more_button
+    mn: Бусад даалгавар үзэх
+    en: Browse More
+  - key: view_task_button
+    mn: Даалгавар харах
+    en: View Task
+acceptance_criteria:
+  - This is an inline success overlay, not a standalone route
+  - Animated checkmark plays spring animation on display
+  - Next steps explain customer review process and notification promise
+  - Tapping 'Бусад даалгавар үзэх' navigates to Task Feed (SCR-TASK-001) via replace
+  - Tapping 'Даалгавар харах' dismisses to Task Detail (SCR-TASK-002)
+  - Comfortable density for celebratory moment
+  - Application is created via POST /tasks/:id/applications on the preceding detail screen
+api_endpoints: []
+analytics_events:
+  - event: application_sent_viewed
+    trigger: Application Sent screen becomes visible
+  - event: application_sent_browse_tapped
+    trigger: User taps Browse More to return to task feed
+  - event: application_sent_view_task_tapped
+    trigger: User taps View Task to see the applied task detail
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Application Sent".
+
+      Application submitted successfully — inline celebration with CTAs to browse more or view task
+
+      Visible elements: animated_checkmark, heading, description, next_steps, browse_more_button, view_task_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

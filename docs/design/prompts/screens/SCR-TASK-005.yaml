@@ -1,0 +1,403 @@
+screen_id: SCR-TASK-005
+name: Verification — ID Upload
+role:
+  - tasker
+phase: 0-1
+template: form_wizard
+route: /(tasker)/verification/upload
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Verification — ID Upload" (SCR-TASK-005) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(3 steps) -> scrollview(upload_area + preview
+  + instructions) -> bottom_nav(back_button + next_button)
+
+  Components used:
+    • COMP-STEPINDICATOR (horizontal): 3-step progress indicator: 1) ID Front, 2) ID Back, 3) Selfie
+    • COMP-PHOTOPICKER (default): Camera capture area for each upload step — ID front, ID back, selfie
+    • COMP-BUTTON (primary): Primary CTA — 'Next' to proceed to next upload step or 'Submit' on final review
+    • COMP-BUTTON (outline): Secondary back button to return to previous step
+    • COMP-BUTTON (secondary): Danger button to retake a photo on the review step
+    • COMP-LOADINGSKELETON (detail): Upload progress indicator while photo is being uploaded to presigned URL
+  This screen has 9 states — generate the primary/default state:
+    Primary state: Step 1 — ID front photo not yet captured; camera prompt displayed
+  Key copy (Mongolian primary):
+    • page_title: "Баталгаажуулалт" (Verification)
+    • step_front_label: "Урд тал" (Front)
+    • step_back_label: "Ар тал" (Back)
+    • step_selfie_label: "Амьд зураг" (Selfie)
+    • front_instruction_heading: "Иргэний үнэмлэхний урд талыг зурагла" (Photograph the front of your ID card)
+    • front_instruction_detail: "Бүх мэдээлэл тод харагдахаар гэрэлтэй газар зурагла" (Take photo in good lighting so all details are clear)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> step_indicator(3 steps) -> scrollview(upload_area + preview + instructions)
+    -> bottom_nav(back_button + next_button)
+components:
+  - component: COMP-STEPINDICATOR
+    variant: horizontal
+    usage: '3-step progress indicator: 1) ID Front, 2) ID Back, 3) Selfie'
+  - component: COMP-PHOTOPICKER
+    variant: default
+    usage: Camera capture area for each upload step — ID front, ID back, selfie
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA — 'Next' to proceed to next upload step or 'Submit' on final review
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary back button to return to previous step
+  - component: COMP-BUTTON
+    variant: secondary
+    usage: Danger button to retake a photo on the review step
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Upload progress indicator while photo is being uploaded to presigned URL
+states:
+  - id: front_upload_empty
+    description: Step 1 — ID front photo not yet captured; camera prompt displayed
+    visible:
+      - nav_header
+      - step_indicator_step1
+      - camera_prompt_front
+      - instructions_front
+      - next_button_disabled
+    hidden:
+      - front_preview
+      - back_upload
+      - selfie_upload
+      - review_section
+      - uploading_indicator
+  - id: front_upload_captured
+    description: Step 1 — ID front photo captured and previewed; next button enabled
+    visible:
+      - nav_header
+      - step_indicator_step1
+      - front_preview
+      - retake_button
+      - next_button_enabled
+    hidden:
+      - camera_prompt_front
+      - back_upload
+      - selfie_upload
+      - review_section
+      - uploading_indicator
+  - id: back_upload_empty
+    description: Step 2 — ID back photo not yet captured; camera prompt displayed
+    visible:
+      - nav_header
+      - step_indicator_step2
+      - camera_prompt_back
+      - instructions_back
+      - back_button
+      - next_button_disabled
+    hidden:
+      - front_upload
+      - back_preview
+      - selfie_upload
+      - review_section
+      - uploading_indicator
+  - id: back_upload_captured
+    description: Step 2 — ID back photo captured and previewed; next button enabled
+    visible:
+      - nav_header
+      - step_indicator_step2
+      - back_preview
+      - retake_button
+      - back_button
+      - next_button_enabled
+    hidden:
+      - camera_prompt_back
+      - front_upload
+      - selfie_upload
+      - review_section
+      - uploading_indicator
+  - id: selfie_upload_empty
+    description: Step 3 — Selfie not yet captured; front-camera prompt with face outline guide
+    visible:
+      - nav_header
+      - step_indicator_step3
+      - camera_prompt_selfie
+      - instructions_selfie
+      - back_button
+      - next_button_disabled
+    hidden:
+      - front_upload
+      - back_upload
+      - selfie_preview
+      - review_section
+      - uploading_indicator
+  - id: selfie_upload_captured
+    description: Step 3 — Selfie captured and previewed; next button enabled to proceed to review
+    visible:
+      - nav_header
+      - step_indicator_step3
+      - selfie_preview
+      - retake_button
+      - back_button
+      - next_button_enabled
+    hidden:
+      - camera_prompt_selfie
+      - front_upload
+      - back_upload
+      - review_section
+      - uploading_indicator
+  - id: uploading
+    description: All 3 photos are being uploaded to presigned URLs — progress indicator shown
+    visible:
+      - nav_header
+      - step_indicator_complete
+      - uploading_indicator
+      - uploading_message
+    hidden:
+      - camera_prompts
+      - review_section
+      - next_button
+      - back_button
+  - id: review_all_three
+    description: All 3 photos uploaded — review thumbnails of ID front, back, and selfie before final submit
+    visible:
+      - nav_header
+      - step_indicator_complete
+      - front_thumbnail
+      - back_thumbnail
+      - selfie_thumbnail
+      - retake_buttons
+      - submit_button
+    hidden:
+      - camera_prompts
+      - uploading_indicator
+  - id: upload_error
+    description: Upload failed for one or more photos — error message with retry
+    visible:
+      - nav_header
+      - step_indicator
+      - error_message
+      - retry_button
+    hidden:
+      - camera_prompts
+      - uploading_indicator
+      - review_section
+copy:
+  - key: page_title
+    mn: Баталгаажуулалт
+    en: Verification
+  - key: step_front_label
+    mn: Урд тал
+    en: Front
+  - key: step_back_label
+    mn: Ар тал
+    en: Back
+  - key: step_selfie_label
+    mn: Амьд зураг
+    en: Selfie
+  - key: front_instruction_heading
+    mn: Иргэний үнэмлэхний урд талыг зурагла
+    en: Photograph the front of your ID card
+  - key: front_instruction_detail
+    mn: Бүх мэдээлэл тод харагдахаар гэрэлтэй газар зурагла
+    en: Take photo in good lighting so all details are clear
+  - key: back_instruction_heading
+    mn: Иргэний үнэмлэхний ар талыг зурагла
+    en: Photograph the back of your ID card
+  - key: back_instruction_detail
+    mn: MRZ код болон бүх мэдээлэл харагдах ёстой
+    en: MRZ code and all information must be visible
+  - key: selfie_instruction_heading
+    mn: Амьд зураг авах
+    en: Take a selfie
+  - key: selfie_instruction_detail
+    mn: Нүүрээ хүрээн дотор байрлуулж, тод гэрэлтэй газар зурагла
+    en: Place your face within the frame in good lighting
+  - key: capture_button
+    mn: Зураг авах
+    en: Take Photo
+  - key: retake_button
+    mn: Дахин авах
+    en: Retake
+  - key: next_button
+    mn: Үргэлжлүүлэх
+    en: Continue
+  - key: back_button
+    mn: Буцах
+    en: Back
+  - key: review_heading
+    mn: Зургуудаа шалгана уу
+    en: Review your photos
+  - key: review_description
+    mn: Бүх зураг тод, мэдээлэл бүрэн харагдаж байгаа эсэхийг шалгана уу
+    en: Make sure all photos are clear and information is fully visible
+  - key: submit_button
+    mn: Илгээх
+    en: Submit
+  - key: uploading_message
+    mn: Зургуудыг илгээж байна...
+    en: Uploading photos...
+  - key: upload_error
+    mn: Зураг илгээхэд алдаа гарлаа. Дахин оролдоно уу.
+    en: Failed to upload photos. Please try again.
+  - key: retry_button
+    mn: Дахин оролдох
+    en: Retry
+acceptance_criteria:
+  - 'Step indicator shows 3 steps: Урд тал, Ар тал, Амьд зураг'
+  - Each step captures exactly one photo via device camera
+  - Camera permission primer is shown on first camera access if not already granted
+  - Photos are uploaded via presigned URL (REQ-SAFE-01 upload pattern)
+  - Next button is disabled until current step's photo is captured
+  - User can retake any photo before moving to next step
+  - Review step shows thumbnails of all 3 photos with individual retake buttons
+  - Submit triggers POST /verification/submit with storage keys
+  - On successful submit, navigates to Verification Submitted (SCR-TASK-010)
+  - Upload error shows error message with retry option
+  - Back button returns to previous step or Consent screen (SCR-TASK-004)
+  - Selfie step shows face outline guide for proper framing
+  - All instruction text meets 16px minimum for Mongolian Cyrillic readability
+api_endpoints:
+  - method: POST
+    path: /verification/upload-url
+    purpose: Get presigned upload URL for ID front, back, or selfie image
+  - method: POST
+    path: /verification/submit
+    purpose: Submit verification with storage keys for all 3 uploaded photos
+analytics_events:
+  - event: verification_upload_viewed
+    trigger: ID Upload screen becomes visible
+  - event: verification_front_captured
+    trigger: User captures ID front photo
+  - event: verification_back_captured
+    trigger: User captures ID back photo
+  - event: verification_selfie_captured
+    trigger: User captures selfie photo
+  - event: verification_photo_retaken
+    trigger: User retakes any photo
+  - event: verification_review_viewed
+    trigger: User reaches the review all three step
+  - event: verification_submitted
+    trigger: User taps Submit on review step
+  - event: verification_upload_failed
+    trigger: Upload fails for one or more photos
+state_prompts:
+  - state_id: front_upload_empty
+    prompt: >-
+      Generate the "front_upload_empty" state of "Verification — ID Upload".
+
+      Step 1 — ID front photo not yet captured; camera prompt displayed
+
+      Visible elements: nav_header, step_indicator_step1, camera_prompt_front, instructions_front, next_button_disabled
+
+      Hidden elements: front_preview, back_upload, selfie_upload, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: front_upload_captured
+    prompt: >-
+      Generate the "front_upload_captured" state of "Verification — ID Upload".
+
+      Step 1 — ID front photo captured and previewed; next button enabled
+
+      Visible elements: nav_header, step_indicator_step1, front_preview, retake_button, next_button_enabled
+
+      Hidden elements: camera_prompt_front, back_upload, selfie_upload, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: back_upload_empty
+    prompt: >-
+      Generate the "back_upload_empty" state of "Verification — ID Upload".
+
+      Step 2 — ID back photo not yet captured; camera prompt displayed
+
+      Visible elements: nav_header, step_indicator_step2, camera_prompt_back, instructions_back, back_button,
+      next_button_disabled
+
+      Hidden elements: front_upload, back_preview, selfie_upload, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: back_upload_captured
+    prompt: >-
+      Generate the "back_upload_captured" state of "Verification — ID Upload".
+
+      Step 2 — ID back photo captured and previewed; next button enabled
+
+      Visible elements: nav_header, step_indicator_step2, back_preview, retake_button, back_button, next_button_enabled
+
+      Hidden elements: camera_prompt_back, front_upload, selfie_upload, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: selfie_upload_empty
+    prompt: >-
+      Generate the "selfie_upload_empty" state of "Verification — ID Upload".
+
+      Step 3 — Selfie not yet captured; front-camera prompt with face outline guide
+
+      Visible elements: nav_header, step_indicator_step3, camera_prompt_selfie, instructions_selfie, back_button,
+      next_button_disabled
+
+      Hidden elements: front_upload, back_upload, selfie_preview, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: selfie_upload_captured
+    prompt: >-
+      Generate the "selfie_upload_captured" state of "Verification — ID Upload".
+
+      Step 3 — Selfie captured and previewed; next button enabled to proceed to review
+
+      Visible elements: nav_header, step_indicator_step3, selfie_preview, retake_button, back_button,
+      next_button_enabled
+
+      Hidden elements: camera_prompt_selfie, front_upload, back_upload, review_section, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: uploading
+    prompt: >-
+      Generate the "uploading" state of "Verification — ID Upload".
+
+      All 3 photos are being uploaded to presigned URLs — progress indicator shown
+
+      Visible elements: nav_header, step_indicator_complete, uploading_indicator, uploading_message
+
+      Hidden elements: camera_prompts, review_section, next_button, back_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: review_all_three
+    prompt: >-
+      Generate the "review_all_three" state of "Verification — ID Upload".
+
+      All 3 photos uploaded — review thumbnails of ID front, back, and selfie before final submit
+
+      Visible elements: nav_header, step_indicator_complete, front_thumbnail, back_thumbnail, selfie_thumbnail,
+      retake_buttons, submit_button
+
+      Hidden elements: camera_prompts, uploading_indicator
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: upload_error
+    prompt: >-
+      Generate the "upload_error" state of "Verification — ID Upload".
+
+      Upload failed for one or more photos — error message with retry
+
+      Visible elements: nav_header, step_indicator, error_message, retry_button
+
+      Hidden elements: camera_prompts, uploading_indicator, review_section
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

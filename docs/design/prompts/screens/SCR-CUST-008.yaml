@@ -1,0 +1,93 @@
+screen_id: SCR-CUST-008
+name: Task Posted — Success
+role:
+  - customer
+phase: 0-1
+template: success_celebration
+route: /(customer)/tasks/new/success
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Task Posted — Success" (SCR-CUST-008) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: success_celebration — Animated checkmark with spring bounce, headline, "what happens next" text, primary +
+  secondary CTAs.
+
+  Layout structure: safe_area -> centered(animated_checkmark + headline + next_steps + ctas)
+
+  Components used:
+    • COMP-ANIMATEDCHECKMARK (default): Animated success checkmark with spring bounce animation
+    • COMP-BUTTON (primary): Primary CTA to view the posted task; secondary CTA to return to task list
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Task posted successfully; celebration screen with checkmark, headline, guidance, and CTAs
+  Key copy (Mongolian primary):
+    • headline: "Даалгавар амжилттай орлоо!" (Task posted successfully!)
+    • next_steps: "Гүйцэтгэгчид таны даалгаврыг харж, хүсэлт илгээх боломжтой. Шинэ хүсэлт ирэхэд мэдэгдэл авна" (Taskers can now see your task and apply. You will be notified when new applications arrive)
+    • cta_view_task: "Даалгаврыг харах" (View Task)
+    • cta_done: "Дууслаа" (Done)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: safe_area -> centered(animated_checkmark + headline + next_steps + ctas)
+components:
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated success checkmark with spring bounce animation
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to view the posted task; secondary CTA to return to task list
+states:
+  - id: default
+    description: Task posted successfully; celebration screen with checkmark, headline, guidance, and CTAs
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: headline
+    mn: Даалгавар амжилттай орлоо!
+    en: Task posted successfully!
+  - key: next_steps
+    mn: Гүйцэтгэгчид таны даалгаврыг харж, хүсэлт илгээх боломжтой. Шинэ хүсэлт ирэхэд мэдэгдэл авна
+    en: Taskers can now see your task and apply. You will be notified when new applications arrive
+  - key: cta_view_task
+    mn: Даалгаврыг харах
+    en: View Task
+  - key: cta_done
+    mn: Дууслаа
+    en: Done
+acceptance_criteria:
+  - StepIndicator is not shown on success screen (wizard is complete)
+  - AnimatedCheckmark plays spring bounce animation on screen entry
+  - Headline confirms task was posted successfully
+  - Next steps text explains that Taskers can now apply and user will receive notifications
+  - Primary CTA 'View Task' replaces to Task Detail SCR-CUST-009 with the new task_id
+  - Secondary CTA 'Done' replaces to My Tasks SCR-CUST-001
+  - Comfortable density spacing for celebratory breathing room
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints: []
+analytics_events:
+  - event: task_posted_success_viewed
+    trigger: Success screen becomes visible after task creation
+  - event: task_posted_view_task_tapped
+    trigger: User taps 'View Task' to see the posted task detail
+  - event: task_posted_done_tapped
+    trigger: User taps 'Done' to return to task list
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Task Posted — Success".
+
+      Task posted successfully; celebration screen with checkmark, headline, guidance, and CTAs
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

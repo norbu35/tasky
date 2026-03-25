@@ -1,0 +1,33 @@
+journey_id: JRN-TASK-07
+name: Tasker Pro Subscription (Phase 3+)
+actor:
+  - tasker
+phase: 3+
+goal: Subscribe to Tasker Pro for benefits
+entry_screen: SCR-P3-004
+exit_screens:
+  - SCR-P3-004
+happy_path:
+  - step: 1
+    screen_id: SCR-P3-004
+    screen_name: Subscription — Tasker Pro
+    action: View plans (Standard/Premium)
+    next: SCR-P3-004
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-P3-004
+    screen_name: Subscription — Tasker Pro
+    action: Subscribe via QPay
+    next: SCR-P3-004
+    lifecycle: null
+alternate_paths:
+  - id: JRN-TASK-07-A1
+    name: Ineligible
+    branch_at_step: 1
+    condition: No Pro Badge (rating < 4.5)
+    screens:
+      - SCR-P3-004
+    outcome: Ineligible state with criteria shown
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

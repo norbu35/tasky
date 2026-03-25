@@ -1,0 +1,232 @@
+screen_id: SCR-CUST-029
+name: Task Boost Payment
+role:
+  - customer
+phase: '2'
+template: detail
+route: /(customer)/tasks/:taskId/boost/pay
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-09.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Task Boost Payment" (SCR-CUST-029) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(qpay_card + payment_status) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): QPay QR card with selected boost summary and amount
+    • COMP-BUTTON (primary): Primary CTA to open QPay deeplink
+    • COMP-BUTTON (ghost): Secondary CTA to go back to boost options
+    • COMP-STATUSBADGE (open): Payment state badge for pending or activated status
+    • COMP-ANIMATEDCHECKMARK (default): Success confirmation after payment verification
+    • COMP-EMPTYSTATE (error): Failure or timeout state for boost payment
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Selected boost payment QR and deeplink are displayed
+  Key copy (Mongolian primary):
+    • nav_title: "Boost төлбөр" (Boost Payment)
+    • selected_product: "Сонгосон бүтээгдэхүүн" (Selected product)
+    • cta_open_qpay: "QPay аппаар нээх" (Open in QPay)
+    • payment_success: "Boost амжилттай идэвхжлээ" (Boost activated successfully)
+    • payment_failed: "Төлбөр баталгаажаагүй байна. Дахин оролдоно уу" (Payment was not confirmed. Please try again)
+    • back_label: "Буцах" (Back)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(qpay_card + payment_status) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: QPay QR card with selected boost summary and amount
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to open QPay deeplink
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary CTA to go back to boost options
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Payment state badge for pending or activated status
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Success confirmation after payment verification
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Failure or timeout state for boost payment
+states:
+  - id: qr_display
+    description: Selected boost payment QR and deeplink are displayed
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: deeplink_redirect
+    description: User tapped the QPay deeplink and app switching is in progress
+    visible:
+      - COMP-CARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: payment_pending
+    description: Payment is pending confirmation and status polling is active
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-EMPTYSTATE
+  - id: payment_success
+    description: Boost payment succeeded and task visibility upgrade is now active
+    visible:
+      - COMP-ANIMATEDCHECKMARK
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-EMPTYSTATE
+  - id: payment_failed
+    description: Boost payment failed or was rejected
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+  - id: payment_timeout
+    description: Boost payment was not confirmed in time and should be retried
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-CARD
+      - COMP-STATUSBADGE
+      - COMP-ANIMATEDCHECKMARK
+copy:
+  - key: nav_title
+    mn: Boost төлбөр
+    en: Boost Payment
+  - key: selected_product
+    mn: Сонгосон бүтээгдэхүүн
+    en: Selected product
+  - key: cta_open_qpay
+    mn: QPay аппаар нээх
+    en: Open in QPay
+  - key: payment_success
+    mn: Boost амжилттай идэвхжлээ
+    en: Boost activated successfully
+  - key: payment_failed
+    mn: Төлбөр баталгаажаагүй байна. Дахин оролдоно уу
+    en: Payment was not confirmed. Please try again
+  - key: back_label
+    mn: Буцах
+    en: Back
+acceptance_criteria:
+  - Payment flow reuses the QPay pattern used elsewhere in the mobile design system
+  - Successful payment activates the selected boost and returns the customer to SCR-CUST-009
+  - Urgent purchase yields higher feed priority than promoted after activation
+  - Payment status polling continues until confirmed, failed, or timeout
+  - Back button returns to SCR-CUST-028 without duplicating a paid activation
+api_endpoints:
+  - method: POST
+    path: /tasks/:id/boost-purchases
+    purpose: Initiate promoted or urgent boost purchase and generate QPay payment data
+  - method: GET
+    path: /payments/:id/status
+    purpose: Poll boost payment status until confirmed, failed, or timed out
+analytics_events:
+  - event: task_boost_payment_started
+    trigger: Boost payment QR is shown
+  - event: task_boost_payment_qpay_opened
+    trigger: Customer taps Open in QPay
+  - event: task_boost_payment_success
+    trigger: Boost payment confirmed
+  - event: task_boost_payment_failed
+    trigger: Boost payment failed or timed out
+state_prompts:
+  - state_id: qr_display
+    prompt: >-
+      Generate the "qr_display" state of "Task Boost Payment".
+
+      Selected boost payment QR and deeplink are displayed
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: deeplink_redirect
+    prompt: >-
+      Generate the "deeplink_redirect" state of "Task Boost Payment".
+
+      User tapped the QPay deeplink and app switching is in progress
+
+      Visible elements: COMP-CARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_pending
+    prompt: >-
+      Generate the "payment_pending" state of "Task Boost Payment".
+
+      Payment is pending confirmation and status polling is active
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-ANIMATEDCHECKMARK, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_success
+    prompt: >-
+      Generate the "payment_success" state of "Task Boost Payment".
+
+      Boost payment succeeded and task visibility upgrade is now active
+
+      Visible elements: COMP-ANIMATEDCHECKMARK, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_failed
+    prompt: >-
+      Generate the "payment_failed" state of "Task Boost Payment".
+
+      Boost payment failed or was rejected
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: payment_timeout
+    prompt: >-
+      Generate the "payment_timeout" state of "Task Boost Payment".
+
+      Boost payment was not confirmed in time and should be retried
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-CARD, COMP-STATUSBADGE, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

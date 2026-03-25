@@ -1,0 +1,40 @@
+appId: mn.tasky.mobile
+---
+# Customer Task Creation Flow
+# Verifies a customer can open the task creation screen via the FAB.
+# Assumes the user is already logged in as a customer.
+
+- launchApp
+
+# Wait for the customer task feed to load
+- extendedWaitUntil:
+    visible: "MY TASKS"
+    timeout: 10000
+
+# Assert the task feed is rendered
+- assertVisible:
+    id: "task-feed"
+
+# Tap the floating action button (plus button) to create a new task
+- tapOn:
+    point: "90%,90%"
+
+# Assert task creation screen appears
+- extendedWaitUntil:
+    visible: "Create a Task"
+    timeout: 5000
+
+# Navigate through category selection
+- assertVisible: "Category"
+- tapOn: "Cleaning"
+
+# Fill in basic task details
+- tapOn: "Task title"
+- inputText: "Clean my apartment"
+
+- tapOn: "Description"
+- inputText: "Need a deep clean of a 2-bedroom apartment"
+
+# Verify the form content is populated
+- assertVisible: "Clean my apartment"
+- assertVisible: "Cleaning"

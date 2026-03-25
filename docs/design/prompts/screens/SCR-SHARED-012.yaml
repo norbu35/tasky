@@ -1,0 +1,258 @@
+screen_id: SCR-SHARED-012
+name: Profile — My Profile
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: detail
+route: /profile
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-05.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Profile — My Profile" (SCR-SHARED-012) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(hero_avatar + stats_summary + info_sections + reviews) ->
+  sticky_bottom_cta(edit)
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Large centered avatar at top of profile hero section
+    • COMP-VERIFICATIONBADGE (default): Displayed overlaid on avatar for verified taskers
+    • COMP-STATUSBADGE (assigned): Shows role badge (customer or tasker) below name
+    • COMP-STARRATING (display): Display average rating below name for tasker view
+    • COMP-REVIEWCARD (default): Recent reviews section for tasker profile view
+    • COMP-STATCARD (default): Statistics summary cards for tasker view (completed jobs, rating)
+    • COMP-BUTTON (primary): Edit Profile CTA in sticky bottom bar
+    • COMP-BUTTON (ghost): Settings gear icon in nav header
+    • COMP-LOADINGSKELETON (profile): Skeleton matching profile layout while data loads
+    • COMP-TRUSTBANNER (default): Trust indicator shown on tasker profile view
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Profile data is being fetched from GET /users/me
+  Key copy (Mongolian primary):
+    • nav_title: "Миний профайл" (My Profile)
+    • section_about: "Миний тухай" (About Me)
+    • section_reviews: "Сэтгэгдлүүд" (Reviews)
+    • section_stats: "Статистик" (Statistics)
+    • label_member_since: "Бүртгүүлсэн огноо" (Member since)
+    • label_email: "Имэйл хаяг" (Email)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header -> scrollview(hero_avatar + stats_summary + info_sections + reviews) ->
+    sticky_bottom_cta(edit)
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Large centered avatar at top of profile hero section
+  - component: COMP-VERIFICATIONBADGE
+    variant: default
+    usage: Displayed overlaid on avatar for verified taskers
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Shows role badge (customer or tasker) below name
+  - component: COMP-STARRATING
+    variant: display
+    usage: Display average rating below name for tasker view
+  - component: COMP-REVIEWCARD
+    variant: default
+    usage: Recent reviews section for tasker profile view
+  - component: COMP-STATCARD
+    variant: default
+    usage: Statistics summary cards for tasker view (completed jobs, rating)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Edit Profile CTA in sticky bottom bar
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Settings gear icon in nav header
+  - component: COMP-LOADINGSKELETON
+    variant: profile
+    usage: Skeleton matching profile layout while data loads
+  - component: COMP-TRUSTBANNER
+    variant: default
+    usage: Trust indicator shown on tasker profile view
+states:
+  - id: loading_initial
+    description: Profile data is being fetched from GET /users/me
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-REVIEWCARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+      - COMP-TRUSTBANNER
+  - id: customer_view
+    description: User is logged in as customer; shows avatar, name, email, member-since, and edit CTA
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON
+    hidden:
+      - COMP-STARRATING
+      - COMP-STATCARD
+      - COMP-REVIEWCARD
+      - COMP-TRUSTBANNER
+      - COMP-VERIFICATIONBADGE
+      - COMP-LOADINGSKELETON
+  - id: tasker_view
+    description: User is logged in as tasker; shows avatar with verification badge, stats, rating, reviews, and trust banner
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-VERIFICATIONBADGE
+      - COMP-STARRATING
+      - COMP-STATCARD
+      - COMP-REVIEWCARD
+      - COMP-TRUSTBANNER
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: GET /users/me failed due to network error; full-screen error with retry
+    visible:
+      - COMP-BUTTON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STARRATING
+      - COMP-REVIEWCARD
+      - COMP-STATCARD
+      - COMP-TRUSTBANNER
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Миний профайл
+    en: My Profile
+  - key: section_about
+    mn: Миний тухай
+    en: About Me
+  - key: section_reviews
+    mn: Сэтгэгдлүүд
+    en: Reviews
+  - key: section_stats
+    mn: Статистик
+    en: Statistics
+  - key: label_member_since
+    mn: Бүртгүүлсэн огноо
+    en: Member since
+  - key: label_email
+    mn: Имэйл хаяг
+    en: Email
+  - key: label_phone
+    mn: Утасны дугаар
+    en: Phone number
+  - key: label_completed_jobs
+    mn: Гүйцэтгэсэн ажил
+    en: Completed jobs
+  - key: label_avg_rating
+    mn: Дундаж үнэлгээ
+    en: Average rating
+  - key: cta_edit_profile
+    mn: Профайл засах
+    en: Edit Profile
+  - key: cta_settings
+    mn: Тохиргоо
+    en: Settings
+  - key: cta_view_stats
+    mn: Статистик харах
+    en: View Stats
+  - key: error_network_title
+    mn: Алдаа гарлаа
+    en: Something went wrong
+  - key: error_network_body
+    mn: Сүлжээний алдаа гарлаа. Дахин оролдоно уу.
+    en: A network error occurred. Please try again.
+  - key: cta_retry
+    mn: Дахин оролдох
+    en: Retry
+  - key: label_no_reviews
+    mn: Сэтгэгдэл одоогоор алга
+    en: No reviews yet
+acceptance_criteria:
+  - Profile displays loading skeleton while GET /users/me is in flight
+  - Customer view shows avatar, display name, email, member-since date, and Edit Profile CTA
+  - >-
+    Tasker view shows avatar with verification badge, average star rating, completed jobs stat card, recent reviews, and
+    trust banner
+  - Tapping Edit Profile navigates (push) to SCR-SHARED-013
+  - Tapping Settings icon navigates (push) to SCR-SHARED-014
+  - Tapping View Stats navigates (push) to SCR-TASK-016 (tasker only)
+  - Network error state shows centered error message with retry button
+  - Retry button re-triggers GET /users/me
+  - All text renders correctly in Mongolian Cyrillic at 16px minimum body size
+  - Profile avatar shows initials fallback when no image URL is available
+  - This screen is the root of the profile tab in both customer and tasker tab bars
+api_endpoints:
+  - method: GET
+    path: /users/me
+    purpose: Fetch the authenticated user's profile data including role, avatar, stats, and reviews
+analytics_events:
+  - event: profile_viewed
+    trigger: Screen loads successfully with user data
+  - event: profile_edit_tapped
+    trigger: User taps the Edit Profile CTA
+  - event: profile_settings_tapped
+    trigger: User taps the settings icon in nav header
+  - event: profile_stats_tapped
+    trigger: Tasker taps View Stats to navigate to stats dashboard
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Profile — My Profile".
+
+      Profile data is being fetched from GET /users/me
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-REVIEWCARD, COMP-STATCARD, COMP-BUTTON,
+      COMP-TRUSTBANNER
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: customer_view
+    prompt: >-
+      Generate the "customer_view" state of "Profile — My Profile".
+
+      User is logged in as customer; shows avatar, name, email, member-since, and edit CTA
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-BUTTON
+
+      Hidden elements: COMP-STARRATING, COMP-STATCARD, COMP-REVIEWCARD, COMP-TRUSTBANNER, COMP-VERIFICATIONBADGE,
+      COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: tasker_view
+    prompt: >-
+      Generate the "tasker_view" state of "Profile — My Profile".
+
+      User is logged in as tasker; shows avatar with verification badge, stats, rating, reviews, and trust banner
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-VERIFICATIONBADGE, COMP-STARRATING, COMP-STATCARD, COMP-REVIEWCARD,
+      COMP-TRUSTBANNER, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Profile — My Profile".
+
+      GET /users/me failed due to network error; full-screen error with retry
+
+      Visible elements: COMP-BUTTON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STARRATING, COMP-REVIEWCARD, COMP-STATCARD, COMP-TRUSTBANNER,
+      COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

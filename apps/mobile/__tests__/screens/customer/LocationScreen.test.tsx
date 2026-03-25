@@ -20,6 +20,26 @@ jest.mock('react-i18next', () => ({
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
+jest.mock('react-native-maps', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  return {
+    __esModule: true,
+    default: ({ children, testID, ...props }: any) => (
+      <View testID={testID} {...props}>
+        {children}
+      </View>
+    ),
+    Marker: ({ testID = 'location-map-marker', ...props }: any) => (
+      <View testID={testID} {...props} />
+    ),
+    UrlTile: ({ testID = 'location-map-tile', ...props }: any) => (
+      <View testID={testID} {...props} />
+    ),
+  };
+});
+
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
   return new Proxy(
@@ -53,10 +73,19 @@ describe('LocationScreen (SCR-CUST-005)', () => {
   it('navigates to schedule when next pressed with location', () => {
     render(<LocationScreen />);
     fireEvent.changeText(screen.getByTestId('location-text-input'), 'Behind State Dept Store');
+    fireEvent(screen.getByTestId('location-map'), 'onPress', {
+      nativeEvent: {
+        coordinate: { latitude: 47.92123, longitude: 106.91876 },
+      },
+    });
     fireEvent.press(screen.getByTestId('location-screen-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/schedule',
+        params: expect.objectContaining({
+          lat: '47.92123',
+          lng: '106.91876',
+        }),
       }),
     );
   });

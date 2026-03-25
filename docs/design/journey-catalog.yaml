@@ -45,7 +45,8 @@ journeys:
       - step: 7
         screen: SCR-SHARED-009
         action: "Grant/skip notification permission"
-        next: "SCR-CUST-001 or SCR-TASK-001"
+        next: SCR-CUST-001
+        note: "If the selected role is Tasker, continue to SCR-TASK-001 instead"
     alternate_paths:
       - id: JRN-SHARED-01-A1
         name: "Facebook OAuth failure"
@@ -427,7 +428,8 @@ journeys:
         condition: "Customer requests reschedule"
         screens: [SCR-CUST-020]
         outcome: "Submit request, wait for Tasker response"
-        lifecycle: "BOOK-T07/T08/T09"
+        lifecycle: "BOOK-T07 (reschedule_requested)"
+        note: "Follow-up outcome is BOOK-T08 if accepted or BOOK-T09 if declined/expired"
       - id: JRN-CUST-04-A2
         name: "Customer cancels"
         branch_at: 2
@@ -554,6 +556,41 @@ journeys:
         screens: [SCR-CUST-027, SCR-CUST-011]
         outcome: "Fall back to open application"
         lifecycle: "TASK-T11 (instant_match_fallback)"
+
+  - id: JRN-CUST-09
+    name: "Purchase Task Boost (Phase 2)"
+    actor: [customer]
+    phase: "2"
+    goal: "Buy promoted or urgent visibility for an open task"
+    entry: SCR-CUST-009
+    exit: [SCR-CUST-009]
+    happy_path:
+      - step: 1
+        screen: SCR-CUST-009
+        action: "Tap 'Boost Task'"
+        next: SCR-CUST-028
+      - step: 2
+        screen: SCR-CUST-028
+        action: "Select Promoted or Urgent and continue"
+        next: SCR-CUST-029
+      - step: 3
+        screen: SCR-CUST-029
+        action: "Complete QPay payment and activate boost"
+        next: SCR-CUST-009
+        lifecycle: "TASK-T12 (task_boost_activated)"
+    alternate_paths:
+      - id: JRN-CUST-09-A1
+        name: "Boost already active"
+        branch_at: 2
+        condition: "Task already has overlapping promoted or urgent status"
+        screens: [SCR-CUST-028]
+        outcome: "Duplicate boost blocked with clear notice"
+      - id: JRN-CUST-09-A2
+        name: "Payment timeout"
+        branch_at: 3
+        condition: "QPay payment not confirmed in time"
+        screens: [SCR-CUST-029]
+        outcome: "Retry or return without duplicate activation"
 
   # ═══════════════════════════════════════════════════
   # TASKER JOURNEYS
@@ -819,6 +856,154 @@ journeys:
         screens: [SCR-P3-004]
         outcome: "Ineligible state with criteria shown"
 
+  - id: JRN-TASK-08
+    name: "AI Profile Polish"
+    actor: [tasker]
+    phase: "0-1"
+    goal: "Improve a tasker profile bio with AI assistance before saving"
+    entry: SCR-SHARED-013
+    exit: [SCR-SHARED-013]
+    happy_path:
+      - step: 1
+        screen: SCR-SHARED-013
+        action: "Tap 'AI polish'"
+        next: SCR-TASK-019
+      - step: 2
+        screen: SCR-TASK-019
+        action: "Generate polished suggestion and compare before/after"
+        next: SCR-TASK-019
+      - step: 3
+        screen: SCR-TASK-019
+        action: "Apply suggested text"
+        next: SCR-SHARED-013
+        lifecycle: "USER-T15 (tasker_polishes_profile)"
+    alternate_paths:
+      - id: JRN-TASK-08-A1
+        name: "Network error"
+        branch_at: 2
+        condition: "Preview generation or save fails"
+        screens: [SCR-TASK-019]
+        outcome: "Retry without losing the original draft"
+
+  # ═══════════════════════════════════════════════════
+  # B2B JOURNEYS
+  # ═══════════════════════════════════════════════════
+
+  - id: JRN-B2B-01
+    name: "Create Business Account"
+    actor: [customer]
+    phase: "2"
+    goal: "Set up a business account with a location and members"
+    entry: SCR-B2B-001
+    exit: [SCR-B2B-001]
+    happy_path:
+      - step: 1
+        screen: SCR-B2B-001
+        action: "Tap 'Create account'"
+        next: SCR-B2B-002
+      - step: 2
+        screen: SCR-B2B-002
+        action: "Enter business details and save"
+        next: SCR-B2B-003
+      - step: 3
+        screen: SCR-B2B-003
+        action: "Add primary business location"
+        next: SCR-B2B-004
+      - step: 4
+        screen: SCR-B2B-004
+        action: "Invite a manager or finish setup"
+        next: SCR-B2B-001
+        lifecycle: "B2B-T01 (business_account_created)"
+    alternate_paths:
+      - id: JRN-B2B-01-A1
+        name: "Owner skips member invite"
+        branch_at: 4
+        condition: "No manager added"
+        screens: [SCR-B2B-004, SCR-B2B-001]
+        outcome: "Account is usable by owner only"
+
+  - id: JRN-B2B-02
+    name: "Post Task as Business"
+    actor: [customer]
+    phase: "2"
+    goal: "Start the standard task-posting flow with business account context"
+    entry: SCR-B2B-006
+    exit: [SCR-CUST-008]
+    happy_path:
+      - step: 1
+        screen: SCR-B2B-006
+        action: "Tap 'Post Task as Business'"
+        next: SCR-B2B-005
+      - step: 2
+        screen: SCR-B2B-005
+        action: "Select business account and location"
+        next: SCR-CUST-002
+      - step: 3
+        screen: SCR-CUST-002
+        action: "Continue the standard task-posting flow"
+        next: SCR-CUST-008
+        lifecycle: "TASK-T13 (business_task_published)"
+    alternate_paths:
+      - id: JRN-B2B-02-A1
+        name: "Location missing"
+        branch_at: 2
+        condition: "Selected account has no valid location"
+        screens: [SCR-B2B-005, SCR-B2B-003]
+        outcome: "Owner adds a location before posting"
+
+  - id: JRN-B2B-03
+    name: "Manage Business Tasks"
+    actor: [customer]
+    phase: "2"
+    goal: "Review account-scoped tasks and open a task detail"
+    entry: SCR-B2B-001
+    exit: [SCR-CUST-009]
+    happy_path:
+      - step: 1
+        screen: SCR-B2B-001
+        action: "Open business account tasks"
+        next: SCR-B2B-006
+      - step: 2
+        screen: SCR-B2B-006
+        action: "Browse business-scoped tasks"
+        next: SCR-CUST-009
+      - step: 3
+        screen: SCR-CUST-009
+        action: "Open standard task detail with business context"
+        next: SCR-CUST-009
+    alternate_paths:
+      - id: JRN-B2B-03-A1
+        name: "Empty business account"
+        branch_at: 2
+        condition: "Selected account has no tasks yet"
+        screens: [SCR-B2B-006]
+        outcome: "Prompt to post the first business task"
+
+  - id: JRN-B2B-04
+    name: "Business Subscription Billing"
+    actor: [customer]
+    phase: "3+"
+    goal: "View or activate Host Lite / Ops Standard for a business account"
+    entry: SCR-B2B-007
+    exit: [SCR-B2B-007]
+    happy_path:
+      - step: 1
+        screen: SCR-B2B-007
+        action: "View available plans and current status"
+        next: SCR-B2B-007
+      - step: 2
+        screen: SCR-B2B-007
+        action: "Activate or renew plan via QPay"
+        next: SCR-B2B-007
+        lifecycle: "B2B-T02 (business_subscription_activated)"
+    alternate_paths:
+      - id: JRN-B2B-04-A1
+        name: "Renewal failed"
+        branch_at: 2
+        condition: "Recurring payment renewal fails"
+        screens: [SCR-B2B-007]
+        outcome: "Show resubscribe path and failed status"
+
   # ═══════════════════════════════════════════════════
   # INFRASTRUCTURE JOURNEYS
   # ═══════════════════════════════════════════════════
@@ -852,25 +1037,28 @@ journeys:
       - name: "Suspended"
         screens: [SCR-SHARED-020]
         outcome: "Show expiry, appeal option"
-        lifecycle: "USER-T05/T06"
+        lifecycle: "USER-T05 (strike_threshold_reached)"
+        note: "Pending-user suspensions use USER-T06"
       - name: "Banned"
         screens: [SCR-SHARED-021]
         outcome: "No app access"
-        lifecycle: "USER-T09/T10/T11"
+        lifecycle: "USER-T09 (admin_bans)"
+        note: "Suspended/pending-user bans use USER-T10 or USER-T11"
 
 # ─── Summary ────────────────────────────────────────
 summary:
-  total_journeys: 20
+  total_journeys: 30
   by_actor:
     shared: 7
-    customer: 8
-    tasker: 7
+    customer: 9
+    tasker: 8
+    b2b: 4
     infrastructure: 2
   by_phase:
-    "0-1": 15
-    "2": 4
-    "3+": 3
+    "0-1": 17
+    "2": 9
+    "3+": 4
   coverage:
-    lifecycle_entities_covered: [task, booking, application, verification, dispute, user]
+    lifecycle_entities_covered: [task, booking, application, verification, dispute, user, business_account, business_subscription]
     all_screens_reachable: true
     all_terminal_states_reachable: true

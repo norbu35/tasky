@@ -1,0 +1,303 @@
+screen_id: SCR-SHARED-014
+name: Profile — Settings
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: settings
+route: /profile/settings
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-06.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Profile — Settings" (SCR-SHARED-014) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: settings — Grouped list rows with section headers and disclosure indicators. 44pt touch targets.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(grouped_list_sections: preferences, account,
+  legal, danger_zone)
+
+  Components used:
+    • COMP-LISTROW (default): Each setting item displayed as a tappable row with disclosure or toggle
+    • COMP-LISTROW (destructive): Destructive account deletion row at bottom in danger color
+    • COMP-TOGGLE (default): Toggle switch for notification and language settings
+    • COMP-LANGUAGESWITCHER (default): Language preference toggle between Mongolian and English
+    • COMP-MODALSHEET (default): Confirmation sheet for role switch and account deletion
+    • COMP-BUTTON (danger): Primary and secondary action buttons inside confirmation modal sheets
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Settings screen loaded with current preferences; all list rows visible
+  Key copy (Mongolian primary):
+    • nav_title: "Тохиргоо" (Settings)
+    • section_preferences: "Тохируулга" (Preferences)
+    • label_language: "Хэл" (Language)
+    • label_notifications: "Мэдэгдэл" (Notifications)
+    • section_account: "Бүртгэл" (Account)
+    • label_role_switch: "Дүр солих" (Switch Role)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: settings
+  density: default
+  structure: 'safe_area -> nav_header(back + title) -> scrollview(grouped_list_sections: preferences, account, legal, danger_zone)'
+components:
+  - component: COMP-LISTROW
+    variant: default
+    usage: Each setting item displayed as a tappable row with disclosure or toggle
+  - component: COMP-LISTROW
+    variant: destructive
+    usage: Destructive account deletion row at bottom in danger color
+  - component: COMP-TOGGLE
+    variant: default
+    usage: Toggle switch for notification and language settings
+  - component: COMP-LANGUAGESWITCHER
+    variant: default
+    usage: Language preference toggle between Mongolian and English
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Confirmation sheet for role switch and account deletion
+  - component: COMP-BUTTON
+    variant: danger
+    usage: Primary and secondary action buttons inside confirmation modal sheets
+states:
+  - id: default
+    description: Settings screen loaded with current preferences; all list rows visible
+    visible:
+      - COMP-LISTROW
+      - COMP-TOGGLE
+      - COMP-LANGUAGESWITCHER
+    hidden:
+      - COMP-MODALSHEET
+  - id: language_mn
+    description: Language is set to Mongolian (default); toggle reflects mn state
+    visible:
+      - COMP-LISTROW
+      - COMP-TOGGLE
+      - COMP-LANGUAGESWITCHER
+    hidden:
+      - COMP-MODALSHEET
+  - id: language_en
+    description: Language is set to English; toggle reflects en state, all UI copy switches
+    visible:
+      - COMP-LISTROW
+      - COMP-TOGGLE
+      - COMP-LANGUAGESWITCHER
+    hidden:
+      - COMP-MODALSHEET
+  - id: notification_on
+    description: Push notifications are enabled; notification toggle is ON
+    visible:
+      - COMP-LISTROW
+      - COMP-TOGGLE
+    hidden:
+      - COMP-MODALSHEET
+  - id: notification_off
+    description: Push notifications are disabled; notification toggle is OFF
+    visible:
+      - COMP-LISTROW
+      - COMP-TOGGLE
+    hidden:
+      - COMP-MODALSHEET
+  - id: role_switch_confirm
+    description: User tapped role switch; confirmation modal sheet appears asking to confirm
+    visible:
+      - COMP-LISTROW
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+  - id: delete_confirm
+    description: User tapped Delete Account; confirmation modal sheet appears with danger styling
+    visible:
+      - COMP-LISTROW
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+    hidden: []
+copy:
+  - key: nav_title
+    mn: Тохиргоо
+    en: Settings
+  - key: section_preferences
+    mn: Тохируулга
+    en: Preferences
+  - key: label_language
+    mn: Хэл
+    en: Language
+  - key: label_notifications
+    mn: Мэдэгдэл
+    en: Notifications
+  - key: section_account
+    mn: Бүртгэл
+    en: Account
+  - key: label_role_switch
+    mn: Дүр солих
+    en: Switch Role
+  - key: value_customer
+    mn: Захиалагч
+    en: Customer
+  - key: value_tasker
+    mn: Гүйцэтгэгч
+    en: Tasker
+  - key: section_legal
+    mn: Хуулийн мэдээлэл
+    en: Legal
+  - key: label_terms
+    mn: Үйлчилгээний нөхцөл
+    en: Terms of Service
+  - key: label_privacy
+    mn: Нууцлалын бодлого
+    en: Privacy Policy
+  - key: label_help
+    mn: Тусламж
+    en: Help & Support
+  - key: section_danger
+    mn: Аюултай бүс
+    en: Danger Zone
+  - key: label_delete_account
+    mn: Бүртгэл устгах
+    en: Delete Account
+  - key: modal_role_switch_title
+    mn: Дүр солих уу?
+    en: Switch role?
+  - key: modal_role_switch_body
+    mn: Та гүйцэтгэгч болж өөрчлөхдөө итгэлтэй байна уу?
+    en: Are you sure you want to switch to Tasker?
+  - key: modal_delete_title
+    mn: Бүртгэл устгах уу?
+    en: Delete account?
+  - key: modal_delete_body
+    mn: Энэ үйлдлийг буцаах боломжгүй. Таны бүх мэдээлэл устгагдана.
+    en: This action cannot be undone. All your data will be permanently deleted.
+  - key: cta_confirm
+    mn: Батлах
+    en: Confirm
+  - key: cta_cancel
+    mn: Болих
+    en: Cancel
+  - key: label_app_version
+    mn: Хувилбар
+    en: App Version
+acceptance_criteria:
+  - 'Settings screen displays grouped list rows: Preferences, Account, Legal, and Danger Zone sections'
+  - Language toggle switches between Mongolian and English and persists immediately
+  - Notification toggle enables/disables push notifications
+  - Switch Role row shows current role and opens confirmation modal sheet on tap
+  - Role switch confirmation calls PUT /users/me/role on confirm
+  - If user switches to Tasker and is not verified, navigates (push) to SCR-TASK-003 after confirmation
+  - Delete Account row is styled in danger color and opens deletion confirmation modal on tap
+  - Delete Account confirmation modal navigates (modal) to SCR-SHARED-015
+  - Terms of Service row navigates (push) to SCR-INFRA-004
+  - Privacy Policy row navigates (push) to SCR-TASK-018
+  - Help & Support row navigates (push) to SCR-INFRA-005
+  - Back button navigates (pop) to SCR-SHARED-012
+  - All list rows have 44pt minimum touch target
+  - Destructive row (Delete Account) uses danger color and is placed at the bottom of the screen
+api_endpoints:
+  - method: GET
+    path: /users/me
+    purpose: Fetch current user settings including role, language preference, notification status
+  - method: PUT
+    path: /users/me/role
+    purpose: Switch user role between customer and tasker
+analytics_events:
+  - event: settings_viewed
+    trigger: Settings screen loads
+  - event: settings_language_changed
+    trigger: User toggles language between mn and en
+  - event: settings_notifications_toggled
+    trigger: User toggles notification preference on or off
+  - event: settings_role_switch_initiated
+    trigger: User taps Switch Role row
+  - event: settings_role_switch_confirmed
+    trigger: User confirms role switch in modal
+  - event: settings_delete_account_initiated
+    trigger: User taps Delete Account row
+  - event: settings_terms_tapped
+    trigger: User taps Terms of Service
+  - event: settings_privacy_tapped
+    trigger: User taps Privacy Policy
+  - event: settings_help_tapped
+    trigger: User taps Help & Support
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Profile — Settings".
+
+      Settings screen loaded with current preferences; all list rows visible
+
+      Visible elements: COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER
+
+      Hidden elements: COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: language_mn
+    prompt: >-
+      Generate the "language_mn" state of "Profile — Settings".
+
+      Language is set to Mongolian (default); toggle reflects mn state
+
+      Visible elements: COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER
+
+      Hidden elements: COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: language_en
+    prompt: >-
+      Generate the "language_en" state of "Profile — Settings".
+
+      Language is set to English; toggle reflects en state, all UI copy switches
+
+      Visible elements: COMP-LISTROW, COMP-TOGGLE, COMP-LANGUAGESWITCHER
+
+      Hidden elements: COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: notification_on
+    prompt: >-
+      Generate the "notification_on" state of "Profile — Settings".
+
+      Push notifications are enabled; notification toggle is ON
+
+      Visible elements: COMP-LISTROW, COMP-TOGGLE
+
+      Hidden elements: COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: notification_off
+    prompt: >-
+      Generate the "notification_off" state of "Profile — Settings".
+
+      Push notifications are disabled; notification toggle is OFF
+
+      Visible elements: COMP-LISTROW, COMP-TOGGLE
+
+      Hidden elements: COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: role_switch_confirm
+    prompt: >-
+      Generate the "role_switch_confirm" state of "Profile — Settings".
+
+      User tapped role switch; confirmation modal sheet appears asking to confirm
+
+      Visible elements: COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: delete_confirm
+    prompt: >-
+      Generate the "delete_confirm" state of "Profile — Settings".
+
+      User tapped Delete Account; confirmation modal sheet appears with danger styling
+
+      Visible elements: COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

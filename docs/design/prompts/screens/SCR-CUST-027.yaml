@@ -1,0 +1,257 @@
+screen_id: SCR-CUST-027
+name: Instant Match Customer
+role:
+  - customer
+phase: 3+
+template: detail
+route: /(customer)/tasks/:taskId/instant-match
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-CUST-08.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Instant Match Customer" (SCR-CUST-027) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> centered(matching_animation + status_text + tasker_card) ->
+  sticky_bottom_cta
+
+  Components used:
+    • COMP-PROFILEAVATAR (lg): Matched tasker avatar shown after a match is found
+    • COMP-STATUSBADGE (assigned): Match status badge showing current state of the instant match process
+    • COMP-BUTTON (primary): Primary CTA changes per state: during matching shows nothing; after match shows 'Confirm Booking'; on fallback shows 'View Applicants'
+    • COMP-LOADINGSKELETON (detail): Animated matching spinner/pulse during search
+    • COMP-TOAST (error): Error toast when no eligible taskers are available
+  This screen has 5 states — generate the primary/default state:
+    Primary state: System is searching for the highest-ranked available Tasker; animated matching spinner displayed with status text
+  Key copy (Mongolian primary):
+    • page_title: "Шууд тохируулга" (Instant Match)
+    • matching_status: "Хамгийн тохиромжтой гүйцэтгэгчийг хайж байна..." (Finding the best available Tasker...)
+    • matched_status: "Гүйцэтгэгч олдлоо! Хариу хүлээж байна..." (Tasker found! Waiting for response...)
+    • countdown_label: "Хариу хүлээх хугацаа" (Response timeout)
+    • declined_status: "Гүйцэтгэгч татгалзлаа. Дараагийн хүнийг хайж байна..." (Tasker declined. Finding the next match...)
+    • decline_count: "{count}/3 татгалзсан" ({count}/3 declined)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> centered(matching_animation + status_text + tasker_card) ->
+    sticky_bottom_cta
+components:
+  - component: COMP-PROFILEAVATAR
+    variant: lg
+    usage: Matched tasker avatar shown after a match is found
+  - component: COMP-STATUSBADGE
+    variant: assigned
+    usage: Match status badge showing current state of the instant match process
+  - component: COMP-BUTTON
+    variant: primary
+    usage: >-
+      Primary CTA changes per state: during matching shows nothing; after match shows 'Confirm Booking'; on fallback
+      shows 'View Applicants'
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Animated matching spinner/pulse during search
+  - component: COMP-TOAST
+    variant: error
+    usage: Error toast when no eligible taskers are available
+states:
+  - id: matching_spinner
+    description: System is searching for the highest-ranked available Tasker; animated matching spinner displayed with status text
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: matched_awaiting_accept
+    description: >-
+      Top-ranked Tasker found and notified; awaiting their accept/decline within 5-minute window. Tasker card shown with
+      countdown timer
+    visible:
+      - COMP-PROFILEAVATAR
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: tasker_declined_retry
+    description: >-
+      Matched Tasker declined or timed out; system retries with next-ranked Tasker. Decline count shown (up to 3 before
+      fallback)
+    visible:
+      - COMP-LOADINGSKELETON
+      - COMP-STATUSBADGE
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: fallback_to_open
+    description: >-
+      3 consecutive declines/timeouts reached; task falls back to standard open-application flow. CTA navigates to
+      Applicants List
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: error_no_eligible
+    description: >-
+      No eligible Taskers available for instant match (insufficient verified Taskers in-district); error state with
+      guidance
+    visible:
+      - COMP-STATUSBADGE
+      - COMP-BUTTON
+      - COMP-TOAST
+    hidden:
+      - COMP-PROFILEAVATAR
+      - COMP-LOADINGSKELETON
+copy:
+  - key: page_title
+    mn: Шууд тохируулга
+    en: Instant Match
+  - key: matching_status
+    mn: Хамгийн тохиромжтой гүйцэтгэгчийг хайж байна...
+    en: Finding the best available Tasker...
+  - key: matched_status
+    mn: Гүйцэтгэгч олдлоо! Хариу хүлээж байна...
+    en: Tasker found! Waiting for response...
+  - key: countdown_label
+    mn: Хариу хүлээх хугацаа
+    en: Response timeout
+  - key: declined_status
+    mn: Гүйцэтгэгч татгалзлаа. Дараагийн хүнийг хайж байна...
+    en: Tasker declined. Finding the next match...
+  - key: decline_count
+    mn: '{count}/3 татгалзсан'
+    en: '{count}/3 declined'
+  - key: fallback_status
+    mn: 3 гүйцэтгэгч татгалзлаа. Даалгавар нээлттэй хүсэлтэд шилжлээ.
+    en: 3 Taskers declined. Task moved to open application.
+  - key: cta_confirm_booking
+    mn: Захиалга баталгаажуулах
+    en: Confirm Booking
+  - key: cta_view_applicants
+    mn: Өргөдөл гаргагчдыг харах
+    en: View Applicants
+  - key: cta_back_to_task
+    mn: Даалгавар руу буцах
+    en: Back to Task
+  - key: error_no_eligible_title
+    mn: Боломжит гүйцэтгэгч олдсонгүй
+    en: No eligible Taskers available
+  - key: error_no_eligible_description
+    mn: Энэ бүс нутагт хангалттай гүйцэтгэгч байхгүй байна. Нээлттэй хүсэлтээр үргэлжлүүлнэ үү.
+    en: Not enough eligible Taskers in this district. Please continue with open application.
+  - key: eligibility_note
+    mn: Шууд тохируулга нь 10+ баталгаажсан, 4.0+ үнэлгээтэй гүйцэтгэгчтэй ангилалд боломжтой
+    en: Instant match available for categories with 10+ verified Taskers rated 4.0+
+acceptance_criteria:
+  - >-
+    Instant match is available only for categories meeting high-liquidity threshold: >=10 verified Taskers with >4.0
+    rating in-district per REQ-BOOK-08
+  - Matching spinner shows animated search state while system selects highest-ranked available Tasker
+  - Matched Tasker receives a 5-minute accept/decline notification per REQ-BOOK-10
+  - Countdown timer shows remaining time in the 5-minute acceptance window
+  - >-
+    If Tasker accepts, screen shows matched Tasker card and CTA navigates via replace to Booking Confirmation
+    (SCR-CUST-014)
+  - If Tasker declines or times out, system retries with next-ranked Tasker and shows decline count
+  - After 3 consecutive declines/timeouts, task falls back to open-application flow per REQ-BOOK-08
+  - Fallback state CTA navigates via replace to Applicants List (SCR-CUST-011)
+  - Error state shows when no eligible Taskers exist in-district, with guidance to use open application
+  - Back button navigates via pop to Task Detail (SCR-CUST-009)
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /tasks/:id/instant-match
+    purpose: Initiate instant match; system selects highest-ranked available Tasker and sends accept/decline notification
+analytics_events:
+  - event: instant_match_initiated
+    trigger: User taps 'Match me now' and POST /tasks/:id/instant-match is called
+  - event: instant_match_tasker_found
+    trigger: System found and notified a candidate Tasker
+  - event: instant_match_tasker_accepted
+    trigger: Matched Tasker accepted within the 5-minute window
+  - event: instant_match_tasker_declined
+    trigger: Matched Tasker declined or timed out
+  - event: instant_match_fallback
+    trigger: 3 consecutive declines; task falls back to open application
+  - event: instant_match_no_eligible
+    trigger: No eligible Taskers available for instant match
+  - event: instant_match_confirm_booking_tapped
+    trigger: User taps 'Confirm Booking' after Tasker accepted
+state_prompts:
+  - state_id: matching_spinner
+    prompt: >-
+      Generate the "matching_spinner" state of "Instant Match Customer".
+
+      System is searching for the highest-ranked available Tasker; animated matching spinner displayed with status text
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: matched_awaiting_accept
+    prompt: >-
+      Generate the "matched_awaiting_accept" state of "Instant Match Customer".
+
+      Top-ranked Tasker found and notified; awaiting their accept/decline within 5-minute window. Tasker card shown with
+      countdown timer
+
+      Visible elements: COMP-PROFILEAVATAR, COMP-STATUSBADGE
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: tasker_declined_retry
+    prompt: >-
+      Generate the "tasker_declined_retry" state of "Instant Match Customer".
+
+      Matched Tasker declined or timed out; system retries with next-ranked Tasker. Decline count shown (up to 3 before
+      fallback)
+
+      Visible elements: COMP-LOADINGSKELETON, COMP-STATUSBADGE
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: fallback_to_open
+    prompt: >-
+      Generate the "fallback_to_open" state of "Instant Match Customer".
+
+      3 consecutive declines/timeouts reached; task falls back to standard open-application flow. CTA navigates to
+      Applicants List
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_no_eligible
+    prompt: >-
+      Generate the "error_no_eligible" state of "Instant Match Customer".
+
+      No eligible Taskers available for instant match (insufficient verified Taskers in-district); error state with
+      guidance
+
+      Visible elements: COMP-STATUSBADGE, COMP-BUTTON, COMP-TOAST
+
+      Hidden elements: COMP-PROFILEAVATAR, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

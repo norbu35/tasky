@@ -1,0 +1,255 @@
+screen_id: SCR-P3-005
+name: Instant Match — Tasker
+role:
+  - tasker
+phase: 3+
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Instant Match — Tasker" (SCR-P3-005) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle + match_details + timer + actions)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet container for instant match notification and accept/decline actions
+    • COMP-SPLITCARD (task): Task summary card within the match sheet showing task details and budget
+    • COMP-PROFILEAVATAR (md): Customer avatar displayed in the match notification
+    • COMP-BUTTON (primary): Primary CTA to accept the instant match
+    • COMP-BUTTON (secondary): Secondary button to decline the instant match
+    • COMP-ANIMATEDCHECKMARK (default): Success animation when match is accepted
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Tasker receives an instant match notification with task details and 5-minute timer
+  Key copy (Mongolian primary):
+    • sheet_title: "Шинэ санал!" (New match!)
+    • match_description: "Танд шинэ шууд холболтын санал ирлээ. 5 минутын дотор хариулна уу" (You have a new instant match offer. Respond within 5 minutes)
+    • timer_label: "Үлдсэн хугацаа" (Time remaining)
+    • timer_format: "{minutes}:{seconds}" ({minutes}:{seconds})
+    • task_label: "Даалгавар" (Task)
+    • budget_label: "Төсөв" (Budget)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle + match_details + timer + actions)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet container for instant match notification and accept/decline actions
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: Task summary card within the match sheet showing task details and budget
+  - component: COMP-PROFILEAVATAR
+    variant: md
+    usage: Customer avatar displayed in the match notification
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to accept the instant match
+  - component: COMP-BUTTON
+    variant: secondary
+    usage: Secondary button to decline the instant match
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Success animation when match is accepted
+states:
+  - id: match_notification
+    description: Tasker receives an instant match notification with task details and 5-minute timer
+    visible:
+      - COMP-MODALSHEET
+      - COMP-SPLITCARD
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.secondary
+    hidden:
+      - COMP-ANIMATEDCHECKMARK
+  - id: accepting
+    description: Tasker tapped accept; processing the match acceptance
+    visible:
+      - COMP-MODALSHEET
+      - COMP-SPLITCARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-BUTTON.secondary
+      - COMP-ANIMATEDCHECKMARK
+  - id: accepted_success
+    description: Match accepted successfully; new booking created
+    visible:
+      - COMP-MODALSHEET
+      - COMP-ANIMATEDCHECKMARK
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.secondary
+  - id: declined
+    description: Tasker declined the match; sheet dismisses
+    visible:
+      - COMP-MODALSHEET
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON
+      - COMP-ANIMATEDCHECKMARK
+  - id: expired_5min
+    description: 5-minute response window expired; match auto-declined
+    visible:
+      - COMP-MODALSHEET
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-PROFILEAVATAR
+      - COMP-BUTTON
+      - COMP-ANIMATEDCHECKMARK
+copy:
+  - key: sheet_title
+    mn: Шинэ санал!
+    en: New match!
+  - key: match_description
+    mn: Танд шинэ шууд холболтын санал ирлээ. 5 минутын дотор хариулна уу
+    en: You have a new instant match offer. Respond within 5 minutes
+  - key: timer_label
+    mn: Үлдсэн хугацаа
+    en: Time remaining
+  - key: timer_format
+    mn: '{minutes}:{seconds}'
+    en: '{minutes}:{seconds}'
+  - key: task_label
+    mn: Даалгавар
+    en: Task
+  - key: budget_label
+    mn: Төсөв
+    en: Budget
+  - key: location_label
+    mn: Байршил
+    en: Location
+  - key: schedule_label
+    mn: Хугацаа
+    en: Schedule
+  - key: customer_label
+    mn: Захиалагч
+    en: Customer
+  - key: cta_accept
+    mn: Хүлээн авах
+    en: Accept
+  - key: cta_decline
+    mn: Татгалзах
+    en: Decline
+  - key: accepting_label
+    mn: Хүлээн авч байна...
+    en: Accepting...
+  - key: accepted_headline
+    mn: Амжилттай!
+    en: Match accepted!
+  - key: accepted_description
+    mn: Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу
+    en: New booking created. Check My Jobs for details
+  - key: declined_message
+    mn: Санал татгалзлаа
+    en: Match declined
+  - key: expired_headline
+    mn: Хугацаа дууслаа
+    en: Time expired
+  - key: expired_description
+    mn: Хариу өгөх хугацаа дууссан тул санал автоматаар цуцлагдлаа
+    en: Response window expired. Match was automatically declined
+acceptance_criteria:
+  - Match notification shows task summary in SplitCard format with budget, location, and schedule
+  - Customer avatar and name are displayed in the match notification
+  - Countdown timer is prominently displayed with 5:00 start time
+  - Timer updates every second in {minutes}:{seconds} format
+  - Timer turns danger color when under 1 minute remaining
+  - Accept button enters loading state during processing
+  - Accepted state shows animated checkmark with success message
+  - After accepted state, sheet auto-dismisses to SCR-TASK-012 (My Jobs) after 2 seconds
+  - Decline immediately dismisses the sheet
+  - Expired state shows timeout message and auto-dismisses after 3 seconds
+  - Sheet is not dismissible by drag-to-close while active
+  - Sheet renders at z-index 30 with branded scrim (primaryDeep at 35%)
+  - Budget uses price_display typography (Manrope bold 20px) with ₮ prefix
+  - Push notification deep-links to this screen with task_id parameter
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /tasks/:id/instant-match/respond
+    purpose: Accept or decline an instant match offer
+analytics_events:
+  - event: instant_match_received
+    trigger: Instant match notification sheet displayed to tasker
+  - event: instant_match_accepted
+    trigger: Tasker taps 'Accept' and match is confirmed
+  - event: instant_match_declined
+    trigger: Tasker taps 'Decline'
+  - event: instant_match_expired
+    trigger: 5-minute response window expires
+  - event: instant_match_timer_warning
+    trigger: Timer reaches 1 minute remaining
+state_prompts:
+  - state_id: match_notification
+    prompt: >-
+      Generate the "match_notification" state of "Instant Match — Tasker".
+
+      Tasker receives an instant match notification with task details and 5-minute timer
+
+      Visible elements: COMP-MODALSHEET, COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON.primary, COMP-BUTTON.secondary
+
+      Hidden elements: COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: accepting
+    prompt: >-
+      Generate the "accepting" state of "Instant Match — Tasker".
+
+      Tasker tapped accept; processing the match acceptance
+
+      Visible elements: COMP-MODALSHEET, COMP-SPLITCARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-BUTTON.secondary, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: accepted_success
+    prompt: >-
+      Generate the "accepted_success" state of "Instant Match — Tasker".
+
+      Match accepted successfully; new booking created
+
+      Visible elements: COMP-MODALSHEET, COMP-ANIMATEDCHECKMARK
+
+      Hidden elements: COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON.primary, COMP-BUTTON.secondary
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: declined
+    prompt: >-
+      Generate the "declined" state of "Instant Match — Tasker".
+
+      Tasker declined the match; sheet dismisses
+
+      Visible elements: COMP-MODALSHEET
+
+      Hidden elements: COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: expired_5min
+    prompt: >-
+      Generate the "expired_5min" state of "Instant Match — Tasker".
+
+      5-minute response window expired; match auto-declined
+
+      Visible elements: COMP-MODALSHEET
+
+      Hidden elements: COMP-SPLITCARD, COMP-PROFILEAVATAR, COMP-BUTTON, COMP-ANIMATEDCHECKMARK
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

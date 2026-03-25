@@ -1,0 +1,259 @@
+screen_id: SCR-SHARED-010
+name: Inbox — Conversation List
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: feed_list
+route: /inbox
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Inbox — Conversation List" (SCR-SHARED-010) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> sticky_header(nav_title + search_bar) -> scrollview(conversation_cards) -> tab_bar
+
+  Components used:
+    • COMP-SEARCHBAR (default): Search conversations by counterparty name or message content
+    • COMP-CARD (default): Conversation row displaying avatar, name, last message preview, timestamp, unread badge
+    • COMP-PROFILEAVATAR (md): Counterparty avatar shown in each conversation row
+    • COMP-EMPTYSTATE (no_results): Empty state when user has no conversations yet
+    • COMP-LOADINGSKELETON (list_row): Skeleton loading state matching conversation list row layout
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Conversation list is loading for the first time
+  Key copy (Mongolian primary):
+    • nav_title: "Чат" (Inbox)
+    • search_placeholder: "Хайх..." (Search...)
+    • empty_heading: "Мессеж байхгүй" (No messages)
+    • empty_description: "Захиалга хийсний дараа энд мессежүүд харагдана" (Messages will appear here after you make a booking)
+    • error_message: "Мессежүүдийг ачаалж чадсангүй" (Failed to load messages)
+    • retry_label: "Дахин оролдох" (Retry)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> sticky_header(nav_title + search_bar) -> scrollview(conversation_cards) -> tab_bar
+components:
+  - component: COMP-SEARCHBAR
+    variant: default
+    usage: Search conversations by counterparty name or message content
+  - component: COMP-CARD
+    variant: default
+    usage: Conversation row displaying avatar, name, last message preview, timestamp, unread badge
+  - component: COMP-PROFILEAVATAR
+    variant: md
+    usage: Counterparty avatar shown in each conversation row
+  - component: COMP-EMPTYSTATE
+    variant: no_results
+    usage: Empty state when user has no conversations yet
+  - component: COMP-LOADINGSKELETON
+    variant: list_row
+    usage: Skeleton loading state matching conversation list row layout
+states:
+  - id: loading_initial
+    description: Conversation list is loading for the first time
+    visible:
+      - nav_title
+      - loading_skeleton
+    hidden:
+      - search_bar
+      - conversation_list
+      - empty_state
+      - error_message
+      - offline_banner
+  - id: empty
+    description: User has no conversations; activation empty state shown
+    visible:
+      - nav_title
+      - search_bar
+      - empty_state
+    hidden:
+      - conversation_list
+      - loading_skeleton
+      - error_message
+      - offline_banner
+  - id: populated
+    description: Conversations loaded and displayed in chronological order
+    visible:
+      - nav_title
+      - search_bar
+      - conversation_list
+    hidden:
+      - empty_state
+      - loading_skeleton
+      - error_message
+      - offline_banner
+  - id: loading_refresh
+    description: Pull-to-refresh in progress; existing content remains visible
+    visible:
+      - nav_title
+      - search_bar
+      - conversation_list
+      - pull_to_refresh_indicator
+    hidden:
+      - empty_state
+      - loading_skeleton
+      - error_message
+      - offline_banner
+  - id: error_network
+    description: Network error loading conversations; retry available
+    visible:
+      - nav_title
+      - error_message
+      - retry_button
+    hidden:
+      - search_bar
+      - conversation_list
+      - empty_state
+      - loading_skeleton
+      - offline_banner
+  - id: offline
+    description: Device is offline; cached conversations shown if available, offline banner at top
+    visible:
+      - nav_title
+      - offline_banner
+      - conversation_list_cached
+    hidden:
+      - search_bar
+      - empty_state
+      - loading_skeleton
+      - error_message
+copy:
+  - key: nav_title
+    mn: Чат
+    en: Inbox
+  - key: search_placeholder
+    mn: Хайх...
+    en: Search...
+  - key: empty_heading
+    mn: Мессеж байхгүй
+    en: No messages
+  - key: empty_description
+    mn: Захиалга хийсний дараа энд мессежүүд харагдана
+    en: Messages will appear here after you make a booking
+  - key: error_message
+    mn: Мессежүүдийг ачаалж чадсангүй
+    en: Failed to load messages
+  - key: retry_label
+    mn: Дахин оролдох
+    en: Retry
+  - key: offline_banner
+    mn: Офлайн байна. Хуучин мессежүүд харагдаж байна.
+    en: You are offline. Showing cached messages.
+  - key: unread_badge_label
+    mn: шинэ
+    en: new
+  - key: last_message_you_prefix
+    mn: 'Та: '
+    en: 'You: '
+acceptance_criteria:
+  - Conversation list is sorted by most recent message timestamp descending
+  - Each row shows counterparty avatar, name, last message preview (50 chars max), and timestamp
+  - Unread conversations show an unread indicator badge
+  - Last message preview truncates at 1 line with ellipsis
+  - Search bar filters conversations by counterparty name
+  - Pull-to-refresh reloads the conversation list
+  - Tapping a conversation row pushes to Chat Detail (SCR-SHARED-011)
+  - Empty state displays when no conversations exist
+  - Loading state shows skeleton matching conversation row layout
+  - Network error shows error message with retry button
+  - Offline state shows cached conversations with offline banner
+  - Tab bar is visible with Inbox tab highlighted
+  - Relative timestamps used for messages within 24 hours
+api_endpoints:
+  - method: GET
+    path: /conversations
+    purpose: Fetch list of conversations for the current user
+analytics_events:
+  - event: inbox_viewed
+    trigger: Conversation list screen becomes visible
+  - event: inbox_search_used
+    trigger: User types in the search bar
+  - event: conversation_tapped
+    trigger: User taps a conversation row; includes conversation_id
+  - event: inbox_pull_to_refresh
+    trigger: User pulls to refresh the conversation list
+  - event: inbox_empty_state_viewed
+    trigger: Empty state is displayed
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Inbox — Conversation List".
+
+      Conversation list is loading for the first time
+
+      Visible elements: nav_title, loading_skeleton
+
+      Hidden elements: search_bar, conversation_list, empty_state, error_message, offline_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Inbox — Conversation List".
+
+      User has no conversations; activation empty state shown
+
+      Visible elements: nav_title, search_bar, empty_state
+
+      Hidden elements: conversation_list, loading_skeleton, error_message, offline_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "Inbox — Conversation List".
+
+      Conversations loaded and displayed in chronological order
+
+      Visible elements: nav_title, search_bar, conversation_list
+
+      Hidden elements: empty_state, loading_skeleton, error_message, offline_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loading_refresh
+    prompt: >-
+      Generate the "loading_refresh" state of "Inbox — Conversation List".
+
+      Pull-to-refresh in progress; existing content remains visible
+
+      Visible elements: nav_title, search_bar, conversation_list, pull_to_refresh_indicator
+
+      Hidden elements: empty_state, loading_skeleton, error_message, offline_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Inbox — Conversation List".
+
+      Network error loading conversations; retry available
+
+      Visible elements: nav_title, error_message, retry_button
+
+      Hidden elements: search_bar, conversation_list, empty_state, loading_skeleton, offline_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline
+    prompt: >-
+      Generate the "offline" state of "Inbox — Conversation List".
+
+      Device is offline; cached conversations shown if available, offline banner at top
+
+      Visible elements: nav_title, offline_banner, conversation_list_cached
+
+      Hidden elements: search_bar, empty_state, loading_skeleton, error_message
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

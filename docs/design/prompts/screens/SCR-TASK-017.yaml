@@ -1,0 +1,376 @@
+screen_id: SCR-TASK-017
+name: Lead Unlock — Accept/Decline
+role:
+  - tasker
+phase: '2'
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Lead Unlock — Accept/Decline" (SCR-TASK-017) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + title + lead_details + credit_cost + balance_display + timer +
+  action_buttons)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet for lead unlock accept/decline flow with credit deduction
+    • COMP-BUTTON (primary): Primary CTA to accept the lead and spend credits
+    • COMP-BUTTON (outline): Secondary CTA to decline the lead without spending credits
+    • COMP-BUTTON (primary): CTA shown when credits are insufficient — redirect to purchase
+    • COMP-CREDITBALANCE (inline): Inline credit balance display showing current balance and cost to unlock
+    • COMP-PROFILEAVATAR (md): Customer avatar shown in lead notification (blurred or partial until unlock)
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed
+  Key copy (Mongolian primary):
+    • notification_heading: "Захиалагч таныг сонголоо!" (A customer selected you!)
+    • task_summary_label: "Даалгавар" (Task)
+    • credit_cost_label: "Кредит зарцуулалт" (Credit Cost)
+    • credit_cost_value: "{cost} кредит" ({cost} credit(s))
+    • credit_balance_label: "Таны үлдэгдэл" (Your Balance)
+    • credit_balance_value: "{balance} кредит" ({balance} credit(s))
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + title + lead_details + credit_cost + balance_display + timer + action_buttons)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet for lead unlock accept/decline flow with credit deduction
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to accept the lead and spend credits
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary CTA to decline the lead without spending credits
+  - component: COMP-BUTTON
+    variant: primary
+    usage: CTA shown when credits are insufficient — redirect to purchase
+  - component: COMP-CREDITBALANCE
+    variant: inline
+    usage: Inline credit balance display showing current balance and cost to unlock
+  - component: COMP-PROFILEAVATAR
+    variant: md
+    usage: Customer avatar shown in lead notification (blurred or partial until unlock)
+states:
+  - id: notification_received
+    description: Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed
+    visible:
+      - handle_bar
+      - notification_heading
+      - task_summary
+      - credit_cost
+      - credit_balance
+      - countdown_timer
+      - accept_button
+      - decline_button
+    hidden:
+      - accepting_spinner
+      - success_content
+      - insufficient_content
+      - expired_content
+  - id: grandfathered_discount_applied
+    description: Eligible grandfathered tasker sees permanent 5 percent discount disclosure before accepting the lead
+    visible:
+      - handle_bar
+      - notification_heading
+      - task_summary
+      - credit_cost
+      - credit_balance
+      - discount_notice
+      - accept_button
+      - decline_button
+    hidden:
+      - accepting_spinner
+      - success_content
+      - insufficient_content
+      - expired_content
+  - id: accepting
+    description: Accept in progress — credits being deducted via API
+    visible:
+      - handle_bar
+      - notification_heading
+      - accepting_spinner
+      - accepting_message
+    hidden:
+      - accept_button
+      - decline_button
+      - credit_cost
+      - countdown_timer
+      - success_content
+      - insufficient_content
+  - id: accepted_credits_deducted
+    description: Lead accepted — credits deducted, customer contact info unlocked
+    visible:
+      - handle_bar
+      - success_icon
+      - accepted_heading
+      - accepted_description
+      - contact_info_unlocked
+      - view_booking_button
+    hidden:
+      - accept_button
+      - decline_button
+      - accepting_spinner
+      - credit_cost
+      - countdown_timer
+      - insufficient_content
+  - id: declined
+    description: Lead declined — no credits charged, confirmation shown
+    visible:
+      - handle_bar
+      - declined_heading
+      - declined_description
+      - done_button
+    hidden:
+      - accept_button
+      - decline_button
+      - credit_cost
+      - countdown_timer
+      - success_content
+      - insufficient_content
+  - id: insufficient_credits
+    description: Credit balance is less than lead cost — purchase redirect offered
+    visible:
+      - handle_bar
+      - notification_heading
+      - task_summary
+      - credit_cost
+      - insufficient_warning
+      - buy_credits_button
+      - decline_button
+      - countdown_timer
+    hidden:
+      - accept_button
+      - accepting_spinner
+      - success_content
+  - id: expired_15min
+    description: 15-minute acceptance window expired — auto-declined, no credits charged
+    visible:
+      - handle_bar
+      - expired_heading
+      - expired_description
+      - done_button
+    hidden:
+      - accept_button
+      - decline_button
+      - credit_cost
+      - countdown_timer
+      - accepting_spinner
+      - success_content
+      - insufficient_content
+copy:
+  - key: notification_heading
+    mn: Захиалагч таныг сонголоо!
+    en: A customer selected you!
+  - key: task_summary_label
+    mn: Даалгавар
+    en: Task
+  - key: credit_cost_label
+    mn: Кредит зарцуулалт
+    en: Credit Cost
+  - key: credit_cost_value
+    mn: '{cost} кредит'
+    en: '{cost} credit(s)'
+  - key: credit_balance_label
+    mn: Таны үлдэгдэл
+    en: Your Balance
+  - key: credit_balance_value
+    mn: '{balance} кредит'
+    en: '{balance} credit(s)'
+  - key: countdown_label
+    mn: Хүлээх хугацаа
+    en: Time remaining
+  - key: countdown_format
+    mn: '{minutes}:{seconds}'
+    en: '{minutes}:{seconds}'
+  - key: accept_button
+    mn: Зөвшөөрч, кредит зарцуулах
+    en: Accept & Spend Credits
+  - key: decline_button
+    mn: Татгалзах
+    en: Decline
+  - key: accepting_message
+    mn: Кредит зарцуулж байна...
+    en: Processing...
+  - key: accepted_heading
+    mn: Амжилттай!
+    en: Success!
+  - key: accepted_description
+    mn: Захиалагчийн холбоо барих мэдээлэл нээгдлээ. {cost} кредит зарцуулагдлаа.
+    en: Customer contact info unlocked. {cost} credit(s) spent.
+  - key: contact_info_label
+    mn: Холбоо барих
+    en: Contact Info
+  - key: view_booking_button
+    mn: Захиалга харах
+    en: View Booking
+  - key: declined_heading
+    mn: Татгалзсан
+    en: Declined
+  - key: declined_description
+    mn: Кредит зарцуулагдаагүй. Дараагийн боломжийг хүлээнэ үү.
+    en: No credits charged. Wait for the next opportunity.
+  - key: insufficient_warning
+    mn: 'Кредит хүрэлцэхгүй байна. Зарцуулах: {cost} кредит, Үлдэгдэл: {balance} кредит.'
+    en: 'Insufficient credits. Cost: {cost}, Balance: {balance}.'
+  - key: buy_credits_button
+    mn: Кредит худалдаж авах
+    en: Buy Credits
+  - key: expired_heading
+    mn: Хугацаа дууслаа
+    en: Time Expired
+  - key: expired_description
+    mn: 15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй.
+    en: The 15-minute window has expired. Auto-declined. No credits charged.
+  - key: done_button
+    mn: Ойлголоо
+    en: Got it
+  - key: refund_notice
+    mn: Захиалагч цуцалвал кредит буцаагдана
+    en: Credits refunded if customer cancels
+  - key: grandfathered_discount_notice
+    mn: Танд early adopter 5% хөнгөлөлт үйлчилж байна
+    en: Your early-adopter 5% discount is applied
+acceptance_criteria:
+  - This is a bottom sheet overlay triggered by push notification, not a standalone route
+  - 15-minute countdown timer is prominently displayed (REQ-PAY-11, REQ-BOOK-10)
+  - Credit cost is shown alongside current balance using CreditBalance component
+  - Accept button deducts credits and unlocks customer contact info (REQ-PAY-11)
+  - Decline results in no credit charge (REQ-PAY-12)
+  - If customer cancels after lead unlock, credits are refunded (REQ-PAY-13)
+  - Refund notice is visible in the notification state
+  - Insufficient credits state shows balance vs cost and redirects to Credits Purchase (SCR-P2-001)
+  - Buy Credits button navigates to Credits Balance & Purchase (SCR-P2-001) via push
+  - Expired state auto-declines and confirms no credits were charged (REQ-PAY-12)
+  - On accept success, dismissed to My Jobs (SCR-TASK-012)
+  - On decline or expiry, dismissed to My Jobs (SCR-TASK-012)
+  - Lead cost follows category-tiered pricing (REQ-PAY-27)
+  - Grandfathered taskers see a clear 5% discount disclosure before paid checkout pricing is confirmed (REQ-PAY-28)
+  - Core matching (browse/apply) remains free — credits only on accept (REQ-PAY-10, REQ-PAY-15)
+  - Scrim overlay behind sheet per modal_sheet template
+api_endpoints:
+  - method: POST
+    path: /applications/:id/accept
+    purpose: Accept lead — deduct credits and unlock customer contact information
+  - method: POST
+    path: /applications/:id/decline
+    purpose: Decline lead — no credits charged, customer prompted to select next applicant
+analytics_events:
+  - event: lead_unlock_viewed
+    trigger: Lead Unlock sheet becomes visible
+  - event: lead_unlock_accepted
+    trigger: Tasker taps Accept & Spend Credits
+  - event: lead_unlock_declined
+    trigger: Tasker taps Decline
+  - event: lead_unlock_insufficient_credits
+    trigger: Insufficient credits state displayed
+  - event: lead_unlock_buy_credits_tapped
+    trigger: Tasker taps Buy Credits from insufficient state
+  - event: lead_unlock_expired
+    trigger: 15-minute window expires without action
+  - event: lead_unlock_timer_viewed
+    trigger: Countdown timer starts with remaining time visible
+state_prompts:
+  - state_id: notification_received
+    prompt: >-
+      Generate the "notification_received" state of "Lead Unlock — Accept/Decline".
+
+      Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed
+
+      Visible elements: handle_bar, notification_heading, task_summary, credit_cost, credit_balance, countdown_timer,
+      accept_button, decline_button
+
+      Hidden elements: accepting_spinner, success_content, insufficient_content, expired_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: grandfathered_discount_applied
+    prompt: >-
+      Generate the "grandfathered_discount_applied" state of "Lead Unlock — Accept/Decline".
+
+      Eligible grandfathered tasker sees permanent 5 percent discount disclosure before accepting the lead
+
+      Visible elements: handle_bar, notification_heading, task_summary, credit_cost, credit_balance, discount_notice,
+      accept_button, decline_button
+
+      Hidden elements: accepting_spinner, success_content, insufficient_content, expired_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: accepting
+    prompt: >-
+      Generate the "accepting" state of "Lead Unlock — Accept/Decline".
+
+      Accept in progress — credits being deducted via API
+
+      Visible elements: handle_bar, notification_heading, accepting_spinner, accepting_message
+
+      Hidden elements: accept_button, decline_button, credit_cost, countdown_timer, success_content,
+      insufficient_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: accepted_credits_deducted
+    prompt: >-
+      Generate the "accepted_credits_deducted" state of "Lead Unlock — Accept/Decline".
+
+      Lead accepted — credits deducted, customer contact info unlocked
+
+      Visible elements: handle_bar, success_icon, accepted_heading, accepted_description, contact_info_unlocked,
+      view_booking_button
+
+      Hidden elements: accept_button, decline_button, accepting_spinner, credit_cost, countdown_timer,
+      insufficient_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: declined
+    prompt: >-
+      Generate the "declined" state of "Lead Unlock — Accept/Decline".
+
+      Lead declined — no credits charged, confirmation shown
+
+      Visible elements: handle_bar, declined_heading, declined_description, done_button
+
+      Hidden elements: accept_button, decline_button, credit_cost, countdown_timer, success_content,
+      insufficient_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: insufficient_credits
+    prompt: >-
+      Generate the "insufficient_credits" state of "Lead Unlock — Accept/Decline".
+
+      Credit balance is less than lead cost — purchase redirect offered
+
+      Visible elements: handle_bar, notification_heading, task_summary, credit_cost, insufficient_warning,
+      buy_credits_button, decline_button, countdown_timer
+
+      Hidden elements: accept_button, accepting_spinner, success_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: expired_15min
+    prompt: >-
+      Generate the "expired_15min" state of "Lead Unlock — Accept/Decline".
+
+      15-minute acceptance window expired — auto-declined, no credits charged
+
+      Visible elements: handle_bar, expired_heading, expired_description, done_button
+
+      Hidden elements: accept_button, decline_button, credit_cost, countdown_timer, accepting_spinner, success_content,
+      insufficient_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

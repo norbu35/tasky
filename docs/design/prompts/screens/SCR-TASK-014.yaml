@@ -1,0 +1,223 @@
+screen_id: SCR-TASK-014
+name: No-Show Flag (Tasker)
+role:
+  - tasker
+phase: 0-1
+template: modal_sheet
+route: null
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-04.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "No-Show Flag (Tasker)" (SCR-TASK-014) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: modal_sheet — Bottom sheet overlay with drag handle bar, content area, and max 2 action buttons. Branded
+  scrim backdrop.
+
+  Layout structure: scrim -> sheet(handle_bar + title + content + action_buttons)
+
+  Components used:
+    • COMP-MODALSHEET (default): Bottom sheet for no-show flag flow — reminder, flag, and confirmation
+    • COMP-BUTTON (danger): Primary CTA to flag the customer as no-show
+    • COMP-BUTTON (outline): Secondary CTA to dismiss and wait longer
+  This screen has 4 states — generate the primary/default state:
+    Primary state: Schedule +10min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm status
+  Key copy (Mongolian primary):
+    • reminder_heading: "Захиалагчтайгаа уулзсан уу?" (Have you met the customer?)
+    • reminder_description: "Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү." (10 minutes past scheduled time. Please update your arrival status.)
+    • update_status_button: "Би ирсэн" (I'm here)
+    • flag_heading: "Захиалагч ирээгүй" (Customer did not show up)
+    • flag_description: "Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна." (15 minutes past scheduled time and the customer has not checked in.)
+    • no_show_warning: "Ирээгүй тэмдэглэсний дараа захиалгыг хянуулна. Худал мэдээлэл өгвөл хариуцлага хүлээнэ." (After flagging, the booking enters review. False reports carry consequences.)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: modal_sheet
+  density: default
+  structure: scrim -> sheet(handle_bar + title + content + action_buttons)
+components:
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Bottom sheet for no-show flag flow — reminder, flag, and confirmation
+  - component: COMP-BUTTON
+    variant: danger
+    usage: Primary CTA to flag the customer as no-show
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary CTA to dismiss and wait longer
+states:
+  - id: pre_reminder_10min
+    description: >-
+      Schedule +10min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm
+      status
+    visible:
+      - handle_bar
+      - reminder_icon
+      - reminder_heading
+      - reminder_description
+      - update_status_button
+      - dismiss_button
+    hidden:
+      - flag_button
+      - flagging_spinner
+      - success_content
+  - id: flag_available_15min
+    description: Schedule +15min — no check-in from customer in past 30min; flag button becomes available
+    visible:
+      - handle_bar
+      - flag_icon
+      - flag_heading
+      - flag_description
+      - no_show_warning
+      - flag_button
+      - wait_button
+    hidden:
+      - reminder_content
+      - flagging_spinner
+      - success_content
+  - id: flagging
+    description: No-show flag is being submitted to API
+    visible:
+      - handle_bar
+      - flag_heading
+      - flagging_spinner
+    hidden:
+      - flag_button
+      - wait_button
+      - reminder_content
+      - success_content
+  - id: flagged_success
+    description: No-show flag submitted successfully — confirmation shown with next steps
+    visible:
+      - handle_bar
+      - success_icon
+      - flagged_heading
+      - flagged_description
+      - done_button
+    hidden:
+      - flag_button
+      - wait_button
+      - reminder_content
+      - flagging_spinner
+copy:
+  - key: reminder_heading
+    mn: Захиалагчтайгаа уулзсан уу?
+    en: Have you met the customer?
+  - key: reminder_description
+    mn: Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.
+    en: 10 minutes past scheduled time. Please update your arrival status.
+  - key: update_status_button
+    mn: Би ирсэн
+    en: I'm here
+  - key: flag_heading
+    mn: Захиалагч ирээгүй
+    en: Customer did not show up
+  - key: flag_description
+    mn: Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.
+    en: 15 minutes past scheduled time and the customer has not checked in.
+  - key: no_show_warning
+    mn: Ирээгүй тэмдэглэсний дараа захиалгыг хянуулна. Худал мэдээлэл өгвөл хариуцлага хүлээнэ.
+    en: After flagging, the booking enters review. False reports carry consequences.
+  - key: flag_button
+    mn: Ирээгүй гэж тэмдэглэх
+    en: Flag No-Show
+  - key: wait_button
+    mn: Хүлээх
+    en: Wait
+  - key: flagged_heading
+    mn: Ирээгүй тэмдэглэгдлээ
+    en: No-Show Flagged
+  - key: flagged_description
+    mn: Захиалга хянагдахаар илгээгдлээ. Дараагийн алхмын талаар мэдэгдэл авна.
+    en: Booking sent for review. You'll be notified about next steps.
+  - key: done_button
+    mn: Ойлголоо
+    en: Got it
+  - key: dismiss_button
+    mn: Хаах
+    en: Dismiss
+acceptance_criteria:
+  - This is a bottom sheet overlay, not a standalone route
+  - Pre-reminder appears at scheduled start +10 minutes (REQ-BOOK-11)
+  - Flag button becomes available only at scheduled start +15 minutes
+  - >-
+    Flag is permitted only if system verifies neither party has posted a status update/check-in in the preceding 30
+    minutes (REQ-BOOK-11)
+  - No mutually accepted in-app reschedule must have superseded the current schedule
+  - Warning text informs tasker that false reports carry consequences
+  - Flag triggers POST /bookings/:id/no-show and booking transitions to NO_SHOW
+  - Repeated no-shows (>=2 in trailing 28 days) trigger strike review per REQ-BOOK-11
+  - Success state confirms flag was submitted and booking is under review
+  - Done button dismisses sheet and returns to Booking Detail (SCR-TASK-013)
+  - Wait button dismisses the sheet without flagging
+  - Scrim overlay behind sheet per modal_sheet template
+api_endpoints:
+  - method: POST
+    path: /bookings/:id/no-show
+    purpose: Flag the counterparty (customer) as no-show for admin reliability review
+analytics_events:
+  - event: no_show_reminder_tasker_viewed
+    trigger: Pre-reminder sheet shown at schedule +10min
+  - event: no_show_flag_available_tasker
+    trigger: Flag button becomes available at schedule +15min
+  - event: no_show_flag_tasker_tapped
+    trigger: Tasker taps Flag No-Show button
+  - event: no_show_flag_tasker_confirmed
+    trigger: No-show flag API call succeeds
+  - event: no_show_flag_tasker_waited
+    trigger: Tasker taps Wait to dismiss and keep waiting
+state_prompts:
+  - state_id: pre_reminder_10min
+    prompt: >-
+      Generate the "pre_reminder_10min" state of "No-Show Flag (Tasker)".
+
+      Schedule +10min — system sends reminder to both parties to update arrival status; sheet prompts tasker to confirm
+      status
+
+      Visible elements: handle_bar, reminder_icon, reminder_heading, reminder_description, update_status_button,
+      dismiss_button
+
+      Hidden elements: flag_button, flagging_spinner, success_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: flag_available_15min
+    prompt: >-
+      Generate the "flag_available_15min" state of "No-Show Flag (Tasker)".
+
+      Schedule +15min — no check-in from customer in past 30min; flag button becomes available
+
+      Visible elements: handle_bar, flag_icon, flag_heading, flag_description, no_show_warning, flag_button, wait_button
+
+      Hidden elements: reminder_content, flagging_spinner, success_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: flagging
+    prompt: >-
+      Generate the "flagging" state of "No-Show Flag (Tasker)".
+
+      No-show flag is being submitted to API
+
+      Visible elements: handle_bar, flag_heading, flagging_spinner
+
+      Hidden elements: flag_button, wait_button, reminder_content, success_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: flagged_success
+    prompt: >-
+      Generate the "flagged_success" state of "No-Show Flag (Tasker)".
+
+      No-show flag submitted successfully — confirmation shown with next steps
+
+      Visible elements: handle_bar, success_icon, flagged_heading, flagged_description, done_button
+
+      Hidden elements: flag_button, wait_button, reminder_content, flagging_spinner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

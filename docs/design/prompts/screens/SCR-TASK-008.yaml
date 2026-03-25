@@ -1,0 +1,106 @@
+screen_id: SCR-TASK-008
+name: Verification — Approved
+role:
+  - tasker
+phase: 0-1
+template: success_celebration
+route: /(tasker)/verification/approved
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Verification — Approved" (SCR-TASK-008) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: success_celebration — Animated checkmark with spring bounce, headline, "what happens next" text, primary +
+  secondary CTAs.
+
+  Layout structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)
+
+  Components used:
+    • COMP-ANIMATEDCHECKMARK (default): Animated success checkmark celebrating verification approval
+    • COMP-BUTTON (primary): Primary CTA to start browsing and applying to tasks
+    • COMP-VERIFICATIONBADGE (default): Verification badge display showing the tasker's new verified status
+  This screen has 1 states — generate the primary/default state:
+    Primary state: Celebration screen — tasker has been approved and can now apply to tasks
+  Key copy (Mongolian primary):
+    • heading: "Баталгаажлаа!" (You're Verified!)
+    • description: "Таны хаяг амжилттай баталгаажлаа. Одоо даалгавруудад анкет илгээж, ажил хийх боломжтой." (Your identity has been verified. You can now apply to tasks and start earning.)
+    • next_steps_heading: "Дараагийн алхам" (What's next)
+    • next_step_browse: "Даалгаврууд хайж, сонирхсон даалгавартаа анкет илгээнэ үү" (Browse tasks and apply to ones that interest you)
+    • next_step_profile: "Профайлаа бөглөж, захиалагчдад илүү итгэл төрүүлнэ үү" (Complete your profile to build trust with customers)
+    • start_browsing_cta: "Даалгавар хайж эхлэх" (Start Browsing)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: success_celebration
+  density: comfortable
+  structure: safe_area -> centered(animated_checkmark + heading + description + next_steps + primary_cta)
+components:
+  - component: COMP-ANIMATEDCHECKMARK
+    variant: default
+    usage: Animated success checkmark celebrating verification approval
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to start browsing and applying to tasks
+  - component: COMP-VERIFICATIONBADGE
+    variant: default
+    usage: Verification badge display showing the tasker's new verified status
+states:
+  - id: default
+    description: Celebration screen — tasker has been approved and can now apply to tasks
+    visible:
+      - animated_checkmark
+      - verification_badge
+      - heading
+      - description
+      - next_steps
+      - start_browsing_button
+    hidden: []
+copy:
+  - key: heading
+    mn: Баталгаажлаа!
+    en: You're Verified!
+  - key: description
+    mn: Таны хаяг амжилттай баталгаажлаа. Одоо даалгавруудад анкет илгээж, ажил хийх боломжтой.
+    en: Your identity has been verified. You can now apply to tasks and start earning.
+  - key: next_steps_heading
+    mn: Дараагийн алхам
+    en: What's next
+  - key: next_step_browse
+    mn: Даалгаврууд хайж, сонирхсон даалгавартаа анкет илгээнэ үү
+    en: Browse tasks and apply to ones that interest you
+  - key: next_step_profile
+    mn: Профайлаа бөглөж, захиалагчдад илүү итгэл төрүүлнэ үү
+    en: Complete your profile to build trust with customers
+  - key: start_browsing_cta
+    mn: Даалгавар хайж эхлэх
+    en: Start Browsing
+acceptance_criteria:
+  - Animated checkmark plays spring animation with bounce on screen entry
+  - Verification badge is prominently displayed alongside success message
+  - Heading and description confirm the tasker's new verified status
+  - Next steps section guides the tasker on what to do after verification
+  - Tapping 'Даалгавар хайж эхлэх' navigates to Task Feed (SCR-TASK-001) via replace
+  - Comfortable density for celebratory emotional impact
+  - This screen is reached via push notification for approval or from DAN success
+api_endpoints: []
+analytics_events:
+  - event: verification_approved_viewed
+    trigger: Approved celebration screen becomes visible
+  - event: verification_approved_browse_tapped
+    trigger: User taps Start Browsing to go to task feed
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Verification — Approved".
+
+      Celebration screen — tasker has been approved and can now apply to tasks
+
+      Visible elements: animated_checkmark, verification_badge, heading, description, next_steps, start_browsing_button
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

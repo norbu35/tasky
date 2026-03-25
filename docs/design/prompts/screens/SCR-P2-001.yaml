@@ -1,0 +1,237 @@
+screen_id: SCR-P2-001
+name: Credits — Balance & Purchase
+role:
+  - tasker
+phase: '2'
+template: detail
+route: /(tasker)/credits
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-03.yaml
+    - prompts/journeys/JRN-TASK-05.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Credits — Balance & Purchase" (SCR-P2-001) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(balance_hero + pack_list + history_link) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CREDITBALANCE (header): Prominent balance display at the top of the screen showing current credit count
+    • COMP-CARD (elevated): Credit pack cards showing pack size, price, and per-credit cost
+    • COMP-BUTTON (primary): Primary CTA to proceed with purchasing selected credit pack
+    • COMP-BUTTON (ghost): Ghost button linking to transaction history
+    • COMP-LOADINGSKELETON (detail): Detail skeleton for initial load
+    • COMP-EMPTYSTATE (error): Error state when balance or packs fail to load
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Fetching credit balance and available packs from API
+  Key copy (Mongolian primary):
+    • nav_title: "Кредит" (Credits)
+    • balance_label: "Миний кредит" (My Credits)
+    • balance_zero_prompt: "Кредит дууссан байна. Нэмж худалдаж аваарай" (You have no credits. Purchase to continue)
+    • section_packs: "Кредит багцууд" (Credit Packs)
+    • pack_credits_label: "{count} кредит" ({count} credits)
+    • pack_price_label: "₮{price}" (₮{price})
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(balance_hero + pack_list + history_link) -> sticky_bottom_cta
+components:
+  - component: COMP-CREDITBALANCE
+    variant: header
+    usage: Prominent balance display at the top of the screen showing current credit count
+  - component: COMP-CARD
+    variant: elevated
+    usage: Credit pack cards showing pack size, price, and per-credit cost
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to proceed with purchasing selected credit pack
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Ghost button linking to transaction history
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton for initial load
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when balance or packs fail to load
+states:
+  - id: loading_initial
+    description: Fetching credit balance and available packs from API
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CREDITBALANCE
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-EMPTYSTATE
+  - id: loaded_has_balance
+    description: Balance loaded with credits > 0; pack list displayed for top-up
+    visible:
+      - COMP-CREDITBALANCE
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: loaded_zero_balance
+    description: Balance is 0 credits; purchase prompt is emphasized
+    visible:
+      - COMP-CREDITBALANCE
+      - COMP-CARD
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: pack_selection
+    description: User has selected a credit pack; purchase CTA becomes active
+    visible:
+      - COMP-CREDITBALANCE
+      - COMP-CARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Failed to load balance or packs due to network error
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-CREDITBALANCE
+      - COMP-CARD
+      - COMP-BUTTON
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Кредит
+    en: Credits
+  - key: balance_label
+    mn: Миний кредит
+    en: My Credits
+  - key: balance_zero_prompt
+    mn: Кредит дууссан байна. Нэмж худалдаж аваарай
+    en: You have no credits. Purchase to continue
+  - key: section_packs
+    mn: Кредит багцууд
+    en: Credit Packs
+  - key: pack_credits_label
+    mn: '{count} кредит'
+    en: '{count} credits'
+  - key: pack_price_label
+    mn: ₮{price}
+    en: ₮{price}
+  - key: pack_per_credit
+    mn: Нэг бүрт ₮{price}
+    en: ₮{price} per credit
+  - key: pack_best_value
+    mn: Хамгийн ашигтай
+    en: Best value
+  - key: cta_purchase
+    mn: Худалдаж авах
+    en: Purchase
+  - key: link_history
+    mn: Гүйлгээний түүх
+    en: Transaction history
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows detail skeleton matching balance + pack layout
+  - Balance hero section displays current credit count using CreditBalance header variant
+  - Zero balance state emphasizes purchase prompt with stronger visual cue
+  - Credit packs are displayed as elevated cards with pack size, price, and per-credit cost
+  - Best-value pack is labeled with a secondary accent badge
+  - Selecting a pack highlights it and enables the purchase CTA
+  - Tapping purchase navigates to SCR-P2-002 (QPay Payment)
+  - Tapping history navigates to SCR-P2-003 (Transaction History)
+  - Network error shows error state with retry CTA
+  - Price values use Manrope bold 20px price_display typography with ₮ prefix
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /credits/balance
+    purpose: Fetch current credit balance for the tasker
+  - method: GET
+    path: /credits/packs
+    purpose: Fetch available credit pack options with pricing
+analytics_events:
+  - event: credits_screen_viewed
+    trigger: Credits screen loaded successfully
+  - event: credits_pack_selected
+    trigger: User taps a credit pack card
+  - event: credits_purchase_tapped
+    trigger: User taps 'Purchase' CTA to proceed to payment
+  - event: credits_history_tapped
+    trigger: User taps 'Transaction History' link
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Credits — Balance & Purchase".
+
+      Fetching credit balance and available packs from API
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CREDITBALANCE, COMP-CARD, COMP-BUTTON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded_has_balance
+    prompt: >-
+      Generate the "loaded_has_balance" state of "Credits — Balance & Purchase".
+
+      Balance loaded with credits > 0; pack list displayed for top-up
+
+      Visible elements: COMP-CREDITBALANCE, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded_zero_balance
+    prompt: >-
+      Generate the "loaded_zero_balance" state of "Credits — Balance & Purchase".
+
+      Balance is 0 credits; purchase prompt is emphasized
+
+      Visible elements: COMP-CREDITBALANCE, COMP-CARD, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: pack_selection
+    prompt: >-
+      Generate the "pack_selection" state of "Credits — Balance & Purchase".
+
+      User has selected a credit pack; purchase CTA becomes active
+
+      Visible elements: COMP-CREDITBALANCE, COMP-CARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Credits — Balance & Purchase".
+
+      Failed to load balance or packs due to network error
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-CREDITBALANCE, COMP-CARD, COMP-BUTTON, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

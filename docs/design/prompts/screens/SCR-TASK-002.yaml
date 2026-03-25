@@ -1,0 +1,317 @@
+screen_id: SCR-TASK-002
+name: Task Detail (Tasker)
+role:
+  - tasker
+phase: 0-1
+template: detail
+route: /(tasker)/tasks/:taskId
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-01.yaml
+    - prompts/journeys/JRN-TASK-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Task Detail (Tasker)" (SCR-TASK-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(task_hero + customer_info + description + photos
+  + location_approximate + schedule_budget + trust_banner) -> sticky_bottom_cta(apply_button)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA at bottom — 'Apply' for verified taskers, 'Get Verified' for unverified
+    • COMP-BUTTON (outline): Secondary CTA — Message customer about the task
+    • COMP-STATUSBADGE (open): Task status badge showing 'Нээлттэй' (Open)
+    • COMP-PROFILEAVATAR (md): Customer's profile avatar in task hero section
+    • COMP-CATEGORYCHIP (active): Category label chip showing the task's service category
+    • COMP-TRUSTBANNER (compact): Trust messaging reinforcing platform safety on detail view
+    • COMP-LOADINGSKELETON (detail): Detail skeleton placeholder during initial data fetch
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Task detail is loading — skeleton placeholder shown
+  Key copy (Mongolian primary):
+    • page_title: "Даалгаврын дэлгэрэнгүй" (Task Detail)
+    • apply_button: "Анкет илгээх" (Apply)
+    • verify_cta: "Баталгаажуулалт хийх" (Get Verified)
+    • message_button: "Зурвас илгээх" (Message)
+    • budget_label: "Төсөв" (Budget)
+    • schedule_label: "Хуваарь" (Schedule)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(task_hero + customer_info + description + photos +
+    location_approximate + schedule_budget + trust_banner) -> sticky_bottom_cta(apply_button)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA at bottom — 'Apply' for verified taskers, 'Get Verified' for unverified
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary CTA — Message customer about the task
+  - component: COMP-STATUSBADGE
+    variant: open
+    usage: Task status badge showing 'Нээлттэй' (Open)
+  - component: COMP-PROFILEAVATAR
+    variant: md
+    usage: Customer's profile avatar in task hero section
+  - component: COMP-CATEGORYCHIP
+    variant: active
+    usage: Category label chip showing the task's service category
+  - component: COMP-TRUSTBANNER
+    variant: compact
+    usage: Trust messaging reinforcing platform safety on detail view
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton placeholder during initial data fetch
+states:
+  - id: loading_initial
+    description: Task detail is loading — skeleton placeholder shown
+    visible:
+      - nav_header
+      - loading_skeleton
+    hidden:
+      - task_content
+      - apply_button
+      - message_button
+      - trust_banner
+  - id: viewable_unverified
+    description: Unverified tasker can view task details but cannot apply — CTA says 'Get Verified'
+    visible:
+      - nav_header
+      - task_content
+      - customer_info
+      - photos
+      - location
+      - schedule_budget
+      - trust_banner
+      - verify_cta
+    hidden:
+      - apply_button
+      - already_applied_badge
+      - cap_reached_notice
+  - id: apply_verified
+    description: Verified tasker can view full detail and apply — primary CTA enabled
+    visible:
+      - nav_header
+      - task_content
+      - customer_info
+      - photos
+      - location
+      - schedule_budget
+      - trust_banner
+      - apply_button
+      - message_button
+    hidden:
+      - verify_cta
+      - already_applied_badge
+      - cap_reached_notice
+  - id: already_applied
+    description: Tasker has already applied to this task — apply button replaced with status indicator
+    visible:
+      - nav_header
+      - task_content
+      - customer_info
+      - photos
+      - location
+      - schedule_budget
+      - trust_banner
+      - already_applied_badge
+      - message_button
+    hidden:
+      - apply_button
+      - verify_cta
+      - cap_reached_notice
+  - id: cap_reached
+    description: Task has reached maximum application count — apply button disabled with explanation
+    visible:
+      - nav_header
+      - task_content
+      - customer_info
+      - photos
+      - location
+      - schedule_budget
+      - trust_banner
+      - cap_reached_notice
+    hidden:
+      - apply_button
+      - verify_cta
+      - already_applied_badge
+  - id: error_network
+    description: Failed to load task detail — network error with retry
+    visible:
+      - nav_header
+      - error_message
+      - retry_button
+    hidden:
+      - task_content
+      - apply_button
+      - trust_banner
+      - loading_skeleton
+copy:
+  - key: page_title
+    mn: Даалгаврын дэлгэрэнгүй
+    en: Task Detail
+  - key: apply_button
+    mn: Анкет илгээх
+    en: Apply
+  - key: verify_cta
+    mn: Баталгаажуулалт хийх
+    en: Get Verified
+  - key: message_button
+    mn: Зурвас илгээх
+    en: Message
+  - key: budget_label
+    mn: Төсөв
+    en: Budget
+  - key: schedule_label
+    mn: Хуваарь
+    en: Schedule
+  - key: location_label
+    mn: Байршил
+    en: Location
+  - key: location_approximate_note
+    mn: Ойролцоо байршил (захиалга баталгаажсны дараа тодорхой хаяг харагдана)
+    en: Approximate location (exact address shown after booking confirmed)
+  - key: description_label
+    mn: Тайлбар
+    en: Description
+  - key: photos_label
+    mn: Зурагнууд
+    en: Photos
+  - key: customer_label
+    mn: Захиалагч
+    en: Customer
+  - key: applicant_count
+    mn: '{count} хүн анкет илгээсэн'
+    en: '{count} applicants'
+  - key: already_applied_badge
+    mn: Анкет илгээсэн
+    en: Applied
+  - key: cap_reached_notice
+    mn: Анкетын тоо дүүрсэн байна
+    en: Application limit reached
+  - key: posted_time
+    mn: '{time} өмнө нийтлэгдсэн'
+    en: Posted {time} ago
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: retry
+    mn: Дахин оролдох
+    en: Retry
+acceptance_criteria:
+  - Task detail displays title, description, photos, approximate location, schedule, and budget
+  - Location is shown as approximate area (fuzzed 500m) per PRD — exact address only after booking
+  - Verified taskers see enabled 'Анкет илгээх' primary CTA at bottom
+  - Unverified taskers see 'Баталгаажуулалт хийх' CTA that navigates to Verification Gate (SCR-TASK-003)
+  - Tapping Apply for a verified tasker triggers application POST and navigates to Application Sent (SCR-TASK-011)
+  - Already applied state replaces apply button with 'Анкет илгээсэн' badge
+  - Cap reached state disables apply with explanatory notice
+  - Customer avatar and name are displayed in customer info section
+  - Budget is displayed in ₮XX,XXX format using price_display typography
+  - Back button in nav header returns to Task Feed (SCR-TASK-001)
+  - Application count is shown (e.g., '5 хүн анкет илгээсэн')
+  - Loading state uses detail skeleton matching content layout
+  - Network error displays retry button
+api_endpoints:
+  - method: GET
+    path: /tasks/:id
+    purpose: Fetch full task detail including description, photos, location, schedule, budget
+  - method: POST
+    path: /tasks/:id/applications
+    purpose: Submit application to the task (verified taskers only)
+analytics_events:
+  - event: task_detail_viewed
+    trigger: Task Detail screen becomes visible
+  - event: task_apply_tapped
+    trigger: Verified tasker taps Apply button
+  - event: task_apply_blocked_unverified
+    trigger: Unverified tasker taps Get Verified CTA
+  - event: task_apply_blocked_cap
+    trigger: Apply action blocked because application cap is reached
+  - event: task_message_tapped
+    trigger: User taps Message button to contact customer
+  - event: task_detail_photos_viewed
+    trigger: User scrolls through task photos
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Task Detail (Tasker)".
+
+      Task detail is loading — skeleton placeholder shown
+
+      Visible elements: nav_header, loading_skeleton
+
+      Hidden elements: task_content, apply_button, message_button, trust_banner
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: viewable_unverified
+    prompt: >-
+      Generate the "viewable_unverified" state of "Task Detail (Tasker)".
+
+      Unverified tasker can view task details but cannot apply — CTA says 'Get Verified'
+
+      Visible elements: nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner,
+      verify_cta
+
+      Hidden elements: apply_button, already_applied_badge, cap_reached_notice
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: apply_verified
+    prompt: >-
+      Generate the "apply_verified" state of "Task Detail (Tasker)".
+
+      Verified tasker can view full detail and apply — primary CTA enabled
+
+      Visible elements: nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner,
+      apply_button, message_button
+
+      Hidden elements: verify_cta, already_applied_badge, cap_reached_notice
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: already_applied
+    prompt: >-
+      Generate the "already_applied" state of "Task Detail (Tasker)".
+
+      Tasker has already applied to this task — apply button replaced with status indicator
+
+      Visible elements: nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner,
+      already_applied_badge, message_button
+
+      Hidden elements: apply_button, verify_cta, cap_reached_notice
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: cap_reached
+    prompt: >-
+      Generate the "cap_reached" state of "Task Detail (Tasker)".
+
+      Task has reached maximum application count — apply button disabled with explanation
+
+      Visible elements: nav_header, task_content, customer_info, photos, location, schedule_budget, trust_banner,
+      cap_reached_notice
+
+      Hidden elements: apply_button, verify_cta, already_applied_badge
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Task Detail (Tasker)".
+
+      Failed to load task detail — network error with retry
+
+      Visible elements: nav_header, error_message, retry_button
+
+      Hidden elements: task_content, apply_button, trust_banner, loading_skeleton
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

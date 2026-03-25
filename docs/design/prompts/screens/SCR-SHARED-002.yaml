@@ -1,0 +1,309 @@
+screen_id: SCR-SHARED-002
+name: Auth — Login
+role:
+  - customer
+  - tasker
+phase: 0-1
+template: auth
+route: /auth/login
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-SHARED-01.yaml
+    - prompts/journeys/JRN-SHARED-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Auth — Login" (SCR-SHARED-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: auth — Centered content with single CTA and trust messaging. Comfortable density, vertically centered,
+  primary CTA at bottom.
+
+  Layout structure: safe_area -> centered_content(logo + heading + description + login_buttons) -> bottom_links(terms +
+  privacy)
+
+  Components used:
+    • COMP-BUTTON (primary): Primary CTA for Facebook login; secondary CTA for OTP login (Phase 2+)
+    • COMP-BUTTON (outline): Secondary OTP login button shown only in Phase 2+
+    • COMP-INPUT (default): Phone number input field, visible only in otp_form state (Phase 2+)
+    • COMP-FORMFIELD (default): Wraps phone input with label and error messaging
+    • COMP-LANGUAGESWITCHER (default): Language toggle at top-right corner for mn/en switching
+  This screen has 7 states — generate the primary/default state:
+    Primary state: Login screen displayed with Facebook login button; OTP button shown in Phase 2+
+  Key copy (Mongolian primary):
+    • heading: "Tasky-д тавтай морил" (Welcome to Tasky)
+    • description: "Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай" (Connect with trusted taskers and book tasks easily)
+    • facebook_button_label: "Facebook-ээр нэвтрэх" (Login with Facebook)
+    • otp_button_label: "Утасны дугаараар нэвтрэх" (Login with Phone)
+    • phone_input_label: "Утасны дугаар" (Phone number)
+    • phone_input_placeholder: "9911 2233" (9911 2233)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: auth
+  density: comfortable
+  structure: safe_area -> centered_content(logo + heading + description + login_buttons) -> bottom_links(terms + privacy)
+components:
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA for Facebook login; secondary CTA for OTP login (Phase 2+)
+  - component: COMP-BUTTON
+    variant: outline
+    usage: Secondary OTP login button shown only in Phase 2+
+  - component: COMP-INPUT
+    variant: default
+    usage: Phone number input field, visible only in otp_form state (Phase 2+)
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps phone input with label and error messaging
+  - component: COMP-LANGUAGESWITCHER
+    variant: default
+    usage: Language toggle at top-right corner for mn/en switching
+states:
+  - id: default
+    description: Login screen displayed with Facebook login button; OTP button shown in Phase 2+
+    visible:
+      - logo
+      - heading
+      - description
+      - facebook_button
+      - language_switcher
+      - terms_link
+      - privacy_link
+    hidden:
+      - otp_button_phase1
+      - phone_input
+      - otp_loading
+  - id: facebook_loading
+    description: Facebook OAuth in progress after user taps the Facebook login button
+    visible:
+      - logo
+      - heading
+      - facebook_button_loading
+      - language_switcher
+    hidden:
+      - otp_button
+      - phone_input
+      - description
+  - id: otp_form
+    description: Phone number entry form shown after tapping OTP login (Phase 2+)
+    visible:
+      - logo
+      - heading
+      - phone_input
+      - submit_button
+      - back_link
+      - language_switcher
+    hidden:
+      - facebook_button
+      - description
+  - id: error_auth_failed
+    description: Authentication failed due to server error or invalid credentials
+    visible:
+      - logo
+      - heading
+      - description
+      - facebook_button
+      - error_message
+      - language_switcher
+    hidden:
+      - phone_input
+  - id: error_network
+    description: Network error prevents authentication request from completing
+    visible:
+      - logo
+      - heading
+      - description
+      - facebook_button
+      - network_error_message
+      - retry_hint
+      - language_switcher
+    hidden:
+      - phone_input
+  - id: error_facebook_unavailable
+    description: Facebook SDK unavailable or user cancelled Facebook OAuth flow
+    visible:
+      - logo
+      - heading
+      - description
+      - facebook_button_retry
+      - facebook_error_message
+      - language_switcher
+    hidden:
+      - phone_input
+  - id: offline
+    description: Device is offline; login actions disabled with offline banner
+    visible:
+      - logo
+      - heading
+      - description
+      - facebook_button_disabled
+      - offline_banner
+      - language_switcher
+    hidden:
+      - phone_input
+copy:
+  - key: heading
+    mn: Tasky-д тавтай морил
+    en: Welcome to Tasky
+  - key: description
+    mn: Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай
+    en: Connect with trusted taskers and book tasks easily
+  - key: facebook_button_label
+    mn: Facebook-ээр нэвтрэх
+    en: Login with Facebook
+  - key: otp_button_label
+    mn: Утасны дугаараар нэвтрэх
+    en: Login with Phone
+  - key: phone_input_label
+    mn: Утасны дугаар
+    en: Phone number
+  - key: phone_input_placeholder
+    mn: 9911 2233
+    en: 9911 2233
+  - key: submit_otp_label
+    mn: Код авах
+    en: Get Code
+  - key: error_auth_failed
+    mn: Нэвтрэх боломжгүй байна. Дахин оролдоно уу.
+    en: Login failed. Please try again.
+  - key: error_facebook_unavailable
+    mn: Facebook холболт амжилтгүй боллоо
+    en: Facebook connection failed
+  - key: error_network
+    mn: Интернэт холболтоо шалгана уу
+    en: Please check your internet connection
+  - key: offline_banner
+    mn: Офлайн байна
+    en: You are offline
+  - key: terms_link
+    mn: Үйлчилгээний нөхцөл
+    en: Terms of Service
+  - key: privacy_link
+    mn: Нууцлалын бодлого
+    en: Privacy Policy
+acceptance_criteria:
+  - Facebook login button is always visible in default state
+  - OTP login button is only visible when Phase 2+ is active
+  - Tapping Facebook button shows loading state on the button with spinner replacing label
+  - On successful Facebook auth for a new user, the app navigates to Onboarding Carousel (SCR-SHARED-005)
+  - On successful Facebook auth for a returning customer, the app navigates to My Tasks (SCR-CUST-001)
+  - On successful Facebook auth for a returning tasker, the app navigates to Task Feed (SCR-TASK-001)
+  - In Phase 2+, tapping OTP button transitions to otp_form state with phone input
+  - Phone input validates 8-digit Mongolian phone number format
+  - On successful OTP request, the app pushes to OTP Verification (SCR-SHARED-003)
+  - Facebook error shows specific error message with retry option
+  - Network error shows message advising user to check connection
+  - Language switcher toggles between Mongolian and English
+  - Terms of Service and Privacy Policy links are visible and tappable
+  - All error messages display inline, not as toasts
+  - Offline state disables login buttons and shows offline banner
+api_endpoints:
+  - method: POST
+    path: /auth/facebook
+    purpose: Authenticate user via Facebook OAuth token
+  - method: POST
+    path: /auth/otp/request
+    purpose: Request OTP code sent to provided phone number (Phase 2+)
+analytics_events:
+  - event: login_screen_viewed
+    trigger: Login screen becomes visible
+  - event: facebook_login_tapped
+    trigger: User taps the Facebook login button
+  - event: facebook_login_success
+    trigger: Facebook OAuth completes successfully
+  - event: facebook_login_failed
+    trigger: Facebook OAuth fails or user cancels
+  - event: otp_login_tapped
+    trigger: User taps the OTP login button (Phase 2+)
+  - event: otp_code_requested
+    trigger: User submits phone number for OTP
+  - event: language_switched
+    trigger: User toggles language between mn and en
+state_prompts:
+  - state_id: default
+    prompt: >-
+      Generate the "default" state of "Auth — Login".
+
+      Login screen displayed with Facebook login button; OTP button shown in Phase 2+
+
+      Visible elements: logo, heading, description, facebook_button, language_switcher, terms_link, privacy_link
+
+      Hidden elements: otp_button_phase1, phone_input, otp_loading
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: facebook_loading
+    prompt: >-
+      Generate the "facebook_loading" state of "Auth — Login".
+
+      Facebook OAuth in progress after user taps the Facebook login button
+
+      Visible elements: logo, heading, facebook_button_loading, language_switcher
+
+      Hidden elements: otp_button, phone_input, description
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: otp_form
+    prompt: >-
+      Generate the "otp_form" state of "Auth — Login".
+
+      Phone number entry form shown after tapping OTP login (Phase 2+)
+
+      Visible elements: logo, heading, phone_input, submit_button, back_link, language_switcher
+
+      Hidden elements: facebook_button, description
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_auth_failed
+    prompt: >-
+      Generate the "error_auth_failed" state of "Auth — Login".
+
+      Authentication failed due to server error or invalid credentials
+
+      Visible elements: logo, heading, description, facebook_button, error_message, language_switcher
+
+      Hidden elements: phone_input
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Auth — Login".
+
+      Network error prevents authentication request from completing
+
+      Visible elements: logo, heading, description, facebook_button, network_error_message, retry_hint,
+      language_switcher
+
+      Hidden elements: phone_input
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_facebook_unavailable
+    prompt: >-
+      Generate the "error_facebook_unavailable" state of "Auth — Login".
+
+      Facebook SDK unavailable or user cancelled Facebook OAuth flow
+
+      Visible elements: logo, heading, description, facebook_button_retry, facebook_error_message, language_switcher
+
+      Hidden elements: phone_input
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: offline
+    prompt: >-
+      Generate the "offline" state of "Auth — Login".
+
+      Device is offline; login actions disabled with offline banner
+
+      Visible elements: logo, heading, description, facebook_button_disabled, offline_banner, language_switcher
+
+      Hidden elements: phone_input
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

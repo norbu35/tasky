@@ -1,0 +1,246 @@
+screen_id: SCR-P2-005
+name: Referral — My Code & Stats
+role:
+  - customer
+  - tasker
+phase: '2'
+template: detail
+route: /referrals
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - none
+stitch_prompt: >-
+  Design a mobile app screen for "Referral — My Code & Stats" (SCR-P2-005) in the Tasky app — Mongolia's domestic
+  service marketplace.
+
+  This screen is used by both Customer and Tasker roles.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header -> scrollview(code_hero + stats_section + referral_list) ->
+  sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Hero card displaying the user's unique referral code with copy/share actions
+    • COMP-STATCARD (default): Stat cards showing referral count, successful conversions, and rewards earned
+    • COMP-BUTTON (primary): Primary CTA to share referral code via native share sheet
+    • COMP-LOADINGSKELETON (detail): Detail skeleton for initial loading of referral data
+    • COMP-EMPTYSTATE (error): Error state when referral data fails to load
+    • COMP-LISTROW (default): List of referred users with their status (pending, signed_up, completed_first_task)
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Fetching referral code and stats from API
+  Key copy (Mongolian primary):
+    • nav_title: "Урилга" (Referrals)
+    • code_heading: "Миний урилгын код" (My referral code)
+    • code_instruction: "Найзуудтайгаа хуваалцаж урамшуулал аваарай" (Share with friends and earn rewards)
+    • cta_copy: "Код хуулах" (Copy code)
+    • toast_copied: "Код хуулагдлаа" (Code copied)
+    • stat_invited: "Урьсан" (Invited)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header -> scrollview(code_hero + stats_section + referral_list) -> sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Hero card displaying the user's unique referral code with copy/share actions
+  - component: COMP-STATCARD
+    variant: default
+    usage: Stat cards showing referral count, successful conversions, and rewards earned
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to share referral code via native share sheet
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Detail skeleton for initial loading of referral data
+  - component: COMP-EMPTYSTATE
+    variant: error
+    usage: Error state when referral data fails to load
+  - component: COMP-LISTROW
+    variant: default
+    usage: List of referred users with their status (pending, signed_up, completed_first_task)
+states:
+  - id: loading_initial
+    description: Fetching referral code and stats from API
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+      - COMP-LISTROW
+      - COMP-EMPTYSTATE
+  - id: loaded_with_referrals
+    description: Referral code and stats loaded; user has referred at least one person
+    visible:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+      - COMP-LISTROW
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: loaded_no_referrals
+    description: Referral code loaded but user has not referred anyone yet
+    visible:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-LISTROW
+      - COMP-EMPTYSTATE
+  - id: sharing
+    description: Native share sheet is open for sharing referral code
+    visible:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Failed to load referral data due to network error
+    visible:
+      - COMP-EMPTYSTATE
+    hidden:
+      - COMP-CARD
+      - COMP-STATCARD
+      - COMP-BUTTON
+      - COMP-LISTROW
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Урилга
+    en: Referrals
+  - key: code_heading
+    mn: Миний урилгын код
+    en: My referral code
+  - key: code_instruction
+    mn: Найзуудтайгаа хуваалцаж урамшуулал аваарай
+    en: Share with friends and earn rewards
+  - key: cta_copy
+    mn: Код хуулах
+    en: Copy code
+  - key: toast_copied
+    mn: Код хуулагдлаа
+    en: Code copied
+  - key: stat_invited
+    mn: Урьсан
+    en: Invited
+  - key: stat_signed_up
+    mn: Бүртгүүлсэн
+    en: Signed up
+  - key: stat_completed
+    mn: Даалгавар гүйцэтгэсэн
+    en: Completed task
+  - key: cta_share
+    mn: Хуваалцах
+    en: Share
+  - key: section_referrals
+    mn: Урьсан хүмүүс
+    en: Referred people
+  - key: referral_status_pending
+    mn: Хүлээгдэж буй
+    en: Pending
+  - key: referral_status_signed_up
+    mn: Бүртгүүлсэн
+    en: Signed up
+  - key: referral_status_completed
+    mn: Даалгавар дууссан
+    en: Task completed
+  - key: error_headline
+    mn: Ачааллах боломжгүй
+    en: Unable to load
+  - key: error_retry
+    mn: Дахин оролдох
+    en: Try again
+acceptance_criteria:
+  - Loading state shows detail skeleton matching referral layout
+  - Referral code is displayed prominently in elevated hero card
+  - Tapping code copies it to clipboard and shows success toast
+  - Stat cards show invited count, signed-up count, and completed-task count
+  - Share CTA opens native platform share sheet with referral code and deep link
+  - Referred users list shows each person with their conversion status
+  - No-referrals state hides the referral list but still shows code and share CTA
+  - Network error shows error state with retry CTA
+  - Back button pops to previous screen
+  - Available to both customer and tasker roles
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: GET
+    path: /referrals/mine
+    purpose: Fetch referral code, stats, and list of referred users
+analytics_events:
+  - event: referral_screen_viewed
+    trigger: Referral screen loaded successfully
+  - event: referral_code_copied
+    trigger: User taps 'Copy code' button
+  - event: referral_shared
+    trigger: User completes share action via native share sheet
+  - event: referral_share_cancelled
+    trigger: User dismisses native share sheet without sharing
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Referral — My Code & Stats".
+
+      Fetching referral code and stats from API
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded_with_referrals
+    prompt: >-
+      Generate the "loaded_with_referrals" state of "Referral — My Code & Stats".
+
+      Referral code and stats loaded; user has referred at least one person
+
+      Visible elements: COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: loaded_no_referrals
+    prompt: >-
+      Generate the "loaded_no_referrals" state of "Referral — My Code & Stats".
+
+      Referral code loaded but user has not referred anyone yet
+
+      Visible elements: COMP-CARD, COMP-STATCARD, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-LISTROW, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: sharing
+    prompt: >-
+      Generate the "sharing" state of "Referral — My Code & Stats".
+
+      Native share sheet is open for sharing referral code
+
+      Visible elements: COMP-CARD, COMP-STATCARD, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Referral — My Code & Stats".
+
+      Failed to load referral data due to network error
+
+      Visible elements: COMP-EMPTYSTATE
+
+      Hidden elements: COMP-CARD, COMP-STATCARD, COMP-BUTTON, COMP-LISTROW, COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

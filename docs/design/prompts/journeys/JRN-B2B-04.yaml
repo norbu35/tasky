@@ -1,0 +1,33 @@
+journey_id: JRN-B2B-04
+name: Business Subscription Billing
+actor:
+  - customer
+phase: 3+
+goal: View or activate Host Lite / Ops Standard for a business account
+entry_screen: SCR-B2B-007
+exit_screens:
+  - SCR-B2B-007
+happy_path:
+  - step: 1
+    screen_id: SCR-B2B-007
+    screen_name: Business Subscription Billing
+    action: View available plans and current status
+    next: SCR-B2B-007
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-B2B-007
+    screen_name: Business Subscription Billing
+    action: Activate or renew plan via QPay
+    next: SCR-B2B-007
+    lifecycle: B2B-T02 (business_subscription_activated)
+alternate_paths:
+  - id: JRN-B2B-04-A1
+    name: Renewal failed
+    branch_at_step: 2
+    condition: Recurring payment renewal fails
+    screens:
+      - SCR-B2B-007
+    outcome: Show resubscribe path and failed status
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

@@ -1,0 +1,47 @@
+appId: mn.tasky.mobile
+---
+# Profile & Role Switch Flow
+# Navigates to the profile screen, opens settings, and looks for role switch.
+# Assumes the user is already logged in.
+
+- launchApp
+
+# Wait for the main tab bar to load
+- extendedWaitUntil:
+    visible: "MY TASKS"
+    timeout: 10000
+
+# Navigate to PROFILE tab
+- tapOn: "PROFILE"
+
+# Assert profile screen content
+- assertVisible:
+    id: "my-profile-screen"
+- assertVisible: "Edit Profile"
+
+# Tap settings gear icon
+- tapOn:
+    id: "settings-icon"
+
+# Assert settings screen appears
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 5000
+
+# Look for role switch option
+- scrollUntilVisible:
+    element: "Switch Role"
+    direction: "DOWN"
+    timeout: 5000
+
+- assertVisible: "Switch Role"
+
+# Tap role switch
+- tapOn: "Switch Role"
+
+# Assert role selection or confirmation appears
+- extendedWaitUntil:
+    visible:
+      id: "role-select-screen"
+    timeout: 5000
+- assertVisible: "How will you use Tasky?"
