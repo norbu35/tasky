@@ -1,0 +1,247 @@
+screen_id: SCR-TASK-019
+name: AI Profile Polish
+role:
+  - tasker
+phase: 0-1
+template: detail
+route: /(tasker)/profile/polish
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-TASK-08.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "AI Profile Polish" (SCR-TASK-019) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Tasker role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(original_bio + polish_options + suggestion_card)
+  -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Original and polished bio cards with clear before/after comparison
+    • COMP-INPUT (multiline): Editable multiline bio source input
+    • COMP-CATEGORYCHIP (active): Tone selection chips for the polish request (friendly, professional, concise)
+    • COMP-BUTTON (primary): Primary CTA to generate or apply the polished version
+    • COMP-BUTTON (ghost): Secondary CTA to keep editing manually
+    • COMP-LOADINGSKELETON (detail): Skeleton for suggestion card while profile data or generation result is loading
+    • COMP-TOAST (success): Success and error toast for apply/save outcomes
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Current bio is loading before polish flow starts
+  Key copy (Mongolian primary):
+    • nav_title: "AI тайлбар сайжруулах" (AI Profile Polish)
+    • source_label: "Одоогийн тайлбар" (Current description)
+    • polished_label: "Санал болгосон хувилбар" (Suggested version)
+    • tone_label: "Хэв маяг" (Tone)
+    • cta_generate: "Санал болгох" (Generate suggestion)
+    • cta_apply: "Энэ хувилбарыг хэрэглэх" (Apply this version)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(original_bio + polish_options + suggestion_card) ->
+    sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Original and polished bio cards with clear before/after comparison
+  - component: COMP-INPUT
+    variant: multiline
+    usage: Editable multiline bio source input
+  - component: COMP-CATEGORYCHIP
+    variant: active
+    usage: Tone selection chips for the polish request (friendly, professional, concise)
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to generate or apply the polished version
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary CTA to keep editing manually
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Skeleton for suggestion card while profile data or generation result is loading
+  - component: COMP-TOAST
+    variant: success
+    usage: Success and error toast for apply/save outcomes
+states:
+  - id: loading_initial
+    description: Current bio is loading before polish flow starts
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON
+      - COMP-TOAST
+  - id: draft_ready
+    description: Original profile description is loaded and ready for polish request
+    visible:
+      - COMP-CARD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: generating
+    description: AI polish request is running and preview result is being generated
+    visible:
+      - COMP-CARD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-BUTTON.ghost
+      - COMP-TOAST
+  - id: suggestion_ready
+    description: Polished version is shown side by side with the original and can be applied
+    visible:
+      - COMP-CARD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-TOAST
+  - id: apply_success
+    description: User applied the polished bio and profile update succeeded
+    visible:
+      - COMP-TOAST
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: Preview generation or save failed due to network error
+    visible:
+      - COMP-CARD
+      - COMP-INPUT
+      - COMP-CATEGORYCHIP
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+      - COMP-TOAST
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: AI тайлбар сайжруулах
+    en: AI Profile Polish
+  - key: source_label
+    mn: Одоогийн тайлбар
+    en: Current description
+  - key: polished_label
+    mn: Санал болгосон хувилбар
+    en: Suggested version
+  - key: tone_label
+    mn: Хэв маяг
+    en: Tone
+  - key: cta_generate
+    mn: Санал болгох
+    en: Generate suggestion
+  - key: cta_apply
+    mn: Энэ хувилбарыг хэрэглэх
+    en: Apply this version
+  - key: toast_success
+    mn: Санал болгосон текст хадгалагдлаа
+    en: Suggested text saved
+acceptance_criteria:
+  - Tasker can preview a polished version of their profile description before saving it
+  - Original text remains visible and editable throughout the flow
+  - Polish request does not overwrite the profile automatically; user must explicitly apply it
+  - Tone chips let the tasker request a more professional or concise rewrite
+  - Apply action persists through PUT /users/me after preview selection
+  - All copy renders correctly in Mongolian Cyrillic at 16px minimum body size
+api_endpoints:
+  - method: POST
+    path: /users/me/profile-polish-preview
+    purpose: Request a polished preview of the tasker's profile description
+  - method: PUT
+    path: /users/me
+    purpose: Persist the accepted polished profile description
+analytics_events:
+  - event: profile_polish_viewed
+    trigger: Screen becomes visible
+  - event: profile_polish_requested
+    trigger: Tasker taps Generate suggestion
+  - event: profile_polish_applied
+    trigger: Tasker accepts and saves the polished version
+  - event: profile_polish_rejected
+    trigger: Tasker leaves without applying the suggestion
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "AI Profile Polish".
+
+      Current bio is loading before polish flow starts
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: draft_ready
+    prompt: >-
+      Generate the "draft_ready" state of "AI Profile Polish".
+
+      Original profile description is loaded and ready for polish request
+
+      Visible elements: COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: generating
+    prompt: >-
+      Generate the "generating" state of "AI Profile Polish".
+
+      AI polish request is running and preview result is being generated
+
+      Visible elements: COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary
+
+      Hidden elements: COMP-BUTTON.ghost, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: suggestion_ready
+    prompt: >-
+      Generate the "suggestion_ready" state of "AI Profile Polish".
+
+      Polished version is shown side by side with the original and can be applied
+
+      Visible elements: COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: apply_success
+    prompt: >-
+      Generate the "apply_success" state of "AI Profile Polish".
+
+      User applied the polished bio and profile update succeeded
+
+      Visible elements: COMP-TOAST
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "AI Profile Polish".
+
+      Preview generation or save failed due to network error
+
+      Visible elements: COMP-CARD, COMP-INPUT, COMP-CATEGORYCHIP, COMP-BUTTON.primary, COMP-BUTTON.ghost, COMP-TOAST
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

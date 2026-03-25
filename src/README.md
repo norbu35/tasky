@@ -24,7 +24,7 @@ Each domain follows a consistent package layout: `api/`, `application/`, `dao/`,
 
 | Module | Package | Purpose |
 |--------|---------|---------|
-| Auth | `mn.tasky.auth` | Phone/SMS OTP authentication, JWT sessions, dev login bypass |
+| Auth | `mn.tasky.auth` | Facebook OAuth (Phase 0-1), phone OTP migration path (Phase 2+), JWT sessions, dev login bypass |
 | User | `mn.tasky.user` | User profiles, roles (customer/tasker/admin) |
 | Task | `mn.tasky.task` | Task CRUD, lifecycle, assignment, status management |
 | Booking | `mn.tasky.booking` | Booking creation, confirmation, safety checks |

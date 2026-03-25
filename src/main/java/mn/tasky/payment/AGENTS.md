@@ -1,6 +1,6 @@
 # Feature: payment
 
-Payment intent initiation and QPay callback processing.
+Escrow payment intent initiation and QPay callback processing.
 
 ## Implemented API
 
@@ -11,7 +11,7 @@ Payment intent initiation and QPay callback processing.
 
 ## Feature Flag
 
-Both flows are gated by `tasky.features.monetization-enabled`.
+Both flows are gated by `escrow_enabled`.
 When disabled, controllers return `503 FEATURE_DEFERRED`.
 
 ## Initiate Flow Rules
@@ -19,6 +19,7 @@ When disabled, controllers return `503 FEATURE_DEFERRED`.
 - Caller must be booking customer.
 - Booking must be `ASSIGNED`.
 - `liability_disclaimer_accepted` must be `true`.
+- Flow is Phase 3+ escrow-gated; direct settlement remains canonical for Phase 0-2.
 - Creates payment intent and returns synthetic `payment_url` + `qr_code`.
 
 ## Callback Rules

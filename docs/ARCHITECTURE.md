@@ -87,7 +87,7 @@ Cross-domain communication uses internal Java method calls only — no network h
         * `customers.churned.{category}` — inactive Customer reactivation
         * `platform.all` — system-wide announcements
     * **Configuration**: `FIREBASE_SERVICE_ACCOUNT_JSON` env var; `tasky.push.provider=firebase` activates `FirebasePushProvider`.
-    * **Current state (Phase 0-1)**: `ExpoPushProvider` is wired as a transitional placeholder. Migration to `FirebasePushProvider` is a Phase 1 task (ADR-0002).
+    * **Current state**: `FirebasePushProvider` is the active production provider. Expo push relay is removed from runtime use and retained only as historical context in ADR-0002.
 * **Async Processing**:
     * **Mechanism**: Spring `@Async` + `ApplicationEventPublisher` for decoupling.
     * **Persistence**: For critical tasks (e.g., notifications, payouts), the `domain_outbox_events` table provides at-least-once delivery with retry logic (`DomainEventOutboxProcessor`).
@@ -434,7 +434,7 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
     * Reliability score is recomputed on cancellation/no-show/completion signals and consumed by applicant ranking.
     * Pro badge assignment is deterministic from completion/rating thresholds and evaluated in background jobs.
 * **Admin Contract**:
-    * Admin user search is phone-only in Phase 0-1 (exact normalized match, required). Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
+    * Admin user search supports exact normalized phone lookup plus name and Facebook ID criteria with cursor pagination.
     * Category management supports intake schema create/update/activate/version/rollback with audit logs.
     * Feature toggles (lead fee, subscription, escrow) must be runtime-switchable without redeploy and fully audited.
 
@@ -631,7 +631,7 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 
 1. **Classify Risk**: Determine `low|medium|high` per `AGENTS.md` quality policy.
 2. **Design**: Update `API.yaml` (contract-first).
-3. **Generate**: Run `openapi-generator` to update DTOs and interfaces.
+3. **Generate**: Run `./gradlew openApiGenerate` to refresh backend interfaces and `pnpm sdk:generate` when TypeScript SDK types must be regenerated from the contract.
 4. **Implement**: Write controller implementations and JDBI repositories.
 5. **Test**: Add/Update required tests for the selected risk tier using `./gradlew --no-daemon` for Java checks.
 6. **Self-Verify**: Run `scripts/self-verify.sh` and produce `artifacts/self-verify.json`.

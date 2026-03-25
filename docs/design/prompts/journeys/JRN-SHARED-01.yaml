@@ -50,7 +50,7 @@ happy_path:
     screen_id: SCR-SHARED-009
     screen_name: Permission Primer — Notifications
     action: Grant/skip notification permission
-    next: SCR-CUST-001 or SCR-TASK-001
+    next: SCR-CUST-001
     lifecycle: null
 alternate_paths:
   - id: JRN-SHARED-01-A1

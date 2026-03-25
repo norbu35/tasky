@@ -1,6 +1,6 @@
 # Feature: wallet
 
-Wallet balances, ledger reads, payout requests, and internal wallet accounting helpers.
+Phase 3+ wallet balances, ledger reads, payout requests, and internal wallet accounting helpers.
 
 ## Implemented API
 
@@ -12,7 +12,7 @@ Wallet balances, ledger reads, payout requests, and internal wallet accounting h
 
 ## Feature Flag
 
-All wallet endpoints are gated by `tasky.features.monetization-enabled`.
+All wallet endpoints are gated by `escrow_enabled`.
 When disabled, controllers return `503 FEATURE_DEFERRED`.
 
 ## Payout Request Behavior

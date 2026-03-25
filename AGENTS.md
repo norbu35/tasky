@@ -104,7 +104,7 @@ PR notes.
 ### External Provider Strategy (Decision Gates, Not Assumptions)
 
 1. Candidate providers:
-    1. Payments: QPay (MVP), SocialPay/Cards (Post-MVP)
+    1. Payments: QPay (Phase 2 credit purchases; Phase 3 escrow/service-payment rails), SocialPay/Cards (Phase 4+)
     2. Identity and trust: Manual Review (MVP), approved local KYC (Post-MVP)
     3. Maps/geocoding: Google Maps and local alternatives
 2. Provider selection must pass:

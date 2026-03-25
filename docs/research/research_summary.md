@@ -1,5 +1,7 @@
 # Tasky PRD Research Compilation (March 3, 2026)
 
+Historical synthesis prepared ahead of the PRD v1.3 rewrite. Use this document as research input, not as a canonical product or architecture baseline.
+
 ## 1. Purpose
 
 This document compiles PRD-relevant findings from the four market research outputs in `docs/research/` so `docs/PRD.md`
@@ -20,10 +22,9 @@ can be updated with evidence-backed decisions.
 - Existing doctrine prioritizes trust, local market fit, liquidity, mobile-first UX, API contracts, and quality gates (
   `AGENTS.md`).
 
-### 3.2 Current baseline in product docs
+### 3.2 Baseline at Time of Compilation
 
-- Current PRD baseline is `docs/PRD.md` v1.1 (liquidity-first, trust-first, phase-1 direct settlement, monetization
-  deferred).
+- At the time of compilation, the working PRD baseline was `docs/PRD.md` v1.1 (liquidity-first, trust-first, phase-1 direct settlement, monetization deferred).
 - Current business strategy (`docs/STRATEGY.md`) already favors 0% commission first, soft monetization later.
 - Backlog and ticket status indicate broad backend foundation already exists, with product integration still ongoing (
   `TASK-080` in progress).

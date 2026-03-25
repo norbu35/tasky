@@ -1,0 +1,46 @@
+journey_id: JRN-B2B-01
+name: Create Business Account
+actor:
+  - customer
+phase: '2'
+goal: Set up a business account with a location and members
+entry_screen: SCR-B2B-001
+exit_screens:
+  - SCR-B2B-001
+happy_path:
+  - step: 1
+    screen_id: SCR-B2B-001
+    screen_name: Business Accounts
+    action: Tap 'Create account'
+    next: SCR-B2B-002
+    lifecycle: null
+  - step: 2
+    screen_id: SCR-B2B-002
+    screen_name: Business Account Editor
+    action: Enter business details and save
+    next: SCR-B2B-003
+    lifecycle: null
+  - step: 3
+    screen_id: SCR-B2B-003
+    screen_name: Business Location Editor
+    action: Add primary business location
+    next: SCR-B2B-004
+    lifecycle: null
+  - step: 4
+    screen_id: SCR-B2B-004
+    screen_name: Business Members
+    action: Invite a manager or finish setup
+    next: SCR-B2B-001
+    lifecycle: B2B-T01 (business_account_created)
+alternate_paths:
+  - id: JRN-B2B-01-A1
+    name: Owner skips member invite
+    branch_at_step: 4
+    condition: No manager added
+    screens:
+      - SCR-B2B-004
+      - SCR-B2B-001
+    outcome: Account is usable by owner only
+visual_consistency_note: >-
+  All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
+  usage. Screens in sequence should feel like a cohesive flow.

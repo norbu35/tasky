@@ -1,0 +1,227 @@
+screen_id: SCR-B2B-002
+name: Business Account Editor
+role:
+  - customer
+phase: '2'
+template: form_wizard
+route: /(customer)/business/accounts/:accountId/edit
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Business Account Editor" (SCR-B2B-002) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
+  Keyboard-aware scrolling.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(account_fields + management_links) ->
+  bottom_nav(cancel + save)
+
+  Components used:
+    • COMP-FORMFIELD (default): Wraps account name, billing day, and notes fields
+    • COMP-INPUT (default): Text inputs for account name and billing metadata
+    • COMP-LISTROW (default): Navigation rows to manage locations and members
+    • COMP-BUTTON (primary): Primary save button
+    • COMP-BUTTON (ghost): Secondary cancel button
+    • COMP-TOAST (success): Success or error toast on save
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Empty create form for a new business account
+  Key copy (Mongolian primary):
+    • nav_title_create: "Бизнес бүртгэх" (Create Business Account)
+    • nav_title_edit: "Бизнес засах" (Edit Business Account)
+    • label_name: "Бизнесийн нэр" (Business name)
+    • label_billing_day: "Төлбөрийн өдөр" (Billing day)
+    • cta_save: "Хадгалах" (Save)
+    • cta_manage_locations: "Байршил удирдах" (Manage locations)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: form_wizard
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(account_fields + management_links) -> bottom_nav(cancel + save)
+components:
+  - component: COMP-FORMFIELD
+    variant: default
+    usage: Wraps account name, billing day, and notes fields
+  - component: COMP-INPUT
+    variant: default
+    usage: Text inputs for account name and billing metadata
+  - component: COMP-LISTROW
+    variant: default
+    usage: Navigation rows to manage locations and members
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary save button
+  - component: COMP-BUTTON
+    variant: ghost
+    usage: Secondary cancel button
+  - component: COMP-TOAST
+    variant: success
+    usage: Success or error toast on save
+states:
+  - id: create_default
+    description: Empty create form for a new business account
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LISTROW
+      - COMP-TOAST
+  - id: edit_default
+    description: Existing business account data is loaded for editing
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-TOAST
+  - id: saving
+    description: Create or update request is in flight
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-TOAST
+  - id: success
+    description: Business account save completed successfully
+    visible:
+      - COMP-TOAST
+    hidden: []
+  - id: validation_error
+    description: Required fields failed validation
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-TOAST
+  - id: error_network
+    description: Create or update request failed
+    visible:
+      - COMP-FORMFIELD
+      - COMP-INPUT
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+      - COMP-BUTTON.ghost
+      - COMP-TOAST
+    hidden: []
+copy:
+  - key: nav_title_create
+    mn: Бизнес бүртгэх
+    en: Create Business Account
+  - key: nav_title_edit
+    mn: Бизнес засах
+    en: Edit Business Account
+  - key: label_name
+    mn: Бизнесийн нэр
+    en: Business name
+  - key: label_billing_day
+    mn: Төлбөрийн өдөр
+    en: Billing day
+  - key: cta_save
+    mn: Хадгалах
+    en: Save
+  - key: cta_manage_locations
+    mn: Байршил удирдах
+    en: Manage locations
+acceptance_criteria:
+  - Business account CRUD is feature-gated behind b2b_enabled
+  - Owner remains a CUSTOMER role and cannot be changed from this screen
+  - Locations and members are managed through linked subflows, not embedded parallel forms
+  - Successful save returns to SCR-B2B-001 with updated account data
+api_endpoints:
+  - method: POST
+    path: /business/accounts
+    purpose: Create a business account for a customer owner
+  - method: PUT
+    path: /business/accounts/:id
+    purpose: Update an existing business account
+analytics_events:
+  - event: business_account_editor_viewed
+    trigger: Editor screen becomes visible
+  - event: business_account_saved
+    trigger: Business account create or update succeeds
+  - event: business_account_locations_tapped
+    trigger: User opens location management from the editor
+state_prompts:
+  - state_id: create_default
+    prompt: >-
+      Generate the "create_default" state of "Business Account Editor".
+
+      Empty create form for a new business account
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LISTROW, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: edit_default
+    prompt: >-
+      Generate the "edit_default" state of "Business Account Editor".
+
+      Existing business account data is loaded for editing
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-LISTROW, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: saving
+    prompt: >-
+      Generate the "saving" state of "Business Account Editor".
+
+      Create or update request is in flight
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-LISTROW, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: success
+    prompt: >-
+      Generate the "success" state of "Business Account Editor".
+
+      Business account save completed successfully
+
+      Visible elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: validation_error
+    prompt: >-
+      Generate the "validation_error" state of "Business Account Editor".
+
+      Required fields failed validation
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-LISTROW, COMP-BUTTON.primary, COMP-BUTTON.ghost
+
+      Hidden elements: COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Business Account Editor".
+
+      Create or update request failed
+
+      Visible elements: COMP-FORMFIELD, COMP-INPUT, COMP-LISTROW, COMP-BUTTON.primary, COMP-BUTTON.ghost, COMP-TOAST
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

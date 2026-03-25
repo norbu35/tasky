@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-108",
+  "risk_level": "high",
+  "req_ids": [
+    "REQ-PAY-25",
+    "REQ-PAY-26"
+  ],
+  "depends_on": [
+    "TASK-020",
+    "TASK-021",
+    "TASK-022"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-108-01",
+      "type": "functional",
+      "statement": "Business account CRUD is feature-gated behind `b2b_enabled` and enforces owner-is-CUSTOMER, account locations, and OWNER or MANAGER membership roles with tenant isolation.",
+      "test_ids": [
+        "TID-TASK-108-API-BUSINESS-ACCOUNT-CRUD"
+      ]
+    },
+    {
+      "id": "AC-TASK-108-02",
+      "type": "functional",
+      "statement": "Tasks created on behalf of a business account persist `business_account_id`, reuse the standard task and booking flow, and can be listed at the account scope for authorized members.",
+      "test_ids": [
+        "TID-TASK-108-DOMAIN-B2B-TASK-TAGGING"
+      ]
+    },
+    {
+      "id": "AC-TASK-108-03",
+      "type": "functional",
+      "statement": "B2B-tagged tasks receive a configurable priority dispatch weight in ranking without creating a separate booking lifecycle or separate payout path.",
+      "test_ids": [
+        "TID-TASK-108-API-B2B-PRIORITY-DISPATCH"
+      ]
+    }
+  ]
+}

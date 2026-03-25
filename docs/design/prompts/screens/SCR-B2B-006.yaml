@@ -1,0 +1,193 @@
+screen_id: SCR-B2B-006
+name: Business Tasks
+role:
+  - customer
+phase: '2'
+template: feed_list
+route: /(customer)/business/accounts/:accountId/tasks
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-02.yaml
+    - prompts/journeys/JRN-B2B-03.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Business Tasks" (SCR-B2B-006) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: feed_list — Sticky header (search bar + filter bar) above a scrollable card feed. Pull-to-refresh, infinite
+  scroll pagination, skeleton loading placeholders.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(task_cards) ->
+  sticky_bottom_cta(post_as_business)
+
+  Components used:
+    • COMP-SPLITCARD (task): Business-scoped task cards reusing the standard task card pattern with account context
+    • COMP-BUTTON (primary): Primary CTA to post a new business task
+    • COMP-LOADINGSKELETON (card): Task list loading skeleton
+    • COMP-EMPTYSTATE (activation): Empty state when account has no tasks yet
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Business task list is loading
+  Key copy (Mongolian primary):
+    • nav_title: "Бизнесийн даалгаврууд" (Business Tasks)
+    • cta_post: "Бизнесээр даалгавар нэмэх" (Post task as business)
+    • empty_headline: "Даалгавар алга" (No tasks yet)
+    • business_tag: "Бизнес" (Business)
+    • retry_label: "Дахин оролдох" (Retry)
+    • list_notice: "Энэ жагсаалт нь зөвхөн сонгосон бизнес бүртгэлийн task-уудыг харуулна" (This list only shows tasks for the selected business account)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: feed_list
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(task_cards) -> sticky_bottom_cta(post_as_business)
+components:
+  - component: COMP-SPLITCARD
+    variant: task
+    usage: Business-scoped task cards reusing the standard task card pattern with account context
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to post a new business task
+  - component: COMP-LOADINGSKELETON
+    variant: card
+    usage: Task list loading skeleton
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Empty state when account has no tasks yet
+states:
+  - id: loading_initial
+    description: Business task list is loading
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-SPLITCARD
+      - COMP-BUTTON
+      - COMP-EMPTYSTATE
+  - id: empty
+    description: Business account has no tasks yet
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-SPLITCARD
+  - id: populated_open
+    description: Business task list shows open tasks only
+    visible:
+      - COMP-SPLITCARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: populated_mixed
+    description: Business task list shows open, assigned, and completed tasks together
+    visible:
+      - COMP-SPLITCARD
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Business task list failed to load
+    visible:
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-SPLITCARD
+copy:
+  - key: nav_title
+    mn: Бизнесийн даалгаврууд
+    en: Business Tasks
+  - key: cta_post
+    mn: Бизнесээр даалгавар нэмэх
+    en: Post task as business
+  - key: empty_headline
+    mn: Даалгавар алга
+    en: No tasks yet
+  - key: business_tag
+    mn: Бизнес
+    en: Business
+  - key: retry_label
+    mn: Дахин оролдох
+    en: Retry
+  - key: list_notice
+    mn: Энэ жагсаалт нь зөвхөн сонгосон бизнес бүртгэлийн task-уудыг харуулна
+    en: This list only shows tasks for the selected business account
+acceptance_criteria:
+  - Business-scoped tasks reuse the standard task card visual pattern
+  - Opening a task routes to SCR-CUST-009 rather than a separate B2B detail surface
+  - Task list is account-scoped and tenant-isolated
+  - Post CTA routes to SCR-B2B-005
+api_endpoints:
+  - method: GET
+    path: /business/accounts/:id/tasks
+    purpose: List tasks for the selected business account
+analytics_events:
+  - event: business_tasks_viewed
+    trigger: Business task list screen loads
+  - event: business_task_opened
+    trigger: User taps a business-scoped task card
+  - event: business_task_post_tapped
+    trigger: User taps post as business CTA
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Business Tasks".
+
+      Business task list is loading
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-SPLITCARD, COMP-BUTTON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Business Tasks".
+
+      Business account has no tasks yet
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-SPLITCARD
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_open
+    prompt: >-
+      Generate the "populated_open" state of "Business Tasks".
+
+      Business task list shows open tasks only
+
+      Visible elements: COMP-SPLITCARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated_mixed
+    prompt: >-
+      Generate the "populated_mixed" state of "Business Tasks".
+
+      Business task list shows open, assigned, and completed tasks together
+
+      Visible elements: COMP-SPLITCARD, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Business Tasks".
+
+      Business task list failed to load
+
+      Visible elements: COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-SPLITCARD
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

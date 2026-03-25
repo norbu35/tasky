@@ -1,7 +1,7 @@
 version: '1.0'
-generated_at: '2026-03-25T17:39:28.364Z'
-total_screens: 81
-total_journeys: 24
+generated_at: '2026-03-25T23:06:53.310Z'
+total_screens: 91
+total_journeys: 30
 generation_order:
   - group: shared
     description: Auth, onboarding, profile, inbox — foundation screens
@@ -65,6 +65,8 @@ generation_order:
       - SCR-CUST-025
       - SCR-CUST-026
       - SCR-CUST-027
+      - SCR-CUST-028
+      - SCR-CUST-029
   - group: tasker
     description: Browse, verify, apply, manage jobs — tasker flow
     screens:
@@ -86,6 +88,17 @@ generation_order:
       - SCR-TASK-016
       - SCR-TASK-017
       - SCR-TASK-018
+      - SCR-TASK-019
+  - group: b2b
+    description: Business accounts, account-scoped posting, task oversight, and billing
+    screens:
+      - SCR-B2B-001
+      - SCR-B2B-002
+      - SCR-B2B-003
+      - SCR-B2B-004
+      - SCR-B2B-005
+      - SCR-B2B-006
+      - SCR-B2B-007
   - group: phase_2
     description: Credits, payments, referrals — monetization
     screens:
@@ -103,6 +116,86 @@ generation_order:
       - SCR-P3-004
       - SCR-P3-005
 screens:
+  - screen_id: SCR-B2B-001
+    name: Business Accounts
+    role:
+      - customer
+    phase: '2'
+    template: feed_list
+    journeys:
+      - JRN-B2B-01
+      - JRN-B2B-03
+    prompt_file: prompts/screens/SCR-B2B-001.yaml
+    state_count: 5
+    has_api: true
+  - screen_id: SCR-B2B-002
+    name: Business Account Editor
+    role:
+      - customer
+    phase: '2'
+    template: form_wizard
+    journeys:
+      - JRN-B2B-01
+    prompt_file: prompts/screens/SCR-B2B-002.yaml
+    state_count: 6
+    has_api: true
+  - screen_id: SCR-B2B-003
+    name: Business Location Editor
+    role:
+      - customer
+    phase: '2'
+    template: form_wizard
+    journeys:
+      - JRN-B2B-01
+      - JRN-B2B-02
+    prompt_file: prompts/screens/SCR-B2B-003.yaml
+    state_count: 6
+    has_api: true
+  - screen_id: SCR-B2B-004
+    name: Business Members
+    role:
+      - customer
+    phase: '2'
+    template: detail
+    journeys:
+      - JRN-B2B-01
+    prompt_file: prompts/screens/SCR-B2B-004.yaml
+    state_count: 6
+    has_api: true
+  - screen_id: SCR-B2B-005
+    name: Post Task as Business
+    role:
+      - customer
+    phase: '2'
+    template: detail
+    journeys:
+      - JRN-B2B-02
+    prompt_file: prompts/screens/SCR-B2B-005.yaml
+    state_count: 5
+    has_api: true
+  - screen_id: SCR-B2B-006
+    name: Business Tasks
+    role:
+      - customer
+    phase: '2'
+    template: feed_list
+    journeys:
+      - JRN-B2B-02
+      - JRN-B2B-03
+    prompt_file: prompts/screens/SCR-B2B-006.yaml
+    state_count: 5
+    has_api: true
+  - screen_id: SCR-B2B-007
+    name: Business Subscription Billing
+    role:
+      - customer
+    phase: 3+
+    template: detail
+    journeys:
+      - JRN-B2B-04
+    prompt_file: prompts/screens/SCR-B2B-007.yaml
+    state_count: 7
+    has_api: true
   - screen_id: SCR-CUST-001
     name: My Tasks — Task List
     role:
@@ -122,6 +215,7 @@ screens:
     template: feed_list
     journeys:
       - JRN-CUST-01
+      - JRN-B2B-02
     prompt_file: prompts/screens/SCR-CUST-002.yaml
     state_count: 3
     has_api: true
@@ -201,6 +295,8 @@ screens:
       - JRN-CUST-02
       - JRN-CUST-07
       - JRN-CUST-08
+      - JRN-CUST-09
+      - JRN-B2B-03
     prompt_file: prompts/screens/SCR-CUST-009.yaml
     state_count: 9
     has_api: true
@@ -408,6 +504,28 @@ screens:
       - JRN-CUST-08
     prompt_file: prompts/screens/SCR-CUST-027.yaml
     state_count: 5
+    has_api: true
+  - screen_id: SCR-CUST-028
+    name: Task Boost Options
+    role:
+      - customer
+    phase: '2'
+    template: detail
+    journeys:
+      - JRN-CUST-09
+    prompt_file: prompts/screens/SCR-CUST-028.yaml
+    state_count: 6
+    has_api: true
+  - screen_id: SCR-CUST-029
+    name: Task Boost Payment
+    role:
+      - customer
+    phase: '2'
+    template: detail
+    journeys:
+      - JRN-CUST-09
+    prompt_file: prompts/screens/SCR-CUST-029.yaml
+    state_count: 6
     has_api: true
   - screen_id: SCR-INFRA-001
     name: Network Error / Offline
@@ -727,6 +845,7 @@ screens:
     template: form_wizard
     journeys:
       - JRN-SHARED-05
+      - JRN-TASK-08
     prompt_file: prompts/screens/SCR-SHARED-013.yaml
     state_count: 7
     has_api: true
@@ -1008,7 +1127,7 @@ screens:
     journeys:
       - JRN-TASK-03
     prompt_file: prompts/screens/SCR-TASK-017.yaml
-    state_count: 6
+    state_count: 7
     has_api: true
   - screen_id: SCR-TASK-018
     name: Privacy Policy
@@ -1020,3 +1139,14 @@ screens:
     prompt_file: prompts/screens/SCR-TASK-018.yaml
     state_count: 2
     has_api: false
+  - screen_id: SCR-TASK-019
+    name: AI Profile Polish
+    role:
+      - tasker
+    phase: 0-1
+    template: detail
+    journeys:
+      - JRN-TASK-08
+    prompt_file: prompts/screens/SCR-TASK-019.yaml
+    state_count: 6
+    has_api: true

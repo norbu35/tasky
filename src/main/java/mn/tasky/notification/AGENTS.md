@@ -22,21 +22,10 @@ Device token registration and push notification dispatch abstraction.
 
 | Provider | Class | Activation |
 |---|---|---|
-| `FirebasePushProvider` | *(Phase 1 — to implement)* | `tasky.push.provider=firebase` |
-| `ExpoPushProvider` | transitional placeholder (Phase 0-1 only) | `tasky.push.provider=expo` |
+| `FirebasePushProvider` | active production provider | `tasky.push.provider=firebase` |
 | `LoggingPushProvider` | local dev / default | `tasky.push.provider=logging` (default) |
 
-**Phase 0-1 current state**: `ExpoPushProvider` is active in production (`tasky.push.provider=expo` in
-`application-prod.yml`). This is a transitional placeholder. The Phase 1 migration task replaces it with
-`FirebasePushProvider` using the Firebase Admin SDK.
-
-**Phase 1 migration checklist** (do not implement partially):
-1. Add Firebase Admin SDK to `build.gradle.kts`
-2. Implement `FirebasePushProvider` — individual sends via `FirebaseMessaging.send()`, batch via `sendMulticast()`
-3. Implement server-side topic subscription in `NotificationService.registerDevice()` using the topic taxonomy in `docs/ARCHITECTURE.md §3.3`
-4. Set `FIREBASE_SERVICE_ACCOUNT_JSON` env var in prod
-5. Change `tasky.push.provider=firebase` in `application-prod.yml`
-6. Remove `ExpoPushProvider`
+**Current state**: `FirebasePushProvider` is active in production and topic subscription is performed during device registration. `ExpoPushProvider` is no longer part of the active runtime path.
 
 ## Topic Fan-out (Phase 1+)
 

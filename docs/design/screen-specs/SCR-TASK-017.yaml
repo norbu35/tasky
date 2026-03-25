@@ -66,6 +66,11 @@ states:
     components_visible: [handle_bar, notification_heading, task_summary, credit_cost, credit_balance, countdown_timer, accept_button, decline_button]
     components_hidden: [accepting_spinner, success_content, insufficient_content, expired_content]
 
+  - id: grandfathered_discount_applied
+    description: "Eligible grandfathered tasker sees permanent 5 percent discount disclosure before accepting the lead"
+    components_visible: [handle_bar, notification_heading, task_summary, credit_cost, credit_balance, discount_notice, accept_button, decline_button]
+    components_hidden: [accepting_spinner, success_content, insufficient_content, expired_content]
+
   - id: accepting
     description: "Accept in progress — credits being deducted via API"
     components_visible: [handle_bar, notification_heading, accepting_spinner, accepting_message]
@@ -207,6 +212,11 @@ copy:
     en: "Credits refunded if customer cancels"
     max_chars: 45
 
+  - key: grandfathered_discount_notice
+    mn: "Танд early adopter 5% хөнгөлөлт үйлчилж байна"
+    en: "Your early-adopter 5% discount is applied"
+    max_chars: 48
+
 api_endpoints:
   - method: POST
     path: "/applications/:id/accept"
@@ -245,5 +255,6 @@ acceptance_criteria:
   - "On accept success, dismissed to My Jobs (SCR-TASK-012)"
   - "On decline or expiry, dismissed to My Jobs (SCR-TASK-012)"
   - "Lead cost follows category-tiered pricing (REQ-PAY-27)"
+  - "Grandfathered taskers see a clear 5% discount disclosure before paid checkout pricing is confirmed (REQ-PAY-28)"
   - "Core matching (browse/apply) remains free — credits only on accept (REQ-PAY-10, REQ-PAY-15)"
   - "Scrim overlay behind sheet per modal_sheet template"

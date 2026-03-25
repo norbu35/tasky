@@ -4,6 +4,10 @@
 
 accepted
 
+## Implementation Status
+
+Completed. Current runtime and production defaults use `FirebasePushProvider`; Expo push relay is no longer part of the active runtime path.
+
 ## Date
 
 2026-03-21
@@ -68,10 +72,10 @@ Negative:
 2. Requires `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) managed as EAS secrets.
 3. APNs auth key must be configured in Firebase Console (one-time; requires Apple Developer account).
 
-## Migration from ExpoPushProvider (Phase 1 task)
+## Migration from ExpoPushProvider (Historical Plan)
 
-The Phase 0-1 production deployment runs `ExpoPushProvider` as a transitional placeholder.
-The Phase 1 migration is a single focused task (estimated 3 days):
+At the time of the decision, the Phase 0-1 production deployment still ran `ExpoPushProvider` as a transitional placeholder.
+That migration plan has since been completed:
 
 1. Firebase project setup: download credentials, configure APNs auth key
 2. Add `@react-native-firebase/app` + `@react-native-firebase/messaging` + `@notifee/react-native` to mobile

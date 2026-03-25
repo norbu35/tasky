@@ -9,6 +9,7 @@ context_refs:
   global: prompts/global-context.yaml
   journeys:
     - prompts/journeys/JRN-CUST-01.yaml
+    - prompts/journeys/JRN-B2B-02.yaml
 stitch_prompt: >-
   Design a mobile app screen for "Post Task — Category Selection" (SCR-CUST-002) in the Tasky app — Mongolia's domestic
   service marketplace.

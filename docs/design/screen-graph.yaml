@@ -146,6 +146,9 @@ nodes:
       - to: SCR-TASK-016
         type: push
         guard: "tap stats, role == tasker"
+      - to: SCR-B2B-001
+        type: push
+        guard: "tap business accounts, role == customer, b2b_enabled"
     data_deps: [user_id, profile]
     tab: profile
 
@@ -155,6 +158,9 @@ nodes:
       - to: SCR-SHARED-012
         type: pop
         guard: "save success or cancel"
+      - to: SCR-TASK-019
+        type: push
+        guard: "tap 'AI polish', role == tasker"
     data_deps: [user_id, profile]
 
   SCR-SHARED-014:
@@ -415,6 +421,9 @@ nodes:
       - to: SCR-CUST-027
         type: push
         guard: "tap 'Match me now', Phase 3+"
+      - to: SCR-CUST-028
+        type: push
+        guard: "tap 'Boost Task', Phase 2, promoted_listings_enabled"
       - to: SCR-SHARED-010
         type: push
         guard: "tap 'Message Tasker'"
@@ -637,6 +646,28 @@ nodes:
         guard: "back"
     data_deps: [task_id, match_candidates]
 
+  SCR-CUST-028:
+    label: "Task Boost Options"
+    edges:
+      - to: SCR-CUST-029
+        type: push
+        guard: "boost selected and continue tapped"
+      - to: SCR-CUST-009
+        type: pop
+        guard: "back"
+    data_deps: [task_id, boost_products, active_boost_state]
+
+  SCR-CUST-029:
+    label: "Task Boost Payment"
+    edges:
+      - to: SCR-CUST-009
+        type: pop
+        guard: "payment complete or back"
+      - to: SCR-CUST-028
+        type: pop
+        guard: "cancel before activation"
+    data_deps: [task_id, payment_id, qpay_qr, selected_boost]
+
   # ═══════════════════════════════════════════════════
   # TASKER FLOW
   # ═══════════════════════════════════════════════════
@@ -849,6 +880,101 @@ nodes:
         type: pop
         guard: "back"
     data_deps: []
+
+  SCR-TASK-019:
+    label: "AI Profile Polish"
+    edges:
+      - to: SCR-SHARED-013
+        type: pop
+        guard: "apply success or back"
+    data_deps: [user_id, profile_bio, polish_preview]
+
+  # ═══════════════════════════════════════════════════
+  # B2B SCREENS
+  # ═══════════════════════════════════════════════════
+
+  SCR-B2B-001:
+    label: "Business Accounts"
+    edges:
+      - to: SCR-B2B-002
+        type: push
+        guard: "tap create account or edit account"
+      - to: SCR-B2B-006
+        type: push
+        guard: "tap account tasks"
+      - to: SCR-B2B-007
+        type: push
+        guard: "tap account billing"
+      - to: SCR-B2B-004
+        type: push
+        guard: "tap account members"
+      - to: SCR-SHARED-012
+        type: pop
+        guard: "back"
+    data_deps: [business_accounts]
+
+  SCR-B2B-002:
+    label: "Business Account Editor"
+    edges:
+      - to: SCR-B2B-003
+        type: push
+        guard: "tap manage locations"
+      - to: SCR-B2B-004
+        type: push
+        guard: "tap manage members"
+      - to: SCR-B2B-001
+        type: pop
+        guard: "save success or back"
+    data_deps: [account_id, business_account]
+
+  SCR-B2B-003:
+    label: "Business Location Editor"
+    edges:
+      - to: SCR-B2B-002
+        type: pop
+        guard: "save success or back"
+    data_deps: [account_id, location_id, business_location]
+
+  SCR-B2B-004:
+    label: "Business Members"
+    edges:
+      - to: SCR-B2B-002
+        type: pop
+        guard: "back"
+    data_deps: [account_id, members]
+
+  SCR-B2B-005:
+    label: "Post Task as Business"
+    edges:
+      - to: SCR-CUST-002
+        type: push
+        guard: "business context selected and continue tapped"
+      - to: SCR-B2B-006
+        type: pop
+        guard: "back"
+    data_deps: [business_accounts, selected_account, selected_location]
+
+  SCR-B2B-006:
+    label: "Business Tasks"
+    edges:
+      - to: SCR-B2B-005
+        type: push
+        guard: "tap 'Post Task as Business'"
+      - to: SCR-CUST-009
+        type: push
+        guard: "tap business task card"
+      - to: SCR-B2B-001
+        type: pop
+        guard: "back"
+    data_deps: [account_id, business_tasks]
+
+  SCR-B2B-007:
+    label: "Business Subscription Billing"
+    edges:
+      - to: SCR-B2B-001
+        type: pop
+        guard: "back or billing updated"
+    data_deps: [account_id, subscription_plans, current_subscription]
 
   # ═══════════════════════════════════════════════════
   # PHASE 2 SCREENS

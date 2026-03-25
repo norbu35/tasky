@@ -8,7 +8,7 @@ All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in
 
 | Method | Path                                       | Notes                                                                      |
 |--------|--------------------------------------------|----------------------------------------------------------------------------|
-| `GET`  | `/api/v1/admin/users`                      | Search by `phone` (exact normalized match via blind index), cursor + limit |
+| `GET`  | `/api/v1/admin/users`                      | Search by `phone`, `name`, or `facebook_id`; cursor + limit |
 | `POST` | `/api/v1/admin/users/{id}/ban`             | Ban user, writes audit log                                                 |
 | `POST` | `/api/v1/admin/users/{id}/unban`           | Set user status to `ACTIVE`, writes audit log                              |
 | `GET`  | `/api/v1/admin/verifications/pending`      | List pending verification requests                                         |
@@ -26,7 +26,7 @@ All endpoints are under `/api/v1/admin/**` and require `ADMIN` role (enforced in
 
 - Verification approve/reject uses `AuthService`; approve sets user status to `VERIFIED`.
 - `POST /admin/disputes/{id}/resolve` accepts outcomes: `RESOLVE_TASKER`, `RESOLVE_CUSTOMER`, `ESCALATE`.
-- Payout endpoints are gated by `tasky.features.monetization-enabled`.
+- Payout endpoints are gated by `escrow_enabled`.
 - `POST /admin/payouts/{id}/process` also enforces weekday rule: Tuesday or Friday only.
 - Some admin endpoints return mixed error envelopes (`{code,message}` and `{error}`) depending on controller path.
 

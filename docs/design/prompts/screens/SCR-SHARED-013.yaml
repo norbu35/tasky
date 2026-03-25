@@ -10,6 +10,7 @@ context_refs:
   global: prompts/global-context.yaml
   journeys:
     - prompts/journeys/JRN-SHARED-05.yaml
+    - prompts/journeys/JRN-TASK-08.yaml
 stitch_prompt: >-
   Design a mobile app screen for "Profile — Edit Profile" (SCR-SHARED-013) in the Tasky app — Mongolia's domestic
   service marketplace.

@@ -4,6 +4,8 @@ Every implementation ticket must have a machine-readable spec at:
 
 `tickets/<TICKET-ID>.json`
 
+This directory is the canonical planning source of truth. The legacy markdown backlog document is intentionally not restored.
+
 Preferred operational wrapper:
 `scripts/agent-flow.sh verify --ticket <TICKET-ID>`
 

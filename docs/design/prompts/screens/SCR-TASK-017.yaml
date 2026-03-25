@@ -28,7 +28,7 @@ stitch_prompt: >-
     • COMP-BUTTON (primary): CTA shown when credits are insufficient — redirect to purchase
     • COMP-CREDITBALANCE (inline): Inline credit balance display showing current balance and cost to unlock
     • COMP-PROFILEAVATAR (md): Customer avatar shown in lead notification (blurred or partial until unlock)
-  This screen has 6 states — generate the primary/default state:
+  This screen has 7 states — generate the primary/default state:
     Primary state: Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed
   Key copy (Mongolian primary):
     • notification_heading: "Захиалагч таныг сонголоо!" (A customer selected you!)
@@ -72,6 +72,22 @@ states:
       - credit_cost
       - credit_balance
       - countdown_timer
+      - accept_button
+      - decline_button
+    hidden:
+      - accepting_spinner
+      - success_content
+      - insufficient_content
+      - expired_content
+  - id: grandfathered_discount_applied
+    description: Eligible grandfathered tasker sees permanent 5 percent discount disclosure before accepting the lead
+    visible:
+      - handle_bar
+      - notification_heading
+      - task_summary
+      - credit_cost
+      - credit_balance
+      - discount_notice
       - accept_button
       - decline_button
     hidden:
@@ -223,6 +239,9 @@ copy:
   - key: refund_notice
     mn: Захиалагч цуцалвал кредит буцаагдана
     en: Credits refunded if customer cancels
+  - key: grandfathered_discount_notice
+    mn: Танд early adopter 5% хөнгөлөлт үйлчилж байна
+    en: Your early-adopter 5% discount is applied
 acceptance_criteria:
   - This is a bottom sheet overlay triggered by push notification, not a standalone route
   - 15-minute countdown timer is prominently displayed (REQ-PAY-11, REQ-BOOK-10)
@@ -237,6 +256,7 @@ acceptance_criteria:
   - On accept success, dismissed to My Jobs (SCR-TASK-012)
   - On decline or expiry, dismissed to My Jobs (SCR-TASK-012)
   - Lead cost follows category-tiered pricing (REQ-PAY-27)
+  - Grandfathered taskers see a clear 5% discount disclosure before paid checkout pricing is confirmed (REQ-PAY-28)
   - Core matching (browse/apply) remains free — credits only on accept (REQ-PAY-10, REQ-PAY-15)
   - Scrim overlay behind sheet per modal_sheet template
 api_endpoints:
@@ -269,6 +289,19 @@ state_prompts:
       Lead notification received — task summary, credit cost, balance, and 15-min countdown timer displayed
 
       Visible elements: handle_bar, notification_heading, task_summary, credit_cost, credit_balance, countdown_timer,
+      accept_button, decline_button
+
+      Hidden elements: accepting_spinner, success_content, insufficient_content, expired_content
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: grandfathered_discount_applied
+    prompt: >-
+      Generate the "grandfathered_discount_applied" state of "Lead Unlock — Accept/Decline".
+
+      Eligible grandfathered tasker sees permanent 5 percent discount disclosure before accepting the lead
+
+      Visible elements: handle_bar, notification_heading, task_summary, credit_cost, credit_balance, discount_notice,
       accept_button, decline_button
 
       Hidden elements: accepting_spinner, success_content, insufficient_content, expired_content

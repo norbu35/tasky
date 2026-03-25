@@ -1,0 +1,223 @@
+screen_id: SCR-B2B-004
+name: Business Members
+role:
+  - customer
+phase: '2'
+template: detail
+route: /(customer)/business/accounts/:accountId/members
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-01.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Business Members" (SCR-B2B-004) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(member_rows) -> sticky_bottom_cta(invite_member)
+
+  Components used:
+    • COMP-LISTROW (default): Rows for each account member showing role, phone, and edit affordance
+    • COMP-MODALSHEET (default): Invite/edit member sheet with role picker
+    • COMP-BUTTON (primary): Primary CTA to invite a new manager
+    • COMP-EMPTYSTATE (activation): Empty state when only the owner exists
+    • COMP-LOADINGSKELETON (list): Member list loading skeleton
+  This screen has 6 states — generate the primary/default state:
+    Primary state: Member list is loading
+  Key copy (Mongolian primary):
+    • nav_title: "Бизнесийн гишүүд" (Business Members)
+    • cta_add_member: "Гишүүн нэмэх" (Add member)
+    • role_owner: "Эзэмшигч" (Owner)
+    • role_manager: "Менежер" (Manager)
+    • empty_headline: "Нэмэлт гишүүн алга" (No additional members)
+    • tenant_notice: "Зөвхөн OWNER эсвэл MANAGER эрхтэй хэрэглэгчид энэ бүртгэлийг ашиглаж чадна" (Only OWNER and MANAGER members can use this account)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: safe_area -> nav_header(back + title) -> scrollview(member_rows) -> sticky_bottom_cta(invite_member)
+components:
+  - component: COMP-LISTROW
+    variant: default
+    usage: Rows for each account member showing role, phone, and edit affordance
+  - component: COMP-MODALSHEET
+    variant: default
+    usage: Invite/edit member sheet with role picker
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to invite a new manager
+  - component: COMP-EMPTYSTATE
+    variant: activation
+    usage: Empty state when only the owner exists
+  - component: COMP-LOADINGSKELETON
+    variant: list
+    usage: Member list loading skeleton
+states:
+  - id: loading_initial
+    description: Member list is loading
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-LISTROW
+      - COMP-MODALSHEET
+      - COMP-BUTTON
+      - COMP-EMPTYSTATE
+  - id: empty
+    description: Only the owner exists and no manager members have been added
+    visible:
+      - COMP-EMPTYSTATE
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-LISTROW
+      - COMP-MODALSHEET
+  - id: populated
+    description: Member list shows owner and managers
+    visible:
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+      - COMP-MODALSHEET
+  - id: invite_sheet
+    description: Invite member sheet is open for phone entry and role assignment
+    visible:
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+      - COMP-MODALSHEET
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: role_updating
+    description: Existing member role is being updated
+    visible:
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+      - COMP-EMPTYSTATE
+  - id: error_network
+    description: Member operations failed due to network error
+    visible:
+      - COMP-LISTROW
+      - COMP-BUTTON.primary
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Бизнесийн гишүүд
+    en: Business Members
+  - key: cta_add_member
+    mn: Гишүүн нэмэх
+    en: Add member
+  - key: role_owner
+    mn: Эзэмшигч
+    en: Owner
+  - key: role_manager
+    mn: Менежер
+    en: Manager
+  - key: empty_headline
+    mn: Нэмэлт гишүүн алга
+    en: No additional members
+  - key: tenant_notice
+    mn: Зөвхөн OWNER эсвэл MANAGER эрхтэй хэрэглэгчид энэ бүртгэлийг ашиглаж чадна
+    en: Only OWNER and MANAGER members can use this account
+acceptance_criteria:
+  - OWNER and MANAGER roles are the only assignable membership roles
+  - Member list is scoped to the selected business account only
+  - Membership management remains tenant-isolated behind b2b_enabled
+api_endpoints:
+  - method: GET
+    path: /business/accounts/:id/members
+    purpose: List business account members
+  - method: POST
+    path: /business/accounts/:id/members
+    purpose: Invite or add a new business account manager
+  - method: PUT
+    path: /business/accounts/:id/members/:memberId
+    purpose: Update a business account member role
+analytics_events:
+  - event: business_members_viewed
+    trigger: Member management screen loads
+  - event: business_member_invite_started
+    trigger: Invite member sheet opens
+  - event: business_member_role_updated
+    trigger: Member role update succeeds
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Business Members".
+
+      Member list is loading
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-LISTROW, COMP-MODALSHEET, COMP-BUTTON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: empty
+    prompt: >-
+      Generate the "empty" state of "Business Members".
+
+      Only the owner exists and no manager members have been added
+
+      Visible elements: COMP-EMPTYSTATE, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-LISTROW, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: populated
+    prompt: >-
+      Generate the "populated" state of "Business Members".
+
+      Member list shows owner and managers
+
+      Visible elements: COMP-LISTROW, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE, COMP-MODALSHEET
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: invite_sheet
+    prompt: >-
+      Generate the "invite_sheet" state of "Business Members".
+
+      Invite member sheet is open for phone entry and role assignment
+
+      Visible elements: COMP-LISTROW, COMP-BUTTON.primary, COMP-MODALSHEET
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: role_updating
+    prompt: >-
+      Generate the "role_updating" state of "Business Members".
+
+      Existing member role is being updated
+
+      Visible elements: COMP-LISTROW, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON, COMP-EMPTYSTATE
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Business Members".
+
+      Member operations failed due to network error
+
+      Visible elements: COMP-LISTROW, COMP-BUTTON.primary
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

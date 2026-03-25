@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tasky Self Verify Artifact",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "ticket",
+    "risk_level",
+    "ticket_spec_path",
+    "req_ids",
+    "files_changed",
+    "required_check_ids",
+    "checks",
+    "acceptance_criteria",
+    "ac_test_mapping",
+    "ac_coverage_summary",
+    "overall_status",
+    "known_risks",
+    "assumptions",
+    "self_critique",
+    "ci_parity",
+    "git_context",
+    "agent"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "ticket": {
+      "type": "string"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "ticket_spec_path": {
+      "type": "string"
+    },
+    "req_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_check_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ac_test_mapping": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ac_coverage_summary": {
+      "type": "object"
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL"
+      ]
+    },
+    "known_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "self_critique": {
+      "type": "object"
+    },
+    "ci_parity": {
+      "type": "object"
+    },
+    "git_context": {
+      "type": "object"
+    },
+    "agent": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

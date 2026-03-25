@@ -1,0 +1,195 @@
+screen_id: SCR-B2B-005
+name: Post Task as Business
+role:
+  - customer
+phase: '2'
+template: detail
+route: /(customer)/tasks/new/business-context
+context_refs:
+  global: prompts/global-context.yaml
+  journeys:
+    - prompts/journeys/JRN-B2B-02.yaml
+stitch_prompt: >-
+  Design a mobile app screen for "Post Task as Business" (SCR-B2B-005) in the Tasky app — Mongolia's domestic service
+  marketplace.
+
+  This screen is used by Customer role.
+
+  Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
+
+  Layout structure: safe_area -> nav_header(back + title) -> scrollview(account_selector + location_selector +
+  context_notice) -> sticky_bottom_cta
+
+  Components used:
+    • COMP-CARD (elevated): Selected business account and selected location cards
+    • COMP-LISTROW (default): Selector rows for account and location
+    • COMP-BUTTON (primary): Primary CTA to continue into the standard task-posting flow with business context
+    • COMP-LOADINGSKELETON (detail): Loading state for account and location selectors
+  This screen has 5 states — generate the primary/default state:
+    Primary state: Business accounts and locations are loading
+  Key copy (Mongolian primary):
+    • nav_title: "Бизнесийн өмнөөс нийтлэх" (Post as Business)
+    • account_label: "Бизнес" (Business account)
+    • location_label: "Байршил" (Location)
+    • cta_continue: "Даалгавар үүсгэх" (Create task)
+    • context_notice: "Энэ сонголт нь стандарт task posting урсгалд business_account_id-г дамжуулна" (This continues into the standard task-posting flow with business_account_id attached)
+    • retry_label: "Дахин оролдох" (Retry)
+  Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Manrope for headings, Plus
+  Jakarta Sans for body. 16px minimum body text. Clean, professional, premium feel. Mongolian Cyrillic text.
+layout:
+  template: detail
+  density: default
+  structure: >-
+    safe_area -> nav_header(back + title) -> scrollview(account_selector + location_selector + context_notice) ->
+    sticky_bottom_cta
+components:
+  - component: COMP-CARD
+    variant: elevated
+    usage: Selected business account and selected location cards
+  - component: COMP-LISTROW
+    variant: default
+    usage: Selector rows for account and location
+  - component: COMP-BUTTON
+    variant: primary
+    usage: Primary CTA to continue into the standard task-posting flow with business context
+  - component: COMP-LOADINGSKELETON
+    variant: detail
+    usage: Loading state for account and location selectors
+states:
+  - id: loading_initial
+    description: Business accounts and locations are loading
+    visible:
+      - COMP-LOADINGSKELETON
+    hidden:
+      - COMP-CARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+  - id: account_selected
+    description: Business account is selected but location is not yet chosen
+    visible:
+      - COMP-CARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: location_selected
+    description: Business account and location are both selected
+    visible:
+      - COMP-CARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: ready_continue
+    description: Business context is valid and user can continue into the standard post-task wizard
+    visible:
+      - COMP-CARD
+      - COMP-LISTROW
+      - COMP-BUTTON
+    hidden:
+      - COMP-LOADINGSKELETON
+  - id: error_network
+    description: Failed to load business accounts or locations
+    visible:
+      - COMP-BUTTON.ghost
+    hidden:
+      - COMP-LOADINGSKELETON
+copy:
+  - key: nav_title
+    mn: Бизнесийн өмнөөс нийтлэх
+    en: Post as Business
+  - key: account_label
+    mn: Бизнес
+    en: Business account
+  - key: location_label
+    mn: Байршил
+    en: Location
+  - key: cta_continue
+    mn: Даалгавар үүсгэх
+    en: Create task
+  - key: context_notice
+    mn: Энэ сонголт нь стандарт task posting урсгалд business_account_id-г дамжуулна
+    en: This continues into the standard task-posting flow with business_account_id attached
+  - key: retry_label
+    mn: Дахин оролдох
+    en: Retry
+acceptance_criteria:
+  - This screen does not create a separate B2B posting lifecycle
+  - Continuing from this screen routes into SCR-CUST-002 with business context attached
+  - Selected business account persists business_account_id through the standard task flow
+  - Location selection is required before continuing
+api_endpoints:
+  - method: GET
+    path: /business/accounts
+    purpose: Fetch business accounts available to the user
+  - method: GET
+    path: /business/accounts/:id/locations
+    purpose: Fetch locations for the selected business account
+analytics_events:
+  - event: post_as_business_viewed
+    trigger: Business context selector opens
+  - event: post_as_business_account_selected
+    trigger: User selects a business account
+  - event: post_as_business_continue
+    trigger: User continues into the standard task wizard
+state_prompts:
+  - state_id: loading_initial
+    prompt: >-
+      Generate the "loading_initial" state of "Post Task as Business".
+
+      Business accounts and locations are loading
+
+      Visible elements: COMP-LOADINGSKELETON
+
+      Hidden elements: COMP-CARD, COMP-LISTROW, COMP-BUTTON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: account_selected
+    prompt: >-
+      Generate the "account_selected" state of "Post Task as Business".
+
+      Business account is selected but location is not yet chosen
+
+      Visible elements: COMP-CARD, COMP-LISTROW, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: location_selected
+    prompt: >-
+      Generate the "location_selected" state of "Post Task as Business".
+
+      Business account and location are both selected
+
+      Visible elements: COMP-CARD, COMP-LISTROW, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: ready_continue
+    prompt: >-
+      Generate the "ready_continue" state of "Post Task as Business".
+
+      Business context is valid and user can continue into the standard post-task wizard
+
+      Visible elements: COMP-CARD, COMP-LISTROW, COMP-BUTTON
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.
+  - state_id: error_network
+    prompt: >-
+      Generate the "error_network" state of "Post Task as Business".
+
+      Failed to load business accounts or locations
+
+      Visible elements: COMP-BUTTON.ghost
+
+      Hidden elements: COMP-LOADINGSKELETON
+
+      Style: Deep blue (#1B3A5C) primary, gold (#C49A3C) accents, off-white (#F9F8F5) background. Mongolian Cyrillic
+      text. 16px minimum body text.

@@ -39,6 +39,7 @@ Authentication, session issuance/refresh, and shared user-account application lo
 
 - `tasky.otp.enabled`
 - `tasky.dev-auth.enabled`
+- `tasky.auth.otp-migration-enforced`
 - `tasky.auth.rate-limit.*`
 - `tasky.auth.otp-ttl-seconds`
-- `tasky.storage.upload-signing-secret` (required for signed upload URLs)
+- `tasky.facebook.*`

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-02-13T13:12:23Z",
+  "updated_at": "2026-03-26T00:00:00Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -142,6 +142,66 @@
       "status": "pending"
     },
     "TASK-090": {
+      "status": "pending"
+    },
+    "TASK-091": {
+      "status": "pending"
+    },
+    "TASK-092": {
+      "status": "pending"
+    },
+    "TASK-093": {
+      "status": "pending"
+    },
+    "TASK-094": {
+      "status": "pending"
+    },
+    "TASK-095": {
+      "status": "pending"
+    },
+    "TASK-096": {
+      "status": "pending"
+    },
+    "TASK-097": {
+      "status": "pending"
+    },
+    "TASK-098": {
+      "status": "pending"
+    },
+    "TASK-099": {
+      "status": "pending"
+    },
+    "TASK-100": {
+      "status": "pending"
+    },
+    "TASK-101": {
+      "status": "pending"
+    },
+    "TASK-102": {
+      "status": "pending"
+    },
+    "TASK-103": {
+      "status": "pending"
+    },
+    "TASK-104": {
+      "status": "pending"
+    },
+    "TASK-105": {
+      "status": "pending"
+    },
+    "TASK-106": {
+      "status": "pending"
+    },
+    "TASK-107": {
+      "status": "pending"
+    },
+    "TASK-108": {
+      "status": "pending"
+    },
+    "TASK-109": {
+      "status": "pending"
+    },
+    "TASK-110": {
       "status": "pending"
     }
   }

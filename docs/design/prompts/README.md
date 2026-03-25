@@ -10,12 +10,35 @@ Context-managed prompt generation system for producing Stitch AI design screens 
 │  global-context.yaml (~140 lines)       │  Brand, tokens, components, rules
 ├─────────────────────────────────────────┤
 │  Tier 2: JOURNEY CONTEXT                │  Shared across screens in a flow
-│  journeys/JRN-*.yaml (~24 files)        │  Navigation, sequence, role
+│  journeys/JRN-*.yaml (~30 files)        │  Navigation, sequence, role
 ├─────────────────────────────────────────┤
 │  Tier 3: SCREEN PROMPTS                 │  Per-screen generation prompt
-│  screens/SCR-*.yaml (81 files)          │  Layout, components, states, copy
+│  screens/SCR-*.yaml (91 files)          │  Layout, components, states, copy
 └─────────────────────────────────────────┘
 ```
+
+## Current Scope Boundary
+
+The current prompt pack covers the **91-screen mobile marketplace pack through Phase 3**:
+
+- 66 Phase `0-1` screens
+- 18 Phase `2` screens
+- 7 Phase `3+` screens
+
+This pack now includes AI Profile Polish, promoted/urgent boost checkout, business-account management, account-scoped posting/views, and B2B billing through Phase 3. It is still not the full PRD mobile roadmap.
+
+Not yet represented as screen prompt artifacts:
+
+- Phase 4 Tasky Plus customer subscription surfaces
+- Phase 4 Family Plan customer subscription surfaces, including favorites and household service history
+
+State authority is intentionally split:
+
+- `screen-inventory.yaml` is the summary screen list and generation-order input
+- `state-matrix.yaml` is the coverage matrix
+- `screen-specs/SCR-*.yaml` is the exhaustive source for per-screen states and acceptance criteria
+
+Build-readiness is also phase-gated: `docs/API.yaml` currently marks `credits`, `referrals`, `subscription`, `instant-match`, and `/verification/dan/verify` as forward-reference endpoints, and the newly documented boost / AI polish / expanded B2B surfaces are still ahead of the canonical API contract. Wallet/payment flows are implemented but feature-gated.
 
 ## How to Use with Stitch
 
@@ -51,10 +74,11 @@ Generate screens by group for visual consistency within each flow:
 
 1. **shared** — Auth, onboarding, profile, inbox (21 screens)
 2. **infrastructure** — Error, offline, update, legal (5 screens)
-3. **customer** — Task posting → applicants → bookings → disputes (27 screens)
-4. **tasker** — Browse → verify → apply → manage jobs (18 screens)
-5. **phase_2** — Credits, payments, referrals (5 screens)
-6. **phase_3** — Wallet, escrow, subscription, instant match (5 screens)
+3. **customer** — Task posting → applicants → bookings → disputes → boost checkout (29 screens)
+4. **tasker** — Browse → verify → apply → manage jobs → AI polish (19 screens)
+5. **b2b** — Business accounts, account-scoped posting, tasks, and billing (7 screens)
+6. **phase_2** — Credits, payments, referrals (5 screens)
+7. **phase_3** — Wallet, escrow, subscription, instant match (5 screens)
 
 Within each group, generate in the order listed in `prompt-manifest.yaml`.
 
@@ -73,8 +97,8 @@ The `context_refs` field in each screen YAML lists which files to compose.
 | Path | Count | Description |
 |------|-------|-------------|
 | `global-context.yaml` | 1 | Brand, tokens, component vocabulary |
-| `journeys/JRN-*.yaml` | 24 | Per-journey flow context |
-| `screens/SCR-*.yaml` | 81 | Per-screen Stitch prompts |
+| `journeys/JRN-*.yaml` | 30 | Per-journey flow context |
+| `screens/SCR-*.yaml` | 91 | Per-screen Stitch prompts |
 | `prompt-manifest.yaml` | 1 | Master index with generation order |
 
 ## Regenerating Prompts

@@ -1,0 +1,122 @@
+# Screen Spec: Post Task as Business
+screen_id: SCR-B2B-005
+name: "Post Task as Business"
+route: "/(customer)/tasks/new/business-context"
+role: [customer]
+phase: "2"
+template: detail
+figma_page: "B2B/Post Task as Business"
+feature: "b2b"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(account_selector + location_selector + context_notice) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-CARD
+    usage: "Selected business account and selected location cards"
+    props:
+      onPress: "open_selector"
+    variant: elevated
+
+  - id: COMP-LISTROW
+    usage: "Selector rows for account and location"
+    props:
+      title: "Бизнес сонгох"
+      accessory: "chevron"
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to continue into the standard task-posting flow with business context"
+    props:
+      label: "Даалгавар үүсгэх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Loading state for account and location selectors"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+states:
+  - id: loading_initial
+    description: "Business accounts and locations are loading"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-CARD, COMP-LISTROW, COMP-BUTTON]
+
+  - id: account_selected
+    description: "Business account is selected but location is not yet chosen"
+    components_visible: [COMP-CARD, COMP-LISTROW, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: location_selected
+    description: "Business account and location are both selected"
+    components_visible: [COMP-CARD, COMP-LISTROW, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: ready_continue
+    description: "Business context is valid and user can continue into the standard post-task wizard"
+    components_visible: [COMP-CARD, COMP-LISTROW, COMP-BUTTON]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+  - id: error_network
+    description: "Failed to load business accounts or locations"
+    components_visible: [COMP-BUTTON.ghost]
+    components_hidden: [COMP-LOADINGSKELETON]
+
+copy:
+  - key: nav_title
+    mn: "Бизнесийн өмнөөс нийтлэх"
+    en: "Post as Business"
+    max_chars: 28
+
+  - key: account_label
+    mn: "Бизнес"
+    en: "Business account"
+    max_chars: 16
+
+  - key: location_label
+    mn: "Байршил"
+    en: "Location"
+    max_chars: 12
+
+  - key: cta_continue
+    mn: "Даалгавар үүсгэх"
+    en: "Create task"
+    max_chars: 18
+
+  - key: context_notice
+    mn: "Энэ сонголт нь стандарт task posting урсгалд business_account_id-г дамжуулна"
+    en: "This continues into the standard task-posting flow with business_account_id attached"
+    max_chars: 90
+
+  - key: retry_label
+    mn: "Дахин оролдох"
+    en: "Retry"
+    max_chars: 14
+
+api_endpoints:
+  - method: GET
+    path: "/business/accounts"
+    purpose: "Fetch business accounts available to the user"
+  - method: GET
+    path: "/business/accounts/:id/locations"
+    purpose: "Fetch locations for the selected business account"
+
+analytics_events:
+  - event: "post_as_business_viewed"
+    trigger: "Business context selector opens"
+  - event: "post_as_business_account_selected"
+    trigger: "User selects a business account"
+  - event: "post_as_business_continue"
+    trigger: "User continues into the standard task wizard"
+
+acceptance_criteria:
+  - "This screen does not create a separate B2B posting lifecycle"
+  - "Continuing from this screen routes into SCR-CUST-002 with business context attached"
+  - "Selected business account persists business_account_id through the standard task flow"
+  - "Location selection is required before continuing"

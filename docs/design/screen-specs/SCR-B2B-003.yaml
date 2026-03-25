@@ -1,0 +1,136 @@
+# Screen Spec: Business Location Editor
+screen_id: SCR-B2B-003
+name: "Business Location Editor"
+route: "/(customer)/business/accounts/:accountId/locations/:locationId"
+role: [customer]
+phase: "2"
+template: form_wizard
+figma_page: "B2B/Business Location Editor"
+feature: "b2b"
+
+layout:
+  template: form_wizard
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(location_fields + map_picker) -> bottom_nav(cancel + save)"
+
+components:
+  - id: COMP-FORMFIELD
+    usage: "Wraps location label and address description fields"
+    props:
+      label: "Байршлын нэр"
+      required: true
+    variant: default
+
+  - id: COMP-INPUT
+    usage: "Text inputs for location label and address details"
+    props:
+      value: "Sukhbaatar 1"
+      placeholder: "Байршлын нэр"
+      maxLength: 80
+    variant: default
+
+  - id: COMP-MAPPICKER
+    usage: "Map picker for selecting exact business location coordinates"
+    props:
+      latitude: 47.9201
+      longitude: 106.9176
+    variant: default
+
+  - id: COMP-BUTTON
+    usage: "Primary save button"
+    props:
+      label: "Байршил хадгалах"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary cancel button"
+    props:
+      label: "Болих"
+      variant: ghost
+      size: lg
+    variant: ghost
+
+states:
+  - id: default
+    description: "Existing or new business location form is ready for editing"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: map_picking
+    description: "User is actively positioning the map pin"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: saving
+    description: "Business location save request is in flight"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: success
+    description: "Location save completed successfully"
+    components_visible: [COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: validation_error
+    description: "Required label or coordinates are missing"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+  - id: error_network
+    description: "Location save failed due to network error"
+    components_visible: [COMP-FORMFIELD, COMP-INPUT, COMP-MAPPICKER, COMP-BUTTON.primary, COMP-BUTTON.ghost]
+    components_hidden: []
+
+copy:
+  - key: nav_title
+    mn: "Бизнесийн байршил"
+    en: "Business Location"
+    max_chars: 22
+
+  - key: label_location_name
+    mn: "Байршлын нэр"
+    en: "Location label"
+    max_chars: 20
+
+  - key: label_address
+    mn: "Тайлбарласан хаяг"
+    en: "Address description"
+    max_chars: 24
+
+  - key: cta_save
+    mn: "Байршил хадгалах"
+    en: "Save location"
+    max_chars: 24
+
+  - key: validation_coordinates
+    mn: "Газрын зураг дээр байршил сонгоно уу"
+    en: "Choose a map location"
+    max_chars: 40
+
+  - key: validation_name
+    mn: "Байршлын нэр оруулна уу"
+    en: "Enter a location label"
+    max_chars: 34
+
+api_endpoints:
+  - method: POST
+    path: "/business/accounts/:id/locations"
+    purpose: "Create a business account location"
+  - method: PUT
+    path: "/business/accounts/:id/locations/:locationId"
+    purpose: "Update a business account location"
+
+analytics_events:
+  - event: "business_location_editor_viewed"
+    trigger: "Location editor opens"
+  - event: "business_location_pin_updated"
+    trigger: "Map pin is moved"
+  - event: "business_location_saved"
+    trigger: "Location save succeeds"
+
+acceptance_criteria:
+  - "Business location requires label, coordinates, and descriptive address text"
+  - "Coordinates are selected through the map picker, not by raw text entry only"
+  - "Successful save returns to SCR-B2B-002 for continued account setup"

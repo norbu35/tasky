@@ -11,6 +11,8 @@ context_refs:
     - prompts/journeys/JRN-CUST-02.yaml
     - prompts/journeys/JRN-CUST-07.yaml
     - prompts/journeys/JRN-CUST-08.yaml
+    - prompts/journeys/JRN-CUST-09.yaml
+    - prompts/journeys/JRN-B2B-03.yaml
 stitch_prompt: >-
   Design a mobile app screen for "Task Detail (Customer)" (SCR-CUST-009) in the Tasky app — Mongolia's domestic service
   marketplace.

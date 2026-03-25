@@ -377,6 +377,22 @@ matrix:
     fallback_to_open: R
     error_no_eligible: R
 
+  SCR-CUST-028:
+    loading_initial: R
+    options_available: R
+    promoted_selected: R
+    urgent_selected: R
+    already_active: R
+    error_network: R
+
+  SCR-CUST-029:
+    qr_display: R
+    deeplink_redirect: R
+    payment_pending: R
+    payment_success: R
+    payment_failed: R
+    payment_timeout: R
+
   # ═══════════════════════════════════════════════════
   # TASKER FLOW
   # ═══════════════════════════════════════════════════
@@ -483,6 +499,7 @@ matrix:
 
   SCR-TASK-017:
     notification_received: R
+    grandfathered_discount_applied: R
     accepting: R
     accepted_credits_deducted: R
     declined: R
@@ -492,6 +509,72 @@ matrix:
   SCR-TASK-018:
     loading: R
     loaded: R
+
+  SCR-TASK-019:
+    loading_initial: R
+    draft_ready: R
+    generating: R
+    suggestion_ready: R
+    apply_success: R
+    error_network: R
+
+  # ═══════════════════════════════════════════════════
+  # B2B SCREENS
+  # ═══════════════════════════════════════════════════
+
+  SCR-B2B-001:
+    loading_initial: R
+    empty_activation: R
+    populated_owner: R
+    populated_member: R
+    error_network: R
+
+  SCR-B2B-002:
+    create_default: R
+    edit_default: R
+    saving: R
+    success: R
+    validation_error: R
+    error_network: R
+
+  SCR-B2B-003:
+    default: R
+    map_picking: R
+    saving: R
+    success: R
+    validation_error: R
+    error_network: R
+
+  SCR-B2B-004:
+    loading_initial: R
+    empty: R
+    populated: R
+    invite_sheet: R
+    role_updating: R
+    error_network: R
+
+  SCR-B2B-005:
+    loading_initial: R
+    account_selected: R
+    location_selected: R
+    ready_continue: R
+    error_network: R
+
+  SCR-B2B-006:
+    loading_initial: R
+    empty: R
+    populated_open: R
+    populated_mixed: R
+    error_network: R
+
+  SCR-B2B-007:
+    loading_initial: R
+    eligible_view_plans: R
+    active_host_lite: R
+    active_ops_standard: R
+    renewal_failed: R
+    cancelled_resubscribe: R
+    error_network: R
 
   # ═══════════════════════════════════════════════════
   # PHASE 2 SCREENS
@@ -575,14 +658,14 @@ matrix:
 # ═══════════════════════════════════════════════════
 
 summary:
-  total_screens: 81
-  total_states: 347
-  required_states: 339
-  optional_states: 8
+  total_screens: 91
+  total_states: 423
+  required_states: 416
+  optional_states: 5
   empty_rows: 0
-  screens_with_loading: 45
-  screens_with_error: 42
-  screens_with_empty: 14
-  screens_with_offline: 10
+  screens_with_loading: 40
+  screens_with_error: 51
+  screens_with_empty: 13
+  screens_with_offline: 8
   coverage_completeness: "100%"
   note: "Every screen has at least one required state. No empty rows."

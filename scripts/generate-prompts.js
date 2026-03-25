@@ -315,6 +315,7 @@ function main() {
       { group: 'infrastructure', description: 'Error, offline, update, legal — system screens', screens: manifest.filter(m => m.screen_id.startsWith('SCR-INFRA')).map(m => m.screen_id) },
       { group: 'customer', description: 'Task posting, applicants, bookings, disputes — customer flow', screens: manifest.filter(m => m.screen_id.startsWith('SCR-CUST')).map(m => m.screen_id) },
       { group: 'tasker', description: 'Browse, verify, apply, manage jobs — tasker flow', screens: manifest.filter(m => m.screen_id.startsWith('SCR-TASK')).map(m => m.screen_id) },
+      { group: 'b2b', description: 'Business accounts, account-scoped posting, task oversight, and billing', screens: manifest.filter(m => m.screen_id.startsWith('SCR-B2B')).map(m => m.screen_id) },
       { group: 'phase_2', description: 'Credits, payments, referrals — monetization', screens: manifest.filter(m => m.screen_id.startsWith('SCR-P2')).map(m => m.screen_id) },
       { group: 'phase_3', description: 'Wallet, escrow, subscription, instant match — advanced', screens: manifest.filter(m => m.screen_id.startsWith('SCR-P3')).map(m => m.screen_id) }
     ],

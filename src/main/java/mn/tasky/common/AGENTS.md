@@ -26,6 +26,9 @@ Operations in `IdempotencyOperations`:
 - `booking.cancel`
 - `booking.complete`
 - `booking.mark_done`
+- `booking.no_show_flag`
+- `booking.reschedule_request`
+- `booking.reschedule_respond`
 - `dispute.raise`
 - `dispute.resolve`
 - `payment.initiate`
@@ -70,6 +73,7 @@ Public paths include:
 
 - `/api/v1/system/version`
 - `/api/v1/auth/facebook`
+- `/api/v1/auth/facebook/status`
 - `/api/v1/auth/otp/request`
 - `/api/v1/auth/otp/verify`
 - `/api/v1/auth/token/refresh`

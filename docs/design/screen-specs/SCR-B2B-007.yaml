@@ -1,0 +1,150 @@
+# Screen Spec: Business Subscription Billing
+screen_id: SCR-B2B-007
+name: "Business Subscription Billing"
+route: "/(customer)/business/accounts/:accountId/billing"
+role: [customer]
+phase: "3+"
+template: detail
+figma_page: "B2B/Business Subscription Billing"
+feature: "b2b"
+
+layout:
+  template: detail
+  density: default
+  structure: "safe_area -> nav_header(back + title) -> scrollview(plan_cards + billing_cycle + status_notice) -> sticky_bottom_cta"
+
+components:
+  - id: COMP-CARD
+    usage: "Billing plan cards for Host Lite and Ops Standard with price and location coverage"
+    props:
+      onPress: "select_plan"
+    variant: elevated
+
+  - id: COMP-STATUSBADGE
+    usage: "Billing status badge for active, renewal_failed, or cancelled states"
+    props:
+      status: "assigned"
+      size: sm
+    variant: assigned
+
+  - id: COMP-BUTTON
+    usage: "Primary CTA to subscribe or resubscribe via QPay"
+    props:
+      label: "QPay-ээр идэвхжүүлэх"
+      variant: primary
+      size: lg
+    variant: primary
+
+  - id: COMP-BUTTON
+    usage: "Secondary CTA to cancel current billing"
+    props:
+      label: "Цуцлах"
+      variant: danger
+      size: md
+    variant: danger
+
+  - id: COMP-LOADINGSKELETON
+    usage: "Skeleton for billing plans and account billing state"
+    props:
+      variant: detail
+      count: 1
+    variant: detail
+
+  - id: COMP-EMPTYSTATE
+    usage: "Error and renewal-failed state with retry guidance"
+    props:
+      illustration: "billing_error"
+      headline: "Төлбөрийн асуудал"
+      ctaLabel: "Дахин оролдох"
+    variant: error
+
+states:
+  - id: loading_initial
+    description: "Business billing plans and current billing state are loading"
+    components_visible: [COMP-LOADINGSKELETON]
+    components_hidden: [COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON, COMP-EMPTYSTATE]
+
+  - id: eligible_view_plans
+    description: "Host Lite and Ops Standard plans are available to subscribe"
+    components_visible: [COMP-CARD, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-STATUSBADGE, COMP-BUTTON.danger, COMP-EMPTYSTATE]
+
+  - id: active_host_lite
+    description: "Host Lite is active for the selected business account"
+    components_visible: [COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON.danger]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: active_ops_standard
+    description: "Ops Standard is active for the selected business account"
+    components_visible: [COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON.danger]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE]
+
+  - id: renewal_failed
+    description: "Recurring payment failed and renewal requires manual recovery"
+    components_visible: [COMP-STATUSBADGE, COMP-EMPTYSTATE, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-CARD, COMP-BUTTON.danger]
+
+  - id: cancelled_resubscribe
+    description: "Subscription was cancelled and can be reactivated"
+    components_visible: [COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON.primary]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-EMPTYSTATE, COMP-BUTTON.danger]
+
+  - id: error_network
+    description: "Billing data failed to load"
+    components_visible: [COMP-EMPTYSTATE]
+    components_hidden: [COMP-LOADINGSKELETON, COMP-CARD, COMP-STATUSBADGE, COMP-BUTTON]
+
+copy:
+  - key: nav_title
+    mn: "Бизнесийн төлбөр"
+    en: "Business Billing"
+    max_chars: 22
+
+  - key: host_lite
+    mn: "Host Lite"
+    en: "Host Lite"
+    max_chars: 12
+
+  - key: ops_standard
+    mn: "Ops Standard"
+    en: "Ops Standard"
+    max_chars: 16
+
+  - key: billing_cycle
+    mn: "Сарын төлбөрийн өдөр: {day}"
+    en: "Billing day: {day}"
+    max_chars: 28
+
+  - key: cta_subscribe
+    mn: "QPay-ээр идэвхжүүлэх"
+    en: "Activate with QPay"
+    max_chars: 24
+
+  - key: renewal_failed
+    mn: "Сунгалтын төлбөр амжилтгүй болсон"
+    en: "Renewal payment failed"
+    max_chars: 32
+
+api_endpoints:
+  - method: GET
+    path: "/business/accounts/:id/subscription"
+    purpose: "Fetch business subscription plans, billing cycle day, and current billing state"
+  - method: POST
+    path: "/business/accounts/:id/subscription"
+    purpose: "Activate or renew a business subscription plan via QPay payment link"
+
+analytics_events:
+  - event: "business_billing_viewed"
+    trigger: "Billing screen loads"
+  - event: "business_billing_plan_selected"
+    trigger: "A billing plan is selected"
+  - event: "business_billing_subscribed"
+    trigger: "Billing plan activation succeeds"
+  - event: "business_billing_renewal_failed"
+    trigger: "Renewal failure state is shown"
+
+acceptance_criteria:
+  - "Host Lite and Ops Standard pricing are shown with per-location semantics"
+  - "Billing cycle day is visible for the selected account"
+  - "Renewal failure is surfaced with a recoverable resubscribe path"
+  - "This screen is feature-gated behind b2b_enabled and intended for Phase 3+ billing rollout"
