@@ -59,6 +59,34 @@ export interface StrikePolicyUpdateRequest {
   autoUnsuspendEnabled?: boolean;
 }
 
+export interface PayoutRequest {
+  id: string;
+  user_id?: string;
+  amount: number;
+  bank_name: string;
+  bank_account: string;
+  status: 'PENDING' | 'PROCESSED' | 'REJECTED';
+  created_at: string;
+  processed_at: string | null;
+}
+
+export interface LeadUnlockPrice {
+  id: string;
+  category_id: string;
+  district_id: string;
+  credits_required: number;
+  effective_from: string;
+  effective_to: string | null;
+}
+
+export interface LeadUnlockPricePayload {
+  category_id: string;
+  district_id: string;
+  credits_required: number;
+  effective_from: string;
+  effective_to?: string | null;
+}
+
 export interface AdminDisputeDetail {
   dispute: Record<string, unknown>;
   booking: Record<string, unknown>;
@@ -282,6 +310,29 @@ export interface ApiClient {
     accessToken: string,
     payload: Partial<StrikePolicyUpdateRequest>,
   ): Promise<StrikePolicy>;
+
+  adminListPendingPayouts(
+    accessToken: string,
+    cursor?: string,
+    limit?: number,
+  ): Promise<CursorPage<PayoutRequest>>;
+
+  adminProcessPayout(
+    accessToken: string,
+    id: string,
+    idempotencyKey: string,
+  ): Promise<PayoutRequest>;
+
+  adminListLeadUnlockPrices(
+    accessToken: string,
+    cursor?: string,
+    limit?: number,
+  ): Promise<CursorPage<LeadUnlockPrice>>;
+
+  adminCreateLeadUnlockPrice(
+    accessToken: string,
+    payload: LeadUnlockPricePayload,
+  ): Promise<LeadUnlockPrice>;
 
   adminListFeatureToggles(accessToken: string): Promise<FeatureToggle[]>;
 
@@ -894,6 +945,67 @@ export class HttpApiClient implements ApiClient {
       '/admin/moderation/strike-policy',
       {
         method: 'PUT',
+        body: JSON.stringify(payload),
+      },
+      accessToken,
+    );
+  }
+
+  adminListPendingPayouts(
+    accessToken: string,
+    cursor?: string,
+    limit?: number,
+  ): Promise<CursorPage<PayoutRequest>> {
+    const params = new URLSearchParams();
+    if (cursor) params.set('cursor', cursor);
+    if (limit) params.set('limit', String(limit));
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.requestJson<CursorPage<PayoutRequest>>(
+      `/admin/payouts/pending${query}`,
+      { method: 'GET' },
+      accessToken,
+    );
+  }
+
+  adminProcessPayout(
+    accessToken: string,
+    id: string,
+    idempotencyKey: string,
+  ): Promise<PayoutRequest> {
+    return this.requestJson<PayoutRequest>(
+      `/admin/payouts/${id}/process`,
+      {
+        method: 'POST',
+        headers: { 'Idempotency-Key': idempotencyKey },
+      },
+      accessToken,
+    );
+  }
+
+  adminListLeadUnlockPrices(
+    accessToken: string,
+    cursor?: string,
+    limit?: number,
+  ): Promise<CursorPage<LeadUnlockPrice>> {
+    const params = new URLSearchParams();
+    if (cursor) params.set('cursor', cursor);
+    if (limit) params.set('limit', String(limit));
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.requestJson<CursorPage<LeadUnlockPrice>>(
+      `/admin/lead-unlock-prices${query}`,
+      { method: 'GET' },
+      accessToken,
+    );
+  }
+
+  adminCreateLeadUnlockPrice(
+    accessToken: string,
+    payload: LeadUnlockPricePayload,
+  ): Promise<LeadUnlockPrice> {
+    return this.requestJson<LeadUnlockPrice>(
+      '/admin/lead-unlock-prices',
+      {
+        method: 'POST',
         body: JSON.stringify(payload),
       },
       accessToken,
