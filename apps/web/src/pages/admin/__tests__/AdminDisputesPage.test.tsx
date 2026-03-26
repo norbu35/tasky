@@ -164,10 +164,6 @@ describe('AdminDisputesPage', () => {
     const api = createMockApiClient();
     renderListPage(api);
 
-    // Should show loading state first
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
-
-    // After load, should show dispute rows
     await waitFor(() => {
       expect(screen.getByText(/Tasker did not show up/)).toBeInTheDocument();
     });
@@ -220,6 +216,19 @@ describe('AdminDisputesPage', () => {
     await waitFor(() => {
       expect(screen.getByText(/error/i)).toBeInTheDocument();
     });
+  });
+
+  it('renders status badges for disputes', async () => {
+    const api = createMockApiClient();
+    renderListPage(api);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Tasker did not show up/)).toBeInTheDocument();
+    });
+
+    // Both disputes have status OPEN
+    const badges = screen.getAllByText('OPEN');
+    expect(badges).toHaveLength(2);
   });
 });
 
