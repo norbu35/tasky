@@ -49,6 +49,9 @@ describe('Messaging & Notifications Integration', () => {
 
     // Verify Header
     await screen.findByRole('heading', { name: 'Inbox' });
+    expect(
+      screen.getByText(/browser notifications keep you updated on new messages and booking changes/i),
+    ).toBeInTheDocument();
 
     // Wait for Conversations to load and the mock one to be active
     // The title "Fix Sink" is rendered inside a div alongside the Avatar + in the active chat header

@@ -169,7 +169,7 @@ export function MessagingNotificationsPage() {
             aria-label={t('messaging.notificationsLabel', 'Notifications')}
             onClick={() => void handlePushToggle(!pushEnabled)}
             className="p-2 rounded-full hover:bg-muted transition-colors"
-          >
+            >
             {pushEnabled ? (
               <Bell className="w-5 h-5 text-primary" />
             ) : (
@@ -177,6 +177,10 @@ export function MessagingNotificationsPage() {
             )}
           </button>
         </div>
+
+        <p className="w-full mb-4 text-sm text-muted-foreground">
+          Browser notifications keep you updated on new messages and booking changes.
+        </p>
 
         {statusMessage && (
           <div className="w-full mb-4 px-4 py-2 bg-primary/10 text-primary rounded-md text-sm border-primary/20 border">

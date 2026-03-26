@@ -209,6 +209,9 @@ export function ProfilePage() {
                 <p className="text-xs text-muted-foreground">
                   {t('profile.photoFormats', 'JPEG, PNG, WebP')}
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Your browser may prompt you to choose a photo when you update your avatar.
+                </p>
               </div>
             </div>
 

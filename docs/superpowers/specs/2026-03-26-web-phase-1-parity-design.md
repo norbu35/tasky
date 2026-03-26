@@ -1,142 +1,151 @@
 # Web Phase 1 Parity Design
 
 **Date:** 2026-03-26
-**Source of truth:** [PRD](/home/norbu/projects/tasky/docs/PRD.md), [mobile UI replacement Figma realignment plan](/home/norbu/projects/tasky/docs/plans/2026-03-26-mobile-ui-replacement-figma-realignment-plan.md), [screen inventory](/home/norbu/projects/tasky/docs/design/screen-inventory.yaml)
+**Primary sources:** [PRD](/home/norbu/projects/tasky/docs/PRD.md), [screen inventory](/home/norbu/projects/tasky/docs/design/screen-inventory.yaml), [web parity matrix](/home/norbu/projects/tasky/docs/plans/2026-03-26-web-phase-1-parity-matrix.md), [mobile Phase 1 realignment plan](/home/norbu/projects/tasky/docs/plans/2026-03-26-mobile-ui-replacement-figma-realignment-plan.md)
 
 ## Goal
 
-Supplement the existing web application so it fully supports Phase `0-1` / Phase 1 product scope, using the completed mobile app and live mobile design system as the adaptive UI source of truth rather than inventing a separate web product model.
+Bring the web client to full **Phase `0-1` / Phase 1 product parity** with the mobile client, using the mobile app and mobile-derived design inventory as the semantic source of truth while adapting layout and interaction density for responsive web.
 
-## Problem
+## Why This Exists
 
-The mobile app now covers the full Phase `0-1` experience, while the web app only covers a narrower subset of flows. This creates operational and product gaps:
+The mobile app now represents the most complete implementation of Phase `0-1` behavior. The web app has a working foundation, but its user journeys are narrower, its state coverage is uneven, and several shared/customer/tasker routes are either missing or collapsed into generic pages. That leaves the project with role-dependent operational gaps and inconsistent supportability across platforms.
 
-- some Phase `0-1` customer and tasker flows are web-missing or web-partial
-- web state coverage is inconsistent for review enforcement, disputes, recovery flows, and account restriction flows
-- parity risk increases because mobile now represents the most complete user-facing execution of the Phase `0-1` product
+This work is not a redesign of the product. It is a **contract-parity supplement**: web must express the same role journeys, states, and guardrails as mobile for Phase `0-1`, while remaining adaptive and web-native.
 
-The objective is not to clone phone layouts onto desktop. The objective is to make web semantically equivalent to Phase `0-1` mobile behavior, with adaptive layouts that respect web usage patterns and the repo’s existing Radix + Tailwind design system constraints.
-
-## Scope
+## Product Contract
 
 ### In Scope
 
-- bring the web app to Phase `0-1` feature parity for customer, tasker, and shared operational surfaces
-- use mobile/Figma state models, copy, and journey sequencing as the parity baseline
-- adapt layouts responsively for mobile web, tablet, and desktop
-- preserve Phase `0-1` business behavior:
-  - Facebook-only auth
-  - direct settlement
-  - manual verification
-  - application-based matching
-  - no live Phase 2/3 payment rails or OTP-primary behavior
-- add missing route coverage, component states, and tests
+- shared/auth/account/infra/legal flows required for Phase `0-1`
+- customer task posting, task management, applicants, bookings, disputes, and rescue flows
+- tasker browse, verification, application, jobs, stats, and privacy flows
+- route/state coverage for loading, empty, error, restricted, and recovery scenarios defined by the mobile/spec baseline
+- responsive web adaptation for mobile web, tablet, and desktop
+- route guards and navigation updates required to expose the new Phase `0-1` surfaces
+- test coverage proving the new web journeys work through the real app shell
 
 ### Out of Scope
 
-- enabling Phase 2/3 behavior on web
-- creating a separate web-only IA that diverges from mobile journeys
-- redesigning the shared design system from scratch
+- enabling live Phase `2` / `3+` business behavior on web
+- introducing a separate web-only product model or divergent IA
+- rebuilding the web design system
 - B2B/business surfaces
-- feature-flag infrastructure for later phases beyond what is strictly needed to preserve Phase `0-1` behavior
+- OTP-primary auth, credits, wallet, escrow, DAN fast-path verification, referrals, subscriptions, and instant match as active user-facing web behavior
 
-## Product Principles
+## Phase 1 Behavioral Invariants
 
-1. **Parity over novelty**
-   Web must match the same user-visible product contract as mobile for Phase `0-1`.
-2. **Adaptive, not duplicated**
-   Mobile screens provide the information architecture and state model. Web layouts may reorganize panes, density, and navigation for larger screens.
-3. **State completeness over happy-path polish**
-   Every major route needs loading, empty, error, blocked, and restricted states where the mobile/spec baseline defines them.
-4. **Operational realism**
-   Phase `0-1` web must support real support and recovery flows, not just task posting and browsing.
-5. **Design-system discipline**
-   Web additions must use existing Radix + Tailwind primitives and established `apps/web/src/components/ui/` patterns.
+These are non-negotiable for web until a later phase explicitly changes them:
+
+- auth remains Facebook-first
+- OTP remains disabled as an active Phase `0-1` path
+- direct settlement remains the customer/tasker payment message
+- manual verification remains the active verification model
+- application-based matching remains the core supply-demand flow
+- review enforcement and restricted-account handling must align with mobile semantics
 
 ## Current Web Reality
 
-The current web app already has a foundation:
+The web app now has two layers of implementation state:
 
-- auth shell
-- customer dashboard and customer task pages
-- tasker feed and tasker tasks
-- profile
-- verification
-- messaging/notifications
-- booking confirmation/safety
-- restricted account surfaces
+### Legacy foundation already present before parity work
 
-But it does not yet represent the full Phase `0-1` surface area covered by mobile/design inventory. Relative to the `66` Phase `0-1` screens in the design inventory, web currently appears to be:
+- `LandingPage`
+- `AuthPage`
+- `ProfilePage`
+- `CustomerDashboardPage`
+- `CustomerTaskPage`
+- `CustomerTaskDetailsPage`
+- `BookingConfirmationPage`
+- `BookingSafetyPage`
+- `MessagingNotificationsPage`
+- `TaskerFeedPage`
+- `TaskerTasksPage`
+- `VerificationPage`
+- `RestrictedAccountPage`
 
-- partially covered for shared/account/auth
-- partially covered for customer task and booking operations
-- partially covered for tasker verification and jobs
-- missing many recovery, review, dispute, and state-rich operational screens
+### New parity work already present on this branch
 
-## Parity Baseline
+- reusable parity shells under `apps/web/src/components/parity/`
+- shared baseline pages under `apps/web/src/pages/shared/`
+- customer baseline pages under `apps/web/src/pages/customer/`
+- focused tests:
+  - `apps/web/tests/unit/parity-shells.test.tsx`
+  - `apps/web/tests/integration/shared-parity.test.tsx`
+  - `apps/web/tests/integration/customer-phase1.test.tsx`
 
-The parity source should be established in this order for every missing or partial web surface:
+The [parity matrix](/home/norbu/projects/tasky/docs/plans/2026-03-26-web-phase-1-parity-matrix.md) is the authoritative gap inventory. The main conclusions are:
 
-1. mobile/Figma-backed screen inventory and specs
-2. current mobile implementation behavior
-3. existing web routing and layout patterns
+- shared/auth/account surfaces are only partially represented
+- customer posting and booking operations exist, but too many screens are collapsed into a few generic pages
+- tasker browse exists, but detail/jobs/stats/privacy parity is still missing
+- several recovery and operational surfaces do not exist at all
 
-The web app should not reinterpret business rules if mobile already implements them correctly.
+## Source-of-Truth Order
 
-## Adaptive Web Design Model
+For every web supplement decision, resolve ambiguity in this order:
 
-Each mobile screen should map into one of three adaptive web forms:
+1. Phase `0-1` product contract from the PRD
+2. mobile/design inventory and screen semantics
+3. current mobile behavior if the web behavior is unclear
+4. current web implementation patterns
 
-### 1. Full-page route
+Web should adapt layout, not reinterpret product rules that mobile already established.
 
-Use when the screen is a distinct task or system state:
+## Adaptive Web Strategy
 
-- auth
-- verification flows
-- account restrictions
-- infra/legal/help
-- full-screen wizards on mobile
+### Principle
 
-### 2. Responsive detail page with side panels
+Web must be **adaptive, not duplicated**. Mobile screen boundaries define domain semantics and state expectations. Web may reorganize those into split panes, denser cards, sticky side rails, or modal/dialog patterns where that improves desktop usability without changing the journey contract.
 
-Use when desktop benefits from simultaneous context:
+### Allowed Web Adaptations
 
-- task detail + action panel
-- booking detail + action rail
-- tasker profile + reviews
-- chat detail + conversation list split view
+- list/detail split view for inbox and some dashboard-like flows
+- sticky action rail on booking/task detail pages
+- dialogs for confirmation and reminder flows that are sheets on mobile
+- denser summary cards, grids, and tables where mobile uses vertically stacked cards
+- browser-native permission prompts may replace mobile permission-primer screens, but the web UX must still provide contextual explanation when a route depends on camera, location, or notifications access
 
-### 3. Dialog / sheet / inline panel adaptation
+### Disallowed Adaptations
 
-Use when mobile uses a sheet but web benefits from modal or side-panel interaction:
+- hiding a required mobile state because “desktop users do not need it”
+- merging unrelated flows into one page if that obscures route semantics
+- inventing new business steps or shortcuts not present in Phase `0-1`
+- shipping later-phase surfaces as active navigation targets
 
-- confirm completion
-- cancel/no-show confirmation
-- review reminder / hard lock
-- lead unlock–style future patterns if needed for hidden later-phase shells
+## Required Route Families
 
-## Required Web Coverage by Phase 0-1 Domain
+### Shared / Auth / Operational
 
-### A. Shared / Auth / Operational Surfaces
+Web must expose or clearly adapt:
 
-Web must support:
-
-- splash/auth entry behavior consistent with Phase `0-1`
-- login with Facebook-only framing
-- inbox list and chat detail
-- profile, edit profile, settings, delete account
+- auth entry
+- onboarding and role intent only if needed to preserve Phase `0-1` web conversion behavior; otherwise these remain intentionally web-adapted into landing/auth
+- inbox list
+- chat detail
 - notifications center
-- review form, reminder, hard-lock enforcement surfaces
-- suspended and banned account states
-- network error, session expired, app update messaging
-- terms, privacy, help
+- profile
+- edit profile
+- settings
+- delete account
+- review form
+- review reminder
+- review hard lock
+- suspended
+- banned
+- network error
+- app update
+- session expired
+- help
+- terms
+- privacy
 
-### B. Customer Surfaces
+### Customer
 
-Web must support:
+Web must expose or clearly adapt:
 
-- my tasks list
-- task-post wizard:
+- tasks list
+- posting flow:
   - category
   - intake
   - photos
@@ -144,202 +153,156 @@ Web must support:
   - schedule/budget
   - review/submit
   - success
-- task detail and cancellation
-- applicants list and applicant timeout/decline states where applicable
+- task detail
+- cancel confirmation
+- applicants
 - tasker public profile
-- booking confirmation and booking confirmed
-- bookings list/detail/timeline/reschedule
-- customer no-show / cancel flows
+- booking confirmation
+- booking confirmed
+- bookings list
+- booking detail
+- timeline
+- reschedule
+- no-show flag
+- no-show reminder
+- cancel
 - rebook
-- dispute raise and dispute status
+- dispute raise
+- dispute status
 - no-applicant rescue
 
-### C. Tasker Surfaces
+### Tasker
 
-Web must support:
+Web must expose or clearly adapt:
 
 - browse feed
 - task detail
+- application sent
 - verification gate
 - consent
 - upload
-- pending / approved / rejected / submitted verification states
-- application sent success
-- my jobs list
+- pending
+- approved
+- rejected
+- submitted
+- jobs list
 - booking detail
 - no-show
 - cancel
 - stats
-- privacy policy
+- privacy
+- AI profile polish
 
-## Information Architecture Recommendation
+## Page Architecture
 
-Keep the current top-level web role structure, but normalize route organization around the same core domains as mobile:
+### Reusable Layout Units
 
-- shared/auth
-- customer tasks/bookings/disputes
-- tasker feed/jobs/verification/profile
-- shared operational utilities
+The web supplement should use a small set of reusable page shells:
 
-Desktop can remain dashboard-oriented, but route boundaries should map to the same domain objects as mobile:
+- feed shell
+- detail shell
+- wizard shell
+- state panel
+- timeline list
+- action rail
 
-- `task`
-- `booking`
-- `dispute`
-- `conversation`
-- `profile`
-- `verification`
+These shells should remain layout-oriented and domain-agnostic.
 
-This minimizes mental drift between clients and reduces future test and contract divergence.
+### Domain Page Rules
 
-## Component Strategy
+- Each page should own one domain responsibility.
+- Shared pages should not depend on customer/tasker-specific business state beyond guard context.
+- Customer and tasker pages should compose reusable shells rather than recreating page structure ad hoc.
+- Existing large pages may be kept temporarily if they still provide correct behavior, but new behavior should land in focused files and gradually pull responsibility out of overloaded legacy pages.
 
-### Reuse
+## Navigation And Guard Expectations
 
-Prefer extending existing web primitives and layouts:
+- unauthenticated access to protected customer/tasker routes redirects to `/auth`
+- restricted users route to the correct restricted-state surface
+- customer and tasker primary nav must expose the correct Phase `0-1` entries only
+- later-phase or follow-on routes must not be discoverable through primary Phase `0-1` navigation
+- route boundaries should map to domain objects:
+  - task
+  - booking
+  - dispute
+  - conversation
+  - profile
+  - verification
 
-- `AdminLayout`
-- `ScreenFrame`
-- `Header`
-- `DesktopSidebar`
-- `BottomNavBar`
-- current page-level shells
+## Data And API Rules
 
-### Add
+- continue using the shared web API client and existing `AppContext`
+- do not introduce a competing fetch/state layer for parity work
+- do not add contract-breaking behavior on the client side
+- if a web route needs state that existing endpoints already provide, adapt through the current API client first
+- if a true API gap appears, stop and surface it explicitly instead of faking later-phase behavior
 
-Introduce web analogs for the most reused mobile patterns:
+## Testing Contract
 
-- adaptive feed list shell
-- detail-page shell with sticky action footer/rail
-- responsive wizard shell
-- status card / state panel components
-- review enforcement dialog/sheet components
-- booking timeline component
-- task/booking summary cards with shared status badge semantics
+### Required Layers
 
-### Do Not Do
+- focused integration tests for each new route family
+- updates to existing auth, guard, messaging, task, booking, and safety tests where route behavior changes
+- unit coverage for reusable parity shells
+- final broad web regression covering the changed slices
 
-- do not create one-off bespoke pages for each state if a reusable shell can express the same pattern
-- do not mirror phone-only spacing/density on desktop
-- do not create a second competing token system
+### State Coverage Requirements
 
-## Data and Behavior Strategy
+Every major supplemented route family must prove:
 
-The web app should continue using the shared API SDK/contracts and the same underlying product rules as mobile.
+- loading state
+- empty state
+- error state
+- happy path
+- role/restriction guard behavior where applicable
 
-For Phase `0-1` parity:
+### Accessibility Expectations
 
-- auth stays Facebook-first
-- OTP screens are not part of active web Phase `0-1` behavior
-- direct settlement messaging remains visible where appropriate
-- no escrow/wallet/credit runtime dependency should leak into core Phase `0-1` flows
-- review and restriction logic should match mobile enforcement states
+For touched routes:
 
-If mobile currently contains richer state handling than web, web should conform to mobile rather than inventing alternative logic.
-
-## Testing Strategy
-
-### 1. Parity Matrix
-
-Create a web Phase `0-1` parity matrix from the mobile/design inventory:
-
-- `exists and aligned`
-- `exists but partial`
-- `missing`
-- `intentionally web-adapted`
-
-This matrix becomes the authoritative rollout tracker.
-
-### 2. Route-Level Tests
-
-Every newly added or heavily revised route should have:
-
-- loading state coverage
-- empty state coverage
-- error state coverage
-- role/restriction guard coverage
-- primary CTA/navigation coverage
-
-### 3. Integration Tests
-
-At minimum, web needs journey coverage for:
-
-- auth entry + restricted access
-- customer post-task to applicant review
-- customer booking management
-- tasker verification to browse/apply/jobs
-- messaging
-- review enforcement
-
-### 4. Accessibility
-
-Any changed web flow must include:
-
-- keyboard navigation verification
-- focus management for dialogs/sheets
-- contrast and semantic structure checks
+- headings must remain queryable and unique enough for screen-reader/test use
+- dialogs must have accessible naming
+- core actions must remain keyboard reachable
 
 ## Delivery Strategy
 
-Implement in vertical slices, not by visual section alone.
+Implementation should proceed in these vertical slices:
 
-Recommended sequence:
+1. parity matrix and reusable shells
+2. shared/auth/operational pages
+3. customer posting/task management
+4. customer bookings/disputes/rescue
+5. tasker browse/application/verification
+6. tasker jobs/stats/privacy
+7. navigation/guard integration
+8. responsive/copy/a11y polish
+9. full regression and smoke verification
 
-1. build parity matrix and route gap inventory
-2. close shared/auth/operational gaps
-3. close customer Phase `0-1` gaps
-4. close tasker Phase `0-1` gaps
-5. run full web regression + accessibility + smoke checks
+This ordering keeps the most cross-cutting web primitives and operational surfaces in place before deeper customer/tasker expansion.
 
-This keeps the web app demoable at each stage and reduces the risk of broad unfinished UI sprawl.
+## Current Branch State
 
-## Risks
+At the time of this spec revision:
 
-### Risk 1: Mobile-to-web over-literal copying
+- parity matrix is complete
+- parity shells are implemented and tested
+- shared baseline pages are implemented and their focused parity test is green
+- customer baseline pages are implemented and their focused parity test is green
+- the next major work is integration:
+  - route wiring
+  - page exports
+  - locale/copy consolidation
+  - broader regressions
+  - remaining customer booking and tasker slices
 
-Mitigation:
+That means the implementation plan must continue from the actual branch state rather than planning as if the web parity work were greenfield.
 
-- explicitly treat mobile as semantic source, not layout source
-- require adaptive review of each page on desktop/tablet/mobile web
+## Acceptance Criteria
 
-### Risk 2: Hidden business-rule drift
+This spec is complete when:
 
-Mitigation:
-
-- use mobile implementation plus spec as behavioral baseline
-- add parity matrix review before implementation starts
-
-### Risk 3: Route sprawl without reusable shells
-
-Mitigation:
-
-- build shared responsive page shells first
-- add page-specific code only after shell choice is settled
-
-### Risk 4: Partial parity claimed too early
-
-Mitigation:
-
-- define done as parity-matrix closure plus tests, not just page count
-
-## Success Criteria
-
-This work is complete when:
-
-- all Phase `0-1` web-required surfaces are classified and implemented or explicitly marked as already aligned
-- web customer, tasker, and shared flows match Phase `0-1` mobile/spec behavior
-- responsive layouts work on mobile web, tablet, and desktop
-- web tests and smoke coverage are expanded to cover the supplemented flows
-- the app can truthfully be described as Phase `0-1` capable on both mobile and web, not mobile-only
-
-## Recommended Plan Shape
-
-The implementation plan should be split into these workstreams:
-
-1. parity matrix and route inventory
-2. shared/auth/operational supplementation
-3. customer supplementation
-4. tasker supplementation
-5. responsive shell refinement and final regression
-
-That keeps the work reviewable, parallelizable, and aligned with the existing repo structure.
+- web covers every Phase `0-1` route family required by the parity matrix, either as aligned or intentionally web-adapted
+- no critical Phase `0-1` journey depends on mobile-only behavior
+- later-phase behavior is not accidentally activated on web
+- route and state coverage are verified with focused tests plus a broader web regression
+- web remains within current design system and API-client constraints

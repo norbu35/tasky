@@ -22,7 +22,7 @@ const CUSTOMER_NAV = [
 
 const TASKER_NAV = [
   { to: '/tasker/feed', label: 'nav.findWork', fallback: 'Find Work', icon: Search },
-  { to: '/tasker/tasks', label: 'nav.myJobs', fallback: 'My Jobs', icon: Briefcase },
+  { to: '/tasker/jobs', label: 'nav.myJobs', fallback: 'My Jobs', icon: Briefcase },
   { to: '/communication', label: 'nav.inbox', fallback: 'Inbox', icon: MessageSquare },
   { to: '/profile', label: 'nav.profile', fallback: 'Profile', icon: User },
 ];

@@ -43,6 +43,9 @@ describe('Tasks Integration', () => {
     );
 
     await screen.findByRole('heading', { name: 'Create task' });
+    expect(
+      screen.getByText(/add photos and place the map pin so taskers can find the job/i),
+    ).toBeInTheDocument();
 
     const categorySelect = screen.getByLabelText('Category') as HTMLSelectElement;
     await waitFor(() => {

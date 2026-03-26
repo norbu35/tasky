@@ -11,8 +11,8 @@ const CUSTOMER_TABS = [
 ];
 
 const TASKER_TABS = [
-  { to: '/tasker/tasks', icon: Search, label: 'nav.findWork', fallback: 'Find Work' },
-  { to: '/tasker/my-tasks', icon: Briefcase, label: 'nav.myJobs', fallback: 'My Jobs' },
+  { to: '/tasker/feed', icon: Search, label: 'nav.findWork', fallback: 'Find Work' },
+  { to: '/tasker/jobs', icon: Briefcase, label: 'nav.myJobs', fallback: 'My Jobs' },
   { to: '/communication', icon: MessageSquare, label: 'nav.inbox', fallback: 'Inbox' },
   { to: '/profile', icon: User, label: 'nav.profile', fallback: 'Profile' },
 ];
