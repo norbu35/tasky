@@ -27,7 +27,7 @@ export function StatePanel({
   className,
 }: StatePanelProps) {
   return (
-    <Card className={cn('shadow-md', toneStyles[tone], className)}>
+    <Card className={cn('shadow-sm', toneStyles[tone], className)}>
       <CardHeader className="space-y-4">
         {icon ? <div className="flex items-center gap-3">{icon}</div> : null}
         <div className="space-y-1">

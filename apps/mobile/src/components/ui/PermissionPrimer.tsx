@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { elevations } from '../../design/elevations';
+import { elevations, overlays } from '../../design/elevations';
 import { Button } from './Button';
 
 const { colors, radius, spacing, typography } = mobileTheme;
@@ -101,16 +101,16 @@ const styles = StyleSheet.create({
   },
   mockBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#F4F3F0',
+    backgroundColor: colors.muted,
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(30, 52, 71, 0.28)',
+    backgroundColor: overlays.sheet,
   },
   sheet: {
     backgroundColor: colors.background,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.md,
     paddingBottom: spacing.xl,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 12,
-    backgroundColor: '#D7D5D1',
+    backgroundColor: colors.border,
     marginBottom: spacing.lg,
   },
   iconShell: {
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E9E8E5',
+    backgroundColor: colors.muted,
   },
   badge: {
     position: 'absolute',
@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FDCE6A',
+    backgroundColor: colors.accent,
     borderWidth: 4,
     borderColor: colors.background,
     ...elevations.card,
   },
   badgeText: {
-    color: '#1B3A5C',
+    color: colors.primaryDeep,
     fontSize: 14,
     fontWeight: '700',
   },
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   grantButton: {
     width: '100%',
     minHeight: 52,
-    borderRadius: 8,
+    borderRadius: radius.md,
   },
   footerNote: {
     marginTop: spacing.lg,

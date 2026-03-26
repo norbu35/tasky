@@ -1,16 +1,19 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { StyleSheet } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { designTokens } from '../../../packages/design-tokens/tokens';
 import AuthScreen from '../src/app/(auth)/index';
 import IndexScreen from '../src/app/index';
 import BookingsScreen from '../src/app/(tabs)/bookings';
 import FeedScreen from '../src/app/(tabs)/index';
-import { Button, FormField, Input, Toast } from '../src/components/ui';
+import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
+import { FormWizardTemplate } from '../src/components/templates/FormWizardTemplate';
 import { mobileTheme } from '../src/design/tokenAdapter';
 import { LoginForm } from '../src/features/auth/components/LoginForm';
 import { useRequestOtp, useVerifyOtp, useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
+import { BookingConfirmation } from '../src/features/bookings/components/BookingConfirmation';
 import {
   useMyProfile,
   useSignOut,
@@ -338,6 +341,66 @@ describe('mobile app structure', () => {
 
     render(<Toast message="Saved" variant="success" />);
     expect(screen.getByText('Saved')).toBeTruthy();
+  });
+
+  it('TID-TASK-071-MOBILE-COMPONENT-STYLING-PARITY keeps shared primitive chrome on token values', () => {
+    render(
+      <>
+        <Button label="Continue" testID="primitive-button" />
+      </>,
+    );
+
+    const buttonStyle = StyleSheet.flatten(screen.getByTestId('primitive-button').props.style);
+    expect(buttonStyle.borderRadius).toBe(designTokens.radius.md);
+
+    render(<Card testID="primitive-card" />);
+
+    const cardStyle = StyleSheet.flatten(screen.getByTestId('primitive-card').props.style);
+    expect(cardStyle.borderRadius).toBe(designTokens.radius.lg);
+    expect(cardStyle.backgroundColor).toBe(designTokens.colors.card.hex);
+    expect(cardStyle.borderColor).toBe(designTokens.colors.border.hex);
+  });
+
+  it('TID-TASK-071-MOBILE-WIZARD-SHELL-PARITY uses calmer shell separation and token framing', () => {
+    render(
+      <FormWizardTemplate currentStep={1} totalSteps={3} onNext={jest.fn()} nextLabel="Continue">
+        <Input placeholder="Describe the task" value="" onChangeText={jest.fn()} />
+      </FormWizardTemplate>,
+    );
+
+    const progressStyle = StyleSheet.flatten(screen.getByTestId('wizard-progress').props.style);
+    expect(progressStyle.paddingHorizontal).toBe(designTokens.spacing.lg);
+
+    const bottomBarStyle = StyleSheet.flatten(screen.getByTestId('wizard-bottom-bar').props.style);
+    expect(bottomBarStyle.backgroundColor).toBe(designTokens.colors.card.hex);
+    expect(bottomBarStyle.borderTopColor).toBe(designTokens.colors.border.hex);
+    expect(bottomBarStyle.borderTopWidth).toBe(1);
+  });
+
+  it('TID-TASK-071-MOBILE-BOOKING-HIERARCHY-PARITY keeps secondary panels visually quieter than primary actions', () => {
+    render(
+      <BookingConfirmation
+        taskTitle="Apartment cleaning"
+        tasker={{
+          name: 'Tasker One',
+          rating: 4.8,
+          reviewCount: 12,
+          isVerified: true,
+        }}
+        summary={{ date: '2026-03-28', time: '14:00', budget: '₮120,000' }}
+        onConfirm={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
+
+    const disclaimerStyle = StyleSheet.flatten(
+      screen.getByTestId('booking-confirmation-disclaimer').props.style,
+    );
+    expect(disclaimerStyle.borderColor).toBe(designTokens.colors.border.hex);
+    expect(disclaimerStyle.backgroundColor).toBe(designTokens.colors.muted.hex);
+
+    const primaryCtaStyle = StyleSheet.flatten(screen.getByTestId('booking-confirmation-cta').props.style);
+    expect(primaryCtaStyle.borderRadius).toBe(designTokens.radius.md);
   });
 
   it('TID-TASK-071-MOBILE-STATE-SEMANTIC-PARITY enforces parity matrix documentation linkage', () => {

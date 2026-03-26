@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
+import { useId } from 'react';
 import { ScreenFrame } from '../../layout/ScreenFrame';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { cn } from '../../lib/utils';
 
 type ResponsiveWizardShellProps = {
@@ -20,26 +20,29 @@ export function ResponsiveWizardShell({
   children,
   className,
 }: ResponsiveWizardShellProps) {
+  const titleId = useId();
+
   return (
     <ScreenFrame maxWidth="narrow">
-      <div className={cn('space-y-6', className)}>
-        <Card className="border-border/60 shadow-md">
-          <CardHeader className="space-y-3">
-            {stepLabel ? (
-              <div className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                {stepLabel}
-              </div>
-            ) : null}
-            <div className="space-y-1">
-              <CardTitle>{title}</CardTitle>
-              {description ? <CardDescription>{description}</CardDescription> : null}
+      <section aria-labelledby={titleId} className={cn('space-y-5', className)}>
+        <header className="space-y-3">
+          {stepLabel ? (
+            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+              {stepLabel}
             </div>
-          </CardHeader>
-          <CardContent>{children}</CardContent>
-        </Card>
+          ) : null}
+          <div className="space-y-1.5">
+            <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
+              {title}
+            </h1>
+            {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
+          </div>
+        </header>
 
-        {footer ? <div>{footer}</div> : null}
-      </div>
+        <div className="space-y-4">{children}</div>
+
+        {footer ? <div className="pt-2">{footer}</div> : null}
+      </section>
     </ScreenFrame>
   );
 }

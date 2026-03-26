@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
 const { colors, radius } = mobileTheme;
 
@@ -103,11 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...elevations.card,
   },
   badgeInner: {
     backgroundColor: colors.verified,

@@ -101,7 +101,7 @@ export function BookingConfirmation({
         </Card>
 
         {/* Liability Disclaimer */}
-        <View style={styles.disclaimerCard}>
+        <View style={styles.disclaimerCard} testID="booking-confirmation-disclaimer">
           <View style={styles.disclaimerHeader}>
             <Shield size={20} color={colors.primaryDeep} />
             <Text style={styles.disclaimerTitle}>
@@ -138,6 +138,7 @@ export function BookingConfirmation({
             onPress={onConfirm}
             disabled={!termsAccepted || isLoading}
             style={[styles.gradientWrapper, (!termsAccepted || isLoading) && styles.disabled]}
+            testID="booking-confirmation-cta"
           >
             <LinearGradient
               colors={[colors.primary, colors.primaryDeep]}
@@ -261,10 +262,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
   },
   disclaimerCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.primaryDeep,
+    borderColor: colors.border,
     padding: spacing.lg,
     marginBottom: spacing.xl,
   },
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   disclaimerTitle: {
     fontSize: typography.body,
     fontWeight: '600',
-    color: colors.primaryDeep,
+    color: colors.foreground,
   },
   disclaimerText: {
     fontSize: typography.caption,
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   gradientWrapper: {
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
     overflow: 'hidden',
   },
   gradientButton: {
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
   },
   gradientButtonText: {
     color: colors.primaryForeground,

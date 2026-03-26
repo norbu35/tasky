@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { overlays } from '../../design/elevations';
 import { Button } from './Button';
 
 type Props = {
@@ -78,10 +79,10 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(16, 24, 34, 0.38)',
+    backgroundColor: overlays.sheet,
   },
   sheet: {
-    backgroundColor: mobileTheme.colors.card,
+    backgroundColor: mobileTheme.colors.background,
     borderTopLeftRadius: mobileTheme.radius.lg,
     borderTopRightRadius: mobileTheme.radius.lg,
     paddingHorizontal: mobileTheme.spacing.lg,
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 5,
     borderRadius: mobileTheme.radius.full,
-    backgroundColor: '#D7D5D1',
+    backgroundColor: mobileTheme.colors.border,
   },
   title: {
     fontSize: mobileTheme.typography.body,

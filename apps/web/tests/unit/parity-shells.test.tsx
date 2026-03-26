@@ -30,6 +30,7 @@ describe('Parity shells', () => {
       </ResponsiveFeedShell>,
     );
 
+    expect(screen.getByRole('region', { name: 'Feed title' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Feed title' })).toBeInTheDocument();
     expect(screen.getByText('Feed description')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Primary' })).toBeInTheDocument();
@@ -50,6 +51,7 @@ describe('Parity shells', () => {
       </ResponsiveDetailShell>,
     );
 
+    expect(screen.getByRole('region', { name: 'Detail title' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Detail title' })).toBeInTheDocument();
     expect(screen.getByText('Detail description')).toBeInTheDocument();
@@ -70,6 +72,7 @@ describe('Parity shells', () => {
       </ResponsiveWizardShell>,
     );
 
+    expect(screen.getByRole('region', { name: 'Wizard title' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Wizard title' })).toBeInTheDocument();
     expect(screen.getByText('Wizard description')).toBeInTheDocument();
     expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();

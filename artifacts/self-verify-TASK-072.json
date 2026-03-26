@@ -1,0 +1,322 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-03-26T10:55:25Z",
+  "ticket": "TASK-072",
+  "risk_level": "medium",
+  "ticket_spec_path": "tickets/TASK-072.json",
+  "req_ids": [
+    "NFR-UI-02"
+  ],
+  "files_changed": [
+    "apps/mobile/__tests__/App.test.tsx",
+    "apps/mobile/src/app/(auth)/index.tsx",
+    "apps/mobile/src/app/(shared)/app-update.tsx",
+    "apps/mobile/src/components/templates/FormWizardTemplate.tsx",
+    "apps/mobile/src/components/ui/Button.tsx",
+    "apps/mobile/src/components/ui/Card.tsx",
+    "apps/mobile/src/components/ui/FAB.tsx",
+    "apps/mobile/src/components/ui/LanguageSwitcher.tsx",
+    "apps/mobile/src/components/ui/ModalSheet.tsx",
+    "apps/mobile/src/components/ui/PermissionPrimer.tsx",
+    "apps/mobile/src/components/ui/ProfileAvatar.tsx",
+    "apps/mobile/src/features/bookings/components/BookingConfirmation.tsx",
+    "apps/web/src/components/parity/ActionRail.tsx",
+    "apps/web/src/components/parity/ResponsiveDetailShell.tsx",
+    "apps/web/src/components/parity/ResponsiveFeedShell.tsx",
+    "apps/web/src/components/parity/ResponsiveWizardShell.tsx",
+    "apps/web/src/components/parity/StatePanel.tsx",
+    "apps/web/src/components/ui/card.tsx",
+    "apps/web/src/pages/ProfilePage.tsx",
+    "apps/web/src/pages/customer/CustomerBookingsPage.tsx",
+    "apps/web/src/pages/tasker/TaskerApplicationSentPage.tsx",
+    "apps/web/src/router/AppRoutes.tsx",
+    "apps/web/tests/unit/parity-shells.test.tsx",
+    "apps/web/tests/unit/profile-page.test.tsx"
+  ],
+  "required_check_ids": [
+    "format_lint",
+    "commit_message_lint",
+    "secret_scan",
+    "ticket_spec_validation",
+    "changed_module_tests",
+    "openapi_validation",
+    "integration_tests_touched",
+    "coverage_gate_touched",
+    "ac_coverage_gate"
+  ],
+  "checks": [
+    {
+      "id": "format_lint",
+      "title": "Format and lint checks",
+      "required": true,
+      "status": "FAIL",
+      "command": "if rg -q '^(apps/web/|apps/mobile/|packages/sdk/|docs/API\\.yaml$|pnpm-lock\\.yaml$|pnpm-workspace\\.yaml$|package\\.json$)' artifacts/checks/changed-files.txt; then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend lint/typecheck checks.\" >&2\n    exit 1\n  fi\n  pnpm -r lint\n  pnpm -r typecheck\nfi\n./gradlew --no-daemon checkstyleMain checkstyleTest",
+      "exit_code": 1,
+      "duration_ms": 16887,
+      "started_at": "2026-03-26T10:55:06Z",
+      "finished_at": "2026-03-26T10:55:23Z",
+      "evidence": {
+        "summary": "Check failed. See artifacts/checks/format_lint.log.",
+        "artifact_paths": [
+          "artifacts/checks/format_lint.log"
+        ]
+      },
+      "error": "Scope: 5 of 6 workspace projects"
+    },
+    {
+      "id": "commit_message_lint",
+      "title": "Commit message lint",
+      "required": true,
+      "status": "PASS",
+      "command": "commit_lint_base=\"${COMMIT_LINT_BASE:-}\"\nif [[ -z \"${commit_lint_base}\" && \"${CI:-}\" != \"true\" ]]; then\n  commit_lint_base=\"HEAD\"\nfi\nif [[ -z \"${commit_lint_base}\" ]]; then\n  for ref in origin/main main origin/master master; do\n    if git rev-parse --verify \"${ref}\" >/dev/null 2>&1; then\n      commit_lint_base=\"$(git merge-base HEAD \"${ref}\")\"\n      break\n    fi\n  done\nfi\n\nif [[ -n \"${commit_lint_base}\" ]]; then\n  python3 scripts/validate-commit-messages.py --base \"${commit_lint_base}\" --ticket \"${SELF_VERIFY_TICKET}\"\nelse\n  python3 scripts/validate-commit-messages.py --ticket \"${SELF_VERIFY_TICKET}\"\nfi",
+      "exit_code": 0,
+      "duration_ms": 59,
+      "started_at": "2026-03-26T10:55:23Z",
+      "finished_at": "2026-03-26T10:55:23Z",
+      "evidence": {
+        "summary": "Check passed.",
+        "artifact_paths": [
+          "artifacts/checks/commit_message_lint.log"
+        ]
+      }
+    },
+    {
+      "id": "secret_scan",
+      "title": "Secret scan",
+      "required": true,
+      "status": "PASS",
+      "command": "! rg -n --hidden --glob '!.git' --glob '!artifacts/**' --glob '!build/**' 'AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----' .",
+      "exit_code": 0,
+      "duration_ms": 51,
+      "started_at": "2026-03-26T10:55:23Z",
+      "finished_at": "2026-03-26T10:55:23Z",
+      "evidence": {
+        "summary": "Check passed.",
+        "artifact_paths": [
+          "artifacts/checks/secret_scan.log"
+        ]
+      }
+    },
+    {
+      "id": "ticket_spec_validation",
+      "title": "Ticket spec and branch context validation",
+      "required": true,
+      "status": "PASS",
+      "command": "python3 scripts/validate-ticket-spec.py \\\n  --spec \"${SELF_VERIFY_TICKET_SPEC_PATH}\" \\\n  --ticket \"${SELF_VERIFY_TICKET}\" \\\n  --risk \"${SELF_VERIFY_RISK}\" \\\n  --req \"${SELF_VERIFY_REQ_CSV}\" \\\n  --branch \"${SELF_VERIFY_BRANCH}\" \\\n  --out artifacts/checks/ticket-spec.normalized.json",
+      "exit_code": 0,
+      "duration_ms": 54,
+      "started_at": "2026-03-26T10:55:23Z",
+      "finished_at": "2026-03-26T10:55:23Z",
+      "evidence": {
+        "summary": "Check passed.",
+        "artifact_paths": [
+          "artifacts/checks/ticket_spec_validation.log"
+        ]
+      }
+    },
+    {
+      "id": "openapi_validation",
+      "title": "OpenAPI contract validation",
+      "required": true,
+      "status": "FAIL",
+      "command": "if [[ \"${SELF_VERIFY_TICKET}\" == \"TASK-002\" ]]; then\n  echo \"TID-TASK-002-API-VALIDATE\"\nfi\n\n./gradlew --no-daemon openApiValidate\n\nif [[ \"${SELF_VERIFY_TICKET}\" == \"TASK-002\" ]] || rg -q '^(docs/API\\.yaml$|packages/sdk/|apps/web/|apps/mobile/|package\\.json$|pnpm-lock\\.yaml$|pnpm-workspace\\.yaml$)' artifacts/checks/changed-files.txt; then\n  scripts/validate-sdk-contract-drift.sh\nfi",
+      "exit_code": 1,
+      "duration_ms": 1300,
+      "started_at": "2026-03-26T10:55:23Z",
+      "finished_at": "2026-03-26T10:55:24Z",
+      "evidence": {
+        "summary": "Check failed. See artifacts/checks/openapi_validation.log.",
+        "artifact_paths": [
+          "artifacts/checks/openapi_validation.log"
+        ]
+      }
+    },
+    {
+      "id": "ac_coverage_gate",
+      "title": "Acceptance criteria coverage gate",
+      "required": true,
+      "status": "FAIL",
+      "command": "python3 scripts/validate-ac-coverage.py \\\n  --normalized artifacts/checks/ticket-spec.normalized.json \\\n  --ticket \"${SELF_VERIFY_TICKET}\" \\\n  --risk \"${SELF_VERIFY_RISK}\" \\\n  --logs-dir artifacts/checks \\\n  --out artifacts/checks/ac-coverage.json",
+      "exit_code": 1,
+      "duration_ms": 55,
+      "started_at": "2026-03-26T10:55:25Z",
+      "finished_at": "2026-03-26T10:55:25Z",
+      "evidence": {
+        "summary": "Check failed. See artifacts/checks/ac_coverage_gate.log.",
+        "artifact_paths": [
+          "artifacts/checks/ac_coverage_gate.log"
+        ]
+      },
+      "error": "Acceptance criteria coverage validation failed:"
+    },
+    {
+      "id": "changed_module_tests",
+      "title": "Changed-module tests",
+      "required": true,
+      "status": "FAIL",
+      "command": "needs_backend=0\nneeds_web=0\nneeds_mobile=0\n\nif rg -q '^(src/|build\\.gradle\\.kts$|settings\\.gradle\\.kts$|gradle/|gradlew$|gradlew\\.bat$)' artifacts/checks/changed-files.txt; then\n  needs_backend=1\nfi\nif rg -q '^apps/web/' artifacts/checks/changed-files.txt; then\n  needs_web=1\nfi\nif rg -q '^apps/mobile/' artifacts/checks/changed-files.txt; then\n  needs_mobile=1\nfi\nif rg -q '^(packages/sdk/|docs/API\\.yaml$)' artifacts/checks/changed-files.txt; then\n  needs_web=1\n  needs_mobile=1\nfi\n\nif (( needs_backend == 1 )); then\n  ./gradlew --no-daemon test --rerun-tasks\nfi\n\nif (( needs_web == 1 || needs_mobile == 1 )); then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend changed-module tests.\" >&2\n    exit 1\n  fi\nfi\n\nif (( needs_web == 1 )); then\n  pnpm --filter @tasky/web test:unit\nfi\nif (( needs_mobile == 1 )); then\n  pnpm --filter @tasky/mobile test:unit\nfi\n\nif (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 )); then\n  echo \"No runtime modules changed; changed-module tests not applicable.\"\nfi",
+      "exit_code": 1,
+      "duration_ms": 0,
+      "started_at": "2026-03-26T10:55:25Z",
+      "finished_at": "2026-03-26T10:55:25Z",
+      "evidence": {
+        "summary": "Check blocked because fast verification failed.",
+        "artifact_paths": []
+      },
+      "error": "Blocked by failing fast check: format_lint"
+    },
+    {
+      "id": "integration_tests_touched",
+      "title": "Integration tests for touched modules",
+      "required": true,
+      "status": "FAIL",
+      "command": "needs_backend=0\nneeds_web=0\nneeds_mobile=0\n\nif rg -q '^(src/main/|src/test/|build\\.gradle\\.kts$|settings\\.gradle\\.kts$)' artifacts/checks/changed-files.txt; then\n  needs_backend=1\nfi\nif rg -q '^apps/web/' artifacts/checks/changed-files.txt; then\n  needs_web=1\nfi\nif rg -q '^apps/mobile/' artifacts/checks/changed-files.txt; then\n  needs_mobile=1\nfi\nif rg -q '^(packages/sdk/|docs/API\\.yaml$)' artifacts/checks/changed-files.txt; then\n  needs_web=1\n  needs_mobile=1\nfi\n\nif (( needs_backend == 1 )); then\n  if find src/test -type f 2>/dev/null | rg -q 'Integration|IT'; then\n    ./gradlew --no-daemon test --rerun-tasks --tests '*Integration*' --tests '*IT*'\n  else\n    ./gradlew --no-daemon test --rerun-tasks\n  fi\nfi\n\nif (( needs_web == 1 || needs_mobile == 1 )); then\n  if ! command -v pnpm >/dev/null 2>&1; then\n    echo \"pnpm is required for frontend integration smoke tests.\" >&2\n    exit 1\n  fi\nfi\n\nif (( needs_web == 1 )); then\n  pnpm --filter @tasky/web test:e2e:smoke\nfi\nif (( needs_mobile == 1 )); then\n  pnpm --filter @tasky/mobile test:e2e:smoke\nfi\n\nif (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 )); then\n  echo \"No touched modules requiring integration tests.\"\nfi",
+      "exit_code": 1,
+      "duration_ms": 0,
+      "started_at": "2026-03-26T10:55:25Z",
+      "finished_at": "2026-03-26T10:55:25Z",
+      "evidence": {
+        "summary": "Check blocked because fast verification failed.",
+        "artifact_paths": []
+      },
+      "error": "Blocked by failing fast check: format_lint"
+    },
+    {
+      "id": "coverage_gate_touched",
+      "title": "Coverage gate on touched critical modules",
+      "required": true,
+      "status": "FAIL",
+      "command": "./gradlew --no-daemon jacocoTestCoverageVerification",
+      "exit_code": 1,
+      "duration_ms": 0,
+      "started_at": "2026-03-26T10:55:25Z",
+      "finished_at": "2026-03-26T10:55:25Z",
+      "evidence": {
+        "summary": "Check blocked because fast verification failed.",
+        "artifact_paths": []
+      },
+      "error": "Blocked by failing fast check: format_lint"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-072-01",
+      "type": "functional",
+      "statement": "Web UI flows touched by changes pass keyboard navigation checks.",
+      "test_ids": [
+        "TID-TASK-072-WEB-A11Y-KEYBOARD"
+      ],
+      "negative_test_ids": []
+    },
+    {
+      "id": "AC-TASK-072-02",
+      "type": "functional",
+      "statement": "Web UI flows touched by changes meet WCAG 2.1 AA contrast.",
+      "test_ids": [
+        "TID-TASK-072-WEB-A11Y-CONTRAST-AA"
+      ],
+      "negative_test_ids": []
+    },
+    {
+      "id": "AC-TASK-072-03",
+      "type": "functional",
+      "statement": "Cross-platform parity checks validate token usage and expected component state behavior.",
+      "test_ids": [
+        "TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK"
+      ],
+      "negative_test_ids": []
+    }
+  ],
+  "ac_test_mapping": [
+    {
+      "ac_id": "AC-TASK-072-01",
+      "test_ids": [
+        "TID-TASK-072-WEB-A11Y-KEYBOARD"
+      ],
+      "covered_test_ids": [],
+      "uncovered_test_ids": [
+        "TID-TASK-072-WEB-A11Y-KEYBOARD"
+      ],
+      "status": "FAIL"
+    },
+    {
+      "ac_id": "AC-TASK-072-02",
+      "test_ids": [
+        "TID-TASK-072-WEB-A11Y-CONTRAST-AA"
+      ],
+      "covered_test_ids": [],
+      "uncovered_test_ids": [
+        "TID-TASK-072-WEB-A11Y-CONTRAST-AA"
+      ],
+      "status": "FAIL"
+    },
+    {
+      "ac_id": "AC-TASK-072-03",
+      "test_ids": [
+        "TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK"
+      ],
+      "covered_test_ids": [],
+      "uncovered_test_ids": [
+        "TID-TASK-072-CROSS-PLATFORM-PARITY-CHECK"
+      ],
+      "status": "FAIL"
+    }
+  ],
+  "ac_coverage_summary": {
+    "total_ac": 3,
+    "mapped_ac": 3,
+    "fully_covered_ac": 0,
+    "total_test_ids": 3,
+    "covered_test_ids": 0,
+    "pass": false,
+    "failures": [
+      "ac_coverage_gate did not produce output"
+    ]
+  },
+  "overall_status": "FAIL",
+  "known_risks": [
+    "Automated checks reduce but do not eliminate risk; human review remains mandatory."
+  ],
+  "assumptions": [
+    "Checks executed in local development environment with available tooling."
+  ],
+  "self_critique": {
+    "requirement_most_likely_to_break": "Requirements tied to changed modules require manual validation against PRD REQ/NFR IDs.",
+    "security_or_abuse_path_impacted": "Authorization, payment, and data exposure paths must be manually reviewed for abuse scenarios.",
+    "proof_test": "commit_message_lint"
+  },
+  "ci_parity": {
+    "local_required_check_ids": [
+      "format_lint",
+      "commit_message_lint",
+      "secret_scan",
+      "ticket_spec_validation",
+      "changed_module_tests",
+      "openapi_validation",
+      "integration_tests_touched",
+      "coverage_gate_touched",
+      "ac_coverage_gate"
+    ],
+    "ci_required_check_ids": [
+      "format_lint",
+      "commit_message_lint",
+      "secret_scan",
+      "ticket_spec_validation",
+      "changed_module_tests",
+      "openapi_validation",
+      "integration_tests_touched",
+      "coverage_gate_touched",
+      "ac_coverage_gate"
+    ],
+    "matches": true
+  },
+  "git_context": {
+    "branch": "agent/TASK-072-cross-platform-ui-polish",
+    "base_ref": "HEAD",
+    "head_sha": "5eaa629c0350902c28ab32d31750447c0f980580"
+  },
+  "agent": {
+    "name": "Codex",
+    "version": "unknown"
+  }
+}

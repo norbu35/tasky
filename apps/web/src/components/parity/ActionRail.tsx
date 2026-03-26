@@ -18,7 +18,7 @@ export function ActionRail({
   className,
 }: ActionRailProps) {
   return (
-    <Card className={cn('lg:sticky lg:top-20 shadow-md', className)}>
+    <Card className={cn('lg:sticky lg:top-20 shadow-sm', className)}>
       {title ? (
         <CardHeader className="pb-4">
           <CardTitle className="text-base">{title}</CardTitle>

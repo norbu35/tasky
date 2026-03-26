@@ -6,6 +6,7 @@ import { CircleCheckBig, Facebook } from 'lucide-react-native';
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button } from '../../components/ui';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 import { useDevLogin } from '../../features/auth/hooks/useAuth';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -124,11 +125,11 @@ const styles = StyleSheet.create({
   },
   languagePill: {
     borderWidth: 1,
-    borderColor: 'rgba(195,198,207,0.2)',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: mobileTheme.radius.md,
     paddingHorizontal: 13,
     paddingVertical: 5,
-    backgroundColor: 'rgba(255,255,255,0.72)',
+    backgroundColor: colors.card,
   },
   languagePillText: {
     color: colors.primaryDeep,
@@ -144,11 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xl,
-    shadowColor: '#0D1B2A',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
-    elevation: 4,
+    ...elevations.elevated,
   },
   title: {
     fontSize: typography.heading,

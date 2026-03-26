@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
+import { useId } from 'react';
 import { ScreenFrame } from '../../layout/ScreenFrame';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { cn } from '../../lib/utils';
 
 type ResponsiveFeedShellProps = {
@@ -20,24 +20,26 @@ export function ResponsiveFeedShell({
   children,
   className,
 }: ResponsiveFeedShellProps) {
+  const titleId = useId();
+
   return (
     <ScreenFrame maxWidth="wide">
       <div className={cn('grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]', className)}>
-        <section className="space-y-6">
-          <Card className="border-border/60 shadow-md">
-            <CardHeader className="flex flex-row items-start justify-between gap-4">
-              <div className="space-y-1">
-                <CardTitle>{title}</CardTitle>
-                {description ? <CardDescription>{description}</CardDescription> : null}
-              </div>
-              {primaryAction ? <div className="flex shrink-0 items-center gap-2">{primaryAction}</div> : null}
-            </CardHeader>
-          </Card>
+        <section aria-labelledby={titleId} className="space-y-5">
+          <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-1.5">
+              <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
+                {title}
+              </h1>
+              {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
+            </div>
+            {primaryAction ? <div className="flex shrink-0 items-center gap-2">{primaryAction}</div> : null}
+          </header>
 
-          <div>{children}</div>
+          <div className="space-y-4">{children}</div>
         </section>
 
-        <aside className="space-y-4">{sideRail}</aside>
+        {sideRail ? <aside className="space-y-4">{sideRail}</aside> : null}
       </div>
     </ScreenFrame>
   );

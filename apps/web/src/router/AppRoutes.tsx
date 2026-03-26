@@ -18,7 +18,6 @@ import {
   CustomerRebookPage,
   CustomerReschedulePage,
   CustomerTaskDetailsPage,
-  CustomerTaskPage,
   CustomerTasksListPage,
   CustomerTaskSuccessPage,
   CustomerTaskWizardPage,

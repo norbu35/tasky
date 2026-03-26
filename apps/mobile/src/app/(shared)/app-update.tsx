@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../../components/ui/Button';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, radius, spacing, typography } = mobileTheme;
 
 const APP_STORE_URL = Platform.select({
   ios: 'https://apps.apple.com/app/tasky',
@@ -40,7 +40,7 @@ export default function AppUpdateScreen() {
 
   return (
     <View style={styles.container} testID="app-update-screen">
-      <LinearGradient colors={['#FFFFFF', '#F2F1ED']} style={styles.iconCard}>
+      <LinearGradient colors={[colors.card, colors.muted]} style={styles.iconCard}>
         <Download size={44} color={colors.primary} />
       </LinearGradient>
       <View style={styles.sparkle}>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   iconCard: {
     width: 92,
     height: 92,
-    borderRadius: 24,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xl,
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     right: spacing['3xl'],
     width: 34,
     height: 34,
-    borderRadius: 10,
-    backgroundColor: '#F4C96B',
+    borderRadius: radius.md,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   versionPill: {
     marginTop: spacing.xl,
     borderRadius: 999,
-    backgroundColor: '#EFEEEB',
+    backgroundColor: colors.muted,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
   },
