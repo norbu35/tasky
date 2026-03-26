@@ -53,7 +53,12 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
   it('renders timeline events', () => {
     mockUseBookingTimeline.mockReturnValue({
       data: [
-        { event: 'booking_created', timestamp: '2026-03-22T09:00:00Z', actor: 'customer' },
+        {
+          event: 'booking_created',
+          timestamp: '2026-03-22T09:00:00Z',
+          actor: 'customer',
+          description: 'Customer posted the booking request',
+        },
         { event: 'tasker_assigned', timestamp: '2026-03-22T10:00:00Z', actor: 'system' },
       ],
       isLoading: false,
@@ -63,6 +68,7 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
     render(<BookingTimelineScreen />);
     expect(screen.getByText('Booking created')).toBeTruthy();
     expect(screen.getByText('Tasker assigned')).toBeTruthy();
+    expect(screen.getByText('Customer posted the booking request')).toBeTruthy();
   });
 
   it('shows active styling on current (last) event', () => {
@@ -91,6 +97,25 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
     });
     render(<BookingTimelineScreen />);
     expect(screen.getByTestId('timeline-event-0-past')).toBeTruthy();
+  });
+
+  it('shows future styling on upcoming events', () => {
+    mockUseBookingTimeline.mockReturnValue({
+      data: [
+        { event: 'booking_created', timestamp: '2026-03-22T09:00:00Z', actor: 'customer' },
+        {
+          event: 'reschedule_accepted',
+          timestamp: '2026-03-23T10:00:00Z',
+          actor: 'system',
+          is_future: true,
+        },
+      ],
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingTimelineScreen />);
+    expect(screen.getByTestId('timeline-event-1-future')).toBeTruthy();
   });
 
   it('renders loading state', () => {

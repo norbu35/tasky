@@ -162,6 +162,45 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     expect(filterBar).toBeTruthy();
   });
 
+  it('filters tasks by search text', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('Search tasks...'), 'sink');
+
+    expect(screen.queryByText('Deep clean apartment')).toBeNull();
+    expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
+  });
+
+  it('renders trust banner in populated state', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    expect(screen.getByText('Verified Tasker')).toBeTruthy();
+  });
+
   it('calls refresh on pull-down', () => {
     const refetchFn = jest.fn();
     mockUseTasks.mockReturnValue({

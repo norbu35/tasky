@@ -37,8 +37,24 @@ jest.mock('../../../../src/features/bookings/hooks/useReschedule', () => ({
   }),
 }));
 
+const mockUseBookingDetail = jest.fn();
+jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
+  useBookingDetail: (id: string) => mockUseBookingDetail(id),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
+  mockUseBookingDetail.mockReturnValue({
+    data: {
+      id: 'b-1',
+      task: {
+        scheduled_at: '2026-04-01T10:00:00Z',
+      },
+    },
+    isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
+  });
 });
 
 describe('RescheduleScreen (SCR-CUST-020)', () => {
@@ -50,6 +66,12 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('renders date/time picker field', () => {
     render(<RescheduleScreen />);
     expect(screen.getByTestId('reschedule-screen-date-picker')).toBeTruthy();
+  });
+
+  it('shows the current schedule at the top in Mongolian date format', () => {
+    render(<RescheduleScreen />);
+    expect(screen.getByText('Current Schedule')).toBeTruthy();
+    expect(screen.getByText('2026.04.01 18:00')).toBeTruthy();
   });
 
   it('renders reason field', () => {
@@ -82,10 +104,31 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
     });
   });
 
+  it('keeps the user on an awaiting state after submit instead of navigating back immediately', async () => {
+    mockReschedule.mockResolvedValue({ id: 'rs-1' });
+    render(<RescheduleScreen />);
+
+    fireEvent.changeText(
+      screen.getByPlaceholderText('Reason for rescheduling...'),
+      'Schedule conflict',
+    );
+    fireEvent.press(screen.getByTestId('reschedule-screen-next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Awaiting Response')).toBeTruthy();
+    });
+    expect(mockBack).not.toHaveBeenCalled();
+  });
+
   it('shows schedule authority note', () => {
     render(<RescheduleScreen />);
     expect(
       screen.getByText('Schedule changes take effect only after counterparty acceptance'),
     ).toBeTruthy();
+  });
+
+  it('renders a back button in the form header', () => {
+    render(<RescheduleScreen />);
+    expect(screen.getByTestId('reschedule-screen-back')).toBeTruthy();
   });
 });

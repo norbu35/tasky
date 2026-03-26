@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
+import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
@@ -11,7 +12,7 @@ const { colors, spacing, radius, typography } = mobileTheme;
 function formatBudget(amount: string): string {
   const num = Number(amount);
   if (isNaN(num)) return amount;
-  return num.toLocaleString('en-US');
+  return `₮${num.toLocaleString('en-US')}`;
 }
 
 function formatSchedule(scheduledAt?: string): string {
@@ -100,13 +101,16 @@ export default function ReviewSubmitScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('customer.postTask.reviewTitle', 'Review & Post')}
+      headerTitle={t('customer.postTask.reviewPageTitle', 'Review & Submit')}
       onBack={handleBack}
       ctaLabel={t('customer.postTask.postButton', 'Post Task')}
       ctaOnPress={handleSubmit}
       ctaLoading={isPending}
       testID="review-submit-screen"
     >
+      <View style={styles.stepWrap}>
+        <StepIndicator currentStep={6} totalSteps={7} />
+      </View>
       <SummarySection
         label={t('customer.postTask.intakeDescription', 'Description')}
         value={params.description ?? ''}
@@ -176,5 +180,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.lg,
     lineHeight: typography.caption * 1.6,
+  },
+  stepWrap: {
+    marginBottom: spacing.md,
   },
 });

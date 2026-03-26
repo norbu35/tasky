@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 
+const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), replace: mockReplace, back: jest.fn() }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -50,13 +51,22 @@ describe('BannedAccountScreen (SCR-SHARED-021)', () => {
     expect(screen.getByText('shared.account.bannedBody')).toBeTruthy();
   });
 
-  it('has no action buttons (terminal state)', () => {
+  it('has support and logout actions but no appeal flow', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    // No appeal, no retry - only the ban message
+    expect(screen.getByText('shared.account.contactSupport')).toBeTruthy();
+    expect(screen.getByText('shared.account.logout')).toBeTruthy();
     expect(screen.queryByTestId('banned-screen-retry')).toBeNull();
     expect(screen.queryByText('shared.account.suspendedAppeal')).toBeNull();
+  });
+
+  it('logs the user out to the auth flow', () => {
+    const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
+    render(<BannedScreen />);
+
+    fireEvent.press(screen.getByText('shared.account.logout'));
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
 
   it('has correct testID on root container', () => {

@@ -55,6 +55,20 @@ jest.mock('../../../../src/features/bookings/hooks/useCompleteBooking', () => ({
   }),
 }));
 
+jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
+  useCancelBooking: () => ({
+    mutateAsync: jest.fn(),
+    isPending: false,
+  }),
+}));
+
+jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
+  useFlagNoShow: () => ({
+    mutateAsync: jest.fn(),
+    isPending: false,
+  }),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
@@ -135,7 +149,47 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     expect(screen.getAllByText('Confirm Complete').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('shows Rebook CTA when completed', () => {
+  it('navigates to chat when message CTA is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking(),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/inbox/b-1');
+  });
+
+  it('shows report issue instead of reschedule and cancel when tasker_marked_done', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({ status: 'TASKER_MARKED_DONE' }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Report Issue')).toBeTruthy();
+    expect(screen.queryByTestId('booking-detail-screen-reschedule-link')).toBeNull();
+    expect(screen.queryByTestId('booking-detail-screen-cancel-btn')).toBeNull();
+  });
+
+  it('navigates to the dispute flow when report issue is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({ status: 'TASKER_MARKED_DONE' }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-report-issue-link'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/bookings/b-1/dispute');
+  });
+
+  it('shows leave review as the primary CTA when completed and not yet reviewed', () => {
     mockUseBookingDetail.mockReturnValue({
       data: makeBooking({ status: 'COMPLETED' }),
       isLoading: false,
@@ -143,6 +197,23 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Leave Review')).toBeTruthy();
+    expect(screen.queryByText('Rebook')).toBeNull();
+  });
+
+  it('shows Rebook CTA when completed review is already submitted', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({
+        status: 'COMPLETED',
+        customer_review_submitted_at: '2026-04-01T12:00:00Z',
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
     expect(screen.getByText('Rebook')).toBeTruthy();
   });
 
@@ -188,7 +259,62 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
-    expect(screen.getByText('Cancel Booking')).toBeTruthy();
+    expect(screen.getByTestId('booking-detail-screen-cancel-btn')).toBeTruthy();
+  });
+
+  it('opens the cancel sheet when cancel booking is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking(),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-cancel-btn'));
+    expect(screen.getByTestId('customer-cancel-sheet')).toBeTruthy();
+  });
+
+  it('navigates to tasker profile when the tasker card is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking(),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-tasker-card'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
+  });
+
+  it('navigates to reschedule screen when reschedule is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking(),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-reschedule-link'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/bookings/b-1/reschedule');
+  });
+
+  it('completed state review link navigates to the shared review screen', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: makeBooking({ status: 'COMPLETED' }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-screen-review-link'));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(shared)/review/[bookingId]',
+      params: { bookingId: 'b-1', role: 'customer' },
+    });
   });
 
   it('renders error state', () => {

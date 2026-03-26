@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react-native';
@@ -9,6 +9,7 @@ import { FilterBar } from '../../components/ui/FilterBar';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
+import { TrustBanner } from '../../components/ui/TrustBanner';
 import { useTasks } from '../../features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../lib/mobileApiClient';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -71,16 +72,23 @@ export default function FeedScreen() {
   };
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTasks = useMemo(() => {
     const tasks = data?.data ?? [];
-    if (activeFilters.length === 0 || activeFilters.includes('all')) {
-      return tasks;
-    }
-    return tasks.filter(
-      (task) => task.category && activeFilters.includes(task.category.name.toLowerCase()),
-    );
-  }, [data, activeFilters]);
+    return tasks.filter((task) => {
+      const matchesCategory =
+        activeFilters.length === 0 ||
+        activeFilters.includes('all') ||
+        (task.category && activeFilters.includes(task.category.name.toLowerCase()));
+      const normalizedSearch = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        task.description.toLowerCase().includes(normalizedSearch) ||
+        task.customer.full_name.toLowerCase().includes(normalizedSearch);
+      return matchesCategory && matchesSearch;
+    });
+  }, [data, activeFilters, searchQuery]);
 
   const handleToggleFilter = useCallback((id: string) => {
     setActiveFilters((prev) => {
@@ -124,6 +132,24 @@ export default function FeedScreen() {
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
+      ListHeaderComponent={
+        <View style={styles.headerContent}>
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder={t('tasker.browse.searchPlaceholder', 'Search tasks...')}
+            placeholderTextColor={colors.textTertiary}
+          />
+          <TrustBanner
+            title={t('tasker.browse.trustTitle', 'Verified Tasker')}
+            description={t(
+              'tasker.browse.trustDescription',
+              'Trusted taskers book faster with strong reliability and review history.',
+            )}
+          />
+        </View>
+      }
       emptyTitle={t('tasker.browse.emptyTitle')}
       emptyDescription={t('tasker.browse.emptyDescription')}
       errorMessage={t('common.error')}
@@ -177,5 +203,19 @@ const styles = StyleSheet.create({
   scheduleText: {
     fontSize: typography.caption,
     color: colors.textSecondary,
+  },
+  headerContent: {
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: mobileTheme.radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    fontSize: typography.body,
+    color: colors.foreground,
+    backgroundColor: colors.card,
   },
 });

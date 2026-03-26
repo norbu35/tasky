@@ -188,6 +188,47 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
     });
   });
 
+  it('shows timestamps for messages', () => {
+    mockUseMessages.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 'msg-1',
+            content: 'Hello there',
+            sender_id: 'user-other',
+            created_at: '2026-03-23T09:00:00Z',
+          },
+        ],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useMessages>);
+
+    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
+    render(<ChatDetailScreen />);
+
+    expect(screen.getByTestId('message-timestamp-msg-1')).toBeTruthy();
+  });
+
+  it('shows error state and retries loading messages', () => {
+    const refetch = jest.fn();
+    mockUseMessages.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      refetch,
+    } as unknown as ReturnType<typeof useMessages>);
+
+    const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
+    render(<ChatDetailScreen />);
+
+    expect(screen.getByText('Failed to load messages')).toBeTruthy();
+    fireEvent.press(screen.getByText('Retry'));
+    expect(refetch).toHaveBeenCalled();
+  });
+
   it('shows phone number warning when phone pattern is detected', () => {
     mockUseMessages.mockReturnValue({
       data: { data: [], cursor: { next: null, prev: null } },

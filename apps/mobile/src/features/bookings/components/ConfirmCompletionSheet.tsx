@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { StyleSheet, Text } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
@@ -22,13 +23,18 @@ export function ConfirmCompletionSheet({
   onCompleted,
 }: ConfirmCompletionSheetProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const { mutateAsync: completeBooking, isPending } = useCompleteBooking();
 
   const handleConfirm = useCallback(async () => {
     const idempotencyKey = `complete-${bookingId}-${Date.now()}`;
     await completeBooking({ bookingId, idempotencyKey });
     onCompleted?.();
-  }, [bookingId, completeBooking, onCompleted]);
+    router.replace({
+      pathname: '/(shared)/review/[bookingId]',
+      params: { bookingId, role: 'customer' },
+    });
+  }, [bookingId, completeBooking, onCompleted, router]);
 
   return (
     <ModalSheetTemplate

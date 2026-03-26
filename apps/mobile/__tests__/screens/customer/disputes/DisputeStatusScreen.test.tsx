@@ -109,7 +109,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
     mockDisputeData = { id: 'dispute-123', status: 'RESOLVED_TASKER', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
     expect(screen.getByText('Resolved for Tasker')).toBeTruthy();
-    expect(screen.getByText('Dispute resolved in favor of the Tasker.')).toBeTruthy();
+    expect(screen.getByText('Outcome: resolved in favor of the Tasker.')).toBeTruthy();
   });
 
   it('renders closed insufficient evidence status', () => {
@@ -130,6 +130,30 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
     render(<DisputeStatusScreen />);
     expect(screen.getByText('Dispute Summary')).toBeTruthy();
     expect(screen.getByText('Poor quality work')).toBeTruthy();
+  });
+
+  it('shows submitted evidence when available', () => {
+    mockDisputeData = {
+      id: 'dispute-123',
+      status: 'OPEN',
+      reason: 'Poor quality work',
+      evidence: ['Photo of damaged sink', 'Chat excerpt with tasker'],
+    };
+    render(<DisputeStatusScreen />);
+    expect(screen.getByText('Submitted Evidence')).toBeTruthy();
+    expect(screen.getByText('Photo of damaged sink')).toBeTruthy();
+    expect(screen.getByText('Chat excerpt with tasker')).toBeTruthy();
+  });
+
+  it('shows the resolution section using the outcome text', () => {
+    mockDisputeData = {
+      id: 'dispute-123',
+      status: 'RESOLVED_CUSTOMER',
+      reason: 'Poor quality work',
+    };
+    render(<DisputeStatusScreen />);
+    expect(screen.getByText('Resolution')).toBeTruthy();
+    expect(screen.getByText('Dispute resolved in your favor.')).toBeTruthy();
   });
 
   it('shows mediation note', () => {

@@ -11,6 +11,7 @@ import LoginScreen from '../../src/app/(auth)/index';
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockBack = jest.fn();
+const mockDevLoginMutate = jest.fn();
 
 jest.mock('expo-router', () => {
   const { Text } = require('react-native');
@@ -62,6 +63,13 @@ jest.mock('react-native-safe-area-context', () => {
     useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
   };
 });
+jest.mock('../../src/features/auth/hooks/useAuth', () => ({
+  useDevLogin: () => ({
+    mutate: mockDevLoginMutate,
+    isPending: false,
+    error: null,
+  }),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -69,7 +77,7 @@ beforeEach(() => {
 });
 
 describe('Auth flow integration', () => {
-  it('first-time user is redirected to onboarding', () => {
+  it('first-time unauthenticated user lands on onboarding from splash', () => {
     setFirstTimeUser();
     render(<SplashScreen />);
     expect(screen.getByTestId('redirect')).toHaveTextContent('/onboarding');
@@ -89,20 +97,23 @@ describe('Auth flow integration', () => {
     expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
   });
 
-  it('onboarding skip completes onboarding and navigates to role-select', () => {
+  it('onboarding skip navigates to role-select without completing onboarding yet', () => {
+    setFirstTimeUser();
     render(<OnboardingScreen />);
     const skipButton = screen.getByTestId('onboarding-skip');
     fireEvent.press(skipButton);
 
-    expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
+    expect(useAppStore.getState().hasSeenOnboarding).toBe(false);
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/role-select');
   });
 
-  it('role selection sets role and navigates to permissions', () => {
+  it('role selection confirms before navigating to permissions', () => {
     render(<RoleSelectScreen />);
     fireEvent.press(screen.getByTestId('role-card-customer'));
     fireEvent.press(screen.getByTestId('role-confirm-button'));
 
+    expect(screen.getByText('Та итгэлтэй байна уу?')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
   });
@@ -111,14 +122,15 @@ describe('Auth flow integration', () => {
     render(<RoleSelectScreen />);
     fireEvent.press(screen.getByTestId('role-card-tasker'));
     fireEvent.press(screen.getByTestId('role-confirm-button'));
+    fireEvent.press(screen.getByTestId('role-sheet-confirm'));
 
     expect(useAppStore.getState().currentRole).toBe('tasker');
   });
 
   it('login screen renders after auth redirect', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Welcome to Tasky')).toBeTruthy();
-    expect(screen.getByTestId('facebook-login-button')).toBeTruthy();
+    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
+    expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
   });
 
   it('full auth state transition: guest -> authenticated', () => {

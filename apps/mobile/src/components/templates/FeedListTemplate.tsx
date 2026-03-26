@@ -31,6 +31,7 @@ export interface FeedListTemplateProps<T> {
   emptyCtaLabel?: string;
   emptyCtaOnPress?: () => void;
   errorMessage?: string;
+  retryLabel?: string;
   filterBar?: React.ReactNode;
   ListHeaderComponent?: React.ReactElement;
   testID?: string;
@@ -84,6 +85,7 @@ export function FeedListTemplate<T>({
   emptyCtaLabel,
   emptyCtaOnPress,
   errorMessage,
+  retryLabel,
   filterBar,
   ListHeaderComponent,
   testID,
@@ -127,6 +129,7 @@ export function FeedListTemplate<T>({
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage', 'Failed to load content')}
           onRetry={onRetry}
+          retryLabel={retryLabel}
           testID={testID ? `${testID}-error` : undefined}
         />
       </View>

@@ -7,6 +7,7 @@ import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { Button } from '../../../../components/ui/Button';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useMarkBookingDone } from '../../../../features/bookings/hooks/useMarkBookingDone';
+import { TaskerCancelSheet } from '../../../../features/bookings/components/TaskerCancelSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -17,12 +18,14 @@ export default function BookingDetailTaskerScreen() {
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
   const markDone = useMarkBookingDone();
-  const [_cancelSheetOpen, setCancelSheetOpen] = useState(false);
+  const [cancelSheetOpen, setCancelSheetOpen] = useState(false);
+  const bookingStatus = booking?.status as string | undefined;
 
-  const isAssigned = booking?.status === 'ASSIGNED';
-  const isCompleted = booking?.status === 'COMPLETED';
-  const _isCancelled = booking?.status === 'CANCELLED';
-  const _isNoShow = booking?.status === 'NO_SHOW';
+  const isAssigned = bookingStatus === 'ASSIGNED';
+  const isMarkedDone = bookingStatus === 'TASKER_MARKED_DONE';
+  const isCompleted = bookingStatus === 'COMPLETED';
+  const _isCancelled = bookingStatus === 'CANCELLED';
+  const _isNoShow = bookingStatus === 'NO_SHOW';
 
   const handleMarkDone = useCallback(() => {
     if (!bookingId) return;
@@ -32,7 +35,9 @@ export default function BookingDetailTaskerScreen() {
     });
   }, [bookingId, markDone]);
 
-  const status = booking?.status?.toLowerCase() as
+  const status = (bookingStatus === 'TASKER_MARKED_DONE'
+    ? 'assigned'
+    : bookingStatus?.toLowerCase()) as
     | 'assigned'
     | 'completed'
     | 'cancelled'
@@ -49,6 +54,12 @@ export default function BookingDetailTaskerScreen() {
       ctaLabel={isAssigned ? t('tasker.jobs.markDone', 'Mark Done') : undefined}
       ctaOnPress={isAssigned ? handleMarkDone : undefined}
       ctaLoading={markDone.isPending}
+      secondaryCtaLabel={
+        (isAssigned || isMarkedDone) ? t('tasker.jobs.messageButton', 'Message') : undefined
+      }
+      secondaryCtaOnPress={
+        (isAssigned || isMarkedDone) ? () => router.push(`/inbox/${bookingId}`) : undefined
+      }
       testID="booking-detail-tasker"
     >
       {booking && (
@@ -73,6 +84,16 @@ export default function BookingDetailTaskerScreen() {
             </Text>
             <Text style={styles.description}>{booking.task?.description ?? ''}</Text>
           </View>
+
+          {(isAssigned || isMarkedDone) && (
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>{t('tasker.jobs.exactAddress', 'Exact Address')}</Text>
+              <Text style={styles.description}>{booking.task?.location_text ?? ''}</Text>
+              <Text style={styles.noteText}>
+                {t('tasker.jobs.exactAddressNote', 'This address is visible only to you')}
+              </Text>
+            </View>
+          )}
 
           {/* Schedule */}
           <View style={styles.section}>
@@ -100,6 +121,17 @@ export default function BookingDetailTaskerScreen() {
                 {t(
                   'tasker.jobs.paymentNote',
                   'Payment is arranged directly with the customer. Tasky is a connector, not a payment processor.',
+                )}
+              </Text>
+            </View>
+          )}
+
+          {isMarkedDone && (
+            <View style={styles.awaitingBanner}>
+              <Text style={styles.awaitingText}>
+                {t(
+                  'tasker.jobs.awaitingConfirmation',
+                  'Waiting for customer to confirm completion',
                 )}
               </Text>
             </View>
@@ -134,6 +166,15 @@ export default function BookingDetailTaskerScreen() {
               />
             </View>
           )}
+
+          {cancelSheetOpen ? (
+            <TaskerCancelSheet
+              isOpen={cancelSheetOpen}
+              onClose={() => setCancelSheetOpen(false)}
+              bookingId={booking.id}
+              strikeCount={0}
+            />
+          ) : null}
         </View>
       )}
     </DetailTemplate>
@@ -182,6 +223,21 @@ const styles = StyleSheet.create({
     fontSize: typography.micro,
     color: colors.mutedForeground,
     lineHeight: 18,
+  },
+  noteText: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: typography.caption * 1.5,
+  },
+  awaitingBanner: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  awaitingText: {
+    fontSize: typography.body,
+    color: colors.foreground,
+    fontWeight: '600',
   },
   cancelSection: {
     alignItems: 'center',

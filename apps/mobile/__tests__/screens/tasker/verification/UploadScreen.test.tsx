@@ -182,4 +182,72 @@ describe('UploadScreen (SCR-TASK-005)', () => {
       expect(mockLaunchLibrary).toHaveBeenCalled();
     });
   });
+
+  it('shows a review section once all three photos are captured', async () => {
+    const UploadScreen = require('../../../../src/app/(tasker)/verification/upload').default;
+    render(<UploadScreen />);
+
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+    });
+    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('tasker.verification.uploadBack')).toBeTruthy();
+    });
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+    });
+    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('tasker.verification.uploadSelfie')).toBeTruthy();
+    });
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('verification-review')).toBeTruthy();
+      expect(screen.getByTestId('retake-front-btn')).toBeTruthy();
+      expect(screen.getByTestId('retake-back-btn')).toBeTruthy();
+      expect(screen.getByTestId('retake-selfie-btn')).toBeTruthy();
+    });
+  });
+
+  it('retakes the front photo from the review section', async () => {
+    const UploadScreen = require('../../../../src/app/(tasker)/verification/upload').default;
+    render(<UploadScreen />);
+
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+    });
+    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('tasker.verification.uploadBack')).toBeTruthy();
+    });
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+    });
+    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByText('tasker.verification.uploadSelfie')).toBeTruthy();
+    });
+    fireEvent.press(screen.getByTestId('capture-camera-btn'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('verification-review')).toBeTruthy();
+    });
+
+    fireEvent.press(screen.getByTestId('retake-front-btn'));
+
+    await waitFor(() => {
+      expect(screen.getByText('tasker.verification.uploadFront')).toBeTruthy();
+      expect(screen.queryByTestId('verification-review')).toBeNull();
+    });
+  });
 });

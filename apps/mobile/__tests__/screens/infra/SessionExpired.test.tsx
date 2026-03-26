@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import SessionExpiredScreen from '../../../src/app/(shared)/session-expired';
+import { useAuthStore } from '../../../src/store/authStore';
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');
@@ -54,30 +55,47 @@ jest.mock('lucide-react-native', () => {
 describe('SessionExpiredScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useAuthStore.setState({
+      session: {
+        accessToken: 'token',
+        refreshToken: 'refresh',
+        user: {
+          id: 'user-1',
+          phone: '+97699001122',
+          primary_auth: 'PHONE_OTP',
+          role: 'CUSTOMER',
+          status: 'PENDING',
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      },
+      profile: null,
+      deviceToken: null,
+    });
   });
 
   it('renders session expired title', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Session Expired')).toBeTruthy();
+    expect(screen.getByText('Session expired')).toBeTruthy();
   });
 
   it('renders session expired body message', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Please log in again to continue')).toBeTruthy();
+    expect(screen.getByText('Your session has expired. Please log in again')).toBeTruthy();
   });
 
   it('shows login button', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Log In')).toBeTruthy();
+    expect(screen.getByText('Log in again')).toBeTruthy();
   });
 
-  it('login button navigates to auth screen', () => {
+  it('login button clears the auth token and navigates to auth screen', () => {
     render(<SessionExpiredScreen />);
 
-    fireEvent.press(screen.getByText('Log In'));
+    fireEvent.press(screen.getByText('Log in again'));
+    expect(useAuthStore.getState().session).toBeNull();
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
 
@@ -85,5 +103,12 @@ describe('SessionExpiredScreen', () => {
     render(<SessionExpiredScreen />);
 
     expect(screen.getByTestId('session-expired-screen')).toBeTruthy();
+  });
+
+  it('renders a modal sheet instead of a plain full-screen body', () => {
+    render(<SessionExpiredScreen />);
+
+    expect(screen.getByText('Session expired')).toBeTruthy();
+    expect(screen.getByText('Log in again')).toBeTruthy();
   });
 });

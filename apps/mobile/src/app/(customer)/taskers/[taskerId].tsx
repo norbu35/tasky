@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
-import { ProfileAvatar } from '../../../components/ui';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { useTaskerProfile } from '../../../features/profile/hooks/useTaskerProfile';
 

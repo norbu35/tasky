@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react-nativ
 import LoginScreen from '../../../src/app/(auth)/index';
 
 const mockReplace = jest.fn();
+const mockDevLoginMutate = jest.fn();
 
 jest.mock('expo-router', () => {
   const { Text } = require('react-native');
@@ -49,24 +50,39 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
+jest.mock('../../../src/features/auth/hooks/useAuth', () => ({
+  useDevLogin: () => ({
+    mutate: mockDevLoginMutate,
+    isPending: false,
+    error: null,
+  }),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
 describe('LoginScreen (SCR-SHARED-002)', () => {
-  it('renders the login title', () => {
+  it('renders the Figma login title', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Welcome to Tasky')).toBeTruthy();
+    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
   });
 
-  it('renders the login subtitle', () => {
+  it('renders the Figma login subtitle', () => {
     render(<LoginScreen />);
-    expect(screen.getByText("Mongolia's trusted service marketplace")).toBeTruthy();
+    expect(screen.getByText('Найдвартай гүйцэтгэгчтэй холбогдож,')).toBeTruthy();
+    expect(screen.getByText('ажлаа хялбар захиалаарай')).toBeTruthy();
   });
 
-  it('renders the Facebook login button', () => {
+  it('renders the Facebook login button copy from Figma', () => {
     render(<LoginScreen />);
     expect(screen.getByTestId('facebook-login-button')).toBeTruthy();
+    expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
+  });
+
+  it('does not render an unsupported alternate login CTA in phase 0-1', () => {
+    render(<LoginScreen />);
+    expect(screen.queryByText('Login with email')).toBeNull();
   });
 
   it('shows error state on login failure', async () => {
@@ -77,9 +93,9 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     });
   });
 
-  it('displays the Tasky logo', () => {
+  it('displays the auth hero badge icon container', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Tasky')).toBeTruthy();
+    expect(screen.getByTestId('login-screen')).toBeTruthy();
   });
 
   it('has a testID on the screen container', () => {
@@ -89,6 +105,12 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
 
   it('shows Facebook button label text', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Continue with Facebook')).toBeTruthy();
+    expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
+  });
+
+  it('renders the Figma footer links', () => {
+    render(<LoginScreen />);
+    expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
+    expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
   });
 });

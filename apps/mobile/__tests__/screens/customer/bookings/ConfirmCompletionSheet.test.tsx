@@ -94,6 +94,20 @@ describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
     });
   });
 
+  it('successful completion routes to the shared review screen', async () => {
+    mockCompleteBooking.mockResolvedValue({ id: 'b-1', status: 'COMPLETED' });
+    render(<ConfirmCompletionSheet {...defaultProps} />);
+
+    fireEvent.press(screen.getByText('Confirm Complete'));
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/(shared)/review/[bookingId]',
+        params: { bookingId: 'b-1', role: 'customer' },
+      });
+    });
+  });
+
   it('Go Back button closes the sheet', () => {
     const onClose = jest.fn();
     render(<ConfirmCompletionSheet {...defaultProps} onClose={onClose} />);

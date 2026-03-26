@@ -75,6 +75,14 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     expect(screen.getByText('Tasky')).toBeTruthy();
   });
 
+  it('renders the Figma splash tagline', () => {
+    useAppStore.setState({ hasSeenOnboarding: true });
+    useAuthStore.setState({ session: null });
+    render(<SplashScreen />);
+    expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('хялбар захиалга')).toBeTruthy();
+  });
+
   it('shows a loading indicator', () => {
     useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
@@ -83,7 +91,6 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   });
 
   it('redirects authenticated users to tabs', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: baseSession });
     render(<SplashScreen />);
     expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
@@ -93,9 +100,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    const redirects = screen.getAllByTestId('redirect');
-    const authRedirect = redirects.find((el) => el.props.children === '/(auth)');
-    expect(authRedirect).toBeTruthy();
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(auth)');
   });
 
   it('redirects first-launch users to onboarding', () => {
@@ -109,6 +114,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Trusted taskers, easy booking')).toBeTruthy();
+    expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('хялбар захиалга')).toBeTruthy();
   });
 });

@@ -313,7 +313,7 @@ describe('mobile app structure', () => {
     expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(tabs)');
 
     render(<AuthScreen />);
-    expect(screen.getByText('Welcome to Tasky')).toBeTruthy();
+    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
     expect(parseError(new ApiError(401, 'OTP invalid'))).toBe('OTP invalid');
     expect(parseError(new Error('generic'))).toBe('generic');
   });

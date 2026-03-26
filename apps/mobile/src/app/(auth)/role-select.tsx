@@ -1,127 +1,282 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, User } from 'lucide-react-native';
+import { ArrowRight, Briefcase, Check, User, X } from 'lucide-react-native';
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
-import { Button, PressableCard } from '../../components/ui';
+import { Button, ModalSheet } from '../../components/ui';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing, typography } = mobileTheme;
+const roleMoodImageUri =
+  'https://www.figma.com/api/mcp/asset/cfec8927-ce2d-4ee5-badc-f32c7637cced';
 
 type RoleOption = 'customer' | 'tasker' | null;
+
+const ROLE_LABELS: Record<Exclude<RoleOption, null>, string> = {
+  customer: 'Захиалагч',
+  tasker: 'Гүйцэтгэгч',
+};
 
 export default function RoleSelectScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const setRole = useAppStore((state) => state.setRole);
   const [selectedRole, setSelectedRole] = useState<RoleOption>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const handleConfirm = () => {
     if (!selectedRole) return;
+    setIsConfirming(true);
+  };
+
+  const handleConfirmSelection = () => {
+    if (!selectedRole) return;
     setRole(selectedRole);
+    setIsConfirming(false);
     router.replace('/(auth)/permission-camera');
   };
 
-  return (
-    <AuthTemplate
-      headline={t('auth.roleSelection.title', 'How will you use Tasky?')}
-      testID="role-select-screen"
-    >
-      <PressableCard
-        testID="role-card-customer"
-        onPress={() => setSelectedRole('customer')}
-        style={[styles.roleCard, selectedRole === 'customer' && styles.roleCardSelected]}
-      >
-        <View style={styles.roleCardContent}>
-          <User
-            size={32}
-            color={selectedRole === 'customer' ? colors.primaryForeground : colors.primary}
-          />
-          <Text style={[styles.roleTitle, selectedRole === 'customer' && styles.roleTitleSelected]}>
-            {t('auth.roleSelection.customerTitle', 'I need help')}
-          </Text>
-          <Text
-            style={[
-              styles.roleDescription,
-              selectedRole === 'customer' && styles.roleDescriptionSelected,
-            ]}
-          >
-            {t('auth.roleSelection.customerDescription', 'Find verified Taskers for your jobs')}
-          </Text>
-        </View>
-      </PressableCard>
+  const roleLabel = selectedRole ? ROLE_LABELS[selectedRole] : ROLE_LABELS.customer;
 
-      <PressableCard
-        testID="role-card-tasker"
-        onPress={() => setSelectedRole('tasker')}
-        style={[styles.roleCard, selectedRole === 'tasker' && styles.roleCardSelected]}
+  const renderRoleCard = (role: Exclude<RoleOption, null>) => {
+    const isSelected = selectedRole === role;
+    const Icon = role === 'customer' ? User : Briefcase;
+    const titleKey =
+      role === 'customer' ? 'auth.roleSelection.customerTitle' : 'auth.roleSelection.taskerTitle';
+    const descriptionKey =
+      role === 'customer'
+        ? 'auth.roleSelection.customerDescription'
+        : 'auth.roleSelection.taskerDescription';
+    const descriptionFallback =
+      role === 'customer' ? 'Ажил нийтлэж, гүйцэтгэгч хайх' : 'Ажилд бүртгүүлж, орлого олох';
+
+    return (
+      <Pressable
+        key={role}
+        testID={`role-card-${role}`}
+        onPress={() => setSelectedRole(role)}
+        style={[styles.roleCard, isSelected && styles.roleCardSelected]}
       >
-        <View style={styles.roleCardContent}>
-          <Briefcase
-            size={32}
-            color={selectedRole === 'tasker' ? colors.primaryForeground : colors.primary}
-          />
-          <Text style={[styles.roleTitle, selectedRole === 'tasker' && styles.roleTitleSelected]}>
-            {t('auth.roleSelection.taskerTitle', 'I want to work')}
-          </Text>
-          <Text
+        <LinearGradient
+          colors={isSelected ? ['#ffffff', '#ffffff'] : ['#f4f3f0', '#f4f3f0']}
+          style={styles.roleCardContent}
+        >
+          <View
             style={[
-              styles.roleDescription,
-              selectedRole === 'tasker' && styles.roleDescriptionSelected,
+              styles.roleIcon,
+              isSelected ? styles.roleIconSelected : styles.roleIconUnselected,
             ]}
           >
-            {t('auth.roleSelection.taskerDescription', 'Get matched with jobs near you')}
-          </Text>
-        </View>
-      </PressableCard>
+            <Icon size={28} color={isSelected ? colors.primaryDeep : colors.foreground} />
+          </View>
+          <View style={styles.roleCopy}>
+            <Text style={styles.roleTitle}>{t(titleKey, ROLE_LABELS[role])}</Text>
+            <Text style={styles.roleDescription}>{t(descriptionKey, descriptionFallback)}</Text>
+          </View>
+          {isSelected ? (
+            <View testID={`role-card-${role}-check`} style={styles.checkMark}>
+              <Check size={14} color="#ffffff" />
+            </View>
+          ) : null}
+        </LinearGradient>
+      </Pressable>
+    );
+  };
+
+  return (
+    <AuthTemplate testID="role-select-screen" contentStyle={styles.contentStyle}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Close">
+          <X size={24} color={colors.primaryDeep} />
+        </Pressable>
+        <Text style={styles.headerTitle}>TASKY</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+
+      <View style={styles.hero}>
+        <Text style={styles.heading}>{t('auth.roleSelection.titleLine1', 'Та хэн бэ?')}</Text>
+        <Text style={styles.subtitle}>
+          {t(
+            'auth.roleSelection.subtitle',
+            'Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.',
+          )}
+        </Text>
+      </View>
+
+      <View style={styles.cards}>{(['customer', 'tasker'] as const).map(renderRoleCard)}</View>
+
+      <View style={styles.moodPanel}>
+        <Image
+          testID="role-mood-image"
+          source={{ uri: roleMoodImageUri }}
+          style={styles.moodImage}
+          resizeMode="cover"
+        />
+      </View>
 
       <Button
         testID="role-confirm-button"
-        label={t('auth.roleSelection.confirm', 'Continue')}
         onPress={handleConfirm}
         disabled={!selectedRole}
         style={styles.confirmButton}
-      />
+      >
+        <View style={styles.confirmContent}>
+          <Text style={styles.confirmLabel}>
+            {t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}
+          </Text>
+          <ArrowRight size={16} color={colors.primaryForeground} />
+        </View>
+      </Button>
+
+      <ModalSheet
+        visible={isConfirming}
+        title={t('auth.roleSelection.confirmSheetTitle', 'Та итгэлтэй байна уу?')}
+        onClose={() => setIsConfirming(false)}
+        dismissible={false}
+        primaryAction={{
+          label: t('auth.roleSelection.confirmSheetPrimary', 'Тийм, баталгаажуулах'),
+          onPress: handleConfirmSelection,
+          testID: 'role-sheet-confirm',
+        }}
+        secondaryAction={{
+          label: t('auth.roleSelection.confirmSheetSecondary', 'Буцах'),
+          onPress: () => setIsConfirming(false),
+          testID: 'role-sheet-cancel',
+        }}
+      >
+        <Text style={styles.sheetMessage}>
+          {t(
+            'auth.roleSelection.confirmSheetMessage',
+            `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,
+          )}
+        </Text>
+      </ModalSheet>
     </AuthTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  contentStyle: {
+    justifyContent: 'center',
+  },
+  header: {
+    marginBottom: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    color: colors.primaryDeep,
+    fontSize: typography.title,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  headerSpacer: {
+    width: 24,
+    height: 24,
+  },
+  hero: {
+    marginBottom: spacing.xl,
+  },
+  heading: {
+    fontSize: typography.heading,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    textAlign: 'center',
+    lineHeight: typography.heading * 1.25,
+  },
+  subtitle: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  cards: {
+    gap: spacing.md,
+  },
   roleCard: {
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: '#e3e2e0',
+    borderRadius: 18,
+    backgroundColor: '#f4f3f0',
+    overflow: 'hidden',
   },
   roleCardSelected: {
     borderColor: colors.primary,
-    backgroundColor: colors.primary,
+    backgroundColor: '#ffffff',
   },
   roleCardContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
+    padding: spacing.lg,
+  },
+  roleIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roleIconSelected: {
+    backgroundColor: '#d2e4ff',
+  },
+  roleIconUnselected: {
+    backgroundColor: '#e3e2e0',
+  },
+  roleCopy: {
+    flex: 1,
+  },
+  checkMark: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primaryDeep,
   },
   roleTitle: {
     fontSize: typography.title,
     fontWeight: '600',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  roleTitleSelected: {
-    color: colors.primaryForeground,
+    color: colors.primaryDeep,
   },
   roleDescription: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
+    fontSize: typography.label,
+    color: '#43474e',
+    marginTop: spacing.xs,
+    lineHeight: 20,
   },
-  roleDescriptionSelected: {
-    color: colors.primaryForeground,
+  moodPanel: {
+    borderRadius: 18,
+    overflow: 'hidden',
+    backgroundColor: '#e9e8e5',
+    minHeight: 148,
+  },
+  moodImage: {
+    width: '100%',
+    height: 192,
   },
   confirmButton: {
-    marginTop: spacing.md,
+    minHeight: 56,
+    borderRadius: 12,
+  },
+  confirmContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  confirmLabel: {
+    color: colors.primaryForeground,
+    fontSize: typography.label,
+    fontWeight: '700',
+  },
+  sheetMessage: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: 24,
   },
 });

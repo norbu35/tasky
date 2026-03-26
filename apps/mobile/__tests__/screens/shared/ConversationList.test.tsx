@@ -77,7 +77,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('shared.inbox.emptyTitle')).toBeTruthy();
+    expect(screen.getByText('No messages')).toBeTruthy();
   });
 
   it('renders conversation rows with name, preview, and timestamp', () => {
@@ -147,5 +147,64 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
 
     fireEvent.press(screen.getByTestId('conversation-row-conv-1'));
     expect(mockPush).toHaveBeenCalledWith('/inbox/conv-1');
+  });
+
+  it('renders the inbox title and filters conversations by counterparty name', () => {
+    mockUseConversations.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 'conv-1',
+            task_title: 'Apartment Cleaning',
+            last_message_preview: 'See you tomorrow!',
+            last_message_at: '2026-03-23T10:00:00Z',
+            counterparty_name: 'John Doe',
+            counterparty_avatar_url: null,
+            unread_count: 0,
+          },
+          {
+            id: 'conv-2',
+            task_title: 'Plumbing Fix',
+            last_message_preview: 'Thanks for the update',
+            last_message_at: '2026-03-22T08:00:00Z',
+            counterparty_name: 'Jane Smith',
+            counterparty_avatar_url: null,
+            unread_count: 0,
+          },
+        ],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useConversations>);
+
+    const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
+    render(<ConversationListScreen />);
+
+    expect(screen.getByText('Inbox')).toBeTruthy();
+    fireEvent.changeText(screen.getByPlaceholderText('Search...'), 'Jane');
+
+    expect(screen.queryByText('John Doe')).toBeNull();
+    expect(screen.getByText('Jane Smith')).toBeTruthy();
+  });
+
+  it('shows the inbox error state and retries loading', () => {
+    const refetch = jest.fn();
+    mockUseConversations.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      isRefetching: false,
+      refetch,
+    } as unknown as ReturnType<typeof useConversations>);
+
+    const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
+    render(<ConversationListScreen />);
+
+    expect(screen.getByText('Failed to load messages')).toBeTruthy();
+    fireEvent.press(screen.getByText('Retry'));
+    expect(refetch).toHaveBeenCalled();
   });
 });

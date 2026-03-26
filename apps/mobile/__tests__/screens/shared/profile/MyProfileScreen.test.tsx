@@ -199,4 +199,40 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     render(<MyProfileScreen />);
     expect(screen.getByTestId('my-profile-screen-error')).toBeTruthy();
   });
+
+  it('tasker view shows a stats action that navigates to the tasker stats screen', () => {
+    mockUseRole.mockReturnValue({
+      currentRole: 'tasker',
+      isCustomer: false,
+      isTasker: true,
+      switchRole: jest.fn(),
+      setRole: jest.fn(),
+    });
+    mockUseMyProfile.mockReturnValue({
+      data: MOCK_TASKER_PROFILE,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
+    render(<MyProfileScreen />);
+
+    fireEvent.press(screen.getByText('View Stats'));
+    expect(mockPush).toHaveBeenCalledWith('/(tasker)/stats');
+  });
+
+  it('retries loading after a profile error', () => {
+    const refetch = jest.fn();
+    mockUseMyProfile.mockReturnValue({
+      data: null,
+      isLoading: false,
+      isError: true,
+      refetch,
+    });
+    const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
+    render(<MyProfileScreen />);
+
+    fireEvent.press(screen.getByText('Try again'));
+    expect(refetch).toHaveBeenCalled();
+  });
 });

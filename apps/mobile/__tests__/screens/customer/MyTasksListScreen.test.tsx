@@ -71,8 +71,32 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
+    expect(screen.getByText('My Tasks')).toBeTruthy();
     expect(screen.getByText('No tasks yet')).toBeTruthy();
     expect(screen.getByText('Post your first task and find trusted help')).toBeTruthy();
+  });
+
+  it('renders a notifications bell action in the header', () => {
+    mockUseMyTasks.mockReturnValue({
+      data: { data: [] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<MyTasksListScreen />);
+    expect(screen.getByTestId('my-tasks-notifications')).toBeTruthy();
+  });
+
+  it('notifications bell navigates to notification center', () => {
+    mockUseMyTasks.mockReturnValue({
+      data: { data: [] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<MyTasksListScreen />);
+    fireEvent.press(screen.getByTestId('my-tasks-notifications'));
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/notifications');
   });
 
   it('renders empty state CTA button', () => {
@@ -115,6 +139,31 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     render(<MyTasksListScreen />);
     expect(screen.getByText('Fix my sink')).toBeTruthy();
     expect(screen.getByText('Clean apartment')).toBeTruthy();
+    expect(screen.getByText('Handyman')).toBeTruthy();
+    expect(screen.getByLabelText('50,000 tugrik')).toBeTruthy();
+  });
+
+  it('pressing a task card navigates to task detail', () => {
+    mockUseMyTasks.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 't-1',
+            description: 'Fix my sink',
+            status: 'OPEN',
+            budget: 50000,
+            scheduled_at: '2026-04-01T10:00:00Z',
+            category: { name: 'Handyman' },
+          },
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<MyTasksListScreen />);
+    fireEvent.press(screen.getByTestId('task-card-t-1'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/t-1');
   });
 
   it('renders filter tabs', () => {

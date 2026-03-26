@@ -211,6 +211,50 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
     expect(screen.getByText('Message Tasker')).toBeTruthy();
   });
 
+  it('navigates to the tasker profile when the assigned tasker card is pressed', () => {
+    mockUseCustomerTaskDetail.mockReturnValue({
+      task: makeTask({
+        status: 'ASSIGNED',
+        tasker: {
+          id: 'tasker-1',
+          full_name: 'Bold Bat',
+          avatar_url: null,
+          rating_avg: 4.5,
+          is_pro: true,
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<TaskDetailCustomerScreen />);
+
+    fireEvent.press(screen.getByTestId('task-detail-customer-screen-tasker-card'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
+  });
+
+  it('navigates to inbox when Message Tasker is pressed', () => {
+    mockUseCustomerTaskDetail.mockReturnValue({
+      task: makeTask({
+        status: 'ASSIGNED',
+        tasker: {
+          id: 'tasker-1',
+          full_name: 'Bold Bat',
+          avatar_url: null,
+          rating_avg: 4.5,
+          is_pro: true,
+        },
+      }),
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<TaskDetailCustomerScreen />);
+
+    fireEvent.press(screen.getByText('Message Tasker'));
+    expect(mockPush).toHaveBeenCalledWith('/inbox');
+  });
+
   it('shows Cancel Task button when open or assigned', () => {
     mockUseCustomerTaskDetail.mockReturnValue({
       task: makeTask({ status: 'OPEN' }),

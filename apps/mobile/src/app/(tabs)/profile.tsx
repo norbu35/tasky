@@ -43,6 +43,8 @@ function AuthenticatedProfile() {
       }}
       ctaLabel={t('shared.profile.editProfile', 'Edit Profile')}
       ctaOnPress={() => router.push('/(shared)/profile/edit')}
+      secondaryCtaLabel={isTasker ? t('shared.profile.viewStats', 'View Stats') : undefined}
+      secondaryCtaOnPress={isTasker ? () => router.push('/(tasker)/stats') : undefined}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}

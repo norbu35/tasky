@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useAppStore } from '../../../src/store/appStore';
 
@@ -57,43 +58,81 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     expect(screen.getByTestId('role-card-tasker')).toBeTruthy();
   });
 
-  it('renders customer card title and description', () => {
+  it('renders the Figma heading and subtitle', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText('I need help')).toBeTruthy();
-    expect(screen.getByText('Find verified Taskers for your jobs')).toBeTruthy();
+    expect(screen.getByText('Та хэн бэ?')).toBeTruthy();
+    expect(screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.')).toBeTruthy();
   });
 
-  it('renders tasker card title and description', () => {
+  it('renders customer and tasker cards from Figma', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText('I want to work')).toBeTruthy();
-    expect(screen.getByText('Get matched with jobs near you')).toBeTruthy();
+    expect(screen.getByText('Захиалагч')).toBeTruthy();
+    expect(screen.getByText('Ажил нийтлэж, гүйцэтгэгч хайх')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('Ажилд бүртгүүлж, орлого олох')).toBeTruthy();
   });
 
-  it('renders the heading', () => {
-    render(<RoleSelectScreen />);
-    expect(screen.getByText('How will you use Tasky?')).toBeTruthy();
-  });
-
-  it('selecting customer sets role to customer and navigates', () => {
+  it('selecting customer opens a confirmation sheet before navigation', () => {
     render(<RoleSelectScreen />);
     fireEvent.press(screen.getByTestId('role-card-customer'));
     fireEvent.press(screen.getByTestId('role-confirm-button'));
+    expect(screen.getByText('Та итгэлтэй байна уу?')).toBeTruthy();
+    expect(
+      screen.getByText('Захиалагч болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.'),
+    ).toBeTruthy();
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('confirming customer selection sets role and navigates', () => {
+    render(<RoleSelectScreen />);
+    fireEvent.press(screen.getByTestId('role-card-customer'));
+    fireEvent.press(screen.getByTestId('role-confirm-button'));
+    fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
   });
 
-  it('selecting tasker sets role to tasker and navigates', () => {
+  it('confirming tasker selection sets role and navigates', () => {
     render(<RoleSelectScreen />);
     fireEvent.press(screen.getByTestId('role-card-tasker'));
     fireEvent.press(screen.getByTestId('role-confirm-button'));
+    fireEvent.press(screen.getByTestId('role-sheet-confirm'));
     expect(useAppStore.getState().currentRole).toBe('tasker');
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/permission-camera');
+  });
+
+  it('go back closes the confirmation sheet without navigating', () => {
+    render(<RoleSelectScreen />);
+    fireEvent.press(screen.getByTestId('role-card-tasker'));
+    fireEvent.press(screen.getByTestId('role-confirm-button'));
+    fireEvent.press(screen.getByTestId('role-sheet-cancel'));
+    expect(screen.queryByText('Та итгэлтэй байна уу?')).toBeNull();
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it('confirm button is disabled until a role is selected', () => {
     render(<RoleSelectScreen />);
     const btn = screen.getByTestId('role-confirm-button');
     expect(btn).toBeDisabled();
+  });
+
+  it('keeps the selected card light with a navy border and a corner check', () => {
+    render(<RoleSelectScreen />);
+
+    fireEvent.press(screen.getByTestId('role-card-customer'));
+
+    const selectedCard = StyleSheet.flatten(screen.getByTestId('role-card-customer').props.style);
+    const unselectedCard = StyleSheet.flatten(screen.getByTestId('role-card-tasker').props.style);
+
+    expect(selectedCard.backgroundColor).toBe('#ffffff');
+    expect(String(selectedCard.borderColor).toLowerCase()).toBe('#1b3a5c');
+    expect(unselectedCard.backgroundColor).toBe('#f4f3f0');
+    expect(screen.getByTestId('role-card-customer-check')).toBeTruthy();
+  });
+
+  it('renders a real mood image instead of an empty placeholder', () => {
+    render(<RoleSelectScreen />);
+    expect(screen.getByTestId('role-mood-image').props.source.uri).toContain('figma');
   });
 
   it('has a testID on the screen container', () => {

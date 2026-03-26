@@ -1,0 +1,147 @@
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { DetailTemplate } from '../../../components/templates/DetailTemplate';
+import { InfoRow } from '../../../components/ui/InfoRow';
+import { Button } from '../../../components/ui/Button';
+import { mobileTheme } from '../../../design/tokenAdapter';
+import { LowBalanceAlert } from '../../../features/credits/components/LowBalanceAlert';
+
+const { colors, spacing, typography, radius } = mobileTheme;
+
+const balanceText = '12,400 ₮';
+
+export default function TaskerCreditsIndexScreen() {
+  const router = useRouter();
+
+  return (
+    <DetailTemplate
+      headerTitle="Credits"
+      onBack={() => router.back()}
+      testID="tasker-credits-index"
+    >
+      <View style={styles.stack}>
+        <View style={styles.heroCard}>
+          <Text style={styles.heroLabel}>Available balance</Text>
+          <Text style={styles.heroValue}>{balanceText}</Text>
+          <Text style={styles.heroCaption}>Enough for 2 more average tasks</Text>
+        </View>
+
+        <LowBalanceAlert
+          testID="credits-low-balance-alert"
+          balanceText={balanceText}
+          description="Task applications are moving fast. Add credits before your balance drops to zero."
+          primaryActionLabel="Top up now"
+          onPrimaryActionPress={() => router.push('/(tasker)/credits/pay')}
+          secondaryActionLabel="View history"
+          onSecondaryActionPress={() => router.push('/(tasker)/credits/history')}
+          primaryActionTestID="tasker-credits-topup"
+          secondaryActionTestID="tasker-credits-history"
+        />
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick actions</Text>
+          <View style={styles.actionRow}>
+            <Button
+              label="Top up"
+              onPress={() => router.push('/(tasker)/credits/pay')}
+              testID="tasker-credits-topup-secondary"
+              style={styles.actionButton}
+            />
+            <Button
+              label="History"
+              variant="outline"
+              onPress={() => router.push('/(tasker)/credits/history')}
+              testID="tasker-credits-history-secondary"
+              style={styles.actionButton}
+            />
+          </View>
+          <Pressable
+            style={styles.referralLink}
+            onPress={() => router.push('/(tasker)/referrals')}
+            testID="tasker-credits-referrals"
+          >
+            <Text style={styles.referralTitle}>Referrals</Text>
+            <Text style={styles.referralBody}>Invite taskers to earn bonus credits.</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Current snapshot</Text>
+          <View style={styles.infoCard}>
+            <InfoRow label="Reserved for active bookings" value="4,800 ₮" />
+            <InfoRow label="Last top-up" value="Yesterday" />
+            <InfoRow label="Pending rewards" value="1,200 ₮" />
+          </View>
+        </View>
+      </View>
+    </DetailTemplate>
+  );
+}
+
+const styles = StyleSheet.create({
+  stack: {
+    gap: spacing.lg,
+  },
+  heroCard: {
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.xs,
+  },
+  heroLabel: {
+    fontSize: typography.label,
+    color: colors.textSecondary,
+  },
+  heroValue: {
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: '800',
+    color: colors.primary,
+  },
+  heroCaption: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+  },
+  section: {
+    gap: spacing.md,
+  },
+  sectionTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    flex: 1,
+  },
+  referralLink: {
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: 'rgba(101, 62, 0, 0.08)',
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.xs,
+  },
+  referralTitle: {
+    fontSize: typography.label,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  referralBody: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+  },
+  infoCard: {
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+});

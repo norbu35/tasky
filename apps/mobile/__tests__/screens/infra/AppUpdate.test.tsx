@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import AppUpdateScreen from '../../../src/app/(shared)/app-update';
 
 import { openURL as mockOpenURL } from 'expo-linking';
+const mockBack = jest.fn();
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');
@@ -21,7 +22,7 @@ jest.mock('react-native-reanimated', () => {
 
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => mockParams,
 }));
 
@@ -56,14 +57,14 @@ describe('AppUpdateScreen', () => {
   it('renders soft update title and body by default', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Update Available')).toBeTruthy();
-    expect(screen.getByText('A new version is available')).toBeTruthy();
+    expect(screen.getByText('New version available')).toBeTruthy();
+    expect(screen.getByText('A new version is available. Update for a better experience')).toBeTruthy();
   });
 
   it('shows dismiss button for soft update', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Not Now')).toBeTruthy();
+    expect(screen.getByText('Later')).toBeTruthy();
     expect(screen.getByText('Update')).toBeTruthy();
   });
 
@@ -72,9 +73,12 @@ describe('AppUpdateScreen', () => {
 
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Update Required')).toBeTruthy();
-    expect(screen.getByText('Update Now')).toBeTruthy();
-    expect(screen.queryByText('Not Now')).toBeFalsy();
+    expect(screen.getByText('Update required')).toBeTruthy();
+    expect(screen.getByText('Update')).toBeTruthy();
+    expect(
+      screen.getByText('An update is required to continue using the app'),
+    ).toBeTruthy();
+    expect(screen.queryByText('Later')).toBeFalsy();
   });
 
   it('update button opens store link', () => {
@@ -82,6 +86,13 @@ describe('AppUpdateScreen', () => {
 
     fireEvent.press(screen.getByText('Update'));
     expect(mockOpenURL).toHaveBeenCalled();
+  });
+
+  it('soft update dismiss goes back', () => {
+    render(<AppUpdateScreen />);
+
+    fireEvent.press(screen.getByText('Later'));
+    expect(mockBack).toHaveBeenCalled();
   });
 
   it('has correct testID on root container', () => {

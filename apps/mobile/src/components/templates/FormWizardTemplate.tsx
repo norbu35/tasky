@@ -36,12 +36,16 @@ export function FormWizardTemplate({
   testID,
 }: FormWizardTemplateProps) {
   const { t } = useTranslation();
-  const showBackButton = showBack && onBack && currentStep > 0;
+  const showBackButton = showBack && onBack && (currentStep > 0 || totalSteps === 1);
 
   return (
     <View style={styles.container} testID={testID}>
       {/* Step Indicator */}
-      <View style={styles.stepIndicator}>
+      <View
+        style={styles.stepIndicator}
+        accessibilityRole="progressbar"
+        accessibilityLabel={`Step ${currentStep + 1} of ${totalSteps}`}
+      >
         {Array.from({ length: totalSteps }).map((_, i) => {
           let dotStyle;
           if (i === currentStep) {

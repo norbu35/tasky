@@ -23,6 +23,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { currentRole, switchRole } = useRole();
   const [showRoleConfirm, setShowRoleConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const sections = [
     {
@@ -80,7 +81,7 @@ export default function SettingsScreen() {
       rows: [
         {
           label: t('shared.settings.deleteAccount', 'Delete Account'),
-          onPress: () => router.push('/(shared)/profile/delete'),
+          onPress: () => setShowDeleteConfirm(true),
           icon: <Trash2 size={20} color={colors.danger} />,
           destructive: true,
         },
@@ -100,6 +101,20 @@ export default function SettingsScreen() {
         onConfirm={() => {
           switchRole();
           setShowRoleConfirm(false);
+        }}
+      />
+      <ConfirmSheet
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        title={t('shared.settings.deleteTitle', 'Delete account?')}
+        description={t(
+          'shared.settings.deleteBody',
+          'This action cannot be undone. All your data will be permanently deleted.',
+        )}
+        confirmLabel={t('shared.settings.confirm', 'Confirm')}
+        isDestructive={true}
+        onConfirm={() => {
+          router.push('/(shared)/profile/delete');
         }}
       />
     </View>

@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
+import { Input } from '../../../components/ui/Input';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -22,8 +23,50 @@ export default function ConversationListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useConversations();
+  const [search, setSearch] = useState('');
 
   const conversations: ConversationItem[] = data?.data ?? [];
+  const filteredConversations = useMemo(() => {
+    const normalizedQuery = search.trim().toLowerCase();
+    const sorted = [...conversations].sort((a, b) => {
+      const aTime = a.last_message_at ? new Date(a.last_message_at).getTime() : 0;
+      const bTime = b.last_message_at ? new Date(b.last_message_at).getTime() : 0;
+      return bTime - aTime;
+    });
+
+    if (!normalizedQuery) {
+      return sorted;
+    }
+
+    return sorted.filter((item) =>
+      (item.counterparty_name ?? item.task_title ?? '').toLowerCase().includes(normalizedQuery),
+    );
+  }, [conversations, search]);
+
+  const formatTimestamp = useCallback((value?: string) => {
+    if (!value) return '';
+    const timestamp = new Date(value);
+    const diff = Date.now() - timestamp.getTime();
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (diff < oneDay) {
+      return timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+
+    return timestamp.toLocaleDateString();
+  }, []);
+
+  const filterBar = (
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Inbox')}</Text>
+      <Input
+        value={search}
+        onChangeText={setSearch}
+        placeholder={t('shared.inbox.searchPlaceholder', 'Search...')}
+        testID="conversation-search-input"
+      />
+    </View>
+  );
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
@@ -46,9 +89,7 @@ export default function ConversationListScreen() {
                   t('messaging.taskDiscussion', 'Task Discussion')}
               </Text>
               {item.last_message_at && (
-                <Text style={styles.timestamp}>
-                  {new Date(item.last_message_at).toLocaleDateString()}
-                </Text>
+                <Text style={styles.timestamp}>{formatTimestamp(item.last_message_at)}</Text>
               )}
             </View>
             {item.last_message_preview && (
@@ -65,28 +106,44 @@ export default function ConversationListScreen() {
         </TouchableOpacity>
       );
     },
-    [router, t],
+    [formatTimestamp, router, t],
   );
 
   return (
     <FeedListTemplate
       testID="conversation-list"
-      data={conversations}
+      data={filteredConversations}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       isLoading={isLoading}
       isError={isError}
-      isEmpty={conversations.length === 0}
+      isEmpty={filteredConversations.length === 0}
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
-      emptyTitle={t('shared.inbox.emptyTitle')}
-      emptyDescription={t('shared.inbox.emptyDescription')}
+      emptyTitle={t('shared.inbox.emptyTitle', 'No messages')}
+      emptyDescription={t(
+        'shared.inbox.emptyDescription',
+        'Messages will appear here after you make a booking',
+      )}
+      errorMessage={t('shared.inbox.errorMessage', 'Failed to load messages')}
+      retryLabel={t('shared.inbox.retry', 'Retry')}
+      filterBar={filterBar}
     />
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    gap: spacing.md,
+  },
+  headerTitle: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

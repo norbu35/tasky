@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
@@ -45,52 +45,63 @@ describe('ConsentScreen (SCR-TASK-004)', () => {
     expect(screen.getByText('tasker.verification.consentBody')).toBeTruthy();
   });
 
-  it('renders checkbox for agreement', () => {
+  it('renders privacy policy link', () => {
     const ConsentScreen = require('../../../../src/app/(tasker)/verification/consent').default;
     render(<ConsentScreen />);
 
-    expect(screen.getByTestId('consent-checkbox')).toBeTruthy();
+    expect(screen.getByTestId('consent-privacy-link')).toBeTruthy();
   });
 
-  it('CTA is disabled until user agrees', () => {
+  it('CTA is disabled until the user scrolls through the consent content', () => {
     const ConsentScreen = require('../../../../src/app/(tasker)/verification/consent').default;
     render(<ConsentScreen />);
 
     const cta = screen.getByTestId('consent-screen-cta');
-    // Button should be disabled (opacity 0.5 is applied by Button when disabled)
     expect(cta).toBeDisabled();
   });
 
-  it('checkbox toggles agreement state', () => {
+  it('scrolling to the end enables the CTA', async () => {
     const ConsentScreen = require('../../../../src/app/(tasker)/verification/consent').default;
     render(<ConsentScreen />);
 
-    const checkbox = screen.getByTestId('consent-checkbox');
-    fireEvent.press(checkbox);
+    fireEvent.scroll(screen.getByTestId('consent-scroll'), {
+      nativeEvent: {
+        contentOffset: { y: 9999 },
+        layoutMeasurement: { height: 400 },
+        contentSize: { height: 4000 },
+      },
+    });
 
-    // After checking, CTA should be enabled
-    const cta = screen.getByTestId('consent-screen-cta');
-    expect(cta).not.toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByTestId('consent-screen-cta')).not.toBeDisabled();
+    });
   });
 
-  it('CTA navigates to upload screen after agreement', () => {
+  it('CTA navigates to upload screen after the scroll gate is satisfied', async () => {
     const ConsentScreen = require('../../../../src/app/(tasker)/verification/consent').default;
     render(<ConsentScreen />);
 
-    // First agree
-    fireEvent.press(screen.getByTestId('consent-checkbox'));
-
-    // Then press CTA
+    fireEvent.scroll(screen.getByTestId('consent-scroll'), {
+      nativeEvent: {
+        contentOffset: { y: 9999 },
+        layoutMeasurement: { height: 400 },
+        contentSize: { height: 4000 },
+      },
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('consent-screen-cta')).not.toBeDisabled();
+    });
     fireEvent.press(screen.getByTestId('consent-screen-cta'));
 
     expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification/upload');
   });
 
-  it('renders data items list', () => {
+  it('privacy policy link opens the privacy route', () => {
     const ConsentScreen = require('../../../../src/app/(tasker)/verification/consent').default;
     render(<ConsentScreen />);
 
-    expect(screen.getByTestId('consent-data-items')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('consent-privacy-link'));
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/legal/privacy');
   });
 
   it('back button calls router.back', () => {

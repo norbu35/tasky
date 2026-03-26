@@ -127,4 +127,28 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     expect(screen.getByText('ACCOUNT')).toBeTruthy();
     expect(screen.getByText('LEGAL')).toBeTruthy();
   });
+
+  it('navigates to terms, privacy, and help screens from legal rows', () => {
+    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
+    render(<SettingsScreen />);
+
+    fireEvent.press(screen.getByText('Terms of Service'));
+    fireEvent.press(screen.getByText('Privacy Policy'));
+    fireEvent.press(screen.getByText('Help & Support'));
+
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/legal/terms');
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/legal/privacy');
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/help');
+  });
+
+  it('opens a delete-account confirmation sheet before navigating to delete flow', () => {
+    const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
+    render(<SettingsScreen />);
+
+    fireEvent.press(screen.getByText('Delete Account'));
+    expect(screen.getByText('Delete account?')).toBeTruthy();
+
+    fireEvent.press(screen.getByText('Confirm'));
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/delete');
+  });
 });

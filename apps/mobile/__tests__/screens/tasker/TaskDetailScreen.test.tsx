@@ -111,7 +111,7 @@ const baseTask: PublicTask = {
   approximate_lng: 106.91,
   status: 'OPEN',
   scheduled_at: '2026-03-25T10:00:00Z',
-  photo_urls: [],
+  photo_urls: ['https://example.com/task-photo-1.jpg', 'https://example.com/task-photo-2.jpg'],
   application_count: 3,
   created_at: '2026-03-23T00:00:00Z',
 };
@@ -169,6 +169,23 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     render(<TaskDetailScreen />);
 
     expect(screen.getByText('tasker.taskDetail.getVerified')).toBeTruthy();
+  });
+
+  it('navigates to tasker verification when unverified CTA is pressed', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: false,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('task-detail-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification');
   });
 
   it('shows "Application Sent" when already applied', () => {
@@ -238,5 +255,57 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
 
     fireEvent.press(screen.getByTestId('task-detail-back'));
     expect(mockBack).toHaveBeenCalled();
+  });
+
+  it('shows a secondary message button for verified taskers', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    expect(screen.getByText('Message')).toBeTruthy();
+  });
+
+  it('renders task photos and approximate location note', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    expect(screen.getByText('Photos')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-photos')).toBeTruthy();
+    expect(
+      screen.getByText('Approximate location (exact address shown after booking confirmed)'),
+    ).toBeTruthy();
+  });
+
+  it('renders compact trust banner on detail', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    expect(screen.getByText('Platform trust')).toBeTruthy();
   });
 });

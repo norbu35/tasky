@@ -9,6 +9,15 @@ import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
+function formatDateTime(value: Date): string {
+  const y = value.getFullYear();
+  const m = String(value.getMonth() + 1).padStart(2, '0');
+  const d = String(value.getDate()).padStart(2, '0');
+  const h = String(value.getHours()).padStart(2, '0');
+  const min = String(value.getMinutes()).padStart(2, '0');
+  return `${y}.${m}.${d} ${h}:${min}`;
+}
+
 export default function RebookScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -28,19 +37,26 @@ export default function RebookScreen() {
 
   const { mutateAsync: createTask, isPending } = useCreateTask();
 
-  // Default new schedule to tomorrow
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(10, 0, 0, 0);
-
   const [budget, setBudget] = useState(params.budget ?? '50000');
-  const [selectedDate] = useState<Date>(tomorrow);
+  const [selectedDate] = useState<Date>(() => {
+    if (params.scheduledAt) {
+      return new Date(params.scheduledAt);
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
+    return tomorrow;
+  });
+
+  const numericBudget = Number(budget);
+  const budgetTooLow = Number.isFinite(numericBudget) && numericBudget <= 1001;
 
   const handleSubmit = useCallback(async () => {
+    if (budgetTooLow) return;
     const task = await createTask({
       category_id: params.categoryId,
       description: params.description,
-      budget: Number(budget),
+      budget: numericBudget,
       location_lat: Number(params.locationLat),
       location_lng: Number(params.locationLng),
       location_text: params.locationText,
@@ -59,7 +75,7 @@ export default function RebookScreen() {
         taskerAvatar: params.taskerAvatar,
       },
     });
-  }, [params, budget, selectedDate, createTask, router]);
+  }, [params, budgetTooLow, numericBudget, selectedDate, createTask, router]);
 
   return (
     <FormWizardTemplate
@@ -68,8 +84,9 @@ export default function RebookScreen() {
       onNext={handleSubmit}
       onBack={() => router.back()}
       nextLabel={t('customer.bookings.ctaRebookSubmit', 'Continue to Booking')}
+      nextDisabled={budgetTooLow}
       nextLoading={isPending}
-      showBack={false}
+      showBack
       testID="rebook-screen"
     >
       {/* Prefilled Note */}
@@ -111,10 +128,7 @@ export default function RebookScreen() {
           {t('customer.bookings.labelNewSchedule', 'New Schedule')}
         </Text>
         <Pressable style={styles.datePicker} testID="rebook-screen-date-picker">
-          <Text style={styles.dateText}>
-            {selectedDate.toLocaleDateString()}{' '}
-            {selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
+          <Text style={styles.dateText}>{formatDateTime(selectedDate)}</Text>
         </Pressable>
       </View>
 
@@ -129,6 +143,11 @@ export default function RebookScreen() {
           maxLength={10}
           testID="rebook-screen-budget"
         />
+        {budgetTooLow ? (
+          <Text style={styles.errorText}>
+            {t('customer.bookings.rebookBudgetLow', 'Budget must be above ₮1,001')}
+          </Text>
+        ) : null}
       </View>
     </FormWizardTemplate>
   );
@@ -200,5 +219,10 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     color: colors.primaryDeep,
     backgroundColor: colors.card,
+  },
+  errorText: {
+    fontSize: typography.caption,
+    color: colors.danger,
+    marginTop: spacing.xs,
   },
 });

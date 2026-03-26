@@ -47,6 +47,8 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
   it('renders the add photo button', () => {
     render(<PhotoUploadScreen />);
+    expect(screen.getByText('Add Photos')).toBeTruthy();
+    expect(screen.getByText('Add photos related to your task (up to 3)')).toBeTruthy();
     expect(screen.getByText('Add Photo')).toBeTruthy();
   });
 
@@ -60,8 +62,19 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     );
   });
 
-  it('renders as step 2 of 5 wizard', () => {
+  it('renders as step 3 of 7 wizard', () => {
     render(<PhotoUploadScreen />);
-    expect(screen.getByTestId('photo-upload-screen')).toBeTruthy();
+    expect(screen.getByLabelText('Step 3 of 7')).toBeTruthy();
+  });
+
+  it('back button returns to intake form', () => {
+    render(<PhotoUploadScreen />);
+    fireEvent.press(screen.getByTestId('photo-upload-screen-back'));
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows optional helper copy', () => {
+    render(<PhotoUploadScreen />);
+    expect(screen.getByText('Photos are optional — you can skip')).toBeTruthy();
   });
 });

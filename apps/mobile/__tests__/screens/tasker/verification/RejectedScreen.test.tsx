@@ -52,7 +52,7 @@ describe('RejectedScreen (SCR-TASK-009)', () => {
     const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
     render(<RejectedScreen />);
 
-    fireEvent.press(screen.getByTestId('rejected-screen-retry'));
+    fireEvent.press(screen.getByTestId('rejected-screen-resubmit'));
     expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification/upload');
   });
 
@@ -61,5 +61,13 @@ describe('RejectedScreen (SCR-TASK-009)', () => {
     render(<RejectedScreen />);
 
     expect(screen.getByText('tasker.verification.rejectedBody')).toBeTruthy();
+  });
+
+  it('browse tasks CTA returns to the task feed', () => {
+    const RejectedScreen = require('../../../../src/app/(tasker)/verification/rejected').default;
+    render(<RejectedScreen />);
+
+    fireEvent.press(screen.getByTestId('rejected-screen-browse'));
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)');
   });
 });

@@ -54,9 +54,9 @@ export default function BookingTimelineScreen() {
     >
       <View style={styles.timeline}>
         {timelineEvents.map((event: any, index: number) => {
+          const isFuture = Boolean(event.is_future);
           const isLast = index === timelineEvents.length - 1;
-          const _isPast = !isLast;
-          const stateLabel = isLast ? 'active' : 'past';
+          const stateLabel = isFuture ? 'future' : isLast ? 'active' : 'past';
 
           return (
             <View
@@ -66,16 +66,33 @@ export default function BookingTimelineScreen() {
             >
               {/* Connector */}
               <View style={styles.connectorColumn}>
-                <View style={[styles.dot, isLast ? styles.dotActive : styles.dotPast]} />
+                <View
+                  style={[
+                    styles.dot,
+                    isFuture ? styles.dotFuture : isLast ? styles.dotActive : styles.dotPast,
+                  ]}
+                />
                 {!isLast && <View style={styles.line} />}
               </View>
 
               {/* Content */}
               <View style={styles.eventContent}>
-                <Text style={[styles.eventLabel, isLast && styles.eventLabelActive]}>
+                <Text
+                  style={[
+                    styles.eventLabel,
+                    isFuture
+                      ? styles.eventLabelFuture
+                      : isLast
+                        ? styles.eventLabelActive
+                        : null,
+                  ]}
+                >
                   {formatEventLabel(event.event)}
                 </Text>
                 <Text style={styles.eventTimestamp}>{formatTimestamp(event.timestamp)}</Text>
+                {event.description ? (
+                  <Text style={styles.eventDescription}>{event.description}</Text>
+                ) : null}
               </View>
             </View>
           );
@@ -108,6 +125,9 @@ const styles = StyleSheet.create({
   dotPast: {
     backgroundColor: colors.chipInactive,
   },
+  dotFuture: {
+    backgroundColor: colors.border,
+  },
   line: {
     width: 2,
     flex: 1,
@@ -132,5 +152,14 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     color: colors.textTertiary,
     marginTop: spacing.xs,
+  },
+  eventDescription: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+    lineHeight: typography.caption * 1.5,
+  },
+  eventLabelFuture: {
+    color: colors.textTertiary,
   },
 });

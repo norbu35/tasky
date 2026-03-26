@@ -8,7 +8,10 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
-export type CancelType = 'free_cancel' | 'late_cancel_warning';
+export type CancelType =
+  | 'free_cancel'
+  | 'late_cancel_warning'
+  | 'late_cancel_incident_count';
 
 interface CustomerCancelSheetProps {
   isOpen: boolean;
@@ -52,6 +55,14 @@ export function CustomerCancelSheet({
               'Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.',
             )}
       </Text>
+      {cancelType === 'late_cancel_incident_count' && (
+        <Text style={styles.warningText}>
+          {t(
+            'customer.bookings.lateCancelRepeatWarning',
+            'You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.',
+          )}
+        </Text>
+      )}
       <Button
         label={t('customer.bookings.ctaCancelConfirm', 'Cancel Booking')}
         variant="destructive"
@@ -89,6 +100,12 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     marginTop: spacing.sm,
+  },
+  warningText: {
+    fontSize: typography.caption,
+    color: colors.danger,
+    lineHeight: typography.caption * 1.5,
+    marginBottom: spacing.md,
   },
   noteText: {
     fontSize: typography.caption,

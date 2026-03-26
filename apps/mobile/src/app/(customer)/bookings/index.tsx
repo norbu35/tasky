@@ -18,6 +18,9 @@ const FILTER_TABS = [
   { id: 'completed', label: 'Completed' },
 ];
 
+const ACTIVE_BOOKING_STATUSES = new Set(['ASSIGNED']);
+const COMPLETED_BOOKING_STATUSES = new Set(['COMPLETED', 'CANCELLED', 'NO_SHOW']);
+
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   const lower = status.toLowerCase();
   if (lower === 'assigned') return 'assigned';
@@ -28,7 +31,22 @@ function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancell
 }
 
 function isActiveStatus(status: string): boolean {
-  return status === 'ASSIGNED' || status === 'TASKER_MARKED_DONE';
+  return ACTIVE_BOOKING_STATUSES.has(status);
+}
+
+function isCompletedStatus(status: string): boolean {
+  return COMPLETED_BOOKING_STATUSES.has(status);
+}
+
+function formatSchedule(value?: string): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${y}.${m}.${d} ${h}:${min}`;
 }
 
 export default function BookingsListScreen() {
@@ -41,7 +59,7 @@ export default function BookingsListScreen() {
 
   const filteredBookings = activeFilter.includes('active')
     ? bookings.filter((b: any) => isActiveStatus(b.status))
-    : bookings.filter((b: any) => !isActiveStatus(b.status));
+    : bookings.filter((b: any) => isCompletedStatus(b.status));
 
   const handleToggleFilter = useCallback((id: string) => {
     setActiveFilter([id]);
@@ -73,15 +91,20 @@ export default function BookingsListScreen() {
         }
         bodyContent={
           <View style={styles.cardBody}>
-            <View style={styles.cardBodyLeft}>
-              <ProfileAvatar
-                uri={booking.tasker?.avatar_url}
-                name={booking.tasker?.full_name}
-                size="sm"
-              />
-              <Text style={styles.taskerName} numberOfLines={1}>
-                {booking.tasker?.full_name}
-              </Text>
+            <View style={styles.cardMeta}>
+              <View style={styles.cardBodyLeft}>
+                <ProfileAvatar
+                  uri={booking.tasker?.avatar_url}
+                  name={booking.tasker?.full_name}
+                  size="sm"
+                />
+                <Text style={styles.taskerName} numberOfLines={1}>
+                  {booking.tasker?.full_name}
+                </Text>
+              </View>
+              {booking.task?.scheduled_at && (
+                <Text style={styles.scheduleText}>{formatSchedule(booking.task.scheduled_at)}</Text>
+              )}
             </View>
             <StatusBadge status={mapStatus(booking.status ?? 'ASSIGNED')} />
           </View>
@@ -149,11 +172,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  cardMeta: {
+    gap: spacing.sm,
+  },
   cardBodyLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     flex: 1,
+  },
+  scheduleText: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
   },
   taskerName: {
     fontSize: typography.caption,

@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useMessages } from '../../../features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
+import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
 import { useAuthStore } from '../../../store/authStore';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -34,7 +35,7 @@ export default function ChatDetailScreen() {
   const profile = useAuthStore((s) => s.profile);
   const myId = profile?.id;
 
-  const { data, isLoading } = useMessages(id ?? '');
+  const { data, isLoading, isError, refetch } = useMessages(id ?? '');
   const { mutate: sendMessage, isPending } = useSendMessage();
 
   const [draft, setDraft] = useState('');
@@ -52,6 +53,10 @@ export default function ChatDetailScreen() {
   const renderMessage = useCallback(
     ({ item }: { item: MessageItem }) => {
       const isMine = item.sender_id === myId;
+      const timestamp = new Date(item.created_at).toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+      });
       return (
         <View
           testID={`message-bubble-${item.id}`}
@@ -63,6 +68,12 @@ export default function ChatDetailScreen() {
           >
             <Text style={[styles.messageText, isMine ? styles.textMine : styles.textTheirs]}>
               {item.content}
+            </Text>
+            <Text
+              testID={`message-timestamp-${item.id}`}
+              style={[styles.timestamp, isMine ? styles.timestampMine : styles.timestampTheirs]}
+            >
+              {timestamp}
             </Text>
           </View>
         </View>
@@ -76,6 +87,33 @@ export default function ChatDetailScreen() {
       <View style={styles.center} testID="chat-loading">
         <Text style={styles.loadingText}>{t('common.loading', 'Loading...')}</Text>
       </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <KeyboardAvoidingView
+        style={styles.container}
+        testID="chat-detail"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Text style={styles.backText}>{t('common.back', 'Back')}</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('chat.title', 'Chat')}</Text>
+          <View style={{ width: 60 }} />
+        </View>
+        <ErrorStateTemplate
+          message={t('shared.inbox.errorMessage', 'Failed to load messages')}
+          retryLabel={t('shared.inbox.retry', 'Retry')}
+          onRetry={() => {
+            void refetch();
+          }}
+          testID="chat-detail-error"
+        />
+      </KeyboardAvoidingView>
     );
   }
 
@@ -254,5 +292,17 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
     fontWeight: '700',
     fontSize: typography.body,
+  },
+  timestamp: {
+    fontSize: typography.micro,
+    marginTop: spacing.xs,
+  },
+  timestampMine: {
+    color: colors.primaryForeground,
+    textAlign: 'right',
+    opacity: 0.85,
+  },
+  timestampTheirs: {
+    color: colors.mutedForeground,
   },
 });

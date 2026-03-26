@@ -42,15 +42,15 @@ export function LanguageSwitcher() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: mobileTheme.colors.card,
-    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    borderRadius: 999,
     borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
+    borderColor: 'rgba(23, 56, 56, 0.12)',
     overflow: 'hidden',
   },
   btn: {
-    flex: 1,
-    paddingVertical: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -58,12 +58,12 @@ const styles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.primary,
   },
   divider: {
-    width: 1,
-    backgroundColor: mobileTheme.colors.border,
+    width: 0,
+    backgroundColor: 'transparent',
   },
   text: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
     color: mobileTheme.colors.foreground,
   },
   activeText: {

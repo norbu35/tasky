@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, act } from '@testing-library/react-native';
 import NetworkErrorScreen from '../../../src/app/(shared)/network-error';
+const mockBack = jest.fn();
 
 jest.mock('react-native-reanimated', () => {
   const RN = require('react-native');
@@ -19,7 +20,7 @@ jest.mock('react-native-reanimated', () => {
 
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => mockParams,
 }));
 
@@ -42,13 +43,21 @@ jest.mock('lucide-react-native', () => {
 
 describe('NetworkErrorScreen', () => {
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.clearAllMocks();
     mockParams = {};
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   it('renders no connection message by default', () => {
     render(<NetworkErrorScreen />);
 
     expect(screen.getByText('No internet connection')).toBeTruthy();
+    expect(screen.getByText('Please check your connection and try again')).toBeTruthy();
   });
 
   it('shows retry button', () => {
@@ -57,14 +66,21 @@ describe('NetworkErrorScreen', () => {
     expect(screen.getByText('Try Again')).toBeTruthy();
   });
 
-  it('calls retry handler when retry button is pressed', () => {
+  it('shows retry loading and then restored toast when retry button is pressed', () => {
     render(<NetworkErrorScreen />);
 
     const retryButton = screen.getByText('Try Again');
     fireEvent.press(retryButton);
+    expect(screen.getByTestId('network-error-screen-retry')).toBeTruthy();
+    act(() => {
+      jest.advanceTimersByTime(1500);
+    });
 
-    // Retry should not crash; the handler is internal
-    expect(retryButton).toBeTruthy();
+    expect(screen.getByText('Connection restored')).toBeTruthy();
+    act(() => {
+      jest.advanceTimersByTime(1200);
+    });
+    expect(mockBack).toHaveBeenCalled();
   });
 
   it('shows slow connection variant when type param is slow_connection', () => {
@@ -73,6 +89,7 @@ describe('NetworkErrorScreen', () => {
     render(<NetworkErrorScreen />);
 
     expect(screen.getByText('Connection is slow')).toBeTruthy();
+    expect(screen.getByText('Connection is slow. Please wait a moment')).toBeTruthy();
   });
 
   it('has correct testID on root container', () => {

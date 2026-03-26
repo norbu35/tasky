@@ -78,6 +78,7 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
   it('confirm button triggers deletion', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
+    fireEvent.changeText(screen.getByTestId('delete-confirmation-input'), 'DELETE');
     fireEvent.press(screen.getByText('Delete My Account'));
     expect(mockDeleteAccount).toHaveBeenCalled();
   });
@@ -109,5 +110,32 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
     expect(screen.getByText(/active bookings/)).toBeTruthy();
+  });
+
+  it('requires confirmation text before enabling deletion', () => {
+    const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
+    render(<AccountDeletionScreen />);
+
+    expect(screen.getByTestId('delete-confirm-button').props.accessibilityState.disabled).toBe(
+      true,
+    );
+
+    fireEvent.changeText(screen.getByTestId('delete-confirmation-input'), 'DELETE');
+
+    expect(screen.getByTestId('delete-confirm-button').props.accessibilityState.disabled).toBe(
+      false,
+    );
+  });
+
+  it('shows blocked state when open disputes prevent deletion', () => {
+    mockUseDeleteAccount.mockReturnValue({
+      mutate: mockDeleteAccount,
+      isPending: false,
+      error: { code: 'OPEN_DISPUTES' },
+    });
+    const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
+    render(<AccountDeletionScreen />);
+
+    expect(screen.getByText(/open disputes/)).toBeTruthy();
   });
 });

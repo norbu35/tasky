@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -9,6 +9,7 @@ const { colors, spacing, typography } = mobileTheme;
 
 export default function SuspendedAccountScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { expiryDate } = useLocalSearchParams<{ expiryDate?: string }>();
 
   return (
@@ -27,6 +28,13 @@ export default function SuspendedAccountScreen() {
         }}
         style={styles.button}
         testID="suspended-appeal-button"
+      />
+      <Button
+        label={t('shared.account.logout')}
+        variant="ghost"
+        onPress={() => router.replace('/(auth)')}
+        style={styles.secondaryButton}
+        testID="suspended-logout-button"
       />
     </View>
   );
@@ -62,6 +70,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: spacing.xl,
+    alignSelf: 'stretch',
+  },
+  secondaryButton: {
+    marginTop: spacing.sm,
     alignSelf: 'stretch',
   },
 });

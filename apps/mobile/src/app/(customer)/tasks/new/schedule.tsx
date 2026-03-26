@@ -10,7 +10,7 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
-const MIN_BUDGET = 5000;
+const MIN_BUDGET = 1001;
 
 type PickerMode = 'date' | 'time' | null;
 
@@ -86,7 +86,7 @@ export default function ScheduleBudgetScreen() {
 
     const budgetNum = Number(budget);
     if (!budget || isNaN(budgetNum) || budgetNum < MIN_BUDGET) {
-      setBudgetError(t('customer.postTask.budgetError', 'Budget must be at least \u20AE5,000'));
+      setBudgetError(t('customer.postTask.budgetError', 'Budget must be at least \u20AE1,001'));
       return;
     }
 
@@ -116,14 +116,16 @@ export default function ScheduleBudgetScreen() {
 
   return (
     <FormWizardTemplate
-      currentStep={3}
-      totalSteps={5}
+      currentStep={4}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
-      nextLabel={t('common.next', 'Next')}
+      nextLabel={t('common.continue', 'Continue')}
       testID="schedule-budget-screen"
     >
-      <Text style={styles.title}>{t('customer.postTask.scheduleTitle', 'When & Budget')}</Text>
+      <Text style={styles.title}>
+        {t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}
+      </Text>
 
       <FormField
         label={t('customer.postTask.scheduleDate', 'Date')}
@@ -161,7 +163,7 @@ export default function ScheduleBudgetScreen() {
         errorText={budgetError || undefined}
         helperText={t(
           'customer.postTask.budgetHelper',
-          'Enter a fixed amount. Minimum: \u20AE5,000',
+          'Enter a fixed amount. Minimum: \u20AE1,001',
         )}
       >
         <Input
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '600',
     color: colors.primaryDeep,
+    marginBottom: spacing.sm,
   },
   scheduleRow: {
     flexDirection: 'row',

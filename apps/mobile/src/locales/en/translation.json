@@ -17,42 +17,82 @@
     "facebookComingSoon": "Facebook OAuth integration is pending backend callback support.",
     "loginToViewProfile": "You need to be logged in to view and edit your profile.",
     "splash": {
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "tagline": "Trusted taskers, easy booking",
+      "poweredBy": "Powered by secure tech"
     },
     "login": {
       "title": "Welcome to Tasky",
-      "subtitle": "Mongolia's trusted service marketplace",
-      "facebookButton": "Continue with Facebook",
+      "subtitle": "Connect with trusted taskers and book tasks easily",
+      "facebookButton": "Login with Facebook",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
       "error": "Login failed. Please try again."
     },
+    "otp": {
+      "heading": "Verify Code",
+      "descriptionPrefix": "We sent a 4-digit code to ",
+      "descriptionSuffix": ".",
+      "verify": "Verify",
+      "resend": "Resend code",
+      "resendCountdown": "Resend in (45s)",
+      "errorWrongCode": "Incorrect code. Please try again.",
+      "errorExpired": "Code expired. Please request a new one.",
+      "securityTitle": "Security",
+      "securityBody": "Your personal details and transactions are protected. Never share your code."
+    },
+    "otpMigration": {
+      "heading": "Register your phone number",
+      "description": "Please verify your phone number to move your old account into this app. This is important for your security.",
+      "label": "Phone number",
+      "placeholder": "9911 2233",
+      "helper": "Adding phone number to your Facebook login",
+      "submit": "Get Code",
+      "skip": "Do it later",
+      "errorInvalidPhone": "Invalid phone number",
+      "securityNote": "PROTECTED BY SECURITY"
+    },
     "onboarding": {
-      "slide1Title": "Find Trusted Help",
-      "slide1Body": "Every Tasker is ID-verified",
-      "slide2Title": "Book with Confidence",
-      "slide2Body": "Fixed prices, no surprises",
-      "slide3Title": "Get It Done",
-      "slide3Body": "Real-time booking, dispute protection",
+      "slide1Title": "Find Trusted Taskers",
+      "slide1Body": "Connect with verified and reliable taskers",
+      "slide2Title": "Easy Booking",
+      "slide2Body": "Post your task and book in just a few taps",
+      "slide3Title": "Safe & Secure",
+      "slide3Body": "A community protected by reviews and verification",
       "skip": "Skip",
       "next": "Next",
       "getStarted": "Get Started"
     },
     "roleSelection": {
-      "title": "How will you use Tasky?",
+      "title": "Who are you?",
+      "subtitle": "Choose your role. You can change it later.",
       "customerTitle": "I need help",
       "customerDescription": "Find verified Taskers for your jobs",
       "taskerTitle": "I want to work",
       "taskerDescription": "Get matched with jobs near you",
-      "confirm": "Continue"
+      "confirm": "Continue",
+      "confirmSheetTitle": "Are you sure?",
+      "confirmSheetMessage": "Confirm you want to be a {{role}}. You can switch later in Settings.",
+      "confirmSheetPrimary": "Yes, confirm",
+      "confirmSheetSecondary": "Go back"
     },
     "permissions": {
-      "cameraTitle": "Camera Access",
-      "cameraDescription": "Take photos for task posts and verification",
-      "locationTitle": "Location Access",
-      "locationDescription": "Find tasks and Taskers near you",
-      "notificationsTitle": "Notifications",
-      "notificationsDescription": "Get updates on bookings and messages",
+      "cameraTitle": "Camera Permission",
+      "cameraDescription": "Camera is needed for photos and verification",
+      "cameraDenied": "Camera permission denied",
+      "cameraSettings": "You can enable camera in Settings",
+      "locationTitle": "Location Permission",
+      "locationDescription": "Needed to show nearby tasks and set task location",
+      "locationDenied": "Location permission denied",
+      "locationSettings": "You can enable location in Settings",
+      "notificationsTitle": "Notification Permission",
+      "notificationsDescription": "Allow notifications to get timely updates on applications and bookings",
+      "notificationsDenied": "Notification permission denied",
+      "notificationsSettings": "You can enable notifications in Settings",
+      "trustBadge": "Secure",
+      "continue": "Continue",
       "allow": "Allow",
-      "skipPermission": "Skip for now"
+      "skipPermission": "Do it later"
     }
   },
   "nav": {
@@ -71,6 +111,7 @@
     "loading": "Loading...",
     "error": "Something went wrong",
     "retry": "Try Again",
+    "allow": "Allow",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save",
@@ -83,6 +124,7 @@
     "seeAll": "See All",
     "offline": "You're offline",
     "getStarted": "Get Started",
+    "skip": "Skip",
     "optional": "optional",
     "yes": "Yes",
     "no": "No"
@@ -473,12 +515,17 @@
       "consentTitle": "Verification Consent",
       "consentBody": "We'll verify your identity using your national ID",
       "consentAgree": "I Agree",
+      "consentContinue": "Agree & Continue",
+      "consentPrivacy": "Read Privacy Policy",
       "uploadTitle": "Upload ID Documents",
       "uploadFront": "ID Card Front",
       "uploadBack": "ID Card Back",
       "uploadSelfie": "Take a Selfie",
       "uploadCapture": "Take Photo",
       "uploadGallery": "Choose from Gallery",
+      "reviewHeading": "Review your photos",
+      "reviewDescription": "Make sure all photos are clear before submitting.",
+      "retakeButton": "Retake",
       "submitButton": "Submit for Review",
       "submitting": "Submitting...",
       "submittedTitle": "Documents Submitted!",
@@ -487,12 +534,18 @@
       "pendingTitle": "Under Review",
       "pendingBody": "Your documents are being reviewed",
       "pendingSla": "Usually takes less than 24 hours",
+      "pendingSubmitted": "Submitted",
+      "pendingReviewing": "Under Review",
       "approvedTitle": "Verified!",
       "approvedBody": "You can now apply for tasks",
       "approvedCta": "Start Browsing",
       "rejectedTitle": "Verification Unsuccessful",
       "rejectedBody": "Please check the reason below and resubmit",
-      "rejectedResubmit": "Resubmit Documents"
+      "rejectedResubmit": "Resubmit Documents",
+      "rejectedBrowse": "Browse Tasks",
+      "rejectedTipLighting": "Take photos in good lighting",
+      "rejectedTipFlat": "Place your ID on a flat surface",
+      "rejectedTipFace": "Keep your face clearly visible"
     },
     "jobs": {
       "title": "My Jobs",
@@ -524,7 +577,10 @@
     "notifications": {
       "title": "Notifications",
       "emptyTitle": "No notifications",
-      "emptyDescription": "You're all caught up"
+      "emptyDescription": "You're all caught up",
+      "errorTitle": "Something went wrong",
+      "errorBody": "Failed to load notifications",
+      "retry": "Retry"
     },
     "profile": {
       "title": "Profile",
@@ -601,10 +657,51 @@
       "loginButton": "Log In"
     },
     "terms": {
-      "title": "Terms of Service"
+      "title": "Terms of Service",
+      "backLabel": "Back",
+      "section0Title": "These Terms at a glance",
+      "section0Body": "Please read these terms carefully. They explain how Tasky works, what you can expect from the service, and which responsibilities remain with you.",
+      "section0Note": "This summary is not a substitute for the full policy below.",
+      "section1Title": "1. Acceptance of Terms",
+      "section1Body": "By accessing or using Tasky, you agree to these Terms and all applicable laws.",
+      "section1Note": "If you do not agree, please stop using the application.",
+      "section2Title": "2. Use of Service",
+      "section2Body": "Tasky connects customers with service providers. Use the service only for lawful purposes.",
+      "section2Note": "You are responsible for the accuracy of the information you submit.",
+      "section3Title": "3. User Accounts",
+      "section3Body": "You are responsible for your account credentials and all activity under your account.",
+      "section3Note": "Keep your contact details current so we can reach you about bookings and support.",
+      "section4Title": "4. Liability",
+      "section4Body": "Tasky is a connector between customers and taskers and does not guarantee work quality.",
+      "section4Note": "Any direct agreement between customers and taskers remains their own responsibility.",
+      "errorHeadline": "Unable to load",
+      "errorRetry": "Try again",
+      "errorDescription": "Failed to load Terms of Service. Please try again"
     },
     "help": {
-      "title": "Help & Support"
+      "title": "Help & Support",
+      "backLabel": "Back",
+      "searchPlaceholder": "Search questions...",
+      "sectionGeneral": "General",
+      "sectionTasks": "About Tasks",
+      "sectionBookings": "About Bookings",
+      "sectionPayments": "About Payments",
+      "sectionAccount": "About Account",
+      "qWhatIsTasky": "What is Tasky?",
+      "aWhatIsTasky": "Tasky is a trusted service marketplace connecting customers with service providers in Mongolia.",
+      "qHowItWorks": "How does Tasky work?",
+      "aHowItWorks": "Post a task, receive applications, choose the best match, and track the booking through completion.",
+      "qPostTask": "How do I post a task?",
+      "aPostTask": "Open Post Task, add your details, choose a budget, and submit once everything looks correct.",
+      "qCancelBooking": "Can I cancel a booking?",
+      "aCancelBooking": "Yes. You can cancel before the booking starts, although late cancellations may affect your account standing.",
+      "qHowPaid": "How do payments work?",
+      "aHowPaid": "Payment support is being introduced in phases. When available, you will see the supported options in booking flow.",
+      "qUpdateAccount": "How do I update my account?",
+      "aUpdateAccount": "Open Profile or Settings to update your personal details, contact information, and preferences.",
+      "errorHeadline": "Unable to load",
+      "errorRetry": "Try again",
+      "errorDescription": "Failed to load help content. Please try again"
     }
   }
 }

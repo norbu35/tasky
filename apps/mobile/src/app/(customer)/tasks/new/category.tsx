@@ -2,7 +2,9 @@ import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { ChevronLeft } from 'lucide-react-native';
 import { FeedListTemplate } from '../../../../components/templates/FeedListTemplate';
+import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import type { Category } from '../../../../lib/mobileApiClient';
@@ -42,6 +44,22 @@ export default function CategorySelectionScreen() {
 
   return (
     <View style={styles.container} testID="category-selection-screen">
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.backButton}
+          testID="category-selection-back"
+          accessibilityRole="button"
+        >
+          <ChevronLeft size={22} color={colors.primary} />
+          <Text style={styles.backLabel}>{t('common.back', 'Back')}</Text>
+        </Pressable>
+        <Text style={styles.pageTitle}>{t('customer.postTask.selectCategory', 'Select Category')}</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+      <View style={styles.stepWrap}>
+        <StepIndicator currentStep={1} totalSteps={7} testID="category-selection-step-indicator" />
+      </View>
       <Text style={styles.title}>
         {t('customer.postTask.categoryTitle', 'What do you need help with?')}
       </Text>
@@ -63,6 +81,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  header: {
+    paddingTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  backButton: {
+    minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  backLabel: {
+    fontSize: typography.body,
+    fontWeight: '500',
+    color: colors.primary,
+  },
+  pageTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.foreground,
+    marginHorizontal: spacing.sm,
+  },
+  headerSpacer: {
+    width: 44,
+  },
+  stepWrap: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
   },
   title: {
     fontSize: typography.heading,

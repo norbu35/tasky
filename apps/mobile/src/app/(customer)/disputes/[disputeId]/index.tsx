@@ -46,6 +46,29 @@ const STATUS_CONFIG: Record<DisputeStatus, { label: string; description: string;
     },
   };
 
+function getResolutionText(status: DisputeStatus, t: (key: string, fb: string) => string): string {
+  switch (status) {
+    case 'OPEN':
+      return t('customer.disputes.resolutionOpen', 'Awaiting admin decision.');
+    case 'ESCALATED':
+      return t('customer.disputes.resolutionEscalated', 'Further investigation in progress.');
+    case 'RESOLVED_CUSTOMER':
+      return t('customer.disputes.resolutionResolvedCustomer', 'Dispute resolved in your favor.');
+    case 'RESOLVED_TASKER':
+      return t(
+        'customer.disputes.resolutionResolvedTasker',
+        'Outcome: resolved in favor of the Tasker.',
+      );
+    case 'CLOSED_INSUFFICIENT':
+      return t(
+        'customer.disputes.resolutionClosedInsufficient',
+        'Closed because evidence was not provided within 24 hours.',
+      );
+    default:
+      return STATUS_CONFIG.OPEN.description;
+  }
+}
+
 export default function DisputeStatusScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -54,6 +77,14 @@ export default function DisputeStatusScreen() {
 
   const status = (dispute?.status as DisputeStatus) ?? 'OPEN';
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.OPEN;
+  const submittedEvidence: unknown[] = Array.isArray(
+    (dispute as { submitted_evidence?: unknown[] } | undefined)?.submitted_evidence,
+  )
+    ? ((dispute as { submitted_evidence?: unknown[] }).submitted_evidence ?? [])
+    : [];
+  const evidenceItems: unknown[] = Array.isArray(dispute?.evidence)
+    ? dispute.evidence
+    : submittedEvidence;
 
   return (
     <DetailTemplate
@@ -84,6 +115,34 @@ export default function DisputeStatusScreen() {
               {t('customer.disputes.sectionSummary', 'Dispute Summary')}
             </Text>
             <Text style={styles.reasonText}>{dispute.reason}</Text>
+          </View>
+
+          {/* Evidence */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {t('customer.disputes.sectionEvidence', 'Submitted Evidence')}
+            </Text>
+            {evidenceItems.length > 0 ? (
+              evidenceItems.map((item: any, index: number) => (
+                <Text key={`${index}-${String(item?.id ?? item)}`} style={styles.evidenceItem}>
+                  {typeof item === 'string'
+                    ? item
+                    : item?.label ?? item?.name ?? item?.description ?? `Evidence ${index + 1}`}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.evidenceItem}>
+                {t('customer.disputes.noEvidence', 'No evidence provided')}
+              </Text>
+            )}
+          </View>
+
+          {/* Resolution */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {t('customer.disputes.sectionResolution', 'Resolution')}
+            </Text>
+            <Text style={styles.statusDescription}>{getResolutionText(status, t)}</Text>
           </View>
 
           {/* Mediation Note */}
@@ -131,6 +190,11 @@ const styles = StyleSheet.create({
   reasonText: {
     fontSize: typography.body,
     color: colors.primaryDeep,
+  },
+  evidenceItem: {
+    fontSize: typography.body,
+    color: colors.primaryDeep,
+    marginBottom: spacing.xs,
   },
   noteContainer: {
     backgroundColor: colors.muted,

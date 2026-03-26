@@ -4,9 +4,10 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import CategorySelectionScreen from '../../../src/app/(customer)/tasks/new/category';
 
 const mockPush = jest.fn();
+const mockBack = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -48,7 +49,21 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('renders the screen title', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
+    expect(screen.getByText('Select Category')).toBeTruthy();
     expect(screen.getByText('What do you need help with?')).toBeTruthy();
+  });
+
+  it('renders step indicator for step 1 of 7', () => {
+    mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
+    render(<CategorySelectionScreen />);
+    expect(screen.getByLabelText('Step 1 of 7')).toBeTruthy();
+  });
+
+  it('back button returns to my tasks', () => {
+    mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
+    render(<CategorySelectionScreen />);
+    fireEvent.press(screen.getByTestId('category-selection-back'));
+    expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
   it('shows categories when loaded', () => {
