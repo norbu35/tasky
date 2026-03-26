@@ -2,6 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../context/AppContext';
 import type { PublicTask, User, Booking } from '../../lib/apiClient';
+import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import { Label } from '../../components/ui/label';
+import { Skeleton } from '../../components/ui/skeleton';
 
 type PageState = 'idle' | 'loading' | 'error' | 'ready' | 'assigning' | 'success' | 'assign-error';
 
@@ -9,28 +14,23 @@ export function AdminConciergePage() {
   const { t } = useTranslation();
   const { apiClient, session } = useAppContext();
 
-  // ── Tasks state ──────────────────────────────────────────────────
   const [tasks, setTasks] = useState<PublicTask[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [pageState, setPageState] = useState<PageState>('idle');
 
-  // ── Tasker search state ──────────────────────────────────────────
   const [phoneQuery, setPhoneQuery] = useState('');
   const [taskerResults, setTaskerResults] = useState<User[]>([]);
   const [selectedTaskerId, setSelectedTaskerId] = useState<string | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
 
-  // ── Assignment form state ────────────────────────────────────────
   const [overrideReason, setOverrideReason] = useState('');
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
 
-  // ── Result state ─────────────────────────────────────────────────
   const [booking, setBooking] = useState<Booking | null>(null);
   const [assignError, setAssignError] = useState<string | null>(null);
 
   const accessToken = session?.accessToken ?? '';
 
-  // ── Load open tasks ──────────────────────────────────────────────
   const loadTasks = useCallback(async () => {
     setPageState('loading');
     try {
@@ -48,7 +48,6 @@ export function AdminConciergePage() {
     }
   }, [accessToken, loadTasks]);
 
-  // ── Search taskers ───────────────────────────────────────────────
   const handleSearchTaskers = async () => {
     if (!phoneQuery.trim()) return;
     setSearchLoading(true);
@@ -62,7 +61,6 @@ export function AdminConciergePage() {
     }
   };
 
-  // ── Assign task ──────────────────────────────────────────────────
   const canAssign =
     selectedTaskId !== null &&
     selectedTaskerId !== null &&
@@ -91,162 +89,182 @@ export function AdminConciergePage() {
     }
   };
 
-  // ── Error state ──────────────────────────────────────────────────
   if (pageState === 'error') {
     return (
-      <div>
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
-        <p>{t('admin.concierge.loadError', 'Failed to load tasks.')}</p>
-        <button onClick={loadTasks}>{t('common.retry', 'Retry')}</button>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
+        <Card>
+          <CardContent className="flex flex-col items-center gap-4 p-6">
+            <p className="text-destructive">
+              {t('admin.concierge.loadError', 'Failed to load tasks.')}
+            </p>
+            <Button onClick={loadTasks}>{t('common.retry', 'Retry')}</Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // ── Success state ────────────────────────────────────────────────
   if (pageState === 'success' && booking) {
     return (
-      <div>
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
-        <div data-testid="assignment-success">
-          <h2 className="text-lg font-semibold">
-            {t('admin.concierge.assignmentSuccess', 'Assignment Successful')}
-          </h2>
-          <p>
-            {t('admin.concierge.bookingId', 'Booking ID')}: {booking.id}
-          </p>
-          <p>
-            {t('admin.concierge.status', 'Status')}: {booking.status}
-          </p>
-        </div>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
+        <Card>
+          <CardContent className="p-6 space-y-2" data-testid="assignment-success">
+            <h2 className="text-lg font-semibold">
+              {t('admin.concierge.assignmentSuccess', 'Assignment Successful')}
+            </h2>
+            <p>
+              {t('admin.concierge.bookingId', 'Booking ID')}: {booking.id}
+            </p>
+            <p>
+              {t('admin.concierge.status', 'Status')}: {booking.status}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // ── Loading state ────────────────────────────────────────────────
   if (pageState === 'loading' || pageState === 'idle') {
     return (
-      <div>
-        <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
-        <div data-testid="concierge-loading">
-          <p>{t('common.loading', 'Loading...')}</p>
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold">
+          {t('admin.concierge.title', 'Concierge Dispatch')}
+        </h1>
+        <div data-testid="concierge-loading" className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <Skeleton className="h-12 w-full" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   }
 
-  // ── Main content ─────────────────────────────────────────────────
   return (
-    <div>
-      <h1 className="text-2xl font-bold">{t('admin.concierge.title', 'Concierge Dispatch')}</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">
+        {t('admin.concierge.title', 'Concierge Dispatch')}
+      </h1>
 
       {/* Section 1: Open Tasks */}
-      <section className="mt-4">
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold">
           {t('admin.concierge.selectTask', 'Select an Open Task')}
         </h2>
-        <div className="mt-2 space-y-2">
+        <div className="space-y-2">
           {tasks.map((task) => (
-            <div
+            <Card
               key={task.id}
               data-testid={`task-row-${task.id}`}
               data-selected={selectedTaskId === task.id ? 'true' : 'false'}
-              className={`cursor-pointer rounded border p-3 ${
-                selectedTaskId === task.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+              className={`cursor-pointer transition-colors ${
+                selectedTaskId === task.id
+                  ? 'border-primary bg-primary/10'
+                  : 'hover:bg-muted/50'
               }`}
               onClick={() => setSelectedTaskId(task.id)}
             >
-              <p className="font-medium">{task.description}</p>
-              <p className="text-sm text-gray-500">
-                {task.category.name} &middot; {task.budget.toLocaleString()}
-                {t('common.currency', ' MNT')}
-              </p>
-            </div>
+              <CardContent className="p-3">
+                <p className="font-medium">{task.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {task.category.name} &middot; {task.budget.toLocaleString()}
+                  {t('common.currency', ' MNT')}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
 
       {/* Section 2: Find a Tasker */}
-      <section className="mt-6">
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold">
           {t('admin.concierge.findTasker', 'Find a Tasker')}
         </h2>
-        <div className="mt-2 flex gap-2">
-          <input
-            type="text"
+        <div className="flex gap-2">
+          <Input
             placeholder={t('admin.concierge.phonePlaceholder', 'Phone number')}
             value={phoneQuery}
             onChange={(e) => setPhoneQuery(e.target.value)}
-            className="rounded border px-3 py-2"
           />
-          <button
-            onClick={handleSearchTaskers}
-            disabled={searchLoading}
-            className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
-          >
+          <Button onClick={handleSearchTaskers} disabled={searchLoading}>
             {t('admin.concierge.search', 'Search')}
-          </button>
+          </Button>
         </div>
-
         {taskerResults.length > 0 && (
-          <div className="mt-2 space-y-2">
+          <div className="space-y-2">
             {taskerResults.map((user) => (
-              <div
+              <Card
                 key={user.id}
                 data-testid={`user-row-${user.id}`}
                 data-selected={selectedTaskerId === user.id ? 'true' : 'false'}
-                className={`cursor-pointer rounded border p-3 ${
-                  selectedTaskerId === user.id ? 'border-green-500 bg-green-50' : 'border-gray-200'
+                className={`cursor-pointer transition-colors ${
+                  selectedTaskerId === user.id
+                    ? 'border-primary bg-primary/10'
+                    : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedTaskerId(user.id)}
               >
-                <p className="font-medium">{user.phone ?? user.id}</p>
-                <p className="text-sm text-gray-500">
-                  {user.role} &middot; {user.status}
-                </p>
-              </div>
+                <CardContent className="p-3">
+                  <p className="font-medium">{user.phone ?? user.id}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {user.role} &middot; {user.status}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
       </section>
 
       {/* Section 3: Assignment Form */}
-      <section className="mt-6">
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold">
           {t('admin.concierge.assignmentForm', 'Assignment')}
         </h2>
-        <div className="mt-2 space-y-3">
+        <Input
+          placeholder={t('admin.concierge.reasonPlaceholder', 'Override reason (min 3 chars)')}
+          value={overrideReason}
+          onChange={(e) => setOverrideReason(e.target.value)}
+        />
+        <div className="flex items-center gap-2">
           <input
-            type="text"
-            placeholder={t('admin.concierge.reasonPlaceholder', 'Override reason (min 3 chars)')}
-            value={overrideReason}
-            onChange={(e) => setOverrideReason(e.target.value)}
-            className="w-full rounded border px-3 py-2"
+            type="checkbox"
+            id="concierge-disclaimer"
+            checked={disclaimerChecked}
+            onChange={(e) => setDisclaimerChecked(e.target.checked)}
           />
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={disclaimerChecked}
-              onChange={(e) => setDisclaimerChecked(e.target.checked)}
-            />
-            {t('admin.concierge.disclaimerLabel', 'I accept liability for this manual assignment')}
-          </label>
-
-          {pageState === 'assign-error' && assignError && (
-            <div data-testid="assignment-error" className="text-red-600">
-              <p>{assignError}</p>
-            </div>
-          )}
-
-          <button
-            onClick={handleAssign}
-            disabled={!canAssign || pageState === 'assigning'}
-            className="rounded bg-green-600 px-6 py-2 text-white disabled:opacity-50"
-          >
-            {pageState === 'assigning'
-              ? t('common.loading', 'Loading...')
-              : t('admin.concierge.assign', 'Assign')}
-          </button>
+          <Label htmlFor="concierge-disclaimer">
+            {t(
+              'admin.concierge.disclaimerLabel',
+              'I accept liability for this manual assignment',
+            )}
+          </Label>
         </div>
+
+        {pageState === 'assign-error' && assignError && (
+          <div data-testid="assignment-error" className="text-destructive text-sm">
+            <p>{assignError}</p>
+          </div>
+        )}
+
+        <Button
+          onClick={handleAssign}
+          disabled={!canAssign || pageState === 'assigning'}
+        >
+          {pageState === 'assigning'
+            ? t('common.loading', 'Loading...')
+            : t('admin.concierge.assign', 'Assign')}
+        </Button>
       </section>
     </div>
   );
