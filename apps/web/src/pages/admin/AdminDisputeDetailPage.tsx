@@ -3,6 +3,26 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 import type { AdminDisputeDetail, Dispute } from '../../lib/apiClient';
+import { Card, CardContent } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { Skeleton } from '../../components/ui/skeleton';
+import { Textarea } from '../../components/ui/textarea';
+
+function disputeStatusVariant(status: string): 'default' | 'secondary' | 'outline' | 'destructive' {
+  switch (status) {
+    case 'OPEN':
+      return 'default';
+    case 'RESOLVED_CUSTOMER':
+    case 'RESOLVED_TASKER':
+      return 'secondary';
+    case 'ESCALATED':
+    case 'CLOSED_INSUFFICIENT_EVIDENCE':
+      return 'outline';
+    default:
+      return 'secondary';
+  }
+}
 
 export function AdminDisputeDetailPage() {
   const { t } = useTranslation();
@@ -42,7 +62,6 @@ export function AdminDisputeDetailPage() {
         return;
       }
       setValidationError(null);
-
       if (!session || !id) return;
       setResolving(true);
       try {
@@ -66,27 +85,38 @@ export function AdminDisputeDetailPage() {
 
   if (loading) {
     return (
-      <div>
+      <div className="space-y-6">
         <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
-        <p>{t('common.loading', 'Loading...')}</p>
+        <p className="sr-only">{t('common.loading', 'Loading...')}</p>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton className="h-20 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error && !detail) {
     return (
-      <div>
+      <div className="space-y-6">
         <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
-        <p className="text-red-600">
-          {t('common.error', 'Error')}: {error}
-        </p>
+        <Card>
+          <CardContent className="p-6 text-center space-y-4">
+            <p className="text-destructive">
+              {t('common.error', 'Error')}: {error}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  if (!detail) {
-    return null;
-  }
+  if (!detail) return null;
 
   const dispute = detail.dispute as unknown as Dispute;
   const booking = detail.booking as Record<string, unknown>;
@@ -103,150 +133,140 @@ export function AdminDisputeDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={() => navigate('/admin/disputes')}
-          className="px-3 py-1 border rounded hover:bg-gray-100"
-        >
+        <Button variant="outline" size="sm" onClick={() => navigate('/admin/disputes')}>
           {t('common.back', 'Back')}
-        </button>
+        </Button>
         <h1 className="text-2xl font-bold">{t('admin.disputeDetail.title', 'Dispute Detail')}</h1>
       </div>
 
       {/* Dispute Info */}
-      <section className="border rounded p-4 space-y-2">
-        <h2 className="text-lg font-semibold">
-          {t('admin.disputeDetail.disputeInfo', 'Dispute Info')}
-        </h2>
-        <p>
-          <strong>{t('admin.disputeDetail.reason', 'Reason')}:</strong> {dispute.reason}
-        </p>
-        <p>
-          <strong>{t('admin.disputeDetail.status', 'Status')}:</strong> {dispute.status}
-        </p>
-        <p>
-          <strong>{t('admin.disputeDetail.createdAt', 'Created')}:</strong>{' '}
-          {new Date(dispute.created_at).toLocaleString()}
-        </p>
-      </section>
+      <Card>
+        <CardContent className="space-y-2 p-6">
+          <h2 className="text-lg font-semibold">
+            {t('admin.disputeDetail.disputeInfo', 'Dispute Info')}
+          </h2>
+          <p>
+            <strong>{t('admin.disputeDetail.reason', 'Reason')}:</strong> {dispute.reason}
+          </p>
+          <div className="flex items-center gap-2">
+            <strong>{t('admin.disputeDetail.status', 'Status')}:</strong>
+            <Badge variant={disputeStatusVariant(dispute.status)}>{dispute.status}</Badge>
+          </div>
+          <p>
+            <strong>{t('admin.disputeDetail.createdAt', 'Created')}:</strong>{' '}
+            {new Date(dispute.created_at).toLocaleString()}
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Booking Context */}
-      <section className="border rounded p-4 space-y-2">
-        <h2 className="text-lg font-semibold">
-          {t('admin.disputeDetail.bookingContext', 'Booking Context')}
-        </h2>
-        {task && (
-          <>
-            <p>
-              <strong>{t('admin.disputeDetail.taskDescription', 'Task')}:</strong>{' '}
-              {String(task.description ?? '')}
-            </p>
+      <Card>
+        <CardContent className="space-y-2 p-6">
+          <h2 className="text-lg font-semibold">
+            {t('admin.disputeDetail.bookingContext', 'Booking Context')}
+          </h2>
+          {task && (
+            <>
+              <p>
+                <strong>{t('admin.disputeDetail.taskDescription', 'Task')}:</strong>{' '}
+                {String(task.description ?? '')}
+              </p>
+              <p>
+                <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
+                {Number(task.budget ?? booking.price ?? 0).toLocaleString()}
+              </p>
+              {task.scheduled_at && (
+                <p>
+                  <strong>{t('admin.disputeDetail.schedule', 'Schedule')}:</strong>{' '}
+                  {new Date(String(task.scheduled_at)).toLocaleString()}
+                </p>
+              )}
+            </>
+          )}
+          {!task && booking.price !== undefined && (
             <p>
               <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
-              {Number(task.budget ?? booking.price ?? 0).toLocaleString()}
+              {Number(booking.price).toLocaleString()}
             </p>
-            {task.scheduled_at && (
-              <p>
-                <strong>{t('admin.disputeDetail.schedule', 'Schedule')}:</strong>{' '}
-                {new Date(String(task.scheduled_at)).toLocaleString()}
-              </p>
-            )}
-          </>
-        )}
-        {!task && booking.price !== undefined && (
-          <p>
-            <strong>{t('admin.disputeDetail.budget', 'Budget')}:</strong>{' '}
-            {Number(booking.price).toLocaleString()}
-          </p>
-        )}
-        {customer && (
-          <p>
-            <strong>{t('admin.disputeDetail.customer', 'Customer')}:</strong>{' '}
-            {String(customer.full_name ?? 'Unknown')}
-          </p>
-        )}
-        {tasker && (
-          <p>
-            <strong>{t('admin.disputeDetail.tasker', 'Tasker')}:</strong>{' '}
-            {String(tasker.full_name ?? 'Unknown')}
-          </p>
-        )}
-      </section>
+          )}
+          {customer && (
+            <p>
+              <strong>{t('admin.disputeDetail.customer', 'Customer')}:</strong>{' '}
+              {String(customer.full_name ?? 'Unknown')}
+            </p>
+          )}
+          {tasker && (
+            <p>
+              <strong>{t('admin.disputeDetail.tasker', 'Tasker')}:</strong>{' '}
+              {String(tasker.full_name ?? 'Unknown')}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Evidence Messages */}
       {evidenceMessages.length > 0 && (
-        <section className="border rounded p-4 space-y-2">
-          <h2 className="text-lg font-semibold">
-            {t('admin.disputeDetail.evidence', 'Evidence Messages')}
-          </h2>
-          <div className="space-y-2">
+        <Card>
+          <CardContent className="space-y-3 p-6">
+            <h2 className="text-lg font-semibold">
+              {t('admin.disputeDetail.evidence', 'Evidence Messages')}
+            </h2>
             {evidenceMessages.map((msg) => (
-              <div key={msg.id} className="border-l-2 pl-3 py-1">
-                <p className="text-sm text-gray-500">{new Date(msg.created_at).toLocaleString()}</p>
-                <p>{msg.content}</p>
+              <div key={msg.id} className="border-l-2 border-border pl-3 py-1">
+                <p className="text-xs text-muted-foreground">
+                  {new Date(msg.created_at).toLocaleString()}
+                </p>
+                <p className="text-sm">{msg.content}</p>
               </div>
             ))}
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Resolution Actions */}
-      <section className="border rounded p-4 space-y-4">
-        <h2 className="text-lg font-semibold">
-          {t('admin.disputeDetail.resolution', 'Resolution')}
-        </h2>
-
-        <div>
-          <label htmlFor="resolution-notes" className="block font-medium mb-1">
-            {t('admin.disputeDetail.notesLabel', 'Resolution Notes')}
-          </label>
-          <textarea
-            id="resolution-notes"
-            className="w-full border rounded p-2"
-            rows={4}
-            placeholder={t('admin.disputeDetail.notesPlaceholder', 'Enter resolution notes...')}
-            value={notes}
-            onChange={(e) => {
-              setNotes(e.target.value);
-              if (validationError) setValidationError(null);
-            }}
-          />
-          {validationError && <p className="text-red-600 text-sm mt-1">{validationError}</p>}
-        </div>
-
-        {error && detail && (
-          <p className="text-red-600 text-sm">
-            {t('common.error', 'Error')}: {error}
-          </p>
-        )}
-
-        <div className="flex gap-3">
-          <button
-            type="button"
-            disabled={resolving}
-            onClick={() => handleResolve('RESOLVE_CUSTOMER')}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {t('admin.disputeDetail.resolveCustomer', 'Resolve for Customer')}
-          </button>
-          <button
-            type="button"
-            disabled={resolving}
-            onClick={() => handleResolve('RESOLVE_TASKER')}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-          >
-            {t('admin.disputeDetail.resolveTasker', 'Resolve for Tasker')}
-          </button>
-          <button
-            type="button"
-            disabled={resolving}
-            onClick={() => handleResolve('ESCALATE')}
-            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50"
-          >
-            {t('admin.disputeDetail.escalate', 'Escalate')}
-          </button>
-        </div>
-      </section>
+      {/* Resolution */}
+      <Card>
+        <CardContent className="space-y-4 p-6">
+          <h2 className="text-lg font-semibold">
+            {t('admin.disputeDetail.resolution', 'Resolution')}
+          </h2>
+          <div>
+            <label htmlFor="resolution-notes" className="block text-sm font-medium mb-1">
+              {t('admin.disputeDetail.notesLabel', 'Resolution Notes')}
+            </label>
+            <Textarea
+              id="resolution-notes"
+              rows={4}
+              placeholder={t('admin.disputeDetail.notesPlaceholder', 'Enter resolution notes...')}
+              value={notes}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                if (validationError) setValidationError(null);
+              }}
+            />
+            {validationError && <p className="text-destructive text-sm mt-1">{validationError}</p>}
+          </div>
+          {error && detail && (
+            <p className="text-destructive text-sm">
+              {t('common.error', 'Error')}: {error}
+            </p>
+          )}
+          <div className="flex gap-3">
+            <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_CUSTOMER')}>
+              {t('admin.disputeDetail.resolveCustomer', 'Resolve for Customer')}
+            </Button>
+            <Button disabled={resolving} onClick={() => handleResolve('RESOLVE_TASKER')}>
+              {t('admin.disputeDetail.resolveTasker', 'Resolve for Tasker')}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={resolving}
+              onClick={() => handleResolve('ESCALATE')}
+            >
+              {t('admin.disputeDetail.escalate', 'Escalate')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
