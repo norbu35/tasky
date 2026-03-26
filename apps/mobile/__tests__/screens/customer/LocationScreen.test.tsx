@@ -62,6 +62,8 @@ describe('LocationScreen (SCR-CUST-005)', () => {
 
   it('renders location text input', () => {
     render(<LocationScreen />);
+    expect(screen.getByText('Set Location')).toBeTruthy();
+    expect(screen.getByText('Pin the task location on the map')).toBeTruthy();
     expect(screen.getByTestId('location-text-input')).toBeTruthy();
   });
 
@@ -90,8 +92,20 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     );
   });
 
-  it('renders as step 3 of 5 wizard', () => {
+  it('renders as step 4 of 7 wizard', () => {
     render(<LocationScreen />);
-    expect(screen.getByTestId('location-screen')).toBeTruthy();
+    expect(screen.getByLabelText('Step 4 of 7')).toBeTruthy();
+  });
+
+  it('back button returns to photo upload', () => {
+    render(<LocationScreen />);
+    fireEvent.press(screen.getByTestId('location-screen-back'));
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('next shows inline error until a pin is placed', () => {
+    render(<LocationScreen />);
+    fireEvent.press(screen.getByTestId('location-screen-next'));
+    expect(screen.getAllByText('Pin the task location on the map').length).toBeGreaterThan(1);
   });
 });

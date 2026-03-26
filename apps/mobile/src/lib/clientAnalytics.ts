@@ -5,7 +5,11 @@ export type ClientEventName =
   | 'BOOKING_CONFIRMED'
   | 'PAYMENT_INITIATED'
   | 'BOOKING_COMPLETED'
-  | 'DISPUTE_RAISED';
+  | 'DISPUTE_RAISED'
+  | 'profile_polish_viewed'
+  | 'profile_polish_requested'
+  | 'profile_polish_applied'
+  | 'profile_polish_rejected';
 
 export type ActorRole = 'CUSTOMER' | 'TASKER' | 'ADMIN' | 'UNKNOWN';
 export type ClientPlatform = 'WEB' | 'MOBILE';

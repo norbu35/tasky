@@ -62,6 +62,14 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
         average_rating: 4.7,
         response_time_minutes: 12,
         reliability_score: 96,
+        completion_rate: 94,
+        cancellations_30d: 1,
+        rating_breakdown: {
+          task_clarity: 4.8,
+          respectfulness: 4.9,
+          punctuality: 4.6,
+        },
+        is_pro: true,
       },
       isLoading: false,
       isError: false,
@@ -75,6 +83,8 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText('4.7')).toBeTruthy();
     expect(screen.getByText('12')).toBeTruthy();
     expect(screen.getByText('96%')).toBeTruthy();
+    expect(screen.getByText('94%')).toBeTruthy();
+    expect(screen.getByText('1')).toBeTruthy();
   });
 
   it('renders stat labels', () => {
@@ -84,6 +94,14 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
         average_rating: 4.7,
         response_time_minutes: 12,
         reliability_score: 96,
+        completion_rate: 94,
+        cancellations_30d: 1,
+        rating_breakdown: {
+          task_clarity: 4.8,
+          respectfulness: 4.9,
+          punctuality: 4.6,
+        },
+        is_pro: true,
       },
       isLoading: false,
       isError: false,
@@ -97,6 +115,14 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText('Overall Rating')).toBeTruthy();
     expect(screen.getByText('Response Time')).toBeTruthy();
     expect(screen.getByText('Reliability Score')).toBeTruthy();
+    expect(screen.getByText('Completion Rate')).toBeTruthy();
+    expect(screen.getByText('Cancellations (30d)')).toBeTruthy();
+    expect(screen.getByText('Rating Breakdown')).toBeTruthy();
+    expect(screen.getByText(/Task Clarity/)).toBeTruthy();
+    expect(screen.getByText(/Respectfulness/)).toBeTruthy();
+    expect(screen.getByText(/Punctuality/)).toBeTruthy();
+    expect(screen.getByText('Reliability')).toBeTruthy();
+    expect(screen.getByText('Pro Badge earned!')).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

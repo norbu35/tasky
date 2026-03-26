@@ -21,7 +21,7 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: { full_name?: string; avatar_url?: string }) =>
+    mutationFn: (payload: { full_name?: string; avatar_url?: string; bio?: string }) =>
       api.updateMyProfile(token!, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['me'] });

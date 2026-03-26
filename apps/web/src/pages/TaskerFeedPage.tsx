@@ -31,6 +31,7 @@ export function TaskerFeedPage() {
   const [applyDrafts, setApplyDrafts] = useState<Record<string, string>>({});
   const [working, setWorking] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [sentTaskId, setSentTaskId] = useState<string | null>(null);
 
   const { data: categoriesPage } = useCategoriesQuery(apiClient, session?.accessToken);
   const categories = categoriesPage?.data || [];
@@ -64,8 +65,9 @@ export function TaskerFeedPage() {
     try {
       await apiClient.applyToTask(session.accessToken, taskId, draft);
       setApplyDrafts((prev) => ({ ...prev, [taskId]: '' }));
+      setSentTaskId(taskId);
       trackClientEvent('APPLICATION_SUBMITTED', { taskId });
-      setActionMessage(t('taskerFeed.msgSent', 'Application sent.'));
+      setActionMessage(null);
       void refetchTasks();
     } catch (error) {
       setActionMessage(parseError(error));
@@ -79,9 +81,7 @@ export function TaskerFeedPage() {
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Page header */}
         <div className="mb-4">
-          <h1 className="text-2xl font-display font-bold tracking-tight">
-            {t('taskerFeed.title', 'Available Tasks')}
-          </h1>
+          <h1 className="text-2xl font-display font-bold tracking-tight">Open task feed</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t(
               'taskerFeed.subtitle',
@@ -131,6 +131,32 @@ export function TaskerFeedPage() {
             {actionMessage}
           </p>
         )}
+
+        {sentTaskId ? (
+          <Card className="border-primary/30 bg-primary/5 shadow-sm">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-2xl font-semibold">Application sent</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Your application is waiting for the customer to review.
+              </p>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-sm text-muted-foreground">Application sent.</p>
+            </CardContent>
+            <CardFooter className="justify-end">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setSentTaskId(null);
+                  setActionMessage(null);
+                }}
+              >
+                Back to feed
+              </Button>
+            </CardFooter>
+          </Card>
+        ) : null}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {loadingTasks && (

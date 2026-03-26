@@ -1,9 +1,12 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { useNotifications } from '../../../src/features/notifications/hooks/useNotifications';
 
+const mockPush = jest.fn();
+const mockBack = jest.fn();
+
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -61,7 +64,7 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('shared.notifications.title')).toBeTruthy();
+    expect(screen.getByText('Notifications')).toBeTruthy();
   });
 
   it('shows empty state when no notifications exist', () => {
@@ -76,7 +79,27 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('shared.notifications.emptyTitle')).toBeTruthy();
+    expect(screen.getByText('No notifications')).toBeTruthy();
+    expect(screen.getByText("You're all caught up")).toBeTruthy();
+  });
+
+  it('shows a retryable error state when the request fails', () => {
+    const refetch = jest.fn();
+    mockUseNotifications.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      isRefetching: false,
+      refetch,
+    } as unknown as ReturnType<typeof useNotifications>);
+
+    const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
+    render(<NotificationCenterScreen />);
+
+    expect(screen.getByText('Something went wrong')).toBeTruthy();
+    expect(screen.getByText('Failed to load notifications')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('notifications-error-retry'));
+    expect(refetch).toHaveBeenCalled();
   });
 
   it('renders mock notification items', () => {
@@ -88,14 +111,14 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
             title: 'New applicant',
             body: 'Someone applied to your task',
             read: false,
-            created_at: '2026-03-23T10:00:00Z',
+            created_at: '2026-03-26T10:00:00Z',
           },
           {
             id: 'notif-2',
             title: 'Booking confirmed',
             body: 'Your booking has been confirmed',
             read: true,
-            created_at: '2026-03-22T08:00:00Z',
+            created_at: '2026-03-24T08:00:00Z',
           },
         ],
         cursor: { next: null, prev: null },
@@ -109,7 +132,26 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
+    expect(screen.getByText('Today')).toBeTruthy();
+    expect(screen.getByText('Earlier')).toBeTruthy();
     expect(screen.getByText('New applicant')).toBeTruthy();
     expect(screen.getByText('Booking confirmed')).toBeTruthy();
+    expect(screen.getByTestId('notification-unread-dot-notif-1')).toBeTruthy();
+  });
+
+  it('back button pops to the previous screen', () => {
+    mockUseNotifications.mockReturnValue({
+      data: { data: [], cursor: { next: null, prev: null } },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useNotifications>);
+
+    const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
+    render(<NotificationCenterScreen />);
+
+    fireEvent.press(screen.getByTestId('notifications-back'));
+    expect(mockBack).toHaveBeenCalled();
   });
 });

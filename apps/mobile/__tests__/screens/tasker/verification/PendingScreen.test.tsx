@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 describe('PendingScreen (SCR-TASK-007)', () => {
-  it('renders "Under Review" heading', () => {
+  it('renders the under review heading', () => {
     const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
     render(<PendingScreen />);
 
@@ -55,6 +55,13 @@ describe('PendingScreen (SCR-TASK-007)', () => {
 
     fireEvent.press(screen.getByTestId('pending-screen-cta'));
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+  });
+
+  it('shows the verification progress indicator', () => {
+    const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
+    render(<PendingScreen />);
+
+    expect(screen.getByTestId('pending-progress')).toBeTruthy();
   });
 
   it('renders with correct testID', () => {

@@ -1,0 +1,341 @@
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { createTaskSchema } from '@tasky/core';
+import { Loader2, Plus, Save } from 'lucide-react';
+
+import { ResponsiveWizardShell, StatePanel } from '../../components/parity';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { useAppContext } from '../../context/AppContext';
+import { parseError } from '../../lib/errorHandling';
+import type { Category, Task } from '../../lib/apiClient';
+import {
+  IntakeFormRenderer,
+  type IntakeField,
+  type IntakeSchema,
+} from '../../components/task-creation/IntakeFormRenderer';
+import { LocationPicker } from '../../components/task-creation/LocationPicker';
+import { PhotoUploadManager } from '../../components/task-creation/PhotoUploadManager';
+
+function parseIntakeSchema(category: Category): IntakeSchema | null {
+  if (!category.intake_enabled || !category.intake_schema_json) {
+    return null;
+  }
+
+  if (!Array.isArray(category.intake_schema_json) || category.intake_schema_json.length === 0) {
+    return null;
+  }
+
+  return {
+    version: category.intake_schema_version ?? 1,
+    fields: category.intake_schema_json.map((field: Record<string, unknown>) => ({
+      name: String(field.key ?? field.name ?? ''),
+      label: String(field.label ?? ''),
+      label_mn: String(field.label_mn ?? field.label ?? ''),
+      type: field.type as IntakeField['type'],
+      required: Boolean(field.required),
+      options: Array.isArray(field.options)
+        ? field.options.map((option) => {
+            if (typeof option === 'string') {
+              return { value: option, label: option, label_mn: option };
+            }
+
+            const typed = option as { value?: string; label?: string; label_mn?: string };
+            return {
+              value: typed.value ?? '',
+              label: typed.label ?? typed.label_mn ?? '',
+              label_mn: typed.label_mn ?? typed.label ?? '',
+            };
+          })
+        : undefined,
+      min: typeof field.min === 'number' ? field.min : undefined,
+      max: typeof field.max === 'number' ? field.max : undefined,
+    })),
+  };
+}
+
+function generateScopeSummary(schema: IntakeSchema, answers: Record<string, unknown>): string {
+  return schema.fields
+    .map((field) => {
+      const raw = answers[field.name];
+      if (raw === undefined || raw === null || raw === '') {
+        return null;
+      }
+
+      if (field.type === 'numeric_counter') {
+        return `${field.label}: ${String(raw)}`;
+      }
+
+      if (field.type === 'yes_no') {
+        return `${field.label}: ${raw === true ? 'Yes' : 'No'}`;
+      }
+
+      if (Array.isArray(raw)) {
+        return `${field.label}: ${raw.join(', ')}`;
+      }
+
+      return `${field.label}: ${String(raw)}`;
+    })
+    .filter((line): line is string => Boolean(line))
+    .join('\n');
+}
+
+export function CustomerTaskWizardPage() {
+  const { apiClient, session, trackClientEvent } = useAppContext();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryId, setCategoryId] = useState('');
+  const [intakeAnswers, setIntakeAnswers] = useState<Record<string, unknown>>({});
+  const [summaryManuallyEdited, setSummaryManuallyEdited] = useState(false);
+  const [description, setDescription] = useState('');
+  const [budget, setBudget] = useState('50000');
+  const [locationText, setLocationText] = useState('');
+  const [locationLat, setLocationLat] = useState(47.9184);
+  const [locationLng, setLocationLng] = useState(106.9177);
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [photoKeys, setPhotoKeys] = useState<string[]>([]);
+  const [working, setWorking] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [createdTask, setCreatedTask] = useState<Task | null>(null);
+
+  const { data: categoriesPage } = useQuery({
+    queryKey: ['customerTaskWizardCategories', session?.accessToken],
+    queryFn: async () => {
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      return apiClient.listCategories(session.accessToken);
+    },
+    enabled: Boolean(session),
+  });
+
+  useEffect(() => {
+    if (categoriesPage?.data) {
+      setCategories(categoriesPage.data);
+      setCategoryId((current) => current || categoriesPage.data[0]?.id || '');
+    }
+  }, [categoriesPage]);
+
+  const selectedCategory = useMemo(
+    () => categories.find((category) => category.id === categoryId) ?? null,
+    [categories, categoryId],
+  );
+
+  const intakeSchema = useMemo(
+    () => (selectedCategory ? parseIntakeSchema(selectedCategory) : null),
+    [selectedCategory],
+  );
+
+  useEffect(() => {
+    setIntakeAnswers({});
+    setSummaryManuallyEdited(false);
+    if (intakeSchema) {
+      setDescription('');
+    }
+  }, [categoryId, intakeSchema]);
+
+  const handleIntakeChange = (fieldName: string, value: unknown) => {
+    setIntakeAnswers((current) => {
+      const next = { ...current, [fieldName]: value };
+      if (!summaryManuallyEdited && intakeSchema) {
+        setDescription(generateScopeSummary(intakeSchema, next));
+      }
+      return next;
+    });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!session) {
+      return;
+    }
+
+    setWorking(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      const payload = createTaskSchema.parse({
+        category_id: categoryId,
+        description: description.trim(),
+        budget: Number(budget),
+        location_lat: locationLat,
+        location_lng: locationLng,
+        location_text: locationText.trim(),
+        scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : '',
+        photo_keys: photoKeys,
+      });
+
+      const created = await apiClient.createTask(session.accessToken, {
+        ...payload,
+        intake_answers: intakeSchema ? intakeAnswers : undefined,
+        intake_schema_version: intakeSchema?.version,
+        scope_summary: intakeSchema ? description.trim() : undefined,
+      });
+
+      setCreatedTask(created);
+      setSuccessMessage('Task created successfully.');
+      trackClientEvent('TASK_POSTED', { taskId: created.id });
+    } catch (error) {
+      setErrorMessage(parseError(error));
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <ResponsiveWizardShell
+      title="Create task"
+      description="Choose a category, capture the scope, and post it for taskers."
+      stepLabel="Phase 1 customer posting"
+      footer={
+        <div className="flex flex-wrap gap-3">
+          <Button type="submit" form="customer-task-form" disabled={working}>
+            {working ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            Create task
+          </Button>
+          <Button type="button" variant="secondary">
+            <Plus className="mr-2 h-4 w-4" />
+            Save draft
+          </Button>
+        </div>
+      }
+    >
+      <form id="customer-task-form" className="space-y-6" onSubmit={handleSubmit}>
+        {errorMessage ? (
+          <StatePanel title="Unable to create task" description={errorMessage} tone="destructive" />
+        ) : null}
+
+        {successMessage ? (
+          <StatePanel
+            title="Task posted successfully"
+            description={successMessage}
+            tone="muted"
+          />
+        ) : null}
+
+        <Card className="border-border/60 shadow-sm">
+          <CardHeader>
+            <CardTitle>Task basics</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <p className="text-sm text-muted-foreground">
+              Add photos and place the map pin so taskers can find the job. Browser prompts for
+              location and uploads may appear while you complete this form.
+            </p>
+            <div className="grid gap-2">
+              <Label htmlFor="task-category">Category</Label>
+              <select
+                id="task-category"
+                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                value={categoryId}
+                onChange={(event) => setCategoryId(event.target.value)}
+              >
+                <option value="">Select category</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {intakeSchema ? (
+              <div className="grid gap-4 rounded-lg border border-border/60 p-4">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    Intake
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Use the answers below to auto-generate the task summary.
+                  </p>
+                </div>
+                <IntakeFormRenderer
+                  schema={intakeSchema}
+                  values={intakeAnswers}
+                  onChange={handleIntakeChange}
+                  locale="en"
+                />
+              </div>
+            ) : null}
+
+            <div className="grid gap-2">
+              <Label htmlFor="task-description">Task details</Label>
+              <Textarea
+                id="task-description"
+                placeholder="Auto-generated from your answers above"
+                value={description}
+                onChange={(event) => {
+                  setSummaryManuallyEdited(true);
+                  setDescription(event.target.value);
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/60 shadow-sm">
+          <CardHeader>
+            <CardTitle>Schedule and pricing</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="task-budget">Budget (MNT)</Label>
+              <Input
+                id="task-budget"
+                type="number"
+                min="0"
+                value={budget}
+                onChange={(event) => setBudget(event.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="task-scheduled-at">Scheduled at</Label>
+              <Input
+                id="task-scheduled-at"
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(event) => setScheduledAt(event.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-2 md:col-span-2">
+              <Label htmlFor="task-location-text">Address description</Label>
+              <Input
+                id="task-location-text"
+                placeholder="ХУД, 15-р хороо, Олимп хотхон"
+                value={locationText}
+                onChange={(event) => setLocationText(event.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-4 md:col-span-2">
+              <LocationPicker
+                lat={locationLat}
+                lng={locationLng}
+                onChange={(lat, lng) => {
+                  setLocationLat(lat);
+                  setLocationLng(lng);
+                }}
+              />
+              <PhotoUploadManager photoKeys={photoKeys} onPhotoKeysChange={setPhotoKeys} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {createdTask ? (
+          <StatePanel
+            title="Draft saved in-memory"
+            description={`Task ID: ${createdTask.id}`}
+            tone="muted"
+          />
+        ) : null}
+      </form>
+    </ResponsiveWizardShell>
+  );
+}

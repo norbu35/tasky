@@ -4,9 +4,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react-nativ
 import RebookScreen from '../../../../src/app/(customer)/rebook';
 
 const mockPush = jest.fn();
+const mockBack = jest.fn();
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
   useLocalSearchParams: () => ({
     taskerId: 'tasker-1',
     taskerName: 'Bold',
@@ -69,6 +70,26 @@ describe('RebookScreen (SCR-CUST-023)', () => {
   it('shows prefilled note', () => {
     render(<RebookScreen />);
     expect(screen.getByText('Prefilled from previous booking. You can edit.')).toBeTruthy();
+  });
+
+  it('shows the previous booking schedule in Mongolian date format', () => {
+    render(<RebookScreen />);
+    expect(screen.getByText('2026.04.01 18:00')).toBeTruthy();
+  });
+
+  it('renders a back button and returns to booking detail', () => {
+    render(<RebookScreen />);
+    fireEvent.press(screen.getByTestId('rebook-screen-back'));
+    expect(mockBack).toHaveBeenCalled();
+  });
+
+  it('disables continue when budget is at or below the minimum threshold', () => {
+    render(<RebookScreen />);
+    fireEvent.changeText(screen.getByTestId('rebook-screen-budget'), '1001');
+    fireEvent.press(screen.getByTestId('rebook-screen-next'));
+
+    expect(mockCreateTask).not.toHaveBeenCalled();
+    expect(screen.getByText('Budget must be above ₮1,001')).toBeTruthy();
   });
 
   it('submit creates new task', async () => {

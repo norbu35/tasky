@@ -65,14 +65,17 @@ export default function LocationScreen() {
 
   return (
     <FormWizardTemplate
-      currentStep={2}
-      totalSteps={5}
+      currentStep={3}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
-      nextLabel={t('common.next', 'Next')}
+      nextLabel={t('common.continue', 'Continue')}
       testID="location-screen"
     >
-      <Text style={styles.title}>{t('customer.postTask.locationTitle', 'Where?')}</Text>
+      <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
+      <Text style={styles.instruction}>
+        {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
+      </Text>
 
       <View style={styles.mapContainer}>
         <MapView
@@ -132,7 +135,13 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '600',
     color: colors.primaryDeep,
+  },
+  instruction: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
     marginBottom: spacing.md,
+    lineHeight: typography.body * 1.5,
   },
   mapContainer: {
     marginBottom: spacing.lg,

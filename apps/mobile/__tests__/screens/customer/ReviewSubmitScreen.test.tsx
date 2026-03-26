@@ -62,6 +62,8 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
 
   it('shows task summary with description', () => {
     render(<ReviewSubmitScreen />);
+    expect(screen.getByText('Review & Submit')).toBeTruthy();
+    expect(screen.getByLabelText('Step 6 of 7')).toBeTruthy();
     expect(screen.getByText('Fix my sink')).toBeTruthy();
   });
 
@@ -72,7 +74,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
 
   it('shows task summary with budget', () => {
     render(<ReviewSubmitScreen />);
-    expect(screen.getByText('50,000')).toBeTruthy();
+    expect(screen.getByText('₮50,000')).toBeTruthy();
   });
 
   it('renders edit buttons for sections', () => {
@@ -84,6 +86,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('renders the submit button', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('Post Task')).toBeTruthy();
+    expect(screen.getByText('Payment is arranged directly with the Tasker')).toBeTruthy();
   });
 
   it('submit calls useCreateTask', async () => {

@@ -3,6 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { elevations } from '../../design/elevations';
+
+const { colors, radius, spacing, typography } = mobileTheme;
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -42,15 +45,16 @@ export function LanguageSwitcher() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: mobileTheme.colors.card,
-    borderRadius: 8,
+    backgroundColor: colors.card,
+    borderRadius: radius.full,
     borderWidth: 1,
-    borderColor: mobileTheme.colors.border,
+    borderColor: colors.border,
     overflow: 'hidden',
+    ...elevations.card,
   },
   btn: {
-    flex: 1,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -58,15 +62,15 @@ const styles = StyleSheet.create({
     backgroundColor: mobileTheme.colors.primary,
   },
   divider: {
-    width: 1,
-    backgroundColor: mobileTheme.colors.border,
+    width: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
   },
   text: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: mobileTheme.colors.foreground,
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.foreground,
   },
   activeText: {
-    color: '#FFFFFF',
+    color: colors.primaryForeground,
   },
 });

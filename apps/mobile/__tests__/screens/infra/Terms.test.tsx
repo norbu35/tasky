@@ -18,9 +18,10 @@ jest.mock('react-native-reanimated', () => {
 });
 
 const mockBack = jest.fn();
+let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -41,6 +42,7 @@ jest.mock('lucide-react-native', () => {
 describe('TermsScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockParams = {};
   });
 
   it('renders Terms of Service title in header', () => {
@@ -59,13 +61,31 @@ describe('TermsScreen', () => {
   it('renders scrollable terms content', () => {
     render(<TermsScreen />);
 
-    // The terms content should be present inside the scroll view
     expect(screen.getByTestId('terms-screen')).toBeTruthy();
+    expect(screen.getByText('1. Acceptance of Terms')).toBeTruthy();
   });
 
-  it('has correct testID on root container', () => {
+  it('shows loading skeleton state when requested', () => {
+    mockParams = { state: 'loading' };
+
     render(<TermsScreen />);
 
     expect(screen.getByTestId('terms-screen')).toBeTruthy();
+    expect(screen.getByTestId('terms-screen-loading')).toBeTruthy();
+    expect(screen.queryByText('1. Acceptance of Terms')).toBeNull();
+  });
+
+  it('shows error state and retries from the inline CTA', () => {
+    mockParams = { state: 'error' };
+
+    render(<TermsScreen />);
+
+    expect(screen.getByText('Unable to load')).toBeTruthy();
+    expect(screen.getByText('Failed to load Terms of Service. Please try again')).toBeTruthy();
+
+    fireEvent.press(screen.getByText('Try again'));
+
+    expect(screen.getByText('1. Acceptance of Terms')).toBeTruthy();
+    expect(screen.queryByText('Unable to load')).toBeNull();
   });
 });

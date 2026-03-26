@@ -9,14 +9,14 @@ import { motion } from 'framer-motion';
 const CUSTOMER_NAV = [
   { to: '/customer/dashboard', label: 'nav.home', fallback: 'Home' },
   { to: '/customer/tasks', label: 'nav.tasks', fallback: 'Tasks' },
-  { to: '/messaging', label: 'nav.inbox', fallback: 'Inbox' },
+  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox' },
   { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
 ];
 
 const TASKER_NAV = [
   { to: '/tasker/feed', label: 'nav.findWork', fallback: 'Find Work' },
-  { to: '/tasker/tasks', label: 'nav.myJobs', fallback: 'My Jobs' },
-  { to: '/messaging', label: 'nav.inbox', fallback: 'Inbox' },
+  { to: '/tasker/jobs', label: 'nav.myJobs', fallback: 'My Jobs' },
+  { to: '/communication', label: 'nav.inbox', fallback: 'Inbox' },
   { to: '/profile', label: 'nav.profile', fallback: 'Profile' },
 ];
 

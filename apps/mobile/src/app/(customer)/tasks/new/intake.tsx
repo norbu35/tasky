@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
+import { mobileTheme } from '../../../../design/tokenAdapter';
+
+const { colors, spacing, typography } = mobileTheme;
 
 export default function IntakeFormScreen() {
   const { t } = useTranslation();
@@ -30,13 +34,19 @@ export default function IntakeFormScreen() {
 
   return (
     <FormWizardTemplate
-      currentStep={0}
-      totalSteps={5}
+      currentStep={1}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
-      nextLabel={t('common.next', 'Next')}
+      nextLabel={t('common.continue', 'Continue')}
       testID="intake-form-screen"
     >
+      <View style={styles.headerBlock}>
+        <Text style={styles.title}>{t('customer.postTask.intakePageTitle', 'Task Details')}</Text>
+        <Text style={styles.instruction}>
+          {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
+        </Text>
+      </View>
       <FormField
         label={t('customer.postTask.intakeDescription', 'Description')}
         errorText={error || undefined}
@@ -58,3 +68,20 @@ export default function IntakeFormScreen() {
     </FormWizardTemplate>
   );
 }
+
+const styles = StyleSheet.create({
+  headerBlock: {
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  title: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
+  instruction: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
+});

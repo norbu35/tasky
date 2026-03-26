@@ -74,6 +74,13 @@ export default function DisputeRaiseScreen() {
       showBack={currentStep > 0}
       testID="dispute-raise-screen"
     >
+      <View style={styles.referenceSection}>
+        <Text style={styles.fieldLabel}>
+          {t('customer.disputes.sectionBookingRef', 'Booking Reference')}
+        </Text>
+        <Text style={styles.referenceValue}>{bookingId}</Text>
+      </View>
+
       {currentStep === 0 && (
         <View>
           <Text style={styles.fieldLabel}>{t('customer.disputes.labelReason', 'Issue Type')}</Text>
@@ -149,11 +156,18 @@ export default function DisputeRaiseScreen() {
 }
 
 const styles = StyleSheet.create({
+  referenceSection: {
+    marginBottom: spacing.xl,
+  },
   fieldLabel: {
     fontSize: typography.subtitle,
     fontWeight: '600',
     color: colors.primary,
     marginBottom: spacing.md,
+  },
+  referenceValue: {
+    fontSize: typography.body,
+    color: colors.primaryDeep,
   },
   reasonList: {
     gap: spacing.sm,

@@ -58,6 +58,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('renders date field', () => {
     render(<ScheduleBudgetScreen />);
+    expect(screen.getByText('Schedule & Budget')).toBeTruthy();
     expect(screen.getByTestId('schedule-date-input')).toBeTruthy();
   });
 
@@ -89,7 +90,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), 'abc');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
+    expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
   });
 
   it('validates budget minimum', () => {
@@ -103,9 +104,9 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
       { type: 'set' },
       new Date(2026, 3, 1, 10, 0),
     );
-    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '4000');
+    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
+    expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
   });
 
   it('requires a date and time selection', () => {
@@ -141,8 +142,19 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     );
   });
 
-  it('renders as step 4 of 5 wizard', () => {
+  it('renders as step 5 of 7 wizard', () => {
     render(<ScheduleBudgetScreen />);
-    expect(screen.getByTestId('schedule-budget-screen')).toBeTruthy();
+    expect(screen.getByLabelText('Step 5 of 7')).toBeTruthy();
+  });
+
+  it('back button returns to location pin', () => {
+    render(<ScheduleBudgetScreen />);
+    fireEvent.press(screen.getByTestId('schedule-budget-screen-back'));
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders continue CTA copy from the wizard spec', () => {
+    render(<ScheduleBudgetScreen />);
+    expect(screen.getByText('Continue')).toBeTruthy();
   });
 });

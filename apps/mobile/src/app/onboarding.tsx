@@ -2,8 +2,10 @@ import React, { useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -11,39 +13,49 @@ import {
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CheckCircle, Search, ShieldCheck } from 'lucide-react-native';
-import { useAppStore } from '../store/appStore';
+import { ArrowLeft } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
 import { Button } from '../components/ui';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing, typography } = mobileTheme;
 
+const ONBOARDING_IMAGES = [
+  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
+  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
+  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
+];
+
 const SLIDES = [
   {
     id: '1',
     titleKey: 'auth.onboarding.slide1Title',
     bodyKey: 'auth.onboarding.slide1Body',
-    icon: Search,
+    imageUri: ONBOARDING_IMAGES[0],
+    titleFallbackLines: ['Итгэлтэй гүйцэтгэгч', 'олоорой'],
+    bodyFallback: 'Бүх гүйцэтгэгч баталгаажсан, үнэлгээтэй',
   },
   {
     id: '2',
     titleKey: 'auth.onboarding.slide2Title',
     bodyKey: 'auth.onboarding.slide2Body',
-    icon: CheckCircle,
+    imageUri: ONBOARDING_IMAGES[1],
+    titleFallbackLines: ['Захиалга хийх', 'амархан'],
+    bodyFallback: 'Ажлаа нийтэлж, хэдхэн товшилтоор захиалга хийгээрэй',
   },
   {
     id: '3',
     titleKey: 'auth.onboarding.slide3Title',
     bodyKey: 'auth.onboarding.slide3Body',
-    icon: ShieldCheck,
+    imageUri: ONBOARDING_IMAGES[2],
+    titleFallbackLines: ['Аюулгүй,', 'итгэлтэй'],
+    bodyFallback: 'Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг',
   },
 ];
 
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
@@ -71,27 +83,58 @@ export default function OnboardingScreen() {
   };
 
   const handleFinish = () => {
-    completeOnboarding();
     router.replace('/(auth)/role-select');
   };
 
   const isLastSlide = currentIndex === SLIDES.length - 1;
 
   const renderItem = ({ item }: { item: (typeof SLIDES)[0] }) => {
-    const Icon = item.icon;
+    const titleLines = item.titleFallbackLines ?? [t(item.titleKey)];
+    const bodyText = item.bodyFallback ?? t(item.bodyKey);
     return (
       <View style={styles.slide}>
-        <View style={styles.iconContainer}>
-          <Icon size={120} color={colors.primary} strokeWidth={1} />
+        <View style={styles.illustrationWrap}>
+          <View style={styles.illustrationBackdrop} />
+          <View style={styles.illustrationCard}>
+            <Image
+              source={{ uri: item.imageUri }}
+              style={styles.heroImage}
+              resizeMode="cover"
+              testID={item.id === '1' ? 'onboarding-slide-image' : undefined}
+            />
+            {item.id === '1' ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{t('auth.onboarding.badge', 'БАТАЛГААЖСАН')}</Text>
+              </View>
+            ) : null}
+          </View>
         </View>
-        <Text style={styles.title}>{t(item.titleKey)}</Text>
-        <Text style={styles.description}>{t(item.bodyKey)}</Text>
+        <View style={styles.titleBlock}>
+          {titleLines.map((line) => (
+            <Text key={line} style={styles.title}>
+              {line}
+            </Text>
+          ))}
+        </View>
+        <Text style={styles.description}>{bodyText}</Text>
       </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.container} testID="onboarding-screen">
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
+          <ArrowLeft size={24} color={colors.primaryDeep} />
+        </Pressable>
+        {isLastSlide ? (
+          <View style={styles.skipSpacer} />
+        ) : (
+          <Pressable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
+            <Text style={styles.skipLabel}>{t('auth.onboarding.skip', 'Алгасах')}</Text>
+          </Pressable>
+        )}
+      </View>
       <FlatList
         ref={flatListRef}
         data={SLIDES}
@@ -105,17 +148,6 @@ export default function OnboardingScreen() {
         scrollEventThrottle={16}
       />
 
-      {!isLastSlide && (
-        <View style={styles.skipContainer}>
-          <Button
-            testID="onboarding-skip"
-            label={t('auth.onboarding.skip', 'Skip')}
-            variant="ghost"
-            onPress={handleSkip}
-          />
-        </View>
-      )}
-
       <View style={styles.footer}>
         <View style={styles.pagination}>
           {SLIDES.map((_, index) => (
@@ -126,7 +158,7 @@ export default function OnboardingScreen() {
                 styles.dot,
                 {
                   backgroundColor: currentIndex === index ? colors.primary : colors.border,
-                  width: currentIndex === index ? 24 : 8,
+                  width: currentIndex === index ? 10 : 6,
                 },
               ]}
             />
@@ -136,8 +168,8 @@ export default function OnboardingScreen() {
           testID="onboarding-next"
           label={
             isLastSlide
-              ? t('auth.onboarding.getStarted', 'Get Started')
-              : t('auth.onboarding.next', 'Next')
+              ? t('auth.onboarding.getStarted', 'Эхлэх')
+              : t('auth.onboarding.next', 'Дараах')
           }
           onPress={handleNext}
           style={styles.button}
@@ -152,11 +184,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  skipContainer: {
+  header: {
     position: 'absolute',
-    top: spacing.xl,
+    top: spacing.lg,
+    left: spacing.lg,
     right: spacing.lg,
     zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  skipLabel: {
+    color: colors.primaryDeep,
+    fontSize: typography.label,
+    fontWeight: '700',
   },
   slide: {
     width,
@@ -165,21 +206,56 @@ const styles = StyleSheet.create({
     paddingTop: spacing['3xl'],
     justifyContent: 'center',
   },
-  iconContainer: {
+  illustrationWrap: {
     marginBottom: spacing['2xl'],
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: colors.subtleViolet,
+    width: 326,
+    height: 407,
+    borderRadius: 32,
+    backgroundColor: '#f4f3f0',
     justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ rotate: '-3deg' }],
+  },
+  illustrationBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 32,
+    backgroundColor: '#f4f3f0',
+  },
+  illustrationCard: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
+    backgroundColor: colors.background,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  badge: {
+    position: 'absolute',
+    bottom: 24,
+    left: 24,
+    backgroundColor: '#1b3a5c',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  badgeText: {
+    color: colors.primaryForeground,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  titleBlock: {
     alignItems: 'center',
   },
   title: {
     fontSize: typography.heading,
     fontWeight: '700',
     color: colors.foreground,
-    marginBottom: spacing.md,
     textAlign: 'center',
+    lineHeight: typography.heading * 1.25,
   },
   description: {
     fontSize: typography.body,
@@ -199,14 +275,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.xl,
-    gap: spacing.sm,
+    gap: 6,
   },
   dot: {
-    height: 8,
-    borderRadius: 4,
+    height: 3,
+    borderRadius: 999,
   },
   button: {
     width: '100%',
     minHeight: 56,
+  },
+  skipSpacer: {
+    width: 56,
+    height: 24,
   },
 });

@@ -80,4 +80,14 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     fireEvent.press(laterBtn);
     expect(mockOnDismiss).toHaveBeenCalled();
   });
+
+  it('navigates to the shared review route with booking context', () => {
+    const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
+    render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
+
+    fireEvent.press(screen.getByText('shared.review.reminderCta'));
+
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/review/booking-123');
+    expect(mockOnDismiss).toHaveBeenCalled();
+  });
 });

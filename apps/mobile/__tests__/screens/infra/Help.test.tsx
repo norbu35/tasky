@@ -18,9 +18,10 @@ jest.mock('react-native-reanimated', () => {
 });
 
 const mockBack = jest.fn();
+let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -43,6 +44,7 @@ jest.mock('lucide-react-native', () => {
 describe('HelpScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockParams = {};
   });
 
   it('renders Help & Support title', () => {
@@ -57,6 +59,8 @@ describe('HelpScreen', () => {
     expect(screen.getByText('General')).toBeTruthy();
     expect(screen.getByText('About Tasks')).toBeTruthy();
     expect(screen.getByText('About Bookings')).toBeTruthy();
+    expect(screen.getByText('About Payments')).toBeTruthy();
+    expect(screen.getByText('About Account')).toBeTruthy();
   });
 
   it('FAQ items are expandable on press', () => {
@@ -71,6 +75,39 @@ describe('HelpScreen', () => {
     // After pressing, answer should be visible
     const faqAnswers = screen.getAllByTestId(/^faq-answer-/);
     expect(faqAnswers.length).toBeGreaterThan(0);
+  });
+
+  it('filters FAQ items from the search bar in real time', () => {
+    render(<HelpScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('Search questions...'), 'cancel');
+
+    expect(screen.getByText('Can I cancel a booking?')).toBeTruthy();
+    expect(screen.queryByText('What is Tasky?')).toBeNull();
+  });
+
+  it('shows loading skeleton state when requested', () => {
+    mockParams = { state: 'loading' };
+
+    render(<HelpScreen />);
+
+    expect(screen.getByTestId('help-screen')).toBeTruthy();
+    expect(screen.getByTestId('help-screen-loading')).toBeTruthy();
+    expect(screen.queryByText('What is Tasky?')).toBeNull();
+  });
+
+  it('shows error state and retries back to loaded FAQ content', () => {
+    mockParams = { state: 'error' };
+
+    render(<HelpScreen />);
+
+    expect(screen.getByText('Unable to load')).toBeTruthy();
+    expect(screen.getByText('Failed to load help content. Please try again')).toBeTruthy();
+
+    fireEvent.press(screen.getByText('Try again'));
+
+    expect(screen.getByText('What is Tasky?')).toBeTruthy();
+    expect(screen.queryByText('Unable to load')).toBeNull();
   });
 
   it('back button navigates back', () => {

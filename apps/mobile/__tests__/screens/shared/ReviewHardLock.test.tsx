@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -64,5 +65,13 @@ describe('ReviewHardLock (SCR-SHARED-019)', () => {
 
     expect(screen.getByTestId('review-hard-lock')).toBeTruthy();
     expect(screen.getByText('shared.review.submit')).toBeTruthy();
+  });
+
+  it('routes to the shared review screen when the CTA is tapped', () => {
+    const { ReviewHardLock } = require('../../../src/features/review/components/ReviewHardLock');
+    render(<ReviewHardLock bookingId="booking-123" />);
+
+    fireEvent.press(screen.getByTestId('review-hard-lock-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/(shared)/review/booking-123');
   });
 });

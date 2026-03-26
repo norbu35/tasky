@@ -38,5 +38,8 @@ describe("Auth Integration", () => {
         });
 
         expect(await screen.findByRole("heading", {name: "Profile setup and updates"})).toBeInTheDocument();
+        expect(
+            screen.getByText(/your browser may prompt you to choose a photo when you update your avatar/i),
+        ).toBeInTheDocument();
     });
 });

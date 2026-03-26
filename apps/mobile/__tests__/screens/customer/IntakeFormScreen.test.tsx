@@ -42,6 +42,8 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
 
   it('renders the description field label', () => {
     render(<IntakeFormScreen />);
+    expect(screen.getByText('Task Details')).toBeTruthy();
+    expect(screen.getByText('Fill in the task details')).toBeTruthy();
     expect(screen.getByText('Description')).toBeTruthy();
   });
 
@@ -66,9 +68,19 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     });
   });
 
-  it('renders as step 1 of 5 wizard', () => {
+  it('renders as step 2 of 7 wizard', () => {
     render(<IntakeFormScreen />);
-    // FormWizardTemplate renders step dots; currentStep=0, totalSteps=5
-    expect(screen.getByTestId('intake-form-screen')).toBeTruthy();
+    expect(screen.getByLabelText('Step 2 of 7')).toBeTruthy();
+  });
+
+  it('back button returns to category selection', () => {
+    render(<IntakeFormScreen />);
+    fireEvent.press(screen.getByTestId('intake-form-screen-back'));
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders continue CTA copy from the wizard spec', () => {
+    render(<IntakeFormScreen />);
+    expect(screen.getByText('Continue')).toBeTruthy();
   });
 });

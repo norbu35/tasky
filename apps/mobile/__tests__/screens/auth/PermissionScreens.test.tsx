@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { useAppStore } from '../../../src/store/appStore';
 
 import PermissionCameraScreen from '../../../src/app/(auth)/permission-camera';
 import PermissionLocationScreen from '../../../src/app/(auth)/permission-location';
@@ -61,13 +62,22 @@ beforeEach(() => {
   mockRequestCameraPermission.mockResolvedValue({ status: 'granted' });
   mockRequestLocationPermission.mockResolvedValue({ status: 'granted' });
   mockRequestNotificationPermission.mockResolvedValue({ status: 'granted' });
+  useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
 });
 
 describe('Permission Camera Screen (SCR-SHARED-007)', () => {
-  it('renders camera permission title and description', () => {
+  it('renders camera permission copy from Figma', () => {
     render(<PermissionCameraScreen />);
-    expect(screen.getByText('Camera Access')).toBeTruthy();
-    expect(screen.getByText('Take photos for task posts and verification')).toBeTruthy();
+    expect(screen.getByText('Хувийн мэдээлэл')).toBeTruthy();
+    expect(screen.getByText('Таны бүртгэл болон баталгаажуулалт')).toBeTruthy();
+    expect(screen.getByText('Дансны баталгаажуулалт')).toBeTruthy();
+    expect(screen.getByText('Камер ашиглан нүүр тулгах')).toBeTruthy();
+    expect(screen.getByText('Камер ашиглах зөвшөөрөл')).toBeTruthy();
+    expect(screen.getByText('Зураг оруулах, баталгаажуулахад камер хэрэгтэй')).toBeTruthy();
+    expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
+    expect(screen.getByText('Дараа')).toBeTruthy();
+    expect(screen.getByTestId('permission-camera-header-block')).toBeTruthy();
+    expect(screen.getByTestId('permission-camera-summary-card')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {
@@ -80,6 +90,16 @@ describe('Permission Camera Screen (SCR-SHARED-007)', () => {
     render(<PermissionCameraScreen />);
     fireEvent.press(screen.getByTestId('permission-allow-button'));
     expect(mockRequestCameraPermission).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows denied guidance when camera permission is rejected', async () => {
+    mockRequestCameraPermission.mockResolvedValue({ status: 'denied' });
+    render(<PermissionCameraScreen />);
+    fireEvent.press(screen.getByTestId('permission-allow-button'));
+    expect(await screen.findByText('Камерын зөвшөөрөл хаагдсан')).toBeTruthy();
+    expect(screen.getByText('Тохиргооноос камерыг нээх боломжтой')).toBeTruthy();
+    expect(screen.getByTestId('permission-continue-button')).toBeTruthy();
+    expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
   });
 
   it('Skip navigates to location permission', () => {
@@ -95,10 +115,12 @@ describe('Permission Camera Screen (SCR-SHARED-007)', () => {
 });
 
 describe('Permission Location Screen (SCR-SHARED-008)', () => {
-  it('renders location permission title and description', () => {
+  it('renders location permission copy from Figma', () => {
     render(<PermissionLocationScreen />);
-    expect(screen.getByText('Location Access')).toBeTruthy();
-    expect(screen.getByText('Find tasks and Taskers near you')).toBeTruthy();
+    expect(screen.getByText('Байршил ашиглах зөвшөөрөл')).toBeTruthy();
+    expect(screen.getByText('Ойролцоох даалгаврууд харуулахад байршил хэрэгтэй')).toBeTruthy();
+    expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
+    expect(screen.getByText('Дараа')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {
@@ -111,6 +133,16 @@ describe('Permission Location Screen (SCR-SHARED-008)', () => {
     render(<PermissionLocationScreen />);
     fireEvent.press(screen.getByTestId('permission-allow-button'));
     expect(mockRequestLocationPermission).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows denied guidance when location permission is rejected', async () => {
+    mockRequestLocationPermission.mockResolvedValue({ status: 'denied' });
+    render(<PermissionLocationScreen />);
+    fireEvent.press(screen.getByTestId('permission-allow-button'));
+    expect(await screen.findByText('Байршлын зөвшөөрөл хаагдсан')).toBeTruthy();
+    expect(screen.getByText('Тохиргооноос байршлыг нээх боломжтой')).toBeTruthy();
+    expect(screen.getByTestId('permission-continue-button')).toBeTruthy();
+    expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
   });
 
   it('Skip navigates to notifications permission', () => {
@@ -126,10 +158,19 @@ describe('Permission Location Screen (SCR-SHARED-008)', () => {
 });
 
 describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
-  it('renders notification permission title and description', () => {
+  it('renders notification permission copy from Figma', () => {
     render(<PermissionNotificationsScreen />);
-    expect(screen.getByText('Notifications')).toBeTruthy();
-    expect(screen.getByText('Get updates on bookings and messages')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-header')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-hero')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-benefits')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-footer')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-benefit-0')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл хүлээн авах')).toBeTruthy();
+    expect(screen.getByText('Шуурхай мэдээлэл')).toBeTruthy();
+    expect(screen.getByText('Аюулгүй байдал')).toBeTruthy();
+    expect(screen.getByText('Сануулах үйлчилгээ')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл зөвшөөрөх')).toBeTruthy();
+    expect(screen.getByText('Дараа')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {
@@ -144,9 +185,26 @@ describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
     expect(mockRequestNotificationPermission).toHaveBeenCalledTimes(1);
   });
 
+  it('shows denied guidance when notification permission is rejected', async () => {
+    mockRequestNotificationPermission.mockResolvedValue({ status: 'denied' });
+    render(<PermissionNotificationsScreen />);
+    fireEvent.press(screen.getByTestId('permission-allow-button'));
+    expect(await screen.findByText('Мэдэгдлийн зөвшөөрөл хаагдсан')).toBeTruthy();
+    expect(screen.getByText('Тохиргооноос мэдэгдлийг нээх боломжтой')).toBeTruthy();
+    expect(screen.getByTestId('permission-continue-button')).toBeTruthy();
+    expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
+  });
+
   it('Skip navigates to home (tabs)', () => {
     render(<PermissionNotificationsScreen />);
     fireEvent.press(screen.getByTestId('permission-skip-button'));
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+  });
+
+  it('final completion marks onboarding done before navigating home', () => {
+    render(<PermissionNotificationsScreen />);
+    fireEvent.press(screen.getByTestId('permission-skip-button'));
+    expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 

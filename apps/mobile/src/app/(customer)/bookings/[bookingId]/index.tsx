@@ -8,6 +8,7 @@ import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { PriceTag } from '../../../../components/ui/PriceTag';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { ConfirmCompletionSheet } from '../../../../features/bookings/components/ConfirmCompletionSheet';
+import { CustomerCancelSheet, type CancelType } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -39,10 +40,10 @@ function getStatusLabel(status: string, t: (key: string, fb: string) => string):
 }
 
 function getCtaConfig(
-  status: string,
+  booking: any,
   t: (key: string, fb: string) => string,
 ): { label: string; action: string } | null {
-  switch (status) {
+  switch (booking?.status) {
     case 'ASSIGNED':
       return { label: t('customer.bookings.ctaMessage', 'Message'), action: 'message' };
     case 'TASKER_MARKED_DONE':
@@ -51,10 +52,35 @@ function getCtaConfig(
         action: 'confirm_complete',
       };
     case 'COMPLETED':
-      return { label: t('customer.bookings.ctaRebook', 'Rebook'), action: 'rebook' };
+      return hasSubmittedReview(booking)
+        ? { label: t('customer.bookings.ctaRebook', 'Rebook'), action: 'rebook' }
+        : { label: t('customer.bookings.ctaLeaveReview', 'Leave Review'), action: 'leave_review' };
     default:
       return null;
   }
+}
+
+function hasSubmittedReview(booking: any): boolean {
+  return Boolean(
+    booking?.customer_review_submitted_at ??
+      booking?.review_submitted_at ??
+      booking?.review?.submitted_at,
+  );
+}
+
+function getCancelType(booking: any): CancelType {
+  const scheduledAt = booking?.task?.scheduled_at;
+  if (!scheduledAt) return 'free_cancel';
+
+  const fourHoursMs = 4 * 60 * 60 * 1000;
+  const timeUntilScheduled = new Date(scheduledAt).getTime() - Date.now();
+  if (timeUntilScheduled >= fourHoursMs) {
+    return 'free_cancel';
+  }
+
+  const recentIncidents =
+    booking?.customer_incidents_28d ?? booking?.customer?.incidents_28d ?? booking?.incidents_28d ?? 0;
+  return recentIncidents > 0 ? 'late_cancel_incident_count' : 'late_cancel_warning';
 }
 
 export default function BookingDetailScreen() {
@@ -63,15 +89,23 @@ export default function BookingDetailScreen() {
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
   const [showCompletionSheet, setShowCompletionSheet] = useState(false);
+  const [showCancelSheet, setShowCancelSheet] = useState(false);
 
   const status: string = booking?.status ?? 'ASSIGNED';
-  const ctaConfig = getCtaConfig(status, t);
+  const ctaConfig = getCtaConfig(booking, t);
 
   const handleCtaPress = useCallback(() => {
     if (!booking) return;
-    const action = getCtaConfig(status, t)?.action;
+    const action = getCtaConfig(booking, t)?.action;
     switch (action) {
       case 'message':
+        router.push(`/inbox/${booking.id}`);
+        break;
+      case 'leave_review':
+        router.push({
+          pathname: '/(shared)/review/[bookingId]',
+          params: { bookingId, role: 'customer' },
+        });
         break;
       case 'confirm_complete':
         setShowCompletionSheet(true);
@@ -95,7 +129,7 @@ export default function BookingDetailScreen() {
         });
         break;
     }
-  }, [booking, status, t, router]);
+  }, [booking, bookingId, t, router]);
 
   const handleTimeline = useCallback(() => {
     router.push(`/(customer)/bookings/${bookingId}/timeline`);
@@ -110,6 +144,10 @@ export default function BookingDetailScreen() {
       pathname: '/(shared)/review/[bookingId]',
       params: { bookingId, role: 'customer' },
     });
+  }, [router, bookingId]);
+
+  const handleReportIssue = useCallback(() => {
+    router.push(`/(customer)/bookings/${bookingId}/dispute`);
   }, [router, bookingId]);
 
   return (
@@ -136,7 +174,11 @@ export default function BookingDetailScreen() {
             <Text style={styles.sectionTitle}>
               {t('customer.bookings.sectionTasker', 'Tasker')}
             </Text>
-            <View style={styles.taskerRow}>
+            <Pressable
+              style={styles.taskerRow}
+              onPress={() => router.push(`/(customer)/taskers/${booking.tasker?.id}`)}
+              testID="booking-detail-screen-tasker-card"
+            >
               <ProfileAvatar
                 uri={booking.tasker?.avatar_url}
                 name={booking.tasker?.full_name}
@@ -146,7 +188,7 @@ export default function BookingDetailScreen() {
               <View style={styles.taskerInfo}>
                 <Text style={styles.taskerName}>{booking.tasker?.full_name}</Text>
               </View>
-            </View>
+            </Pressable>
           </View>
 
           {/* Task Summary */}
@@ -185,7 +227,7 @@ export default function BookingDetailScreen() {
               </Text>
             </Pressable>
 
-            {(status === 'ASSIGNED' || status === 'TASKER_MARKED_DONE') && (
+            {status === 'ASSIGNED' && (
               <>
                 <Pressable
                   style={styles.actionLink}
@@ -196,7 +238,11 @@ export default function BookingDetailScreen() {
                     {t('customer.bookings.ctaReschedule', 'Reschedule')}
                   </Text>
                 </Pressable>
-                <Pressable style={styles.actionLink} testID="booking-detail-screen-cancel-btn">
+                <Pressable
+                  style={styles.actionLink}
+                  onPress={() => setShowCancelSheet(true)}
+                  testID="booking-detail-screen-cancel-btn"
+                >
                   <Text style={styles.cancelText}>
                     {t('customer.bookings.ctaCancel', 'Cancel Booking')}
                   </Text>
@@ -204,7 +250,19 @@ export default function BookingDetailScreen() {
               </>
             )}
 
-            {status === 'COMPLETED' && (
+            {status === 'TASKER_MARKED_DONE' && (
+              <Pressable
+                style={styles.actionLink}
+                onPress={handleReportIssue}
+                testID="booking-detail-screen-report-issue-link"
+              >
+                <Text style={styles.cancelText}>
+                  {t('customer.bookings.ctaReportIssue', 'Report Issue')}
+                </Text>
+              </Pressable>
+            )}
+
+            {status === 'COMPLETED' && !hasSubmittedReview(booking) && (
               <Pressable
                 style={styles.actionLink}
                 onPress={handleLeaveReview}
@@ -212,6 +270,18 @@ export default function BookingDetailScreen() {
               >
                 <Text style={styles.actionLinkText}>
                   {t('shared.review.title', 'Leave a Review')}
+                </Text>
+              </Pressable>
+            )}
+
+            {(status === 'CANCELLED' || status === 'NO_SHOW') && (
+              <Pressable
+                style={styles.actionLink}
+                onPress={handleReportIssue}
+                testID="booking-detail-screen-report-issue-link"
+              >
+                <Text style={styles.cancelText}>
+                  {t('customer.bookings.ctaReportIssue', 'Report Issue')}
                 </Text>
               </Pressable>
             )}
@@ -225,6 +295,16 @@ export default function BookingDetailScreen() {
             onCompleted={() => {
               setShowCompletionSheet(false);
               refetch();
+            }}
+          />
+          <CustomerCancelSheet
+            isOpen={showCancelSheet}
+            onClose={() => setShowCancelSheet(false)}
+            bookingId={bookingId}
+            cancelType={getCancelType(booking)}
+            onCancelled={() => {
+              setShowCancelSheet(false);
+              router.replace('/(customer)/bookings');
             }}
           />
         </>

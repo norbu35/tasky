@@ -1,4 +1,5 @@
 import React from 'react';
+import { Dimensions, FlatList, StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useAppStore } from '../../../src/store/appStore';
 
@@ -58,17 +59,24 @@ beforeEach(() => {
 });
 
 describe('OnboardingScreen (SCR-SHARED-005)', () => {
-  it('renders the first slide content', () => {
+  it('renders the first slide content from Figma', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByText('auth.onboarding.slide1Title')).toBeTruthy();
-    expect(screen.getByText('auth.onboarding.slide1Body')).toBeTruthy();
+    expect(screen.getByText('Итгэлтэй гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('олоорой')).toBeTruthy();
+    expect(screen.getByText('Бүх гүйцэтгэгч баталгаажсан, үнэлгээтэй')).toBeTruthy();
   });
 
-  it('shows 3 pagination dots', () => {
+  it('renders a photo-led hero and compact dash pagination', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByTestId('pagination-dot-0')).toBeTruthy();
-    expect(screen.getByTestId('pagination-dot-1')).toBeTruthy();
-    expect(screen.getByTestId('pagination-dot-2')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-slide-image').props.source.uri).toContain('figma');
+
+    const activeDash = StyleSheet.flatten(screen.getByTestId('pagination-dot-0').props.style);
+    const inactiveDash = StyleSheet.flatten(screen.getByTestId('pagination-dot-1').props.style);
+
+    expect(activeDash.width).toBeLessThan(20);
+    expect(activeDash.height).toBeLessThan(6);
+    expect(inactiveDash.width).toBeLessThan(12);
+    expect(inactiveDash.height).toBeLessThan(6);
   });
 
   it('shows Skip button on first slide', () => {
@@ -76,10 +84,36 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
     expect(screen.getByTestId('onboarding-skip')).toBeTruthy();
   });
 
+  it('renders the Figma top bar skip label', () => {
+    render(<OnboardingScreen />);
+    expect(screen.getByText('Алгасах')).toBeTruthy();
+  });
+
   it('skip navigates to role selection', () => {
     render(<OnboardingScreen />);
     fireEvent.press(screen.getByTestId('onboarding-skip'));
     expect(mockReplace).toHaveBeenCalledWith('/(auth)/role-select');
+  });
+
+  it('does not mark onboarding complete before the permission primer flow finishes', () => {
+    render(<OnboardingScreen />);
+    fireEvent.press(screen.getByTestId('onboarding-skip'));
+    expect(useAppStore.getState().hasSeenOnboarding).toBe(false);
+  });
+
+  it('hides Skip on the final slide and switches the CTA label', () => {
+    render(<OnboardingScreen />);
+
+    fireEvent.scroll(screen.UNSAFE_getByType(FlatList), {
+      nativeEvent: {
+        contentOffset: { x: Dimensions.get('window').width * 2, y: 0 },
+        contentSize: { width: Dimensions.get('window').width * 3, height: 0 },
+        layoutMeasurement: { width: Dimensions.get('window').width, height: 0 },
+      },
+    });
+
+    expect(screen.queryByTestId('onboarding-skip')).toBeNull();
+    expect(screen.getByText('Эхлэх')).toBeTruthy();
   });
 
   it('shows Next button on first slide', () => {

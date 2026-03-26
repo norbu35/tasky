@@ -11,6 +11,7 @@ import {
 import { useAppStore } from '../../src/store/appStore';
 import { RoleProvider } from '../../src/providers/RoleProvider';
 import { useTasks } from '../../src/features/tasks/hooks/useTasks';
+import { useMyTasks } from '../../src/features/tasks/hooks/useMyTasks';
 import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
 import FeedScreen from '../../src/app/(tabs)/index';
 import TabsLayout from '../../src/app/(tabs)/_layout';
@@ -94,6 +95,9 @@ jest.mock('react-native-safe-area-context', () => {
 jest.mock('../../src/features/tasks/hooks/useTasks', () => ({
   useTasks: jest.fn(),
 }));
+jest.mock('../../src/features/tasks/hooks/useMyTasks', () => ({
+  useMyTasks: jest.fn(),
+}));
 jest.mock('../../src/features/profile/hooks/useProfile', () => ({
   useMyProfile: jest.fn(),
   useUpdateProfile: jest.fn(() => ({ mutate: jest.fn(), isPending: false })),
@@ -101,12 +105,19 @@ jest.mock('../../src/features/profile/hooks/useProfile', () => ({
 }));
 
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>;
+const mockUseMyTasks = useMyTasks as jest.MockedFunction<typeof useMyTasks>;
 const mockUseMyProfile = useMyProfile as jest.MockedFunction<typeof useMyProfile>;
 
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
   useAppStore.setState({ currentRole: 'tasker' });
+  mockUseMyTasks.mockReturnValue({
+    data: { data: [] },
+    isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useMyTasks>);
 });
 
 describe('Tasker journey integration', () => {

@@ -16,7 +16,7 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
   const router = useRouter();
 
   const handleSubmitReview = () => {
-    router.push(`/reviews/new?bookingId=${bookingId}`);
+    router.push(`/(shared)/review/${bookingId}`);
   };
 
   return (

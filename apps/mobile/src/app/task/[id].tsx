@@ -6,9 +6,10 @@ import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
+import { PhotoGrid } from '../../components/ui/PhotoGrid';
+import { TrustBanner } from '../../components/ui/TrustBanner';
 import { useTaskDetail } from '../../features/tasks/hooks/useTasks';
 import { ApplicationSentSuccess } from '../../features/tasks/components/ApplicationSentSuccess';
-import { VerificationGate } from '../../features/tasks/components/VerificationGate';
 import { createMobileApiClient } from '../../lib/mobileApiClient';
 import { useAuthStore } from '../../store/authStore';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -28,7 +29,6 @@ export default function TaskDetailScreen() {
   const session = useAuthStore((s) => s.session);
   const [isApplying, setIsApplying] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showVerificationGate, setShowVerificationGate] = useState(false);
   const [localApplied, setLocalApplied] = useState(false);
   const appliedState = hasApplied || localApplied;
 
@@ -47,11 +47,7 @@ export default function TaskDetailScreen() {
   }, [session, taskId]);
 
   const handleGetVerified = useCallback(() => {
-    setShowVerificationGate(true);
-  }, []);
-
-  const handleStartVerification = useCallback(() => {
-    router.push('/verification' as any);
+    router.push('/(tasker)/verification' as any);
   }, [router]);
 
   const handleBack = useCallback(() => {
@@ -66,19 +62,13 @@ export default function TaskDetailScreen() {
     setShowSuccess(false);
   }, []);
 
+  const handleMessageCustomer = useCallback(() => {
+    router.push(`/inbox/${taskId}` as any);
+  }, [router, taskId]);
+
   // Show success celebration inline after applying
   if (showSuccess) {
     return <ApplicationSentSuccess onBrowseMore={handleBrowseMore} onViewTask={handleViewTask} />;
-  }
-
-  // Show verification gate inline
-  if (showVerificationGate) {
-    return (
-      <VerificationGate
-        onStartVerification={handleStartVerification}
-        onMaybeLater={() => setShowVerificationGate(false)}
-      />
-    );
   }
 
   // Determine CTA label and action
@@ -112,6 +102,8 @@ export default function TaskDetailScreen() {
       ctaOnPress={ctaOnPress}
       ctaLoading={isApplying}
       ctaDisabled={ctaDisabled}
+      secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton', 'Message') : undefined}
+      secondaryCtaOnPress={isVerified ? handleMessageCustomer : undefined}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -148,6 +140,12 @@ export default function TaskDetailScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>{t('taskDetails.location')}</Text>
               <LocationPin text={task.approximate_location} />
+              <Text style={styles.locationNote}>
+                {t(
+                  'tasker.taskDetail.locationApproximateNote',
+                  'Approximate location (exact address shown after booking confirmed)',
+                )}
+              </Text>
             </View>
           )}
 
@@ -167,12 +165,28 @@ export default function TaskDetailScreen() {
             </View>
           )}
 
+          {task.photo_urls.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>{t('tasker.taskDetail.photosLabel', 'Photos')}</Text>
+              <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
+            </View>
+          )}
+
           {/* Application count */}
           {task.application_count > 0 && (
             <Text style={styles.applicantCount}>
               {task.application_count} {t('customer.taskDetail.applicants', 'applicants')}
             </Text>
           )}
+
+          <TrustBanner
+            title={t('tasker.taskDetail.trustTitle', 'Platform trust')}
+            description={t(
+              'tasker.taskDetail.trustDescription',
+              'Verified taskers and consistent reviews help protect both sides of every booking.',
+            )}
+            variant="compact"
+          />
         </View>
       )}
     </DetailTemplate>
@@ -216,6 +230,12 @@ const styles = StyleSheet.create({
   scheduleText: {
     fontSize: typography.body,
     color: colors.foreground,
+  },
+  locationNote: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: typography.caption * 1.5,
+    marginTop: spacing.xs,
   },
   applicantCount: {
     fontSize: typography.label,

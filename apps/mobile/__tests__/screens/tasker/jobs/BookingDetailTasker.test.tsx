@@ -32,6 +32,24 @@ jest.mock('lucide-react-native', () => {
   );
 });
 
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    __esModule: true,
+    default: React.forwardRef(function MockBottomSheet({ children, index }: any, ref: any) {
+      React.useImperativeHandle(ref, () => ({
+        snapToIndex: jest.fn(),
+        close: jest.fn(),
+      }));
+      if (index === -1) return null;
+      return <View>{children}</View>;
+    }),
+    BottomSheetBackdrop: ({ children }: any) => <View>{children}</View>,
+    BottomSheetView: ({ children }: any) => <View>{children}</View>,
+  };
+});
+
 jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
   useBookingDetail: jest.fn(),
 }));
@@ -40,6 +58,14 @@ const mockMarkBookingDone = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useMarkBookingDone', () => ({
   useMarkBookingDone: () => ({
     mutate: mockMarkBookingDone,
+    isPending: false,
+  }),
+}));
+
+const mockCancelBooking = jest.fn();
+jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
+  useCancelBooking: () => ({
+    mutate: mockCancelBooking,
     isPending: false,
   }),
 }));
@@ -204,6 +230,37 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     expect(screen.getByText('John Customer')).toBeTruthy();
   });
 
+  it('shows exact address note for assigned booking', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Exact Address')).toBeTruthy();
+    expect(screen.getByText('This address is visible only to you')).toBeTruthy();
+  });
+
+  it('shows message button for assigned booking', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Message')).toBeTruthy();
+  });
+
   it('shows cancel button for assigned booking', () => {
     mockUseBookingDetail.mockReturnValue({
       data: assignedBooking,
@@ -217,6 +274,39 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     render(<BookingDetailScreen />);
 
     expect(screen.getByText('Cancel Booking')).toBeTruthy();
+  });
+
+  it('opens the cancel sheet when cancel is pressed', () => {
+    mockUseBookingDetail.mockReturnValue({
+      data: assignedBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    fireEvent.press(screen.getByTestId('booking-detail-tasker-cancel'));
+    expect(screen.getByTestId('tasker-cancel-sheet')).toBeTruthy();
+  });
+
+  it('shows awaiting confirmation banner after tasker marked done', () => {
+    const awaitingBooking = { ...assignedBooking, status: 'TASKER_MARKED_DONE' as const };
+    mockUseBookingDetail.mockReturnValue({
+      data: awaitingBooking,
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookingDetail>);
+
+    const BookingDetailScreen =
+      require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
+    render(<BookingDetailScreen />);
+
+    expect(screen.getByText('Waiting for customer to confirm completion')).toBeTruthy();
+    expect(screen.queryByText('Mark Done')).toBeNull();
   });
 
   it('shows completed state without Mark Done button', () => {

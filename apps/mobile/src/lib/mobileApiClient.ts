@@ -39,6 +39,11 @@ export interface BookingFilters {
   status?: 'ASSIGNED' | 'COMPLETED' | 'CANCELLED';
 }
 
+export interface ProfilePolishPreviewPayload {
+  bio: string;
+  tone: 'friendly' | 'professional' | 'concise';
+}
+
 export interface MobileApiClient {
   requestOtp(phone: string): Promise<string>;
 
@@ -52,8 +57,13 @@ export interface MobileApiClient {
 
   updateMyProfile(
     accessToken: string,
-    payload: { full_name?: string; avatar_url?: string | null },
+    payload: { full_name?: string; avatar_url?: string | null; bio?: string },
   ): Promise<Profile>;
+
+  getProfilePolishPreview(
+    accessToken: string,
+    payload: ProfilePolishPreviewPayload,
+  ): Promise<{ suggested_bio: string }>;
 
   getAvatarUploadUrl(
     accessToken: string,
@@ -294,7 +304,7 @@ export class HttpMobileApiClient implements MobileApiClient {
 
   updateMyProfile(
     accessToken: string,
-    payload: { full_name?: string; avatar_url?: string | null },
+    payload: { full_name?: string; avatar_url?: string | null; bio?: string },
   ): Promise<Profile> {
     return this.requestJson<Profile>(
       '/users/me',
@@ -304,6 +314,28 @@ export class HttpMobileApiClient implements MobileApiClient {
       },
       accessToken,
     );
+  }
+
+  getProfilePolishPreview(
+    accessToken: string,
+    payload: ProfilePolishPreviewPayload,
+  ): Promise<{ suggested_bio: string }> {
+    return this.requestJson<{
+      suggested_bio?: string;
+      suggestion?: string;
+      preview?: string;
+      bio?: string;
+    }>(
+      '/users/me/profile-polish-preview',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+      accessToken,
+    ).then((response) => ({
+      suggested_bio:
+        response.suggested_bio ?? response.suggestion ?? response.preview ?? response.bio ?? '',
+    }));
   }
 
   getAvatarUploadUrl(

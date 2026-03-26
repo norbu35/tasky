@@ -1,8 +1,7 @@
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { MapPin } from 'lucide-react-native';
-import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { PermissionPrimer } from '../../components/ui';
 import { requestLocationPermission } from '../../utils/permissions';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -10,28 +9,49 @@ import { mobileTheme } from '../../design/tokenAdapter';
 const { colors } = mobileTheme;
 
 export default function PermissionLocationScreen() {
-  const { t } = useTranslation();
   const router = useRouter();
+  const [isDenied, setIsDenied] = React.useState(false);
 
-  const handleGrant = async () => {
-    await requestLocationPermission();
+  const goNext = () => {
     router.replace('/(auth)/permission-notifications');
   };
 
-  const handleSkip = () => {
-    router.replace('/(auth)/permission-notifications');
+  const handleGrant = async () => {
+    const result = await requestLocationPermission();
+    if (result.status === 'granted') {
+      goNext();
+      return;
+    }
+    setIsDenied(true);
   };
 
   return (
-    <AuthTemplate testID="permission-location-screen">
+    <View style={styles.container} testID="permission-location-screen">
       <PermissionPrimer
         icon={<MapPin size={48} color={colors.primary} />}
-        title={t('auth.permissions.locationTitle', 'Location Access')}
-        description={t('auth.permissions.locationDescription', 'Find tasks and Taskers near you')}
-        onGrant={handleGrant}
-        onSkip={handleSkip}
+        title="Байршил ашиглах зөвшөөрөл"
+        description="Ойролцоох даалгаврууд харуулахад байршил хэрэгтэй"
+        deniedMessage="Байршлын зөвшөөрөл хаагдсан"
+        settingsHint="Тохиргооноос байршлыг нээх боломжтой"
+        continueLabel="Үргэлжлүүлэх"
+        allowLabel="Зөвшөөрөх"
+        skipLabel="Дараа"
+        footerNote="Таны мэдээлэл нууцлагдсан"
+        isDenied={isDenied}
+        onGrant={() => {
+          void handleGrant();
+        }}
+        onSkip={goNext}
+        onContinue={goNext}
         testID="permission-location-primer"
       />
-    </AuthTemplate>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+});

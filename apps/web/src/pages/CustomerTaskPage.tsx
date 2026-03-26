@@ -304,6 +304,9 @@ export function CustomerTaskPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            <p className="text-sm text-muted-foreground">
+              Add photos and place the map pin so taskers can find the job.
+            </p>
             <div className="grid gap-2">
               <Label htmlFor="task-category">{t('customerTask.categoryLabel', 'Category')}</Label>
               <select

@@ -36,12 +36,17 @@ export function FormWizardTemplate({
   testID,
 }: FormWizardTemplateProps) {
   const { t } = useTranslation();
-  const showBackButton = showBack && onBack && currentStep > 0;
+  const showBackButton = showBack && onBack && (currentStep > 0 || totalSteps === 1);
 
   return (
     <View style={styles.container} testID={testID}>
       {/* Step Indicator */}
-      <View style={styles.stepIndicator}>
+      <View
+        testID="wizard-progress"
+        style={styles.stepIndicator}
+        accessibilityRole="progressbar"
+        accessibilityLabel={`Step ${currentStep + 1} of ${totalSteps}`}
+      >
         {Array.from({ length: totalSteps }).map((_, i) => {
           let dotStyle;
           if (i === currentStep) {
@@ -72,7 +77,7 @@ export function FormWizardTemplate({
       </KeyboardAvoidingView>
 
       {/* Sticky Bottom Bar */}
-      <View style={styles.bottomBar}>
+      <View style={styles.bottomBar} testID="wizard-bottom-bar">
         {showBackButton ? (
           <View style={styles.buttonRow}>
             <Button
@@ -115,7 +120,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
     gap: spacing.sm,
   },
   dot: {
@@ -143,11 +150,15 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: spacing.lg,
     gap: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing['2xl'],
   },
   bottomBar: {
-    padding: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
     backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
     ...elevations.elevated,
   },
   buttonRow: {

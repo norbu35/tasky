@@ -20,7 +20,7 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
 
   const handleReviewNow = () => {
     onDismiss();
-    router.push(`/reviews/new?bookingId=${bookingId}`);
+    router.push(`/(shared)/review/${bookingId}`);
   };
 
   return (

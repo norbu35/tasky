@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Plus } from 'lucide-react-native';
+import { Bell, Plus } from 'lucide-react-native';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
 import { FilterBar } from '../../../components/ui/FilterBar';
 import { SplitCard } from '../../../components/ui/SplitCard';
@@ -50,10 +50,15 @@ export default function MyTasksListScreen() {
     router.push('/(customer)/tasks/new/category');
   }, [router]);
 
+  const handleNotificationsPress = useCallback(() => {
+    router.push('/(shared)/notifications');
+  }, [router]);
+
   const renderTaskCard = useCallback(
     (task: any) => (
       <SplitCard
         testID={`task-card-${task.id}`}
+        onPress={() => router.push(`/(customer)/tasks/${task.id}`)}
         headerContent={
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle} numberOfLines={1}>
@@ -64,6 +69,11 @@ export default function MyTasksListScreen() {
         }
         bodyContent={
           <View style={styles.cardBody}>
+            {task.category?.name ? (
+              <Text style={styles.cardCategory} numberOfLines={1}>
+                {task.category.name}
+              </Text>
+            ) : null}
             <StatusBadge status={mapStatus(task.status ?? 'open')} />
             {task.scheduled_at && (
               <Text style={styles.cardSchedule}>
@@ -74,7 +84,7 @@ export default function MyTasksListScreen() {
         }
       />
     ),
-    [],
+    [router],
   );
 
   const filterBar = (
@@ -91,6 +101,18 @@ export default function MyTasksListScreen() {
 
   return (
     <View style={styles.container} testID="my-tasks-screen">
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>{t('customer.taskList.title', 'My Tasks')}</Text>
+        <Pressable
+          style={styles.headerAction}
+          onPress={handleNotificationsPress}
+          testID="my-tasks-notifications"
+          accessibilityRole="button"
+          accessibilityLabel={t('shared.notifications.title', 'Notifications')}
+        >
+          <Bell size={22} color={colors.primary} />
+        </Pressable>
+      </View>
       <FeedListTemplate
         data={filteredTasks}
         renderItem={renderTaskCard}
@@ -127,6 +149,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  header: {
+    paddingTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
+  headerAction: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   fab: {
     position: 'absolute',
     bottom: 100,
@@ -157,9 +202,12 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   cardBody: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  cardCategory: {
+    fontSize: typography.label,
+    fontWeight: '600',
+    color: colors.foreground,
   },
   cardSchedule: {
     fontSize: typography.caption,

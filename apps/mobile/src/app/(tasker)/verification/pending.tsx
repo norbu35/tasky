@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Clock } from 'lucide-react-native';
+import { Clock, CircleCheck, CircleDashed } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -20,6 +20,18 @@ export default function PendingScreen() {
       <Text style={styles.title}>{t('tasker.verification.pendingTitle')}</Text>
       <Text style={styles.description}>{t('tasker.verification.pendingBody')}</Text>
       <Text style={styles.sla}>{t('tasker.verification.pendingSla')}</Text>
+
+      <View style={styles.progress} testID="pending-progress">
+        <View style={styles.progressRow}>
+          <CircleCheck size={18} color={colors.verified} />
+          <Text style={styles.progressText}>{t('tasker.verification.pendingSubmitted')}</Text>
+        </View>
+        <View style={styles.progressRow}>
+          <CircleDashed size={18} color={colors.accent} />
+          <Text style={styles.progressText}>{t('tasker.verification.pendingReviewing')}</Text>
+        </View>
+      </View>
+
       <Button
         label={t('tasker.verification.submittedCta')}
         onPress={() => router.replace('/(tabs)')}
@@ -65,6 +77,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.md,
     fontWeight: '500',
+  },
+  progress: {
+    alignSelf: 'stretch',
+    gap: spacing.sm,
+    marginTop: spacing.xl,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  progressText: {
+    fontSize: typography.body,
+    color: colors.primary,
+    lineHeight: typography.body * 1.5,
   },
   cta: {
     marginTop: spacing.xl,

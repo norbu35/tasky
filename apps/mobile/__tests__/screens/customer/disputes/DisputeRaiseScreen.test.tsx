@@ -56,6 +56,12 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
     expect(screen.getByText('Issue Type')).toBeTruthy();
   });
 
+  it('shows the booking reference section at the top', () => {
+    render(<DisputeRaiseScreen />);
+    expect(screen.getByText('Booking Reference')).toBeTruthy();
+    expect(screen.getByText('booking-123')).toBeTruthy();
+  });
+
   it('renders predefined reason options', () => {
     render(<DisputeRaiseScreen />);
     expect(screen.getByText('Poor quality work')).toBeTruthy();

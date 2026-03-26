@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 
+const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), replace: mockReplace, back: jest.fn() }),
   useLocalSearchParams: () => ({}),
 }));
 
@@ -73,6 +74,14 @@ describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
     render(<SuspendedScreen />);
 
     expect(screen.getByText('shared.account.suspendedAppeal')).toBeTruthy();
+  });
+
+  it('renders logout action and returns the user to login', () => {
+    const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
+    render(<SuspendedScreen />);
+
+    fireEvent.press(screen.getByText('shared.account.logout'));
+    expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
 
   it('has correct testID on root container', () => {

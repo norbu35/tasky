@@ -17,16 +17,23 @@ export default function EditProfileScreen() {
   const router = useRouter();
   const { data: profile, isLoading } = useMyProfile();
   const updateMutation = useUpdateProfile();
+  const profileDetails = profile as (typeof profile & { bio?: string | null }) | undefined;
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [nameError, setNameError] = useState('');
 
   useEffect(() => {
-    if (profile) {
-      setName(profile.full_name);
+    if (profileDetails) {
+      setName(profileDetails.full_name);
+      setBio(profileDetails.bio ?? '');
     }
-  }, [profile]);
+  }, [profileDetails]);
+
+  const isDirty =
+    !!profileDetails &&
+    (name.trim() !== (profileDetails.full_name ?? '').trim() ||
+      bio.trim() !== (profileDetails.bio ?? '').trim());
 
   const handleSave = () => {
     setNameError('');
@@ -37,7 +44,7 @@ export default function EditProfileScreen() {
     }
 
     updateMutation.mutate(
-      { full_name: name.trim() },
+      { full_name: name.trim(), bio: bio.trim() },
       {
         onSuccess: () => {
           router.back();
@@ -53,7 +60,7 @@ export default function EditProfileScreen() {
       onNext={handleSave}
       onBack={() => router.back()}
       nextLabel={t('shared.profile.save', 'Save')}
-      nextDisabled={isLoading}
+      nextDisabled={isLoading || !isDirty}
       nextLoading={updateMutation.isPending}
       showBack={true}
       testID="edit-profile-screen"

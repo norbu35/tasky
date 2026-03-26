@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewProps, TextProps } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
-const { colors } = mobileTheme;
+const { colors, radius, spacing, typography } = mobileTheme;
 
 export function Card({ style, ...props }: ViewProps) {
   return <View style={[styles.card, style]} {...props} />;
@@ -31,37 +32,33 @@ export function CardFooter({ style, ...props }: ViewProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    ...elevations.card,
     overflow: 'hidden',
   },
   header: {
-    padding: 16,
-    paddingBottom: 8,
+    padding: spacing.lg,
+    paddingBottom: spacing.sm,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: typography.title,
+    fontWeight: '700',
     color: colors.cardForeground,
     letterSpacing: -0.5,
   },
   description: {
-    fontSize: 14,
+    fontSize: typography.body,
     color: colors.mutedForeground,
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   content: {
-    padding: 16,
-    paddingTop: 8,
+    padding: spacing.lg,
+    paddingTop: spacing.sm,
   },
   footer: {
-    padding: 16,
+    padding: spacing.lg,
     paddingTop: 0,
     flexDirection: 'row',
     alignItems: 'center',

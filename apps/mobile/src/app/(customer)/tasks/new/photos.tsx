@@ -36,8 +36,8 @@ export default function PhotoUploadScreen() {
 
   return (
     <FormWizardTemplate
-      currentStep={1}
-      totalSteps={5}
+      currentStep={2}
+      totalSteps={7}
       onNext={handleNext}
       onBack={handleBack}
       nextLabel={
@@ -47,7 +47,7 @@ export default function PhotoUploadScreen() {
     >
       <Text style={styles.title}>{t('customer.postTask.photosTitle', 'Add Photos')}</Text>
       <Text style={styles.subtitle}>
-        {t('customer.postTask.photosDescription', 'Help Taskers understand the job')}
+        {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
       </Text>
       <PhotoGrid
         photos={photos}

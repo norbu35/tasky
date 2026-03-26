@@ -16,6 +16,7 @@ export * from './SplitCard';
 export * from './StepIndicator';
 export * from './FilterBar';
 export * from './SkeletonLoader';
+export * from './LanguageSwitcher';
 export * from './OfflineBanner';
 export * from './PressableCard';
 export * from './PermissionPrimer';

@@ -64,6 +64,7 @@ export function SettingsTemplate({ sections, testID }: SettingsTemplateProps) {
     <SectionList
       style={styles.container}
       sections={sectionListData}
+      initialNumToRender={32}
       keyExtractor={(item, index) => `${item.label}-${index}`}
       renderItem={({ item, index, section }) => (
         <>

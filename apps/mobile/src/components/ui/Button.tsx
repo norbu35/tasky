@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const { colors } = mobileTheme;
+const { colors, radius, spacing, typography } = mobileTheme;
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.md,
   },
   disabled: {
     opacity: 0.5,
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
   // Variants
   defaultVariant: {
     backgroundColor: colors.primary,
+    ...elevations.card,
   },
   secondaryVariant: {
     backgroundColor: colors.secondary,
@@ -159,17 +161,17 @@ const styles = StyleSheet.create({
 
   // Sizes
   defaultSize: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    minHeight: 40,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    minHeight: 48,
   },
   smSize: {
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
     minHeight: 36,
   },
   lgSize: {
-    paddingHorizontal: 32,
-    minHeight: 44,
+    paddingHorizontal: spacing.xl,
+    minHeight: 52,
   },
   iconSize: {
     width: 36,
@@ -179,17 +181,17 @@ const styles = StyleSheet.create({
 
   // Text
   text: {
-    fontWeight: '500',
+    fontWeight: '700',
     textAlign: 'center',
   } as TextStyle,
   defaultText: {
-    fontSize: 14,
+    fontSize: typography.label,
   },
   smText: {
-    fontSize: 12,
+    fontSize: typography.caption,
   },
   lgText: {
-    fontSize: 14,
+    fontSize: typography.body,
   },
   iconText: {
     display: 'none',

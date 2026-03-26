@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
-import { StatusBadge, ProfileAvatar } from '../../../../components/ui';
+import { StatusBadge } from '../../../../components/ui/StatusBadge';
+import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
@@ -44,7 +45,7 @@ export default function TaskDetailCustomerScreen() {
   } else if (isAssigned && tasker) {
     ctaLabel = t('customer.taskDetail.messageTasker', 'Message Tasker');
     ctaOnPress = () => {
-      // Navigate to messaging
+      router.push('/inbox');
     };
   } else if (isOpen && !hasApplicants) {
     // When open with no applicants, use cancel as primary CTA
@@ -131,7 +132,11 @@ export default function TaskDetailCustomerScreen() {
 
             {/* Assigned Tasker Info */}
             {(isAssigned || isTaskerMarkedDone) && tasker && (
-              <View style={styles.taskerCard}>
+              <Pressable
+                style={styles.taskerCard}
+                onPress={() => router.push(`/(customer)/taskers/${tasker.id}`)}
+                testID="task-detail-customer-screen-tasker-card"
+              >
                 <View style={styles.taskerRow}>
                   <ProfileAvatar
                     uri={tasker.avatar_url}
@@ -155,7 +160,7 @@ export default function TaskDetailCustomerScreen() {
                     )}
                   </View>
                 </View>
-              </View>
+              </Pressable>
             )}
 
             {/* Payment note */}

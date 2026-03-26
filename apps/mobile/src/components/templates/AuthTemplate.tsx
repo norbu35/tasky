@@ -1,5 +1,14 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -11,6 +20,8 @@ export interface AuthTemplateProps {
   showLogo?: boolean;
   trustMessage?: string;
   testID?: string;
+  topRightSlot?: React.ReactNode;
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 export function AuthTemplate({
@@ -20,6 +31,8 @@ export function AuthTemplate({
   showLogo = false,
   trustMessage,
   testID,
+  topRightSlot,
+  contentStyle,
 }: AuthTemplateProps) {
   return (
     <KeyboardAvoidingView
@@ -27,8 +40,9 @@ export function AuthTemplate({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       testID={testID}
     >
+      {topRightSlot ? <View style={styles.topRight}>{topRightSlot}</View> : null}
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, contentStyle]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -61,6 +75,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing['3xl'],
+  },
+  topRight: {
+    position: 'absolute',
+    top: spacing.xl,
+    right: spacing.xl,
+    zIndex: 10,
   },
   logo: {
     fontSize: typography.heroTitle,

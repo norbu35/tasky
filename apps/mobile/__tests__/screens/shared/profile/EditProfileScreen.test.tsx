@@ -59,6 +59,7 @@ const MOCK_PROFILE = {
   id: 'user-1',
   full_name: 'Батбаяр',
   avatar_url: 'https://cdn.tasky.mn/avatars/user1.jpg',
+  bio: 'Reliable helper',
   role: 'CUSTOMER',
   status: 'VERIFIED',
   rating_avg: 0,
@@ -124,5 +125,27 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
     expect(screen.getByTestId('edit-profile-screen')).toBeTruthy();
+  });
+
+  it('prefills the bio field from the current profile', () => {
+    const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
+    render(<EditProfileScreen />);
+
+    expect(screen.getByDisplayValue('Reliable helper')).toBeTruthy();
+  });
+
+  it('keeps save disabled until the form is modified', () => {
+    const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
+    render(<EditProfileScreen />);
+
+    expect(screen.getByTestId('edit-profile-screen-next').props.accessibilityState.disabled).toBe(
+      true,
+    );
+
+    fireEvent.changeText(screen.getByDisplayValue('Батбаяр'), 'Болд');
+
+    expect(screen.getByTestId('edit-profile-screen-next').props.accessibilityState.disabled).toBe(
+      false,
+    );
   });
 });

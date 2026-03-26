@@ -106,6 +106,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
     render(<BookingsListScreen />);
     expect(screen.getByText('Fix my sink')).toBeTruthy();
     expect(screen.getByText('Clean apartment')).toBeTruthy();
+    expect(screen.getByText('2026.04.01 18:00')).toBeTruthy();
   });
 
   it('renders status filter tabs', () => {
@@ -143,5 +144,102 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
     render(<BookingsListScreen />);
     fireEvent.press(screen.getByTestId('booking-card-b-1'));
     expect(mockPush).toHaveBeenCalledWith('/(customer)/bookings/b-1');
+  });
+
+  it('empty-state CTA navigates to the post-task flow', () => {
+    mockUseBookings.mockReturnValue({
+      data: { data: [] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingsListScreen />);
+
+    fireEvent.press(screen.getByText('Post a Task'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new/category');
+  });
+
+  it('shows only ASSIGNED bookings in the Active tab and excludes tasker_marked_done', () => {
+    mockUseBookings.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 'b-1',
+            status: 'ASSIGNED',
+            task: { description: 'Assigned booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            tasker: { full_name: 'Bold', avatar_url: null },
+          },
+          {
+            id: 'b-2',
+            status: 'TASKER_MARKED_DONE',
+            task: { description: 'Marked done booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            tasker: { full_name: 'Saran', avatar_url: null },
+          },
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingsListScreen />);
+
+    expect(screen.getByText('Assigned booking')).toBeTruthy();
+    expect(screen.queryByText('Marked done booking')).toBeNull();
+  });
+
+  it('shows only completed lifecycle bookings in the Completed tab', () => {
+    mockUseBookings.mockReturnValue({
+      data: {
+        data: [
+          {
+            id: 'b-1',
+            status: 'ASSIGNED',
+            task: { description: 'Assigned booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            tasker: { full_name: 'Bold', avatar_url: null },
+          },
+          {
+            id: 'b-2',
+            status: 'TASKER_MARKED_DONE',
+            task: {
+              description: 'Marked done booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
+            tasker: { full_name: 'Saran', avatar_url: null },
+          },
+          {
+            id: 'b-3',
+            status: 'COMPLETED',
+            task: {
+              description: 'Completed booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
+            tasker: { full_name: 'Mika', avatar_url: null },
+          },
+          {
+            id: 'b-4',
+            status: 'CANCELLED',
+            task: {
+              description: 'Cancelled booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
+            tasker: { full_name: 'Nara', avatar_url: null },
+          },
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingsListScreen />);
+
+    fireEvent.press(screen.getByText('Completed'));
+
+    expect(screen.queryByText('Assigned booking')).toBeNull();
+    expect(screen.queryByText('Marked done booking')).toBeNull();
+    expect(screen.getByText('Completed booking')).toBeTruthy();
+    expect(screen.getByText('Cancelled booking')).toBeTruthy();
   });
 });
