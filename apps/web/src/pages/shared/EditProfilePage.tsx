@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ResponsiveWizardShell } from '../../components/parity';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -5,24 +6,26 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 
 export function EditProfilePage() {
+  const { t } = useTranslation();
+
   return (
     <ResponsiveWizardShell
-      title="Edit profile"
-      description="Refresh your public details without leaving the core profile flow."
+      title={t('sharedPages.editProfile.title', 'Edit profile')}
+      description={t('sharedPages.editProfile.description', 'Refresh your public details without leaving the core profile flow.')}
       footer={
         <Button type="button">
-          Save profile
+          {t('sharedPages.editProfile.saveAction', 'Save profile')}
         </Button>
       }
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="shared-edit-name">Display name</Label>
-          <Input defaultValue="Tasky User" id="shared-edit-name" />
+          <Label htmlFor="shared-edit-name">{t('sharedPages.editProfile.displayName', 'Display name')}</Label>
+          <Input defaultValue={t('sharedPages.editProfile.defaultName', 'Tasky User')} id="shared-edit-name" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="shared-edit-bio">Bio</Label>
-          <Textarea defaultValue="Reliable and responsive." id="shared-edit-bio" />
+          <Label htmlFor="shared-edit-bio">{t('sharedPages.editProfile.bioLabel', 'Bio')}</Label>
+          <Textarea defaultValue={t('sharedPages.editProfile.defaultBio', 'Reliable and responsive.')} id="shared-edit-bio" />
         </div>
       </div>
     </ResponsiveWizardShell>

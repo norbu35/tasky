@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createTaskSchema } from '@tasky/core';
@@ -84,6 +85,7 @@ function generateScopeSummary(schema: IntakeSchema, answers: Record<string, unkn
 }
 
 export function CustomerTaskWizardPage() {
+  const { t, i18n } = useTranslation();
   const { apiClient, session, trackClientEvent } = useAppContext();
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState('');
@@ -178,7 +180,7 @@ export function CustomerTaskWizardPage() {
       });
 
       setCreatedTask(created);
-      setSuccessMessage('Task created successfully.');
+      setSuccessMessage(t('customerPages.taskWizard.successMessage', 'Task created successfully.'));
       trackClientEvent('TASK_POSTED', { taskId: created.id });
     } catch (error) {
       setErrorMessage(parseError(error));
@@ -189,30 +191,30 @@ export function CustomerTaskWizardPage() {
 
   return (
     <ResponsiveWizardShell
-      title="Create task"
-      description="Choose a category, capture the scope, and post it for taskers."
-      stepLabel="Phase 1 customer posting"
+      title={t('customerPages.taskWizard.title', 'Create task')}
+      description={t('customerPages.taskWizard.description', 'Choose a category, capture the scope, and post it for taskers.')}
+      stepLabel={t('customerPages.taskWizard.stepLabel', 'Phase 1 customer posting')}
       footer={
         <div className="flex flex-wrap gap-3">
           <Button type="submit" form="customer-task-form" disabled={working}>
             {working ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Create task
+            {t('customerPages.taskWizard.createAction', 'Create task')}
           </Button>
           <Button type="button" variant="secondary">
             <Plus className="mr-2 h-4 w-4" />
-            Save draft
+            {t('customerPages.taskWizard.saveDraft', 'Save draft')}
           </Button>
         </div>
       }
     >
       <form id="customer-task-form" className="space-y-6" onSubmit={handleSubmit}>
         {errorMessage ? (
-          <StatePanel title="Unable to create task" description={errorMessage} tone="destructive" />
+          <StatePanel title={t('customerPages.taskWizard.errorTitle', 'Unable to create task')} description={errorMessage} tone="destructive" />
         ) : null}
 
         {successMessage ? (
           <StatePanel
-            title="Task posted successfully"
+            title={t('customerPages.taskWizard.successTitle', 'Task posted successfully')}
             description={successMessage}
             tone="muted"
           />
@@ -220,22 +222,21 @@ export function CustomerTaskWizardPage() {
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>Task basics</CardTitle>
+            <CardTitle>{t('customerPages.taskWizard.basicsTitle', 'Task basics')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
             <p className="text-sm text-muted-foreground">
-              Add photos and place the map pin so taskers can find the job. Browser prompts for
-              location and uploads may appear while you complete this form.
+              {t('customerPages.taskWizard.basicsDesc', 'Add photos and place the map pin so taskers can find the job. Browser prompts for location and uploads may appear while you complete this form.')}
             </p>
             <div className="grid gap-2">
-              <Label htmlFor="task-category">Category</Label>
+              <Label htmlFor="task-category">{t('customerPages.taskWizard.categoryLabel', 'Category')}</Label>
               <select
                 id="task-category"
                 className="h-10 rounded-md border border-input bg-background px-3 text-sm"
                 value={categoryId}
                 onChange={(event) => setCategoryId(event.target.value)}
               >
-                <option value="">Select category</option>
+                <option value="">{t('customerPages.taskWizard.selectCategory', 'Select category')}</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
@@ -248,26 +249,26 @@ export function CustomerTaskWizardPage() {
               <div className="grid gap-4 rounded-lg border border-border/60 p-4">
                 <div className="space-y-1">
                   <h3 className="text-sm font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                    Intake
+                    {t('customerPages.taskWizard.intakeTitle', 'Intake')}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Use the answers below to auto-generate the task summary.
+                    {t('customerPages.taskWizard.intakeDesc', 'Use the answers below to auto-generate the task summary.')}
                   </p>
                 </div>
                 <IntakeFormRenderer
                   schema={intakeSchema}
                   values={intakeAnswers}
                   onChange={handleIntakeChange}
-                  locale="en"
+                  locale={(i18n.language === 'mn' ? 'mn' : 'en')}
                 />
               </div>
             ) : null}
 
             <div className="grid gap-2">
-              <Label htmlFor="task-description">Task details</Label>
+              <Label htmlFor="task-description">{t('customerPages.taskWizard.taskDetails', 'Task details')}</Label>
               <Textarea
                 id="task-description"
-                placeholder="Auto-generated from your answers above"
+                placeholder={t('customerPages.taskWizard.detailsPlaceholder', 'Auto-generated from your answers above')}
                 value={description}
                 onChange={(event) => {
                   setSummaryManuallyEdited(true);
@@ -280,11 +281,11 @@ export function CustomerTaskWizardPage() {
 
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
-            <CardTitle>Schedule and pricing</CardTitle>
+            <CardTitle>{t('customerPages.taskWizard.scheduleTitle', 'Schedule and pricing')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="task-budget">Budget (MNT)</Label>
+              <Label htmlFor="task-budget">{t('customerPages.taskWizard.budgetLabel', 'Budget (MNT)')}</Label>
               <Input
                 id="task-budget"
                 type="number"
@@ -295,7 +296,7 @@ export function CustomerTaskWizardPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="task-scheduled-at">Scheduled at</Label>
+              <Label htmlFor="task-scheduled-at">{t('customerPages.taskWizard.scheduledAtLabel', 'Scheduled at')}</Label>
               <Input
                 id="task-scheduled-at"
                 type="datetime-local"
@@ -305,10 +306,10 @@ export function CustomerTaskWizardPage() {
             </div>
 
             <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="task-location-text">Address description</Label>
+              <Label htmlFor="task-location-text">{t('customerPages.taskWizard.addressLabel', 'Address description')}</Label>
               <Input
                 id="task-location-text"
-                placeholder="ХУД, 15-р хороо, Олимп хотхон"
+                placeholder={t('customerPages.taskWizard.addressPlaceholder', 'ХУД, 15-р хороо, Олимп хотхон')}
                 value={locationText}
                 onChange={(event) => setLocationText(event.target.value)}
               />
@@ -330,8 +331,8 @@ export function CustomerTaskWizardPage() {
 
         {createdTask ? (
           <StatePanel
-            title="Draft saved in-memory"
-            description={`Task ID: ${createdTask.id}`}
+            title={t('customerPages.taskWizard.draftSaved', 'Draft saved in-memory')}
+            description={t('customerPages.taskWizard.taskId', 'Task ID: {{id}}', { id: createdTask.id })}
             tone="muted"
           />
         ) : null}

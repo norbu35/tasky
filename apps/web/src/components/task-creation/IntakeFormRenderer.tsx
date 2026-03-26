@@ -22,6 +22,9 @@ export interface IntakeFormRendererProps {
   locale?: 'en' | 'mn';
 }
 
+// Add i18n hook
+import { useTranslation } from 'react-i18next';
+
 function getLabel(item: { label: string; label_mn: string }, locale: 'en' | 'mn'): string {
   return locale === 'mn' ? item.label_mn : item.label;
 }
@@ -154,7 +157,7 @@ function DropdownField({
         required={field.required}
       >
         <option value="" disabled>
-          Select...
+          {locale === 'mn' ? 'Сонгох...' : 'Select...'}
         </option>
         {field.options?.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -196,7 +199,7 @@ function YesNoField({
             checked={value === true}
             onChange={() => onChange(field.name, true)}
           />
-          Yes
+          {locale === 'mn' ? 'Тийм' : 'Yes'}
         </label>
         <label htmlFor={noId} className="flex items-center gap-2">
           <input
@@ -206,7 +209,7 @@ function YesNoField({
             checked={value === false}
             onChange={() => onChange(field.name, false)}
           />
-          No
+          {locale === 'mn' ? 'Үгүй' : 'No'}
         </label>
       </div>
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

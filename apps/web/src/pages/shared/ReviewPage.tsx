@@ -1,21 +1,23 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ResponsiveWizardShell, StatePanel } from '../../components/parity';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 
 export function ReviewPage() {
+  const { t } = useTranslation();
   const [rating, setRating] = useState<number | null>(null);
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   return (
     <ResponsiveWizardShell
-      title="Leave a review"
-      description="Capture a quick quality signal before the journey closes."
+      title={t('sharedPages.review.title', 'Leave a review')}
+      description={t('sharedPages.review.description', 'Capture a quick quality signal before the journey closes.')}
       footer={
         <Button onClick={() => setSubmitted(true)} type="button">
-          Submit review
+          {t('sharedPages.review.submitAction', 'Submit review')}
         </Button>
       }
     >
@@ -28,14 +30,14 @@ export function ReviewPage() {
               type="button"
               variant={rating === value ? 'default' : 'outline'}
             >
-              {value} stars
+              {t('sharedPages.review.stars', '{{value}} stars', { value })}
             </Button>
           ))}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="review-notes">Review notes</Label>
+          <Label htmlFor="review-notes">{t('sharedPages.review.notesLabel', 'Review notes')}</Label>
           <Textarea
-            aria-label="Review notes"
+            aria-label={t('sharedPages.review.notesLabel', 'Review notes')}
             id="review-notes"
             onChange={(event) => setNotes(event.target.value)}
             value={notes}
@@ -43,8 +45,8 @@ export function ReviewPage() {
         </div>
         {submitted ? (
           <StatePanel
-            title="Thanks for submitting feedback."
-            description={`Rating recorded${rating ? `: ${rating}/5.` : '.'}`}
+            title={t('sharedPages.review.thanksTitle', 'Thanks for submitting feedback.')}
+            description={t('sharedPages.review.ratingRecorded', 'Rating recorded{{rating}}.', { rating: rating ? `: ${rating}/5` : '' })}
             tone="muted"
           />
         ) : null}

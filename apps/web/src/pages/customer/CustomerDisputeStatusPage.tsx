@@ -1,24 +1,27 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { ResponsiveDetailShell } from '../../components/parity';
 
 export function CustomerDisputeStatusPage() {
+  const { t } = useTranslation();
+
   return (
     <ResponsiveDetailShell
-      title="Dispute status"
-      description="Review the current dispute state and the next support action."
+      title={t('customerPages.disputeStatus.title', 'Dispute status')}
+      description={t('customerPages.disputeStatus.description', 'Review the current dispute state and the next support action.')}
       primaryAction={
         <Button type="button" variant="secondary">
-          Contact support
+          {t('customerPages.disputeStatus.contactSupport', 'Contact support')}
         </Button>
       }
     >
       <Card className="border-border/60 shadow-sm">
         <CardHeader>
-          <CardTitle>Resolution status</CardTitle>
+          <CardTitle>{t('customerPages.disputeStatus.cardTitle', 'Resolution status')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          The customer can see whether the dispute is open, under review, or resolved.
+          {t('customerPages.disputeStatus.cardDesc', 'The customer can see whether the dispute is open, under review, or resolved.')}
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

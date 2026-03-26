@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 
 import { useAppContext } from '../../context/AppContext';
@@ -7,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 
 export function CustomerBookingsPage() {
   const { apiClient, session } = useAppContext();
+  const { t } = useTranslation();
 
   const { data } = useQuery({
     queryKey: ['customerBookings', session?.accessToken],
@@ -24,8 +26,8 @@ export function CustomerBookingsPage() {
 
   return (
     <ResponsiveFeedShell
-      title="Bookings"
-      description="Track active, completed, and cancelled bookings in one place."
+      title={t('customerPages.bookings.title', 'Bookings')}
+      description={t('customerPages.bookings.description', 'Track active, completed, and cancelled bookings in one place.')}
     >
       <div className="grid gap-4 md:grid-cols-2">
         {bookings.map((booking) => (

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Users } from 'lucide-react';
 
 import { ActionRail, ResponsiveDetailShell, StatePanel } from '../../components/parity';
@@ -5,10 +6,12 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 
 export function CustomerApplicantsPage() {
+  const { t } = useTranslation();
+
   return (
     <ResponsiveDetailShell
-      title="Applicants"
-      description="Review the taskers who are interested in this task."
+      title={t('customerPages.applicants.title', 'Applicants')}
+      description={t('customerPages.applicants.description', 'Review the taskers who are interested in this task.')}
       primaryAction={
         <Button type="button" variant="secondary">
           Open review panel
@@ -29,7 +32,7 @@ export function CustomerApplicantsPage() {
       <div className="space-y-4">
         <StatePanel
           icon={<Users className="h-5 w-5 text-primary" />}
-          title="Awaiting applicant data"
+          title={t('customerPages.applicants.loading', 'Loading applicants...')}
           description="Hook this page up to a task ID to show the live applicant queue."
           tone="muted"
         />

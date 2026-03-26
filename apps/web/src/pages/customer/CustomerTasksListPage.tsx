@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { CalendarDays, MapPin, Plus } from 'lucide-react';
@@ -12,6 +13,7 @@ import type { Task } from '../../lib/apiClient';
 
 export function CustomerTasksListPage() {
   const { apiClient, session } = useAppContext();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
@@ -34,22 +36,22 @@ export function CustomerTasksListPage() {
 
   return (
     <ResponsiveFeedShell
-      title="My tasks"
-      description="Track what you have posted and jump back into the posting flow."
+      title={t('customerPages.tasksList.title', 'My tasks')}
+      description={t('customerPages.tasksList.description', 'Track what you have posted and jump back into the posting flow.')}
       primaryAction={
         <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
           <Plus className="mr-2 h-4 w-4" />
-          Post new task
+          {t('customerPages.tasksList.postNew', 'Post new task')}
         </Button>
       }
       sideRail={
         <StatePanel
-          title="Need a fresh request?"
-          description="Start a new customer task from the same posting flow."
+          title={t('customerPages.tasksList.freshRequest', 'Need a fresh request?')}
+          description={t('customerPages.tasksList.startNewDesc', 'Start a new customer task from the same posting flow.')}
           tone="muted"
           actions={
             <Button type="button" variant="secondary" onClick={() => navigate('/customer/tasks/new')}>
-              Start posting
+              {t('customerPages.tasksList.startPosting', 'Start posting')}
             </Button>
           }
         />
@@ -57,8 +59,8 @@ export function CustomerTasksListPage() {
     >
       {error ? (
         <StatePanel
-          title="Failed to load tasks"
-          description={error instanceof Error ? error.message : 'Please try again.'}
+          title={t('customerPages.tasksList.errorTitle', 'Failed to load tasks')}
+          description={error instanceof Error ? error.message : t('customerPages.tasksList.tryAgain', 'Please try again.')}
           tone="destructive"
         />
       ) : isLoading ? (
@@ -78,12 +80,12 @@ export function CustomerTasksListPage() {
         </div>
       ) : tasks.length === 0 ? (
         <StatePanel
-          title="No tasks yet"
-          description="Post your first task to start collecting applications."
+          title={t('customerPages.tasksList.noTasks', 'No tasks yet')}
+          description={t('customerPages.tasksList.postFirst', 'Post your first task to start collecting applications.')}
           actions={
             <Button type="button" onClick={() => navigate('/customer/tasks/new')}>
               <Plus className="mr-2 h-4 w-4" />
-              Post new task
+              {t('customerPages.tasksList.postNew', 'Post new task')}
             </Button>
           }
         />
@@ -99,6 +101,8 @@ export function CustomerTasksListPage() {
 }
 
 function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <Card
       className="border-border/60 shadow-sm transition-colors hover:border-primary/50 hover:bg-muted/20"
@@ -115,9 +119,9 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
       <CardContent className="flex items-start justify-between gap-4 p-4">
         <div className="min-w-0 space-y-2">
           <div className="flex items-center gap-2">
-            <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'}>{task.status}</Badge>
+            <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'}>{t(`sharedPages.status.${task.status}`, task.status)}</Badge>
             <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-              Customer task
+              {t('customerPages.tasksList.cardType', 'Customer task')}
             </span>
           </div>
           <h2 className="truncate text-base font-semibold">{task.description}</h2>
@@ -133,9 +137,9 @@ function TaskCard({ task, onOpen }: { task: Task; onOpen: () => void }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-lg font-semibold">{task.budget.toLocaleString()} MNT</div>
+          <div className="text-lg font-semibold">{task.budget.toLocaleString()} {t('sharedPages.currencyMNT', 'MNT')}</div>
           <Button type="button" variant="outline" size="sm" className="mt-2" onClick={onOpen}>
-            View details
+            {t('customerPages.tasksList.viewDetails', 'View details')}
           </Button>
         </div>
       </CardContent>

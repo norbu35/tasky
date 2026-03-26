@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ import { MessageSquareText } from 'lucide-react';
 
 export function CustomerBookingDetailPage() {
   const { apiClient, session } = useAppContext();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get('bookingId') ?? 'booking-1';
 
@@ -26,24 +28,24 @@ export function CustomerBookingDetailPage() {
 
   return (
     <ResponsiveDetailShell
-      title="Booking detail"
-      description="Review the booking status, message the tasker, or continue to safety actions."
+      title={t('customerPages.bookingDetail.title', 'Booking detail')}
+      description={t('customerPages.bookingDetail.description', 'Review the booking status, message the tasker, or continue to safety actions.')}
       primaryAction={
         <Button type="button" variant="secondary">
-          Open booking safety
+          {t('customerPages.bookingDetail.openSafety', 'Open booking safety')}
         </Button>
       }
       detailRail={
         <ActionRail
-          title="Next step"
+          title={t('customerPages.bookingDetail.nextStep', 'Next step')}
           primaryAction={
             <Button type="button" className="w-full">
-              Message tasker
+              {t('customerPages.bookingDetail.messageTasker', 'Message tasker')}
             </Button>
           }
           secondaryActions={
             <Button type="button" variant="outline" className="w-full">
-              Open booking safety
+              {t('customerPages.bookingDetail.openSafety', 'Open booking safety')}
             </Button>
           }
         />
@@ -59,14 +61,14 @@ export function CustomerBookingDetailPage() {
             <MessageSquareText className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <div>Status: {data.status}</div>
-            <div>Tasker: {data.tasker_id}</div>
+            <div>{t('customerPages.bookingDetail.statusLabel', 'Status:')} {data.status}</div>
+            <div>{t('customerPages.bookingDetail.taskerLabel', 'Tasker:')} {data.tasker_id}</div>
           </CardContent>
         </Card>
       ) : (
         <StatePanel
-          title="Loading booking detail"
-          description="Loading booking information."
+          title={t('customerPages.bookingDetail.loadingTitle', 'Loading booking detail')}
+          description={t('customerPages.bookingDetail.loadingDesc', 'Loading booking information.')}
           tone="muted"
         />
       )}

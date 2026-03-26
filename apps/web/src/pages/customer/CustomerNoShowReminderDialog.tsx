@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -17,18 +18,20 @@ export function CustomerNoShowReminderDialog({
   open,
   onOpenChange,
 }: CustomerNoShowReminderDialogProps) {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>No-show reminder</DialogTitle>
+          <DialogTitle>{t('customerPages.noShowReminder.title', 'No-show reminder')}</DialogTitle>
           <DialogDescription>
-            Remind the tasker that the booking is still active and the customer is waiting.
+            {t('customerPages.noShowReminder.description', 'Remind the tasker that the booking is still active and the customer is waiting.')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-            Close
+            {t('customerPages.noShowReminder.close', 'Close')}
           </Button>
         </DialogFooter>
       </DialogContent>

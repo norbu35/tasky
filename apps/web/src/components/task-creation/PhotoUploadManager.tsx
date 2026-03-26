@@ -4,6 +4,7 @@ import { Label } from '../ui/label';
 import { ImagePlus, Loader2, X } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { parseError } from '../../lib/errorHandling';
+import { useTranslation } from 'react-i18next';
 
 interface PhotoUploadManagerProps {
   photoKeys: string[];
@@ -17,6 +18,7 @@ export function PhotoUploadManager({
   maxPhotos = 3,
 }: PhotoUploadManagerProps) {
   const { apiClient, session } = useAppContext();
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,12 +29,12 @@ export function PhotoUploadManager({
     if (!file) return;
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setError('Invalid file type. Only JPG, PNG, and WebP are allowed.');
+      setError(t('taskCreation.photoUpload.invalidType', 'Invalid file type. Only JPG, PNG, and WebP are allowed.'));
       return;
     }
 
     if (photoKeys.length >= maxPhotos) {
-      setError(`You can only upload up to ${maxPhotos} photos.`);
+      setError(t('taskCreation.photoUpload.maxPhotosError', 'You can only upload up to {{maxPhotos}} photos.', { maxPhotos }));
       return;
     }
 
@@ -57,7 +59,7 @@ export function PhotoUploadManager({
       });
 
       if (!uploadResponse.ok) {
-        setError('Failed to upload image to storage layer.');
+        setError(t('taskCreation.photoUpload.uploadFailed', 'Failed to upload image to storage layer.'));
         return;
       }
 
@@ -79,7 +81,7 @@ export function PhotoUploadManager({
   return (
     <div className="grid gap-2">
       <Label>
-        Task Photos ({photoKeys.length}/{maxPhotos})
+        {t('taskCreation.photoUpload.label', 'Task Photos')} ({photoKeys.length}/{maxPhotos})
       </Label>
       <div className="flex flex-wrap gap-4">
         {photoKeys.map((key, index) => (
@@ -115,7 +117,7 @@ export function PhotoUploadManager({
             ) : (
               <>
                 <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Add Photo</span>
+                <span className="text-xs text-muted-foreground">{t('taskCreation.photoUpload.addPhoto', 'Add Photo')}</span>
               </>
             )}
           </button>

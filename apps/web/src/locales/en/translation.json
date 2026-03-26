@@ -25,6 +25,10 @@
     "facebookOutage": "Facebook login is temporarily unavailable. We're working on it."
   },
   "nav": {
+    "home": "Home",
+    "tasks": "Tasks",
+    "findWork": "Find Work",
+    "myJobs": "My Jobs",
     "profile": "Profile",
     "createTask": "Customer",
     "confirmBooking": "Confirm",
@@ -375,5 +379,377 @@
     "customerRequired": "Customer role required",
     "blockedDesc": "Route guard blocked this path because your account role is currently {{role}}.",
     "goToProfile": "Go to profile"
+  },
+  "customerPages": {
+    "applicants": {
+      "title": "Task applicants",
+      "description": "Review and connect with taskers who want to take your job.",
+      "loading": "Loading applicants...",
+      "noApplicants": "No applicants yet",
+      "noApplicantsDesc": "Wait for taskers to apply, or boost your visibility."
+    },
+    "bookingConfirmed": {
+      "title": "Booking confirmed",
+      "description": "The tasker has been booked and the customer flow can continue to timeline or safety.",
+      "backToBookings": "Back to bookings",
+      "summaryTitle": "Confirmation summary",
+      "summaryDesc": "The booking confirmation surface stays available for Phase 1 direct settlement."
+    },
+    "bookingDetail": {
+      "title": "Booking detail",
+      "description": "Review the booking status, message the tasker, or continue to safety actions.",
+      "openSafety": "Open booking safety",
+      "nextStep": "Next step",
+      "messageTasker": "Message tasker",
+      "statusLabel": "Status:",
+      "taskerLabel": "Tasker:",
+      "loadingTitle": "Loading booking detail",
+      "loadingDesc": "Loading booking information."
+    },
+    "bookings": {
+      "title": "Bookings",
+      "description": "Track active, completed, and cancelled bookings in one place."
+    },
+    "disputeRaise": {
+      "title": "Raise dispute",
+      "description": "Open a dispute while keeping Phase 1 settlement rules intact.",
+      "submitAction": "Submit dispute",
+      "cardTitle": "Raise a dispute",
+      "cardDesc": "Capture the reason, evidence, and resolution request before escalation."
+    },
+    "disputeStatus": {
+      "title": "Dispute status",
+      "description": "Review the current dispute state and the next support action.",
+      "contactSupport": "Contact support",
+      "cardTitle": "Resolution status",
+      "cardDesc": "The customer can see whether the dispute is open, under review, or resolved."
+    },
+    "noApplicantRescue": {
+      "title": "No applicants yet",
+      "description": "Keep the task visible and help the customer recover when nobody has applied.",
+      "boostVisibility": "Boost visibility",
+      "recoveryTitle": "Recovery options",
+      "recoveryDesc": "Prompt the customer to adjust price, timing, or description.",
+      "rescueTitle": "Rescue options",
+      "rescueDesc": "Keep the task in the queue and suggest a cheaper or more flexible rebook path."
+    },
+    "noShowReminder": {
+      "title": "No-show reminder",
+      "description": "Remind the tasker that the booking is still active and the customer is waiting.",
+      "close": "Close"
+    },
+    "rebook": {
+      "title": "Rebook task",
+      "description": "Start a new booking from the prior task details without breaking direct settlement.",
+      "continueAction": "Continue rebook",
+      "cardTitle": "Rebook summary",
+      "cardDesc": "Reuse the same customer details while letting the user choose a fresh schedule."
+    },
+    "reschedule": {
+      "title": "Reschedule booking",
+      "description": "Update the booking time while preserving the Phase 1 direct settlement flow.",
+      "saveChanges": "Save changes",
+      "cardTitle": "Choose a new time",
+      "cardDesc": "Keep the booking on the customer timeline until the new time is confirmed."
+    },
+    "taskCancel": {
+      "title": "Cancel task?",
+      "description": "Stopping this task will remove it from the active customer flow.",
+      "keepTask": "Keep task",
+      "cancelTask": "Cancel task"
+    },
+    "taskSuccess": {
+      "title": "Task posted successfully",
+      "description": "Your task is live and ready for taskers to review.",
+      "stepLabel": "Customer posting complete",
+      "backToTasks": "Back to tasks",
+      "postAnother": "Post another task",
+      "liveTitle": "Task live",
+      "liveDesc": "Taskers can now browse, review, and apply."
+    },
+    "taskWizard": {
+      "title": "Post a new task",
+      "description": "Describe what you need, where, and your budget.",
+      "cancelPosting": "Cancel posting",
+      "progressTitle": "Posting progress",
+      "stepCategory": "Category",
+      "stepDetails": "Details",
+      "stepLocation": "Location",
+      "stepReview": "Review",
+      "nextStep": "Next step",
+      "back": "Back",
+      "confirmPost": "Confirm & Post",
+      "categoryTitle": "What needs to be done?",
+      "categoryDesc": "Select a category to get matched faster.",
+      "detailsTitle": "Task details",
+      "detailsDesc": "Provide specific details to help taskers understand.",
+      "descLabel": "Description",
+      "descPlaceholder": "Explain what you need done in detail...",
+      "descRequired": "Description is required (minimum 10 characters).",
+      "scheduleLabel": "When do you need this?",
+      "budgetLabel": "Estimated budget (MNT)",
+      "budgetInfo": "This is an estimate. Final price is agreed with the tasker.",
+      "invalidBudget": "Please enter a valid budget relative to the minimum category price.",
+      "photosTitle": "Task Photos",
+      "photosHelp": "Help taskers understand the work."
+    },
+    "taskerProfile": {
+      "title": "Tasker profile",
+      "description": "Review the tasker before you confirm or message them.",
+      "openProfile": "Open profile",
+      "primaryActions": "Primary actions",
+      "messageTasker": "Message tasker",
+      "openChat": "Open chat",
+      "verifiedTasker": "Verified Tasker",
+      "trustedLabel": "Trusted for Phase 1 customer bookings and direct settlement flows.",
+      "ratingStats": "{{rating}} rating from {{count}} jobs",
+      "responseDetail": "Responds quickly during business hours"
+    },
+    "tasksList": {
+      "title": "My tasks",
+      "description": "Track what you have posted and jump back into the posting flow.",
+      "postNew": "Post new task",
+      "freshRequestTitle": "Need a fresh request?",
+      "freshRequestDesc": "Start a new customer task from the same posting flow.",
+      "startPosting": "Start posting",
+      "loadingError": "Failed to load tasks",
+      "tryAgain": "Please try again.",
+      "noTasks": "No tasks yet",
+      "noTasksDesc": "Post your first task to start collecting applications.",
+      "customerTask": "Customer task",
+      "viewDetails": "View details"
+    },
+    "timeline": {
+      "title": "Booking timeline",
+      "description": "Follow the booking from confirmation to completion and disputes.",
+      "backToBooking": "Back to booking",
+      "cardTitle": "Timeline",
+      "confirmedLabel": "Booking confirmed",
+      "confirmedDesc": "Customer accepted the tasker",
+      "inProgressLabel": "Task in progress",
+      "inProgressDesc": "Tasker is on the way",
+      "awaitingLabel": "Awaiting completion",
+      "awaitingDesc": "Capture final review or raise a dispute"
+    }
+  },
+  "sharedPages": {
+    "appUpdate": {
+      "title": "Update required",
+      "description": "A new version of the app is available. Please update to continue.",
+      "updateNow": "Update now",
+      "cardTitle": "Required changes",
+      "cardDesc": "This maintains backward compatibility and enforces API version checks."
+    },
+    "banned": {
+      "title": "Account banned",
+      "description": "This account can no longer access the marketplace."
+    },
+    "chatDetail": {
+      "title": "Conversation",
+      "description": "Direct chat bounded to an active task booking.",
+      "sendMessage": "Send message",
+      "messageHistory": "Message history",
+      "historyDesc": "Chat UI handles simple text exchanges during Phase 0."
+    },
+    "deleteAccount": {
+      "title": "Delete account",
+      "description": "Permanently remove your account and data.",
+      "confirmDelete": "Confirm deletion",
+      "cardTitle": "Account erasure",
+      "cardDesc": "This action cannot be undone. All active tasks will be canceled."
+    },
+    "editProfile": {
+      "title": "Edit profile",
+      "description": "Update your public display information.",
+      "saveChanges": "Save changes",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "bio": "Bio",
+      "successTitle": "Profile updated",
+      "successDesc": "Your changes have been saved successfully."
+    },
+    "help": {
+      "title": "Help center",
+      "description": "Find answers or contact our support team.",
+      "cardTitle": "Common questions",
+      "cardDesc": "FAQ integration limits manual support overhead early on."
+    },
+    "inbox": {
+      "title": "Inbox",
+      "description": "Recent messages from taskers and customers.",
+      "cardTitle": "Messages list",
+      "cardDesc": "Aggregated view of active booking chats."
+    },
+    "networkError": {
+      "title": "Connectivity issues",
+      "description": "Unable to reach the Tasky services.",
+      "retry": "Retry connection",
+      "cardTitle": "Offline state",
+      "cardDesc": "Check your internet connection and try again."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Recent alerts and updates.",
+      "cardTitle": "Activity feed",
+      "cardDesc": "Lists booking updates, payments, and system alerts."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "How we collect, use, and protect your information.",
+      "cardTitle": "Data handling",
+      "cardDesc": "Standard privacy terms covering PII and booking history."
+    },
+    "reviewHardLock": {
+      "title": "Review prior booking",
+      "description": "You must review your last completed task before continuing.",
+      "submitReview": "Submit review",
+      "cardTitle": "Feedback required",
+      "cardDesc": "Forces quality signal capture to build market trust."
+    },
+    "review": {
+      "title": "Leave a review",
+      "description": "Capture a quick quality signal before the journey closes.",
+      "submitReview": "Submit review",
+      "reviewNotes": "Review notes",
+      "stars": "{{count}} stars",
+      "thanksTitle": "Thanks for submitting feedback.",
+      "thanksDesc": "Rating recorded.",
+      "thanksDescRated": "Rating recorded: {{rating}}/5."
+    },
+    "reviewReminder": {
+      "title": "Don't forget to review",
+      "description": "Please take a moment to rate your recent experience.",
+      "close": "Close"
+    },
+    "sessionExpired": {
+      "title": "Session expired",
+      "description": "Please log in again to continue using the app."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage notifications, language, and preferences.",
+      "cardTitle": "App preferences",
+      "cardDesc": "Push toggles and localized language selection."
+    },
+    "suspended": {
+      "title": "Account suspended",
+      "description": "Temporary hold placed on this account.",
+      "cardTitle": "Review active",
+      "cardDesc": "Contact support to resolve the suspension."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "description": "The rules governing marketplace usage.",
+      "cardTitle": "Legal agreement",
+      "cardDesc": "Defines direct settlement boundaries and dispute limits."
+    }
+  },
+  "taskerPages": {
+    "applicationSent": {
+      "title": "Application sent",
+      "description": "Your application has been sent to the customer and is waiting for review.",
+      "backToFeed": "Back to feed",
+      "sentDesc": "Application sent."
+    },
+    "bookingDetail": {
+      "title": "Booking detail",
+      "description": "Review booking status, timeline, and support actions.",
+      "cardDesc": "Taskers can review the booking and respond to issues here."
+    },
+    "cancelDialog": {
+      "title": "Cancel booking",
+      "description": "Cancel an assigned booking with a reason.",
+      "cardDesc": "Taskers confirm cancellations before the booking is updated."
+    },
+    "jobs": {
+      "title": "My jobs",
+      "description": "Track active and completed tasks you have been hired for.",
+      "cardTitle": "Jobs feed",
+      "cardDesc": "Switch between active and past work histories."
+    },
+    "noShowDialog": {
+      "title": "No-show reminder",
+      "description": "Record a no-show reminder before escalation.",
+      "cardDesc": "This keeps the manual verification and dispute process explicit for Phase 1."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "How tasker data is handled in Phase 1.",
+      "cardDesc": "We only show the minimum task details needed to complete assigned jobs safely."
+    },
+    "profilePolish": {
+      "title": "AI profile polish",
+      "description": "Refine your tasker profile copy before publishing.",
+      "cardDesc": "Phase 1 uses a simple review-and-apply loop for profile improvements."
+    },
+    "stats": {
+      "title": "Tasker stats",
+      "description": "View a concise performance summary.",
+      "desc1": "Completion rate, rating, and response time stay visible for taskers.",
+      "desc2": "Phase 1 keeps the stats surface lightweight and auditable."
+    },
+    "taskDetail": {
+      "title": "Task detail",
+      "description": "Review the public task before applying.",
+      "desc1": "Task summary, budget, and approximate location are shown here.",
+      "desc2": "Manual verification stays intact for Phase 0-1 tasker access."
+    }
+  },
+  "verification": {
+    "approved": {
+      "title": "Verification approved",
+      "description": "Your identity has been approved.",
+      "cardDesc": "You can now accept jobs with a verified tasker profile."
+    },
+    "consent": {
+      "title": "Verification consent",
+      "description": "Confirm the verification policy before uploading documents.",
+      "cardDesc": "By continuing, you confirm that the uploaded documents belong to you."
+    },
+    "gate": {
+      "title": "Identity verification",
+      "description": "Start your tasker verification flow.",
+      "cardDesc": "Manual review is required before a tasker can accept jobs."
+    },
+    "pending": {
+      "title": "Verification pending",
+      "description": "Your submission is awaiting manual review.",
+      "cardDesc": "We will notify you when your verification is reviewed."
+    },
+    "rejected": {
+      "title": "Verification rejected",
+      "description": "Review the rejection reason and try again.",
+      "cardDesc": "Fix the issues noted by the reviewer before resubmitting."
+    },
+    "submitted": {
+      "title": "Verification submitted",
+      "description": "Your verification documents are in the queue.",
+      "cardDesc": "Submission is recorded and waiting for the reviewer queue."
+    },
+    "upload": {
+      "title": "Upload verification documents",
+      "description": "Upload the front and back of your ID card.",
+      "cardDesc": "Phase 1 keeps the upload step simple and reviewable."
+    }
+  },
+  "taskCreation": {
+    "locationPicker": {
+      "mapLocation": "Map Location",
+      "clickMap": "Click on the map to place the location pin."
+    },
+    "photoUpload": {
+      "taskPhotos": "Task Photos",
+      "addPhoto": "Add Photo",
+      "invalidType": "Invalid file type. Only JPG, PNG, and WebP are allowed.",
+      "maxPhotos": "You can only upload up to {{max}} photos.",
+      "uploadStoredFailed": "Failed to upload image to storage layer."
+    },
+    "intakeForm": {
+      "select": "Select...",
+      "yes": "Yes",
+      "no": "No",
+      "decrement": "Decrement",
+      "increment": "Increment"
+    }
   }
 }
