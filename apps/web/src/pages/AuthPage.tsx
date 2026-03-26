@@ -199,7 +199,8 @@ export function AuthPage() {
       setSession(session);
       setProfile(null);
       await refreshProfile();
-      navigate(returnPath, { replace: true });
+      const destination = role === 'ADMIN' ? '/admin/verifications' : returnPath;
+      navigate(destination, { replace: true });
     } catch (error) {
       toast.error(parseError(error));
     } finally {
