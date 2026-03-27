@@ -22,9 +22,6 @@ export interface IntakeFormRendererProps {
   locale?: 'en' | 'mn';
 }
 
-// Add i18n hook
-import { useTranslation } from 'react-i18next';
-
 function getLabel(item: { label: string; label_mn: string }, locale: 'en' | 'mn'): string {
   return locale === 'mn' ? item.label_mn : item.label;
 }

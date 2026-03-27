@@ -136,7 +136,7 @@ export function AdminLeadPricingPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
-              {t('admin.pricing.loadError', 'Failed to load lead unlock prices')}
+              {error ?? t('admin.pricing.loadError', 'Failed to load lead unlock prices')}
             </p>
             <Button onClick={fetchPrices}>{t('common.retry', 'Retry')}</Button>
           </CardContent>
@@ -152,9 +152,7 @@ export function AdminLeadPricingPage() {
           <Tag className="h-6 w-6" />
           {t('admin.pricing.title', 'Lead Pricing')}
         </h1>
-        <Button onClick={handleOpenDialog}>
-          {t('admin.pricing.create', 'Create Price')}
-        </Button>
+        <Button onClick={handleOpenDialog}>{t('admin.pricing.create', 'Create Price')}</Button>
       </div>
 
       {prices.length === 0 ? (
@@ -201,9 +199,7 @@ export function AdminLeadPricingPage() {
                     {new Date(price.effective_from).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
-                    {price.effective_to
-                      ? new Date(price.effective_to).toLocaleDateString()
-                      : '—'}
+                    {price.effective_to ? new Date(price.effective_to).toLocaleDateString() : '—'}
                   </td>
                 </tr>
               ))}
@@ -217,12 +213,17 @@ export function AdminLeadPricingPage() {
           <DialogHeader>
             <DialogTitle>{t('admin.pricing.createTitle', 'Create Price Rule')}</DialogTitle>
             <DialogDescription>
-              {t('admin.pricing.createDesc', 'Set a lead unlock credit requirement for a category and district.')}
+              {t(
+                'admin.pricing.createDesc',
+                'Set a lead unlock credit requirement for a category and district.',
+              )}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label htmlFor="price-category">{t('admin.pricing.colCategory', 'Category ID')}</Label>
+              <Label htmlFor="price-category">
+                {t('admin.pricing.colCategory', 'Category ID')}
+              </Label>
               <Input
                 id="price-category"
                 placeholder={t('admin.pricing.categoryPlaceholder', 'Category UUID')}
@@ -231,7 +232,9 @@ export function AdminLeadPricingPage() {
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="price-district">{t('admin.pricing.colDistrict', 'District ID')}</Label>
+              <Label htmlFor="price-district">
+                {t('admin.pricing.colDistrict', 'District ID')}
+              </Label>
               <Input
                 id="price-district"
                 placeholder={t('admin.pricing.districtPlaceholder', 'District slug')}
@@ -240,7 +243,9 @@ export function AdminLeadPricingPage() {
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="price-credits">{t('admin.pricing.colCredits', 'Credits Required')}</Label>
+              <Label htmlFor="price-credits">
+                {t('admin.pricing.colCredits', 'Credits Required')}
+              </Label>
               <Input
                 id="price-credits"
                 type="number"

@@ -228,7 +228,7 @@ export function AdminModerationPage() {
 
           <p className="text-xs text-muted-foreground pt-2">
             {t('admin.moderation.updatedAt', 'Last updated')}:{' '}
-            {new Date(policy.updatedAt).toLocaleString()}
+            {policy.updatedAt ? new Date(policy.updatedAt).toLocaleString() : '—'}
           </p>
         </CardContent>
       </Card>

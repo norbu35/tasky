@@ -65,6 +65,9 @@ import {
   AdminCategoriesPage,
   AdminFeaturesPage,
   AdminConciergePage,
+  AdminModerationPage,
+  AdminPayoutsPage,
+  AdminLeadPricingPage,
 } from '../pages/admin';
 import { ProtectedRoute, RoleGuard } from './RouteGuards';
 import { AdminRoute } from './AdminRoute';
@@ -626,6 +629,9 @@ export function AppRoutes() {
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="features" element={<AdminFeaturesPage />} />
         <Route path="concierge" element={<AdminConciergePage />} />
+        <Route path="moderation" element={<AdminModerationPage />} />
+        <Route path="payouts" element={<AdminPayoutsPage />} />
+        <Route path="pricing" element={<AdminLeadPricingPage />} />
       </Route>
       <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>

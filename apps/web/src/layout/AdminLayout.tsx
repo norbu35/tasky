@@ -1,6 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, AlertTriangle, Users, FolderTree, ToggleLeft, Headset } from 'lucide-react';
+import {
+  ShieldCheck,
+  AlertTriangle,
+  Users,
+  FolderTree,
+  ToggleLeft,
+  Headset,
+  Scale,
+  Banknote,
+  Tag,
+} from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useAppContext } from '../context/AppContext';
 
@@ -21,6 +31,9 @@ const NAV_ITEMS = [
   },
   { to: '/admin/features', icon: ToggleLeft, label: 'admin.nav.features', fallback: 'Features' },
   { to: '/admin/concierge', icon: Headset, label: 'admin.nav.concierge', fallback: 'Concierge' },
+  { to: '/admin/moderation', icon: Scale, label: 'admin.nav.moderation', fallback: 'Moderation' },
+  { to: '/admin/payouts', icon: Banknote, label: 'admin.nav.payouts', fallback: 'Payouts' },
+  { to: '/admin/pricing', icon: Tag, label: 'admin.nav.pricing', fallback: 'Pricing' },
 ] as const;
 
 export function AdminLayout() {
