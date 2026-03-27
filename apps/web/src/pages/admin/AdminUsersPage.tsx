@@ -64,11 +64,11 @@ export function AdminUsersPage() {
       const result = await apiClient.adminSearchUsers(session.accessToken, phone);
       setUsers(result.data);
     } catch (err) {
-      setSearchError(err instanceof Error ? err.message : 'Failed to search users');
+      setSearchError(err instanceof Error ? err.message : t('admin.users.searchError', 'Failed to search users'));
     } finally {
       setSearchLoading(false);
     }
-  }, [apiClient, session, phone]);
+  }, [apiClient, session, phone, t]);
 
   // ── Ban handler ──────────────────────────────────────────────────
   const handleBan = async () => {
@@ -79,7 +79,7 @@ export function AdminUsersPage() {
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
       toast.success(t('admin.users.banSuccess', 'User banned successfully'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to ban user');
+      toast.error(err instanceof Error ? err.message : t('admin.users.banError', 'Failed to ban user'));
     } finally {
       setBanBusy(false);
       setBanTarget(null);
@@ -95,7 +95,7 @@ export function AdminUsersPage() {
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
       toast.success(t('admin.users.unbanSuccess', 'User unbanned successfully'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to unban user');
+      toast.error(err instanceof Error ? err.message : t('admin.users.unbanError', 'Failed to unban user'));
     }
   };
 
@@ -108,12 +108,12 @@ export function AdminUsersPage() {
       const result = await apiClient.adminListFlaggedMessages(session.accessToken);
       setFlaggedMessages(result.data);
     } catch (err) {
-      setFlaggedError(err instanceof Error ? err.message : 'Failed to load flagged messages');
+      setFlaggedError(err instanceof Error ? err.message : t('admin.users.loadFlaggedError', 'Failed to load flagged messages'));
     } finally {
       setFlaggedLoading(false);
       setFlaggedLoaded(true);
     }
-  }, [apiClient, session]);
+  }, [apiClient, session, t]);
 
   const [activeTab, setActiveTab] = useState('search');
 

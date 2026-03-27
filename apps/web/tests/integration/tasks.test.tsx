@@ -42,7 +42,7 @@ describe('Tasks Integration', () => {
       />,
     );
 
-    await screen.findByRole('heading', { name: 'Create task' });
+    await screen.findByRole('heading', { name: 'Post a new task' });
     expect(
       screen.getByText(/add photos and place the map pin so taskers can find the job/i),
     ).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe('Tasks Integration', () => {
     fireEvent.change(screen.getByLabelText('Task details'), {
       target: { value: 'Deep clean two-bedroom apartment with kitchen and bathroom.' },
     });
-    fireEvent.change(screen.getByLabelText('Budget (MNT)'), {
+    fireEvent.change(screen.getByLabelText('Estimated budget (MNT)'), {
       target: { value: '120000' },
     });
     fireEvent.change(screen.getByLabelText('Address description'), {

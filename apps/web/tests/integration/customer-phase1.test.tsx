@@ -127,14 +127,14 @@ describe('Customer phase 1 parity', () => {
 
     renderWithProviders(<CustomerTaskWizardPage />, apiClient);
 
-    expect(await screen.findByRole('heading', { name: 'Create task' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Post a new task' })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText('Room count')).toBeInTheDocument();
     });
 
     await user.type(screen.getByRole('spinbutton', { name: /Room count/i }), '2');
-    await user.clear(screen.getByLabelText('Budget (MNT)'));
-    await user.type(screen.getByLabelText('Budget (MNT)'), '120000');
+    await user.clear(screen.getByLabelText('Estimated budget (MNT)'));
+    await user.type(screen.getByLabelText('Estimated budget (MNT)'), '120000');
     await user.clear(screen.getByLabelText('Address description'));
     await user.type(screen.getByLabelText('Address description'), 'ХУД 15-р хороо');
     await user.type(screen.getByLabelText('Scheduled at'), localDateTimeInput(24));
@@ -167,8 +167,8 @@ describe('Customer phase 1 parity', () => {
   it('renders the customer applicants page with tasker cards and review actions', () => {
     renderWithProviders(<CustomerApplicantsPage />);
 
-    expect(screen.getByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
-    expect(screen.getByText('Awaiting applicant data')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Task applicants' })).toBeInTheDocument();
+    expect(screen.getByText('Loading applicants...')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Review task' })).toBeInTheDocument();
   });
 

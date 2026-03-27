@@ -48,11 +48,11 @@ export function AdminDisputesPage() {
       const result = await apiClient.adminListDisputes(session.accessToken);
       setDisputes(result.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session]);
+  }, [apiClient, session, t]);
 
   useEffect(() => {
     fetchDisputes();
@@ -134,7 +134,9 @@ export function AdminDisputesPage() {
               >
                 <td className="px-4 py-3">{truncate(dispute.reason, 80)}</td>
                 <td className="px-4 py-3">
-                  <Badge variant={disputeStatusVariant(dispute.status)}>{dispute.status}</Badge>
+                  <Badge variant={disputeStatusVariant(dispute.status)}>
+                    {t(`admin.disputes.status_${dispute.status}`, dispute.status)}
+                  </Badge>
                 </td>
                 <td className="px-4 py-3">{formatDate(dispute.created_at)}</td>
               </tr>

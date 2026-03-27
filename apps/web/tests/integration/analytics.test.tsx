@@ -47,7 +47,7 @@ describe('Analytics Integration', () => {
       />,
     );
 
-    await screen.findByRole('heading', { name: 'Create task' });
+    await screen.findByRole('heading', { name: 'Post a new task' });
     const categorySelect = screen.getByLabelText('Category') as HTMLSelectElement;
     await waitFor(() => {
       expect(categorySelect.options.length).toBeGreaterThan(1);
@@ -58,7 +58,7 @@ describe('Analytics Integration', () => {
     fireEvent.change(screen.getByLabelText('Task details'), {
       target: { value: 'Analytics deep cleaning request for TID-090 coverage.' },
     });
-    fireEvent.change(screen.getByLabelText('Budget (MNT)'), {
+    fireEvent.change(screen.getByLabelText('Estimated budget (MNT)'), {
       target: { value: '98000' },
     });
     fireEvent.change(screen.getByLabelText('Address description'), {

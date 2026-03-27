@@ -30,7 +30,7 @@ export function ReviewPage() {
               type="button"
               variant={rating === value ? 'default' : 'outline'}
             >
-              {t('sharedPages.review.stars', '{{value}} stars', { value })}
+              {t('sharedPages.review.stars', '{{count}} stars', { count: value })}
             </Button>
           ))}
         </div>

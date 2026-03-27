@@ -24,7 +24,6 @@ export function AdminPayoutsPage() {
 
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [pageState, setPageState] = useState<PageState>('loading');
-  const [error, setError] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 
@@ -33,7 +32,6 @@ export function AdminPayoutsPage() {
   const fetchPayouts = useCallback(async () => {
     if (!accessToken) return;
     setPageState('loading');
-    setError(null);
     try {
       const result = await apiClient.adminListPendingPayouts(accessToken);
       setPayouts(result.data);
@@ -43,7 +41,6 @@ export function AdminPayoutsPage() {
       if (status === 503) {
         setPageState('phase-gated');
       } else {
-        setError(err instanceof Error ? err.message : 'Unknown error');
         setPageState('error');
       }
     }

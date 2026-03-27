@@ -83,7 +83,7 @@ describe('Navigation phase 1 parity', () => {
   it('routes the customer applicants surface through the real app shell', async () => {
     renderApp('/customer/tasks/task-1/applicants');
 
-    expect(await screen.findByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Task applicants' })).toBeInTheDocument();
   });
 
   it('routes the customer tasker profile surface through the real app shell', async () => {
@@ -94,7 +94,7 @@ describe('Navigation phase 1 parity', () => {
 
   it('routes the app update and customer bookings surfaces through the real app shell', async () => {
     renderApp('/app-update');
-    expect(await screen.findByRole('heading', { name: 'App update available' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Update required' })).toBeInTheDocument();
 
     cleanup();
 
@@ -104,7 +104,7 @@ describe('Navigation phase 1 parity', () => {
 
   it('routes the tasker parity surfaces through the real app shell', async () => {
     renderApp('/tasker/jobs', 'TASKER');
-    expect(await screen.findByRole('heading', { name: 'My Jobs' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My jobs' })).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: 'Find Work' })).toSatisfy((links) =>
       links.every((link: HTMLAnchorElement) => link.getAttribute('href') === '/tasker/feed'),
     );

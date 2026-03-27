@@ -59,11 +59,12 @@ describe('Shared parity pages', () => {
         <ChatDetailPage />
       </>,
     );
+    screen.debug();
 
     expect(screen.getByRole('heading', { name: 'Inbox' })).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search conversations')).toBeInTheDocument();
     expect(screen.getByText('Apartment cleaning')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Chat detail' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Conversation' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Send message' })).toBeInTheDocument();
   });
 
@@ -82,7 +83,7 @@ describe('Shared parity pages', () => {
     expect(screen.getByRole('heading', { name: 'Settings' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Delete account' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save profile' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Logout' })[0]).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Delete permanently' })).toBeDisabled();
   });
 
@@ -100,12 +101,12 @@ describe('Shared parity pages', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Leave a review' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Reviews required' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Review prior booking' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Account suspended' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Account banned' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Network error' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Connectivity issues' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Session expired' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'App update available' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Update required' })).toBeInTheDocument();
   });
 
   it('renders the reminder dialog', () => {
@@ -115,7 +116,7 @@ describe('Shared parity pages', () => {
       </>,
     );
 
-    expect(screen.getByRole('dialog', { name: 'Leave a review reminder' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: "Don't forget to review" })).toBeInTheDocument();
   });
 
   it('renders help, terms, and privacy surfaces', () => {
@@ -127,7 +128,7 @@ describe('Shared parity pages', () => {
       </>,
     );
 
-    expect(screen.getByRole('heading', { name: 'Help & support' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Help center' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Terms of service' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Privacy policy' })).toBeInTheDocument();
   });

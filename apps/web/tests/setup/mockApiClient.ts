@@ -170,63 +170,75 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     adminListPendingVerifications: vi
       .fn()
       .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
-    adminApproveVerification: vi
-      .fn()
-      .mockResolvedValue({
-        id: 'v-1',
-        user_id: 'u-1',
-        status: 'APPROVED',
-        submitted_at: '2026-01-01T00:00:00Z',
-      }),
-    adminRejectVerification: vi
-      .fn()
-      .mockResolvedValue({
-        id: 'v-1',
-        user_id: 'u-1',
-        status: 'REJECTED',
-        submitted_at: '2026-01-01T00:00:00Z',
-      }),
+    adminApproveVerification: vi.fn().mockResolvedValue({
+      id: 'v-1',
+      user_id: 'u-1',
+      status: 'APPROVED',
+      submitted_at: '2026-01-01T00:00:00Z',
+    }),
+    adminRejectVerification: vi.fn().mockResolvedValue({
+      id: 'v-1',
+      user_id: 'u-1',
+      status: 'REJECTED',
+      submitted_at: '2026-01-01T00:00:00Z',
+    }),
     adminListDisputes: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
-    adminGetDispute: vi
-      .fn()
-      .mockResolvedValue({
-        dispute: baseDispute,
-        booking: baseBooking,
-        conversation_id: null,
-        evidence_messages: [],
-      }),
+    adminGetDispute: vi.fn().mockResolvedValue({
+      dispute: baseDispute,
+      booking: baseBooking,
+      conversation_id: null,
+      evidence_messages: [],
+    }),
     adminResolveDispute: vi.fn().mockResolvedValue(baseDispute),
-    adminGetStrikePolicy: vi
+    adminGetStrikePolicy: vi.fn().mockResolvedValue({
+      strikeWindowDays: 30,
+      strikeThreshold: 3,
+      firstSuspensionDays: 7,
+      repeatSuspensionDays: 30,
+      repeatOffenseWindowDays: 90,
+      autoUnsuspendEnabled: true,
+      updatedAt: '2026-01-01T00:00:00Z',
+    }),
+    adminUpdateStrikePolicy: vi.fn().mockResolvedValue({
+      strikeWindowDays: 30,
+      strikeThreshold: 3,
+      firstSuspensionDays: 7,
+      repeatSuspensionDays: 30,
+      repeatOffenseWindowDays: 90,
+      autoUnsuspendEnabled: true,
+      updatedAt: '2026-01-01T00:00:00Z',
+    }),
+    adminListPendingPayouts: vi
       .fn()
-      .mockResolvedValue({
-        strikeWindowDays: 30,
-        strikeThreshold: 3,
-        firstSuspensionDays: 7,
-        repeatSuspensionDays: 30,
-        repeatOffenseWindowDays: 90,
-        autoUnsuspendEnabled: true,
-        updatedAt: '2026-01-01T00:00:00Z',
-      }),
-    adminUpdateStrikePolicy: vi
+      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+    adminProcessPayout: vi.fn().mockResolvedValue({
+      id: 'payout-1',
+      user_id: 'user-1',
+      amount: 50000,
+      bank_name: 'Khan Bank',
+      bank_account: '1234567890',
+      status: 'PROCESSED',
+      created_at: '2026-01-01T00:00:00Z',
+      processed_at: '2026-01-02T00:00:00Z',
+    }),
+    adminListLeadUnlockPrices: vi
       .fn()
-      .mockResolvedValue({
-        strikeWindowDays: 30,
-        strikeThreshold: 3,
-        firstSuspensionDays: 7,
-        repeatSuspensionDays: 30,
-        repeatOffenseWindowDays: 90,
-        autoUnsuspendEnabled: true,
-        updatedAt: '2026-01-01T00:00:00Z',
-      }),
+      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+    adminCreateLeadUnlockPrice: vi.fn().mockResolvedValue({
+      id: 'price-1',
+      category_id: 'cat-1',
+      district_id: 'dist-1',
+      credits_required: 100,
+      effective_from: '2026-01-01T00:00:00Z',
+      effective_to: null,
+    }),
     adminListFeatureToggles: vi.fn().mockResolvedValue({ data: [] }),
-    adminUpdateFeatureToggle: vi
-      .fn()
-      .mockResolvedValue({
-        feature_name: 'lead_fee_enabled',
-        is_enabled: false,
-        updated_by: null,
-        updated_at: '2026-01-01T00:00:00Z',
-      }),
+    adminUpdateFeatureToggle: vi.fn().mockResolvedValue({
+      feature_name: 'lead_fee_enabled',
+      is_enabled: false,
+      updated_by: null,
+      updated_at: '2026-01-01T00:00:00Z',
+    }),
     adminConciergeAssignTask: vi.fn().mockResolvedValue(baseBooking),
     adminListCategories: vi
       .fn()

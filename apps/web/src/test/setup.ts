@@ -15,3 +15,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 import '@testing-library/jest-dom/vitest';
+import i18n from '../lib/i18n';
+
+// Force i18n to use English in all tests to avoid failures due to default Mongolian fallback
+i18n.changeLanguage('en');

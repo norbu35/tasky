@@ -34,7 +34,6 @@ export function AdminLeadPricingPage() {
 
   const [prices, setPrices] = useState<LeadUnlockPrice[]>([]);
   const [pageState, setPageState] = useState<PageState>('loading');
-  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<LeadUnlockPricePayload>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -44,7 +43,6 @@ export function AdminLeadPricingPage() {
   const fetchPrices = useCallback(async () => {
     if (!accessToken) return;
     setPageState('loading');
-    setError(null);
     try {
       const result = await apiClient.adminListLeadUnlockPrices(accessToken);
       setPrices(result.data);
@@ -54,7 +52,6 @@ export function AdminLeadPricingPage() {
       if (status === 503) {
         setPageState('phase-gated');
       } else {
-        setError(err instanceof Error ? err.message : 'Unknown error');
         setPageState('error');
       }
     }

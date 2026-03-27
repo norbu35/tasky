@@ -84,7 +84,7 @@ export function AdminConciergePage() {
       setBooking(result);
       setPageState('success');
     } catch (err) {
-      setAssignError(err instanceof Error ? err.message : 'Assignment failed');
+      setAssignError(err instanceof Error ? err.message : t('admin.concierge.assignmentFailed', 'Assignment failed'));
       setPageState('assign-error');
     }
   };

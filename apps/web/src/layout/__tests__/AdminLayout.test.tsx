@@ -227,7 +227,7 @@ describe('AdminLayout', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('button', { name: /sign out/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
   });
 
   it('renders Outlet for child content', () => {

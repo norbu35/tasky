@@ -213,7 +213,7 @@ describe('Tasker phase 1 parity', () => {
       apiClient,
     );
 
-    expect(await screen.findByRole('heading', { name: 'My Jobs' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Identity Verification' })).toBeInTheDocument();
   });
 
@@ -221,6 +221,7 @@ describe('Tasker phase 1 parity', () => {
     renderWithProviders(
       <>
         <TaskerTaskDetailPage />
+        <TaskerTasksPage />
         <TaskerJobsPage />
         <TaskerBookingDetailPage />
         <TaskerNoShowDialog />
@@ -240,7 +241,8 @@ describe('Tasker phase 1 parity', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'Task detail' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'My Jobs' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'My jobs' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Booking detail' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'No-show reminder' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Cancel booking' })).toBeInTheDocument();

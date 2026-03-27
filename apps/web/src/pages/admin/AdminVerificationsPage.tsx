@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { differenceInHours, differenceInMinutes } from 'date-fns';
 import { CheckCircle, ChevronDown, ChevronRight, RefreshCw, XCircle } from 'lucide-react';
 import type { VerificationDetail } from '../../lib/apiClient';
@@ -20,18 +21,18 @@ interface SlaInfo {
   colorClass: string;
 }
 
-function computeSla(submittedAt: string, now: Date): SlaInfo {
+function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   const submitted = new Date(submittedAt);
   const deadlineMs = submitted.getTime() + SLA_HOURS * 60 * 60 * 1000;
   const remainingMs = deadlineMs - now.getTime();
 
   if (remainingMs <= 0) {
-    return { label: 'Overdue', colorClass: 'bg-red-700 text-white' };
+    return { label: t('admin.verifications.overdue', 'Overdue'), colorClass: 'bg-red-700 text-white' };
   }
 
   const hoursLeft = differenceInHours(deadlineMs, now);
   const minutesLeft = differenceInMinutes(deadlineMs, now) % 60;
-  const label = `${hoursLeft}h ${minutesLeft}m`;
+  const label = t('admin.verifications.slaTimeLeft', '{{hours}}h {{minutes}}m', { hours: hoursLeft, minutes: minutesLeft });
 
   if (hoursLeft >= 12) {
     return { label, colorClass: 'bg-green-100 text-green-800 border-green-300' };
@@ -199,7 +200,7 @@ export function AdminVerificationsPage() {
 
       <div className="space-y-3">
         {verifications.map((v) => {
-          const sla = computeSla(v.submitted_at, now);
+          const sla = computeSla(v.submitted_at, now, t);
           const isExpanded = expandedId === v.id;
           const isRejecting = rejectingId === v.id;
 

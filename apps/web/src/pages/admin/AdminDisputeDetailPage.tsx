@@ -45,11 +45,11 @@ export function AdminDisputeDetailPage() {
       const result = await apiClient.adminGetDispute(session.accessToken, id);
       setDetail(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('common.unknownError', 'Unknown error'));
     } finally {
       setLoading(false);
     }
-  }, [apiClient, session, id]);
+  }, [apiClient, session, id, t]);
 
   useEffect(() => {
     fetchDetail();
@@ -150,7 +150,9 @@ export function AdminDisputeDetailPage() {
           </p>
           <div className="flex items-center gap-2">
             <strong>{t('admin.disputeDetail.status', 'Status')}:</strong>
-            <Badge variant={disputeStatusVariant(dispute.status)}>{dispute.status}</Badge>
+            <Badge variant={disputeStatusVariant(dispute.status)}>
+              {t(`admin.disputes.status_${dispute.status}`, dispute.status)}
+            </Badge>
           </div>
           <p>
             <strong>{t('admin.disputeDetail.createdAt', 'Created')}:</strong>{' '}
@@ -192,13 +194,13 @@ export function AdminDisputeDetailPage() {
           {customer && (
             <p>
               <strong>{t('admin.disputeDetail.customer', 'Customer')}:</strong>{' '}
-              {String(customer.full_name ?? 'Unknown')}
+              {String(customer.full_name ?? t('common.unknown', 'Unknown'))}
             </p>
           )}
           {tasker && (
             <p>
               <strong>{t('admin.disputeDetail.tasker', 'Tasker')}:</strong>{' '}
-              {String(tasker.full_name ?? 'Unknown')}
+              {String(tasker.full_name ?? t('common.unknown', 'Unknown'))}
             </p>
           )}
         </CardContent>

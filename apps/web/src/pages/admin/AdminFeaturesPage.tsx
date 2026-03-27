@@ -132,15 +132,14 @@ export function AdminFeaturesPage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">{t('admin.features.title', 'Features')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">Failed to load feature toggles</p>
-            <Button onClick={fetchToggles}>Retry</Button>
+            <p className="text-destructive">{t('admin.features.loadError', 'Failed to load feature toggles')}</p>
+            <Button onClick={fetchToggles}>{t('common.retry', 'Retry')}</Button>
           </CardContent>
         </Card>
       </div>
@@ -162,7 +161,7 @@ export function AdminFeaturesPage() {
                 {FEATURE_DESCRIPTIONS[toggle.feature_name] ?? ''}
               </p>
               <p className="text-xs text-muted-foreground">
-                {toggle.updated_by && `Updated by ${toggle.updated_by} — `}
+                {toggle.updated_by && t('admin.features.updatedBy', 'Updated by {{name}} — ', { name: toggle.updated_by })}
                 {formatTimestamp(toggle.updated_at)}
               </p>
             </div>
@@ -179,21 +178,28 @@ export function AdminFeaturesPage() {
       <Dialog open={pendingToggle !== null} onOpenChange={(open) => !open && handleCancel()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogTitle>{t('admin.features.confirmTitle', 'Are you sure?')}</DialogTitle>
             <DialogDescription>
               {pendingToggle
-                ? `You are about to ${pendingToggle.newValue ? 'enable' : 'disable'} "${
-                    FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName
-                  }". This change will take effect immediately.`
+                ? t(
+                    'admin.features.confirmDesc',
+                    'You are about to {{action}} "{{feature}}". This change will take effect immediately.',
+                    {
+                      action: pendingToggle.newValue
+                        ? t('common.enable', 'enable')
+                        : t('common.disable', 'disable'),
+                      feature: FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName,
+                    },
+                  )
                 : ''}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="secondary" onClick={handleCancel} disabled={updating}>
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button onClick={handleConfirm} disabled={updating}>
-              Confirm
+              {t('common.confirm', 'Confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>
