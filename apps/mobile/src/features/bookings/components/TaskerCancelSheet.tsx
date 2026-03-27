@@ -53,7 +53,7 @@ export function TaskerCancelSheet({
           <Text style={styles.description}>
             {t(
               'tasker.jobs.cancel.description',
-              'Cancelling will reopen the task. Cancellations affect your reliability score.',
+              t('tasker.jobs.cancelWarning', 'Cancelling will reopen the task. Cancellations affect your reliability score.'),
             )}
           </Text>
 

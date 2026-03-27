@@ -46,7 +46,7 @@ export function ConfirmCompletionSheet({
       <Text style={styles.description}>
         {t(
           'customer.bookings.confirmCompletionDescription',
-          'After confirming, you can leave a review. Payment is settled directly with the Tasker.',
+          t('customer.bookings.confirmCompletionDesc', 'After confirming, you can leave a review. Payment is settled directly with the Tasker.'),
         )}
       </Text>
       <Button

@@ -50,12 +50,12 @@ export function TaskCancelSheet({
   if (isLate) {
     body = t(
       'customer.cancelSheet.bodyLate',
-      'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident',
+      t('customer.bookings.cancelLateWarning', 'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident'),
     );
   } else if (isAssigned) {
     body = t(
       'customer.cancelSheet.bodyAssigned',
-      'Cancelling more than 4 hours before schedule incurs no penalty',
+      t('customer.bookings.cancelFree', 'Cancelling more than 4 hours before schedule incurs no penalty'),
     );
   } else {
     body = t('customer.cancelSheet.bodyOpen', 'Cancelling this task has no penalty');

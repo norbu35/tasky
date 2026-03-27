@@ -85,15 +85,25 @@
       "locationDescription": "Needed to show nearby tasks and set task location",
       "locationDenied": "Location permission denied",
       "locationSettings": "You can enable location in Settings",
-      "notificationsTitle": "Notification Permission",
-      "notificationsDescription": "Allow notifications to get timely updates on applications and bookings",
-      "notificationsDenied": "Notification permission denied",
+      "notificationsTitle": "Enable Notifications",
+      "notificationsDescription": "Helps track progress in real-time and improve service quality.",
+      "notificationsDenied": "Notifications permission denied",
       "notificationsSettings": "You can enable notifications in Settings",
       "trustBadge": "Secure",
       "continue": "Continue",
-      "allow": "Allow",
-      "skipPermission": "Do it later"
-    }
+      "allow": "Allow Notifications",
+      "skipPermission": "Do it later",
+      "instantTitle": "Instant Updates",
+      "instantBody": "Receive order and request updates directly on your phone.",
+      "securityTitle": "Security",
+      "securityBody": "Important notifications about account and payment security.",
+      "remindersTitle": "Reminders",
+      "remindersBody": "We will remind you ahead of upcoming scheduled tasks.",
+      "skip": "Skip for now"
+    },
+    "devBypass": "Dev bypass",
+    "loginAsCustomer": "Login as Customer",
+    "loginAsTasker": "Login as Tasker"
   },
   "nav": {
     "profile": "Profile",
@@ -127,7 +137,8 @@
     "skip": "Skip",
     "optional": "optional",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "yesterday": "Yesterday"
   },
   "status": {
     "open": "OPEN",
@@ -429,7 +440,7 @@
     "applicants": {
       "title": "Applicants",
       "emptyTitle": "No applicants yet",
-      "emptyDescription": "Taskers are being notified",
+      "emptyDescription": "Once taskers apply to your task, they will appear here.",
       "accept": "Accept",
       "viewProfile": "View Profile",
       "recommended": "Recommended"
@@ -452,8 +463,8 @@
       "rescheduleReason": "Reason (optional)",
       "rescheduleSubmit": "Send Request",
       "cancelBooking": "Cancel Booking",
-      "cancelFree": "Free cancellation",
-      "cancelLateWarning": "Late cancellation may affect your account",
+      "cancelFree": "Cancelling more than 4 hours before schedule incurs no penalty",
+      "cancelLateWarning": "Cancelling within 4 hours of schedule. This will be recorded as a reliability incident",
       "cancelConfirm": "Yes, Cancel",
       "noShowTitle": "Tasker didn't show up?",
       "noShowFlag": "Flag No-Show",
@@ -461,7 +472,12 @@
       "completionConfirm": "Yes, it's done",
       "completionDeny": "No, there's an issue",
       "rebook": "Book Again",
-      "addToCalendar": "Add to Calendar"
+      "addToCalendar": "Add to Calendar",
+      "cancelPenaltyFree": "You can cancel this booking with no penalty.",
+      "cancelLateIncident": "Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.",
+      "cancelIncidentWarning": "You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.",
+      "confirmCompletionDesc": "After confirming, you can leave a review. Payment is settled directly with the Tasker.",
+      "noShowWarning": "After flagging, the booking enters review. False reports carry consequences."
     },
     "disputes": {
       "raiseTitle": "Report an Issue",
@@ -553,7 +569,7 @@
       "emptyDescription": "Apply to tasks to get your first job",
       "markDone": "Mark as Done",
       "cancelJob": "Cancel Job",
-      "cancelWarning": "Cancelling affects your reliability score",
+      "cancelWarning": "Cancelling will reopen the task. Cancellations affect your reliability score.",
       "cancelConfirm": "Yes, Cancel",
       "noShowFlag": "Customer No-Show",
       "stats": "My Stats"
@@ -563,7 +579,56 @@
       "jobsCompleted": "Jobs Completed",
       "averageRating": "Average Rating",
       "responseTime": "Response Time",
-      "reliability": "Reliability Score"
+      "reliability": "Reliability Score",
+      "reliabilityDesc": "Based on completion rate, punctuality, ratings, and cancellation history"
+    },
+    "credits": {
+      "balanceLow": "Balance running low",
+      "availableBalance": "Available balance",
+      "enoughForTwoTasks": "Enough for 2 more average tasks",
+      "quickActions": "Quick actions",
+      "topUp": "Top up",
+      "history": "History",
+      "currentSnapshot": "Current snapshot",
+      "reserved": "Reserved for active bookings",
+      "lastTopUp": "Last top-up",
+      "yesterday": "Yesterday",
+      "pendingRewards": "Pending rewards",
+      "chooseAmount": "Choose an amount",
+      "topUpPreview": "Top-up preview",
+      "method": "Method",
+      "mobileWallet": "Mobile wallet",
+      "processing": "Processing",
+      "instant": "Instant",
+      "balanceAfterTopUp": "Balance after top up",
+      "notes": "Notes",
+      "thisMonth": "This month",
+      "netMovement": "Net credit movement from top-ups and payouts",
+      "today": "Today",
+      "taskPayout": "Task payout",
+      "completedBooking": "Completed booking"
+    },
+    "subscription": {
+      "title": "Tasker Pro"
+    },
+    "referrals": {
+      "heroTitle": "Invite a tasker",
+      "codeLabel": "Invite code",
+      "copyCode": "Copy invite code",
+      "viewCredits": "View credits",
+      "howItWorks": "How it works",
+      "step1Label": "Step 1",
+      "step1Value": "Share your code with another tasker",
+      "step2Label": "Step 2",
+      "step2Value": "They complete verification",
+      "step3Label": "Step 3",
+      "step3Value": "You both receive a bonus",
+      "bonusPending": "Referral bonus pending",
+      "title": "Referrals",
+      "inviteBody": "Invite taskers to earn bonus credits."
+    },
+    "polish": {
+      "aiPowered": "AI POWERED"
     }
   },
   "shared": {
@@ -572,7 +637,9 @@
       "emptyTitle": "No conversations",
       "emptyDescription": "Messages from bookings will appear here",
       "phoneWarning": "Sharing phone numbers outside the app is not recommended",
-      "sendPlaceholder": "Type a message..."
+      "sendPlaceholder": "Type a message...",
+      "errorLoading": "Failed to load conversations.",
+      "errorMessages": "Failed to load messages"
     },
     "notifications": {
       "title": "Notifications",
@@ -580,7 +647,13 @@
       "emptyDescription": "You're all caught up",
       "errorTitle": "Something went wrong",
       "errorBody": "Failed to load notifications",
-      "retry": "Retry"
+      "retry": "Retry",
+      "newApplicant": "New Applicant",
+      "bookingConfirmed": "Booking Confirmed",
+      "reviewReminder": "Review Reminder",
+      "newMessage": "New Message",
+      "taskCompleted": "Task Completed",
+      "reviewReminderBody": "You have not reviewed your completed task with Temuulen yet. Leave a review to help the community."
     },
     "profile": {
       "title": "Profile",

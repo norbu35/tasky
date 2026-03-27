@@ -48,18 +48,18 @@ export function CustomerCancelSheet({
         {cancelType === 'free_cancel'
           ? t(
               'customer.bookings.freeCancelDescription',
-              'You can cancel this booking with no penalty.',
+              t('customer.bookings.cancelPenaltyFree', 'You can cancel this booking with no penalty.'),
             )
           : t(
               'customer.bookings.lateCancelDescription',
-              'Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.',
+              t('customer.bookings.cancelLateIncident', 'Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.'),
             )}
       </Text>
       {cancelType === 'late_cancel_incident_count' && (
         <Text style={styles.warningText}>
           {t(
             'customer.bookings.lateCancelRepeatWarning',
-            'You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.',
+            t('customer.bookings.cancelIncidentWarning', 'You already have 1 incident in the last 28 days. A 2nd incident may trigger ranking penalty and strike review.'),
           )}
         </Text>
       )}

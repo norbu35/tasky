@@ -208,7 +208,7 @@ export default function ProfilePolishScreen() {
         <View style={styles.introCard}>
           <View style={styles.aiBadge}>
             <Sparkles size={14} color={colors.secondaryForeground} />
-            <Text style={styles.aiBadgeText}>AI POWERED</Text>
+            <Text style={styles.aiBadgeText}>{t('tasker.polish.aiPowered', 'AI POWERED')}</Text>
           </View>
           <Text style={styles.heroTitle}>{t('tasker.profilePolish.heroTitle', 'Профайл засах')}</Text>
           <Text style={styles.heroBody}>

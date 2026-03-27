@@ -84,16 +84,16 @@ export default function LoginScreen() {
 
       {__DEV__ ? (
         <View style={styles.devSection}>
-          <Text style={styles.devLabel}>Dev bypass</Text>
+          <Text style={styles.devLabel}>{t('auth.devBypass', 'Dev bypass')}</Text>
           <Button
-            label="Login as Customer"
+            label={t('auth.loginAsCustomer', 'Login as Customer')}
             variant="secondary"
             onPress={() => handleDevLoginAs('CUSTOMER')}
             isLoading={busy}
             style={styles.devButton}
           />
           <Button
-            label="Login as Tasker"
+            label={t('auth.loginAsTasker', 'Login as Tasker')}
             variant="secondary"
             onPress={() => handleDevLoginAs('TASKER')}
             isLoading={busy}

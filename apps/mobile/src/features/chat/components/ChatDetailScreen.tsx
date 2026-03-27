@@ -43,7 +43,7 @@ export function ChatDetailScreen() {
       const res = await client.listMessages(session.accessToken, id);
       setMessages(res.data);
     } catch (err) {
-      console.error('Failed to load messages', err);
+      console.error(t('shared.inbox.errorMessages', 'Failed to load messages'), err);
     } finally {
       setIsLoading(false);
     }

@@ -249,7 +249,7 @@ export function ApplicantsList() {
           title={t('applicants.emptyTitle', 'No applicants yet')}
           subtitle={t(
             'applicants.emptySubtitle',
-            'Once taskers apply to your task, they will appear here.',
+            t('customer.applicants.emptyDescription', 'Once taskers apply to your task, they will appear here.'),
           )}
         />
       ) : (

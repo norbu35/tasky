@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -10,6 +11,7 @@ type SubscriptionState = 'eligible' | 'ineligible';
 type SubscriptionStatus = 'idle' | 'confirming' | 'active';
 
 export default function SubscriptionScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ state?: SubscriptionState; demoState?: string }>();
   const isLockedDemo = params.demoState === 'locked' || params.state === 'ineligible';
   const [status, setStatus] = React.useState<SubscriptionStatus>('idle');
@@ -17,7 +19,7 @@ export default function SubscriptionScreen() {
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content} testID="subscription-screen">
-        <Text style={styles.title}>Tasker Pro</Text>
+        <Text style={styles.title}>{t('tasker.subscription.title', 'Tasker Pro')}</Text>
         <Text style={styles.subtitle}>Tasker Pro болоорой</Text>
 
         {isLockedDemo ? (

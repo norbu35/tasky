@@ -32,7 +32,7 @@ export function InboxScreen() {
       setConversations(res.data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || 'Failed to load conversations.');
+      setError(err.message || t('shared.inbox.errorLoading', 'Failed to load conversations.'));
     } finally {
       setIsLoading(false);
     }

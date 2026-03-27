@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,32 +18,33 @@ interface Transaction {
   timestamp: string;
 }
 
-const transactions: Transaction[] = [
-  {
-    id: 'top-up-1',
-    title: 'Top-up',
-    amount: '+20,000 ₮',
-    subtitle: 'Mobile wallet',
-    timestamp: 'Today',
-  },
-  {
-    id: 'payout-1',
-    title: 'Task payout',
-    amount: '-7,600 ₮',
-    subtitle: 'Completed booking',
-    timestamp: 'Yesterday',
-  },
-];
-
 function resolveState(value: string | string[] | undefined): RouteState {
   const state = Array.isArray(value) ? value[0] : value;
   return state === 'empty' ? 'empty' : 'loaded';
 }
 
 export default function TaskerCreditsHistoryScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams();
   const state = resolveState(params.state);
+
+  const transactions: Transaction[] = [
+    {
+      id: 'top-up-1',
+      title: 'Top-up',
+      amount: '+20,000 ₮',
+      subtitle: t('tasker.credits.mobileWallet', 'Mobile wallet'),
+      timestamp: t('tasker.credits.today', 'Today'),
+    },
+    {
+      id: 'payout-1',
+      title: t('tasker.credits.taskPayout', 'Task payout'),
+      amount: '-7,600 ₮',
+      subtitle: t('tasker.credits.completedBooking', 'Completed booking'),
+      timestamp: t('tasker.credits.yesterday', 'Yesterday'),
+    },
+  ];
 
   return (
     <DetailTemplate
@@ -59,9 +61,9 @@ export default function TaskerCreditsHistoryScreen() {
       ) : (
         <View style={styles.stack}>
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryLabel}>This month</Text>
+            <Text style={styles.summaryLabel}>{t('tasker.credits.thisMonth', 'This month')}</Text>
             <Text style={styles.summaryValue}>+12,400 ₮</Text>
-            <Text style={styles.summaryCaption}>Net credit movement from top-ups and payouts</Text>
+            <Text style={styles.summaryCaption}>{t('tasker.credits.netMovement', 'Net credit movement from top-ups and payouts')}</Text>
           </View>
 
           <View style={styles.timeline}>

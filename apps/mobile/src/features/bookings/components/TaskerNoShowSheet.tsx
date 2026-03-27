@@ -75,7 +75,7 @@ export function TaskerNoShowSheet({
             <Text style={styles.warningText}>
               {t(
                 'tasker.jobs.noShow.warning',
-                'After flagging, the booking enters review. False reports carry consequences.',
+                t('customer.bookings.noShowWarning', 'After flagging, the booking enters review. False reports carry consequences.'),
               )}
             </Text>
           </View>

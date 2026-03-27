@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -20,6 +21,8 @@ interface ActionSheetProps {
 }
 
 export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
       <View style={styles.backdrop}>
@@ -48,7 +51,7 @@ export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetPro
             </Pressable>
           ))}
           <Pressable style={styles.cancelRow} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{t('common.cancel', 'Cancel')}</Text>
           </Pressable>
         </View>
       </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Bell, Lock, MessageSquareMore, TimerReset } from 'lucide-react-native';
 import { Button } from '../../components/ui';
 import { requestNotificationPermission } from '../../utils/permissions';
@@ -31,6 +32,7 @@ const BENEFITS = [
 ];
 
 export default function PermissionNotificationsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const [isDenied, setIsDenied] = React.useState(false);
@@ -67,9 +69,9 @@ export default function PermissionNotificationsScreen() {
       </View>
 
       <View style={styles.copyBlock}>
-        <Text style={styles.title}>Мэдэгдэл хүлээн авах</Text>
+        <Text style={styles.title}>{t('auth.permissions.notificationsTitle', 'Мэдэгдэл хүлээн авах')}</Text>
         <Text style={styles.description}>
-          Ажлын явцыг цаг алдалгүй хянаж, үйлчилгээний чанарыг сайжруулахад тусална.
+          {t('auth.permissions.notificationsDescription', 'Ажлын явцыг цаг алдалгүй хянаж, үйлчилгээний чанарыг сайжруулахад тусална.')}
         </Text>
       </View>
 
@@ -80,8 +82,8 @@ export default function PermissionNotificationsScreen() {
               <Icon size={18} color={colors.primary} />
             </View>
             <View style={styles.benefitCopy}>
-              <Text style={styles.benefitTitle}>{title}</Text>
-              <Text style={styles.benefitBody}>{body}</Text>
+              <Text style={styles.benefitTitle}>{t(`auth.permissions.${key}Title`, title)}</Text>
+              <Text style={styles.benefitBody}>{t(`auth.permissions.${key}Body`, body)}</Text>
             </View>
           </View>
         ))}
@@ -90,11 +92,11 @@ export default function PermissionNotificationsScreen() {
       <View style={styles.footer} testID="permission-notifications-footer">
         {isDenied ? (
           <>
-            <Text style={styles.deniedMessage}>Мэдэгдлийн зөвшөөрөл хаагдсан</Text>
-            <Text style={styles.settingsHint}>Тохиргооноос мэдэгдлийг нээх боломжтой</Text>
+            <Text style={styles.deniedMessage}>{t('auth.permissions.notificationsDenied', 'Мэдэгдлийн зөвшөөрөл хаагдсан')}</Text>
+            <Text style={styles.settingsHint}>{t('auth.permissions.notificationsSettings', 'Тохиргооноос мэдэгдлийг нээх боломжтой')}</Text>
             <Button
               testID="permission-continue-button"
-              label="Үргэлжлүүлэх"
+              label={t('auth.permissions.continue', 'Үргэлжлүүлэх')}
               onPress={finishFlow}
               style={styles.primaryButton}
               accessibilityLabel="Үргэлжлүүлэх"
@@ -104,7 +106,7 @@ export default function PermissionNotificationsScreen() {
           <>
             <Button
               testID="permission-allow-button"
-              label="Мэдэгдэл зөвшөөрөх"
+              label={t('auth.permissions.allow', 'Мэдэгдэл зөвшөөрөх')}
               onPress={() => {
                 void handleGrant();
               }}
@@ -113,7 +115,7 @@ export default function PermissionNotificationsScreen() {
             />
             <Button
               testID="permission-skip-button"
-              label="Дараа"
+              label={t('auth.permissions.skip', 'Дараа')}
               variant="ghost"
               onPress={finishFlow}
               accessibilityLabel="Дараа"

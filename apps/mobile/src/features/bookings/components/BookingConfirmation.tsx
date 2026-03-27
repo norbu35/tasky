@@ -111,10 +111,7 @@ export function BookingConfirmation({
           <Text style={styles.disclaimerText}>
             {t(
               'booking.liabilityBody',
-              'Tasky acts solely as a connector between task posters and taskers. ' +
-                'Tasky does not process payments, employ taskers, or guarantee work quality. ' +
-                'All arrangements, payments, and liability for task completion are between the ' +
-                'poster and the tasker directly.',
+              t('booking.liabilityBody', 'Tasky acts solely as a connector between task posters and taskers. Tasky does not process payments, employ taskers, or guarantee work quality. All arrangements, payments, and liability for task completion are between the poster and the tasker directly.'),
             )}
           </Text>
           <Pressable

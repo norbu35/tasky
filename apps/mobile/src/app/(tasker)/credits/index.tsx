@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -12,6 +13,7 @@ const { colors, spacing, typography, radius } = mobileTheme;
 const balanceText = '12,400 ₮';
 
 export default function TaskerCreditsIndexScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -22,9 +24,9 @@ export default function TaskerCreditsIndexScreen() {
     >
       <View style={styles.stack}>
         <View style={styles.heroCard}>
-          <Text style={styles.heroLabel}>Available balance</Text>
+          <Text style={styles.heroLabel}>{t('tasker.credits.availableBalance', 'Available balance')}</Text>
           <Text style={styles.heroValue}>{balanceText}</Text>
-          <Text style={styles.heroCaption}>Enough for 2 more average tasks</Text>
+          <Text style={styles.heroCaption}>{t('tasker.credits.enoughForTwoTasks', 'Enough for 2 more average tasks')}</Text>
         </View>
 
         <LowBalanceAlert
@@ -40,16 +42,16 @@ export default function TaskerCreditsIndexScreen() {
         />
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick actions</Text>
+          <Text style={styles.sectionTitle}>{t('tasker.credits.quickActions', 'Quick actions')}</Text>
           <View style={styles.actionRow}>
             <Button
-              label="Top up"
+              label={t('tasker.credits.topUp', 'Top up')}
               onPress={() => router.push('/(tasker)/credits/pay')}
               testID="tasker-credits-topup-secondary"
               style={styles.actionButton}
             />
             <Button
-              label="History"
+              label={t('tasker.credits.history', 'History')}
               variant="outline"
               onPress={() => router.push('/(tasker)/credits/history')}
               testID="tasker-credits-history-secondary"
@@ -61,17 +63,17 @@ export default function TaskerCreditsIndexScreen() {
             onPress={() => router.push('/(tasker)/referrals')}
             testID="tasker-credits-referrals"
           >
-            <Text style={styles.referralTitle}>Referrals</Text>
-            <Text style={styles.referralBody}>Invite taskers to earn bonus credits.</Text>
+            <Text style={styles.referralTitle}>{t('tasker.referrals.title', 'Referrals')}</Text>
+            <Text style={styles.referralBody}>{t('tasker.referrals.inviteBody', 'Invite taskers to earn bonus credits.')}</Text>
           </Pressable>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Current snapshot</Text>
+          <Text style={styles.sectionTitle}>{t('tasker.credits.currentSnapshot', 'Current snapshot')}</Text>
           <View style={styles.infoCard}>
-            <InfoRow label="Reserved for active bookings" value="4,800 ₮" />
-            <InfoRow label="Last top-up" value="Yesterday" />
-            <InfoRow label="Pending rewards" value="1,200 ₮" />
+            <InfoRow label={t('tasker.credits.reserved', 'Reserved for active bookings')} value="4,800 ₮" />
+            <InfoRow label={t('tasker.credits.lastTopUp', 'Last top-up')} value={t('tasker.credits.yesterday', 'Yesterday')} />
+            <InfoRow label={t('tasker.credits.pendingRewards', 'Pending rewards')} value="1,200 ₮" />
           </View>
         </View>
       </View>

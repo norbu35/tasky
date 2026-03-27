@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -31,6 +32,8 @@ export function ModalSheet({
   secondaryAction,
   dismissible = true,
 }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
       <View style={styles.backdrop}>
@@ -67,7 +70,7 @@ export function ModalSheet({
               ) : null}
             </View>
           ) : (
-            <Button label="Close" variant="secondary" onPress={onClose} />
+            <Button label={t('common.close', 'Close')} variant="secondary" onPress={onClose} />
           )}
         </View>
       </View>

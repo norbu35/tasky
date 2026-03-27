@@ -91,7 +91,7 @@ export default function TaskerStatsScreen() {
             <Text style={styles.sectionLine}>
               {t(
                 'tasker.stats.reliabilityDescription',
-                'Based on completion rate, punctuality, ratings, and cancellation history',
+                t('tasker.stats.reliabilityDesc', 'Based on completion rate, punctuality, ratings, and cancellation history'),
               )}
             </Text>
           </View>

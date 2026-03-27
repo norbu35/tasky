@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -9,29 +10,30 @@ import { mobileTheme } from '../../design/tokenAdapter';
 const { colors, spacing, radius, typography } = mobileTheme;
 
 export default function TaskerReferralsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
     <DetailTemplate headerTitle="Referrals" onBack={() => router.back()} testID="tasker-referrals-screen">
       <View style={styles.stack}>
         <View style={styles.heroCard}>
-          <Text style={styles.heroTitle}>Invite a tasker</Text>
+          <Text style={styles.heroTitle}>{t('tasker.referrals.heroTitle', 'Invite a tasker')}</Text>
           <Text style={styles.heroBody}>
             Share your invite code to grow the network and unlock simple bonus credits.
           </Text>
           <View style={styles.codePill}>
-            <Text style={styles.codeLabel}>Invite code</Text>
+            <Text style={styles.codeLabel}>{t('tasker.referrals.codeLabel', 'Invite code')}</Text>
             <Text style={styles.codeValue}>TASKY-247</Text>
           </View>
           <View style={styles.actionRow}>
             <Button
-              label="Copy invite code"
+              label={t('tasker.referrals.copyCode', 'Copy invite code')}
               onPress={() => {}}
               testID="tasker-referrals-copy-code"
               style={styles.actionButton}
             />
             <Button
-              label="View credits"
+              label={t('tasker.referrals.viewCredits', 'View credits')}
               variant="outline"
               onPress={() => router.push('/(tasker)/credits')}
               testID="tasker-referrals-view-credits"
@@ -41,16 +43,16 @@ export default function TaskerReferralsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>How it works</Text>
+          <Text style={styles.sectionTitle}>{t('tasker.referrals.howItWorks', 'How it works')}</Text>
           <View style={styles.infoCard}>
-            <InfoRow label="Step 1" value="Share your code with another tasker" />
-            <InfoRow label="Step 2" value="They complete verification" />
-            <InfoRow label="Step 3" value="You both receive a bonus" />
+            <InfoRow label={t('tasker.referrals.step1Label', 'Step 1')} value={t('tasker.referrals.step1Value', 'Share your code with another tasker')} />
+            <InfoRow label={t('tasker.referrals.step2Label', 'Step 2')} value={t('tasker.referrals.step2Value', 'They complete verification')} />
+            <InfoRow label={t('tasker.referrals.step3Label', 'Step 3')} value={t('tasker.referrals.step3Value', 'You both receive a bonus')} />
           </View>
         </View>
 
         <Pressable style={styles.banner}>
-          <Text style={styles.bannerTitle}>Referral bonus pending</Text>
+          <Text style={styles.bannerTitle}>{t('tasker.referrals.bonusPending', 'Referral bonus pending')}</Text>
           <Text style={styles.bannerBody}>1 invite is still in review.</Text>
         </Pressable>
       </View>
