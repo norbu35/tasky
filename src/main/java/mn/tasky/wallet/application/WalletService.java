@@ -1,9 +1,14 @@
 package mn.tasky.wallet.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.common.audit.AuditEventDao;
+import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.wallet.dao.CreditedBookingDao;
 import mn.tasky.wallet.dao.LedgerEntryDao;
 import mn.tasky.wallet.dao.PayoutRequestDao;
@@ -29,16 +34,22 @@ public class WalletService {
     private final LedgerEntryDao ledgerEntryDao;
     private final PayoutRequestDao payoutRequestDao;
     private final CreditedBookingDao creditedBookingDao;
+    private final AuditEventDao auditEventDao;
+    private final ObjectMapper objectMapper;
 
     public WalletService(
             WalletDao walletDao,
             LedgerEntryDao ledgerEntryDao,
             PayoutRequestDao payoutRequestDao,
-            CreditedBookingDao creditedBookingDao) {
+            CreditedBookingDao creditedBookingDao,
+            AuditEventDao auditEventDao,
+            ObjectMapper objectMapper) {
         this.walletDao = walletDao;
         this.ledgerEntryDao = ledgerEntryDao;
         this.payoutRequestDao = payoutRequestDao;
         this.creditedBookingDao = creditedBookingDao;
+        this.auditEventDao = auditEventDao;
+        this.objectMapper = objectMapper;
     }
 
     public WalletBalance getBalance(String userId) {
@@ -156,7 +167,7 @@ public class WalletService {
     }
 
     @Transactional
-    public void processPayout(String payoutId) {
+    public void processPayout(String actorUserId, String payoutId, String reason) {
         Optional<PayoutRequest> payoutOpt = payoutRequestDao.findById(payoutId);
         if (payoutOpt.isEmpty()) {
             throw new IllegalArgumentException("Payout not found");
@@ -167,7 +178,14 @@ public class WalletService {
         }
 
         Instant now = Instant.now();
-        payoutRequestDao.updateStatus(payoutId, "PROCESSED", now);
+        int updatedRows = payoutRequestDao.updateStatusIfCurrent(payoutId, "PENDING", "PROCESSED", now);
+        if (updatedRows == 0) {
+            throw new IllegalArgumentException("Payout already processed");
+        }
+        String sanitizedReason = TextSanitizer.plainText(reason);
+        if (sanitizedReason == null || sanitizedReason.isBlank()) {
+            throw new IllegalArgumentException("Payout processing reason is required");
+        }
 
         ledgerEntryDao.insert(
                 UUID.randomUUID().toString(),
@@ -177,7 +195,18 @@ public class WalletService {
                 payout.id(),
                 "Payout processed",
                 now);
-        log.info("wallet_payout_processed payoutId={} userId={} amount={}", payoutId, payout.userId(), payout.amount());
+        auditEventDao.insert(
+                actorUserId,
+                "PAYOUT_PROCESSED",
+                "PAYOUT",
+                payout.id(),
+                toAuditMetadata(payout, sanitizedReason));
+        log.info(
+                "wallet_payout_processed payoutId={} userId={} amount={} actorUserId={}",
+                payoutId,
+                payout.userId(),
+                payout.amount(),
+                actorUserId);
     }
 
     @Transactional
@@ -209,5 +238,18 @@ public class WalletService {
                 "Late cancellation fee for booking #" + bookingId,
                 now);
         log.info("wallet_cancellation_fee userId={} amount={} bookingId={}", userId, amount, bookingId);
+    }
+
+    private String toAuditMetadata(PayoutRequest payout, String reason) {
+        try {
+            return objectMapper.writeValueAsString(Map.of(
+                    "user_id", payout.userId(),
+                    "amount", payout.amount(),
+                    "old_status", "PENDING",
+                    "new_status", "PROCESSED",
+                    "reason", reason));
+        } catch (JsonProcessingException exception) {
+            throw new IllegalArgumentException("Failed to serialize payout audit metadata.", exception);
+        }
     }
 }

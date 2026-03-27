@@ -1,6 +1,10 @@
 package mn.tasky.booking;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doThrow;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -9,8 +13,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
+import mn.tasky.common.outbox.DomainEventOutboxService;
+import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.notification.dto.NotificationLog;
 import mn.tasky.task.application.TaskService;
@@ -20,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,11 +49,17 @@ class BookingIntegrationTests extends IntegrationTestBase {
     @Autowired
     private BookingService bookingService;
 
-    @Autowired
+    @SpyBean
     private TaskService taskService;
 
     @Autowired
     private NotificationService notificationService;
+
+    @MockBean
+    private BookingTimelineService bookingTimelineService;
+
+    @MockBean
+    private DomainEventOutboxService domainEventOutboxService;
 
     @Test
     @DisplayName("TID-TASK-030-API-BOOKING-READS booking retrieval and filtering")
@@ -141,7 +156,7 @@ class BookingIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
-    @DisplayName("TID-TASK-030-DOMAIN-BOOKING-STATE-MACHINE complete booking flow errors")
+    @DisplayName("TID-TASK-030-API-BOOKING-COMPLETE completion updates booking and task state")
     void completeBookingFlow() {
         AuthContext customer = authenticate("c1");
         AuthContext tasker = authenticate("c2");
@@ -158,11 +173,83 @@ class BookingIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> resSuccess =
                 postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
         assertThat(resSuccess.getStatusCode().value()).isEqualTo(200);
+        assertThat(bookingService.getBooking(booking.id()))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo("COMPLETED"));
+        assertThat(taskService.getTask(taskId))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo("COMPLETED"));
 
         // 3. Complete fails: already completed
         ResponseEntity<Map> resInvalid =
                 postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
         assertThat(resInvalid.getStatusCode().value()).isEqualTo(409);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-API-BOOKING-COMPLETE completion transitions booking and task to completed")
+    void completeBookingTransitionsTaskAndBooking() {
+        AuthContext customer = authenticate("complete-success-customer");
+        AuthContext tasker = authenticate("complete-success-tasker");
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsEntry("status", "COMPLETED");
+        assertThat(bookingService.getBooking(booking.id()))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo("COMPLETED"));
+        assertThat(taskService.getTask(taskId))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo("COMPLETED"));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-RELI-ATOMIC-COMPLETE downstream outbox failure rolls back booking and task state")
+    void completeBookingRollsBackWhenOutboxPublishFails() {
+        AuthContext customer = authenticate("complete-atomic-customer");
+        AuthContext tasker = authenticate("complete-atomic-tasker");
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+        String originalTaskStatus =
+                taskService.getTask(taskId).map(TaskState::status).orElseThrow();
+        doThrow(new RuntimeException("outbox unavailable"))
+                .when(domainEventOutboxService)
+                .publish(eq(OutboxEventTypes.BOOKING_COMPLETED), eq("BOOKING"), eq(booking.id()), anyMap());
+
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(bookingService.getBooking(booking.id())).hasValueSatisfying(state -> assertThat(state.status())
+                .isEqualTo("ASSIGNED"));
+        assertThat(taskService.getTask(taskId))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo(originalTaskStatus));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-RELI-ATOMIC-COMPLETE task state failure rolls back booking transition")
+    void completeBookingRollsBackWhenTaskTransitionFails() {
+        AuthContext customer = authenticate("complete-task-failure-customer");
+        AuthContext tasker = authenticate("complete-task-failure-tasker");
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+        String originalTaskStatus =
+                taskService.getTask(taskId).map(TaskState::status).orElseThrow();
+        doThrow(new RuntimeException("task transition unavailable"))
+                .when(taskService)
+                .transitionToCompleted(taskId);
+
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(bookingService.getBooking(booking.id())).hasValueSatisfying(state -> assertThat(state.status())
+                .isEqualTo("ASSIGNED"));
+        assertThat(taskService.getTask(taskId))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo(originalTaskStatus));
     }
 
     @Test
@@ -219,6 +306,34 @@ class BookingIntegrationTests extends IntegrationTestBase {
                 postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
         assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(cancelResponse.getBody().get("cancellation_fee")).isNull();
+    }
+
+    @Test
+    @DisplayName("TID-TASK-030-RELI-ATOMIC-CANCEL downstream timeline failure rolls back booking and task state")
+    void cancelBookingRollsBackWhenTimelineWriteFails() {
+        AuthContext customer = authenticate("cancel-atomic-customer");
+        AuthContext tasker = authenticate("cancel-atomic-tasker");
+
+        String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.DAYS));
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+        String originalTaskStatus =
+                taskService.getTask(taskId).map(TaskState::status).orElseThrow();
+        doThrow(new RuntimeException("timeline unavailable"))
+                .when(bookingTimelineService)
+                .recordEvent(
+                        eq(booking.id()),
+                        eq(BookingTimelineService.BOOKING_CANCELLED),
+                        eq(customer.userId()),
+                        isNull());
+
+        ResponseEntity<Map> response =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(bookingService.getBooking(booking.id())).hasValueSatisfying(state -> assertThat(state.status())
+                .isEqualTo("ASSIGNED"));
+        assertThat(taskService.getTask(taskId))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo(originalTaskStatus));
     }
 
     @Test

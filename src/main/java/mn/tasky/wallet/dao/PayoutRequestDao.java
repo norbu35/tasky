@@ -52,4 +52,16 @@ public interface PayoutRequestDao {
 
     @SqlUpdate("UPDATE payout_requests SET status = :status, processed_at = :processedAt WHERE id" + " = :id")
     void updateStatus(@Bind("id") UUID id, @Bind("status") String status, @Bind("processedAt") Instant processedAt);
+
+    default int updateStatusIfCurrent(String id, String expectedStatus, String status, Instant processedAt) {
+        return updateStatusIfCurrent(required(id, "id"), expectedStatus, status, processedAt);
+    }
+
+    @SqlUpdate("UPDATE payout_requests SET status = :status, processed_at = :processedAt "
+            + "WHERE id = :id AND status = :expectedStatus")
+    int updateStatusIfCurrent(
+            @Bind("id") UUID id,
+            @Bind("expectedStatus") String expectedStatus,
+            @Bind("status") String status,
+            @Bind("processedAt") Instant processedAt);
 }

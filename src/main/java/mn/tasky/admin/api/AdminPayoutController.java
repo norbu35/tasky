@@ -4,12 +4,15 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
+import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import mn.tasky.admin.dto.AdminActionRequest;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.feature.FeatureToggleService;
@@ -25,6 +28,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,6 +88,7 @@ public class AdminPayoutController {
     public ResponseEntity<?> processPayout(
             @AuthenticationPrincipal JwtPrincipal principal,
             @PathVariable String id,
+            @Valid @RequestBody AdminActionRequest body,
             @RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
             HttpServletRequest request) {
         String actorId = principal.userId();
@@ -107,7 +112,7 @@ public class AdminPayoutController {
             idempotencyService.abandon(actorId, IdempotencyOperations.PROCESS_PAYOUT, idempotencyKey);
             return deferredResponse(request);
         }
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        DayOfWeek today = LocalDate.now(ZoneId.of("Asia/Ulaanbaatar")).getDayOfWeek();
         if (today != DayOfWeek.TUESDAY && today != DayOfWeek.FRIDAY) {
             idempotencyService.abandon(actorId, IdempotencyOperations.PROCESS_PAYOUT, idempotencyKey);
             return ResponseEntity.badRequest()
@@ -115,7 +120,7 @@ public class AdminPayoutController {
         }
 
         try {
-            walletService.processPayout(id);
+            walletService.processPayout(actorId, id, body.reason());
             idempotencyService.completeWithResource(
                     actorId, IdempotencyOperations.PROCESS_PAYOUT, idempotencyKey, "PAYOUT", id);
             return ResponseEntity.ok(Map.of("status", "PROCESSED"));

@@ -184,6 +184,8 @@ class BookingServiceTests {
         BookingTransitionResult completedResult = bookingService.completeBooking("customer-1", booking.id());
         assertThat(completedResult.isSuccess()).isTrue();
         assertThat(completedResult.booking().status()).isEqualTo("COMPLETED");
+        assertThat(bookingService.completeBooking("customer-1", booking.id()).errorCode())
+                .isEqualTo("INVALID_TRANSITION");
     }
 
     @Test

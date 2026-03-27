@@ -50,6 +50,7 @@ import org.jdbi.v3.core.mapper.reflect.ReflectionMappers;
 import org.jdbi.v3.jackson2.Jackson2Plugin;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import org.jdbi.v3.spring5.SpringConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -58,7 +59,7 @@ public class JdbiConfig {
 
     @Bean
     public Jdbi jdbi(DataSource dataSource) {
-        Jdbi jdbi = Jdbi.create(dataSource);
+        Jdbi jdbi = Jdbi.create(new SpringConnectionFactory(dataSource));
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new PostgresPlugin());
         jdbi.installPlugin(new Jackson2Plugin());

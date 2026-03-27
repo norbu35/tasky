@@ -1,10 +1,14 @@
 package mn.tasky.dispute.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.booking.application.BookingService;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
@@ -31,11 +35,20 @@ public class DisputeService {
     private final BookingService bookingService;
     private final DisputeDao disputeDao;
     private final DisputeEvidenceDao disputeEvidenceDao;
+    private final AuditEventDao auditEventDao;
+    private final ObjectMapper objectMapper;
 
-    public DisputeService(BookingService bookingService, DisputeDao disputeDao, DisputeEvidenceDao disputeEvidenceDao) {
+    public DisputeService(
+            BookingService bookingService,
+            DisputeDao disputeDao,
+            DisputeEvidenceDao disputeEvidenceDao,
+            AuditEventDao auditEventDao,
+            ObjectMapper objectMapper) {
         this.bookingService = bookingService;
         this.disputeDao = disputeDao;
         this.disputeEvidenceDao = disputeEvidenceDao;
+        this.auditEventDao = auditEventDao;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -192,6 +205,7 @@ public class DisputeService {
      * @param resolutionNotes Notes explaining the resolution.
      * @return A {@link DisputeResolutionResult} indicating success or failure.
      */
+    @Transactional
     public DisputeResolutionResult resolveDispute(
             String adminId, String disputeId, String outcome, String resolutionNotes) {
         String sanitizedNotes = TextSanitizer.plainText(resolutionNotes);
@@ -222,6 +236,17 @@ public class DisputeService {
 
         Instant now = Instant.now();
         disputeDao.update(disputeId, newStatus, outcome, null, sanitizedNotes, now);
+        auditEventDao.insert(
+                adminId,
+                "DISPUTE_RESOLVED",
+                "DISPUTE",
+                disputeId,
+                toJson(Map.of(
+                        "booking_id", dispute.bookingId(),
+                        "old_status", dispute.status(),
+                        "new_status", newStatus,
+                        "resolution_action", outcome,
+                        "resolution_notes", sanitizedNotes == null ? "" : sanitizedNotes)));
 
         Dispute resolved = new Dispute(
                 dispute.id(),
@@ -236,5 +261,13 @@ public class DisputeService {
                 now);
 
         return DisputeResolutionResult.success(resolved);
+    }
+
+    private String toJson(Map<String, Object> payload) {
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException exception) {
+            throw new IllegalArgumentException("Failed to serialize dispute audit metadata.", exception);
+        }
     }
 }

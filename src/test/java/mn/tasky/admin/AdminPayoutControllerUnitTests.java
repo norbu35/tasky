@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mn.tasky.admin.api.AdminPayoutController;
+import mn.tasky.admin.dto.AdminActionRequest;
 import mn.tasky.common.feature.FeatureToggleService;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
@@ -68,7 +69,8 @@ class AdminPayoutControllerUnitTests {
         when(idempotencyService.claim(principal.userId(), IdempotencyOperations.PROCESS_PAYOUT, "idem-1"))
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.IN_PROGRESS, null));
 
-        ResponseEntity<?> response = controller.processPayout(principal, uuid(1), "idem-1", request());
+        ResponseEntity<?> response = controller.processPayout(
+                principal, uuid(1), new AdminActionRequest("manual review"), "idem-1", request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_IN_PROGRESS");
@@ -100,7 +102,8 @@ class AdminPayoutControllerUnitTests {
         when(idempotencyService.claim(principal.userId(), IdempotencyOperations.PROCESS_PAYOUT, "idem-2"))
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.COMPLETED, record));
 
-        ResponseEntity<?> response = controller.processPayout(principal, uuid(2), "idem-2", request());
+        ResponseEntity<?> response = controller.processPayout(
+                principal, uuid(2), new AdminActionRequest("manual review"), "idem-2", request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_REPLAY_MISSING");
@@ -118,7 +121,8 @@ class AdminPayoutControllerUnitTests {
                 .thenReturn(Optional.of(new PayoutRequest(
                         payoutId, uuid(4), 4000, "PROCESSED", Instant.parse("2026-02-17T00:00:00Z"))));
 
-        ResponseEntity<?> response = controller.processPayout(principal, uuid(5), "idem-3", request());
+        ResponseEntity<?> response = controller.processPayout(
+                principal, uuid(5), new AdminActionRequest("manual review"), "idem-3", request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("status", "PROCESSED");
@@ -146,7 +150,8 @@ class AdminPayoutControllerUnitTests {
         when(idempotencyService.claim(principal.userId(), IdempotencyOperations.PROCESS_PAYOUT, "idem-4"))
                 .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
 
-        ResponseEntity<?> response = controller.processPayout(principal, uuid(6), "idem-4", request());
+        ResponseEntity<?> response = controller.processPayout(
+                principal, uuid(6), new AdminActionRequest("manual review"), "idem-4", request());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         verify(idempotencyService)

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.dispute.dao.DisputeDao;
@@ -18,9 +19,11 @@ import mn.tasky.dispute.dao.DisputeEvidenceDao;
 import mn.tasky.dispute.dto.Dispute;
 import mn.tasky.dispute.dto.DisputeRaiseResult;
 import mn.tasky.dispute.dto.DisputeResolutionResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -38,11 +41,15 @@ class DisputeServiceTests {
     @Mock
     private DisputeEvidenceDao disputeEvidenceDao;
 
+    @Mock
+    private AuditEventDao auditEventDao;
+
     private DisputeService disputeService;
 
     @BeforeEach
     void setUp() {
-        disputeService = new DisputeService(bookingService, disputeDao, disputeEvidenceDao);
+        disputeService =
+                new DisputeService(bookingService, disputeDao, disputeEvidenceDao, auditEventDao, new ObjectMapper());
     }
 
     @Test
@@ -219,5 +226,19 @@ class DisputeServiceTests {
                         eq(null),
                         eq("Reviewed evidence"),
                         any(Instant.class));
+        ArgumentCaptor<String> metadataCaptor = ArgumentCaptor.forClass(String.class);
+        verify(auditEventDao)
+                .insert(
+                        eq(ADMIN_ID),
+                        eq("DISPUTE_RESOLVED"),
+                        eq("DISPUTE"),
+                        eq(open.id()),
+                        metadataCaptor.capture());
+        String metadata = metadataCaptor.getValue();
+        assertThat(metadata).contains("\"booking_id\":\"" + open.bookingId() + "\"");
+        assertThat(metadata).contains("\"old_status\":\"OPEN\"");
+        assertThat(metadata).contains("\"new_status\":\"RESOLVED_CUSTOMER\"");
+        assertThat(metadata).contains("\"resolution_action\":\"RESOLVE_CUSTOMER\"");
+        assertThat(metadata).contains("\"resolution_notes\":\"Reviewed evidence\"");
     }
 }

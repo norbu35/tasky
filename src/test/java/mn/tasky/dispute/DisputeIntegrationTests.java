@@ -15,6 +15,7 @@ import mn.tasky.booking.application.BookingService;
 import mn.tasky.booking.dao.BookingDao;
 import mn.tasky.booking.dto.BookingState;
 import mn.tasky.common.IntegrationTestBase;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ class DisputeIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private BookingDao bookingDao;
+
+    @Autowired
+    private Jdbi jdbi;
 
     @Test
     @DisplayName("TID-TASK-041-API-DISPUTE-RAISE and resolve lifecycle " + "(TID-TASK-041-API-ADMIN-DISPUTE-RESOLVE)")
@@ -226,6 +230,55 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         assertThat(replayOnDifferentPath.getBody().get("id")).isEqualTo(disputeAId);
         assertThat(disputeBState.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(disputeBState.getBody().get("status")).isEqualTo("OPEN");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-041-AUDIT-DISPUTE-RESOLVE dispute resolution writes immutable audit event")
+    void disputeResolutionWritesAuditEvent() {
+        AuthContext customer = authenticate("cust-audit");
+        AuthContext tasker = authenticate("task-audit");
+        String adminToken = tokenFor("ADMIN", "ACTIVE", ADMIN_ID);
+
+        String taskId = createTask(customer.accessToken());
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 10000);
+
+        ResponseEntity<Map> disputeResponse = postWithAuth(
+                "/api/v1/bookings/" + booking.id() + "/disputes",
+                customer.accessToken(),
+                Map.of("reason", "Audit trail should exist"));
+        String disputeId = (String) disputeResponse.getBody().get("id");
+
+        ResponseEntity<Map> resolveResponse = postWithAuth(
+                "/api/v1/admin/disputes/" + disputeId + "/resolve",
+                adminToken,
+                Map.of("outcome", "RESOLVE_CUSTOMER", "notes", "Customer evidence accepted"));
+
+        assertThat(resolveResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Map<String, String> auditEvent = jdbi.withHandle(handle -> handle.createQuery(
+                        "SELECT actor_user_id::text AS actor_user_id, "
+                                + "metadata_json ->> 'booking_id' AS booking_id, "
+                                + "metadata_json ->> 'old_status' AS old_status, "
+                                + "metadata_json ->> 'new_status' AS new_status, "
+                                + "metadata_json ->> 'resolution_action' AS resolution_action, "
+                                + "metadata_json ->> 'resolution_notes' AS resolution_notes "
+                                + "FROM audit_events WHERE action = 'DISPUTE_RESOLVED' "
+                                + "AND resource_type = 'DISPUTE' AND resource_id = CAST(:disputeId AS uuid)")
+                .bind("disputeId", disputeId)
+                .map((rs, ctx) -> Map.of(
+                        "actor_user_id", rs.getString("actor_user_id"),
+                        "booking_id", rs.getString("booking_id"),
+                        "old_status", rs.getString("old_status"),
+                        "new_status", rs.getString("new_status"),
+                        "resolution_action", rs.getString("resolution_action"),
+                        "resolution_notes", rs.getString("resolution_notes")))
+                .one());
+        assertThat(auditEvent)
+                .containsEntry("actor_user_id", ADMIN_ID)
+                .containsEntry("booking_id", booking.id())
+                .containsEntry("old_status", "OPEN")
+                .containsEntry("new_status", "RESOLVED_CUSTOMER")
+                .containsEntry("resolution_action", "RESOLVE_CUSTOMER")
+                .containsEntry("resolution_notes", "Customer evidence accepted");
     }
 
     private AuthContext authenticate(String seed) {

@@ -12,10 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import mn.tasky.auth.application.AuthService;
+import mn.tasky.booking.application.BookingLifecycleService;
 import mn.tasky.booking.application.BookingScheduleService;
 import mn.tasky.booking.application.BookingService;
-import mn.tasky.booking.application.BookingTimelineService;
 import mn.tasky.booking.application.NoShowService;
 import mn.tasky.booking.application.RepeatBookingService;
 import mn.tasky.booking.dto.BookingMarkDoneResult;
@@ -29,14 +28,8 @@ import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.idempotency.IdempotencyClaim;
 import mn.tasky.common.idempotency.IdempotencyOperations;
 import mn.tasky.common.idempotency.IdempotencyService;
-import mn.tasky.common.outbox.DomainEventOutboxService;
-import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.security.JwtPrincipal;
 import mn.tasky.notification.application.NotificationService;
-import mn.tasky.task.application.TaskService;
-import mn.tasky.task.dto.TaskState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -55,38 +48,27 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class BookingController {
 
-    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
-
     private final BookingService bookingService;
+    private final BookingLifecycleService bookingLifecycleService;
     private final BookingScheduleService scheduleService;
-    private final BookingTimelineService timelineService;
     private final NoShowService noShowService;
     private final RepeatBookingService repeatBookingService;
-    private final TaskService taskService;
-    private final AuthService authService;
-    private final DomainEventOutboxService domainEventOutboxService;
     private final NotificationService notificationService;
     private final IdempotencyService idempotencyService;
 
     public BookingController(
             BookingService bookingService,
+            BookingLifecycleService bookingLifecycleService,
             BookingScheduleService scheduleService,
-            BookingTimelineService timelineService,
             NoShowService noShowService,
             RepeatBookingService repeatBookingService,
-            TaskService taskService,
-            AuthService authService,
-            DomainEventOutboxService domainEventOutboxService,
             NotificationService notificationService,
             IdempotencyService idempotencyService) {
         this.bookingService = bookingService;
+        this.bookingLifecycleService = bookingLifecycleService;
         this.scheduleService = scheduleService;
-        this.timelineService = timelineService;
         this.noShowService = noShowService;
         this.repeatBookingService = repeatBookingService;
-        this.taskService = taskService;
-        this.authService = authService;
-        this.domainEventOutboxService = domainEventOutboxService;
         this.notificationService = notificationService;
         this.idempotencyService = idempotencyService;
     }
@@ -153,32 +135,9 @@ public class BookingController {
         }
 
         try {
-            Optional<BookingState> bookingOpt = bookingService.getBooking(id);
-            if (bookingOpt.isEmpty()) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of(
-                                "code",
-                                "NOT_FOUND",
-                                "message",
-                                "Booking not found.",
-                                "trace_id",
-                                resolveTraceId(request)));
-            }
-
-            BookingState booking = bookingOpt.get();
-            Optional<TaskState> taskOpt = taskService.getTask(booking.taskId());
-            if (taskOpt.isEmpty()) {
-                idempotencyService.abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, idempotencyKey);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-            BookingTransitionResult result = bookingService.cancelBooking(
-                    principal.userId(), id, taskOpt.get().scheduledAt());
+            BookingTransitionResult result = bookingLifecycleService.cancelBooking(principal.userId(), id);
 
             if (result.isSuccess()) {
-                handleTaskCancellationSideEffects(result.booking(), principal.userId());
-                timelineService.recordEvent(id, BookingTimelineService.BOOKING_CANCELLED, principal.userId(), null);
                 idempotencyService.completeWithResource(
                         principal.userId(),
                         IdempotencyOperations.CANCEL_BOOKING,
@@ -223,37 +182,6 @@ public class BookingController {
         }
     }
 
-    private void handleTaskCancellationSideEffects(BookingState booking, String actorUserId) {
-        if (booking.taskerId().equals(actorUserId)) {
-            handleTaskerCancellation(booking);
-            authService.addStrike(actorUserId);
-            return;
-        }
-        if (booking.customerId().equals(actorUserId)) {
-            handleCustomerCancellation(booking);
-        }
-    }
-
-    private void handleTaskerCancellation(BookingState booking) {
-        if (taskService.reopenTask(booking.taskId()).isPresent()) {
-            return;
-        }
-        log.warn(
-                "Task not found when reopening after cancellation: bookingId={} taskId={}",
-                booking.id(),
-                booking.taskId());
-    }
-
-    private void handleCustomerCancellation(BookingState booking) {
-        if (taskService.transitionToCancelled(booking.taskId()).isPresent()) {
-            return;
-        }
-        log.warn(
-                "Task not found when cancelling after customer cancellation: bookingId={} taskId={}",
-                booking.id(),
-                booking.taskId());
-    }
-
     @PostMapping("/{id}/complete")
     public ResponseEntity<?> completeBooking(
             @AuthenticationPrincipal JwtPrincipal principal,
@@ -277,42 +205,15 @@ public class BookingController {
         }
 
         try {
-            BookingTransitionResult result = bookingService.completeBooking(principal.userId(), id);
+            BookingTransitionResult result = bookingLifecycleService.completeBooking(principal.userId(), id);
 
             if (result.isSuccess()) {
-                BookingState booking = result.booking();
-                // Update task status to COMPLETED
-                if (taskService.transitionToCompleted(booking.taskId()).isEmpty()) {
-                    log.warn(
-                            "Task not found when completing booking: bookingId={} taskId={}",
-                            booking.id(),
-                            booking.taskId());
-                }
-
-                timelineService.recordEvent(id, BookingTimelineService.BOOKING_COMPLETED, principal.userId(), null);
-
-                domainEventOutboxService.publish(
-                        OutboxEventTypes.BOOKING_COMPLETED,
-                        "BOOKING",
-                        booking.id(),
-                        Map.of(
-                                "booking_id",
-                                booking.id(),
-                                "task_id",
-                                booking.taskId(),
-                                "customer_id",
-                                booking.customerId(),
-                                "tasker_id",
-                                booking.taskerId(),
-                                "price",
-                                booking.price()));
-
                 idempotencyService.completeWithResource(
                         principal.userId(),
                         IdempotencyOperations.COMPLETE_BOOKING,
                         idempotencyKey,
                         "BOOKING",
-                        booking.id());
+                        result.booking().id());
                 return ResponseEntity.ok(withCancellationFee(result.booking()));
             }
 

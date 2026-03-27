@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -261,8 +262,11 @@ class PayoutIntegrationTests extends IntegrationTestBase {
 
         // Process result depends on configured schedule days (Tuesday/Friday).
         ResponseEntity<Map> processResponse =
-                postWithAuth("/api/v1/admin/payouts/" + payoutId + "/process", adminToken, null);
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
+                postWithAuth(
+                        "/api/v1/admin/payouts/" + payoutId + "/process",
+                        adminToken,
+                        Map.of("reason", "Manual settlement release"));
+        DayOfWeek today = LocalDate.now(ZoneId.of("Asia/Ulaanbaatar")).getDayOfWeek();
         if (today == DayOfWeek.TUESDAY || today == DayOfWeek.FRIDAY) {
             assertThat(processResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(processResponse.getBody().get("status")).isEqualTo("PROCESSED");
@@ -270,6 +274,44 @@ class PayoutIntegrationTests extends IntegrationTestBase {
             assertThat(processResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(processResponse.getBody().get("error").toString()).contains("Today is " + today);
         }
+    }
+
+    @Test
+    @DisplayName("TID-TASK-034-AUDIT-PAYOUT-PROCESS payout processing writes immutable audit event")
+    void payoutProcessingWritesAuditEvent() {
+        AuthContext tasker = authenticate("payout-audit-tasker");
+        AuthContext customer = authenticate("payout-audit-customer");
+
+        walletService.creditTaskCompletion(
+                tasker.userId(), createBooking(customer.userId(), tasker.userId()), 10000, 1000);
+        String payoutId = (String) postWithAuth(
+                        "/api/v1/wallet/payouts",
+                        tokenFor("TASKER", "ACTIVE", tasker.userId()),
+                        Map.of("amount", 5000))
+                .getBody()
+                .get("id");
+
+        walletService.processPayout(ADMIN_ID, payoutId, "Manual settlement release");
+
+        Map<String, String> auditEvent = jdbi.withHandle(handle -> handle.createQuery(
+                        "SELECT actor_user_id::text AS actor_user_id, "
+                                + "metadata_json ->> 'reason' AS reason, "
+                                + "metadata_json ->> 'old_status' AS old_status, "
+                                + "metadata_json ->> 'new_status' AS new_status "
+                                + "FROM audit_events WHERE action = 'PAYOUT_PROCESSED' "
+                                + "AND resource_type = 'PAYOUT' AND resource_id = CAST(:payoutId AS uuid)")
+                .bind("payoutId", payoutId)
+                .map((rs, ctx) -> Map.of(
+                        "actor_user_id", rs.getString("actor_user_id"),
+                        "reason", rs.getString("reason"),
+                        "old_status", rs.getString("old_status"),
+                        "new_status", rs.getString("new_status")))
+                .one());
+        assertThat(auditEvent)
+                .containsEntry("actor_user_id", ADMIN_ID)
+                .containsEntry("reason", "Manual settlement release")
+                .containsEntry("old_status", "PENDING")
+                .containsEntry("new_status", "PROCESSED");
     }
 
     record AuthContext(String userId, String accessToken) {}
