@@ -14,7 +14,7 @@ SECURITY_TYPES = {"security", "abuse"}
 TEST_FILE_PATTERNS = [
     r"\.test\.(tsx?|jsx?)$",
     r"\.spec\.(tsx?|jsx?)$",
-    r"(Integration|Unit)Tests?\.java$",
+    r"Tests?\.java$",
     r"__tests__[\\/].*\.(tsx?|jsx?)$",
     r"e2e[\\/].*\.ts$",
     r"maestro[\\/].*\.yaml$",
@@ -74,6 +74,26 @@ def collect_logs(logs_dir: Path) -> tuple[list[Path], str]:
     return filtered, merged
 
 
+def collect_test_result_artifacts(repo_root: Path) -> tuple[list[Path], str]:
+    patterns = (
+        "build/test-results/test/*.xml",
+        "**/build/test-results/test/*.xml",
+        "**/surefire-reports/*.xml",
+        "**/failsafe-reports/*.xml",
+        "**/test-results/**/*.xml",
+    )
+    result_files: list[Path] = []
+    seen: set[Path] = set()
+    for pattern in patterns:
+        for path in repo_root.glob(pattern):
+            if not path.is_file() or path in seen:
+                continue
+            seen.add(path)
+            result_files.append(path)
+    merged = "\n".join(load_text(path) for path in sorted(result_files))
+    return sorted(result_files), merged
+
+
 def load_changed_test_content(changed_files_path: Path) -> tuple[list[str], str]:
     """
     Read the changed-files list, filter to test files, read their content.
@@ -130,10 +150,13 @@ def main() -> int:
         print("acceptance_criteria must be a non-empty array in normalized spec.", file=sys.stderr)
         return 1
 
+    repo_root = Path.cwd()
     logs, merged_log_text = collect_logs(logs_dir)
+    result_files, merged_result_text = collect_test_result_artifacts(repo_root)
+    merged_runner_text = "\n".join(part for part in (merged_log_text, merged_result_text) if part)
     failures: list[str] = []
-    if not logs:
-        failures.append("No test logs found for acceptance coverage validation.")
+    if not logs and not result_files:
+        failures.append("No test logs or test result artifacts found for acceptance coverage validation.")
 
     # Load changed test files when --changed-files is provided.
     check_authorship = args.changed_files is not None
@@ -162,7 +185,7 @@ def main() -> int:
         negative_test_ids = criterion.get("negative_test_ids", [])
 
         # Check 1: TID appeared in test runner output (test ran).
-        ran = [tid for tid in test_ids if match_test_id(tid, merged_log_text)]
+        ran = [tid for tid in test_ids if match_test_id(tid, merged_runner_text)]
         not_ran = [tid for tid in test_ids if tid not in ran]
 
         # Check 2: TID appears in a test file changed on this branch (test was written).
@@ -183,7 +206,7 @@ def main() -> int:
             else:
                 missing_negative = [
                     tid for tid in negative_test_ids
-                    if not match_test_id(tid, merged_log_text)
+                    if not match_test_id(tid, merged_runner_text)
                 ]
                 if missing_negative:
                     failures.append(

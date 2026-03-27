@@ -272,7 +272,11 @@ def validate(
             "uncovered_test_ids",
             "status",
         }
-        unknown = set(mapping.keys()) - required_fields
+        optional_fields = {
+            "not_run_test_ids",
+            "not_written_test_ids",
+        }
+        unknown = set(mapping.keys()) - required_fields - optional_fields
         if unknown:
             err(errors, f"{prefix} unknown fields: {sorted(unknown)}")
         missing = required_fields - set(mapping.keys())
@@ -287,8 +291,16 @@ def validate(
             err(errors, f"Duplicate ac_test_mapping ac_id: {ac_id}")
             continue
         mapping_by_ac[ac_id] = mapping
-        for field in ("test_ids", "covered_test_ids", "uncovered_test_ids"):
+        for field in (
+            "test_ids",
+            "covered_test_ids",
+            "uncovered_test_ids",
+            "not_run_test_ids",
+            "not_written_test_ids",
+        ):
             value = mapping.get(field)
+            if field in optional_fields and value is None:
+                continue
             if not isinstance(value, list):
                 err(errors, f"{prefix}.{field} must be an array.")
                 continue
@@ -316,7 +328,11 @@ def validate(
             "pass",
             "failures",
         }
-        unknown = set(ac_summary.keys()) - required_fields
+        optional_fields = {
+            "changed_test_files",
+            "authorship_check_enabled",
+        }
+        unknown = set(ac_summary.keys()) - required_fields - optional_fields
         if unknown:
             err(errors, f"ac_coverage_summary unknown fields: {sorted(unknown)}")
         missing = required_fields - set(ac_summary.keys())
@@ -334,6 +350,10 @@ def validate(
                 err(errors, f"ac_coverage_summary.{key} must be integer >= 0.")
         if not isinstance(ac_summary.get("pass"), bool):
             err(errors, "ac_coverage_summary.pass must be boolean.")
+        if "authorship_check_enabled" in ac_summary and not isinstance(
+            ac_summary.get("authorship_check_enabled"), bool
+        ):
+            err(errors, "ac_coverage_summary.authorship_check_enabled must be boolean.")
         failures = ac_summary.get("failures")
         if not isinstance(failures, list):
             err(errors, "ac_coverage_summary.failures must be an array.")
@@ -341,6 +361,14 @@ def validate(
             for item in failures:
                 if not is_non_empty_string(item):
                     err(errors, "ac_coverage_summary.failures entries must be non-empty strings.")
+        changed_test_files = ac_summary.get("changed_test_files")
+        if changed_test_files is not None:
+            if not isinstance(changed_test_files, list):
+                err(errors, "ac_coverage_summary.changed_test_files must be an array.")
+            else:
+                for item in changed_test_files:
+                    if not is_non_empty_string(item):
+                        err(errors, "ac_coverage_summary.changed_test_files entries must be non-empty strings.")
 
         if isinstance(ac_summary.get("total_ac"), int) and ac_summary.get("total_ac") != len(ac_ids):
             err(errors, "ac_coverage_summary.total_ac must match acceptance_criteria length.")

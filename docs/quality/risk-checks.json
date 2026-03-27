@@ -19,8 +19,7 @@
     "commit_message_lint",
     "secret_scan",
     "ticket_spec_validation",
-    "openapi_validation",
-    "ac_coverage_gate"
+    "openapi_validation"
   ],
   "required_by_risk": {
     "low": [

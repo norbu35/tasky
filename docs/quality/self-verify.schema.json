@@ -77,11 +77,84 @@
     "ac_test_mapping": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "ac_id": {
+            "type": "string"
+          },
+          "test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "covered_test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "uncovered_test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "not_run_test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "not_written_test_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string"
+          }
+        }
       }
     },
     "ac_coverage_summary": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "total_ac": {
+          "type": "integer"
+        },
+        "mapped_ac": {
+          "type": "integer"
+        },
+        "fully_covered_ac": {
+          "type": "integer"
+        },
+        "total_test_ids": {
+          "type": "integer"
+        },
+        "covered_test_ids": {
+          "type": "integer"
+        },
+        "changed_test_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authorship_check_enabled": {
+          "type": "boolean"
+        },
+        "pass": {
+          "type": "boolean"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "overall_status": {
       "type": "string",

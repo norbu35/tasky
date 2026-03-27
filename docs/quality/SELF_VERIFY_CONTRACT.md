@@ -45,6 +45,12 @@ Required checks by risk:
 
 Fast-fail checks are defined separately in the same registry and run before expensive checks.
 
+Coverage gate semantics:
+
+- `coverage_gate_touched` validates changed executable lines in touched in-scope runtime files using JaCoCo output from the local test run.
+- The gate excludes generated sources, DTO-only packages, and deferred monetization packages, matching the project coverage policy intent.
+- Unchanged uncovered lines in the same file do not fail the gate; the objective is incremental coverage on the code being changed.
+
 ## Artifact Contract
 
 Canonical schema file: `docs/quality/self-verify.schema.json`
@@ -57,6 +63,7 @@ Artifact requirements:
 - every required check must resolve to `PASS` or `FAIL`
 - `overall_status` is `PASS` only when every required check passed
 - acceptance criteria and AC coverage summary must be included
+- AC coverage entries may include authorship metadata (`not_run_test_ids`, `not_written_test_ids`, `changed_test_files`, `authorship_check_enabled`) when branch-written test proof is enforced
 - git context and agent metadata are mandatory
 
 Top-level fields:

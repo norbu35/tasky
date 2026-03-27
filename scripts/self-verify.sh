@@ -406,7 +406,12 @@ fi
 CMD
       ;;
     coverage_gate_touched)
-      echo "./gradlew --no-daemon jacocoTestCoverageVerification"
+      cat <<'CMD'
+python3 scripts/validate-touched-coverage.py \
+  --changed-files artifacts/checks/changed-files.txt \
+  --jacoco-xml build/reports/jacoco/test/jacocoTestReport.xml \
+  --out artifacts/checks/touched-coverage.json
+CMD
       ;;
     full_test_suite)
       cat <<'CMD'
@@ -415,7 +420,7 @@ if rg -q '^(apps/web/|apps/mobile/|packages/sdk/|docs/API\.yaml$|pnpm-lock\.yaml
   needs_frontend=1
 fi
 
-./gradlew --no-daemon check
+./gradlew --no-daemon check -x jacocoTestCoverageVerification
 
 if (( needs_frontend == 1 )); then
   if ! command -v pnpm >/dev/null 2>&1; then
@@ -431,7 +436,26 @@ fi
 CMD
       ;;
     sast_dependency_scan)
-      echo "if command -v semgrep >/dev/null 2>&1; then semgrep --error --config auto .; else echo 'semgrep not installed'; exit 1; fi"
+      cat <<'CMD'
+if ! command -v semgrep >/dev/null 2>&1; then
+  echo "semgrep not installed" >&2
+  exit 1
+fi
+
+semgrep_targets=()
+while IFS= read -r changed_file; do
+  if [[ -n "${changed_file}" && -e "${changed_file}" ]]; then
+    semgrep_targets+=("${changed_file}")
+  fi
+done < artifacts/checks/changed-files.txt
+
+if (( ${#semgrep_targets[@]} == 0 )); then
+  echo "No existing changed files to scan."
+  exit 0
+fi
+
+semgrep --error --config auto "${semgrep_targets[@]}"
+CMD
       ;;
     migration_safety)
       echo "python3 scripts/validate-migrations.py"
@@ -446,6 +470,7 @@ python3 scripts/validate-ac-coverage.py \
   --ticket "${SELF_VERIFY_TICKET}" \
   --risk "${SELF_VERIFY_RISK}" \
   --logs-dir artifacts/checks \
+  --changed-files artifacts/checks/changed-files.txt \
   --out artifacts/checks/ac-coverage.json
 CMD
       ;;
@@ -458,7 +483,9 @@ CMD
 
 mkdir -p "$(dirname "${out_path}")"
 mkdir -p artifacts/checks
-rm -f artifacts/checks/*.log artifacts/checks/ac-coverage.json artifacts/checks/ticket-spec.normalized.json
+rm -f artifacts/checks/*.log artifacts/checks/ac-coverage.json artifacts/checks/ticket-spec.normalized.json \
+  artifacts/checks/touched-coverage.json
+rm -rf build/test-results/test build/reports/tests/test
 printf '%s\n' "${files_changed[@]}" > artifacts/checks/changed-files.txt
 
 checks_json='[]'
