@@ -136,7 +136,7 @@ export function AdminLeadPricingPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
-              {error ?? t('admin.pricing.loadError', 'Failed to load lead unlock prices')}
+              {t('admin.pricing.loadError', 'Failed to load lead unlock prices')}
             </p>
             <Button onClick={fetchPrices}>{t('common.retry', 'Retry')}</Button>
           </CardContent>

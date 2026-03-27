@@ -124,7 +124,7 @@ export function AdminPayoutsPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
             <p className="text-destructive">
-              {error ?? t('admin.payouts.loadError', 'Failed to load pending payouts')}
+              {t('admin.payouts.loadError', 'Failed to load pending payouts')}
             </p>
             <Button onClick={fetchPayouts}>{t('common.retry', 'Retry')}</Button>
           </CardContent>
