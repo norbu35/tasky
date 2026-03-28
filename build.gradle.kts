@@ -270,9 +270,9 @@ tasks.register<Exec>("gateSmoke") {
 }
 
 tasks.register<Exec>("gateRegression") {
-    description = "Gate 2: all Critical + High scenarios covered + mutation floors. Blocks deploy."
+    description = "Gate 2: all Critical + High scenarios covered, API contract valid, JaCoCo floors. Blocks deploy."
     group = "verification"
-    dependsOn(tasks.test, tasks.jacocoTestReport)
+    dependsOn(tasks.test, tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification, "openApiValidate")
     doFirst {
         exec { commandLine("./scripts/sync-registry.sh") }
     }

@@ -35,6 +35,10 @@ if registry_path.exists():
         existing = data.get("scenarios") or {}
 
 scenarios = {}
+parse_errors = []
+duplicate_ids = []
+
+VALID_RISKS = {"critical", "high", "medium", "low"}
 
 for md_file in sorted(scenarios_dir.glob("*.md")):
     domain = md_file.stem
@@ -43,16 +47,42 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
     content = md_file.read_text()
     blocks = re.split(r'\n(?=## SCN-)', content)
     for block in blocks:
+        # Detect SCN header presence before full parse — catches malformed blocks
+        header_match = re.match(r'## (SCN-[A-Z]+\d*-\d+)', block)
+        if not header_match:
+            continue  # Not a scenario block (e.g., file header text)
+
+        scn_id_candidate = header_match.group(1)
+
         m = re.match(
             r'## (SCN-[A-Z]+\d*-\d+)\n+\*\*Risk:\*\* (\w+)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
             block
         )
         if not m:
+            parse_errors.append(
+                f"  MALFORMED block for {scn_id_candidate} in {md_file.name} "
+                f"— check Risk/PRD/Title field order and formatting"
+            )
             continue
+
         scn_id = m.group(1)
         risk = m.group(2).strip().lower()
         prd_ref = m.group(3).strip()
         title = m.group(4).strip()
+
+        if risk not in VALID_RISKS:
+            parse_errors.append(
+                f"  INVALID risk '{risk}' for {scn_id} in {md_file.name} "
+                f"— must be one of: {', '.join(sorted(VALID_RISKS))}"
+            )
+            continue
+
+        if scn_id in scenarios:
+            duplicate_ids.append(
+                f"  DUPLICATE ID {scn_id} in {md_file.name} "
+                f"(first seen in {scenarios[scn_id]['domain']}.md)"
+            )
+            continue  # Do not overwrite — first definition wins
 
         test_type = "domain-unit" if risk in ("critical", "high") else "medium-unit"
         if domain == "integration":
@@ -67,9 +97,24 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
             "test_type": test_type,
             "status": prev.get("status", "untested"),
             "mutation_kill_rate": prev.get("mutation_kill_rate"),
+            "mutation_kill_rate_updated_at": prev.get("mutation_kill_rate_updated_at"),
             "notes": prev.get("notes"),
             "override_status": prev.get("override_status"),
         }
+
+# Report parse errors as warnings (stderr)
+if parse_errors:
+    print("[sync] WARNING: malformed scenario blocks found:", file=sys.stderr)
+    for msg in parse_errors:
+        print(msg, file=sys.stderr)
+
+# Duplicate IDs are hard errors — exit non-zero so CI catches them immediately
+if duplicate_ids:
+    print("[sync] ERROR: duplicate scenario IDs found:", file=sys.stderr)
+    for msg in duplicate_ids:
+        print(msg, file=sys.stderr)
+    print("[sync] Fix duplicates in tests/scenarios/ before proceeding.", file=sys.stderr)
+    sys.exit(1)
 
 registry_path.parent.mkdir(parents=True, exist_ok=True)
 with open(registry_path, "w") as f:
@@ -81,43 +126,68 @@ with open(registry_path, "w") as f:
 print(f"[sync] Parsed {len(scenarios)} scenarios from {scenarios_dir}")
 PYEOF
 
-# ── Step 2: Scan @DisplayName annotations for SCN-* IDs ──────────────────────
+# ── Step 2: Scan surefire XML results for PASSING SCN-* tests ────────────────
+# Reads build/test-results/test/TEST-*.xml — only testcase elements with no
+# <failure> or <skipped> child are treated as covered. This means:
+#   - @Disabled tests: skipped element present → not covered
+#   - Commented-out tests: never appear in XML → not covered
+#   - Failing tests: failure element present → not covered
+#   - Tests that did not run (no test run yet): XML absent → warn, not covered
 python3 - <<'PYEOF'
-import re, yaml
+import re, sys, yaml
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 registry_path = Path("tests/registry.yaml")
-test_src = Path("src/test/java")
+surefire_dir = Path("build/test-results/test")
 
 with open(registry_path) as f:
     data = yaml.safe_load(f)
 scenarios = data.get("scenarios") or {}
 
-found_ids = set()
-# Match @DisplayName("SCN-XXX-NNN: ...") — single or double quotes, with optional whitespace
-pattern = re.compile(r'@DisplayName\s*\(\s*["\']+(SCN-[A-Z]+-\d+)[:\s]')
-for java_file in test_src.rglob("*.java"):
-    content = java_file.read_text(errors="ignore")
-    for m in pattern.finditer(content):
-        found_ids.add(m.group(1))
+if not surefire_dir.exists():
+    print("[sync] WARNING: no surefire results at build/test-results/test/ — "
+          "run ./gradlew test first. Status not updated.", file=sys.stderr)
+else:
+    found_ids = set()
+    scn_pattern = re.compile(r'^(SCN-[A-Z]+-\d+)[:\s]')
 
-updated = 0
-for scn_id, entry in scenarios.items():
-    if entry.get("override_status"):
-        continue
-    new_status = "covered" if scn_id in found_ids else "untested"
-    if entry["status"] != new_status:
-        entry["status"] = new_status
-        updated += 1
+    for xml_file in surefire_dir.glob("TEST-*.xml"):
+        try:
+            tree = ET.parse(xml_file)
+        except ET.ParseError as e:
+            print(f"[sync] WARNING: could not parse {xml_file.name}: {e}", file=sys.stderr)
+            continue
 
-with open(registry_path, "w") as f:
-    f.write("# Auto-generated by scripts/sync-registry.sh\n")
-    f.write("# Edit scenario entries in tests/scenarios/<domain>.md only.\n")
-    f.write("# Hand-edit only: notes, override_status.\n\n")
-    yaml.dump({"scenarios": scenarios}, f, default_flow_style=False, sort_keys=True, allow_unicode=True)
+        for testcase in tree.findall(".//testcase"):
+            name = testcase.get("name", "")
+            # Skip failed tests
+            if testcase.find("failure") is not None:
+                continue
+            # Skip skipped/disabled tests
+            if testcase.find("skipped") is not None:
+                continue
+            m = scn_pattern.match(name)
+            if m:
+                found_ids.add(m.group(1))
 
-covered = sum(1 for e in scenarios.values() if e["status"] == "covered")
-print(f"[sync] Status updated for {updated} scenario(s). Covered: {covered}/{len(scenarios)}")
+    updated = 0
+    for scn_id, entry in scenarios.items():
+        if entry.get("override_status"):
+            continue
+        new_status = "covered" if scn_id in found_ids else "untested"
+        if entry["status"] != new_status:
+            entry["status"] = new_status
+            updated += 1
+
+    with open(registry_path, "w") as f:
+        f.write("# Auto-generated by scripts/sync-registry.sh\n")
+        f.write("# Edit scenario entries in tests/scenarios/<domain>.md only.\n")
+        f.write("# Hand-edit only: notes, override_status.\n\n")
+        yaml.dump({"scenarios": scenarios}, f, default_flow_style=False, sort_keys=True, allow_unicode=True)
+
+    covered = sum(1 for e in scenarios.values() if e["status"] == "covered")
+    print(f"[sync] Status updated for {updated} scenario(s). Covered: {covered}/{len(scenarios)}")
 PYEOF
 
 # ── Step 3: Parse PIT XML for mutation_kill_rate per domain ──────────────────
@@ -152,10 +222,14 @@ domain_rates = {
     for d, s in pkg_stats.items() if s["total"] > 0
 }
 
+from datetime import datetime, timezone
+
+now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 for entry in scenarios.values():
     domain = entry.get("domain", "")
     if domain in domain_rates:
         entry["mutation_kill_rate"] = domain_rates[domain]
+        entry["mutation_kill_rate_updated_at"] = now_iso
 
 with open(registry_path, "w") as f:
     f.write("# Auto-generated by scripts/sync-registry.sh\n")

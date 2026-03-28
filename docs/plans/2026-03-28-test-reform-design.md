@@ -195,10 +195,15 @@ Passes if:
 - Gate 1 passes
 - All High scenario tests pass
 - No High scenario has `status: untested`
-- Integration smoke tests pass (happy path only, one per domain)
-- `./gradlew openApiValidate` passes
+- `./gradlew openApiValidate` passes (contract drift detection)
 - JaCoCo line coverage >= 80% on Critical and High packages
-- Contract test count >= operation count in `docs/API.yaml`
+- PIT data exists for all Critical/High domains and is not stale (< 25h old)
+
+> **Note:** Integration smoke tests run as part of `./gradlew test` (Gate 2 depends on
+> `tasks.test`). Contract test count enforcement is deferred to Phase 3 when the
+> contract test suite exists. Mutation *floors* are enforced by Gate 3 (nightly) only,
+> because PIT takes 30-60 minutes and cannot run inline on every merge; Gate 2 enforces
+> data freshness instead.
 
 **Blocks:** production deploy
 

@@ -6,6 +6,7 @@ scenarios:
   SCN-AUTH-001:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-01
@@ -16,6 +17,7 @@ scenarios:
   SCN-AUTH-002:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-01
@@ -26,6 +28,7 @@ scenarios:
   SCN-AUTH-003:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-01
@@ -36,6 +39,7 @@ scenarios:
   SCN-AUTH-004:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-01
@@ -46,6 +50,7 @@ scenarios:
   SCN-AUTH-005:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-02
@@ -57,6 +62,7 @@ scenarios:
   SCN-AUTH-006:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -68,6 +74,7 @@ scenarios:
   SCN-AUTH-007:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -78,6 +85,7 @@ scenarios:
   SCN-AUTH-008:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-ADMIN-03
@@ -89,6 +97,7 @@ scenarios:
   SCN-AUTH-009:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-05
@@ -99,6 +108,7 @@ scenarios:
   SCN-AUTH-010:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-05
@@ -110,6 +120,7 @@ scenarios:
   SCN-AUTH-011:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-05
@@ -120,6 +131,7 @@ scenarios:
   SCN-AUTH-012:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-09
@@ -130,6 +142,7 @@ scenarios:
   SCN-AUTH-013:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-10
@@ -140,6 +153,7 @@ scenarios:
   SCN-AUTH-014:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-09
@@ -151,6 +165,7 @@ scenarios:
   SCN-AUTH-015:
     domain: auth
     mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-09
@@ -161,6 +176,7 @@ scenarios:
   SCN-BOOK-001:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-04
@@ -172,6 +188,7 @@ scenarios:
   SCN-BOOK-002:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-04
@@ -183,6 +200,7 @@ scenarios:
   SCN-BOOK-003:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-04
@@ -193,6 +211,7 @@ scenarios:
   SCN-BOOK-004:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: REQ-BOOK-04 escalation logic (warning vs ranking penalty) not yet implemented
       in BookingService
     override_status: 'waived: escalation enforcement deferred'
@@ -205,6 +224,7 @@ scenarios:
   SCN-BOOK-005:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-06
@@ -215,6 +235,7 @@ scenarios:
   SCN-BOOK-006:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: REQ-BOOK-06 tasker cancellation strike counting not wired in cancelBooking
       — only no-shows call addStrike currently
     override_status: 'waived: tasker cancel strike counting deferred'
@@ -227,6 +248,7 @@ scenarios:
   SCN-BOOK-007:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-03
@@ -237,6 +259,7 @@ scenarios:
   SCN-BOOK-008:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-03
@@ -247,6 +270,7 @@ scenarios:
   SCN-BOOK-009:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-05
@@ -257,6 +281,7 @@ scenarios:
   SCN-BOOK-010:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -267,6 +292,7 @@ scenarios:
   SCN-BOOK-011:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -277,6 +303,7 @@ scenarios:
   SCN-BOOK-012:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -287,6 +314,7 @@ scenarios:
   SCN-BOOK-013:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -298,6 +326,7 @@ scenarios:
   SCN-BOOK-014:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -309,6 +338,7 @@ scenarios:
   SCN-BOOK-015:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -319,6 +349,7 @@ scenarios:
   SCN-BOOK-016:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-11
@@ -329,6 +360,7 @@ scenarios:
   SCN-BOOK-017:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-12
@@ -340,6 +372,7 @@ scenarios:
   SCN-BOOK-018:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-12
@@ -350,6 +383,7 @@ scenarios:
   SCN-BOOK-019:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-12
@@ -360,6 +394,7 @@ scenarios:
   SCN-BOOK-020:
     domain: booking
     mutation_kill_rate: 33
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-BOOK-13
@@ -368,9 +403,259 @@ scenarios:
     test_type: domain-unit
     title: Only the latest mutually accepted in-app schedule changes policy timers
       and the reschedule lifecycle remains audit-immutable
+  SCN-CATEGORY-001:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin can add a new service category
+  SCN-CATEGORY-002:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Admin can edit, deactivate, and reorder categories with immediate picker
+      propagation
+  SCN-CATEGORY-003:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Schema lint rejects activation candidates with fewer than 3 required questions
+  SCN-CATEGORY-004:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Schema lint rejects activation candidates with more than 5 required questions
+  SCN-CATEGORY-005:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Schema lint rejects unsupported field types
+  SCN-CATEGORY-006:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Canary activation publishes a new schema version without rebinding existing
+      drafts
+  SCN-CATEGORY-007:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Rollback restores the last-known-good schema version
+  SCN-CATEGORY-008:
+    domain: category
+    mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-ADMIN-05
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Rollback without a last-known-good schema fails with NO_FALLBACK
+  SCN-DISPUTE-001:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Either participant can open a dispute while the booking is ASSIGNED
+  SCN-DISPUTE-002:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Either participant can open a dispute within 24 hours after booking completion
+  SCN-DISPUTE-003:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Completed-booking dispute after 24 hours is rejected
+  SCN-DISPUTE-004:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Dispute creation outside ASSIGNED or COMPLETED booking states is rejected
+  SCN-DISPUTE-005:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-10
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Dispute submission requires at least one evidence artifact
+  SCN-DISPUTE-006:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-10
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Missing evidence after reminder and 24-hour grace auto-closes the dispute
+      as INSUFFICIENT_EVIDENCE
+  SCN-DISPUTE-007:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-10
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Evidence added during the grace window prevents insufficient-evidence auto-close
+  SCN-DISPUTE-008:
+    domain: dispute
+    mutation_kill_rate: 58
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Phase 1 dispute resolution is limited to evidence-only outcomes and admin
+      misconduct notes
+  SCN-REVIEW-001:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Booking completion creates structured review prompts for both customer
+      and tasker
+  SCN-REVIEW-002:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Immediate review prompt is sent at completion time
+  SCN-REVIEW-003:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-11
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Open review case at 24 hours sends the first reminder
+  SCN-REVIEW-004:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-11
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Open review case at 72 hours sends the final reminder
+  SCN-REVIEW-005:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-02
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Hard lock is enforced only when an open review case also has a configured
+      risk flag
+  SCN-REVIEW-006:
+    domain: review
+    mutation_kill_rate: 43
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-SAFE-11
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Hard lock triggered by dispute, repeated non-submission, or investigation
+      logs the trigger reason
   SCN-SEC-001:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -381,6 +666,7 @@ scenarios:
   SCN-SEC-002:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -391,6 +677,7 @@ scenarios:
   SCN-SEC-003:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -401,6 +688,7 @@ scenarios:
   SCN-SEC-004:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-AUTH-03
@@ -411,6 +699,7 @@ scenarios:
   SCN-SEC-005:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-TASK-01
@@ -422,6 +711,7 @@ scenarios:
   SCN-SEC-006:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-TASK-03
@@ -432,6 +722,7 @@ scenarios:
   SCN-SEC-007:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-LEAK-03
@@ -443,6 +734,7 @@ scenarios:
   SCN-SEC-008:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-LEAK-01
@@ -453,6 +745,7 @@ scenarios:
   SCN-SEC-009:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-LEAK-02
@@ -463,6 +756,7 @@ scenarios:
   SCN-SEC-010:
     domain: security
     mutation_kill_rate: 0
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
     notes: null
     override_status: null
     prd_ref: REQ-LEAK-03
@@ -470,3 +764,220 @@ scenarios:
     status: covered
     test_type: domain-unit
     title: Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED
+  SCN-TASK-001:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-00
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task-post form loads the active intake schema for the selected category
+  SCN-TASK-002:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-00
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task submit with missing required intake answers fails with field-level
+      validation errors
+  SCN-TASK-003:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task creation without required base fields returns field-specific validation
+      errors
+  SCN-TASK-004:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Budget equal to 1000 MNT is rejected
+  SCN-TASK-005:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Budget greater than 1000 MNT is accepted
+  SCN-TASK-006:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-01
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Fourth task photo is rejected with PHOTO_LIMIT_EXCEEDED
+  SCN-TASK-007:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Tasker feed includes only OPEN tasks
+  SCN-TASK-008:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task feed exposes district or fuzzed location only before confirmation
+  SCN-TASK-009:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Non-participant task detail returns approximate location only
+  SCN-TASK-010:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task owner receives full exact location fields in task detail
+  SCN-TASK-011:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Accepted tasker receives full exact location fields after booking confirmation
+  SCN-TASK-012:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Task feed cursor pagination is deterministic and pages do not overlap
+  SCN-TASK-013:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-03
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Invalid task feed cursor is rejected with INVALID_CURSOR
+  SCN-TASK-014:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-07
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Deterministic job scope summary is generated from intake answers before
+      submit and persisted
+  SCN-TASK-015:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-10
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Summary rendering failure falls back to canonical key-value summary without
+      blocking posting
+  SCN-TASK-016:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-09
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Draft creation binds and returns the active intake schema version at form
+      start
+  SCN-TASK-017:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-09
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Draft submit validates against its bound schema version even after a newer
+      version is activated
+  SCN-TASK-018:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-09
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Draft submit still uses its bound schema version even if that version is
+      no longer active
+  SCN-TASK-019:
+    domain: task
+    mutation_kill_rate: 12
+    mutation_kill_rate_updated_at: '2026-03-28T18:47:01Z'
+    notes: null
+    override_status: null
+    prd_ref: REQ-TASK-11
+    risk: high
+    status: untested
+    test_type: domain-unit
+    title: Deactivated category blocks new draft and create requests but existing
+      tasks keep their lifecycle
