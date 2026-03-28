@@ -26,6 +26,7 @@
     "@react-native-firebase/messaging": "^23.8.8",
     "@stomp/stompjs": "^7.3.0",
     "@tanstack/react-query": "^5.0.0",
+    "@tasky/design-tokens": "workspace:*",
     "@tasky/sdk": "workspace:*",
     "expo": "~52.0.39",
     "expo-blur": "~14.0.3",

@@ -1,5 +1,4 @@
-import { designTokens } from '../../../../packages/design-tokens/tokens';
-import { motionTokens } from '../../../../packages/design-tokens/src/motion';
+import { designTokens, motionTokens } from '@tasky/design-tokens';
 
 export const mobileTheme = {
   colors: {

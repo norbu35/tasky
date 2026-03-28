@@ -174,9 +174,9 @@ export function CustomerTaskWizardPage() {
 
       const created = await apiClient.createTask(session.accessToken, {
         ...payload,
-        intake_answers: intakeSchema ? intakeAnswers : undefined,
-        intake_schema_version: intakeSchema?.version,
-        scope_summary: intakeSchema ? description.trim() : undefined,
+        intake_answers: intakeSchema ? intakeAnswers : {},
+        intake_schema_version: intakeSchema?.version ?? 1,
+        scope_summary: intakeSchema ? description.trim() : null,
       });
 
       setCreatedTask(created);

@@ -228,6 +228,9 @@ export function CustomerTaskPage() {
       // Build the full payload with intake data if available
       const payload: Parameters<typeof apiClient.createTask>[1] = {
         ...validatedData,
+        intake_answers: {},
+        intake_schema_version: 1,
+        scope_summary: null,
       };
 
       if (hasIntakeSchema && intakeSchema) {
