@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-112",
+  "risk_level": "medium",
+  "req_ids": [
+    "NFR-API-01",
+    "NFR-API-02"
+  ],
+  "depends_on": [
+    "TASK-002"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-112-01",
+      "type": "functional",
+      "statement": "All live Spring MVC API paths under `/api/v1` are documented in `docs/API.yaml`.",
+      "test_ids": [
+        "TID-TASK-112-CONTRACT-SPRING-PARITY"
+      ]
+    },
+    {
+      "id": "AC-TASK-112-02",
+      "type": "functional",
+      "statement": "Documented endpoints without live server implementations declare explicit deferral metadata in `docs/API.yaml`.",
+      "test_ids": [
+        "TID-TASK-112-CONTRACT-DEFERRED-METADATA"
+      ]
+    },
+    {
+      "id": "AC-TASK-112-03",
+      "type": "functional",
+      "statement": "Web and mobile API clients use generated SDK schema types for task creation and dispute creation payloads.",
+      "test_ids": [
+        "TID-TASK-112-WEB-SDK-SCHEMAS",
+        "TID-TASK-112-MOBILE-SDK-SCHEMAS"
+      ]
+    }
+  ]
+}

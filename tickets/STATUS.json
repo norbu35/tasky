@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-03-28T08:43:37Z",
+  "updated_at": "2026-03-28T09:56:28Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -214,6 +214,13 @@
       "branch": "agent/TASK-111-web-container-overlay",
       "claimed_at": "2026-03-28T07:39:27Z",
       "completed_at": "2026-03-28T08:43:37Z"
+    },
+    "TASK-112": {
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-112-openapi-contract-authority",
+      "claimed_at": "2026-03-28T09:31:00Z",
+      "completed_at": "2026-03-28T09:56:28Z"
     }
   }
 }

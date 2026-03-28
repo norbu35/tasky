@@ -52,7 +52,7 @@ class ApiContractTraceabilityTests {
     @Test
     @DisplayName("TID-TASK-065-CONTRACT-LIST-ENDPOINTS list endpoints expose cursor + limit " + "contract parameters")
     void listEndpointsExposeCursorAndLimitContract() throws Exception {
-        String api = Files.readString(Path.of("docs/API.yaml"));
+        String api = OpenApiContractTestSupport.readOpenApi();
 
         List<String> listEndpoints = List.of(
                 "/categories",
@@ -77,15 +77,27 @@ class ApiContractTraceabilityTests {
         }
     }
 
-    private String endpointBlock(String api, String endpoint) {
-        String marker = "  " + endpoint + ":";
-        int start = api.indexOf(marker);
-        assertThat(start).as("endpoint marker should exist: %s", endpoint).isGreaterThanOrEqualTo(0);
+    @Test
+    @DisplayName("TID-TASK-112-CONTRACT-DEFERRED-METADATA spec-only endpoints declare explicit deferral metadata")
+    void specOnlyEndpointsDeclareExplicitDeferralMetadata() throws Exception {
+        String api = OpenApiContractTestSupport.readOpenApi();
+        var deferredPaths = OpenApiContractTestSupport.documentedPaths(api);
+        deferredPaths.removeAll(OpenApiContractTestSupport.liveApiPaths());
 
-        int next = api.indexOf("\n  /", start + marker.length());
-        if (next < 0) {
-            return api.substring(start);
+        assertThat(deferredPaths).as("expected at least one deferred endpoint in the OpenAPI spec").isNotEmpty();
+
+        for (String path : deferredPaths) {
+            String block = OpenApiContractTestSupport.endpointBlock(api, path);
+            assertThat(block)
+                    .as("deferred endpoint %s must declare x-tasky-status", path)
+                    .contains("x-tasky-status: deferred");
+            assertThat(block)
+                    .as("deferred endpoint %s must declare x-tasky-target-phase", path)
+                    .contains("x-tasky-target-phase:");
         }
-        return api.substring(start, next);
+    }
+
+    private String endpointBlock(String api, String endpoint) {
+        return OpenApiContractTestSupport.endpointBlock(api, endpoint);
     }
 }
