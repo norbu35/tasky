@@ -1,7 +1,6 @@
 package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -91,21 +90,37 @@ class TaskServiceUnitTests {
     @Test
     @DisplayName("buildPhotoAccessUrls returns empty list for null input")
     void buildPhotoAccessUrlsNull() {
-        assertThat(taskService.buildPhotoAccessUrls(null)).isEmpty();
+        assertThat(taskService.buildPhotoAccessUrls(null, "user-1")).isEmpty();
     }
 
     @Test
-    @DisplayName("buildPhotoAccessUrl builds correct URL")
-    void buildPhotoAccessUrl() {
-        String url = taskService.buildPhotoAccessUrl("uploads/tasks/user-1/photo.jpg");
-        assertThat(url).contains("presigned-get");
-        assertThat(url).contains("photo.jpg");
+    @DisplayName("buildOwnedPhotoAccessUrl builds correct URL for owned task photo")
+    void buildOwnedPhotoAccessUrl() {
+        assertThat(taskService.buildOwnedPhotoAccessUrl("uploads/tasks/user-1/photo.jpg", "user-1"))
+                .hasValueSatisfying(url -> {
+                    assertThat(url).contains("presigned-get");
+                    assertThat(url).contains("photo.jpg");
+                });
     }
 
     @Test
-    @DisplayName("buildPhotoAccessUrl rejects non-task-photo namespaces")
-    void buildPhotoAccessUrlRejectsNonTaskPhotoKeys() {
-        assertThatThrownBy(() -> taskService.buildPhotoAccessUrl("uploads/verification/user-1/front.jpg"))
-                .isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("buildOwnedPhotoAccessUrl skips foreign and wrong-namespace task photos")
+    void buildOwnedPhotoAccessUrlSkipsInvalidKeys() {
+        assertThat(taskService.buildOwnedPhotoAccessUrl("uploads/tasks/other-user/photo.jpg", "user-1")).isEmpty();
+        assertThat(taskService.buildOwnedPhotoAccessUrl("uploads/verification/user-1/front.jpg", "user-1"))
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("buildPhotoAccessUrls skips legacy invalid task photo keys")
+    void buildPhotoAccessUrlsSkipsLegacyInvalidKeys() {
+        assertThat(taskService.buildPhotoAccessUrls(
+                        java.util.List.of(
+                                "uploads/tasks/user-1/photo.jpg",
+                                "uploads/tasks/other-user/photo.jpg",
+                                "uploads/verification/user-1/front.jpg"),
+                        "user-1"))
+                .hasSize(1)
+                .allSatisfy(url -> assertThat(url).contains("photo.jpg"));
     }
 }

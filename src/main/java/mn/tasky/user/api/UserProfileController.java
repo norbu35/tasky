@@ -4,6 +4,7 @@ import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dao.UserDao;
@@ -86,10 +87,10 @@ public class UserProfileController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody UpdateProfileRequest body,
             HttpServletRequest request) {
-        if (body.avatarUrl() != null && body.avatarUrl().startsWith("uploads/")) {
+        if (body.avatarUrl() != null) {
             try {
                 storageKeyPolicy.validateOwnedKey(
-                        body.avatarUrl(), StorageKeyPolicy.Namespace.AVATAR, principal.userId());
+                        extractAvatarStorageKey(body.avatarUrl()), StorageKeyPolicy.Namespace.AVATAR, principal.userId());
             } catch (IllegalArgumentException exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of(
@@ -157,5 +158,24 @@ public class UserProfileController {
 
         return ResponseEntity.ok(
                 Map.of("message", "Account deletion requested. Data will be removed after 90-day retention period."));
+    }
+
+    private String extractAvatarStorageKey(String avatarUrl) {
+        if (avatarUrl.startsWith("uploads/")) {
+            return avatarUrl;
+        }
+
+        URI uri = URI.create(avatarUrl);
+        String host = uri.getHost();
+        if (!"cdn.tasky.mn".equals(host) && !"cdn.tasky.local".equals(host)) {
+            throw new IllegalArgumentException("Invalid avatar URL");
+        }
+
+        String path = uri.getPath();
+        if (path == null || path.isBlank()) {
+            throw new IllegalArgumentException("Invalid avatar URL");
+        }
+
+        return path.startsWith("/") ? path.substring(1) : path;
     }
 }

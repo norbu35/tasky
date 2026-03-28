@@ -95,4 +95,30 @@ class AdminVerificationAuditTests {
 
         org.mockito.Mockito.verifyNoInteractions(auditEventDao);
     }
+
+    @Test
+    @DisplayName("View verification detail skips audit events when media URLs are missing")
+    void viewVerificationDetailMissingMediaSkipsAudit() {
+        VerificationDetail detail = new VerificationDetail(
+                VERIFICATION_ID,
+                "00000000-0000-0000-0000-000000000010",
+                "+97699110001",
+                "Test User",
+                null,
+                null,
+                "PENDING",
+                null,
+                "2026-03-01T00:00:00Z",
+                null,
+                null,
+                null,
+                null);
+        when(authService.getVerificationDetail(VERIFICATION_ID)).thenReturn(Optional.of(detail));
+
+        JwtPrincipal principal = new JwtPrincipal(ADMIN_USER_ID, "ADMIN", "ACTIVE");
+        ResponseEntity<?> response = controller.getDetail(VERIFICATION_ID, principal, new MockHttpServletRequest());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        org.mockito.Mockito.verifyNoInteractions(auditEventDao);
+    }
 }

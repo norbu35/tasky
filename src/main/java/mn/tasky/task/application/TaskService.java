@@ -886,22 +886,35 @@ public class TaskService {
      * @param storageKeys Photo storage keys.
      * @return Access URLs, or empty list when no keys are provided.
      */
-    public List<String> buildPhotoAccessUrls(List<String> storageKeys) {
+    public List<String> buildPhotoAccessUrls(List<String> storageKeys, String customerId) {
         if (storageKeys == null || storageKeys.isEmpty()) {
             return List.of();
         }
-        return storageKeys.stream().map(this::buildPhotoAccessUrl).toList();
+        return storageKeys.stream()
+                .map(storageKey -> buildOwnedPhotoAccessUrl(storageKey, customerId))
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     /**
      * Builds a read URL for one stored photo key.
      *
      * @param storageKey Photo storage key.
-     * @return Presigned read URL.
+     * @param customerId Task owner identifier used to enforce namespace ownership.
+     * @return Presigned read URL when the key still belongs to the task owner.
      */
-    public String buildPhotoAccessUrl(String storageKey) {
-        storageKeyPolicy.validateNamespaceKey(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO);
-        return storageService.generateDownloadUrl(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO);
+    public Optional<String> buildOwnedPhotoAccessUrl(String storageKey, String customerId) {
+        if (!StringUtils.hasText(customerId)) {
+            return Optional.empty();
+        }
+
+        try {
+            storageKeyPolicy.validateOwnedKey(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO, customerId);
+            return Optional.of(storageService.generateDownloadUrl(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO));
+        } catch (IllegalArgumentException exception) {
+            log.warn("Skipping invalid legacy task photo key for owner {}: {}", customerId, storageKey);
+            return Optional.empty();
+        }
     }
 
     /**
@@ -963,11 +976,13 @@ public class TaskService {
         List<String> photoKeys = replacePhotos
                 ? List.copyOf(command.photoKeys())
                 : (existing.photoKeys() == null ? List.of() : List.copyOf(existing.photoKeys()));
-        if (photoKeys.size() > 3) {
-            return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
-        }
-        if (!areOwnedTaskPhotoKeys(photoKeys, customerId)) {
-            return TaskUpdateResult.INVALID_PHOTO_KEY_RESULT;
+        if (replacePhotos) {
+            if (photoKeys.size() > 3) {
+                return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
+            }
+            if (!areOwnedTaskPhotoKeys(photoKeys, customerId)) {
+                return TaskUpdateResult.INVALID_PHOTO_KEY_RESULT;
+            }
         }
 
         Instant now = Instant.now();

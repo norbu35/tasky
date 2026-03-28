@@ -60,12 +60,14 @@ curl http://127.0.0.1:8080/api/v1/system/version
 
 ## Local Auth Bypass (Testing)
 
-For local testing, dev auth is enabled by default (`tasky.dev-auth.enabled=true`).
+For local testing, dev auth is only allowed in the `local` or `test` Spring profiles.
 
-- Web login page shows `Developer quick login` buttons in dev mode.
+- Backend dev auth requires `SPRING_PROFILES_ACTIVE=local` (or `test`) plus `TASKY_DEV_AUTH_ENABLED=true`.
+- Web login shows `Developer quick login` buttons only when `VITE_DEV_AUTH_ENABLED=true`.
+- Mobile login shows the same buttons only when `EXPO_PUBLIC_DEV_AUTH_ENABLED=true`.
 - Buttons call `POST /api/v1/auth/dev/login` and issue a normal JWT session without SMS OTP.
-- Disable it by setting `TASKY_DEV_AUTH_ENABLED=false`.
-- Production safety gate: app startup fails in `prod`/`production` profile if dev auth is enabled.
+- Disable it by setting `TASKY_DEV_AUTH_ENABLED=false` and clearing the matching client flag.
+- Production safety gate: app startup fails outside `local`/`test` if dev auth is enabled.
 
 ## Verification Workflow
 

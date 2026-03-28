@@ -32,6 +32,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -56,6 +57,9 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DisplayName("TID-TASK-021-API-TASK-CREATE customer can create a task with valid data")
@@ -957,6 +961,48 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
         assertThat(response.getBody()).containsEntry("code", "INVALID_PHOTO_KEY");
     }
 
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-GET legacy invalid photo rows are filtered from owner task views")
+    void ownerTaskViewSkipsLegacyInvalidPhotoRows() {
+        AuthContext customer = authenticate("1992");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTaskWithPhoto(customer, categoryId, "photo1.jpg");
+
+        jdbcTemplate.update(
+                "UPDATE task_photos SET storage_key = ? WHERE task_id = ?",
+                "uploads/tasks/other-user/foreign-photo.jpg",
+                UUID.fromString(taskId));
+
+        ResponseEntity<Map> response = getWithAuth("/api/v1/tasks/" + taskId, customer.accessToken());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat((List<?>) response.getBody().get("photos")).isEmpty();
+        assertThat((List<?>) response.getBody().get("photo_keys")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-UPDATE non-photo updates succeed when legacy invalid photo rows exist")
+    void nonPhotoUpdatesIgnoreLegacyInvalidPhotoRows() {
+        AuthContext customer = authenticate("1993");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTaskWithPhoto(customer, categoryId, "photo2.jpg");
+
+        jdbcTemplate.update(
+                "UPDATE task_photos SET storage_key = ? WHERE task_id = ?",
+                "uploads/verification/" + customer.userId() + "/front.jpg",
+                UUID.fromString(taskId));
+
+        ResponseEntity<Map> response = putWithAuth(
+                "/api/v1/tasks/" + taskId,
+                customer.accessToken(),
+                Map.of("description", "Updated description while keeping legacy photos untouched."));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsEntry(
+                "description", "Updated description while keeping legacy photos untouched.");
+        assertThat((List<?>) response.getBody().get("photos")).isEmpty();
+    }
+
     private String createTask(String token, String categoryId) {
         ResponseEntity<Map> response = postWithAuth(
                 "/api/v1/tasks",
@@ -976,6 +1022,30 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
                         "Ulaanbaatar",
                         "scheduled_at",
                         Instant.now().plus(1, ChronoUnit.DAYS).toString()));
+        return response.getBody().get("id").toString();
+    }
+
+    private String createTaskWithPhoto(AuthContext customer, String categoryId, String fileName) {
+        ResponseEntity<Map> response = postWithAuth(
+                "/api/v1/tasks",
+                customer.accessToken(),
+                Map.of(
+                        "category_id",
+                        categoryId,
+                        "description",
+                        "Description for a task that should preserve photo behavior.",
+                        "budget",
+                        70000,
+                        "location_lat",
+                        47.9,
+                        "location_lng",
+                        106.9,
+                        "location_text",
+                        "Ulaanbaatar",
+                        "scheduled_at",
+                        Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                        "photo_keys",
+                        List.of("uploads/tasks/" + customer.userId() + "/" + fileName)));
         return response.getBody().get("id").toString();
     }
 

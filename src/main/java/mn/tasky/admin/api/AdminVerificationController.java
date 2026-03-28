@@ -61,18 +61,22 @@ public class AdminVerificationController {
         return authService
                 .getVerificationDetail(id)
                 .<ResponseEntity<?>>map(detail -> {
-                    auditEventDao.insert(
-                            principal.userId(),
-                            "VERIFICATION_MEDIA_VIEWED",
-                            "VERIFICATION",
-                            detail.id(),
-                            "{\"field\":\"id_card_front\"}");
-                    auditEventDao.insert(
-                            principal.userId(),
-                            "VERIFICATION_MEDIA_VIEWED",
-                            "VERIFICATION",
-                            detail.id(),
-                            "{\"field\":\"id_card_back\"}");
+                    if (detail.idCardFrontUrl() != null) {
+                        auditEventDao.insert(
+                                principal.userId(),
+                                "VERIFICATION_MEDIA_VIEWED",
+                                "VERIFICATION",
+                                detail.id(),
+                                "{\"field\":\"id_card_front\"}");
+                    }
+                    if (detail.idCardBackUrl() != null) {
+                        auditEventDao.insert(
+                                principal.userId(),
+                                "VERIFICATION_MEDIA_VIEWED",
+                                "VERIFICATION",
+                                detail.id(),
+                                "{\"field\":\"id_card_back\"}");
+                    }
                     return ResponseEntity.ok(toDetailBody(detail));
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)

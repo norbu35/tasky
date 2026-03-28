@@ -155,6 +155,39 @@ class UserProfileIntegrationTests extends IntegrationTestBase {
         assertThat(response.getBody()).containsEntry("code", "INVALID_AVATAR_KEY");
     }
 
+    @Test
+    @DisplayName("TID-TASK-011-API-PROFILE-GET-PUT profile update accepts owned avatar CDN URLs")
+    void profileUpdateAcceptsOwnedCdnAvatarUrl() {
+        AuthContext auth = authenticate("42");
+        String avatarUrl = "https://cdn.tasky.local/uploads/avatars/" + auth.userId() + "/custom-profile.png";
+
+        ResponseEntity<Map> response = putWithAuth(
+                "/api/v1/users/me",
+                auth.accessToken(),
+                Map.of("full_name", "Bat-Erdene", "avatar_url", avatarUrl));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsEntry("avatar_url", avatarUrl);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-011-API-PROFILE-GET-PUT profile update rejects foreign avatar CDN URLs")
+    void profileUpdateRejectsForeignCdnAvatarUrl() {
+        AuthContext auth = authenticate("41");
+
+        ResponseEntity<Map> response = putWithAuth(
+                "/api/v1/users/me",
+                auth.accessToken(),
+                Map.of(
+                        "full_name",
+                        "Bat-Erdene",
+                        "avatar_url",
+                        "https://cdn.tasky.local/uploads/avatars/other-user/custom-profile.png"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("code", "INVALID_AVATAR_KEY");
+    }
+
     private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, String> body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

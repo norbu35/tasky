@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
-import { ProfilePage } from '../../src/pages/ProfilePage';
+import {
+  avatarValueToApiPayload,
+  avatarValueToPreviewUrl,
+  ProfilePage,
+} from '../../src/pages/ProfilePage';
 import { buildApiClientMock } from '../setup/mockApiClient';
 import { baseProfile, baseSession } from '../setup/mockData';
 
@@ -43,6 +47,18 @@ function renderProfilePage(profileOverrides: Partial<AppContextValue['profile']>
 }
 
 describe('ProfilePage', () => {
+  it('converts managed avatar keys into local preview URLs', () => {
+    expect(avatarValueToPreviewUrl('uploads/avatars/user-1/photo.png')).toBe(
+      'https://cdn.tasky.local/uploads/avatars/user-1/photo.png',
+    );
+  });
+
+  it('converts tasky CDN avatar URLs back into managed keys for API writes', () => {
+    expect(
+      avatarValueToApiPayload('https://cdn.tasky.local/uploads/avatars/user-1/photo.png'),
+    ).toBe('uploads/avatars/user-1/photo.png');
+  });
+
   it('renders the profile page as a named detail region', () => {
     renderProfilePage();
 

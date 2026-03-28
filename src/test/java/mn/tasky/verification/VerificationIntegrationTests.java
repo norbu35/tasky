@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.sql.Timestamp;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
@@ -34,6 +36,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
 
     @Value("${tasky.security.jwt-secret}")
     private String jwtSecret;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DisplayName("TID-TASK-012-API-TASKER-ACTIVATE CUSTOMER can activate TASKER role and receives" + " new tokens")
@@ -285,6 +290,51 @@ class VerificationIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> profile = getWithAuth("/api/v1/users/me", taskerToken);
         assertThat(profile.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(profile.getBody().get("status")).isEqualTo("VERIFIED");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-013-API-ADMIN-VERIFICATION-LIST legacy invalid verification media keys do not break admin review")
+    @SuppressWarnings("unchecked")
+    void adminVerificationEndpointsTolerateLegacyInvalidMediaKeys() {
+        AuthContext auth = authenticate("741");
+        String verificationId = UUID.randomUUID().toString();
+        Instant now = Instant.now();
+
+        jdbcTemplate.update(
+                "INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, status, submitted_at,"
+                        + " admin_notes, reviewed_at, consent_policy_version, consent_accepted_at, dan_reference)"
+                        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                UUID.fromString(verificationId),
+                UUID.fromString(auth.userId()),
+                "uploads/tasks/" + auth.userId() + "/foreign-photo.jpg",
+                "not-a-managed-key",
+                "PENDING",
+                Timestamp.from(now),
+                null,
+                null,
+                "1.0",
+                Timestamp.from(now),
+                null);
+
+        String adminToken = adminToken();
+        ResponseEntity<Map> pendingResponse = getWithAuth("/api/v1/admin/verifications/pending", adminToken);
+
+        assertThat(pendingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<Map<String, Object>> data =
+                (List<Map<String, Object>>) pendingResponse.getBody().get("data");
+        Map<String, Object> verification = data.stream()
+                .filter(row -> verificationId.equals(row.get("id")))
+                .findFirst()
+                .orElseThrow();
+        assertThat(verification.get("id_card_front_url")).isNull();
+        assertThat(verification.get("id_card_back_url")).isNull();
+
+        ResponseEntity<Map> detailResponse =
+                getWithAuth("/api/v1/admin/verifications/" + verificationId, adminToken);
+
+        assertThat(detailResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(detailResponse.getBody().get("id_card_front_url")).isNull();
+        assertThat(detailResponse.getBody().get("id_card_back_url")).isNull();
     }
 
     private String adminToken() {

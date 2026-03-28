@@ -160,7 +160,7 @@ public class TaskController {
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
         List<String> photoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
-        response.put("photo_urls", taskService.buildPhotoAccessUrls(photoKeys));
+        response.put("photo_urls", taskService.buildPhotoAccessUrls(photoKeys, task.customerId()));
         response.put("application_count", taskApplicationCount(task.id()));
         response.put("created_at", task.createdAt().toString());
 
@@ -221,14 +221,11 @@ public class TaskController {
         List<String> rawPhotoKeys = task.photoKeys();
         final List<String> photoKeys = rawPhotoKeys == null ? List.of() : rawPhotoKeys;
         List<Map<String, Object>> photos = IntStream.range(0, photoKeys.size())
-                .mapToObj(index -> {
-                    Map<String, Object> photo = new LinkedHashMap<>();
-                    photo.put("storage_key", photoKeys.get(index));
-                    photo.put("url", taskService.buildPhotoAccessUrl(photoKeys.get(index)));
-                    photo.put("sort_order", index);
-                    return photo;
-                })
+                .mapToObj(index -> toOwnedPhotoResponse(photoKeys.get(index), index, task.customerId()))
+                .flatMap(Optional::stream)
                 .toList();
+        List<String> visiblePhotoKeys =
+                photos.stream().map(photo -> String.valueOf(photo.get("storage_key"))).toList();
         response.put("id", task.id());
         response.put("category_id", task.categoryId());
         response.put("customer_id", task.customerId());
@@ -240,10 +237,20 @@ public class TaskController {
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
         response.put("photos", photos);
-        response.put("photo_keys", photoKeys);
+        response.put("photo_keys", visiblePhotoKeys);
         response.put("created_at", task.createdAt().toString());
         response.put("updated_at", task.updatedAt().toString());
         return response;
+    }
+
+    private Optional<Map<String, Object>> toOwnedPhotoResponse(String storageKey, int sortOrder, String customerId) {
+        return taskService.buildOwnedPhotoAccessUrl(storageKey, customerId).map(url -> {
+            Map<String, Object> photo = new LinkedHashMap<>();
+            photo.put("storage_key", storageKey);
+            photo.put("url", url);
+            photo.put("sort_order", sortOrder);
+            return photo;
+        });
     }
 
     @GetMapping("/{id}")

@@ -813,10 +813,8 @@ public class AuthService {
         String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
         String name = profile != null ? profile.fullName() : null;
 
-        String frontUrl =
-                storageService.generateDownloadUrl(request.idCardFrontKey(), StorageKeyPolicy.Namespace.VERIFICATION);
-        String backUrl =
-                storageService.generateDownloadUrl(request.idCardBackKey(), StorageKeyPolicy.Namespace.VERIFICATION);
+        String frontUrl = safeVerificationDownloadUrl(request.idCardFrontKey());
+        String backUrl = safeVerificationDownloadUrl(request.idCardBackKey());
 
         return new VerificationDetail(
                 request.id(),
@@ -832,6 +830,18 @@ public class AuthService {
                 null,
                 null,
                 null);
+    }
+
+    private String safeVerificationDownloadUrl(String storageKey) {
+        if (!StringUtils.hasText(storageKey)) {
+            return null;
+        }
+
+        try {
+            return storageService.generateDownloadUrl(storageKey, StorageKeyPolicy.Namespace.VERIFICATION);
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
     }
 
     /**

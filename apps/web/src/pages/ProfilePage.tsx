@@ -11,6 +11,33 @@ import { parseError } from '../lib/errorHandling';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+const LOCAL_CDN_BASE = 'https://cdn.tasky.local/';
+const PROD_CDN_BASE = 'https://cdn.tasky.mn/';
+
+export function avatarValueToPreviewUrl(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+  return value.startsWith('uploads/') ? `${LOCAL_CDN_BASE}${value}` : value;
+}
+
+export function avatarValueToApiPayload(value: string | null | undefined): string | null {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed) {
+    return null;
+  }
+  if (trimmed.startsWith('uploads/')) {
+    return trimmed;
+  }
+  if (trimmed.startsWith(LOCAL_CDN_BASE)) {
+    return trimmed.slice(LOCAL_CDN_BASE.length);
+  }
+  if (trimmed.startsWith(PROD_CDN_BASE)) {
+    return trimmed.slice(PROD_CDN_BASE.length);
+  }
+  return trimmed;
+}
+
 export function ProfilePage() {
   const { apiClient, session, profile, setProfile, refreshProfile, updateSessionUser } =
     useAppContext();
@@ -24,7 +51,7 @@ export function ProfilePage() {
 
   useEffect(() => {
     setFullName(profile?.full_name ?? '');
-    setAvatarUrl(profile?.avatar_url ?? '');
+    setAvatarUrl(avatarValueToPreviewUrl(profile?.avatar_url));
   }, [profile]);
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -77,7 +104,7 @@ export function ProfilePage() {
       }
 
       // 3. Set preview URL
-      setAvatarUrl(`https://cdn.tasky.local/${storageKey}`);
+      setAvatarUrl(avatarValueToPreviewUrl(storageKey));
       toast.success(
         t('profile.avatarUploaded', 'Avatar uploaded to bucket. Click Save below to apply.'),
       );
@@ -98,7 +125,7 @@ export function ProfilePage() {
     try {
       const updated = await apiClient.updateMyProfile(session.accessToken, {
         full_name: fullName.trim(),
-        avatar_url: avatarUrl.trim().length > 0 ? avatarUrl.trim() : null,
+        avatar_url: avatarValueToApiPayload(avatarUrl),
       });
       setProfile(updated);
       toast.success(t('profile.profileUpdated', 'Profile updated successfully'));
@@ -302,7 +329,7 @@ export function ProfilePage() {
             if (!session) return;
             const res = await apiClient.getAvatarUploadUrl(session.accessToken, 'image/png');
             setGeneratedStorageKey(res.storageKey);
-            setAvatarUrl(`https://cdn.tasky.local/${res.storageKey}`);
+            setAvatarUrl(avatarValueToPreviewUrl(res.storageKey));
           }}
         >
           Generate avatar upload URL

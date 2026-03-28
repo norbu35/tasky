@@ -9,6 +9,6 @@ describe("Component Usage Compliance", () => {
         render(<App apiClient={apiClient} initialRoute="/auth"/>);
 
         expect(screen.getByRole("button", {name: "Continue with Facebook"})).toBeInTheDocument();
-        expect(screen.getByText("Developer Bypass")).toBeInTheDocument();
+        expect(screen.queryByText("Developer Bypass")).not.toBeInTheDocument();
     });
 });
