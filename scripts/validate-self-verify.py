@@ -270,6 +270,8 @@ def validate(
             "test_ids",
             "covered_test_ids",
             "uncovered_test_ids",
+            "not_run_test_ids",
+            "not_written_test_ids",
             "status",
         }
         optional_fields = {
@@ -325,6 +327,8 @@ def validate(
             "fully_covered_ac",
             "total_test_ids",
             "covered_test_ids",
+            "changed_test_files",
+            "authorship_check_enabled",
             "pass",
             "failures",
         }

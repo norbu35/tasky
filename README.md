@@ -153,3 +153,17 @@ Run mobile tests:
 pnpm --filter @tasky/mobile test:unit
 pnpm --filter @tasky/mobile test:e2e:smoke
 ```
+
+## Web Container
+
+The base repo compose file stays focused on the backend and supporting services. Use the generic web overlay to build
+and run the Tasky web container:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.web.yml build web
+docker compose -f docker-compose.yml -f docker-compose.web.yml up -d web
+```
+
+The overlay builds `apps/web/Dockerfile` and publishes the Caddy-served web app on `WEB_PORT` (default `8081`). Any
+reverse proxy, TLS, ingress, or network policy for a specific deployment environment is intentionally left outside this
+repo.

@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: tasky-web:dev
+    container_name: tasky-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8081}:80"

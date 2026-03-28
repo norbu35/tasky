@@ -22,3 +22,7 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-03-27T21:57:51Z | local | Codex | TASK-010 | agent/TASK-010-auth-hardening-rebuild | d3a1dbda4d1525f73413652387318d130e3603ae | high | PASS | 13/13 | REQ-AUTH-01,REQ-AUTH-02,REQ-AUTH-03 | `artifacts/TASK-010-self-verify.json` |
 | 2026-03-27T21:57:51Z | local | Codex | TASK-010 | agent/TASK-010-auth-hardening-rebuild | d3a1dbda4d1525f73413652387318d130e3603ae | high | PASS | 13/13 | REQ-AUTH-01,REQ-AUTH-02,REQ-AUTH-03 | `artifacts/TASK-010-self-verify.json` |
 | 2026-03-28T04:48:16Z | local | Codex | TASK-021 | agent/TASK-021-storage-key-policy-rebuild | d3a1dbda4d1525f73413652387318d130e3603ae | high | PASS | 13/13 | REQ-TASK-01,REQ-TASK-04 | `artifacts/TASK-021-self-verify.json` |
+| 2026-03-28T08:31:51Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | FAIL | 3/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
+| 2026-03-28T08:32:57Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | FAIL | 4/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
+| 2026-03-28T08:42:35Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | PASS | 6/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
+| 2026-03-28T08:42:35Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | PASS | 6/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
