@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "description": "Multi-agent task coordination file. Agents read this to find available work and write to claim tasks. Git commit+push acts as the atomic lock.",
-  "updated_at": "2026-03-28T08:43:37Z",
+  "updated_at": "2026-03-28T09:56:28Z",
   "tickets": {
     "TASK-000": {
       "status": "done",
@@ -53,16 +53,25 @@
       "claimed_at": "2026-02-13T13:12:23Z"
     },
     "TASK-021": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-021-task-lifecycle",
+      "claimed_at": "2026-02-13T16:25:38Z",
+      "completed_at": "2026-02-13T16:29:36Z"
     },
     "TASK-022": {
       "status": "pending"
     },
     "TASK-023": {
-      "status": "pending"
+      "status": "done",
+      "completed_at": "2026-02-13T16:38:30Z"
     },
     "TASK-030": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-030-booking-lifecycle",
+      "claimed_at": "2026-02-13T16:39:39Z",
+      "completed_at": "2026-02-13T16:42:49Z"
     },
     "TASK-031": {
       "status": "pending"
@@ -80,10 +89,18 @@
       "status": "pending"
     },
     "TASK-041": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-041-dispute-workflow",
+      "claimed_at": "2026-03-28T08:48:00Z",
+      "completed_at": "2026-03-28T09:56:28Z"
     },
     "TASK-042": {
-      "status": "pending"
+      "status": "done",
+      "agent": "Codex",
+      "branch": "agent/TASK-042-safety-fraud",
+      "claimed_at": "2026-02-13T19:12:13Z",
+      "completed_at": "2026-02-13T19:22:17Z"
     },
     "TASK-043": {
       "status": "pending"

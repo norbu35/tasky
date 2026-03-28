@@ -34,6 +34,8 @@ import org.springframework.test.annotation.DirtiesContext;
 class DisputeIntegrationTests extends IntegrationTestBase {
 
     private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
+    private static final List<Map<String, Object>> DEFAULT_EVIDENCE =
+            List.of(Map.of("type", "WRITTEN_TIMELINE", "textPayload", "Customer documented the delivery issues."));
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @LocalServerPort
@@ -66,7 +68,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> resNotFound = postWithAuth(
                 "/api/v1/bookings/" + missingBookingId + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Missing booking reason"));
+                Map.of("reason", "Missing booking reason", "evidence", DEFAULT_EVIDENCE));
         assertThat(resNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
         // 2. Raise fails: Forbidden (wrong user)
@@ -74,7 +76,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> resForbidden = postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 stranger.accessToken(),
-                Map.of("reason", "Forbidden dispute reason"));
+                Map.of("reason", "Forbidden dispute reason", "evidence", DEFAULT_EVIDENCE));
         assertThat(resForbidden.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 
         // 3. Raise fails: Invalid status (CANCELLED booking)
@@ -82,7 +84,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> resInvalidStatus = postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Invalid status reason"));
+                Map.of("reason", "Invalid status reason", "evidence", DEFAULT_EVIDENCE));
         assertThat(resInvalidStatus.getStatusCode().value()).isEqualTo(400);
         assertThat(resInvalidStatus.getBody().get("message").toString()).contains("ASSIGNED or COMPLETED");
 
@@ -92,7 +94,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> response = postWithAuth(
                 "/api/v1/bookings/" + activeBooking.id() + "/disputes",
                 tasker.accessToken(),
-                Map.of("reason", "Incomplete work"));
+                Map.of("reason", "Incomplete work", "evidence", DEFAULT_EVIDENCE));
         assertThat(response.getStatusCode().value()).isEqualTo(201);
         String disputeId = (String) response.getBody().get("id");
 
@@ -100,7 +102,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> resExists = postWithAuth(
                 "/api/v1/bookings/" + activeBooking.id() + "/disputes",
                 tasker.accessToken(),
-                Map.of("reason", "Duplicate dispute"));
+                Map.of("reason", "Duplicate dispute", "evidence", DEFAULT_EVIDENCE));
         assertThat(resExists.getStatusCode().value()).isEqualTo(409);
         assertThat(resExists.getBody().get("message").toString()).contains("exists");
 
@@ -154,13 +156,13 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "First dispute reason"));
+                Map.of("reason", "First dispute reason", "evidence", DEFAULT_EVIDENCE));
 
         // Duplicate open dispute should fail
         ResponseEntity<Map> duplicate = postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Second dispute reason"));
+                Map.of("reason", "Second dispute reason", "evidence", DEFAULT_EVIDENCE));
         assertThat(duplicate.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
@@ -183,7 +185,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> expired = postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Payment was refused after completion"));
+                Map.of("reason", "Payment was refused after completion", "evidence", DEFAULT_EVIDENCE));
 
         assertThat(expired.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(expired.getBody().get("code")).isEqualTo("DISPUTE_WINDOW_EXPIRED");
@@ -204,11 +206,11 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> disputeAResponse = postWithAuth(
                 "/api/v1/bookings/" + bookingA.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Tasker refused to complete agreed scope"));
+                Map.of("reason", "Tasker refused to complete agreed scope", "evidence", DEFAULT_EVIDENCE));
         ResponseEntity<Map> disputeBResponse = postWithAuth(
                 "/api/v1/bookings/" + bookingB.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Tasker did not show up"));
+                Map.of("reason", "Tasker did not show up", "evidence", DEFAULT_EVIDENCE));
         String disputeAId = (String) disputeAResponse.getBody().get("id");
         String disputeBId = (String) disputeBResponse.getBody().get("id");
         String key = UUID.randomUUID().toString();
@@ -245,7 +247,7 @@ class DisputeIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> disputeResponse = postWithAuth(
                 "/api/v1/bookings/" + booking.id() + "/disputes",
                 customer.accessToken(),
-                Map.of("reason", "Audit trail should exist"));
+                Map.of("reason", "Audit trail should exist", "evidence", DEFAULT_EVIDENCE));
         String disputeId = (String) disputeResponse.getBody().get("id");
 
         ResponseEntity<Map> resolveResponse = postWithAuth(

@@ -173,6 +173,14 @@ public class BookingController {
                                 "Booking cannot be cancelled in its current status.",
                                 "trace_id",
                                 resolveTraceId(request)));
+                case BookingTransitionResult.OPEN_DISPUTE -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code",
+                                "OPEN_DISPUTE",
+                                "message",
+                                "Booking cannot be closed while an open dispute exists.",
+                                "trace_id",
+                                resolveTraceId(request)));
                 default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .build();
             };
@@ -241,6 +249,14 @@ public class BookingController {
                                 "INVALID_STATUS",
                                 "message",
                                 "Booking must be ASSIGNED to be completed.",
+                                "trace_id",
+                                resolveTraceId(request)));
+                case BookingTransitionResult.OPEN_DISPUTE -> ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of(
+                                "code",
+                                "OPEN_DISPUTE",
+                                "message",
+                                "Booking cannot be closed while an open dispute exists.",
                                 "trace_id",
                                 resolveTraceId(request)));
                 default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
