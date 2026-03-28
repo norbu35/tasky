@@ -1,5 +1,59 @@
 # Agent Instructions
 
+## Workflow Overview
+
+There are two agent roles. The same agent may play both in one session, or they may be separate sessions.
+
+### 1. Planning: Requirement → Tasks
+
+The user describes what they want in plain language. The planning agent:
+
+1. Reads `docs/PRD.md`, `docs/ARCHITECTURE.md`, and `docs/API.yaml` to understand what exists
+2. Asks clarifying questions until the requirement is unambiguous
+3. Breaks the requirement into tasks using `scripts/task.sh add "Title"`
+4. Fills in each task file with a description and "Done When" criteria
+5. Sets priority and dependencies between tasks
+
+### 2. Implementation: Task → Branch → PR
+
+The implementation agent:
+
+1. Runs `scripts/task.sh next` to find available work
+2. Runs `scripts/task.sh start TASK-ID` to claim it and create a branch
+3. Reads the task file and implements what's described
+4. Writes tests for every "Done When" criterion
+5. Runs all checks locally (see "How to Submit Work")
+6. Updates `CHANGELOG.md`, marks the task done, pushes, and opens a PR
+7. The user reviews the PR and merges it
+
+## Writing Good Tasks
+
+A task should be a **vertical slice** deliverable in one PR. It touches one feature across the necessary layers (DB → backend → API spec → frontend). If a feature is too large for one PR, split by user-facing capability, not by technical layer.
+
+**Task file format** (`tasks/TASK-NNN.md`):
+
+```markdown
+# TASK-NNN: Short imperative title
+
+**Status:** todo
+**Priority:** high
+**Depends on:** TASK-NNN (optional)
+
+## Description
+2-5 sentences: what the user wants, what needs to change, which layers are involved.
+Reference specific endpoints, tables, or screens when possible.
+
+## Done When
+- Each criterion is concrete and testable
+- Mention specific endpoints, validation rules, or UI behaviors
+- Include contract updates (API.yaml, SDK regen) if endpoints change
+- Bad: "search works well" — Good: "GET /api/v1/tasks?district=X returns tasks within 5km"
+```
+
+**Priority values:** `critical`, `high`, `medium`, `low`
+
+**Dependencies:** `scripts/task.sh next` automatically skips tasks whose dependencies aren't `done`.
+
 ## Before Starting Any Task
 
 Read these files first:
