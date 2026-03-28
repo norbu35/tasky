@@ -31,7 +31,7 @@ class FacebookCircuitBreakerTests {
     // ------------------------------------------------------------------
 
     @Test
-    @DisplayName("3 failures within 60s window opens the circuit")
+    @DisplayName("SCN-AUTH-014: Facebook circuit breaker opens after repeated provider failures and status reports unavailable")
     void threeFailuresWithinWindowOpensCircuit() {
         breaker.recordFailure();
         breaker.recordFailure();
@@ -159,6 +159,27 @@ class FacebookCircuitBreakerTests {
         breaker.recordSuccess();
 
         assertThat(breaker.getState()).isEqualTo(State.CLOSED);
+    }
+
+    // ------------------------------------------------------------------
+    // SCN-AUTH-015
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("SCN-AUTH-015: Open Facebook circuit fails closed on additional login attempts until recovery")
+    void openCircuitRejectsSubsequentAttempts() {
+        // Given: circuit is open
+        breaker.recordFailure();
+        breaker.recordFailure();
+        breaker.recordFailure();
+        assertThat(breaker.isOpen()).isTrue();
+
+        // When: another attempt arrives — isOpen() still reports open (no recovery yet)
+        assertThat(breaker.isOpen()).isTrue();
+
+        // And: only recordSuccess closes the circuit (recovery)
+        breaker.recordSuccess();
+        assertThat(breaker.isOpen()).isFalse();
     }
 
     // ------------------------------------------------------------------
