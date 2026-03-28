@@ -629,16 +629,15 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 
 ## 8. Development Workflow
 
-1. **Classify Risk**: Determine `low|medium|high` per `AGENTS.md` quality policy.
-2. **Design**: Update `API.yaml` (contract-first).
-3. **Generate**: Run `./gradlew openApiGenerate` to refresh backend interfaces and `pnpm sdk:generate` when TypeScript SDK types must be regenerated from the contract.
+1. **Pick up a task**: Run `scripts/task.sh next` and read the task file.
+2. **Design**: Update `docs/API.yaml` first (contract-first).
+3. **Generate**: Run `pnpm sdk:generate` to regenerate TypeScript SDK types from the contract.
 4. **Implement**: Write controller implementations and JDBI repositories.
-5. **Test**: Add/Update required tests for the selected risk tier using `./gradlew --no-daemon` for Java checks.
-6. **Self-Verify**: Run `scripts/self-verify.sh` and produce `artifacts/self-verify.json`.
-7. **Work Log**: Ensure `docs/agent/WORK_LOG.md` receives the appended execution entry from `scripts/agent-log.sh`.
-8. **Commit**: Commit code, tests, and self-verification artifact together.
-9. **PR + CI**: CI re-runs self-verification and performs parity checks.
-10. **Review + Merge**: Merge only after required approvals and passing gates.
+5. **Test**: Write tests for every "Done When" criterion. Run `./gradlew --no-daemon test`.
+6. **Verify**: Run `./gradlew openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`.
+7. **Commit**: Commit code and tests together.
+8. **PR + CI**: Push branch, open PR. CI runs backend tests, frontend checks, and security scans.
+9. **Review + Merge**: Merge after human review and passing CI.
 
 ---
 

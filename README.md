@@ -4,28 +4,23 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 
 ## Repository Layout
 
-| Path                                   | Purpose                                                             |
-|----------------------------------------|---------------------------------------------------------------------|
-| `AGENTS.md`                            | Governing policy — doctrine, quality gates, security baseline       |
-| `docs/PRD.md`                          | Product requirements and scope                                      |
-| `docs/ARCHITECTURE.md`                 | Technical architecture, data model, API guidelines, frontend system |
-| `docs/ARCHITECTURE_INDEX.md`           | Architecture reading router (topic -> canonical source, non-dup)    |
-| `docs/METRICS.md`                      | Marketplace KPIs, funnel metrics, and event tracking schema         |
-| `docs/STRATEGY.md`                     | Business model and go-to-market plan                                |
-| `docs/adr/`                            | Architecture Decision Records                                       |
-| `docs/quality/SELF_VERIFY_CONTRACT.md` | Self-verification script and artifact contract                      |
-| `docs/agent/RUNBOOK.md`                | Canonical agent operational workflow                                |
-| `docs/agent/WORK_LOG.md`               | Append-only agent execution audit trail                             |
-| `docs/API.yaml`                        | OpenAPI 3.0 contract (source of truth for all clients)              |
-| `src/`                                 | Spring Boot backend source                                          |
-| `apps/web`                             | React web client scaffold                                           |
-| `apps/mobile`                          | React Native (Expo) mobile scaffold                                 |
-| `packages/sdk`                         | Shared TypeScript SDK scaffold (generated from OpenAPI)             |
-| `packages/design-tokens`               | Shared cross-platform design token source                           |
-| `scripts/`                             | Verification and workflow tooling                                   |
-| `tickets/`                             | Canonical delivery plan: machine-readable ticket specs and `STATUS.json` |
-
-`tickets/` is the planning source of truth. The legacy markdown backlog document is intentionally not restored.
+| Path                         | Purpose                                                             |
+|------------------------------|---------------------------------------------------------------------|
+| `AGENTS.md`                  | Agent instructions — conventions, workflow, guardrails              |
+| `docs/PRD.md`                | Product requirements and scope                                      |
+| `docs/ARCHITECTURE.md`       | Technical architecture, data model, API guidelines, frontend system |
+| `docs/ARCHITECTURE_INDEX.md` | Architecture reading router (topic → canonical source)              |
+| `docs/METRICS.md`            | Marketplace KPIs, funnel metrics, and event tracking schema         |
+| `docs/STRATEGY.md`           | Business model and go-to-market plan                                |
+| `docs/adr/`                  | Architecture Decision Records                                       |
+| `docs/API.yaml`              | OpenAPI 3.0 contract (source of truth for all clients)              |
+| `src/`                       | Spring Boot backend source                                          |
+| `apps/web`                   | React web client                                                    |
+| `apps/mobile`                | React Native (Expo) mobile client                                   |
+| `packages/sdk`               | Shared TypeScript SDK (generated from OpenAPI)                      |
+| `packages/design-tokens`     | Shared cross-platform design token source                           |
+| `tasks/`                     | Task files for agent work                                           |
+| `scripts/`                   | Tooling (task management, validation, performance)                  |
 
 ## Prerequisites
 
@@ -33,8 +28,6 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 - Docker + Docker Compose
 - Python 3.10+
 - Node.js 20+ and pnpm 10+
-- `jq`, `git`, `rg`, `curl`
-- `semgrep` for high-risk verification
 
 ## Quick Start
 
@@ -55,7 +48,6 @@ docker compose up -d postgres minio minio-bootstrap
 
 ```bash
 curl http://127.0.0.1:8080/actuator/health
-curl http://127.0.0.1:8080/api/v1/system/version
 ```
 
 ## Local Auth Bypass (Testing)
@@ -66,48 +58,19 @@ For local testing, dev auth is only allowed in the `local` or `test` Spring prof
 - Web login shows `Developer quick login` buttons only when `VITE_DEV_AUTH_ENABLED=true`.
 - Mobile login shows the same buttons only when `EXPO_PUBLIC_DEV_AUTH_ENABLED=true`.
 - Buttons call `POST /api/v1/auth/dev/login` and issue a normal JWT session without SMS OTP.
-- Disable it by setting `TASKY_DEV_AUTH_ENABLED=false` and clearing the matching client flag.
 - Production safety gate: app startup fails outside `local`/`test` if dev auth is enabled.
 
-## Verification Workflow
-
-Agent entrypoint (recommended):
+## Task Management
 
 ```bash
-scripts/agent-flow.sh status
-scripts/agent-flow.sh start --agent my-agent --slug bootstrap
-scripts/agent-flow.sh verify --ticket TASK-001
-scripts/agent-flow.sh complete --ticket TASK-001
-scripts/agent-flow.sh merge --ticket TASK-001
+scripts/task.sh list                # see all tasks
+scripts/task.sh next                # see next available task
+scripts/task.sh start TASK-ID       # start working on a task
+scripts/task.sh done TASK-ID        # mark task complete
+scripts/task.sh add "Title"         # create a new task
 ```
 
-Generate local verification artifact:
-
-```bash
-scripts/self-verify.sh \
-  --ticket TASK-123 \
-  --risk medium \
-  --req REQ-AUTH-01,NFR-API-01 \
-  --out artifacts/self-verify.json
-```
-
-Validate requirement coverage before sprint planning:
-
-```bash
-scripts/validate-traceability.py
-scripts/validate-backlog.py
-scripts/validate-ticket-specs.py
-```
-
-High-risk verification runs:
-
-- SAST (`semgrep`)
-- migration checks
-- performance smoke (`scripts/performance-smoke.sh`)
-
-If `PERF_TARGET_URL` is unset, performance smoke auto-starts local backend via `./gradlew bootRun`.
-
-## Frontend/SDK Scaffold
+## Frontend
 
 Install JS dependencies:
 
@@ -133,37 +96,32 @@ Run mobile app:
 pnpm --filter @tasky/mobile start
 ```
 
-## Frontend Testing Stack
+## Testing
 
-- Web unit/component: Vitest + React Testing Library
-- Web E2E: Playwright
-- Mobile unit/component: Jest (jest-expo) + React Native Testing Library
-- Mobile E2E: Maestro flows (enabled when `TASKY_RUN_MAESTRO=true`; otherwise component-test fallback is used)
-
-Run web tests:
-
+### Backend
 ```bash
-pnpm --filter @tasky/web test:unit
-pnpm --filter @tasky/web test:e2e:smoke
+./gradlew test                              # all tests
+./gradlew test --tests "mn.tasky.auth.*"    # specific tests
+./gradlew openApiValidate                   # API contract validation
+python3 scripts/validate-migrations.py      # migration safety
 ```
 
-Run mobile tests:
-
+### Frontend
 ```bash
-pnpm --filter @tasky/mobile test:unit
-pnpm --filter @tasky/mobile test:e2e:smoke
+pnpm --filter @tasky/web test:unit          # web unit tests
+pnpm --filter @tasky/web test:e2e:smoke     # web E2E (Playwright)
+pnpm --filter @tasky/mobile test:unit       # mobile unit tests
+pnpm -r typecheck                           # typecheck all workspaces
+pnpm -r lint                                # lint all workspaces
 ```
 
 ## Web Container
 
-The base repo compose file stays focused on the backend and supporting services. Use the generic web overlay to build
-and run the Tasky web container:
+Use the generic web overlay to build and run the Tasky web container:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.web.yml build web
 docker compose -f docker-compose.yml -f docker-compose.web.yml up -d web
 ```
 
-The overlay builds `apps/web/Dockerfile` and publishes the Caddy-served web app on `WEB_PORT` (default `8081`). Any
-reverse proxy, TLS, ingress, or network policy for a specific deployment environment is intentionally left outside this
-repo.
+The overlay builds `apps/web/Dockerfile` and publishes the Caddy-served web app on `WEB_PORT` (default `8081`).
