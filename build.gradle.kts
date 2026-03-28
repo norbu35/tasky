@@ -13,6 +13,7 @@ plugins {
     id("net.ltgt.errorprone") version "4.1.0"
     id("org.owasp.dependencycheck") version "12.1.0"
     id("com.diffplug.spotless") version "6.25.0"
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "mn.tasky"
@@ -253,4 +254,93 @@ tasks.register("precommit") {
     description = "Quick local quality check before committing (~20-30s)"
     group = "verification"
     dependsOn("spotlessCheck", "checkstyleMain", "compileJava", "compileTestJava")
+}
+
+// Quality Gates — driven by tests/registry.yaml and tests/scenarios/*.md
+// Run sync-registry.sh first to ensure registry reflects current test + PIT state.
+
+tasks.register<Exec>("gateSmoke") {
+    description = "Gate 1: all Critical scenarios covered. Blocks merge to main."
+    group = "verification"
+    dependsOn(tasks.test)
+    doFirst {
+        exec { commandLine("./scripts/sync-registry.sh") }
+    }
+    commandLine("./scripts/check-gates.sh", "smoke")
+}
+
+tasks.register<Exec>("gateRegression") {
+    description = "Gate 2: all Critical + High scenarios covered + mutation floors. Blocks deploy."
+    group = "verification"
+    dependsOn(tasks.test, tasks.jacocoTestReport)
+    doFirst {
+        exec { commandLine("./scripts/sync-registry.sh") }
+    }
+    commandLine("./scripts/check-gates.sh", "regression")
+}
+
+tasks.register<Exec>("gateFull") {
+    description = "Gate 3: all scenarios + PIT floors. Runs nightly."
+    group = "verification"
+    dependsOn(tasks.test, tasks.jacocoTestReport, "pitest")
+    doFirst {
+        exec { commandLine("./scripts/sync-registry.sh") }
+    }
+    commandLine("./scripts/check-gates.sh", "full")
+}
+
+// PIT Mutation Testing
+// Run: ./gradlew pitest
+// Report: build/reports/pitest/index.html
+//
+// Excluded packages mirror the JaCoCo exclusions:
+//   - generated API sources     (mn.tasky.api.generated*)
+//   - DTO-only packages         (mn.tasky.*.dto*)
+//   - deferred monetization     (mn.tasky.payment*, mn.tasky.wallet*)
+//   - root package (no classes) (mn.tasky)
+//
+// Thresholds are intentionally low to start — tighten after the first baseline run.
+// See build/reports/pitest/index.html to find which packages need work.
+pitest {
+    junit5PluginVersion.set("1.2.1")
+    pitestVersion.set("1.17.0")
+
+    targetClasses.set(setOf("mn.tasky.*"))
+    excludedClasses.set(setOf(
+        "mn.tasky.api.generated.*",
+        "mn.tasky.*.dto.*",
+        "mn.tasky.payment.*",
+        "mn.tasky.wallet.*",
+        "mn.tasky.TaskyApplication"
+    ))
+    targetTests.set(setOf("mn.tasky.*"))
+
+    // Exclude slow Testcontainers integration tests — PIT re-runs tests for every mutant,
+    // so integration tests (each spinning up Postgres) would take hours.
+    // Unit tests give fast, precise mutation feedback on domain logic.
+    excludedTestClasses.set(setOf(
+        "mn.tasky.**.*IntegrationTests",
+        "mn.tasky.**.*IntegrationTest",
+        "mn.tasky.TaskyApplicationTests",
+        "mn.tasky.common.IntegrationTestBase",
+        "mn.tasky.performance.**",
+        "mn.tasky.contract.OpenApiContractTestSupport"
+    ))
+
+    // Mutators: defaults (STRONGER) give a good signal without excessive noise
+    mutators.set(setOf("STRONGER"))
+
+    // Run tests in parallel — tune based on your CI machine
+    threads.set(4)
+
+    // Fail the build if mutation coverage drops below this threshold.
+    // Start at 0 (establish a baseline), then raise once you've reviewed the first report.
+    mutationThreshold.set(0)
+
+    // Output
+    outputFormats.set(setOf("HTML", "XML"))
+    reportDir.set(file("${layout.buildDirectory.get()}/reports/pitest"))
+
+    timestampedReports.set(false)
+    verbose.set(false)
 }
