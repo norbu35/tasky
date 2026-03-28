@@ -1,2 +1,62 @@
 # review Scenarios
 <!-- Scenarios authored here. See tests/scenarios/README.md for format. -->
+
+## SCN-REVIEW-001
+**Risk:** High
+**PRD:** REQ-SAFE-02
+**Title:** Booking completion creates structured review prompts for both customer and tasker
+
+Given a booking transitions to COMPLETED
+When review enforcement is created for that booking
+Then the customer receives a structured review prompt
+And the tasker receives a structured review prompt
+
+## SCN-REVIEW-002
+**Risk:** High
+**PRD:** REQ-SAFE-02
+**Title:** Immediate review prompt is sent at completion time
+
+Given a booking has just transitioned to COMPLETED
+When the completion workflow finishes
+Then the review prompt is sent immediately
+
+## SCN-REVIEW-003
+**Risk:** High
+**PRD:** REQ-SAFE-11
+**Title:** Open review case at 24 hours sends the first reminder
+
+Given a participant still has an open review enforcement case 24 hours after booking completion
+When review reminders are processed
+Then the participant receives the 24-hour review reminder
+And the enforcement case advances to the 24-hour reminder state
+
+## SCN-REVIEW-004
+**Risk:** High
+**PRD:** REQ-SAFE-11
+**Title:** Open review case at 72 hours sends the final reminder
+
+Given a participant still has an open review enforcement case 72 hours after booking completion
+When review reminders are processed
+Then the participant receives the 72-hour review reminder
+And the enforcement case advances to the 72-hour reminder state
+
+## SCN-REVIEW-005
+**Risk:** High
+**PRD:** REQ-SAFE-02
+**Title:** Hard lock is enforced only when an open review case also has a configured risk flag
+
+Given a user has an open review enforcement case
+And the user has no open dispute, no two consecutive missed reviews, and no active trust-safety investigation
+When lock eligibility is evaluated
+Then no hard lock is applied
+
+## SCN-REVIEW-006
+**Risk:** High
+**PRD:** REQ-SAFE-11
+**Title:** Hard lock triggered by dispute, repeated non-submission, or investigation logs the trigger reason
+
+Given a user has an open review enforcement case
+And at least one configured risk flag is true for that user
+When lock eligibility is evaluated
+Then a hard lock is applied to the user's next posting or application action
+And the trigger reason is recorded in the audit trail

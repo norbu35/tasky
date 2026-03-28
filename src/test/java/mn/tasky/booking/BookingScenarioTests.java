@@ -1,6 +1,10 @@
 package mn.tasky.booking;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import mn.tasky.booking.application.BookingLifecycleService;
+import mn.tasky.booking.dto.BookingTransitionResult;
+import mn.tasky.common.IntegrationTestBase;
+import mn.tasky.task.application.TaskService;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -27,7 +31,18 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Domain-unit tests for booking service critical scenarios.
@@ -199,5 +214,71 @@ class BookingScenarioTests {
         bookingService.cancelBooking("customer-1", b2.id(), Instant.now().plus(5, ChronoUnit.HOURS));
         BookingTransitionResult afterCancel = bookingService.completeBooking("customer-1", b2.id());
         assertThat(afterCancel.errorCode()).isEqualTo(BookingTransitionResult.INVALID_TRANSITION);
+    }
+
+    // ── SCN-BOOK-005 (integration — requires BookingLifecycleService + TaskService) ─
+
+    @Nested
+    @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    class LifecycleScenarios extends IntegrationTestBase {
+
+        private final TestRestTemplate http = new TestRestTemplate();
+
+        @LocalServerPort int port;
+        @Autowired BookingService bookingService;
+        @Autowired BookingLifecycleService lifecycleService;
+        @Autowired TaskService taskService;
+
+        @Test
+        @DisplayName("SCN-BOOK-005: Tasker cancellation reopens the linked task to OPEN")
+        void taskerCancellationReopensTask() {
+            org.springframework.http.HttpHeaders h = new org.springframework.http.HttpHeaders();
+            h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+            ResponseEntity<Map> custResp = http.postForEntity(url("/api/v1/auth/dev/login"),
+                    new HttpEntity<>(Map.of("phone", "+97691500001", "role", "CUSTOMER"), h), Map.class);
+            String custToken = (String) custResp.getBody().get("access_token");
+            String custId    = (String) ((Map) custResp.getBody().get("user")).get("id");
+
+            ResponseEntity<Map> taskerResp = http.postForEntity(url("/api/v1/auth/dev/login"),
+                    new HttpEntity<>(Map.of("phone", "+97691500002", "role", "TASKER"), h), Map.class);
+            String taskerId = (String) ((Map) taskerResp.getBody().get("user")).get("id");
+
+            org.springframework.http.HttpHeaders auth = new org.springframework.http.HttpHeaders();
+            auth.setBearerAuth(custToken);
+            auth.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+            Map cats = http.exchange(url("/api/v1/categories"), HttpMethod.GET,
+                    new HttpEntity<>(auth), Map.class).getBody();
+            String catId = ((Map) ((List) cats.get("data")).get(0)).get("id").toString();
+
+            Map taskBody = Map.of("category_id", catId,
+                    "description", "Test task for SCN-BOOK-005 scenario",
+                    "budget", 50000,
+                    "location_lat", 47.9, "location_lng", 106.9,
+                    "location_text", "Test Street 1, UB",
+                    "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString());
+            ResponseEntity<Map> taskCreateResp = http.exchange(url("/api/v1/tasks"), HttpMethod.POST,
+                    new HttpEntity<>(taskBody, auth), Map.class);
+            assertThat(taskCreateResp.getStatusCode().value())
+                    .as("Task creation failed: %s", taskCreateResp.getBody())
+                    .isLessThan(300);
+            String taskId = (String) taskCreateResp.getBody().get("id");
+
+            // Create booking via service
+            mn.tasky.booking.dto.BookingState booking =
+                    bookingService.createBooking(taskId, taskerId, custId, 50000);
+
+            // Tasker cancels via lifecycle service (also updates task status)
+            BookingTransitionResult result = lifecycleService.cancelBooking(taskerId, booking.id());
+
+            assertThat(result.isSuccess()).isTrue();
+            assertThat(result.booking().status()).isEqualTo("CANCELLED");
+            assertThat(taskService.getTask(taskId)).isPresent()
+                    .hasValueSatisfying(t -> assertThat(t.status()).isEqualTo("OPEN"));
+        }
+
+        private String url(String path) { return "http://localhost:" + port + path; }
     }
 }
