@@ -42,7 +42,7 @@ function formatTimeAgo(value: string, t: TFunction): string {
 }
 
 export function CustomerTaskDetailsPage() {
-  const { id: taskId } = useParams<{ id: string }>();
+  const { taskId } = useParams<{ taskId: string }>();
   const { apiClient, session } = useAppContext();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();

@@ -90,7 +90,9 @@ public class UserProfileController {
         if (body.avatarUrl() != null) {
             try {
                 storageKeyPolicy.validateOwnedKey(
-                        extractAvatarStorageKey(body.avatarUrl()), StorageKeyPolicy.Namespace.AVATAR, principal.userId());
+                        extractAvatarStorageKey(body.avatarUrl()),
+                        StorageKeyPolicy.Namespace.AVATAR,
+                        principal.userId());
             } catch (IllegalArgumentException exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of(

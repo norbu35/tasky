@@ -1,7 +1,7 @@
 import '../../src/lib/i18n';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -164,12 +164,72 @@ describe('Customer phase 1 parity', () => {
     expect(screen.getByRole('button', { name: 'Post another task' })).toBeInTheDocument();
   });
 
-  it('renders the customer applicants page with tasker cards and review actions', () => {
-    renderWithProviders(<CustomerApplicantsPage />);
+  it('renders the customer applicants page with tasker cards and review actions', async () => {
+    const apiClient = buildApiClientMock({
+      listMyTasks: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'task-1',
+            category_id: baseCategory.id,
+            category: baseCategory,
+            description: 'Deep clean apartment',
+            budget: 120000,
+            location_text: 'Exact location kept private',
+            status: 'OPEN',
+            scheduled_at: '2026-02-16T10:00:00Z',
+            created_at: '2026-02-14T00:00:00Z',
+          },
+        ],
+        cursor: { next: null, prev: null },
+      }),
+      listTaskApplications: vi.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'app-1',
+            task_id: 'task-1',
+            tasker: {
+              id: 'tasker-1',
+              full_name: 'Tasker',
+              avatar_url: null,
+              rating_avg: 4.6,
+              completed_tasks: 7,
+              is_pro: true,
+            },
+            message: 'I can do this task tomorrow morning.',
+            status: 'PENDING',
+            created_at: '2026-02-14T00:00:00Z',
+          },
+        ],
+        cursor: { next: null, prev: null },
+      }),
+    });
 
-    expect(screen.getByRole('heading', { name: 'Task applicants' })).toBeInTheDocument();
-    expect(screen.getByText('Loading applicants...')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Review task' })).toBeInTheDocument();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/customer/tasks/task-1/applicants']}>
+        <QueryClientProvider client={queryClient}>
+          <AppContext.Provider value={createContext({ apiClient })}>
+            <Routes>
+              <Route
+                path="/customer/tasks/:taskId/applicants"
+                element={<CustomerApplicantsPage />}
+              />
+            </Routes>
+          </AppContext.Provider>
+        </QueryClientProvider>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
+    expect(await screen.findByText('Tasker')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Review & Accept' })).toBeInTheDocument();
   });
 
   it('renders the customer tasker profile page with profile and review summary', () => {
