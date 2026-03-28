@@ -6,19 +6,20 @@ import ReviewSubmitScreen from '../../../src/app/(customer)/tasks/new/review';
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
+const mockParams = {
+  categoryId: 'cat-123',
+  description: 'Fix my sink',
+  photos: '[]',
+  location: 'Behind State Dept Store',
+  lat: '47.92123',
+  lng: '106.91876',
+  scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
+  budget: '50000',
+};
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, back: mockBack }),
-  useLocalSearchParams: () => ({
-    categoryId: 'cat-123',
-    description: 'Fix my sink',
-    photos: '[]',
-    location: 'Behind State Dept Store',
-    lat: '47.92123',
-    lng: '106.91876',
-    scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
-    budget: '50000',
-  }),
+  useLocalSearchParams: () => mockParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -48,6 +49,16 @@ jest.mock('../../../src/features/tasks/hooks/useCreateTask', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  Object.assign(mockParams, {
+    categoryId: 'cat-123',
+    description: 'Fix my sink',
+    photos: '[]',
+    location: 'Behind State Dept Store',
+    lat: '47.92123',
+    lng: '106.91876',
+    scheduledAt: new Date(2026, 3, 1, 10, 0).toISOString(),
+    budget: '50000',
+  });
   mockUseCreateTask.mockReturnValue({
     mutateAsync: mockMutateAsync,
     isPending: false,
@@ -98,6 +109,8 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
         budget: 50000,
         category_id: 'cat-123',
         description: 'Fix my sink',
+        intake_answers: {},
+        intake_schema_version: 1,
         location_lat: 47.92123,
         location_lng: 106.91876,
         location_text: 'Behind State Dept Store',
@@ -122,6 +135,33 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     fireEvent.press(screen.getByText('Post Task'));
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks/new/success');
+    });
+  });
+
+  it('TID-TASK-113-MOBILE-REVIEW-SUBMIT-PAYLOAD submits intake answers, schema version, and photo keys', async () => {
+    mockMutateAsync.mockResolvedValue({ id: 'task-new-1' });
+    Object.assign(mockParams, {
+      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
+      intakeAnswers: JSON.stringify({ rooms: 2, supplies_provided: true }),
+      intakeSchemaVersion: '7',
+    });
+
+    render(<ReviewSubmitScreen />);
+    fireEvent.press(screen.getByText('Post Task'));
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        budget: 50000,
+        category_id: 'cat-123',
+        description: 'Fix my sink',
+        intake_answers: { rooms: 2, supplies_provided: true },
+        intake_schema_version: 7,
+        location_lat: 47.92123,
+        location_lng: 106.91876,
+        location_text: 'Behind State Dept Store',
+        photo_keys: ['photo-key-1', 'photo-key-2'],
+        scheduled_at: new Date(2026, 3, 1, 10, 0).toISOString(),
+      });
     });
   });
 });
