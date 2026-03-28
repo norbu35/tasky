@@ -136,13 +136,13 @@ describe('Accessibility and parity gates', () => {
     render(<App apiClient={buildApiClientMock()} initialRoute="/auth" />);
 
     const facebookButton = screen.getByRole('button', { name: 'Continue with Facebook' });
-    const customerBypassButton = screen.getByRole('button', { name: 'Customer' });
+    const languageButton = screen.getByRole('button', { name: /en/i });
 
     facebookButton.focus();
     expect(facebookButton).toHaveFocus();
 
-    customerBypassButton.focus();
-    expect(customerBypassButton).toHaveFocus();
+    languageButton.focus();
+    expect(languageButton).toHaveFocus();
   });
 
   it('TID-TASK-072-WEB-A11Y-CONTRAST-AA enforces WCAG AA contrast for core token pairs', () => {

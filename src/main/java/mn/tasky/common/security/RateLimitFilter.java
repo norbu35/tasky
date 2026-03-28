@@ -20,7 +20,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -39,21 +38,21 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimitCounterDao rateLimitCounterDao;
     private final ObjectMapper objectMapper;
+    private final ClientIpResolver clientIpResolver;
     private final int authenticatedRpm;
     private final int unauthenticatedRpm;
-    private final int trustedProxyDepth;
 
     public RateLimitFilter(
             RateLimitCounterDao rateLimitCounterDao,
             ObjectMapper objectMapper,
+            ClientIpResolver clientIpResolver,
             @Value("${tasky.rate-limit.authenticated-rpm:100}") int authenticatedRpm,
-            @Value("${tasky.rate-limit.unauthenticated-rpm:30}") int unauthenticatedRpm,
-            @Value("${tasky.rate-limit.trusted-proxy-depth:0}") int trustedProxyDepth) {
+            @Value("${tasky.rate-limit.unauthenticated-rpm:30}") int unauthenticatedRpm) {
         this.rateLimitCounterDao = rateLimitCounterDao;
         this.objectMapper = objectMapper;
+        this.clientIpResolver = clientIpResolver;
         this.authenticatedRpm = authenticatedRpm;
         this.unauthenticatedRpm = unauthenticatedRpm;
-        this.trustedProxyDepth = trustedProxyDepth;
     }
 
     @Override
@@ -78,12 +77,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
             rateKey = "api-user:" + authentication.getName();
             limit = authenticatedRpm;
         } else {
-            rateKey = "api-ip:" + resolveClientIp(request);
+            rateKey = "api-ip:" + clientIpResolver.resolve(request);
             limit = unauthenticatedRpm;
         }
 
         if (!authenticated && "/api/v1/payments/qpay/callback".equals(request.getRequestURI())) {
-            rateKey = "api-qpay-callback:" + resolveClientIp(request);
+            rateKey = "api-qpay-callback:" + clientIpResolver.resolve(request);
             limit = 10;
         }
 
@@ -102,22 +101,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String resolveClientIp(HttpServletRequest request) {
-        if (trustedProxyDepth <= 0) {
-            return request.getRemoteAddr();
-        }
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (StringUtils.hasText(forwarded)) {
-            String[] parts = forwarded.split(",");
-            int clientIndex = Math.max(0, parts.length - trustedProxyDepth);
-            String ip = parts[clientIndex].trim();
-            if (StringUtils.hasText(ip)) {
-                return ip;
-            }
-        }
-        return request.getRemoteAddr();
     }
 
     private void writeRateLimitResponse(HttpServletResponse response, long retryAfter) throws IOException {

@@ -87,7 +87,7 @@ describe('AdminPayoutsPage', () => {
     });
     renderPage();
     await waitFor(() => {
-      expect(screen.getByText(/no pending payouts/i)).toBeInTheDocument();
+      expect(screen.getByText(/^empty$/i)).toBeInTheDocument();
     });
   });
 
@@ -105,7 +105,7 @@ describe('AdminPayoutsPage', () => {
     vi.mocked(mockApiClient.adminListPendingPayouts!).mockRejectedValue(new Error('Network error'));
     renderPage();
     await waitFor(() => {
-      expect(screen.getByText(/failed to load/i)).toBeInTheDocument();
+      expect(screen.getByText(/load error/i)).toBeInTheDocument();
     });
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
@@ -118,7 +118,7 @@ describe('AdminPayoutsPage', () => {
     const processButtons = screen.getAllByRole('button', { name: /process/i });
     fireEvent.click(processButtons[0]);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/confirm/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
   });
 
   it('confirming Process calls adminProcessPayout and removes row', async () => {

@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Loader2,
   Shield,
-  ShieldAlert,
   User,
   Wrench,
 } from 'lucide-react';
@@ -27,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 
-type DevRole = 'CUSTOMER' | 'TASKER' | 'ADMIN';
+type DevRole = 'CUSTOMER' | 'TASKER';
 
 type FacebookAuthResponse = {
   accessToken: string;
@@ -70,9 +69,7 @@ function FacebookIcon({ className }: { className?: string }) {
 
 export function AuthPage() {
   const contractLoaded: boolean = typeof ({} as paths) === 'object';
-  const host = typeof window !== 'undefined' ? window.location.hostname : '';
-  const isLocalHost = host === 'localhost' || host === '127.0.0.1';
-  const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === 'true' || isLocalHost;
+  const devAuthEnabled = import.meta.env.VITE_DEV_AUTH_ENABLED === 'true';
   const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID;
 
   const { apiClient, setSession, setProfile, refreshProfile } = useAppContext();
@@ -193,14 +190,12 @@ export function AuthPage() {
   const handleDevLogin = async (role: DevRole): Promise<void> => {
     setLoading(true);
     try {
-      const devPhone =
-        role === 'ADMIN' ? '+97600000000' : role === 'TASKER' ? '+97611111111' : '+97622222222';
+      const devPhone = role === 'TASKER' ? '+97611111111' : '+97622222222';
       const session = await apiClient.devLogin(devPhone, role);
       setSession(session);
       setProfile(null);
       await refreshProfile();
-      const destination = role === 'ADMIN' ? '/admin/verifications' : returnPath;
-      navigate(destination, { replace: true });
+      navigate(returnPath, { replace: true });
     } catch (error) {
       toast.error(parseError(error));
     } finally {
@@ -368,7 +363,7 @@ export function AuthPage() {
                 </span>
                 <div className="h-px bg-border flex-1" />
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="ghost"
                   className="h-auto py-3 flex-col gap-2 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5"
@@ -386,15 +381,6 @@ export function AuthPage() {
                 >
                   <Wrench className="w-5 h-5 text-muted-foreground" />
                   <span className="text-xs">{t('auth.loginAsTasker', 'Tasker')}</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="h-auto py-3 flex-col gap-2 rounded-xl border border-border hover:border-destructive hover:bg-destructive/5"
-                  onClick={() => handleDevLogin('ADMIN')}
-                  disabled={loading}
-                >
-                  <ShieldAlert className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-xs">{t('auth.loginAsAdmin', 'Admin')}</span>
                 </Button>
               </div>
             </motion.div>

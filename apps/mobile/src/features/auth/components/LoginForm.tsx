@@ -8,6 +8,7 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 const { colors, spacing, typography } = mobileTheme;
 
 export function LoginForm() {
+  const devAuthEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
   const [phone, setPhone] = useState('+976');
   const [code, setCode] = useState('');
   const [step, setStep] = useState<'options' | 'phone' | 'otp'>('options');
@@ -63,7 +64,7 @@ export function LoginForm() {
             onPress={() => setStep('phone')}
           />
 
-          {__DEV__ && (
+          {devAuthEnabled && (
             <>
               <Button
                 label="Dev: Login as Customer"

@@ -53,7 +53,7 @@
     {
       "id": "AC-TASK-010-05",
       "type": "security",
-      "statement": "Dev auth bypass is available in non-production environments and rejects unsupported roles.",
+      "statement": "Dev auth bypass is available only when explicitly enabled under the local or test profile and rejects unsupported roles.",
       "test_ids": [
         "TID-TASK-010-DEV-AUTH-BYPASS"
       ],

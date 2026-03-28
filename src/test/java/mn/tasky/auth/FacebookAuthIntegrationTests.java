@@ -47,6 +47,8 @@ class FacebookAuthIntegrationTests extends IntegrationTestBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).containsKeys("access_token", "refresh_token", "user");
+        assertThat(String.valueOf(response.getBody().get("access_token"))).isNotBlank();
+        assertThat(String.valueOf(response.getBody().get("refresh_token"))).isNotBlank();
         Map<String, Object> user = (Map<String, Object>) response.getBody().get("user");
         assertThat(user.get("facebook_id")).isEqualTo("fb-user-auth");
         assertThat(user.get("role")).isEqualTo("CUSTOMER");
@@ -96,6 +98,8 @@ class FacebookAuthIntegrationTests extends IntegrationTestBase {
 
         assertThat(first.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(second.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(first.getBody()).containsKeys("access_token", "refresh_token", "user");
+        assertThat(second.getBody()).containsKeys("access_token", "refresh_token", "user");
         assertThat(firstUser.get("id")).isEqualTo(secondUser.get("id"));
     }
 
@@ -142,5 +146,6 @@ class FacebookAuthIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> bannedResponse = post("/api/v1/auth/facebook", Map.of("access_token", accessToken));
 
         assertThat(bannedResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(bannedResponse.getBody()).containsEntry("code", "ACCOUNT_RESTRICTED");
     }
 }

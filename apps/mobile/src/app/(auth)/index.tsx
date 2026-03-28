@@ -14,6 +14,7 @@ const { colors, spacing, typography } = mobileTheme;
 type LoginState = 'default' | 'facebook_loading' | 'error';
 
 export default function LoginScreen() {
+  const devAuthEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
   const { t } = useTranslation();
   const router = useRouter();
   const [state, setState] = useState<LoginState>('default');
@@ -82,7 +83,7 @@ export default function LoginScreen() {
         </Text>
       ) : null}
 
-      {__DEV__ ? (
+      {devAuthEnabled ? (
         <View style={styles.devSection}>
           <Text style={styles.devLabel}>{t('auth.devBypass', 'Dev bypass')}</Text>
           <Button

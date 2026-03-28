@@ -219,7 +219,7 @@ describe('AdminCategoriesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/no categories/i)).toBeInTheDocument();
+      expect(screen.getByText(/^empty$/i)).toBeInTheDocument();
     });
   });
 
@@ -230,7 +230,7 @@ describe('AdminCategoriesPage', () => {
     renderPage();
 
     const retryButton = await screen.findByRole('button', { name: /retry/i });
-    expect(screen.getByText(/failed to load/i)).toBeInTheDocument();
+    expect(screen.getByText(/load error/i)).toBeInTheDocument();
 
     // Now fix the mock and retry
     vi.mocked(mockApiClient.adminListCategories!).mockResolvedValue(MOCK_CATEGORIES_PAGE);
@@ -251,7 +251,7 @@ describe('AdminCategoriesPage', () => {
     });
 
     // Open create dialog
-    fireEvent.click(screen.getByRole('button', { name: /create category/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^create$/i }));
 
     await waitFor(() => {
       expect(screen.getByLabelText(/^name$/i)).toBeInTheDocument();

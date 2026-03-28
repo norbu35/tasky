@@ -8,6 +8,7 @@ import java.util.Map;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.RefreshTokenRequest;
+import mn.tasky.common.security.ClientIpResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,16 +24,19 @@ public class TokenController {
 
     private final AuthService authService;
     private final OtpRateLimitService otpRateLimitService;
+    private final ClientIpResolver clientIpResolver;
 
-    public TokenController(AuthService authService, OtpRateLimitService otpRateLimitService) {
+    public TokenController(
+            AuthService authService, OtpRateLimitService otpRateLimitService, ClientIpResolver clientIpResolver) {
         this.authService = authService;
         this.otpRateLimitService = otpRateLimitService;
+        this.clientIpResolver = clientIpResolver;
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshToken(
             @Valid @RequestBody RefreshTokenRequest body, HttpServletRequest request) {
-        otpRateLimitService.assertRefreshAllowed(body.refreshToken(), resolveClientIp(request));
+        otpRateLimitService.assertRefreshAllowed(body.refreshToken(), clientIpResolver.resolve(request));
 
         return authService
                 .refreshToken(body.refreshToken())
@@ -46,13 +50,5 @@ public class TokenController {
                                 "Invalid or expired refresh token.",
                                 "trace_id",
                                 resolveTraceId(request))));
-    }
-
-    private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }

@@ -2,11 +2,17 @@ package mn.tasky.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -20,10 +26,14 @@ import org.springframework.http.ResponseEntity;
 @ExtendWith(OutputCaptureExtension.class)
 class ObservabilityIntegrationTests extends IntegrationTestBase {
 
+    private static final String ADMIN_ID = "00000000-0000-0000-0000-000000000001";
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @LocalServerPort
     private int port;
+
+    @Value("${tasky.security.jwt-secret}")
+    private String jwtSecret;
 
     @Test
     @DisplayName("TID-TASK-003-BE-CORRELATION-ID correlation id is logged and propagated")
@@ -55,15 +65,8 @@ class ObservabilityIntegrationTests extends IntegrationTestBase {
                 restTemplate.getForEntity("http://localhost:" + port + "/actuator/prometheus", String.class);
         assertThat(unauthenticatedMetricsResponse.getStatusCode().value()).isEqualTo(401);
 
-        Map<String, Object> loginRequest = Map.of("phone", "+97699119911", "role", "ADMIN");
-        ResponseEntity<Map> loginResponse = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/v1/auth/dev/login", loginRequest, Map.class);
-        assertThat(loginResponse.getStatusCode().is2xxSuccessful()).isTrue();
-        String accessToken = (String) loginResponse.getBody().get("access_token");
-        assertThat(accessToken).isNotBlank();
-
         HttpHeaders metricsHeaders = new HttpHeaders();
-        metricsHeaders.setBearerAuth(accessToken);
+        metricsHeaders.setBearerAuth(tokenFor("ADMIN", "ACTIVE"));
         ResponseEntity<String> metricsResponse = restTemplate.exchange(
                 "http://localhost:" + port + "/actuator/prometheus",
                 HttpMethod.GET,
@@ -90,5 +93,18 @@ class ObservabilityIntegrationTests extends IntegrationTestBase {
         assertThat(errorResponse.getStatusCode().isError()).isTrue();
         assertThat(errorResponse.getBody()).containsKey("trace_id");
         assertThat(errorResponse.getHeaders().getFirst("X-Trace-Id")).isNotBlank();
+    }
+
+    private String tokenFor(String role, String status) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(ADMIN_ID)
+                .claim("role", role)
+                .claim("status", status)
+                .claim("token_type", "access")
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(3600)))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
     }
 }

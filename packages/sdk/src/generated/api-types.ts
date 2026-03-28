@@ -48,6 +48,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/facebook/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Facebook OAuth circuit breaker status
+         * @description Returns the current state of the Facebook OAuth circuit breaker.
+         *     Used by the web auth page to surface outage banners when the Facebook
+         *     OAuth provider is degraded or unavailable.
+         */
+        get: operations["getFacebookStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/otp/request": {
         parameters: {
             query?: never;
@@ -128,7 +150,11 @@ export interface paths {
          */
         put: operations["updateMyProfile"];
         post?: never;
-        delete?: never;
+        /**
+         * Request account deletion
+         * @description Marks the account for deletion. Identity data is anonymized after 90-day retention period.
+         */
+        delete: operations["requestAccountDeletion"];
         options?: never;
         head?: never;
         patch?: never;
@@ -249,7 +275,8 @@ export interface paths {
         put?: never;
         /**
          * Verify via E-Mongolia DAN (Phase 2+)
-         * @description Optional fast-path verification using DAN. On provider failure/unavailability,
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         *     Optional fast-path verification using DAN. On provider failure/unavailability,
          *     manual verification remains available as fallback.
          */
         post: operations["verifyWithDan"];
@@ -517,7 +544,8 @@ export interface paths {
         put?: never;
         /**
          * Start instant match (Phase 3+)
-         * @description Starts instant-match flow for eligible high-liquidity categories/districts.
+         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+         *     Starts instant-match flow for eligible high-liquidity categories/districts.
          *     Offer window is 5 minutes per tasker; after 3 declines/timeouts flow falls back to standard applications.
          */
         post: operations["startInstantMatch"];
@@ -746,6 +774,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bookings/{id}/rebook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rebook from completed booking
+         * @description Creates a new OPEN task prefilled from a completed booking (same category, location, budget).
+         *     Intake answers use the current active schema version.
+         */
+        post: operations["rebookFromBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/payments/bookings/{id}/initiate": {
         parameters: {
             query?: never;
@@ -802,7 +851,8 @@ export interface paths {
         };
         /**
          * Get lead-unlock credit balance
-         * @description Phase 2+ endpoint for tasker credit balance.
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         *     Tasker credit balance for lead-unlock purchases.
          */
         get: operations["getCreditBalance"];
         put?: never;
@@ -878,7 +928,8 @@ export interface paths {
         put?: never;
         /**
          * Activate tasker subscription (Phase 3+)
-         * @description Enables monthly subscription for eligible Pro taskers.
+         * @description **Not yet implemented — Phase 3+ forward reference. Returns 404 until implemented.**
+         *     Enables monthly subscription for eligible Pro taskers.
          */
         post: operations["activateTaskerSubscription"];
         delete?: never;
@@ -1020,7 +1071,8 @@ export interface paths {
         };
         /**
          * Get my referral link and monthly reward status
-         * @description Phase 2+ endpoint. Returns referral code/link, current monthly conversion count,
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
+         *     Returns referral code/link, current monthly conversion count,
          *     and remaining reward-eligible slots under fraud-cap policy.
          */
         get: operations["getMyReferralSummary"];
@@ -1164,6 +1216,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/messages/flagged": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List phone-flagged messages
+         * @description Returns paginated messages where phone_number_flagged is true.
+         */
+        get: operations["adminListFlaggedMessages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/users": {
         parameters: {
             query?: never;
@@ -1173,7 +1245,8 @@ export interface paths {
         };
         /**
          * Search users
-         * @description Search users by name and Facebook ID in Phase 0-1; phone criteria is added in Phase 2+.
+         * @description Search users by phone number (exact normalized match). Phase 0-1 implementation is phone-only.
+         *     Name and Facebook ID search criteria are Phase 2+ additions (not yet implemented).
          */
         get: operations["adminSearchUsers"];
         put?: never;
@@ -1559,6 +1632,72 @@ export interface paths {
         put?: never;
         /** Activate or rollback category schema version */
         post: operations["adminActivateCategorySchema"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/security/customer/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Customer role auth smoke-test
+         * @description Auth scope smoke-test endpoint. Returns the authenticated user's role
+         *     and userId. Used in integration tests to verify that CUSTOMER
+         *     role-based access control is correctly applied.
+         */
+        get: operations["pingCustomer"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/security/tasker/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tasker role auth smoke-test
+         * @description Auth scope smoke-test endpoint. Returns the authenticated user's role
+         *     and userId. Used in integration tests to verify that TASKER
+         *     role-based access control is correctly applied.
+         */
+        get: operations["pingTasker"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/security/admin/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin role auth smoke-test
+         * @description Auth scope smoke-test endpoint. Returns the authenticated user's role
+         *     and userId. Used in integration tests to verify that ADMIN
+         *     role-based access control is correctly applied.
+         */
+        get: operations["pingAdmin"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2028,11 +2167,11 @@ export interface components {
             reviewer?: components["schemas"]["Profile"];
             /** Format: uuid */
             reviewee_id: string;
-            quality_rating: number;
+            quality_rating?: number;
             punctuality_rating: number;
-            communication_rating: number;
-            clarity_rating: number;
-            respectfulness_rating: number;
+            communication_rating?: number;
+            clarity_rating?: number;
+            respectfulness_rating?: number;
             comment?: string | null;
             /** Format: date-time */
             created_at: string;
@@ -2047,7 +2186,7 @@ export interface components {
             raised_by: string;
             reason: string;
             /** @enum {string} */
-            status: "OPEN" | "RESOLVED" | "CLOSED_INSUFFICIENT_EVIDENCE";
+            status: "OPEN" | "RESOLVED_TASKER" | "RESOLVED_CUSTOMER" | "ESCALATED" | "CLOSED_INSUFFICIENT_EVIDENCE";
             /** @enum {string|null} */
             resolution_action?: "RESOLVE_CUSTOMER" | "RESOLVE_TASKER" | "ESCALATE" | "REFUND" | "RELEASE" | null;
             /** Format: uuid */
@@ -2317,6 +2456,30 @@ export interface operations {
             };
         };
     };
+    getFacebookStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Circuit breaker state. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        available: boolean;
+                        /** @enum {string} */
+                        state: "CLOSED" | "OPEN" | "HALF_OPEN";
+                    };
+                };
+            };
+        };
+    };
     requestOtp: {
         parameters: {
             query?: never;
@@ -2499,6 +2662,30 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    requestAccountDeletion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Account deletion requested. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Account deletion requested. Data will be removed after 90-day retention period. */
+                        message: string;
+                    };
+                };
+            };
             401: components["responses"]["Unauthorized"];
         };
     };
@@ -3672,6 +3859,40 @@ export interface operations {
             };
         };
     };
+    rebookFromBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description New task created from completed booking. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Task"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Booking is not in COMPLETED status. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     initiatePayment: {
         parameters: {
             query?: never;
@@ -4156,11 +4377,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    quality_rating: number;
+                    quality_rating?: number;
                     punctuality_rating: number;
-                    communication_rating: number;
-                    clarity_rating: number;
-                    respectfulness_rating: number;
+                    communication_rating?: number;
+                    clarity_rating?: number;
+                    respectfulness_rating?: number;
                     comment?: string | null;
                 };
             };
@@ -4426,7 +4647,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description FCM or Expo push token. */
+                    /** @description FCM registration token obtained via `@react-native-firebase/messaging` `getToken()`. Expo push tokens are not accepted. */
                     token: string;
                     /** @enum {string} */
                     platform: "IOS" | "ANDROID" | "WEB";
@@ -4472,15 +4693,41 @@ export interface operations {
             404: components["responses"]["NotFound"];
         };
     };
-    adminSearchUsers: {
+    adminListFlaggedMessages: {
         parameters: {
             query?: {
-                /** @description Partial full name match. */
-                name?: string;
-                /** @description Exact Facebook identity match (Phase 0-1 and migrated users). */
-                facebook_id?: string;
-                /** @description Phone number to search for (exact normalized match only, E.164 recommended). */
-                phone?: string;
+                /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
+                cursor?: components["parameters"]["CursorParam"];
+                /** @description Maximum number of items to return (default 20, max 100). */
+                limit?: components["parameters"]["LimitParam"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of phone-flagged messages. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["Message"][];
+                        cursor: components["schemas"]["CursorPagination"];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    adminSearchUsers: {
+        parameters: {
+            query: {
+                /** @description Phone number to search for (exact normalized match, E.164 recommended). */
+                phone: string;
                 /** @description Opaque cursor for pagination. Pass the `next` value from a previous response. */
                 cursor?: components["parameters"]["CursorParam"];
                 /** @description Maximum number of items to return (default 20, max 100). */
@@ -5311,6 +5558,87 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+        };
+    };
+    pingCustomer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth scope confirmed. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example CUSTOMER */
+                        role: string;
+                        /** Format: uuid */
+                        userId: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    pingTasker: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth scope confirmed. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example TASKER */
+                        role: string;
+                        /** Format: uuid */
+                        userId: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    pingAdmin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth scope confirmed. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example ADMIN */
+                        role: string;
+                        /** Format: uuid */
+                        userId: string;
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
         };
     };
 }

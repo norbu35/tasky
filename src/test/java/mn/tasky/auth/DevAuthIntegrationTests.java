@@ -63,4 +63,13 @@ class DevAuthIntegrationTests extends IntegrationTestBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    @DisplayName("TID-TASK-010-DEV-AUTH-VALIDATION rejects admin dev auth role")
+    void devAuthRejectsAdminRole() {
+        String phone = uniquePhone("53");
+        ResponseEntity<Map> response = post("/api/v1/auth/dev/login", Map.of("phone", phone, "role", "ADMIN"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

@@ -69,7 +69,7 @@ describe('AdminModerationPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load/i)).toBeInTheDocument();
+      expect(screen.getByText(/load error/i)).toBeInTheDocument();
     });
 
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();

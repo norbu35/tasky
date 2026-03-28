@@ -203,7 +203,7 @@ describe('AdminDisputesPage', () => {
     renderListPage(api);
 
     await waitFor(() => {
-      expect(screen.getByText(/no disputes/i)).toBeInTheDocument();
+      expect(screen.getByText(/^empty$/i)).toBeInTheDocument();
     });
   });
 
@@ -279,7 +279,7 @@ describe('AdminDisputeDetailPage', () => {
     await user.type(notesInput, 'Customer claim is valid based on evidence');
 
     // Click resolve for customer
-    const resolveBtn = screen.getByRole('button', { name: /resolve for customer/i });
+    const resolveBtn = screen.getByRole('button', { name: /resolve customer/i });
     await user.click(resolveBtn);
 
     await waitFor(() => {
@@ -304,12 +304,12 @@ describe('AdminDisputeDetailPage', () => {
     const user = userEvent.setup();
 
     // Click resolve without filling notes
-    const resolveBtn = screen.getByRole('button', { name: /resolve for customer/i });
+    const resolveBtn = screen.getByRole('button', { name: /resolve customer/i });
     await user.click(resolveBtn);
 
     // Should show validation error
     await waitFor(() => {
-      expect(screen.getByText(/notes.*(required|mandatory)/i)).toBeInTheDocument();
+      expect(screen.getByText(/notes required/i)).toBeInTheDocument();
     });
 
     // Should NOT call the API

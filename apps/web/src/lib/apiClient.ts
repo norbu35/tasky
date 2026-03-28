@@ -248,7 +248,7 @@ export interface ApiClient {
 
   unregisterDevice(accessToken: string, token: string): Promise<void>;
 
-  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER' | 'ADMIN'): Promise<AuthTokens>;
+  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER'): Promise<AuthTokens>;
 
   // ─── Verification Methods ─────────────────────────────────────────
 
@@ -772,7 +772,7 @@ export class HttpApiClient implements ApiClient {
     );
   }
 
-  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER' | 'ADMIN'): Promise<AuthTokens> {
+  devLogin(phone: string, role: 'CUSTOMER' | 'TASKER'): Promise<AuthTokens> {
     return this.requestJson<{ access_token: string; refresh_token: string; user: User }>(
       '/auth/dev/login',
       {

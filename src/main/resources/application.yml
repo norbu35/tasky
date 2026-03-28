@@ -65,6 +65,8 @@ tasky:
     otp-test-code: ${TASKY_OTP_TEST_CODE:}
   dev-auth:
     enabled: ${TASKY_DEV_AUTH_ENABLED:false}
+  rate-limit:
+    trusted-proxy-depth: ${TASKY_RATE_LIMIT_TRUSTED_PROXY_DEPTH:0}
   security:
     jwt-secret: ${TASKY_JWT_SECRET}
     encryption-key: ${TASKY_ENCRYPTION_KEY}

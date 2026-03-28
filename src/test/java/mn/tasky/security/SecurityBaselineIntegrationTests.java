@@ -24,7 +24,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class SecurityBaselineIntegrationTests extends IntegrationTestBase {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -128,6 +130,25 @@ class SecurityBaselineIntegrationTests extends IntegrationTestBase {
         assertThat(blockedRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
+    @Test
+    @DisplayName("TID-TASK-004-SEC-OAUTH-RATE-LIMIT spoofed XFF does not bypass Facebook OAuth rate limit")
+    void facebookAuthRateLimitIgnoresSpoofedForwardedForWhenProxyTrustDisabled() {
+        String accessToken = "facebook-security-token-spoofed";
+        when(facebookGraphClient.debugToken(accessToken)).thenReturn("fb-user-security-spoofed");
+        when(facebookGraphClient.fetchProfile(accessToken))
+                .thenReturn(new FacebookGraphClient.FacebookProfile("fb-user-security-spoofed", "Security Test", null));
+
+        for (int index = 0; index < 10; index++) {
+            ResponseEntity<Map> response =
+                    post("/api/v1/auth/facebook", Map.of("access_token", accessToken), "203.0.113." + (100 + index));
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        }
+
+        ResponseEntity<Map> blockedRequest =
+                post("/api/v1/auth/facebook", Map.of("access_token", accessToken), "203.0.113.250");
+        assertThat(blockedRequest.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
+    }
+
     private ResponseEntity<Map> post(String path, Map<String, String> body, String clientIp) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -136,9 +157,5 @@ class SecurityBaselineIntegrationTests extends IntegrationTestBase {
         }
 
         return restTemplate.exchange(url(path), HttpMethod.POST, new HttpEntity<>(body, headers), Map.class);
-    }
-
-    private ResponseEntity<Map> post(String path, Map<String, String> body) {
-        return post(path, body, null);
     }
 }

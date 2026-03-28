@@ -125,7 +125,7 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(leadFeeSwitch);
 
     await waitFor(() => {
-      expect(screen.getByText(/Are you sure/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
     });
   });
 
@@ -142,7 +142,7 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(leadFeeSwitch);
 
     await waitFor(() => {
-      expect(screen.getByText(/Are you sure/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
     });
 
     const confirmButton = screen.getByRole('button', { name: /confirm/i });
@@ -174,7 +174,7 @@ describe('AdminFeaturesPage', () => {
     fireEvent.click(subSwitch);
 
     await waitFor(() => {
-      expect(screen.getByText(/Are you sure/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /confirm title/i })).toBeInTheDocument();
     });
 
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
@@ -189,7 +189,7 @@ describe('AdminFeaturesPage', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load/i)).toBeInTheDocument();
+      expect(screen.getByText(/load error/i)).toBeInTheDocument();
     });
 
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();

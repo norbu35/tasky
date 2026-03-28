@@ -85,7 +85,7 @@ describe('AdminLeadPricingPage', () => {
     });
     renderPage();
     await waitFor(() => {
-      expect(screen.getByText(/no prices/i)).toBeInTheDocument();
+      expect(screen.getByText(/^empty$/i)).toBeInTheDocument();
     });
   });
 
@@ -103,7 +103,7 @@ describe('AdminLeadPricingPage', () => {
     vi.mocked(mockApiClient.adminListLeadUnlockPrices!).mockRejectedValue(new Error('Network error'));
     renderPage();
     await waitFor(() => {
-      expect(screen.getByText(/failed to load/i)).toBeInTheDocument();
+      expect(screen.getByText(/load error/i)).toBeInTheDocument();
     });
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
@@ -113,7 +113,7 @@ describe('AdminLeadPricingPage', () => {
     await waitFor(() => {
       expect(screen.getByText('cat-cleaning')).toBeInTheDocument();
     });
-    fireEvent.click(screen.getByRole('button', { name: /create price/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^create$/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
@@ -123,7 +123,7 @@ describe('AdminLeadPricingPage', () => {
       expect(screen.getByText('cat-cleaning')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /create price/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^create$/i }));
 
     fireEvent.change(screen.getByPlaceholderText(/category/i), {
       target: { value: 'cat-repair' },
@@ -134,7 +134,7 @@ describe('AdminLeadPricingPage', () => {
     fireEvent.change(screen.getByPlaceholderText(/credits/i), {
       target: { value: '3' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/effective from/i), {
+    fireEvent.change(screen.getByPlaceholderText(/from placeholder/i), {
       target: { value: '2026-04-01T00:00' },
     });
 

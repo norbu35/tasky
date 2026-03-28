@@ -9,6 +9,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.application.OtpRateLimitService;
 import mn.tasky.auth.dto.OtpRequest;
 import mn.tasky.auth.dto.OtpVerifyRequest;
+import mn.tasky.common.security.ClientIpResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +26,17 @@ public class OtpController {
 
     private final OtpRateLimitService otpRateLimitService;
     private final AuthService authService;
+    private final ClientIpResolver clientIpResolver;
     private final boolean otpEnabled;
 
     public OtpController(
             OtpRateLimitService otpRateLimitService,
             AuthService authService,
+            ClientIpResolver clientIpResolver,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled) {
         this.otpRateLimitService = otpRateLimitService;
         this.authService = authService;
+        this.clientIpResolver = clientIpResolver;
         this.otpEnabled = otpEnabled;
     }
 
@@ -42,17 +46,9 @@ public class OtpController {
         if (!otpEnabled) {
             return featureDisabled(request);
         }
-        otpRateLimitService.assertRequestAllowed(body.phone(), resolveClientIp(request));
+        otpRateLimitService.assertRequestAllowed(body.phone(), clientIpResolver.resolve(request));
         String maskedPhone = authService.requestOtp(body.phone());
         return ResponseEntity.ok(Map.of("message", "OTP sent to " + maskedPhone));
-    }
-
-    private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 
     @PostMapping("/verify")
@@ -61,7 +57,7 @@ public class OtpController {
         if (!otpEnabled) {
             return featureDisabled(request);
         }
-        otpRateLimitService.assertVerifyAllowed(body.phone(), resolveClientIp(request));
+        otpRateLimitService.assertVerifyAllowed(body.phone(), clientIpResolver.resolve(request));
 
         return authService
                 .verifyOtp(body.phone(), body.code(), body.facebookAccessToken())

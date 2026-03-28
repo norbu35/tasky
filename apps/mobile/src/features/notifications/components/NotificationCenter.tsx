@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle, Bell, CheckCircle, MessageSquare } from 'lucide-react-native';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -21,48 +22,53 @@ interface NotificationCenterProps {
   onPressNotification?: (notification: NotificationItem) => void;
 }
 
-const MOCK_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: '1',
-    type: 'info',
-    title: t('shared.notifications.newApplicant', 'New Applicant'),
-    body: 'Batbayar applied to your task "Move furniture to new apartment".',
-    timestamp: '2 min ago',
-    read: false,
-  },
-  {
-    id: '2',
-    type: 'success',
-    title: t('shared.notifications.bookingConfirmed', 'Booking Confirmed'),
-    body: 'Your booking with Sarnai for "Deep clean 2-bedroom apartment" has been confirmed.',
-    timestamp: '1 hour ago',
-    read: false,
-  },
-  {
-    id: '3',
-    type: 'warning',
-    title: t('shared.notifications.reviewReminder', 'Review Reminder'),
-    body: t('shared.notifications.reviewReminderBody', 'You have not reviewed your completed task with Temuulen yet. Leave a review to help the community.'),
-    timestamp: '3 hours ago',
-    read: true,
-  },
-  {
-    id: '4',
-    type: 'message',
-    title: t('shared.notifications.newMessage', 'New Message'),
-    body: 'Oyungerel sent you a message about "Install air conditioner".',
-    timestamp: t('common.yesterday', 'Yesterday'),
-    read: true,
-  },
-  {
-    id: '5',
-    type: 'success',
-    title: t('shared.notifications.taskCompleted', 'Task Completed'),
-    body: 'Your task "Assemble IKEA bookshelf" has been marked as completed. Don\'t forget to leave a review!',
-    timestamp: '2 days ago',
-    read: true,
-  },
-];
+function buildMockNotifications(t: TFunction): NotificationItem[] {
+  return [
+    {
+      id: '1',
+      type: 'info',
+      title: t('shared.notifications.newApplicant', 'New Applicant'),
+      body: 'Batbayar applied to your task "Move furniture to new apartment".',
+      timestamp: '2 min ago',
+      read: false,
+    },
+    {
+      id: '2',
+      type: 'success',
+      title: t('shared.notifications.bookingConfirmed', 'Booking Confirmed'),
+      body: 'Your booking with Sarnai for "Deep clean 2-bedroom apartment" has been confirmed.',
+      timestamp: '1 hour ago',
+      read: false,
+    },
+    {
+      id: '3',
+      type: 'warning',
+      title: t('shared.notifications.reviewReminder', 'Review Reminder'),
+      body: t(
+        'shared.notifications.reviewReminderBody',
+        'You have not reviewed your completed task with Temuulen yet. Leave a review to help the community.',
+      ),
+      timestamp: '3 hours ago',
+      read: true,
+    },
+    {
+      id: '4',
+      type: 'message',
+      title: t('shared.notifications.newMessage', 'New Message'),
+      body: 'Oyungerel sent you a message about "Install air conditioner".',
+      timestamp: t('common.yesterday', 'Yesterday'),
+      read: true,
+    },
+    {
+      id: '5',
+      type: 'success',
+      title: t('shared.notifications.taskCompleted', 'Task Completed'),
+      body: 'Your task "Assemble IKEA bookshelf" has been marked as completed. Don\'t forget to leave a review!',
+      timestamp: '2 days ago',
+      read: true,
+    },
+  ];
+}
 
 function getNotificationIcon(type: NotificationType) {
   const iconSize = 20;
@@ -95,6 +101,7 @@ function getIconBackground(type: NotificationType): string {
 
 export function NotificationCenter({ onPressNotification }: NotificationCenterProps) {
   const { t } = useTranslation();
+  const notifications = buildMockNotifications(t);
 
   const renderItem = useCallback(
     ({ item }: { item: NotificationItem }) => (
@@ -149,7 +156,7 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
         <Text style={styles.headerTitle}>{t('notifications.title', 'Notifications')}</Text>
       </View>
       <FlatList
-        data={MOCK_NOTIFICATIONS}
+        data={notifications}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContent}

@@ -65,8 +65,9 @@ public class AuthService {
     private static final ModerationPolicy DEFAULT_MODERATION_POLICY =
             new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
 
-    private static final Set<String> SUPPORTED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
+    private static final Set<String> DEV_AUTH_ALLOWED_ROLES = Set.of("CUSTOMER", "TASKER");
     private static final Set<String> NON_PROD_PROFILES = Set.of("dev", "test", "local");
+    private static final Set<String> DEV_AUTH_ALLOWED_PROFILES = Set.of("local", "test");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE =
             Map.of("image/jpeg", "jpg", "image/png", "png", "image/webp", "webp");
     private static final Map<String, String> VERIFICATION_EXTENSION_BY_CONTENT_TYPE =
@@ -114,7 +115,7 @@ public class AuthService {
             SuspensionEventDao suspensionEventDao,
             BadgeDao badgeDao,
             MeterRegistry meterRegistry,
-            @Value("${tasky.dev-auth.enabled:true}") boolean devAuthEnabled,
+            @Value("${tasky.dev-auth.enabled:false}") boolean devAuthEnabled,
             @Value("${tasky.otp.enabled:false}") boolean otpEnabled,
             @Value("${tasky.auth.otp-ttl-seconds:300}") long otpTtlSeconds,
             @Value("${tasky.auth.otp-test-code:}") String otpTestCode) {
@@ -148,6 +149,9 @@ public class AuthService {
         if (!nonProductionProfile && devAuthEnabled) {
             throw new IllegalStateException("tasky.dev-auth.enabled must be false in production.");
         }
+        if (devAuthEnabled && !isDevAuthAllowedProfile()) {
+            throw new IllegalStateException("tasky.dev-auth.enabled requires an explicit local or test profile.");
+        }
         if (!otpEnabled) {
             return;
         }
@@ -163,6 +167,12 @@ public class AuthService {
         return Arrays.stream(environment.getActiveProfiles())
                 .map(profile -> profile.toLowerCase(Locale.ROOT))
                 .anyMatch(NON_PROD_PROFILES::contains);
+    }
+
+    private boolean isDevAuthAllowedProfile() {
+        return Arrays.stream(environment.getActiveProfiles())
+                .map(profile -> profile.toLowerCase(Locale.ROOT))
+                .anyMatch(DEV_AUTH_ALLOWED_PROFILES::contains);
     }
 
     /**
@@ -499,7 +509,7 @@ public class AuthService {
     public AuthSession devLogin(String rawPhone, String role) {
         String phone = normalizePhone(rawPhone);
         String normalizedRole = role == null ? "CUSTOMER" : role.trim().toUpperCase(Locale.ROOT);
-        if (!SUPPORTED_ROLES.contains(normalizedRole)) {
+        if (!DEV_AUTH_ALLOWED_ROLES.contains(normalizedRole)) {
             throw new IllegalArgumentException("Unsupported role: " + normalizedRole);
         }
 

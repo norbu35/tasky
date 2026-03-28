@@ -44,7 +44,7 @@ export function useDevLogin() {
   const setRole = useAppStore((state) => state.setRole);
 
   return useMutation({
-    mutationFn: async ({ phone, role }: { phone: string; role: string }) => {
+    mutationFn: async ({ phone, role }: { phone: string; role: 'CUSTOMER' | 'TASKER' }) => {
       return await api.devLogin(phone, role);
     },
     onSuccess: async (session, variables) => {

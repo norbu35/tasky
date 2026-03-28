@@ -233,7 +233,7 @@ describe('AdminUsersPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/no users found/i)).toBeInTheDocument();
+      expect(screen.getByText(/no results/i)).toBeInTheDocument();
     });
   });
 
@@ -247,7 +247,7 @@ describe('AdminUsersPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /search/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to search/i)).toBeInTheDocument();
+      expect(screen.getByText(/search error/i)).toBeInTheDocument();
     });
 
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
