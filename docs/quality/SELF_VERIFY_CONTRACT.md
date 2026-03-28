@@ -65,6 +65,7 @@ Artifact requirements:
 - acceptance criteria and AC coverage summary must be included
 - AC coverage entries may include authorship metadata (`not_run_test_ids`, `not_written_test_ids`, `changed_test_files`, `authorship_check_enabled`) when branch-written test proof is enforced
 - git context and agent metadata are mandatory
+- artifact provenance must match the checked-out branch, `HEAD` SHA, and ticket spec path being validated
 
 Top-level fields:
 
@@ -123,3 +124,13 @@ Appender behavior:
 ## CI Parity Rule
 
 Local and CI required check sets must match the same risk-derived registry. CI may re-run checks independently, but it must not silently use a weaker or broader required set than the local artifact claims.
+
+## Provenance Rule
+
+CI must reject a local artifact when any of these do not match the current checkout:
+
+- `git_context.branch`
+- `git_context.head_sha`
+- `ticket_spec_path` existence and ticket identity
+
+This prevents stale or wrong-ticket `artifacts/self-verify.json` files from being trusted as PR input.

@@ -1,35 +1,30 @@
 #!/usr/bin/env python3
-"""Validate PRD requirement traceability and backlog ticket coverage."""
+"""Validate PRD requirement traceability against canonical ticket specs."""
 
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
 
+
 REQ_RE = re.compile(r"\b(?:REQ|NFR)-[A-Z]+-[0-9]+\b")
-TASK_RE = re.compile(r"\bTASK-[0-9]{3}\b")
-TABLE_ROW_RE = re.compile(r"^\|\s*([^|]+?)\s*\|(.+)$")
-BACKLOG_HEADING_RE = re.compile(r"^###\s+(TASK-[0-9]{3})\b")
-BACKLOG_INDEX_ROW_RE = re.compile(
-    r"^\|\s*(TASK-[0-9]{3})\s*\|\s*[^|]+\|\s*(?:low|medium|high)\s*\|\s*([^|]+)\|",
-    re.IGNORECASE,
-)
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate docs traceability coverage.")
+    parser = argparse.ArgumentParser(description="Validate PRD requirement traceability.")
     parser.add_argument("--prd", default="docs/PRD.md", help="Path to PRD markdown")
+    parser.add_argument(
+        "--tickets-dir",
+        default="tickets",
+        help="Path to canonical ticket spec directory",
+    )
     parser.add_argument(
         "--traceability",
         default="docs/TRACEABILITY.md",
-        help="Path to traceability markdown",
-    )
-    parser.add_argument(
-        "--backlog",
-        default="docs/BACKLOG.md",
-        help="Path to backlog markdown",
+        help="Optional supplemental traceability matrix",
     )
     return parser.parse_args()
 
@@ -40,104 +35,69 @@ def load_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def extract_prd_requirement_ids(prd_text: str) -> set[str]:
-    return set(REQ_RE.findall(prd_text))
-
-
-def extract_traceability_rows(traceability_text: str) -> dict[str, set[str]]:
-    rows: dict[str, set[str]] = {}
-    for raw_line in traceability_text.splitlines():
-        line = raw_line.strip()
-        if not line.startswith("|"):
-            continue
-        if line.startswith("|---"):
-            continue
-        m = TABLE_ROW_RE.match(line)
-        if not m:
-            continue
-        first_col = m.group(1).strip()
-        if not REQ_RE.fullmatch(first_col):
-            continue
-        ticket_ids = set(TASK_RE.findall(line))
-        rows[first_col] = ticket_ids
-    return rows
-
-
-def extract_backlog_ticket_ids(backlog_text: str) -> set[str]:
-    ticket_ids: set[str] = set()
-    for raw_line in backlog_text.splitlines():
-        m = BACKLOG_HEADING_RE.match(raw_line.strip())
-        if m:
-            ticket_ids.add(m.group(1))
-    return ticket_ids
-
-
-def extract_backlog_index_rows(backlog_text: str) -> dict[str, set[str]]:
-    rows: dict[str, set[str]] = {}
-    for raw_line in backlog_text.splitlines():
-        m = BACKLOG_INDEX_ROW_RE.match(raw_line.strip())
-        if not m:
-            continue
-        ticket = m.group(1)
-        coverage_col = m.group(2)
-        for req_id in REQ_RE.findall(coverage_col):
-            rows.setdefault(req_id, set()).add(ticket)
-    return rows
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def main() -> int:
     args = parse_args()
     prd_path = Path(args.prd)
+    tickets_dir = Path(args.tickets_dir)
     traceability_path = Path(args.traceability)
-    backlog_path = Path(args.backlog)
 
     try:
         prd_text = load_text(prd_path)
-        backlog_text = load_text(backlog_path)
     except FileNotFoundError as exc:
         print(str(exc), file=sys.stderr)
         return 1
 
-    prd_reqs = extract_prd_requirement_ids(prd_text)
-    if traceability_path.is_file():
-        traceability_text = traceability_path.read_text(encoding="utf-8")
-        trace_rows = extract_traceability_rows(traceability_text)
-        coverage_source = f"traceability matrix: {traceability_path}"
-    else:
-        trace_rows = extract_backlog_index_rows(backlog_text)
-        coverage_source = "backlog index coverage column (traceability file missing)"
-    backlog_tickets = extract_backlog_ticket_ids(backlog_text)
+    if not tickets_dir.is_dir():
+        print(f"Ticket directory not found: {tickets_dir}", file=sys.stderr)
+        return 1
 
-    trace_reqs = set(trace_rows.keys())
-
-    missing_in_trace = sorted(prd_reqs - trace_reqs)
-    extra_in_trace = sorted(trace_reqs - prd_reqs)
-    reqs_without_tickets = sorted([req for req, tickets in trace_rows.items() if not tickets])
-
-    all_trace_tickets: set[str] = set()
-    for tickets in trace_rows.values():
-        all_trace_tickets.update(tickets)
-    trace_tickets_missing_backlog = sorted(all_trace_tickets - backlog_tickets)
-
+    prd_reqs = set(REQ_RE.findall(prd_text))
+    ticket_reqs: dict[str, set[str]] = {}
     failures: list[str] = []
-    if missing_in_trace:
-        failures.append(f"Requirements missing in traceability: {missing_in_trace}")
-    if extra_in_trace:
-        failures.append(f"Traceability contains unknown requirement IDs: {extra_in_trace}")
-    if reqs_without_tickets:
-        failures.append(f"Requirements without mapped ticket IDs: {reqs_without_tickets}")
-    if trace_tickets_missing_backlog:
-        failures.append(
-            "Traceability references tickets not defined in backlog headings: "
-            f"{trace_tickets_missing_backlog}"
-        )
+
+    for spec_path in sorted(tickets_dir.glob("TASK-*.json")):
+        try:
+            payload = load_json(spec_path)
+        except Exception as exc:
+            failures.append(f"{spec_path.name}: failed to parse JSON: {exc}")
+            continue
+        ticket_id = spec_path.stem
+        req_ids = payload.get("req_ids", [])
+        if not isinstance(req_ids, list):
+            failures.append(f"{ticket_id}: req_ids must be an array.")
+            continue
+        ticket_reqs[ticket_id] = set(req_ids)
+
+    referenced_reqs = set().union(*ticket_reqs.values()) if ticket_reqs else set()
+    missing_in_tickets = sorted(prd_reqs - referenced_reqs)
+    extra_in_tickets = sorted(referenced_reqs - prd_reqs)
+
+    if missing_in_tickets:
+        failures.append(f"Requirements missing from ticket specs: {missing_in_tickets}")
+    if extra_in_tickets:
+        failures.append(f"Ticket specs reference unknown requirement IDs: {extra_in_tickets}")
+
+    supplemental_trace_rows = 0
+    if traceability_path.is_file():
+        trace_text = traceability_path.read_text(encoding="utf-8")
+        trace_reqs = set(REQ_RE.findall(trace_text))
+        extra_in_trace = sorted(trace_reqs - prd_reqs)
+        if extra_in_trace:
+            failures.append(
+                f"Supplemental traceability matrix references unknown requirement IDs: {extra_in_trace}"
+            )
+        supplemental_trace_rows = len(trace_reqs)
 
     print("Traceability validation summary:")
-    print(f"- Coverage source: {coverage_source}")
+    print("- Coverage source: canonical ticket specs under tickets/*.json")
     print(f"- PRD requirement IDs: {len(prd_reqs)}")
-    print(f"- Traceability rows: {len(trace_reqs)}")
-    print(f"- Backlog ticket definitions: {len(backlog_tickets)}")
-    print(f"- Tickets referenced by traceability: {len(all_trace_tickets)}")
+    print(f"- Ticket specs scanned: {len(ticket_reqs)}")
+    print(f"- Requirement IDs referenced by tickets: {len(referenced_reqs)}")
+    print(f"- Supplemental traceability rows: {supplemental_trace_rows}")
 
     if failures:
         print("Traceability validation failed:", file=sys.stderr)

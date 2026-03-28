@@ -15,6 +15,7 @@ TEST_FILE_PATTERNS = [
     r"\.test\.(tsx?|jsx?)$",
     r"\.spec\.(tsx?|jsx?)$",
     r"Tests?\.java$",
+    r"scripts[\\/]tests[\\/]test_.*\.py$",
     r"__tests__[\\/].*\.(tsx?|jsx?)$",
     r"e2e[\\/].*\.ts$",
     r"maestro[\\/].*\.yaml$",

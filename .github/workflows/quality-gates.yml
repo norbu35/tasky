@@ -16,12 +16,15 @@ jobs:
       - name: Ensure scripts are executable
         run: chmod +x scripts/*.sh scripts/*.py
 
-      - name: Validate traceability and backlog contracts
+      - name: Validate canonical planning and compatibility contracts
         run: |
           python3 scripts/validate-traceability.py
           python3 scripts/validate-backlog.py
           python3 scripts/validate-ticket-specs.py
           python3 scripts/validate-compat-docs.py
+
+      - name: Run workflow integrity regression tests
+        run: python3 -m unittest discover -s scripts/tests -p 'test_workflow_integrity.py'
 
   frontend-quality:
     runs-on: ubuntu-latest

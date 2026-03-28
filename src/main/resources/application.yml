@@ -3,8 +3,9 @@ spring:
     name: tasky-server
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:tasky}
-    username: ${POSTGRES_USER:tasky}
-    password: ${POSTGRES_PASSWORD:tasky}
+    # Runtime app user: least-privilege account created by docker/init-db.sql
+    username: ${APP_DB_USER:tasky_app}
+    password: ${APP_DB_PASSWORD:tasky_app}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: ${HIKARI_MAX_POOL:10}
@@ -17,6 +18,9 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    # Migration owner: separate from the runtime app user to preserve least-privilege
+    user: ${POSTGRES_USER:tasky}
+    password: ${POSTGRES_PASSWORD:tasky}
   messages:
     basename: i18n/messages
     encoding: UTF-8

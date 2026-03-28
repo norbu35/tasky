@@ -364,9 +364,18 @@ class SelfVerifyPolicyTests(unittest.TestCase):
         self.assertIn("artifacts/checks/changed-files.txt", self_verify)
         self.assertIn("semgrep --error --config auto \"${semgrep_targets[@]}\"", self_verify)
 
-    def test_touched_coverage_validator_uses_defusedxml(self) -> None:
+    def test_self_verify_runs_script_tests_for_workflow_changes(self) -> None:
+        self_verify = SELF_VERIFY.read_text(encoding="utf-8")
+        self.assertIn("python3 -m unittest discover -s scripts/tests", self_verify)
+
+    def test_touched_coverage_validator_has_safe_xml_parser_fallback(self) -> None:
         validator = VALIDATE_TOUCHED_COVERAGE.read_text(encoding="utf-8")
+        self.assertIn("xml.etree.ElementTree", validator)
         self.assertIn("from defusedxml import ElementTree as ET", validator)
+
+    def test_ac_coverage_validator_recognizes_workflow_python_tests(self) -> None:
+        validator = VALIDATE_AC_COVERAGE.read_text(encoding="utf-8")
+        self.assertIn("scripts[\\\\/]tests[\\\\/]test_.*\\.py$", validator)
 
     def test_validate_self_verify_accepts_authorship_metadata_fields(self) -> None:
         validator = (REPO_ROOT / "scripts" / "validate-self-verify.py").read_text(encoding="utf-8")

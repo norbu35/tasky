@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-117",
+  "risk_level": "low",
+  "req_ids": [
+    "NFR-SEC-01",
+    "NFR-API-02",
+    "NFR-OBS-01"
+  ],
+  "depends_on": [],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-117-01",
+      "type": "functional",
+      "statement": "Workflow integrity validation uses canonical ticket specs and coordination state rather than missing legacy backlog documents.",
+      "test_ids": [
+        "TID-TASK-117-WORKFLOW-TICKET-CANON"
+      ]
+    },
+    {
+      "id": "AC-TASK-117-02",
+      "type": "functional",
+      "statement": "Self-verification artifact validation rejects stale or mismatched branch and head provenance before CI trusts the artifact metadata.",
+      "test_ids": [
+        "TID-TASK-117-WORKFLOW-SELF-VERIFY-PROVENANCE"
+      ]
+    },
+    {
+      "id": "AC-TASK-117-03",
+      "type": "functional",
+      "statement": "Compatibility-doc validation passes against the repo's living Claude guidance contract and remains enforceable in CI.",
+      "test_ids": [
+        "TID-TASK-117-WORKFLOW-COMPAT-DOC"
+      ]
+    }
+  ]
+}

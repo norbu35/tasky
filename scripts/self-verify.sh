@@ -263,7 +263,11 @@ if rg -q '^(apps/web/|apps/mobile/|packages/sdk/|docs/API\.yaml$|pnpm-lock\.yaml
   pnpm -r lint
   pnpm -r typecheck
 fi
-./gradlew --no-daemon checkstyleMain checkstyleTest
+if rg -q '^(src/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle/|gradlew$|gradlew\.bat$)' artifacts/checks/changed-files.txt; then
+  ./gradlew --no-daemon checkstyleMain checkstyleTest
+else
+  echo "No backend/frontend lint targets changed; format_lint backend checks not applicable."
+fi
 CMD
       ;;
     commit_message_lint)
@@ -307,6 +311,7 @@ CMD
 needs_backend=0
 needs_web=0
 needs_mobile=0
+needs_workflow=0
 
 if rg -q '^(src/|build\.gradle\.kts$|settings\.gradle\.kts$|gradle/|gradlew$|gradlew\.bat$)' artifacts/checks/changed-files.txt; then
   needs_backend=1
@@ -320,6 +325,9 @@ fi
 if rg -q '^(packages/sdk/|docs/API\.yaml$)' artifacts/checks/changed-files.txt; then
   needs_web=1
   needs_mobile=1
+fi
+if rg -q '^(\.github/workflows/|scripts/|docs/quality/|CLAUDE\.md$|tickets/)' artifacts/checks/changed-files.txt; then
+  needs_workflow=1
 fi
 
 if (( needs_backend == 1 )); then
@@ -339,8 +347,11 @@ fi
 if (( needs_mobile == 1 )); then
   pnpm --filter @tasky/mobile test:unit
 fi
+if (( needs_workflow == 1 )); then
+  python3 -m unittest discover -s scripts/tests
+fi
 
-if (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 )); then
+if (( needs_backend == 0 && needs_web == 0 && needs_mobile == 0 && needs_workflow == 0 )); then
   echo "No runtime modules changed; changed-module tests not applicable."
 fi
 CMD

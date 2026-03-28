@@ -27,3 +27,5 @@ Generated entries are written by `scripts/agent-log.sh`.
 | 2026-03-28T08:42:35Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | PASS | 6/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
 | 2026-03-28T08:42:35Z | local | Codex | TASK-111 | agent/TASK-111-web-container-overlay | 8e6611fe75b8321c738492db7ef160eb50b60a1b | low | PASS | 6/6 | NFR-RELI-01 | `artifacts/self-verify.json` |
 | 2026-03-28T10:12:17Z | local | Codex | TASK-114 | agent/TASK-114-web-customer-route-parity | 05cad53a33303d24ccfb8a5f58d13aef9c20409f | medium | FAIL | 4/9 | NFR-UI-02,REQ-BOOK-01,REQ-BOOK-02,REQ-TASK-02 | `artifacts/self-verify.json` |
+| 2026-03-28T11:28:28Z | local | Codex | TASK-117 | agent/TASK-117-release-gate-integrity | b0c5580bfbf58eab7ea06dc6a31b109fec7a7571 | low | PASS | 6/6 | NFR-SEC-01,NFR-API-02,NFR-OBS-01 | `artifacts/self-verify.json` |
+| 2026-03-28T11:34:39Z | local | Codex | TASK-116 | agent/TASK-116-production-readiness-audit | 8b839e820f5301804003aef471f213c9f87cc546 | low | PASS | 6/6 | NFR-SEC-01,NFR-API-02,NFR-OBS-01,NFR-UI-01 | `artifacts/self-verify.json` |

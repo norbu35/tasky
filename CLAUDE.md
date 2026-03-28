@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+<!-- COMPATIBILITY_ONLY -->
+
 ## Governing Documents
 
 **Read these before coding anything non-trivial:**

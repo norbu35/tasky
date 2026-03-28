@@ -11,8 +11,12 @@ services:
       POSTGRES_HOST: pgbouncer
       PGBOUNCER_PORT: ${PGBOUNCER_PORT:-6432}
       POSTGRES_DB: ${POSTGRES_DB:-tasky}
+      # Flyway migration owner (DDL rights); Flyway bypasses PgBouncer via direct Postgres port
       POSTGRES_USER: ${POSTGRES_USER:-tasky}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tasky}
+      # Least-privilege runtime user; app connects via PgBouncer with this account
+      APP_DB_USER: ${APP_DB_USER:-tasky_app}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-tasky_app}
       TASKY_JWT_SECRET: ${TASKY_JWT_SECRET}
       TASKY_ENCRYPTION_KEY: ${TASKY_ENCRYPTION_KEY}
       TASKY_BLIND_INDEX_KEY: ${TASKY_BLIND_INDEX_KEY}

@@ -10,7 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-from defusedxml import ElementTree as ET
+try:
+    from defusedxml import ElementTree as ET
+except ModuleNotFoundError:  # pragma: no cover - exercised by script-level tests
+    import xml.etree.ElementTree as ET
 
 
 HUNK_RE = re.compile(r"@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")

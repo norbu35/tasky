@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -60,6 +62,30 @@ def load_risk_policy(path: Path) -> tuple[set[str], dict[str, list[str]]]:
             raise ValueError(f"risk-checks.json missing or invalid required_by_risk.{risk}")
 
     return set(check_ids), required_by_risk
+
+
+def resolve_current_branch() -> str:
+    env_branch = os.getenv("GITHUB_HEAD_REF")
+    if env_branch:
+        return env_branch
+    ref_name = os.getenv("GITHUB_REF_NAME")
+    if ref_name:
+        return ref_name
+
+    for command in (["git", "symbolic-ref", "--short", "HEAD"], ["git", "rev-parse", "--abbrev-ref", "HEAD"]):
+        proc = subprocess.run(command, capture_output=True, text=True, check=False)
+        if proc.returncode == 0:
+            branch = proc.stdout.strip()
+            if branch:
+                return branch
+    return "UNKNOWN_BRANCH"
+
+
+def resolve_current_head_sha() -> str:
+    proc = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False)
+    if proc.returncode != 0:
+        return "NO_HEAD"
+    return proc.stdout.strip()
 
 
 def validate(
@@ -453,6 +479,38 @@ def validate(
         head_sha = git_context.get("head_sha")
         if not (isinstance(head_sha, str) and (head_sha == "NO_HEAD" or HEAD_SHA_RE.match(head_sha))):
             err(errors, "git_context.head_sha must be git SHA or NO_HEAD.")
+
+        current_branch = resolve_current_branch()
+        if is_non_empty_string(git_context.get("branch")) and current_branch != git_context.get("branch"):
+            err(
+                errors,
+                f"git_context.branch does not match current checkout. artifact={git_context.get('branch')} current={current_branch}",
+            )
+        current_head_sha = resolve_current_head_sha()
+        if isinstance(head_sha, str) and current_head_sha != head_sha:
+            err(
+                errors,
+                f"git_context.head_sha does not match current checkout. artifact={head_sha} current={current_head_sha}",
+            )
+
+    if is_non_empty_string(ticket) and is_non_empty_string(git_context.get("branch") if isinstance(git_context, dict) else None):
+        expected_prefix = f"agent/{ticket}-"
+        branch_value = git_context.get("branch")
+        if not branch_value.startswith(expected_prefix):
+            err(errors, f"git_context.branch must start with {expected_prefix}")
+
+    if is_non_empty_string(ticket_spec_path):
+        spec_path = Path(ticket_spec_path)
+        if not spec_path.is_file():
+            err(errors, f"ticket_spec_path does not exist: {ticket_spec_path}")
+        else:
+            try:
+                spec_payload = json.loads(spec_path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                err(errors, f"ticket_spec_path is not valid JSON: {exc}")
+            else:
+                if spec_payload.get("ticket") != ticket:
+                    err(errors, "ticket_spec_path ticket field does not match artifact ticket.")
 
     agent = artifact.get("agent")
     if not isinstance(agent, dict):
