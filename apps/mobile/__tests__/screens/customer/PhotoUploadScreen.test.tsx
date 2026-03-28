@@ -5,10 +5,11 @@ import PhotoUploadScreen from '../../../src/app/(customer)/tasks/new/photos';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
+const mockParams = { categoryId: 'cat-123', description: 'Fix my sink' };
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: mockBack }),
-  useLocalSearchParams: () => ({ categoryId: 'cat-123', description: 'Fix my sink' }),
+  useLocalSearchParams: () => mockParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -32,6 +33,7 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  Object.assign(mockParams, { categoryId: 'cat-123', description: 'Fix my sink' });
 });
 
 describe('PhotoUploadScreen (SCR-CUST-004)', () => {
@@ -76,5 +78,25 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
   it('shows optional helper copy', () => {
     render(<PhotoUploadScreen />);
     expect(screen.getByText('Photos are optional — you can skip')).toBeTruthy();
+  });
+
+  it('TID-TASK-113-MOBILE-PHOTO-KEYS-PERSIST preserves existing uploaded photo keys when continuing', () => {
+    Object.assign(mockParams, {
+      categoryId: 'cat-123',
+      description: 'Fix my sink',
+      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
+    });
+
+    render(<PhotoUploadScreen />);
+    fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
+
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/(customer)/tasks/new/location',
+      params: {
+        categoryId: 'cat-123',
+        description: 'Fix my sink',
+        photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
+      },
+    });
   });
 });

@@ -9,6 +9,34 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
+function parsePhotoKeys(value?: string): string[] {
+  if (!value) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseIntakeAnswers(value?: string): Record<string, unknown> {
+  if (!value) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 function formatBudget(amount: string): string {
   const num = Number(amount);
   if (isNaN(num)) return amount;
@@ -64,6 +92,8 @@ export default function ReviewSubmitScreen() {
   const params = useLocalSearchParams<{
     categoryId: string;
     description: string;
+    intakeAnswers?: string;
+    intakeSchemaVersion?: string;
     photos: string;
     location: string;
     lat: string;
@@ -83,11 +113,13 @@ export default function ReviewSubmitScreen() {
         category_id: params.categoryId ?? '',
         description: params.description ?? '',
         budget: Number(params.budget) || 0,
+        intake_answers: parseIntakeAnswers(params.intakeAnswers),
+        intake_schema_version: Number(params.intakeSchemaVersion) || 1,
         location_lat: Number.isFinite(locationLat) ? locationLat : 0,
         location_lng: Number.isFinite(locationLng) ? locationLng : 0,
         location_text: params.location ?? '',
         scheduled_at: params.scheduledAt ?? '',
-        photo_keys: [],
+        photo_keys: parsePhotoKeys(params.photos),
       });
       router.replace('/(customer)/tasks/new/success');
     } catch {

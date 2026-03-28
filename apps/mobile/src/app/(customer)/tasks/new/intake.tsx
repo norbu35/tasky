@@ -24,7 +24,12 @@ export default function IntakeFormScreen() {
     setError('');
     router.push({
       pathname: '/(customer)/tasks/new/photos',
-      params: { categoryId: params.categoryId, description },
+      params: {
+        categoryId: params.categoryId,
+        description,
+        intakeAnswers: JSON.stringify({ description }),
+        intakeSchemaVersion: '1',
+      },
     });
   };
 

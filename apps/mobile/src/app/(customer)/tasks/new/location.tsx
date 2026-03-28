@@ -24,6 +24,8 @@ export default function LocationScreen() {
   const params = useLocalSearchParams<{
     categoryId: string;
     description: string;
+    intakeAnswers?: string;
+    intakeSchemaVersion?: string;
     photos: string;
     location?: string;
     lat?: string;
@@ -51,6 +53,8 @@ export default function LocationScreen() {
       params: {
         categoryId: params.categoryId,
         description: params.description,
+        intakeAnswers: params.intakeAnswers,
+        intakeSchemaVersion: params.intakeSchemaVersion,
         photos: params.photos,
         location: locationText,
         lat: String(pin.latitude),

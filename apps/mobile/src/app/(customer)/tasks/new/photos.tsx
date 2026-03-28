@@ -8,11 +8,30 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
+function parsePhotoKeys(value?: string): string[] {
+  if (!value) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function PhotoUploadScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ categoryId: string; description: string }>();
-  const [photos] = useState<string[]>([]);
+  const params = useLocalSearchParams<{
+    categoryId: string;
+    description: string;
+    intakeAnswers?: string;
+    intakeSchemaVersion?: string;
+    photos?: string;
+  }>();
+  const [photos] = useState<string[]>(() => parsePhotoKeys(params.photos));
 
   const handleAddPhoto = () => {
     // In production, this would open camera/gallery picker
@@ -25,6 +44,8 @@ export default function PhotoUploadScreen() {
       params: {
         categoryId: params.categoryId,
         description: params.description,
+        intakeAnswers: params.intakeAnswers,
+        intakeSchemaVersion: params.intakeSchemaVersion,
         photos: JSON.stringify(photos),
       },
     });

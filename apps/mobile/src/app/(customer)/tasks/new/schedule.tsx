@@ -46,6 +46,8 @@ export default function ScheduleBudgetScreen() {
   const params = useLocalSearchParams<{
     categoryId: string;
     description: string;
+    intakeAnswers?: string;
+    intakeSchemaVersion?: string;
     photos: string;
     location: string;
     lat: string;
@@ -100,6 +102,8 @@ export default function ScheduleBudgetScreen() {
       params: {
         categoryId: params.categoryId,
         description: params.description,
+        intakeAnswers: params.intakeAnswers,
+        intakeSchemaVersion: params.intakeSchemaVersion,
         photos: params.photos,
         location: params.location,
         lat: params.lat,

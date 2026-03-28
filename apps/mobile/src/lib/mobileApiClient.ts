@@ -5,6 +5,7 @@ export type Profile = components['schemas']['Profile'];
 export type Category = components['schemas']['Category'];
 export type PublicTask = components['schemas']['PublicTask'];
 export type Task = components['schemas']['Task'];
+export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
 export type TaskApplication = components['schemas']['TaskApplication'];
 export type Booking = components['schemas']['Booking'];
 export type Review = components['schemas']['Review'];
@@ -76,16 +77,7 @@ export interface MobileApiClient {
 
   createTask(
     accessToken: string,
-    payload: {
-      category_id: string;
-      description: string;
-      budget: number;
-      location_lat: number;
-      location_lng: number;
-      location_text: string;
-      scheduled_at: string;
-      photo_keys?: string[];
-    },
+    payload: CreateTaskRequest,
   ): Promise<Task>;
 
   listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
@@ -367,16 +359,7 @@ export class HttpMobileApiClient implements MobileApiClient {
 
   createTask(
     accessToken: string,
-    payload: {
-      category_id: string;
-      description: string;
-      budget: number;
-      location_lat: number;
-      location_lng: number;
-      location_text: string;
-      scheduled_at: string;
-      photo_keys?: string[];
-    },
+    payload: CreateTaskRequest,
   ): Promise<Task> {
     return this.requestJson<Task>(
       '/tasks',

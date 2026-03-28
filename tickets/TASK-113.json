@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "ticket": "TASK-113",
+  "risk_level": "medium",
+  "req_ids": [
+    "REQ-TASK-01",
+    "REQ-TASK-03"
+  ],
+  "depends_on": [
+    "TASK-002",
+    "TASK-071",
+    "TASK-092"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-TASK-113-01",
+      "type": "functional",
+      "statement": "The mobile task-posting wizard preserves uploaded photo keys across screens.",
+      "test_ids": [
+        "TID-TASK-113-MOBILE-PHOTO-KEYS-PERSIST"
+      ]
+    },
+    {
+      "id": "AC-TASK-113-02",
+      "type": "functional",
+      "statement": "The mobile review step submits `intake_answers`, `intake_schema_version`, and `photo_keys` to task creation.",
+      "test_ids": [
+        "TID-TASK-113-MOBILE-REVIEW-SUBMIT-PAYLOAD"
+      ]
+    },
+    {
+      "id": "AC-TASK-113-03",
+      "type": "functional",
+      "statement": "The mobile API client task-create request shape is derived from the generated SDK schema.",
+      "test_ids": [
+        "TID-TASK-113-MOBILE-API-CREATE-TASK-SCHEMA"
+      ]
+    }
+  ]
+}
