@@ -44,7 +44,7 @@ for md_file in sorted(scenarios_dir.glob("*.md")):
     blocks = re.split(r'\n(?=## SCN-)', content)
     for block in blocks:
         m = re.match(
-            r'## (SCN-[A-Z]+-\d+)\n\*\*Risk:\*\* (\w+)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
+            r'## (SCN-[A-Z]+\d*-\d+)\n+\*\*Risk:\*\* (\w+)\n\*\*PRD:\*\* ([^\n]+)\n\*\*Title:\*\* ([^\n]+)',
             block
         )
         if not m:
