@@ -312,7 +312,7 @@ class BookingIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
-    @DisplayName("TID-TASK-032-DOMAIN-TASKER-CANCEL-STRIKE tasker cancellation reopens task")
+    @DisplayName("SCN-BOOK-005: Tasker cancellation reopens the linked task to OPEN")
     void taskerCancellationReopensTask() {
         AuthContext customer = authenticate("rc1");
         AuthContext tasker = authenticate("rc2");

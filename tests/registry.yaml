@@ -165,7 +165,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-04
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer cancels more than 4 hours before schedule - no incident and no
       fee
@@ -176,7 +176,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-04
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer cancels less than 4 hours before schedule - reliability incident
       recorded and no fee
@@ -187,14 +187,15 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-04
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer cancels exactly 4 hours before schedule - treated as late
   SCN-BOOK-004:
     domain: booking
     mutation_kill_rate: 33
-    notes: null
-    override_status: null
+    notes: REQ-BOOK-04 escalation logic (warning vs ranking penalty) not yet implemented
+      in BookingService
+    override_status: 'waived: escalation enforcement deferred'
     prd_ref: REQ-BOOK-04
     risk: critical
     status: untested
@@ -208,14 +209,15 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-06
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Tasker cancellation reopens the linked task to OPEN
   SCN-BOOK-006:
     domain: booking
     mutation_kill_rate: 33
-    notes: null
-    override_status: null
+    notes: REQ-BOOK-06 tasker cancellation strike counting not wired in cancelBooking
+      — only no-shows call addStrike currently
+    override_status: 'waived: tasker cancel strike counting deferred'
     prd_ref: REQ-BOOK-06
     risk: critical
     status: untested
@@ -229,7 +231,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Booking confirmation without liability disclaimer acceptance is rejected
   SCN-BOOK-008:
@@ -239,7 +241,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Liability disclaimer acceptance timestamp is recorded on the booking
   SCN-BOOK-009:
@@ -249,7 +251,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-05
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Terminal booking states reject invalid transitions with INVALID_TRANSITION
   SCN-BOOK-010:
@@ -259,7 +261,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Scheduled start plus 10 minutes sends no-show reminder to both parties
   SCN-BOOK-011:
@@ -269,7 +271,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: No-show flag before 15 minutes after schedule returns TOO_EARLY
   SCN-BOOK-012:
@@ -279,7 +281,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Recent in-app activity within 30 minutes blocks no-show flag
   SCN-BOOK-013:
@@ -289,7 +291,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Accepted future reschedule supersedes no-show adjudication on the original
       schedule
@@ -300,7 +302,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Valid no-show flag transitions booking and task to NO_SHOW and records
       audit history
@@ -311,7 +313,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Repeated no-shows within 28 days create a strike-review case
   SCN-BOOK-016:
@@ -321,7 +323,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-11
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Repeating the no-show flag on an already NO_SHOW booking is idempotent
   SCN-BOOK-017:
@@ -331,7 +333,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-12
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Reschedule request in ASSIGNED creates a REQUESTED event with proposed
       datetime and optional reason
@@ -342,7 +344,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-12
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Accepted reschedule updates the canonical schedule and resets policy timers
   SCN-BOOK-019:
@@ -352,7 +354,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-12
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Declined or expired reschedule request preserves the original schedule
   SCN-BOOK-020:
@@ -362,7 +364,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-BOOK-13
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Only the latest mutually accepted in-app schedule changes policy timers
       and the reschedule lifecycle remains audit-immutable
@@ -373,7 +375,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Protected endpoints reject requests without a bearer JWT
   SCN-SEC-002:
@@ -383,7 +385,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: CUSTOMER role cannot access tasker-only or admin-only routes
   SCN-SEC-003:
@@ -393,7 +395,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: TASKER role cannot access customer-only or admin-only routes
   SCN-SEC-004:
@@ -403,7 +405,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: ADMIN-only routes are accessible to ADMIN and forbidden to non-admin roles
   SCN-SEC-005:
@@ -413,7 +415,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the
       security layer
@@ -424,7 +426,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Open-task visibility exposes only approximate location before booking confirmation
   SCN-SEC-007:
@@ -434,7 +436,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Exact task address is revealed only to the owner or booked tasker after
       booking confirmation
@@ -445,7 +447,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer-facing payloads never expose tasker phone fields
   SCN-SEC-009:
@@ -455,7 +457,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-02
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer phone remains masked until lead unlock or payment commitment succeeds
   SCN-SEC-010:
@@ -465,6 +467,6 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED

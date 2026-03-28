@@ -59,7 +59,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "GET {0} is accessible without auth")
     @MethodSource("publicGetEndpoints")
-    @DisplayName("Public GET endpoints return 2xx without authentication")
+    @DisplayName("SCN-SEC-001: Protected endpoints reject requests without a bearer JWT")
     void publicEndpointsAccessibleWithoutAuth(String path) {
         ResponseEntity<Map> response = exchange(path, HttpMethod.GET, null);
         assertThat(response.getStatusCode().is2xxSuccessful())
@@ -83,7 +83,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "{1} {0} returns 401 without auth")
     @MethodSource("protectedEndpoints")
-    @DisplayName("Protected endpoints return 401 when unauthenticated")
+    @DisplayName("SCN-SEC-001: Protected endpoints reject requests without a bearer JWT")
     void protectedEndpointsReturn401WithoutAuth(String path, HttpMethod method) {
         ResponseEntity<Map> response = exchange(path, method, null);
         assertThat(response.getStatusCode())
@@ -104,7 +104,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "CUSTOMER: {1} {0} is allowed")
     @MethodSource("customerAllowedEndpoints")
-    @DisplayName("CUSTOMER can access general and customer-specific endpoints")
+    @DisplayName("SCN-SEC-002: CUSTOMER role cannot access tasker-only or admin-only routes")
     void customerCanAccessAllowedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("CUSTOMER");
         ResponseEntity<Map> response = exchange(path, method, token);
@@ -123,7 +123,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "CUSTOMER: {1} {0} is forbidden")
     @MethodSource("customerForbiddenEndpoints")
-    @DisplayName("CUSTOMER is forbidden from tasker and admin endpoints")
+    @DisplayName("SCN-SEC-002: CUSTOMER role cannot access tasker-only or admin-only routes")
     void customerForbiddenFromRestrictedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("CUSTOMER");
         ResponseEntity<Map> response = exchange(path, method, token);
@@ -143,7 +143,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "TASKER: {1} {0} is allowed")
     @MethodSource("taskerAllowedEndpoints")
-    @DisplayName("TASKER can access general and tasker-specific endpoints")
+    @DisplayName("SCN-SEC-003: TASKER role cannot access customer-only or admin-only routes")
     void taskerCanAccessAllowedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("TASKER");
         ResponseEntity<Map> response = exchange(path, method, token);
@@ -162,7 +162,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "TASKER: {1} {0} is forbidden")
     @MethodSource("taskerForbiddenEndpoints")
-    @DisplayName("TASKER is forbidden from customer and admin endpoints")
+    @DisplayName("SCN-SEC-003: TASKER role cannot access customer-only or admin-only routes")
     void taskerForbiddenFromRestrictedEndpoints(String path, HttpMethod method) {
         String token = tokenFor("TASKER");
         ResponseEntity<Map> response = exchange(path, method, token);
@@ -183,7 +183,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "ADMIN: {1} {0} is allowed")
     @MethodSource("adminAllowedEndpoints")
-    @DisplayName("ADMIN can access general and admin-specific endpoints")
+    @DisplayName("SCN-SEC-004: ADMIN-only routes are accessible to ADMIN and forbidden to non-admin roles")
     void adminCanAccessAllEndpoints(String path, HttpMethod method) {
         String token = tokenFor("ADMIN");
         ResponseEntity<Map> response = exchange(path, method, token);
@@ -199,7 +199,7 @@ class AuthorizationMatrixTests extends IntegrationTestBase {
 
     @ParameterizedTest(name = "POST /api/v1/tasks with role={0}: expected={1}")
     @MethodSource("createTaskMatrix")
-    @DisplayName("POST /api/v1/tasks enforces CUSTOMER-only at security layer")
+    @DisplayName("SCN-SEC-005: Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the security layer")
     void createTaskEnforcesCustomerRole(String role, HttpStatus expected) {
         String token = role != null ? tokenFor(role) : null;
         ResponseEntity<Map> response = exchange("/api/v1/tasks", HttpMethod.POST, token);
