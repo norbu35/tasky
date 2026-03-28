@@ -43,7 +43,7 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
     private DisputeEvidenceDao disputeEvidenceDao;
 
     @Test
-    @DisplayName("TIERS-009: Raise dispute with evidence — evidence persisted and retrievable")
+    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE dispute evidence is persisted and retrievable")
     void raiseDisputeWithEvidence() {
         AuthContext customer = authenticate("cust-ev1");
         AuthContext tasker = authenticate("task-ev1");
@@ -96,8 +96,8 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
-    @DisplayName("TIERS-009: Raise dispute with zero evidence — dispute stays OPEN initially")
-    void raiseDisputeWithZeroEvidence() {
+    @DisplayName("TID-TASK-041-API-DISPUTE-RAISE rejects dispute creation without evidence")
+    void raiseDisputeWithoutEvidence() {
         AuthContext customer = authenticate("cust-ev2");
         AuthContext tasker = authenticate("task-ev2");
 
@@ -109,18 +109,8 @@ class DisputeEvidenceIntegrationTests extends IntegrationTestBase {
                 customer.accessToken(),
                 Map.of("reason", "The tasker did not finish the work properly"));
 
-        assertThat(response.getStatusCode().value()).isEqualTo(201);
-        String disputeId = (String) response.getBody().get("id");
-        assertThat(response.getBody().get("status")).isEqualTo("OPEN");
-
-        // Verify no evidence
-        var evidenceList = disputeEvidenceDao.findByDisputeId(disputeId);
-        assertThat(evidenceList).isEmpty();
-
-        // Verify dispute is still OPEN (not immediately closed)
-        ResponseEntity<Map> detailResponse = getWithAuth("/api/v1/disputes/" + disputeId, customer.accessToken());
-        assertThat(detailResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(detailResponse.getBody().get("status")).isEqualTo("OPEN");
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(disputeEvidenceDao.findByDisputeId(booking.id())).isEmpty();
     }
 
     private AuthContext authenticate(String seed) {

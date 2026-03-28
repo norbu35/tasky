@@ -6,6 +6,7 @@ import mn.tasky.booking.dto.BookingState;
 import mn.tasky.booking.dto.BookingTransitionResult;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
+import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.task.application.TaskService;
 import mn.tasky.task.dto.TaskState;
 import org.springframework.stereotype.Service;
@@ -19,18 +20,21 @@ public class BookingLifecycleService {
     private final TaskService taskService;
     private final AuthService authService;
     private final DomainEventOutboxService domainEventOutboxService;
+    private final DisputeDao disputeDao;
 
     public BookingLifecycleService(
             BookingService bookingService,
             BookingTimelineService timelineService,
             TaskService taskService,
             AuthService authService,
-            DomainEventOutboxService domainEventOutboxService) {
+            DomainEventOutboxService domainEventOutboxService,
+            DisputeDao disputeDao) {
         this.bookingService = bookingService;
         this.timelineService = timelineService;
         this.taskService = taskService;
         this.authService = authService;
         this.domainEventOutboxService = domainEventOutboxService;
+        this.disputeDao = disputeDao;
     }
 
     @Transactional
@@ -38,6 +42,9 @@ public class BookingLifecycleService {
         BookingState booking = bookingService.getBooking(bookingId).orElse(null);
         if (booking == null) {
             return BookingTransitionResult.NOT_FOUND_RESULT;
+        }
+        if (hasOpenDispute(bookingId)) {
+            return BookingTransitionResult.OPEN_DISPUTE_RESULT;
         }
 
         TaskState task = taskService.getTask(booking.taskId()).orElseThrow(() -> new IllegalStateException(
@@ -63,6 +70,9 @@ public class BookingLifecycleService {
 
     @Transactional
     public BookingTransitionResult completeBooking(String actorUserId, String bookingId) {
+        if (hasOpenDispute(bookingId)) {
+            return BookingTransitionResult.OPEN_DISPUTE_RESULT;
+        }
         BookingTransitionResult result = bookingService.completeBooking(actorUserId, bookingId);
         if (!result.isSuccess()) {
             return result;
@@ -89,6 +99,10 @@ public class BookingLifecycleService {
                         "price",
                         updated.price()));
         return bookingService.getBooking(bookingId).map(BookingTransitionResult::success).orElse(result);
+    }
+
+    private boolean hasOpenDispute(String bookingId) {
+        return disputeDao.findOpenByBookingId(bookingId).isPresent();
     }
 
     private void requireTaskUpdate(

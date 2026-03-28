@@ -152,7 +152,42 @@ class BookingIntegrationTests extends IntegrationTestBase {
     }
 
     private boolean requiresIdempotencyHeader(String path) {
-        return path.matches("^/api/v1/bookings/[^/]+/(cancel|complete|mark-done)$");
+        return path.matches("^/api/v1/bookings/[^/]+/(cancel|complete|mark-done|disputes)$");
+    }
+
+    @Test
+    @DisplayName("TID-TASK-041-DOMAIN-PAYOUT-HOLD open dispute blocks booking completion and cancellation")
+    void openDisputeBlocksBookingClosureActions() {
+        AuthContext customer = authenticate("disp-block-customer");
+        AuthContext tasker = authenticate("disp-block-tasker");
+
+        String taskId = createTaskAt(customer.accessToken(), Instant.now().plus(1, ChronoUnit.DAYS));
+        BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
+
+        ResponseEntity<Map> dispute = postWithAuth(
+                "/api/v1/bookings/" + booking.id() + "/disputes",
+                customer.accessToken(),
+                Map.of(
+                        "reason",
+                        "The tasker stopped communicating before the scheduled work.",
+                        "evidence",
+                        List.of(Map.of(
+                                "type",
+                                "WRITTEN_TIMELINE",
+                                "textPayload",
+                                "Customer documented the communication breakdown."))));
+        ResponseEntity<Map> complete =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/complete", customer.accessToken(), null);
+        ResponseEntity<Map> cancel =
+                postWithAuth("/api/v1/bookings/" + booking.id() + "/cancel", customer.accessToken(), null);
+
+        assertThat(dispute.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(complete.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(complete.getBody().get("code")).isEqualTo("OPEN_DISPUTE");
+        assertThat(cancel.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(cancel.getBody().get("code")).isEqualTo("OPEN_DISPUTE");
+        assertThat(bookingService.getBooking(booking.id()))
+                .hasValueSatisfying(state -> assertThat(state.status()).isEqualTo("ASSIGNED"));
     }
 
     @Test
@@ -401,11 +436,20 @@ class BookingIntegrationTests extends IntegrationTestBase {
         BookingState booking = bookingService.createBooking(taskId, tasker.userId(), customer.userId(), 50000);
         String key = UUID.randomUUID().toString();
         Map<String, String> disputeBody = Map.of("reason", "The task was not completed as agreed upon.");
+        Map<String, Object> requestBody = Map.of(
+                "reason",
+                disputeBody.get("reason"),
+                "evidence",
+                List.of(Map.of(
+                        "type",
+                        "WRITTEN_TIMELINE",
+                        "textPayload",
+                        "Customer documented the incomplete work in detail.")));
 
         ResponseEntity<Map> first = postWithAuthAndIdempotency(
-                "/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), disputeBody, key);
+                "/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), requestBody, key);
         ResponseEntity<Map> replay = postWithAuthAndIdempotency(
-                "/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), disputeBody, key);
+                "/api/v1/bookings/" + booking.id() + "/disputes", customer.accessToken(), requestBody, key);
 
         assertThat(first.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(replay.getStatusCode()).isEqualTo(HttpStatus.OK);

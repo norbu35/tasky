@@ -95,6 +95,23 @@ class BookingControllerUnitTests {
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "IDEMPOTENCY_IN_PROGRESS");
     }
 
+    @Test
+    @DisplayName("BookingController cancel returns conflict when an open dispute exists")
+    void cancelBookingOpenDispute() {
+        JwtPrincipal principal = customerPrincipal();
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-1b"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(bookingLifecycleService.cancelBooking(principal.userId(), "booking-open-dispute"))
+                .thenReturn(BookingTransitionResult.OPEN_DISPUTE_RESULT);
+
+        ResponseEntity<?> response =
+                controller.cancelBooking(principal, "booking-open-dispute", "idem-1b", request());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "OPEN_DISPUTE");
+        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.CANCEL_BOOKING, "idem-1b");
+    }
+
     private JwtPrincipal customerPrincipal() {
         return new JwtPrincipal("customer-123", "CUSTOMER", "ACTIVE");
     }
@@ -266,6 +283,22 @@ class BookingControllerUnitTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "INVALID_STATUS");
         verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6");
+    }
+
+    @Test
+    @DisplayName("BookingController complete returns conflict when an open dispute exists")
+    void completeBookingOpenDispute() {
+        JwtPrincipal principal = customerPrincipal();
+        when(idempotencyService.claim(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6c"))
+                .thenReturn(new IdempotencyClaim(IdempotencyClaim.Status.NEW, null));
+        when(bookingLifecycleService.completeBooking(principal.userId(), "booking-dispute"))
+                .thenReturn(BookingTransitionResult.OPEN_DISPUTE_RESULT);
+
+        ResponseEntity<?> response = controller.completeBooking(principal, "booking-dispute", "idem-6c", request());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat((Map<String, Object>) response.getBody()).containsEntry("code", "OPEN_DISPUTE");
+        verify(idempotencyService).abandon(principal.userId(), IdempotencyOperations.COMPLETE_BOOKING, "idem-6c");
     }
 
     @Test
