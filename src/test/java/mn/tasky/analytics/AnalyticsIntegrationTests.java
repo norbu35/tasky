@@ -412,9 +412,9 @@ class AnalyticsIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front-" + UUID.randomUUID() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/front-" + UUID.randomUUID() + ".jpg",
                         "id_card_back_key",
-                        "uploads/verification/back-" + UUID.randomUUID() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/back-" + UUID.randomUUID() + ".jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",

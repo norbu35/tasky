@@ -19,6 +19,7 @@ import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.CryptoService;
 import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.storage.S3PresignedUrlService;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
@@ -51,6 +52,7 @@ class AuthServiceConfigurationTests {
                 mock(FacebookGraphClient.class),
                 environment,
                 mock(S3PresignedUrlService.class),
+                mock(StorageKeyPolicy.class),
                 mock(UserDao.class),
                 mock(ProfileDao.class),
                 mock(OtpChallengeDao.class),

@@ -11,6 +11,7 @@ import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.observability.RequestObservabilityFilter;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.verification.api.VerificationController;
 import mn.tasky.verification.dto.VerificationStatusApiResponse;
 import mn.tasky.verification.dto.VerificationSubmitRequest;
@@ -30,11 +31,14 @@ class VerificationControllerUnitTests {
     @Mock
     private AuthService authService;
 
+    @Mock
+    private StorageKeyPolicy storageKeyPolicy;
+
     private VerificationController controller;
 
     @BeforeEach
     void setUp() {
-        controller = new VerificationController(authService);
+        controller = new VerificationController(authService, storageKeyPolicy);
     }
 
     @Test

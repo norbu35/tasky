@@ -11,6 +11,7 @@ import mn.tasky.auth.dto.ProfileUpdate;
 import mn.tasky.auth.dto.UserProfile;
 import mn.tasky.common.audit.AuditEventDao;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.user.dto.AvatarUploadUrlRequest;
 import mn.tasky.user.dto.ProfileResponse;
 import mn.tasky.user.dto.UpdateProfileRequest;
@@ -34,11 +35,17 @@ public class UserProfileController {
     private final AuthService authService;
     private final UserDao userDao;
     private final AuditEventDao auditEventDao;
+    private final StorageKeyPolicy storageKeyPolicy;
 
-    public UserProfileController(AuthService authService, UserDao userDao, AuditEventDao auditEventDao) {
+    public UserProfileController(
+            AuthService authService,
+            UserDao userDao,
+            AuditEventDao auditEventDao,
+            StorageKeyPolicy storageKeyPolicy) {
         this.authService = authService;
         this.userDao = userDao;
         this.auditEventDao = auditEventDao;
+        this.storageKeyPolicy = storageKeyPolicy;
     }
 
     @GetMapping("/me")
@@ -79,6 +86,22 @@ public class UserProfileController {
             @AuthenticationPrincipal JwtPrincipal principal,
             @Valid @RequestBody UpdateProfileRequest body,
             HttpServletRequest request) {
+        if (body.avatarUrl() != null && body.avatarUrl().startsWith("uploads/")) {
+            try {
+                storageKeyPolicy.validateOwnedKey(
+                        body.avatarUrl(), StorageKeyPolicy.Namespace.AVATAR, principal.userId());
+            } catch (IllegalArgumentException exception) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of(
+                                "code",
+                                "INVALID_AVATAR_KEY",
+                                "message",
+                                "Avatar key must belong to the caller's avatar namespace.",
+                                "trace_id",
+                                resolveTraceId(request)));
+            }
+        }
+
         ProfileUpdate update = new ProfileUpdate(body.fullName(), body.avatarUrl());
 
         return authService

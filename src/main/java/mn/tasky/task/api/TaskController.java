@@ -390,6 +390,14 @@ public class TaskController {
                             "Maximum 3 photos per task.",
                             "trace_id",
                             resolveTraceId(request)));
+            case TaskUpdateResult.INVALID_PHOTO_KEY -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code",
+                            "INVALID_PHOTO_KEY",
+                            "message",
+                            "Photo keys must belong to the caller's task-photo namespace.",
+                            "trace_id",
+                            resolveTraceId(request)));
             default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         };
     }

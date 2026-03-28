@@ -1,6 +1,8 @@
 package mn.tasky.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,6 +15,7 @@ import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dao.CategorySchemaVersionDao;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.storage.S3PresignedUrlService;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
@@ -36,7 +39,7 @@ class TaskServiceUnitTests {
         s3Mock = mock(S3PresignedUrlService.class);
         when(s3Mock.generateUploadUrl(anyString(), anyString()))
                 .thenReturn("https://storage.example.com/presigned-upload");
-        when(s3Mock.generateDownloadUrl(anyString()))
+        when(s3Mock.generateDownloadUrl(anyString(), any()))
                 .thenAnswer(inv -> "https://storage.example.com/presigned-get/" + inv.getArgument(0));
 
         taskService = new TaskService(
@@ -50,6 +53,7 @@ class TaskServiceUnitTests {
                 mock(ReviewEnforcementService.class),
                 mock(ScopeSummaryGenerator.class),
                 s3Mock,
+                new StorageKeyPolicy(),
                 mock(TaskDao.class),
                 mock(TaskPhotoDao.class),
                 mock(TaskApplicationDao.class),
@@ -96,5 +100,12 @@ class TaskServiceUnitTests {
         String url = taskService.buildPhotoAccessUrl("uploads/tasks/user-1/photo.jpg");
         assertThat(url).contains("presigned-get");
         assertThat(url).contains("photo.jpg");
+    }
+
+    @Test
+    @DisplayName("buildPhotoAccessUrl rejects non-task-photo namespaces")
+    void buildPhotoAccessUrlRejectsNonTaskPhotoKeys() {
+        assertThatThrownBy(() -> taskService.buildPhotoAccessUrl("uploads/verification/user-1/front.jpg"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

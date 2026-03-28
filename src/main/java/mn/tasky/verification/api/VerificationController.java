@@ -9,6 +9,7 @@ import mn.tasky.auth.application.AuthService;
 import mn.tasky.auth.dto.VerificationStatusResponse;
 import mn.tasky.auth.dto.VerificationSubmitResult;
 import mn.tasky.common.security.JwtPrincipal;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.verification.dto.VerificationStatusApiResponse;
 import mn.tasky.verification.dto.VerificationSubmitRequest;
 import mn.tasky.verification.dto.VerificationUploadUrlRequest;
@@ -28,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class VerificationController {
 
     private final AuthService authService;
+    private final StorageKeyPolicy storageKeyPolicy;
 
-    public VerificationController(AuthService authService) {
+    public VerificationController(AuthService authService, StorageKeyPolicy storageKeyPolicy) {
         this.authService = authService;
+        this.storageKeyPolicy = storageKeyPolicy;
     }
 
     @PostMapping("/upload-url")
@@ -64,6 +67,21 @@ public class VerificationController {
                             "CONSENT_REQUIRED",
                             "message",
                             "Consent must be accepted to submit verification.",
+                            "trace_id",
+                                resolveTraceId(request)));
+        }
+        try {
+            storageKeyPolicy.validateOwnedKey(
+                    body.idCardFrontKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
+            storageKeyPolicy.validateOwnedKey(
+                    body.idCardBackKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code",
+                            "INVALID_VERIFICATION_KEY",
+                            "message",
+                            "Verification keys must belong to the caller's verification namespace.",
                             "trace_id",
                             resolveTraceId(request)));
         }

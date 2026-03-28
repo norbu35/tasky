@@ -67,7 +67,11 @@ class EncryptionIntegrationTests extends IntegrationTestBase {
     void idAssetPrivacy() {
         AuthContext user = authenticate("user-id");
         authService.activateTaskerRole(user.userId());
-        authService.submitVerification(user.userId(), "front.jpg", "back.jpg", "1.0");
+        authService.submitVerification(
+                user.userId(),
+                "uploads/verification/" + user.userId() + "/front.jpg",
+                "uploads/verification/" + user.userId() + "/back.jpg",
+                "1.0");
 
         VerificationStatusResponse status = authService.getVerificationStatus(user.userId());
         assertThat(status.status()).isEqualTo("PENDING");

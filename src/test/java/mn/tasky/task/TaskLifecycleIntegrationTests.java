@@ -80,12 +80,68 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
                 "scheduled_at",
                 futureDate,
                 "photo_keys",
-                List.of("uploads/tasks/photo1.jpg"));
+                List.of("uploads/tasks/" + customer.userId() + "/photo1.jpg"));
 
         ResponseEntity<Map> response = postWithAuth("/api/v1/tasks", customer.accessToken(), body);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody().get("status")).isEqualTo("OPEN");
         assertThat(response.getBody().get("description")).isEqualTo(body.get("description"));
+    }
+
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-CREATE task creation rejects photo keys outside the customer's task namespace")
+    void taskCreationRejectsForeignOrWrongNamespacePhotoKeys() {
+        AuthContext customer = authenticate("90");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String futureDate = Instant.now().plus(1, ChronoUnit.DAYS).toString();
+
+        ResponseEntity<Map> wrongOwnerResponse = postWithAuth(
+                "/api/v1/tasks",
+                customer.accessToken(),
+                Map.of(
+                        "category_id",
+                        categoryId,
+                        "description",
+                        "This task tries to attach another user's photo key.",
+                        "budget",
+                        55000,
+                        "location_lat",
+                        47.9188,
+                        "location_lng",
+                        106.9176,
+                        "location_text",
+                        "Ulaanbaatar, Mongolia",
+                        "scheduled_at",
+                        futureDate,
+                        "photo_keys",
+                        List.of("uploads/tasks/other-user/foreign-photo.jpg")));
+
+        assertThat(wrongOwnerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(wrongOwnerResponse.getBody()).containsEntry("code", "INVALID_PHOTO_KEY");
+
+        ResponseEntity<Map> wrongNamespaceResponse = postWithAuth(
+                "/api/v1/tasks",
+                customer.accessToken(),
+                Map.of(
+                        "category_id",
+                        categoryId,
+                        "description",
+                        "This task tries to attach a verification document key.",
+                        "budget",
+                        55000,
+                        "location_lat",
+                        47.9188,
+                        "location_lng",
+                        106.9176,
+                        "location_text",
+                        "Ulaanbaatar, Mongolia",
+                        "scheduled_at",
+                        futureDate,
+                        "photo_keys",
+                        List.of("uploads/verification/" + customer.userId() + "/front.jpg")));
+
+        assertThat(wrongNamespaceResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(wrongNamespaceResponse.getBody()).containsEntry("code", "INVALID_PHOTO_KEY");
     }
 
     private AuthContext authenticate(String prefix) {
@@ -793,9 +849,9 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/front-" + Instant.now().toEpochMilli() + ".jpg",
                         "id_card_back_key",
-                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/back-" + Instant.now().toEpochMilli() + ".jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
@@ -878,18 +934,27 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
 
         String newDescription = "Updated description with more than ten characters.";
         Map<String, Object> updateBody = Map.of("description", newDescription, "budget", 80000);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
-        headers.setBearerAuth(customer.accessToken());
-
-        ResponseEntity<Map> response = restTemplate.exchange(
-                url("/api/v1/tasks/" + taskId), HttpMethod.PUT, new HttpEntity<>(updateBody, headers), Map.class);
+        ResponseEntity<Map> response = putWithAuth("/api/v1/tasks/" + taskId, customer.accessToken(), updateBody);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().get("description")).isEqualTo(newDescription);
         assertThat(((Number) response.getBody().get("budget")).intValue()).isEqualTo(80000);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-021-API-TASK-UPDATE task updates reject photo keys outside the customer's task namespace")
+    void customerCannotUpdateTaskWithForeignPhotoKey() {
+        AuthContext customer = authenticate("1991");
+        String categoryId = getFirstCategoryId(customer.accessToken());
+        String taskId = createTask(customer.accessToken(), categoryId);
+
+        ResponseEntity<Map> response = putWithAuth(
+                "/api/v1/tasks/" + taskId,
+                customer.accessToken(),
+                Map.of("photo_keys", List.of("uploads/verification/" + customer.userId() + "/front.jpg")));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("code", "INVALID_PHOTO_KEY");
     }
 
     private String createTask(String token, String categoryId) {
@@ -912,6 +977,17 @@ class TaskLifecycleIntegrationTests extends IntegrationTestBase {
                         "scheduled_at",
                         Instant.now().plus(1, ChronoUnit.DAYS).toString()));
         return response.getBody().get("id").toString();
+    }
+
+    private ResponseEntity<Map> putWithAuth(String path, String bearerToken, Object body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(MediaType.parseMediaTypes(MediaType.APPLICATION_JSON_VALUE));
+        if (bearerToken != null) {
+            headers.setBearerAuth(bearerToken);
+        }
+
+        return restTemplate.exchange(url(path), HttpMethod.PUT, new HttpEntity<>(body, headers), Map.class);
     }
 
     // --- Helpers ---

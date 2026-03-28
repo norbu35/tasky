@@ -26,6 +26,7 @@ import mn.tasky.common.dto.PresignedUpload;
 import mn.tasky.common.outbox.DomainEventOutboxService;
 import mn.tasky.common.outbox.OutboxEventTypes;
 import mn.tasky.common.storage.S3PresignedUrlService;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import mn.tasky.common.validation.TextSanitizer;
 import mn.tasky.messaging.application.MessagingService;
 import mn.tasky.notification.application.NotificationService;
@@ -81,6 +82,7 @@ public class TaskService {
     private final TaskDraftDao taskDraftDao;
     private final ObjectMapper objectMapper;
     private final S3PresignedUrlService storageService;
+    private final StorageKeyPolicy storageKeyPolicy;
     private final ReviewEnforcementService reviewEnforcementService;
     private final double taskMatchNotificationRadiusKm;
     private final int taskMatchNotificationLimit;
@@ -96,6 +98,7 @@ public class TaskService {
             ReviewEnforcementService reviewEnforcementService,
             ScopeSummaryGenerator scopeSummaryGenerator,
             S3PresignedUrlService storageService,
+            StorageKeyPolicy storageKeyPolicy,
             TaskDao taskDao,
             TaskPhotoDao taskPhotoDao,
             TaskApplicationDao taskApplicationDao,
@@ -114,6 +117,7 @@ public class TaskService {
         this.reviewEnforcementService = reviewEnforcementService;
         this.scopeSummaryGenerator = scopeSummaryGenerator;
         this.storageService = storageService;
+        this.storageKeyPolicy = storageKeyPolicy;
         this.taskDao = taskDao;
         this.taskPhotoDao = taskPhotoDao;
         this.taskApplicationDao = taskApplicationDao;
@@ -148,6 +152,11 @@ public class TaskService {
 
         if (command.photoKeys().size() > 3) {
             return TaskCreateResult.error(TaskCreateResult.TOO_MANY_PHOTOS, "Maximum 3 photos allowed.");
+        }
+        if (!areOwnedTaskPhotoKeys(command.photoKeys(), customerId)) {
+            return TaskCreateResult.error(
+                    TaskCreateResult.INVALID_PHOTO_KEY,
+                    "Photo keys must belong to the caller's task-photo namespace.");
         }
 
         String sanitizedDescription = TextSanitizer.plainText(command.description());
@@ -866,7 +875,7 @@ public class TaskService {
             return Optional.empty();
         }
 
-        String storageKey = "uploads/tasks/" + userId + "/" + UUID.randomUUID() + "." + extension;
+        String storageKey = storageKeyPolicy.createKey(StorageKeyPolicy.Namespace.TASK_PHOTO, userId, extension);
         String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
@@ -891,7 +900,8 @@ public class TaskService {
      * @return Presigned read URL.
      */
     public String buildPhotoAccessUrl(String storageKey) {
-        return storageService.generateDownloadUrl(storageKey);
+        storageKeyPolicy.validateNamespaceKey(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO);
+        return storageService.generateDownloadUrl(storageKey, StorageKeyPolicy.Namespace.TASK_PHOTO);
     }
 
     /**
@@ -956,6 +966,9 @@ public class TaskService {
         if (photoKeys.size() > 3) {
             return TaskUpdateResult.TOO_MANY_PHOTOS_RESULT;
         }
+        if (!areOwnedTaskPhotoKeys(photoKeys, customerId)) {
+            return TaskUpdateResult.INVALID_PHOTO_KEY_RESULT;
+        }
 
         Instant now = Instant.now();
         taskDao.updateDetails(taskId, description, budget, locationLat, locationLng, locationText, scheduledAt, now);
@@ -991,6 +1004,17 @@ public class TaskService {
                         existing.createdAt(),
                         now));
         return TaskUpdateResult.success(updated);
+    }
+
+    private boolean areOwnedTaskPhotoKeys(List<String> photoKeys, String customerId) {
+        for (String photoKey : photoKeys) {
+            try {
+                storageKeyPolicy.validateOwnedKey(photoKey, StorageKeyPolicy.Namespace.TASK_PHOTO, customerId);
+            } catch (IllegalArgumentException exception) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private record TaskCursor(Instant createdAt, UUID id) {}

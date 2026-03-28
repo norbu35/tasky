@@ -173,6 +173,49 @@ class VerificationIntegrationTests extends IntegrationTestBase {
     }
 
     @Test
+    @DisplayName(
+            "TID-TASK-012-API-VERIFICATION-SUBMIT "
+                    + "verification submission rejects keys outside the caller namespace")
+    void verificationSubmissionRejectsForeignOrWrongNamespaceKeys() {
+        AuthContext auth = authenticate("73");
+
+        ResponseEntity<Map> activateResponse = postWithAuth("/api/v1/users/me/role/tasker", auth.accessToken(), null);
+        String taskerToken = String.valueOf(activateResponse.getBody().get("access_token"));
+
+        ResponseEntity<Map> wrongOwnerResponse = postWithAuth(
+                "/api/v1/verification/submit",
+                taskerToken,
+                Map.of(
+                        "id_card_front_key",
+                        "uploads/verification/other-user/front.jpg",
+                        "id_card_back_key",
+                        "uploads/verification/other-user/back.jpg",
+                        "consent_policy_version",
+                        "1.0",
+                        "consent_accepted",
+                        true));
+
+        assertThat(wrongOwnerResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(wrongOwnerResponse.getBody()).containsEntry("code", "INVALID_VERIFICATION_KEY");
+
+        ResponseEntity<Map> wrongNamespaceResponse = postWithAuth(
+                "/api/v1/verification/submit",
+                taskerToken,
+                Map.of(
+                        "id_card_front_key",
+                        "uploads/tasks/" + auth.userId() + "/photo.jpg",
+                        "id_card_back_key",
+                        "uploads/tasks/" + auth.userId() + "/photo-2.jpg",
+                        "consent_policy_version",
+                        "1.0",
+                        "consent_accepted",
+                        true));
+
+        assertThat(wrongNamespaceResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(wrongNamespaceResponse.getBody()).containsEntry("code", "INVALID_VERIFICATION_KEY");
+    }
+
+    @Test
     @DisplayName("TID-TASK-012-API-VERIFICATION-STATUS TID-TASK-013-API-ADMIN-VERIFICATION-LIST "
             + "TID-TASK-013-API-ADMIN-VERIFICATION-APPROVE verification status reflects full "
             + "lifecycle")
@@ -195,9 +238,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front.jpg",
+                        "uploads/verification/" + auth.userId() + "/front.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back.jpg",
+                        "uploads/verification/" + auth.userId() + "/back.jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
@@ -272,9 +315,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front.jpg",
+                        "uploads/verification/" + auth.userId() + "/front.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back.jpg",
+                        "uploads/verification/" + auth.userId() + "/back.jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
@@ -312,9 +355,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front2.jpg",
+                        "uploads/verification/" + auth.userId() + "/front2.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back2.jpg",
+                        "uploads/verification/" + auth.userId() + "/back2.jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
@@ -384,9 +427,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front.jpg",
+                        "uploads/verification/" + auth.userId() + "/front.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back.jpg"));
+                        "uploads/verification/" + auth.userId() + "/back.jpg"));
         assertThat(noConsentResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
         // Submit with consent_accepted = false — should get 400
@@ -395,9 +438,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front.jpg",
+                        "uploads/verification/" + auth.userId() + "/front.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back.jpg",
+                        "uploads/verification/" + auth.userId() + "/back.jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
@@ -420,9 +463,9 @@ class VerificationIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front.jpg",
+                        "uploads/verification/" + auth.userId() + "/front.jpg",
                         "id_card_back_key",
-                        "uploads/verification/back.jpg",
+                        "uploads/verification/" + auth.userId() + "/back.jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",

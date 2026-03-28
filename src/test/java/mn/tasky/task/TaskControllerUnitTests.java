@@ -237,6 +237,8 @@ class TaskControllerUnitTests {
                 .thenReturn(TaskUpdateResult.INVALID_SCHEDULE_RESULT);
         when(taskService.updateTask(eq(principal.userId()), eq("task-too-many-photos"), any()))
                 .thenReturn(TaskUpdateResult.TOO_MANY_PHOTOS_RESULT);
+        when(taskService.updateTask(eq(principal.userId()), eq("task-invalid-photo-key"), any()))
+                .thenReturn(TaskUpdateResult.INVALID_PHOTO_KEY_RESULT);
         when(taskService.updateTask(eq(principal.userId()), eq("task-unknown"), any()))
                 .thenReturn(new TaskUpdateResult(null, "UNKNOWN"));
 
@@ -247,6 +249,7 @@ class TaskControllerUnitTests {
         assertTaskUpdateError(principal, "task-invalid-location", HttpStatus.BAD_REQUEST, "INVALID_LOCATION");
         assertTaskUpdateError(principal, "task-invalid-schedule", HttpStatus.BAD_REQUEST, "INVALID_SCHEDULE");
         assertTaskUpdateError(principal, "task-too-many-photos", HttpStatus.BAD_REQUEST, "TOO_MANY_PHOTOS");
+        assertTaskUpdateError(principal, "task-invalid-photo-key", HttpStatus.BAD_REQUEST, "INVALID_PHOTO_KEY");
 
         ResponseEntity<?> unknownResponse =
                 controller.updateTask(principal, "task-unknown", updateTaskRequest(), request());

@@ -49,6 +49,7 @@ import mn.tasky.common.security.JwtTokenService;
 import mn.tasky.common.security.dto.ParsedRefreshToken;
 import mn.tasky.common.security.dto.RefreshToken;
 import mn.tasky.common.storage.S3PresignedUrlService;
+import mn.tasky.common.storage.StorageKeyPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -79,6 +80,7 @@ public class AuthService {
     private final FacebookGraphClient facebookGraphClient;
     private final Environment environment;
     private final S3PresignedUrlService storageService;
+    private final StorageKeyPolicy storageKeyPolicy;
     private final boolean devAuthEnabled;
     private final boolean otpEnabled;
     private final long otpTtlSeconds;
@@ -104,6 +106,7 @@ public class AuthService {
             FacebookGraphClient facebookGraphClient,
             Environment environment,
             S3PresignedUrlService storageService,
+            StorageKeyPolicy storageKeyPolicy,
             UserDao userDao,
             ProfileDao profileDao,
             OtpChallengeDao otpChallengeDao,
@@ -125,6 +128,7 @@ public class AuthService {
         this.facebookGraphClient = facebookGraphClient;
         this.environment = environment;
         this.storageService = storageService;
+        this.storageKeyPolicy = storageKeyPolicy;
         this.userDao = userDao;
         this.profileDao = profileDao;
         this.otpChallengeDao = otpChallengeDao;
@@ -708,7 +712,7 @@ public class AuthService {
             return Optional.empty();
         }
 
-        String storageKey = "uploads/verification/" + userId + "/" + UUID.randomUUID() + "." + extension;
+        String storageKey = storageKeyPolicy.createKey(StorageKeyPolicy.Namespace.VERIFICATION, userId, extension);
         String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }
@@ -809,8 +813,10 @@ public class AuthService {
         String phone = userOpt.map(u -> decryptPhone(u.phone())).orElse(null);
         String name = profile != null ? profile.fullName() : null;
 
-        String frontUrl = storageService.generateDownloadUrl(request.idCardFrontKey());
-        String backUrl = storageService.generateDownloadUrl(request.idCardBackKey());
+        String frontUrl =
+                storageService.generateDownloadUrl(request.idCardFrontKey(), StorageKeyPolicy.Namespace.VERIFICATION);
+        String backUrl =
+                storageService.generateDownloadUrl(request.idCardBackKey(), StorageKeyPolicy.Namespace.VERIFICATION);
 
         return new VerificationDetail(
                 request.id(),
@@ -1259,7 +1265,7 @@ public class AuthService {
             return Optional.empty();
         }
 
-        String storageKey = "uploads/avatars/" + userId + "/" + UUID.randomUUID() + "." + extension;
+        String storageKey = storageKeyPolicy.createKey(StorageKeyPolicy.Namespace.AVATAR, userId, extension);
         String uploadUrl = storageService.generateUploadUrl(storageKey, normalizedContentType);
         return Optional.of(new PresignedUpload(uploadUrl, storageKey));
     }

@@ -4,6 +4,7 @@ public record TaskCreateResult(TaskState task, String errorCode, String errorMes
 
     public static final String INVALID_CATEGORY = "INVALID_CATEGORY";
     public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
+    public static final String INVALID_PHOTO_KEY = "INVALID_PHOTO_KEY";
     public static final String INVALID_DESCRIPTION = "INVALID_DESCRIPTION";
     public static final String INVALID_SCHEDULE = "INVALID_SCHEDULE";
     public static final String INTAKE_NOT_ENABLED = "INTAKE_NOT_ENABLED";

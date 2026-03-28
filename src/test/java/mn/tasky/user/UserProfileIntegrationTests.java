@@ -47,16 +47,22 @@ class UserProfileIntegrationTests extends IntegrationTestBase {
         ResponseEntity<Map> updated = putWithAuth(
                 "/api/v1/users/me",
                 auth.accessToken(),
-                Map.of("full_name", "Bat-Erdene", "avatar_url", "uploads/avatars/custom-profile.png"));
+                Map.of(
+                        "full_name",
+                        "Bat-Erdene",
+                        "avatar_url",
+                        "uploads/avatars/" + auth.userId() + "/custom-profile.png"));
 
         assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updated.getBody()).containsEntry("full_name", "Bat-Erdene");
-        assertThat(updated.getBody()).containsEntry("avatar_url", "uploads/avatars/custom-profile.png");
+        assertThat(updated.getBody())
+                .containsEntry("avatar_url", "uploads/avatars/" + auth.userId() + "/custom-profile.png");
 
         ResponseEntity<Map> secondGet = getWithAuth("/api/v1/users/me", auth.accessToken());
         assertThat(secondGet.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(secondGet.getBody()).containsEntry("full_name", "Bat-Erdene");
-        assertThat(secondGet.getBody()).containsEntry("avatar_url", "uploads/avatars/custom-profile.png");
+        assertThat(secondGet.getBody())
+                .containsEntry("avatar_url", "uploads/avatars/" + auth.userId() + "/custom-profile.png");
     }
 
     private AuthContext authenticate(String prefix) {
@@ -129,6 +135,24 @@ class UserProfileIntegrationTests extends IntegrationTestBase {
                 "/api/v1/users/me/avatar/upload-url", auth.accessToken(), Map.of("content_type", "application/pdf"));
 
         assertThat(badContentTypeResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("TID-TASK-011-API-PROFILE-GET-PUT profile update rejects avatar keys outside the caller namespace")
+    void profileUpdateRejectsForeignAvatarStorageKey() {
+        AuthContext auth = authenticate("43");
+
+        ResponseEntity<Map> response = putWithAuth(
+                "/api/v1/users/me",
+                auth.accessToken(),
+                Map.of(
+                        "full_name",
+                        "Bat-Erdene",
+                        "avatar_url",
+                        "uploads/verification/" + auth.userId() + "/front.jpg"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).containsEntry("code", "INVALID_AVATAR_KEY");
     }
 
     private ResponseEntity<Map> postWithAuth(String path, String bearerToken, Map<String, String> body) {

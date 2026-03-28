@@ -9,6 +9,7 @@ public record TaskUpdateResult(TaskState task, String errorCode) {
     public static final String INVALID_LOCATION = "INVALID_LOCATION";
     public static final String INVALID_SCHEDULE = "INVALID_SCHEDULE";
     public static final String TOO_MANY_PHOTOS = "TOO_MANY_PHOTOS";
+    public static final String INVALID_PHOTO_KEY = "INVALID_PHOTO_KEY";
 
     public static final TaskUpdateResult NOT_FOUND_RESULT = new TaskUpdateResult(null, NOT_FOUND);
     public static final TaskUpdateResult FORBIDDEN_RESULT = new TaskUpdateResult(null, FORBIDDEN);
@@ -17,6 +18,7 @@ public record TaskUpdateResult(TaskState task, String errorCode) {
     public static final TaskUpdateResult INVALID_LOCATION_RESULT = new TaskUpdateResult(null, INVALID_LOCATION);
     public static final TaskUpdateResult INVALID_SCHEDULE_RESULT = new TaskUpdateResult(null, INVALID_SCHEDULE);
     public static final TaskUpdateResult TOO_MANY_PHOTOS_RESULT = new TaskUpdateResult(null, TOO_MANY_PHOTOS);
+    public static final TaskUpdateResult INVALID_PHOTO_KEY_RESULT = new TaskUpdateResult(null, INVALID_PHOTO_KEY);
 
     public static TaskUpdateResult success(TaskState task) {
         return new TaskUpdateResult(task, null);

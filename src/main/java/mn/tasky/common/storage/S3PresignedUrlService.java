@@ -23,27 +23,21 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Service
 public class S3PresignedUrlService {
 
-    private static final Duration DEFAULT_UPLOAD_TTL = Duration.ofMinutes(15);
-    private static final Duration DEFAULT_DOWNLOAD_TTL = Duration.ofHours(1);
-
-    private static final java.util.regex.Pattern VALID_UPLOAD_KEY_PATTERN = java.util.regex.Pattern.compile(
-            "^uploads/(tasks|avatars|evidence|verification)/[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
-
-    private static final java.util.regex.Pattern VALID_DOWNLOAD_KEY_PATTERN =
-            java.util.regex.Pattern.compile("^[a-zA-Z0-9_/.@-]+\\.[a-zA-Z]{2,4}$");
-
     private final S3Presigner presigner;
+    private final StorageKeyPolicy storageKeyPolicy;
     private final String bucket;
     private final Duration uploadTtl;
     private final Duration downloadTtl;
 
     public S3PresignedUrlService(
+            StorageKeyPolicy storageKeyPolicy,
             @Value("${tasky.storage.endpoint:http://localhost:9000}") String endpoint,
             @Value("${tasky.storage.access-key:minioadmin}") String accessKey,
             @Value("${tasky.storage.secret-key:minioadmin}") String secretKey,
             @Value("${tasky.storage.bucket:tasky-local}") String bucket,
             @Value("${tasky.storage.upload-ttl-seconds:900}") long uploadTtlSeconds,
             @Value("${tasky.storage.download-ttl-seconds:3600}") long downloadTtlSeconds) {
+        this.storageKeyPolicy = storageKeyPolicy;
         this.bucket = bucket;
         this.uploadTtl = Duration.ofSeconds(uploadTtlSeconds);
         this.downloadTtl = Duration.ofSeconds(downloadTtlSeconds);
@@ -56,22 +50,6 @@ public class S3PresignedUrlService {
                 .build();
     }
 
-    private void validateUploadKey(String key) {
-        if (key == null
-                || key.contains("..")
-                || !VALID_UPLOAD_KEY_PATTERN.matcher(key).matches()) {
-            throw new IllegalArgumentException("Invalid storage key");
-        }
-    }
-
-    private void validateDownloadKey(String key) {
-        if (key == null
-                || key.contains("..")
-                || !VALID_DOWNLOAD_KEY_PATTERN.matcher(key).matches()) {
-            throw new IllegalArgumentException("Invalid storage key");
-        }
-    }
-
     /**
      * Generates a presigned PUT URL for uploading an object.
      *
@@ -80,7 +58,7 @@ public class S3PresignedUrlService {
      * @return Presigned upload URL valid for {@code uploadTtl}.
      */
     public String generateUploadUrl(String key, String contentType) {
-        validateUploadKey(key);
+        storageKeyPolicy.validateManagedKey(key);
         PutObjectRequest putRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
@@ -96,11 +74,12 @@ public class S3PresignedUrlService {
     /**
      * Generates a presigned GET URL for downloading an object.
      *
-     * @param key Storage key (object path within the bucket).
+     * @param key       Storage key (object path within the bucket).
+     * @param namespace Expected storage namespace.
      * @return Presigned download URL valid for {@code downloadTtl}.
      */
-    public String generateDownloadUrl(String key) {
-        validateDownloadKey(key);
+    public String generateDownloadUrl(String key, StorageKeyPolicy.Namespace namespace) {
+        storageKeyPolicy.validateNamespaceKey(key, namespace);
         GetObjectRequest getRequest =
                 GetObjectRequest.builder().bucket(bucket).key(key).build();
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()

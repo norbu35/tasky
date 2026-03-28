@@ -193,9 +193,9 @@ class MessagingIntegrationTests extends IntegrationTestBase {
                 taskerToken,
                 Map.of(
                         "id_card_front_key",
-                        "uploads/verification/front-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/front-" + Instant.now().toEpochMilli() + ".jpg",
                         "id_card_back_key",
-                        "uploads/verification/back-" + Instant.now().toEpochMilli() + ".jpg",
+                        "uploads/verification/" + tasker.userId() + "/back-" + Instant.now().toEpochMilli() + ".jpg",
                         "consent_policy_version",
                         "1.0",
                         "consent_accepted",
