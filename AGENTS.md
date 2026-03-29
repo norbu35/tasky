@@ -139,6 +139,7 @@ The backend uses a scenario-based test framework. Read this section fully before
 - Never modify files in `tests/scenarios/` — those are QA-authored specs; raise a comment if wrong
 - Never use `@DirtiesContext` — use `IntegrationTestBase` (already handles truncation per test)
 - Never assert only on mock invocation (`verify(dao).someMethod(...)`) without also asserting on observable output state
+- Never assert only on a mock invocation for a 'Then' clause that describes enforcement or state change — also assert on the observable effect (the downstream call, state, or error) that the clause requires. Invocation proves the code ran; the effect proves it did the right thing. The `pitestBookingAuth` gate enforces this mechanically; this rule explains why.
 - Never put more than one scenario in one test method
 - Never write a test without a `SCN-*` `@DisplayName` — the gate rejects untraceable tests
 

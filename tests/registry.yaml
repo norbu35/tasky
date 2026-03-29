@@ -44,7 +44,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Dev auth enabled in production profile throws on startup
   SCN-AUTH-002:
@@ -55,7 +55,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Phase 0-1 OTP request endpoint is disabled with 403 FEATURE_DISABLED
   SCN-AUTH-003:
@@ -66,7 +66,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Phase 0-1 OTP verify endpoint is disabled with 403 FEATURE_DISABLED
   SCN-AUTH-004:
@@ -77,7 +77,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Valid Facebook OAuth token creates a CUSTOMER session
   SCN-AUTH-005:
@@ -88,7 +88,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-02
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Same facebook_id authenticates the existing user without creating a duplicate
       account
@@ -100,7 +100,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Successful authentication issues a signed JWT with sub, role, exp, and
       iat claims
@@ -112,7 +112,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Invalid-signature or expired access token is rejected with 401
   SCN-AUTH-008:
@@ -123,7 +123,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: BANNED or active SUSPENDED account is denied authentication even with otherwise
       valid credentials
@@ -135,7 +135,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-05
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: OTP request rate limit per phone returns 429 within the configured window
   SCN-AUTH-010:
@@ -146,7 +146,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-05
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: OTP request rate limit per request source returns 429 within the configured
       window
@@ -158,7 +158,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-05
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Valid OTP verification returns an authenticated session
   SCN-AUTH-012:
@@ -169,7 +169,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-09
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Facebook OAuth outage fails closed with 503 AUTH_PROVIDER_UNAVAILABLE
   SCN-AUTH-013:
@@ -180,7 +180,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-10
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Existing valid session remains usable during Facebook OAuth outage
   SCN-AUTH-014:
@@ -191,7 +191,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-09
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Facebook circuit breaker opens after repeated provider failures and status
       reports unavailable
@@ -203,7 +203,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-09
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Open Facebook circuit fails closed on additional login attempts until recovery
   SCN-BOOK-001:
@@ -269,8 +269,8 @@ scenarios:
     domain: booking
     mutation_kill_rate: 33
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: null
-    override_status: null
+    notes: Tasker 3-strike suspension not yet implemented; deferred to next sprint.
+    override_status: waived pending tasker-suspension feature
     prd_ref: REQ-BOOK-06
     risk: critical
     status: untested
@@ -455,7 +455,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Admin can add a new service category
   SCN-CATEGORY-002:
@@ -466,7 +466,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Admin can edit, deactivate, and reorder categories with immediate picker
       propagation
@@ -478,7 +478,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Schema lint rejects activation candidates with fewer than 3 required questions
   SCN-CATEGORY-004:
@@ -489,7 +489,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Schema lint rejects activation candidates with more than 5 required questions
   SCN-CATEGORY-005:
@@ -500,7 +500,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Schema lint rejects unsupported field types
   SCN-CATEGORY-006:
@@ -511,7 +511,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Canary activation publishes a new schema version without rebinding existing
       drafts
@@ -523,7 +523,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Rollback restores the last-known-good schema version
   SCN-CATEGORY-008:
@@ -534,7 +534,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-ADMIN-05
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Rollback without a last-known-good schema fails with NO_FALLBACK
   SCN-DISPUTE-001:
@@ -545,7 +545,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Either participant can open a dispute while the booking is ASSIGNED
   SCN-DISPUTE-002:
@@ -556,7 +556,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Either participant can open a dispute within 24 hours after booking completion
   SCN-DISPUTE-003:
@@ -567,7 +567,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Completed-booking dispute after 24 hours is rejected
   SCN-DISPUTE-004:
@@ -578,7 +578,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Dispute creation outside ASSIGNED or COMPLETED booking states is rejected
   SCN-DISPUTE-005:
@@ -589,7 +589,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-10
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Dispute submission requires at least one evidence artifact
   SCN-DISPUTE-006:
@@ -600,7 +600,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-10
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Missing evidence after reminder and 24-hour grace auto-closes the dispute
       as INSUFFICIENT_EVIDENCE
@@ -612,7 +612,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-10
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Evidence added during the grace window prevents insufficient-evidence auto-close
   SCN-DISPUTE-008:
@@ -623,7 +623,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Phase 1 dispute resolution is limited to evidence-only outcomes and admin
       misconduct notes
@@ -735,7 +735,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-02
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Booking completion creates structured review prompts for both customer
       and tasker
@@ -747,7 +747,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-02
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Immediate review prompt is sent at completion time
   SCN-REVIEW-003:
@@ -758,7 +758,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-11
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Open review case at 24 hours sends the first reminder
   SCN-REVIEW-004:
@@ -769,7 +769,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-11
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Open review case at 72 hours sends the final reminder
   SCN-REVIEW-005:
@@ -780,7 +780,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-02
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Hard lock is enforced only when an open review case also has a configured
       risk flag
@@ -792,7 +792,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-SAFE-11
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Hard lock triggered by dispute, repeated non-submission, or investigation
       logs the trigger reason
@@ -804,7 +804,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Protected endpoints reject requests without a bearer JWT
   SCN-SEC-002:
@@ -815,7 +815,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: CUSTOMER role cannot access tasker-only or admin-only routes
   SCN-SEC-003:
@@ -826,7 +826,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: TASKER role cannot access customer-only or admin-only routes
   SCN-SEC-004:
@@ -837,7 +837,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: ADMIN-only routes are accessible to ADMIN and forbidden to non-admin roles
   SCN-SEC-005:
@@ -848,7 +848,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task creation endpoint allows CUSTOMER and rejects TASKER or ADMIN at the
       security layer
@@ -860,7 +860,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Open-task visibility exposes only approximate location before booking confirmation
   SCN-SEC-007:
@@ -871,7 +871,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Exact task address is revealed only to the owner or booked tasker after
       booking confirmation
@@ -883,7 +883,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-01
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer-facing payloads never expose tasker phone fields
   SCN-SEC-009:
@@ -894,7 +894,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-02
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Customer phone remains masked until lead unlock or payment commitment succeeds
   SCN-SEC-010:
@@ -905,7 +905,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-03
     risk: critical
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Exact-address fetch before the required unlock state is denied with ADDRESS_LOCKED
   SCN-SMOKE-001:
@@ -916,7 +916,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-01
     risk: high
-    status: untested
+    status: covered
     test_type: integration
     title: Facebook OAuth outage fails closed and existing session survives end-to-end
   SCN-SMOKE-002:
@@ -938,7 +938,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: high
-    status: untested
+    status: covered
     test_type: integration
     title: Task creation and retrieval end-to-end against real database
   SCN-SMOKE-004:
@@ -949,7 +949,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: integration
     title: Non-participant task detail exposes only approximate location against real
       database
@@ -961,7 +961,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-AUTH-03
     risk: high
-    status: untested
+    status: covered
     test_type: integration
     title: All protected endpoint error responses include code, message, and trace_id
       fields
@@ -973,7 +973,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-00
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task-post form loads the active intake schema for the selected category
   SCN-TASK-002:
@@ -984,7 +984,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-00
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task submit with missing required intake answers fails with field-level
       validation errors
@@ -996,7 +996,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task creation without required base fields returns field-specific validation
       errors
@@ -1008,7 +1008,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Budget equal to 1000 MNT is rejected
   SCN-TASK-005:
@@ -1019,7 +1019,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Budget greater than 1000 MNT is accepted
   SCN-TASK-006:
@@ -1030,7 +1030,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-01
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Fourth task photo is rejected with PHOTO_LIMIT_EXCEEDED
   SCN-TASK-007:
@@ -1041,7 +1041,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Tasker feed includes only OPEN tasks
   SCN-TASK-008:
@@ -1052,7 +1052,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task feed exposes district or fuzzed location only before confirmation
   SCN-TASK-009:
@@ -1063,7 +1063,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Non-participant task detail returns approximate location only
   SCN-TASK-010:
@@ -1074,7 +1074,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task owner receives full exact location fields in task detail
   SCN-TASK-011:
@@ -1085,7 +1085,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Accepted tasker receives full exact location fields after booking confirmation
   SCN-TASK-012:
@@ -1096,7 +1096,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Task feed cursor pagination is deterministic and pages do not overlap
   SCN-TASK-013:
@@ -1107,7 +1107,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-03
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Invalid task feed cursor is rejected with INVALID_CURSOR
   SCN-TASK-014:
@@ -1118,7 +1118,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-07
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Deterministic job scope summary is generated from intake answers before
       submit and persisted
@@ -1130,7 +1130,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-10
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Summary rendering failure falls back to canonical key-value summary without
       blocking posting
@@ -1142,7 +1142,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Draft creation binds and returns the active intake schema version at form
       start
@@ -1154,7 +1154,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Draft submit validates against its bound schema version even after a newer
       version is activated
@@ -1166,7 +1166,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-09
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Draft submit still uses its bound schema version even if that version is
       no longer active
@@ -1178,7 +1178,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-TASK-11
     risk: high
-    status: untested
+    status: covered
     test_type: domain-unit
     title: Deactivated category blocks new draft and create requests but existing
       tasks keep their lifecycle
