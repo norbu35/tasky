@@ -177,7 +177,7 @@ public class NoShowService {
 
         // f. If no-show party is the tasker, add strike
         if (booking.taskerId().equals(noShowPartyId)) {
-            authService.addStrike(noShowPartyId);
+            authService.addStrike(noShowPartyId, "NO_SHOW", bookingId);
         }
 
         // Return updated booking

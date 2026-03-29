@@ -297,13 +297,23 @@ public class BookingService {
         BookingTransitionResult result = transition(bookingId, "CANCELLED", List.of("ASSIGNED", "PAID"));
         if (result.isSuccess() && lateCustomerCancellation) {
             log.warn("Late cancellation for booking {} by customer {}", bookingId, userId);
+            Instant windowStart = Instant.now().minus(28, java.time.temporal.ChronoUnit.DAYS);
+            long recentIncidents =
+                    bookingReliabilityIncidentDao.countRecentIncidents(userId, "CUSTOMER_LATE_CANCEL%", windowStart);
+            String incidentType =
+                    recentIncidents == 0 ? "CUSTOMER_LATE_CANCEL_WARNING" : "CUSTOMER_LATE_CANCEL_PENALTY";
             bookingReliabilityIncidentDao.insert(
                     UUID.randomUUID().toString(),
                     bookingId,
                     userId,
-                    "CUSTOMER_LATE_CANCEL",
-                    "Customer cancelled within 4 hours of scheduled task time.",
+                    incidentType,
+                    recentIncidents == 0
+                            ? "Customer cancelled within 4 hours. Warning issued."
+                            : "Customer cancelled within 4 hours. Ranking penalty and Instant Match disabled.",
                     Instant.now());
+            if ("CUSTOMER_LATE_CANCEL_PENALTY".equals(incidentType)) {
+                authService.revokeInstantMatch(userId, java.time.Duration.ofDays(30));
+            }
         }
         return result;
     }

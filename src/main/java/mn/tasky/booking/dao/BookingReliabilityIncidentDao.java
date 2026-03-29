@@ -5,6 +5,7 @@ import static mn.tasky.common.persistence.UuidHelper.required;
 import java.time.Instant;
 import java.util.UUID;
 import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 public interface BookingReliabilityIncidentDao {
@@ -30,4 +31,15 @@ public interface BookingReliabilityIncidentDao {
             @Bind("incidentType") String incidentType,
             @Bind("details") String details,
             @Bind("recordedAt") Instant recordedAt);
+
+    default long countRecentIncidents(String userId, String incidentTypePattern, Instant since) {
+        return countRecentIncidents(required(userId, "userId"), incidentTypePattern, since);
+    }
+
+    @SqlQuery("SELECT COUNT(*) FROM booking_reliability_incidents "
+            + "WHERE user_id = :userId AND incident_type LIKE :incidentTypePattern AND recorded_at >= :since")
+    long countRecentIncidents(
+            @Bind("userId") UUID userId,
+            @Bind("incidentTypePattern") String incidentTypePattern,
+            @Bind("since") Instant since);
 }

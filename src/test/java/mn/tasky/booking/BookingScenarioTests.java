@@ -187,6 +187,9 @@ class BookingScenarioTests {
         assertThat(result.isSuccess()).isTrue();
         verify(incidentDao).insert(anyString(), anyString(), anyString(),
                 org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_PENALTY"), anyString(), any());
+        verify(authService).revokeInstantMatch(
+                org.mockito.ArgumentMatchers.eq("customer-1"),
+                org.mockito.ArgumentMatchers.eq(java.time.Duration.ofDays(30)));
     }
 
     // ── SCN-BOOK-006 ─────────────────────────────────────────────────────────
@@ -227,18 +230,8 @@ class BookingScenarioTests {
     }
 
 
-    @Test
-    @DisplayName("SCN-BOOK-007: Booking confirmation without liability disclaimer acceptance is rejected")
-    void bookingConfirmationWithoutDisclaimerRejected() {
-        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
-
-        // The booking is created with disclaimer = false by default
-        assertThat(booking.liabilityDisclaimerAccepted()).isFalse();
-
-        // Attempting to complete without disclaimer — service should not allow transition
-        // without the disclaimer flag (validated at controller, stored on booking)
-        assertThat(store.get(booking.id()).liabilityDisclaimerAccepted()).isFalse();
-    }
+    // SCN-BOOK-007 moved to TaskAcceptScenarioTests — disclaimer rejection is tested
+    // at the TaskService boundary where the guard actually lives.
 
     // ── SCN-BOOK-008 ─────────────────────────────────────────────────────────
 

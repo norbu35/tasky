@@ -39,6 +39,11 @@ public class BookingLifecycleService {
 
     @Transactional
     public BookingTransitionResult cancelBooking(String actorUserId, String bookingId) {
+        return cancelBooking(actorUserId, bookingId, null);
+    }
+
+    @Transactional
+    public BookingTransitionResult cancelBooking(String actorUserId, String bookingId, String reason) {
         BookingState booking = bookingService.getBooking(bookingId).orElse(null);
         if (booking == null) {
             return BookingTransitionResult.NOT_FOUND_RESULT;
@@ -58,7 +63,10 @@ public class BookingLifecycleService {
         if (updated.taskerId().equals(actorUserId)) {
             requireTaskUpdate(
                     taskService.reopenTask(updated.taskId()), "reopening", bookingId, updated.taskId());
-            authService.addStrike(actorUserId);
+            boolean isSafetyOrFraud = reason != null && reason.toLowerCase(java.util.Locale.ROOT).contains("safety");
+            if (!isSafetyOrFraud) {
+                authService.addStrike(actorUserId, reason, bookingId);
+            }
         } else if (updated.customerId().equals(actorUserId)) {
             requireTaskUpdate(
                     taskService.transitionToCancelled(updated.taskId()), "cancelling", bookingId, updated.taskId());
