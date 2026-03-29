@@ -116,13 +116,52 @@ Every PR must include:
 - How you verified it (which tests you wrote/updated)
 - Anything you're unsure about
 
-## Testing
+## Backend Testing Rules
 
-- Every "Done When" criterion needs a corresponding test
-- For changes touching **auth, payments, wallet, migrations, or SecurityConfig**: write both positive and negative tests (happy path works AND unauthorized/invalid attempts are rejected). Call this out in the PR description
-- Backend: JUnit 5 + Spring Boot Test. Integration tests use `@SpringBootTest` with Testcontainers
+The backend uses a scenario-based test framework. Read this section fully before writing any test.
+
+### Before writing a test
+
+1. Check `tests/registry.yaml` for an existing scenario covering the behavior
+2. Check `tests/scenarios/<domain>.md` for the full scenario spec
+3. If no scenario exists for the behavior: **STOP** — report the gap, do not invent a test
+
+### MUST
+
+- `@DisplayName` must start with the scenario ID: `"SCN-XXX-NNN: <exact title from scenario file>"`
+- Domain-unit tests: zero Spring annotations (`@SpringBootTest`, `@Autowired`, `@MockBean` forbidden)
+- Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`
+- Run `./scripts/sync-registry.sh` after writing tests — commit updated `tests/registry.yaml` in the same PR
+- Run `./gradlew gateSmoke` before opening a PR — it must pass
+
+### MUST NOT
+
+- Never modify files in `tests/scenarios/` — those are QA-authored specs; raise a comment if wrong
+- Never use `@DirtiesContext` — use `IntegrationTestBase` (already handles truncation per test)
+- Never assert only on mock invocation (`verify(dao).someMethod(...)`) without also asserting on observable output state
+- Never put more than one scenario in one test method
+- Never write a test without a `SCN-*` `@DisplayName` — the gate rejects untraceable tests
+
+### When a PIT survived mutation is assigned to you
+
+1. Find it in `build/reports/pitest/index.html`
+2. Identify which scenario file covers that behavior in `tests/scenarios/`
+3. If a scenario covers it: the test assertion is wrong — fix it, not the production code
+4. If no scenario covers it: report the gap — do not add a test without a scenario
+
+### Quality gates
+
+| Gate | Command | Blocks |
+|---|---|---|
+| Smoke | `./gradlew gateSmoke` | Merge to main — all Critical scenarios must be covered |
+| Regression | `./gradlew gateRegression` | Deploy — all High scenarios + JaCoCo 80% + API contract valid |
+| Full (nightly) | `./gradlew gateFull` | Alerts on mutation floor violations |
+
+### Frontend testing
+
 - Web: Vitest + React Testing Library
 - Mobile: Jest + React Native Testing Library
+- For changes touching **auth, payments, wallet, migrations, or SecurityConfig**: write both positive and negative tests and call it out in the PR description
 
 ## What Not to Do
 

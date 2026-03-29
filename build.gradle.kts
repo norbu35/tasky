@@ -335,7 +335,9 @@ pitest {
 
     // Fail the build if mutation coverage drops below this threshold.
     // Start at 0 (establish a baseline), then raise once you've reviewed the first report.
-    mutationThreshold.set(0)
+    // Raised from 0 after Phase 1+2 scenario coverage established.
+    // Raise further as mutation scores improve — floor only moves up.
+    mutationThreshold.set(20)
 
     // Output
     outputFormats.set(setOf("HTML", "XML"))

@@ -150,7 +150,9 @@ if not surefire_dir.exists():
           "run ./gradlew test first. Status not updated.", file=sys.stderr)
 else:
     found_ids = set()
-    scn_pattern = re.compile(r'^(SCN-[A-Z]+-\d+)[:\s]')
+    # Match any SCN-* ID anywhere in the test name — handles multiple IDs in one @DisplayName
+    # e.g. "SCN-AUTH-013 SCN-SMOKE-001: ..." picks up both IDs
+    scn_anywhere = re.compile(r'\b(SCN-[A-Z]+-\d+)\b')
 
     for xml_file in surefire_dir.glob("TEST-*.xml"):
         try:
@@ -167,8 +169,7 @@ else:
             # Skip skipped/disabled tests
             if testcase.find("skipped") is not None:
                 continue
-            m = scn_pattern.match(name)
-            if m:
+            for m in scn_anywhere.finditer(name):
                 found_ids.add(m.group(1))
 
     updated = 0

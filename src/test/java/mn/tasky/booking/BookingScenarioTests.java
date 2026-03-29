@@ -231,7 +231,7 @@ class BookingScenarioTests {
         @Autowired TaskService taskService;
 
         @Test
-        @DisplayName("SCN-BOOK-005: Tasker cancellation reopens the linked task to OPEN")
+        @DisplayName("SCN-BOOK-005 SCN-SMOKE-002: Tasker cancellation reopens the linked task to OPEN")
         void taskerCancellationReopensTask() {
             org.springframework.http.HttpHeaders h = new org.springframework.http.HttpHeaders();
             h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);

@@ -66,10 +66,15 @@ if gate in ("regression", "full"):
 
     # PIT staleness check: find the most recent mutation_kill_rate_updated_at across
     # all Critical/High domain entries. Fail if absent or older than threshold.
+    # The "integration" domain has no production code — PIT mutation data does not
+    # apply to it and it is excluded from staleness and floor checks.
+    DOMAINS_WITHOUT_PRODUCTION_CODE = {"integration"}
+
     TIER_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
     critical_high_domains = set(
         e["domain"] for e in scenarios.values()
         if e["risk"] in ("critical", "high")
+        and e["domain"] not in DOMAINS_WITHOUT_PRODUCTION_CODE
     )
     latest_pit_update = None
     domains_with_no_pit = []
@@ -119,10 +124,13 @@ if gate == "full":
     FLOORS = {"critical": 75, "high": 60}
     MEDIUM_FLOOR = 40
     TIER_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    DOMAINS_WITHOUT_PRODUCTION_CODE = {"integration"}
     domain_tier = {}
     domain_kill = {}
     for entry in scenarios.values():
         d, r = entry["domain"], entry["risk"]
+        if d in DOMAINS_WITHOUT_PRODUCTION_CODE:
+            continue
         current = domain_tier.get(d, "low")
         if TIER_ORDER.get(r, 3) < TIER_ORDER.get(current, 3):
             domain_tier[d] = r

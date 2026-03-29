@@ -213,7 +213,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-009 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-009: Non-participant task detail returns approximate location only")
+    @DisplayName("SCN-TASK-009 SCN-SMOKE-004: Non-participant task detail returns approximate location only")
     void nonParticipantTaskDetailHasApproximateLocationOnly() {
         ResponseEntity<Map> created = postWithAuth("/api/v1/tasks", taskBody(50000), custToken);
         String taskId = created.getBody().get("id").toString();
@@ -230,7 +230,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-010 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-010: Task owner receives full exact location fields in task detail")
+    @DisplayName("SCN-TASK-010 SCN-SMOKE-003: Task owner receives full exact location fields in task detail")
     void ownerTaskDetailHasExactLocation() {
         ResponseEntity<Map> created = postWithAuth("/api/v1/tasks", taskBody(50000), custToken);
         String taskId = created.getBody().get("id").toString();

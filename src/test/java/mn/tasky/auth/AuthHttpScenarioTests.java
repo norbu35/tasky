@@ -134,7 +134,7 @@ class AuthHttpScenarioTests extends IntegrationTestBase {
     // ── SCN-AUTH-013 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-AUTH-013: Existing valid session remains usable during Facebook OAuth outage")
+    @DisplayName("SCN-AUTH-013 SCN-SMOKE-001: Existing valid session remains usable during Facebook OAuth outage")
     void existingSessionUsableDuringOutage() {
         // Given: a user is already authenticated (valid JWT issued with the real signing key)
         String validToken = validToken("CUSTOMER", "ACTIVE");
