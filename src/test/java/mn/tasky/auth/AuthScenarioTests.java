@@ -78,7 +78,7 @@ class AuthScenarioTests {
         when(userDao.findSuspensionEndAt(anyString())).thenReturn(Optional.empty());
         when(moderationPolicyDao.findActive()).thenReturn(Optional.empty());
         when(profileDao.findByUserId(anyString()))
-                .thenReturn(Optional.of(new UserProfileState("Test User", null, 0.0, 0)));
+                .thenReturn(Optional.of(new UserProfileState("Test User", null, 0.0, 0, null)));
     }
 
     // ── SCN-AUTH-001 ─────────────────────────────────────────────────────────
