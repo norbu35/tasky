@@ -286,12 +286,15 @@ behavioural data that does not exist at launch. Therefore: start manual, graduat
   terms. In Phase 2+, applicant acceptance is completed only after the selected Tasker spends the required lead-unlock
   credits (see REQ-PAY-11).
 * **REQ-BOOK-04**: Customer Cancellation Policy: Free cancellation > 4 hours before start. Late cancellation (< 4 hours)
-  is recorded as a reliability incident in booking history and trust metrics; first incident in trailing 28 days is
-  warning-only, while 2 incidents in trailing 28 days trigger ranking penalty and potential strike review.
+  results in a cancellation fee (Phase 2+) or a reliability incident warning on the first occurrence. A second late
+  cancellation within 28 days flags the user's future tasks with a "Low Customer Reliability" warning visible to
+  applicants, and revokes their access to Instant Match (REQ-BOOK-08) for 30 days.
 * **REQ-BOOK-05**: Booking status lifecycle MUST be: `ASSIGNED` → `COMPLETED` | `CANCELLED` | `NO_SHOW`. This is
   separate from the Task status lifecycle.
-* **REQ-BOOK-06**: Tasker Cancellation Policy: Tasker may cancel a booking; task reverts to `OPEN`. Strike system: 3
-  cancellations within 30 days results in a 7-day suspension from the platform.
+* **REQ-BOOK-06**: Tasker Cancellation Policy: Tasker may cancel a booking, which incurs a moderation strike; task
+  reverts to `OPEN`. 3 strikes within a 30-day rolling window result in an automatic 7-day suspension. Exception:
+  Taskers may select "Safety/Fraud" as the cancellation reason, which bypasses the automated strike but immediately
+  opens a Trust & Safety investigation ticket. Abuse of the safety override results in immediate platform review.
 * **REQ-BOOK-07**: Repeat Booking shortcut: Customer can rebook a previously hired Tasker with one tap for a new task in
   the same category. `[F7]`
 * **REQ-BOOK-08** *(Phase 3+)*: **Instant Match**: For categories meeting the high-liquidity threshold (≥10 verified
@@ -667,12 +670,14 @@ flow — B2B is a thin coordination layer, not a parallel system.
 * **REQ-BOOK-03**: Booking reaches final confirmed state only after Customer acceptance plus
   `liability_disclaimer_accepted=true`; in Phase 2+, confirmation additionally requires successful lead-unlock debit
   event.
-* **REQ-BOOK-04**: Customer cancellations >4h before schedule create no incident; cancellations <=4h create reliability
-  incident; first incident in trailing 28 days creates warning only; second incident applies ranking penalty flag.
+* **REQ-BOOK-04**: Customer cancellations >4h before schedule create no incident; late cancellations (<=4h) result in a
+  cancellation fee (Phase 2+) or a reliability incident warning on the first occurrence; a second late cancellation in 28
+  days flags future tasks with "Low Customer Reliability" visible to applicants and revokes Instant Match for 30 days.
 * **REQ-BOOK-05**: Booking status transitions are restricted to `ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW`; task and
   booking state machines are independently persisted and validated in contract tests.
-* **REQ-BOOK-06**: Tasker cancellation reopens linked task to `OPEN`; if a Tasker records 3 cancellations in any rolling
-  30-day window, account suspension is automatically set for 7 days and enforcement is auditable.
+* **REQ-BOOK-06**: Tasker cancellation reopens linked task to `OPEN` and incurs a moderation strike; 3 strikes in any
+  rolling 30-day window automatically set a 7-day suspension. Exception: "Safety/Fraud" reason bypasses the strike but
+  opens an immediate Trust & Safety ticket; abuse of this override triggers immediate platform review.
 * **REQ-BOOK-07**: Rebook action is available on completed bookings and pre-fills same-category Task creation; rebook is
   initiated by a single primary action from booking history.
 * **REQ-BOOK-08**: Instant Match is visible only when liquidity threshold (>=10 verified Taskers with >4.0 rating in

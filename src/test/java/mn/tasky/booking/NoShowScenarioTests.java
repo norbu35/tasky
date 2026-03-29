@@ -199,8 +199,8 @@ class NoShowScenarioTests {
         // Customer flags no-show (tasker is the no-show party)
         noShowService.flagNoShow(BOOKING_ID, CUSTOMER_ID);
 
-        // addStrike is called for the tasker (no-show party)
-        verify(authService).addStrike(TASKER_ID);
+        // addStrike is called for the tasker (no-show party) with reason and booking context
+        verify(authService).addStrike(eq(TASKER_ID), eq("NO_SHOW"), eq(BOOKING_ID));
     }
 
     // ── SCN-BOOK-016 ─────────────────────────────────────────────────────────

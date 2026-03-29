@@ -39,13 +39,14 @@ And a customer late-cancel reliability incident is recorded
 ## SCN-BOOK-004
 **Risk:** Critical
 **PRD:** REQ-BOOK-04
-**Title:** Late-cancel enforcement escalates from warning-only on first incident to ranking penalty on second incident in 28 days
+**Title:** Late-cancel enforcement escalates from warning-only on first occurrence to "Low Customer Reliability" flag and Instant Match revocation on second occurrence in 28 days
 
 Given a customer records a first late cancellation within a trailing 28-day window
 And that same customer records a second late cancellation within the same trailing 28-day window
 When the two incidents are evaluated for enforcement
-Then the first incident is warning-only
-And the second incident applies a ranking-penalty flag
+Then the first occurrence results in a cancellation fee (Phase 2+) or a reliability incident warning
+And the second occurrence flags future tasks with "Low Customer Reliability" visible to applicants
+And revokes access to Instant Match for 30 days
 
 ## SCN-BOOK-005
 **Risk:** Critical
@@ -62,12 +63,22 @@ And no cancellation fee is recorded
 ## SCN-BOOK-006
 **Risk:** Critical
 **PRD:** REQ-BOOK-06
-**Title:** Third tasker cancellation in a rolling 30 days suspends the tasker for 7 days
+**Title:** Third tasker cancellation without safety override in a rolling 30 days suspends the tasker for 7 days
 
 Given a tasker already has 2 booking cancellations in the trailing 30 days
 When that tasker cancels another booking
 Then the tasker records a third cancellation in the rolling 30-day window
 And the tasker account is suspended for 7 days
+
+## SCN-BOOK-021
+**Risk:** Critical
+**PRD:** REQ-BOOK-06
+**Title:** Tasker cancellation with Safety/Fraud reason bypasses automated strike and opens Trust and Safety ticket
+
+Given a booking is in ASSIGNED status
+When the tasker cancels the booking with "Safety/Fraud" as the reason
+Then no moderation strike is incurred
+And a Trust & Safety investigation ticket is immediately opened
 
 ## SCN-BOOK-007
 **Risk:** Critical

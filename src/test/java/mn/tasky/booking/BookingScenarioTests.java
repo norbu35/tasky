@@ -58,11 +58,12 @@ class BookingScenarioTests {
     private final Map<String, BookingState> store = new HashMap<>();
     private BookingService bookingService;
     private BookingReliabilityIncidentDao incidentDao;
+    private AuthService authService;
 
     @BeforeEach
     void setUp() {
         store.clear();
-        AuthService authService = mock(AuthService.class);
+        authService = mock(AuthService.class);
         BookingDao bookingDao = mock(BookingDao.class);
         incidentDao = mock(BookingReliabilityIncidentDao.class);
         BookingCompletionSignalDao completionSignalDao = mock(BookingCompletionSignalDao.class);
@@ -142,9 +143,9 @@ class BookingScenarioTests {
         assertThat(result.isSuccess()).isTrue();
         assertThat(result.booking().status()).isEqualTo("CANCELLED");
         assertThat(result.booking().cancellationFee()).isNull();
-        // Reliability incident recorded for late cancel
+        // Reliability incident recorded for late cancel (warning for first offense)
         verify(incidentDao).insert(anyString(), anyString(), anyString(),
-                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL"), anyString(), any());
+                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_WARNING"), anyString(), any());
     }
 
     // ── SCN-BOOK-003 ─────────────────────────────────────────────────────────
@@ -163,10 +164,68 @@ class BookingScenarioTests {
 
         assertThat(result.isSuccess()).isTrue();
         verify(incidentDao).insert(anyString(), anyString(), anyString(),
-                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL"), anyString(), any());
+                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_WARNING"), anyString(), any());
     }
 
-    // ── SCN-BOOK-007 ─────────────────────────────────────────────────────────
+    // ── SCN-BOOK-004 ─────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-BOOK-004: Customer cancels late 2 times within 28 days - Instant Match disabled")
+    void customerCancelLateMultipleTimes() {
+        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
+        Instant scheduledAt = Instant.now().plus(2, ChronoUnit.HOURS);
+
+        // Mock that they already have 1 recent incident
+        org.mockito.Mockito.when(incidentDao.countRecentIncidents(
+                org.mockito.ArgumentMatchers.eq("customer-1"), 
+                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL%"), 
+                any(Instant.class)))
+            .thenReturn(1L);
+
+        BookingTransitionResult result = bookingService.cancelBooking("customer-1", booking.id(), scheduledAt);
+
+        assertThat(result.isSuccess()).isTrue();
+        verify(incidentDao).insert(anyString(), anyString(), anyString(),
+                org.mockito.ArgumentMatchers.eq("CUSTOMER_LATE_CANCEL_PENALTY"), anyString(), any());
+    }
+
+    // ── SCN-BOOK-006 ─────────────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-BOOK-021: Tasker cancellation with Safety/Fraud reason bypasses automated strike and opens Trust and Safety ticket")
+    void taskerCancelForSafetyDoesNotAddStrike() {
+        BookingState booking = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
+        
+        mn.tasky.task.application.TaskService taskService = mock(mn.tasky.task.application.TaskService.class);
+        mn.tasky.task.dto.TaskState task = mock(mn.tasky.task.dto.TaskState.class);
+        // Mock task state lookup
+        when(taskService.getTask("task-1")).thenReturn(Optional.of(task));
+        // Mock reopen task
+        when(taskService.reopenTask("task-1")).thenReturn(Optional.of(task));
+        
+        mn.tasky.booking.application.BookingLifecycleService lifecycleService = new mn.tasky.booking.application.BookingLifecycleService(
+                bookingService,
+                mock(mn.tasky.booking.application.BookingTimelineService.class),
+                taskService,
+                authService,
+                mock(mn.tasky.common.outbox.DomainEventOutboxService.class),
+                mock(mn.tasky.dispute.dao.DisputeDao.class));
+
+        // Use standard cancellation reason
+        lifecycleService.cancelBooking("tasker-1", booking.id(), "Car broke down");
+        verify(authService).addStrike("tasker-1", "Car broke down", booking.id());
+
+        org.mockito.Mockito.reset(authService);
+        
+        // Use Safety/Fraud reason
+        BookingState booking2 = bookingService.createBooking("task-1", "tasker-1", "customer-1", 50_000);
+        lifecycleService.cancelBooking("tasker-1", booking2.id(), "Safety/Fraud");
+        
+        // No strike applied
+        verify(authService, org.mockito.Mockito.never()).addStrike(anyString());
+        verify(authService, org.mockito.Mockito.never()).addStrike(anyString(), anyString(), anyString());
+    }
+
 
     @Test
     @DisplayName("SCN-BOOK-007: Booking confirmation without liability disclaimer acceptance is rejected")
@@ -271,7 +330,7 @@ class BookingScenarioTests {
                     bookingService.createBooking(taskId, taskerId, custId, 50000);
 
             // Tasker cancels via lifecycle service (also updates task status)
-            BookingTransitionResult result = lifecycleService.cancelBooking(taskerId, booking.id());
+            BookingTransitionResult result = lifecycleService.cancelBooking(taskerId, booking.id(), null);
 
             assertThat(result.isSuccess()).isTrue();
             assertThat(result.booking().status()).isEqualTo("CANCELLED");
