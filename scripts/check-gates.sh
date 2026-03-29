@@ -76,7 +76,7 @@ if gate in ("regression", "full"):
         if e["risk"] in ("critical", "high")
         and e["domain"] not in DOMAINS_WITHOUT_PRODUCTION_CODE
     )
-    latest_pit_update = None
+    oldest_pit_update = None
     domains_with_no_pit = []
     for entry in scenarios.values():
         if entry["domain"] not in critical_high_domains:
@@ -88,8 +88,8 @@ if gate in ("regression", "full"):
         else:
             try:
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
-                if latest_pit_update is None or ts > latest_pit_update:
-                    latest_pit_update = ts
+                if oldest_pit_update is None or ts < oldest_pit_update:
+                    oldest_pit_update = ts
             except ValueError:
                 pass
 
@@ -98,8 +98,8 @@ if gate in ("regression", "full"):
             f"[REGRESSION] PIT data missing for Critical/High domain(s): "
             f"{sorted(set(domains_with_no_pit))} — run ./gradlew pitest then sync-registry.sh"
         )
-    elif latest_pit_update is not None:
-        age = datetime.now(timezone.utc) - latest_pit_update
+    elif oldest_pit_update is not None:
+        age = datetime.now(timezone.utc) - oldest_pit_update
         if age > timedelta(hours=PIT_STALENESS_HOURS):
             failures.append(
                 f"[REGRESSION] PIT data is stale: last updated "
@@ -112,7 +112,7 @@ if gate in ("regression", "full"):
 # ./gradlew gateFull which depends on pitest, so PIT data is always fresh here.
 if gate == "full":
     for scn_id, entry in sorted(scenarios.items()):
-        if entry["risk"] not in ("critical", "high"):
+        if entry["risk"] not in ("critical", "high", "medium"):
             continue
         if entry["status"] == "untested" \
                 and not (entry.get("notes") or "").strip() \

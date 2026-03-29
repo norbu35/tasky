@@ -2591,6 +2591,16 @@ paths:
       parameters:
         - $ref: '#/components/parameters/PathId'
         - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes.
       responses:
         '200':
           description: Booking cancelled.
