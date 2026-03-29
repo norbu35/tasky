@@ -1257,6 +1257,44 @@ public class AuthService {
     }
 
     /**
+     * Adds a moderation strike with optional reason and booking context.
+     * Delegates to the single-arg overload for the suspension logic.
+     *
+     * @param userId    Target user identifier.
+     * @param reason    Human-readable reason (for audit; not persisted separately).
+     * @param bookingId Booking context (for audit; not persisted separately).
+     */
+    public void addStrike(String userId, String reason, String bookingId) {
+        addStrike(userId);
+    }
+
+    /**
+     * Revokes Instant Match access for the given user for the specified duration.
+     * Writes instant_match_revoked_until = NOW + duration to the user profile.
+     *
+     * @param userId   The user whose Instant Match access to revoke.
+     * @param duration How long to revoke access for.
+     */
+    public void revokeInstantMatch(String userId, java.time.Duration duration) {
+        Instant revokedUntil = Instant.now().plus(duration);
+        profileDao.setInstantMatchRevokedUntil(userId, revokedUntil);
+    }
+
+    /**
+     * Returns true if the user is currently allowed to use Instant Match.
+     * Returns true if no revocation timestamp is recorded or if it has expired.
+     *
+     * @param userId The customer user ID to check.
+     * @return true if Instant Match is allowed, false if currently revoked.
+     */
+    public boolean isInstantMatchAllowed(String userId) {
+        return profileDao.findByUserId(userId)
+                .map(p -> p.instantMatchRevokedUntil() == null
+                        || Instant.now().isAfter(p.instantMatchRevokedUntil()))
+                .orElse(true);
+    }
+
+    /**
      * Creates a signed upload URL for avatar images.
      *
      * @param userId      User identifier.
