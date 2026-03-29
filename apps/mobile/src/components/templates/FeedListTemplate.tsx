@@ -109,7 +109,7 @@ export function FeedListTemplate<T>({
   if (isLoading) {
     return (
       <View style={styles.container} testID={testID}>
-        {filterBar}
+        {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
         {ListHeaderComponent}
         <View style={styles.skeletonList}>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -139,7 +139,7 @@ export function FeedListTemplate<T>({
   if (isEmpty || data.length === 0) {
     return (
       <View style={styles.container} testID={testID}>
-        {filterBar}
+        {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
         <EmptyStateTemplate
           title={emptyTitle ?? t('feed.emptyTitle', 'Nothing here yet')}
           description={emptyDescription}
@@ -153,7 +153,7 @@ export function FeedListTemplate<T>({
 
   return (
     <View style={styles.container} testID={testID}>
-      {filterBar}
+      {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
       <FlatList
         data={data}
         renderItem={renderListItem}
@@ -219,6 +219,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.chipInactive,
     borderRadius: radius.xs,
     width: '80%',
+  },
+  filterBarWrapper: {
+    flexShrink: 0,
   },
   footerLoader: {
     paddingVertical: spacing.xl,

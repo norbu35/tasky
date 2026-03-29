@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
+    alignItems: 'center',
   },
   chip: {
     paddingHorizontal: spacing.lg,

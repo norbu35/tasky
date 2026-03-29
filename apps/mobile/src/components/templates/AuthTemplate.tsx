@@ -21,6 +21,7 @@ export interface AuthTemplateProps {
   trustMessage?: string;
   testID?: string;
   topRightSlot?: React.ReactNode;
+  bottomSlot?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
 }
 
@@ -32,6 +33,7 @@ export function AuthTemplate({
   trustMessage,
   testID,
   topRightSlot,
+  bottomSlot,
   contentStyle,
 }: AuthTemplateProps) {
   return (
@@ -61,6 +63,7 @@ export function AuthTemplate({
         {/* Trust Message */}
         {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
       </ScrollView>
+      {bottomSlot ? <View style={styles.bottomCenter}>{bottomSlot}</View> : null}
     </KeyboardAvoidingView>
   );
 }
@@ -106,6 +109,10 @@ const styles = StyleSheet.create({
   formContent: {
     marginTop: spacing['2xl'],
     gap: spacing.lg,
+  },
+  bottomCenter: {
+    alignItems: 'center',
+    paddingBottom: spacing['2xl'],
   },
   trustMessage: {
     fontSize: typography.caption,

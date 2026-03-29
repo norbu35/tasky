@@ -43,7 +43,7 @@ export default function LoginScreen() {
   return (
     <AuthTemplate
       testID="login-screen"
-      topRightSlot={
+      bottomSlot={
         <View style={styles.languagePill}>
           <Text style={styles.languagePillText}>MN/EN</Text>
         </View>
