@@ -86,6 +86,7 @@ dependencies {
     testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
+    testImplementation("com.atlassian.oai:swagger-request-validator-mockmvc:2.41.0")
 
     // Static analysis
     errorprone("com.google.errorprone:error_prone_core:2.36.0")
@@ -272,7 +273,8 @@ tasks.register<Exec>("gateSmoke") {
 tasks.register<Exec>("gateRegression") {
     description = "Gate 2: all Critical + High scenarios covered, API contract valid, JaCoCo floors. Blocks deploy."
     group = "verification"
-    dependsOn(tasks.test, tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification, "openApiValidate")
+    dependsOn(tasks.test, tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification,
+              "openApiValidate", "pitestBookingAuth")
     doFirst {
         exec { commandLine("./scripts/sync-registry.sh") }
     }
@@ -343,6 +345,40 @@ pitest {
     outputFormats.set(setOf("HTML", "XML"))
     reportDir.set(file("${layout.buildDirectory.get()}/reports/pitest"))
 
+    timestampedReports.set(false)
+    verbose.set(false)
+}
+
+// Scoped PIT for booking + auth domains — runs as part of gateRegression.
+// Targets only the two domains with recent enforcement gaps so the gate stays fast.
+// Floor starts at baseline (booking ~33%, auth ~12% combined ≈ 15%) — raise as
+// coverage improves toward the 80% aspiration in the design doc.
+tasks.register("pitestBookingAuth", info.solidsoft.gradle.pitest.PitestTask::class.java) {
+    description = "Scoped mutation test for booking and auth packages. Blocks gateRegression."
+    group = "verification"
+
+    targetClasses.set(setOf("mn.tasky.booking.*", "mn.tasky.auth.*"))
+    excludedClasses.set(setOf(
+        "mn.tasky.*.dto.*",
+        "mn.tasky.auth.AccountRestrictedException"
+    ))
+    targetTests.set(setOf("mn.tasky.booking.*", "mn.tasky.auth.*", "mn.tasky.task.*"))
+    excludedTestClasses.set(setOf(
+        "mn.tasky.**.*IntegrationTests",
+        "mn.tasky.**.*IntegrationTest",
+        "mn.tasky.common.IntegrationTestBase",
+        "mn.tasky.contract.OpenApiContractTestSupport"
+    ))
+
+    mutators.set(setOf("STRONGER"))
+    threads.set(4)
+
+    // Floor = current baseline rounded down to nearest 5%.
+    // Raise this value when booking/auth test coverage improves.
+    mutationThreshold.set(15)
+
+    outputFormats.set(setOf("HTML", "XML"))
+    reportDir.set(file("${layout.buildDirectory.get()}/reports/pitest-booking-auth"))
     timestampedReports.set(false)
     verbose.set(false)
 }
