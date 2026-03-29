@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tasky
+    username: tasky
+    password: tasky
+
+tasky:
+  dev-auth:
+    enabled: ${TASKY_DEV_AUTH_ENABLED:false}
+  auth:
+    otp-test-code: ${TASKY_OTP_TEST_CODE:}
+  facebook:
+    app-id: ${TASKY_FACEBOOK_APP_ID:}
+    app-secret: ${TASKY_FACEBOOK_APP_SECRET:}
+  security:
+    jwt-secret: ${TASKY_JWT_SECRET}
+    encryption-key: ${TASKY_ENCRYPTION_KEY}
+    blind-index-key: ${TASKY_BLIND_INDEX_KEY}
+    access-token-ttl-seconds: 3600
+    refresh-token-ttl-seconds: 2592000
+  qpay:
+    webhook-secret: ${TASKY_QPAY_WEBHOOK_SECRET:}
