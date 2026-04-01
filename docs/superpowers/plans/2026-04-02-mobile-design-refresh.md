@@ -1,12 +1,35 @@
 # Mobile Design Refresh Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+>
+> **Execution Note (2026-04-02):** Apply this file together with `docs/superpowers/plans/2026-04-02-mobile-design-refresh-comprehensive-plan.md` and `docs/superpowers/plans/2026-04-02-mobile-route-normalization-matrix.md` for corrected routing/workflow guidance and blocker handling.
 
 **Goal:** Replace the visual shell of the Tasky mobile app with the Figma "Mobile" designs across 63 screens while preserving all existing business logic, data hooks, and navigation.
 
 **Architecture:** Five parallel agents each own a domain (auth, inbox/profile/infra, customer task flow, customer booking flow, tasker flow). Each screen is implemented by combining three sources in priority order: (1) `docs/design/screen-specs/SCR-*.yaml` wins for component choice and state coverage, (2) Figma `get_design_context` wins for layout/spacing/visual hierarchy, (3) existing code wins for all hooks, navigation calls, and data props. No hardcoded hex values or pixel numbers — all via `mobileTheme` tokens.
 
 **Tech Stack:** React Native (Expo), TypeScript, Expo Router, `mobileTheme` from `src/design/tokenAdapter.ts`, lucide-react-native icons, existing component library at `src/components/ui/`
+
+---
+
+## Execution Environment (Required)
+
+Use **one git worktree per agent lane** to isolate parallel edits and keep TDD loops scoped.
+
+Recommended worktree branches:
+- `agent/mobile-refresh-a1-auth-onboarding`
+- `agent/mobile-refresh-a2a-shared-profile`
+- `agent/mobile-refresh-a2b-infra`
+- `agent/mobile-refresh-a3-customer-task`
+- `agent/mobile-refresh-a4-customer-booking`
+- `agent/mobile-refresh-a5-tasker`
+
+Rules:
+- Each lane edits only files assigned in `docs/superpowers/plans/2026-04-02-mobile-route-normalization-matrix.md`.
+- No cross-lane file edits without explicit reassignment.
+- Run TDD per SCR/state slice in-lane before moving to the next SCR.
+- Do not defer tests in autonomous mode; lane checks must pass before handoff.
+- Rebase each lane branch on latest main before integration.
 
 ---
 
@@ -259,10 +282,25 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 - [ ] Read `docs/design/component-contract.yaml` in full — this is your component reference
 - [ ] Read `docs/design/prompts/global-context.yaml` — this is the design token reference
-- [ ] Read `docs/design/prompts/generation-tracker.md` — note the 14 invalid Figma frames to skip
+- [ ] Read `docs/design/prompts/generation-tracker.md` — note the 14 duplicate Stitch screens listed for removal
 - [ ] Read `docs/superpowers/specs/2026-04-02-mobile-design-refresh-design.md` — the full design spec
 - [ ] Confirm Figma MCP is available: call `get_design_context(fileKey="IljfnTQPkq7vpkmK1NN1NC", nodeId="2:87")` (Splash screen). If it errors, stop and report.
 - [ ] Run `pnpm --filter @tasky/mobile typecheck` — baseline must pass before any changes
+
+## Shared-File Conflict Matrix (read before parallel work)
+
+Use this ownership map to prevent branch collisions. If you need to touch a file owned by another agent, sync with that owner first and rebase before commit.
+
+| Shared file | Owner agent | Consumer agents | Rule |
+|---|---|---|---|
+| `app/(tabs)/index.tsx` | Agent 3 (customer states) | Agent 5 (tasker states) | Agent 3 lands first, Agent 5 rebases and edits only tasker branch |
+| `app/task/[id].tsx` | Agent 5 | none | Tasker task detail only; customer detail is in `app/(customer)/tasks/[taskId]/index.tsx` |
+| `components/templates/ErrorStateTemplate.tsx` | Agent 2 | Agents 1–5 | Keep props backward compatible; run targeted smoke on all screens using template |
+| `app/(shared)/legal/privacy.tsx` | Agent 5 | Agent 2 (legal group) | Agent 5 owns edits; Agent 2 does not modify privacy screen |
+| `app/(shared)/legal/terms.tsx` | Agent 2 | Agent 5 | Agent 2 owns edits; Agent 5 does not modify terms screen |
+| `features/bookings/components/CustomerCancelSheet.tsx` | Agent 4 | none | Keep testIDs stable for existing tests |
+| `features/bookings/components/TaskerCancelSheet.tsx` | Agent 5 | none | Keep testIDs stable for existing tests |
+| `features/bookings/components/TaskerNoShowSheet.tsx` | Agent 5 | Agent 4 | Agent 5 owns tasker version; Agent 4 only touches customer no-show |
 
 ---
 
@@ -276,11 +314,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-001 — Splash / Launch Screen
 
-**Spec:** `docs/design/screen-specs/SCR-SHARED-001.yaml` | **Figma:** `2:87` | **File:** `app/(auth)/index.tsx` (check — may be the login screen; if so, create `app/(auth)/splash.tsx`)
+**Spec:** `docs/design/screen-specs/SCR-SHARED-001.yaml` | **Figma:** `2:87` | **File:** `app/index.tsx` (update)
 
 - [ ] Read `SCR-SHARED-001.yaml` — extract template, states, components, acceptance_criteria
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:87")` — note visual layout
-- [ ] Read existing `app/(auth)/index.tsx` — identify hooks/navigation to preserve
+- [ ] Read existing `app/index.tsx` — identify hooks/navigation to preserve
 - [ ] Implement: spec template + Figma layout + mobileTheme tokens + preserved hooks
 - [ ] Verify all acceptance_criteria items from spec
 
@@ -316,13 +354,13 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-005 — Onboarding Carousel
 
-**Spec:** `docs/design/screen-specs/SCR-SHARED-005.yaml` | **Figma:** `2:2` | **File:** `app/(auth)/onboarding.tsx` (create)
+**Spec:** `docs/design/screen-specs/SCR-SHARED-005.yaml` | **Figma:** `2:2` | **File:** `app/onboarding.tsx` (update)
 
 - [ ] Read `SCR-SHARED-005.yaml`
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:2")` — note slide layout, pagination dots
 - [ ] Implement 3-slide carousel with pagination — use `FlatList` with `pagingEnabled` or existing carousel pattern in codebase
 - [ ] Check existing codebase for an `OnboardingCarousel` component before creating a new one: `grep -r "carousel\|Carousel" apps/mobile/src/`
-- [ ] Register in `app/(auth)/_layout.tsx`: `<Stack.Screen name="onboarding" />`
+- [ ] Do not register onboarding in `app/(auth)/_layout.tsx`; `app/onboarding.tsx` is root-level and auto-registered by Expo Router
 - [ ] Verify all acceptance_criteria
 
 ### SCR-SHARED-006 — Role Selection
@@ -425,7 +463,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-014 — Profile — Settings
 
-**Figma:** `2:634` | **File:** `app/(shared)/settings/index.tsx` (create)
+**Figma:** `2:634` | **File:** `app/(shared)/profile/settings.tsx` (update)
 
 - [ ] Read `SCR-SHARED-014.yaml` — note 7 states, `COMP-LISTROW`, `COMP-TOGGLE`
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:634")`
@@ -436,18 +474,18 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-015 — Account Deletion Confirmation
 
-**Figma:** `2:902` | **File:** `app/(shared)/settings/delete-account.tsx` (create)
+**Figma:** `2:902` | **File:** `app/(shared)/profile/delete.tsx` (update)
 
 - [ ] Read `SCR-SHARED-015.yaml` — note 5 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:902")`
 - [ ] Check existing tests: `__tests__/screens/shared/profile/` for expected component testIDs
 - [ ] Preserve `useDeleteAccount` hook from `features/profile/hooks/useDeleteAccount.ts`
-- [ ] Register in `app/(shared)/settings/_layout.tsx` (create `_layout.tsx` if needed)
+- [ ] Register in `app/(shared)/_layout.tsx` if route options are needed; do not create `app/(shared)/settings/_layout.tsx`
 - [ ] Verify all acceptance_criteria
 
 ### SCR-SHARED-016 — Notification Center
 
-**Figma:** `2:988` | **File:** `app/(shared)/notifications/index.tsx` (create)
+**Figma:** `2:988` | **File:** `app/(shared)/notifications.tsx` (update)
 
 - [ ] Read `SCR-SHARED-016.yaml` — note 5 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:988")`
@@ -457,7 +495,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-017 — Review Form
 
-**Figma:** `2:1089` | **File:** `app/(shared)/review/form.tsx` (create)
+**Figma:** `2:1089` | **File:** `app/(shared)/review/[bookingId].tsx` (update)
 
 - [ ] Read `SCR-SHARED-017.yaml` — note 8 states, `COMP-STARRATING`, `COMP-INPUT`
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1089")`
@@ -467,7 +505,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-018 — Review Reminder
 
-**Figma:** `2:1180` | **File:** `features/bookings/components/ReviewReminderSheet.tsx` (create)
+**Figma:** `2:1180` | **File:** `features/review/components/ReviewReminder.tsx` (update)
 
 - [ ] Read `SCR-SHARED-018.yaml` — note 2 states (bottom sheet)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1180")`
@@ -476,7 +514,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-019 — Review Hard Lock
 
-**Figma:** `2:1215` | **File:** `features/bookings/components/ReviewHardLockSheet.tsx` (create)
+**Figma:** `2:1215` | **File:** `features/review/components/ReviewHardLock.tsx` (update)
 
 - [ ] Read `SCR-SHARED-019.yaml` — note 3 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1215")`
@@ -485,7 +523,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-020 — Suspended Account
 
-**Figma:** `2:1270` | **File:** `app/(shared)/suspended.tsx` (create)
+**Figma:** `2:1270` | **File:** `app/(shared)/account/suspended.tsx` (update)
 
 - [ ] Read `SCR-SHARED-020.yaml` — note 3 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1270")`
@@ -495,7 +533,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-SHARED-021 — Banned Account
 
-**Figma:** `2:1325` | **File:** `app/(shared)/banned.tsx` (create)
+**Figma:** `2:1325` | **File:** `app/(shared)/account/banned.tsx` (update)
 
 - [ ] Read `SCR-SHARED-021.yaml` — note 1 state
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1325")`
@@ -515,7 +553,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-INFRA-002 — App Update Required
 
-**Figma:** `2:1557` | **File:** `app/(shared)/update-required.tsx` (create)
+**Figma:** `2:1557` | **File:** `app/(shared)/app-update.tsx` (update)
 
 - [ ] Read `SCR-INFRA-002.yaml` — note 2 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1557")`
@@ -524,7 +562,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-INFRA-003 — Session Expired
 
-**Figma:** `2:1390` | **File:** `features/auth/components/SessionExpiredSheet.tsx` (create)
+**Figma:** `2:1390` | **File:** `app/(shared)/session-expired.tsx` (update)
 
 - [ ] Read `SCR-INFRA-003.yaml` — note 1 state (bottom sheet)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1390")`
@@ -533,7 +571,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-INFRA-004 — Terms of Service
 
-**Figma:** `2:1462` | **File:** `app/(shared)/legal/terms.tsx` (create)
+**Figma:** `2:1462` | **File:** `app/(shared)/legal/terms.tsx` (update)
 
 - [ ] Read `SCR-INFRA-004.yaml` — note 3 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1462")`
@@ -542,7 +580,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-INFRA-005 — Help & Support / FAQ
 
-**Figma:** `2:1594` | **File:** `app/(shared)/help/index.tsx` (create)
+**Figma:** `2:1594` | **File:** `app/(shared)/help.tsx` (update)
 
 - [ ] Read `SCR-INFRA-005.yaml` — note 3 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1594")`
@@ -591,7 +629,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-003 — Post Task — Intake Form
 
-**Figma:** `2:1880` | **File:** `app/(customer)/tasks/new/form.tsx`
+**Figma:** `2:1880` | **File:** `app/(customer)/tasks/new/intake.tsx`
 
 - [ ] Read `SCR-CUST-003.yaml` — note 3 states, `COMP-INPUT`, `COMP-FORMFIELD`, step 2 of 5
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:1880")`
@@ -650,11 +688,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-009 — Task Detail (Customer)
 
-**Figma:** `2:16205` | **File:** `app/task/[id]/index.tsx` (create/update)
+**Figma:** `2:16205` | **File:** `app/(customer)/tasks/[taskId]/index.tsx` (update)
 
 - [ ] Read `SCR-CUST-009.yaml` — note 9 states (largest screen in this task)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:16205")`
-- [ ] Check existing: `find apps/mobile/src/app/task -name "index*"`
+- [ ] Check existing: `find apps/mobile/src/app/(customer)/tasks -name \"[taskId]\" -o -name \"index.tsx\"`
 - [ ] Spec wins for state coverage — implement all 9 states; do not skip "no_applicants", "applicant_timeout", "booking_confirmed" states
 - [ ] Preserve any task detail and applicant hooks
 - [ ] Verify all acceptance_criteria
@@ -671,11 +709,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-011 — Applicants List
 
-**Figma:** `2:16393` | **File:** `app/task/[id]/applicants.tsx` (update)
+**Figma:** `2:16393` | **File:** `app/(customer)/tasks/[taskId]/applicants.tsx` (update)
 
 - [ ] Read `SCR-CUST-011.yaml` — note 6 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:16393")`
-- [ ] Read existing `app/task/[id]/applicants.tsx` and `__tests__/screens/customer/ApplicantsListScreen.test.tsx`
+- [ ] Read existing `app/(customer)/tasks/[taskId]/applicants.tsx` and `__tests__/screens/customer/ApplicantsListScreen.test.tsx`
 - [ ] Preserve applicant selection and booking confirmation hooks
 - [ ] Verify all acceptance_criteria
 
@@ -690,11 +728,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-013 — Tasker Public Profile
 
-**Figma:** `2:16551` | **File:** `app/profile/[id].tsx` (update)
+**Figma:** `2:16551` | **File:** `app/(customer)/taskers/[taskerId].tsx` (update)
 
 - [ ] Read `SCR-CUST-013.yaml` — note 3 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:16551")`
-- [ ] Read existing `app/profile/[id].tsx` and `__tests__/screens/customer/TaskerProfileScreen.test.tsx`
+- [ ] Read existing `app/(customer)/taskers/[taskerId].tsx` and `__tests__/screens/customer/TaskerProfileScreen.test.tsx`
 - [ ] Preserve `useTaskerProfile` hook; show `COMP-VERIFICATIONBADGE`, `COMP-REVIEWCARD`, `COMP-STARRATING`
 - [ ] Verify all acceptance_criteria
 
@@ -745,11 +783,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-017 — Booking Detail (Customer)
 
-**Figma:** `2:16933` | **File:** `app/(customer)/bookings/[id].tsx` (create/update)
+**Figma:** `2:16933` | **File:** `app/(customer)/bookings/[bookingId]/index.tsx` (update)
 
 - [ ] Read `SCR-CUST-017.yaml` — note 12 states (most complex screen in the plan)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:16933")`
-- [ ] Check existing: `find apps/mobile/src/app/(customer)/bookings -name "[id]*" -o -name "detail*"`
+- [ ] Check existing: `find apps/mobile/src/app/(customer)/bookings -name \"[bookingId]\" -o -name \"index.tsx\"`
 - [ ] Spec wins for all 12 states — implement every one; do not skip "reschedule_requested", "no_show_flagged", "dispute_open" states
 - [ ] Preserve `useBookingDetail`, `useBookingTimeline` hooks
 - [ ] Register in `app/(customer)/bookings/_layout.tsx` or `app/(customer)/_layout.tsx`
@@ -767,7 +805,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-019 — Booking Timeline
 
-**Figma:** `2:17093` | **File:** `features/bookings/components/BookingTimeline.tsx` (create/update)
+**Figma:** `2:17093` | **File:** `app/(customer)/bookings/[bookingId]/timeline.tsx` (update)
 
 - [ ] Read `SCR-CUST-019.yaml` — note 3 states, `COMP-TIMELINEEVENT`
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:17093")`
@@ -808,7 +846,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-023 — Rebook Shortcut
 
-**Figma:** `2:17568` | **File:** `features/tasks/components/RebookSheet.tsx` (create)
+**Figma:** `2:17568` | **File:** `app/(customer)/rebook.tsx` (update)
 
 - [ ] Read `SCR-CUST-023.yaml` — note 5 states (bottom sheet)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:17568")`
@@ -817,7 +855,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-024 — Dispute — Raise
 
-**Figma:** `2:17672` | **File:** `features/disputes/components/DisputeRaiseSheet.tsx` (create)
+**Figma:** `2:17672` | **File:** `app/(customer)/bookings/[bookingId]/dispute.tsx` (update)
 
 - [ ] Read `SCR-CUST-024.yaml` — note 8 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:17672")`
@@ -826,7 +864,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-025 — Dispute — Status
 
-**Figma:** `2:17747` | **File:** `features/disputes/components/DisputeStatusScreen.tsx` (create)
+**Figma:** `2:17747` | **File:** `app/(customer)/disputes/[disputeId]/index.tsx` (update)
 
 - [ ] Read `SCR-CUST-025.yaml` — note 7 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:17747")`
@@ -844,7 +882,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-CUST-027 — Instant Match — Customer
 
-**Figma:** `2:17939` | **File:** `features/tasks/components/InstantMatchSheet.tsx` (create)
+**Figma:** `2:17939` | **File:** `app/(customer)/tasks/[taskId]/instant-match.tsx` (create)
 
 - [ ] Read `SCR-CUST-027.yaml` — note 5 states (bottom sheet)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:17939")`
@@ -881,11 +919,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-TASK-002 — Task Detail (Tasker)
 
-**Figma:** `2:18192` | **File:** `app/task/[id]/index.tsx` (tasker view update — same file as SCR-CUST-009, different branch)
+**Figma:** `2:18192` | **File:** `app/task/[id].tsx` (tasker view update)
 
 - [ ] Read `SCR-TASK-002.yaml` — note 6 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:18192")`
-- [ ] Note: `app/task/[id]/index.tsx` is shared between customer and tasker views — coordinate with Agent 3 or ensure the file uses role-conditional rendering. If Agent 3 already updated this file, read the updated version before making changes.
+- [ ] Note: customer task detail is `app/(customer)/tasks/[taskId]/index.tsx`; tasker task detail is `app/task/[id].tsx`. Do not merge these into one screen.
 - [ ] Implement tasker-specific states without breaking customer states
 - [ ] Verify all acceptance_criteria
 
@@ -911,11 +949,11 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-TASK-013 — Booking Detail (Tasker)
 
-**Figma:** `2:48874` | **File:** `app/(tasker)/jobs/[id].tsx` (create/update)
+**Figma:** `2:48874` | **File:** `app/(tasker)/jobs/[bookingId]/index.tsx` (update)
 
 - [ ] Read `SCR-TASK-013.yaml` — note 9 states
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:48874")`
-- [ ] Check existing: `find apps/mobile/src/app/(tasker)/jobs -name "[id]*"`
+- [ ] Check existing: `find apps/mobile/src/app/(tasker)/jobs -name \"[bookingId]\" -o -name \"index.tsx\"`
 - [ ] Preserve `useBookingDetail`, `useMarkBookingDone` hooks
 - [ ] Register in `app/(tasker)/jobs/_layout.tsx` if new
 - [ ] Verify all acceptance_criteria
@@ -943,7 +981,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-TASK-016 — Tasker Stats Dashboard
 
-**Figma:** `2:49048` | **File:** `app/(tasker)/stats/index.tsx` (create)
+**Figma:** `2:49048` | **File:** `app/(tasker)/stats.tsx` (update)
 
 - [ ] Read `SCR-TASK-016.yaml` — note 3 states, `COMP-STATCARD`, `COMP-PROGRESSTRACKER`
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:49048")`
@@ -954,7 +992,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 
 ### SCR-TASK-017 — Lead Unlock — Accept/Decline
 
-**Figma:** `2:48641` | **File:** `features/tasks/components/LeadUnlockSheet.tsx` (create)
+**Figma:** `2:48641` | **File:** `features/bookings/components/LeadUnlockSheet.tsx` (update)
 
 - [ ] Read `SCR-TASK-017.yaml` — note 7 states (bottom sheet, credit cost shown)
 - [ ] `get_design_context("IljfnTQPkq7vpkmK1NN1NC", "2:48641")`
@@ -974,7 +1012,7 @@ Check each item from `SCR-SHARED-009.yaml acceptance_criteria` against the imple
 ### Agent 5 — Finish
 
 - [ ] `pnpm --filter @tasky/mobile typecheck` — must pass with zero errors
-- [ ] Note: if `app/task/[id]/index.tsx` was also modified by Agent 3, coordinate commits to avoid conflict — one agent should rebase on the other's changes
+- [ ] Note: Agent 3 owns `app/(customer)/tasks/[taskId]/index.tsx`; Agent 5 owns `app/task/[id].tsx`. Keep ownership split to avoid conflicts.
 - [ ] `git add apps/mobile/src/app/(tabs)/index.tsx apps/mobile/src/app/(tasker)/ apps/mobile/src/features/` && `git commit -m "feat(mobile): apply Figma designs to tasker flow (SCR-TASK-001, 002, 011–018)"`
 
 ---
@@ -987,4 +1025,6 @@ Run after all 5 agents have committed.
 - [ ] `pnpm --filter @tasky/mobile typecheck` — full pass across the combined changes
 - [ ] `pnpm --filter @tasky/mobile test` — run all mobile tests; check for testID regressions
 - [ ] If tests fail: read the failing test, identify the changed testID or missing component, fix the production code (never the test unless the testID genuinely changed per spec)
+- [ ] Run repo submit gates from `AGENTS.md`: `./gradlew test`, `./gradlew openApiValidate`, `pnpm -r typecheck`, `pnpm -r test`
 - [ ] `git commit -m "chore(mobile): integration typecheck pass after design refresh"`
+- [ ] For AI-authored commits, include trailer: `Co-Authored-By: Pi <noreply@pi.dev>`

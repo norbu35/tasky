@@ -158,7 +158,7 @@ screens:
 
   - id: SCR-SHARED-017
     name: "Review Form"
-    route: "/reviews/new"
+    route: "/(shared)/review/:bookingId"
     role: [customer, tasker]
     phase: "0-1"
     template: form_wizard

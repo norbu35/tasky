@@ -5,7 +5,7 @@ role:
   - tasker
 phase: 0-1
 template: form_wizard
-route: /reviews/new
+route: /(shared)/review/:bookingId
 context_refs:
   global: prompts/global-context.yaml
   journeys:

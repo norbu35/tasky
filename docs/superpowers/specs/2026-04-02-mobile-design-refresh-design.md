@@ -45,55 +45,60 @@ Every screen is implemented by combining three inputs:
 
 | SCR-ID | Screen name | Figma node | Code path | Action |
 |---|---|---|---|---|
-| SCR-SHARED-001 | Splash / Launch | 2:87 | `app/(auth)/index.tsx` | update |
+| SCR-SHARED-001 | Splash / Launch | 2:87 | `app/index.tsx` | update |
 | SCR-SHARED-002 | Auth — Login | 2:320 | `app/(auth)/index.tsx` | update |
-| SCR-SHARED-003 | Auth — OTP Verification | 2:193 | `app/(auth)/otp.tsx` | create |
-| SCR-SHARED-004 | Auth — OTP Migration Gate | 2:413 | `app/(auth)/otp-migration.tsx` | create |
-| SCR-SHARED-005 | Onboarding Carousel | 2:2 | `app/(auth)/onboarding.tsx` | create |
+| SCR-SHARED-003 | Auth — OTP Verification | 2:193 | `app/(auth)/otp.tsx` | update |
+| SCR-SHARED-004 | Auth — OTP Migration Gate | 2:413 | `app/(auth)/otp-migration.tsx` | update |
+| SCR-SHARED-005 | Onboarding Carousel | 2:2 | `app/onboarding.tsx` | update |
 | SCR-SHARED-006 | Role Selection | 2:38 | `app/(auth)/role-select.tsx` | update |
 | SCR-SHARED-007 | Permission Primer — Camera | 2:119 | `app/(auth)/permission-camera.tsx` | update |
 | SCR-SHARED-008 | Permission Primer — Location | 2:250 | `app/(auth)/permission-location.tsx` | update |
 | SCR-SHARED-009 | Permission Primer — Notifications | 2:362 | `app/(auth)/permission-notifications.tsx` | update |
 
-### Agent 2 — Inbox, Profile & Infrastructure (17 screens)
+### Agent 2A — Inbox & Profile (12 screens)
 
 | SCR-ID | Screen name | Figma node | Code path | Action |
 |---|---|---|---|---|
 | SCR-SHARED-010 | Inbox — Conversation List | 2:451 | `app/(tabs)/inbox/index.tsx` | update |
 | SCR-SHARED-011 | Inbox — Chat Detail | 2:553 | `app/(tabs)/inbox/[id].tsx` | update |
 | SCR-SHARED-012 | Profile — My Profile | 2:817 | `app/(tabs)/profile.tsx` | update |
-| SCR-SHARED-013 | Profile — Edit Profile | 2:756 | `app/(shared)/profile/edit.tsx` | create |
-| SCR-SHARED-014 | Profile — Settings | 2:634 | `app/(shared)/settings/index.tsx` | create |
-| SCR-SHARED-015 | Account Deletion Confirmation | 2:902 | `app/(shared)/settings/delete-account.tsx` | create |
-| SCR-SHARED-016 | Notification Center | 2:988 | `app/(shared)/notifications/index.tsx` | create |
-| SCR-SHARED-017 | Review Form | 2:1089 | `app/(shared)/review/form.tsx` | create |
-| SCR-SHARED-018 | Review Reminder | 2:1180 | `features/bookings/components/ReviewReminderSheet.tsx` | create |
-| SCR-SHARED-019 | Review Hard Lock | 2:1215 | `features/bookings/components/ReviewHardLockSheet.tsx` | create |
-| SCR-SHARED-020 | Suspended Account | 2:1270 | `app/(shared)/suspended.tsx` | create |
-| SCR-SHARED-021 | Banned Account | 2:1325 | `app/(shared)/banned.tsx` | create |
-| SCR-INFRA-001 | Network Error / Offline | 2:1360 | `components/templates/ErrorStateTemplate.tsx` | update |
-| SCR-INFRA-002 | App Update Required | 2:1557 | `app/(shared)/update-required.tsx` | create |
-| SCR-INFRA-003 | Session Expired | 2:1390 | `features/auth/components/SessionExpiredSheet.tsx` | create |
-| SCR-INFRA-004 | Terms of Service | 2:1462 | `app/(shared)/legal/terms.tsx` | create |
-| SCR-INFRA-005 | Help & Support / FAQ | 2:1594 | `app/(shared)/help/index.tsx` | create |
+| SCR-SHARED-013 | Profile — Edit Profile | 2:756 | `app/(shared)/profile/edit.tsx` | update |
+| SCR-SHARED-014 | Profile — Settings | 2:634 | `app/(shared)/profile/settings.tsx` | update |
+| SCR-SHARED-015 | Account Deletion Confirmation | 2:902 | `app/(shared)/profile/delete.tsx` | update |
+| SCR-SHARED-016 | Notification Center | 2:988 | `app/(shared)/notifications.tsx` | update |
+| SCR-SHARED-017 | Review Form | 2:1089 | `app/(shared)/review/[bookingId].tsx` | update |
+| SCR-SHARED-018 | Review Reminder | 2:1180 | `features/review/components/ReviewReminder.tsx` | update |
+| SCR-SHARED-019 | Review Hard Lock | 2:1215 | `features/review/components/ReviewHardLock.tsx` | update |
+| SCR-SHARED-020 | Suspended Account | 2:1270 | `app/(shared)/account/suspended.tsx` | update |
+| SCR-SHARED-021 | Banned Account | 2:1325 | `app/(shared)/account/banned.tsx` | update |
+
+### Agent 2B — Infrastructure (5 screens)
+
+| SCR-ID | Screen name | Figma node | Code path | Action |
+|---|---|---|---|---|
+| SCR-INFRA-001 | Network Error / Offline | 2:1360 | `app/(shared)/network-error.tsx` | update |
+| SCR-INFRA-002 | App Update Required | 2:1557 | `app/(shared)/app-update.tsx` | update |
+| SCR-INFRA-003 | Session Expired | 2:1390 | `app/(shared)/session-expired.tsx` | update |
+| SCR-INFRA-004 | Terms of Service | 2:1462 | `app/(shared)/legal/terms.tsx` | update |
+| SCR-INFRA-005 | Help & Support / FAQ | 2:1594 | `app/(shared)/help.tsx` | update |
 
 ### Agent 3 — Customer Task Flow (13 screens)
 
 | SCR-ID | Screen name | Figma node | Code path | Action |
 |---|---|---|---|---|
-| SCR-CUST-001 | My Tasks — Task List | 2:1689 | `app/(tabs)/index.tsx` (customer) | update |
-| SCR-CUST-002 | Post Task — Category Selection | 2:1783 | `app/(customer)/tasks/new/category.tsx` | create/update |
-| SCR-CUST-003 | Post Task — Intake Form | 2:1880 | `app/(customer)/tasks/new/form.tsx` | create/update |
-| SCR-CUST-004 | Post Task — Photo Upload | 2:1956 | `app/(customer)/tasks/new/photos.tsx` | create/update |
-| SCR-CUST-005 | Post Task — Location Pin | 2:2021 | `app/(customer)/tasks/new/location.tsx` | create/update |
-| SCR-CUST-006 | Post Task — Schedule & Budget | 2:2080 | `app/(customer)/tasks/new/schedule.tsx` | create/update |
-| SCR-CUST-007 | Post Task — Review & Submit | 2:2212 | `app/(customer)/tasks/new/review.tsx` | create/update |
+| SCR-CUST-001 | My Tasks — Task List | 2:1689 | `app/(customer)/tasks/index.tsx` | update |
+| SCR-CUST-002 | Post Task — Category Selection | 2:1783 | `app/(customer)/tasks/new/category.tsx` | update |
+| SCR-CUST-003 | Post Task — Intake Form | 2:1880 | `app/(customer)/tasks/new/intake.tsx` | update |
+| SCR-CUST-004 | Post Task — Photo Upload | 2:1956 | `app/(customer)/tasks/new/photos.tsx` | update |
+| SCR-CUST-005 | Post Task — Location Pin | 2:2021 | `app/(customer)/tasks/new/location.tsx` | update |
+| SCR-CUST-006 | Post Task — Schedule & Budget | 2:2080 | `app/(customer)/tasks/new/schedule.tsx` | update |
+| SCR-CUST-007 | Post Task — Review & Submit | 2:2212 | `app/(customer)/tasks/new/review.tsx` | update |
 | SCR-CUST-008 | Task Posted — Success | 2:16276 | `app/(customer)/tasks/new/success.tsx` | update |
-| SCR-CUST-009 | Task Detail (Customer) | 2:16205 | `app/task/[id]/index.tsx` | create/update |
+| SCR-CUST-009 | Task Detail (Customer) | 2:16205 | `app/(customer)/tasks/[taskId]/index.tsx` | update |
 | SCR-CUST-010 | Task Cancel Confirmation | 2:16325 | `features/tasks/components/TaskCancelSheet.tsx` | update |
-| SCR-CUST-011 | Applicants List | 2:16393 | `app/task/[id]/applicants.tsx` | update |
-| SCR-CUST-012 | Applicant Timeout/Decline | 2:16512 | `features/tasks/components/ApplicantDeclineSheet.tsx` | create |
-| SCR-CUST-013 | Tasker Public Profile | 2:16551 | `app/profile/[id].tsx` | update |
+| SCR-CUST-011 | Applicants List | 2:16393 | `app/(customer)/tasks/[taskId]/applicants.tsx` | update |
+| SCR-CUST-012 | Applicant Timeout/Decline | 2:16512 | `app/(customer)/tasks/[taskId]/applicants.tsx` | update |
+| SCR-CUST-013 | Tasker Public Profile | 2:16551 | `app/(customer)/taskers/[taskerId].tsx` | update |
 
 ### Agent 4 — Customer Booking Flow (14 screens)
 
@@ -101,32 +106,32 @@ Every screen is implemented by combining three inputs:
 |---|---|---|---|---|
 | SCR-CUST-014 | Booking Confirmation | 2:16679 | `app/(customer)/bookings/confirm.tsx` | update |
 | SCR-CUST-015 | Booking Confirmed — Success | 2:16767 | `app/(customer)/bookings/confirmed.tsx` | update |
-| SCR-CUST-016 | Customer Bookings List | 2:16826 | `app/(tabs)/bookings.tsx` | update |
-| SCR-CUST-017 | Booking Detail (Customer) | 2:16933 | `app/(customer)/bookings/[id].tsx` | create/update |
-| SCR-CUST-018 | Confirm Completion — Decision | 2:17017 | `features/bookings/components/ConfirmCompletionSheet.tsx` | create |
-| SCR-CUST-019 | Booking Timeline | 2:17093 | `features/bookings/components/BookingTimeline.tsx` | create/update |
-| SCR-CUST-020 | Reschedule | 2:17223 | `features/bookings/components/RescheduleModal.tsx` | update |
+| SCR-CUST-016 | Customer Bookings List | 2:16826 | `app/(customer)/bookings/index.tsx` | update |
+| SCR-CUST-017 | Booking Detail (Customer) | 2:16933 | `app/(customer)/bookings/[bookingId]/index.tsx` | update |
+| SCR-CUST-018 | Confirm Completion — Decision | 2:17017 | `features/bookings/components/ConfirmCompletionSheet.tsx` | update |
+| SCR-CUST-019 | Booking Timeline | 2:17093 | `app/(customer)/bookings/[bookingId]/timeline.tsx` | update |
+| SCR-CUST-020 | Reschedule | 2:17223 | `app/(customer)/bookings/[bookingId]/reschedule.tsx` | update |
 | SCR-CUST-021 | No-Show Flag + Reminder | 2:17362 | `features/bookings/components/CustomerNoShowSheet.tsx` | update |
-| SCR-CUST-022 | Booking Cancel (Customer) | 2:17462 | `features/bookings/components/CustomerCancelSheet.tsx` | create/update |
-| SCR-CUST-023 | Rebook Shortcut | 2:17568 | `features/tasks/components/RebookSheet.tsx` | create |
-| SCR-CUST-024 | Dispute — Raise | 2:17672 | `features/disputes/components/DisputeRaiseSheet.tsx` | create |
-| SCR-CUST-025 | Dispute — Status | 2:17747 | `features/disputes/components/DisputeStatusScreen.tsx` | create |
+| SCR-CUST-022 | Booking Cancel (Customer) | 2:17462 | `features/bookings/components/CustomerCancelSheet.tsx` | update |
+| SCR-CUST-023 | Rebook Shortcut | 2:17568 | `app/(customer)/rebook.tsx` | update |
+| SCR-CUST-024 | Dispute — Raise | 2:17672 | `app/(customer)/bookings/[bookingId]/dispute.tsx` | update |
+| SCR-CUST-025 | Dispute — Status | 2:17747 | `app/(customer)/disputes/[disputeId]/index.tsx` | update |
 | SCR-CUST-026 | No Applicant Rescue | 2:17850 | `features/tasks/components/NoApplicantRescue.tsx` | update |
-| SCR-CUST-027 | Instant Match — Customer | 2:17939 | `features/tasks/components/InstantMatchSheet.tsx` | create |
+| SCR-CUST-027 | Instant Match — Customer | 2:17939 | `app/(customer)/tasks/[taskId]/instant-match.tsx` | update |
 
 ### Agent 5 — Tasker Flow (10 screens)
 
 | SCR-ID | Screen name | Figma node | Code path | Action |
 |---|---|---|---|---|
-| SCR-TASK-001 | Browse — Task Feed | 2:18034 | `app/(tabs)/index.tsx` (tasker) | update |
-| SCR-TASK-002 | Task Detail (Tasker) | 2:18192 | `app/task/[id]/index.tsx` (tasker view) | update |
+| SCR-TASK-001 | Browse — Task Feed | 2:18034 | `app/(tabs)/index.tsx` | update |
+| SCR-TASK-002 | Task Detail (Tasker) | 2:18192 | `app/(tasker)/tasks/[taskId].tsx` | update (alias route) |
 | SCR-TASK-011 | Application Sent | 2:18408 | `features/tasks/components/ApplicationSentSuccess.tsx` | update |
 | SCR-TASK-012 | My Jobs — Tasker View | 2:48522 | `app/(tasker)/jobs/index.tsx` | update |
-| SCR-TASK-013 | Booking Detail (Tasker) | 2:48874 | `app/(tasker)/jobs/[id].tsx` | create/update |
-| SCR-TASK-014 | No-Show Flag (Tasker) | 2:48978 | `features/bookings/components/TaskerNoShowSheet.tsx` | create/update |
-| SCR-TASK-015 | Booking Cancel (Tasker) | 2:19029 | `features/bookings/components/TaskerCancelSheet.tsx` | create/update |
-| SCR-TASK-016 | Tasker Stats Dashboard | 2:49048 | `app/(tasker)/stats/index.tsx` | create |
-| SCR-TASK-017 | Lead Unlock — Accept/Decline | 2:48641 | `features/tasks/components/LeadUnlockSheet.tsx` | create |
+| SCR-TASK-013 | Booking Detail (Tasker) | 2:48874 | `app/(tasker)/jobs/[bookingId]/index.tsx` | update |
+| SCR-TASK-014 | No-Show Flag (Tasker) | 2:48978 | `features/bookings/components/TaskerNoShowSheet.tsx` | update |
+| SCR-TASK-015 | Booking Cancel (Tasker) | 2:19029 | `features/bookings/components/TaskerCancelSheet.tsx` | update |
+| SCR-TASK-016 | Tasker Stats Dashboard | 2:49048 | `app/(tasker)/stats.tsx` | update |
+| SCR-TASK-017 | Lead Unlock — Accept/Decline | 2:48641 | `features/bookings/components/LeadUnlockSheet.tsx` | update |
 | SCR-TASK-018 | Privacy Policy | 2:48774 | `app/(shared)/legal/privacy.tsx` | update |
 
 ---
