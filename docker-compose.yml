@@ -72,7 +72,7 @@ services:
       retries: 6
 
   pgbouncer:
-    image: bitnami/pgbouncer:1
+    image: edoburu/pgbouncer:latest
     container_name: tasky-pgbouncer
     restart: unless-stopped
     environment:

@@ -94,6 +94,7 @@ describe('LocationScreen (SCR-CUST-005)', () => {
 
   it('renders as step 4 of 7 wizard', () => {
     render(<LocationScreen />);
+    expect(screen.getByText('Step 4 of 7')).toBeTruthy();
     expect(screen.getByLabelText('Step 4 of 7')).toBeTruthy();
   });
 
@@ -103,9 +104,20 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
-  it('next shows inline error until a pin is placed', () => {
+  it('keeps next disabled until a pin is placed', () => {
     render(<LocationScreen />);
-    fireEvent.press(screen.getByTestId('location-screen-next'));
-    expect(screen.getAllByText('Pin the task location on the map').length).toBeGreaterThan(1);
+    const nextButton = screen.getByTestId('location-screen-next');
+
+    expect(nextButton).toBeDisabled();
+    fireEvent.press(nextButton);
+    expect(mockPush).not.toHaveBeenCalled();
+
+    fireEvent(screen.getByTestId('location-map'), 'onPress', {
+      nativeEvent: {
+        coordinate: { latitude: 47.92123, longitude: 106.91876 },
+      },
+    });
+
+    expect(nextButton).not.toBeDisabled();
   });
 });

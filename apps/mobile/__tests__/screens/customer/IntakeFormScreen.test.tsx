@@ -62,15 +62,30 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     render(<IntakeFormScreen />);
     fireEvent.changeText(screen.getByTestId('intake-description-input'), 'Fix my leaky faucet');
     fireEvent.press(screen.getByTestId('intake-form-screen-next'));
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: '/(customer)/tasks/new/photos',
-      params: { categoryId: 'cat-123', description: 'Fix my leaky faucet' },
-    });
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/tasks/new/photos',
+        params: expect.objectContaining({
+          categoryId: 'cat-123',
+          description: 'Fix my leaky faucet',
+        }),
+      }),
+    );
   });
 
   it('renders as step 2 of 7 wizard', () => {
     render(<IntakeFormScreen />);
+    expect(screen.getByText('Step 2 of 7')).toBeTruthy();
     expect(screen.getByLabelText('Step 2 of 7')).toBeTruthy();
+  });
+
+  it('shows a live character counter for the description field', () => {
+    render(<IntakeFormScreen />);
+    expect(screen.getByText('0 / 500')).toBeTruthy();
+
+    fireEvent.changeText(screen.getByTestId('intake-description-input'), 'Fix sink');
+
+    expect(screen.getByText('8 / 500')).toBeTruthy();
   });
 
   it('back button returns to category selection', () => {

@@ -24,6 +24,7 @@ export function PhotoGrid({
   const { t } = useTranslation();
   const visiblePhotos = photos.slice(0, maxPhotos);
   const remainingCount = photos.length - maxPhotos;
+  const placeholderCount = showAddButton ? Math.max(0, maxPhotos - visiblePhotos.length) : 0;
 
   return (
     <View style={styles.grid} testID={testID}>
@@ -37,16 +38,21 @@ export function PhotoGrid({
           )}
         </View>
       ))}
-      {showAddButton && visiblePhotos.length < maxPhotos && (
+      {Array.from({ length: placeholderCount }).map((_, index) => (
         <Pressable
+          key={`placeholder-${index}`}
           style={styles.addButton}
           onPress={onAddPhoto}
           accessibilityRole="button"
-          accessibilityLabel={t('common.addPhoto')}
+          accessibilityLabel={t('common.addPhoto', 'Add Photo')}
+          testID={testID ? `${testID}-add-${index}` : undefined}
         >
-          <Plus size={24} color={colors.mutedForeground} />
+          <View style={styles.addIconWrap}>
+            <Plus size={20} color={colors.primary} />
+          </View>
+          <Text style={styles.addLabel}>{t('customer.postTask.photosAdd', 'Add Photo')}</Text>
         </Pressable>
-      )}
+      ))}
     </View>
   );
 }
@@ -88,5 +94,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.muted,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  addIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary + '12',
+  },
+  addLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.primary,
+    textAlign: 'center',
   },
 });

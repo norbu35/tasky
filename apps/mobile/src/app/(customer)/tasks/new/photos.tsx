@@ -32,6 +32,9 @@ export default function PhotoUploadScreen() {
     photos?: string;
   }>();
   const [photos] = useState<string[]>(() => parsePhotoKeys(params.photos));
+  const stepLabel = t('taskPost.step', 'Step {{current}} of {{total}}')
+    .replace('{{current}}', '3')
+    .replace('{{total}}', '7');
 
   const handleAddPhoto = () => {
     // In production, this would open camera/gallery picker
@@ -62,10 +65,11 @@ export default function PhotoUploadScreen() {
       onNext={handleNext}
       onBack={handleBack}
       nextLabel={
-        photos.length > 0 ? t('common.next', 'Next') : t('customer.postTask.photosSkip', 'Skip')
+        photos.length > 0 ? t('common.continue', 'Continue') : t('customer.postTask.photosSkip', 'Skip')
       }
       testID="photo-upload-screen"
     >
+      <Text style={styles.stepLabel}>{stepLabel}</Text>
       <Text style={styles.title}>{t('customer.postTask.photosTitle', 'Add Photos')}</Text>
       <Text style={styles.subtitle}>
         {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
@@ -77,19 +81,32 @@ export default function PhotoUploadScreen() {
         showAddButton
         testID="photo-upload-grid"
       />
-      <View style={styles.addButtonContainer}>
-        <Text style={styles.addButtonText} onPress={handleAddPhoto} testID="photo-add-button">
-          {t('customer.postTask.photosAdd', 'Add Photo')}
-        </Text>
-      </View>
       <Text style={styles.helperText}>
         {t('customer.postTask.photosOptional', 'Photos are optional — you can skip')}
       </Text>
+      <View style={styles.tipCard}>
+        <Text style={styles.tipTitle}>
+          {t('customer.postTask.photosTipTitle', 'Photo tip')}
+        </Text>
+        <Text style={styles.tipBody}>
+          {t(
+            'customer.postTask.photosTipBody',
+            'Natural light and wide shots help Taskers price the work more accurately.',
+          )}
+        </Text>
+      </View>
     </FormWizardTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  stepLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.textSecondary,
+  },
   title: {
     fontSize: typography.heading,
     fontWeight: '600',
@@ -98,19 +115,29 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: typography.body,
     color: colors.textSecondary,
-  },
-  addButtonContainer: {
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  addButtonText: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.accent,
+    lineHeight: typography.body * 1.5,
   },
   helperText: {
     fontSize: typography.caption,
     color: colors.mutedForeground,
     textAlign: 'center',
+  },
+  tipCard: {
+    borderRadius: mobileTheme.radius.lg,
+    padding: spacing.lg,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.sm,
+  },
+  tipTitle: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  tipBody: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: typography.caption * 1.6,
   },
 });

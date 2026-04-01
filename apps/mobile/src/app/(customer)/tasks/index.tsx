@@ -11,7 +11,7 @@ import { PriceTag } from '../../../components/ui/PriceTag';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 const FILTER_TABS = [
   { id: 'all', label: 'All' },
@@ -37,6 +37,9 @@ export default function MyTasksListScreen() {
   const [activeFilter, setActiveFilter] = useState<string[]>(['all']);
 
   const tasks = data?.data ?? [];
+  const openCount = tasks.filter((task: any) => mapStatus(task.status ?? 'open') === 'open').length;
+  const assignedCount = tasks.filter((task: any) => mapStatus(task.status ?? 'open') === 'assigned').length;
+  const completedCount = tasks.filter((task: any) => mapStatus(task.status ?? 'open') === 'completed').length;
 
   const filteredTasks = activeFilter.includes('all')
     ? tasks
@@ -113,6 +116,30 @@ export default function MyTasksListScreen() {
           <Bell size={22} color={colors.primary} />
         </Pressable>
       </View>
+      <View style={styles.hero}>
+        <Text style={styles.heroEyebrow}>
+          {t('customer.taskList.heroEyebrow', 'Your workspace')}
+        </Text>
+        <Text style={styles.heroTitle}>
+          {t('customer.taskList.heroTitle', 'Track active, assigned, and completed work')}
+        </Text>
+        <View style={styles.heroStats}>
+          <View style={styles.statChip}>
+            <Text style={styles.statValue}>{openCount}</Text>
+            <Text style={styles.statLabel}>{t('customer.taskList.filterOpen', 'Open')}</Text>
+          </View>
+          <View style={styles.statChip}>
+            <Text style={styles.statValue}>{assignedCount}</Text>
+            <Text style={styles.statLabel}>{t('customer.taskList.filterAssigned', 'Assigned')}</Text>
+          </View>
+          <View style={styles.statChip}>
+            <Text style={styles.statValue}>{completedCount}</Text>
+            <Text style={styles.statLabel}>
+              {t('customer.taskList.filterCompleted', 'Completed')}
+            </Text>
+          </View>
+        </View>
+      </View>
       <FeedListTemplate
         data={filteredTasks}
         renderItem={renderTaskCard}
@@ -124,7 +151,7 @@ export default function MyTasksListScreen() {
         emptyTitle={t('customer.taskList.emptyTitle', 'No tasks yet')}
         emptyDescription={t(
           'customer.taskList.emptyDescription',
-          'Post your first task and find trusted help',
+          'Post your first task and find a trusted tasker',
         )}
         emptyCtaLabel={t('customer.taskList.emptyCta', 'Post a Task')}
         emptyCtaOnPress={handleFabPress}
@@ -139,6 +166,7 @@ export default function MyTasksListScreen() {
         accessibilityLabel={t('customer.taskList.emptyCta', 'Post a Task')}
       >
         <Plus size={28} color={colors.primaryForeground} />
+        <Text style={styles.fabLabel}>{t('customer.taskList.emptyCta', 'Post a Task')}</Text>
       </Pressable>
     </View>
   );
@@ -172,22 +200,72 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  hero: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
+    gap: spacing.sm,
+  },
+  heroEyebrow: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.textSecondary,
+  },
+  heroTitle: {
+    fontSize: typography.heading,
+    fontWeight: '800',
+    color: colors.primaryDeep,
+    lineHeight: typography.heading * 1.15,
+  },
+  heroStats: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  statChip: {
+    flex: 1,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.xs,
+  },
+  statValue: {
+    fontSize: typography.heading,
+    fontWeight: '800',
+    color: colors.primaryDeep,
+  },
+  statLabel: {
+    fontSize: typography.caption,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
   fab: {
     position: 'absolute',
     bottom: 100,
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    right: spacing.lg,
+    minHeight: 60,
+    borderRadius: radius.full,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
     shadowColor: mobileTheme.shadows.elevated.color,
     shadowOffset: mobileTheme.shadows.elevated.offset,
     shadowOpacity: mobileTheme.shadows.elevated.opacity,
     shadowRadius: mobileTheme.shadows.elevated.radius,
     elevation: mobileTheme.shadows.elevated.elevation,
     zIndex: 999,
+  },
+  fabLabel: {
+    fontSize: typography.label,
+    fontWeight: '700',
+    color: colors.primaryForeground,
   },
   cardHeader: {
     flexDirection: 'row',

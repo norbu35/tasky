@@ -50,7 +50,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
     expect(screen.getByText('Select Category')).toBeTruthy();
-    expect(screen.getByText('What do you need help with?')).toBeTruthy();
+    expect(screen.getByText('What type of task do you need?')).toBeTruthy();
   });
 
   it('renders step indicator for step 1 of 7', () => {
@@ -79,9 +79,12 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
       isError: false,
     });
     render(<CategorySelectionScreen />);
+    expect(screen.getByTestId('category-selection-grid')).toBeTruthy();
     expect(screen.getByText('Cleaning')).toBeTruthy();
     expect(screen.getByText('Handyman')).toBeTruthy();
     expect(screen.getByText('Moving')).toBeTruthy();
+    expect(screen.getByText('Deep, regular, or move-out')).toBeTruthy();
+    expect(screen.getByText('Repairs and installations')).toBeTruthy();
   });
 
   it('selecting a category navigates to intake form with categoryId', () => {

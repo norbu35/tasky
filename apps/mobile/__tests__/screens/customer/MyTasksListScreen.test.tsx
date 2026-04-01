@@ -73,7 +73,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     render(<MyTasksListScreen />);
     expect(screen.getByText('My Tasks')).toBeTruthy();
     expect(screen.getByText('No tasks yet')).toBeTruthy();
-    expect(screen.getByText('Post your first task and find trusted help')).toBeTruthy();
+    expect(screen.getByText('Post your first task and find a trusted tasker')).toBeTruthy();
   });
 
   it('renders a notifications bell action in the header', () => {
@@ -107,7 +107,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByText('Post a Task')).toBeTruthy();
+    expect(screen.getByTestId('my-tasks-feed-empty-cta')).toBeTruthy();
   });
 
   it('renders task cards with title and status when populated', () => {
@@ -174,10 +174,11 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
+    expect(screen.getByTestId('my-tasks-filter-bar')).toBeTruthy();
     expect(screen.getByText('All')).toBeTruthy();
-    expect(screen.getByText('Open')).toBeTruthy();
-    expect(screen.getByText('Assigned')).toBeTruthy();
-    expect(screen.getByText('Completed')).toBeTruthy();
+    expect(screen.getAllByText('Open').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Assigned').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Completed').length).toBeGreaterThan(0);
   });
 
   it('renders FAB button', () => {

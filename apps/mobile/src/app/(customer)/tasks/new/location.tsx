@@ -39,15 +39,15 @@ export default function LocationScreen() {
       ? { latitude: initialLat, longitude: initialLng }
       : null,
   );
-  const [pinError, setPinError] = useState('');
+  const stepLabel = t('taskPost.step', 'Step {{current}} of {{total}}')
+    .replace('{{current}}', '4')
+    .replace('{{total}}', '7');
 
   const handleNext = () => {
     if (!pin) {
-      setPinError(t('customer.postTask.pinRequired', 'Pin the task location on the map'));
       return;
     }
 
-    setPinError('');
     router.push({
       pathname: '/(customer)/tasks/new/schedule',
       params: {
@@ -74,8 +74,10 @@ export default function LocationScreen() {
       onNext={handleNext}
       onBack={handleBack}
       nextLabel={t('common.continue', 'Continue')}
+      nextDisabled={!pin}
       testID="location-screen"
     >
+      <Text style={styles.stepLabel}>{stepLabel}</Text>
       <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
       <Text style={styles.instruction}>
         {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
@@ -91,9 +93,6 @@ export default function LocationScreen() {
           }}
           onPress={(e) => {
             setPin(e.nativeEvent.coordinate);
-            if (pinError) {
-              setPinError('');
-            }
           }}
           testID="location-map"
         >
@@ -104,11 +103,21 @@ export default function LocationScreen() {
           />
           {pin && <Marker coordinate={pin} />}
         </MapView>
-        <Text style={[styles.mapHint, pinError ? styles.mapHintError : null]}>
-          {pinError ||
-            (pin
-              ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
-              : t('customer.postTask.tapToPin', 'Tap the map to pin the location'))}
+        <Text style={styles.mapHint}>
+          {pin
+            ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
+            : t('customer.postTask.tapToPin', 'Tap the map to pin the location')}
+        </Text>
+      </View>
+
+      <View style={styles.statusCard}>
+        <Text style={styles.statusLabel}>
+          {t('customer.postTask.locationStatusTitle', 'Location status')}
+        </Text>
+        <Text style={styles.statusValue}>
+          {pin
+            ? t('customer.postTask.locationPinned', 'Pinned and ready to continue')
+            : t('customer.postTask.locationAwaitingPin', 'Drop a pin to unlock the next step')}
         </Text>
       </View>
 
@@ -135,6 +144,13 @@ export default function LocationScreen() {
 }
 
 const styles = StyleSheet.create({
+  stepLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.textSecondary,
+  },
   title: {
     fontSize: typography.heading,
     fontWeight: '600',
@@ -153,7 +169,7 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: 220,
-    borderRadius: 12,
+    borderRadius: mobileTheme.radius.lg,
     overflow: 'hidden',
   },
   mapHint: {
@@ -162,8 +178,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.xs,
   },
-  mapHintError: {
-    color: colors.danger,
+  statusCard: {
+    borderRadius: mobileTheme.radius.lg,
+    padding: spacing.lg,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.xs,
+  },
+  statusLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.textSecondary,
+  },
+  statusValue: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryDeep,
   },
   privacyNote: {
     fontSize: typography.caption,

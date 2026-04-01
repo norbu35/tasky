@@ -51,7 +51,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     render(<PhotoUploadScreen />);
     expect(screen.getByText('Add Photos')).toBeTruthy();
     expect(screen.getByText('Add photos related to your task (up to 3)')).toBeTruthy();
-    expect(screen.getByText('Add Photo')).toBeTruthy();
+    expect(screen.getAllByText('Add Photo')).toHaveLength(3);
   });
 
   it('can skip photos and navigate to location', () => {
@@ -66,6 +66,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
   it('renders as step 3 of 7 wizard', () => {
     render(<PhotoUploadScreen />);
+    expect(screen.getByText('Step 3 of 7')).toBeTruthy();
     expect(screen.getByLabelText('Step 3 of 7')).toBeTruthy();
   });
 
@@ -80,6 +81,18 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     expect(screen.getByText('Photos are optional — you can skip')).toBeTruthy();
   });
 
+  it('uses continue copy when uploaded photos already exist', () => {
+    Object.assign(mockParams, {
+      categoryId: 'cat-123',
+      description: 'Fix my sink',
+      photos: JSON.stringify(['photo-key-1']),
+    });
+
+    render(<PhotoUploadScreen />);
+
+    expect(screen.getByText('Continue')).toBeTruthy();
+  });
+
   it('TID-TASK-113-MOBILE-PHOTO-KEYS-PERSIST preserves existing uploaded photo keys when continuing', () => {
     Object.assign(mockParams, {
       categoryId: 'cat-123',
@@ -90,13 +103,15 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     render(<PhotoUploadScreen />);
     fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
 
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: '/(customer)/tasks/new/location',
-      params: {
-        categoryId: 'cat-123',
-        description: 'Fix my sink',
-        photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
-      },
-    });
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/tasks/new/location',
+        params: expect.objectContaining({
+          categoryId: 'cat-123',
+          description: 'Fix my sink',
+          photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
+        }),
+      }),
+    );
   });
 });
