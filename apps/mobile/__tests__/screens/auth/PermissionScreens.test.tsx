@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { useAppStore } from '../../../src/store/appStore';
 
 import PermissionCameraScreen from '../../../src/app/(auth)/permission-camera';
@@ -160,16 +160,11 @@ describe('Permission Location Screen (SCR-SHARED-008)', () => {
 describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
   it('renders notification permission copy from Figma', () => {
     render(<PermissionNotificationsScreen />);
-    expect(screen.getByTestId('permission-notifications-header')).toBeTruthy();
-    expect(screen.getByTestId('permission-notifications-hero')).toBeTruthy();
-    expect(screen.getByTestId('permission-notifications-benefits')).toBeTruthy();
-    expect(screen.getByTestId('permission-notifications-footer')).toBeTruthy();
-    expect(screen.getByTestId('permission-notifications-benefit-0')).toBeTruthy();
-    expect(screen.getByText('Мэдэгдэл хүлээн авах')).toBeTruthy();
-    expect(screen.getByText('Шуурхай мэдээлэл')).toBeTruthy();
-    expect(screen.getByText('Аюулгүй байдал')).toBeTruthy();
-    expect(screen.getByText('Сануулах үйлчилгээ')).toBeTruthy();
-    expect(screen.getByText('Мэдэгдэл зөвшөөрөх')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-primer')).toBeTruthy();
+    expect(screen.getByTestId('permission-notifications-progress')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл авах зөвшөөрөл')).toBeTruthy();
+    expect(screen.getByText('Шинэ даалгавар, мессеж, захиалгын мэдэгдэл авахад хэрэгтэй')).toBeTruthy();
+    expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
     expect(screen.getByText('Дараа')).toBeTruthy();
   });
 
@@ -195,17 +190,40 @@ describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
     expect(screen.getByText('Үргэлжлүүлэх')).toBeTruthy();
   });
 
-  it('Skip navigates to home (tabs)', () => {
+  it('Skip routes customers into the my tasks landing screen', () => {
     render(<PermissionNotificationsScreen />);
     fireEvent.press(screen.getByTestId('permission-skip-button'));
-    expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
   });
 
-  it('final completion marks onboarding done before navigating home', () => {
+  it('final completion marks onboarding done before navigating the customer flow', () => {
     render(<PermissionNotificationsScreen />);
     fireEvent.press(screen.getByTestId('permission-skip-button'));
     expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
+    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
+  });
+
+  it('routes taskers into the task feed after the final primer', () => {
+    useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'tasker' });
+
+    render(<PermissionNotificationsScreen />);
+    fireEvent.press(screen.getByTestId('permission-skip-button'));
+
+    expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+  });
+
+  it('granted notification access completes onboarding into the role-specific home', async () => {
+    useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'tasker' });
+
+    render(<PermissionNotificationsScreen />);
+    fireEvent.press(screen.getByTestId('permission-allow-button'));
+
+    expect(mockRequestNotificationPermission).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
+      expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+    });
   });
 
   it('has a testID on the screen container', () => {

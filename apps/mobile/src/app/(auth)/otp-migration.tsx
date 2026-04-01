@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
@@ -15,25 +15,47 @@ import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography, shadows } = mobileTheme;
 
-type MigrationState = 'default' | 'invalid_phone' | 'verifying';
+type MigrationState = 'default' | 'invalid_phone' | 'verifying' | 'error_network';
 
 function resolveState(value?: string): MigrationState {
-  if (value === 'invalid_phone' || value === 'verifying') {
-    return value;
+  if (
+    value === 'invalid_phone' ||
+    value === 'verifying' ||
+    value === 'error_network' ||
+    value === 'network_error'
+  ) {
+    return value === 'network_error' ? 'error_network' : value;
   }
   return 'default';
 }
 
 export default function OtpMigrationScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const params = useLocalSearchParams<{ phone?: string; state?: string }>();
   const state = resolveState(typeof params.state === 'string' ? params.state : undefined);
   const initialPhone = typeof params.phone === 'string' ? params.phone.replace(/\D/g, '').slice(0, 8) : '';
   const [phone, setPhone] = React.useState(initialPhone);
   const isValidPhone = /^\d{8}$/.test(phone);
   const showError = state === 'invalid_phone';
+  const showNetworkError = state === 'error_network';
   const isLoading = state === 'verifying';
   const isSubmitDisabled = !isValidPhone || showError || isLoading;
+
+  const handleSubmit = () => {
+    if (!isValidPhone || isLoading) {
+      return;
+    }
+
+    router.push({
+      pathname: '/(auth)/otp',
+      params: { phone },
+    });
+  };
+
+  const handleSkip = () => {
+    router.replace('/(tabs)');
+  };
 
   return (
     <SafeAreaView style={styles.container} testID="otp-migration-screen">
@@ -57,12 +79,14 @@ export default function OtpMigrationScreen() {
           <Text style={styles.heading}>
             {t('auth.otpMigration.heading', 'Утасны дугаараа бүртгүүлнэ үү')}
           </Text>
-          <Text style={styles.description}>
-            {t(
-              'auth.otpMigration.description',
-              'Та хуучин систем дээрх бүртгэлээ энэ апп-д шилжүүлэхийн тулд утасны дугаараа баталгаажуулна уу. Энэ нь таны аюулгүй байдалд чухал юм.',
-            )}
-          </Text>
+          {!isLoading ? (
+            <Text style={styles.description}>
+              {t(
+                'auth.otpMigration.description',
+                'Та хуучин систем дээрх бүртгэлээ энэ апп-д шилжүүлэхийн тулд утасны дугаараа баталгаажуулна уу. Энэ нь таны аюулгүй байдалд чухал юм.',
+              )}
+            </Text>
+          ) : null}
         </View>
 
         <View style={styles.formArea}>
@@ -75,7 +99,9 @@ export default function OtpMigrationScreen() {
             errorText={
               showError
                 ? t('auth.otpMigration.errorInvalidPhone', 'Утасны дугаар буруу байна')
-                : undefined
+                : showNetworkError
+                  ? t('auth.otpMigration.errorNetwork', 'Интернэт холболтоо шалгана уу')
+                  : undefined
             }
           >
             <View style={styles.phoneInputShell}>
@@ -101,15 +127,19 @@ export default function OtpMigrationScreen() {
             label={t('auth.otpMigration.submit', 'Код авах')}
             isLoading={isLoading}
             disabled={isSubmitDisabled}
+            onPress={handleSubmit}
             style={styles.submitButton}
           />
 
-          <Button
-            testID="otp-migration-skip-button"
-            label={t('auth.otpMigration.skip', 'Дараа хийх')}
-            variant="ghost"
-            style={styles.skipButton}
-          />
+          {!isLoading ? (
+            <Button
+              testID="otp-migration-skip-button"
+              label={t('auth.otpMigration.skip', 'Дараа хийх')}
+              variant="ghost"
+              onPress={handleSkip}
+              style={styles.skipButton}
+            />
+          ) : null}
         </View>
 
         <View style={styles.footerNote}>

@@ -60,16 +60,16 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
 
   it('renders the Figma heading and subtitle', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText('Та хэн бэ?')).toBeTruthy();
-    expect(screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.')).toBeTruthy();
+    expect(screen.getByText(/Та юу хийхийг хүсч байна/i)).toBeTruthy();
+    expect(screen.getByText('Та хүссэн үедээ роль солих боломжтой')).toBeTruthy();
   });
 
   it('renders customer and tasker cards from Figma', () => {
     render(<RoleSelectScreen />);
     expect(screen.getByText('Захиалагч')).toBeTruthy();
-    expect(screen.getByText('Ажил нийтлэж, гүйцэтгэгч хайх')).toBeTruthy();
+    expect(screen.getByText('Даалгавар оруулж, гүйцэтгэгч олох')).toBeTruthy();
     expect(screen.getByText('Гүйцэтгэгч')).toBeTruthy();
-    expect(screen.getByText('Ажилд бүртгүүлж, орлого олох')).toBeTruthy();
+    expect(screen.getByText('Даалгавар хүлээж аваад орлого олох')).toBeTruthy();
   });
 
   it('selecting customer opens a confirmation sheet before navigation', () => {

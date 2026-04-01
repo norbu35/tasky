@@ -20,6 +20,11 @@ const ROLE_LABELS: Record<Exclude<RoleOption, null>, string> = {
   tasker: 'Гүйцэтгэгч',
 };
 
+const ROLE_COPY = {
+  customer: 'Даалгавар оруулж, гүйцэтгэгч олох',
+  tasker: 'Даалгавар хүлээж аваад орлого олох',
+} as const;
+
 export default function RoleSelectScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -50,8 +55,6 @@ export default function RoleSelectScreen() {
       role === 'customer'
         ? 'auth.roleSelection.customerDescription'
         : 'auth.roleSelection.taskerDescription';
-    const descriptionFallback =
-      role === 'customer' ? 'Ажил нийтлэж, гүйцэтгэгч хайх' : 'Ажилд бүртгүүлж, орлого олох';
 
     return (
       <Pressable
@@ -74,7 +77,7 @@ export default function RoleSelectScreen() {
           </View>
           <View style={styles.roleCopy}>
             <Text style={styles.roleTitle}>{t(titleKey, ROLE_LABELS[role])}</Text>
-            <Text style={styles.roleDescription}>{t(descriptionKey, descriptionFallback)}</Text>
+            <Text style={styles.roleDescription}>{t(descriptionKey, ROLE_COPY[role])}</Text>
           </View>
           {isSelected ? (
             <View testID={`role-card-${role}-check`} style={styles.checkMark}>
@@ -97,11 +100,13 @@ export default function RoleSelectScreen() {
       </View>
 
       <View style={styles.hero}>
-        <Text style={styles.heading}>{t('auth.roleSelection.titleLine1', 'Та хэн бэ?')}</Text>
+        <Text style={styles.heading}>
+          {t('auth.roleSelection.titleLine1', 'Та юу хийхийг хүсч байна\nвэ?')}
+        </Text>
         <Text style={styles.subtitle}>
           {t(
             'auth.roleSelection.subtitle',
-            'Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.',
+            'Та хүссэн үедээ роль солих боломжтой',
           )}
         </Text>
       </View>
