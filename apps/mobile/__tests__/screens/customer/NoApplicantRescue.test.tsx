@@ -122,6 +122,24 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
     expect(screen.getByText('Request Help')).toBeTruthy();
   });
 
+  it('shows supporting rescue descriptions for each action', () => {
+    render(
+      <NoApplicantRescue
+        isOpen={true}
+        onClose={jest.fn()}
+        taskId="task-1"
+        onAdjustBudget={jest.fn()}
+        onAdjustSchedule={jest.fn()}
+        onRequestConcierge={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Boost your task to get responses faster.')).toBeTruthy();
+    expect(screen.getByText('Raise the offer to attract more qualified taskers.')).toBeTruthy();
+    expect(screen.getByText('Move the schedule to a time with stronger availability.')).toBeTruthy();
+    expect(screen.getByText('Ask Tasky concierge to help review and rescue this task.')).toBeTruthy();
+  });
+
   it('calls onAdjustBudget when budget option is pressed', () => {
     const onAdjustBudget = jest.fn();
     render(

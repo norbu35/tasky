@@ -4,9 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { Button } from '../../../../components/ui/Button';
+import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
-import { SkeletonLoader } from '../../../../components/ui/SkeletonLoader';
-import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { Toast } from '../../../../components/ui/Toast';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
@@ -39,18 +38,36 @@ function coerceDeclineCount(value: string | string[] | undefined): number {
   return Math.max(1, Math.min(3, Math.floor(parsed)));
 }
 
+function coerceString(value: string | string[] | undefined, fallback: string): string {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw?.trim() ? raw : fallback;
+}
+
 export default function CustomerInstantMatchScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { taskId, state, declineCount } = useLocalSearchParams<{
+  const {
+    taskId,
+    state,
+    declineCount,
+    taskTitle,
+    budget,
+    locationText,
+  } = useLocalSearchParams<{
     taskId: string;
     state?: InstantMatchState;
     declineCount?: string;
+    taskTitle?: string;
+    budget?: string;
+    locationText?: string;
   }>();
 
   const matchState = coerceState(state);
   const declines = coerceDeclineCount(declineCount);
   const hasTaskId = Boolean(taskId);
+  const summaryTitle = coerceString(taskTitle, 'Deep clean apartment');
+  const summaryLocation = coerceString(locationText, '15th khoroo');
+  const summaryBudget = Number(coerceString(budget, '45000'));
 
   const onBack = () => {
     if (hasTaskId) {
@@ -72,42 +89,102 @@ export default function CustomerInstantMatchScreen() {
     router.replace('/(tabs)');
   };
 
+  const heroTitle =
+    matchState === 'matched_awaiting_accept'
+      ? t('matching.instantMatch.heroMatched', 'Tasker found')
+      : matchState === 'fallback_to_open'
+        ? t(
+            'matching.instantMatch.heroFallback',
+            'Instant match could not secure a tasker.',
+          )
+        : matchState === 'error_no_eligible'
+          ? t('matching.instantMatch.heroError', 'No eligible taskers nearby')
+          : t('matching.instantMatch.heroSearching', 'Finding your tasker');
+
+  const heroSubtitle =
+    matchState === 'fallback_to_open'
+      ? t(
+          'matching.instantMatch.heroFallbackBody',
+          'Your task is now open for applications.',
+        )
+      : matchState === 'error_no_eligible'
+        ? t(
+            'matching.instantMatch.heroErrorBody',
+            'You can review the task and continue with open applications instead.',
+          )
+        : t(
+            'matching.instantMatch.heroSearchingBody',
+            'We are checking nearby verified taskers right now.',
+          );
+
   return (
     <DetailTemplate
       testID="instant-match-customer-screen"
-      headerTitle={t('matching.instantMatch.pageTitle', 'Шууд тохируулга')}
+      headerTitle={t('matching.instantMatch.pageTitle', 'Instant Match')}
       onBack={onBack}
     >
       <View style={styles.container}>
-        {(matchState === 'matched_awaiting_accept' ||
-          matchState === 'tasker_declined_retry' ||
-          matchState === 'fallback_to_open' ||
-          matchState === 'error_no_eligible') && (
-          <StatusBadge status="assigned" />
+        <View style={styles.heroBlock}>
+          <Text style={styles.heroTitle}>{heroTitle}</Text>
+          <Text style={styles.heroSubtitle}>{heroSubtitle}</Text>
+        </View>
+
+        {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
+          <View style={styles.rings} testID="instant-match-rings">
+            <View style={styles.ring} />
+            <View style={[styles.ring, styles.ringMiddle]} />
+            <View style={[styles.ring, styles.ringInner]} />
+            <View style={styles.pinCore}>
+              <View style={styles.pinCoreDot} />
+            </View>
+          </View>
         )}
+
+        <View style={styles.taskCard} testID="instant-match-task-card">
+          <View style={styles.taskerPreview}>
+            <ProfileAvatar
+              size="md"
+              showVerified={matchState === 'matched_awaiting_accept'}
+              name={matchState === 'matched_awaiting_accept' ? 'B. Temuulen' : 'Tasky'}
+            />
+            <View style={styles.taskerPreviewCopy}>
+              <Text style={styles.taskerPreviewName}>
+                {matchState === 'matched_awaiting_accept'
+                  ? t('matching.instantMatch.sampleTaskerName', 'B. Temuulen')
+                  : t('matching.instantMatch.previewName', 'Tasky instant match')}
+              </Text>
+              <Text style={styles.taskerPreviewMeta}>
+                {matchState === 'matched_awaiting_accept'
+                  ? t('matching.instantMatch.verifiedTasker', 'Verified Tasker')
+                  : t('matching.instantMatch.previewMeta', 'Matching in progress')}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.taskCardHeader}>
+            <Text style={styles.taskCardLabel}>{t('matching.instantMatch.taskLabel', 'Task')}</Text>
+            <PriceTag amount={summaryBudget} size="sm" />
+          </View>
+          <Text style={styles.taskCardTitle}>{summaryTitle}</Text>
+          <Text style={styles.taskCardMeta}>{summaryLocation}</Text>
+        </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
           <View style={styles.centerBlock}>
-            <SkeletonLoader
-              testID="instant-match-loading"
-              width={96}
-              height={96}
-              borderRadius={radius.full}
-            />
             <Text style={styles.statusText}>
               {matchState === 'tasker_declined_retry'
                 ? t(
                     'matching.instantMatch.declinedStatus',
-                    'Гүйцэтгэгч татгалзлаа. Дараагийн хүнийг хайж байна...',
+                    'A tasker declined. We are moving to the next best match...',
                   )
                 : t(
                     'matching.instantMatch.matchingStatus',
-                    'Хамгийн тохиромжтой гүйцэтгэгчийг хайж байна...',
+                    'Searching for the strongest nearby match...',
                   )}
             </Text>
             {matchState === 'tasker_declined_retry' && (
               <Text style={styles.metaText}>
-                {t('matching.instantMatch.declineCount', '{{count}}/3 татгалзсан', {
+                {t('matching.instantMatch.declineCount', '{{count}}/3 declined', {
                   count: declines,
                 })}
               </Text>
@@ -117,20 +194,15 @@ export default function CustomerInstantMatchScreen() {
 
         {matchState === 'matched_awaiting_accept' && (
           <View style={styles.centerBlock}>
-            <ProfileAvatar
-              size="xl"
-              showVerified
-              name={t('matching.instantMatch.sampleTaskerName', 'Б. Тэмүүлэн')}
-            />
             <Text style={styles.statusText}>
-              {t('matching.instantMatch.matchedStatus', 'Гүйцэтгэгч олдлоо! Хариу хүлээж байна...')}
+              {t('matching.instantMatch.matchedStatus', 'Tasker found')}
             </Text>
             <Text style={styles.metaText}>
-              {t('matching.instantMatch.countdownLabel', 'Хариу хүлээх хугацаа')}: 04:59
+              {t('matching.instantMatch.countdownLabel', 'Waiting for acceptance')}: 04:59
             </Text>
             <Button
               testID="instant-match-confirm-booking"
-              label={t('matching.instantMatch.confirmBooking', 'Захиалга баталгаажуулах')}
+              label={t('matching.instantMatch.confirmBooking', 'Confirm booking')}
               onPress={onConfirmBooking}
             />
           </View>
@@ -141,12 +213,18 @@ export default function CustomerInstantMatchScreen() {
             <Text style={styles.statusText}>
               {t(
                 'matching.instantMatch.fallbackStatus',
-                '3 гүйцэтгэгч татгалзлаа. Даалгавар нээлттэй хүсэлтэд шилжлээ.',
+                'Instant match could not secure a tasker.',
+              )}
+            </Text>
+            <Text style={styles.metaText}>
+              {t(
+                'matching.instantMatch.fallbackDescription',
+                'Your task is now open for applications.',
               )}
             </Text>
             <Button
               testID="instant-match-view-applicants"
-              label={t('matching.instantMatch.viewApplicants', 'Өргөдөл гаргагчдыг харах')}
+              label={t('matching.instantMatch.viewApplicants', 'View applicants')}
               onPress={onViewApplicants}
             />
           </View>
@@ -156,18 +234,18 @@ export default function CustomerInstantMatchScreen() {
           <View style={styles.centerBlock}>
             <Toast
               variant="error"
-              message={t('matching.instantMatch.noEligibleTitle', 'Боломжит гүйцэтгэгч олдсонгүй')}
+              message={t('matching.instantMatch.noEligibleTitle', 'No eligible taskers nearby')}
             />
             <Text style={styles.statusText}>
               {t(
                 'matching.instantMatch.noEligibleDescription',
-                'Энэ бүс нутагт хангалттай гүйцэтгэгч байхгүй байна. Нээлттэй хүсэлтээр үргэлжлүүлнэ үү.',
+                'You can review the task and continue with open applications instead.',
               )}
             </Text>
             <Button
               testID="instant-match-back-to-task"
               variant="outline"
-              label={t('matching.instantMatch.backToTask', 'Даалгавар руу буцах')}
+              label={t('matching.instantMatch.backToTask', 'Back to task')}
               onPress={onBack}
             />
           </View>
@@ -182,8 +260,99 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     minHeight: 480,
   },
+  heroBlock: {
+    gap: spacing.sm,
+  },
+  heroTitle: {
+    fontSize: typography.heading,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  heroSubtitle: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
+  rings: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 220,
+  },
+  ring: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  ringMiddle: {
+    width: 132,
+    height: 132,
+  },
+  ringInner: {
+    width: 88,
+    height: 88,
+  },
+  pinCore: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pinCoreDot: {
+    width: 14,
+    height: 14,
+    borderRadius: radius.full,
+    backgroundColor: colors.primaryForeground,
+  },
+  taskCard: {
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  taskerPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  taskerPreviewCopy: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  taskerPreviewName: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  taskerPreviewMeta: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
+  taskCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  taskCardLabel: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  taskCardTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  taskCardMeta: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
   centerBlock: {
-    marginTop: spacing['2xl'],
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.xl,
