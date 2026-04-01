@@ -36,14 +36,14 @@ export default function OtpScreen() {
 
   const resendLabel = isExpired
     ? t('auth.otp.resend', 'Код дахин илгээх')
-    : t('auth.otp.resendCountdown', 'Дахин илгээх (45с)');
+    : t('auth.otp.resendCountdown', 'Код дахин илгээх (45с)');
 
   const descriptionPrefix = t('auth.otp.descriptionPrefix', 'Бид таны ');
   const descriptionSuffix = t('auth.otp.descriptionSuffix', ' дугаарт 4 оронтой нууц код илгээлээ.');
 
   return (
     <SafeAreaView style={styles.container} testID="otp-screen">
-      <View style={styles.header}>
+      <View style={styles.header} testID="otp-top-app-bar">
         <Pressable
           accessibilityRole="button"
           onPress={() => router.back()}
@@ -75,6 +75,7 @@ export default function OtpScreen() {
           {['5', '—', '—', '—'].map((digit, index) => (
             <View
               key={`${digit}-${index}`}
+              testID="otp-code-cell"
               style={[
                 styles.codeCell,
                 index === 0 ? styles.codeCellActive : undefined,
@@ -94,6 +95,7 @@ export default function OtpScreen() {
         </View>
 
         <Pressable
+          testID="otp-resend-link"
           accessibilityRole="button"
           onPress={() => {}}
           disabled={!isExpired}
@@ -102,7 +104,6 @@ export default function OtpScreen() {
             !isExpired && styles.resendButtonDisabled,
             pressed && isExpired ? styles.pressed : undefined,
           ]}
-          testID="otp-resend-button"
         >
           <RefreshCw size={12} color={isExpired ? colors.primaryDeep : colors.mutedForeground} />
           <Text style={[styles.resendLabel, !isExpired && styles.resendLabelMuted]}>
@@ -120,7 +121,7 @@ export default function OtpScreen() {
           </View>
         )}
 
-        <View style={styles.securityCard}>
+        <View style={styles.securityCard} testID="otp-security-card">
           <View style={styles.securityIcon}>
             <ShieldCheck size={22} color={colors.primaryDeep} />
           </View>
@@ -138,7 +139,7 @@ export default function OtpScreen() {
         </View>
       </View>
 
-      <View style={styles.footer}>
+      <View style={styles.footer} testID="otp-fixed-cta">
         <Button
           testID="otp-verify-button"
           label={t('auth.otp.verify', 'Баталгаажуулах')}
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: colors.primaryDeep,
-    fontSize: typography.label,
+    fontSize: typography.title,
     fontWeight: '700',
   },
   headerSpacer: {
@@ -191,10 +192,10 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: colors.primaryDeep,
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: '800',
-    letterSpacing: -0.75,
-    lineHeight: 38,
+    letterSpacing: -0.8,
+    lineHeight: 40,
     textAlign: 'center',
   },
   description: {
@@ -220,8 +221,8 @@ const styles = StyleSheet.create({
     opacity: 0.96,
   },
   codeCell: {
-    width: 46,
-    height: 46,
+    width: 48,
+    height: 48,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',

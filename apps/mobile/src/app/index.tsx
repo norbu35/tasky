@@ -4,7 +4,7 @@ import { Redirect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../store/authStore';
-import { useAppStore } from '../store/appStore';
+import { CircleCheckBig } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -12,19 +12,25 @@ const { colors, spacing, typography } = mobileTheme;
 export default function SplashScreen() {
   const { t } = useTranslation();
   const session = useAuthStore((state) => state.session);
-  const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding);
 
-  if (session) {
-    return <Redirect href="/(tabs)" />;
-  }
-
-  const nextHref = hasSeenOnboarding ? '/(auth)' : '/onboarding';
+  const nextHref = !session
+    ? '/(auth)'
+    : session.user.primary_auth === 'FACEBOOK'
+      ? '/(auth)/otp-migration'
+      : session.user.role === 'CUSTOMER'
+        ? '/(customer)/tasks'
+        : '/(tabs)';
 
   return (
-    <LinearGradient colors={['#0C2B47', '#173B5B', '#0C2B47']} style={styles.container} testID="splash-screen">
+    <LinearGradient
+      colors={[colors.primaryDeep, colors.primary, colors.primaryDeep]}
+      style={styles.container}
+      testID="splash-screen"
+    >
+      <Redirect href={nextHref} />
       <View style={styles.content}>
         <View style={styles.brandMark}>
-          <Text style={styles.brandGlyph}>✓</Text>
+          <CircleCheckBig size={28} color={colors.primaryForeground} />
         </View>
         <Text style={styles.logo}>Tasky</Text>
         <View style={styles.taglineWrap}>
@@ -48,7 +54,6 @@ export default function SplashScreen() {
         color={colors.secondary}
         style={styles.loader}
       />
-      <Redirect href={nextHref} />
     </LinearGradient>
   );
 }
@@ -64,23 +69,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing['2xl'],
   },
   brandMark: {
-    width: 60,
-    height: 60,
-    borderRadius: 18,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderColor: 'rgba(255,255,255,0.12)',
     backgroundColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,
   },
-  brandGlyph: {
-    color: colors.primaryForeground,
-    fontSize: 28,
-    fontWeight: '700',
-  },
   logo: {
-    fontSize: 60,
+    fontSize: 56,
     fontWeight: '700',
     color: colors.primaryForeground,
     fontFamily: 'Manrope',
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     width: 136,
     height: 2,
     backgroundColor: 'rgba(255,255,255,0.16)',
+    overflow: 'hidden',
   },
   progressFill: {
     width: 42,

@@ -313,7 +313,7 @@ describe('mobile app structure', () => {
 
     useAuthStore.setState({ session: baseSession });
     render(<IndexScreen />);
-    expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(tabs)');
+    expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(customer)/tasks');
 
     render(<AuthScreen />);
     expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();

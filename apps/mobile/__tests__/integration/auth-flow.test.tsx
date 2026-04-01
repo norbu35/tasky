@@ -77,10 +77,10 @@ beforeEach(() => {
 });
 
 describe('Auth flow integration', () => {
-  it('first-time unauthenticated user lands on onboarding from splash', () => {
+  it('first-time unauthenticated user lands on auth from splash', () => {
     setFirstTimeUser();
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/onboarding');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(auth)');
   });
 
   it('returning guest is redirected to auth', () => {
@@ -94,7 +94,7 @@ describe('Auth flow integration', () => {
   it('authenticated user is redirected to tabs', () => {
     setAuthenticated();
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks');
   });
 
   it('onboarding skip navigates to role-select without completing onboarding yet', () => {
@@ -145,6 +145,6 @@ describe('Auth flow integration', () => {
     // Simulate login completing
     useAuthStore.setState({ session: baseSession });
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks');
   });
 });

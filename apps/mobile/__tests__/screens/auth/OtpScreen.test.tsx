@@ -39,12 +39,15 @@ describe('OtpScreen (SCR-SHARED-003)', () => {
   it('renders the default OTP shell', () => {
     render(<OtpScreen />);
 
+    expect(screen.getByTestId('otp-top-app-bar')).toBeTruthy();
     expect(screen.getByTestId('otp-heading')).toHaveTextContent('Баталгаажуулах код');
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/9911\s+2233/);
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/4 оронтой нууц код/);
-    expect(screen.getByTestId('otp-code-input')).toBeTruthy();
+    expect(screen.getAllByTestId('otp-code-cell')).toHaveLength(4);
+    expect(screen.getByTestId('otp-resend-link')).toHaveTextContent('Код дахин илгээх (45с)');
+    expect(screen.getByTestId('otp-security-card')).toBeTruthy();
+    expect(screen.getByTestId('otp-fixed-cta')).toBeTruthy();
     expect(screen.getByTestId('otp-verify-button')).toBeDisabled();
-    expect(screen.getByTestId('otp-resend-button')).toBeTruthy();
     expect(screen.getByTestId('otp-back-button')).toBeTruthy();
   });
 
@@ -54,7 +57,7 @@ describe('OtpScreen (SCR-SHARED-003)', () => {
     render(<OtpScreen />);
 
     expect(screen.getByText(/Буруу код/i)).toBeTruthy();
-    expect(screen.getByTestId('otp-code-input')).toBeTruthy();
+    expect(screen.getAllByTestId('otp-code-cell')).toHaveLength(4);
     expect(screen.getByTestId('otp-verify-button')).toBeDisabled();
   });
 });

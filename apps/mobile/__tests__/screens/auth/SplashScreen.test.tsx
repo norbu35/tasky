@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import { useAuthStore } from '../../../src/store/authStore';
-import { useAppStore } from '../../../src/store/appStore';
 
 import SplashScreen from '../../../src/app/index';
 
@@ -61,22 +60,24 @@ const baseSession = {
   },
 };
 
+function expectRedirectHref(expectedHref: string) {
+  const redirects = screen.getAllByTestId('redirect');
+  expect(redirects.some((redirect) => redirect.props.children === expectedHref)).toBe(true);
+}
+
 beforeEach(() => {
   jest.clearAllMocks();
   useAuthStore.setState({ session: null, profile: null, deviceToken: null });
-  useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
 });
 
 describe('SplashScreen (SCR-SHARED-001)', () => {
   it('renders the Tasky logo', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
     expect(screen.getByText('Tasky')).toBeTruthy();
   });
 
   it('renders the Figma splash tagline', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
     expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
@@ -84,34 +85,50 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   });
 
   it('shows a loading indicator', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
     expect(screen.getByTestId('splash-loading')).toBeTruthy();
   });
 
-  it('redirects authenticated users to tabs', () => {
-    useAuthStore.setState({ session: baseSession });
+  it('redirects authenticated customer users to my tasks', () => {
+    useAuthStore.setState({
+      session: {
+        ...baseSession,
+        user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'PHONE_OTP' },
+      },
+    });
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
+    expectRedirectHref('/(customer)/tasks');
   });
 
-  it('redirects unauthenticated users to auth', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
-    useAuthStore.setState({ session: null });
+  it('redirects authenticated tasker users to task feed', () => {
+    useAuthStore.setState({
+      session: {
+        ...baseSession,
+        user: { ...baseSession.user, role: 'TASKER', primary_auth: 'PHONE_OTP' },
+      },
+    });
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(auth)');
+    expectRedirectHref('/(tabs)');
   });
 
-  it('redirects first-launch users to onboarding', () => {
-    useAppStore.setState({ hasSeenOnboarding: false });
-    useAuthStore.setState({ session: null });
+  it('redirects Facebook-authenticated users to OTP migration', () => {
+    useAuthStore.setState({
+      session: {
+        ...baseSession,
+        user: { ...baseSession.user, role: 'CUSTOMER', primary_auth: 'FACEBOOK' },
+      },
+    });
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/onboarding');
+    expectRedirectHref('/(auth)/otp-migration');
+  });
+
+  it('redirects unauthenticated users to login', () => {
+    render(<SplashScreen />);
+    expectRedirectHref('/(auth)');
   });
 
   it('displays tagline text', () => {
-    useAppStore.setState({ hasSeenOnboarding: true });
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
     expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
