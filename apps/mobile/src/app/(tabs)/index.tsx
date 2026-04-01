@@ -134,6 +134,12 @@ export default function FeedScreen() {
       onRetry={refetch}
       ListHeaderComponent={
         <View style={styles.headerContent}>
+          <View style={styles.headerCopy}>
+            <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Browse Tasks')}</Text>
+            <Text style={styles.screenSubtitle}>
+              {t('tasker.browse.subtitle', 'Fresh tasks around you')}
+            </Text>
+          </View>
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
@@ -207,6 +213,18 @@ const styles = StyleSheet.create({
   headerContent: {
     gap: spacing.md,
     marginBottom: spacing.md,
+  },
+  headerCopy: {
+    gap: spacing.xs,
+  },
+  screenTitle: {
+    fontSize: typography.heading,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  screenSubtitle: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
   },
   searchInput: {
     borderWidth: 1,

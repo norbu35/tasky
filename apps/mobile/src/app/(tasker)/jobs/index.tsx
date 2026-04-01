@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
+import { FilterBar } from '../../../components/ui/FilterBar';
 import { SplitCard } from '../../../components/ui/SplitCard';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
@@ -10,6 +11,12 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import type { Booking } from '../../../lib/mobileApiClient';
 
 const { colors, spacing, typography } = mobileTheme;
+
+const JOB_FILTERS = [
+  { id: 'active', label: 'Active' },
+  { id: 'completed', label: 'Completed' },
+  { id: 'cancelled', label: 'Cancelled' },
+];
 
 function BookingCardHeader({ booking }: { booking: Booking }) {
   const customerName = booking.customer?.full_name ?? '';
@@ -45,8 +52,20 @@ export default function MyJobsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useBookings();
+  const [activeFilters, setActiveFilters] = useState<string[]>(['active']);
 
   const bookings = data?.data ?? [];
+  const filteredBookings = useMemo(() => {
+    if (activeFilters.includes('completed')) {
+      return bookings.filter((booking) => booking.status === 'COMPLETED');
+    }
+    if (activeFilters.includes('cancelled')) {
+      return bookings.filter((booking) => booking.status === 'CANCELLED');
+    }
+    return bookings.filter(
+      (booking) => booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED',
+    );
+  }, [activeFilters, bookings]);
 
   const renderItem = useCallback(
     (booking: Booking) => (
@@ -61,15 +80,18 @@ export default function MyJobsScreen() {
   );
 
   const keyExtractor = useCallback((booking: Booking) => booking.id, []);
+  const handleToggleFilter = useCallback((id: string) => {
+    setActiveFilters([id]);
+  }, []);
 
   return (
     <FeedListTemplate
-      data={bookings}
+      data={filteredBookings}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       isLoading={isLoading}
       isError={isError}
-      isEmpty={bookings.length === 0}
+      isEmpty={filteredBookings.length === 0}
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
@@ -77,6 +99,17 @@ export default function MyJobsScreen() {
       emptyDescription={t('tasker.jobs.emptyDescription', 'Apply to tasks and get your first job')}
       emptyCtaLabel={t('tasker.jobs.emptyCta', 'Browse Tasks')}
       emptyCtaOnPress={() => router.push('/(tabs)')}
+      filterBar={
+        <FilterBar
+          filters={JOB_FILTERS.map((filter) => ({
+            id: filter.id,
+            label: t(`tasker.jobs.filter.${filter.id}`, filter.label),
+          }))}
+          activeFilters={activeFilters}
+          onToggle={handleToggleFilter}
+          testID="my-jobs-filter-bar"
+        />
+      }
       testID="my-jobs-feed"
     />
   );

@@ -101,6 +101,21 @@ const completedBooking: Booking = {
   },
 };
 
+const cancelledBooking: Booking = {
+  ...baseBooking,
+  id: 'booking-3',
+  status: 'CANCELLED',
+  customer: {
+    ...baseBooking.customer!,
+    full_name: 'Khulan Poster',
+  },
+  task: {
+    ...baseBooking.task!,
+    id: 'task-3',
+    description: 'Move a sofa',
+  },
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
@@ -136,7 +151,7 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
     expect(screen.getByText('No jobs yet')).toBeTruthy();
   });
 
-  it('renders job cards with customer name, task title, schedule, and status', () => {
+  it('renders active jobs by default with customer name, task title, schedule, and status', () => {
     mockUseBookings.mockReturnValue({
       data: {
         data: [baseBooking, completedBooking],
@@ -153,8 +168,50 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
 
     expect(screen.getByText('John Customer')).toBeTruthy();
     expect(screen.getByText('Deep clean apartment')).toBeTruthy();
-    expect(screen.getByText('Jane Poster')).toBeTruthy();
+    expect(screen.queryByText('Jane Poster')).toBeNull();
+    expect(screen.queryByText('Fix kitchen sink')).toBeNull();
+  });
+
+  it('renders segmented status tabs', () => {
+    mockUseBookings.mockReturnValue({
+      data: {
+        data: [baseBooking, completedBooking, cancelledBooking],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookings>);
+
+    const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
+    render(<MyJobsScreen />);
+
+    expect(screen.getByText('Active')).toBeTruthy();
+    expect(screen.getByText('Completed')).toBeTruthy();
+    expect(screen.getByText('Cancelled')).toBeTruthy();
+  });
+
+  it('filters bookings by selected status tab', () => {
+    mockUseBookings.mockReturnValue({
+      data: {
+        data: [baseBooking, completedBooking, cancelledBooking],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useBookings>);
+
+    const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
+    render(<MyJobsScreen />);
+
+    fireEvent.press(screen.getByText('Completed'));
+
+    expect(screen.queryByText('Deep clean apartment')).toBeNull();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
+    expect(screen.queryByText('Move a sofa')).toBeNull();
   });
 
   it('navigates to booking detail on card press', () => {

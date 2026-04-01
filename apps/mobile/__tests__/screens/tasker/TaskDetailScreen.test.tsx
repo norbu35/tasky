@@ -220,7 +220,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     fireEvent.press(screen.getByText('tasker.taskDetail.applyButton'));
 
     await waitFor(() => {
-      expect(screen.getByText('tasker.taskDetail.applicationSentTitle')).toBeTruthy();
+      expect(screen.getByText('Application sent')).toBeTruthy();
     });
   });
 

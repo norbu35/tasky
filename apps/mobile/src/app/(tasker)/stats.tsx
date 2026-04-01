@@ -42,6 +42,14 @@ export default function TaskerStatsScreen() {
     >
       {stats && (
         <View style={styles.content}>
+          <View style={styles.heroCard} testID="tasker-stats-hero">
+            <Text style={styles.heroLabel}>{t('tasker.stats.heroLabel', 'Your rating')}</Text>
+            <Text style={styles.heroValue}>{stats.average_rating.toFixed(1)}</Text>
+            <Text style={styles.heroMeta}>
+              {t('tasker.stats.heroMeta', 'From customer reviews')}
+            </Text>
+          </View>
+
           <View style={styles.statsRow}>
             <StatCard
               value={String(stats.jobs_completed)}
@@ -113,6 +121,26 @@ export default function TaskerStatsScreen() {
 const styles = StyleSheet.create({
   content: {
     gap: spacing.md,
+  },
+  heroCard: {
+    backgroundColor: mobileTheme.colors.primary,
+    borderRadius: mobileTheme.radius.lg,
+    padding: spacing.xl,
+    gap: spacing.xs,
+  },
+  heroLabel: {
+    fontSize: mobileTheme.typography.label,
+    color: mobileTheme.colors.primaryForeground,
+    opacity: 0.9,
+  },
+  heroValue: {
+    fontSize: mobileTheme.typography.heroTitle,
+    fontWeight: '700',
+    color: mobileTheme.colors.secondary,
+  },
+  heroMeta: {
+    fontSize: mobileTheme.typography.caption,
+    color: mobileTheme.colors.primaryForeground,
   },
   section: {
     gap: spacing.xs,

@@ -41,7 +41,7 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     } = require('../../../src/features/tasks/components/ApplicationSentSuccess');
     render(<ApplicationSentSuccess onBrowseMore={jest.fn()} onViewTask={jest.fn()} />);
 
-    expect(screen.getByText('tasker.taskDetail.applicationSentTitle')).toBeTruthy();
+    expect(screen.getByText('Application sent')).toBeTruthy();
   });
 
   it('renders next steps text', () => {
@@ -51,6 +51,9 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     render(<ApplicationSentSuccess onBrowseMore={jest.fn()} onViewTask={jest.fn()} />);
 
     expect(screen.getByTestId('application-sent')).toBeTruthy();
+    expect(screen.getByText('The customer will review your intro and profile next.')).toBeTruthy();
+    expect(screen.getByText("You'll get a notification if you're shortlisted.")).toBeTruthy();
+    expect(screen.getByText('Keep applying while you wait.')).toBeTruthy();
   });
 
   it('CTA "Browse More Tasks" calls onBrowseMore', () => {

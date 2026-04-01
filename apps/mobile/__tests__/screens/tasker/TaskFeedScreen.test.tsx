@@ -105,6 +105,25 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     render(<TaskFeedScreen />);
 
     expect(screen.getByTestId('task-feed')).toBeTruthy();
+    expect(screen.getByText('Browse Tasks')).toBeTruthy();
+  });
+
+  it('renders the browse summary header', () => {
+    mockUseTasks.mockReturnValue({
+      data: {
+        data: [baseTask, secondTask],
+        cursor: { next: null, prev: null },
+      },
+      isLoading: false,
+      isError: false,
+      isRefetching: false,
+      refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useTasks>);
+
+    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+    render(<TaskFeedScreen />);
+
+    expect(screen.getByText('Fresh tasks around you')).toBeTruthy();
   });
 
   it('shows empty activation state when no tasks', () => {

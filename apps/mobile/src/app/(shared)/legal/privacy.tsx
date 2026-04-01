@@ -17,6 +17,10 @@ export default function PrivacyPolicyScreen() {
       onBack={() => router.back()}
       testID="privacy-screen"
     >
+      <View style={styles.metaRow}>
+        <Text style={styles.metaLabel}>{t('shared.legal.updated', 'Updated: 2026.01.01')}</Text>
+      </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
           {t('shared.legal.dataCollection', 'Data Collection')}
@@ -96,12 +100,23 @@ export default function PrivacyPolicyScreen() {
         <Text style={styles.sectionBody}>
           {t('shared.legal.contactBody', 'Contact us with any questions about our privacy policy.')}
         </Text>
+        <View style={styles.supportCard}>
+          <Text style={styles.supportLabel}>{t('shared.legal.contactEmail', 'Email')}</Text>
+          <Text style={styles.supportEmail}>support@tasky.mn</Text>
+        </View>
       </View>
     </DetailTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  metaRow: {
+    marginBottom: spacing.lg,
+  },
+  metaLabel: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
   section: {
     marginBottom: spacing.lg,
   },
@@ -115,5 +130,21 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     color: colors.textSecondary,
     lineHeight: typography.body * 1.6,
+  },
+  supportCard: {
+    marginTop: spacing.md,
+    backgroundColor: colors.card,
+    borderRadius: mobileTheme.radius.md,
+    padding: spacing.md,
+    gap: spacing.xs,
+  },
+  supportLabel: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
+  supportEmail: {
+    fontSize: typography.body,
+    fontWeight: '600',
+    color: colors.primaryDeep,
   },
 });

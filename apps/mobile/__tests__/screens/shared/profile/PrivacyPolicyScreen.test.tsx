@@ -73,4 +73,12 @@ describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
     render(<PrivacyPolicyScreen />);
     expect(screen.getByText('User Rights')).toBeTruthy();
   });
+
+  it('renders the last updated label and support email card', () => {
+    const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
+    render(<PrivacyPolicyScreen />);
+
+    expect(screen.getByText('Updated: 2026.01.01')).toBeTruthy();
+    expect(screen.getByText('support@tasky.mn')).toBeTruthy();
+  });
 });
