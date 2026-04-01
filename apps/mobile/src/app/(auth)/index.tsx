@@ -1,25 +1,40 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CircleCheckBig, Facebook } from 'lucide-react-native';
-import { AuthTemplate } from '../../components/templates/AuthTemplate';
-import { Button } from '../../components/ui';
+import { useDevLogin } from '../../features/auth/hooks/useAuth';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
-import { useDevLogin } from '../../features/auth/hooks/useAuth';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
+
+const figmaBrandIconUri = 'https://www.figma.com/api/mcp/asset/e6b0056f-a59c-4588-a0a0-58a19f241eea';
+const figmaFacebookIconUri = 'https://www.figma.com/api/mcp/asset/f8fb49cc-9362-4143-81f5-806311ac01ea';
+const figmaSecondaryIconUri = 'https://www.figma.com/api/mcp/asset/74bdd916-7483-47da-b133-cdaa849bac3c';
+const figmaHeroTextureUri =
+  'https://www.figma.com/api/mcp/asset/5719d416-6033-44e7-b264-2ea2e25f1e3c';
 
 type LoginState = 'default' | 'facebook_loading' | 'error';
 
 export default function LoginScreen() {
-  const devAuthEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const [state, setState] = useState<LoginState>('default');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const devLogin = useDevLogin();
+
+  const devAuthEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
+  const isFacebookLoading = state === 'facebook_loading';
+  const busy = devLogin.isPending;
 
   const handleFacebookLogin = async () => {
     setState('facebook_loading');
@@ -33,104 +48,169 @@ export default function LoginScreen() {
     }
   };
 
+  const handleEmailLogin = () => {
+    // UI shell only: the deeper email/OTP flow is represented elsewhere in the auth stack.
+  };
+
   const handleDevLoginAs = (role: 'CUSTOMER' | 'TASKER') => {
     const phone = role === 'CUSTOMER' ? '+97699999999' : '+97699988888';
     devLogin.mutate({ phone, role });
   };
 
-  const busy = devLogin.isPending;
+  const toggleLanguage = () => {
+    void i18n.changeLanguage(i18n.language === 'mn' ? 'en' : 'mn');
+  };
 
   return (
-    <AuthTemplate
-      testID="login-screen"
-      bottomSlot={
-        <View style={styles.languagePill}>
-          <Text style={styles.languagePillText}>MN/EN</Text>
-        </View>
-      }
-      contentStyle={styles.contentStyle}
-    >
-      <View style={styles.hero}>
-        <View style={styles.brandMark}>
-          <CircleCheckBig size={28} color={colors.primaryForeground} />
-        </View>
-        <Text style={styles.title}>{t('auth.login.title', 'Tasky-д тавтай морил')}</Text>
-        <Text style={styles.subtitle}>
-          {t('auth.login.subtitleLine1', 'Найдвартай гүйцэтгэгчтэй холбогдож,')}
-        </Text>
-        <Text style={styles.subtitleSecondary}>
-          {t('auth.login.subtitleLine2', 'ажлаа хялбар захиалаарай')}
-        </Text>
-      </View>
-
-      <Button
-        testID="facebook-login-button"
-        onPress={handleFacebookLogin}
-        isLoading={state === 'facebook_loading'}
-        style={styles.facebookButton}
+    <SafeAreaView style={styles.container} testID="login-screen">
+      <Pressable
+        testID="language-switcher"
+        onPress={toggleLanguage}
+        style={styles.languagePill}
+        accessibilityRole="button"
+        accessibilityLabel={t('auth.login.languageSwitcher', 'MN/EN')}
       >
-        <View style={styles.buttonContent}>
-          <Facebook size={18} color={colors.primaryForeground} />
-          <Text style={styles.facebookButtonText}>
-            {t('auth.login.facebookButton', 'Facebook-ээр нэвтрэх')}
+        <Text style={styles.languagePillText}>MN/EN</Text>
+      </Pressable>
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.brandBlock}>
+          <View style={styles.brandIconWrap}>
+            <View style={styles.brandGlow} />
+            <View style={styles.brandIconCard}>
+              <Image source={{ uri: figmaBrandIconUri }} style={styles.brandIcon} />
+            </View>
+          </View>
+
+          <View style={styles.copyBlock}>
+            <Text style={styles.title}>{t('auth.login.title', 'Tasky-д тавтай морил')}</Text>
+            <Text style={styles.subtitleLine}>
+              {t('auth.login.subtitleLine1', 'Найдвартай гүйцэтгэгчтэй холбогдож,')}
+            </Text>
+            <Text style={styles.subtitleLine}>
+              {t('auth.login.subtitleLine2', 'ажлаа хялбар захиалаарай')}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.actions}>
+          <Pressable
+            testID="facebook-login-button"
+            onPress={() => {
+              void handleFacebookLogin();
+            }}
+            disabled={isFacebookLoading}
+            style={({ pressed }) => [
+              styles.facebookButton,
+              pressed && !isFacebookLoading ? styles.pressed : null,
+              isFacebookLoading ? styles.disabled : null,
+            ]}
+            accessibilityRole="button"
+          >
+            <View style={styles.facebookButtonContent}>
+              {isFacebookLoading ? (
+                <ActivityIndicator color={colors.primaryForeground} />
+              ) : (
+                <>
+                  <Image source={{ uri: figmaFacebookIconUri }} style={styles.buttonIcon} />
+                  <Text style={styles.facebookButtonText}>
+                    {t('auth.login.facebookButton', 'Facebook-ээр нэвтрэх')}
+                  </Text>
+                </>
+              )}
+            </View>
+          </Pressable>
+
+          <View style={styles.dividerRow}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>{t('auth.login.orLabel', 'Эсвэл')}</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <Pressable
+            testID="secondary-login-button"
+            onPress={handleEmailLogin}
+            style={({ pressed }) => [styles.secondaryButton, pressed ? styles.pressed : null]}
+            accessibilityRole="button"
+          >
+            <View style={styles.secondaryButtonContent}>
+              <Image source={{ uri: figmaSecondaryIconUri }} style={styles.secondaryIcon} />
+              <Text style={styles.secondaryButtonText}>
+                {t('auth.login.secondaryButton', 'Имэйл хаягаар нэвтрэх')}
+              </Text>
+            </View>
+          </Pressable>
+        </View>
+
+        <View style={styles.illustrationWrap} pointerEvents="none">
+          <Image source={{ uri: figmaHeroTextureUri }} style={styles.illustration} />
+        </View>
+
+        <View style={styles.footer}>
+          <View style={styles.footerLinks}>
+            <Pressable onPress={() => router.push('/(shared)/legal/terms')} accessibilityRole="link">
+              <Text style={styles.footerLink}>{t('auth.login.terms', 'Үйлчилгээний нөхцөл')}</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/(shared)/legal/privacy')} accessibilityRole="link">
+              <Text style={styles.footerLink}>{t('auth.login.privacy', 'Нууцлалын бодлого')}</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.copyright}>
+            {t('auth.login.copyright', '© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')}
           </Text>
         </View>
-      </Button>
 
-      {state === 'error' && errorMessage ? (
-        <Text testID="login-error" style={styles.errorText}>
-          {errorMessage}
-        </Text>
-      ) : null}
+        {state === 'error' && errorMessage ? (
+          <Text testID="login-error" style={styles.errorText}>
+            {errorMessage}
+          </Text>
+        ) : null}
 
-      {devAuthEnabled ? (
-        <View style={styles.devSection}>
-          <Text style={styles.devLabel}>{t('auth.devBypass', 'Dev bypass')}</Text>
-          <Button
-            label={t('auth.loginAsCustomer', 'Login as Customer')}
-            variant="secondary"
-            onPress={() => handleDevLoginAs('CUSTOMER')}
-            isLoading={busy}
-            style={styles.devButton}
-          />
-          <Button
-            label={t('auth.loginAsTasker', 'Login as Tasker')}
-            variant="secondary"
-            onPress={() => handleDevLoginAs('TASKER')}
-            isLoading={busy}
-            style={styles.devButton}
-          />
-          {devLogin.error ? <Text style={styles.errorText}>{devLogin.error.message}</Text> : null}
-        </View>
-      ) : null}
-
-      <View style={styles.footer}>
-        <Pressable onPress={() => router.push('/(shared)/legal/terms')}>
-          <Text style={styles.footerLink}>{t('auth.login.terms', 'Үйлчилгээний нөхцөл')}</Text>
-        </Pressable>
-        <Pressable onPress={() => router.push('/(shared)/legal/privacy')}>
-          <Text style={styles.footerLink}>{t('auth.login.privacy', 'Нууцлалын бодлого')}</Text>
-        </Pressable>
-      </View>
-    </AuthTemplate>
+        {devAuthEnabled ? (
+          <View style={styles.devSection}>
+            <Text style={styles.devLabel}>{t('auth.devBypass', 'Dev bypass')}</Text>
+            <Pressable
+              style={styles.devButton}
+              onPress={() => handleDevLoginAs('CUSTOMER')}
+              disabled={busy}
+            >
+              <Text style={styles.devButtonText}>{t('auth.loginAsCustomer', 'Login as Customer')}</Text>
+            </Pressable>
+            <Pressable
+              style={styles.devButton}
+              onPress={() => handleDevLoginAs('TASKER')}
+              disabled={busy}
+            >
+              <Text style={styles.devButtonText}>{t('auth.loginAsTasker', 'Login as Tasker')}</Text>
+            </Pressable>
+            {devLogin.error ? <Text style={styles.errorText}>{devLogin.error.message}</Text> : null}
+          </View>
+        ) : null}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  contentStyle: {
-    justifyContent: 'center',
-  },
-  hero: {
-    alignItems: 'center',
-    marginBottom: spacing.xl,
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
   languagePill: {
+    position: 'absolute',
+    right: spacing.xl,
+    top: spacing.xl,
+    zIndex: 10,
     borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: mobileTheme.radius.md,
+    borderColor: 'rgba(195,198,207,0.2)',
+    borderRadius: radius.md,
     paddingHorizontal: 13,
     paddingVertical: 5,
-    backgroundColor: colors.card,
+    backgroundColor: colors.background,
   },
   languagePillText: {
     color: colors.primaryDeep,
@@ -138,82 +218,201 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.35,
   },
-  brandMark: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
-    backgroundColor: colors.primary,
+  scrollContent: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: 72,
+    paddingBottom: spacing['2xl'],
+    gap: spacing.xl,
+    flexGrow: 1,
+    justifyContent: 'space-between',
+  },
+  brandBlock: {
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  brandIconWrap: {
+    width: 96,
+    height: 96,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xl,
-    ...elevations.elevated,
+  },
+  brandGlow: {
+    position: 'absolute',
+    right: -16,
+    top: -16,
+    width: 96,
+    height: 96,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(253,206,106,0.2)',
+    opacity: 0.9,
+  },
+  brandIconCard: {
+    width: 80,
+    height: 80,
+    borderRadius: radius.sm,
+    backgroundColor: colors.primaryDeep,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...elevations.card,
+  },
+  brandIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+  },
+  copyBlock: {
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   title: {
+    color: colors.primaryDeep,
     fontSize: typography.heading,
     fontWeight: '700',
-    color: colors.primaryDeep,
     textAlign: 'center',
-    marginBottom: spacing.sm,
+    letterSpacing: -0.6,
   },
-  subtitle: {
-    fontSize: typography.body,
+  subtitleLine: {
     color: colors.textSecondary,
-    textAlign: 'center',
+    fontSize: typography.body,
     lineHeight: 26,
+    textAlign: 'center',
   },
-  subtitleSecondary: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 26,
+  actions: {
+    gap: spacing.md,
   },
   facebookButton: {
-    backgroundColor: colors.primary,
-    minHeight: 52,
-    borderRadius: 12,
+    minHeight: 48,
+    borderRadius: radius.md,
+    backgroundColor: colors.primaryDeep,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+    ...elevations.card,
   },
-  buttonContent: {
+  facebookButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
   },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  },
   facebookButtonText: {
     color: colors.primaryForeground,
     fontSize: typography.label,
+    fontWeight: '600',
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(195,198,207,0.2)',
+  },
+  dividerText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
+  secondaryButton: {
+    minHeight: 48,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(195,198,207,0.1)',
+    backgroundColor: colors.muted,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  secondaryButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  secondaryIcon: {
+    width: 20,
+    height: 16,
+    resizeMode: 'contain',
+  },
+  secondaryButtonText: {
+    color: colors.primaryDeep,
+    fontSize: typography.label,
     fontWeight: '700',
   },
-  errorText: {
+  illustrationWrap: {
+    opacity: 0.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+  },
+  illustration: {
+    width: '100%',
+    aspectRatio: 326 / 128,
+    resizeMode: 'cover',
+  },
+  footer: {
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingTop: spacing.lg,
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing['2xl'],
+  },
+  footerLink: {
+    color: colors.textSecondary,
     fontSize: typography.body,
-    color: colors.danger,
+  },
+  copyright: {
+    color: colors.textSecondary,
+    fontSize: typography.body,
+    opacity: 0.6,
     textAlign: 'center',
-    marginTop: spacing.md,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: typography.body,
+    textAlign: 'center',
   },
   devSection: {
-    marginTop: spacing['2xl'],
     gap: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     paddingTop: spacing.lg,
   },
   devLabel: {
+    color: colors.textSecondary,
     fontSize: typography.caption,
-    color: colors.mutedForeground,
     textAlign: 'center',
-    marginBottom: spacing.xs,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   devButton: {
+    minHeight: 44,
+    borderRadius: radius.md,
     backgroundColor: colors.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: spacing['2xl'],
+  devButtonText: {
+    color: colors.primaryForeground,
+    fontSize: typography.label,
+    fontWeight: '700',
   },
-  footerLink: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
+  disabled: {
+    opacity: 0.7,
+  },
+  pressed: {
+    opacity: 0.92,
+    transform: [{ scale: 0.99 }],
   },
 });

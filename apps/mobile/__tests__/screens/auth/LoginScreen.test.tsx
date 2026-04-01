@@ -80,6 +80,11 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
   });
 
+  it('renders the Figma secondary login button copy', () => {
+    render(<LoginScreen />);
+    expect(screen.getByText('Имэйл хаягаар нэвтрэх')).toBeTruthy();
+  });
+
   it('does not render an unsupported alternate login CTA in phase 0-1', () => {
     render(<LoginScreen />);
     expect(screen.queryByText('Login with email')).toBeNull();
@@ -112,5 +117,11 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     render(<LoginScreen />);
     expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
     expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
+    expect(screen.getByText('© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')).toBeTruthy();
+  });
+
+  it('renders the Figma section divider', () => {
+    render(<LoginScreen />);
+    expect(screen.getByText('Эсвэл')).toBeTruthy();
   });
 });
