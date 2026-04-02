@@ -102,6 +102,11 @@ Every screen is implemented by combining three inputs:
 
 ### Agent 4 — Customer Booking Flow (14 screens)
 
+Note: `SCR-CUST-023` rebook and `SCR-CUST-027` instant match were refreshed visually in the initial mobile pass, but
+their exact booking-confirmation handoff remains constrained by backend contract reality. Follow-up architecture and
+execution are tracked in `docs/plans/2026-04-02-booking-confirmation-source-design.md`,
+`docs/plans/2026-04-02-booking-confirmation-source-implementation.md`, and `tasks/TASK-002.md`.
+
 | SCR-ID | Screen name | Figma node | Code path | Action |
 |---|---|---|---|---|
 | SCR-CUST-014 | Booking Confirmation | 2:16679 | `app/(customer)/bookings/confirm.tsx` | update |
