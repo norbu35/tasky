@@ -15,6 +15,8 @@ Last updated: 2026-04-02
 | `pnpm -r test` | Unit tests across workspaces | Web+Mobile+Packages | Yes | SDK/package tests currently low-signal |
 | `pnpm -r lint` | Lint across workspaces | Web+Mobile+Packages | Yes | quality-gates workflow |
 | `pnpm sdk:generate` | Regenerate TS SDK from OpenAPI | API/Frontend | No (direct) | drift control for client contract |
+| `pnpm workspace:boundaries` | Workspace dependency edge validation | Repo architecture | Yes | prevents forbidden monorepo package edges |
+| `pnpm generated:verify` | Generated artifact reproducibility | API/Frontend/Packages | Yes | validates SDK/tokens reproducibility path |
 
 ## Root Scripts
 
@@ -25,6 +27,8 @@ Last updated: 2026-04-02
 | `npm run lint` | `pnpm -r lint` |
 | `npm run typecheck` | `pnpm -r typecheck` |
 | `npm run sdk:generate` | `pnpm --filter @tasky/sdk generate` |
+| `npm run workspace:boundaries` | `node tooling/scripts/validate-workspace-boundaries.mjs` |
+| `npm run generated:verify` | `pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck` |
 
 ## Workspace Scripts (High Signal)
 
@@ -40,6 +44,7 @@ Last updated: 2026-04-02
 
 | Workflow | Job | Effective Gate |
 |---|---|---|
+| `quality-gates.yml` | `cleanup-gate` | SDK drift, workspace boundary validation, cleanup trusted gate script |
 | `quality-gates.yml` | `backend-quality` | `./gradlew :services:api:test`, `./gradlew :services:api:openApiValidate`, `python3 tooling/scripts/validate-migrations.py` |
 | `quality-gates.yml` | `frontend-quality` | `pnpm -r typecheck`, `pnpm -r lint`, `pnpm -r test` |
 | `quality-gates.yml` | `security` | dependency-review, trivy fs/image, semgrep |
@@ -68,4 +73,5 @@ Last updated: 2026-04-02
 | `./gradlew --no-daemon openApiValidate` | Pass | contract is valid |
 | `./gradlew --no-daemon gateSmoke` | Pass (2/2 runs) | deterministic pass in Batch A and B |
 | `pnpm -r typecheck` | Pass | workspace typecheck passed in Batch A |
-| `pnpm -r test` | Fail (2/2 runs) | deterministic `@tasky/web` failures, see `test-trust-audit.md` |
+| `pnpm -r test` | Pass (1/1 rehab rerun) | deterministic web failures fixed; residual warnings tracked in rehab backlog |
+| `tooling/scripts/check-cleanup-gate.sh` | Pass | passed in Batch C with updated trusted gate set |

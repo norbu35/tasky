@@ -48,6 +48,26 @@ Observations:
 - `pnpm -r test` failed again with the same two `@tasky/web` tests and same failure signatures.
 - This indicates deterministic failure, not flaky behavior, for the current failing checks.
 
+### Batch C: Cleanup-critical rehab + full rerun
+
+Command:
+
+```bash
+tooling/scripts/check-cleanup-gate.sh && ./gradlew --no-daemon :services:api:test :services:api:openApiValidate && pnpm -r test
+```
+
+Result: `PASS`
+
+Observations:
+
+- Cleanup-critical web test failures were repaired by:
+  - removing dependency on deleted historical spec file in `apps/web/tests/unit/web-container-overlay.test.ts`
+  - aligning applicants heading expectation with current UI contract in `apps/web/tests/integration/navigation-phase1.test.tsx`
+- `tooling/scripts/check-cleanup-gate.sh` passed.
+- `./gradlew --no-daemon :services:api:test :services:api:openApiValidate` passed.
+- `pnpm -r test` passed across workspaces.
+- Residual warning noise remains (React Router future flags, i18next/act warnings), but no deterministic failing assertions remained in this run.
+
 ## Early Risk Signals (Pre-execution)
 
 - `tests/registry.yaml` contains zero mutation kill-rate entries in multiple domains, so coverage quality is uneven.
@@ -62,4 +82,4 @@ Observations:
 | `./gradlew openApiValidate` | Trusted | Passed in Batch A |
 | `./gradlew gateSmoke` | Trusted | Passed in Batch A and Batch B |
 | `pnpm -r typecheck` | Trusted | Passed in Batch A |
-| `pnpm -r test` | Blocked (deterministic fail) | Fails in `@tasky/web` on two reproducible tests |
+| `pnpm -r test` | Trusted (with warning noise) | Passed in Batch C after deterministic web test rehab |

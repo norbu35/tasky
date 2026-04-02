@@ -83,7 +83,7 @@ describe('Navigation phase 1 parity', () => {
   it('routes the customer applicants surface through the real app shell', async () => {
     renderApp('/customer/tasks/task-1/applicants');
 
-    expect(await screen.findByRole('heading', { name: 'Task applicants' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
   });
 
   it('routes the customer tasker profile surface through the real app shell', async () => {

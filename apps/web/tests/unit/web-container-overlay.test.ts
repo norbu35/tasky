@@ -35,19 +35,10 @@ describe("Generic web container overlay contract", () => {
 
     test("TID-TASK-111-DOC-GENERIC-CONTAINER-RUNBOOK documents generic overlay commands without server-specific routing", () => {
         const readme = readFileSync(resolve(repoRoot, "README.md"), "utf8");
-        const designSpec = readFileSync(
-            resolve(repoRoot, "docs/superpowers/specs/2026-03-26-web-docker-caddy-design.md"),
-            "utf8"
-        );
 
         expect(readme).toContain("docker compose -f docker-compose.yml -f docker-compose.web.yml build web");
         expect(readme).toContain("docker compose -f docker-compose.yml -f docker-compose.web.yml up -d web");
         expect(readme).not.toContain("tasky.norbu.dev");
         expect(readme).not.toContain("the-grid");
-
-        expect(designSpec).toContain("generic web container adapter");
-        expect(designSpec).toContain("docker-compose.web.yml");
-        expect(designSpec).not.toContain("tasky.norbu.dev");
-        expect(designSpec).not.toContain("the-grid");
     });
 });
