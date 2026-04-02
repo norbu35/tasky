@@ -19,7 +19,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `apps/mobile`                | React Native (Expo) mobile client                                   |
 | `packages/sdk`               | Shared TypeScript SDK (generated from OpenAPI)                      |
 | `packages/design-tokens`     | Shared cross-platform design token source                           |
-| `tasks/`                     | Task files for agent work                                           |
+| `archive/legacy-task-system/`| Archived greenfield task queue (`tasks/` + `scripts/task.sh`)       |
 | `scripts/`                   | Tooling (task management, validation, performance)                  |
 
 ## Prerequisites
@@ -63,12 +63,12 @@ For local testing, dev auth is only allowed in the `local` or `test` Spring prof
 ## Task Management
 
 ```bash
-scripts/task.sh list                # see all tasks
-scripts/task.sh next                # see next available task
-scripts/task.sh start TASK-ID       # start working on a task
-scripts/task.sh done TASK-ID        # mark task complete
-scripts/task.sh add "Title"         # create a new task
+# Legacy queue archived
+ls archive/legacy-task-system/tasks
+cat archive/legacy-task-system/task.sh
 ```
+
+The repo-native task queue is archived and no longer the live maintenance workflow.
 
 ## Frontend
 

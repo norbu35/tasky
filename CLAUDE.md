@@ -32,13 +32,10 @@ pnpm -r test                        # test all workspaces
 pnpm -r lint                        # lint all workspaces
 ```
 
-### Task Management
+### Task Management (Archived)
 ```bash
-scripts/task.sh list                # see all tasks
-scripts/task.sh next                # see next available task
-scripts/task.sh start TASK-ID       # start working on a task
-scripts/task.sh done TASK-ID        # mark task complete
-scripts/task.sh add "Title"         # create a new task
+ls archive/legacy-task-system/tasks
+cat archive/legacy-task-system/task.sh
 ```
 
 ## Project Overview
@@ -52,7 +49,7 @@ apps/web/               React + Vite + Tailwind web client
 apps/mobile/            React Native (Expo) mobile client
 packages/sdk/           TypeScript SDK (generated from docs/API.yaml)
 packages/design-tokens/ Cross-platform design tokens
-tasks/                  Task files for agent work
+archive/legacy-task-system/tasks/  Archived task files from greenfield phase
 ```
 
 ### Key Decisions

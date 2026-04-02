@@ -4,40 +4,40 @@
 
 There are two agent roles. The same agent may play both in one session, or they may be separate sessions.
 
-### 1. Planning: Requirement → Tasks
+### 1. Planning: Requirement → Plan Tranches
 
 The user describes what they want in plain language. The planning agent:
 
 1. Reads `docs/PRD.md`, `docs/ARCHITECTURE.md`, and `docs/API.yaml` to understand what exists
 2. Asks clarifying questions until the requirement is unambiguous
-3. Breaks the requirement into tasks using `scripts/task.sh add "Title"`
-4. Fills in each task file with a description and "Done When" criteria
-5. Sets priority and dependencies between tasks
+3. Writes/updates plan tranches in `docs/plans/`
+4. Uses explicit entry/exit criteria per tranche
+5. Captures dependencies and verification requirements in the plan docs
 
-### 2. Implementation: Task → Branch → PR
+### 2. Implementation: Plan Tranche → Branch → PR
 
 The implementation agent:
 
-1. Runs `scripts/task.sh next` to find available work
-2. Runs `scripts/task.sh start TASK-ID` to claim it and create a branch
-3. Reads the task file and implements what's described
+1. Selects the next tranche from the active plan in `docs/plans/`
+2. Creates/uses a working branch for that tranche
+3. Implements the scoped changes
 4. Writes tests for every "Done When" criterion
 5. Runs all checks locally (see "How to Submit Work")
-6. Updates `CHANGELOG.md`, marks the task done, pushes, and opens a PR
+6. Updates `CHANGELOG.md`, pushes, and opens a PR
 7. The user reviews the PR and merges it
 
-## Writing Good Tasks
+## Writing Good Tranches
 
-A task should be a **vertical slice** deliverable in one PR. It touches one feature across the necessary layers (DB → backend → API spec → frontend). If a feature is too large for one PR, split by user-facing capability, not by technical layer.
+A tranche should be a **vertical slice** deliverable in one PR. It touches one feature across the necessary layers (DB -> backend -> API spec -> frontend). If a feature is too large for one PR, split by user-facing capability, not by technical layer.
 
-**Task file format** (`tasks/TASK-NNN.md`):
+**Plan tranche format** (`docs/plans/*.md`):
 
 ```markdown
-# TASK-NNN: Short imperative title
+# Tranche: Short imperative title
 
-**Status:** todo
+**Status:** planned
 **Priority:** high
-**Depends on:** TASK-NNN (optional)
+**Depends on:** tranche-name (optional)
 
 ## Description
 2-5 sentences: what the user wants, what needs to change, which layers are involved.
@@ -52,7 +52,7 @@ Reference specific endpoints, tables, or screens when possible.
 
 **Priority values:** `critical`, `high`, `medium`, `low`
 
-**Dependencies:** `scripts/task.sh next` automatically skips tasks whose dependencies aren't `done`.
+**Dependencies:** list explicit plan-tranche dependencies and required verification gates.
 
 ## Before Starting Any Task
 
@@ -86,14 +86,13 @@ For any endpoint change:
 3. Then implement the backend and frontend changes
 4. Never hand-write request/response types that exist in the generated SDK
 
-## How to Pick Up Work
+## Task Queue Status
 
-```bash
-scripts/task.sh next          # see the next available task
-scripts/task.sh start TASK-ID # set to in-progress, create branch
-```
+The greenfield task queue is archived:
+- `archive/legacy-task-system/tasks/`
+- `archive/legacy-task-system/task.sh`
 
-Read the task file in `tasks/`. The "Done When" section defines what you need to deliver.
+Do not use `scripts/task.sh` for active maintenance work.
 
 ## How to Submit Work
 
@@ -105,8 +104,7 @@ Read the task file in `tasks/`. The "Done When" section defines what you need to
    pnpm -r test
    ```
 2. Update `CHANGELOG.md` with a one-line summary of what you did
-3. Run `scripts/task.sh done TASK-ID`
-4. Push the branch and open a PR
+3. Push the branch and open a PR
 
 ## PR Description
 
