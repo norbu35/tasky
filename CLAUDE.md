@@ -44,11 +44,14 @@ cat archive/legacy-task-system/task.sh
 
 ### Structure
 ```
-src/                    Spring Boot backend (modular monolith)
+services/               Backend service zone (target: services/api)
+src/                    Transitional backend source location
 apps/web/               React + Vite + Tailwind web client
 apps/mobile/            React Native (Expo) mobile client
 packages/sdk/           TypeScript SDK (generated from docs/API.yaml)
 packages/design-tokens/ Cross-platform design tokens
+research/               Research datasets and analysis inputs
+tooling/                Structural and verification tooling
 archive/legacy-task-system/tasks/  Archived task files from greenfield phase
 ```
 

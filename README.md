@@ -14,13 +14,16 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `docs/STRATEGY.md`           | Business model and go-to-market plan                                |
 | `docs/adr/`                  | Architecture Decision Records                                       |
 | `docs/API.yaml`              | OpenAPI 3.0 contract (source of truth for all clients)              |
-| `src/`                       | Spring Boot backend source                                          |
+| `services/`                  | Deployable backend service zone (target: `services/api`)            |
+| `src/`                       | Transitional backend source location (to be moved under `services/`)|
 | `apps/web`                   | React web client                                                    |
 | `apps/mobile`                | React Native (Expo) mobile client                                   |
 | `packages/sdk`               | Shared TypeScript SDK (generated from OpenAPI)                      |
 | `packages/design-tokens`     | Shared cross-platform design token source                           |
+| `research/`                  | Research datasets and analysis inputs                               |
+| `tooling/`                   | Structural/verification tooling and repo automation                 |
 | `archive/legacy-task-system/`| Archived greenfield task queue (`tasks/` + `scripts/task.sh`)       |
-| `scripts/`                   | Tooling (task management, validation, performance)                  |
+| `scripts/`                   | Transitional script location (to be partitioned by ownership)       |
 
 ## Prerequisites
 

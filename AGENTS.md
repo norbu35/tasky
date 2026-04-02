@@ -66,7 +66,7 @@ Read these files first:
 - **Backend:** Java 21, Spring Boot 3, JDBI 3 (explicit SQL, not JPA), PostgreSQL + PostGIS, Flyway migrations
 - **Web:** React 18, TypeScript, Vite, Radix UI + Tailwind (shadcn conventions, no CLI)
 - **Mobile:** React Native (Expo), TypeScript
-- **Monorepo:** pnpm workspaces — `apps/web/`, `apps/mobile/`, `packages/sdk/`, `packages/design-tokens/`
+- **Monorepo:** runtime and shared code under `apps/`, `services/`, `packages/`; support zones under `tooling/`, `research/`, and `archive/`
 - **API client:** Always consume `@tasky/sdk` (generated from `docs/API.yaml`), never hand-write fetch calls
 
 ## Code Conventions

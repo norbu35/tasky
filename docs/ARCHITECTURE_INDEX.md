@@ -20,10 +20,14 @@ When documents conflict, precedence from `AGENTS.md` applies.
 | System architecture baseline (stack, data architecture, NFR approach) | `docs/ARCHITECTURE.md`                      | `docs/design/domain-lifecycles.yaml`, `docs/design/journey-catalog.yaml` |
 | Module runtime behavior (auth, errors, idempotency, side effects)     | `src/main/java/mn/tasky/<module>/AGENTS.md` | Module controllers/services                     |
 | Quality gates and self-verification contract                          | `docs/quality/SELF_VERIFY_CONTRACT.md`      | `docs/quality/risk-checks.json`                 |
-| Agent workflow and task management                                    | `AGENTS.md`                                 | `tasks/`, `scripts/task.sh`                      |
+| Agent workflow and maintenance execution                              | `AGENTS.md`                                 | `docs/plans/`, `archive/legacy-task-system/`    |
 | Project policy and conflict resolution                                | `AGENTS.md`                                 | ADRs under `docs/adr/`                          |
 
 ## 3. Module Contract Index
+
+Repository zones:
+- Runtime: `apps/`, `services/`, `packages/`
+- Support: `tooling/`, `research/`, `archive/`, `docs/`
 
 Each file below is the canonical contract for that backend module:
 
