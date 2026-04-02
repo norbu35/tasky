@@ -6,6 +6,7 @@ import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { useAcceptApplication } from '../../../features/bookings/hooks/useAcceptApplication';
+import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
@@ -23,24 +24,38 @@ export default function BookingConfirmScreen() {
     taskerName: string;
     taskerAvatar: string;
     taskerRating: string;
+    source?: 'application' | 'rebook' | 'instant_match';
+    bookingIntentId?: string;
   }>();
 
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const { mutateAsync: acceptApplication, isPending } = useAcceptApplication();
+  const { mutateAsync: confirmBookingIntent, isPending: isConfirmingIntent } = useConfirmBookingIntent();
 
   const handleConfirm = useCallback(async () => {
-    const idempotencyKey = `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
-    const booking = await acceptApplication({
-      taskId: params.taskId,
-      applicationId: params.applicationId,
-      liabilityDisclaimerAccepted: true,
-      idempotencyKey,
-    });
+    const source = params.source ?? 'application';
+    const idempotencyKey =
+      source === 'rebook'
+        ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
+        : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
+    const booking =
+      source === 'rebook'
+        ? await confirmBookingIntent({
+            bookingIntentId: params.bookingIntentId!,
+            liabilityDisclaimerAccepted: true,
+            idempotencyKey,
+          })
+        : await acceptApplication({
+            taskId: params.taskId,
+            applicationId: params.applicationId,
+            liabilityDisclaimerAccepted: true,
+            idempotencyKey,
+          });
     router.replace({
       pathname: '/(customer)/bookings/confirmed',
       params: { bookingId: booking.id },
     });
-  }, [params, acceptApplication, router]);
+  }, [params, acceptApplication, confirmBookingIntent, router]);
 
   return (
     <DetailTemplate
@@ -48,7 +63,7 @@ export default function BookingConfirmScreen() {
       onBack={() => router.back()}
       ctaLabel={t('customer.bookings.ctaConfirm', 'Confirm Booking')}
       ctaOnPress={handleConfirm}
-      ctaLoading={isPending}
+      ctaLoading={isPending || isConfirmingIntent}
       ctaDisabled={!disclaimerChecked}
       testID="booking-confirm-screen"
     >

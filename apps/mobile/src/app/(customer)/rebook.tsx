@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../components/templates/FormWizardTemplate';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
+import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -22,6 +23,7 @@ export default function RebookScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{
+    bookingId?: string;
     taskerId: string;
     taskerName: string;
     taskerAvatar: string;
@@ -36,6 +38,8 @@ export default function RebookScreen() {
   }>();
 
   const { mutateAsync: createTask, isPending } = useCreateTask();
+  const { mutateAsync: createBookingIntent, isPending: isCreatingBookingIntent } =
+    useCreateBookingIntent();
 
   const [budget, setBudget] = useState(params.budget ?? '50000');
   const [selectedDate] = useState<Date>(() => {
@@ -65,11 +69,18 @@ export default function RebookScreen() {
       photo_keys: [],
       scheduled_at: selectedDate.toISOString(),
     });
+    const bookingIntent = await createBookingIntent({
+      taskId: task.id,
+      source: 'REBOOK',
+      taskerId: params.taskerId,
+      originalBookingId: params.bookingId,
+    });
     router.push({
       pathname: '/(customer)/bookings/confirm',
       params: {
         taskId: task.id,
-        applicationId: '',
+        source: 'rebook',
+        bookingIntentId: bookingIntent.id,
         taskerId: params.taskerId,
         taskTitle: params.description,
         taskBudget: budget,
@@ -78,7 +89,7 @@ export default function RebookScreen() {
         taskerAvatar: params.taskerAvatar,
       },
     });
-  }, [params, budgetTooLow, numericBudget, selectedDate, createTask, router]);
+  }, [params, budgetTooLow, numericBudget, selectedDate, createTask, createBookingIntent, router]);
 
   return (
     <FormWizardTemplate
@@ -88,7 +99,7 @@ export default function RebookScreen() {
       onBack={() => router.back()}
       nextLabel={t('customer.bookings.ctaRebookSubmit', 'Continue to Booking')}
       nextDisabled={budgetTooLow}
-      nextLoading={isPending}
+      nextLoading={isPending || isCreatingBookingIntent}
       showBack
       testID="rebook-screen"
     >

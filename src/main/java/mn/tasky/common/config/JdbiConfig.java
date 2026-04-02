@@ -15,6 +15,7 @@ import mn.tasky.auth.dao.UserDao;
 import mn.tasky.auth.dao.VerificationDao;
 import mn.tasky.booking.dao.BookingCompletionSignalDao;
 import mn.tasky.booking.dao.BookingDao;
+import mn.tasky.booking.dao.BookingIntentDao;
 import mn.tasky.booking.dao.BookingReliabilityIncidentDao;
 import mn.tasky.booking.dao.BookingScheduleEventDao;
 import mn.tasky.booking.dao.BookingTimelineEventDao;
@@ -170,6 +171,11 @@ public class JdbiConfig {
     @Bean
     public BookingDao bookingDao(Jdbi jdbi) {
         return jdbi.onDemand(BookingDao.class);
+    }
+
+    @Bean
+    public BookingIntentDao bookingIntentDao(Jdbi jdbi) {
+        return jdbi.onDemand(BookingIntentDao.class);
     }
 
     @Bean

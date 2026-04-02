@@ -533,6 +533,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tasks/{id}/booking-intents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create booking intent for non-application confirmation sources
+         * @description Creates a booking intent for a customer-owned OPEN task.
+         *     `REBOOK` is implemented. `INSTANT_MATCH` remains deferred until Phase 3+.
+         */
+        post: operations["createBookingIntent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tasks/{id}/instant-match": {
         parameters: {
             query?: never;
@@ -789,6 +810,47 @@ export interface paths {
          *     Intake answers use the current active schema version.
          */
         post: operations["rebookFromBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/booking-intents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get booking intent
+         * @description Returns booking intent details for the owner.
+         */
+        get: operations["getBookingIntent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/booking-intents/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm booking intent
+         * @description Confirms a booking intent and creates an ASSIGNED booking.
+         *     Requires `liability_disclaimer_accepted=true` and Idempotency-Key header.
+         */
+        post: operations["confirmBookingIntent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2112,6 +2174,34 @@ export interface components {
             created_at: string;
             /** Format: date-time */
             updated_at?: string;
+        };
+        BookingIntent: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            task_id: string;
+            /** Format: uuid */
+            tasker_id: string;
+            /** Format: uuid */
+            customer_id: string;
+            /** @enum {string} */
+            source: "REBOOK" | "INSTANT_MATCH";
+            /** @enum {string} */
+            status: "PENDING" | "CONFIRMED" | "EXPIRED" | "CANCELLED";
+            /** Format: uuid */
+            original_booking_id?: string | null;
+            /** Format: uuid */
+            offer_id?: string | null;
+            /** Format: date-time */
+            expires_at?: string | null;
+            /** Format: uuid */
+            confirmed_booking_id?: string | null;
+            /** Format: date-time */
+            confirmed_at?: string | null;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
         };
         BookingScheduleEvent: {
             /** Format: uuid */
@@ -3465,6 +3555,54 @@ export interface operations {
             };
         };
     };
+    createBookingIntent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    source: "REBOOK" | "INSTANT_MATCH";
+                    /** Format: uuid */
+                    tasker_id: string;
+                    /** Format: uuid */
+                    original_booking_id?: string | null;
+                    /** Format: uuid */
+                    offer_id?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Booking intent created. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingIntent"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Task or source constraints not satisfiable. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     startInstantMatch: {
         parameters: {
             query?: never;
@@ -3673,7 +3811,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Optional cancellation reason. Taskers can use "Safety/Fraud" to bypass strikes. */
+                    reason?: string;
+                };
+            };
+        };
         responses: {
             /** @description Booking cancelled. */
             200: {
@@ -3927,6 +4072,75 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Booking is not in COMPLETED status. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getBookingIntent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Booking intent details. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingIntent"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    confirmBookingIntent: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Unique key to ensure idempotent handling of critical state-changing requests. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKeyHeader"];
+            };
+            path: {
+                id: components["parameters"]["PathId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {boolean} */
+                    liability_disclaimer_accepted: true;
+                };
+            };
+        };
+        responses: {
+            /** @description Booking created from intent. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Booking"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Intent or task status does not allow confirmation. */
             409: {
                 headers: {
                     [name: string]: unknown;

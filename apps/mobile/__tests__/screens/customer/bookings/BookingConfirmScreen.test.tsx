@@ -6,20 +6,21 @@ import BookingConfirmScreen from '../../../../src/app/(customer)/bookings/confir
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
+let mockLocalSearchParams: Record<string, string> = {
+  taskId: 'task-1',
+  applicationId: 'app-1',
+  taskerId: 'tasker-1',
+  taskTitle: 'Fix my sink',
+  taskBudget: '50000',
+  taskSchedule: '2026-04-01T10:00:00Z',
+  taskerName: 'Bold',
+  taskerAvatar: 'https://example.com/avatar.jpg',
+  taskerRating: '4.7',
+};
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace, back: mockBack }),
-  useLocalSearchParams: () => ({
-    taskId: 'task-1',
-    applicationId: 'app-1',
-    taskerId: 'tasker-1',
-    taskTitle: 'Fix my sink',
-    taskBudget: '50000',
-    taskSchedule: '2026-04-01T10:00:00Z',
-    taskerName: 'Bold',
-    taskerAvatar: 'https://example.com/avatar.jpg',
-    taskerRating: '4.7',
-  }),
+  useLocalSearchParams: () => mockLocalSearchParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -43,6 +44,7 @@ jest.mock('lucide-react-native', () => {
 
 const mockAcceptApplication = jest.fn();
 const mockMutate = jest.fn();
+const mockConfirmBookingIntent = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useAcceptApplication', () => ({
   useAcceptApplication: () => ({
     mutateAsync: mockAcceptApplication,
@@ -50,9 +52,26 @@ jest.mock('../../../../src/features/bookings/hooks/useAcceptApplication', () => 
     isPending: false,
   }),
 }));
+jest.mock('../../../../src/features/bookings/hooks/useConfirmBookingIntent', () => ({
+  useConfirmBookingIntent: () => ({
+    mutateAsync: mockConfirmBookingIntent,
+    isPending: false,
+  }),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockLocalSearchParams = {
+    taskId: 'task-1',
+    applicationId: 'app-1',
+    taskerId: 'tasker-1',
+    taskTitle: 'Fix my sink',
+    taskBudget: '50000',
+    taskSchedule: '2026-04-01T10:00:00Z',
+    taskerName: 'Bold',
+    taskerAvatar: 'https://example.com/avatar.jpg',
+    taskerRating: '4.7',
+  };
 });
 
 describe('BookingConfirmScreen (SCR-CUST-014)', () => {
@@ -114,5 +133,35 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
   it('renders payment note', () => {
     render(<BookingConfirmScreen />);
     expect(screen.getByText('Payment is arranged directly with the Tasker')).toBeTruthy();
+  });
+
+  it('confirm uses booking intent flow when source is rebook', async () => {
+    mockLocalSearchParams = {
+      taskId: 'task-1',
+      applicationId: '',
+      source: 'rebook',
+      bookingIntentId: 'intent-1',
+      taskerId: 'tasker-1',
+      taskTitle: 'Fix my sink',
+      taskBudget: '50000',
+      taskSchedule: '2026-04-01T10:00:00Z',
+      taskerName: 'Bold',
+      taskerAvatar: 'https://example.com/avatar.jpg',
+      taskerRating: '4.7',
+    };
+    mockConfirmBookingIntent.mockResolvedValue({ id: 'booking-2' });
+    render(<BookingConfirmScreen />);
+    fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
+    fireEvent.press(screen.getByTestId('booking-confirm-screen-cta'));
+    await waitFor(() => {
+      expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          bookingIntentId: 'intent-1',
+          liabilityDisclaimerAccepted: true,
+          idempotencyKey: expect.any(String),
+        }),
+      );
+      expect(mockAcceptApplication).not.toHaveBeenCalled();
+    });
   });
 });

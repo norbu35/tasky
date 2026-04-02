@@ -24,6 +24,8 @@ export function BookingConfirmationPage() {
 
   const taskId = searchParams.get('taskId');
   const applicationId = searchParams.get('applicationId');
+  const source = searchParams.get('source') ?? 'application';
+  const bookingIntentId = searchParams.get('bookingIntentId');
 
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [successBooking, setSuccessBooking] = useState<Booking | null>(null);
@@ -38,16 +40,26 @@ export function BookingConfirmationPage() {
   const { data: appsPage, isLoading: loadingApp } = useQuery({
     queryKey: ['taskApplications', taskId, session?.accessToken],
     queryFn: async () => apiClient.listTaskApplications(session!.accessToken, taskId!),
-    enabled: !!session && !!taskId && !!applicationId,
+    enabled: !!session && !!taskId && source === 'application' && !!applicationId,
   });
 
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      if (!session || !taskId || !applicationId) throw new Error('Missing requirements');
+      if (!session) throw new Error('Missing requirements');
+      if (source === 'rebook') {
+        if (!bookingIntentId) throw new Error('Missing booking intent');
+        return apiClient.confirmBookingIntent(
+          session.accessToken,
+          bookingIntentId,
+          disclaimerAccepted,
+          createIdempotencyKey('confirm-intent'),
+        );
+      }
+      if (!taskId || !applicationId) throw new Error('Missing requirements');
       return apiClient.acceptApplication(
         session.accessToken,
-        taskId!,
-        applicationId!,
+        taskId,
+        applicationId,
         disclaimerAccepted,
         createIdempotencyKey('accept'),
       );
@@ -59,7 +71,7 @@ export function BookingConfirmationPage() {
     },
   });
 
-  if (!taskId || !applicationId) {
+  if (source !== 'rebook' && (!taskId || !applicationId)) {
     return (
       <ScreenFrame maxWidth="narrow">
         <Alert variant="destructive">
@@ -78,8 +90,27 @@ export function BookingConfirmationPage() {
     );
   }
 
+  if (source === 'rebook' && !bookingIntentId) {
+    return (
+      <ScreenFrame maxWidth="narrow">
+        <Alert variant="destructive">
+          <AlertTitle>{t('bookingConfirmation.invalidRequestTitle', 'Invalid Request')}</AlertTitle>
+          <AlertDescription>
+            {t(
+              'bookingConfirmation.invalidRequestDesc',
+              'Booking intent is missing from the URL.',
+            )}
+          </AlertDescription>
+        </Alert>
+        <Button variant="ghost" className="mt-4" onClick={() => navigate('/customer/tasks')}>
+          {t('bookingConfirmation.backToDashboard', 'Back to Dashboard')}
+        </Button>
+      </ScreenFrame>
+    );
+  }
+
   const task = tasksPage?.data.find((t) => t.id === taskId);
-  const application = appsPage?.data.find((a) => a.id === applicationId);
+  const application = applicationId ? appsPage?.data.find((a) => a.id === applicationId) : undefined;
 
   if (successBooking) {
     return (
@@ -216,10 +247,12 @@ export function BookingConfirmationPage() {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  {t(
-                    'bookingConfirmation.applicantLoadError',
-                    'Applicant details could not be loaded.',
-                  )}
+                  {source === 'rebook'
+                    ? t('bookingConfirmation.rebookTaskerPending', 'Tasker details will load after confirmation.')
+                    : t(
+                        'bookingConfirmation.applicantLoadError',
+                        'Applicant details could not be loaded.',
+                      )}
                 </p>
               )}
             </section>
