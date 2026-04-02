@@ -15,14 +15,14 @@ Usage:
         --categories cleaning,moving \\
         --location ulan-bator \\
         --max-pages 10 \\
-        --output data/unegui/
+        --output ../market-data/unegui/
 
     # Incremental (cron) — only fetch new listings since last run:
     python3 scripts/scrape-unegui.py \\
         --categories cleaning,moving,plumbing,electrical,painting,construction \\
         --location ulan-bator \\
         --max-pages 5 \\
-        --output data/unegui/ \\
+        --output ../market-data/unegui/ \\
         --mode incremental
 """
 
@@ -677,8 +677,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     p.add_argument(
         "--output",
-        default="data/unegui/",
-        help="Output directory for CSV files (default: data/unegui/).",
+        default="../market-data/unegui/",
+        help="Output directory for CSV files (default: ../market-data/unegui/).",
     )
     p.add_argument(
         "--mode",

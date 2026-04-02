@@ -11,7 +11,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOG_DIR="$SCRIPT_DIR/../data/unegui/logs"
+LOG_DIR="$SCRIPT_DIR/../market-data/unegui/logs"
 mkdir -p "$LOG_DIR"
 LOGFILE="$LOG_DIR/scrape_$(date +%Y%m%d_%H%M%S).log"
 
@@ -19,7 +19,7 @@ python3 "$SCRIPT_DIR/scrape-unegui.py" \
   --categories cleaning,moving,plumbing,electrical,painting,construction \
   --location ulan-bator \
   --max-pages 5 \
-  --output "$SCRIPT_DIR/../data/unegui/" \
+  --output "$SCRIPT_DIR/../market-data/unegui/" \
   --mode incremental \
   --fetch-phones \
   2>&1 | tee "$LOGFILE"

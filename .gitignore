@@ -41,8 +41,8 @@ artifacts/checks/*
 !artifacts/self-verify.json
 
 # Scraper output (keep directory placeholder)
-data/unegui/*
-!data/unegui/.gitkeep
+research/market-data/unegui/*
+!research/market-data/unegui/.gitkeep
 
 # Git worktrees
 .worktrees/

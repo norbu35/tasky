@@ -8,4 +8,6 @@ Intended contents:
 - analysis inputs that are not runtime source code
 
 Current state:
-- some research assets are still under `docs/research/`, `scripts/data/`, and `unegui-scraper/` and will be realigned in later phases.
+- research datasets are maintained under `research/market-data/`
+- scraper source and requirements are maintained under `research/unegui-scraper/`
+- analysis summaries remain under `docs/research/`

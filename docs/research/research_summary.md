@@ -14,6 +14,10 @@ can be updated with evidence-backed decisions.
 3. `docs/research/Gemini1.docx`
 4. `docs/research/Gemini2.docx`
 
+Associated raw market snapshots and scraper assets now live under:
+- `research/market-data/`
+- `research/unegui-scraper/`
+
 ## 3. Project Goal and Current State (from existing project docs)
 
 ### 3.1 Goal (unchanged)
