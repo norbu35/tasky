@@ -64,12 +64,13 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     render(<LocationScreen />);
     expect(screen.getByText('Set Location')).toBeTruthy();
     expect(screen.getByText('Pin the task location on the map')).toBeTruthy();
+    expect(screen.getByTestId('location-current-card')).toBeTruthy();
     expect(screen.getByTestId('location-text-input')).toBeTruthy();
   });
 
   it('renders the location label', () => {
     render(<LocationScreen />);
-    expect(screen.getByText('Location details')).toBeTruthy();
+    expect(screen.getByText('Location description')).toBeTruthy();
   });
 
   it('navigates to schedule when next pressed with location', () => {
@@ -119,5 +120,14 @@ describe('LocationScreen (SCR-CUST-005)', () => {
     });
 
     expect(nextButton).not.toBeDisabled();
+  });
+
+  it('renders map controls and quick location chips', () => {
+    render(<LocationScreen />);
+    expect(screen.getByTestId('location-locate-button')).toBeTruthy();
+    expect(screen.getByTestId('location-zoom-in-button')).toBeTruthy();
+    expect(screen.getByTestId('location-zoom-out-button')).toBeTruthy();
+    expect(screen.getByText('Popular locations')).toBeTruthy();
+    expect(screen.getByText('Home')).toBeTruthy();
   });
 });

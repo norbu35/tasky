@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 // Ulaanbaatar city centre
 const UB_CENTER = { latitude: 47.9184, longitude: 106.9177 };
@@ -34,6 +35,11 @@ export default function LocationScreen() {
   const initialLat = parseCoordinateParam(params.lat);
   const initialLng = parseCoordinateParam(params.lng);
   const [locationText, setLocationText] = useState(params.location ?? '');
+  const quickLocations = [
+    t('customer.postTask.quickLocationHome', 'Home'),
+    t('customer.postTask.quickLocationWork', 'Work'),
+    t('customer.postTask.quickLocationSukhbaatar', 'Sukhbaatar Square'),
+  ];
   const [pin, setPin] = useState<{ latitude: number; longitude: number } | null>(
     initialLat !== null && initialLng !== null
       ? { latitude: initialLat, longitude: initialLng }
@@ -103,6 +109,25 @@ export default function LocationScreen() {
           />
           {pin && <Marker coordinate={pin} />}
         </MapView>
+        <View pointerEvents="none" style={styles.mapCenterOverlay}>
+          <View style={styles.pickHereBadge}>
+            <Text style={styles.pickHereText}>{t('customer.postTask.pickHere', 'Pick here')}</Text>
+          </View>
+          <View style={styles.pinIconWrap}>
+            <Navigation size={16} color={colors.primaryForeground} />
+          </View>
+        </View>
+        <View style={styles.mapControls}>
+          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-locate-button">
+            <LocateFixed size={18} color={colors.primaryDeep} />
+          </Pressable>
+          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-zoom-in-button">
+            <Plus size={18} color={colors.primaryDeep} />
+          </Pressable>
+          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-zoom-out-button">
+            <Minus size={18} color={colors.primaryDeep} />
+          </Pressable>
+        </View>
         <Text style={styles.mapHint}>
           {pin
             ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
@@ -110,29 +135,50 @@ export default function LocationScreen() {
         </Text>
       </View>
 
-      <View style={styles.statusCard}>
+      <View style={styles.statusCard} testID="location-current-card">
         <Text style={styles.statusLabel}>
-          {t('customer.postTask.locationStatusTitle', 'Location status')}
+          {t('customer.postTask.currentLocationLabel', 'Current location')}
         </Text>
         <Text style={styles.statusValue}>
           {pin
-            ? t('customer.postTask.locationPinned', 'Pinned and ready to continue')
+            ? t('customer.postTask.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
             : t('customer.postTask.locationAwaitingPin', 'Drop a pin to unlock the next step')}
         </Text>
       </View>
 
       <FormField
-        label={t('customer.postTask.locationLabel', 'Location details')}
+        label={t('customer.postTask.locationDescriptionLabel', 'Location description')}
         helperText={t('customer.postTask.locationHelper', 'Provide details helpful for the Tasker')}
       >
         <Input
           testID="location-text-input"
           value={locationText}
           onChangeText={setLocationText}
-          placeholder={t('customer.postTask.locationPlaceholder', 'Enter location')}
+          placeholder={t(
+            'customer.postTask.locationPlaceholder',
+            'e.g., Behind State Dept Store, 5th floor',
+          )}
           maxLength={100}
         />
       </FormField>
+      <View style={styles.quickLocationsSection}>
+        <Text style={styles.quickLocationsLabel}>
+          {t('customer.postTask.quickLocationsLabel', 'Popular locations')}
+        </Text>
+        <View style={styles.quickLocationsRow}>
+          {quickLocations.map((location) => (
+            <Pressable
+              key={location}
+              onPress={() => setLocationText(location)}
+              style={styles.quickChip}
+              testID={`location-quick-${location}`}
+              accessibilityRole="button"
+            >
+              <Text style={styles.quickChipText}>{location}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
       <Text style={styles.privacyNote}>
         {t(
           'customer.postTask.locationPrivacy',
@@ -168,9 +214,54 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: 220,
-    borderRadius: mobileTheme.radius.lg,
+    height: 260,
+    borderRadius: radius.lg,
     overflow: 'hidden',
+  },
+  mapCenterOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+  },
+  pickHereBadge: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+    backgroundColor: colors.primaryDeep,
+  },
+  pickHereText: {
+    fontSize: typography.label,
+    color: colors.primaryForeground,
+    fontWeight: '700',
+  },
+  pinIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+  },
+  mapControls: {
+    position: 'absolute',
+    right: spacing.md,
+    bottom: spacing.xl,
+    gap: spacing.sm,
+  },
+  mapControlButton: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   mapHint: {
     fontSize: typography.caption,
@@ -179,11 +270,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   statusCard: {
-    borderRadius: mobileTheme.radius.lg,
+    borderRadius: radius.md,
     padding: spacing.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
     gap: spacing.xs,
   },
   statusLabel: {
@@ -203,5 +292,31 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
     marginTop: spacing.md,
     lineHeight: typography.caption * 1.6,
+  },
+  quickLocationsSection: {
+    gap: spacing.sm,
+  },
+  quickLocationsLabel: {
+    fontSize: typography.caption,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: colors.textSecondary,
+    fontWeight: '700',
+  },
+  quickLocationsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  quickChip: {
+    backgroundColor: `${colors.mutedForeground}20`,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  quickChipText: {
+    fontSize: typography.caption,
+    color: colors.foreground,
+    fontWeight: '600',
   },
 });

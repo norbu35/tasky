@@ -49,7 +49,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
   it('renders the add photo button', () => {
     render(<PhotoUploadScreen />);
-    expect(screen.getByText('Add Photos')).toBeTruthy();
+    expect(screen.getByText('Show your task workspace')).toBeTruthy();
     expect(screen.getByText('Add photos related to your task (up to 3)')).toBeTruthy();
     expect(screen.getAllByText('Add Photo')).toHaveLength(3);
   });
@@ -91,6 +91,27 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     render(<PhotoUploadScreen />);
 
     expect(screen.getByText('Continue')).toBeTruthy();
+  });
+
+  it('shows remove action for uploaded photos and updates params payload after removal', () => {
+    Object.assign(mockParams, {
+      categoryId: 'cat-123',
+      description: 'Fix my sink',
+      photos: JSON.stringify(['photo-key-1', 'photo-key-2']),
+    });
+
+    render(<PhotoUploadScreen />);
+    fireEvent.press(screen.getByTestId('photo-upload-remove-0'));
+    fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
+
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/tasks/new/location',
+        params: expect.objectContaining({
+          photos: JSON.stringify(['photo-key-2']),
+        }),
+      }),
+    );
   });
 
   it('TID-TASK-113-MOBILE-PHOTO-KEYS-PERSIST preserves existing uploaded photo keys when continuing', () => {
