@@ -8,7 +8,7 @@ Last updated: 2026-04-02
 |---|---|---|---|---|
 | `./gradlew --no-daemon test` | Backend unit/integration tests | Backend | Yes | Base backend correctness gate |
 | `./gradlew --no-daemon openApiValidate` | OpenAPI contract validity | Backend/API | Yes | Must pass before SDK generation/merge |
-| `./gradlew --no-daemon gateSmoke` | Critical scenario smoke gate | Backend/QA | Intended | wraps `test` + `scripts/check-gates.sh smoke` |
+| `./gradlew --no-daemon gateSmoke` | Critical scenario smoke gate | Backend/QA | Intended | wraps `test` + `tooling/scripts/check-gates.sh smoke` |
 | `./gradlew --no-daemon gateRegression` | Regression + coverage + mutation subset | Backend/QA | Release-level | depends on `pitestBookingAuth` |
 | `./gradlew --no-daemon gateFull` | Full mutation/nightly gate | Backend/QA | Nightly/alerts | highest cost |
 | `pnpm -r typecheck` | Type safety across workspaces | Web+Mobile+Packages | Yes | includes apps and packages |
@@ -40,12 +40,12 @@ Last updated: 2026-04-02
 
 | Workflow | Job | Effective Gate |
 |---|---|---|
-| `quality-gates.yml` | `backend-quality` | `./gradlew test`, `./gradlew openApiValidate`, `python3 scripts/validate-migrations.py` |
+| `quality-gates.yml` | `backend-quality` | `./gradlew :services:api:test`, `./gradlew :services:api:openApiValidate`, `python3 tooling/scripts/validate-migrations.py` |
 | `quality-gates.yml` | `frontend-quality` | `pnpm -r typecheck`, `pnpm -r lint`, `pnpm -r test` |
 | `quality-gates.yml` | `security` | dependency-review, trivy fs/image, semgrep |
 | `nightly-regression.yml` | `full-regression` | `pnpm -r typecheck`, `pnpm -r test`, `./gradlew check openApiValidate`, image scan |
 | `release-gate.yml` | `migration-safety` | migration validation + flyway info |
-| `release-gate.yml` | `performance-smoke` | `scripts/performance-smoke.sh` |
+| `release-gate.yml` | `performance-smoke` | `tooling/scripts/performance-smoke.sh` |
 | `release-gate.yml` | `release-readiness-checklist` | artifact schema validation |
 
 ## Initial Trust Classification (Before Runtime Audit)

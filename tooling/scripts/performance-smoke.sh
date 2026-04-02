@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 target="${PERF_TARGET_URL:-http://127.0.0.1:${PERF_TARGET_PORT:-8080}}"
 max_p95_ms="${PERF_MAX_P95_MS:-500}"

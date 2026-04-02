@@ -24,10 +24,10 @@ jobs:
           fetch-depth: 0
 
       - name: Ensure scripts are executable
-        run: chmod +x scripts/*.sh scripts/*.py
+        run: chmod +x tooling/scripts/*.sh tooling/scripts/*.py
 
       - name: Validate migration naming and immutability
-        run: python3 scripts/validate-migrations.py
+        run: python3 tooling/scripts/validate-migrations.py
 
       - name: Verify migrations on a clean database
         run: |
@@ -46,8 +46,8 @@ jobs:
           POSTGRES_DB: tasky
           POSTGRES_HOST: localhost
           TASKY_JWT_SECRET: test-jwt-secret-32-chars-minimum!!
-          TASKY_ENCRYPTION_KEY: test-enc-key-32-chars-minimum!!!!!
-          TASKY_BLIND_INDEX_KEY: test-blind-key-32-chars-minimum!!!
+          TASKY_ENCRYPTION_KEY: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
+          TASKY_BLIND_INDEX_KEY: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
           TASKY_QPAY_WEBHOOK_SECRET: test-qpay-secret
 
   rollback-readiness:
@@ -100,10 +100,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Ensure scripts are executable
-        run: chmod +x gradlew scripts/*.sh scripts/*.py
+        run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
 
       - name: Run performance smoke test
-        run: bash scripts/performance-smoke.sh
+        run: bash tooling/scripts/performance-smoke.sh
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -113,8 +113,8 @@ jobs:
           APP_DB_USER: tasky
           APP_DB_PASSWORD: tasky
           TASKY_JWT_SECRET: test-jwt-secret-32-chars-minimum!!
-          TASKY_ENCRYPTION_KEY: test-enc-key-32-chars-minimum!!!!!
-          TASKY_BLIND_INDEX_KEY: test-blind-key-32-chars-minimum!!!
+          TASKY_ENCRYPTION_KEY: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
+          TASKY_BLIND_INDEX_KEY: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
           TASKY_QPAY_WEBHOOK_SECRET: test-qpay-secret
 
   release-readiness-checklist:

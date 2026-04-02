@@ -178,7 +178,7 @@ tasks.jacocoTestCoverageVerification {
 // Checkstyle
 checkstyle {
     toolVersion = "10.21.2"
-    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+    configFile = file("${rootProject.projectDir}/tooling/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
 }
 
@@ -201,7 +201,7 @@ pmd {
     toolVersion = "7.9.0"
     isConsoleOutput = true
     ruleSets = mutableListOf()   // clear defaults; use our ruleset only
-    ruleSetFiles = files("${rootProject.projectDir}/config/pmd/pmd-ruleset.xml")
+    ruleSetFiles = files("${rootProject.projectDir}/tooling/config/pmd/pmd-ruleset.xml")
     isIgnoreFailures = false
 }
 tasks.withType<Pmd>().configureEach {
@@ -216,7 +216,7 @@ spotbugs {
     toolVersion = "4.8.6"
     effort = com.github.spotbugs.snom.Effort.MAX
     reportLevel = com.github.spotbugs.snom.Confidence.MEDIUM
-    excludeFilter = file("${rootProject.projectDir}/config/spotbugs/spotbugs-exclude.xml")
+    excludeFilter = file("${rootProject.projectDir}/tooling/config/spotbugs/spotbugs-exclude.xml")
     ignoreFailures = false
 }
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
@@ -233,7 +233,7 @@ tasks.withType<JavaCompile>().configureEach {
 // OWASP Dependency Check (opt-in — deliberately NOT wired into `check`)
 dependencyCheck {
     failBuildOnCVSS = 7.0f
-    suppressionFile = "${rootProject.projectDir}/config/owasp/suppressions.xml"
+    suppressionFile = "${rootProject.projectDir}/tooling/config/owasp/suppressions.xml"
     nvd { apiKey = System.getenv("NVD_API_KEY") ?: "" }
 }
 
@@ -268,10 +268,10 @@ tasks.register<Exec>("gateSmoke") {
     doFirst {
         exec {
             workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
         }
     }
-    commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "smoke")
+    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "smoke")
 }
 
 tasks.register<Exec>("gateRegression") {
@@ -283,10 +283,10 @@ tasks.register<Exec>("gateRegression") {
     doFirst {
         exec {
             workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
         }
     }
-    commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "regression")
+    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "regression")
 }
 
 tasks.register<Exec>("gateFull") {
@@ -297,10 +297,10 @@ tasks.register<Exec>("gateFull") {
     doFirst {
         exec {
             workingDir(rootProject.projectDir)
-            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+            commandLine("${rootProject.projectDir}/services/api/scripts/sync-registry.sh")
         }
     }
-    commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "full")
+    commandLine("${rootProject.projectDir}/tooling/scripts/check-gates.sh", "full")
 }
 
 // PIT Mutation Testing

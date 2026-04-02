@@ -17,6 +17,7 @@ docker compose up -d postgres minio minio-bootstrap  # start dependencies
 ./gradlew test                                        # run all tests
 ./gradlew test --tests "mn.tasky.auth.*"              # run specific tests
 ./gradlew openApiValidate                             # validate API contract
+python3 tooling/scripts/validate-migrations.py        # migration safety
 ```
 
 Always use `./gradlew`, never system `gradle`.
@@ -45,13 +46,16 @@ cat archive/legacy-task-system/task.sh
 ### Structure
 ```
 services/               Backend service zone (target: services/api)
-src/                    Transitional backend source location
+services/api/           Spring Boot backend service module
 apps/web/               React + Vite + Tailwind web client
 apps/mobile/            React Native (Expo) mobile client
 packages/sdk/           TypeScript SDK (generated from docs/API.yaml)
 packages/design-tokens/ Cross-platform design tokens
 research/               Research datasets and analysis inputs
-tooling/                Structural and verification tooling
+tooling/agent/          Curated contributor-agent assets
+tooling/config/         Shared static-analysis and security config
+tooling/scripts/        Repository verification and automation scripts
+services/api/scripts/   Backend service operational scripts
 archive/legacy-task-system/tasks/  Archived task files from greenfield phase
 ```
 

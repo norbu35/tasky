@@ -59,7 +59,7 @@ Reference specific endpoints, tables, or screens when possible.
 Read these files first:
 - `docs/ARCHITECTURE.md` — system design, domain packages, persistence patterns
 - `docs/API.yaml` — skim the OpenAPI spec for the area you're working in
-- The relevant domain package under `src/main/java/mn/tasky/` — understand existing patterns before adding code
+- The relevant domain package under `services/api/src/main/java/mn/tasky/` — understand existing patterns before adding code
 
 ## Tech Stack
 
@@ -129,7 +129,7 @@ The backend uses a scenario-based test framework. Read this section fully before
 - `@DisplayName` must start with the scenario ID: `"SCN-XXX-NNN: <exact title from scenario file>"`
 - Domain-unit tests: zero Spring annotations (`@SpringBootTest`, `@Autowired`, `@MockBean` forbidden)
 - Mock only external boundaries: `FacebookGraphClient`, `FirebasePushProvider`, `S3StorageService`
-- Run `./scripts/sync-registry.sh` after writing tests — commit updated `tests/registry.yaml` in the same PR
+- Run `./services/api/scripts/sync-registry.sh` after writing tests — commit updated `tests/registry.yaml` in the same PR
 - Run `./gradlew gateSmoke` before opening a PR — it must pass
 
 ### MUST NOT

@@ -15,5 +15,5 @@ Each scenario:
 
 - @DisplayName must be exactly: "SCN-XXX-NNN: <title>"
 - Do not modify this directory
-- Run scripts/sync-registry.sh after implementing tests
+- Run services/api/scripts/sync-registry.sh after implementing tests
 - See docs/plans/2026-03-28-test-reform-design.md for full rules

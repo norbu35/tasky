@@ -106,7 +106,7 @@ The `context_refs` field in each screen YAML lists which files to compose.
 If screen specs change, re-run the generation script:
 
 ```bash
-node scripts/generate-prompts.js
+node tooling/scripts/generate-prompts.js
 ```
 
 This reads `docs/design/screen-specs/SCR-*.yaml` + `journey-catalog.yaml` + `screen-inventory.yaml` and regenerates all prompt files.

@@ -65,7 +65,7 @@ jobs:
         run: ./gradlew --no-daemon :services:api:openApiValidate
 
       - name: Validate migrations
-        run: python3 scripts/validate-migrations.py
+        run: python3 tooling/scripts/validate-migrations.py
 
   frontend-quality:
     runs-on: ubuntu-latest
@@ -141,4 +141,4 @@ jobs:
           config: >-
             p/owasp-top-ten
             p/java
-            config/semgrep/tasky-rules.yaml
+            tooling/config/semgrep/tasky-rules.yaml

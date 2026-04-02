@@ -14,16 +14,17 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `docs/STRATEGY.md`           | Business model and go-to-market plan                                |
 | `docs/adr/`                  | Architecture Decision Records                                       |
 | `docs/API.yaml`              | OpenAPI 3.0 contract (source of truth for all clients)              |
-| `services/`                  | Deployable backend service zone (target: `services/api`)            |
-| `src/`                       | Transitional backend source location (to be moved under `services/`)|
+| `services/api`               | Spring Boot backend service module                                  |
 | `apps/web`                   | React web client                                                    |
 | `apps/mobile`                | React Native (Expo) mobile client                                   |
 | `packages/sdk`               | Shared TypeScript SDK (generated from OpenAPI)                      |
 | `packages/design-tokens`     | Shared cross-platform design token source                           |
 | `research/`                  | Research datasets and analysis inputs                               |
-| `tooling/`                   | Structural/verification tooling and repo automation                 |
+| `tooling/agent`              | Curated contributor-agent assets and workflows                      |
+| `tooling/config`             | Shared static-analysis and security tool configuration              |
+| `tooling/scripts`            | Repository-level verification and automation scripts                |
 | `archive/legacy-task-system/`| Archived greenfield task queue (`tasks/` + `scripts/task.sh`)       |
-| `scripts/`                   | Transitional script location (to be partitioned by ownership)       |
+| `services/api/scripts`       | Backend-service-specific operational scripts                        |
 
 ## Prerequisites
 
@@ -106,7 +107,7 @@ pnpm --filter @tasky/mobile start
 ./gradlew test                              # all tests
 ./gradlew test --tests "mn.tasky.auth.*"    # specific tests
 ./gradlew openApiValidate                   # API contract validation
-python3 scripts/validate-migrations.py      # migration safety
+python3 tooling/scripts/validate-migrations.py # migration safety
 ```
 
 ### Frontend

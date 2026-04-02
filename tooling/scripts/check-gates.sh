@@ -2,20 +2,20 @@
 # check-gates.sh
 # Reads tests/registry.yaml and enforces quality gates.
 #
-# Usage: ./scripts/check-gates.sh <gate>
+# Usage: ./tooling/scripts/check-gates.sh <gate>
 #   gate: smoke | regression | full
 #
 # Exit code: 0 = pass, 1 = fail
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 GATE="${1:-smoke}"
 REGISTRY="${ROOT_DIR}/tests/registry.yaml"
 
 if [ ! -f "$REGISTRY" ]; then
-    echo "[gate] ERROR: $REGISTRY not found. Run ${ROOT_DIR}/scripts/sync-registry.sh first."
+    echo "[gate] ERROR: $REGISTRY not found. Run ${ROOT_DIR}/services/api/scripts/sync-registry.sh first."
     exit 1
 fi
 
