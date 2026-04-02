@@ -8,10 +8,15 @@
 # Run from the repository root.
 set -euo pipefail
 
-SCENARIOS_DIR="tests/scenarios"
-REGISTRY="tests/registry.yaml"
-TEST_SRC="src/test/java"
-PIT_XML="build/reports/pitest/mutations.xml"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+SCENARIOS_DIR="${ROOT_DIR}/tests/scenarios"
+REGISTRY="${ROOT_DIR}/tests/registry.yaml"
+TEST_RESULTS_DIR="${ROOT_DIR}/services/api/build/test-results/test"
+PIT_XML="${ROOT_DIR}/services/api/build/reports/pitest/mutations.xml"
+
+export SCENARIOS_DIR REGISTRY TEST_RESULTS_DIR PIT_XML
 
 # ── Step 1: Parse scenario files and upsert registry ─────────────────────────
 python3 - <<'PYEOF'
@@ -24,8 +29,10 @@ except ImportError:
     print("[sync] ERROR: pyyaml not installed. Run: pip3 install pyyaml", file=sys.stderr)
     sys.exit(1)
 
-scenarios_dir = Path("tests/scenarios")
-registry_path = Path("tests/registry.yaml")
+import os
+
+scenarios_dir = Path(os.environ["SCENARIOS_DIR"])
+registry_path = Path(os.environ["REGISTRY"])
 
 # Load existing registry to preserve notes and override_status
 existing = {}
@@ -138,8 +145,10 @@ import re, sys, yaml
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-registry_path = Path("tests/registry.yaml")
-surefire_dir = Path("build/test-results/test")
+import os
+
+registry_path = Path(os.environ["REGISTRY"])
+surefire_dir = Path(os.environ["TEST_RESULTS_DIR"])
 
 with open(registry_path) as f:
     data = yaml.safe_load(f)
@@ -198,8 +207,10 @@ import xml.etree.ElementTree as ET, yaml
 from collections import defaultdict
 from pathlib import Path
 
-registry_path = Path("tests/registry.yaml")
-pit_xml = Path("build/reports/pitest/mutations.xml")
+import os
+
+registry_path = Path(os.environ["REGISTRY"])
+pit_xml = Path(os.environ["PIT_XML"])
 
 with open(registry_path) as f:
     data = yaml.safe_load(f)
@@ -244,4 +255,4 @@ else
     echo "[sync] No PIT report at $PIT_XML — skipping mutation_kill_rate update"
 fi
 
-echo "[sync] Done. Registry: tests/registry.yaml"
+echo "[sync] Done. Registry: ${REGISTRY}"

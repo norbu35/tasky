@@ -46,7 +46,7 @@ jobs:
           pnpm -r test
 
       - name: Run full regression checks
-        run: ./gradlew --no-daemon check openApiValidate
+        run: ./gradlew --no-daemon :services:api:check :services:api:openApiValidate
 
       - name: Build regression container image
         run: docker build -t tasky-server:nightly .

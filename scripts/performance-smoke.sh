@@ -1,21 +1,47 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
 target="${PERF_TARGET_URL:-http://127.0.0.1:${PERF_TARGET_PORT:-8080}}"
 max_p95_ms="${PERF_MAX_P95_MS:-500}"
 sample_count="${PERF_SAMPLE_COUNT:-7}"
 startup_timeout_s="${PERF_STARTUP_TIMEOUT_S:-90}"
 managed_local_mode=false
+started_local_postgres=false
 boot_pid=""
-boot_log="artifacts/checks/perf_bootrun.log"
+boot_log="${ROOT_DIR}/artifacts/checks/perf_bootrun.log"
 
 cleanup() {
   if [[ -n "${boot_pid}" ]] && kill -0 "${boot_pid}" >/dev/null 2>&1; then
     kill "${boot_pid}" >/dev/null 2>&1 || true
     wait "${boot_pid}" >/dev/null 2>&1 || true
   fi
+  if [[ "${started_local_postgres}" == "true" ]]; then
+    docker compose -f "${ROOT_DIR}/docker-compose.yml" stop postgres >/dev/null 2>&1 || true
+  fi
 }
 trap cleanup EXIT
+
+can_connect_postgres() {
+  python3 - "$1" "$2" <<'PY'
+import socket
+import sys
+
+host = sys.argv[1]
+port = int(sys.argv[2])
+s = socket.socket()
+s.settimeout(1.5)
+try:
+    s.connect((host, port))
+    print("ok")
+except OSError:
+    sys.exit(1)
+finally:
+    s.close()
+PY
+}
 
 if [[ ! "${target}" =~ ^https?:// ]]; then
   echo "PERF_TARGET_URL must start with http:// or https://: ${target}" >&2
@@ -24,9 +50,28 @@ fi
 
 if [[ -z "${PERF_TARGET_URL:-}" ]]; then
   managed_local_mode=true
-  mkdir -p artifacts/checks
-  echo "PERF_TARGET_URL is not set. Starting local app via ./gradlew bootRun for smoke test."
-  ./gradlew --no-daemon bootRun >"${boot_log}" 2>&1 &
+  mkdir -p "${ROOT_DIR}/artifacts/checks"
+  echo "PERF_TARGET_URL is not set. Starting local app via :services:api:bootRun for smoke test."
+  export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-dev}"
+  export POSTGRES_HOST="${POSTGRES_HOST:-127.0.0.1}"
+  export POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+  export POSTGRES_DB="${POSTGRES_DB:-tasky}"
+  export POSTGRES_USER="${POSTGRES_USER:-tasky}"
+  export POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-tasky}"
+  export APP_DB_USER="${APP_DB_USER:-tasky}"
+  export APP_DB_PASSWORD="${APP_DB_PASSWORD:-tasky}"
+  export TASKY_JWT_SECRET="${TASKY_JWT_SECRET:-test-jwt-secret-32-chars-minimum!!}"
+  export TASKY_ENCRYPTION_KEY="${TASKY_ENCRYPTION_KEY:-MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=}"
+  export TASKY_BLIND_INDEX_KEY="${TASKY_BLIND_INDEX_KEY:-RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=}"
+  export TASKY_QPAY_WEBHOOK_SECRET="${TASKY_QPAY_WEBHOOK_SECRET:-test-qpay-secret}"
+  if ! can_connect_postgres "${POSTGRES_HOST}" "${POSTGRES_PORT}"; then
+    if command -v docker >/dev/null 2>&1; then
+      echo "Postgres is not reachable at ${POSTGRES_HOST}:${POSTGRES_PORT}. Starting local postgres service via docker compose."
+      docker compose -f "${ROOT_DIR}/docker-compose.yml" up -d postgres >/dev/null
+      started_local_postgres=true
+    fi
+  fi
+  "${ROOT_DIR}/gradlew" --no-daemon :services:api:bootRun >"${boot_log}" 2>&1 &
   boot_pid="$!"
 fi
 

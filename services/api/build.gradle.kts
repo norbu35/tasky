@@ -266,7 +266,10 @@ tasks.register<Exec>("gateSmoke") {
     dependsOn(tasks.test)
     workingDir(rootProject.projectDir)
     doFirst {
-        exec { commandLine("${rootProject.projectDir}/scripts/sync-registry.sh") }
+        exec {
+            workingDir(rootProject.projectDir)
+            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+        }
     }
     commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "smoke")
 }
@@ -278,7 +281,10 @@ tasks.register<Exec>("gateRegression") {
               "openApiValidate", "pitestBookingAuth")
     workingDir(rootProject.projectDir)
     doFirst {
-        exec { commandLine("${rootProject.projectDir}/scripts/sync-registry.sh") }
+        exec {
+            workingDir(rootProject.projectDir)
+            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+        }
     }
     commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "regression")
 }
@@ -289,7 +295,10 @@ tasks.register<Exec>("gateFull") {
     dependsOn(tasks.test, tasks.jacocoTestReport, "pitest")
     workingDir(rootProject.projectDir)
     doFirst {
-        exec { commandLine("${rootProject.projectDir}/scripts/sync-registry.sh") }
+        exec {
+            workingDir(rootProject.projectDir)
+            commandLine("${rootProject.projectDir}/scripts/sync-registry.sh")
+        }
     }
     commandLine("${rootProject.projectDir}/scripts/check-gates.sh", "full")
 }

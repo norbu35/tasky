@@ -39,7 +39,7 @@ jobs:
           done
           docker compose -f docker-compose.yml up --build --no-start app
           # Run Flyway migration check against the fresh DB
-          ./gradlew --no-daemon flywayInfo
+          ./gradlew --no-daemon :services:api:flywayInfo
         env:
           POSTGRES_USER: tasky
           POSTGRES_PASSWORD: tasky
@@ -103,7 +103,7 @@ jobs:
         run: chmod +x gradlew scripts/*.sh scripts/*.py
 
       - name: Run performance smoke test
-        run: scripts/performance-smoke.sh
+        run: bash scripts/performance-smoke.sh
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432

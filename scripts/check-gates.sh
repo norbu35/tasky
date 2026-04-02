@@ -8,11 +8,14 @@
 # Exit code: 0 = pass, 1 = fail
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
 GATE="${1:-smoke}"
-REGISTRY="tests/registry.yaml"
+REGISTRY="${ROOT_DIR}/tests/registry.yaml"
 
 if [ ! -f "$REGISTRY" ]; then
-    echo "[gate] ERROR: $REGISTRY not found. Run ./scripts/sync-registry.sh first."
+    echo "[gate] ERROR: $REGISTRY not found. Run ${ROOT_DIR}/scripts/sync-registry.sh first."
     exit 1
 fi
 
