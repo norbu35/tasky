@@ -50,6 +50,29 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
+function getFutureDate(days = 1): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  date.setHours(10, 0, 0, 0);
+  return date;
+}
+
+function getFutureTimeFrom(base: Date): Date {
+  const time = new Date(base);
+  time.setHours(11, 30, 0, 0);
+  return time;
+}
+
+function pickDateAndTime(date: Date, time: Date) {
+  fireEvent.press(screen.getByTestId('schedule-date-input'));
+  fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, date);
+  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+
+  fireEvent.press(screen.getByTestId('schedule-time-input'));
+  fireEvent(screen.getByTestId('schedule-time-picker'), 'onChange', { type: 'set' }, time);
+  fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+}
+
 describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
   it('has a testID on the screen container', () => {
     render(<ScheduleBudgetScreen />);
@@ -79,15 +102,10 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('shows budget validation when amount is below minimum', () => {
     render(<ScheduleBudgetScreen />);
-    fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
-    fireEvent.press(screen.getByTestId('schedule-time-input'));
-    fireEvent(
-      screen.getByTestId('schedule-time-picker'),
-      'onChange',
-      { type: 'set' },
-      new Date(2026, 3, 3, 10, 0),
-    );
+    const date = getFutureDate(1);
+    const time = getFutureTimeFrom(date);
+    pickDateAndTime(date, time);
+
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
     expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
     expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
@@ -95,15 +113,11 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('shows schedule validation when a past date is selected', () => {
     render(<ScheduleBudgetScreen />);
-    fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
-    fireEvent.press(screen.getByTestId('schedule-time-input'));
-    fireEvent(
-      screen.getByTestId('schedule-time-picker'),
-      'onChange',
-      { type: 'set' },
-      new Date(2026, 3, 1, 10, 0),
-    );
+    const now = new Date();
+    const pastDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 10, 0, 0, 0);
+    const pastTime = new Date(pastDate);
+    pickDateAndTime(pastDate, pastTime);
+
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     expect(screen.getByText('Cannot select a past date/time')).toBeTruthy();
     expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
@@ -114,15 +128,10 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     const nextButton = screen.getByTestId('schedule-budget-screen-next');
     expect(nextButton).toBeDisabled();
 
-    fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
-    fireEvent.press(screen.getByTestId('schedule-time-input'));
-    fireEvent(
-      screen.getByTestId('schedule-time-picker'),
-      'onChange',
-      { type: 'set' },
-      new Date(2026, 3, 3, 10, 0),
-    );
+    const date = getFutureDate(1);
+    const time = getFutureTimeFrom(date);
+    pickDateAndTime(date, time);
+
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
 
     expect(nextButton).not.toBeDisabled();
@@ -130,16 +139,19 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('navigates to review when valid', () => {
     render(<ScheduleBudgetScreen />);
-    const expectedScheduledAt = new Date(2026, 3, 3, 10, 0).toISOString();
-    fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
-    fireEvent.press(screen.getByTestId('schedule-time-input'));
-    fireEvent(
-      screen.getByTestId('schedule-time-picker'),
-      'onChange',
-      { type: 'set' },
-      new Date(2026, 3, 3, 10, 0),
-    );
+    const date = getFutureDate(1);
+    const time = getFutureTimeFrom(date);
+    const expectedScheduledAt = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
+      0,
+      0,
+    ).toISOString();
+    pickDateAndTime(date, time);
+
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
     expect(mockPush).toHaveBeenCalledWith(
@@ -152,6 +164,21 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
         }),
       }),
     );
+  });
+
+  it('keeps iOS picker visible while scrolling until user confirms', () => {
+    render(<ScheduleBudgetScreen />);
+    const date = getFutureDate(1);
+
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, date);
+
+    expect(screen.getByTestId('schedule-ios-picker-card')).toBeTruthy();
+    expect(screen.getByTestId('schedule-picker-confirm')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('schedule-picker-confirm'));
+
+    expect(screen.queryByTestId('schedule-ios-picker-card')).toBeNull();
   });
 
   it('renders as step 5 of 7 wizard', () => {

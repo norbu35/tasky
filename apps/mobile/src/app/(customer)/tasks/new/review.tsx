@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { DetailTemplate } from '../../../../components/templates/DetailTemplate'
 import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { parseError } from '../../../../utils/errorHandling';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -60,6 +61,32 @@ function formatSchedule(scheduledAt?: string): string {
     hour12: false,
   });
   return `${date} ${time}`;
+}
+
+function extractTaskId(result: unknown): string | null {
+  if (!result || typeof result !== 'object') {
+    return null;
+  }
+
+  const candidate = result as {
+    id?: unknown;
+    task?: { id?: unknown };
+    data?: { id?: unknown };
+  };
+
+  if (typeof candidate.id === 'string' && candidate.id.length > 0) {
+    return candidate.id;
+  }
+
+  if (typeof candidate.task?.id === 'string' && candidate.task.id.length > 0) {
+    return candidate.task.id;
+  }
+
+  if (typeof candidate.data?.id === 'string' && candidate.data.id.length > 0) {
+    return candidate.data.id;
+  }
+
+  return null;
 }
 
 function SummarySection({
@@ -127,11 +154,20 @@ export default function ReviewSubmitScreen() {
   }>();
 
   const { mutateAsync, isPending } = useCreateTask();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const photos = useMemo(() => parsePhotoKeys(params.photos), [params.photos]);
   const intakeAnswers = useMemo(() => parseIntakeAnswers(params.intakeAnswers), [params.intakeAnswers]);
+  const hasRequiredPayload =
+    Boolean(params.categoryId) &&
+    Boolean(params.description?.trim()) &&
+    Boolean(params.location?.trim()) &&
+    Boolean(params.lat) &&
+    Boolean(params.lng) &&
+    Boolean(params.budget);
 
   const handleSubmit = async () => {
     try {
+      setSubmitError(null);
       const locationLat = Number(params.lat);
       const locationLng = Number(params.lng);
 
@@ -147,12 +183,19 @@ export default function ReviewSubmitScreen() {
         scheduled_at: params.scheduledAt ?? '',
         photo_keys: photos,
       });
+      const taskId = extractTaskId(createdTask);
+      if (!taskId) {
+        throw new Error(
+          t('customer.postTask.submitUnexpectedResponse', 'Unexpected server response. Please try again.'),
+        );
+      }
+
       router.replace({
         pathname: '/(customer)/tasks/new/success',
-        params: { taskId: createdTask.id },
+        params: { taskId },
       });
-    } catch {
-      // Error handling is surfaced by the mutation hook and screen state.
+    } catch (error) {
+      setSubmitError(parseError(error));
     }
   };
 
@@ -163,6 +206,7 @@ export default function ReviewSubmitScreen() {
       ctaLabel={t('customer.postTask.postButton', 'Post Task')}
       ctaOnPress={handleSubmit}
       ctaLoading={isPending}
+      ctaDisabled={!hasRequiredPayload}
       testID="review-submit-screen"
     >
       <View style={styles.stepWrap}>
@@ -225,6 +269,11 @@ export default function ReviewSubmitScreen() {
       <Text style={styles.paymentNote}>
         {t('customer.postTask.paymentNote', 'Payment is arranged directly with the Tasker')}
       </Text>
+      {submitError ? (
+        <View style={styles.errorBox} testID="review-submit-error">
+          <Text style={styles.errorText}>{submitError}</Text>
+        </View>
+      ) : null}
     </DetailTemplate>
   );
 }
@@ -326,5 +375,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.lg,
     lineHeight: typography.caption * 1.6,
+  },
+  errorBox: {
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: `${colors.danger}66`,
+    backgroundColor: `${colors.danger}12`,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  errorText: {
+    fontSize: typography.caption,
+    color: colors.danger,
+    fontWeight: '600',
   },
 });

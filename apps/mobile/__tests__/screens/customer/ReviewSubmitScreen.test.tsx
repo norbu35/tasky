@@ -141,6 +141,32 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     });
   });
 
+  it('handles nested task id response shape', async () => {
+    mockMutateAsync.mockResolvedValue({ task: { id: 'task-nested-2' } });
+    render(<ReviewSubmitScreen />);
+
+    fireEvent.press(screen.getByText('Post Task'));
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/(customer)/tasks/new/success',
+        params: { taskId: 'task-nested-2' },
+      });
+    });
+  });
+
+  it('shows submit error when create task fails', async () => {
+    mockMutateAsync.mockRejectedValue(new Error('Request failed with status 500'));
+    render(<ReviewSubmitScreen />);
+
+    fireEvent.press(screen.getByText('Post Task'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('review-submit-error')).toBeTruthy();
+      expect(screen.getByText('Request failed with status 500')).toBeTruthy();
+    });
+  });
+
   it('TID-TASK-113-MOBILE-REVIEW-SUBMIT-PAYLOAD submits intake answers, schema version, and photo keys', async () => {
     mockMutateAsync.mockResolvedValue({ id: 'task-new-1' });
     Object.assign(mockParams, {

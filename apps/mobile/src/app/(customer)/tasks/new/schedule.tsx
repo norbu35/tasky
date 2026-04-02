@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, Clock3 } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
+import { Button } from '../../../../components/ui/Button';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -14,6 +15,7 @@ const { colors, radius, spacing, typography } = mobileTheme;
 const MIN_BUDGET = 1001;
 
 type PickerMode = 'date' | 'time' | null;
+type ActivePickerState = { mode: Exclude<PickerMode, null>; draftValue: Date } | null;
 
 function createDefaultScheduleDate(): Date {
   const date = new Date();
@@ -41,6 +43,13 @@ function combineDateAndTime(dateValue: Date, timeValue: Date): Date {
   return combined;
 }
 
+function toValidDate(value: Date | null | undefined, fallback: Date): Date {
+  if (value instanceof Date && Number.isFinite(value.getTime())) {
+    return value;
+  }
+  return fallback;
+}
+
 export default function ScheduleBudgetScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -57,7 +66,7 @@ export default function ScheduleBudgetScreen() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-  const [activePicker, setActivePicker] = useState<PickerMode>(null);
+  const [activePicker, setActivePicker] = useState<ActivePickerState>(null);
   const [budget, setBudget] = useState('');
   const [touchedBudget, setTouchedBudget] = useState(false);
   const [touchedSchedule, setTouchedSchedule] = useState(false);
@@ -71,7 +80,7 @@ export default function ScheduleBudgetScreen() {
 
   const budgetNumber = Number(budget);
   const isBudgetValid = budget !== '' && Number.isFinite(budgetNumber) && budgetNumber >= MIN_BUDGET;
-  const isScheduleValid = Boolean(schedule) && schedule!.getTime() >= createDefaultScheduleDate().getTime();
+  const isScheduleValid = Boolean(schedule) && schedule!.getTime() > Date.now();
   const canContinue = isBudgetValid && isScheduleValid;
 
   const budgetError =
@@ -83,11 +92,30 @@ export default function ScheduleBudgetScreen() {
       ? t('customer.postTask.schedulePastError', 'Cannot select a past date/time')
       : '';
 
+  const openPicker = (mode: Exclude<PickerMode, null>) => {
+    const fallback = createDefaultScheduleDate();
+    const currentValue =
+      mode === 'date'
+        ? toValidDate(selectedDate, fallback)
+        : toValidDate(selectedTime, fallback);
+    setTouchedSchedule(true);
+    setActivePicker({ mode, draftValue: currentValue });
+  };
+
   const handlePickerChange = (event: { type?: string }, pickedValue?: Date) => {
-    const pickerMode = activePicker;
-    setActivePicker(null);
+    const pickerMode = activePicker?.mode;
 
     if (event.type === 'dismissed' || !pickedValue || !pickerMode) {
+      if (Platform.OS === 'android') {
+        setActivePicker(null);
+      }
+      return;
+    }
+
+    if (Platform.OS === 'ios') {
+      setActivePicker((prev) =>
+        prev ? { ...prev, draftValue: toValidDate(pickedValue, prev.draftValue) } : prev,
+      );
       return;
     }
 
@@ -96,10 +124,28 @@ export default function ScheduleBudgetScreen() {
     } else {
       setSelectedTime(pickedValue);
     }
+    setActivePicker(null);
+  };
+
+  const handlePickerCancel = () => {
+    setActivePicker(null);
+  };
+
+  const handlePickerConfirm = () => {
+    if (!activePicker) {
+      return;
+    }
+
+    if (activePicker.mode === 'date') {
+      setSelectedDate(activePicker.draftValue);
+    } else {
+      setSelectedTime(activePicker.draftValue);
+    }
+    setActivePicker(null);
   };
 
   const handleNext = () => {
-    if (!canContinue || !schedule) {
+    if (!canContinue || !schedule || schedule.getTime() <= Date.now()) {
       return;
     }
 
@@ -151,10 +197,7 @@ export default function ScheduleBudgetScreen() {
         >
           <View style={styles.scheduleRow}>
             <Pressable
-              onPress={() => {
-                setTouchedSchedule(true);
-                setActivePicker('date');
-              }}
+              onPress={() => openPicker('date')}
               style={({ pressed }) => [styles.pickerField, pressed ? styles.pickerFieldPressed : null]}
               testID="schedule-date-input"
             >
@@ -166,10 +209,7 @@ export default function ScheduleBudgetScreen() {
             </Pressable>
 
             <Pressable
-              onPress={() => {
-                setTouchedSchedule(true);
-                setActivePicker('time');
-              }}
+              onPress={() => openPicker('time')}
               style={({ pressed }) => [styles.pickerField, pressed ? styles.pickerFieldPressed : null]}
               testID="schedule-time-input"
             >
@@ -223,17 +263,53 @@ export default function ScheduleBudgetScreen() {
       </View>
 
       {activePicker ? (
-        <DateTimePicker
-          testID={activePicker === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
-          value={
-            activePicker === 'date'
-              ? selectedDate ?? createDefaultScheduleDate()
-              : selectedTime ?? createDefaultScheduleDate()
-          }
-          mode={activePicker}
-          is24Hour
-          onChange={handlePickerChange}
-        />
+        Platform.OS === 'ios' ? (
+          <View style={styles.iosPickerCard} testID="schedule-ios-picker-card">
+            <View style={styles.iosPickerHeader}>
+              <Text style={styles.iosPickerTitle}>
+                {activePicker.mode === 'date'
+                  ? t('customer.postTask.scheduleDate', 'Date')
+                  : t('customer.postTask.scheduleTime', 'Time')}
+              </Text>
+              <Text style={styles.iosPickerHint}>
+                {t('customer.postTask.schedulePickerHint', 'Confirm your selection')}
+              </Text>
+            </View>
+            <DateTimePicker
+              testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
+              value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
+              mode={activePicker.mode}
+              display="spinner"
+              is24Hour
+              onChange={handlePickerChange}
+              minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
+            />
+            <View style={styles.iosPickerActions}>
+              <Button
+                testID="schedule-picker-cancel"
+                label={t('common.cancel', 'Cancel')}
+                variant="outline"
+                onPress={handlePickerCancel}
+                style={styles.iosPickerActionButton}
+              />
+              <Button
+                testID="schedule-picker-confirm"
+                label={t('common.confirm', 'Confirm')}
+                onPress={handlePickerConfirm}
+                style={styles.iosPickerActionButton}
+              />
+            </View>
+          </View>
+        ) : (
+          <DateTimePicker
+            testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
+            value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
+            mode={activePicker.mode}
+            is24Hour
+            onChange={handlePickerChange}
+            minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
+          />
+        )
       ) : null}
     </FormWizardTemplate>
   );
@@ -326,5 +402,35 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     color: colors.textSecondary,
     lineHeight: typography.caption * 1.5,
+  },
+  iosPickerCard: {
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  iosPickerHeader: {
+    gap: spacing.xs,
+  },
+  iosPickerTitle: {
+    fontSize: typography.label,
+    color: colors.primaryDeep,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  iosPickerHint: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
+  iosPickerActions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  iosPickerActionButton: {
+    flex: 1,
   },
 });
