@@ -38,6 +38,9 @@ jobs:
       - name: Validate SDK generated drift
         run: tooling/scripts/validate-sdk-contract-drift.sh
 
+      - name: Validate workspace dependency boundaries
+        run: pnpm workspace:boundaries
+
       - name: Run trusted cleanup gate
         run: tooling/scripts/check-cleanup-gate.sh
 

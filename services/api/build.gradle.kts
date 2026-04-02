@@ -247,8 +247,20 @@ tasks.test {
     finalizedBy(tasks.jacocoTestReport)
 }
 
+tasks.register<Test>("architectureTest") {
+    description = "Runs architecture boundary tests (ArchUnit)."
+    group = "verification"
+    useJUnitPlatform()
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    filter {
+        includeTestsMatching("*ArchitectureTest")
+    }
+}
+
 tasks.named("check") {
     dependsOn(tasks.jacocoTestCoverageVerification)
+    dependsOn("architectureTest")
 }
 
 tasks.register("precommit") {

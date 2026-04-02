@@ -11,6 +11,7 @@
     "typecheck": "pnpm -r typecheck",
     "sdk:generate": "pnpm --filter @tasky/sdk generate",
     "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
-    "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck"
+    "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck",
+    "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs"
   }
 }
