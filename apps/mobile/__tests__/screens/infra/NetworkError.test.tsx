@@ -56,30 +56,33 @@ describe('NetworkErrorScreen', () => {
   it('renders no connection message by default', () => {
     render(<NetworkErrorScreen />);
 
-    expect(screen.getByText('No internet connection')).toBeTruthy();
-    expect(screen.getByText('Please check your connection and try again')).toBeTruthy();
+    expect(screen.getByText('Интернэт холболтгүй байна')).toBeTruthy();
+    expect(screen.getByText('Сүлжээний холболтоо шалгаад дахин оролдоно уу')).toBeTruthy();
   });
 
   it('shows retry button', () => {
     render(<NetworkErrorScreen />);
 
-    expect(screen.getByText('Try Again')).toBeTruthy();
+    expect(screen.getByText('Дахин оролдох')).toBeTruthy();
   });
 
   it('shows retry loading and then restored toast when retry button is pressed', () => {
     render(<NetworkErrorScreen />);
 
-    const retryButton = screen.getByText('Try Again');
+    const retryButton = screen.getByText('Дахин оролдох');
     fireEvent.press(retryButton);
     expect(screen.getByTestId('network-error-screen-retry')).toBeTruthy();
     act(() => {
-      jest.advanceTimersByTime(1500);
+      jest.advanceTimersByTime(3999);
     });
 
-    expect(screen.getByText('Connection restored')).toBeTruthy();
+    expect(mockBack).not.toHaveBeenCalled();
+    expect(screen.getByText('Холболт сэргэлээ')).toBeTruthy();
+
     act(() => {
-      jest.advanceTimersByTime(1200);
+      jest.advanceTimersByTime(1);
     });
+
     expect(mockBack).toHaveBeenCalled();
   });
 
@@ -88,8 +91,8 @@ describe('NetworkErrorScreen', () => {
 
     render(<NetworkErrorScreen />);
 
-    expect(screen.getByText('Connection is slow')).toBeTruthy();
-    expect(screen.getByText('Connection is slow. Please wait a moment')).toBeTruthy();
+    expect(screen.getByText('Холболт удаан байна')).toBeTruthy();
+    expect(screen.getByText('Сүлжээний холболт удаан байна. Түр хүлээнэ үү')).toBeTruthy();
   });
 
   it('has correct testID on root container', () => {

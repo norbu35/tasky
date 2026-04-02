@@ -28,6 +28,7 @@ export default function DisputeRaiseScreen() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [photos] = useState<string[]>([]);
   const [description, setDescription] = useState('');
+  const hasEvidence = photos.length > 0 || description.trim().length > 0;
 
   const handleNext = useCallback(async () => {
     if (currentStep < TOTAL_STEPS - 1) {
@@ -57,7 +58,8 @@ export default function DisputeRaiseScreen() {
     // In production, this would open an image picker
   }, []);
 
-  const isNextDisabled = currentStep === 0 && !selectedReason;
+  const isNextDisabled =
+    (currentStep === 0 && !selectedReason) || (currentStep === TOTAL_STEPS - 1 && !hasEvidence);
   const isLastStep = currentStep === TOTAL_STEPS - 1;
 
   return (
@@ -149,6 +151,12 @@ export default function DisputeRaiseScreen() {
             numberOfLines={5}
             testID="dispute-description-input"
           />
+          <Text style={styles.helperText}>
+            {t(
+              'customer.disputes.validationNoEvidence',
+              'At least 1 evidence artifact is required',
+            )}
+          </Text>
         </View>
       )}
     </FormWizardTemplate>
@@ -207,6 +215,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     marginTop: spacing.md,
+  },
+  helperText: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
   },
   noteText: {
     fontSize: typography.caption,

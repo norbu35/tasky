@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WifiOff } from 'lucide-react-native';
@@ -23,15 +23,15 @@ export default function NetworkErrorScreen() {
 
   const headline =
     connectionType === 'slow_connection'
-      ? t('infra.networkError.slowConnection', 'Connection is slow')
-      : t('infra.networkError.noConnection', 'No internet connection');
+      ? t('infra.networkError.slowConnection', 'Холболт удаан байна')
+      : t('infra.networkError.noConnection', 'Интернэт холболтгүй байна');
 
   const description =
     connectionType === 'slow_connection'
-      ? t('infra.networkError.slowDescription', 'Connection is slow. Please wait a moment')
+      ? t('infra.networkError.slowDescription', 'Сүлжээний холболт удаан байна. Түр хүлээнэ үү')
       : t(
           'infra.networkError.noConnectionDescription',
-          'Please check your connection and try again',
+          'Сүлжээний холболтоо шалгаад дахин оролдоно уу',
         );
 
   const handleRetry = useCallback(() => {
@@ -40,18 +40,11 @@ export default function NetworkErrorScreen() {
     setTimeout(() => {
       setIsRetrying(false);
       setIsRestored(true);
+      setTimeout(() => {
+        router.back();
+      }, 2500);
     }, 1500);
-  }, []);
-
-  useEffect(() => {
-    if (!isRestored) return;
-
-    const timer = setTimeout(() => {
-      router.back();
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  }, [isRestored, router]);
+  }, [router]);
 
   return (
     <View style={styles.container} testID="network-error-screen">
@@ -61,7 +54,7 @@ export default function NetworkErrorScreen() {
       <Text style={styles.headline}>{headline}</Text>
       <Text style={styles.description}>{description}</Text>
       <Button
-        label={t('infra.networkError.retry', 'Try Again')}
+        label={t('infra.networkError.retry', 'Дахин оролдох')}
         onPress={handleRetry}
         isLoading={isRetrying}
         style={styles.retryButton}
@@ -69,7 +62,7 @@ export default function NetworkErrorScreen() {
       />
       {isRestored ? (
         <View style={styles.toastWrap}>
-          <Toast message={t('infra.networkError.restored', 'Connection restored')} variant="success" />
+          <Toast message={t('infra.networkError.restored', 'Холболт сэргэлээ')} variant="success" />
         </View>
       ) : null}
     </View>

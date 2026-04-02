@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 
 import OtpScreen from '../../../src/app/(auth)/otp';
 
@@ -40,15 +40,24 @@ describe('OtpScreen (SCR-SHARED-003)', () => {
     render(<OtpScreen />);
 
     expect(screen.getByTestId('otp-top-app-bar')).toBeTruthy();
-    expect(screen.getByTestId('otp-heading')).toHaveTextContent('Баталгаажуулах код');
+    expect(screen.getByTestId('otp-heading')).toHaveTextContent('Код баталгаажуулах');
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/9911\s+2233/);
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/4 оронтой нууц код/);
     expect(screen.getAllByTestId('otp-code-cell')).toHaveLength(4);
-    expect(screen.getByTestId('otp-resend-link')).toHaveTextContent('Код дахин илгээх (45с)');
+    expect(screen.getByTestId('otp-code-input-field')).toBeTruthy();
+    expect(screen.getByTestId('otp-resend-link')).toHaveTextContent('Код дахин илгээх (60с)');
     expect(screen.getByTestId('otp-security-card')).toBeTruthy();
     expect(screen.getByTestId('otp-fixed-cta')).toBeTruthy();
     expect(screen.getByTestId('otp-verify-button')).toBeDisabled();
     expect(screen.getByTestId('otp-back-button')).toBeTruthy();
+  });
+
+  it('enables verify after entering 4 digits', () => {
+    render(<OtpScreen />);
+
+    fireEvent.changeText(screen.getByTestId('otp-code-input-field'), '1234');
+
+    expect(screen.getByTestId('otp-verify-button')).not.toBeDisabled();
   });
 
   it('renders a representative wrong-code error state', () => {

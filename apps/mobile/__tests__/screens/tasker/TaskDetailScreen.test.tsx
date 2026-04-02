@@ -121,6 +121,25 @@ beforeEach(() => {
 });
 
 describe('TaskDetailScreen (SCR-TASK-002)', () => {
+  it('renders the direct task detail shell with the expected header and testIDs', () => {
+    mockUseTaskDetail.mockReturnValue({
+      task: baseTask,
+      isLoading: false,
+      isError: false,
+      isVerified: true,
+      hasApplied: false,
+      capReached: false,
+    });
+
+    const TaskDetailScreen = require('../../../src/app/task/[id]').default;
+    render(<TaskDetailScreen />);
+
+    expect(screen.getByTestId('task-detail')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-back')).toBeTruthy();
+    expect(screen.getByTestId('task-detail-cta')).toBeTruthy();
+    expect(screen.getByText('taskDetails.title')).toBeTruthy();
+  });
+
   it('renders task title and description', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
@@ -220,7 +239,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     fireEvent.press(screen.getByText('tasker.taskDetail.applyButton'));
 
     await waitFor(() => {
-      expect(screen.getByText('Application sent')).toBeTruthy();
+      expect(screen.getByText('Анкет амжилттай илгээгдлээ!')).toBeTruthy();
     });
   });
 

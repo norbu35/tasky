@@ -41,7 +41,7 @@ describe('OtpMigrationScreen (SCR-SHARED-004)', () => {
     render(<OtpMigrationScreen />);
 
     expect(screen.getByText('Утасны дугаараа бүртгүүлнэ үү')).toBeTruthy();
-    expect(screen.getByText(/утасны дугаараа баталгаажуулна уу/i)).toBeTruthy();
+    expect(screen.getByText('Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү')).toBeTruthy();
     expect(screen.getByTestId('otp-migration-phone-input')).toBeTruthy();
     expect(screen.getByTestId('otp-migration-submit-button')).toBeDisabled();
     expect(screen.getByTestId('otp-migration-skip-button')).toBeTruthy();
@@ -83,7 +83,7 @@ describe('OtpMigrationScreen (SCR-SHARED-004)', () => {
     render(<OtpMigrationScreen />);
 
     expect(
-      screen.queryByText(/утасны дугаараа баталгаажуулна уу/i),
+      screen.queryByText('Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү'),
     ).toBeNull();
     expect(screen.queryByTestId('otp-migration-skip-button')).toBeNull();
     expect(screen.getByTestId('otp-migration-submit-button')).toBeDisabled();

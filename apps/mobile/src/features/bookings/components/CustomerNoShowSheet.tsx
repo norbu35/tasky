@@ -31,7 +31,8 @@ export function CustomerNoShowSheet({
   const handleFlag = useCallback(async () => {
     await flagNoShow({ bookingId });
     onFlagged?.();
-  }, [bookingId, flagNoShow, onFlagged]);
+    onClose();
+  }, [bookingId, flagNoShow, onClose, onFlagged]);
 
   const handleArrived = useCallback(() => {
     onClose();

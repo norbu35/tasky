@@ -61,9 +61,8 @@ beforeEach(() => {
 describe('OnboardingScreen (SCR-SHARED-005)', () => {
   it('renders the first slide content from Figma', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByText('Итгэлтэй гүйцэтгэгч')).toBeTruthy();
-    expect(screen.getByText('олоорой')).toBeTruthy();
-    expect(screen.getByText('Бүх гүйцэтгэгч баталгаажсан, үнэлгээтэй')).toBeTruthy();
+    expect(screen.getByText('Найдвартай гүйцэтгэгч олох')).toBeTruthy();
+    expect(screen.getByText('Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой')).toBeTruthy();
   });
 
   it('renders a photo-led hero and compact dash pagination', () => {
@@ -118,7 +117,7 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
 
   it('shows Next button on first slide', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByTestId('onboarding-next')).toBeTruthy();
+    expect(screen.getByTestId('onboarding-next')).toHaveTextContent('Дараагийх');
   });
 
   it('has a testID on the screen container', () => {

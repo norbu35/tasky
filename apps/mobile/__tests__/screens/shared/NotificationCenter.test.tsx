@@ -64,7 +64,7 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('Notifications')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдлүүд')).toBeTruthy();
   });
 
   it('shows empty state when no notifications exist', () => {
@@ -79,8 +79,8 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('No notifications')).toBeTruthy();
-    expect(screen.getByText("You're all caught up")).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл алга')).toBeTruthy();
+    expect(screen.getByText('Танд одоогоор мэдэгдэл ирээгүй байна')).toBeTruthy();
   });
 
   it('shows a retryable error state when the request fails', () => {
@@ -96,8 +96,8 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('Something went wrong')).toBeTruthy();
-    expect(screen.getByText('Failed to load notifications')).toBeTruthy();
+    expect(screen.getByText('Алдаа гарлаа')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдлүүдийг ачаалахад алдаа гарлаа')).toBeTruthy();
     fireEvent.press(screen.getByTestId('notifications-error-retry'));
     expect(refetch).toHaveBeenCalled();
   });
@@ -132,8 +132,8 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('Today')).toBeTruthy();
-    expect(screen.getByText('Earlier')).toBeTruthy();
+    expect(screen.getByText('Өнөөдөр')).toBeTruthy();
+    expect(screen.getByText('Өмнөх')).toBeTruthy();
     expect(screen.getByText('New applicant')).toBeTruthy();
     expect(screen.getByText('Booking confirmed')).toBeTruthy();
     expect(screen.getByTestId('notification-unread-dot-notif-1')).toBeTruthy();

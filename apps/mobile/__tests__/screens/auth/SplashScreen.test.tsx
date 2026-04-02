@@ -80,8 +80,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('renders the Figma splash tagline', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
-    expect(screen.getByText('хялбар захиалга')).toBeTruthy();
+    expect(screen.getByText('Найдвартай гүйцэтгэгч, хялбар захиалга')).toBeTruthy();
   });
 
   it('shows a loading indicator', () => {
@@ -131,7 +130,6 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('displays tagline text', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Найдвартай гүйцэтгэгч')).toBeTruthy();
-    expect(screen.getByText('хялбар захиалга')).toBeTruthy();
+    expect(screen.getByText('Найдвартай гүйцэтгэгч, хялбар захиалга')).toBeTruthy();
   });
 });

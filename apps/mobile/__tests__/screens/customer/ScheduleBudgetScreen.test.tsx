@@ -77,56 +77,68 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     expect(screen.getByText('Budget')).toBeTruthy();
   });
 
-  it('validates budget is a number', () => {
+  it('shows budget validation when amount is below minimum', () => {
     render(<ScheduleBudgetScreen />);
     fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
     fireEvent.press(screen.getByTestId('schedule-time-input'));
     fireEvent(
       screen.getByTestId('schedule-time-picker'),
       'onChange',
       { type: 'set' },
-      new Date(2026, 3, 1, 10, 0),
-    );
-    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), 'abc');
-    fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
-  });
-
-  it('validates budget minimum', () => {
-    render(<ScheduleBudgetScreen />);
-    fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
-    fireEvent.press(screen.getByTestId('schedule-time-input'));
-    fireEvent(
-      screen.getByTestId('schedule-time-picker'),
-      'onChange',
-      { type: 'set' },
-      new Date(2026, 3, 1, 10, 0),
+      new Date(2026, 3, 3, 10, 0),
     );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
-    fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
     expect(screen.getByText('Budget must be at least ₮1,001')).toBeTruthy();
+    expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
   });
 
-  it('requires a date and time selection', () => {
+  it('shows schedule validation when a past date is selected', () => {
     render(<ScheduleBudgetScreen />);
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent.press(screen.getByTestId('schedule-time-input'));
+    fireEvent(
+      screen.getByTestId('schedule-time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2026, 3, 1, 10, 0),
+    );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
-    fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
-    expect(screen.getByText('Choose a date and time')).toBeTruthy();
+    expect(screen.getByText('Cannot select a past date/time')).toBeTruthy();
+    expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
+  });
+
+  it('keeps next disabled until schedule and budget are valid', () => {
+    render(<ScheduleBudgetScreen />);
+    const nextButton = screen.getByTestId('schedule-budget-screen-next');
+    expect(nextButton).toBeDisabled();
+
+    fireEvent.press(screen.getByTestId('schedule-date-input'));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
+    fireEvent.press(screen.getByTestId('schedule-time-input'));
+    fireEvent(
+      screen.getByTestId('schedule-time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2026, 3, 3, 10, 0),
+    );
+    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
+
+    expect(nextButton).not.toBeDisabled();
   });
 
   it('navigates to review when valid', () => {
     render(<ScheduleBudgetScreen />);
-    const expectedScheduledAt = new Date(2026, 3, 1, 10, 0).toISOString();
+    const expectedScheduledAt = new Date(2026, 3, 3, 10, 0).toISOString();
     fireEvent.press(screen.getByTestId('schedule-date-input'));
-    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 1));
+    fireEvent(screen.getByTestId('schedule-date-picker'), 'onChange', { type: 'set' }, new Date(2026, 3, 3));
     fireEvent.press(screen.getByTestId('schedule-time-input'));
     fireEvent(
       screen.getByTestId('schedule-time-picker'),
       'onChange',
       { type: 'set' },
-      new Date(2026, 3, 1, 10, 0),
+      new Date(2026, 3, 3, 10, 0),
     );
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));

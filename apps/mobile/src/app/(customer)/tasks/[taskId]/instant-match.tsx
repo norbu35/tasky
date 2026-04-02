@@ -7,6 +7,7 @@ import { Button } from '../../../../components/ui/Button';
 import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
+import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -50,6 +51,10 @@ export default function CustomerInstantMatchScreen() {
     taskId,
     state,
     declineCount,
+    taskerId,
+    taskerName,
+    taskerAvatar,
+    taskerRating,
     taskTitle,
     budget,
     locationText,
@@ -57,10 +62,16 @@ export default function CustomerInstantMatchScreen() {
     taskId: string;
     state?: InstantMatchState;
     declineCount?: string;
+    taskerId?: string;
+    taskerName?: string;
+    taskerAvatar?: string;
+    taskerRating?: string;
     taskTitle?: string;
     budget?: string;
     locationText?: string;
   }>();
+  const { mutateAsync: createBookingIntent, isPending: isCreatingBookingIntent } =
+    useCreateBookingIntent();
 
   const matchState = coerceState(state);
   const declines = coerceDeclineCount(declineCount);
@@ -68,6 +79,10 @@ export default function CustomerInstantMatchScreen() {
   const summaryTitle = coerceString(taskTitle, 'Deep clean apartment');
   const summaryLocation = coerceString(locationText, '15th khoroo');
   const summaryBudget = Number(coerceString(budget, '45000'));
+  const matchedTaskerId = coerceString(taskerId, 'tasker-1');
+  const matchedTaskerName = coerceString(taskerName, 'B. Temuulen');
+  const matchedTaskerAvatar = coerceString(taskerAvatar, '');
+  const matchedTaskerRating = coerceString(taskerRating, '4.7');
 
   const onBack = () => {
     if (hasTaskId) {
@@ -78,7 +93,29 @@ export default function CustomerInstantMatchScreen() {
   };
 
   const onConfirmBooking = () => {
-    router.replace('/(customer)/bookings/confirm');
+    void (async () => {
+      const bookingIntent = await createBookingIntent({
+        taskId,
+        source: 'INSTANT_MATCH',
+        taskerId: matchedTaskerId,
+      });
+      router.replace({
+        pathname: '/(customer)/bookings/confirm',
+        params: {
+          taskId,
+          source: 'instant_match',
+          bookingIntentId: bookingIntent.id,
+          taskerId: matchedTaskerId,
+          taskTitle: summaryTitle,
+          taskBudget: String(summaryBudget),
+          taskSchedule: new Date().toISOString(),
+          taskerName: matchedTaskerName,
+          taskerAvatar: matchedTaskerAvatar,
+          taskerRating: matchedTaskerRating,
+          locationText: summaryLocation,
+        },
+      });
+    })();
   };
 
   const onViewApplicants = () => {
@@ -145,12 +182,12 @@ export default function CustomerInstantMatchScreen() {
             <ProfileAvatar
               size="md"
               showVerified={matchState === 'matched_awaiting_accept'}
-              name={matchState === 'matched_awaiting_accept' ? 'B. Temuulen' : 'Tasky'}
+              name={matchState === 'matched_awaiting_accept' ? matchedTaskerName : 'Tasky'}
             />
             <View style={styles.taskerPreviewCopy}>
               <Text style={styles.taskerPreviewName}>
                 {matchState === 'matched_awaiting_accept'
-                  ? t('matching.instantMatch.sampleTaskerName', 'B. Temuulen')
+                  ? t('matching.instantMatch.sampleTaskerName', matchedTaskerName)
                   : t('matching.instantMatch.previewName', 'Tasky instant match')}
               </Text>
               <Text style={styles.taskerPreviewMeta}>
@@ -204,6 +241,7 @@ export default function CustomerInstantMatchScreen() {
               testID="instant-match-confirm-booking"
               label={t('matching.instantMatch.confirmBooking', 'Confirm booking')}
               onPress={onConfirmBooking}
+              isLoading={isCreatingBookingIntent}
             />
           </View>
         )}

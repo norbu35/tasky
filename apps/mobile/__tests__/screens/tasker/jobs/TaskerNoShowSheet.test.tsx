@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { act, render, screen, fireEvent } from '@testing-library/react-native';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -26,6 +26,7 @@ const mockFlagNoShow = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
   useFlagNoShow: () => ({
     mutate: mockFlagNoShow,
+    mutateAsync: mockFlagNoShow,
     isPending: false,
   }),
 }));
@@ -66,7 +67,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
       />,
     );
 
-    expect(screen.getByText('Have you met the customer?')).toBeTruthy();
+    expect(screen.getByText('Захиалагчтайгаа уулзсан уу?')).toBeTruthy();
   });
 
   it('shows flag button available at 15min past schedule', () => {
@@ -82,7 +83,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
       />,
     );
 
-    expect(screen.getByText('Flag No-Show')).toBeTruthy();
+    expect(screen.getByText('Ирээгүй гэж тэмдэглэх')).toBeTruthy();
   });
 
   it('flag button calls flagNoShow', () => {
@@ -98,7 +99,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
       />,
     );
 
-    fireEvent.press(screen.getByText('Flag No-Show'));
+    fireEvent.press(screen.getByText('Ирээгүй гэж тэмдэглэх'));
     expect(mockFlagNoShow).toHaveBeenCalledWith({ bookingId: 'booking-123' });
   });
 
@@ -116,8 +117,29 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
       />,
     );
 
-    expect(screen.getByText('Wait')).toBeTruthy();
-    fireEvent.press(screen.getByText('Wait'));
+    expect(screen.getByText('Хүлээх')).toBeTruthy();
+    fireEvent.press(screen.getByText('Хүлээх'));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('shows success confirmation after flagging', async () => {
+    mockFlagNoShow.mockResolvedValueOnce(undefined);
+    const {
+      TaskerNoShowSheet,
+    } = require('../../../../src/features/bookings/components/TaskerNoShowSheet');
+    render(
+      <TaskerNoShowSheet
+        isOpen={true}
+        onClose={jest.fn()}
+        bookingId="booking-123"
+        minutesPastSchedule={15}
+      />,
+    );
+
+    await act(async () => {
+      fireEvent.press(screen.getByText('Ирээгүй гэж тэмдэглэх'));
+      await Promise.resolve();
+    });
+    expect(screen.getByText('Ирээгүй тэмдэглэгдлээ')).toBeTruthy();
   });
 });

@@ -21,8 +21,18 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
   const { View } = require('react-native');
-  const MockBottomSheet = ({ children, ...props }: any) => <View {...props}>{children}</View>;
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, ...props }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      snapToIndex: jest.fn(),
+      close: jest.fn(),
+    }));
+    return <View {...props}>{children}</View>;
+  });
   MockBottomSheet.displayName = 'MockBottomSheet';
   return {
     __esModule: true,
@@ -68,22 +78,18 @@ describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
 
   it('shows "Confirm the work is complete?" prompt', () => {
     render(<ConfirmCompletionSheet {...defaultProps} />);
-    expect(screen.getByText('Confirm the work is complete?')).toBeTruthy();
+    expect(screen.getByText('Ажил дууссан уу?')).toBeTruthy();
   });
 
   it('shows description text', () => {
     render(<ConfirmCompletionSheet {...defaultProps} />);
-    expect(
-      screen.getByText(
-        'After confirming, you can leave a review. Payment is settled directly with the Tasker.',
-      ),
-    ).toBeTruthy();
+    expect(screen.getByText('Ажил хүлээн зөвшөөрснөөр гүйцэтгэгчид төлбөр олгогдоно')).toBeTruthy();
   });
 
   it('Yes/Confirm calls completeBooking', async () => {
     mockCompleteBooking.mockResolvedValue({ id: 'b-1', status: 'COMPLETED' });
     render(<ConfirmCompletionSheet {...defaultProps} />);
-    fireEvent.press(screen.getByText('Confirm Complete'));
+    fireEvent.press(screen.getByText('Баталгаажуулах'));
     await waitFor(() => {
       expect(mockCompleteBooking).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -98,7 +104,7 @@ describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
     mockCompleteBooking.mockResolvedValue({ id: 'b-1', status: 'COMPLETED' });
     render(<ConfirmCompletionSheet {...defaultProps} />);
 
-    fireEvent.press(screen.getByText('Confirm Complete'));
+    fireEvent.press(screen.getByText('Баталгаажуулах'));
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith({
@@ -111,7 +117,7 @@ describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
   it('Go Back button closes the sheet', () => {
     const onClose = jest.fn();
     render(<ConfirmCompletionSheet {...defaultProps} onClose={onClose} />);
-    fireEvent.press(screen.getByText('Go Back'));
+    fireEvent.press(screen.getByText('Буцах'));
     expect(onClose).toHaveBeenCalled();
   });
 });

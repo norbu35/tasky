@@ -28,17 +28,22 @@ type Row =
 function formatRelativeTimestamp(timestamp: string): string {
   const date = new Date(timestamp);
   const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
   const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
 
-  if (diffHours < 1) {
-    return 'Just now';
+  if (diffMinutes < 1) {
+    return 'Дөнгөж сая';
+  }
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} мин өмнө`;
   }
 
   if (diffHours < 24) {
-    return `${diffHours}h ago`;
+    return `${diffHours} цагийн өмнө`;
   }
 
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('en-CA');
 }
 
 function isSameDay(left: Date, right: Date): boolean {
@@ -111,8 +116,8 @@ export default function NotificationCenterScreen() {
     () =>
       buildRows(
         notifications,
-        t('label.today', 'Today'),
-        t('label.earlier', 'Earlier'),
+        t('label.today', 'Өнөөдөр'),
+        t('label.earlier', 'Өмнөх'),
       ),
     [notifications, t],
   );
@@ -162,7 +167,7 @@ export default function NotificationCenterScreen() {
         >
           <ArrowLeft size={20} color={colors.foreground} />
         </Pressable>
-        <Text style={styles.screenTitle}>{t('shared.notifications.title', 'Notifications')}</Text>
+        <Text style={styles.screenTitle}>{t('shared.notifications.title', 'Мэдэгдлүүд')}</Text>
       </View>
 
       {isLoading ? (
@@ -177,14 +182,14 @@ export default function NotificationCenterScreen() {
             <Bell size={32} color={colors.danger} />
           </View>
           <Text style={styles.errorTitle}>
-            {t('shared.notifications.errorTitle', 'Something went wrong')}
+            {t('shared.notifications.errorTitle', 'Алдаа гарлаа')}
           </Text>
           <Text style={styles.errorBody}>
-            {t('shared.notifications.errorBody', 'Failed to load notifications')}
+            {t('shared.notifications.errorBody', 'Мэдэгдлүүдийг ачаалахад алдаа гарлаа')}
           </Text>
           <Button
             testID="notifications-error-retry"
-            label={t('shared.notifications.retry', 'Retry')}
+            label={t('shared.notifications.retry', 'Дахин оролдох')}
             onPress={() => {
               void refetch();
             }}
@@ -194,8 +199,8 @@ export default function NotificationCenterScreen() {
       ) : notifications.length === 0 ? (
         <EmptyStateTemplate
           testID="notifications-empty"
-          title={t('shared.notifications.emptyTitle', 'No notifications')}
-          description={t('shared.notifications.emptyDescription', "You're all caught up")}
+          title={t('shared.notifications.emptyTitle', 'Мэдэгдэл алга')}
+          description={t('shared.notifications.emptyDescription', 'Танд одоогоор мэдэгдэл ирээгүй байна')}
           icon={<Bell size={32} color={colors.textSecondary} />}
         />
       ) : (

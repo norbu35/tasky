@@ -69,8 +69,8 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
       refetch: jest.fn(),
     });
     render(<BookingsListScreen />);
-    expect(screen.getByText('No bookings yet')).toBeTruthy();
-    expect(screen.getByText('Post a task and select a Tasker to get started')).toBeTruthy();
+    expect(screen.getByText('Захиалга байхгүй байна')).toBeTruthy();
+    expect(screen.getByText('Даалгавар нийтэлж, гүйцэтгэгч сонгоорой')).toBeTruthy();
   });
 
   it('renders booking cards with SplitCard when populated', () => {
@@ -117,8 +117,8 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
       refetch: jest.fn(),
     });
     render(<BookingsListScreen />);
-    expect(screen.getByText('Active')).toBeTruthy();
-    expect(screen.getByText('Completed')).toBeTruthy();
+    expect(screen.getByText('Идэвхтэй')).toBeTruthy();
+    expect(screen.getByText('Дууссан')).toBeTruthy();
   });
 
   it('navigates to booking detail on card press', () => {
@@ -155,7 +155,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
     });
     render(<BookingsListScreen />);
 
-    fireEvent.press(screen.getByText('Post a Task'));
+    fireEvent.press(screen.getByText('Даалгавар нийтлэх'));
     expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new/category');
   });
 
@@ -235,7 +235,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
     });
     render(<BookingsListScreen />);
 
-    fireEvent.press(screen.getByText('Completed'));
+    fireEvent.press(screen.getByText('Дууссан'));
 
     expect(screen.queryByText('Assigned booking')).toBeNull();
     expect(screen.queryByText('Marked done booking')).toBeNull();

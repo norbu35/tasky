@@ -75,7 +75,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('Review & Submit')).toBeTruthy();
     expect(screen.getByLabelText('Step 6 of 7')).toBeTruthy();
-    expect(screen.getByText('Fix my sink')).toBeTruthy();
+    expect(screen.getAllByText('Fix my sink').length).toBeGreaterThan(0);
   });
 
   it('shows task summary with location', () => {
@@ -134,7 +134,10 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
     render(<ReviewSubmitScreen />);
     fireEvent.press(screen.getByText('Post Task'));
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks/new/success');
+      expect(mockReplace).toHaveBeenCalledWith({
+        pathname: '/(customer)/tasks/new/success',
+        params: { taskId: 'task-new-1' },
+      });
     });
   });
 

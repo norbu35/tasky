@@ -66,28 +66,20 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('renders status badge for open dispute', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Open')).toBeTruthy();
+    expect(screen.getByText('Нээлттэй')).toBeTruthy();
   });
 
   it('shows open dispute description', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(
-      screen.getByText(
-        'Your dispute is under admin review. You will be notified when a decision is made.',
-      ),
-    ).toBeTruthy();
+    expect(screen.getByText('Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.')).toBeTruthy();
   });
 
   it('renders escalated status', () => {
     mockDisputeData = { id: 'dispute-123', status: 'ESCALATED', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Escalated')).toBeTruthy();
-    expect(
-      screen.getByText(
-        'Dispute has been escalated for further investigation. A response will follow.',
-      ),
-    ).toBeTruthy();
+    expect(screen.getByText('Мөрдөн шалгаж байна')).toBeTruthy();
+    expect(screen.getByText('Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.')).toBeTruthy();
   });
 
   it('renders resolved for customer status', () => {
@@ -97,19 +89,15 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Resolved for Customer')).toBeTruthy();
-    expect(
-      screen.getByText(
-        'Dispute resolved in your favor. A misconduct note has been added to the other party.',
-      ),
-    ).toBeTruthy();
+    expect(screen.getByText('Хэрэглэгчийн талд шийдэгдсэн')).toBeTruthy();
+    expect(screen.getByText('Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.')).toBeTruthy();
   });
 
   it('renders resolved for tasker status', () => {
     mockDisputeData = { id: 'dispute-123', status: 'RESOLVED_TASKER', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Resolved for Tasker')).toBeTruthy();
-    expect(screen.getByText('Outcome: resolved in favor of the Tasker.')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэгчийн талд шийдэгдсэн')).toBeTruthy();
+    expect(screen.getAllByText('Маргаан гүйцэтгэгчийн талд шийдэгдлээ.')[0]).toBeTruthy();
   });
 
   it('renders closed insufficient evidence status', () => {
@@ -119,16 +107,16 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Closed — Insufficient Evidence')).toBeTruthy();
+    expect(screen.getByText('Нотлох баримт хангалтгүй — хаагдсан')).toBeTruthy();
     expect(
-      screen.getByText('Dispute closed because evidence was not provided within 24 hours.'),
+      screen.getAllByText('Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.')[0],
     ).toBeTruthy();
   });
 
   it('shows dispute summary with reason', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Dispute Summary')).toBeTruthy();
+    expect(screen.getByText('Маргааны товч')).toBeTruthy();
     expect(screen.getByText('Poor quality work')).toBeTruthy();
   });
 
@@ -140,7 +128,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       evidence: ['Photo of damaged sink', 'Chat excerpt with tasker'],
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Submitted Evidence')).toBeTruthy();
+    expect(screen.getByText('Илгээсэн нотлох баримт')).toBeTruthy();
     expect(screen.getByText('Photo of damaged sink')).toBeTruthy();
     expect(screen.getByText('Chat excerpt with tasker')).toBeTruthy();
   });
@@ -152,16 +140,14 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Resolution')).toBeTruthy();
-    expect(screen.getByText('Dispute resolved in your favor.')).toBeTruthy();
+    expect(screen.getByText('Шийдвэр')).toBeTruthy();
+    expect(screen.getByText('Маргаан таны талд шийдэгдлээ.')).toBeTruthy();
   });
 
   it('shows mediation note', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(
-      screen.getByText('Disputes are evidence-only mediation. No monetary compensation is issued.'),
-    ).toBeTruthy();
+    expect(screen.getByText('Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.')).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

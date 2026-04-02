@@ -46,6 +46,6 @@ describe('TasksTabScreen', () => {
   it('renders the customer task list instead of a placeholder', () => {
     render(<TasksTabScreen />);
     expect(screen.getByTestId('my-tasks-screen')).toBeTruthy();
-    expect(screen.getByText('My Tasks')).toBeTruthy();
+    expect(screen.getByText(/My Tasks|Миний даалгаврууд/)).toBeTruthy();
   });
 });

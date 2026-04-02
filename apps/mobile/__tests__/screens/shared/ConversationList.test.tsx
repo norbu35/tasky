@@ -77,7 +77,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('No messages')).toBeTruthy();
+    expect(screen.getByText('Мессеж байхгүй')).toBeTruthy();
   });
 
   it('renders conversation rows with name, preview, and timestamp', () => {
@@ -183,8 +183,8 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('Inbox')).toBeTruthy();
-    fireEvent.changeText(screen.getByPlaceholderText('Search...'), 'Jane');
+    expect(screen.getByText('Мессеж')).toBeTruthy();
+    fireEvent.changeText(screen.getByPlaceholderText('Хайх...'), 'Jane');
 
     expect(screen.queryByText('John Doe')).toBeNull();
     expect(screen.getByText('Jane Smith')).toBeTruthy();
@@ -203,8 +203,8 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('Failed to load messages')).toBeTruthy();
-    fireEvent.press(screen.getByText('Retry'));
+    expect(screen.getByText('Мессежүүдийг ачаалж чадсангүй')).toBeTruthy();
+    fireEvent.press(screen.getByText('Дахин оролдох'));
     expect(refetch).toHaveBeenCalled();
   });
 });

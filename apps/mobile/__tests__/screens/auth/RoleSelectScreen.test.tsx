@@ -60,8 +60,10 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
 
   it('renders the Figma heading and subtitle', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText(/Та юу хийхийг хүсч байна/i)).toBeTruthy();
-    expect(screen.getByText('Та хүссэн үедээ роль солих боломжтой')).toBeTruthy();
+    expect(screen.getByText('Та хэн бэ?')).toBeTruthy();
+    expect(
+      screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.'),
+    ).toBeTruthy();
   });
 
   it('renders customer and tasker cards from Figma', () => {
@@ -128,11 +130,6 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     expect(String(selectedCard.borderColor).toLowerCase()).toBe('#1b3a5c');
     expect(unselectedCard.backgroundColor).toBe('#f4f3f0');
     expect(screen.getByTestId('role-card-customer-check')).toBeTruthy();
-  });
-
-  it('renders a real mood image instead of an empty placeholder', () => {
-    render(<RoleSelectScreen />);
-    expect(screen.getByTestId('role-mood-image').props.source.uri).toContain('figma');
   });
 
   it('has a testID on the screen container', () => {

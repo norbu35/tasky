@@ -84,6 +84,23 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
     expect(screen.getByTestId('dispute-evidence-photos')).toBeTruthy();
   });
 
+  it('keeps submit disabled on the final step until evidence is provided', () => {
+    render(<DisputeRaiseScreen />);
+    fireEvent.press(screen.getByText('Poor quality work'));
+    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+
+    const submit = screen.getByTestId('dispute-raise-screen-next');
+    expect(submit).toBeDisabled();
+
+    fireEvent.changeText(
+      screen.getByPlaceholderText('Describe the issue in detail...'),
+      'The work was not done properly',
+    );
+
+    expect(submit).not.toBeDisabled();
+  });
+
   it('advances to description step after evidence', () => {
     render(<DisputeRaiseScreen />);
     // Step 0 -> select reason

@@ -59,16 +59,11 @@ export default function OtpMigrationScreen() {
 
   return (
     <SafeAreaView style={styles.container} testID="otp-migration-screen">
-      <View style={styles.header}>
-        <View style={styles.headerIconShell}>
-          <ArrowLeft size={18} color={colors.primaryDeep} />
-        </View>
-        <Text style={styles.headerTitle}>Tasky</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
       <View style={styles.content}>
         <View style={styles.hero}>
+          <View style={styles.backShell}>
+            <ArrowLeft size={18} color={colors.primaryDeep} />
+          </View>
           <View style={styles.securityShell}>
             <View style={styles.securityGlow} />
             <View style={styles.securityIconCard}>
@@ -83,7 +78,7 @@ export default function OtpMigrationScreen() {
             <Text style={styles.description}>
               {t(
                 'auth.otpMigration.description',
-                'Та хуучин систем дээрх бүртгэлээ энэ апп-д шилжүүлэхийн тулд утасны дугаараа баталгаажуулна уу. Энэ нь таны аюулгүй байдалд чухал юм.',
+                'Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү',
               )}
             </Text>
           ) : null}
@@ -141,12 +136,6 @@ export default function OtpMigrationScreen() {
             />
           ) : null}
         </View>
-
-        <View style={styles.footerNote}>
-          <Text style={styles.footerNoteText}>
-            {t('auth.otpMigration.securityNote', 'АЮУЛГҮЙ БАЙДЛЫН ХАМГААЛАЛТТАЙ')}
-          </Text>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -157,34 +146,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    height: 64,
-    paddingHorizontal: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.background,
-  },
-  headerIconShell: {
+  backShell: {
     width: 40,
     height: 40,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: {
-    color: colors.primaryDeep,
-    fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-  },
-  headerSpacer: {
-    width: 40,
-  },
   content: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: 54,
+    paddingTop: 72,
     paddingBottom: spacing.lg,
     justifyContent: 'space-between',
   },
@@ -262,15 +234,5 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     minHeight: 44,
-  },
-  footerNote: {
-    alignItems: 'center',
-    paddingTop: spacing.xl,
-  },
-  footerNoteText: {
-    color: 'rgba(67, 71, 78, 0.6)',
-    fontSize: 12,
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
   },
 });

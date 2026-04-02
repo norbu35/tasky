@@ -50,17 +50,17 @@ describe('HelpScreen', () => {
   it('renders Help & Support title', () => {
     render(<HelpScreen />);
 
-    expect(screen.getByText('Help & Support')).toBeTruthy();
+    expect(screen.getByText('Тусламж')).toBeTruthy();
   });
 
   it('shows FAQ section headers', () => {
     render(<HelpScreen />);
 
-    expect(screen.getByText('General')).toBeTruthy();
-    expect(screen.getByText('About Tasks')).toBeTruthy();
-    expect(screen.getByText('About Bookings')).toBeTruthy();
-    expect(screen.getByText('About Payments')).toBeTruthy();
-    expect(screen.getByText('About Account')).toBeTruthy();
+    expect(screen.getByText('Ерөнхий')).toBeTruthy();
+    expect(screen.getByText('Даалгаврын тухай')).toBeTruthy();
+    expect(screen.getByText('Захиалгын тухай')).toBeTruthy();
+    expect(screen.getByText('Төлбөрийн тухай')).toBeTruthy();
+    expect(screen.getByText('Бүртгэлийн тухай')).toBeTruthy();
   });
 
   it('FAQ items are expandable on press', () => {
@@ -80,10 +80,10 @@ describe('HelpScreen', () => {
   it('filters FAQ items from the search bar in real time', () => {
     render(<HelpScreen />);
 
-    fireEvent.changeText(screen.getByPlaceholderText('Search questions...'), 'cancel');
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'цуцал');
 
-    expect(screen.getByText('Can I cancel a booking?')).toBeTruthy();
-    expect(screen.queryByText('What is Tasky?')).toBeNull();
+    expect(screen.getByText('Захиалгаа цуцалж болох уу?')).toBeTruthy();
+    expect(screen.queryByText('Tasky гэж юу вэ?')).toBeNull();
   });
 
   it('shows loading skeleton state when requested', () => {
@@ -101,13 +101,13 @@ describe('HelpScreen', () => {
 
     render(<HelpScreen />);
 
-    expect(screen.getByText('Unable to load')).toBeTruthy();
-    expect(screen.getByText('Failed to load help content. Please try again')).toBeTruthy();
+    expect(screen.getByText('Ачааллах боломжгүй')).toBeTruthy();
+    expect(screen.getByText('Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Try again'));
+    fireEvent.press(screen.getByText('Дахин оролдох'));
 
-    expect(screen.getByText('What is Tasky?')).toBeTruthy();
-    expect(screen.queryByText('Unable to load')).toBeNull();
+    expect(screen.getByText('Tasky гэж юу вэ?')).toBeTruthy();
+    expect(screen.queryByText('Ачааллах боломжгүй')).toBeNull();
   });
 
   it('back button navigates back', () => {

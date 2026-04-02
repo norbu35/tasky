@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Banknote, Calendar, Headphones } from 'lucide-react-native';
+import { Banknote, CalendarDays, Headphones, Sparkles } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -16,7 +16,7 @@ export interface NoApplicantRescueProps {
   onRequestConcierge: () => void;
 }
 
-function RescueOption({
+function RescueButton({
   icon: Icon,
   label,
   description,
@@ -28,9 +28,9 @@ function RescueOption({
   onPress: () => void;
 }) {
   return (
-    <Pressable style={styles.optionButton} onPress={onPress}>
-      <View style={styles.optionIcon}>
-        <Icon size={20} color={colors.primary} />
+    <Pressable onPress={onPress} style={styles.optionButton} accessibilityRole="button">
+      <View style={styles.optionIconWrap}>
+        <Icon size={18} color={colors.secondary} />
       </View>
       <View style={styles.optionCopy}>
         <Text style={styles.optionLabel}>{label}</Text>
@@ -51,66 +51,102 @@ export function NoApplicantRescue({
   const { t } = useTranslation();
 
   return (
-    <ModalSheetTemplate
-      isOpen={isOpen}
-      onClose={onClose}
-      title={t('customer.noApplicantRescue.title', 'No applicants yet')}
-      testID="no-applicant-rescue"
-      snapPoints={['55%']}
-    >
-      <View style={styles.content}>
-        <Text style={styles.introText}>
-          {t('customer.noApplicantRescue.intro', 'Boost your task to get responses faster.')}
-        </Text>
+    <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="no-applicant-rescue" snapPoints={['86%']}>
+      <View style={styles.iconWrap}>
+        <View style={styles.iconOuter}>
+          <Sparkles size={28} color={colors.secondary} />
+        </View>
+      </View>
 
-        <RescueOption
+      <Text style={styles.title}>
+        {t('customer.noApplicantRescue.title', 'Гүйцэтгэгч олдсонгүй')}
+      </Text>
+
+      <Text style={styles.description}>
+        {t(
+          'customer.noApplicantRescue.intro',
+          '120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.',
+        )}
+      </Text>
+
+      <View style={styles.cardStack}>
+        <RescueButton
           icon={Banknote}
-          label={t('customer.noApplicantRescue.adjustBudget', 'Increase Budget')}
+          label={t('customer.noApplicantRescue.adjustBudget', 'Төсөв нэмэх')}
           description={t(
             'customer.noApplicantRescue.adjustBudgetDescription',
-            'Raise the offer to attract more qualified taskers.',
+            'Төсөв нэмснээр гүйцэтгэгч олдох магадлал өснө.',
           )}
           onPress={onAdjustBudget}
         />
 
-        <RescueOption
-          icon={Calendar}
-          label={t('customer.noApplicantRescue.adjustSchedule', 'Change Schedule')}
+        <RescueButton
+          icon={CalendarDays}
+          label={t('customer.noApplicantRescue.adjustSchedule', 'Цаг өөрчлөх')}
           description={t(
             'customer.noApplicantRescue.adjustScheduleDescription',
-            'Move the schedule to a time with stronger availability.',
+            'Шинэ цаг сонгосноор илүү олон гүйцэтгэгчид харагдана.',
           )}
           onPress={onAdjustSchedule}
         />
 
-        <RescueOption
+        <RescueButton
           icon={Headphones}
-          label={t('customer.noApplicantRescue.requestConcierge', 'Request Help')}
+          label={t('customer.noApplicantRescue.requestConcierge', 'Тусламж хүсэх')}
           description={t(
             'customer.noApplicantRescue.requestConciergeDescription',
-            'Ask Tasky concierge to help review and rescue this task.',
+            'Туслах ажилтанд илгээж, даалгаврыг гараар хуваарилуулна.',
           )}
           onPress={onRequestConcierge}
         />
-
-        <Pressable onPress={onClose} style={styles.dismissButton}>
-          <Text style={styles.dismissText}>
-            {t('customer.noApplicantRescue.dismiss', 'Dismiss')}
-          </Text>
-        </Pressable>
       </View>
+
+      <View style={styles.noteCard}>
+        <Text style={styles.noteText}>
+          {t(
+            'customer.noApplicantRescue.note',
+            'Төсөв болон цагийн өөрчлөлт хийсний дараа сонгосон даалгавар дахин идэвхжинэ.',
+          )}
+        </Text>
+      </View>
+
+      <Pressable onPress={onClose} style={styles.dismissButton} accessibilityRole="button">
+        <Text style={styles.dismissText}>{t('customer.noApplicantRescue.dismiss', 'Хаах')}</Text>
+      </Pressable>
     </ModalSheetTemplate>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    gap: spacing.md,
+  iconWrap: {
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
   },
-  introText: {
+  iconOuter: {
+    width: 64,
+    height: 64,
+    borderRadius: radius.lg,
+    backgroundColor: colors.muted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    textAlign: 'center',
+  },
+  description: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
+    textAlign: 'center',
+    lineHeight: typography.body * 1.6,
+    marginTop: spacing.sm,
+  },
+  cardStack: {
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
   optionButton: {
     flexDirection: 'row',
@@ -118,37 +154,49 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: colors.muted,
     borderRadius: radius.md,
-    padding: spacing.lg,
+    padding: spacing.md,
   },
-  optionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
+  optionIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
   optionCopy: {
     flex: 1,
-    gap: spacing.xs,
+    gap: 2,
   },
   optionLabel: {
     fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.foreground,
+    fontWeight: '700',
+    color: colors.primaryDeep,
   },
   optionDescription: {
     fontSize: typography.caption,
-    color: colors.textSecondary,
     lineHeight: typography.caption * 1.5,
+    color: colors.textSecondary,
+  },
+  noteCard: {
+    backgroundColor: colors.primaryDeep,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  noteText: {
+    fontSize: typography.caption,
+    lineHeight: typography.caption * 1.5,
+    color: colors.accent,
+    textAlign: 'center',
   },
   dismissButton: {
-    paddingVertical: spacing.md,
+    minHeight: 48,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   dismissText: {
     fontSize: typography.body,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.textSecondary,
   },
 });

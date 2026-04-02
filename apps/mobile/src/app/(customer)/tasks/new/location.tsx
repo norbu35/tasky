@@ -7,6 +7,7 @@ import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
+import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -35,19 +36,17 @@ export default function LocationScreen() {
   const initialLat = parseCoordinateParam(params.lat);
   const initialLng = parseCoordinateParam(params.lng);
   const [locationText, setLocationText] = useState(params.location ?? '');
-  const quickLocations = [
-    t('customer.postTask.quickLocationHome', 'Home'),
-    t('customer.postTask.quickLocationWork', 'Work'),
-    t('customer.postTask.quickLocationSukhbaatar', 'Sukhbaatar Square'),
-  ];
   const [pin, setPin] = useState<{ latitude: number; longitude: number } | null>(
     initialLat !== null && initialLng !== null
       ? { latitude: initialLat, longitude: initialLng }
       : null,
   );
-  const stepLabel = t('taskPost.step', 'Step {{current}} of {{total}}')
-    .replace('{{current}}', '4')
-    .replace('{{total}}', '7');
+
+  const quickLocations = [
+    t('customer.postTask.quickLocationHome', 'Home'),
+    t('customer.postTask.quickLocationWork', 'Work'),
+    t('customer.postTask.quickLocationSukhbaatar', 'Sukhbaatar Square'),
+  ];
 
   const handleNext = () => {
     if (!pin) {
@@ -69,27 +68,25 @@ export default function LocationScreen() {
     });
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <FormWizardTemplate
       currentStep={3}
       totalSteps={7}
       onNext={handleNext}
-      onBack={handleBack}
+      onBack={() => router.back()}
       nextLabel={t('common.continue', 'Continue')}
       nextDisabled={!pin}
       testID="location-screen"
     >
-      <Text style={styles.stepLabel}>{stepLabel}</Text>
-      <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
-      <Text style={styles.instruction}>
-        {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
-      </Text>
+      <View style={styles.hero}>
+        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '4').replace('{{total}}', '7')}</Text>
+        <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
+        <Text style={styles.instruction}>
+          {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
+        </Text>
+      </View>
 
-      <View style={styles.mapContainer}>
+      <View style={styles.mapShell}>
         <MapView
           style={styles.map}
           initialRegion={{
@@ -107,9 +104,9 @@ export default function LocationScreen() {
             maximumZ={19}
             flipY={false}
           />
-          {pin && <Marker coordinate={pin} />}
+          {pin ? <Marker coordinate={pin} /> : null}
         </MapView>
-        <View pointerEvents="none" style={styles.mapCenterOverlay}>
+        <View pointerEvents="none" style={styles.mapOverlay}>
           <View style={styles.pickHereBadge}>
             <Text style={styles.pickHereText}>{t('customer.postTask.pickHere', 'Pick here')}</Text>
           </View>
@@ -128,68 +125,74 @@ export default function LocationScreen() {
             <Minus size={18} color={colors.primaryDeep} />
           </Pressable>
         </View>
-        <Text style={styles.mapHint}>
-          {pin
-            ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
-            : t('customer.postTask.tapToPin', 'Tap the map to pin the location')}
-        </Text>
       </View>
 
-      <View style={styles.statusCard} testID="location-current-card">
-        <Text style={styles.statusLabel}>
-          {t('customer.postTask.currentLocationLabel', 'Current location')}
-        </Text>
-        <Text style={styles.statusValue}>
-          {pin
-            ? t('customer.postTask.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
-            : t('customer.postTask.locationAwaitingPin', 'Drop a pin to unlock the next step')}
-        </Text>
-      </View>
+      <View style={styles.sheetCard} testID="location-current-card">
+        <View style={styles.sheetHeader}>
+          <Text style={styles.sheetTitle}>
+            {pin
+              ? t('customer.postTask.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
+              : t('customer.postTask.locationAwaitingPin', 'Drop a pin to unlock the next step')}
+          </Text>
+          <Text style={styles.sheetStatus}>
+            {pin
+              ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
+              : t('customer.postTask.tapToPin', 'Tap the map to pin the location')}
+          </Text>
+        </View>
 
-      <FormField
-        label={t('customer.postTask.locationDescriptionLabel', 'Location description')}
-        helperText={t('customer.postTask.locationHelper', 'Provide details helpful for the Tasker')}
-      >
-        <Input
-          testID="location-text-input"
-          value={locationText}
-          onChangeText={setLocationText}
-          placeholder={t(
-            'customer.postTask.locationPlaceholder',
-            'e.g., Behind State Dept Store, 5th floor',
-          )}
-          maxLength={100}
-        />
-      </FormField>
-      <View style={styles.quickLocationsSection}>
-        <Text style={styles.quickLocationsLabel}>
-          {t('customer.postTask.quickLocationsLabel', 'Popular locations')}
-        </Text>
-        <View style={styles.quickLocationsRow}>
-          {quickLocations.map((location) => (
-            <Pressable
-              key={location}
-              onPress={() => setLocationText(location)}
-              style={styles.quickChip}
-              testID={`location-quick-${location}`}
-              accessibilityRole="button"
-            >
-              <Text style={styles.quickChipText}>{location}</Text>
-            </Pressable>
-          ))}
+        <FormField
+          label={t('customer.postTask.locationDescriptionLabel', 'Location description')}
+          helperText={t('customer.postTask.locationHelper', 'Provide details helpful for the Tasker')}
+        >
+          <Input
+            testID="location-text-input"
+            value={locationText}
+            onChangeText={setLocationText}
+            placeholder={t(
+              'customer.postTask.locationPlaceholder',
+              'e.g., Behind State Dept Store, 5th floor',
+            )}
+            maxLength={100}
+          />
+        </FormField>
+
+        <View style={styles.quickLocationsSection}>
+          <Text style={styles.quickLocationsLabel}>
+            {t('customer.postTask.quickLocationsLabel', 'Popular locations')}
+          </Text>
+          <View style={styles.quickLocationsRow}>
+            {quickLocations.map((location) => (
+              <Pressable
+                key={location}
+                onPress={() => setLocationText(location)}
+                style={styles.quickChip}
+                testID={`location-quick-${location}`}
+                accessibilityRole="button"
+              >
+                <Text style={styles.quickChipText}>{location}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.privacyNoteRow}>
+          <Text style={styles.privacyNote}>
+            {t(
+              'customer.postTask.locationPrivacy',
+              'Taskers see approximate location. Exact address shown after booking confirmation',
+            )}
+          </Text>
         </View>
       </View>
-      <Text style={styles.privacyNote}>
-        {t(
-          'customer.postTask.locationPrivacy',
-          'Taskers see approximate location. Exact address shown after booking confirmation',
-        )}
-      </Text>
     </FormWizardTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  hero: {
+    gap: spacing.sm,
+  },
   stepLabel: {
     fontSize: typography.caption,
     fontWeight: '700',
@@ -199,26 +202,26 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.heading,
-    fontWeight: '600',
+    fontWeight: '800',
     color: colors.primaryDeep,
   },
   instruction: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
     lineHeight: typography.body * 1.5,
   },
-  mapContainer: {
-    marginBottom: spacing.lg,
+  mapShell: {
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    backgroundColor: colors.muted,
+    minHeight: 280,
+    ...elevations.card,
   },
   map: {
     width: '100%',
-    height: 260,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
+    height: 280,
   },
-  mapCenterOverlay: {
+  mapOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -250,7 +253,7 @@ const styles = StyleSheet.create({
   mapControls: {
     position: 'absolute',
     right: spacing.md,
-    bottom: spacing.xl,
+    bottom: spacing.md,
     gap: spacing.sm,
   },
   mapControlButton: {
@@ -263,45 +266,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  mapHint: {
-    fontSize: typography.caption,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-  },
-  statusCard: {
-    borderRadius: radius.md,
+  sheetCard: {
+    marginTop: spacing.sm,
+    borderRadius: radius.lg,
     padding: spacing.lg,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.lg,
+  },
+  sheetHeader: {
     gap: spacing.xs,
   },
-  statusLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
-  },
-  statusValue: {
-    fontSize: typography.body,
-    fontWeight: '700',
+  sheetTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '800',
     color: colors.primaryDeep,
   },
-  privacyNote: {
+  sheetStatus: {
     fontSize: typography.caption,
-    color: colors.mutedForeground,
-    marginTop: spacing.md,
-    lineHeight: typography.caption * 1.6,
+    color: colors.textSecondary,
   },
   quickLocationsSection: {
     gap: spacing.sm,
   },
   quickLocationsLabel: {
-    fontSize: typography.caption,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    color: colors.textSecondary,
+    fontSize: typography.body,
     fontWeight: '700',
+    color: colors.primaryDeep,
   },
   quickLocationsRow: {
     flexDirection: 'row',
@@ -309,14 +301,22 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   quickChip: {
-    backgroundColor: `${colors.mutedForeground}20`,
-    borderRadius: radius.full,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primary}12`,
   },
   quickChipText: {
     fontSize: typography.caption,
-    color: colors.foreground,
-    fontWeight: '600',
+    color: colors.primaryDeep,
+    fontWeight: '700',
+  },
+  privacyNoteRow: {
+    paddingTop: spacing.xs,
+  },
+  privacyNote: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: typography.caption * 1.5,
   },
 });

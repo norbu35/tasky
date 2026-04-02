@@ -54,8 +54,12 @@ describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    expect(screen.getByText('shared.account.suspendedTitle')).toBeTruthy();
-    expect(screen.getByText('shared.account.suspendedBody')).toBeTruthy();
+    expect(screen.getByText('Бүртгэл түр хаагдсан')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Таны хаягийг манай үйлчилгээний нөхцөл зөрчсөн тул түр хугацаагаар хязгаарлалаа.',
+      ),
+    ).toBeTruthy();
   });
 
   it('shows expiry date when provided via route params', () => {
@@ -66,21 +70,21 @@ describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    expect(screen.getByText('Suspension ends: 2026-04-15')).toBeTruthy();
+    expect(screen.getByText('Suspension ends: 2026.04.15')).toBeTruthy();
   });
 
   it('renders appeal button', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    expect(screen.getByText('shared.account.suspendedAppeal')).toBeTruthy();
+    expect(screen.getByText('Гомдол гаргах')).toBeTruthy();
   });
 
   it('renders logout action and returns the user to login', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    fireEvent.press(screen.getByText('shared.account.logout'));
+    fireEvent.press(screen.getByText('Гарах'));
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
 

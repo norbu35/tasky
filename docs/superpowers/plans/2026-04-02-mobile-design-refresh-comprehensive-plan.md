@@ -127,7 +127,10 @@ Before final PR:
 
 - The in-scope 63-screen refresh lane is implemented in repo history (lane commits plus booking-source follow-up).
 - Current branch (`agent/TASK-002-source-aware-booking-confirmation`) includes the latest customer booking source-aware handoff updates required by this plan.
+- Route wrappers verified as intentionally stable:
+  - `apps/mobile/src/app/(shared)/review/[bookingId].tsx` remains a route-level re-export to the refreshed `ReviewForm` component.
+  - `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx` remains the contract alias redirect to canonical `/task/[id]`.
 - Verification run completed on this branch:
   - `pnpm --filter @tasky/mobile typecheck` ✅
-  - `pnpm --filter @tasky/mobile exec jest --watchman=false --runInBand` ✅ (104 suites, 703 tests)
+  - `pnpm --filter @tasky/mobile exec jest --watchman=false --runInBand` ✅ (105 suites, 719 tests)
 - Remaining tracked mobile work is outside this 63-screen scope and is captured in `tasks/TASK-001.md` (deferred phase screens from AGENTS.md).

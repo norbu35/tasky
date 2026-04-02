@@ -164,4 +164,34 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
       expect(mockAcceptApplication).not.toHaveBeenCalled();
     });
   });
+
+  it('confirm uses booking intent flow when source is instant_match', async () => {
+    mockLocalSearchParams = {
+      taskId: 'task-1',
+      applicationId: '',
+      source: 'instant_match',
+      bookingIntentId: 'intent-2',
+      taskerId: 'tasker-1',
+      taskTitle: 'Fix my sink',
+      taskBudget: '50000',
+      taskSchedule: '2026-04-01T10:00:00Z',
+      taskerName: 'Bold',
+      taskerAvatar: 'https://example.com/avatar.jpg',
+      taskerRating: '4.7',
+    };
+    mockConfirmBookingIntent.mockResolvedValue({ id: 'booking-3' });
+    render(<BookingConfirmScreen />);
+    fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
+    fireEvent.press(screen.getByTestId('booking-confirm-screen-cta'));
+    await waitFor(() => {
+      expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          bookingIntentId: 'intent-2',
+          liabilityDisclaimerAccepted: true,
+          idempotencyKey: expect.any(String),
+        }),
+      );
+      expect(mockAcceptApplication).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -39,6 +39,7 @@ describe('LeadUnlockSheet (SCR-TASK-017)', () => {
     expect(screen.getByText('2 кредит')).toBeTruthy();
     expect(screen.getByText('Зөвшөөрч, кредит зарцуулах')).toBeTruthy();
     expect(screen.getByText('Татгалзах')).toBeTruthy();
+    expect(screen.getByText('Захиалагч цуцалвал кредит буцаагдана')).toBeTruthy();
   });
 
   it('renders the insufficient credits state', () => {
@@ -46,6 +47,7 @@ describe('LeadUnlockSheet (SCR-TASK-017)', () => {
 
     expect(screen.getByText('Кредит хүрэлцэхгүй байна')).toBeTruthy();
     expect(screen.getByText('Кредит худалдаж авах')).toBeTruthy();
+    expect(screen.getByText(/Үлдэгдэл: 0/)).toBeTruthy();
   });
 
   it('buy credits CTA triggers the callback', () => {
@@ -61,5 +63,21 @@ describe('LeadUnlockSheet (SCR-TASK-017)', () => {
 
     fireEvent.press(screen.getByTestId('lead-unlock-buy-credits'));
     expect(onBuyCredits).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the accepted state confirmation', () => {
+    render(<LeadUnlockSheet {...baseProps} state="accepted_credits_deducted" />);
+
+    expect(screen.getByText('Амжилттай!')).toBeTruthy();
+    expect(screen.getByText('Захиалагчийн холбоо барих мэдээлэл нээгдлээ. 2 кредит зарцуулагдлаа.')).toBeTruthy();
+    expect(screen.getByText('Ойлголоо')).toBeTruthy();
+  });
+
+  it('renders the expired state confirmation', () => {
+    render(<LeadUnlockSheet {...baseProps} state="expired_15min" />);
+
+    expect(screen.getByText('Хугацаа дууслаа')).toBeTruthy();
+    expect(screen.getByText('15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй.')).toBeTruthy();
+    expect(screen.getByText('Ойлголоо')).toBeTruthy();
   });
 });

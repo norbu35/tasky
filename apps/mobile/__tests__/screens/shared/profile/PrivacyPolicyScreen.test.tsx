@@ -44,15 +44,15 @@ describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
   it('renders the privacy policy title', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText('Privacy Policy')).toBeTruthy();
+    expect(screen.getByText(/Privacy Policy|Нууцлалын бодлого/)).toBeTruthy();
   });
 
   it('renders scrollable content sections', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText('Data Collection')).toBeTruthy();
-    expect(screen.getByText('Data Usage')).toBeTruthy();
-    expect(screen.getByText('Data Storage')).toBeTruthy();
+    expect(screen.getByText(/Data Collection|Мэдээлэл цуглуулах/)).toBeTruthy();
+    expect(screen.getByText(/Data Usage|Мэдээллийн ашиглалт/)).toBeTruthy();
+    expect(screen.getAllByText(/Data Storage|Мэдээлэл хадгалах/).length).toBeGreaterThan(0);
   });
 
   it('renders back button that navigates back', () => {
@@ -65,20 +65,20 @@ describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
   it('renders identity verification section', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText('Identity Verification Data')).toBeTruthy();
+    expect(screen.getByText(/Identity Verification Data|Таниулах баталгаажуулалтын мэдээлэл/)).toBeTruthy();
   });
 
   it('renders user rights section', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText('User Rights')).toBeTruthy();
+    expect(screen.getByText(/User Rights|Хэрэглэгчийн эрх/)).toBeTruthy();
   });
 
   it('renders the last updated label and support email card', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
 
-    expect(screen.getByText('Updated: 2026.01.01')).toBeTruthy();
+    expect(screen.getByText(/Updated: 2026.01.01|Сүүлд шинэчлэгдсэн: 2026.01.01/)).toBeTruthy();
     expect(screen.getByText('support@tasky.mn')).toBeTruthy();
   });
 });

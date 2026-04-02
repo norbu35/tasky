@@ -48,7 +48,7 @@ describe('TermsScreen', () => {
   it('renders Terms of Service title in header', () => {
     render(<TermsScreen />);
 
-    expect(screen.getByText('Terms of Service')).toBeTruthy();
+    expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
   });
 
   it('shows back button that navigates back', () => {
@@ -62,7 +62,8 @@ describe('TermsScreen', () => {
     render(<TermsScreen />);
 
     expect(screen.getByTestId('terms-screen')).toBeTruthy();
-    expect(screen.getByText('1. Acceptance of Terms')).toBeTruthy();
+    expect(screen.getByText('1. Нөхцөлийг зөвшөөрөх')).toBeTruthy();
+    expect(screen.getByText('Эдгээр нөхцөлийг товчоор')).toBeTruthy();
   });
 
   it('shows loading skeleton state when requested', () => {
@@ -80,12 +81,12 @@ describe('TermsScreen', () => {
 
     render(<TermsScreen />);
 
-    expect(screen.getByText('Unable to load')).toBeTruthy();
-    expect(screen.getByText('Failed to load Terms of Service. Please try again')).toBeTruthy();
+    expect(screen.getByText('Ачааллах боломжгүй')).toBeTruthy();
+    expect(screen.getByText('Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Try again'));
+    fireEvent.press(screen.getByText('Дахин оролдох'));
 
-    expect(screen.getByText('1. Acceptance of Terms')).toBeTruthy();
-    expect(screen.queryByText('Unable to load')).toBeNull();
+    expect(screen.getByText('1. Нөхцөлийг зөвшөөрөх')).toBeTruthy();
+    expect(screen.queryByText('Ачааллах боломжгүй')).toBeNull();
   });
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Lock } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -21,10 +22,18 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
 
   return (
     <View style={styles.container} testID="review-hard-lock">
-      <Text style={styles.title}>{t('shared.review.hardLockTitle')}</Text>
-      <Text style={styles.body}>{t('shared.review.hardLockBody')}</Text>
+      <View style={styles.iconShell}>
+        <Lock size={30} color={colors.primary} />
+      </View>
+      <Text style={styles.title}>{t('shared.review.hardLockTitle', 'Үнэлгээ өгөх шаардлагатай')}</Text>
+      <Text style={styles.body}>
+        {t(
+          'shared.review.hardLockBody',
+          'Та үргэлжлүүлэн ашиглахын тулд өмнөх захиалгын үнэлгээгээ өгөх шаардлагатай.',
+        )}
+      </Text>
       <Button
-        label={t('shared.review.submit')}
+        label={t('shared.review.submit', 'Үнэлгээ өгөх')}
         onPress={handleSubmitReview}
         style={styles.button}
         testID="review-hard-lock-cta"
@@ -40,6 +49,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.background,
+  },
+  iconShell: {
+    width: 72,
+    height: 72,
+    borderRadius: 18,
+    backgroundColor: colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
   },
   title: {
     fontSize: typography.title,

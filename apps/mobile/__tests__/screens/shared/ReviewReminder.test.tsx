@@ -58,15 +58,17 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    expect(screen.getByText('shared.review.reminderTitle')).toBeTruthy();
-    expect(screen.getByText('shared.review.reminderBody')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээ өгөхөө мартсан уу?')).toBeTruthy();
+    expect(
+      screen.getByText('Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг'),
+    ).toBeTruthy();
   });
 
   it('renders "Leave a Review" CTA button', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    const cta = screen.getByText('shared.review.reminderCta');
+    const cta = screen.getByText('Үнэлгээ өгөх');
     expect(cta).toBeTruthy();
   });
 
@@ -74,7 +76,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    const laterBtn = screen.getByText('shared.review.reminderLater');
+    const laterBtn = screen.getByText('Дараа');
     expect(laterBtn).toBeTruthy();
 
     fireEvent.press(laterBtn);
@@ -85,7 +87,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    fireEvent.press(screen.getByText('shared.review.reminderCta'));
+    fireEvent.press(screen.getByText('Үнэлгээ өгөх'));
 
     expect(mockPush).toHaveBeenCalledWith('/(shared)/review/booking-123');
     expect(mockOnDismiss).toHaveBeenCalled();

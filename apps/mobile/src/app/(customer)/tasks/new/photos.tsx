@@ -32,17 +32,10 @@ export default function PhotoUploadScreen() {
     photos?: string;
   }>();
   const [photos, setPhotos] = useState<string[]>(() => parsePhotoKeys(params.photos).slice(0, 3));
-  const stepLabel = t('taskPost.step', 'Step {{current}} of {{total}}')
-    .replace('{{current}}', '3')
-    .replace('{{total}}', '7');
-  const progressHint = t('customer.postTask.photosProgressHint', 'Almost done');
-  const slots = useMemo(
-    () => Array.from({ length: 3 }, (_, index) => photos[index] ?? null),
-    [photos],
-  );
+  const slots = useMemo(() => Array.from({ length: 3 }, (_, index) => photos[index] ?? null), [photos]);
 
   const handleAddPhoto = () => {
-    // Keep data flow unchanged until presigned upload integration is wired.
+    // Photo picker integration is not yet wired in this lane.
   };
 
   const handleRemovePhoto = (index: number) => {
@@ -62,34 +55,26 @@ export default function PhotoUploadScreen() {
     });
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <FormWizardTemplate
       currentStep={2}
       totalSteps={7}
       onNext={handleNext}
-      onBack={handleBack}
+      onBack={() => router.back()}
       nextLabel={
         photos.length > 0 ? t('common.continue', 'Continue') : t('customer.postTask.photosSkip', 'Skip')
       }
       testID="photo-upload-screen"
     >
       <View style={styles.progressHeader}>
-        <Text style={styles.stepLabel}>{stepLabel}</Text>
-        <Text style={styles.progressHint}>{progressHint}</Text>
+        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '3').replace('{{total}}', '7')}</Text>
+        <Text style={styles.progressHint}>{t('customer.postTask.photosProgressHint', 'Almost done')}</Text>
       </View>
-      <Text style={styles.title}>
-        {t('customer.postTask.photosHeroTitle', 'Show your task workspace')}
-      </Text>
+      <Text style={styles.title}>{t('customer.postTask.photosHeroTitle', 'Show your task workspace')}</Text>
       <Text style={styles.subtitle}>
-        {t(
-          'customer.postTask.photosInstruction',
-          'Add photos related to your task (up to 3)',
-        )}
+        {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
       </Text>
+
       <View style={styles.grid} testID="photo-upload-grid">
         {slots.map((photoUri, index) =>
           photoUri ? (
@@ -122,16 +107,16 @@ export default function PhotoUploadScreen() {
           ),
         )}
       </View>
+
       <View style={styles.helperRow}>
         <Info size={16} color={colors.secondary} />
         <Text style={styles.helperText}>
           {t('customer.postTask.photosOptional', 'Photos are optional — you can skip')}
         </Text>
       </View>
+
       <View style={styles.tipCard}>
-        <Text style={styles.tipTitle}>
-          {t('customer.postTask.photosTipTitle', 'Photo tip')}
-        </Text>
+        <Text style={styles.tipTitle}>{t('customer.postTask.photosTipTitle', 'Photo tip')}</Text>
         <Text style={styles.tipBody}>
           {t(
             'customer.postTask.photosTipBody',
@@ -144,18 +129,18 @@ export default function PhotoUploadScreen() {
 }
 
 const styles = StyleSheet.create({
+  progressHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
   stepLabel: {
     fontSize: typography.caption,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     color: colors.textSecondary,
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
   },
   progressHint: {
     fontSize: typography.caption,
@@ -174,12 +159,13 @@ const styles = StyleSheet.create({
   },
   grid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
   photoCard: {
-    flex: 1,
+    width: '31.5%',
     aspectRatio: 1,
-    borderRadius: radius.sm,
+    borderRadius: radius.lg,
     overflow: 'hidden',
     backgroundColor: colors.muted,
   },
@@ -199,16 +185,16 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.primaryDeep}99`,
   },
   addCard: {
-    flex: 1,
+    width: '31.5%',
     aspectRatio: 1,
-    borderRadius: radius.sm,
+    borderRadius: radius.lg,
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: colors.chipInactive,
     backgroundColor: colors.muted,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs,
     padding: spacing.sm,
   },
   addIconWrap: {
@@ -242,7 +228,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     backgroundColor: `${colors.accent}20`,
     gap: spacing.sm,
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
   },
   tipTitle: {
     fontSize: typography.body,

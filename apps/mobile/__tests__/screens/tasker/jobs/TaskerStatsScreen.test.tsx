@@ -53,6 +53,7 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     render(<StatsScreen />);
 
     expect(screen.getByTestId('tasker-stats')).toBeTruthy();
+    expect(screen.getByText('Миний статистик')).toBeTruthy();
   });
 
   it('renders stats cards with jobs completed, rating, response time, reliability', () => {
@@ -63,6 +64,8 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
         response_time_minutes: 12,
         reliability_score: 96,
         completion_rate: 94,
+        application_success_rate: 42,
+        unlock_conversion_rate: 18,
         cancellations_30d: 1,
         rating_breakdown: {
           task_clarity: 4.8,
@@ -81,10 +84,11 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
 
     expect(screen.getByText('23')).toBeTruthy();
     expect(screen.getAllByText('4.7').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('12')).toBeTruthy();
+    expect(screen.getByText(/12 мин/)).toBeTruthy();
     expect(screen.getByText('96%')).toBeTruthy();
     expect(screen.getByText('94%')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy();
+    expect(screen.getByText('42%')).toBeTruthy();
   });
 
   it('renders the hero rating panel', () => {
@@ -112,8 +116,8 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     render(<StatsScreen />);
 
     expect(screen.getByTestId('tasker-stats-hero')).toBeTruthy();
-    expect(screen.getByText('Your rating')).toBeTruthy();
-    expect(screen.getByText('From customer reviews')).toBeTruthy();
+    expect(screen.getByText('Таны үнэлгээ')).toBeTruthy();
+    expect(screen.getByText('Захиалагчийн үнэлгээнээс')).toBeTruthy();
   });
 
   it('renders stat labels', () => {
@@ -124,6 +128,8 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
         response_time_minutes: 12,
         reliability_score: 96,
         completion_rate: 94,
+        application_success_rate: 42,
+        unlock_conversion_rate: 18,
         cancellations_30d: 1,
         rating_breakdown: {
           task_clarity: 4.8,
@@ -140,18 +146,18 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     const StatsScreen = require('../../../../src/app/(tasker)/stats').default;
     render(<StatsScreen />);
 
-    expect(screen.getByText('Completed Jobs')).toBeTruthy();
-    expect(screen.getByText('Overall Rating')).toBeTruthy();
-    expect(screen.getByText('Response Time')).toBeTruthy();
-    expect(screen.getByText('Reliability Score')).toBeTruthy();
-    expect(screen.getByText('Completion Rate')).toBeTruthy();
-    expect(screen.getByText('Cancellations (30d)')).toBeTruthy();
-    expect(screen.getByText('Rating Breakdown')).toBeTruthy();
-    expect(screen.getByText(/Task Clarity/)).toBeTruthy();
-    expect(screen.getByText(/Respectfulness/)).toBeTruthy();
-    expect(screen.getByText(/Punctuality/)).toBeTruthy();
-    expect(screen.getByText('Reliability')).toBeTruthy();
-    expect(screen.getByText('Pro Badge earned!')).toBeTruthy();
+    expect(screen.getByText('Дууссан ажил')).toBeTruthy();
+    expect(screen.getByText('Ерөнхий үнэлгээ')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэлийн хувь')).toBeTruthy();
+    expect(screen.getByText('Анкетын амжилт')).toBeTruthy();
+    expect(screen.getByText('Цуцлалт (30 хоногт)')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээний задаргаа')).toBeTruthy();
+    expect(screen.getByText(/Даалгаврын тодорхой байдал/)).toBeTruthy();
+    expect(screen.getByText(/Хүндэтгэлтэй хандлага/)).toBeTruthy();
+    expect(screen.getByText(/Цаг баримтлал/)).toBeTruthy();
+    expect(screen.getByText('Найдвартай байдал')).toBeTruthy();
+    expect(screen.getByText('Pro Badge олдсон!')).toBeTruthy();
+    expect(screen.getByText('Идэвхжил')).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

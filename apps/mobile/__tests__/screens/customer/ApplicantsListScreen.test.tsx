@@ -20,6 +20,26 @@ jest.mock('react-i18next', () => ({
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(props: any, ref: any) {
+    React.useImperativeHandle(ref, () => ({
+      snapToIndex: jest.fn(),
+      close: jest.fn(),
+    }));
+    return <View {...props}>{props.children}</View>;
+  });
+  return {
+    __esModule: true,
+    default: MockBottomSheet,
+    BottomSheetView: View,
+    BottomSheetModal: View,
+    BottomSheetModalProvider: View,
+    BottomSheetBackdrop: View,
+  };
+});
+
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
   return new Proxy(
@@ -35,16 +55,20 @@ jest.mock('../../../src/features/tasks/hooks/useApplications', () => ({
   useApplications: () => mockUseApplications(),
 }));
 
-const mockAcceptMutateAsync = jest.fn();
-jest.mock('../../../src/features/bookings/hooks/useAcceptApplication', () => ({
-  useAcceptApplication: () => ({
-    mutateAsync: mockAcceptMutateAsync,
-    isPending: false,
-  }),
+const mockUseCustomerTaskDetail = jest.fn();
+jest.mock('../../../src/features/tasks/hooks/useCustomerTaskDetail', () => ({
+  useCustomerTaskDetail: () => mockUseCustomerTaskDetail(),
 }));
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockUseCustomerTaskDetail.mockReturnValue({
+    task: {
+      description: 'Fix my sink',
+      budget: 50000,
+      scheduled_at: '2026-04-03T10:00:00Z',
+    },
+  });
 });
 
 const makeApplicant = (overrides: Record<string, any> = {}) => ({
@@ -83,7 +107,7 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
       refetch: jest.fn(),
     });
     render(<ApplicantsListScreen />);
-    expect(screen.getByTestId('applicants-list-screen')).toBeTruthy();
+    expect(screen.getByText('Loading')).toBeTruthy();
   });
 
   it('renders empty state when no applicants', () => {
@@ -160,7 +184,7 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     expect(mockPush).toHaveBeenCalledWith('/(customer)/taskers/tasker-1');
   });
 
-  it('Accept navigates to booking confirmation with params', () => {
+  it('Accept opens a confirmation sheet before navigation', () => {
     mockUseApplications.mockReturnValue({
       data: { data: [makeApplicant()] },
       isLoading: false,
@@ -169,13 +193,34 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     });
     render(<ApplicantsListScreen />);
     fireEvent.press(screen.getByText('Accept'));
+    expect(screen.getByTestId('applicant-accept-sheet')).toBeTruthy();
+    expect(screen.getByText('Select this Tasker?')).toBeTruthy();
+    expect(screen.getByText('Confirm')).toBeTruthy();
+  });
+
+  it('Confirm navigates to booking confirmation with params', () => {
+    mockUseApplications.mockReturnValue({
+      data: { data: [makeApplicant()] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<ApplicantsListScreen />);
+    fireEvent.press(screen.getByText('Accept'));
+    fireEvent.press(screen.getByTestId('applicant-accept-sheet-confirm'));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/(customer)/bookings/confirm',
-      params: {
+      params: expect.objectContaining({
         taskId: 'task-1',
         applicationId: 'app-1',
         taskerId: 'tasker-1',
-      },
+        taskTitle: 'Fix my sink',
+        taskBudget: '50000',
+        taskSchedule: '2026-04-03T10:00:00Z',
+        taskerName: 'Bold Bat',
+        taskerRating: '4.5',
+        source: 'application',
+      }),
     });
   });
 
@@ -187,6 +232,6 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
       refetch: jest.fn(),
     });
     render(<ApplicantsListScreen />);
-    expect(screen.getByTestId('verified-badge-tasker-1')).toBeTruthy();
+    expect(screen.getByTestId('icon-CheckCircle')).toBeTruthy();
   });
 });

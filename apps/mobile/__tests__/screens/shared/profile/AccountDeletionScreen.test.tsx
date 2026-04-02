@@ -65,28 +65,32 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
   it('shows warning text', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
-    expect(screen.getByText(/cannot be undone/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана.',
+      ),
+    ).toBeTruthy();
   });
 
   it('shows delete and cancel buttons', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
-    expect(screen.getByText('Delete My Account')).toBeTruthy();
-    expect(screen.getByText('Cancel')).toBeTruthy();
+    expect(screen.getByText('Бүртгэлээ устгах')).toBeTruthy();
+    expect(screen.getByText('Болих')).toBeTruthy();
   });
 
   it('confirm button triggers deletion', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
     fireEvent.changeText(screen.getByTestId('delete-confirmation-input'), 'DELETE');
-    fireEvent.press(screen.getByText('Delete My Account'));
+    fireEvent.press(screen.getByText('Бүртгэлээ устгах'));
     expect(mockDeleteAccount).toHaveBeenCalled();
   });
 
   it('cancel button goes back', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
-    fireEvent.press(screen.getByText('Cancel'));
+    fireEvent.press(screen.getByText('Болих'));
     expect(mockBack).toHaveBeenCalled();
   });
 
@@ -109,7 +113,11 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
     });
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
-    expect(screen.getByText(/active bookings/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай.',
+      ),
+    ).toBeTruthy();
   });
 
   it('requires confirmation text before enabling deletion', () => {
@@ -136,6 +144,10 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
 
-    expect(screen.getByText(/open disputes/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай.',
+      ),
+    ).toBeTruthy();
   });
 });

@@ -148,7 +148,7 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
     const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
     render(<MyJobsScreen />);
 
-    expect(screen.getByText('No jobs yet')).toBeTruthy();
+    expect(screen.getByText('Одоогоор ажил байхгүй байна')).toBeTruthy();
   });
 
   it('renders active jobs by default with customer name, task title, schedule, and status', () => {
@@ -187,9 +187,9 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
     const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
     render(<MyJobsScreen />);
 
-    expect(screen.getByText('Active')).toBeTruthy();
-    expect(screen.getByText('Completed')).toBeTruthy();
-    expect(screen.getByText('Cancelled')).toBeTruthy();
+    expect(screen.getByText('Идэвхтэй')).toBeTruthy();
+    expect(screen.getByText('Дууссан')).toBeTruthy();
+    expect(screen.getByText('Цуцлагдсан')).toBeTruthy();
   });
 
   it('filters bookings by selected status tab', () => {
@@ -207,7 +207,7 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
     const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
     render(<MyJobsScreen />);
 
-    fireEvent.press(screen.getByText('Completed'));
+    fireEvent.press(screen.getByText('Дууссан'));
 
     expect(screen.queryByText('Deep clean apartment')).toBeNull();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();

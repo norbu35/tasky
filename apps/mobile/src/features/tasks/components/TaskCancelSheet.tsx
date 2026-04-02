@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
+import { AlertTriangle } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -31,35 +32,25 @@ export function TaskCancelSheet({
   const router = useRouter();
   const cancelBooking = useCancelBooking();
 
-  const _isOpen = taskStatus === 'OPEN';
   const isAssigned = taskStatus === 'ASSIGNED';
   const isLate = isAssigned && isLateCancellation;
+  const title = isLate
+    ? t('customer.cancelSheet.titleLate', 'Late Cancellation')
+    : isAssigned
+      ? t('customer.cancelSheet.titleAssigned', 'Cancel this booking?')
+      : t('customer.cancelSheet.titleOpen', 'Cancel this task?');
 
-  // Title
-  let title: string;
-  if (isLate) {
-    title = t('customer.cancelSheet.titleLate', 'Late Cancellation');
-  } else if (isAssigned) {
-    title = t('customer.cancelSheet.titleAssigned', 'Cancel this booking?');
-  } else {
-    title = t('customer.cancelSheet.titleOpen', 'Cancel this task?');
-  }
-
-  // Body
-  let body: string;
-  if (isLate) {
-    body = t(
-      'customer.cancelSheet.bodyLate',
-      t('customer.bookings.cancelLateWarning', 'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident'),
-    );
-  } else if (isAssigned) {
-    body = t(
-      'customer.cancelSheet.bodyAssigned',
-      t('customer.bookings.cancelFree', 'Cancelling more than 4 hours before schedule incurs no penalty'),
-    );
-  } else {
-    body = t('customer.cancelSheet.bodyOpen', 'Cancelling this task has no penalty');
-  }
+  const body = isLate
+    ? t(
+        'customer.cancelSheet.bodyLate',
+        'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident',
+      )
+    : isAssigned
+      ? t(
+          'customer.cancelSheet.bodyAssigned',
+          'Cancelling more than 4 hours before schedule incurs no penalty',
+        )
+      : t('customer.cancelSheet.bodyOpen', 'Cancelling this task has no penalty');
 
   const handleConfirmCancel = async () => {
     try {
@@ -72,7 +63,7 @@ export function TaskCancelSheet({
       onClose();
       router.replace('/(customer)/tasks');
     } catch {
-      // Error handled by toast
+      // Error state is handled by the mutation hook and toast layer.
     }
   };
 
@@ -85,9 +76,12 @@ export function TaskCancelSheet({
       snapPoints={['45%']}
     >
       <View style={styles.content}>
+        <View style={styles.iconWrap}>
+          <AlertTriangle size={22} color={colors.danger} />
+        </View>
         <Text style={styles.body}>{body}</Text>
 
-        {isLate && (
+        {isLate ? (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
               {t(
@@ -96,7 +90,7 @@ export function TaskCancelSheet({
               )}
             </Text>
           </View>
-        )}
+        ) : null}
 
         <Button
           label={t('customer.cancelSheet.confirm', 'Yes, Cancel')}
@@ -118,13 +112,21 @@ const styles = StyleSheet.create({
   content: {
     gap: spacing.lg,
   },
+  iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: `${colors.danger}14`,
+  },
   body: {
     fontSize: typography.body,
     color: colors.mutedForeground,
     lineHeight: typography.body * 1.6,
   },
   warningBox: {
-    backgroundColor: colors.danger + '15',
+    backgroundColor: `${colors.danger}15`,
     borderRadius: radius.md,
     padding: spacing.md,
     borderLeftWidth: 3,

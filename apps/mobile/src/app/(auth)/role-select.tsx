@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Briefcase, Check, User, X } from 'lucide-react-native';
+import { ArrowRight, Briefcase, Check, User } from 'lucide-react-native';
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { colors, spacing, typography } = mobileTheme;
-const roleMoodImageUri =
-  'https://www.figma.com/api/mcp/asset/cfec8927-ce2d-4ee5-badc-f32c7637cced';
 
 type RoleOption = 'customer' | 'tasker' | null;
 
@@ -63,10 +60,7 @@ export default function RoleSelectScreen() {
         onPress={() => setSelectedRole(role)}
         style={[styles.roleCard, isSelected && styles.roleCardSelected]}
       >
-        <LinearGradient
-          colors={isSelected ? ['#ffffff', '#ffffff'] : ['#f4f3f0', '#f4f3f0']}
-          style={styles.roleCardContent}
-        >
+        <View style={styles.roleCardContent}>
           <View
             style={[
               styles.roleIcon,
@@ -84,43 +78,24 @@ export default function RoleSelectScreen() {
               <Check size={14} color="#ffffff" />
             </View>
           ) : null}
-        </LinearGradient>
+        </View>
       </Pressable>
     );
   };
 
   return (
     <AuthTemplate testID="role-select-screen" contentStyle={styles.contentStyle}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Close">
-          <X size={24} color={colors.primaryDeep} />
-        </Pressable>
-        <Text style={styles.headerTitle}>TASKY</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
       <View style={styles.hero}>
-        <Text style={styles.heading}>
-          {t('auth.roleSelection.titleLine1', 'Та юу хийхийг хүсч байна\nвэ?')}
-        </Text>
+        <Text style={styles.heading}>{t('auth.roleSelection.heading', 'Та хэн бэ?')}</Text>
         <Text style={styles.subtitle}>
           {t(
             'auth.roleSelection.subtitle',
-            'Та хүссэн үедээ роль солих боломжтой',
+            'Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.',
           )}
         </Text>
       </View>
 
       <View style={styles.cards}>{(['customer', 'tasker'] as const).map(renderRoleCard)}</View>
-
-      <View style={styles.moodPanel}>
-        <Image
-          testID="role-mood-image"
-          source={{ uri: roleMoodImageUri }}
-          style={styles.moodImage}
-          resizeMode="cover"
-        />
-      </View>
 
       <Button
         testID="role-confirm-button"
@@ -166,22 +141,6 @@ export default function RoleSelectScreen() {
 const styles = StyleSheet.create({
   contentStyle: {
     justifyContent: 'center',
-  },
-  header: {
-    marginBottom: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: {
-    color: colors.primaryDeep,
-    fontSize: typography.title,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  headerSpacer: {
-    width: 24,
-    height: 24,
   },
   hero: {
     marginBottom: spacing.xl,
@@ -250,19 +209,9 @@ const styles = StyleSheet.create({
   },
   roleDescription: {
     fontSize: typography.label,
-    color: '#43474e',
+    color: colors.textSecondary,
     marginTop: spacing.xs,
     lineHeight: 20,
-  },
-  moodPanel: {
-    borderRadius: 18,
-    overflow: 'hidden',
-    backgroundColor: '#e9e8e5',
-    minHeight: 148,
-  },
-  moodImage: {
-    width: '100%',
-    height: 192,
   },
   confirmButton: {
     minHeight: 56,

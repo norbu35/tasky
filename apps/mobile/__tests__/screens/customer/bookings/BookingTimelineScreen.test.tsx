@@ -34,8 +34,24 @@ jest.mock('../../../../src/features/bookings/hooks/useBookingTimeline', () => ({
   useBookingTimeline: (id: string) => mockUseBookingTimeline(id),
 }));
 
+const mockUseBookingDetail = jest.fn();
+jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
+  useBookingDetail: (id: string) => mockUseBookingDetail(id),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
+  mockUseBookingDetail.mockReturnValue({
+    data: {
+      id: 'b-1',
+      task_id: 'task-1',
+      task: { description: 'Гэр цэвэрлэгээ' },
+      tasker: { full_name: 'Bold', avatar_url: null },
+    },
+    isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
+  });
 });
 
 describe('BookingTimelineScreen (SCR-CUST-019)', () => {
@@ -66,8 +82,8 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
       refetch: jest.fn(),
     });
     render(<BookingTimelineScreen />);
-    expect(screen.getByText('Booking created')).toBeTruthy();
-    expect(screen.getByText('Tasker assigned')).toBeTruthy();
+    expect(screen.getByText('Захиалга үүсгэсэн')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэгч томилогдсон')).toBeTruthy();
     expect(screen.getByText('Customer posted the booking request')).toBeTruthy();
   });
 
@@ -116,6 +132,18 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
     });
     render(<BookingTimelineScreen />);
     expect(screen.getByTestId('timeline-event-1-future')).toBeTruthy();
+  });
+
+  it('shows the helper CTA section', () => {
+    mockUseBookingTimeline.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<BookingTimelineScreen />);
+    expect(screen.getByText('Тусламж хэрэгтэй юу?')).toBeTruthy();
+    expect(screen.getByText('Оператортой холбогдох')).toBeTruthy();
   });
 
   it('renders loading state', () => {

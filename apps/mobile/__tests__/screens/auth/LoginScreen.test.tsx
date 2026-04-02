@@ -70,8 +70,9 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
 
   it('renders the Figma login subtitle', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Найдвартай гүйцэтгэгчтэй холбогдож,')).toBeTruthy();
-    expect(screen.getByText('ажлаа хялбар захиалаарай')).toBeTruthy();
+    expect(
+      screen.getByText('Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай'),
+    ).toBeTruthy();
   });
 
   it('renders the Facebook login button copy from Figma', () => {
@@ -80,14 +81,10 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
   });
 
-  it('renders the Figma secondary login button copy', () => {
+  it('hides the Phase 2 OTP login CTA in the default auth state', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Имэйл хаягаар нэвтрэх')).toBeTruthy();
-  });
-
-  it('does not render an unsupported alternate login CTA in phase 0-1', () => {
-    render(<LoginScreen />);
-    expect(screen.queryByText('Login with email')).toBeNull();
+    expect(screen.queryByTestId('secondary-login-button')).toBeNull();
+    expect(screen.queryByText('Утасны дугаараар нэвтрэх')).toBeNull();
   });
 
   it('shows error state on login failure', async () => {
@@ -122,6 +119,6 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
 
   it('renders the Figma section divider', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Эсвэл')).toBeTruthy();
+    expect(screen.queryByText('Эсвэл')).toBeNull();
   });
 });

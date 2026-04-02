@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Star } from 'lucide-react-native';
+import { MapPin, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
@@ -11,6 +11,35 @@ import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCusto
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
 
 const { colors, spacing, typography, radius } = mobileTheme;
+
+function formatBudget(value?: number | null) {
+  if (typeof value !== 'number') {
+    return '₮0';
+  }
+  return `₮${value.toLocaleString('en-US')}`;
+}
+
+function formatSchedule(value?: string | null) {
+  if (!value) return '';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return `${parsed.getFullYear()}.${String(parsed.getMonth() + 1).padStart(2, '0')}.${String(parsed.getDate()).padStart(2, '0')}`;
+}
+
+function DetailRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
+    </View>
+  );
+}
 
 export default function TaskDetailCustomerScreen() {
   const { t } = useTranslation();
@@ -25,42 +54,58 @@ export default function TaskDetailCustomerScreen() {
   const isTaskerMarkedDone = status === 'TASKER_MARKED_DONE';
   const isCompleted = status === 'COMPLETED';
   const isCancelled = status === 'CANCELLED';
-  const _isTerminal = isCompleted || isCancelled || status === 'NO_SHOW';
 
-  const hasApplicants = (task as any)?.applicant_count > 0;
   const tasker = (task as any)?.tasker;
+  const hasApplicants = Number((task as any)?.applicant_count ?? 0) > 0;
+  const photos = useMemo(() => ((task as any)?.photo_keys ?? []) as string[], [task]);
 
-  // Determine primary CTA
-  let ctaLabel: string | undefined;
-  let ctaOnPress: (() => void) | undefined;
+  const ctaLabel = useMemo(() => {
+    if (isOpen && hasApplicants) {
+      return t('customer.taskDetail.viewApplicants', 'View Applicants');
+    }
+    if (isTaskerMarkedDone) {
+      return t('customer.taskDetail.markComplete', 'Confirm Complete');
+    }
+    if (isAssigned && tasker) {
+      return t('customer.taskDetail.messageTasker', 'Message Tasker');
+    }
+    if (isOpen) {
+      return t('customer.taskDetail.cancel', 'Cancel Task');
+    }
+    return undefined;
+  }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, tasker, t]);
 
-  if (isOpen && hasApplicants) {
-    ctaLabel = t('customer.taskDetail.viewApplicants', 'View Applicants');
-    ctaOnPress = () => router.push(`/(customer)/tasks/${taskId}/applicants`);
-  } else if (isTaskerMarkedDone) {
-    ctaLabel = t('customer.taskDetail.markComplete', 'Confirm Complete');
-    ctaOnPress = () => {
-      // Will be connected to complete booking mutation
-    };
-  } else if (isAssigned && tasker) {
-    ctaLabel = t('customer.taskDetail.messageTasker', 'Message Tasker');
-    ctaOnPress = () => {
-      router.push('/inbox');
-    };
-  } else if (isOpen && !hasApplicants) {
-    // When open with no applicants, use cancel as primary CTA
-    ctaLabel = t('customer.taskDetail.cancel', 'Cancel Task');
-    ctaOnPress = () => setShowCancelSheet(true);
-  }
+  const ctaOnPress = useMemo(() => {
+    if (isOpen && hasApplicants) {
+      return () => router.push(`/(customer)/tasks/${taskId}/applicants`);
+    }
+    if (isTaskerMarkedDone) {
+      return () => {
+        // Completion flow is handled elsewhere in the booking path.
+      };
+    }
+    if (isAssigned && tasker) {
+      return () => router.push('/inbox');
+    }
+    if (isOpen) {
+      return () => setShowCancelSheet(true);
+    }
+    return undefined;
+  }, [isAssigned, isOpen, isTaskerMarkedDone, router, taskId, tasker]);
 
-  // Secondary CTA for cancel (only when there is already a primary CTA)
-  let secondaryCtaLabel: string | undefined;
-  let secondaryCtaOnPress: (() => void) | undefined;
+  const secondaryCtaLabel = useMemo(() => {
+    if ((isOpen && hasApplicants) || isAssigned) {
+      return t('customer.taskDetail.cancel', 'Cancel Task');
+    }
+    return undefined;
+  }, [hasApplicants, isAssigned, isOpen, t]);
 
-  if ((isOpen && hasApplicants) || isAssigned) {
-    secondaryCtaLabel = t('customer.taskDetail.cancel', 'Cancel Task');
-    secondaryCtaOnPress = () => setShowCancelSheet(true);
-  }
+  const secondaryCtaOnPress = useMemo(() => {
+    if ((isOpen && hasApplicants) || isAssigned) {
+      return () => setShowCancelSheet(true);
+    }
+    return undefined;
+  }, [hasApplicants, isAssigned, isOpen]);
 
   return (
     <>
@@ -77,65 +122,99 @@ export default function TaskDetailCustomerScreen() {
         secondaryCtaLabel={secondaryCtaLabel}
         secondaryCtaOnPress={secondaryCtaOnPress}
       >
-        {task && (
+        {task ? (
           <View style={styles.content}>
-            {/* Status Badge */}
-            <StatusBadge
-              status={(status === 'TASKER_MARKED_DONE' ? 'assigned' : status.toLowerCase()) as any}
-            />
-
-            {/* Task Description */}
-            <Text style={styles.title}>{task.description}</Text>
-
-            {/* Details Section */}
-            <View style={styles.detailsCard}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>
-                  {t('customer.postTask.budgetLabel', 'Budget')}
-                </Text>
-                <Text style={styles.detailValue}>{(task.budget ?? 0).toLocaleString()}₮</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>
-                  {t('customer.postTask.location', 'Location')}
-                </Text>
-                <Text style={styles.detailValue}>{(task as any).location_text ?? ''}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>
-                  {t('customer.postTask.scheduleDate', 'Date')}
-                </Text>
-                <Text style={styles.detailValue}>
-                  {task.scheduled_at ? task.scheduled_at.split('T')[0] : ''}
-                </Text>
-              </View>
+            <View style={styles.heroCard}>
+              <StatusBadge
+                status={
+                  (status === 'TASKER_MARKED_DONE' ? 'assigned' : status.toLowerCase()) as
+                    | 'open'
+                    | 'assigned'
+                    | 'completed'
+                    | 'cancelled'
+                    | 'no_show'
+                }
+              />
+              <Text style={styles.title}>{task.description}</Text>
+              <Text style={styles.subtitle}>
+                {t('customer.taskDetail.sectionDetails', 'Details')}
+              </Text>
             </View>
 
-            {/* Applicants Section (OPEN state) */}
-            {isOpen && (
-              <View style={styles.section}>
+            <View style={styles.detailsCard}>
+              <DetailRow
+                label={t('customer.postTask.categoryLabel', 'Category')}
+                value={(task as any)?.category?.name ?? t('customer.postTask.notSet', 'Not set')}
+              />
+              <DetailRow
+                label={t('customer.postTask.budgetLabel', 'Budget')}
+                value={formatBudget(task.budget)}
+              />
+              <DetailRow
+                label={t('customer.postTask.location', 'Location')}
+                value={(task as any).location_text ?? ''}
+              />
+              <DetailRow
+                label={t('customer.postTask.scheduleDate', 'Date')}
+                value={formatSchedule(task.scheduled_at)}
+              />
+            </View>
+
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>
                   {t('customer.taskDetail.applicants', 'Applicants')}
                 </Text>
-                {hasApplicants ? (
-                  <Text style={styles.applicantCount}>
-                    {(task as any).applicant_count}{' '}
-                    {t('customer.applicants.title', 'applications received')}
-                  </Text>
+                <Text style={styles.sectionPill}>{Number((task as any)?.applicant_count ?? 0)}</Text>
+              </View>
+              {hasApplicants ? (
+                <Text style={styles.sectionBody}>
+                  {t('customer.applicants.title', 'applications received')}
+                </Text>
+              ) : (
+                <Text style={styles.sectionBody}>
+                  {t('customer.taskDetail.noApplicants', 'No applicants yet')}
+                </Text>
+              )}
+            </View>
+
+            <View style={styles.sectionCard}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>{t('customer.taskDetail.sectionPhotos', 'Photos')}</Text>
+                <Text style={styles.sectionPill}>{photos.length}</Text>
+              </View>
+              <View style={styles.photoRow}>
+                {photos.length > 0 ? (
+                  photos.slice(0, 3).map((photoKey, index) => (
+                    <View key={`${photoKey}-${index}`} style={styles.photoThumb}>
+                      <Text style={styles.photoThumbText}>{index + 1}</Text>
+                    </View>
+                  ))
                 ) : (
-                  <Text style={styles.noApplicants}>
-                    {t('customer.taskDetail.noApplicants', 'No applicants yet')}
-                  </Text>
+                  <Text style={styles.sectionBody}>{t('customer.taskDetail.noPhotos', 'No photos')}</Text>
                 )}
               </View>
-            )}
+            </View>
 
-            {/* Assigned Tasker Info */}
-            {(isAssigned || isTaskerMarkedDone) && tasker && (
+            <View style={styles.locationCard}>
+              <View style={styles.locationRow}>
+                <MapPin size={16} color={colors.primaryDeep} />
+                <Text style={styles.locationText}>{(task as any).location_text ?? ''}</Text>
+              </View>
+              <Text style={styles.locationNote}>
+                {t(
+                  'customer.taskDetail.locationNote',
+                  'Taskers see approximate location until the booking is confirmed.',
+                )}
+              </Text>
+            </View>
+
+            {(isAssigned || isTaskerMarkedDone) && tasker ? (
               <Pressable
                 style={styles.taskerCard}
                 onPress={() => router.push(`/(customer)/taskers/${tasker.id}`)}
                 testID="task-detail-customer-screen-tasker-card"
+                accessibilityRole="button"
               >
                 <View style={styles.taskerRow}>
                   <ProfileAvatar
@@ -150,30 +229,46 @@ export default function TaskDetailCustomerScreen() {
                       <Star size={14} color={colors.accent} fill={colors.accent} />
                       <Text style={styles.ratingText}>{tasker.rating_avg ?? 0}</Text>
                     </View>
-                    {tasker.is_pro && (
-                      <View style={styles.verifiedRow}>
-                        <ShieldCheck size={14} color={colors.trustMuted} />
-                        <Text style={styles.verifiedText}>
-                          {t('customer.taskerProfile.verified', 'Identity Verified')}
-                        </Text>
-                      </View>
-                    )}
+                    <Text style={styles.taskerHint}>
+                      {t('customer.taskDetail.assignedTasker', 'Assigned Tasker')}
+                    </Text>
                   </View>
                 </View>
               </Pressable>
-            )}
+            ) : null}
 
-            {/* Payment note */}
-            {(isOpen || isAssigned) && (
+            {(isOpen || isAssigned) ? (
               <Text style={styles.paymentNote}>
                 {t(
                   'customer.taskDetail.paymentNote',
                   'Payment is arranged directly with the Tasker',
                 )}
               </Text>
-            )}
+            ) : null}
+
+            {isCompleted ? (
+              <View style={styles.terminalCard}>
+                <Text style={styles.terminalTitle}>
+                  {t('customer.taskDetail.completedTitle', 'Task completed')}
+                </Text>
+                <Text style={styles.terminalBody}>
+                  {t('customer.taskDetail.completedBody', 'Thanks for using Tasky')}
+                </Text>
+              </View>
+            ) : null}
+
+            {isCancelled ? (
+              <View style={styles.terminalCard}>
+                <Text style={styles.terminalTitle}>
+                  {t('customer.taskDetail.cancelledTitle', 'Task cancelled')}
+                </Text>
+                <Text style={styles.terminalBody}>
+                  {t('customer.taskDetail.cancelledBody', 'This task is no longer active')}
+                </Text>
+              </View>
+            ) : null}
           </View>
-        )}
+        ) : null}
       </DetailTemplate>
 
       <TaskCancelSheet
@@ -191,53 +286,129 @@ const styles = StyleSheet.create({
   content: {
     gap: spacing.lg,
   },
+  heroCard: {
+    gap: spacing.sm,
+  },
   title: {
     fontSize: typography.heroTitle,
-    fontWeight: '800',
+    fontWeight: '900',
     color: colors.foreground,
     lineHeight: 36,
   },
+  subtitle: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    fontWeight: '700',
+  },
   detailsCard: {
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    gap: spacing.md,
   },
   detailLabel: {
+    flex: 1,
     fontSize: typography.label,
     color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+    fontWeight: '700',
   },
   detailValue: {
+    flex: 1,
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.foreground,
+    textAlign: 'right',
   },
-  section: {
+  sectionCard: {
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
     gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   sectionTitle: {
     fontSize: typography.subtitle,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.foreground,
   },
-  applicantCount: {
-    fontSize: typography.body,
-    color: colors.primary,
-    fontWeight: '600',
+  sectionPill: {
+    minWidth: 28,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primary}12`,
+    color: colors.primaryDeep,
+    fontSize: typography.caption,
+    fontWeight: '800',
+    textAlign: 'center',
   },
-  noApplicants: {
+  sectionBody: {
     fontSize: typography.body,
     color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
+  photoRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  photoThumb: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.md,
+    backgroundColor: `${colors.primary}12`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoThumbText: {
+    fontSize: typography.body,
+    color: colors.primaryDeep,
+    fontWeight: '800',
+  },
+  locationCard: {
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    gap: spacing.sm,
+    backgroundColor: `${colors.primary}0F`,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  locationText: {
+    flex: 1,
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  locationNote: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    lineHeight: typography.caption * 1.5,
   },
   taskerCard: {
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   taskerRow: {
     flexDirection: 'row',
@@ -250,7 +421,7 @@ const styles = StyleSheet.create({
   },
   taskerName: {
     fontSize: typography.subtitle,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.foreground,
   },
   ratingRow: {
@@ -260,23 +431,32 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.foreground,
   },
-  verifiedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  verifiedText: {
+  taskerHint: {
     fontSize: typography.caption,
-    color: colors.trustMuted,
-    fontWeight: '600',
+    color: colors.textSecondary,
   },
   paymentNote: {
     fontSize: typography.caption,
     color: colors.textSecondary,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  terminalCard: {
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: `${colors.muted}80`,
+    gap: spacing.xs,
+  },
+  terminalTitle: {
+    fontSize: typography.body,
+    fontWeight: '800',
+    color: colors.primaryDeep,
+  },
+  terminalBody: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
   },
 });

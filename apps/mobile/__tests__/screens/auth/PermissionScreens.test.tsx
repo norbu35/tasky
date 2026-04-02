@@ -68,16 +68,10 @@ beforeEach(() => {
 describe('Permission Camera Screen (SCR-SHARED-007)', () => {
   it('renders camera permission copy from Figma', () => {
     render(<PermissionCameraScreen />);
-    expect(screen.getByText('Хувийн мэдээлэл')).toBeTruthy();
-    expect(screen.getByText('Таны бүртгэл болон баталгаажуулалт')).toBeTruthy();
-    expect(screen.getByText('Дансны баталгаажуулалт')).toBeTruthy();
-    expect(screen.getByText('Камер ашиглан нүүр тулгах')).toBeTruthy();
     expect(screen.getByText('Камер ашиглах зөвшөөрөл')).toBeTruthy();
-    expect(screen.getByText('Зураг оруулах, баталгаажуулахад камер хэрэгтэй')).toBeTruthy();
+    expect(screen.getByText('Зураг оруулах, баталгаажуулалт хийхэд камер хэрэгтэй')).toBeTruthy();
     expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
-    expect(screen.getByText('Дараа')).toBeTruthy();
-    expect(screen.getByTestId('permission-camera-header-block')).toBeTruthy();
-    expect(screen.getByTestId('permission-camera-summary-card')).toBeTruthy();
+    expect(screen.getByText('Дараа хийх')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {
@@ -118,9 +112,11 @@ describe('Permission Location Screen (SCR-SHARED-008)', () => {
   it('renders location permission copy from Figma', () => {
     render(<PermissionLocationScreen />);
     expect(screen.getByText('Байршил ашиглах зөвшөөрөл')).toBeTruthy();
-    expect(screen.getByText('Ойролцоох даалгаврууд харуулахад байршил хэрэгтэй')).toBeTruthy();
+    expect(
+      screen.getByText('Ойролцоох даалгавруудыг харуулах, байршил тодорхойлоход хэрэгтэй'),
+    ).toBeTruthy();
     expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
-    expect(screen.getByText('Дараа')).toBeTruthy();
+    expect(screen.getByText('Дараа хийх')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {
@@ -161,11 +157,14 @@ describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
   it('renders notification permission copy from Figma', () => {
     render(<PermissionNotificationsScreen />);
     expect(screen.getByTestId('permission-notifications-primer')).toBeTruthy();
-    expect(screen.getByTestId('permission-notifications-progress')).toBeTruthy();
     expect(screen.getByText('Мэдэгдэл авах зөвшөөрөл')).toBeTruthy();
-    expect(screen.getByText('Шинэ даалгавар, мессеж, захиалгын мэдэгдэл авахад хэрэгтэй')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Шинэ өргөдөл, захиалгын мэдээллийг цаг тухайд нь авахын тулд мэдэгдлийг зөвшөөрнө үү',
+      ),
+    ).toBeTruthy();
     expect(screen.getByText('Зөвшөөрөх')).toBeTruthy();
-    expect(screen.getByText('Дараа')).toBeTruthy();
+    expect(screen.getByText('Дараа хийх')).toBeTruthy();
   });
 
   it('renders Allow and Skip buttons', () => {

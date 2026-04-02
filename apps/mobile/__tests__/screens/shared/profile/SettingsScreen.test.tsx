@@ -72,31 +72,31 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   it('renders settings screen with language row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Language')).toBeTruthy();
+    expect(screen.getByText('Хэл')).toBeTruthy();
   });
 
   it('renders notifications row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Notifications')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл')).toBeTruthy();
   });
 
   it('renders role switch row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Switch Role')).toBeTruthy();
+    expect(screen.getByText('Дүр солих')).toBeTruthy();
   });
 
   it('renders terms of service row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Terms of Service')).toBeTruthy();
+    expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
   });
 
   it('renders privacy policy row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Privacy Policy')).toBeTruthy();
+    expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
   });
 
   it('renders help and danger zone sections in section data', () => {
@@ -105,17 +105,17 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
     // Legal section header is rendered
-    expect(screen.getByText('LEGAL')).toBeTruthy();
+    expect(screen.getByText('ХУУЛИЙН МЭДЭЭЛЭЛ')).toBeTruthy();
     // Terms and Privacy are rendered within legal
-    expect(screen.getByText('Terms of Service')).toBeTruthy();
-    expect(screen.getByText('Privacy Policy')).toBeTruthy();
+    expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
+    expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
   });
 
   it('tapping role switch shows confirmation', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    fireEvent.press(screen.getByText('Switch Role'));
-    expect(screen.getByText('Switch role?')).toBeTruthy();
+    fireEvent.press(screen.getByText('Дүр солих'));
+    expect(screen.getByText('Дүр солих уу?')).toBeTruthy();
   });
 
   it('renders all four section headers (Preferences, Account, Legal visible; Danger Zone in data)', () => {
@@ -123,18 +123,18 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     render(<SettingsScreen />);
     // SectionList virtualizes, so first 3 section headers render; Danger Zone
     // is in the data but may be beyond the initial render window.
-    expect(screen.getByText('PREFERENCES')).toBeTruthy();
-    expect(screen.getByText('ACCOUNT')).toBeTruthy();
-    expect(screen.getByText('LEGAL')).toBeTruthy();
+    expect(screen.getByText('ТОХИРУУЛГА')).toBeTruthy();
+    expect(screen.getByText('БҮРТГЭЛ')).toBeTruthy();
+    expect(screen.getByText('ХУУЛИЙН МЭДЭЭЛЭЛ')).toBeTruthy();
   });
 
   it('navigates to terms, privacy, and help screens from legal rows', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
 
-    fireEvent.press(screen.getByText('Terms of Service'));
-    fireEvent.press(screen.getByText('Privacy Policy'));
-    fireEvent.press(screen.getByText('Help & Support'));
+    fireEvent.press(screen.getByText('Үйлчилгээний нөхцөл'));
+    fireEvent.press(screen.getByText('Нууцлалын бодлого'));
+    fireEvent.press(screen.getByText('Тусламж & Дэмжлэг'));
 
     expect(mockPush).toHaveBeenCalledWith('/(shared)/legal/terms');
     expect(mockPush).toHaveBeenCalledWith('/(shared)/legal/privacy');
@@ -145,10 +145,10 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
 
-    fireEvent.press(screen.getByText('Delete Account'));
-    expect(screen.getByText('Delete account?')).toBeTruthy();
+    fireEvent.press(screen.getByText('Бүртгэл устгах'));
+    expect(screen.getByText('Бүртгэл устгах уу?')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Confirm'));
+    fireEvent.press(screen.getByText('Батлах'));
     expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/delete');
   });
 });

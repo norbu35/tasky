@@ -41,7 +41,7 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     } = require('../../../src/features/tasks/components/ApplicationSentSuccess');
     render(<ApplicationSentSuccess onBrowseMore={jest.fn()} onViewTask={jest.fn()} />);
 
-    expect(screen.getByText('Application sent')).toBeTruthy();
+    expect(screen.getByText('Анкет амжилттай илгээгдлээ!')).toBeTruthy();
   });
 
   it('renders next steps text', () => {
@@ -51,12 +51,12 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     render(<ApplicationSentSuccess onBrowseMore={jest.fn()} onViewTask={jest.fn()} />);
 
     expect(screen.getByTestId('application-sent')).toBeTruthy();
-    expect(screen.getByText('The customer will review your intro and profile next.')).toBeTruthy();
-    expect(screen.getByText("You'll get a notification if you're shortlisted.")).toBeTruthy();
-    expect(screen.getByText('Keep applying while you wait.')).toBeTruthy();
+    expect(screen.getByText('Захиалагч анкетуудыг хянаж, сонголт хийнэ')).toBeTruthy();
+    expect(screen.getByText('Таныг сонговол мэдэгдэл авна')).toBeTruthy();
+    expect(screen.getByText('Бусад даалгавруудад ч анкет илгээх боломжтой')).toBeTruthy();
   });
 
-  it('CTA "Browse More Tasks" calls onBrowseMore', () => {
+  it('CTA "Бусад даалгавар үзэх" calls onBrowseMore', () => {
     const onBrowse = jest.fn();
     const {
       ApplicationSentSuccess,
@@ -67,7 +67,7 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     expect(onBrowse).toHaveBeenCalledTimes(1);
   });
 
-  it('secondary CTA calls onViewTask', () => {
+  it('secondary CTA "Даалгавар харах" calls onViewTask', () => {
     const onView = jest.fn();
     const {
       ApplicationSentSuccess,

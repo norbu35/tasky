@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -29,17 +30,20 @@ export default function OtpScreen() {
   const params = useLocalSearchParams<{ phone?: string; state?: string }>();
   const phone = typeof params.phone === 'string' && params.phone ? params.phone : '9911 2233';
   const state = resolveOtpState(typeof params.state === 'string' ? params.state : undefined);
+  const [code, setCode] = React.useState('');
 
   const isExpired = state === 'expired';
   const isWrongCode = state === 'wrong_code';
   const isVerifying = state === 'verifying';
+  const sanitizedCode = code.replace(/\D/g, '').slice(0, 4);
 
   const resendLabel = isExpired
     ? t('auth.otp.resend', 'Код дахин илгээх')
-    : t('auth.otp.resendCountdown', 'Код дахин илгээх (45с)');
+    : t('auth.otp.resendCountdown', 'Код дахин илгээх (60с)');
 
   const descriptionPrefix = t('auth.otp.descriptionPrefix', 'Бид таны ');
   const descriptionSuffix = t('auth.otp.descriptionSuffix', ' дугаарт 4 оронтой нууц код илгээлээ.');
+  const activeCellIndex = sanitizedCode.length >= 4 ? 3 : sanitizedCode.length;
 
   return (
     <SafeAreaView style={styles.container} testID="otp-screen">
@@ -52,15 +56,15 @@ export default function OtpScreen() {
         >
           <ArrowLeft size={18} color={colors.primaryDeep} />
         </Pressable>
-        <Text style={styles.headerTitle}>{t('auth.otp.heading', 'Баталгаажуулах код')}</Text>
+        <Text style={styles.headerTitle}>{t('auth.otp.heading', 'Код баталгаажуулах')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.content}>
         <View style={styles.hero}>
-        <Text style={styles.heading} testID="otp-heading">
-          {t('auth.otp.heading', 'Баталгаажуулах код')}
-        </Text>
+          <Text style={styles.heading} testID="otp-heading">
+            {t('auth.otp.heading', 'Код баталгаажуулах')}
+          </Text>
           <Text style={styles.description} testID="otp-description">
             <Text style={styles.descriptionMuted}>{descriptionPrefix}</Text>
             <Text style={styles.phoneText}>{phone}</Text>
@@ -72,26 +76,42 @@ export default function OtpScreen() {
           style={[styles.codeShell, isWrongCode && styles.codeShellError]}
           testID="otp-code-input"
         >
-          {['5', '—', '—', '—'].map((digit, index) => (
-            <View
-              key={`${digit}-${index}`}
-              testID="otp-code-cell"
-              style={[
-                styles.codeCell,
-                index === 0 ? styles.codeCellActive : undefined,
-                isWrongCode ? styles.codeCellError : undefined,
-              ]}
-            >
-              <Text
+          <TextInput
+            testID="otp-code-input-field"
+            style={styles.hiddenInput}
+            value={sanitizedCode}
+            onChangeText={(text) => setCode(text.replace(/\D/g, '').slice(0, 4))}
+            autoFocus
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            editable={!isVerifying && !isExpired}
+            maxLength={4}
+          />
+          {Array.from({ length: 4 }).map((_, index) => {
+            const digit = sanitizedCode[index] ?? '—';
+            const isActive = index === activeCellIndex && sanitizedCode.length < 4 && !isVerifying;
+
+            return (
+              <View
+                key={`${digit}-${index}`}
+                testID="otp-code-cell"
                 style={[
-                  styles.codeCellText,
-                  index === 0 ? styles.codeCellTextActive : styles.codeCellTextMuted,
+                  styles.codeCell,
+                  isActive ? styles.codeCellActive : undefined,
+                  isWrongCode ? styles.codeCellError : undefined,
                 ]}
               >
-                {digit}
-              </Text>
-            </View>
-          ))}
+                <Text
+                  style={[
+                    styles.codeCellText,
+                    sanitizedCode[index] ? styles.codeCellTextActive : styles.codeCellTextMuted,
+                  ]}
+                >
+                  {digit}
+                </Text>
+              </View>
+            );
+          })}
         </View>
 
         <Pressable
@@ -144,7 +164,7 @@ export default function OtpScreen() {
           testID="otp-verify-button"
           label={t('auth.otp.verify', 'Баталгаажуулах')}
           isLoading={isVerifying}
-          disabled
+          disabled={sanitizedCode.length !== 4 || isVerifying}
           style={styles.verifyButton}
         />
       </View>
@@ -216,9 +236,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     paddingVertical: spacing.md,
+    alignItems: 'center',
   },
   codeShellError: {
     opacity: 0.96,
+  },
+  hiddenInput: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    opacity: 0,
   },
   codeCell: {
     width: 48,
@@ -270,7 +297,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   resendLabelMuted: {
-    color: colors.primaryDeep,
+    color: colors.mutedForeground,
   },
   errorBlock: {
     alignSelf: 'center',

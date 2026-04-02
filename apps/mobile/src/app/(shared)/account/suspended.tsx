@@ -7,6 +7,13 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography } = mobileTheme;
 
+function formatDate(value?: string) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toISOString().slice(0, 10).replace(/-/g, '.');
+}
+
 export default function SuspendedAccountScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -14,15 +21,20 @@ export default function SuspendedAccountScreen() {
 
   return (
     <View style={styles.container} testID="suspended-screen">
-      <Text style={styles.title}>{t('shared.account.suspendedTitle')}</Text>
-      <Text style={styles.body}>{t('shared.account.suspendedBody')}</Text>
+      <Text style={styles.title}>{t('shared.account.suspendedTitle', 'Бүртгэл түр хаагдсан')}</Text>
+      <Text style={styles.body}>
+        {t(
+          'shared.account.suspendedBody',
+          'Таны хаягийг манай үйлчилгээний нөхцөл зөрчсөн тул түр хугацаагаар хязгаарлалаа.',
+        )}
+      </Text>
       {expiryDate && (
         <Text style={styles.expiry}>
-          {t('shared.account.suspendedExpiry', { date: expiryDate })}
+          {t('shared.account.suspendedExpiry', { date: formatDate(expiryDate) })}
         </Text>
       )}
       <Button
-        label={t('shared.account.suspendedAppeal')}
+        label={t('shared.account.suspendedAppeal', 'Гомдол гаргах')}
         onPress={() => {
           // Appeal flow - will be connected in a later phase
         }}
@@ -30,7 +42,7 @@ export default function SuspendedAccountScreen() {
         testID="suspended-appeal-button"
       />
       <Button
-        label={t('shared.account.logout')}
+        label={t('shared.account.logout', 'Гарах')}
         variant="ghost"
         onPress={() => router.replace('/(auth)')}
         style={styles.secondaryButton}

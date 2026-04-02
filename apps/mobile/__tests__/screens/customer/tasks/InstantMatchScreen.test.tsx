@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 let mockParams: Record<string, string> = {
   taskId: 'task-1',
@@ -9,6 +9,7 @@ let mockParams: Record<string, string> = {
 };
 const mockBack = jest.fn();
 const mockReplace = jest.fn();
+const mockCreateBookingIntent = jest.fn();
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: mockReplace, back: mockBack }),
@@ -35,6 +36,13 @@ jest.mock('lucide-react-native', () => {
     },
   );
 });
+
+jest.mock('../../../../src/features/bookings/hooks/useCreateBookingIntent', () => ({
+  useCreateBookingIntent: () => ({
+    mutateAsync: mockCreateBookingIntent,
+    isPending: false,
+  }),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -64,6 +72,7 @@ describe('CustomerInstantMatchScreen (SCR-CUST-027)', () => {
     mockParams = {
       ...mockParams,
       state: 'matched_awaiting_accept',
+      taskerId: 'tasker-1',
     };
     const CustomerInstantMatchScreen =
       require('../../../../src/app/(customer)/tasks/[taskId]/instant-match').default;
@@ -72,6 +81,39 @@ describe('CustomerInstantMatchScreen (SCR-CUST-027)', () => {
     expect(screen.getAllByText('Tasker found').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Verified Tasker')).toBeTruthy();
     expect(screen.getByTestId('instant-match-confirm-booking')).toBeTruthy();
+  });
+
+  it('creates a booking intent and routes to booking confirmation when matched tasker is confirmed', async () => {
+    mockParams = {
+      ...mockParams,
+      state: 'matched_awaiting_accept',
+      taskerId: 'tasker-1',
+    };
+    mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
+    const CustomerInstantMatchScreen =
+      require('../../../../src/app/(customer)/tasks/[taskId]/instant-match').default;
+    render(<CustomerInstantMatchScreen />);
+
+    fireEvent.press(screen.getByTestId('instant-match-confirm-booking'));
+
+    await waitFor(() => {
+      expect(mockCreateBookingIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: 'task-1',
+          source: 'INSTANT_MATCH',
+          taskerId: 'tasker-1',
+        }),
+      );
+      expect(mockReplace).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pathname: '/(customer)/bookings/confirm',
+          params: expect.objectContaining({
+            source: 'instant_match',
+            bookingIntentId: 'intent-1',
+          }),
+        }),
+      );
+    });
   });
 
   it('shows fallback state after repeated declines', () => {

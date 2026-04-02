@@ -47,25 +47,29 @@ describe('BannedAccountScreen (SCR-SHARED-021)', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    expect(screen.getByText('shared.account.bannedTitle')).toBeTruthy();
-    expect(screen.getByText('shared.account.bannedBody')).toBeTruthy();
+    expect(screen.getByText('Бүртгэл хаагдсан')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй.',
+      ),
+    ).toBeTruthy();
   });
 
   it('has support and logout actions but no appeal flow', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    expect(screen.getByText('shared.account.contactSupport')).toBeTruthy();
-    expect(screen.getByText('shared.account.logout')).toBeTruthy();
+    expect(screen.getByText('Тусламж авах')).toBeTruthy();
+    expect(screen.getByText('Гарах')).toBeTruthy();
     expect(screen.queryByTestId('banned-screen-retry')).toBeNull();
-    expect(screen.queryByText('shared.account.suspendedAppeal')).toBeNull();
+    expect(screen.queryByText('Гомдол гаргах')).toBeNull();
   });
 
   it('logs the user out to the auth flow', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    fireEvent.press(screen.getByText('shared.account.logout'));
+    fireEvent.press(screen.getByText('Гарах'));
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
 

@@ -34,12 +34,13 @@ export default function BookingConfirmScreen() {
 
   const handleConfirm = useCallback(async () => {
     const source = params.source ?? 'application';
+    const usesBookingIntent = source === 'rebook' || source === 'instant_match';
     const idempotencyKey =
-      source === 'rebook'
+      usesBookingIntent
         ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
         : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
     const booking =
-      source === 'rebook'
+      usesBookingIntent
         ? await confirmBookingIntent({
             bookingIntentId: params.bookingIntentId!,
             liabilityDisclaimerAccepted: true,
