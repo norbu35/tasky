@@ -195,7 +195,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Mark Done')).toBeTruthy();
+    expect(screen.getByText('Ажил дууссан')).toBeTruthy();
   });
 
   it('Mark Done button calls markBookingDone', () => {
@@ -210,7 +210,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    fireEvent.press(screen.getByText('Mark Done'));
+    fireEvent.press(screen.getByText('Ажил дууссан'));
     expect(mockMarkBookingDone).toHaveBeenCalled();
   });
 
@@ -226,7 +226,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Customer')).toBeTruthy();
+    expect(screen.getByText('Захиалагч')).toBeTruthy();
     expect(screen.getByText('John Customer')).toBeTruthy();
   });
 
@@ -242,8 +242,8 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Exact Address')).toBeTruthy();
-    expect(screen.getByText('This address is visible only to you')).toBeTruthy();
+    expect(screen.getByText('Тодорхой хаяг')).toBeTruthy();
+    expect(screen.getByText('Энэ хаяг зөвхөн танд харагдана')).toBeTruthy();
   });
 
   it('shows message button for assigned booking', () => {
@@ -258,7 +258,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Message')).toBeTruthy();
+    expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
   });
 
   it('shows cancel button for assigned booking', () => {
@@ -273,7 +273,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Cancel Booking')).toBeTruthy();
+    expect(screen.getByText('Захиалга цуцлах')).toBeTruthy();
   });
 
   it('opens the cancel sheet when cancel is pressed', () => {
@@ -305,8 +305,8 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Waiting for customer to confirm completion')).toBeTruthy();
-    expect(screen.queryByText('Mark Done')).toBeNull();
+    expect(screen.getByText('Захиалагч баталгаажуулахыг хүлээж байна')).toBeTruthy();
+    expect(screen.queryByText('Ажил дууссан')).toBeNull();
   });
 
   it('shows completed state without Mark Done button', () => {
@@ -322,7 +322,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.queryByText('Mark Done')).toBeNull();
+    expect(screen.queryByText('Ажил дууссан')).toBeNull();
   });
 
   it('shows error state with retry', () => {

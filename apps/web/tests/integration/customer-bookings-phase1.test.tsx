@@ -2,7 +2,7 @@ import '../../src/lib/i18n';
 
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AppContext, type AppContextValue } from '../../src/context/AppContext';
@@ -49,6 +49,45 @@ function renderWithContext(ui: React.ReactElement, apiClient = buildApiClientMoc
   );
 }
 
+function renderWithRoute(
+  path: string,
+  route: string,
+  ui: React.ReactElement,
+  apiClient = buildApiClientMock(),
+) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  const contextValue: AppContextValue = {
+    apiClient,
+    locale: 'en',
+    session: baseSession,
+    profile: baseProfile,
+    profileBusy: false,
+    profileError: null,
+    setSession: vi.fn(),
+    setProfile: vi.fn(),
+    setProfileError: vi.fn(),
+    refreshProfile: vi.fn().mockResolvedValue(undefined),
+    updateSessionUser: vi.fn(),
+    signOut: vi.fn(),
+    trackClientEvent: vi.fn(),
+  };
+
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <QueryClientProvider client={queryClient}>
+        <AppContext.Provider value={contextValue}>
+          <Routes>
+            <Route path={route} element={ui} />
+          </Routes>
+        </AppContext.Provider>
+      </QueryClientProvider>
+    </MemoryRouter>,
+  );
+}
+
 describe('Customer bookings phase 1 parity', () => {
   it('renders the customer bookings list and booking detail shell', async () => {
     const apiClient = buildApiClientMock({
@@ -65,7 +104,12 @@ describe('Customer bookings phase 1 parity', () => {
     expect(await screen.findByText('booking-1')).toBeInTheDocument();
     bookingsView.unmount();
 
-    const detailView = renderWithContext(<CustomerBookingDetailPage />, apiClient);
+    const detailView = renderWithRoute(
+      '/customer/bookings/booking-1',
+      '/customer/bookings/:bookingId',
+      <CustomerBookingDetailPage />,
+      apiClient,
+    );
     expect(await screen.findByRole('heading', { name: 'Booking detail' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Message tasker' })).toBeInTheDocument();
     detailView.unmount();

@@ -41,21 +41,19 @@ describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
 
   it('shows success headline', () => {
     render(<BookingConfirmedScreen />);
-    expect(screen.getByText('Booking confirmed!')).toBeTruthy();
+    expect(screen.getByText('Захиалга баталгаажлаа!')).toBeTruthy();
   });
 
   it('shows next steps guidance', () => {
     render(<BookingConfirmedScreen />);
     expect(
-      screen.getByText(
-        'Your Tasker will arrive at the scheduled time. You can contact them via chat.',
-      ),
+      screen.getByText('Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.'),
     ).toBeTruthy();
   });
 
   it('renders primary CTA to view booking', () => {
     render(<BookingConfirmedScreen />);
-    expect(screen.getByText('View Booking')).toBeTruthy();
+    expect(screen.getByText('Захиалга харах')).toBeTruthy();
   });
 
   it('primary CTA navigates to booking detail', () => {
@@ -66,7 +64,7 @@ describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
 
   it('renders secondary Done CTA', () => {
     render(<BookingConfirmedScreen />);
-    expect(screen.getByText('Done')).toBeTruthy();
+    expect(screen.getByText('Дууслаа')).toBeTruthy();
   });
 
   it('Done CTA navigates to bookings list', () => {

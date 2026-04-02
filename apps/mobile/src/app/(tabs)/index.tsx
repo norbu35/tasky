@@ -17,11 +17,11 @@ import { mobileTheme } from '../../design/tokenAdapter';
 const { colors, spacing, typography } = mobileTheme;
 
 const CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'cleaning', label: 'Cleaning' },
-  { id: 'repair', label: 'Repair' },
-  { id: 'moving', label: 'Moving' },
-  { id: 'electrician', label: 'Electrician' },
+  { id: 'all', label: 'Бүгд' },
+  { id: 'cleaning', label: 'Цэвэрлэгээ' },
+  { id: 'repair', label: 'Засвар' },
+  { id: 'moving', label: 'Зөөвөр' },
+  { id: 'electrician', label: 'Цахилгаан' },
 ];
 
 function TaskCardHeader({ task }: { task: PublicTask }) {
@@ -73,6 +73,11 @@ export default function FeedScreen() {
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleClearFilters = useCallback(() => {
+    setActiveFilters([]);
+    setSearchQuery('');
+  }, []);
 
   const filteredTasks = useMemo(() => {
     const tasks = data?.data ?? [];
@@ -135,29 +140,34 @@ export default function FeedScreen() {
       ListHeaderComponent={
         <View style={styles.headerContent}>
           <View style={styles.headerCopy}>
-            <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Browse Tasks')}</Text>
+            <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Даалгаврууд')}</Text>
             <Text style={styles.screenSubtitle}>
-              {t('tasker.browse.subtitle', 'Fresh tasks around you')}
+              {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
             </Text>
           </View>
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder={t('tasker.browse.searchPlaceholder', 'Search tasks...')}
+            placeholder={t('tasker.browse.searchPlaceholder', 'Даалгавар хайх...')}
             placeholderTextColor={colors.textTertiary}
           />
           <TrustBanner
-            title={t('tasker.browse.trustTitle', 'Verified Tasker')}
+            title={t('tasker.browse.trustTitle', 'Баталгаажсан даалгавар гүйцэтгэгч')}
             description={t(
               'tasker.browse.trustDescription',
-              'Trusted taskers book faster with strong reliability and review history.',
+              'Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.',
             )}
           />
         </View>
       }
-      emptyTitle={t('tasker.browse.emptyTitle')}
-      emptyDescription={t('tasker.browse.emptyDescription')}
+      emptyTitle={t('tasker.browse.emptyTitle', 'Одоогоор даалгавар байхгүй байна')}
+      emptyDescription={t(
+        'tasker.browse.emptyDescription',
+        'Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу',
+      )}
+      emptyCtaLabel={t('tasker.browse.emptyCta', 'Шүүлтүүр цэвэрлэх')}
+      emptyCtaOnPress={handleClearFilters}
       errorMessage={t('common.error')}
       filterBar={
         <FilterBar

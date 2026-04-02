@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Search } from 'lucide-react-native';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
-import { Input } from '../../../components/ui/Input';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -24,6 +25,7 @@ export default function ConversationListScreen() {
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useConversations();
   const [search, setSearch] = useState('');
+  const [mode, setMode] = useState<'all' | 'unread' | 'important'>('all');
 
   const conversations: ConversationItem[] = data?.data ?? [];
   const filteredConversations = useMemo(() => {
@@ -35,13 +37,28 @@ export default function ConversationListScreen() {
     });
 
     if (!normalizedQuery) {
-      return sorted;
+      return sorted.filter((item) => {
+        if (mode === 'unread') {
+          return (item.unread_count ?? 0) > 0;
+        }
+        if (mode === 'important') {
+          return (item.unread_count ?? 0) > 0;
+        }
+        return true;
+      });
     }
 
-    return sorted.filter((item) =>
-      (item.counterparty_name ?? item.task_title ?? '').toLowerCase().includes(normalizedQuery),
-    );
-  }, [conversations, search]);
+    return sorted.filter((item) => {
+      const haystack = `${item.counterparty_name ?? ''} ${item.task_title ?? ''}`.toLowerCase();
+      const matchesQuery = haystack.includes(normalizedQuery);
+      const matchesMode =
+        mode === 'all' ||
+        mode === 'important' ||
+        (mode === 'unread' && (item.unread_count ?? 0) > 0);
+
+      return matchesQuery && matchesMode;
+    });
+  }, [conversations, mode, search]);
 
   const formatTimestamp = useCallback((value?: string) => {
     if (!value) return '';
@@ -57,36 +74,75 @@ export default function ConversationListScreen() {
   }, []);
 
   const filterBar = (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Inbox')}</Text>
-      <Input
-        value={search}
-        onChangeText={setSearch}
-        placeholder={t('shared.inbox.searchPlaceholder', 'Search...')}
-        testID="conversation-search-input"
-      />
+    <View style={styles.headerShell}>
+      <View style={styles.headerRow}>
+        <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Мессеж')}</Text>
+        <Pressable style={styles.headerIconButton} accessibilityRole="button">
+          <Search size={20} color={colors.primary} />
+        </Pressable>
+      </View>
+
+      <View style={styles.chipRow}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setMode('all')}
+          style={[styles.chip, mode === 'all' && styles.chipActive]}
+        >
+          <Text style={[styles.chipLabel, mode === 'all' && styles.chipLabelActive]}>
+            {t('shared.inbox.all', 'Бүх мессеж')}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setMode('unread')}
+          style={[styles.chip, mode === 'unread' && styles.chipActive]}
+        >
+          <Text style={[styles.chipLabel, mode === 'unread' && styles.chipLabelActive]}>
+            {t('shared.inbox.unread', 'Уншаагүй')}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setMode('important')}
+          style={[styles.chip, mode === 'important' && styles.chipActive]}
+        >
+          <Text style={[styles.chipLabel, mode === 'important' && styles.chipLabelActive]}>
+            {t('shared.inbox.important', 'Чухал')}
+          </Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.searchShell}>
+        <Search size={18} color={colors.textTertiary} />
+        <TextInput
+          value={search}
+          onChangeText={setSearch}
+          placeholder={t('shared.inbox.searchPlaceholder', 'Хайх...')}
+          placeholderTextColor={colors.textTertiary}
+          style={styles.searchInput}
+          testID="conversation-search-input"
+        />
+      </View>
     </View>
   );
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
-      const initial = (item.counterparty_name ?? item.task_title ?? 'T').charAt(0);
+      const title = item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion', 'Чат');
       return (
-        <TouchableOpacity
+        <Pressable
           testID={`conversation-row-${item.id}`}
           style={styles.row}
           onPress={() => router.push(`/inbox/${item.id}`)}
-          activeOpacity={0.7}
+          accessibilityRole="button"
         >
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initial}</Text>
+          <View style={styles.avatarShell}>
+            <ProfileAvatar uri={item.counterparty_avatar_url ?? undefined} name={title} size="md" />
           </View>
           <View style={styles.content}>
             <View style={styles.topRow}>
               <Text style={styles.name} numberOfLines={1}>
-                {item.counterparty_name ??
-                  item.task_title ??
-                  t('messaging.taskDiscussion', 'Task Discussion')}
+                {title}
               </Text>
               {item.last_message_at && (
                 <Text style={styles.timestamp}>{formatTimestamp(item.last_message_at)}</Text>
@@ -100,10 +156,10 @@ export default function ConversationListScreen() {
           </View>
           {(item.unread_count ?? 0) > 0 && (
             <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>{item.unread_count}</Text>
+              <View style={styles.unreadDot} />
             </View>
           )}
-        </TouchableOpacity>
+        </Pressable>
       );
     },
     [formatTimestamp, router, t],
@@ -121,26 +177,81 @@ export default function ConversationListScreen() {
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
-      emptyTitle={t('shared.inbox.emptyTitle', 'No messages')}
+      emptyTitle={t('shared.inbox.emptyTitle', 'Мессеж байхгүй')}
       emptyDescription={t(
         'shared.inbox.emptyDescription',
-        'Messages will appear here after you make a booking',
+        'Захиалга хийсний дараа энд мессежүүд харагдана',
       )}
-      errorMessage={t('shared.inbox.errorMessage', 'Failed to load messages')}
-      retryLabel={t('shared.inbox.retry', 'Retry')}
+      errorMessage={t('shared.inbox.errorMessage', 'Мессежүүдийг ачаалж чадсангүй')}
+      retryLabel={t('shared.inbox.retry', 'Дахин оролдох')}
       filterBar={filterBar}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  headerShell: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
     gap: spacing.md,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerIconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chipRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  chip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  chipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  chipLabel: {
+    fontSize: typography.label,
+    color: colors.foreground,
+    fontWeight: '600',
+  },
+  chipLabelActive: {
+    color: colors.primaryForeground,
+  },
+  searchShell: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...elevations.card,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: typography.body,
+    color: colors.foreground,
+    paddingVertical: 0,
+  },
   headerTitle: {
-    fontSize: typography.title,
+    fontSize: typography.subtitle,
     fontWeight: '700',
     color: colors.foreground,
   },
@@ -148,24 +259,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.muted,
-    justifyContent: 'center',
-    alignItems: 'center',
+  avatarShell: {
     marginRight: spacing.md,
-  },
-  avatarText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primary,
   },
   content: {
     flex: 1,
@@ -192,18 +292,18 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   unreadBadge: {
-    backgroundColor: colors.accent,
+    width: 18,
+    height: 18,
     borderRadius: radius.full,
-    minWidth: 22,
-    height: 22,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing.xs,
     marginLeft: spacing.sm,
   },
-  unreadText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primaryForeground,
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: radius.full,
+    backgroundColor: colors.primaryForeground,
   },
 });

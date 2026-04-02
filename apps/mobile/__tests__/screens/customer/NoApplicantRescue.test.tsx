@@ -77,7 +77,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('No applicants yet')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэгч олдсонгүй')).toBeTruthy();
   });
 
   it('shows adjust budget option', () => {
@@ -91,7 +91,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Increase Budget')).toBeTruthy();
+    expect(screen.getByText('Төсөв нэмэх')).toBeTruthy();
   });
 
   it('shows adjust schedule option', () => {
@@ -105,7 +105,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Change Schedule')).toBeTruthy();
+    expect(screen.getByText('Цаг өөрчлөх')).toBeTruthy();
   });
 
   it('shows request concierge option', () => {
@@ -119,7 +119,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Request Help')).toBeTruthy();
+    expect(screen.getByText('Тусламж хүсэх')).toBeTruthy();
   });
 
   it('shows supporting rescue descriptions for each action', () => {
@@ -134,10 +134,12 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
       />,
     );
 
-    expect(screen.getByText('Boost your task to get responses faster.')).toBeTruthy();
-    expect(screen.getByText('Raise the offer to attract more qualified taskers.')).toBeTruthy();
-    expect(screen.getByText('Move the schedule to a time with stronger availability.')).toBeTruthy();
-    expect(screen.getByText('Ask Tasky concierge to help review and rescue this task.')).toBeTruthy();
+    expect(
+      screen.getByText('120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.'),
+    ).toBeTruthy();
+    expect(screen.getByText('Төсөв нэмснээр гүйцэтгэгч олдох магадлал өснө.')).toBeTruthy();
+    expect(screen.getByText('Шинэ цаг сонгосноор илүү олон гүйцэтгэгчид харагдана.')).toBeTruthy();
+    expect(screen.getByText('Туслах ажилтанд илгээж, даалгаврыг гараар хуваарилуулна.')).toBeTruthy();
   });
 
   it('calls onAdjustBudget when budget option is pressed', () => {
@@ -152,7 +154,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    fireEvent.press(screen.getByText('Increase Budget'));
+    fireEvent.press(screen.getByText('Төсөв нэмэх'));
     expect(onAdjustBudget).toHaveBeenCalled();
   });
 
@@ -168,7 +170,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    fireEvent.press(screen.getByText('Change Schedule'));
+    fireEvent.press(screen.getByText('Цаг өөрчлөх'));
     expect(onAdjustSchedule).toHaveBeenCalled();
   });
 
@@ -184,7 +186,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={onRequestConcierge}
       />,
     );
-    fireEvent.press(screen.getByText('Request Help'));
+    fireEvent.press(screen.getByText('Тусламж хүсэх'));
     expect(onRequestConcierge).toHaveBeenCalled();
   });
 
@@ -199,7 +201,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Dismiss')).toBeTruthy();
+    expect(screen.getByText('Хаах')).toBeTruthy();
   });
 
   it('calls onClose when dismiss is pressed', () => {
@@ -214,7 +216,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    fireEvent.press(screen.getByText('Dismiss'));
+    fireEvent.press(screen.getByText('Хаах'));
     expect(onClose).toHaveBeenCalled();
   });
 });

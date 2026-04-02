@@ -48,64 +48,64 @@ function TermsContent() {
   const sections = useMemo(
     () => [
       {
-        title: t('infra.terms.section0Title', 'These Terms at a glance'),
+        title: t('infra.terms.section0Title', 'Эдгээр нөхцөлийг товчоор'),
         lead: t(
           'infra.terms.section0Body',
-          'Please read these terms carefully. They explain how Tasky works, what you can expect from the service, and which responsibilities remain with you.',
+          'Эдгээр нөхцөлийг анхааралтай уншина уу. Тэд Tasky хэрхэн ажилладаг, үйлчилгээнээс юу хүлээх, ямар хариуцлага танд үлдэхийг тайлбарлана.',
         ),
         points: [
           t(
             'infra.terms.section0Note',
-            'This summary is not a substitute for the full policy below.',
+            'Энэ товч тайлбар нь доорх бүрэн журмыг орлохгүй.',
           ),
         ],
       },
       {
-        title: t('infra.terms.section1Title', '1. Acceptance of Terms'),
+        title: t('infra.terms.section1Title', '1. Нөхцөлийг зөвшөөрөх'),
         lead: t(
           'infra.terms.section1Body',
-          'By accessing or using the Tasky application, you agree to be bound by these Terms of Service and all applicable laws and regulations.',
+          'Tasky-г ашигласнаар та эдгээр нөхцөл болон холбогдох бүх хуулийг зөвшөөрч байна.',
         ),
         points: [
-          t('infra.terms.section1Note', 'If you do not agree, please stop using the application.'),
+          t('infra.terms.section1Note', 'Хэрэв та зөвшөөрөхгүй бол аппликейшнийг ашиглахаа зогсооно уу.'),
         ],
       },
       {
-        title: t('infra.terms.section2Title', '2. Use of Service'),
+        title: t('infra.terms.section2Title', '2. Үйлчилгээний хэрэглээ'),
         lead: t(
           'infra.terms.section2Body',
-          'Tasky provides a platform connecting customers with service providers. You agree to use the service only for lawful purposes.',
+          'Tasky нь захиалагч болон үйлчилгээ үзүүлэгчийг холбодог. Зөвхөн хууль ёсны зорилгоор ашиглана уу.',
         ),
         points: [
           t(
             'infra.terms.section2Note',
-            'You are responsible for the accuracy of the information you submit.',
+            'Оруулж буй мэдээллийн үнэн зөвийг та өөрөө хариуцна.',
           ),
         ],
       },
       {
-        title: t('infra.terms.section3Title', '3. User Accounts'),
+        title: t('infra.terms.section3Title', '3. Хэрэглэгчийн бүртгэл'),
         lead: t(
           'infra.terms.section3Body',
-          'You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.',
+          'Та өөрийн нэвтрэх мэдээлэл болон бүртгэл дээрх бүх үйлдлийн хариуцлагыг хариуцна.',
         ),
         points: [
           t(
             'infra.terms.section3Note',
-            'Keep your contact details current so we can reach you about bookings and support.',
+            'Захиалга болон дэмжлэгийн мэдээлэл хүрэхийн тулд холбоо барих мэдээллээ шинэ байлгаарай.',
           ),
         ],
       },
       {
-        title: t('infra.terms.section4Title', '4. Liability'),
+        title: t('infra.terms.section4Title', '4. Хариуцлага'),
         lead: t(
           'infra.terms.section4Body',
-          'Tasky acts solely as a connector between task posters and taskers. Tasky does not process payments, employ taskers, or guarantee work quality.',
+          'Tasky нь захиалагч болон гүйцэтгэгчийг холбох үүрэгтэй бөгөөд ажлын чанарыг баталгаажуулахгүй.',
         ),
         points: [
           t(
             'infra.terms.section4Note',
-            'Any direct agreement between customers and taskers remains their own responsibility.',
+            'Захиалагч болон гүйцэтгэгчийн хоорондын шууд тохиролцоо нь өөрсдийн хариуцлага байна.',
           ),
         ],
       },
@@ -125,7 +125,7 @@ function TermsContent() {
           <Text style={styles.sectionBody}>{section.lead}</Text>
           {index === 0 ? (
             <Text style={styles.sectionLead}>
-              <Text style={styles.sectionLeadStrong}>Note: </Text>
+              <Text style={styles.sectionLeadStrong}>Санамж: </Text>
               {section.points[0]}
             </Text>
           ) : null}
@@ -153,7 +153,7 @@ export default function TermsScreen() {
     setState(resolveState(params.state));
   }, [params.state]);
 
-  const title = t('infra.terms.title', 'Terms of Service');
+  const title = t('infra.terms.title', 'Үйлчилгээний нөхцөл');
 
   return (
     <SafeAreaView style={styles.safeArea} testID="terms-screen">
@@ -165,7 +165,7 @@ export default function TermsScreen() {
           testID="terms-screen-back"
         >
           <ChevronLeft size={24} color={colors.primary} />
-          <Text style={styles.backLabel}>{t('infra.terms.backLabel', 'Back')}</Text>
+          <Text style={styles.backLabel}>{t('infra.terms.backLabel', 'Буцах')}</Text>
         </Pressable>
         <Text style={styles.headerTitle}>{title}</Text>
         <View style={styles.headerAction} />
@@ -176,14 +176,15 @@ export default function TermsScreen() {
       ) : state === 'error' ? (
         <View style={styles.errorContainer}>
           <TermsErrorVisual />
-          <Text style={styles.errorHeadline}>
-            {t('infra.terms.errorHeadline', 'Unable to load')}
-          </Text>
+          <Text style={styles.errorHeadline}>{t('infra.terms.errorHeadline', 'Ачааллах боломжгүй')}</Text>
           <Text style={styles.errorDescription}>
-            {t('infra.terms.errorDescription', 'Failed to load Terms of Service. Please try again')}
+            {t(
+              'infra.terms.errorDescription',
+              'Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу',
+            )}
           </Text>
           <Button
-            label={t('infra.terms.errorRetry', 'Try again')}
+            label={t('infra.terms.errorRetry', 'Дахин оролдох')}
             onPress={() => setState('loaded')}
             style={styles.errorButton}
           />

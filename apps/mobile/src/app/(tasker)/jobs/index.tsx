@@ -13,9 +13,9 @@ import type { Booking } from '../../../lib/mobileApiClient';
 const { colors, spacing, typography } = mobileTheme;
 
 const JOB_FILTERS = [
-  { id: 'active', label: 'Active' },
-  { id: 'completed', label: 'Completed' },
-  { id: 'cancelled', label: 'Cancelled' },
+  { id: 'active', label: 'Идэвхтэй' },
+  { id: 'completed', label: 'Дууссан' },
+  { id: 'cancelled', label: 'Цуцлагдсан' },
 ];
 
 function BookingCardHeader({ booking }: { booking: Booking }) {
@@ -95,9 +95,12 @@ export default function MyJobsScreen() {
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
-      emptyTitle={t('tasker.jobs.emptyTitle', 'No jobs yet')}
-      emptyDescription={t('tasker.jobs.emptyDescription', 'Apply to tasks and get your first job')}
-      emptyCtaLabel={t('tasker.jobs.emptyCta', 'Browse Tasks')}
+      emptyTitle={t('tasker.jobs.emptyTitle', 'Одоогоор ажил байхгүй байна')}
+      emptyDescription={t(
+        'tasker.jobs.emptyDescription',
+        'Даалгавруудад анкет илгээж, эхний ажлаа аваарай',
+      )}
+      emptyCtaLabel={t('tasker.jobs.emptyCta', 'Даалгавар хайх')}
       emptyCtaOnPress={() => router.push('/(tabs)')}
       filterBar={
         <FilterBar

@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Check, ArrowRight } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
-import { Button } from '../../../components/ui/Button';
 import { useCompleteBooking } from '../hooks/useCompleteBooking';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 interface ConfirmCompletionSheetProps {
   isOpen: boolean;
@@ -37,39 +38,134 @@ export function ConfirmCompletionSheet({
   }, [bookingId, completeBooking, onCompleted, router]);
 
   return (
-    <ModalSheetTemplate
-      isOpen={isOpen}
-      onClose={onClose}
-      title={t('customer.bookings.confirmCompletionTitle', 'Confirm the work is complete?')}
-      testID="confirm-completion-sheet"
-    >
+    <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="confirm-completion-sheet" snapPoints={['58%']}>
+      <View style={styles.iconWrap}>
+        <View style={styles.iconOuter}>
+          <View style={styles.iconInner}>
+            <Check size={30} color={colors.verified} strokeWidth={3} />
+          </View>
+        </View>
+      </View>
+
+      <Text style={styles.title}>{t('customer.bookings.confirmCompletionTitle', 'Ажил дууссан уу?')}</Text>
+
       <Text style={styles.description}>
         {t(
           'customer.bookings.confirmCompletionDescription',
-          t('customer.bookings.confirmCompletionDesc', 'After confirming, you can leave a review. Payment is settled directly with the Tasker.'),
+          'Ажил хүлээн зөвшөөрснөөр гүйцэтгэгчид төлбөр олгогдоно',
         )}
       </Text>
-      <Button
-        label={t('customer.bookings.ctaConfirmComplete', 'Confirm Complete')}
-        onPress={handleConfirm}
-        isLoading={isPending}
-        testID="confirm-completion-confirm-btn"
-      />
-      <Button
-        label={t('customer.bookings.ctaGoBack', 'Go Back')}
-        variant="outline"
-        onPress={onClose}
-        testID="confirm-completion-cancel-btn"
-      />
+
+      <View style={styles.actions}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => void handleConfirm()}
+          style={styles.primaryWrap}
+          testID="confirm-completion-confirm-btn"
+          disabled={isPending}
+        >
+          <LinearGradient
+            colors={[colors.verified, colors.trust]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.primaryButton, isPending && styles.buttonDisabled]}
+          >
+            <Text style={styles.primaryButtonText}>
+              {t('customer.bookings.ctaConfirmComplete', 'Баталгаажуулах')}
+            </Text>
+            <ArrowRight size={18} color={colors.primaryForeground} />
+          </LinearGradient>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={onClose}
+          style={styles.secondaryButton}
+          testID="confirm-completion-cancel-btn"
+        >
+          <Text style={styles.secondaryButtonText}>
+            {t('customer.bookings.ctaGoBack', 'Буцах')}
+          </Text>
+        </Pressable>
+      </View>
     </ModalSheetTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  iconWrap: {
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  iconOuter: {
+    width: 80,
+    height: 80,
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'rgba(0,0,0,0.05)',
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  iconInner: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.lg,
+    backgroundColor: colors.trustMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    textAlign: 'center',
+  },
   description: {
     fontSize: typography.body,
-    color: colors.accent,
+    color: colors.textSecondary,
+    textAlign: 'center',
     lineHeight: typography.body * 1.6,
-    marginBottom: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  actions: {
+    gap: spacing.md,
+  },
+  primaryWrap: {
+    borderRadius: radius.md,
+    overflow: 'hidden',
+  },
+  primaryButton: {
+    minHeight: 52,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  primaryButtonText: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+  },
+  secondaryButton: {
+    minHeight: 48,
+    borderRadius: radius.md,
+    borderWidth: 2,
+    borderColor: colors.primaryDeep,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
 });

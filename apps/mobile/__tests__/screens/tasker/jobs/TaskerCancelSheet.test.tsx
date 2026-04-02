@@ -27,6 +27,7 @@ const mockCancelBooking = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
   useCancelBooking: () => ({
     mutate: mockCancelBooking,
+    mutateAsync: mockCancelBooking,
     get isPending() {
       return mockIsPending;
     },
@@ -70,12 +71,13 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    expect(screen.getByText('Cancel this booking?')).toBeTruthy();
+    expect(screen.getAllByText('Захиалга цуцлах уу?').length).toBeGreaterThanOrEqual(2);
     expect(
       screen.getByText(
-        'Cancelling will reopen the task. Cancellations affect your reliability score.',
+        'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.',
       ),
     ).toBeTruthy();
+    expect(screen.getByText('Цуцлах шалтгаан')).toBeTruthy();
   });
 
   it('confirm button calls cancelBooking', () => {
@@ -91,7 +93,8 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    fireEvent.press(screen.getByText('Confirm Cancellation'));
+    fireEvent.press(screen.getByText('Цагийн хуваарь таарахгүй болсон'));
+    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
     expect(mockCancelBooking).toHaveBeenCalled();
   });
 
@@ -122,7 +125,7 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       <TaskerCancelSheet isOpen={true} onClose={onClose} bookingId="booking-123" strikeCount={0} />,
     );
 
-    fireEvent.press(screen.getByText('Go Back'));
+    fireEvent.press(screen.getByText('Буцах'));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -141,8 +144,31 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
 
     expect(
       screen.getByText(
-        'Warning: You have 2 cancellations in 30 days. One more will result in a 7-day suspension!',
+        'Анхааруулга: Та сүүлийн 30 хоногт 2 удаа цуцалсан байна. Дахин нэг удаа цуцалвал таны бүртгэл 7 хоногоор түдгэлзэнэ!',
       ),
     ).toBeTruthy();
+  });
+
+  it('requires a reason before enabling confirm', () => {
+    const onClose = jest.fn();
+    const {
+      TaskerCancelSheet,
+    } = require('../../../../src/features/bookings/components/TaskerCancelSheet');
+    render(
+      <TaskerCancelSheet
+        isOpen={true}
+        onClose={onClose}
+        bookingId="booking-123"
+        strikeCount={0}
+      />,
+    );
+
+    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
+    expect(mockCancelBooking).not.toHaveBeenCalled();
+    fireEvent.press(screen.getByText('Цагийн хуваарь таарахгүй болсон'));
+    fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));
+    expect(mockCancelBooking).toHaveBeenCalledWith(
+      expect.objectContaining({ bookingId: 'booking-123' }),
+    );
   });
 });

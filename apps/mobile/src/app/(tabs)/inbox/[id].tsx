@@ -1,8 +1,10 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -11,13 +13,15 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Briefcase, ChevronLeft, Paperclip, ShieldAlert } from 'lucide-react-native';
 import { useMessages } from '../../../features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
+import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAuthStore } from '../../../store/authStore';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 const PHONE_REGEX = /(\+?976)?[\s-]?\d{4}[\s-]?\d{4}|\d{8,}/;
 
@@ -44,11 +48,20 @@ export default function ChatDetailScreen() {
   const messages: MessageItem[] = data?.data ?? [];
   const showPhoneWarning = PHONE_REGEX.test(draft);
 
+  const activeTask = useMemo(
+    () => ({
+      title: t('shared.inbox.contextTitle', 'Үйлчилгээ'),
+      subtitle: t('shared.inbox.contextSubtitle', 'Захиалгын дэлгэрэнгүй'),
+      status: t('shared.inbox.contextStatus', 'Баталгаажсан'),
+    }),
+    [t],
+  );
+
   const handleSend = useCallback(() => {
     if (!id || draft.trim().length === 0) return;
     sendMessage({ conversationId: id, content: draft.trim() });
     setDraft('');
-  }, [id, draft, sendMessage]);
+  }, [draft, id, sendMessage]);
 
   const renderMessage = useCallback(
     ({ item }: { item: MessageItem }) => {
@@ -57,6 +70,7 @@ export default function ChatDetailScreen() {
         hour: 'numeric',
         minute: '2-digit',
       });
+
       return (
         <View
           testID={`message-bubble-${item.id}`}
@@ -85,7 +99,7 @@ export default function ChatDetailScreen() {
   if (isLoading) {
     return (
       <View style={styles.center} testID="chat-loading">
-        <Text style={styles.loadingText}>{t('common.loading', 'Loading...')}</Text>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -99,15 +113,25 @@ export default function ChatDetailScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backText}>{t('common.back', 'Back')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('chat.title', 'Chat')}</Text>
-          <View style={{ width: 60 }} />
+          <Pressable onPress={() => router.back()} style={styles.backBtn} testID="chat-back">
+            <ChevronLeft size={24} color={colors.primary} />
+          </Pressable>
+          <View style={styles.headerTitleShell}>
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {t('shared.inbox.chatTitle', 'Чат')}
+            </Text>
+            <View style={styles.onlineRow}>
+              <View style={styles.onlineDot} />
+              <Text style={styles.onlineText}>{t('shared.inbox.online', 'Онлайн')}</Text>
+            </View>
+          </View>
+          <View style={styles.headerAvatarShell}>
+            <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
+          </View>
         </View>
         <ErrorStateTemplate
-          message={t('shared.inbox.errorMessage', 'Failed to load messages')}
-          retryLabel={t('shared.inbox.retry', 'Retry')}
+          message={t('shared.inbox.errorMessage', 'Мессежүүдийг ачаалж чадсангүй')}
+          retryLabel={t('shared.inbox.retry', 'Дахин оролдох')}
           onRetry={() => {
             void refetch();
           }}
@@ -125,11 +149,46 @@ export default function ChatDetailScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>{t('common.back', 'Back')}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('chat.title', 'Chat')}</Text>
-        <View style={{ width: 60 }} />
+        <Pressable onPress={() => router.back()} style={styles.backBtn} testID="chat-back">
+          <ChevronLeft size={24} color={colors.primary} />
+        </Pressable>
+        <View style={styles.headerTitleShell}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {t('shared.inbox.chatTitle', 'Чат')}
+          </Text>
+          <View style={styles.onlineRow}>
+            <View style={styles.onlineDot} />
+            <Text style={styles.onlineText}>{t('shared.inbox.online', 'Онлайн')}</Text>
+          </View>
+        </View>
+        <View style={styles.headerAvatarShell}>
+          <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
+        </View>
+      </View>
+
+      <View style={styles.contextCard}>
+        <View style={styles.contextIcon}>
+          <Briefcase size={18} color={colors.primaryForeground} />
+        </View>
+        <View style={styles.contextBody}>
+          <Text style={styles.contextLabel}>{activeTask.title}</Text>
+          <Text style={styles.contextTitle} numberOfLines={2}>
+            {activeTask.subtitle}
+          </Text>
+        </View>
+        <View style={styles.contextStatusPill}>
+          <Text style={styles.contextStatus}>{activeTask.status}</Text>
+        </View>
+      </View>
+
+      <View style={styles.warningBanner}>
+        <ShieldAlert size={16} color={colors.primary} />
+        <Text style={styles.warningText}>
+          {t(
+            'shared.inbox.phoneWarning',
+            'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
+          )}
+        </Text>
       </View>
 
       <FlatList
@@ -139,21 +198,30 @@ export default function ChatDetailScreen() {
         renderItem={renderMessage}
         contentContainerStyle={styles.messageList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        ListFooterComponent={<View style={styles.listFooterSpacer} />}
       />
 
       {showPhoneWarning && (
         <View testID="phone-warning" style={styles.phoneWarning}>
-          <Text style={styles.phoneWarningText}>{t('shared.inbox.phoneWarning')}</Text>
+          <Text style={styles.phoneWarningText}>
+            {t(
+              'shared.inbox.phoneWarning',
+              'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
+            )}
+          </Text>
         </View>
       )}
 
       <View style={styles.inputBar}>
+        <Pressable style={styles.attachButton} accessibilityRole="button">
+          <Paperclip size={18} color={colors.foreground} />
+        </Pressable>
         <TextInput
           testID="chat-input"
           style={styles.input}
           value={draft}
           onChangeText={setDraft}
-          placeholder={t('shared.inbox.sendPlaceholder', 'Type a message...')}
+          placeholder={t('shared.inbox.sendPlaceholder', 'Мессеж бичих...')}
           placeholderTextColor={colors.mutedForeground}
           maxLength={500}
           multiline
@@ -164,7 +232,7 @@ export default function ChatDetailScreen() {
           onPress={handleSend}
           disabled={draft.trim().length === 0 || isPending}
         >
-          <Text style={styles.sendBtnText}>{t('chat.send', 'Send')}</Text>
+          <Text style={styles.sendBtnText}>{t('chat.send', 'Илгээх')}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -182,40 +250,123 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.background,
   },
-  loadingText: {
-    color: colors.mutedForeground,
-    fontSize: typography.body,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.md,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     backgroundColor: colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   backBtn: {
-    width: 60,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backText: {
-    color: colors.primary,
-    fontSize: typography.body,
+  headerTitleShell: {
+    flex: 1,
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: typography.title,
-    fontWeight: '600',
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
+  onlineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: 2,
+  },
+  onlineDot: {
+    width: 8,
+    height: 8,
+    borderRadius: radius.full,
+    backgroundColor: colors.verified,
+  },
+  onlineText: {
+    fontSize: typography.micro,
+    color: colors.mutedForeground,
+  },
+  headerAvatarShell: {
+    width: 40,
+    alignItems: 'flex-end',
+  },
+  contextCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: colors.card,
+    ...elevations.card,
+  },
+  contextIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contextBody: {
+    flex: 1,
+    gap: 2,
+  },
+  contextLabel: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.mutedForeground,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  contextTitle: {
+    fontSize: typography.body,
+    fontWeight: '700',
+    color: colors.foreground,
+  },
+  contextStatusPill: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.full,
+    backgroundColor: colors.accent,
+  },
+  contextStatus: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  warningBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+    marginHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+    backgroundColor: colors.secondary,
+  },
+  warningText: {
+    flex: 1,
+    fontSize: typography.label,
     color: colors.foreground,
   },
   messageList: {
-    padding: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
+  },
+  listFooterSpacer: {
+    height: spacing.xl,
   },
   bubbleWrapper: {
     width: '100%',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
     flexDirection: 'row',
   },
   bubbleRight: {
@@ -227,16 +378,16 @@ const styles = StyleSheet.create({
   bubble: {
     maxWidth: '75%',
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 20,
+    paddingVertical: spacing.md,
+    borderRadius: radius.lg,
   },
   bubbleMine: {
     backgroundColor: colors.primary,
-    borderBottomRightRadius: 4,
+    borderBottomRightRadius: 6,
   },
   bubbleTheirs: {
     backgroundColor: colors.muted,
-    borderBottomLeftRadius: 4,
+    borderBottomLeftRadius: 6,
   },
   messageText: {
     fontSize: typography.body,
@@ -247,6 +398,18 @@ const styles = StyleSheet.create({
   },
   textTheirs: {
     color: colors.foreground,
+  },
+  timestamp: {
+    marginTop: spacing.xs,
+    fontSize: typography.micro,
+  },
+  timestampMine: {
+    color: colors.primaryForeground,
+    opacity: 0.7,
+    textAlign: 'right',
+  },
+  timestampTheirs: {
+    color: colors.mutedForeground,
   },
   phoneWarning: {
     backgroundColor: colors.secondary,
@@ -260,30 +423,38 @@ const styles = StyleSheet.create({
   },
   inputBar: {
     flexDirection: 'row',
-    padding: spacing.sm,
-    paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.sm,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.md,
     backgroundColor: colors.card,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     alignItems: 'center',
   },
+  attachButton: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    backgroundColor: colors.muted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   input: {
     flex: 1,
     backgroundColor: colors.muted,
-    borderRadius: 20,
+    borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    fontSize: typography.body,
     color: colors.foreground,
-    maxHeight: 100,
+    maxHeight: 96,
+    fontSize: typography.body,
   },
   sendBtn: {
-    marginLeft: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     backgroundColor: colors.primary,
-    borderRadius: 20,
-    justifyContent: 'center',
+    borderRadius: radius.md,
   },
   sendBtnDisabled: {
     opacity: 0.5,
@@ -292,17 +463,5 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
     fontWeight: '700',
     fontSize: typography.body,
-  },
-  timestamp: {
-    fontSize: typography.micro,
-    marginTop: spacing.xs,
-  },
-  timestampMine: {
-    color: colors.primaryForeground,
-    textAlign: 'right',
-    opacity: 0.85,
-  },
-  timestampTheirs: {
-    color: colors.mutedForeground,
   },
 });

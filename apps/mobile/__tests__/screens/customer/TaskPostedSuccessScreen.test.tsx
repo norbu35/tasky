@@ -4,10 +4,11 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import TaskPostedSuccessScreen from '../../../src/app/(customer)/tasks/new/success';
 
 const mockReplace = jest.fn();
+const mockParams = { taskId: 'task-new-1' };
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: mockReplace, back: jest.fn() }),
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
 }));
 
 jest.mock('react-i18next', () => ({
@@ -41,12 +42,16 @@ describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
 
   it('shows success headline', () => {
     render(<TaskPostedSuccessScreen />);
-    expect(screen.getByText('Task Posted!')).toBeTruthy();
+    expect(screen.getByText('Task posted successfully!')).toBeTruthy();
   });
 
   it('shows success body text', () => {
     render(<TaskPostedSuccessScreen />);
-    expect(screen.getByText('Taskers in your area will be notified')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Taskers can now see your task and apply. You will be notified when new applications arrive',
+      ),
+    ).toBeTruthy();
   });
 
   it('shows next steps', () => {
@@ -55,14 +60,21 @@ describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
     expect(screen.getByText('Review Tasker profiles and ratings')).toBeTruthy();
   });
 
-  it('renders primary CTA', () => {
+  it('renders primary and secondary CTAs', () => {
     render(<TaskPostedSuccessScreen />);
-    expect(screen.getByText('View My Tasks')).toBeTruthy();
+    expect(screen.getByText('View Task')).toBeTruthy();
+    expect(screen.getByText('Done')).toBeTruthy();
   });
 
-  it('CTA navigates to task list', () => {
+  it('CTA navigates to task detail when task id is present', () => {
     render(<TaskPostedSuccessScreen />);
     fireEvent.press(screen.getByTestId('task-posted-success-screen-cta'));
+    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks/task-new-1');
+  });
+
+  it('Done navigates back to task list', () => {
+    render(<TaskPostedSuccessScreen />);
+    fireEvent.press(screen.getByTestId('task-posted-success-screen-done'));
     expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
   });
 });

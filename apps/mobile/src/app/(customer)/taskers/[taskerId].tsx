@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Star } from 'lucide-react-native';
+import { CalendarDays, ShieldCheck, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -20,6 +20,7 @@ export default function TaskerProfileScreen() {
   const reviews = reviewsQuery.data?.data ?? [];
   const isLoading = profileQuery.isLoading;
   const isError = profileQuery.isError;
+  const categories = ((profile as any)?.categories ?? []) as string[];
 
   return (
     <DetailTemplate
@@ -30,10 +31,11 @@ export default function TaskerProfileScreen() {
       isError={isError}
       onRetry={profileQuery.refetch}
       errorMessage={t('customer.taskerProfile.errorNetwork', 'Failed to load profile')}
+      ctaLabel={t('customer.taskerProfile.ctaMessage', 'Message')}
+      ctaOnPress={() => router.push('/inbox')}
     >
-      {profile && (
+      {profile ? (
         <View style={styles.content}>
-          {/* Profile Hero */}
           <View style={styles.hero}>
             <ProfileAvatar
               uri={profile.avatar_url}
@@ -42,25 +44,29 @@ export default function TaskerProfileScreen() {
               showVerified={(profile as any).is_pro}
             />
             <Text style={styles.name}>{profile.full_name}</Text>
-
-            {/* Rating */}
             <View style={styles.ratingRow}>
               <Star size={16} color={colors.accent} fill={colors.accent} />
               <Text style={styles.ratingText}>{((profile as any).rating_avg ?? 0).toFixed(1)}</Text>
             </View>
-
-            {/* Verified badge */}
-            {(profile as any).is_pro && (
+            {(profile as any).is_pro ? (
               <View style={styles.verifiedRow}>
                 <ShieldCheck size={16} color={colors.trustMuted} />
                 <Text style={styles.verifiedText}>
                   {t('customer.taskerProfile.verified', 'Identity Verified')}
                 </Text>
               </View>
-            )}
+            ) : null}
+            <View style={styles.memberRow}>
+              <CalendarDays size={14} color={colors.textSecondary} />
+              <Text style={styles.memberText}>
+                {t('customer.taskerProfile.memberSince', 'Member since: {date}').replace(
+                  '{date}',
+                  new Date((profile as any).created_at ?? Date.now()).toLocaleDateString(),
+                )}
+              </Text>
+            </View>
           </View>
 
-          {/* Stats */}
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>{(profile as any).completed_tasks ?? 0}</Text>
@@ -74,7 +80,32 @@ export default function TaskerProfileScreen() {
             </View>
           </View>
 
-          {/* Reviews Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('customer.taskerProfile.about', 'About')}</Text>
+            <Text style={styles.aboutText}>
+              {(profile as any).bio ?? t('customer.taskerProfile.noBio', 'No bio yet')}
+            </Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {t('customer.taskerProfile.categories', 'Categories')}
+            </Text>
+            <View style={styles.chipsRow}>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <View key={category} style={styles.chip}>
+                    <Text style={styles.chipText}>{category}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.sectionBody}>
+                  {t('customer.taskerProfile.noCategories', 'No categories listed')}
+                </Text>
+              )}
+            </View>
+          </View>
+
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               {t('customer.taskerProfile.reviews', 'Reviews')}
@@ -95,14 +126,14 @@ export default function TaskerProfileScreen() {
                         <Text style={styles.reviewRatingText}>{review.quality_rating}</Text>
                       </View>
                     </View>
-                    {review.comment && <Text style={styles.reviewComment}>{review.comment}</Text>}
+                    {review.comment ? <Text style={styles.reviewComment}>{review.comment}</Text> : null}
                   </View>
                 ))}
               </View>
             )}
           </View>
         </View>
-      )}
+      ) : null}
     </DetailTemplate>
   );
 }
@@ -117,7 +148,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: typography.heroTitle,
-    fontWeight: '800',
+    fontWeight: '900',
     color: colors.foreground,
     marginTop: spacing.sm,
   },
@@ -128,7 +159,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: typography.subtitle,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.foreground,
   },
   verifiedRow: {
@@ -142,8 +173,17 @@ const styles = StyleSheet.create({
   },
   verifiedText: {
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.trustMuted,
+  },
+  memberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  memberText: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -152,14 +192,16 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.lg,
     alignItems: 'center',
     gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   statValue: {
     fontSize: typography.heroTitle,
-    fontWeight: '800',
+    fontWeight: '900',
     color: colors.foreground,
   },
   statLabel: {
@@ -172,8 +214,33 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.title,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.foreground,
+  },
+  aboutText: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
+  sectionBody: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+  },
+  chipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  chip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primary}12`,
+  },
+  chipText: {
+    fontSize: typography.caption,
+    color: colors.primaryDeep,
+    fontWeight: '700',
   },
   emptyReviews: {
     fontSize: typography.body,
@@ -186,9 +253,11 @@ const styles = StyleSheet.create({
   },
   reviewCard: {
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   reviewHeader: {
     flexDirection: 'row',
@@ -197,7 +266,7 @@ const styles = StyleSheet.create({
   },
   reviewerName: {
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.foreground,
   },
   reviewRating: {

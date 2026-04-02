@@ -178,7 +178,7 @@ describe('Tasker journey integration', () => {
     it('renders My Tasks text', () => {
       render(<TasksScreen />);
 
-      expect(screen.getByText('My Tasks')).toBeTruthy();
+      expect(screen.getByText(/My Tasks|Миний даалгаврууд/)).toBeTruthy();
     });
   });
 

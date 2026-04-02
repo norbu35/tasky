@@ -35,18 +35,18 @@ export default function AccountDeletionScreen() {
           <AlertTriangle size={48} color={colors.danger} />
         </View>
 
-        <Text style={styles.title}>{t('shared.profile.deleteTitle', 'Delete Account')}</Text>
+        <Text style={styles.title}>{t('shared.profile.deleteTitle', 'Бүртгэл устгах')}</Text>
 
         {isBlocked ? (
           <>
             <Text style={styles.body}>
               {t(
                 'shared.profile.deleteBlockedBookings',
-                'You have active bookings. You must complete or cancel all bookings before deleting your account.',
+                'Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай.',
               )}
             </Text>
             <Button
-              label={t('shared.profile.understood', 'Understood')}
+              label={t('shared.profile.understood', 'Ойлголоо')}
               variant="outline"
               onPress={() => router.back()}
               style={styles.button}
@@ -57,11 +57,11 @@ export default function AccountDeletionScreen() {
             <Text style={styles.body}>
               {t(
                 'shared.profile.deleteBlockedDisputes',
-                'You have open disputes. You must resolve all disputes before deleting your account.',
+                'Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай.',
               )}
             </Text>
             <Button
-              label={t('shared.profile.understood', 'Understood')}
+              label={t('shared.profile.understood', 'Ойлголоо')}
               variant="outline"
               onPress={() => router.back()}
               style={styles.button}
@@ -72,11 +72,11 @@ export default function AccountDeletionScreen() {
             <Text style={styles.body}>
               {t(
                 'shared.profile.deleteWarning',
-                'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.',
+                'Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана.',
               )}
             </Text>
             <Text style={styles.confirmationLabel}>
-              {t('shared.profile.deleteConfirmationPrompt', "Type 'DELETE' to confirm")}
+              {t('shared.profile.deleteConfirmationPrompt', "Баталгаажуулахын тулд 'DELETE' гэж бичнэ үү")}
             </Text>
             <Input
               testID="delete-confirmation-input"
@@ -90,7 +90,7 @@ export default function AccountDeletionScreen() {
 
             <View style={styles.actions}>
               <Button
-                label={t('shared.profile.deleteConfirm', 'Delete My Account')}
+                label={t('shared.profile.deleteConfirm', 'Бүртгэлээ устгах')}
                 variant="destructive"
                 onPress={handleDelete}
                 isLoading={isPending}
@@ -99,7 +99,7 @@ export default function AccountDeletionScreen() {
                 testID="delete-confirm-button"
               />
               <Button
-                label={t('shared.profile.deleteCancel', 'Cancel')}
+                label={t('shared.profile.deleteCancel', 'Болих')}
                 variant="ghost"
                 onPress={() => router.back()}
                 disabled={isPending}

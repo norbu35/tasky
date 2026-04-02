@@ -8,6 +8,7 @@ export type Task = components['schemas']['Task'];
 export type CreateTaskRequest = components['schemas']['CreateTaskRequest'];
 export type TaskApplication = components['schemas']['TaskApplication'];
 export type Booking = components['schemas']['Booking'];
+export type BookingIntent = components['schemas']['BookingIntent'];
 export type Review = components['schemas']['Review'];
 export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
@@ -90,6 +91,22 @@ export interface MobileApiClient {
     accessToken: string,
     taskId: string,
     applicationId: string,
+    liabilityDisclaimerAccepted: boolean,
+    idempotencyKey: string,
+  ): Promise<Booking>;
+
+  createBookingIntent(
+    accessToken: string,
+    taskId: string,
+    source: 'REBOOK' | 'INSTANT_MATCH',
+    taskerId: string,
+    originalBookingId?: string,
+    offerId?: string,
+  ): Promise<BookingIntent>;
+
+  confirmBookingIntent(
+    accessToken: string,
+    bookingIntentId: string,
     liabilityDisclaimerAccepted: boolean,
     idempotencyKey: string,
   ): Promise<Booking>;
@@ -410,6 +427,50 @@ export class HttpMobileApiClient implements MobileApiClient {
   ): Promise<Booking> {
     return this.requestJson<Booking>(
       `/tasks/${taskId}/applications/${applicationId}/accept`,
+      {
+        method: 'POST',
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          liability_disclaimer_accepted: liabilityDisclaimerAccepted,
+        }),
+      },
+      accessToken,
+    );
+  }
+
+  createBookingIntent(
+    accessToken: string,
+    taskId: string,
+    source: 'REBOOK' | 'INSTANT_MATCH',
+    taskerId: string,
+    originalBookingId?: string,
+    offerId?: string,
+  ): Promise<BookingIntent> {
+    return this.requestJson<BookingIntent>(
+      `/tasks/${taskId}/booking-intents`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          source,
+          tasker_id: taskerId,
+          original_booking_id: originalBookingId,
+          offer_id: offerId,
+        }),
+      },
+      accessToken,
+    );
+  }
+
+  confirmBookingIntent(
+    accessToken: string,
+    bookingIntentId: string,
+    liabilityDisclaimerAccepted: boolean,
+    idempotencyKey: string,
+  ): Promise<Booking> {
+    return this.requestJson<Booking>(
+      `/booking-intents/${bookingIntentId}/confirm`,
       {
         method: 'POST',
         headers: {

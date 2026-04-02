@@ -47,8 +47,12 @@ describe('ReviewHardLock (SCR-SHARED-019)', () => {
     const { ReviewHardLock } = require('../../../src/features/review/components/ReviewHardLock');
     render(<ReviewHardLock bookingId="booking-123" />);
 
-    expect(screen.getByText('shared.review.hardLockTitle')).toBeTruthy();
-    expect(screen.getByText('shared.review.hardLockBody')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээ өгөх шаардлагатай')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Та үргэлжлүүлэн ашиглахын тулд өмнөх захиалгын үнэлгээгээ өгөх шаардлагатай.',
+      ),
+    ).toBeTruthy();
   });
 
   it('has no dismiss option — no close or back button', () => {
@@ -64,7 +68,7 @@ describe('ReviewHardLock (SCR-SHARED-019)', () => {
     render(<ReviewHardLock bookingId="booking-123" />);
 
     expect(screen.getByTestId('review-hard-lock')).toBeTruthy();
-    expect(screen.getByText('shared.review.submit')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээ өгөх')).toBeTruthy();
   });
 
   it('routes to the shared review screen when the CTA is tapped', () => {

@@ -32,8 +32,18 @@ jest.mock('lucide-react-native', () => {
 });
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
   const { View } = require('react-native');
-  const MockBottomSheet = ({ children, ...props }: any) => <View {...props}>{children}</View>;
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, ...props }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      snapToIndex: jest.fn(),
+      close: jest.fn(),
+    }));
+    return <View {...props}>{children}</View>;
+  });
   MockBottomSheet.displayName = 'MockBottomSheet';
   return {
     __esModule: true,

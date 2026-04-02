@@ -9,107 +9,132 @@ import { mobileTheme } from '../../design/tokenAdapter';
 
 const { spacing } = mobileTheme;
 
+function readNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function formatPercent(value: number | undefined): string {
+  return value == null ? '—' : `${value}%`;
+}
+
+function formatRating(value: number | undefined): string {
+  return value == null ? '—' : value.toFixed(1);
+}
+
 export default function TaskerStatsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useMyStats();
 
-  const stats = data as
-    | ({
-        jobs_completed: number;
-        average_rating: number;
-        response_time_minutes: number;
-        reliability_score: number;
-        completion_rate?: number;
-        cancellations_30d?: number;
-        rating_breakdown?: {
-          task_clarity?: number;
-          respectfulness?: number;
-          punctuality?: number;
-        };
-        is_pro?: boolean;
-      } & Record<string, unknown>)
-    | undefined;
+  const rawStats = (data ?? {}) as Record<string, unknown>;
+  const jobsCompleted = readNumber(rawStats.jobs_completed);
+  const averageRating = readNumber(rawStats.average_rating);
+  const responseTimeMinutes = readNumber(rawStats.response_time_minutes);
+  const reliabilityScore = readNumber(rawStats.reliability_score);
+  const completionRate = readNumber(rawStats.completion_rate);
+  const applicationSuccessRate = readNumber(rawStats.application_success_rate) ?? completionRate;
+  const unlockConversionRate = readNumber(rawStats.unlock_conversion_rate) ?? applicationSuccessRate;
+  const cancellations30d = readNumber(rawStats.cancellations_30d) ?? 0;
+  const ratingBreakdown = (rawStats.rating_breakdown ?? {}) as Record<string, unknown>;
+  const taskClarity = readNumber(ratingBreakdown.task_clarity);
+  const respectfulness = readNumber(ratingBreakdown.respectfulness);
+  const punctuality = readNumber(ratingBreakdown.punctuality);
+  const isPro = Boolean(rawStats.is_pro);
 
   return (
     <DetailTemplate
-      headerTitle={t('tasker.stats.title', 'My Stats')}
+      headerTitle={t('tasker.stats.title', 'Миний статистик')}
       onBack={() => router.back()}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
       testID="tasker-stats"
     >
-      {stats && (
+      {data && (
         <View style={styles.content}>
           <View style={styles.heroCard} testID="tasker-stats-hero">
-            <Text style={styles.heroLabel}>{t('tasker.stats.heroLabel', 'Your rating')}</Text>
-            <Text style={styles.heroValue}>{stats.average_rating.toFixed(1)}</Text>
+            <Text style={styles.heroLabel}>{t('tasker.stats.heroLabel', 'Таны үнэлгээ')}</Text>
+            <Text style={styles.heroValue}>{formatRating(averageRating)}</Text>
             <Text style={styles.heroMeta}>
-              {t('tasker.stats.heroMeta', 'From customer reviews')}
+              {t('tasker.stats.heroMeta', 'Захиалагчийн үнэлгээнээс')}
             </Text>
           </View>
 
-          <View style={styles.statsRow}>
-            <StatCard
-              value={String(stats.jobs_completed)}
-              label={t('tasker.stats.jobsCompleted', 'Completed Jobs')}
-            />
-            <StatCard
-              value={String(stats.average_rating)}
-              label={t('tasker.stats.averageRating', 'Overall Rating')}
-            />
-          </View>
-          <View style={styles.statsRow}>
-            <StatCard
-              value={String(stats.response_time_minutes)}
-              label={t('tasker.stats.responseTime', 'Response Time')}
-            />
-            <StatCard
-              value={`${stats.reliability_score}%`}
-              label={t('tasker.stats.reliabilityScore', 'Reliability Score')}
-            />
-          </View>
-          <View style={styles.statsRow}>
-            <StatCard
-              value={`${stats.completion_rate ?? stats.reliability_score}%`}
-              label={t('tasker.stats.completionRate', 'Completion Rate')}
-            />
-            <StatCard
-              value={String(stats.cancellations_30d ?? 0)}
-              label={t('tasker.stats.cancellations30d', 'Cancellations (30d)')}
-            />
-          </View>
+          <Text style={styles.sectionHeading}>
+            {t('tasker.stats.sectionHeading', 'Ерөнхий үзүүлэлтүүд')}
+          </Text>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('tasker.stats.ratingBreakdown', 'Rating Breakdown')}</Text>
-            <Text style={styles.sectionLine}>
-              {t('tasker.stats.taskClarity', 'Task Clarity')}: {stats.rating_breakdown?.task_clarity ?? stats.average_rating}
-            </Text>
-            <Text style={styles.sectionLine}>
-              {t('tasker.stats.respectfulness', 'Respectfulness')}: {stats.rating_breakdown?.respectfulness ?? stats.average_rating}
-            </Text>
-            <Text style={styles.sectionLine}>
-              {t('tasker.stats.punctuality', 'Punctuality')}: {stats.rating_breakdown?.punctuality ?? stats.average_rating}
-            </Text>
+          <View style={styles.statsGrid}>
+            <StatCard
+              value={String(jobsCompleted ?? 0)}
+              label={t('tasker.stats.jobsCompleted', 'Дууссан ажил')}
+            />
+            <StatCard
+              value={formatRating(averageRating)}
+              label={t('tasker.stats.averageRating', 'Ерөнхий үнэлгээ')}
+            />
+          </View>
+          <View style={styles.statsGrid}>
+            <StatCard
+              value={formatPercent(completionRate)}
+              label={t('tasker.stats.completionRate', 'Гүйцэтгэлийн хувь')}
+            />
+            <StatCard
+              value={formatPercent(applicationSuccessRate)}
+              label={t('tasker.stats.applicationSuccess', 'Анкетын амжилт')}
+            />
+          </View>
+          <View style={styles.statsGrid}>
+            <StatCard
+              value={String(cancellations30d)}
+              label={t('tasker.stats.cancellations30d', 'Цуцлалт (30 хоногт)')}
+            />
+            <StatCard
+              value={formatPercent(reliabilityScore)}
+              label={t('tasker.stats.reliabilityScore', 'Найдвартай байдлын оноо')}
+            />
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('tasker.stats.reliabilityHeading', 'Reliability')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('tasker.stats.ratingBreakdown', 'Үнэлгээний задаргаа')}
+            </Text>
+            <Text style={styles.sectionLine}>
+              {t('tasker.stats.taskClarity', 'Даалгаврын тодорхой байдал')}: {taskClarity ?? averageRating ?? '—'}
+            </Text>
+            <Text style={styles.sectionLine}>
+              {t('tasker.stats.respectfulness', 'Хүндэтгэлтэй хандлага')}: {respectfulness ?? averageRating ?? '—'}
+            </Text>
+            <Text style={styles.sectionLine}>
+              {t('tasker.stats.punctuality', 'Цаг баримтлал')}: {punctuality ?? averageRating ?? '—'}
+            </Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('tasker.stats.reliabilityHeading', 'Найдвартай байдал')}</Text>
+            <Text style={styles.sectionLine}>
+              {t('tasker.stats.reliabilityLabel', 'Найдвартай байдлын оноо')}: {formatPercent(reliabilityScore)}
+            </Text>
             <Text style={styles.sectionLine}>
               {t(
                 'tasker.stats.reliabilityDescription',
-                t('tasker.stats.reliabilityDesc', 'Based on completion rate, punctuality, ratings, and cancellation history'),
+                'Гүйцэтгэлийн хувь, цаг баримтлал, үнэлгээ, цуцлалтын түүх дээр суурилсан',
               )}
             </Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('tasker.stats.proBadge', 'Pro Badge')}</Text>
+            <Text style={styles.sectionTitle}>{t('tasker.stats.activityHeading', 'Идэвхжил')}</Text>
             <Text style={styles.sectionLine}>
-              {stats.is_pro
-                ? t('tasker.stats.proBadgeEarned', 'Pro Badge earned!')
-                : t('tasker.stats.proBadgeEligible', 'Earn Pro Badge with 15+ jobs and 4.5+ rating')}
+              {t('tasker.stats.unlockConversion', 'Түгжээ тайлалтын хувь')}: {formatPercent(unlockConversionRate)}
+            </Text>
+            <Text style={styles.sectionLine}>
+              {t('tasker.stats.responseTime', 'Хариу өгөх хугацаа')}: {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
+            </Text>
+            <Text style={styles.sectionLine}>
+              {isPro
+                ? t('tasker.stats.proBadgeEarned', 'Pro Badge олдсон!')
+                : t('tasker.stats.proBadgeEligible', '15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна')}
             </Text>
           </View>
         </View>
@@ -142,6 +167,15 @@ const styles = StyleSheet.create({
     fontSize: mobileTheme.typography.caption,
     color: mobileTheme.colors.primaryForeground,
   },
+  sectionHeading: {
+    fontSize: mobileTheme.typography.subtitle,
+    fontWeight: '700',
+    color: mobileTheme.colors.primaryDeep,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
   section: {
     gap: spacing.xs,
     paddingTop: spacing.sm,
@@ -149,14 +183,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: mobileTheme.typography.subtitle,
     fontWeight: '600',
-    color: mobileTheme.colors.primary,
+    color: mobileTheme.colors.primaryDeep,
   },
   sectionLine: {
     fontSize: mobileTheme.typography.body,
     color: mobileTheme.colors.foreground,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
+    lineHeight: mobileTheme.typography.body * 1.5,
   },
 });

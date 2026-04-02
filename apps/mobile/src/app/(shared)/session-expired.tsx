@@ -24,11 +24,11 @@ export default function SessionExpiredScreen() {
       <View style={styles.scrim} />
       <ModalSheet
         visible
-        title={t('infra.sessionExpired.title', 'Session expired')}
+        title={t('infra.sessionExpired.title', 'Хугацаа дууссан')}
         onClose={() => {}}
         dismissible={false}
         primaryAction={{
-          label: t('infra.sessionExpired.loginButton', 'Log in again'),
+          label: t('infra.sessionExpired.loginButton', 'Дахин нэвтрэх'),
           onPress: handleLogin,
           testID: 'session-expired-screen-login',
         }}
@@ -38,7 +38,10 @@ export default function SessionExpiredScreen() {
             <LogIn size={28} color={colors.primary} />
           </View>
           <Text style={styles.body}>
-            {t('infra.sessionExpired.body', 'Your session has expired. Please log in again')}
+            {t(
+              'infra.sessionExpired.body',
+              'Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү',
+            )}
           </Text>
         </View>
       </ModalSheet>
@@ -49,6 +52,8 @@ export default function SessionExpiredScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
+    zIndex: 30,
     backgroundColor: colors.background,
   },
   scrim: {

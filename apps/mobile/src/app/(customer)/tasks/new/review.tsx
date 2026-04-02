@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { DetailTemplate } from '../../../../components/templates/DetailTemplate'
 import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { parseError } from '../../../../utils/errorHandling';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -39,7 +40,7 @@ function parseIntakeAnswers(value?: string): Record<string, unknown> {
 
 function formatBudget(amount: string): string {
   const num = Number(amount);
-  if (isNaN(num)) return amount;
+  if (Number.isNaN(num)) return amount;
   return `₮${num.toLocaleString('en-US')}`;
 }
 
@@ -53,10 +54,39 @@ function formatSchedule(scheduledAt?: string): string {
     return scheduledAt;
   }
 
-  return `${parsed.toLocaleDateString()} ${parsed.toLocaleTimeString([], {
+  const date = `${parsed.getFullYear()}.${String(parsed.getMonth() + 1).padStart(2, '0')}.${String(parsed.getDate()).padStart(2, '0')}`;
+  const time = parsed.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
-  })}`;
+    hour12: false,
+  });
+  return `${date} ${time}`;
+}
+
+function extractTaskId(result: unknown): string | null {
+  if (!result || typeof result !== 'object') {
+    return null;
+  }
+
+  const candidate = result as {
+    id?: unknown;
+    task?: { id?: unknown };
+    data?: { id?: unknown };
+  };
+
+  if (typeof candidate.id === 'string' && candidate.id.length > 0) {
+    return candidate.id;
+  }
+
+  if (typeof candidate.task?.id === 'string' && candidate.task.id.length > 0) {
+    return candidate.task.id;
+  }
+
+  if (typeof candidate.data?.id === 'string' && candidate.data.id.length > 0) {
+    return candidate.data.id;
+  }
+
+  return null;
 }
 
 function SummarySection({
@@ -64,24 +94,45 @@ function SummarySection({
   value,
   onEdit,
   testID,
+  children,
 }: {
   label: string;
   value: string;
   onEdit?: () => void;
   testID?: string;
+  children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
   return (
     <View style={styles.section} testID={testID}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{label}</Text>
-        {onEdit && (
+        {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
             <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
           </Pressable>
-        )}
+        ) : null}
       </View>
       <Text style={styles.sectionValue}>{value}</Text>
+      {children}
+    </View>
+  );
+}
+
+function PhotosPreview({ photos }: { photos: string[] }) {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.photosRow}>
+      {photos.length > 0 ? (
+        photos.map((photo, index) => (
+          <View key={`${photo}-${index}`} style={styles.photoThumb}>
+            <Text style={styles.photoThumbText}>{String(index + 1)}</Text>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.sectionValue}>{t('customer.postTask.noPhotos', 'No photos added')}</Text>
+      )}
     </View>
   );
 }
@@ -103,108 +154,220 @@ export default function ReviewSubmitScreen() {
   }>();
 
   const { mutateAsync, isPending } = useCreateTask();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const photos = useMemo(() => parsePhotoKeys(params.photos), [params.photos]);
+  const intakeAnswers = useMemo(() => parseIntakeAnswers(params.intakeAnswers), [params.intakeAnswers]);
+  const hasRequiredPayload =
+    Boolean(params.categoryId) &&
+    Boolean(params.description?.trim()) &&
+    Boolean(params.location?.trim()) &&
+    Boolean(params.lat) &&
+    Boolean(params.lng) &&
+    Boolean(params.budget);
 
   const handleSubmit = async () => {
     try {
+      setSubmitError(null);
       const locationLat = Number(params.lat);
       const locationLng = Number(params.lng);
 
-      await mutateAsync({
+      const createdTask = await mutateAsync({
         category_id: params.categoryId ?? '',
         description: params.description ?? '',
         budget: Number(params.budget) || 0,
-        intake_answers: parseIntakeAnswers(params.intakeAnswers),
+        intake_answers: intakeAnswers,
         intake_schema_version: Number(params.intakeSchemaVersion) || 1,
         location_lat: Number.isFinite(locationLat) ? locationLat : 0,
         location_lng: Number.isFinite(locationLng) ? locationLng : 0,
         location_text: params.location ?? '',
         scheduled_at: params.scheduledAt ?? '',
-        photo_keys: parsePhotoKeys(params.photos),
+        photo_keys: photos,
       });
-      router.replace('/(customer)/tasks/new/success');
-    } catch {
-      // Error handled by mutation state
-    }
-  };
+      const taskId = extractTaskId(createdTask);
+      if (!taskId) {
+        throw new Error(
+          t('customer.postTask.submitUnexpectedResponse', 'Unexpected server response. Please try again.'),
+        );
+      }
 
-  const handleBack = () => {
-    router.back();
+      router.replace({
+        pathname: '/(customer)/tasks/new/success',
+        params: { taskId },
+      });
+    } catch (error) {
+      setSubmitError(parseError(error));
+    }
   };
 
   return (
     <DetailTemplate
       headerTitle={t('customer.postTask.reviewPageTitle', 'Review & Submit')}
-      onBack={handleBack}
+      onBack={() => router.back()}
       ctaLabel={t('customer.postTask.postButton', 'Post Task')}
       ctaOnPress={handleSubmit}
       ctaLoading={isPending}
+      ctaDisabled={!hasRequiredPayload}
       testID="review-submit-screen"
     >
       <View style={styles.stepWrap}>
-        <StepIndicator currentStep={6} totalSteps={7} />
+        <StepIndicator currentStep={6} totalSteps={7} testID="review-step-indicator" />
       </View>
+
+      <View style={styles.heroCard}>
+        <Text style={styles.heroLabel}>{t('customer.postTask.sectionScope', 'Job Scope Summary')}</Text>
+        <Text style={styles.heroTitle}>{params.description ?? ''}</Text>
+        <Text style={styles.heroBody}>
+          {t(
+            'customer.postTask.scopeSummaryHint',
+            'You can edit the summary before posting the task.',
+          )}
+        </Text>
+        <View style={styles.categoryBadge}>
+          <Text style={styles.categoryBadgeText}>
+            {t('customer.postTask.sectionCategory', 'Category')} · {params.categoryId}
+          </Text>
+        </View>
+      </View>
+
       <SummarySection
-        label={t('customer.postTask.intakeDescription', 'Description')}
+        label={t('customer.postTask.sectionDetails', 'Task Details')}
         value={params.description ?? ''}
         onEdit={() => router.back()}
         testID="review-section-description"
       />
+
       <SummarySection
-        label={t('customer.postTask.locationTitle', 'Location')}
+        label={t('customer.postTask.sectionPhotos', 'Photos')}
+        value={photos.length > 0 ? t('customer.postTask.photosCount', '{{count}} photos').replace('{{count}}', String(photos.length)) : t('customer.postTask.noPhotos', 'No photos added')}
+        onEdit={() => router.back()}
+        testID="review-section-photos"
+      >
+        <PhotosPreview photos={photos} />
+      </SummarySection>
+
+      <SummarySection
+        label={t('customer.postTask.sectionLocation', 'Location')}
         value={params.location ?? t('customer.postTask.notSet', 'Not set')}
         onEdit={() => router.back()}
         testID="review-section-location"
       />
+
       <SummarySection
-        label={t('customer.postTask.scheduleDate', 'Schedule')}
+        label={t('customer.postTask.sectionSchedule', 'Schedule')}
         value={formatSchedule(params.scheduledAt) || t('customer.postTask.flexible', 'Flexible')}
         onEdit={() => router.back()}
         testID="review-section-schedule"
       />
+
       <SummarySection
-        label={t('customer.postTask.budgetLabel', 'Budget')}
+        label={t('customer.postTask.sectionBudget', 'Budget')}
         value={formatBudget(params.budget ?? '0')}
         onEdit={() => router.back()}
         testID="review-section-budget"
       />
+
       <Text style={styles.paymentNote}>
         {t('customer.postTask.paymentNote', 'Payment is arranged directly with the Tasker')}
       </Text>
+      {submitError ? (
+        <View style={styles.errorBox} testID="review-submit-error">
+          <Text style={styles.errorText}>{submitError}</Text>
+        </View>
+      ) : null}
     </DetailTemplate>
   );
 }
 
 const styles = StyleSheet.create({
+  stepWrap: {
+    marginBottom: spacing.md,
+  },
+  heroCard: {
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  heroLabel: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    fontWeight: '700',
+  },
+  heroTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '800',
+    color: colors.primaryDeep,
+  },
+  heroBody: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primary}12`,
+  },
+  categoryBadgeText: {
+    fontSize: typography.caption,
+    color: colors.primaryDeep,
+    fontWeight: '700',
+  },
   section: {
     backgroundColor: colors.card,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
+    gap: spacing.sm,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm,
   },
   sectionLabel: {
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.mutedForeground,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   editLink: {
     fontSize: typography.label,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.accent,
   },
   sectionValue: {
     fontSize: typography.body,
     color: colors.foreground,
     lineHeight: typography.body * 1.5,
+  },
+  photosRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  photoThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    backgroundColor: `${colors.primary}12`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoThumbText: {
+    fontSize: typography.caption,
+    fontWeight: '800',
+    color: colors.primaryDeep,
   },
   paymentNote: {
     fontSize: typography.caption,
@@ -213,7 +376,17 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
     lineHeight: typography.caption * 1.6,
   },
-  stepWrap: {
+  errorBox: {
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: `${colors.danger}66`,
+    backgroundColor: `${colors.danger}12`,
+    padding: spacing.md,
     marginBottom: spacing.md,
+  },
+  errorText: {
+    fontSize: typography.caption,
+    color: colors.danger,
+    fontWeight: '600',
   },
 });

@@ -34,9 +34,8 @@ export default function SplashScreen() {
         </View>
         <Text style={styles.logo}>Tasky</Text>
         <View style={styles.taglineWrap}>
-          <Text style={styles.tagline}>{t('auth.splash.taglineLine1', 'Найдвартай гүйцэтгэгч')}</Text>
-          <Text style={styles.taglineSecondary}>
-            {t('auth.splash.taglineLine2', 'хялбар захиалга')}
+          <Text style={styles.tagline}>
+            {t('auth.splash.tagline', 'Найдвартай гүйцэтгэгч, хялбар захиалга')}
           </Text>
         </View>
       </View>
@@ -93,14 +92,6 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: typography.label,
     color: colors.primaryForeground,
-    textAlign: 'center',
-    letterSpacing: 2.1,
-    textTransform: 'uppercase',
-    lineHeight: 24,
-  },
-  taglineSecondary: {
-    fontSize: typography.label,
-    color: 'rgba(255,255,255,0.8)',
     textAlign: 'center',
     letterSpacing: 2.1,
     textTransform: 'uppercase',

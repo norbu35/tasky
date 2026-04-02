@@ -122,3 +122,15 @@ Before final PR:
 1. Freeze agent assignments against the normalization matrix lanes (1, 2A, 2B, 3, 4, 5).
 2. For each SCR, fetch Figma via `get_design_context(fileKey, nodeId)` using the matrix node ID (no root-node calls).
 3. Execute UI parity updates batch-by-batch, preserving hooks/navigation and existing testIDs.
+
+## 8. Completion Checkpoint (2026-04-02)
+
+- The in-scope 63-screen refresh lane is implemented in repo history (lane commits plus booking-source follow-up).
+- Current branch (`agent/TASK-002-source-aware-booking-confirmation`) includes the latest customer booking source-aware handoff updates required by this plan.
+- Route wrappers verified as intentionally stable:
+  - `apps/mobile/src/app/(shared)/review/[bookingId].tsx` remains a route-level re-export to the refreshed `ReviewForm` component.
+  - `apps/mobile/src/app/(tasker)/tasks/[taskId].tsx` remains the contract alias redirect to canonical `/task/[id]`.
+- Verification run completed on this branch:
+  - `pnpm --filter @tasky/mobile typecheck` ✅
+  - `pnpm --filter @tasky/mobile exec jest --watchman=false --runInBand` ✅ (105 suites, 719 tests)
+- Remaining tracked mobile work is outside this 63-screen scope and is captured in `tasks/TASK-001.md` (deferred phase screens from AGENTS.md).

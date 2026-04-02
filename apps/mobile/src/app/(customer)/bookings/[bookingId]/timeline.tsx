@@ -1,32 +1,36 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
+import { ChevronLeft, CircleHelp, ClipboardList, House, MessageSquare, UserRound } from 'lucide-react-native';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
+import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
-const EVENT_LABELS: Record<string, string> = {
-  booking_created: 'Booking created',
-  tasker_assigned: 'Tasker assigned',
-  reschedule_requested: 'Reschedule requested',
-  reschedule_accepted: 'Reschedule accepted',
-  reschedule_declined: 'Reschedule declined',
-  reschedule_expired: 'Reschedule request expired',
-  tasker_marked_done: 'Tasker marked as done',
-  customer_confirmed: 'Customer confirmed completion',
-  cancelled: 'Booking cancelled',
-  no_show: 'Flagged as no-show',
-};
+const figmaServiceImageUri =
+  'https://www.figma.com/api/mcp/asset/0cf8176a-cff9-4d3a-9418-2a2d334f986f';
 
-function formatEventLabel(event: string): string {
-  return EVENT_LABELS[event] ?? event.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-}
+const CUSTOMER_NAV_ITEMS = [
+  { id: 'tasks', label: 'Даалгавар', icon: House, href: '/(customer)/tasks' },
+  { id: 'bookings', label: 'Захиалга', icon: ClipboardList, href: '/(customer)/bookings' },
+  { id: 'inbox', label: 'Мэдэгдэл', icon: MessageSquare, href: '/(tabs)/inbox' },
+  { id: 'profile', label: 'Профайл', icon: UserRound, href: '/(tabs)/profile' },
+] as const;
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return ts;
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -35,131 +39,503 @@ function formatTimestamp(ts: string): string {
   return `${y}.${m}.${day} ${h}:${min}`;
 }
 
+function getEventLabel(event: string): string {
+  switch (event) {
+    case 'booking_created':
+      return 'Захиалга үүсгэсэн';
+    case 'tasker_assigned':
+      return 'Гүйцэтгэгч томилогдсон';
+    case 'reschedule_requested':
+      return 'Цаг өөрчлөх хүсэлт';
+    case 'reschedule_accepted':
+      return 'Цаг өөрчлөлт зөвшөөрсөн';
+    case 'reschedule_declined':
+      return 'Цаг өөрчлөлт татгалзсан';
+    case 'reschedule_expired':
+      return 'Хүсэлт дууссан';
+    case 'tasker_marked_done':
+      return 'Гүйцэтгэгч дуусгасан';
+    case 'customer_confirmed':
+      return 'Хэрэглэгч баталгаажуулсан';
+    case 'cancelled':
+      return 'Захиалга цуцалсан';
+    case 'no_show':
+      return 'Ирээгүй гэж тэмдэглэсэн';
+    default:
+      return event;
+  }
+}
+
+function CustomerBottomNav({
+  activeId,
+  onNavigate,
+}: {
+  activeId: (typeof CUSTOMER_NAV_ITEMS)[number]['id'];
+  onNavigate: (href: string) => void;
+}) {
+  return (
+    <View style={styles.bottomNav}>
+      {CUSTOMER_NAV_ITEMS.map((item) => {
+        const isActive = item.id === activeId;
+        const Icon = item.icon;
+        return (
+          <Pressable
+            key={item.id}
+            onPress={() => onNavigate(item.href)}
+            style={[styles.bottomNavItem, isActive && styles.bottomNavItemActive]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
+          >
+            <Icon size={18} color={isActive ? colors.primaryForeground : colors.textSecondary} />
+            <Text style={[styles.bottomNavLabel, isActive && styles.bottomNavLabelActive]}>
+              {item.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function TimelineEventRow({
+  index,
+  event,
+  isActive,
+  isFuture,
+}: {
+  index: number;
+  event: {
+    event: string;
+    timestamp: string;
+    description?: string | null;
+    is_future?: boolean;
+  };
+  isActive: boolean;
+  isFuture: boolean;
+}) {
+  return (
+    <View
+      style={[styles.timelineRow, isFuture && styles.timelineRowFuture]}
+      testID={`timeline-event-${index}-${isFuture ? 'future' : isActive ? 'active' : 'past'}`}
+    >
+      <View style={styles.timelineRail}>
+        <View
+          style={[
+            styles.timelineDot,
+            isActive && styles.timelineDotActive,
+            isFuture && styles.timelineDotFuture,
+            !isActive && !isFuture && styles.timelineDotPast,
+          ]}
+        />
+        {!isFuture ? <View style={styles.timelineLine} /> : <View style={styles.timelineLineMuted} />}
+      </View>
+      <View style={styles.timelineCopy}>
+        <Text style={[styles.timelineTimestamp, isActive && styles.timelineTimestampActive]}>
+          {formatTimestamp(event.timestamp)}
+        </Text>
+        <Text style={[styles.timelineLabel, isActive && styles.timelineLabelActive]}>
+          {getEventLabel(event.event)}
+        </Text>
+        {event.description ? (
+          <Text style={styles.timelineDescription}>{event.description}</Text>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
 export default function BookingTimelineScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: events, isLoading, isError, refetch } = useBookingTimeline(bookingId);
+  const { data: booking } = useBookingDetail(bookingId);
 
-  const timelineEvents = events ?? [];
+  const timelineEvents = (events ?? []) as Array<{
+    event: string;
+    timestamp: string;
+    description?: string | null;
+    is_future?: boolean;
+  }>;
+  const activeIndex = React.useMemo(() => {
+    const lastNonFuture = timelineEvents.reduce<number>((acc, event, index) => {
+      if (!event.is_future) return index;
+      return acc;
+    }, 0);
+    return lastNonFuture;
+  }, [timelineEvents]);
+
+  const handleNavigate = React.useCallback(
+    (href: string) => {
+      router.push(href as never);
+    },
+    [router],
+  );
 
   return (
-    <DetailTemplate
-      headerTitle={t('customer.bookings.timelineTitle', 'Booking Timeline')}
-      onBack={() => router.back()}
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      testID="booking-timeline-screen"
-    >
-      <View style={styles.timeline}>
-        {timelineEvents.map((event: any, index: number) => {
-          const isFuture = Boolean(event.is_future);
-          const isLast = index === timelineEvents.length - 1;
-          const stateLabel = isFuture ? 'future' : isLast ? 'active' : 'past';
+    <SafeAreaView style={styles.safeArea} testID="booking-timeline-screen">
+      <View style={styles.shell}>
+        <View style={styles.header}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.back()}
+            style={styles.backButton}
+            testID="booking-timeline-screen-back"
+          >
+            <ChevronLeft size={22} color={colors.primaryDeep} />
+          </Pressable>
+          <Text style={styles.headerTitle}>
+            {t('customer.bookings.timelineTitle', 'Захиалгын түүх')}
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
 
-          return (
-            <View
-              key={index}
-              style={styles.eventRow}
-              testID={`timeline-event-${index}-${stateLabel}`}
-            >
-              {/* Connector */}
-              <View style={styles.connectorColumn}>
-                <View
-                  style={[
-                    styles.dot,
-                    isFuture ? styles.dotFuture : isLast ? styles.dotActive : styles.dotPast,
-                  ]}
-                />
-                {!isLast && <View style={styles.line} />}
-              </View>
-
-              {/* Content */}
-              <View style={styles.eventContent}>
-                <Text
-                  style={[
-                    styles.eventLabel,
-                    isFuture
-                      ? styles.eventLabelFuture
-                      : isLast
-                        ? styles.eventLabelActive
-                        : null,
-                  ]}
-                >
-                  {formatEventLabel(event.event)}
-                </Text>
-                <Text style={styles.eventTimestamp}>{formatTimestamp(event.timestamp)}</Text>
-                {event.description ? (
-                  <Text style={styles.eventDescription}>{event.description}</Text>
-                ) : null}
-              </View>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.contextCard}>
+            <View style={styles.contextImageWrap}>
+              <Image source={{ uri: figmaServiceImageUri }} style={styles.contextImage} />
             </View>
-          );
-        })}
+            <View style={styles.contextCopy}>
+              <Text style={styles.contextId}>
+                {t('customer.bookings.timelineId', `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`)}
+              </Text>
+              <Text style={styles.contextTitle} numberOfLines={2}>
+                {booking?.task?.description ?? t('customer.bookings.timelineFallbackTitle', 'Даалгаврын дэлгэрэнгүй')}
+              </Text>
+              <Text style={styles.contextSubtitle} numberOfLines={1}>
+                {booking?.tasker?.full_name
+                  ? `${booking.tasker.full_name} (${t('customer.bookings.timelineTasker', 'Гүйцэтгэгч')})`
+                  : t('customer.bookings.timelineTaskerFallback', 'Гүйцэтгэгч')}
+              </Text>
+            </View>
+          </View>
+
+          {isLoading ? (
+            <View style={styles.loadingBlock}>
+              <View style={styles.loadingLineLarge} />
+              <View style={styles.loadingLineMedium} />
+              <View style={styles.loadingLineMedium} />
+            </View>
+          ) : null}
+
+          <View style={styles.timelineSection}>
+            {timelineEvents.map((event, index) => (
+              <TimelineEventRow
+                key={`${event.event}-${event.timestamp}-${index}`}
+                index={index}
+                event={event}
+                isActive={index === activeIndex}
+                isFuture={Boolean(event.is_future)}
+              />
+            ))}
+          </View>
+
+          <View style={styles.helpCard}>
+            <View style={styles.helpHeader}>
+              <Text style={styles.helpTitle}>
+                {t('customer.bookings.helpTitle', 'Тусламж хэрэгтэй юу?')}
+              </Text>
+              <CircleHelp size={18} color={colors.secondary} />
+            </View>
+            <Text style={styles.helpBody}>
+              {t(
+                'customer.bookings.helpBody',
+                'Хэрэв танд захиалгын талаар асуулт гарвал манай дэмжлэгийн багтай холбогдоорой.',
+              )}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push('/(shared)/help')}
+              style={styles.helpButton}
+              testID="booking-timeline-help-cta"
+            >
+              <Text style={styles.helpButtonText}>
+                {t('customer.bookings.helpCta', 'Оператортой холбогдох')}
+              </Text>
+            </Pressable>
+          </View>
+
+          {isError ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void refetch()}
+              style={styles.errorBanner}
+              testID="booking-timeline-error"
+            >
+              <Text style={styles.errorBannerText}>
+                {t(
+                  'customer.bookings.timelineError',
+                  'Захиалгын түүх ачааллахад алдаа гарлаа. Дахин оролдох.',
+                )}
+              </Text>
+            </Pressable>
+          ) : null}
+        </ScrollView>
+
+        <CustomerBottomNav activeId="bookings" onNavigate={handleNavigate} />
       </View>
-    </DetailTemplate>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  timeline: {
-    paddingVertical: spacing.md,
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
-  eventRow: {
+  shell: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  header: {
     flexDirection: 'row',
-    minHeight: 60,
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
   },
-  connectorColumn: {
-    width: 32,
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: 164,
+    gap: spacing.lg,
+  },
+  contextCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+  },
+  contextImageWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    backgroundColor: colors.card,
+  },
+  contextImage: {
+    width: '100%',
+    height: '100%',
+  },
+  contextCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  contextId: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.secondary,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  contextTitle: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    lineHeight: typography.title * 1.2,
+  },
+  contextSubtitle: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
+  loadingBlock: {
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+  },
+  loadingLineLarge: {
+    height: 16,
+    borderRadius: radius.xs,
+    backgroundColor: colors.muted,
+    width: '55%',
+  },
+  loadingLineMedium: {
+    height: 12,
+    borderRadius: radius.xs,
+    backgroundColor: colors.muted,
+    width: '72%',
+  },
+  timelineSection: {
+    gap: spacing.lg,
+    paddingVertical: spacing.xs,
+  },
+  timelineRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    alignItems: 'flex-start',
+  },
+  timelineRowFuture: {
+    opacity: 0.45,
+  },
+  timelineRail: {
+    width: 24,
     alignItems: 'center',
   },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  timelineDot: {
+    width: 24,
+    height: 24,
+    borderRadius: radius.full,
+    borderWidth: 3,
+    borderColor: colors.background,
+    backgroundColor: colors.primaryDeep,
+    zIndex: 1,
   },
-  dotActive: {
-    backgroundColor: colors.primary,
+  timelineDotPast: {
+    backgroundColor: colors.primaryDeep,
   },
-  dotPast: {
+  timelineDotActive: {
+    backgroundColor: colors.secondary,
+  },
+  timelineDotFuture: {
     backgroundColor: colors.chipInactive,
   },
-  dotFuture: {
-    backgroundColor: colors.border,
-  },
-  line: {
+  timelineLine: {
     width: 2,
     flex: 1,
-    backgroundColor: colors.chipInactive,
-    marginVertical: 2,
+    minHeight: 28,
+    marginTop: -1,
+    backgroundColor: colors.border,
   },
-  eventContent: {
+  timelineLineMuted: {
+    width: 2,
     flex: 1,
-    paddingLeft: spacing.sm,
-    paddingBottom: spacing.lg,
+    minHeight: 28,
+    marginTop: -1,
+    backgroundColor: colors.border,
+    opacity: 0.5,
   },
-  eventLabel: {
+  timelineCopy: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  timelineTimestamp: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.textSecondary,
+  },
+  timelineTimestampActive: {
+    color: colors.secondary,
+  },
+  timelineLabel: {
     fontSize: typography.body,
-    color: colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '700',
+    color: colors.primaryDeep,
   },
-  eventLabelActive: {
-    color: colors.primary,
-    fontWeight: '600',
+  timelineLabelActive: {
+    color: colors.secondary,
   },
-  eventTimestamp: {
-    fontSize: typography.caption,
-    color: colors.textTertiary,
-    marginTop: spacing.xs,
-  },
-  eventDescription: {
+  timelineDescription: {
     fontSize: typography.caption,
     color: colors.textSecondary,
-    marginTop: spacing.xs,
     lineHeight: typography.caption * 1.5,
   },
-  eventLabelFuture: {
-    color: colors.textTertiary,
+  helpCard: {
+    backgroundColor: colors.primaryDeep,
+    borderRadius: 16,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  helpHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  helpTitle: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+  },
+  helpBody: {
+    fontSize: typography.body,
+    color: colors.accent,
+    lineHeight: typography.body * 1.5,
+  },
+  helpButton: {
+    minHeight: 48,
+    borderRadius: radius.md,
+    backgroundColor: colors.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  helpButtonText: {
+    fontSize: typography.label,
+    fontWeight: '700',
+    color: colors.secondaryForeground,
+  },
+  errorBanner: {
+    backgroundColor: colors.danger,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  errorBannerText: {
+    fontSize: typography.label,
+    fontWeight: '600',
+    color: colors.dangerForeground,
+  },
+  bottomNav: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.card,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    shadowColor: 'rgba(26,28,26,0.06)',
+    shadowOpacity: 1,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: -10 },
+    elevation: 8,
+  },
+  bottomNavItem: {
+    flex: 1,
+    minWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
+  },
+  bottomNavItemActive: {
+    backgroundColor: colors.primary,
+  },
+  bottomNavLabel: {
+    fontSize: typography.micro,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  bottomNavLabelActive: {
+    color: colors.primaryForeground,
   },
 });

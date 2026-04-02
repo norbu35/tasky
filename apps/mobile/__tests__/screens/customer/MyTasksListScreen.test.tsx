@@ -59,8 +59,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByTestId('my-tasks-screen')).toBeTruthy();
-    // FeedListTemplate shows skeletons when isLoading=true
+    expect(screen.getByTestId('my-tasks-loading-state')).toBeTruthy();
   });
 
   it('renders empty activation state when no tasks', () => {
@@ -71,7 +70,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByText('My Tasks')).toBeTruthy();
+    expect(screen.getByText('Миний даалгаврууд')).toBeTruthy();
     expect(screen.getByText('No tasks yet')).toBeTruthy();
     expect(screen.getByText('Post your first task and find a trusted tasker')).toBeTruthy();
   });
@@ -166,19 +165,27 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/t-1');
   });
 
-  it('renders filter tabs', () => {
+  it('renders hero task counts', () => {
     mockUseMyTasks.mockReturnValue({
-      data: { data: [] },
+      data: {
+        data: [
+          {
+            id: 't-1',
+            description: 'Fix my sink',
+            status: 'OPEN',
+            budget: 50000,
+            scheduled_at: '2026-04-01T10:00:00Z',
+            category: { name: 'Handyman' },
+          },
+        ],
+      },
       isLoading: false,
       isError: false,
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByTestId('my-tasks-filter-bar')).toBeTruthy();
-    expect(screen.getByText('All')).toBeTruthy();
+    expect(screen.getByText('1')).toBeTruthy();
     expect(screen.getAllByText('Open').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Assigned').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Completed').length).toBeGreaterThan(0);
   });
 
   it('renders FAB button', () => {
@@ -212,6 +219,6 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByTestId('my-tasks-screen')).toBeTruthy();
+    expect(screen.getByTestId('my-tasks-error-state')).toBeTruthy();
   });
 });

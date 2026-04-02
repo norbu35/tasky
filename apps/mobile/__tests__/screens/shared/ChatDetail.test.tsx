@@ -224,8 +224,8 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
     const ChatDetailScreen = require('../../../src/app/(tabs)/inbox/[id]').default;
     render(<ChatDetailScreen />);
 
-    expect(screen.getByText('Failed to load messages')).toBeTruthy();
-    fireEvent.press(screen.getByText('Retry'));
+    expect(screen.getByText('Мессежүүдийг ачаалж чадсангүй')).toBeTruthy();
+    fireEvent.press(screen.getByText('Дахин оролдох'));
     expect(refetch).toHaveBeenCalled();
   });
 

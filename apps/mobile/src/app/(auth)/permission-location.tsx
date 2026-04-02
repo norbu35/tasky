@@ -28,15 +28,14 @@ export default function PermissionLocationScreen() {
   return (
     <View style={styles.container} testID="permission-location-screen">
       <PermissionPrimer
-        icon={<MapPin size={48} color={colors.primary} />}
+        icon={<MapPin size={48} color={colors.primaryDeep} />}
         title="Байршил ашиглах зөвшөөрөл"
-        description="Ойролцоох даалгаврууд харуулахад байршил хэрэгтэй"
+        description="Ойролцоох даалгавруудыг харуулах, байршил тодорхойлоход хэрэгтэй"
         deniedMessage="Байршлын зөвшөөрөл хаагдсан"
         settingsHint="Тохиргооноос байршлыг нээх боломжтой"
         continueLabel="Үргэлжлүүлэх"
         allowLabel="Зөвшөөрөх"
-        skipLabel="Дараа"
-        footerNote="Таны мэдээлэл нууцлагдсан"
+        skipLabel="Дараа хийх"
         isDenied={isDenied}
         onGrant={() => {
           void handleGrant();

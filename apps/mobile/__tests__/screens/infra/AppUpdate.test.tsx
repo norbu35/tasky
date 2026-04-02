@@ -57,15 +57,17 @@ describe('AppUpdateScreen', () => {
   it('renders soft update title and body by default', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('New version available')).toBeTruthy();
-    expect(screen.getByText('A new version is available. Update for a better experience')).toBeTruthy();
+    expect(screen.getByText('Шинэ хувилбар гарлаа')).toBeTruthy();
+    expect(
+      screen.getByText('Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой'),
+    ).toBeTruthy();
   });
 
   it('shows dismiss button for soft update', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Later')).toBeTruthy();
-    expect(screen.getByText('Update')).toBeTruthy();
+    expect(screen.getByText('Дараа нь')).toBeTruthy();
+    expect(screen.getByText('Шинэчлэх')).toBeTruthy();
   });
 
   it('force update hides dismiss button', () => {
@@ -73,25 +75,23 @@ describe('AppUpdateScreen', () => {
 
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Update required')).toBeTruthy();
-    expect(screen.getByText('Update')).toBeTruthy();
-    expect(
-      screen.getByText('An update is required to continue using the app'),
-    ).toBeTruthy();
-    expect(screen.queryByText('Later')).toBeFalsy();
+    expect(screen.getByText('Шинэчлэлт шаардлагатай')).toBeTruthy();
+    expect(screen.getByText('Шинэчлэх')).toBeTruthy();
+    expect(screen.getByText('Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай')).toBeTruthy();
+    expect(screen.queryByText('Дараа нь')).toBeFalsy();
   });
 
   it('update button opens store link', () => {
     render(<AppUpdateScreen />);
 
-    fireEvent.press(screen.getByText('Update'));
+    fireEvent.press(screen.getByText('Шинэчлэх'));
     expect(mockOpenURL).toHaveBeenCalled();
   });
 
   it('soft update dismiss goes back', () => {
     render(<AppUpdateScreen />);
 
-    fireEvent.press(screen.getByText('Later'));
+    fireEvent.press(screen.getByText('Дараа нь'));
     expect(mockBack).toHaveBeenCalled();
   });
 

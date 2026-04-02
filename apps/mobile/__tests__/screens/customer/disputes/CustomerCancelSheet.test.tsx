@@ -20,8 +20,18 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
   const { View } = require('react-native');
-  const MockBottomSheet = ({ children, ...props }: any) => <View {...props}>{children}</View>;
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, ...props }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      snapToIndex: jest.fn(),
+      close: jest.fn(),
+    }));
+    return <View {...props}>{children}</View>;
+  });
   MockBottomSheet.displayName = 'MockBottomSheet';
   return {
     __esModule: true,
@@ -68,19 +78,19 @@ describe('CustomerCancelSheet (SCR-CUST-022)', () => {
 
   it('shows title "Cancel Booking"', () => {
     render(<CustomerCancelSheet {...defaultProps} />);
-    expect(screen.getAllByText('Cancel Booking').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Захиалга цуцлах').length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows free cancel copy when cancelType is free_cancel', () => {
     render(<CustomerCancelSheet {...defaultProps} cancelType="free_cancel" />);
-    expect(screen.getByText('You can cancel this booking with no penalty.')).toBeTruthy();
+    expect(screen.getByText('Та энэ захиалгыг торгуулгүйгээр цуцлах боломжтой.')).toBeTruthy();
   });
 
   it('shows late cancel warning when cancelType is late_cancel_warning', () => {
     render(<CustomerCancelSheet {...defaultProps} cancelType="late_cancel_warning" />);
     expect(
       screen.getByText(
-        'Less than 4 hours until scheduled time. This cancellation will be recorded as a reliability incident.',
+        'Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ. Энэ цуцлалт таны найдвартай байдлын бүртгэлд тэмдэглэгдэнэ.',
       ),
     ).toBeTruthy();
   });
@@ -89,7 +99,7 @@ describe('CustomerCancelSheet (SCR-CUST-022)', () => {
     render(<CustomerCancelSheet {...defaultProps} />);
     expect(
       screen.getByText(
-        'Cancellation policy: >4 hours before — no penalty. Within 4 hours — reliability incident.',
+        'Цуцлалтын бодлого: 4+ цагийн өмнө — торгуулгүй. 4 цагийн дотор — найдвартай байдлын зөрчил.',
       ),
     ).toBeTruthy();
   });
@@ -111,7 +121,7 @@ describe('CustomerCancelSheet (SCR-CUST-022)', () => {
   it('Go Back button closes the sheet', () => {
     const onClose = jest.fn();
     render(<CustomerCancelSheet {...defaultProps} onClose={onClose} />);
-    fireEvent.press(screen.getByText('Go Back'));
+    fireEvent.press(screen.getByText('Буцах'));
     expect(onClose).toHaveBeenCalled();
   });
 });

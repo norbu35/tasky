@@ -47,6 +47,7 @@ const makeProfile = (overrides: Record<string, any> = {}) => ({
   completed_tasks: 24,
   is_pro: true,
   bio: 'Experienced handyman',
+  categories: ['Handyman', 'Moving'],
   created_at: '2025-01-15T00:00:00Z',
   ...overrides,
 });
@@ -157,5 +158,17 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
     });
     render(<TaskerProfileScreen />);
     expect(screen.getByText('Reviews')).toBeTruthy();
+  });
+
+  it('shows categories and message CTA copy', () => {
+    mockUseTaskerProfile.mockReturnValue({
+      profile: { data: makeProfile(), isLoading: false, isError: false },
+      reviews: { data: { data: [] }, isLoading: false, isError: false },
+    });
+    render(<TaskerProfileScreen />);
+    expect(screen.getByText('Categories')).toBeTruthy();
+    expect(screen.getByText('Handyman')).toBeTruthy();
+    expect(screen.getByText('Moving')).toBeTruthy();
+    expect(screen.getByText('Message')).toBeTruthy();
   });
 });

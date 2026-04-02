@@ -114,6 +114,7 @@ export default function BookingDetailScreen() {
         router.push({
           pathname: '/(customer)/rebook',
           params: {
+            bookingId,
             taskerId: booking.tasker?.id,
             taskerName: booking.tasker?.full_name,
             taskerAvatar: booking.tasker?.avatar_url,

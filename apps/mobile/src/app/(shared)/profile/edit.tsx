@@ -39,7 +39,7 @@ export default function EditProfileScreen() {
     setNameError('');
 
     if (!name.trim()) {
-      setNameError(t('shared.profile.nameRequired', 'Name is required'));
+      setNameError(t('shared.profile.nameRequired', 'Нэр хоосон байж болохгүй'));
       return;
     }
 
@@ -59,7 +59,7 @@ export default function EditProfileScreen() {
       totalSteps={1}
       onNext={handleSave}
       onBack={() => router.back()}
-      nextLabel={t('shared.profile.save', 'Save')}
+      nextLabel={t('shared.profile.save', 'Хадгалах')}
       nextDisabled={isLoading || !isDirty}
       nextLoading={updateMutation.isPending}
       showBack={true}
@@ -71,30 +71,30 @@ export default function EditProfileScreen() {
         <Pressable style={styles.changePhotoButton}>
           <Camera size={16} color={colors.primary} />
           <Text style={styles.changePhotoText}>
-            {t('shared.profile.changePhoto', 'Change photo')}
+            {t('shared.profile.changePhoto', 'Зураг солих')}
           </Text>
         </Pressable>
       </View>
 
       {/* Name Field */}
-      <FormField label={t('shared.profile.nameLabel', 'Name')} errorText={nameError || undefined}>
+      <FormField label={t('shared.profile.nameLabel', 'Нэр')} errorText={nameError || undefined}>
         <Input
           value={name}
           onChangeText={(text) => {
             setName(text);
             if (nameError) setNameError('');
           }}
-          placeholder={t('shared.profile.namePlaceholder', 'Enter your name')}
+          placeholder={t('shared.profile.namePlaceholder', 'Нэрээ оруулна уу')}
           maxLength={50}
         />
       </FormField>
 
       {/* Bio Field */}
-      <FormField label={t('shared.profile.bioLabel', 'About me')}>
+      <FormField label={t('shared.profile.bioLabel', 'Миний тухай')}>
         <Input
           value={bio}
           onChangeText={setBio}
-          placeholder={t('shared.profile.bioPlaceholder', 'Write about yourself')}
+          placeholder={t('shared.profile.bioPlaceholder', 'Өөрийнхөө тухай бичнэ үү')}
           maxLength={200}
           multiline
           numberOfLines={4}

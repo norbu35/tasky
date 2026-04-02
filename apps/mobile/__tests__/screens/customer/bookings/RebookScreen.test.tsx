@@ -43,9 +43,16 @@ jest.mock('lucide-react-native', () => {
 });
 
 const mockCreateTask = jest.fn();
+const mockCreateBookingIntent = jest.fn();
 jest.mock('../../../../src/features/tasks/hooks/useCreateTask', () => ({
   useCreateTask: () => ({
     mutateAsync: mockCreateTask,
+    isPending: false,
+  }),
+}));
+jest.mock('../../../../src/features/bookings/hooks/useCreateBookingIntent', () => ({
+  useCreateBookingIntent: () => ({
+    mutateAsync: mockCreateBookingIntent,
     isPending: false,
   }),
 }));
@@ -94,6 +101,7 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('submit creates new task', async () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
+    mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
     fireEvent.press(screen.getByTestId('rebook-screen-next'));
     await waitFor(() => {
@@ -109,12 +117,25 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('success navigates to confirm booking', async () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
+    mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
     fireEvent.press(screen.getByTestId('rebook-screen-next'));
     await waitFor(() => {
+      expect(mockCreateBookingIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: 'new-task-1',
+          source: 'REBOOK',
+          originalBookingId: undefined,
+          taskerId: 'tasker-1',
+        }),
+      );
       expect(mockPush).toHaveBeenCalledWith(
         expect.objectContaining({
           pathname: '/(customer)/bookings/confirm',
+          params: expect.objectContaining({
+            source: 'rebook',
+            bookingIntentId: 'intent-1',
+          }),
         }),
       );
     });

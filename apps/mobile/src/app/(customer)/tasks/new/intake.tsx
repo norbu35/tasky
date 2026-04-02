@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
@@ -7,18 +7,28 @@ import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
+
+const intakeTypes = ['One-time', 'Recurring', 'Urgent'] as const;
 
 export default function IntakeFormScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{ categoryId: string }>();
   const [description, setDescription] = useState('');
+  const [selectedType, setSelectedType] = useState<(typeof intakeTypes)[number]>('One-time');
+  const [roomCount, setRoomCount] = useState('');
   const [error, setError] = useState('');
-  const stepLabel = t('taskPost.step', 'Step {{current}} of {{total}}')
-    .replace('{{current}}', '2')
-    .replace('{{total}}', '7');
+
   const descriptionLength = description.length;
+  const intakeAnswers = useMemo(
+    () => ({
+      description,
+      task_type: selectedType,
+      room_count: roomCount ? Number(roomCount) : null,
+    }),
+    [description, roomCount, selectedType],
+  );
 
   const handleNext = () => {
     if (!description.trim()) {
@@ -31,14 +41,10 @@ export default function IntakeFormScreen() {
       params: {
         categoryId: params.categoryId,
         description,
-        intakeAnswers: JSON.stringify({ description }),
+        intakeAnswers: JSON.stringify(intakeAnswers),
         intakeSchemaVersion: '1',
       },
     });
-  };
-
-  const handleBack = () => {
-    router.back();
   };
 
   return (
@@ -46,17 +52,18 @@ export default function IntakeFormScreen() {
       currentStep={1}
       totalSteps={7}
       onNext={handleNext}
-      onBack={handleBack}
+      onBack={() => router.back()}
       nextLabel={t('common.continue', 'Continue')}
       testID="intake-form-screen"
     >
       <View style={styles.headerBlock}>
-        <Text style={styles.stepLabel}>{stepLabel}</Text>
+        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '2').replace('{{total}}', '7')}</Text>
         <Text style={styles.title}>{t('customer.postTask.intakePageTitle', 'Task Details')}</Text>
         <Text style={styles.instruction}>
           {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
         </Text>
       </View>
+
       <View style={styles.tipCard}>
         <Text style={styles.tipTitle}>
           {t('customer.postTask.intakeTipTitle', 'Better details lead to better offers')}
@@ -68,6 +75,7 @@ export default function IntakeFormScreen() {
           )}
         </Text>
       </View>
+
       <FormField
         label={t('customer.postTask.intakeDescription', 'Description')}
         errorText={error || undefined}
@@ -96,6 +104,42 @@ export default function IntakeFormScreen() {
           <Text style={styles.counter}>{`${descriptionLength} / 500`}</Text>
         </View>
       </FormField>
+
+      <FormField
+        label={t('customer.postTask.intakeTaskType', 'Task type')}
+        helperText={t('customer.postTask.intakeTaskTypeHelper', 'Pick the closest fit')}
+      >
+        <View style={styles.chipRow}>
+          {intakeTypes.map((type) => {
+            const active = type === selectedType;
+            return (
+              <Pressable
+                key={type}
+                onPress={() => setSelectedType(type)}
+                style={[styles.chip, active && styles.chipActive]}
+                accessibilityRole="button"
+                testID={`intake-type-${type.toLowerCase()}`}
+              >
+                <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{type}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </FormField>
+
+      <FormField
+        label={t('customer.postTask.intakeRoomCount', 'Room count')}
+        helperText={t('customer.postTask.intakeRoomCountHelper', 'Optional: helps size the job')}
+      >
+        <Input
+          testID="intake-room-count-input"
+          value={roomCount}
+          onChangeText={setRoomCount}
+          placeholder={t('customer.postTask.intakeRoomCountPlaceholder', 'e.g. 2')}
+          keyboardType="numeric"
+          maxLength={2}
+        />
+      </FormField>
     </FormWizardTemplate>
   );
 }
@@ -114,7 +158,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.title,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.foreground,
   },
   instruction: {
@@ -160,5 +204,31 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     fontWeight: '700',
     color: colors.mutedForeground,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  chip: {
+    minHeight: 40,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    justifyContent: 'center',
+  },
+  chipActive: {
+    backgroundColor: `${colors.primary}14`,
+    borderColor: `${colors.primary}40`,
+  },
+  chipLabel: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+    fontWeight: '700',
+  },
+  chipLabelActive: {
+    color: colors.primaryDeep,
   },
 });

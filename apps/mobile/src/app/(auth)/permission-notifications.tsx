@@ -8,7 +8,7 @@ import { requestNotificationPermission } from '../../utils/permissions';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function PermissionNotificationsScreen() {
   const { t } = useTranslation();
@@ -38,7 +38,7 @@ export default function PermissionNotificationsScreen() {
         title={t('auth.permissions.notificationsTitle', 'Мэдэгдэл авах зөвшөөрөл')}
         description={t(
           'auth.permissions.notificationsDescription',
-          'Шинэ даалгавар, мессеж, захиалгын мэдэгдэл авахад хэрэгтэй',
+          'Шинэ өргөдөл, захиалгын мэдээллийг цаг тухайд нь авахын тулд мэдэгдлийг зөвшөөрнө үү',
         )}
         deniedMessage={t('auth.permissions.notificationsDenied', 'Мэдэгдлийн зөвшөөрөл хаагдсан')}
         settingsHint={t(
@@ -47,8 +47,7 @@ export default function PermissionNotificationsScreen() {
         )}
         continueLabel={t('auth.permissions.continue', 'Үргэлжлүүлэх')}
         allowLabel={t('auth.permissions.allow', 'Зөвшөөрөх')}
-        skipLabel={t('auth.permissions.skip', 'Дараа')}
-        badgeLabel="!"
+        skipLabel={t('auth.permissions.skip', 'Дараа хийх')}
         isDenied={isDenied}
         onGrant={() => {
           void handleGrant();
@@ -58,10 +57,6 @@ export default function PermissionNotificationsScreen() {
         testID="permission-notifications-primer"
       />
 
-      <View style={styles.progress} testID="permission-notifications-progress">
-        <View style={[styles.progressDot, styles.progressDotActive]} />
-        <View style={styles.progressDot} />
-      </View>
     </View>
   );
 }
@@ -70,24 +65,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  progress: {
-    position: 'absolute',
-    bottom: spacing['2xl'],
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-  },
-  progressDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 999,
-    backgroundColor: colors.border,
-  },
-  progressDotActive: {
-    backgroundColor: colors.primaryDeep,
   },
 });

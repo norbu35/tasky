@@ -1,6 +1,6 @@
 # TASK-002: Add source-aware booking confirmation for rebook and phase-gated instant match
 
-**Status:** todo
+**Status:** done
 **Priority:** high
 
 ## Description

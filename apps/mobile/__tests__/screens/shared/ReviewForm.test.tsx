@@ -4,7 +4,7 @@ import { useSubmitReview } from '../../../src/features/review/hooks/useSubmitRev
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
-  useLocalSearchParams: () => ({ bookingId: 'booking-123', role: 'tasker', name: 'John Tasker' }),
+  useLocalSearchParams: () => ({ bookingId: 'booking-123', role: 'customer', name: 'Bold B.' }),
 }));
 
 jest.mock('react-i18next', () => ({
@@ -18,6 +18,11 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+
+jest.mock('expo-blur', () => {
+  const { View } = require('react-native');
+  return { BlurView: View };
+});
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = require('react-native');
@@ -56,45 +61,53 @@ beforeEach(() => {
 });
 
 describe('ReviewFormScreen (SCR-SHARED-017)', () => {
-  it('renders rating categories with star inputs', () => {
+  it('renders the review shell with Figma-aligned chrome and spec copy', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    // role=tasker means tasker rates the customer → RATE_CUSTOMER_CATEGORIES
-    expect(screen.getByText('shared.review.taskClarity')).toBeTruthy();
-    expect(screen.getByText('shared.review.respectfulness')).toBeTruthy();
-    expect(screen.getByText('shared.review.punctuality')).toBeTruthy();
+    expect(screen.getByTestId('review-form-header')).toBeTruthy();
+    expect(screen.getByTestId('review-form-footer')).toBeTruthy();
+    expect(screen.getByText('Сэтгэгдэл бичих')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэгч')).toBeTruthy();
+    expect(screen.getByText('Ажлын чанар')).toBeTruthy();
+    expect(screen.getByText('Цаг баримтлал')).toBeTruthy();
+    expect(screen.getByText('Харилцаа')).toBeTruthy();
+    expect(screen.getByTestId('review-comment-input')).toBeTruthy();
+    expect(screen.getByTestId('review-form-next')).toBeTruthy();
   });
 
-  it('renders the comment text field', () => {
+  it('disables submit until all three ratings are selected', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    expect(screen.getByTestId('review-comment-input')).toBeTruthy();
+    expect(screen.getByTestId('review-form-next').props.accessibilityState?.disabled).toBe(true);
+
+    fireEvent.press(screen.getByTestId('rating-qualityOfWork-star-5'));
+    fireEvent.press(screen.getByTestId('rating-punctuality-star-5'));
+    fireEvent.press(screen.getByTestId('rating-communication-star-5'));
+
+    expect(screen.getByTestId('review-form-next').props.accessibilityState?.disabled).toBeFalsy();
   });
 
   it('submit calls useSubmitReview with correct field mapping', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    // role=tasker means tasker rates the customer → RATE_CUSTOMER_CATEGORIES
-    fireEvent.press(screen.getByTestId('rating-taskDescriptionClarity-star-5'));
-    fireEvent.press(screen.getByTestId('rating-respectfulness-star-5'));
+    fireEvent.press(screen.getByTestId('rating-qualityOfWork-star-5'));
     fireEvent.press(screen.getByTestId('rating-punctuality-star-5'));
+    fireEvent.press(screen.getByTestId('rating-communication-star-5'));
 
-    // Type a comment
     const commentInput = screen.getByTestId('review-comment-input');
     fireEvent.changeText(commentInput, 'Great work!');
 
-    // Submit
     fireEvent.press(screen.getByTestId('review-form-next'));
 
     expect(mockMutate).toHaveBeenCalledWith({
       bookingId: 'booking-123',
       ratings: {
-        taskDescriptionClarity: 5,
-        respectfulness: 5,
+        qualityOfWork: 5,
         punctuality: 5,
+        communication: 5,
       },
       comment: 'Great work!',
     });
@@ -111,6 +124,6 @@ describe('ReviewFormScreen (SCR-SHARED-017)', () => {
     const ReviewFormScreen = require('../../../src/features/review/components/ReviewForm').default;
     render(<ReviewFormScreen />);
 
-    expect(screen.getByTestId('review-form')).toBeTruthy();
+    expect(screen.getByTestId('review-form-next')).toBeTruthy();
   });
 });

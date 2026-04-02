@@ -20,8 +20,18 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
 jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
   const { View } = require('react-native');
-  const MockBottomSheet = ({ children, ...props }: any) => <View {...props}>{children}</View>;
+  const MockBottomSheet = React.forwardRef(function MockBottomSheet(
+    { children, ...props }: any,
+    ref: any,
+  ) {
+    React.useImperativeHandle(ref, () => ({
+      snapToIndex: jest.fn(),
+      close: jest.fn(),
+    }));
+    return <View {...props}>{children}</View>;
+  });
   MockBottomSheet.displayName = 'MockBottomSheet';
   return {
     __esModule: true,
@@ -110,6 +120,16 @@ describe('CustomerNoShowSheet (SCR-CUST-021)', () => {
       expect(mockFlagNoShow).toHaveBeenCalledWith(
         expect.objectContaining({ bookingId: 'booking-123' }),
       );
+    });
+  });
+
+  it('flag button dismisses the sheet after flagging', async () => {
+    const onClose = jest.fn();
+    mockFlagNoShow.mockResolvedValue(undefined);
+    render(<CustomerNoShowSheet {...defaultProps} onClose={onClose} state="flag_available_15min" />);
+    fireEvent.press(screen.getByText('Flag No-Show'));
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
     });
   });
 

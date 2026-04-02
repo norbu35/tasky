@@ -39,78 +39,78 @@ function buildFaqSections(t: (key: string, fallback: string) => string): FaqSect
   return [
     {
       id: 'general',
-      title: t('infra.help.sectionGeneral', 'General'),
+      title: t('infra.help.sectionGeneral', 'Ерөнхий'),
       items: [
         {
           id: 'general-what-is-tasky',
-          question: t('infra.help.qWhatIsTasky', 'What is Tasky?'),
+          question: t('infra.help.qWhatIsTasky', 'Tasky гэж юу вэ?'),
           answer: t(
             'infra.help.aWhatIsTasky',
-            'Tasky is a trusted service marketplace connecting customers with service providers in Mongolia.',
+            'Tasky бол Монгол дахь хэрэглэгчдийг үйлчилгээ үзүүлэгчидтэй холбодог найдвартай үйлчилгээний зах зээл юм.',
           ),
         },
         {
           id: 'general-how-it-works',
-          question: t('infra.help.qHowItWorks', 'How does Tasky work?'),
+          question: t('infra.help.qHowItWorks', 'Tasky хэрхэн ажилладаг вэ?'),
           answer: t(
             'infra.help.aHowItWorks',
-            'Post a task, receive applications, choose the best match, and track the booking through completion.',
+            'Ажлаа нийтэлж, өргөдөл хүлээн авч, хамгийн тохирохыг сонгон, захиалга дуусах хүртэл хянаарай.',
           ),
         },
       ],
     },
     {
       id: 'tasks',
-      title: t('infra.help.sectionTasks', 'About Tasks'),
+      title: t('infra.help.sectionTasks', 'Даалгаврын тухай'),
       items: [
         {
           id: 'tasks-post-task',
-          question: t('infra.help.qPostTask', 'How do I post a task?'),
+          question: t('infra.help.qPostTask', 'Ажлаа хэрхэн нийтлэх вэ?'),
           answer: t(
             'infra.help.aPostTask',
-            'Open Post Task, add your details, choose a budget, and submit once everything looks correct.',
+            'Ажил оруулах хэсгээс дэлгэрэнгүй мэдээллээ бөглөж, төсвөө сонгоод, бүгд зөв бол илгээнэ үү.',
           ),
         },
       ],
     },
     {
       id: 'bookings',
-      title: t('infra.help.sectionBookings', 'About Bookings'),
+      title: t('infra.help.sectionBookings', 'Захиалгын тухай'),
       items: [
         {
           id: 'bookings-cancel',
-          question: t('infra.help.qCancelBooking', 'Can I cancel a booking?'),
+          question: t('infra.help.qCancelBooking', 'Захиалгаа цуцалж болох уу?'),
           answer: t(
             'infra.help.aCancelBooking',
-            'Yes. You can cancel before the booking starts, although late cancellations may affect your account standing.',
+            'Тийм. Захиалга эхлэхээс өмнө цуцалж болно, харин оройтож цуцлах нь бүртгэлийн байдалд нөлөөлж магадгүй.',
           ),
         },
       ],
     },
     {
       id: 'payments',
-      title: t('infra.help.sectionPayments', 'About Payments'),
+      title: t('infra.help.sectionPayments', 'Төлбөрийн тухай'),
       items: [
         {
           id: 'payments-how-paid',
-          question: t('infra.help.qHowPaid', 'How do payments work?'),
+          question: t('infra.help.qHowPaid', 'Төлбөр хэрхэн ажиллах вэ?'),
           answer: t(
             'infra.help.aHowPaid',
-            'Payment support is being introduced in phases. When available, you will see the supported options in booking flow.',
+            'Төлбөрийн дэмжлэгийг үе шаттай нэвтрүүлж байна. Боломжтой үед та захиалгын урсгалаас дэмжигдэх сонголтуудыг харна.',
           ),
         },
       ],
     },
     {
       id: 'account',
-      title: t('infra.help.sectionAccount', 'About Account'),
+      title: t('infra.help.sectionAccount', 'Бүртгэлийн тухай'),
       items: [
         {
           id: 'account-update',
-          question: t('infra.help.qUpdateAccount', 'How do I update my account?'),
+          question: t('infra.help.qUpdateAccount', 'Бүртгэлээ хэрхэн шинэчлэх вэ?'),
           answer: t(
             'infra.help.aUpdateAccount',
-            'Open Profile or Settings to update your personal details, contact information, and preferences.',
+            'Профайл эсвэл Тохиргоо хэсгээс хувийн мэдээлэл, холбоо барих мэдээлэл, тохиргоогоо шинэчилнэ үү.',
           ),
         },
       ],
@@ -247,7 +247,7 @@ export default function HelpScreen() {
     setState('loaded');
   };
 
-  const searchPlaceholder = t('infra.help.searchPlaceholder', 'Search questions...');
+  const searchPlaceholder = t('infra.help.searchPlaceholder', 'Асуулт хайх...');
 
   return (
     <SafeAreaView style={styles.safeArea} testID="help-screen">
@@ -259,9 +259,9 @@ export default function HelpScreen() {
           testID="help-screen-back"
         >
           <ChevronLeft size={24} color={colors.primary} />
-          <Text style={styles.backLabel}>{t('infra.help.backLabel', 'Back')}</Text>
+          <Text style={styles.backLabel}>{t('infra.help.backLabel', 'Буцах')}</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{t('infra.help.title', 'Help & Support')}</Text>
+        <Text style={styles.headerTitle}>{t('infra.help.title', 'Тусламж')}</Text>
         <View style={styles.headerAction} />
       </View>
 
@@ -269,12 +269,12 @@ export default function HelpScreen() {
         <HelpLoading searchPlaceholder={searchPlaceholder} />
       ) : state === 'error' ? (
         <HelpErrorState
-          headline={t('infra.help.errorHeadline', 'Unable to load')}
+          headline={t('infra.help.errorHeadline', 'Ачааллах боломжгүй')}
           description={t(
             'infra.help.errorDescription',
-            'Failed to load help content. Please try again',
+            'Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу',
           )}
-          retryLabel={t('infra.help.errorRetry', 'Try again')}
+          retryLabel={t('infra.help.errorRetry', 'Дахин оролдох')}
           onRetry={handleRetry}
         />
       ) : (

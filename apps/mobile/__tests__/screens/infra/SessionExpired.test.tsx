@@ -76,25 +76,25 @@ describe('SessionExpiredScreen', () => {
   it('renders session expired title', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Session expired')).toBeTruthy();
+    expect(screen.getByText('Хугацаа дууссан')).toBeTruthy();
   });
 
   it('renders session expired body message', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Your session has expired. Please log in again')).toBeTruthy();
+    expect(screen.getByText('Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү')).toBeTruthy();
   });
 
   it('shows login button', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Log in again')).toBeTruthy();
+    expect(screen.getByText('Дахин нэвтрэх')).toBeTruthy();
   });
 
   it('login button clears the auth token and navigates to auth screen', () => {
     render(<SessionExpiredScreen />);
 
-    fireEvent.press(screen.getByText('Log in again'));
+    fireEvent.press(screen.getByText('Дахин нэвтрэх'));
     expect(useAuthStore.getState().session).toBeNull();
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
@@ -108,7 +108,7 @@ describe('SessionExpiredScreen', () => {
   it('renders a modal sheet instead of a plain full-screen body', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Session expired')).toBeTruthy();
-    expect(screen.getByText('Log in again')).toBeTruthy();
+    expect(screen.getByText('Хугацаа дууссан')).toBeTruthy();
+    expect(screen.getByText('Дахин нэвтрэх')).toBeTruthy();
   });
 });

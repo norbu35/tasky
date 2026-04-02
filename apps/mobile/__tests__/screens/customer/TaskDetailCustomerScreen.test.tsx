@@ -141,8 +141,8 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
       refetch: jest.fn(),
     });
     render(<TaskDetailCustomerScreen />);
-    expect(screen.getByText('Fix my sink')).toBeTruthy();
-    expect(screen.getByText('Bayangol district')).toBeTruthy();
+    expect(screen.getAllByText('Fix my sink').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Bayangol district').length).toBeGreaterThan(0);
   });
 
   it('shows budget in formatted string', () => {

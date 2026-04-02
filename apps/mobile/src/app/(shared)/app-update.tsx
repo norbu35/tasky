@@ -23,12 +23,18 @@ export default function AppUpdateScreen() {
   const isForce = params.type === 'force';
 
   const title = isForce
-    ? t('infra.appUpdate.forceTitle', 'Update required')
-    : t('infra.appUpdate.softTitle', 'New version available');
+    ? t('infra.appUpdate.forceTitle', 'Шинэчлэлт шаардлагатай')
+    : t('infra.appUpdate.softTitle', 'Шинэ хувилбар гарлаа');
 
   const body = isForce
-    ? t('infra.appUpdate.forceBody', 'An update is required to continue using the app')
-    : t('infra.appUpdate.softBody', 'A new version is available. Update for a better experience');
+    ? t(
+        'infra.appUpdate.forceBody',
+        'Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай',
+      )
+    : t(
+        'infra.appUpdate.softBody',
+        'Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой',
+      );
 
   const handleUpdate = useCallback(() => {
     void openURL(APP_STORE_URL);
@@ -43,26 +49,17 @@ export default function AppUpdateScreen() {
       <LinearGradient colors={[colors.card, colors.muted]} style={styles.iconCard}>
         <Download size={44} color={colors.primary} />
       </LinearGradient>
-      <View style={styles.sparkle}>
-        <Text style={styles.sparkleText}>✦</Text>
-      </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.body}>{body}</Text>
-      <View style={styles.versionPill}>
-        <Text style={styles.versionText}>
-          {t('infra.appUpdate.currentVersion', 'current: 1.2.0')} →{' '}
-          {t('infra.appUpdate.nextVersion', 'new: 1.3.0')}
-        </Text>
-      </View>
       <Button
-        label={t('infra.appUpdate.softUpdate', 'Update')}
+        label={t('infra.appUpdate.softUpdate', 'Шинэчлэх')}
         onPress={handleUpdate}
         style={styles.updateButton}
         testID="app-update-screen-update"
       />
       {!isForce && (
         <Button
-          label={t('infra.appUpdate.softDismiss', 'Later')}
+          label={t('infra.appUpdate.softDismiss', 'Дараа нь')}
           variant="ghost"
           onPress={handleDismiss}
           style={styles.dismissButton}
@@ -76,6 +73,8 @@ export default function AppUpdateScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
+    zIndex: 60,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
@@ -89,21 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing.xl,
   },
-  sparkle: {
-    position: 'absolute',
-    top: '34%',
-    right: spacing['3xl'],
-    width: 34,
-    height: 34,
-    borderRadius: radius.md,
-    backgroundColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sparkleText: {
-    color: colors.primary,
-    fontSize: 16,
-  },
   title: {
     fontSize: typography.title,
     fontWeight: '700',
@@ -116,18 +100,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing.sm,
-    lineHeight: typography.body * 1.6,
-  },
-  versionPill: {
-    marginTop: spacing.xl,
-    borderRadius: 999,
-    backgroundColor: colors.muted,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  versionText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
+    lineHeight: 24,
   },
   updateButton: {
     marginTop: spacing.xl,

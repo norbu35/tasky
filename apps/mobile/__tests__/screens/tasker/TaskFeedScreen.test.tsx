@@ -105,7 +105,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     render(<TaskFeedScreen />);
 
     expect(screen.getByTestId('task-feed')).toBeTruthy();
-    expect(screen.getByText('Browse Tasks')).toBeTruthy();
+    expect(screen.getByText('Даалгаврууд')).toBeTruthy();
   });
 
   it('renders the browse summary header', () => {
@@ -123,7 +123,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
     render(<TaskFeedScreen />);
 
-    expect(screen.getByText('Fresh tasks around you')).toBeTruthy();
+    expect(screen.getByText('Шинэ даалгаврууд ойрхон')).toBeTruthy();
   });
 
   it('shows empty activation state when no tasks', () => {
@@ -138,7 +138,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
     render(<TaskFeedScreen />);
 
-    expect(screen.getByText('tasker.browse.emptyTitle')).toBeTruthy();
+    expect(screen.getByText('Одоогоор даалгавар байхгүй байна')).toBeTruthy();
   });
 
   it('renders task cards with price and category', () => {
@@ -196,7 +196,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
     render(<TaskFeedScreen />);
 
-    fireEvent.changeText(screen.getByPlaceholderText('Search tasks...'), 'sink');
+    fireEvent.changeText(screen.getByPlaceholderText('Даалгавар хайх...'), 'sink');
 
     expect(screen.queryByText('Deep clean apartment')).toBeNull();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
@@ -217,7 +217,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
     const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
     render(<TaskFeedScreen />);
 
-    expect(screen.getByText('Verified Tasker')).toBeTruthy();
+    expect(screen.getByText('Баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
   });
 
   it('calls refresh on pull-down', () => {

@@ -32,15 +32,15 @@ const SLIDES = [
     titleKey: 'auth.onboarding.slide1Title',
     bodyKey: 'auth.onboarding.slide1Body',
     imageUri: ONBOARDING_IMAGES[0],
-    titleFallbackLines: ['Итгэлтэй гүйцэтгэгч', 'олоорой'],
-    bodyFallback: 'Бүх гүйцэтгэгч баталгаажсан, үнэлгээтэй',
+    titleFallback: 'Найдвартай гүйцэтгэгч олох',
+    bodyFallback: 'Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой',
   },
   {
     id: '2',
     titleKey: 'auth.onboarding.slide2Title',
     bodyKey: 'auth.onboarding.slide2Body',
     imageUri: ONBOARDING_IMAGES[1],
-    titleFallbackLines: ['Захиалга хийх', 'амархан'],
+    titleFallback: 'Захиалга хийх амархан',
     bodyFallback: 'Ажлаа нийтэлж, хэдхэн товшилтоор захиалга хийгээрэй',
   },
   {
@@ -48,7 +48,7 @@ const SLIDES = [
     titleKey: 'auth.onboarding.slide3Title',
     bodyKey: 'auth.onboarding.slide3Body',
     imageUri: ONBOARDING_IMAGES[2],
-    titleFallbackLines: ['Аюулгүй,', 'итгэлтэй'],
+    titleFallback: 'Аюулгүй, итгэлтэй',
     bodyFallback: 'Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг',
   },
 ];
@@ -89,7 +89,7 @@ export default function OnboardingScreen() {
   const isLastSlide = currentIndex === SLIDES.length - 1;
 
   const renderItem = ({ item }: { item: (typeof SLIDES)[0] }) => {
-    const titleLines = item.titleFallbackLines ?? [t(item.titleKey)];
+    const titleText = item.titleFallback ?? t(item.titleKey);
     const bodyText = item.bodyFallback ?? t(item.bodyKey);
     return (
       <View style={styles.slide}>
@@ -110,11 +110,7 @@ export default function OnboardingScreen() {
           </View>
         </View>
         <View style={styles.titleBlock}>
-          {titleLines.map((line) => (
-            <Text key={line} style={styles.title}>
-              {line}
-            </Text>
-          ))}
+          <Text style={styles.title}>{titleText}</Text>
         </View>
         <Text style={styles.description}>{bodyText}</Text>
       </View>
@@ -169,7 +165,7 @@ export default function OnboardingScreen() {
           label={
             isLastSlide
               ? t('auth.onboarding.getStarted', 'Эхлэх')
-              : t('auth.onboarding.next', 'Дараах')
+              : t('auth.onboarding.next', 'Дараагийх')
           }
           onPress={handleNext}
           style={styles.button}

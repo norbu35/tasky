@@ -19,7 +19,6 @@ const { colors, spacing, typography, radius } = mobileTheme;
 
 const figmaBrandIconUri = 'https://www.figma.com/api/mcp/asset/e6b0056f-a59c-4588-a0a0-58a19f241eea';
 const figmaFacebookIconUri = 'https://www.figma.com/api/mcp/asset/f8fb49cc-9362-4143-81f5-806311ac01ea';
-const figmaSecondaryIconUri = 'https://www.figma.com/api/mcp/asset/74bdd916-7483-47da-b133-cdaa849bac3c';
 const figmaHeroTextureUri =
   'https://www.figma.com/api/mcp/asset/5719d416-6033-44e7-b264-2ea2e25f1e3c';
 
@@ -46,10 +45,6 @@ export default function LoginScreen() {
       setState('error');
       setErrorMessage(t('auth.login.error', 'Login failed. Please try again.'));
     }
-  };
-
-  const handleEmailLogin = () => {
-    // UI shell only: the deeper email/OTP flow is represented elsewhere in the auth stack.
   };
 
   const handleDevLoginAs = (role: 'CUSTOMER' | 'TASKER') => {
@@ -89,10 +84,10 @@ export default function LoginScreen() {
           <View style={styles.copyBlock}>
             <Text style={styles.title}>{t('auth.login.title', 'Tasky-д тавтай морил')}</Text>
             <Text style={styles.subtitleLine}>
-              {t('auth.login.subtitleLine1', 'Найдвартай гүйцэтгэгчтэй холбогдож,')}
-            </Text>
-            <Text style={styles.subtitleLine}>
-              {t('auth.login.subtitleLine2', 'ажлаа хялбар захиалаарай')}
+              {t(
+                'auth.login.description',
+                'Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай',
+              )}
             </Text>
           </View>
         </View>
@@ -122,26 +117,6 @@ export default function LoginScreen() {
                   </Text>
                 </>
               )}
-            </View>
-          </Pressable>
-
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>{t('auth.login.orLabel', 'Эсвэл')}</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <Pressable
-            testID="secondary-login-button"
-            onPress={handleEmailLogin}
-            style={({ pressed }) => [styles.secondaryButton, pressed ? styles.pressed : null]}
-            accessibilityRole="button"
-          >
-            <View style={styles.secondaryButtonContent}>
-              <Image source={{ uri: figmaSecondaryIconUri }} style={styles.secondaryIcon} />
-              <Text style={styles.secondaryButtonText}>
-                {t('auth.login.secondaryButton', 'Имэйл хаягаар нэвтрэх')}
-              </Text>
             </View>
           </Pressable>
         </View>
@@ -278,10 +253,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   actions: {
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   facebookButton: {
-    minHeight: 48,
+    minHeight: 56,
     borderRadius: radius.md,
     backgroundColor: colors.primaryDeep,
     justifyContent: 'center',
@@ -303,48 +278,6 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
     fontSize: typography.label,
     fontWeight: '600',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(195,198,207,0.2)',
-  },
-  dividerText: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 1.2,
-  },
-  secondaryButton: {
-    minHeight: 48,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(195,198,207,0.1)',
-    backgroundColor: colors.muted,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  secondaryButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  secondaryIcon: {
-    width: 20,
-    height: 16,
-    resizeMode: 'contain',
-  },
-  secondaryButtonText: {
-    color: colors.primaryDeep,
-    fontSize: typography.label,
-    fontWeight: '700',
   },
   illustrationWrap: {
     opacity: 0.3,

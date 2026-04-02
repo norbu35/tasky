@@ -13,95 +13,108 @@ export default function PrivacyPolicyScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('shared.legal.privacyTitle', 'Privacy Policy')}
+      headerTitle={t('shared.legal.privacyTitle', 'Нууцлалын бодлого')}
       onBack={() => router.back()}
       testID="privacy-screen"
     >
       <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>{t('shared.legal.updated', 'Updated: 2026.01.01')}</Text>
+        <Text style={styles.metaLabel}>
+          {t('shared.legal.updated', 'Сүүлд шинэчлэгдсэн: 2026.01.01')}
+        </Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          {t('shared.legal.dataCollection', 'Data Collection')}
+          {t('shared.legal.dataCollection', 'Мэдээлэл цуглуулах')}
         </Text>
         <Text style={styles.sectionBody}>
           {t(
             'shared.legal.dataCollectionBody',
-            'We collect information you provide directly, such as your name, phone number, and profile photo, as well as information generated through your use of Tasky.',
-          )}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.dataUsage', 'Data Usage')}</Text>
-        <Text style={styles.sectionBody}>
-          {t(
-            'shared.legal.dataUsageBody',
-            'Your data is used to provide and improve our services, match you with tasks or taskers, and ensure the safety of our platform.',
-          )}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.dataStorage', 'Data Storage')}</Text>
-        <Text style={styles.sectionBody}>
-          {t(
-            'shared.legal.dataStorageBody',
-            'User data is retained while the account is active. After deletion, data is removed per our retention policy.',
-          )}
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.dataSharing', 'Data Sharing')}</Text>
-        <Text style={styles.sectionBody}>
-          {t(
-            'shared.legal.dataSharingBody',
-            'We do not sell your personal data. Limited information may be shared with service providers who assist in operating our platform.',
+            'Бид таны нэр, утасны дугаар, профайл зураг зэрэг шууд өгсөн мэдээлэл болон Tasky-г ашиглах явцад үүссэн мэдээллийг цуглуулна.',
           )}
         </Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          {t('shared.legal.identityData', 'Identity Verification Data')}
+          {t('shared.legal.dataUsage', 'Мэдээллийн ашиглалт')}
+        </Text>
+        <Text style={styles.sectionBody}>
+          {t(
+            'shared.legal.dataUsageBody',
+            'Таны мэдээллийг үйлчилгээ үзүүлэх, сайжруулах, даалгавар болон tasker-уудыг тааруулах, платформын аюулгүй байдлыг хангахад ашиглана.',
+          )}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          {t('shared.legal.dataStorage', 'Мэдээлэл хадгалах')}
+        </Text>
+        <Text style={styles.sectionBody}>
+          {t(
+            'shared.legal.dataStorageBody',
+            'Хэрэглэгчийн мэдээллийг бүртгэл идэвхтэй байх хугацаанд хадгална. Устгасны дараа хадгалалтын бодлогын дагуу устгана.',
+          )}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          {t('shared.legal.dataSharing', 'Мэдээлэл хуваалцах')}
+        </Text>
+        <Text style={styles.sectionBody}>
+          {t(
+            'shared.legal.dataSharingBody',
+            'Бид таны хувийн мэдээллийг худалдахгүй. Платформыг ажиллуулахад тусалдаг үйлчилгээ үзүүлэгчтэй хязгаарлагдмал мэдээлэл хуваалцаж болно.',
+          )}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          {t('shared.legal.identityData', 'Таниулах баталгаажуулалтын мэдээлэл')}
         </Text>
         <Text style={styles.sectionBody}>
           {t(
             'shared.legal.identityDataBody',
-            'ID photos and selfies are collected solely for verification. This data is deleted when your account is deleted.',
+            'Иргэний үнэмлэхний зураг болон амьд зургийг зөвхөн баталгаажуулалтын зорилгоор цуглуулна. Бүртгэл устгахад энэ мэдээлэл устгагдана.',
           )}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.userRights', 'User Rights')}</Text>
+        <Text style={styles.sectionTitle}>{t('shared.legal.userRights', 'Хэрэглэгчийн эрх')}</Text>
         <Text style={styles.sectionBody}>
           {t(
             'shared.legal.userRightsBody',
-            'You have the right to access, modify, and delete your data. Account deletion requests can be submitted from Settings.',
+            'Та өөрийн мэдээлэлд хандах, засах, устгах эрхтэй. Бүртгэл устгах хүсэлтийг Тохиргоо хэсгээс илгээнэ.',
           )}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.dataRetention', 'Data Retention')}</Text>
+        <Text style={styles.sectionTitle}>
+          {t('shared.legal.dataRetention', 'Мэдээлэл хадгалах хугацаа')}
+        </Text>
         <Text style={styles.sectionBody}>
           {t(
             'shared.legal.dataRetentionBody',
-            'User data is retained while the account is active. After deletion, data is removed per policy.',
+            'Хэрэглэгчийн мэдээллийг бүртгэл хүчинтэй байх хугацаанд хадгална. Устгасны дараа мэдээллийг бодлогын дагуу устгана.',
           )}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('shared.legal.contact', 'Contact')}</Text>
+        <Text style={styles.sectionTitle}>{t('shared.legal.contact', 'Холбоо барих')}</Text>
         <Text style={styles.sectionBody}>
-          {t('shared.legal.contactBody', 'Contact us with any questions about our privacy policy.')}
+          {t(
+            'shared.legal.contactBody',
+            'Нууцлалын бодлогын талаар асуулт байвал бидэнтэй холбогдоно уу.',
+          )}
         </Text>
         <View style={styles.supportCard}>
-          <Text style={styles.supportLabel}>{t('shared.legal.contactEmail', 'Email')}</Text>
+          <Text style={styles.supportLabel}>{t('shared.legal.contactEmail', 'Имэйл')}</Text>
           <Text style={styles.supportEmail}>support@tasky.mn</Text>
         </View>
       </View>
@@ -116,6 +129,7 @@ const styles = StyleSheet.create({
   metaLabel: {
     fontSize: typography.caption,
     color: colors.textSecondary,
+    textAlign: 'left',
   },
   section: {
     marginBottom: spacing.lg,
@@ -125,11 +139,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.primary,
     marginBottom: spacing.sm,
+    textAlign: 'left',
   },
   sectionBody: {
     fontSize: typography.body,
     color: colors.textSecondary,
     lineHeight: typography.body * 1.6,
+    textAlign: 'left',
   },
   supportCard: {
     marginTop: spacing.md,
@@ -141,10 +157,12 @@ const styles = StyleSheet.create({
   supportLabel: {
     fontSize: typography.caption,
     color: colors.textSecondary,
+    textAlign: 'left',
   },
   supportEmail: {
     fontSize: typography.body,
     fontWeight: '600',
     color: colors.primaryDeep,
+    textAlign: 'left',
   },
 });

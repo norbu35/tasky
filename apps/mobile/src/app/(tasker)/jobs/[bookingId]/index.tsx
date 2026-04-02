@@ -46,16 +46,16 @@ export default function BookingDetailTaskerScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('tasker.jobs.bookingDetail', 'Booking Detail')}
+      headerTitle={t('tasker.jobs.bookingDetail', 'Захиалгын дэлгэрэнгүй')}
       onBack={() => router.back()}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-      ctaLabel={isAssigned ? t('tasker.jobs.markDone', 'Mark Done') : undefined}
+      ctaLabel={isAssigned ? t('tasker.jobs.markDone', 'Ажил дууссан') : undefined}
       ctaOnPress={isAssigned ? handleMarkDone : undefined}
       ctaLoading={markDone.isPending}
       secondaryCtaLabel={
-        (isAssigned || isMarkedDone) ? t('tasker.jobs.messageButton', 'Message') : undefined
+        isAssigned || isMarkedDone ? t('tasker.jobs.messageButton', 'Зурвас илгээх') : undefined
       }
       secondaryCtaOnPress={
         (isAssigned || isMarkedDone) ? () => router.push(`/inbox/${bookingId}`) : undefined
@@ -73,31 +73,31 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Customer Info */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.customerLabel', 'Customer')}</Text>
+            <Text style={styles.sectionLabel}>{t('tasker.jobs.customerLabel', 'Захиалагч')}</Text>
             <Text style={styles.customerName}>{booking.customer?.full_name ?? ''}</Text>
           </View>
 
           {/* Task Description */}
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>
-              {t('tasker.jobs.taskDescription', 'Task Description')}
+              {t('tasker.jobs.taskDescription', 'Даалгаврын тайлбар')}
             </Text>
             <Text style={styles.description}>{booking.task?.description ?? ''}</Text>
           </View>
 
           {(isAssigned || isMarkedDone) && (
             <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('tasker.jobs.exactAddress', 'Exact Address')}</Text>
+              <Text style={styles.sectionLabel}>{t('tasker.jobs.exactAddress', 'Тодорхой хаяг')}</Text>
               <Text style={styles.description}>{booking.task?.location_text ?? ''}</Text>
               <Text style={styles.noteText}>
-                {t('tasker.jobs.exactAddressNote', 'This address is visible only to you')}
+                {t('tasker.jobs.exactAddressNote', 'Энэ хаяг зөвхөн танд харагдана')}
               </Text>
             </View>
           )}
 
           {/* Schedule */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.schedule', 'Schedule')}</Text>
+            <Text style={styles.sectionLabel}>{t('tasker.jobs.schedule', 'Хуваарь')}</Text>
             <Text style={styles.scheduleText}>
               {booking.confirmed_scheduled_at
                 ? new Date(booking.confirmed_scheduled_at).toLocaleString()
@@ -107,7 +107,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Budget */}
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.budget', 'Budget')}</Text>
+            <Text style={styles.sectionLabel}>{t('tasker.jobs.budget', 'Төсөв')}</Text>
             <Text style={styles.priceText}>
               {'\u20AE'}
               {booking.price?.toLocaleString() ?? ''}
@@ -117,10 +117,13 @@ export default function BookingDetailTaskerScreen() {
           {/* Payment Note */}
           {isAssigned && (
             <View style={styles.paymentNote}>
+              <Text style={styles.sectionLabel}>
+                {t('tasker.jobs.paymentNoteHeading', 'Төлбөрийн мэдээлэл')}
+              </Text>
               <Text style={styles.paymentNoteText}>
                 {t(
                   'tasker.jobs.paymentNote',
-                  'Payment is arranged directly with the customer. Tasky is a connector, not a payment processor.',
+                  'Төлбөр нь захиалагчтай шууд тохиролцоно. Tasky нь зуучлагч биш.',
                 )}
               </Text>
             </View>
@@ -131,7 +134,7 @@ export default function BookingDetailTaskerScreen() {
               <Text style={styles.awaitingText}>
                 {t(
                   'tasker.jobs.awaitingConfirmation',
-                  'Waiting for customer to confirm completion',
+                  'Захиалагч баталгаажуулахыг хүлээж байна',
                 )}
               </Text>
             </View>
@@ -141,7 +144,7 @@ export default function BookingDetailTaskerScreen() {
           {isAssigned && (
             <View style={styles.cancelSection}>
               <Button
-                label={t('tasker.jobs.cancelBooking', 'Cancel Booking')}
+                label={t('tasker.jobs.cancelBooking', 'Захиалга цуцлах')}
                 variant="ghost"
                 onPress={() => setCancelSheetOpen(true)}
                 textStyle={styles.cancelText}
@@ -173,6 +176,10 @@ export default function BookingDetailTaskerScreen() {
               onClose={() => setCancelSheetOpen(false)}
               bookingId={booking.id}
               strikeCount={0}
+              onCancelled={() => {
+                setCancelSheetOpen(false);
+                router.replace('/(tasker)/jobs');
+              }}
             />
           ) : null}
         </View>

@@ -70,14 +70,14 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
 
   it('shows the current schedule at the top in Mongolian date format', () => {
     render(<RescheduleScreen />);
-    expect(screen.getByText('Current Schedule')).toBeTruthy();
+    expect(screen.getByText('Одоогийн хуваарь')).toBeTruthy();
     expect(screen.getByText('2026.04.01 18:00')).toBeTruthy();
   });
 
   it('renders reason field', () => {
     render(<RescheduleScreen />);
-    expect(screen.getByText('Reason')).toBeTruthy();
-    expect(screen.getByPlaceholderText('Reason for rescheduling...')).toBeTruthy();
+    expect(screen.getByText('Шалтгаан (заавал биш)')).toBeTruthy();
+    expect(screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...')).toBeTruthy();
   });
 
   it('submit calls reschedule with ISO date', async () => {
@@ -87,7 +87,7 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
     fireEvent.press(screen.getByTestId('reschedule-screen-date-picker'));
     // Fill reason
     fireEvent.changeText(
-      screen.getByPlaceholderText('Reason for rescheduling...'),
+      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
       'Schedule conflict',
     );
     // Submit
@@ -109,13 +109,13 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
     render(<RescheduleScreen />);
 
     fireEvent.changeText(
-      screen.getByPlaceholderText('Reason for rescheduling...'),
+      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
       'Schedule conflict',
     );
     fireEvent.press(screen.getByTestId('reschedule-screen-next'));
 
     await waitFor(() => {
-      expect(screen.getByText('Awaiting Response')).toBeTruthy();
+      expect(screen.getByText('Хүлээж байна')).toBeTruthy();
     });
     expect(mockBack).not.toHaveBeenCalled();
   });
@@ -123,7 +123,9 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('shows schedule authority note', () => {
     render(<RescheduleScreen />);
     expect(
-      screen.getByText('Schedule changes take effect only after counterparty acceptance'),
+      screen.getByText(
+        'Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно',
+      ),
     ).toBeTruthy();
   });
 

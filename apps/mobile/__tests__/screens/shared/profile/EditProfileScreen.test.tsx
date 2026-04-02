@@ -84,7 +84,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
     expect(screen.getByTestId('edit-profile-screen')).toBeTruthy();
-    expect(screen.getByText('Save')).toBeTruthy();
+    expect(screen.getByText('Хадгалах')).toBeTruthy();
   });
 
   it('renders name input pre-filled with current name', () => {
@@ -96,7 +96,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
   it('renders change photo button', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
-    expect(screen.getByText('Change photo')).toBeTruthy();
+    expect(screen.getByText('Зураг солих')).toBeTruthy();
   });
 
   it('save button calls updateMyProfile with changed name', () => {
@@ -117,7 +117,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const nameInput = screen.getByDisplayValue('Батбаяр');
     fireEvent.changeText(nameInput, '');
     fireEvent.press(screen.getByTestId('edit-profile-screen-next'));
-    expect(screen.getByText('Name is required')).toBeTruthy();
+    expect(screen.getByText('Нэр хоосон байж болохгүй')).toBeTruthy();
   });
 
   it('shows loading state on save button when saving', () => {
