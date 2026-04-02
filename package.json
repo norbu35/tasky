@@ -9,6 +9,8 @@
     "format": "pnpm -r format",
     "format:check": "pnpm -r format:check",
     "typecheck": "pnpm -r typecheck",
-    "sdk:generate": "pnpm --filter @tasky/sdk generate"
+    "sdk:generate": "pnpm --filter @tasky/sdk generate",
+    "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
+    "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck"
   }
 }

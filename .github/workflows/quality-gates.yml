@@ -33,7 +33,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Ensure scripts are executable
-        run: chmod +x gradlew tooling/scripts/check-cleanup-gate.sh
+        run: chmod +x gradlew tooling/scripts/check-cleanup-gate.sh tooling/scripts/validate-sdk-contract-drift.sh
+
+      - name: Validate SDK generated drift
+        run: tooling/scripts/validate-sdk-contract-drift.sh
 
       - name: Run trusted cleanup gate
         run: tooling/scripts/check-cleanup-gate.sh
