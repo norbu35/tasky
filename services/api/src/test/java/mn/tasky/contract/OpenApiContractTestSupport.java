@@ -26,7 +26,23 @@ final class OpenApiContractTestSupport {
     private OpenApiContractTestSupport() {}
 
     static String readOpenApi() throws IOException {
-        return Files.readString(Path.of("docs/API.yaml"));
+        return Files.readString(resolveFromRepoRoot("docs/API.yaml"));
+    }
+
+    static Path resolveFromRepoRoot(String relativePath) {
+        Path cursor = Path.of("").toAbsolutePath().normalize();
+        for (int i = 0; i < 6; i++) {
+            Path marker = cursor.resolve("settings.gradle.kts");
+            if (Files.exists(marker)) {
+                return cursor.resolve(relativePath).normalize();
+            }
+            Path parent = cursor.getParent();
+            if (parent == null) {
+                break;
+            }
+            cursor = parent;
+        }
+        throw new IllegalStateException("Could not resolve repository root for path: " + relativePath);
     }
 
     static Set<String> documentedPaths(String api) {

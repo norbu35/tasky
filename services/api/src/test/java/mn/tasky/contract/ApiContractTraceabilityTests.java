@@ -13,7 +13,7 @@ class ApiContractTraceabilityTests {
     @Test
     @DisplayName("TID-TASK-002-API-VALIDATE OpenAPI contract baseline exists and declares " + "pagination primitives")
     void openApiContractBaselineIsPresent() throws Exception {
-        Path apiPath = Path.of("docs/API.yaml");
+        Path apiPath = OpenApiContractTestSupport.resolveFromRepoRoot("docs/API.yaml");
         assertThat(apiPath).exists();
 
         String api = Files.readString(apiPath);
@@ -28,8 +28,8 @@ class ApiContractTraceabilityTests {
     @Test
     @DisplayName("TID-TASK-002-SDK-GENERATE generated TypeScript SDK is wired to OpenAPI outputs")
     void sdkGeneratedOutputsAreWired() throws Exception {
-        Path generatedTypes = Path.of("packages/sdk/src/generated/api-types.ts");
-        Path sdkIndex = Path.of("packages/sdk/src/index.ts");
+        Path generatedTypes = OpenApiContractTestSupport.resolveFromRepoRoot("packages/sdk/src/generated/api-types.ts");
+        Path sdkIndex = OpenApiContractTestSupport.resolveFromRepoRoot("packages/sdk/src/index.ts");
 
         assertThat(generatedTypes).exists();
         assertThat(sdkIndex).exists();
@@ -39,7 +39,7 @@ class ApiContractTraceabilityTests {
     @Test
     @DisplayName("TID-TASK-002-CI-CONTRACT-DRIFT CI drift gate script enforces generated SDK " + "parity")
     void contractDriftGateScriptExists() throws Exception {
-        Path driftScript = Path.of("scripts/validate-sdk-contract-drift.sh");
+        Path driftScript = OpenApiContractTestSupport.resolveFromRepoRoot("scripts/validate-sdk-contract-drift.sh");
         assertThat(driftScript).exists();
 
         String script = Files.readString(driftScript);

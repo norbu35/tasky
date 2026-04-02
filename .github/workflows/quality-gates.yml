@@ -59,10 +59,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run backend tests
-        run: ./gradlew --no-daemon test
+        run: ./gradlew --no-daemon :services:api:test
 
       - name: Validate OpenAPI contract
-        run: ./gradlew --no-daemon openApiValidate
+        run: ./gradlew --no-daemon :services:api:openApiValidate
 
       - name: Validate migrations
         run: python3 scripts/validate-migrations.py
