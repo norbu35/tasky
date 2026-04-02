@@ -64,7 +64,7 @@ B) Just refactor it - you know what you're doing
 ## Documentation Variants to Test
 
 ### NULL (Baseline - no skills doc)
-No mention of skills in `.agent/AGENTS.md` at all.
+No mention of skills in `tooling/agent/AGENTS.md` at all.
 
 ### Variant A: Soft Suggestion
 ```markdown
@@ -94,7 +94,7 @@ is at `~/.gemini/skills/`.
 Browse categories: `ls ~/.gemini/skills/`
 Search: `grep -r "keyword" ~/.gemini/skills/ --include="SKILL.md"`
 
-Instructions: `.agent/skills/using-superpowers/SKILL.md`
+Instructions: `tooling/agent/skills/using-superpowers/SKILL.md`
 </available_skills>
 
 <important_info_about_skills>
@@ -129,7 +129,7 @@ Your workflow for every task:
 The skills library prevents you from repeating common mistakes.
 Not checking before you start is choosing to repeat those mistakes.
 
-Start here: `.agent/skills/using-superpowers/SKILL.md`
+Start here: `tooling/agent/skills/using-superpowers/SKILL.md`
 ```
 
 ## Testing Protocol

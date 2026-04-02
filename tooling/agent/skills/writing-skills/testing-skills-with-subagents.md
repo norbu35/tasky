@@ -10,9 +10,9 @@ You run scenarios without the skill (RED - watch agent fail), write skill addres
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill prevents the right failures.
 
-**REQUIRED BACKGROUND:** You MUST understand `.agent/skills/test-driven-development/SKILL.md` before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
+**REQUIRED BACKGROUND:** You MUST understand `tooling/agent/skills/test-driven-development/SKILL.md` before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
 
-**Complete worked example:** See examples/AGENTS_MD_TESTING.md for a full test campaign testing `.agent/AGENTS.md` documentation variants.
+**Complete worked example:** See examples/AGENTS_MD_TESTING.md for a full test campaign testing `tooling/agent/AGENTS.md` documentation variants.
 
 ## When to Use
 

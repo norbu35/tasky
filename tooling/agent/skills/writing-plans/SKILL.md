@@ -33,7 +33,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For Antigravity:** REQUIRED WORKFLOW: Use `.agent/workflows/execute-plan.md` to execute this plan in single-flow mode.
+> **For Antigravity:** REQUIRED WORKFLOW: Use `tooling/agent/workflows/execute-plan.md` to execute this plan in single-flow mode.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -99,10 +99,10 @@ git commit -m "feat: add specific feature"
 After saving the plan, use a single execution path:
 
 **"Plan complete and saved to `docs/plans/<filename>.md`.**
-**Next step: run `.agent/workflows/execute-plan.md` to execute this plan task-by-task in single-flow mode."**
+**Next step: run `tooling/agent/workflows/execute-plan.md` to execute this plan task-by-task in single-flow mode."**
 
 Execution requirements:
-- **Entry workflow:** `.agent/workflows/execute-plan.md`
-- **Execution skill:** `.agent/skills/executing-plans/SKILL.md`
-- **Enforced execution model:** `.agent/skills/single-flow-task-execution/SKILL.md`
+- **Entry workflow:** `tooling/agent/workflows/execute-plan.md`
+- **Execution skill:** `tooling/agent/skills/executing-plans/SKILL.md`
+- **Enforced execution model:** `tooling/agent/skills/single-flow-task-execution/SKILL.md`
 - **Tracking:** update `<project-root>/docs/plans/task.md` (table-only tracker)

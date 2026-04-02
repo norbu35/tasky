@@ -20,19 +20,19 @@ Or manually:
 
 ```bash
 mkdir -p .agent
-cp -R /path/to/antigravity-superpowers-cli/templates/.agent/* .agent/
+cp -R /path/to/antigravity-superpowers-cli/templates/tooling/agent/* tooling/agent/
 ```
 
-If your project already has `.agent/skills`, merge carefully and keep the versions you want.
+If your project already has `tooling/agent/skills`, merge carefully and keep the versions you want.
 
 ## What Gets Installed
 
-- `.agent/AGENTS.md`
-- `.agent/task.md` (template only)
-- `.agent/skills/*`
-- `.agent/workflows/*`
-- `.agent/agents/*`
-- `.agent/tests/*`
+- `tooling/agent/AGENTS.md`
+- `tooling/agent/task.md` (template only)
+- `tooling/agent/skills/*`
+- `tooling/agent/workflows/*`
+- `tooling/agent/agents/*`
+- `tooling/agent/tests/*`
 
 Runtime tracking file:
 
@@ -43,7 +43,7 @@ Runtime tracking file:
 From your target project root:
 
 ```bash
-bash .agent/tests/run-tests.sh
+bash tooling/agent/tests/run-tests.sh
 ```
 
 Expected result: all checks pass with zero failures.
@@ -53,12 +53,12 @@ Expected result: all checks pass with zero failures.
 - This profile uses strict single-flow task execution.
 - Generic coding subagents are intentionally not used.
 - Browser automation can use `browser_subagent` when needed.
-- Skill references are local to `.agent/skills`.
+- Skill references are local to `tooling/agent/skills`.
 
 ## Update
 
 Re-run the CLI init with `--force` to update, then rerun validation:
 
 ```bash
-bash .agent/tests/run-tests.sh
+bash tooling/agent/tests/run-tests.sh
 ```

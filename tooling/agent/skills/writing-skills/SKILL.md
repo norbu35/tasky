@@ -15,7 +15,7 @@ You write test cases (pressure scenarios with explicit task execution), watch th
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
 
-**REQUIRED BACKGROUND:** You MUST understand `.agent/skills/test-driven-development/SKILL.md` before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+**REQUIRED BACKGROUND:** You MUST understand `tooling/agent/skills/test-driven-development/SKILL.md` before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
 
 **Official guidance:** For Antigravity's official skill authoring best practices, see antigravity-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
@@ -57,7 +57,7 @@ The entire skill creation process follows RED-GREEN-REFACTOR.
 
 - One-off solutions
 - Standard practices well-documented elsewhere
-- Project-specific conventions (put in `.agent/AGENTS.md`)
+- Project-specific conventions (put in `tooling/agent/AGENTS.md`)
 - Mechanical constraints (if it's enforceable with regex/validation, automate it—save documentation for judgment calls)
 
 ## Skill Types
@@ -309,8 +309,8 @@ wc -w skills/path/SKILL.md
 
 Use skill name only, with explicit requirement markers:
 
-- ✅ Good: `**REQUIRED SKILL:** Use .agent/skills/test-driven-development/SKILL.md`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand .agent/skills/systematic-debugging/SKILL.md`
+- ✅ Good: `**REQUIRED SKILL:** Use tooling/agent/skills/test-driven-development/SKILL.md`
+- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand tooling/agent/skills/systematic-debugging/SKILL.md`
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 
@@ -432,7 +432,7 @@ Edit skill without testing? Same violation.
 - Don't "adapt" while running tests
 - Delete means delete
 
-**REQUIRED BACKGROUND:** `.agent/skills/test-driven-development/SKILL.md` explains why this matters. Same principles apply to documentation.
+**REQUIRED BACKGROUND:** `tooling/agent/skills/test-driven-development/SKILL.md` explains why this matters. Same principles apply to documentation.
 
 ## Testing All Skill Types
 

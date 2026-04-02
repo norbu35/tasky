@@ -27,7 +27,7 @@ WHEN receiving code review feedback:
 ## Forbidden Responses
 
 **NEVER:**
-- "You're absolutely right!" (explicit `.agent/AGENTS.md` style violation)
+- "You're absolutely right!" (explicit `tooling/agent/AGENTS.md` style violation)
 - "Great point!" / "Excellent feedback!" (performative)
 - "Let me implement that now" (before verification)
 

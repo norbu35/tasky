@@ -6,7 +6,7 @@ This profile adapts Superpowers workflows for Antigravity with strict single-flo
 
 ## Core Rules
 
-1. Prefer local skills in `.agent/skills/<skill-name>/SKILL.md`.
+1. Prefer local skills in `tooling/agent/skills/<skill-name>/SKILL.md`.
 2. Execute one core task at a time with `task_boundary`.
 3. Use `browser_subagent` only for browser automation tasks.
 4. Track checklist progress in `<project-root>/docs/plans/task.md` (table-only live tracker).
@@ -18,7 +18,7 @@ When source skills reference legacy tool names, use these Antigravity equivalent
 
 - Legacy assistant/platform names -> `Antigravity`
 - `Task` tool -> `browser_subagent` for browser tasks, otherwise sequential `task_boundary`
-- `Skill` tool -> `view_file ~/.gemini/skills/<skill-name>/SKILL.md` (or project-local `.agent/skills/<skill-name>/SKILL.md`)
+- `Skill` tool -> `view_file ~/.gemini/skills/<skill-name>/SKILL.md` (or project-local `tooling/agent/skills/<skill-name>/SKILL.md`)
 - `TodoWrite` -> update `<project-root>/docs/plans/task.md` task list
 - File operations -> `view_file`, `write_to_file`, `replace_file_content`, `multi_replace_file_content`
 - Directory listing -> `list_dir`
@@ -33,10 +33,10 @@ When source skills reference legacy tool names, use these Antigravity equivalent
 
 ## Skill Loading
 
-- First preference: project skills at `.agent/skills`.
+- First preference: project skills at `tooling/agent/skills`.
 - Second preference: user skills at `~/.gemini/skills`.
 - If both exist, project-local skills win for this profile.
-- Optional parity assets may exist at `.agent/workflows/*` and `.agent/agents/*` as entrypoint shims/reference profiles.
+- Optional parity assets may exist at `tooling/agent/workflows/*` and `tooling/agent/agents/*` as entrypoint shims/reference profiles.
 - These assets do not change the strict single-flow execution requirements in this file.
 
 ## Single-Flow Execution Model
