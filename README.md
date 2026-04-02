@@ -10,6 +10,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `docs/PRD.md`                | Product requirements and scope                                      |
 | `docs/ARCHITECTURE.md`       | Technical architecture, data model, API guidelines, frontend system |
 | `docs/ARCHITECTURE_INDEX.md` | Architecture reading router (topic → canonical source)              |
+| `docs/maintenance/OPERATING_MODEL.md` | Maintenance workflow and verification operating model      |
 | `docs/METRICS.md`            | Marketplace KPIs, funnel metrics, and event tracking schema         |
 | `docs/STRATEGY.md`           | Business model and go-to-market plan                                |
 | `docs/adr/`                  | Architecture Decision Records                                       |
@@ -24,6 +25,7 @@ Tasky is a trust-first domestic services marketplace for Mongolia.
 | `tooling/config`             | Shared static-analysis and security tool configuration              |
 | `tooling/scripts`            | Repository-level verification and automation scripts                |
 | `archive/legacy-task-system/`| Archived greenfield task queue (`tasks/` + `scripts/task.sh`)       |
+| `archive/greenfield-docs/`   | Archived superseded planning/spec artifacts                          |
 | `services/api/scripts`       | Backend-service-specific operational scripts                        |
 
 ## Prerequisites
@@ -64,15 +66,14 @@ For local testing, dev auth is only allowed in the `local` or `test` Spring prof
 - Buttons call `POST /api/v1/auth/dev/login` and issue a normal JWT session without SMS OTP.
 - Production safety gate: app startup fails outside `local`/`test` if dev auth is enabled.
 
-## Task Management
+## Maintenance Mode
 
 ```bash
-# Legacy queue archived
-ls archive/legacy-task-system/tasks
-cat archive/legacy-task-system/task.sh
+cat docs/maintenance/OPERATING_MODEL.md
+ls docs/plans
 ```
 
-The repo-native task queue is archived and no longer the live maintenance workflow.
+The greenfield queue and superpowers plan/spec surfaces are archived under `archive/`.
 
 ## Frontend
 
@@ -117,6 +118,7 @@ pnpm --filter @tasky/web test:e2e:smoke     # web E2E (Playwright)
 pnpm --filter @tasky/mobile test:unit       # mobile unit tests
 pnpm -r typecheck                           # typecheck all workspaces
 pnpm -r lint                                # lint all workspaces
+pnpm workspace:boundaries                   # monorepo dependency boundaries
 ```
 
 ## Web Container

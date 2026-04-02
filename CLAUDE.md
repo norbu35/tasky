@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Start Here
 
 - `AGENTS.md` — conventions, workflow, guardrails (read first)
+- `docs/maintenance/OPERATING_MODEL.md` — maintenance execution model and trusted gates
 - `docs/ARCHITECTURE.md` — system design and domain structure
 - `docs/API.yaml` — OpenAPI contract (source of truth for all clients)
 
@@ -31,12 +32,13 @@ pnpm --filter @tasky/mobile start   # mobile dev server
 pnpm -r typecheck                   # typecheck all workspaces
 pnpm -r test                        # test all workspaces
 pnpm -r lint                        # lint all workspaces
+pnpm workspace:boundaries           # validate monorepo dependency boundaries
 ```
 
-### Task Management (Archived)
+### Legacy Greenfield References (Archived)
 ```bash
 ls archive/legacy-task-system/tasks
-cat archive/legacy-task-system/task.sh
+ls archive/greenfield-docs/docs/superpowers
 ```
 
 ## Project Overview

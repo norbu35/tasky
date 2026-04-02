@@ -195,7 +195,7 @@ Co-Authored-By: Pi <noreply@pi.dev>
 ## Deferred Mobile Screens
 
 The following screens were deliberately excluded from the 2026-04-02 mobile design refresh
-(`docs/superpowers/specs/2026-04-02-mobile-design-refresh-design.md`) to keep the initial
+(`archive/greenfield-docs/docs/superpowers/specs/2026-04-02-mobile-design-refresh-design.md`) to keep the initial
 scope focused on primary user flows. A future agent should implement these as a follow-up.
 
 **Figma file key:** `IljfnTQPkq7vpkmK1NN1NC`
