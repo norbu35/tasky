@@ -184,10 +184,13 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     backgroundColor: colors.muted,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
   reasonOptionSelected: {
-    borderColor: colors.accent,
-    backgroundColor: colors.muted,
+    borderWidth: 1.5,
+    borderColor: colors.primaryDeep,
+    backgroundColor: colors.card,
   },
   reasonText: {
     fontSize: typography.body,

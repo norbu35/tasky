@@ -397,16 +397,6 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
     fontWeight: '700',
   },
-  secondaryButton: {
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
   bottomAccent: {
     position: 'absolute',
     left: 0,
