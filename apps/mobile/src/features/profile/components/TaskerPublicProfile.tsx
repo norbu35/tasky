@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionTitle: {
-    fontSize: typography.title,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
