@@ -55,7 +55,9 @@ export function InstantMatchTaskerSheet({
       <View style={styles.scrim}>
         <View style={styles.sheet} testID="instant-match-sheet">
           <Text style={styles.title}>Амжилттай!</Text>
-          <Text style={styles.description}>Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу</Text>
+          <Text style={styles.description}>
+            Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу
+          </Text>
         </View>
       </View>
     );
@@ -88,10 +90,26 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     gap: spacing.md,
   },
-  handle: { width: 48, height: 5, borderRadius: 999, backgroundColor: '#d8d6d0', alignSelf: 'center' },
-  title: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep, textAlign: 'center' },
+  handle: {
+    width: 48,
+    height: 5,
+    borderRadius: 999,
+    backgroundColor: '#d8d6d0',
+    alignSelf: 'center',
+  },
+  title: {
+    fontSize: typography.title,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    textAlign: 'center',
+  },
   description: { fontSize: typography.body, color: colors.textSecondary, textAlign: 'center' },
-  card: { backgroundColor: '#f4f3f0', borderRadius: radius.md, padding: spacing.lg, gap: spacing.sm },
+  card: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
   taskTitle: { fontSize: typography.body, fontWeight: '700', color: colors.primaryDeep },
   budget: { fontSize: typography.label, color: colors.textSecondary },
   timer: { fontSize: typography.label, fontWeight: '700', color: colors.primaryDeep },

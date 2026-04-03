@@ -227,8 +227,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     padding: 16,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   sectionTitle: {
     fontSize: 16,

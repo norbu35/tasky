@@ -121,8 +121,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   avatar: {
     width: 48,

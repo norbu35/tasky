@@ -162,8 +162,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   metaLabel: {
     fontSize: 12,

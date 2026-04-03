@@ -7,6 +7,7 @@ import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button, ModalSheet } from '../../components/ui';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -104,9 +105,7 @@ export default function RoleSelectScreen() {
         style={styles.confirmButton}
       >
         <View style={styles.confirmContent}>
-          <Text style={styles.confirmLabel}>
-            {t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}
-          </Text>
+          <Text style={styles.confirmLabel}>{t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}</Text>
           <ArrowRight size={16} color={colors.primaryForeground} />
         </View>
       </Button>
@@ -162,15 +161,15 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   roleCard: {
-    borderWidth: 1,
-    borderColor: '#e3e2e0',
-    borderRadius: 18,
-    backgroundColor: '#f4f3f0',
+    borderRadius: 12,
+    backgroundColor: colors.muted,
     overflow: 'hidden',
   },
   roleCardSelected: {
-    borderColor: colors.primary,
+    borderWidth: 2,
+    borderColor: colors.primaryDeep,
     backgroundColor: '#ffffff',
+    ...elevations.soft,
   },
   roleCardContent: {
     flexDirection: 'row',

@@ -85,7 +85,9 @@ export function LeadUnlockSheet({
         ) : isDeclined ? (
           <View style={styles.stateStack}>
             <Text style={styles.title}>{'Татгалзсан'}</Text>
-            <Text style={styles.subtitle}>{'Кредит зарцуулагдаагүй. Дараагийн боломжийг хүлээнэ үү.'}</Text>
+            <Text style={styles.subtitle}>
+              {'Кредит зарцуулагдаагүй. Дараагийн боломжийг хүлээнэ үү.'}
+            </Text>
             <Button label={'Ойлголоо'} onPress={onClose} />
           </View>
         ) : isExpired ? (
@@ -105,8 +107,12 @@ export function LeadUnlockSheet({
               <Text style={styles.cardTitle}>{taskTitle}</Text>
               <Text style={styles.meta}>{`${creditCost} кредит`}</Text>
               <Text style={styles.meta}>{`Үлдэгдэл: ${balance} кредит`}</Text>
-              <Text style={styles.meta}>{`Хүлээх хугацаа: ${formatTimer(minutesRemaining, secondsRemaining)}`}</Text>
-              <Text style={styles.meta}>{`Холбоо барих мэдээлэл ${isDiscounted ? '5% хөнгөлөлттэй' : ''}`.trim()}</Text>
+              <Text
+                style={styles.meta}
+              >{`Хүлээх хугацаа: ${formatTimer(minutesRemaining, secondsRemaining)}`}</Text>
+              <Text style={styles.meta}>
+                {`Холбоо барих мэдээлэл ${isDiscounted ? '5% хөнгөлөлттэй' : ''}`.trim()}
+              </Text>
             </View>
 
             <Text style={styles.refundNotice}>{'Захиалагч цуцалвал кредит буцаагдана'}</Text>
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
   },
   inlineCard: {
     borderRadius: radius.md,
-    backgroundColor: '#f4f3f0',
+    backgroundColor: colors.muted,
     padding: spacing.lg,
     gap: spacing.sm,
   },

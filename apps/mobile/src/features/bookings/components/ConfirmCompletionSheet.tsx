@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { useCompleteBooking } from '../hooks/useCompleteBooking';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { elevations } from '../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -38,7 +39,12 @@ export function ConfirmCompletionSheet({
   }, [bookingId, completeBooking, onCompleted, router]);
 
   return (
-    <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="confirm-completion-sheet" snapPoints={['58%']}>
+    <ModalSheetTemplate
+      isOpen={isOpen}
+      onClose={onClose}
+      testID="confirm-completion-sheet"
+      snapPoints={['58%']}
+    >
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
           <View style={styles.iconInner}>
@@ -47,7 +53,9 @@ export function ConfirmCompletionSheet({
         </View>
       </View>
 
-      <Text style={styles.title}>{t('customer.bookings.confirmCompletionTitle', 'Ажил дууссан уу?')}</Text>
+      <Text style={styles.title}>
+        {t('customer.bookings.confirmCompletionTitle', 'Ажил дууссан уу?')}
+      </Text>
 
       <Text style={styles.description}>
         {t(
@@ -105,11 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: 'rgba(0,0,0,0.05)',
-    shadowOpacity: 1,
-    shadowRadius: 2,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
+    ...elevations.soft,
   },
   iconInner: {
     width: 56,
