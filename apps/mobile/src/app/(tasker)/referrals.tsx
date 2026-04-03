@@ -98,19 +98,19 @@ const styles = StyleSheet.create({
   codePill: {
     padding: spacing.md,
     borderRadius: radius.md,
-    backgroundColor: 'rgba(16, 38, 56, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     gap: spacing.xs,
   },
   codeLabel: {
     fontSize: typography.caption,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
     textTransform: 'uppercase',
     letterSpacing: 0.4,
   },
   codeValue: {
     fontSize: typography.subtitle,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.card,
   },
   actionRow: {
     flexDirection: 'row',

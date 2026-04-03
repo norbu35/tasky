@@ -210,7 +210,7 @@ export default function ProfilePolishScreen() {
       <View style={styles.content}>
         <View style={styles.introCard}>
           <View style={styles.aiBadge}>
-            <Sparkles size={14} color={colors.secondaryForeground} />
+            <Sparkles size={14} color={colors.secondary} />
             <Text style={styles.aiBadgeText}>{t('tasker.polish.aiPowered', 'AI POWERED')}</Text>
           </View>
           <Text style={styles.heroTitle}>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   aiBadgeText: {
     fontSize: typography.micro,
     fontWeight: '700',
-    color: colors.secondaryForeground,
+    color: colors.secondary,
     letterSpacing: 0.5,
   },
   heroTitle: {
