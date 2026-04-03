@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontSize: typography.heading,
-    fontWeight: '900',
+    fontWeight: '800',
     color: colors.primaryDeep,
   },
   countText: {

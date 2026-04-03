@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.primaryDeep,
     marginBottom: spacing.md,
   },

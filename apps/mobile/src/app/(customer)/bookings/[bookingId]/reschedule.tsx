@@ -443,12 +443,17 @@ const styles = StyleSheet.create({
     color: colors.primaryDeep,
   },
   stepperLabelActive: {
-    fontSize: typography.micro,
-    color: colors.primaryDeep,
+    fontSize: typography.caption,
     fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.textSecondary,
   },
   stepperLabelInactive: {
-    fontSize: typography.micro,
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
     color: colors.textSecondary,
   },
   stepperLine: {
@@ -458,7 +463,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
   },
   calendarCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.lg,
     ...elevations.soft,
@@ -510,10 +515,7 @@ const styles = StyleSheet.create({
   },
   dayCellSelected: {
     backgroundColor: colors.primaryDeep,
-    shadowColor: 'rgba(0,0,0,0.1)',
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    ...elevations.soft,
   },
   dayCellDisabled: {
     opacity: 0.25,
@@ -545,8 +547,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   sectionTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.primaryDeep,
   },
   timeRow: {
@@ -565,10 +567,7 @@ const styles = StyleSheet.create({
   },
   timeChipSelected: {
     backgroundColor: colors.primaryDeep,
-    shadowColor: 'rgba(0,0,0,0.1)',
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    ...elevations.soft,
   },
   timeChipText: {
     fontSize: typography.label,

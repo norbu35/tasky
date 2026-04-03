@@ -539,8 +539,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xs,
   },
   statusBadge: {
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   cardTitle: {
-    fontSize: typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   timelineTitle: {
-    fontSize: typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   resolutionTitle: {
-    fontSize: typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
@@ -801,11 +801,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(250,249,246,0.92)',
     borderTopWidth: 1,
     borderTopColor: 'rgba(195,198,207,0.15)',
-    shadowColor: 'rgba(26,28,26,0.06)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: -4 },
-    elevation: 8,
+    ...elevations.elevated,
   },
   bottomNavItem: {
     flex: 1,

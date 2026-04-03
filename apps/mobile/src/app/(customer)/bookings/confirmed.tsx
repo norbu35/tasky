@@ -14,6 +14,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, CalendarPlus2, Check, ChevronLeft, MessageSquare } from 'lucide-react-native';
+import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
 
@@ -106,9 +107,11 @@ export default function BookingConfirmedScreen() {
           </Text>
 
           <View style={styles.sectionHeadingWrap}>
-            <Text style={styles.sectionHeading}>
-              {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
-            </Text>
+            <View style={styles.sectionHeadingPill}>
+              <Text style={styles.sectionHeading}>
+                {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.nextStepsCard}>
@@ -181,16 +184,12 @@ export default function BookingConfirmedScreen() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable
-              accessibilityRole="button"
+            <Button
+              label={t('customer.bookings.ctaDone', 'Дууслаа')}
+              variant="outline"
               onPress={handleDone}
-              style={styles.secondaryButton}
               testID="booking-confirmed-screen-secondary-cta"
-            >
-              <Text style={styles.secondaryButtonText}>
-                {t('customer.bookings.ctaDone', 'Дууслаа')}
-              </Text>
-            </Pressable>
+            />
           </View>
         </ScrollView>
 
@@ -264,6 +263,13 @@ const styles = StyleSheet.create({
   sectionHeadingWrap: {
     alignSelf: 'stretch',
     marginTop: spacing.md,
+  },
+  sectionHeadingPill: {
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    backgroundColor: colors.muted,
+    alignSelf: 'center',
   },
   sectionHeading: {
     fontSize: typography.label,
