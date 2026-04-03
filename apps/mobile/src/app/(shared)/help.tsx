@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: typography.subtitle,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
     textAlign: 'center',
     marginHorizontal: spacing.sm,
   },
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.subtitle,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
     marginBottom: spacing.md,
   },
   faqRow: {
@@ -403,8 +403,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingHorizontal: spacing.md,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    marginBottom: spacing.sm,
   },
   faqQuestion: {
     flex: 1,
@@ -414,7 +416,7 @@ const styles = StyleSheet.create({
   },
   faqAnswerContainer: {
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     backgroundColor: colors.muted,
     borderRadius: radius.md,
     marginBottom: spacing.sm,
@@ -422,7 +424,7 @@ const styles = StyleSheet.create({
   faqAnswer: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
+    lineHeight: 24,
   },
   loadingContainer: {
     flex: 1,

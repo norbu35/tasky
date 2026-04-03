@@ -78,13 +78,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   iconShell: {
-    width: 88,
-    height: 88,
+    width: 72,
+    height: 72,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.muted,
-    marginBottom: spacing.xl,
+    backgroundColor: `${colors.danger}1A`,
+    marginBottom: spacing.lg,
   },
   headline: {
     fontSize: typography.title,
@@ -102,8 +102,6 @@ const styles = StyleSheet.create({
   retryButton: {
     marginTop: spacing.xl,
     alignSelf: 'stretch',
-    minHeight: 52,
-    borderRadius: 12,
   },
   toastWrap: {
     position: 'absolute',

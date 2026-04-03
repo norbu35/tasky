@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -53,12 +53,7 @@ function TermsContent() {
           'infra.terms.section0Body',
           'Эдгээр нөхцөлийг анхааралтай уншина уу. Тэд Tasky хэрхэн ажилладаг, үйлчилгээнээс юу хүлээх, ямар хариуцлага танд үлдэхийг тайлбарлана.',
         ),
-        points: [
-          t(
-            'infra.terms.section0Note',
-            'Энэ товч тайлбар нь доорх бүрэн журмыг орлохгүй.',
-          ),
-        ],
+        points: [t('infra.terms.section0Note', 'Энэ товч тайлбар нь доорх бүрэн журмыг орлохгүй.')],
       },
       {
         title: t('infra.terms.section1Title', '1. Нөхцөлийг зөвшөөрөх'),
@@ -67,7 +62,10 @@ function TermsContent() {
           'Tasky-г ашигласнаар та эдгээр нөхцөл болон холбогдох бүх хуулийг зөвшөөрч байна.',
         ),
         points: [
-          t('infra.terms.section1Note', 'Хэрэв та зөвшөөрөхгүй бол аппликейшнийг ашиглахаа зогсооно уу.'),
+          t(
+            'infra.terms.section1Note',
+            'Хэрэв та зөвшөөрөхгүй бол аппликейшнийг ашиглахаа зогсооно уу.',
+          ),
         ],
       },
       {
@@ -77,10 +75,7 @@ function TermsContent() {
           'Tasky нь захиалагч болон үйлчилгээ үзүүлэгчийг холбодог. Зөвхөн хууль ёсны зорилгоор ашиглана уу.',
         ),
         points: [
-          t(
-            'infra.terms.section2Note',
-            'Оруулж буй мэдээллийн үнэн зөвийг та өөрөө хариуцна.',
-          ),
+          t('infra.terms.section2Note', 'Оруулж буй мэдээллийн үнэн зөвийг та өөрөө хариуцна.'),
         ],
       },
       {
@@ -176,7 +171,9 @@ export default function TermsScreen() {
       ) : state === 'error' ? (
         <View style={styles.errorContainer}>
           <TermsErrorVisual />
-          <Text style={styles.errorHeadline}>{t('infra.terms.errorHeadline', 'Ачааллах боломжгүй')}</Text>
+          <Text style={styles.errorHeadline}>
+            {t('infra.terms.errorHeadline', 'Ачааллах боломжгүй')}
+          </Text>
           <Text style={styles.errorDescription}>
             {t(
               'infra.terms.errorDescription',
@@ -224,13 +221,13 @@ const styles = StyleSheet.create({
   backLabel: {
     fontSize: typography.body,
     fontWeight: '500',
-    color: colors.primary,
+    color: colors.primaryDeep,
   },
   headerTitle: {
     flex: 1,
     fontSize: typography.subtitle,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
     textAlign: 'center',
     marginHorizontal: spacing.sm,
   },
@@ -244,27 +241,30 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: spacing.lg,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.lg,
   },
   sectionLead: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
+    lineHeight: 24,
     marginBottom: spacing.lg,
   },
   sectionLeadStrong: {
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.primaryDeep,
   },
   sectionTitle: {
     fontSize: typography.subtitle,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
     marginBottom: spacing.sm,
   },
   sectionBody: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
+    lineHeight: 24,
   },
   clauses: {
     marginTop: spacing.sm,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   clauseBullet: {
     fontSize: typography.body,
     lineHeight: typography.body * 1.5,
-    color: colors.primary,
+    color: colors.primaryDeep,
     marginTop: 1,
   },
   clauseText: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   clauseStrong: {
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
   },
   loadingContainer: {
     flex: 1,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   errorHeadline: {
     fontSize: typography.title,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.primaryDeep,
     textAlign: 'center',
     marginBottom: spacing.sm,
   },

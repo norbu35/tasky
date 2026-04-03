@@ -65,9 +65,9 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
   },
   iconShell: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.lg,
+    width: 72,
+    height: 72,
+    borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.muted,

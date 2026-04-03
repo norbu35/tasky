@@ -4,7 +4,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Download } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { openURL } from 'expo-linking';
-import { LinearGradient } from 'expo-linear-gradient';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../../components/ui/Button';
 
@@ -46,9 +45,9 @@ export default function AppUpdateScreen() {
 
   return (
     <View style={styles.container} testID="app-update-screen">
-      <LinearGradient colors={[colors.card, colors.muted]} style={styles.iconCard}>
-        <Download size={44} color={colors.primary} />
-      </LinearGradient>
+      <View style={styles.iconShell}>
+        <Download size={32} color={colors.primary} />
+      </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.body}>{body}</Text>
       <Button
@@ -73,27 +72,25 @@ export default function AppUpdateScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
-    zIndex: 60,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
     backgroundColor: colors.background,
   },
-  iconCard: {
-    width: 92,
-    height: 92,
-    borderRadius: radius.lg,
+  iconShell: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.full,
+    backgroundColor: colors.muted,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   title: {
     fontSize: typography.title,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.foreground,
     textAlign: 'center',
-    marginTop: spacing.lg,
   },
   body: {
     fontSize: typography.body,
@@ -105,8 +102,6 @@ const styles = StyleSheet.create({
   updateButton: {
     marginTop: spacing.xl,
     alignSelf: 'stretch',
-    minHeight: 54,
-    borderRadius: 12,
   },
   dismissButton: {
     marginTop: spacing.md,

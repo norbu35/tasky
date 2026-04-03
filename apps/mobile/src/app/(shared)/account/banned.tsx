@@ -1,11 +1,12 @@
 import React from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ban } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function BannedAccountScreen() {
   const { t } = useTranslation();
@@ -13,6 +14,9 @@ export default function BannedAccountScreen() {
 
   return (
     <View style={styles.container} testID="banned-screen">
+      <View style={styles.iconShell}>
+        <Ban size={32} color={colors.danger} />
+      </View>
       <Text style={styles.title}>{t('shared.account.bannedTitle', 'Бүртгэл хаагдсан')}</Text>
       <Text style={styles.body}>
         {t(
@@ -47,6 +51,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.background,
   },
+  iconShell: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.danger}1A`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
   title: {
     fontSize: typography.title,
     fontWeight: '700',
@@ -56,9 +69,9 @@ const styles = StyleSheet.create({
   },
   body: {
     fontSize: typography.body,
-    color: colors.mutedForeground,
+    color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: typography.body * 1.5,
+    lineHeight: 24,
   },
   supportButton: {
     marginTop: spacing.xl,

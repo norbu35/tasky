@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { TriangleAlert } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 function formatDate(value?: string) {
   if (!value) return '';
@@ -21,6 +22,9 @@ export default function SuspendedAccountScreen() {
 
   return (
     <View style={styles.container} testID="suspended-screen">
+      <View style={styles.iconShell}>
+        <TriangleAlert size={32} color={colors.danger} />
+      </View>
       <Text style={styles.title}>{t('shared.account.suspendedTitle', 'Бүртгэл түр хаагдсан')}</Text>
       <Text style={styles.body}>
         {t(
@@ -60,6 +64,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: colors.background,
   },
+  iconShell: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.danger}1A`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+  },
   title: {
     fontSize: typography.title,
     fontWeight: '700',
@@ -69,9 +82,9 @@ const styles = StyleSheet.create({
   },
   body: {
     fontSize: typography.body,
-    color: colors.mutedForeground,
+    color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: typography.body * 1.5,
+    lineHeight: 24,
   },
   expiry: {
     fontSize: typography.body,

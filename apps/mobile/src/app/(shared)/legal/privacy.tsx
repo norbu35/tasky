@@ -10,9 +10,7 @@ export default function PrivacyPolicyScreen() {
   const { t } = useTranslation();
 
   return (
-    <DetailTemplate
-      testID="privacy-screen"
-    >
+    <DetailTemplate testID="privacy-screen">
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>
           {t('shared.legal.updated', 'Сүүлд шинэчлэгдсэн: 2026.01.01')}
@@ -133,14 +131,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.subtitle,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.primaryDeep,
     marginBottom: spacing.sm,
     textAlign: 'left',
   },
   sectionBody: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
+    lineHeight: 24,
     textAlign: 'left',
   },
   supportCard: {
