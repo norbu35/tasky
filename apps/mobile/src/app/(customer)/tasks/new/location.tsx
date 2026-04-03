@@ -79,7 +79,11 @@ export default function LocationScreen() {
       testID="location-screen"
     >
       <View style={styles.hero}>
-        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '4').replace('{{total}}', '7')}</Text>
+        <Text style={styles.stepLabel}>
+          {t('taskPost.step', 'Step {{current}} of {{total}}')
+            .replace('{{current}}', '4')
+            .replace('{{total}}', '7')}
+        </Text>
         <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
         <Text style={styles.instruction}>
           {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
@@ -115,13 +119,25 @@ export default function LocationScreen() {
           </View>
         </View>
         <View style={styles.mapControls}>
-          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-locate-button">
+          <Pressable
+            style={styles.mapControlButton}
+            accessibilityRole="button"
+            testID="location-locate-button"
+          >
             <LocateFixed size={18} color={colors.primaryDeep} />
           </Pressable>
-          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-zoom-in-button">
+          <Pressable
+            style={styles.mapControlButton}
+            accessibilityRole="button"
+            testID="location-zoom-in-button"
+          >
             <Plus size={18} color={colors.primaryDeep} />
           </Pressable>
-          <Pressable style={styles.mapControlButton} accessibilityRole="button" testID="location-zoom-out-button">
+          <Pressable
+            style={styles.mapControlButton}
+            accessibilityRole="button"
+            testID="location-zoom-out-button"
+          >
             <Minus size={18} color={colors.primaryDeep} />
           </Pressable>
         </View>
@@ -143,7 +159,10 @@ export default function LocationScreen() {
 
         <FormField
           label={t('customer.postTask.locationDescriptionLabel', 'Location description')}
-          helperText={t('customer.postTask.locationHelper', 'Provide details helpful for the Tasker')}
+          helperText={t(
+            'customer.postTask.locationHelper',
+            'Provide details helpful for the Tasker',
+          )}
         >
           <Input
             testID="location-text-input"
@@ -215,7 +234,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: colors.muted,
     minHeight: 280,
-    ...elevations.card,
+    ...elevations.soft,
   },
   map: {
     width: '100%',
@@ -270,9 +289,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
     gap: spacing.lg,
   },
   sheetHeader: {

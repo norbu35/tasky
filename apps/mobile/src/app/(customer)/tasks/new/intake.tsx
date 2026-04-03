@@ -5,19 +5,59 @@ import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
 const intakeTypes = ['One-time', 'Recurring', 'Urgent'] as const;
 
+function parseIntakeAnswers(value?: string): {
+  description?: string;
+  task_type?: string;
+  room_count?: number | null;
+} {
+  if (!value) return {};
+
+  try {
+    const parsed = JSON.parse(value) as {
+      description?: unknown;
+      task_type?: unknown;
+      room_count?: unknown;
+    };
+
+    return {
+      description: typeof parsed.description === 'string' ? parsed.description : undefined,
+      task_type: typeof parsed.task_type === 'string' ? parsed.task_type : undefined,
+      room_count: typeof parsed.room_count === 'number' ? parsed.room_count : null,
+    };
+  } catch {
+    return {};
+  }
+}
+
 export default function IntakeFormScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ categoryId: string }>();
-  const [description, setDescription] = useState('');
-  const [selectedType, setSelectedType] = useState<(typeof intakeTypes)[number]>('One-time');
-  const [roomCount, setRoomCount] = useState('');
+  const params = useLocalSearchParams<{
+    categoryId: string;
+    description?: string;
+    intakeAnswers?: string;
+  }>();
+  const initialAnswers = useMemo(
+    () => parseIntakeAnswers(params.intakeAnswers),
+    [params.intakeAnswers],
+  );
+  const initialType =
+    intakeTypes.find((type) => type === initialAnswers.task_type) ??
+    ('One-time' as (typeof intakeTypes)[number]);
+
+  const [description, setDescription] = useState(
+    params.description ?? initialAnswers.description ?? '',
+  );
+  const [selectedType, setSelectedType] = useState<(typeof intakeTypes)[number]>(initialType);
+  const [roomCount, setRoomCount] = useState(
+    typeof initialAnswers.room_count === 'number' ? String(initialAnswers.room_count) : '',
+  );
   const [error, setError] = useState('');
 
   const descriptionLength = description.length;
@@ -57,7 +97,11 @@ export default function IntakeFormScreen() {
       testID="intake-form-screen"
     >
       <View style={styles.headerBlock}>
-        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '2').replace('{{total}}', '7')}</Text>
+        <Text style={styles.stepLabel}>
+          {t('taskPost.step', 'Step {{current}} of {{total}}')
+            .replace('{{current}}', '2')
+            .replace('{{total}}', '7')}
+        </Text>
         <Text style={styles.title}>{t('customer.postTask.intakePageTitle', 'Task Details')}</Text>
         <Text style={styles.instruction}>
           {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
@@ -157,9 +201,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   title: {
-    fontSize: typography.title,
+    fontSize: 24,
     fontWeight: '800',
-    color: colors.foreground,
+    color: colors.primaryDeep,
   },
   instruction: {
     fontSize: typography.body,
@@ -169,9 +213,7 @@ const styles = StyleSheet.create({
   tipCard: {
     borderRadius: mobileTheme.radius.lg,
     padding: spacing.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
     gap: spacing.sm,
   },
   tipTitle: {
@@ -211,17 +253,17 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   chip: {
+    flex: 1,
     minHeight: 40,
     paddingHorizontal: spacing.md,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
+    borderRadius: radius.sm,
+    backgroundColor: colors.muted,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   chipActive: {
-    backgroundColor: `${colors.primary}14`,
-    borderColor: `${colors.primary}40`,
+    backgroundColor: colors.primaryDeep,
+    ...elevations.soft,
   },
   chipLabel: {
     fontSize: typography.caption,
@@ -229,6 +271,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   chipLabelActive: {
-    color: colors.primaryDeep,
+    color: colors.primaryForeground,
   },
 });

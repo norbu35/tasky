@@ -15,7 +15,9 @@ function parsePhotoKeys(value?: string): string[] {
 
   try {
     const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === 'string')
+      : [];
   } catch {
     return [];
   }
@@ -32,7 +34,10 @@ export default function PhotoUploadScreen() {
     photos?: string;
   }>();
   const [photos, setPhotos] = useState<string[]>(() => parsePhotoKeys(params.photos).slice(0, 3));
-  const slots = useMemo(() => Array.from({ length: 3 }, (_, index) => photos[index] ?? null), [photos]);
+  const slots = useMemo(
+    () => Array.from({ length: 3 }, (_, index) => photos[index] ?? null),
+    [photos],
+  );
 
   const handleAddPhoto = () => {
     // Photo picker integration is not yet wired in this lane.
@@ -62,15 +67,25 @@ export default function PhotoUploadScreen() {
       onNext={handleNext}
       onBack={() => router.back()}
       nextLabel={
-        photos.length > 0 ? t('common.continue', 'Continue') : t('customer.postTask.photosSkip', 'Skip')
+        photos.length > 0
+          ? t('common.continue', 'Continue')
+          : t('customer.postTask.photosSkip', 'Skip')
       }
       testID="photo-upload-screen"
     >
       <View style={styles.progressHeader}>
-        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '3').replace('{{total}}', '7')}</Text>
-        <Text style={styles.progressHint}>{t('customer.postTask.photosProgressHint', 'Almost done')}</Text>
+        <Text style={styles.stepLabel}>
+          {t('taskPost.step', 'Step {{current}} of {{total}}')
+            .replace('{{current}}', '3')
+            .replace('{{total}}', '7')}
+        </Text>
+        <Text style={styles.progressHint}>
+          {t('customer.postTask.photosProgressHint', 'Almost done')}
+        </Text>
       </View>
-      <Text style={styles.title}>{t('customer.postTask.photosHeroTitle', 'Show your task workspace')}</Text>
+      <Text style={styles.title}>
+        {t('customer.postTask.photosHeroTitle', 'Show your task workspace')}
+      </Text>
       <Text style={styles.subtitle}>
         {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
       </Text>
@@ -226,7 +241,7 @@ const styles = StyleSheet.create({
   tipCard: {
     borderRadius: radius.lg,
     padding: spacing.lg,
-    backgroundColor: `${colors.accent}20`,
+    backgroundColor: colors.muted,
     gap: spacing.sm,
     marginTop: spacing.xs,
   },

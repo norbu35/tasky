@@ -1,9 +1,11 @@
 import React from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Sparkles } from 'lucide-react-native';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { CheckCircle2 } from 'lucide-react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { Button } from '../../../../components/ui/Button';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -12,6 +14,15 @@ export default function TaskPostedSuccessScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { taskId } = useLocalSearchParams<{ taskId?: string }>();
+  const checkScale = useSharedValue(0.8);
+
+  React.useEffect(() => {
+    checkScale.value = withSpring(1, { damping: 14, stiffness: 220 });
+  }, [checkScale]);
+
+  const animatedCheckStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: checkScale.value }],
+  }));
 
   const handleViewTask = () => {
     if (taskId) {
@@ -26,24 +37,40 @@ export default function TaskPostedSuccessScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} testID="task-posted-success-screen">
+    <SafeAreaView
+      edges={['top', 'bottom']}
+      style={styles.container}
+      testID="task-posted-success-screen"
+    >
       <View style={styles.hero}>
-        <View style={styles.iconWrap}>
-          <Sparkles size={18} color={colors.primaryDeep} />
+        <Animated.View style={[styles.checkWrap, animatedCheckStyle]}>
+          <CheckCircle2 size={50} color={colors.verified} />
+        </Animated.View>
+        <View style={styles.statusBadge}>
+          <Text style={styles.statusBadgeLabel}>
+            {t('customer.postTask.successBadge', 'БАТАЛГААЖСАН')}
+          </Text>
         </View>
-        <View style={styles.checkWrap}>
-          <CheckCircle2 size={80} color={colors.verified} />
-        </View>
-        <Text style={styles.headline}>{t('customer.postTask.successTitle', 'Task posted successfully!')}</Text>
+        <Text style={styles.headline}>
+          {t('customer.postTask.successTitle', 'Task posted successfully!')}
+        </Text>
         <Text style={styles.body}>
           {t(
             'customer.postTask.successBody',
             'Taskers can now see your task and apply. You will be notified when new applications arrive',
           )}
         </Text>
+        <View style={styles.decorDots}>
+          <View style={[styles.decorDot, { backgroundColor: colors.primary }]} />
+          <View style={[styles.decorDot, { backgroundColor: colors.secondary }]} />
+          <View style={[styles.decorDot, { backgroundColor: colors.verified }]} />
+        </View>
       </View>
 
       <View style={styles.card}>
+        <Text style={styles.cardDarkLabel}>
+          {t('customer.postTask.successNextLabel', 'ДАРААГИЙН АЛХАМ')}
+        </Text>
         <Text style={styles.cardTitle}>
           {t('customer.postTask.successNextTitle', 'What happens next')}
         </Text>
@@ -88,28 +115,42 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingTop: spacing.lg,
   },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}14`,
-  },
   checkWrap: {
-    width: 120,
-    height: 120,
+    width: 96,
+    height: 96,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: `${colors.verified}12`,
+    backgroundColor: `${colors.verified}1A`,
+  },
+  statusBadge: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.verified}1A`,
+  },
+  statusBadgeLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    color: colors.verified,
+  },
+  decorDots: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  decorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   headline: {
-    fontSize: typography.title,
+    fontSize: 24,
     fontWeight: '900',
     color: colors.primaryDeep,
     textAlign: 'center',
-    lineHeight: typography.title * 1.2,
+    lineHeight: 30,
   },
   body: {
     fontSize: typography.body,
@@ -118,12 +159,19 @@ const styles = StyleSheet.create({
     lineHeight: typography.body * 1.6,
   },
   card: {
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.lg,
+    padding: 32,
     gap: spacing.sm,
+    ...elevations.soft,
+  },
+  cardDarkLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: colors.primaryDeep,
+    marginBottom: spacing.xs,
   },
   cardTitle: {
     fontSize: typography.body,
@@ -143,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.border,
     backgroundColor: colors.card,
   },

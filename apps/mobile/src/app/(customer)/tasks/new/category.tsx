@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Bolt,
+  ChevronLeft,
   Hammer,
   Leaf,
   Package,
@@ -19,7 +21,6 @@ import {
   Search,
 } from 'lucide-react-native';
 import { Input } from '../../../../components/ui/Input';
-import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -106,7 +107,6 @@ function CategoryCard({
   category: Category;
   onPress: () => void;
 }) {
-  const { t } = useTranslation();
   const visual = getCategoryVisual(category.name);
   const Icon = visual.icon;
 
@@ -121,7 +121,6 @@ function CategoryCard({
         <Icon color={visual.tint} size={22} />
       </View>
       <Text style={styles.categoryName}>{category.name}</Text>
-      <Text style={styles.categoryDescription}>{visual.description}</Text>
     </Pressable>
   );
 }
@@ -150,52 +149,49 @@ export default function CategorySelectionScreen() {
   );
 
   return (
-    <View style={styles.container} testID="category-selection-screen">
+    <SafeAreaView edges={['top']} style={styles.container} testID="category-selection-screen">
+      {/* Header — frosted bar with back + title */}
+      <View style={styles.header}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('wizard.close', 'Close')}
+          onPress={() => router.back()}
+          style={styles.backButton}
+          testID="category-selection-back"
+        >
+          <ChevronLeft size={20} color={colors.primaryDeep} />
+        </Pressable>
+        <Text style={styles.headerTitle}>
+          {t('customer.postTask.categoryInstruction', 'Ангилал сонгох')}
+        </Text>
+      </View>
+
       <ScrollView
         testID="category-selection-scroll"
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '1').replace('{{total}}', '7')}</Text>
-          <StepIndicator currentStep={1} totalSteps={7} testID="category-selection-step-indicator" />
-          <Text style={styles.title}>{t('customer.postTask.categoryInstruction', 'What type of task do you need?')}</Text>
-          <Text style={styles.support}>
-            {t(
-              'customer.postTask.categorySupport',
-              'Pick the closest match. You can refine the scope in the next step.',
-            )}
-          </Text>
-        </View>
-
+        {/* Search — flat tonal */}
         <View style={styles.searchWrap}>
-          <Search size={18} color={colors.textSecondary} />
+          <Search size={18} color={`${colors.textSecondary}99`} />
           <Input
             value={query}
             onChangeText={setQuery}
-            placeholder={t('customer.postTask.searchCategories', 'Search categories')}
+            placeholder={t('customer.postTask.searchCategories', 'Ангилал хайх...')}
             testID="category-selection-search"
             style={styles.searchInput}
           />
         </View>
 
-        <View style={styles.featuredBanner}>
-          <View style={styles.featuredIcon}>
-            <Sparkles size={18} color={colors.primary} />
-          </View>
-          <View style={styles.featuredCopy}>
-            <Text style={styles.featuredTitle}>
-              {t('customer.postTask.featuredTitle', 'Need help choosing?')}
-            </Text>
-            <Text style={styles.featuredBody}>
-              {t(
-                'customer.postTask.featuredBody',
-                'Pick the closest match and refine the job scope in the next step.',
-              )}
-            </Text>
-          </View>
-        </View>
+        {/* Editorial intro */}
+        <Text style={styles.editorialIntro}>
+          {t(
+            'customer.postTask.categorySupport',
+            'Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.',
+          )}
+        </Text>
 
+        {/* Category grid */}
         {isLoading ? (
           <View style={styles.loadingState} testID="category-selection-loading">
             <ActivityIndicator color={colors.primary} />
@@ -232,8 +228,21 @@ export default function CategorySelectionScreen() {
             ))}
           </View>
         )}
+
+        {/* Featured banner — dark navy */}
+        <View style={styles.featuredBanner}>
+          <Text style={styles.featuredTitle}>
+            {t('customer.postTask.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
+          </Text>
+          <Text style={styles.featuredBody}>
+            {t(
+              'customer.postTask.featuredBody',
+              'Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя.',
+            )}
+          </Text>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -242,43 +251,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing['3xl'],
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.lg,
+    paddingHorizontal: spacing.xl,
+    height: 64,
   },
-  hero: {
-    gap: spacing.sm,
+  backButton: {
+    width: 32,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
-  },
-  title: {
+  headerTitle: {
     fontSize: typography.title,
-    fontWeight: '800',
+    fontWeight: '700',
     color: colors.primaryDeep,
-    lineHeight: typography.title * 1.2,
   },
-  support: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
+  scrollContent: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing['3xl'],
+    gap: spacing.xl,
   },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    ...elevations.card,
+    borderRadius: radius.sm,
+    backgroundColor: colors.muted,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    height: 56,
   },
   searchInput: {
     flex: 1,
@@ -288,37 +292,11 @@ const styles = StyleSheet.create({
     minHeight: 40,
     backgroundColor: 'transparent',
   },
-  featuredBanner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: `${colors.primary}10`,
-    borderWidth: 1,
-    borderColor: `${colors.primary}20`,
-  },
-  featuredIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}18`,
-  },
-  featuredCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  featuredTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  featuredBody: {
-    fontSize: typography.caption,
+  editorialIntro: {
+    fontSize: typography.label,
     color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
+    lineHeight: typography.label * 1.625,
+    maxWidth: 274,
   },
   loadingState: {
     gap: spacing.md,
@@ -326,22 +304,20 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   loadingCard: {
-    width: '48%',
-    minHeight: 132,
-    borderRadius: radius.lg,
+    width: '47%',
+    minHeight: 163,
+    borderRadius: radius.md,
     backgroundColor: colors.muted,
   },
   messageCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
+    padding: spacing.xl,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.sm,
-    ...elevations.card,
+    ...elevations.soft,
   },
   messageTitle: {
     fontSize: typography.body,
@@ -368,34 +344,48 @@ const styles = StyleSheet.create({
     color: colors.secondaryForeground,
   },
   categoryCard: {
-    width: '48%',
-    minHeight: 132,
-    padding: spacing.md,
-    borderRadius: radius.lg,
+    width: '47%',
+    minHeight: 163,
+    padding: 20,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: spacing.sm,
-    ...elevations.card,
+    justifyContent: 'space-between',
+    ...elevations.soft,
   },
   categoryCardPressed: {
-    opacity: 0.95,
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
   },
   categoryIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
+    width: 48,
+    height: 48,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryName: {
     fontSize: typography.body,
-    fontWeight: '800',
+    fontWeight: '600',
     color: colors.primaryDeep,
+    marginTop: spacing.xl,
   },
-  categoryDescription: {
+  featuredBanner: {
+    padding: spacing.xl,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    overflow: 'hidden',
+  },
+  featuredTitle: {
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+    marginBottom: spacing.xs,
+  },
+  featuredBody: {
     fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.4,
+    color: colors.primaryForeground,
+    opacity: 0.8,
+    lineHeight: typography.caption * 1.35,
+    maxWidth: 180,
   },
 });

@@ -6,13 +6,9 @@ export default function NewTaskLayout() {
   const { t } = useTranslation();
 
   return (
-    <Stack
-      screenOptions={{
-        ...defaultStackScreenOptions,
-        presentation: 'modal',
-      }}
-    >
-      <Stack.Screen name="category" options={{ title: t('wizard.stepCategory', 'Category') }} />
+    <Stack screenOptions={defaultStackScreenOptions}>
+      <Stack.Screen name="index" options={{ title: t('wizard.stepCategory', 'Category'), headerShown: false }} />
+      <Stack.Screen name="category" options={{ title: t('wizard.stepCategory', 'Category'), headerShown: false }} />
       <Stack.Screen name="intake" options={{ title: t('wizard.stepDetails', 'Details') }} />
       <Stack.Screen name="location" options={{ title: t('wizard.stepLocation', 'Location') }} />
       <Stack.Screen name="photos" options={{ title: t('wizard.stepPhotos', 'Photos') }} />

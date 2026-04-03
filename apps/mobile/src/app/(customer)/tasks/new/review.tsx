@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
-import { StepIndicator } from '../../../../components/ui/StepIndicator';
+import { Toast } from '../../../../components/ui/Toast';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { parseError } from '../../../../utils/errorHandling';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -17,7 +18,9 @@ function parsePhotoKeys(value?: string): string[] {
 
   try {
     const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === 'string')
+      : [];
   } catch {
     return [];
   }
@@ -60,7 +63,7 @@ function formatSchedule(scheduledAt?: string): string {
     minute: '2-digit',
     hour12: false,
   });
-  return `${date} ${time}`;
+  return `${date}, ${time}`;
 }
 
 function extractTaskId(result: unknown): string | null {
@@ -89,50 +92,89 @@ function extractTaskId(result: unknown): string | null {
   return null;
 }
 
-function SummarySection({
+function isImageUri(value: string): boolean {
+  return /^https?:\/\//i.test(value);
+}
+
+function SectionCard({
   label,
   value,
   onEdit,
   testID,
+  icon,
+  featured = false,
   children,
 }: {
   label: string;
   value: string;
   onEdit?: () => void;
   testID?: string;
+  icon?: React.ReactNode;
+  featured?: boolean;
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
+
   return (
-    <View style={styles.section} testID={testID}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionLabel}>{label}</Text>
+    <View style={[styles.card, featured && styles.cardFeatured]} testID={testID}>
+      <View style={styles.cardHeader}>
+        <Text style={[styles.cardLabel, featured && styles.cardLabelFeatured]}>{label}</Text>
         {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
-            <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
+            <Text style={[styles.editLink, featured && styles.editLinkFeatured]}>
+              {t('customer.postTask.edit', 'Edit')}
+            </Text>
           </Pressable>
         ) : null}
       </View>
-      <Text style={styles.sectionValue}>{value}</Text>
+
+      <View style={styles.cardValueRow}>
+        {icon ? (
+          <View style={[styles.cardIconWrap, featured && styles.cardIconWrapFeatured]}>{icon}</View>
+        ) : null}
+        <Text style={[styles.cardValue, featured && styles.cardValueFeatured]}>{value}</Text>
+      </View>
       {children}
     </View>
   );
 }
 
-function PhotosPreview({ photos }: { photos: string[] }) {
+function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }) {
   const { t } = useTranslation();
+  const slots = photos.slice(0, 3);
 
   return (
-    <View style={styles.photosRow}>
-      {photos.length > 0 ? (
-        photos.map((photo, index) => (
-          <View key={`${photo}-${index}`} style={styles.photoThumb}>
-            <Text style={styles.photoThumbText}>{String(index + 1)}</Text>
+    <View style={styles.card} testID="review-section-photos">
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardLabel}>
+          {t('customer.postTask.sectionPhotos', 'Photos')}{' '}
+          {photos.length > 0 ? `(${photos.length})` : ''}
+        </Text>
+        <Pressable onPress={onEdit} accessibilityRole="button">
+          <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.photoGrid}>
+        {slots.map((photo, index) => (
+          <View key={`${photo}-${index}`} style={styles.photoSlot}>
+            {isImageUri(photo) ? (
+              <Image source={{ uri: photo }} style={styles.photoImage} />
+            ) : (
+              <Text style={styles.photoFallback}>{String(index + 1)}</Text>
+            )}
           </View>
-        ))
-      ) : (
-        <Text style={styles.sectionValue}>{t('customer.postTask.noPhotos', 'No photos added')}</Text>
-      )}
+        ))}
+        {Array.from({ length: Math.max(0, 3 - slots.length) }).map((_, idx) => (
+          <View key={`empty-${idx}`} style={[styles.photoSlot, styles.photoSlotEmpty]}>
+            <Text style={styles.photoEmptyPlus}>+</Text>
+          </View>
+        ))}
+      </View>
+
+      {photos.length === 0 ? (
+        <Text style={styles.photosHint}>{t('customer.postTask.noPhotos', 'No photos added')}</Text>
+      ) : null}
     </View>
   );
 }
@@ -155,8 +197,14 @@ export default function ReviewSubmitScreen() {
 
   const { mutateAsync, isPending } = useCreateTask();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const photos = useMemo(() => parsePhotoKeys(params.photos), [params.photos]);
-  const intakeAnswers = useMemo(() => parseIntakeAnswers(params.intakeAnswers), [params.intakeAnswers]);
+  const intakeAnswers = useMemo(
+    () => parseIntakeAnswers(params.intakeAnswers),
+    [params.intakeAnswers],
+  );
+
+  const intakeSchemaVersion = Number(params.intakeSchemaVersion) || 1;
   const hasRequiredPayload =
     Boolean(params.categoryId) &&
     Boolean(params.description?.trim()) &&
@@ -164,6 +212,19 @@ export default function ReviewSubmitScreen() {
     Boolean(params.lat) &&
     Boolean(params.lng) &&
     Boolean(params.budget);
+
+  const commonStepParams = {
+    categoryId: params.categoryId ?? '',
+    description: params.description ?? '',
+    intakeAnswers: JSON.stringify(intakeAnswers),
+    intakeSchemaVersion: String(intakeSchemaVersion),
+    photos: JSON.stringify(photos),
+    location: params.location ?? '',
+    lat: params.lat ?? '',
+    lng: params.lng ?? '',
+    scheduledAt: params.scheduledAt ?? '',
+    budget: params.budget ?? '',
+  };
 
   const handleSubmit = async () => {
     try {
@@ -176,7 +237,7 @@ export default function ReviewSubmitScreen() {
         description: params.description ?? '',
         budget: Number(params.budget) || 0,
         intake_answers: intakeAnswers,
-        intake_schema_version: Number(params.intakeSchemaVersion) || 1,
+        intake_schema_version: intakeSchemaVersion,
         location_lat: Number.isFinite(locationLat) ? locationLat : 0,
         location_lng: Number.isFinite(locationLng) ? locationLng : 0,
         location_text: params.location ?? '',
@@ -186,7 +247,10 @@ export default function ReviewSubmitScreen() {
       const taskId = extractTaskId(createdTask);
       if (!taskId) {
         throw new Error(
-          t('customer.postTask.submitUnexpectedResponse', 'Unexpected server response. Please try again.'),
+          t(
+            'customer.postTask.submitUnexpectedResponse',
+            'Unexpected server response. Please try again.',
+          ),
         );
       }
 
@@ -199,6 +263,10 @@ export default function ReviewSubmitScreen() {
     }
   };
 
+  const description = params.description ?? '';
+  const shortDescription =
+    description.length > 140 ? `${description.slice(0, 140).trimEnd()}...` : description;
+
   return (
     <DetailTemplate
       ctaLabel={t('customer.postTask.postButton', 'Post Task')}
@@ -207,69 +275,163 @@ export default function ReviewSubmitScreen() {
       ctaDisabled={!hasRequiredPayload}
       testID="review-submit-screen"
     >
-      <View style={styles.stepWrap}>
-        <StepIndicator currentStep={6} totalSteps={7} testID="review-step-indicator" />
-      </View>
-
-      <View style={styles.heroCard}>
-        <Text style={styles.heroLabel}>{t('customer.postTask.sectionScope', 'Job Scope Summary')}</Text>
-        <Text style={styles.heroTitle}>{params.description ?? ''}</Text>
-        <Text style={styles.heroBody}>
-          {t(
-            'customer.postTask.scopeSummaryHint',
-            'You can edit the summary before posting the task.',
-          )}
+      <View style={styles.headerBlock}>
+        <Text style={styles.stepKicker}>{t('customer.postTask.finalStep', 'Final Step')}</Text>
+        <Text style={styles.pageTitle}>
+          {t('customer.postTask.reviewTitle', 'Review & Submit')}
         </Text>
-        <View style={styles.categoryBadge}>
-          <Text style={styles.categoryBadgeText}>
-            {t('customer.postTask.sectionCategory', 'Category')} · {params.categoryId}
-          </Text>
-        </View>
       </View>
 
-      <SummarySection
-        label={t('customer.postTask.sectionDetails', 'Task Details')}
-        value={params.description ?? ''}
-        onEdit={() => router.back()}
-        testID="review-section-description"
+      <SectionCard
+        label={t('customer.postTask.sectionCategory', 'Category')}
+        value={params.categoryId ?? ''}
+        onEdit={() => router.push('/(customer)/tasks/new/category')}
+        testID="review-section-category"
+        icon={<Sparkles size={16} color={colors.primaryDeep} />}
       />
 
-      <SummarySection
-        label={t('customer.postTask.sectionPhotos', 'Photos')}
-        value={photos.length > 0 ? t('customer.postTask.photosCount', '{{count}} photos').replace('{{count}}', String(photos.length)) : t('customer.postTask.noPhotos', 'No photos added')}
-        onEdit={() => router.back()}
-        testID="review-section-photos"
-      >
-        <PhotosPreview photos={photos} />
-      </SummarySection>
+      <SectionCard
+        label={t('customer.postTask.sectionScope', 'Job Scope Summary')}
+        value={params.description ?? ''}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/intake',
+            params: { categoryId: commonStepParams.categoryId },
+          })
+        }
+        testID="review-section-title"
+      />
 
-      <SummarySection
+      <View style={styles.card} testID="review-section-description">
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardLabel}>
+            {t('customer.postTask.sectionDetails', 'Task Details')}
+          </Text>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: '/(customer)/tasks/new/intake',
+                params: { categoryId: commonStepParams.categoryId },
+              })
+            }
+            accessibilityRole="button"
+          >
+            <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
+          </Pressable>
+        </View>
+        <Text style={styles.descriptionText}>
+          {showFullDescription ? description : shortDescription}
+        </Text>
+        {description.length > 140 ? (
+          <Pressable
+            onPress={() => setShowFullDescription((prev) => !prev)}
+            accessibilityRole="button"
+          >
+            <Text style={styles.viewMoreLink}>
+              {showFullDescription
+                ? t('customer.postTask.viewLess', 'View less')
+                : t('customer.postTask.viewMore', 'View more')}
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      <PhotosCard
+        photos={photos}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/photos',
+            params: {
+              categoryId: commonStepParams.categoryId,
+              description: commonStepParams.description,
+              intakeAnswers: commonStepParams.intakeAnswers,
+              intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
+              photos: commonStepParams.photos,
+            },
+          })
+        }
+      />
+
+      <SectionCard
         label={t('customer.postTask.sectionLocation', 'Location')}
         value={params.location ?? t('customer.postTask.notSet', 'Not set')}
-        onEdit={() => router.back()}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/location',
+            params: {
+              categoryId: commonStepParams.categoryId,
+              description: commonStepParams.description,
+              intakeAnswers: commonStepParams.intakeAnswers,
+              intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
+              photos: commonStepParams.photos,
+              location: commonStepParams.location,
+              lat: commonStepParams.lat,
+              lng: commonStepParams.lng,
+            },
+          })
+        }
         testID="review-section-location"
+        icon={<MapPin size={16} color={colors.accent} />}
       />
 
-      <SummarySection
+      <SectionCard
         label={t('customer.postTask.sectionSchedule', 'Schedule')}
         value={formatSchedule(params.scheduledAt) || t('customer.postTask.flexible', 'Flexible')}
-        onEdit={() => router.back()}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/schedule',
+            params: {
+              categoryId: commonStepParams.categoryId,
+              description: commonStepParams.description,
+              intakeAnswers: commonStepParams.intakeAnswers,
+              intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
+              photos: commonStepParams.photos,
+              location: commonStepParams.location,
+              lat: commonStepParams.lat,
+              lng: commonStepParams.lng,
+            },
+          })
+        }
         testID="review-section-schedule"
+        icon={<CalendarDays size={16} color={colors.primaryDeep} />}
       />
 
-      <SummarySection
+      <SectionCard
         label={t('customer.postTask.sectionBudget', 'Budget')}
         value={formatBudget(params.budget ?? '0')}
-        onEdit={() => router.back()}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/schedule',
+            params: {
+              categoryId: commonStepParams.categoryId,
+              description: commonStepParams.description,
+              intakeAnswers: commonStepParams.intakeAnswers,
+              intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
+              photos: commonStepParams.photos,
+              location: commonStepParams.location,
+              lat: commonStepParams.lat,
+              lng: commonStepParams.lng,
+            },
+          })
+        }
         testID="review-section-budget"
+        icon={<CircleDollarSign size={16} color={colors.accent} />}
+        featured
       />
 
-      <Text style={styles.paymentNote}>
-        {t('customer.postTask.paymentNote', 'Payment is arranged directly with the Tasker')}
-      </Text>
+      <View style={styles.guidanceCard}>
+        <CircleAlert size={16} color={colors.accent} />
+        <Text style={styles.guidanceText}>
+          {t(
+            'customer.postTask.reviewGuidance',
+            'Taskers will review your task and send offers. Double-check details before posting.',
+          )}
+        </Text>
+      </View>
+
       {submitError ? (
         <View style={styles.errorBox} testID="review-submit-error">
-          <Text style={styles.errorText}>{submitError}</Text>
+          <Toast message={submitError} variant="error" />
         </View>
       ) : null}
     </DetailTemplate>
@@ -277,114 +439,150 @@ export default function ReviewSubmitScreen() {
 }
 
 const styles = StyleSheet.create({
-  stepWrap: {
-    marginBottom: spacing.md,
+  headerBlock: {
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
   },
-  heroCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  heroLabel: {
+  stepKicker: {
     fontSize: typography.caption,
-    color: colors.textSecondary,
+    color: colors.secondary,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 1.2,
     fontWeight: '700',
   },
-  heroTitle: {
-    fontSize: typography.subtitle,
+  pageTitle: {
+    fontSize: 36,
+    color: colors.primaryDeep,
     fontWeight: '800',
-    color: colors.primaryDeep,
+    lineHeight: 40,
+    letterSpacing: -0.9,
   },
-  heroBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.primary}12`,
-  },
-  categoryBadgeText: {
-    fontSize: typography.caption,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  section: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.md,
+  card: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.sm,
+    padding: spacing.lg,
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.sm,
   },
-  sectionHeader: {
+  cardFeatured: {
+    backgroundColor: colors.primaryDeep,
+    borderRadius: radius.lg,
+    ...elevations.soft,
+  },
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  sectionLabel: {
-    fontSize: typography.label,
+  cardLabel: {
+    fontSize: typography.caption,
     fontWeight: '700',
-    color: colors.mutedForeground,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    color: colors.textSecondary,
+  },
+  cardLabelFeatured: {
+    color: `${colors.primaryForeground}CC`,
   },
   editLink: {
-    fontSize: typography.label,
+    fontSize: typography.caption,
     fontWeight: '700',
+    color: colors.primaryDeep,
+  },
+  editLinkFeatured: {
     color: colors.accent,
   },
-  sectionValue: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.5,
-  },
-  photosRow: {
+  cardValueRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: spacing.sm,
   },
-  photoThumb: {
-    width: 44,
-    height: 44,
+  cardIconWrap: {
+    width: 28,
+    height: 28,
     borderRadius: radius.md,
-    backgroundColor: `${colors.primary}12`,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: `${colors.primary}14`,
+  },
+  cardIconWrapFeatured: {
+    backgroundColor: `${colors.primaryForeground}1F`,
+  },
+  cardValue: {
+    flex: 1,
+    fontSize: typography.body,
+    color: colors.foreground,
+    fontWeight: '700',
+    lineHeight: typography.body * 1.45,
+  },
+  cardValueFeatured: {
+    color: colors.primaryForeground,
+    fontSize: 36,
+    fontWeight: '800',
+    lineHeight: 40,
+  },
+  descriptionText: {
+    fontSize: typography.body,
+    color: colors.foreground,
+    lineHeight: typography.body * 1.6,
+  },
+  viewMoreLink: {
+    fontSize: typography.caption,
+    color: colors.accent,
+    fontWeight: '700',
+  },
+  photoGrid: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  photoSlot: {
+    width: 128,
+    height: 128,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    backgroundColor: colors.muted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  photoThumbText: {
-    fontSize: typography.caption,
-    fontWeight: '800',
-    color: colors.primaryDeep,
+  photoSlotEmpty: {
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: colors.chipInactive,
+    backgroundColor: `${colors.card}`,
   },
-  paymentNote: {
+  photoImage: {
+    width: '100%',
+    height: '100%',
+  },
+  photoFallback: {
     fontSize: typography.caption,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    marginTop: spacing.lg,
+    color: colors.primaryDeep,
+    fontWeight: '700',
+  },
+  photoEmptyPlus: {
+    fontSize: typography.heading,
+    color: colors.textSecondary,
+    lineHeight: typography.heading,
+  },
+  photosHint: {
+    fontSize: typography.caption,
+    color: colors.textSecondary,
+  },
+  guidanceCard: {
+    borderRadius: radius.md,
+    backgroundColor: colors.muted,
+    padding: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  guidanceText: {
+    flex: 1,
+    fontSize: typography.caption,
     lineHeight: typography.caption * 1.6,
+    color: colors.textSecondary,
   },
   errorBox: {
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: `${colors.danger}66`,
-    backgroundColor: `${colors.danger}12`,
-    padding: spacing.md,
     marginBottom: spacing.md,
-  },
-  errorText: {
-    fontSize: typography.caption,
-    color: colors.danger,
-    fontWeight: '600',
   },
 });

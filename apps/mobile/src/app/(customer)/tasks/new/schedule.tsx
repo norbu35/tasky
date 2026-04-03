@@ -3,12 +3,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CalendarDays, Clock3 } from 'lucide-react-native';
+import { CalendarDays } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Button } from '../../../../components/ui/Button';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
-import { mobileTheme } from '../../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
@@ -50,6 +50,12 @@ function toValidDate(value: Date | null | undefined, fallback: Date): Date {
   return fallback;
 }
 
+function parseDateParam(value?: string): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
 export default function ScheduleBudgetScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -62,12 +68,15 @@ export default function ScheduleBudgetScreen() {
     location: string;
     lat: string;
     lng: string;
+    scheduledAt?: string;
+    budget?: string;
   }>();
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+  const parsedSchedule = parseDateParam(params.scheduledAt);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(parsedSchedule);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(parsedSchedule);
   const [activePicker, setActivePicker] = useState<ActivePickerState>(null);
-  const [budget, setBudget] = useState('');
+  const [budget, setBudget] = useState(params.budget ?? '');
   const [touchedBudget, setTouchedBudget] = useState(false);
   const [touchedSchedule, setTouchedSchedule] = useState(false);
 
@@ -79,7 +88,8 @@ export default function ScheduleBudgetScreen() {
   }, [selectedDate, selectedTime]);
 
   const budgetNumber = Number(budget);
-  const isBudgetValid = budget !== '' && Number.isFinite(budgetNumber) && budgetNumber >= MIN_BUDGET;
+  const isBudgetValid =
+    budget !== '' && Number.isFinite(budgetNumber) && budgetNumber >= MIN_BUDGET;
   const isScheduleValid = Boolean(schedule) && schedule!.getTime() > Date.now();
   const canContinue = isBudgetValid && isScheduleValid;
 
@@ -95,9 +105,7 @@ export default function ScheduleBudgetScreen() {
   const openPicker = (mode: Exclude<PickerMode, null>) => {
     const fallback = createDefaultScheduleDate();
     const currentValue =
-      mode === 'date'
-        ? toValidDate(selectedDate, fallback)
-        : toValidDate(selectedTime, fallback);
+      mode === 'date' ? toValidDate(selectedDate, fallback) : toValidDate(selectedTime, fallback);
     setTouchedSchedule(true);
     setActivePicker({ mode, draftValue: currentValue });
   };
@@ -177,17 +185,28 @@ export default function ScheduleBudgetScreen() {
       testID="schedule-budget-screen"
     >
       <View style={styles.hero}>
-        <Text style={styles.stepLabel}>{t('taskPost.step', 'Step {{current}} of {{total}}').replace('{{current}}', '5').replace('{{total}}', '7')}</Text>
-        <Text style={styles.title}>{t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}</Text>
+        <Text style={styles.stepLabel}>
+          {t('taskPost.step', 'Step {{current}} of {{total}}')
+            .replace('{{current}}', '5')
+            .replace('{{total}}', '7')}
+        </Text>
+        <Text style={styles.title}>
+          {t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}
+        </Text>
         <Text style={styles.subtitle}>
-          {t('customer.postTask.scheduleInstruction', 'Pick when the task should happen and set your budget.')}
+          {t(
+            'customer.postTask.scheduleInstruction',
+            'Pick when the task should happen and set your budget.',
+          )}
         </Text>
       </View>
 
       <View style={styles.dateCard}>
         <View style={styles.dateCardHeader}>
           <CalendarDays size={18} color={colors.primary} />
-          <Text style={styles.dateCardTitle}>{t('customer.postTask.scheduleLabel', 'When do you need this done?')}</Text>
+          <Text style={styles.dateCardTitle}>
+            {t('customer.postTask.scheduleLabel', 'When do you need this done?')}
+          </Text>
         </View>
 
         <FormField
@@ -198,10 +217,19 @@ export default function ScheduleBudgetScreen() {
           <View style={styles.scheduleRow}>
             <Pressable
               onPress={() => openPicker('date')}
-              style={({ pressed }) => [styles.pickerField, pressed ? styles.pickerFieldPressed : null]}
+              style={({ pressed }) => [
+                styles.pickerField,
+                selectedDate ? styles.pickerFieldActive : null,
+                pressed ? styles.pickerFieldPressed : null,
+              ]}
               testID="schedule-date-input"
             >
-              <Text style={[styles.pickerText, selectedDate ? null : styles.pickerPlaceholder]}>
+              <Text
+                style={[
+                  styles.pickerText,
+                  selectedDate ? styles.pickerTextActive : styles.pickerPlaceholder,
+                ]}
+              >
                 {selectedDate
                   ? formatDateValue(selectedDate)
                   : t('customer.postTask.scheduleDatePlaceholder', 'Pick a date')}
@@ -210,10 +238,19 @@ export default function ScheduleBudgetScreen() {
 
             <Pressable
               onPress={() => openPicker('time')}
-              style={({ pressed }) => [styles.pickerField, pressed ? styles.pickerFieldPressed : null]}
+              style={({ pressed }) => [
+                styles.pickerField,
+                selectedTime ? styles.pickerFieldActive : null,
+                pressed ? styles.pickerFieldPressed : null,
+              ]}
               testID="schedule-time-input"
             >
-              <Text style={[styles.pickerText, selectedTime ? null : styles.pickerPlaceholder]}>
+              <Text
+                style={[
+                  styles.pickerText,
+                  selectedTime ? styles.pickerTextActive : styles.pickerPlaceholder,
+                ]}
+              >
                 {selectedTime
                   ? formatTimeValue(selectedTime)
                   : t('customer.postTask.scheduleTimePlaceholder', 'Pick a time')}
@@ -221,14 +258,13 @@ export default function ScheduleBudgetScreen() {
             </Pressable>
           </View>
         </FormField>
+      </View>
 
+      <View style={styles.budgetSection}>
+        <Text style={styles.budgetHeading}>{t('customer.postTask.budgetLabel', 'Budget')}</Text>
         <FormField
-          label={t('customer.postTask.budgetLabel', 'Budget')}
           errorText={budgetError || undefined}
-          helperText={t(
-            'customer.postTask.budgetHelper',
-            'Enter a fixed amount. Minimum: ₮1,001',
-          )}
+          helperText={t('customer.postTask.budgetHelper', 'Enter a fixed amount. Minimum: ₮1,001')}
         >
           <Input
             testID="schedule-budget-input"
@@ -243,22 +279,8 @@ export default function ScheduleBudgetScreen() {
             invalid={Boolean(budgetError)}
           />
         </FormField>
-      </View>
-
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryRow}>
-          <Clock3 size={16} color={colors.primaryDeep} />
-          <Text style={styles.summaryText}>
-            {schedule
-              ? `${formatDateValue(schedule)} · ${formatTimeValue(schedule)}`
-              : t('customer.postTask.scheduleSummary', 'Choose a date and time')}
-          </Text>
-        </View>
-        <Text style={styles.summaryNote}>
-          {t(
-            'customer.postTask.scheduleNote',
-            'Date format uses YYYY.MM.DD and budget is shown in tugrik.',
-          )}
+        <Text style={styles.budgetGoldHint}>
+          {t('customer.postTask.budgetGoldHint', 'Set a fair budget to attract skilled Taskers')}
         </Text>
       </View>
 
@@ -276,7 +298,9 @@ export default function ScheduleBudgetScreen() {
               </Text>
             </View>
             <DateTimePicker
-              testID={activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'}
+              testID={
+                activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'
+              }
               value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
               mode={activePicker.mode}
               display="spinner"
@@ -327,7 +351,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   title: {
-    fontSize: typography.heading,
+    fontSize: 24,
     fontWeight: '800',
     color: colors.primaryDeep,
   },
@@ -337,12 +361,11 @@ const styles = StyleSheet.create({
     lineHeight: typography.body * 1.5,
   },
   dateCard: {
-    padding: spacing.lg,
+    padding: 20,
     borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
     gap: spacing.lg,
+    ...elevations.soft,
   },
   dateCardHeader: {
     flexDirection: 'row',
@@ -369,6 +392,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
+  pickerFieldActive: {
+    backgroundColor: colors.primaryDeep,
+    borderColor: colors.primaryDeep,
+  },
   pickerFieldPressed: {
     opacity: 0.85,
   },
@@ -377,30 +404,26 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     fontWeight: '600',
   },
+  pickerTextActive: {
+    color: colors.primaryForeground,
+    fontWeight: '700',
+  },
   pickerPlaceholder: {
     color: colors.mutedForeground,
     fontWeight: '500',
   },
-  summaryCard: {
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    backgroundColor: `${colors.primary}0F`,
+  budgetSection: {
     gap: spacing.sm,
   },
-  summaryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  summaryText: {
-    flex: 1,
-    fontSize: typography.body,
+  budgetHeading: {
+    fontSize: typography.subtitle,
+    fontWeight: '800',
     color: colors.primaryDeep,
-    fontWeight: '700',
   },
-  summaryNote: {
+  budgetGoldHint: {
     fontSize: typography.caption,
-    color: colors.textSecondary,
+    color: colors.secondary,
+    fontWeight: '600',
     lineHeight: typography.caption * 1.5,
   },
   iosPickerCard: {
