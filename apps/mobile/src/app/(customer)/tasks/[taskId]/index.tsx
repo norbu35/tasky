@@ -111,8 +111,6 @@ export default function TaskDetailCustomerScreen() {
     <>
       <DetailTemplate
         testID="task-detail-customer-screen"
-        headerTitle={t('customer.taskDetail.title', 'Task Detail')}
-        onBack={() => router.back()}
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}

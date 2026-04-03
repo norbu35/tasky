@@ -60,8 +60,6 @@ export default function BookingConfirmScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('customer.bookings.confirmTitle', 'Confirm Booking')}
-      onBack={() => router.back()}
       ctaLabel={t('customer.bookings.ctaConfirm', 'Confirm Booking')}
       ctaOnPress={handleConfirm}
       ctaLoading={isPending || isConfirmingIntent}

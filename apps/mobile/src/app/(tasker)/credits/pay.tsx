@@ -26,8 +26,6 @@ export default function TaskerCreditsPayScreen() {
   if (state === 'error') {
     return (
       <DetailTemplate
-        headerTitle="Top up credits"
-        onBack={() => router.back()}
         isError
         onRetry={() => router.replace('/(tasker)/credits/pay')}
         errorMessage="Could not load top-up options"
@@ -40,8 +38,6 @@ export default function TaskerCreditsPayScreen() {
 
   return (
     <DetailTemplate
-      headerTitle="Top up credits"
-      onBack={() => router.back()}
       ctaLabel="Confirm top up"
       ctaOnPress={() => router.replace('/(tasker)/credits/history')}
       testID="tasker-credits-pay"

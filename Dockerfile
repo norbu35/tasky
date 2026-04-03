@@ -5,7 +5,8 @@ COPY gradlew gradlew
 COPY gradle gradle
 COPY build.gradle.kts settings.gradle.kts ./
 COPY services services
-COPY config config
+COPY packages packages
+COPY tooling tooling
 COPY docs/API.yaml docs/API.yaml
 
 RUN chmod +x gradlew && ./gradlew --no-daemon :services:api:bootJar

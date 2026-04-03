@@ -14,10 +14,8 @@ import { useTranslation } from 'react-i18next';
 import {
   ClipboardList,
   House,
-  Menu,
   Search,
   UserRound,
-  ChevronLeft,
   AlertTriangle,
   CircleCheckBig,
   CircleAlert,
@@ -287,23 +285,6 @@ export default function DisputeStatusScreen() {
   return (
     <SafeAreaView style={styles.safeArea} testID="dispute-status-screen">
       <View style={styles.shell}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.back()}
-            style={styles.headerButton}
-            testID="dispute-status-screen-back"
-          >
-            <ChevronLeft size={20} color={colors.primaryDeep} />
-          </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('customer.disputes.statusTitle', 'Маргааны статус')}
-          </Text>
-          <Pressable accessibilityRole="button" style={styles.headerButton}>
-            <Menu size={18} color={colors.primaryDeep} />
-          </Pressable>
-        </View>
-
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -491,29 +472,6 @@ const styles = StyleSheet.create({
   shell: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  header: {
-    height: 64,
-    paddingHorizontal: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    marginHorizontal: spacing.md,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,

@@ -10,7 +10,7 @@ spring:
   flyway:
     baseline-on-migrate: false
     # Flyway bypasses PgBouncer and connects directly with the owner account
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT:5432}/${POSTGRES_DB:tasky}
+    url: jdbc:postgresql://${FLYWAY_HOST:postgres}:${POSTGRES_PORT:5432}/${POSTGRES_DB:tasky}
     user: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 

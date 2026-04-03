@@ -43,8 +43,6 @@ export default function TaskerStatsScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('tasker.stats.title', 'Миний статистик')}
-      onBack={() => router.back()}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}

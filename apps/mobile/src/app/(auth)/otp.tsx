@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ShieldCheck, RefreshCw } from 'lucide-react-native';
+import { ShieldCheck, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
 
@@ -47,18 +47,6 @@ export default function OtpScreen() {
 
   return (
     <SafeAreaView style={styles.container} testID="otp-screen">
-      <View style={styles.header} testID="otp-top-app-bar">
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.back()}
-          style={styles.backButton}
-          testID="otp-back-button"
-        >
-          <ArrowLeft size={18} color={colors.primaryDeep} />
-        </Pressable>
-        <Text style={styles.headerTitle}>{t('auth.otp.heading', 'Код баталгаажуулах')}</Text>
-        <View style={styles.headerSpacer} />
-      </View>
 
       <View style={styles.content}>
         <View style={styles.hero}>
@@ -176,29 +164,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  header: {
-    height: 64,
-    paddingHorizontal: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.muted,
-  },
-  headerTitle: {
-    color: colors.primaryDeep,
-    fontSize: typography.title,
-    fontWeight: '700',
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   content: {
     flex: 1,

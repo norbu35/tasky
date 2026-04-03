@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,7 @@ public class FirebasePushProvider implements PushNotificationProvider {
 
     private final FirebaseMessaging messaging;
 
+    @Autowired
     public FirebasePushProvider(@Value("${FIREBASE_SERVICE_ACCOUNT_JSON:}") String serviceAccountJson) {
         this.messaging = initFirebase(serviceAccountJson);
     }

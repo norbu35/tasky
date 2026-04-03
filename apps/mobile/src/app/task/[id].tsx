@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { PriceTag } from '../../components/ui/PriceTag';
@@ -50,10 +50,6 @@ export default function TaskDetailScreen() {
     router.push('/(tasker)/verification' as any);
   }, [router]);
 
-  const handleBack = useCallback(() => {
-    router.back();
-  }, [router]);
-
   const handleBrowseMore = useCallback(() => {
     router.replace('/(tabs)' as any);
   }, [router]);
@@ -95,20 +91,20 @@ export default function TaskDetailScreen() {
   }
 
   return (
-    <DetailTemplate
-      headerTitle={t('taskDetails.title')}
-      onBack={handleBack}
-      ctaLabel={ctaLabel}
-      ctaOnPress={ctaOnPress}
-      ctaLoading={isApplying}
-      ctaDisabled={ctaDisabled}
-      secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton', 'Message') : undefined}
-      secondaryCtaOnPress={isVerified ? handleMessageCustomer : undefined}
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      testID="task-detail"
-    >
+    <>
+      <Stack.Screen options={{ title: t('taskDetails.title') }} />
+      <DetailTemplate
+        ctaLabel={ctaLabel}
+        ctaOnPress={ctaOnPress}
+        ctaLoading={isApplying}
+        ctaDisabled={ctaDisabled}
+        secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton', 'Message') : undefined}
+        secondaryCtaOnPress={isVerified ? handleMessageCustomer : undefined}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={refetch}
+        testID="task-detail"
+      >
       {task && (
         <View style={styles.content}>
           {/* Customer info */}
@@ -189,7 +185,8 @@ export default function TaskDetailScreen() {
           />
         </View>
       )}
-    </DetailTemplate>
+      </DetailTemplate>
+    </>
   );
 }
 

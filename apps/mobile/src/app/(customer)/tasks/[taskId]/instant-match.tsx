@@ -157,7 +157,6 @@ export default function CustomerInstantMatchScreen() {
   return (
     <DetailTemplate
       testID="instant-match-customer-screen"
-      headerTitle={t('matching.instantMatch.pageTitle', 'Instant Match')}
       onBack={onBack}
     >
       <View style={styles.container}>

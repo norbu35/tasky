@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -9,12 +8,9 @@ const { colors, spacing, typography } = mobileTheme;
 
 export default function PrivacyPolicyScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
 
   return (
     <DetailTemplate
-      headerTitle={t('shared.legal.privacyTitle', 'Нууцлалын бодлого')}
-      onBack={() => router.back()}
       testID="privacy-screen"
     >
       <View style={styles.metaRow}>

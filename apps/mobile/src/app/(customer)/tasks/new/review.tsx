@@ -201,8 +201,6 @@ export default function ReviewSubmitScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('customer.postTask.reviewPageTitle', 'Review & Submit')}
-      onBack={() => router.back()}
       ctaLabel={t('customer.postTask.postButton', 'Post Task')}
       ctaOnPress={handleSubmit}
       ctaLoading={isPending}

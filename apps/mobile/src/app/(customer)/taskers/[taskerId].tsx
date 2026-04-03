@@ -25,8 +25,6 @@ export default function TaskerProfileScreen() {
   return (
     <DetailTemplate
       testID="tasker-profile-screen"
-      headerTitle={t('customer.taskerProfile.title', 'Tasker Profile')}
-      onBack={() => router.back()}
       isLoading={isLoading}
       isError={isError}
       onRetry={profileQuery.refetch}

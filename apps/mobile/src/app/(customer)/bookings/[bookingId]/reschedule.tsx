@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CalendarDays, ChevronLeft, ChevronLeft as ChevronLeftIcon, ChevronRight, Clock3, Info, CalendarRange } from 'lucide-react-native';
+import { ArrowRight, CalendarDays, ChevronLeft as ChevronLeftIcon, ChevronRight, Clock3, Info, CalendarRange } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
@@ -113,20 +113,6 @@ export default function RescheduleScreen() {
   return (
     <SafeAreaView style={styles.safeArea} testID="reschedule-screen">
       <View style={styles.shell}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.back()}
-            style={styles.backButton}
-            testID="reschedule-screen-back"
-          >
-            <ChevronLeft size={22} color={colors.primaryDeep} />
-          </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('customer.bookings.pageRescheduleTitle', 'Цаг өөрчлөх')}
-          </Text>
-        </View>
-
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -362,27 +348,6 @@ const styles = StyleSheet.create({
   shell: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
   },
   scroll: {
     flex: 1,

@@ -48,8 +48,6 @@ export default function TaskerCreditsHistoryScreen() {
 
   return (
     <DetailTemplate
-      headerTitle="Credit history"
-      onBack={() => router.back()}
       testID="tasker-credits-history"
     >
       {state === 'empty' ? (

@@ -178,8 +178,6 @@ export default function ProfilePolishScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('tasker.profilePolish.title', 'AI тайлбар сайжруулах')}
-      onBack={() => router.back()}
       ctaLabel={
         screenState === 'suggestion_ready'
           ? t('tasker.profilePolish.apply', 'Энэ хувилбарыг хэрэглэх')

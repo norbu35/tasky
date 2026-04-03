@@ -153,8 +153,6 @@ export default function BookingDetailScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('customer.bookings.detailTitle', 'Booking Detail')}
-      onBack={() => router.back()}
       ctaLabel={ctaConfig?.label}
       ctaOnPress={ctaConfig ? handleCtaPress : undefined}
       isLoading={isLoading}

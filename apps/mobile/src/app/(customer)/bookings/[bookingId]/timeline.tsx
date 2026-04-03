@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, CircleHelp, ClipboardList, House, MessageSquare, UserRound } from 'lucide-react-native';
+import { CircleHelp, ClipboardList, House, MessageSquare, UserRound } from 'lucide-react-native';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -175,21 +175,6 @@ export default function BookingTimelineScreen() {
   return (
     <SafeAreaView style={styles.safeArea} testID="booking-timeline-screen">
       <View style={styles.shell}>
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.back()}
-            style={styles.backButton}
-            testID="booking-timeline-screen-back"
-          >
-            <ChevronLeft size={22} color={colors.primaryDeep} />
-          </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('customer.bookings.timelineTitle', 'Захиалгын түүх')}
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
-
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -290,31 +275,6 @@ const styles = StyleSheet.create({
   shell: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  headerSpacer: {
-    width: 40,
   },
   scroll: {
     flex: 1,

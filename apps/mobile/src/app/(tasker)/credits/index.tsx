@@ -18,8 +18,6 @@ export default function TaskerCreditsIndexScreen() {
 
   return (
     <DetailTemplate
-      headerTitle="Credits"
-      onBack={() => router.back()}
       testID="tasker-credits-index"
     >
       <View style={styles.stack}>

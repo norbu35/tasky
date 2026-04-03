@@ -1,19 +1,18 @@
 import React from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { ChevronLeft } from 'lucide-react-native';
-import { useTranslation } from 'react-i18next';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
 import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
+import { useTranslation } from 'react-i18next';
 
-const { colors, spacing, typography } = mobileTheme;
-
-const HEADER_HEIGHT = 56;
+const { colors, spacing } = mobileTheme;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
+  /** @deprecated Title is now set via Stack.Screen options in the layout. */
   headerTitle?: string;
+  /** @deprecated Back navigation is now handled by the native Stack header. */
   onBack?: () => void;
   ctaLabel?: string;
   ctaOnPress?: () => void;
@@ -21,12 +20,18 @@ export interface DetailTemplateProps {
   ctaDisabled?: boolean;
   secondaryCtaLabel?: string;
   secondaryCtaOnPress?: () => void;
+  /** @deprecated Use Stack.Screen headerRight in your layout instead. */
   rightAction?: { icon: React.ReactNode; onPress: () => void };
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
   errorMessage?: string;
   testID?: string;
+  /**
+   * When true the template renders without top SafeArea padding,
+   * useful for full-bleed hero screens where the native header is hidden.
+   */
+  hideHeader?: boolean;
 }
 
 function DetailSkeleton() {
@@ -42,58 +47,33 @@ function DetailSkeleton() {
 
 export function DetailTemplate({
   children,
-  headerTitle,
-  onBack,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  headerTitle: _headerTitle,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onBack: _onBack,
   ctaLabel,
   ctaOnPress,
   ctaLoading = false,
   ctaDisabled = false,
   secondaryCtaLabel,
   secondaryCtaOnPress,
-  rightAction,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rightAction: _rightAction,
   isLoading = false,
   isError = false,
   onRetry,
   errorMessage,
   testID,
+  hideHeader = false,
 }: DetailTemplateProps) {
   const { t } = useTranslation();
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
   return (
-    <SafeAreaView style={styles.safeArea} testID={testID}>
-      {/* Header */}
-      <View style={styles.header}>
-        {onBack ? (
-          <Pressable
-            onPress={onBack}
-            style={styles.headerAction}
-            hitSlop={spacing.sm}
-            testID={testID ? `${testID}-back` : undefined}
-          >
-            <ChevronLeft size={24} color={colors.primary} />
-          </Pressable>
-        ) : (
-          <View style={styles.headerAction} />
-        )}
-        {headerTitle && (
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {headerTitle}
-          </Text>
-        )}
-        {rightAction ? (
-          <Pressable
-            onPress={rightAction.onPress}
-            style={styles.headerAction}
-            hitSlop={spacing.sm}
-            testID={testID ? `${testID}-right-action` : undefined}
-          >
-            {rightAction.icon}
-          </Pressable>
-        ) : (
-          <View style={styles.headerAction} />
-        )}
-      </View>
+    <SafeAreaView
+      style={[styles.safeArea, hideHeader && styles.safeAreaNoTop]}
+      testID={testID}
+    >
 
       {/* Body */}
       {isError ? (
@@ -148,26 +128,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    height: HEADER_HEIGHT,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-  },
-  headerAction: {
-    width: spacing['3xl'],
-    height: spacing['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
-    textAlign: 'center',
-    marginHorizontal: spacing.sm,
+  safeAreaNoTop: {
+    // Used when hideHeader=true — removes SafeArea top inset so
+    // full-bleed hero content can extend behind the status bar.
+    paddingTop: 0,
   },
   scrollView: {
     flex: 1,

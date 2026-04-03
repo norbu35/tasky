@@ -46,8 +46,6 @@ export default function BookingDetailTaskerScreen() {
 
   return (
     <DetailTemplate
-      headerTitle={t('tasker.jobs.bookingDetail', 'Захиалгын дэлгэрэнгүй')}
-      onBack={() => router.back()}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
