@@ -444,18 +444,13 @@ const styles = StyleSheet.create({
     width: '75%',
     height: 16,
     borderRadius: radius.xs,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.border,
   },
   loadingRowIcon: {
     width: 20,
     height: 20,
     borderRadius: radius.full,
-    backgroundColor: colors.muted,
-  },
-  errorContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
+    backgroundColor: colors.border,
   },
   errorState: {
     flex: 1,

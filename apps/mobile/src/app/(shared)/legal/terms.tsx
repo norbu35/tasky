@@ -287,10 +287,6 @@ const styles = StyleSheet.create({
     lineHeight: typography.body * 1.5,
     flex: 1,
   },
-  clauseStrong: {
-    fontWeight: '600',
-    color: colors.primaryDeep,
-  },
   loadingContainer: {
     flex: 1,
     paddingHorizontal: spacing.lg,
@@ -342,7 +338,7 @@ const styles = StyleSheet.create({
     right: 0,
     width: 28,
     height: 28,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.border,
     borderTopRightRadius: mobileTheme.radius.lg,
     borderBottomLeftRadius: mobileTheme.radius.md,
   },
@@ -350,14 +346,14 @@ const styles = StyleSheet.create({
     height: 8,
     width: '60%',
     borderRadius: mobileTheme.radius.xs,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.border,
     marginTop: spacing.lg,
   },
   errorDocumentLine: {
     height: 8,
     width: '100%',
     borderRadius: mobileTheme.radius.xs,
-    backgroundColor: colors.muted,
+    backgroundColor: colors.border,
   },
   errorBadge: {
     position: 'absolute',
