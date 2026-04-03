@@ -22,7 +22,7 @@ Every screen must use tokens via these imports (never hardcode values that exist
 
 ```tsx
 import { mobileTheme } from '<relative-path>/design/tokenAdapter';
-import { elevations } from '<relative-path>/design/elevations';
+import { elevations } from '<relative-path>/design/elevations'; // only when the screen uses card shadows or elevated surfaces
 // destructure at top of file:
 const { colors, spacing, typography, radius } = mobileTheme;
 ```
@@ -90,8 +90,8 @@ Used by: task lists, booking lists, job lists, inbox
 - screenTitle: fontSize 24, fontWeight '800', color colors.primaryDeep
 - searchInput (if present): backgroundColor: colors.muted, borderWidth: 0
 - Filter chips: active = colors.primaryDeep bg + white text, inactive = '#e3e2e0' bg + dark text
-- Card outer wrapper: colors.muted bg, radius.lg, 4px padding
-- Card inner: colors.card bg, elevations.soft, no borderWidth/borderColor
+- Card outer wrapper (if Figma shows a tonal frame): colors.muted bg, radius.lg, 4px padding
+- Card inner (or card directly if no outer wrapper): colors.card bg, elevations.soft, no borderWidth/borderColor
 - Skeleton cards: elevations.soft (not borders)
 - FAB: colors.secondary bg, radius.lg
 
@@ -134,8 +134,9 @@ Used by: category, intake, location, photos, schedule, review (task creation wiz
 - title: fontSize 24, fontWeight '800', color colors.primaryDeep
 - subtitle: fontSize typography.body, color colors.textSecondary
 - Content cards: backgroundColor colors.muted, radius.lg, elevations.soft
-- Active picker fields / selected states: backgroundColor colors.primaryDeep, text colors.primaryForeground
-- Input fields: backgroundColor colors.muted, borderWidth: 0 (use invalid state for error only)
+- Picker/selector fields in tonal cards: backgroundColor colors.muted, borderWidth: 0
+  - Active/filled state: backgroundColor colors.primaryDeep, text colors.primaryForeground
+- Leave `<Input>` component border handling untouched — the shared component owns its own focus/error states
 
 ❌ Remove:
 - borderWidth on content cards
@@ -155,7 +156,7 @@ Used by: task posted success, booking confirmed, verification approved
 - headline: fontSize typography.title, fontWeight '900', color colors.primaryDeep, textAlign 'center'
 - "Next steps" card: backgroundColor colors.card, radius.md, elevations.soft, padding 32
   - dark label: fontSize typography.caption, fontWeight '700', uppercase, color colors.primaryDeep
-- Actions: primary Button (full-width) + secondary borderless button (border: 2, colors.border bg)
+- Actions: primary Button (full-width) + secondary outlined button (borderWidth: 2, borderColor colors.border, backgroundColor colors.card)
 ```
 
 ### Archetype E — Auth / Onboarding
@@ -196,6 +197,7 @@ Used by: network error, session expired, banned, suspended, app update, legal pa
 
 Used by: inbox list, chat thread
 
+**Inbox list:**
 ```
 ✅ Apply:
 - Unread rows: backgroundColor '#e7f1fb', no border
@@ -205,6 +207,8 @@ Used by: inbox list, chat thread
 - Timestamp: inline with name/title row (space-between), fontSize typography.caption
 - Unread indicator: colors.secondary dot
 ```
+
+**Chat thread:** Figma is authoritative — apply general tokens (colors, typography, spacing) but defer layout decisions (message bubbles, input composer, typing indicators) to the Figma result. Do not invent chat-specific patterns from the inbox list rules.
 
 ---
 
@@ -224,6 +228,15 @@ The following screens have already received the facelift. Do NOT re-apply:
 | `apps/mobile/src/app/(tabs)/profile.tsx` | Role badge, tonal info card ✅ |
 | `apps/mobile/src/app/(auth)/role-select.tsx` | Border+shadow selected, no border unselected ✅ |
 
+**Explicitly excluded (not visual screens):**
+
+| File | Reason |
+|---|---|
+| `apps/mobile/src/app/index.tsx` | Root splash/redirect — no visual surface to polish |
+| `apps/mobile/src/app/create.tsx` | Navigation shim — delegates to wizard screens |
+| `apps/mobile/src/app/(customer)/tasks/new/index.tsx` | Wizard entry redirect — no visual surface |
+| All `_layout.tsx` files | Expo Router layout wrappers — not screens |
+
 ---
 
 ## 5. Phase 1: Sequential Figma-Driven Pass
@@ -240,7 +253,7 @@ For each screen in the batches below:
 
 **If Figma node is not found** for a screen: fall back to the archetype pattern alone and mark the screen with `[figma-fallback]` in comments for a human review pass.
 
-**Constraint:** Only edit `StyleSheet.create({...})` blocks and the JSX that applies those styles. Do not change component structure, data fetching, navigation calls, or `testID` props.
+**Constraint:** Prefer edits to `StyleSheet.create({...})` blocks and style props. Structural JSX additions (wrappers like `BlurView`, conditional style arrays, `ListFooterComponent` for banners) are allowed when needed for the visual pattern. Do not change data-flow JSX, navigation calls, component props unrelated to styling, or `testID` props.
 
 ---
 
@@ -306,15 +319,16 @@ Typecheck after #14, then again after #19.
 | 29 | `verification/pending.tsx` | `Tasker/Verification Pending` | SCR-TASK-014 | D (Success) |
 | 30 | `verification/approved.tsx` | `Tasker/Verification Approved` | SCR-TASK-015 | D (Success) |
 | 31 | `verification/rejected.tsx` | `Tasker/Verification Rejected` | SCR-TASK-016 | F (Edge) |
-| 32 | `verification/dan.tsx` | `Tasker/Verification DAN` | SCR-TASK-018 | C (Form) |
-| 33 | `subscription.tsx` | `Tasker/Subscription` | SCR-TASK-007 | B (Detail) |
-| 34 | `referrals.tsx` | `Tasker/Referrals` | SCR-TASK-008 | B (Detail) |
-| 35 | `credits/index.tsx` | `Tasker/Credits` | SCR-P2-001 | B (Detail) |
-| 36 | `credits/history.tsx` | `Tasker/Credits History` | SCR-P2-002 | A (List) |
-| 37 | `credits/pay.tsx` | `Tasker/Credits Pay` | SCR-P2-003 | C (Form) |
-| 38 | `profile/polish.tsx` | `Tasker/Profile Polish` | SCR-TASK-012 | C (Form) |
+| 32 | `verification/submitted.tsx` | `Tasker/Verification Submitted` | — | D (Success) |
+| 33 | `verification/dan.tsx` | `Tasker/Verification DAN` | SCR-TASK-018 | C (Form) |
+| 34 | `subscription.tsx` | `Tasker/Subscription` | SCR-TASK-007 | B (Detail) |
+| 35 | `referrals.tsx` | `Tasker/Referrals` | SCR-TASK-008 | B (Detail) |
+| 36 | `credits/index.tsx` | `Tasker/Credits` | SCR-P2-001 | B (Detail) |
+| 37 | `credits/history.tsx` | `Tasker/Credits History` | SCR-P2-002 | A (List) |
+| 38 | `credits/pay.tsx` | `Tasker/Credits Pay` | SCR-P2-003 | C (Form) |
+| 39 | `profile/polish.tsx` | `Tasker/Profile Polish` | SCR-TASK-012 | C (Form) |
 
-Typecheck after #26, then again after #38.
+Typecheck after #27, then again after #39.
 
 ---
 
@@ -324,25 +338,26 @@ Typecheck after #26, then again after #38.
 
 | # | File | Figma Page | SCR-ID | Archetype |
 |---|---|---|---|---|
-| 39 | `(auth)/index.tsx` | `Shared/Auth Login` | SCR-SHARED-002 | E (Auth) |
-| 40 | `onboarding.tsx` | `Shared/Onboarding` | SCR-SHARED-005 | E (Auth) |
-| 41 | `(auth)/permission-camera.tsx` | `Shared/Permission Camera` | SCR-SHARED-006 | E (Auth) |
-| 42 | `(auth)/permission-location.tsx` | `Shared/Permission Location` | SCR-SHARED-007 | E (Auth) |
-| 43 | `(auth)/permission-notifications.tsx` | `Shared/Permission Notifications` | SCR-SHARED-008 | E (Auth) |
-| 44 | `(auth)/otp.tsx` | `Shared/OTP Verification` | SCR-SHARED-003 | E (Auth) |
-| 45 | `(auth)/otp-migration.tsx` | `Shared/OTP Migration` | SCR-SHARED-004 | E (Auth) |
-| 46 | `(tabs)/inbox/index.tsx` | `Shared/Inbox List` | SCR-SHARED-010 | G (Inbox) |
-| 47 | `(tabs)/inbox/[id].tsx` | `Shared/Chat Thread` | SCR-SHARED-011 | G (Inbox) |
-| 48 | `(shared)/review/[bookingId].tsx` | `Shared/Leave Review` | SCR-SHARED-012 | C (Form) |
-| 49 | `(shared)/profile/edit.tsx` | `Shared/Edit Profile` | SCR-SHARED-013 | C (Form) |
-| 50 | `(shared)/profile/settings.tsx` | `Shared/Settings` | SCR-SHARED-014 | F (Edge) |
-| 51 | `(shared)/profile/delete.tsx` | `Shared/Delete Account` | SCR-SHARED-015 | F (Edge) |
-| 52 | `profile/[id].tsx` | `Shared/Public Profile` | SCR-SHARED-009 | B (Detail) |
-| 53 | `task/[id].tsx` | `Tasker/Task Detail Tasker` | SCR-TASK-002 | B (Detail) — same Figma as #20 |
-| 54 | `(tabs)/bookings.tsx` | `Customer/Bookings List` | SCR-CUST-013 | A (List) |
-| 55 | `(tabs)/tasks.tsx` | `Tasker/Jobs List` | SCR-TASK-005 | A (List) — same Figma as #21 |
+| 40 | `(auth)/index.tsx` | `Shared/Auth Login` | SCR-SHARED-002 | E (Auth) |
+| 41 | `onboarding.tsx` | `Shared/Onboarding` | SCR-SHARED-005 | E (Auth) |
+| 42 | `(auth)/permission-camera.tsx` | `Shared/Permission Camera` | SCR-SHARED-006 | E (Auth) |
+| 43 | `(auth)/permission-location.tsx` | `Shared/Permission Location` | SCR-SHARED-007 | E (Auth) |
+| 44 | `(auth)/permission-notifications.tsx` | `Shared/Permission Notifications` | SCR-SHARED-008 | E (Auth) |
+| 45 | `(auth)/otp.tsx` | `Shared/OTP Verification` | SCR-SHARED-003 | E (Auth) |
+| 46 | `(auth)/otp-migration.tsx` | `Shared/OTP Migration` | SCR-SHARED-004 | E (Auth) |
+| 47 | `(tabs)/inbox/index.tsx` | `Shared/Inbox List` | SCR-SHARED-010 | G (Inbox) |
+| 48 | `(tabs)/inbox/[id].tsx` | `Shared/Chat Thread` | SCR-SHARED-011 | G (Inbox) |
+| 49 | `(shared)/review/[bookingId].tsx` | `Shared/Leave Review` | SCR-SHARED-012 | C (Form) |
+| 50 | `(shared)/profile/edit.tsx` | `Shared/Edit Profile` | SCR-SHARED-013 | C (Form) |
+| 51 | `(shared)/profile/settings.tsx` | `Shared/Settings` | SCR-SHARED-014 | F (Edge) |
+| 52 | `(shared)/profile/delete.tsx` | `Shared/Delete Account` | SCR-SHARED-015 | F (Edge) |
+| 53 | `profile/[id].tsx` | `Shared/Public Profile` | SCR-SHARED-009 | B (Detail) |
+| 54 | `task/[id].tsx` | `Tasker/Task Detail Tasker` | SCR-TASK-002 | B (Detail) — same Figma ref as #20; this is a public view with fewer sections. Read the file first and apply matching styles to whatever sections exist. |
+| 55 | `task/[id]/applicants.tsx` | `Customer/Applicant List` | — | A (List) — public applicant view; same visual treatment as #8 |
+| 56 | `(tabs)/bookings.tsx` | `Customer/Bookings List` | SCR-CUST-013 | A (List) |
+| 57 | `(tabs)/tasks.tsx` | `Tasker/Jobs List` | SCR-TASK-005 | A (List) — same Figma as #21 |
 
-Typecheck after #47, then again after #55.
+Typecheck after #44 (auth block), after #48 (inbox block), then again after #57.
 
 ---
 
@@ -351,14 +366,14 @@ Typecheck after #47, then again after #55.
 
 | # | File | Notes |
 |---|---|---|
-| 56 | `(shared)/account/banned.tsx` | Centered icon + headline + body; danger tint shell |
-| 57 | `(shared)/account/suspended.tsx` | Same as banned with warning tint |
-| 58 | `(shared)/app-update.tsx` | Centered illustration + headline + store CTA |
-| 59 | `(shared)/network-error.tsx` | Error icon shell + retry CTA |
-| 60 | `(shared)/session-expired.tsx` | Lock icon shell + re-login CTA |
-| 61 | `(shared)/help.tsx` | Scroll view with tonal section cards |
-| 62 | `(shared)/legal/terms.tsx` | Pure scroll — ensure padding and typography only |
-| 63 | `(shared)/legal/privacy.tsx` | Same as terms |
+| 58 | `(shared)/account/banned.tsx` | Centered icon + headline + body; danger tint shell |
+| 59 | `(shared)/account/suspended.tsx` | Same as banned with warning tint |
+| 60 | `(shared)/app-update.tsx` | Centered illustration + headline + store CTA |
+| 61 | `(shared)/network-error.tsx` | Error icon shell + retry CTA |
+| 62 | `(shared)/session-expired.tsx` | Lock icon shell + re-login CTA |
+| 63 | `(shared)/help.tsx` | Scroll view with tonal section cards |
+| 64 | `(shared)/legal/terms.tsx` | Pure scroll — ensure padding and typography only |
+| 65 | `(shared)/legal/privacy.tsx` | Same as terms |
 
 For Batch 5, Figma fetch is optional — apply Archetype F pattern directly. Typecheck at end of batch.
 
@@ -400,23 +415,34 @@ For each archetype:
 After archetype-by-archetype check, run one final scan across all modified files:
 
 ```bash
-# Should return zero results after the pass is complete:
-grep -r "borderWidth: 1" apps/mobile/src/app --include="*.tsx" | grep -v "node_modules"
+# Should return zero results after the pass is complete.
+# Note: these target card/section wrappers only — legitimate uses in Input, FormField,
+# Modal, Sheet, Divider components are expected and should be ignored.
+
+# Card border remnants (exclude shared UI components that legitimately use borders):
+grep -r "borderWidth: 1" apps/mobile/src/app --include="*.tsx" | grep -v "node_modules" | grep -v "Input\|FormField\|Modal\|Sheet\|Divider"
+
+# Hardcoded shadows (exclude the elevations definition file itself):
 grep -r "shadowColor.*rgba" apps/mobile/src/app --include="*.tsx" | grep -v "node_modules"
-grep -r "\"#f4f3f0\"" apps/mobile/src/app --include="*.tsx" | grep -v "node_modules"
+grep -r "shadowColor.*rgba" apps/mobile/src/design --include="*.ts" | grep -v "elevations.ts"
+
+# Hardcoded muted color (should use colors.muted token):
+grep -r "'#f4f3f0'" apps/mobile/src/app --include="*.tsx" | grep -v "node_modules"
+grep -r '"#f4f3f0"' apps/mobile/src/app --include="*.tsx" | grep -v "node_modules"
 ```
 
-- `borderWidth: 1` on cards → replace with `elevations.soft`
+- `borderWidth: 1` on card/section wrappers → replace with `elevations.soft` (leave Input/FormField borders alone)
 - `shadowColor.*rgba` → replace with `elevations.*` spread
-- `"#f4f3f0"` hardcoded → replace with `colors.muted`
+- `'#f4f3f0'` / `"#f4f3f0"` hardcoded → replace with `colors.muted`
 
 ---
 
 ## 7. Done Criteria
 
-- [ ] `pnpm --filter @tasky/mobile typecheck` passes with zero errors (the pre-existing `schedule.tsx` error is acceptable if it predates this pass)
-- [ ] All 63 screens in the Phase 1 table are marked complete
-- [ ] The global scan in Section 6.4 returns zero results
+- [ ] `pnpm --filter @tasky/mobile typecheck` passes with zero errors (the pre-existing TS2741 error in `schedule.tsx` line 265 — Property 'label' missing in FormField — is acceptable; it predates this pass)
+- [ ] `pnpm --filter @tasky/mobile test` passes (pre-existing test failures acceptable if they predate this pass)
+- [ ] All 65 screens in the Phase 1 tables are marked complete
+- [ ] The global scan in Section 6.4 returns zero results (excluding legitimate component-level uses)
 - [ ] Phase 2 archetype check is complete for all 7 archetypes
 - [ ] No test IDs, prop names, or navigation calls were modified
 
