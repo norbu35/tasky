@@ -17,8 +17,10 @@ import { elevations } from '../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
-const figmaBrandIconUri = 'https://www.figma.com/api/mcp/asset/e6b0056f-a59c-4588-a0a0-58a19f241eea';
-const figmaFacebookIconUri = 'https://www.figma.com/api/mcp/asset/f8fb49cc-9362-4143-81f5-806311ac01ea';
+const figmaBrandIconUri =
+  'https://www.figma.com/api/mcp/asset/e6b0056f-a59c-4588-a0a0-58a19f241eea';
+const figmaFacebookIconUri =
+  'https://www.figma.com/api/mcp/asset/f8fb49cc-9362-4143-81f5-806311ac01ea';
 const figmaHeroTextureUri =
   'https://www.figma.com/api/mcp/asset/5719d416-6033-44e7-b264-2ea2e25f1e3c';
 
@@ -127,10 +129,16 @@ export default function LoginScreen() {
 
         <View style={styles.footer}>
           <View style={styles.footerLinks}>
-            <Pressable onPress={() => router.push('/(shared)/legal/terms')} accessibilityRole="link">
+            <Pressable
+              onPress={() => router.push('/(shared)/legal/terms')}
+              accessibilityRole="link"
+            >
               <Text style={styles.footerLink}>{t('auth.login.terms', 'Үйлчилгээний нөхцөл')}</Text>
             </Pressable>
-            <Pressable onPress={() => router.push('/(shared)/legal/privacy')} accessibilityRole="link">
+            <Pressable
+              onPress={() => router.push('/(shared)/legal/privacy')}
+              accessibilityRole="link"
+            >
               <Text style={styles.footerLink}>{t('auth.login.privacy', 'Нууцлалын бодлого')}</Text>
             </Pressable>
           </View>
@@ -153,7 +161,9 @@ export default function LoginScreen() {
               onPress={() => handleDevLoginAs('CUSTOMER')}
               disabled={busy}
             >
-              <Text style={styles.devButtonText}>{t('auth.loginAsCustomer', 'Login as Customer')}</Text>
+              <Text style={styles.devButtonText}>
+                {t('auth.loginAsCustomer', 'Login as Customer')}
+              </Text>
             </Pressable>
             <Pressable
               style={styles.devButton}
@@ -241,8 +251,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.primaryDeep,
-    fontSize: typography.heading,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     textAlign: 'center',
     letterSpacing: -0.6,
   },

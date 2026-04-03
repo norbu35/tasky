@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     width: 326,
     height: 407,
     borderRadius: 32,
-    backgroundColor: '#f4f3f0',
+    backgroundColor: colors.muted,
     justifyContent: 'center',
     alignItems: 'center',
     transform: [{ rotate: '-3deg' }],
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   illustrationBackdrop: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 32,
-    backgroundColor: '#f4f3f0',
+    backgroundColor: colors.muted,
   },
   illustrationCard: {
     width: '100%',
@@ -247,11 +247,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.foreground,
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primaryDeep,
     textAlign: 'center',
-    lineHeight: typography.heading * 1.25,
+    lineHeight: 30,
   },
   description: {
     fontSize: typography.body,

@@ -100,9 +100,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textTertiary,
-    letterSpacing: 0.5,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   sectionSpacer: {
     height: spacing.xl,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.lg,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   rowIcon: {
     marginRight: spacing.md,

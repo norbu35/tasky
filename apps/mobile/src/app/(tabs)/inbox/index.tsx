@@ -128,11 +128,13 @@ export default function ConversationListScreen() {
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
-      const title = item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion', 'Чат');
+      const title =
+        item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion', 'Чат');
+      const isUnread = (item.unread_count ?? 0) > 0;
       return (
         <Pressable
           testID={`conversation-row-${item.id}`}
-          style={styles.row}
+          style={[styles.row, isUnread ? styles.rowUnread : styles.rowRead]}
           onPress={() => router.push(`/inbox/${item.id}`)}
           accessibilityRole="button"
         >
@@ -141,11 +143,13 @@ export default function ConversationListScreen() {
           </View>
           <View style={styles.content}>
             <View style={styles.topRow}>
-              <Text style={styles.name} numberOfLines={1}>
+              <Text style={[styles.name, isUnread && styles.nameUnread]} numberOfLines={1}>
                 {title}
               </Text>
               {item.last_message_at && (
-                <Text style={styles.timestamp}>{formatTimestamp(item.last_message_at)}</Text>
+                <Text style={[styles.timestamp, isUnread && styles.timestampUnread]}>
+                  {formatTimestamp(item.last_message_at)}
+                </Text>
               )}
             </View>
             {item.last_message_preview && (
@@ -154,8 +158,8 @@ export default function ConversationListScreen() {
               </Text>
             )}
           </View>
-          {(item.unread_count ?? 0) > 0 && (
-            <View style={styles.unreadBadge}>
+          {isUnread && (
+            <View style={styles.unreadDotWrap}>
               <View style={styles.unreadDot} />
             </View>
           )}
@@ -251,18 +255,21 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   headerTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.foreground,
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primaryDeep,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+  },
+  rowUnread: {
+    backgroundColor: '#e7f1fb',
+  },
+  rowRead: {
+    backgroundColor: colors.background,
   },
   avatarShell: {
     marginRight: spacing.md,
@@ -282,28 +289,35 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: spacing.sm,
   },
+  nameUnread: {
+    color: colors.primaryDeep,
+    fontWeight: '700',
+  },
   timestamp: {
     fontSize: typography.micro,
     color: colors.mutedForeground,
+  },
+  timestampUnread: {
+    color: colors.primaryDeep,
+    fontWeight: '700',
   },
   preview: {
     fontSize: typography.label,
     color: colors.mutedForeground,
     marginTop: 2,
   },
-  unreadBadge: {
-    width: 18,
-    height: 18,
+  unreadDotWrap: {
+    width: 10,
+    height: 10,
     borderRadius: radius.full,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     marginLeft: spacing.sm,
   },
   unreadDot: {
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: radius.full,
-    backgroundColor: colors.primaryForeground,
+    backgroundColor: colors.secondary,
   },
 });

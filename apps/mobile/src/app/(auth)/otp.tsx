@@ -1,19 +1,13 @@
 import React from 'react';
-import {
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
-const { colors, radius, spacing, typography, shadows } = mobileTheme;
+const { colors, radius, spacing, typography } = mobileTheme;
 
 type OtpState = 'default' | 'wrong_code' | 'expired' | 'verifying';
 
@@ -42,12 +36,14 @@ export default function OtpScreen() {
     : t('auth.otp.resendCountdown', 'Код дахин илгээх (60с)');
 
   const descriptionPrefix = t('auth.otp.descriptionPrefix', 'Бид таны ');
-  const descriptionSuffix = t('auth.otp.descriptionSuffix', ' дугаарт 4 оронтой нууц код илгээлээ.');
+  const descriptionSuffix = t(
+    'auth.otp.descriptionSuffix',
+    ' дугаарт 4 оронтой нууц код илгээлээ.',
+  );
   const activeCellIndex = sanitizedCode.length >= 4 ? 3 : sanitizedCode.length;
 
   return (
     <SafeAreaView style={styles.container} testID="otp-screen">
-
       <View style={styles.content}>
         <View style={styles.hero}>
           <Text style={styles.heading} testID="otp-heading">
@@ -177,10 +173,10 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: colors.primaryDeep,
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '800',
-    letterSpacing: -0.8,
-    lineHeight: 40,
+    letterSpacing: -0.6,
+    lineHeight: 30,
     textAlign: 'center',
   },
   description: {
@@ -218,14 +214,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F4F3F0',
+    backgroundColor: colors.muted,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   codeCellActive: {
     borderColor: colors.primary,
     backgroundColor: colors.card,
-    ...shadows.card,
+    ...elevations.soft,
   },
   codeCellError: {
     borderColor: colors.danger,
@@ -281,7 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: spacing.md,
-    backgroundColor: '#E9E8E5',
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.lg,
   },
@@ -291,7 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#CDE1FF',
+    backgroundColor: colors.card,
   },
   securityCopy: {
     flex: 1,
@@ -314,10 +310,6 @@ const styles = StyleSheet.create({
   verifyButton: {
     minHeight: 56,
     borderRadius: radius.md,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 3,
+    ...elevations.soft,
   },
 });

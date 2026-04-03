@@ -14,7 +14,7 @@ import { createMobileApiClient } from '../../lib/mobileApiClient';
 import { useAuthStore } from '../../store/authStore';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 const api = createMobileApiClient();
 
 export default function TaskDetailScreen() {
@@ -105,86 +105,88 @@ export default function TaskDetailScreen() {
         onRetry={refetch}
         testID="task-detail"
       >
-      {task && (
-        <View style={styles.content}>
-          {/* Customer info */}
-          <View style={styles.customerSection}>
-            <Text style={styles.customerName}>{task.customer.full_name}</Text>
-            {task.customer.rating_avg > 0 && (
-              <Text style={styles.customerRating}>{task.customer.rating_avg.toFixed(1)}</Text>
+        {task && (
+          <View style={styles.content}>
+            {/* Customer info */}
+            <View style={styles.customerSection}>
+              <Text style={styles.customerName}>{task.customer.full_name}</Text>
+              {task.customer.rating_avg > 0 && (
+                <Text style={styles.customerRating}>{task.customer.rating_avg.toFixed(1)}</Text>
+              )}
+            </View>
+
+            {/* Task description */}
+            <Text style={styles.description}>{task.description}</Text>
+
+            {/* Budget */}
+            <View style={styles.section}>
+              <Text style={styles.sectionLabel}>{t('taskDetails.budget')}</Text>
+              <PriceTag amount={task.budget} size="lg" />
+            </View>
+
+            {/* Category */}
+            {task.category && (
+              <View style={styles.section}>
+                <CategoryChip label={task.category.name} isActive />
+              </View>
             )}
-          </View>
 
-          {/* Task description */}
-          <Text style={styles.description}>{task.description}</Text>
-
-          {/* Budget */}
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('taskDetails.budget')}</Text>
-            <PriceTag amount={task.budget} size="lg" />
-          </View>
-
-          {/* Category */}
-          {task.category && (
-            <View style={styles.section}>
-              <CategoryChip label={task.category.name} isActive />
-            </View>
-          )}
-
-          {/* Location */}
-          {task.approximate_location && (
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('taskDetails.location')}</Text>
-              <LocationPin text={task.approximate_location} />
-              <Text style={styles.locationNote}>
-                {t(
-                  'tasker.taskDetail.locationApproximateNote',
-                  'Approximate location (exact address shown after booking confirmed)',
-                )}
-              </Text>
-            </View>
-          )}
-
-          {/* Schedule */}
-          {task.scheduled_at && (
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('taskDetail.dateTime', 'Date & Time')}</Text>
-              <Text style={styles.scheduleText}>
-                {new Date(task.scheduled_at).toLocaleDateString('en', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-
-          {task.photo_urls.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('tasker.taskDetail.photosLabel', 'Photos')}</Text>
-              <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
-            </View>
-          )}
-
-          {/* Application count */}
-          {task.application_count > 0 && (
-            <Text style={styles.applicantCount}>
-              {task.application_count} {t('customer.taskDetail.applicants', 'applicants')}
-            </Text>
-          )}
-
-          <TrustBanner
-            title={t('tasker.taskDetail.trustTitle', 'Platform trust')}
-            description={t(
-              'tasker.taskDetail.trustDescription',
-              'Verified taskers and consistent reviews help protect both sides of every booking.',
+            {/* Location */}
+            {task.approximate_location && (
+              <View style={styles.section}>
+                <Text style={styles.sectionLabel}>{t('taskDetails.location')}</Text>
+                <LocationPin text={task.approximate_location} />
+                <Text style={styles.locationNote}>
+                  {t(
+                    'tasker.taskDetail.locationApproximateNote',
+                    'Approximate location (exact address shown after booking confirmed)',
+                  )}
+                </Text>
+              </View>
             )}
-            variant="compact"
-          />
-        </View>
-      )}
+
+            {/* Schedule */}
+            {task.scheduled_at && (
+              <View style={styles.section}>
+                <Text style={styles.sectionLabel}>{t('taskDetail.dateTime', 'Date & Time')}</Text>
+                <Text style={styles.scheduleText}>
+                  {new Date(task.scheduled_at).toLocaleDateString('en', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </Text>
+              </View>
+            )}
+
+            {task.photo_urls.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionLabel}>
+                  {t('tasker.taskDetail.photosLabel', 'Photos')}
+                </Text>
+                <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
+              </View>
+            )}
+
+            {/* Application count */}
+            {task.application_count > 0 && (
+              <Text style={styles.applicantCount}>
+                {task.application_count} {t('customer.taskDetail.applicants', 'applicants')}
+              </Text>
+            )}
+
+            <TrustBanner
+              title={t('tasker.taskDetail.trustTitle', 'Platform trust')}
+              description={t(
+                'tasker.taskDetail.trustDescription',
+                'Verified taskers and consistent reviews help protect both sides of every booking.',
+              )}
+              variant="compact"
+            />
+          </View>
+        )}
       </DetailTemplate>
     </>
   );
@@ -198,6 +200,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
   customerName: {
     fontSize: typography.subtitle,
@@ -216,6 +221,9 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: spacing.xs,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
   sectionLabel: {
     fontSize: typography.caption,

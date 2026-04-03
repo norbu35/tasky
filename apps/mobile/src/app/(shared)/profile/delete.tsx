@@ -8,7 +8,7 @@ import { Input } from '../../../components/ui/Input';
 import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function AccountDeletionScreen() {
   const { t } = useTranslation();
@@ -76,7 +76,10 @@ export default function AccountDeletionScreen() {
               )}
             </Text>
             <Text style={styles.confirmationLabel}>
-              {t('shared.profile.deleteConfirmationPrompt', "Баталгаажуулахын тулд 'DELETE' гэж бичнэ үү")}
+              {t(
+                'shared.profile.deleteConfirmationPrompt',
+                "Баталгаажуулахын тулд 'DELETE' гэж бичнэ үү",
+              )}
             </Text>
             <Input
               testID="delete-confirmation-input"
@@ -125,6 +128,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.full,
+    backgroundColor: colors.muted,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   title: {
@@ -136,13 +145,13 @@ const styles = StyleSheet.create({
   },
   body: {
     fontSize: typography.body,
-    color: colors.mutedForeground,
+    color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: spacing.xl,
   },
   actions: {
-    width: '100%',
+    alignSelf: 'stretch',
     gap: spacing.sm,
   },
   confirmationLabel: {

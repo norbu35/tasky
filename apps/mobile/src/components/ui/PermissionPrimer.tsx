@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 96,
     height: 96,
-    borderRadius: 24,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.muted,
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.primaryDeep,
     textAlign: 'center',
     marginBottom: spacing.sm,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   grantButton: {
     width: '100%',
-    minHeight: 52,
+    minHeight: 56,
     borderRadius: radius.md,
   },
   footerNote: {

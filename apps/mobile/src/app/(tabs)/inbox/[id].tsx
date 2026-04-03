@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
   },
   bubbleMine: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDeep,
     borderBottomRightRadius: 6,
   },
   bubbleTheirs: {
@@ -394,22 +394,22 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   textMine: {
-    color: colors.primaryForeground,
+    color: colors.card,
   },
   textTheirs: {
     color: colors.foreground,
   },
   timestamp: {
     marginTop: spacing.xs,
-    fontSize: typography.micro,
+    fontSize: typography.caption,
   },
   timestampMine: {
-    color: colors.primaryForeground,
+    color: colors.card,
     opacity: 0.7,
     textAlign: 'right',
   },
   timestampTheirs: {
-    color: colors.mutedForeground,
+    color: colors.textSecondary,
   },
   phoneWarning: {
     backgroundColor: colors.secondary,

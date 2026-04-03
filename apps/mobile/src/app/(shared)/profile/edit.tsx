@@ -10,7 +10,7 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
@@ -110,6 +110,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     paddingVertical: spacing.lg,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.lg,
   },
   changePhotoButton: {
     flexDirection: 'row',

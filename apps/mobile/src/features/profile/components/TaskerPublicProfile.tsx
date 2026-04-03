@@ -154,10 +154,7 @@ export function TaskerPublicProfile() {
         </View>
 
         {/* CTA */}
-        <Pressable
-          style={styles.ctaButton}
-          onPress={() => router.push('/(customer)/tasks/new/category')}
-        >
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/(customer)/tasks/new')}>
           <LinearGradient
             colors={[colors.primaryDeep, colors.primary]}
             start={{ x: 0, y: 0 }}
@@ -194,7 +191,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.foreground,
+    color: colors.primaryDeep,
     letterSpacing: -0.6,
   },
 
@@ -259,7 +256,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.title,
     fontWeight: '700',
-    color: colors.foreground,
+    color: colors.primaryDeep,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
@@ -274,10 +271,10 @@ const styles = StyleSheet.create({
 
   // Bio
   bioCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     borderRadius: radius.md,
     padding: 25,
-    ...elevations.card,
+    ...elevations.soft,
   },
   bioText: {
     fontSize: typography.body,

@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderRadius: radius.md,
-    ...elevations.card,
+    ...elevations.soft,
   },
   status: {
     fontSize: typography.body,

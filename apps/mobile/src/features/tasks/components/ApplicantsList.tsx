@@ -249,7 +249,10 @@ export function ApplicantsList() {
           title={t('applicants.emptyTitle', 'No applicants yet')}
           subtitle={t(
             'applicants.emptySubtitle',
-            t('customer.applicants.emptyDescription', 'Once taskers apply to your task, they will appear here.'),
+            t(
+              'customer.applicants.emptyDescription',
+              'Once taskers apply to your task, they will appear here.',
+            ),
           )}
         />
       ) : (
@@ -290,9 +293,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primaryDeep,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
@@ -311,6 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: 20,
     gap: 14,
+    ...elevations.soft,
   },
   cardTopRow: {
     flexDirection: 'row',

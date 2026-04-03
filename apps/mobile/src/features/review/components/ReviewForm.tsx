@@ -125,8 +125,7 @@ export default function ReviewFormScreen() {
     setShowSuccess(true);
   });
 
-  const counterpartyName =
-    params.name ?? (role === 'customer' ? 'Болд Б.' : 'Батбаяр Б.');
+  const counterpartyName = params.name ?? (role === 'customer' ? 'Болд Б.' : 'Батбаяр Б.');
   const counterpartyRole = role === 'customer' ? 'Гүйцэтгэгч' : 'Захиалагч';
   const avatarUrl = params.avatarUrl ?? 'https://cdn.tasky.mn/avatars/counterparty.jpg';
 
@@ -187,9 +186,7 @@ export default function ReviewFormScreen() {
           >
             <ArrowLeft size={22} color={colors.primaryDeep} />
           </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('shared.review.navTitle', 'Сэтгэгдэл бичих')}
-          </Text>
+          <Text style={styles.headerTitle}>{t('shared.review.navTitle', 'Сэтгэгдэл бичих')}</Text>
         </View>
 
         <KeyboardAvoidingView
@@ -215,21 +212,13 @@ export default function ReviewFormScreen() {
                   {t('shared.review.successTitle', 'Баярлалаа!')}
                 </Text>
                 <Text style={styles.successBody}>
-                  {t(
-                    'shared.review.successBody',
-                    'Таны сэтгэгдэл амжилттай бүртгэгдлээ',
-                  )}
+                  {t('shared.review.successBody', 'Таны сэтгэгдэл амжилттай бүртгэгдлээ')}
                 </Text>
               </Animated.View>
             ) : (
               <>
                 <View style={styles.counterpartyRow}>
-                  <ProfileAvatar
-                    uri={avatarUrl}
-                    name={counterpartyName}
-                    size="lg"
-                    showVerified
-                  />
+                  <ProfileAvatar uri={avatarUrl} name={counterpartyName} size="lg" showVerified />
                   <View style={styles.counterpartyCopy}>
                     <Text style={styles.counterpartyName}>{counterpartyName}</Text>
                     <Text style={styles.counterpartyRole}>{counterpartyRole}</Text>
@@ -258,10 +247,7 @@ export default function ReviewFormScreen() {
 
                 <View style={styles.commentSection}>
                   <Text style={styles.commentLabel}>
-                    {t(
-                      'shared.review.label_comment',
-                      'Нэмэлт тайлбар (сонголтот)',
-                    )}
+                    {t('shared.review.label_comment', 'Нэмэлт тайлбар (сонголтот)')}
                   </Text>
                   <View style={styles.commentCard}>
                     <TextInput
@@ -278,7 +264,9 @@ export default function ReviewFormScreen() {
                       onChangeText={setComment}
                       maxLength={COMMENT_MAX_LENGTH}
                     />
-                    <Text style={styles.counter}>{`${comment.length} / ${COMMENT_MAX_LENGTH}`}</Text>
+                    <Text
+                      style={styles.counter}
+                    >{`${comment.length} / ${COMMENT_MAX_LENGTH}`}</Text>
                   </View>
                 </View>
               </>
@@ -402,6 +390,9 @@ const styles = StyleSheet.create({
   },
   categoriesSection: {
     gap: spacing.xl + spacing.sm,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.xl,
   },
   categoryRow: {
     gap: spacing.md,

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield } from 'lucide-react-native';
@@ -12,8 +7,9 @@ import { Button } from '../../components/ui/Button';
 import { FormField } from '../../components/ui/FormField';
 import { Input } from '../../components/ui/Input';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
-const { colors, radius, spacing, typography, shadows } = mobileTheme;
+const { colors, radius, spacing, typography } = mobileTheme;
 
 type MigrationState = 'default' | 'invalid_phone' | 'verifying' | 'error_network';
 
@@ -34,7 +30,8 @@ export default function OtpMigrationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ phone?: string; state?: string }>();
   const state = resolveState(typeof params.state === 'string' ? params.state : undefined);
-  const initialPhone = typeof params.phone === 'string' ? params.phone.replace(/\D/g, '').slice(0, 8) : '';
+  const initialPhone =
+    typeof params.phone === 'string' ? params.phone.replace(/\D/g, '').slice(0, 8) : '';
   const [phone, setPhone] = React.useState(initialPhone);
   const isValidPhone = /^\d{8}$/.test(phone);
   const showError = state === 'invalid_phone';
@@ -87,10 +84,7 @@ export default function OtpMigrationScreen() {
         <View style={styles.formArea}>
           <FormField
             label={t('auth.otpMigration.label', 'Утасны дугаар')}
-            helperText={t(
-              'auth.otpMigration.helper',
-              'Facebook нэвтрэлтэд утасны дугаар нэмнэ',
-            )}
+            helperText={t('auth.otpMigration.helper', 'Facebook нэвтрэлтэд утасны дугаар нэмнэ')}
             errorText={
               showError
                 ? t('auth.otpMigration.errorInvalidPhone', 'Утасны дугаар буруу байна')
@@ -183,15 +177,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
-    ...shadows.elevated,
+    backgroundColor: colors.muted,
+    ...elevations.soft,
   },
   heading: {
     color: colors.primaryDeep,
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: '800',
-    letterSpacing: -0.75,
-    lineHeight: 37.5,
+    letterSpacing: -0.6,
+    lineHeight: 30,
     textAlign: 'center',
   },
   description: {
@@ -226,11 +220,7 @@ const styles = StyleSheet.create({
   submitButton: {
     minHeight: 56,
     borderRadius: radius.md,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 3,
+    ...elevations.soft,
   },
   skipButton: {
     minHeight: 44,
