@@ -1,14 +1,13 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { elevations } from '../../design/elevations';
 import { Button } from '../ui/Button';
 
 const { colors, spacing, radius } = mobileTheme;
 
-const DOT_SIZE = spacing.sm;
-const DOT_ACTIVE_WIDTH = spacing.xl;
+const BAR_HEIGHT = 6;
 
 export interface FormWizardTemplateProps {
   currentStep: number;
@@ -40,24 +39,19 @@ export function FormWizardTemplate({
 
   return (
     <View style={styles.container} testID={testID}>
-      {/* Step Indicator */}
+      {/* Step Indicator — bar segments */}
       <View
         testID="wizard-progress"
         style={styles.stepIndicator}
         accessibilityRole="progressbar"
         accessibilityLabel={`Step ${currentStep + 1} of ${totalSteps}`}
       >
-        {Array.from({ length: totalSteps }).map((_, i) => {
-          let dotStyle;
-          if (i === currentStep) {
-            dotStyle = styles.dotActive;
-          } else if (i < currentStep) {
-            dotStyle = styles.dotCompleted;
-          } else {
-            dotStyle = styles.dotInactive;
-          }
-          return <View key={i} style={[styles.dot, dotStyle]} />;
-        })}
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <View
+            key={i}
+            style={[styles.bar, i <= currentStep ? styles.barFilled : styles.barEmpty]}
+          />
+        ))}
       </View>
 
       {/* Scrollable Form Content */}
@@ -76,37 +70,39 @@ export function FormWizardTemplate({
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Sticky Bottom Bar */}
-      <View style={styles.bottomBar} testID="wizard-bottom-bar">
-        {showBackButton ? (
-          <View style={styles.buttonRow}>
-            <Button
-              label={t('wizard.back', 'Back')}
-              variant="outline"
-              onPress={onBack}
-              style={styles.backButton}
-              testID={testID ? `${testID}-back` : undefined}
-            />
+      {/* Sticky Bottom Bar — frosted glass */}
+      <BlurView intensity={40} tint="light" style={styles.bottomBar} testID="wizard-bottom-bar">
+        <View style={styles.bottomBarInner}>
+          {showBackButton ? (
+            <View style={styles.buttonRow}>
+              <Button
+                label={t('wizard.back', 'Back')}
+                variant="outline"
+                onPress={onBack}
+                style={styles.backButton}
+                testID={testID ? `${testID}-back` : undefined}
+              />
+              <Button
+                label={nextLabel ?? t('wizard.next', 'Next')}
+                onPress={onNext}
+                disabled={nextDisabled}
+                isLoading={nextLoading}
+                style={styles.nextButton}
+                testID={testID ? `${testID}-next` : undefined}
+              />
+            </View>
+          ) : (
             <Button
               label={nextLabel ?? t('wizard.next', 'Next')}
               onPress={onNext}
               disabled={nextDisabled}
               isLoading={nextLoading}
-              style={styles.nextButton}
+              style={styles.nextButtonFull}
               testID={testID ? `${testID}-next` : undefined}
             />
-          </View>
-        ) : (
-          <Button
-            label={nextLabel ?? t('wizard.next', 'Next')}
-            onPress={onNext}
-            disabled={nextDisabled}
-            isLoading={nextLoading}
-            style={styles.nextButtonFull}
-            testID={testID ? `${testID}-next` : undefined}
-          />
-        )}
-      </View>
+          )}
+        </View>
+      </BlurView>
     </View>
   );
 }
@@ -118,27 +114,21 @@ const styles = StyleSheet.create({
   },
   stepIndicator: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
+    gap: 6,
   },
-  dot: {
-    height: DOT_SIZE,
-    borderRadius: radius.full,
+  bar: {
+    flex: 1,
+    height: BAR_HEIGHT,
+    borderRadius: radius.md,
   },
-  dotActive: {
-    width: DOT_ACTIVE_WIDTH,
-    backgroundColor: colors.accent,
-  },
-  dotCompleted: {
-    width: DOT_SIZE,
+  barFilled: {
     backgroundColor: colors.primary,
   },
-  dotInactive: {
-    width: DOT_SIZE,
+  barEmpty: {
     backgroundColor: colors.chipInactive,
   },
   keyboardAvoid: {
@@ -153,13 +143,12 @@ const styles = StyleSheet.create({
     paddingBottom: spacing['2xl'],
   },
   bottomBar: {
-    paddingTop: spacing.md,
-    paddingBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  bottomBarInner: {
+    paddingTop: spacing.lg,
+    paddingBottom: spacing['2xl'],
     paddingHorizontal: spacing.lg,
-    backgroundColor: colors.card,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    ...elevations.elevated,
   },
   buttonRow: {
     flexDirection: 'row',

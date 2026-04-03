@@ -208,7 +208,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     });
     render(<MyTasksListScreen />);
     fireEvent.press(screen.getByTestId('my-tasks-fab'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new/category');
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new');
   });
 
   it('renders error state when API fails', () => {

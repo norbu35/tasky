@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   screenTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.primaryDeep,
   },
   screenSubtitle: {
@@ -237,13 +237,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   searchInput: {
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 0,
     borderRadius: mobileTheme.radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontSize: typography.body,
     color: colors.foreground,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
 });

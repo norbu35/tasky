@@ -73,7 +73,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
 
   it('shows task summary with description', () => {
     render(<ReviewSubmitScreen />);
-    expect(screen.getByText('Review & Submit')).toBeTruthy();
+    expect(screen.getByText('Job Scope Summary')).toBeTruthy();
     expect(screen.getByLabelText('Step 6 of 7')).toBeTruthy();
     expect(screen.getAllByText('Fix my sink').length).toBeGreaterThan(0);
   });

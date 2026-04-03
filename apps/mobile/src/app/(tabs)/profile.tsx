@@ -15,7 +15,7 @@ import { useAuthStore } from '../../store/authStore';
 import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function MyProfileScreen() {
   const session = useAuthStore((state) => state.session);
@@ -62,6 +62,13 @@ function AuthenticatedProfile() {
               showVerified={isTasker && profile.status === 'VERIFIED'}
             />
             <Text style={styles.name}>{profile.full_name}</Text>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>
+                {isTasker
+                  ? t('shared.profile.roleTasker', 'Гүйцэтгэгч')
+                  : t('shared.profile.roleCustomer', 'Захиалагч')}
+              </Text>
+            </View>
             {isTasker && profile.status === 'VERIFIED' && (
               <VerifiedBadge status="verified" size="md" testID="verified-badge" />
             )}
@@ -126,22 +133,36 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   name: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.primaryDeep,
     textAlign: 'center',
+  },
+  roleBadge: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    borderRadius: radius.full,
+    backgroundColor: '#d2e4ff',
+  },
+  roleBadgeText: {
+    fontSize: typography.caption,
+    fontWeight: '600',
+    color: '#2b486b',
   },
   statsRow: {
     flexDirection: 'row',
     gap: spacing.md,
   },
   infoSection: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.lg,
     gap: spacing.md,
   },
   sectionTitle: {
     fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontWeight: '700',
+    color: colors.primaryDeep,
   },
   infoRow: {
     flexDirection: 'row',

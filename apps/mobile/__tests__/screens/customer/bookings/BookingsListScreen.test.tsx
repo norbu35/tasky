@@ -156,7 +156,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
     render(<BookingsListScreen />);
 
     fireEvent.press(screen.getByText('Даалгавар нийтлэх'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new/category');
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new');
   });
 
   it('shows only ASSIGNED bookings in the Active tab and excludes tasker_marked_done', () => {

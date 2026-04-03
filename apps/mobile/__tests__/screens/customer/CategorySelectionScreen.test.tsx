@@ -49,7 +49,6 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('renders the screen title', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
-    expect(screen.getByText('Select Category')).toBeTruthy();
     expect(screen.getByText('What type of task do you need?')).toBeTruthy();
   });
 

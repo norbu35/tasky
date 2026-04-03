@@ -17,6 +17,6 @@ describe('CreateTaskScreen', () => {
   it('redirects to the route-based customer task creation flow', () => {
     render(<CreateTaskScreen />);
 
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks/new/category');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks/new');
   });
 });

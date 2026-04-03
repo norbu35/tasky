@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { elevations } from '../../design/elevations';
 import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 import { useTranslation } from 'react-i18next';
@@ -70,11 +70,7 @@ export function DetailTemplate({
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, hideHeader && styles.safeAreaNoTop]}
-      testID={testID}
-    >
-
+    <SafeAreaView style={[styles.safeArea, hideHeader && styles.safeAreaNoTop]} testID={testID}>
       {/* Body */}
       {isError ? (
         <ErrorStateTemplate
@@ -99,7 +95,12 @@ export function DetailTemplate({
 
       {/* Sticky Bottom CTA */}
       {hasBottomBar && !isLoading && !isError && (
-        <View style={styles.bottomBar}>
+        <BlurView
+          intensity={40}
+          tint="light"
+          style={styles.bottomBar}
+          testID={testID ? `${testID}-bottom-bar` : undefined}
+        >
           {secondaryCtaLabel && secondaryCtaOnPress && (
             <Button
               label={secondaryCtaLabel}
@@ -117,7 +118,7 @@ export function DetailTemplate({
             style={styles.primaryCta}
             testID={testID ? `${testID}-cta` : undefined}
           />
-        </View>
+        </BlurView>
       )}
     </SafeAreaView>
   );
@@ -149,9 +150,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.card,
     padding: spacing.md,
-    ...elevations.elevated,
+    paddingBottom: spacing.lg,
+    overflow: 'hidden',
   },
   primaryCta: {
     alignSelf: 'stretch',

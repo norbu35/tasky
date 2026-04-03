@@ -69,7 +69,13 @@ function buildRows(notifications: Notification[], todayLabel: string, earlierLab
 
   if (today.length > 0) {
     rows.push({ type: 'section', id: 'today', label: todayLabel });
-    rows.push(...today.map((notification) => ({ type: 'notification' as const, id: notification.id, notification })));
+    rows.push(
+      ...today.map((notification) => ({
+        type: 'notification' as const,
+        id: notification.id,
+        notification,
+      })),
+    );
   }
 
   if (earlier.length > 0) {
@@ -86,24 +92,23 @@ function buildRows(notifications: Notification[], todayLabel: string, earlierLab
   return rows;
 }
 
-function getNotificationIcon(title: string) {
+function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor: string } {
   if (/message/i.test(title)) {
-    return <MessageSquare size={18} color={colors.primary} />;
+    return { icon: <MessageSquare size={18} color={colors.foreground} />, shellColor: '#e3e2e0' };
   }
-
   if (/booking/i.test(title)) {
-    return <Briefcase size={18} color={colors.primary} />;
+    return { icon: <Briefcase size={18} color={colors.primaryDeep} />, shellColor: '#fdce6a' };
   }
-
   if (/dispute/i.test(title)) {
-    return <ShieldAlert size={18} color={colors.danger} />;
+    return {
+      icon: <ShieldAlert size={18} color={colors.primaryForeground} />,
+      shellColor: colors.danger,
+    };
   }
-
   if (/review/i.test(title)) {
-    return <Star size={18} color={colors.secondary} />;
+    return { icon: <Star size={18} color={colors.primaryDeep} />, shellColor: '#ecbf80' };
   }
-
-  return <Bell size={18} color={colors.primary} />;
+  return { icon: <Bell size={18} color={colors.primaryForeground} />, shellColor: '#1b3a5c' };
 }
 
 export default function NotificationCenterScreen() {
@@ -113,12 +118,7 @@ export default function NotificationCenterScreen() {
 
   const notifications = data?.data ?? [];
   const rows = useMemo(
-    () =>
-      buildRows(
-        notifications,
-        t('label.today', 'Өнөөдөр'),
-        t('label.earlier', 'Өмнөх'),
-      ),
+    () => buildRows(notifications, t('label.today', 'Өнөөдөр'), t('label.earlier', 'Өмнөх')),
     [notifications, t],
   );
 
@@ -128,29 +128,36 @@ export default function NotificationCenterScreen() {
     }
 
     const notification = item.notification;
+    const meta = getNotificationMeta(notification.title);
 
     return (
       <Pressable
         testID={`notification-item-${notification.id}`}
-        style={styles.card}
+        style={[styles.card, !notification.read && styles.cardUnread]}
         accessibilityRole="button"
         onPress={() => router.push('/(tabs)/inbox' as never)}
       >
-        <View style={styles.iconShell}>{getNotificationIcon(notification.title)}</View>
+        <View style={[styles.iconShell, { backgroundColor: meta.shellColor }]}>{meta.icon}</View>
         <View style={styles.textBlock}>
           <View style={styles.titleRow}>
-            <Text style={styles.title}>{notification.title}</Text>
-            {!notification.read ? (
-              <View
-                testID={`notification-unread-dot-${notification.id}`}
-                style={styles.unreadDot}
-              />
-            ) : null}
+            <Text style={styles.title} numberOfLines={1}>
+              {notification.title}
+            </Text>
+            <View style={styles.titleMeta}>
+              <Text style={styles.timestamp}>
+                {formatRelativeTimestamp(notification.created_at)}
+              </Text>
+              {!notification.read ? (
+                <View
+                  testID={`notification-unread-dot-${notification.id}`}
+                  style={styles.unreadDot}
+                />
+              ) : null}
+            </View>
           </View>
           <Text style={styles.body} numberOfLines={2}>
             {notification.body}
           </Text>
-          <Text style={styles.timestamp}>{formatRelativeTimestamp(notification.created_at)}</Text>
         </View>
       </Pressable>
     );
@@ -200,7 +207,10 @@ export default function NotificationCenterScreen() {
         <EmptyStateTemplate
           testID="notifications-empty"
           title={t('shared.notifications.emptyTitle', 'Мэдэгдэл алга')}
-          description={t('shared.notifications.emptyDescription', 'Танд одоогоор мэдэгдэл ирээгүй байна')}
+          description={t(
+            'shared.notifications.emptyDescription',
+            'Танд одоогоор мэдэгдэл ирээгүй байна',
+          )}
           icon={<Bell size={32} color={colors.textSecondary} />}
         />
       ) : (
@@ -209,6 +219,19 @@ export default function NotificationCenterScreen() {
           renderItem={renderRow}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
+          ListFooterComponent={
+            <View style={styles.promoBanner}>
+              <Text style={styles.promoBannerTitle}>
+                {t('shared.notifications.promoBannerTitle', 'Tasky Premium')}
+              </Text>
+              <Text style={styles.promoBannerBody}>
+                {t(
+                  'shared.notifications.promoBannerBody',
+                  'Баталгаажсан гүйцэтгэгчидтэй хурдан холбогдоорой',
+                )}
+              </Text>
+            </View>
+          }
           refreshControl={
             <RefreshControl
               refreshing={isRefetching}
@@ -263,23 +286,21 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
-    letterSpacing: 0.6,
+    letterSpacing: 1.2,
   },
   card: {
     flexDirection: 'row',
     gap: spacing.md,
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.md,
-    marginBottom: spacing.sm,
+    marginBottom: 2,
+  },
+  cardUnread: {
+    backgroundColor: '#e7f1fb',
   },
   iconShell: {
     width: 40,
     height: 40,
-    borderRadius: 14,
-    backgroundColor: colors.muted,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -292,9 +313,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
+  titleMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   title: {
     flex: 1,
-    fontSize: typography.label,
+    fontSize: typography.body,
     fontWeight: '700',
     color: colors.foreground,
   },
@@ -302,18 +328,36 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: radius.full,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.secondary,
   },
   body: {
     marginTop: spacing.xs,
-    fontSize: typography.label,
+    fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   timestamp: {
-    marginTop: spacing.xs,
     fontSize: typography.micro,
     color: colors.textTertiary,
+  },
+  promoBanner: {
+    marginTop: spacing.xl,
+    backgroundColor: colors.primaryDeep,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    height: 128,
+    justifyContent: 'flex-end',
+  },
+  promoBannerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.primaryForeground,
+  },
+  promoBannerBody: {
+    fontSize: typography.caption,
+    color: `${colors.primaryForeground}99`,
+    marginTop: 4,
+    lineHeight: typography.caption * 1.5,
   },
   skeletonList: {
     paddingHorizontal: spacing.lg,

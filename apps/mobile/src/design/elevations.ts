@@ -5,6 +5,13 @@ const { shadows } = designTokens;
 
 export const elevations = {
   none: {},
+  soft: {
+    shadowColor: '#1a1c1a',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    ...(Platform.OS === 'android' && { elevation: 2 }),
+  },
   card: {
     shadowColor: shadows.card.color,
     shadowOffset: shadows.card.offset,

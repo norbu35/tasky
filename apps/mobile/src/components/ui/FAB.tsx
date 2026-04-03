@@ -30,7 +30,7 @@ export function FAB() {
     if (!session) {
       router.push('/(auth)');
     } else {
-      router.push('/(customer)/tasks/new/category');
+      router.push('/(customer)/tasks/new');
     }
   };
 

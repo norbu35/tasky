@@ -110,6 +110,7 @@ describe('RebookScreen (SCR-CUST-023)', () => {
           category_id: 'cat-1',
           description: 'Fix my sink',
           budget: 50000,
+          intake_answers: { description: 'Fix my sink' },
         }),
       );
     });
