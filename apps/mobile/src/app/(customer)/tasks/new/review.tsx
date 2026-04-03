@@ -445,17 +445,15 @@ const styles = StyleSheet.create({
   },
   stepKicker: {
     fontSize: typography.caption,
-    color: colors.secondary,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
-    letterSpacing: 1.2,
+    letterSpacing: 0.8,
     fontWeight: '700',
   },
   pageTitle: {
-    fontSize: 36,
+    fontSize: 24,
     color: colors.primaryDeep,
     fontWeight: '800',
-    lineHeight: 40,
-    letterSpacing: -0.9,
   },
   card: {
     backgroundColor: colors.muted,

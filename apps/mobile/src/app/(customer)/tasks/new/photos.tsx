@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   title: {
-    fontSize: typography.heroTitle,
+    fontSize: 24,
     fontWeight: '800',
     color: colors.primaryDeep,
     lineHeight: typography.heroTitle * 1.22,

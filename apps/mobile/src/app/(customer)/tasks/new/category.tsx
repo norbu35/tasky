@@ -1,12 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -100,13 +93,7 @@ function getCategoryVisual(name: string): CategoryVisual {
   };
 }
 
-function CategoryCard({
-  category,
-  onPress,
-}: {
-  category: Category;
-  onPress: () => void;
-}) {
+function CategoryCard({ category, onPress }: { category: Category; onPress: () => void }) {
   const visual = getCategoryVisual(category.name);
   const Icon = visual.icon;
 
@@ -209,13 +196,21 @@ export default function CategorySelectionScreen() {
             <Text style={styles.messageBody}>
               {t('customer.postTask.categoryLoadHint', 'Pull to refresh or try again shortly.')}
             </Text>
-            <Pressable onPress={() => refetch()} style={styles.retryButton} testID="category-selection-retry">
-              <Text style={styles.retryLabel}>{t('customer.postTask.categoryRetry', 'Try again')}</Text>
+            <Pressable
+              onPress={() => refetch()}
+              style={styles.retryButton}
+              testID="category-selection-retry"
+            >
+              <Text style={styles.retryLabel}>
+                {t('customer.postTask.categoryRetry', 'Try again')}
+              </Text>
             </Pressable>
           </View>
         ) : filteredCategories.length === 0 ? (
           <View style={styles.messageCard}>
-            <Text style={styles.messageTitle}>{t('categories.empty', 'No categories available')}</Text>
+            <Text style={styles.messageTitle}>
+              {t('categories.empty', 'No categories available')}
+            </Text>
           </View>
         ) : (
           <View style={styles.grid} testID="category-selection-grid">
@@ -348,9 +343,8 @@ const styles = StyleSheet.create({
     minHeight: 163,
     padding: 20,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     justifyContent: 'space-between',
-    ...elevations.soft,
   },
   categoryCardPressed: {
     opacity: 0.85,

@@ -88,14 +88,12 @@ export default function TaskPostedSuccessScreen() {
           onPress={handleViewTask}
           testID="task-posted-success-screen-cta"
         />
-        <Pressable
+        <Button
+          label="Дуусгах"
+          variant="outline"
           onPress={handleDone}
-          style={styles.doneButton}
-          accessibilityRole="button"
           testID="task-posted-success-screen-done"
-        >
-          <Text style={styles.doneLabel}>{t('customer.postTask.successDone', 'Done')}</Text>
-        </Pressable>
+        />
       </View>
     </SafeAreaView>
   );
@@ -160,7 +158,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     padding: 32,
     gap: spacing.sm,
     ...elevations.soft,
