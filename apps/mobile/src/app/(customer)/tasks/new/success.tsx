@@ -184,18 +184,4 @@ const styles = StyleSheet.create({
   actions: {
     gap: spacing.sm,
   },
-  doneButton: {
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  doneLabel: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
 });
