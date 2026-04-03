@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
   verifyButton: {
     minHeight: 56,
     borderRadius: radius.md,
+    backgroundColor: colors.primaryDeep,
     ...elevations.soft,
   },
 });

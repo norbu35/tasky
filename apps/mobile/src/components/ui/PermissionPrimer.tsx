@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 56,
     borderRadius: radius.md,
+    backgroundColor: colors.primaryDeep,
   },
   footerNote: {
     marginTop: spacing.lg,
