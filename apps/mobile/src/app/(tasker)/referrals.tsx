@@ -43,16 +43,29 @@ export default function TaskerReferralsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.referrals.howItWorks', 'How it works')}</Text>
+          <Text style={styles.sectionTitle}>
+            {t('tasker.referrals.howItWorks', 'How it works')}
+          </Text>
           <View style={styles.infoCard}>
-            <InfoRow label={t('tasker.referrals.step1Label', 'Step 1')} value={t('tasker.referrals.step1Value', 'Share your code with another tasker')} />
-            <InfoRow label={t('tasker.referrals.step2Label', 'Step 2')} value={t('tasker.referrals.step2Value', 'They complete verification')} />
-            <InfoRow label={t('tasker.referrals.step3Label', 'Step 3')} value={t('tasker.referrals.step3Value', 'You both receive a bonus')} />
+            <InfoRow
+              label={t('tasker.referrals.step1Label', 'Step 1')}
+              value={t('tasker.referrals.step1Value', 'Share your code with another tasker')}
+            />
+            <InfoRow
+              label={t('tasker.referrals.step2Label', 'Step 2')}
+              value={t('tasker.referrals.step2Value', 'They complete verification')}
+            />
+            <InfoRow
+              label={t('tasker.referrals.step3Label', 'Step 3')}
+              value={t('tasker.referrals.step3Value', 'You both receive a bonus')}
+            />
           </View>
         </View>
 
         <Pressable style={styles.banner}>
-          <Text style={styles.bannerTitle}>{t('tasker.referrals.bonusPending', 'Referral bonus pending')}</Text>
+          <Text style={styles.bannerTitle}>
+            {t('tasker.referrals.bonusPending', 'Referral bonus pending')}
+          </Text>
           <Text style={styles.bannerBody}>1 invite is still in review.</Text>
         </Pressable>
       </View>
@@ -67,20 +80,19 @@ const styles = StyleSheet.create({
   heroCard: {
     padding: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.primaryDeep,
     gap: spacing.md,
   },
   heroTitle: {
     fontSize: 28,
     lineHeight: 34,
     fontWeight: '800',
-    color: colors.foreground,
+    color: colors.card,
   },
   heroBody: {
     fontSize: typography.body,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
+    opacity: 0.85,
     lineHeight: typography.body * 1.5,
   },
   codePill: {

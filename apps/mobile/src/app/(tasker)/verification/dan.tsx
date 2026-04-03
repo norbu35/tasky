@@ -39,10 +39,13 @@ export default function DanVerificationScreen() {
         </View>
         <Text style={styles.title}>Хурдан баталгаажуулалт</Text>
         <Text style={styles.description}>
-          E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг
-          оруулах шаардлагагүй.
+          E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах
+          шаардлагагүй.
         </Text>
-        <Button label="E-Mongolia-р баталгаажуулах" onPress={() => router.push('/(tasker)/verification/dan?state=success')} />
+        <Button
+          label="E-Mongolia-р баталгаажуулах"
+          onPress={() => router.push('/(tasker)/verification/dan?state=success')}
+        />
         <Button
           testID="dan-manual-fallback"
           label="Гар аргаар баталгаажуулах"
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: 999,
-    backgroundColor: '#e7eef6',
+    backgroundColor: colors.muted,
   },
   logoBadgeText: {
     color: colors.primaryDeep,

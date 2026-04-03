@@ -18,14 +18,20 @@ export default function SubscriptionScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content} testID="subscription-screen">
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        testID="subscription-screen"
+      >
         <Text style={styles.title}>{t('tasker.subscription.title', 'Tasker Pro')}</Text>
         <Text style={styles.subtitle}>Tasker Pro болоорой</Text>
 
         {isLockedDemo ? (
           <View style={styles.card} testID="subscription-screen-locked">
             <Text style={styles.cardTitle}>Шаардлага хангаагүй</Text>
-            <Text style={styles.description}>Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай</Text>
+            <Text style={styles.description}>
+              Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай
+            </Text>
           </View>
         ) : (
           <>
@@ -42,7 +48,11 @@ export default function SubscriptionScreen() {
                 <Text style={styles.activeText}>Идэвхтэй</Text>
               </View>
             ) : (
-              <Button testID="subscription-screen-cta" label="Бүртгүүлэх" onPress={() => setStatus('confirming')} />
+              <Button
+                testID="subscription-screen-cta"
+                label="Бүртгүүлэх"
+                onPress={() => setStatus('confirming')}
+              />
             )}
           </>
         )}
@@ -52,7 +62,11 @@ export default function SubscriptionScreen() {
         <View style={styles.sheet} testID="subscription-confirm-sheet">
           <Text style={styles.sheetTitle}>Сонголтоо шалгана уу</Text>
           <Text style={styles.description}>Tasker Pro subscription-ийг идэвхжүүлэх үү?</Text>
-          <Button testID="subscription-confirm" label="Баталгаажуулах" onPress={() => setStatus('active')} />
+          <Button
+            testID="subscription-confirm"
+            label="Баталгаажуулах"
+            onPress={() => setStatus('active')}
+          />
           <Button label="Буцах" variant="ghost" onPress={() => setStatus('idle')} />
         </View>
       ) : null}
@@ -66,7 +80,12 @@ const styles = StyleSheet.create({
   content: { padding: spacing.xl, gap: spacing.lg },
   title: { fontSize: typography.heading, fontWeight: '700', color: colors.primaryDeep },
   subtitle: { fontSize: typography.title, fontWeight: '600', color: colors.primaryDeep },
-  card: { backgroundColor: '#f4f3f0', borderRadius: radius.lg, padding: spacing.xl, gap: spacing.sm },
+  card: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
+    gap: spacing.sm,
+  },
   cardTitle: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep },
   description: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
   activeBadge: {

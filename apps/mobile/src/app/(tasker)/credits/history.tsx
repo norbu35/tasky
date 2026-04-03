@@ -47,9 +47,7 @@ export default function TaskerCreditsHistoryScreen() {
   ];
 
   return (
-    <DetailTemplate
-      testID="tasker-credits-history"
-    >
+    <DetailTemplate testID="tasker-credits-history">
       {state === 'empty' ? (
         <EmptyStateTemplate
           testID="tasker-credits-history-empty"
@@ -61,7 +59,9 @@ export default function TaskerCreditsHistoryScreen() {
           <View style={styles.summaryCard}>
             <Text style={styles.summaryLabel}>{t('tasker.credits.thisMonth', 'This month')}</Text>
             <Text style={styles.summaryValue}>+12,400 ₮</Text>
-            <Text style={styles.summaryCaption}>{t('tasker.credits.netMovement', 'Net credit movement from top-ups and payouts')}</Text>
+            <Text style={styles.summaryCaption}>
+              {t('tasker.credits.netMovement', 'Net credit movement from top-ups and payouts')}
+            </Text>
           </View>
 
           <View style={styles.timeline}>
@@ -89,24 +89,24 @@ const styles = StyleSheet.create({
   summaryCard: {
     padding: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.primaryDeep,
     gap: spacing.xs,
   },
   summaryLabel: {
     fontSize: typography.label,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
+    opacity: 0.8,
   },
   summaryValue: {
     fontSize: 32,
     lineHeight: 38,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.card,
   },
   summaryCaption: {
     fontSize: typography.body,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
+    opacity: 0.7,
   },
   timeline: {
     gap: spacing.sm,

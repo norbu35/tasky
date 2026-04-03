@@ -43,9 +43,10 @@ export default function ProfilePolishScreen() {
   const [tone, setTone] = React.useState<Tone>('professional');
   const [screenState, setScreenState] = React.useState<ScreenState>('draft_ready');
   const [suggestion, setSuggestion] = React.useState('');
-  const [toast, setToast] = React.useState<{ message: string; variant: 'success' | 'error' } | null>(
-    null,
-  );
+  const [toast, setToast] = React.useState<{
+    message: string;
+    variant: 'success' | 'error';
+  } | null>(null);
   const requestVersionRef = React.useRef(0);
   const trackRejectedRef = React.useRef(false);
   const appliedSuggestionRef = React.useRef(false);
@@ -184,10 +185,14 @@ export default function ProfilePolishScreen() {
           : t('tasker.profilePolish.generate', 'Санал болгох')
       }
       ctaOnPress={handlePrimaryAction}
-      ctaLoading={screenState === 'generating' || previewProfilePolish.isPending || updateProfile.isPending}
+      ctaLoading={
+        screenState === 'generating' || previewProfilePolish.isPending || updateProfile.isPending
+      }
       ctaDisabled={!sourceBio.trim()}
       secondaryCtaLabel={
-        screenState === 'generating' ? undefined : t('tasker.profilePolish.manualEdit', 'Гараар засах')
+        screenState === 'generating'
+          ? undefined
+          : t('tasker.profilePolish.manualEdit', 'Гараар засах')
       }
       secondaryCtaOnPress={
         screenState === 'generating'
@@ -208,7 +213,9 @@ export default function ProfilePolishScreen() {
             <Sparkles size={14} color={colors.secondaryForeground} />
             <Text style={styles.aiBadgeText}>{t('tasker.polish.aiPowered', 'AI POWERED')}</Text>
           </View>
-          <Text style={styles.heroTitle}>{t('tasker.profilePolish.heroTitle', 'Профайл засах')}</Text>
+          <Text style={styles.heroTitle}>
+            {t('tasker.profilePolish.heroTitle', 'Профайл засах')}
+          </Text>
           <Text style={styles.heroBody}>
             {t(
               'tasker.profilePolish.heroBody',
@@ -218,7 +225,9 @@ export default function ProfilePolishScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{t('tasker.profilePolish.sourceLabel', 'Одоогийн тайлбар')}</Text>
+          <Text style={styles.sectionLabel}>
+            {t('tasker.profilePolish.sourceLabel', 'Одоогийн тайлбар')}
+          </Text>
           <View style={styles.sourceCard}>
             <Input
               value={sourceBio}
@@ -230,7 +239,10 @@ export default function ProfilePolishScreen() {
                 }
                 setToast(null);
               }}
-              placeholder={t('tasker.profilePolish.sourcePlaceholder', 'Өөрийн ажлын туршлагаа бичнэ үү')}
+              placeholder={t(
+                'tasker.profilePolish.sourcePlaceholder',
+                'Өөрийн ажлын туршлагаа бичнэ үү',
+              )}
               multiline
               numberOfLines={6}
               maxLength={MAX_BIO_LENGTH}
@@ -304,7 +316,7 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
   },
   introCard: {
-    backgroundColor: '#f4f7fb',
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.xl,
     gap: spacing.md,

@@ -35,14 +35,9 @@ export default function BookingDetailTaskerScreen() {
     });
   }, [bookingId, markDone]);
 
-  const status = (bookingStatus === 'TASKER_MARKED_DONE'
-    ? 'assigned'
-    : bookingStatus?.toLowerCase()) as
-    | 'assigned'
-    | 'completed'
-    | 'cancelled'
-    | 'no_show'
-    | undefined;
+  const status = (
+    bookingStatus === 'TASKER_MARKED_DONE' ? 'assigned' : bookingStatus?.toLowerCase()
+  ) as 'assigned' | 'completed' | 'cancelled' | 'no_show' | undefined;
 
   return (
     <DetailTemplate
@@ -56,7 +51,7 @@ export default function BookingDetailTaskerScreen() {
         isAssigned || isMarkedDone ? t('tasker.jobs.messageButton', 'Зурвас илгээх') : undefined
       }
       secondaryCtaOnPress={
-        (isAssigned || isMarkedDone) ? () => router.push(`/inbox/${bookingId}`) : undefined
+        isAssigned || isMarkedDone ? () => router.push(`/inbox/${bookingId}`) : undefined
       }
       testID="booking-detail-tasker"
     >
@@ -85,7 +80,9 @@ export default function BookingDetailTaskerScreen() {
 
           {(isAssigned || isMarkedDone) && (
             <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('tasker.jobs.exactAddress', 'Тодорхой хаяг')}</Text>
+              <Text style={styles.sectionLabel}>
+                {t('tasker.jobs.exactAddress', 'Тодорхой хаяг')}
+              </Text>
               <Text style={styles.description}>{booking.task?.location_text ?? ''}</Text>
               <Text style={styles.noteText}>
                 {t('tasker.jobs.exactAddressNote', 'Энэ хаяг зөвхөн танд харагдана')}
@@ -130,10 +127,7 @@ export default function BookingDetailTaskerScreen() {
           {isMarkedDone && (
             <View style={styles.awaitingBanner}>
               <Text style={styles.awaitingText}>
-                {t(
-                  'tasker.jobs.awaitingConfirmation',
-                  'Захиалагч баталгаажуулахыг хүлээж байна',
-                )}
+                {t('tasker.jobs.awaitingConfirmation', 'Захиалагч баталгаажуулахыг хүлээж байна')}
               </Text>
             </View>
           )}
@@ -217,7 +211,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.foreground,
+    color: colors.secondary,
   },
   paymentNote: {
     backgroundColor: colors.muted,

@@ -17,14 +17,16 @@ export default function TaskerCreditsIndexScreen() {
   const router = useRouter();
 
   return (
-    <DetailTemplate
-      testID="tasker-credits-index"
-    >
+    <DetailTemplate testID="tasker-credits-index">
       <View style={styles.stack}>
         <View style={styles.heroCard}>
-          <Text style={styles.heroLabel}>{t('tasker.credits.availableBalance', 'Available balance')}</Text>
+          <Text style={styles.heroLabel}>
+            {t('tasker.credits.availableBalance', 'Available balance')}
+          </Text>
           <Text style={styles.heroValue}>{balanceText}</Text>
-          <Text style={styles.heroCaption}>{t('tasker.credits.enoughForTwoTasks', 'Enough for 2 more average tasks')}</Text>
+          <Text style={styles.heroCaption}>
+            {t('tasker.credits.enoughForTwoTasks', 'Enough for 2 more average tasks')}
+          </Text>
         </View>
 
         <LowBalanceAlert
@@ -40,7 +42,9 @@ export default function TaskerCreditsIndexScreen() {
         />
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.credits.quickActions', 'Quick actions')}</Text>
+          <Text style={styles.sectionTitle}>
+            {t('tasker.credits.quickActions', 'Quick actions')}
+          </Text>
           <View style={styles.actionRow}>
             <Button
               label={t('tasker.credits.topUp', 'Top up')}
@@ -62,16 +66,29 @@ export default function TaskerCreditsIndexScreen() {
             testID="tasker-credits-referrals"
           >
             <Text style={styles.referralTitle}>{t('tasker.referrals.title', 'Referrals')}</Text>
-            <Text style={styles.referralBody}>{t('tasker.referrals.inviteBody', 'Invite taskers to earn bonus credits.')}</Text>
+            <Text style={styles.referralBody}>
+              {t('tasker.referrals.inviteBody', 'Invite taskers to earn bonus credits.')}
+            </Text>
           </Pressable>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.credits.currentSnapshot', 'Current snapshot')}</Text>
+          <Text style={styles.sectionTitle}>
+            {t('tasker.credits.currentSnapshot', 'Current snapshot')}
+          </Text>
           <View style={styles.infoCard}>
-            <InfoRow label={t('tasker.credits.reserved', 'Reserved for active bookings')} value="4,800 ₮" />
-            <InfoRow label={t('tasker.credits.lastTopUp', 'Last top-up')} value={t('tasker.credits.yesterday', 'Yesterday')} />
-            <InfoRow label={t('tasker.credits.pendingRewards', 'Pending rewards')} value="1,200 ₮" />
+            <InfoRow
+              label={t('tasker.credits.reserved', 'Reserved for active bookings')}
+              value="4,800 ₮"
+            />
+            <InfoRow
+              label={t('tasker.credits.lastTopUp', 'Last top-up')}
+              value={t('tasker.credits.yesterday', 'Yesterday')}
+            />
+            <InfoRow
+              label={t('tasker.credits.pendingRewards', 'Pending rewards')}
+              value="1,200 ₮"
+            />
           </View>
         </View>
       </View>
@@ -86,24 +103,24 @@ const styles = StyleSheet.create({
   heroCard: {
     padding: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.primaryDeep,
     gap: spacing.xs,
   },
   heroLabel: {
     fontSize: typography.label,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
+    opacity: 0.8,
   },
   heroValue: {
     fontSize: 36,
     lineHeight: 42,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.card,
   },
   heroCaption: {
     fontSize: typography.body,
-    color: colors.textSecondary,
+    color: colors.primaryForeground,
+    opacity: 0.7,
   },
   section: {
     gap: spacing.md,

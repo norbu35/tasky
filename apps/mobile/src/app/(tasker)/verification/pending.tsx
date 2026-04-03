@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.title,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.foreground,
     textAlign: 'center',
   },
   description: {
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   progressRow: {
     flexDirection: 'row',

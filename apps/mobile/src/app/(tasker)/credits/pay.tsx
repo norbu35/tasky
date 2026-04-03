@@ -44,7 +44,9 @@ export default function TaskerCreditsPayScreen() {
     >
       <View style={styles.stack}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.credits.chooseAmount', 'Choose an amount')}</Text>
+          <Text style={styles.sectionTitle}>
+            {t('tasker.credits.chooseAmount', 'Choose an amount')}
+          </Text>
           <View style={styles.amountGrid}>
             {amountOptions.map((amount) => (
               <Pressable
@@ -52,7 +54,9 @@ export default function TaskerCreditsPayScreen() {
                 style={[styles.amountCard, amount === '20,000 ₮' && styles.amountCardSelected]}
                 testID={`tasker-credits-amount-${amount.replace(/[^0-9]/g, '')}`}
               >
-                <Text style={[styles.amountText, amount === '20,000 ₮' && styles.amountTextSelected]}>
+                <Text
+                  style={[styles.amountText, amount === '20,000 ₮' && styles.amountTextSelected]}
+                >
                   {amount}
                 </Text>
               </Pressable>
@@ -61,11 +65,22 @@ export default function TaskerCreditsPayScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.credits.topUpPreview', 'Top-up preview')}</Text>
+          <Text style={styles.sectionTitle}>
+            {t('tasker.credits.topUpPreview', 'Top-up preview')}
+          </Text>
           <View style={styles.previewCard}>
-            <InfoRow label={t('tasker.credits.method', 'Method')} value={t('tasker.credits.mobileWallet', 'Mobile wallet')} />
-            <InfoRow label={t('tasker.credits.processing', 'Processing')} value={t('tasker.credits.instant', 'Instant')} />
-            <InfoRow label={t('tasker.credits.balanceAfterTopUp', 'Balance after top up')} value="32,400 ₮" />
+            <InfoRow
+              label={t('tasker.credits.method', 'Method')}
+              value={t('tasker.credits.mobileWallet', 'Mobile wallet')}
+            />
+            <InfoRow
+              label={t('tasker.credits.processing', 'Processing')}
+              value={t('tasker.credits.instant', 'Instant')}
+            />
+            <InfoRow
+              label={t('tasker.credits.balanceAfterTopUp', 'Balance after top up')}
+              value="32,400 ₮"
+            />
           </View>
         </View>
 
@@ -101,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   amountCardSelected: {
     borderColor: colors.primary,

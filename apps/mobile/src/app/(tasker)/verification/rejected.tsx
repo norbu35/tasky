@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontSize: typography.body,
-    color: colors.primary,
+    color: colors.foreground,
     textAlign: 'center',
     marginTop: spacing.lg,
     lineHeight: typography.body * 1.6,
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   tipText: {
     fontSize: typography.body,
-    color: colors.primary,
+    color: colors.foreground,
     lineHeight: typography.body * 1.5,
   },
   primaryCta: {

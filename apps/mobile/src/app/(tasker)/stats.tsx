@@ -33,7 +33,8 @@ export default function TaskerStatsScreen() {
   const reliabilityScore = readNumber(rawStats.reliability_score);
   const completionRate = readNumber(rawStats.completion_rate);
   const applicationSuccessRate = readNumber(rawStats.application_success_rate) ?? completionRate;
-  const unlockConversionRate = readNumber(rawStats.unlock_conversion_rate) ?? applicationSuccessRate;
+  const unlockConversionRate =
+    readNumber(rawStats.unlock_conversion_rate) ?? applicationSuccessRate;
   const cancellations30d = readNumber(rawStats.cancellations_30d) ?? 0;
   const ratingBreakdown = (rawStats.rating_breakdown ?? {}) as Record<string, unknown>;
   const taskClarity = readNumber(ratingBreakdown.task_clarity);
@@ -42,12 +43,7 @@ export default function TaskerStatsScreen() {
   const isPro = Boolean(rawStats.is_pro);
 
   return (
-    <DetailTemplate
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      testID="tasker-stats"
-    >
+    <DetailTemplate isLoading={isLoading} isError={isError} onRetry={refetch} testID="tasker-stats">
       {data && (
         <View style={styles.content}>
           <View style={styles.heroCard} testID="tasker-stats-hero">
@@ -98,20 +94,26 @@ export default function TaskerStatsScreen() {
               {t('tasker.stats.ratingBreakdown', 'Үнэлгээний задаргаа')}
             </Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.taskClarity', 'Даалгаврын тодорхой байдал')}: {taskClarity ?? averageRating ?? '—'}
+              {t('tasker.stats.taskClarity', 'Даалгаврын тодорхой байдал')}:{' '}
+              {taskClarity ?? averageRating ?? '—'}
             </Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.respectfulness', 'Хүндэтгэлтэй хандлага')}: {respectfulness ?? averageRating ?? '—'}
+              {t('tasker.stats.respectfulness', 'Хүндэтгэлтэй хандлага')}:{' '}
+              {respectfulness ?? averageRating ?? '—'}
             </Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.punctuality', 'Цаг баримтлал')}: {punctuality ?? averageRating ?? '—'}
+              {t('tasker.stats.punctuality', 'Цаг баримтлал')}:{' '}
+              {punctuality ?? averageRating ?? '—'}
             </Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('tasker.stats.reliabilityHeading', 'Найдвартай байдал')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('tasker.stats.reliabilityHeading', 'Найдвартай байдал')}
+            </Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.reliabilityLabel', 'Найдвартай байдлын оноо')}: {formatPercent(reliabilityScore)}
+              {t('tasker.stats.reliabilityLabel', 'Найдвартай байдлын оноо')}:{' '}
+              {formatPercent(reliabilityScore)}
             </Text>
             <Text style={styles.sectionLine}>
               {t(
@@ -124,15 +126,20 @@ export default function TaskerStatsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('tasker.stats.activityHeading', 'Идэвхжил')}</Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.unlockConversion', 'Түгжээ тайлалтын хувь')}: {formatPercent(unlockConversionRate)}
+              {t('tasker.stats.unlockConversion', 'Түгжээ тайлалтын хувь')}:{' '}
+              {formatPercent(unlockConversionRate)}
             </Text>
             <Text style={styles.sectionLine}>
-              {t('tasker.stats.responseTime', 'Хариу өгөх хугацаа')}: {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
+              {t('tasker.stats.responseTime', 'Хариу өгөх хугацаа')}:{' '}
+              {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
             </Text>
             <Text style={styles.sectionLine}>
               {isPro
                 ? t('tasker.stats.proBadgeEarned', 'Pro Badge олдсон!')
-                : t('tasker.stats.proBadgeEligible', '15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна')}
+                : t(
+                    'tasker.stats.proBadgeEligible',
+                    '15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна',
+                  )}
             </Text>
           </View>
         </View>
@@ -146,7 +153,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   heroCard: {
-    backgroundColor: mobileTheme.colors.primary,
+    backgroundColor: mobileTheme.colors.primaryDeep,
     borderRadius: mobileTheme.radius.lg,
     padding: spacing.xl,
     gap: spacing.xs,

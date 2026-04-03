@@ -42,10 +42,7 @@ export default function UploadScreen() {
   const currentSide = STEPS[currentStep];
   const currentPhoto = photos[currentSide];
   const hasPhoto = !!currentPhoto;
-  const allPhotosCaptured = useMemo(
-    () => STEPS.every((side) => !!photos[side]),
-    [photos],
-  );
+  const allPhotosCaptured = useMemo(() => STEPS.every((side) => !!photos[side]), [photos]);
   const showReview = currentStep === STEPS.length - 1 && allPhotosCaptured;
 
   const captureFromCamera = useCallback(async () => {
@@ -199,10 +196,12 @@ export default function UploadScreen() {
 
 const styles = StyleSheet.create({
   stepLabel: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.textSecondary,
     textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
     marginBottom: spacing.lg,
   },
   previewContainer: {
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   reviewHeading: {
     fontSize: typography.subtitle,

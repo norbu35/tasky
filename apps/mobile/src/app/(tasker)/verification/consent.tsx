@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ExternalLink } from 'lucide-react-native';
@@ -120,10 +113,10 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   heading: {
-    fontSize: typography.heading,
-    fontWeight: '600',
-    color: colors.primary,
-    lineHeight: typography.heading * 1.2,
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primaryDeep,
+    lineHeight: 24 * 1.2,
   },
   body: {
     fontSize: typography.body,
@@ -134,7 +127,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.lg,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   dataItem: {
     fontSize: typography.body,

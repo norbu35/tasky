@@ -23,7 +23,11 @@ export default function WalletPayoutScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content} testID="wallet-payout-screen">
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      testID="wallet-payout-screen"
+    >
       <Text style={styles.title}>Мөнгө татах</Text>
       <Text style={styles.balance}>Боломжит үлдэгдэл: ₮120,000</Text>
       <TextInput
@@ -46,8 +50,13 @@ export default function WalletPayoutScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.xl, gap: spacing.lg },
-  successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
-  title: { fontSize: typography.heading, fontWeight: '700', color: colors.primaryDeep },
+  successContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
+  title: { fontSize: 24, fontWeight: '700', color: colors.primaryDeep },
   balance: { fontSize: typography.body, color: colors.textSecondary },
   input: {
     borderWidth: 1,
