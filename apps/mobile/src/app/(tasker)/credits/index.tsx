@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sectionTitle: {
-    fontSize: typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
-    color: colors.foreground,
+    color: colors.primaryDeep,
   },
   actionRow: {
     flexDirection: 'row',
@@ -140,9 +140,7 @@ const styles = StyleSheet.create({
   referralLink: {
     padding: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: 'rgba(101, 62, 0, 0.08)',
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
     gap: spacing.xs,
   },
   referralTitle: {
@@ -158,7 +156,5 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
 });

@@ -48,7 +48,12 @@ const styles = StyleSheet.create({
   heroLabel: { fontSize: typography.label, color: colors.primaryForeground, opacity: 0.8 },
   heroAmount: { fontSize: 32, fontWeight: '800', color: colors.card },
   statsRow: { flexDirection: 'row', gap: spacing.md },
-  statCard: { flex: 1, backgroundColor: colors.card, borderRadius: radius.md, padding: spacing.lg },
+  statCard: {
+    flex: 1,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+  },
   statLabel: {
     fontSize: typography.caption,
     color: colors.textSecondary,

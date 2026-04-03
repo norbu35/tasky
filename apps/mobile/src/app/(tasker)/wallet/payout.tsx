@@ -34,7 +34,7 @@ export default function WalletPayoutScreen() {
         value={amount}
         onChangeText={setAmount}
         placeholder="₮0"
-        placeholderTextColor="#8c8f93"
+        placeholderTextColor={colors.textSecondary}
         style={styles.input}
       />
       {showError ? <Text style={styles.error}>Хамгийн бага дүн: ₮10,000</Text> : null}
@@ -56,11 +56,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.background,
   },
-  title: { fontSize: 24, fontWeight: '700', color: colors.primaryDeep },
+  title: { fontSize: 24, fontWeight: '800', color: colors.primaryDeep },
   balance: { fontSize: typography.body, color: colors.textSecondary },
   input: {
     borderWidth: 1,
-    borderColor: '#d7d2c8',
+    borderColor: colors.border,
     borderRadius: radius.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,

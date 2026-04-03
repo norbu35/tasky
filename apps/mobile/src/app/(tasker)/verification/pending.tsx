@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock, CircleCheck, CircleDashed } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -38,6 +38,13 @@ export default function PendingScreen() {
         style={styles.cta}
         testID="pending-screen-cta"
       />
+      <Button
+        label="Буцах"
+        variant="outline"
+        onPress={() => router.back()}
+        style={styles.secondaryBtn}
+        testID="verification-pending-screen-back"
+      />
     </View>
   );
 }
@@ -50,8 +57,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   iconContainer: {
-    width: 80,
-    height: 80,
+    width: 96,
+    height: 96,
     borderRadius: radius.full,
     backgroundColor: colors.muted,
     justifyContent: 'center',
@@ -85,6 +92,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.md,
     backgroundColor: colors.muted,
+    ...elevations.soft,
   },
   progressRow: {
     flexDirection: 'row',
@@ -99,5 +107,8 @@ const styles = StyleSheet.create({
   cta: {
     marginTop: spacing.xl,
     alignSelf: 'stretch',
+  },
+  secondaryBtn: {
+    marginTop: spacing.sm,
   },
 });

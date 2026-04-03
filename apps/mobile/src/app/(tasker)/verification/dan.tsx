@@ -5,7 +5,7 @@ import { AuthTemplate } from '../../../components/templates/AuthTemplate';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 type DanState = 'default' | 'success';
 
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   logoBadge: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    borderRadius: 999,
+    borderRadius: radius.full,
     backgroundColor: colors.muted,
   },
   logoBadgeText: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.heading,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.primaryDeep,
     textAlign: 'center',
   },

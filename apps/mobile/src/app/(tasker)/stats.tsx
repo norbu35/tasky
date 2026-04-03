@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     color: mobileTheme.colors.primaryForeground,
   },
   sectionHeading: {
-    fontSize: mobileTheme.typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
     color: mobileTheme.colors.primaryDeep,
   },

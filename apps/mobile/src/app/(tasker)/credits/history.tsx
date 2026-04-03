@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { EmptyStateTemplate } from '../../../components/templates/EmptyStateTemplate';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -115,9 +115,8 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.xs,
+    ...elevations.soft,
   },
   transactionHeader: {
     flexDirection: 'row',

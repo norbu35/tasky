@@ -10,7 +10,7 @@ import { SkeletonLoader } from '../../../components/ui/SkeletonLoader';
 import { Toast } from '../../../components/ui/Toast';
 import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { useProfilePolishPreview } from '../../../features/profile/hooks/useProfilePolish';
-import { mobileTheme } from '../../../design/tokenAdapter';
+import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import {
   createConsoleClientAnalyticsTracker,
   resolveClientLocale,
@@ -246,7 +246,6 @@ export default function ProfilePolishScreen() {
               multiline
               numberOfLines={6}
               maxLength={MAX_BIO_LENGTH}
-              style={styles.input}
             />
             <Text style={styles.counter}>{`${currentCount}/${MAX_BIO_LENGTH}`}</Text>
           </View>
@@ -338,7 +337,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   heroTitle: {
-    fontSize: 30,
+    fontSize: 24,
     lineHeight: 38,
     fontWeight: '800',
     color: colors.primaryDeep,
@@ -352,27 +351,18 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sectionLabel: {
-    fontSize: typography.label,
+    fontSize: typography.caption,
     lineHeight: 20,
     fontWeight: '700',
-    color: colors.primaryDeep,
-    letterSpacing: 0.35,
+    color: colors.textSecondary,
+    letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
   sourceCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
-  },
-  input: {
-    minHeight: 160,
-    borderWidth: 0,
-    backgroundColor: 'transparent',
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    textAlignVertical: 'top',
-    lineHeight: 26,
   },
   counter: {
     alignSelf: 'flex-end',
@@ -389,11 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.xl,
     gap: spacing.md,
-    shadowColor: colors.foreground,
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.06,
-    shadowRadius: 40,
-    elevation: 3,
+    ...elevations.soft,
   },
   suggestionText: {
     fontSize: typography.body,

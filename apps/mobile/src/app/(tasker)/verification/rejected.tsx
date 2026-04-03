@@ -55,12 +55,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   iconContainer: {
-    width: 96,
-    height: 96,
+    width: 72,
+    height: 72,
     borderRadius: radius.full,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.muted,
+    backgroundColor: `${colors.danger}1A`,
     marginBottom: spacing.xl,
   },
   title: {

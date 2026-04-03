@@ -123,23 +123,19 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sectionTitle: {
-    fontSize: typography.subtitle,
+    fontSize: 24,
     fontWeight: '700',
-    color: colors.foreground,
+    color: colors.primaryDeep,
   },
   infoCard: {
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   banner: {
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: 'rgba(255, 221, 184, 0.22)',
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.xs,
   },
   bannerTitle: {

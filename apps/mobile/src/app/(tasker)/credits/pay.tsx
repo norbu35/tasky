@@ -114,8 +114,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     backgroundColor: colors.muted,
   },
   amountCardSelected: {
@@ -133,9 +131,7 @@ const styles = StyleSheet.create({
   previewCard: {
     padding: spacing.lg,
     borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
   },
   note: {
     fontSize: typography.body,
