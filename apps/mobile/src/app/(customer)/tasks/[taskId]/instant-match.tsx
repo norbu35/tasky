@@ -9,6 +9,7 @@ import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
 import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -130,20 +131,14 @@ export default function CustomerInstantMatchScreen() {
     matchState === 'matched_awaiting_accept'
       ? t('matching.instantMatch.heroMatched', 'Tasker found')
       : matchState === 'fallback_to_open'
-        ? t(
-            'matching.instantMatch.heroFallback',
-            'Instant match could not secure a tasker.',
-          )
+        ? t('matching.instantMatch.heroFallback', 'Instant match could not secure a tasker.')
         : matchState === 'error_no_eligible'
           ? t('matching.instantMatch.heroError', 'No eligible taskers nearby')
           : t('matching.instantMatch.heroSearching', 'Finding your tasker');
 
   const heroSubtitle =
     matchState === 'fallback_to_open'
-      ? t(
-          'matching.instantMatch.heroFallbackBody',
-          'Your task is now open for applications.',
-        )
+      ? t('matching.instantMatch.heroFallbackBody', 'Your task is now open for applications.')
       : matchState === 'error_no_eligible'
         ? t(
             'matching.instantMatch.heroErrorBody',
@@ -155,10 +150,7 @@ export default function CustomerInstantMatchScreen() {
           );
 
   return (
-    <DetailTemplate
-      testID="instant-match-customer-screen"
-      onBack={onBack}
-    >
+    <DetailTemplate testID="instant-match-customer-screen" onBack={onBack}>
       <View style={styles.container}>
         <View style={styles.heroBlock}>
           <Text style={styles.heroTitle}>{heroTitle}</Text>
@@ -350,6 +342,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.md,
+    ...elevations.soft,
   },
   taskerPreview: {
     flexDirection: 'row',
@@ -390,7 +383,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   centerBlock: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.xl,
     gap: spacing.md,

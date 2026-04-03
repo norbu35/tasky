@@ -9,7 +9,7 @@ import { useAcceptApplication } from '../../../features/bookings/hooks/useAccept
 import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function BookingConfirmScreen() {
   const { t } = useTranslation();
@@ -30,28 +30,27 @@ export default function BookingConfirmScreen() {
 
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
   const { mutateAsync: acceptApplication, isPending } = useAcceptApplication();
-  const { mutateAsync: confirmBookingIntent, isPending: isConfirmingIntent } = useConfirmBookingIntent();
+  const { mutateAsync: confirmBookingIntent, isPending: isConfirmingIntent } =
+    useConfirmBookingIntent();
 
   const handleConfirm = useCallback(async () => {
     const source = params.source ?? 'application';
     const usesBookingIntent = source === 'rebook' || source === 'instant_match';
-    const idempotencyKey =
-      usesBookingIntent
-        ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
-        : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
-    const booking =
-      usesBookingIntent
-        ? await confirmBookingIntent({
-            bookingIntentId: params.bookingIntentId!,
-            liabilityDisclaimerAccepted: true,
-            idempotencyKey,
-          })
-        : await acceptApplication({
-            taskId: params.taskId,
-            applicationId: params.applicationId,
-            liabilityDisclaimerAccepted: true,
-            idempotencyKey,
-          });
+    const idempotencyKey = usesBookingIntent
+      ? `confirm-intent-${params.bookingIntentId}-${Date.now()}`
+      : `confirm-${params.taskId}-${params.applicationId}-${Date.now()}`;
+    const booking = usesBookingIntent
+      ? await confirmBookingIntent({
+          bookingIntentId: params.bookingIntentId!,
+          liabilityDisclaimerAccepted: true,
+          idempotencyKey,
+        })
+      : await acceptApplication({
+          taskId: params.taskId,
+          applicationId: params.applicationId,
+          liabilityDisclaimerAccepted: true,
+          idempotencyKey,
+        });
     router.replace({
       pathname: '/(customer)/bookings/confirmed',
       params: { bookingId: booking.id },
@@ -150,15 +149,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
     marginBottom: spacing.md,
   },
   taskerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
   },
   taskerInfo: {
     flex: 1,

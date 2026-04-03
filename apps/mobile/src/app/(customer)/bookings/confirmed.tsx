@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, CalendarPlus2, Check, ChevronLeft, MessageSquare } from 'lucide-react-native';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { elevations } from '../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -239,8 +240,8 @@ const styles = StyleSheet.create({
   successIconBackground: {
     width: 96,
     height: 96,
-    borderRadius: radius.md,
-    backgroundColor: colors.trustMuted,
+    borderRadius: radius.full,
+    backgroundColor: colors.muted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -278,11 +279,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.muted,
     borderRadius: radius.md,
     padding: spacing.lg,
-    shadowColor: 'rgba(26,28,26,0.04)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
+    ...elevations.soft,
   },
   nextStepsIcon: {
     width: 40,
@@ -316,11 +313,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.md,
     padding: spacing.lg,
-    shadowColor: 'rgba(26,28,26,0.04)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
+    ...elevations.soft,
   },
   providerLeft: {
     flexDirection: 'row',
@@ -368,9 +361,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.muted,
   },
   calendarCtaText: {
     fontSize: typography.label,

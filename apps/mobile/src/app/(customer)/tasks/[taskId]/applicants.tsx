@@ -7,6 +7,7 @@ import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetT
 import { Button } from '../../../../components/ui/Button';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 import { useApplications } from '../../../../features/tasks/hooks/useApplications';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 
@@ -149,7 +150,9 @@ export default function ApplicantsListScreen() {
             <Text style={styles.backLabel}>{t('common.back', 'Back')}</Text>
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.pageTitle}>{t('customer.applicants.pageTitle', 'Applications')}</Text>
+            <Text style={styles.pageTitle}>
+              {t('customer.applicants.pageTitle', 'Applications')}
+            </Text>
             <Text style={styles.countText}>
               {t('customer.applicants.count', '{{count}} applications').replace(
                 '{{count}}',
@@ -168,7 +171,11 @@ export default function ApplicantsListScreen() {
             <Text style={styles.stateTitle}>
               {t('customer.applicants.errorNetwork', 'Failed to load applications')}
             </Text>
-            <Pressable onPress={() => refetch()} style={styles.retryButton} testID="applicants-retry">
+            <Pressable
+              onPress={() => refetch()}
+              style={styles.retryButton}
+              testID="applicants-retry"
+            >
               <Text style={styles.retryText}>{t('common.tryAgain', 'Try again')}</Text>
             </Pressable>
           </View>
@@ -294,8 +301,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevations.soft,
     gap: spacing.sm,
   },
   stateTitle: {
@@ -342,8 +348,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: radius.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevations.soft,
     gap: spacing.md,
   },
   cardTopRow: {

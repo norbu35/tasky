@@ -1,19 +1,12 @@
 import React from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CircleHelp, ClipboardList, House, MessageSquare, UserRound } from 'lucide-react-native';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -127,7 +120,11 @@ function TimelineEventRow({
             !isActive && !isFuture && styles.timelineDotPast,
           ]}
         />
-        {!isFuture ? <View style={styles.timelineLine} /> : <View style={styles.timelineLineMuted} />}
+        {!isFuture ? (
+          <View style={styles.timelineLine} />
+        ) : (
+          <View style={styles.timelineLineMuted} />
+        )}
       </View>
       <View style={styles.timelineCopy}>
         <Text style={[styles.timelineTimestamp, isActive && styles.timelineTimestampActive]}>
@@ -186,10 +183,14 @@ export default function BookingTimelineScreen() {
             </View>
             <View style={styles.contextCopy}>
               <Text style={styles.contextId}>
-                {t('customer.bookings.timelineId', `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`)}
+                {t(
+                  'customer.bookings.timelineId',
+                  `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`,
+                )}
               </Text>
               <Text style={styles.contextTitle} numberOfLines={2}>
-                {booking?.task?.description ?? t('customer.bookings.timelineFallbackTitle', 'Даалгаврын дэлгэрэнгүй')}
+                {booking?.task?.description ??
+                  t('customer.bookings.timelineFallbackTitle', 'Даалгаврын дэлгэрэнгүй')}
               </Text>
               <Text style={styles.contextSubtitle} numberOfLines={1}>
                 {booking?.tasker?.full_name
@@ -472,11 +473,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    shadowColor: 'rgba(26,28,26,0.06)',
-    shadowOpacity: 1,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: -10 },
-    elevation: 8,
+    ...elevations.soft,
   },
   bottomNavItem: {
     flex: 1,

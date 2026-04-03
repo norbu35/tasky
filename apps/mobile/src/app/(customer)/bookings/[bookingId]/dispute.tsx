@@ -168,9 +168,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   fieldLabel: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
     marginBottom: spacing.md,
   },
   referenceValue: {
@@ -181,11 +181,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   reasonOption: {
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: radius.md,
     padding: spacing.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   reasonOptionSelected: {
     borderColor: colors.accent,

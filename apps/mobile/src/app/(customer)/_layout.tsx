@@ -9,6 +9,13 @@ export default function CustomerLayout() {
       {/* Task flows */}
       <Stack.Screen name="tasks/index" options={{ headerShown: false }} />
       <Stack.Screen
+        name="tasks/new"
+        options={{
+          ...modalStackScreenOptions,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="tasks/[taskId]/index"
         options={{ title: t('customer.taskDetail.title', 'Task Detail') }}
       />

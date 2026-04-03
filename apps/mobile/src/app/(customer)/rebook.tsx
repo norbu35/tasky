@@ -7,6 +7,7 @@ import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -176,11 +177,15 @@ const styles = StyleSheet.create({
   },
   taskerCard: {
     marginBottom: spacing.xl,
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...elevations.soft,
   },
   sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
     marginBottom: spacing.md,
   },
   taskerRow: {
@@ -215,24 +220,20 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   datePicker: {
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: radius.md,
     padding: spacing.md,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   dateText: {
     fontSize: typography.body,
     color: colors.primaryDeep,
   },
   budgetInput: {
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: radius.md,
     padding: spacing.md,
     fontSize: typography.body,
     color: colors.primaryDeep,
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
   },
   errorText: {
     fontSize: typography.caption,

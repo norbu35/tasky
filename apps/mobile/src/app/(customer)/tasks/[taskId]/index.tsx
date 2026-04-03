@@ -6,6 +6,7 @@ import { MapPin, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
 import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
+import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
@@ -26,13 +27,7 @@ function formatSchedule(value?: string | null) {
   return `${parsed.getFullYear()}.${String(parsed.getMonth() + 1).padStart(2, '0')}.${String(parsed.getDate()).padStart(2, '0')}`;
 }
 
-function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>{label}</Text>
@@ -145,17 +140,24 @@ export default function TaskDetailCustomerScreen() {
                 value={(task as any)?.category?.name ?? t('customer.postTask.notSet', 'Not set')}
               />
               <DetailRow
-                label={t('customer.postTask.budgetLabel', 'Budget')}
-                value={formatBudget(task.budget)}
-              />
-              <DetailRow
-                label={t('customer.postTask.location', 'Location')}
-                value={(task as any).location_text ?? ''}
-              />
-              <DetailRow
                 label={t('customer.postTask.scheduleDate', 'Date')}
                 value={formatSchedule(task.scheduled_at)}
               />
+            </View>
+
+            <View style={styles.budgetCard}>
+              <View style={styles.budgetCardTop}>
+                <Text style={styles.budgetCardLabel}>
+                  {t('customer.postTask.budgetLabel', 'Budget')}
+                </Text>
+                <View style={styles.applicantChip}>
+                  <Text style={styles.applicantChipText}>
+                    {Number((task as any)?.applicant_count ?? 0)}{' '}
+                    {t('customer.applicants.title', 'applicants')}
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.budgetAmount}>{formatBudget(task.budget)}</Text>
             </View>
 
             <View style={styles.sectionCard}>
@@ -163,7 +165,9 @@ export default function TaskDetailCustomerScreen() {
                 <Text style={styles.sectionTitle}>
                   {t('customer.taskDetail.applicants', 'Applicants')}
                 </Text>
-                <Text style={styles.sectionPill}>{Number((task as any)?.applicant_count ?? 0)}</Text>
+                <Text style={styles.sectionPill}>
+                  {Number((task as any)?.applicant_count ?? 0)}
+                </Text>
               </View>
               {hasApplicants ? (
                 <Text style={styles.sectionBody}>
@@ -178,18 +182,22 @@ export default function TaskDetailCustomerScreen() {
 
             <View style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{t('customer.taskDetail.sectionPhotos', 'Photos')}</Text>
+                <Text style={styles.sectionTitle}>
+                  {t('customer.taskDetail.sectionPhotos', 'Photos')}
+                </Text>
                 <Text style={styles.sectionPill}>{photos.length}</Text>
               </View>
-              <View style={styles.photoRow}>
+              <View style={styles.photoGrid}>
                 {photos.length > 0 ? (
-                  photos.slice(0, 3).map((photoKey, index) => (
+                  photos.slice(0, 4).map((photoKey, index) => (
                     <View key={`${photoKey}-${index}`} style={styles.photoThumb}>
                       <Text style={styles.photoThumbText}>{index + 1}</Text>
                     </View>
                   ))
                 ) : (
-                  <Text style={styles.sectionBody}>{t('customer.taskDetail.noPhotos', 'No photos')}</Text>
+                  <Text style={styles.sectionBody}>
+                    {t('customer.taskDetail.noPhotos', 'No photos')}
+                  </Text>
                 )}
               </View>
             </View>
@@ -233,15 +241,6 @@ export default function TaskDetailCustomerScreen() {
                   </View>
                 </View>
               </Pressable>
-            ) : null}
-
-            {(isOpen || isAssigned) ? (
-              <Text style={styles.paymentNote}>
-                {t(
-                  'customer.taskDetail.paymentNote',
-                  'Payment is arranged directly with the Tasker',
-                )}
-              </Text>
             ) : null}
 
             {isCompleted ? (
@@ -288,10 +287,10 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: typography.heroTitle,
-    fontWeight: '900',
-    color: colors.foreground,
-    lineHeight: 36,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    lineHeight: 32,
   },
   subtitle: {
     fontSize: typography.caption,
@@ -301,12 +300,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   detailsCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
+    backgroundColor: colors.muted,
+    borderRadius: radius.sm,
     padding: spacing.lg,
     gap: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   detailRow: {
     flexDirection: 'row',
@@ -329,12 +326,10 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   sectionCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
+    backgroundColor: colors.muted,
+    borderRadius: radius.sm,
     padding: spacing.lg,
     gap: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -362,13 +357,14 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: typography.body * 1.5,
   },
-  photoRow: {
+  photoGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
   photoThumb: {
-    width: 56,
-    height: 56,
+    width: '48%',
+    height: 163,
     borderRadius: radius.md,
     backgroundColor: `${colors.primary}12`,
     alignItems: 'center',
@@ -401,12 +397,47 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: typography.caption * 1.5,
   },
+  budgetCard: {
+    backgroundColor: colors.primaryDeep,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    gap: spacing.sm,
+    ...elevations.soft,
+  },
+  budgetCardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  budgetCardLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    color: `${colors.primaryForeground}99`,
+  },
+  applicantChip: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primaryForeground}1A`,
+  },
+  applicantChipText: {
+    fontSize: typography.micro,
+    fontWeight: '700',
+    color: colors.primaryForeground,
+  },
+  budgetAmount: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: colors.secondary,
+    lineHeight: 40,
+  },
   taskerCard: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevations.soft,
   },
   taskerRow: {
     flexDirection: 'row',
@@ -435,12 +466,6 @@ const styles = StyleSheet.create({
   taskerHint: {
     fontSize: typography.caption,
     color: colors.textSecondary,
-  },
-  paymentNote: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    fontStyle: 'italic',
   },
   terminalCard: {
     padding: spacing.lg,

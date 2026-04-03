@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Button } from '../../../../components/ui/Button';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -57,9 +58,7 @@ export default function EscrowScreen() {
         <View style={styles.successCard}>
           <Text style={styles.cardTitle}>Төлбөр баталгаажлаа</Text>
           <Text style={styles.successTitle}>Эскроу амжилттай!</Text>
-          <Text style={styles.description}>
-            Төлбөр аюулгүй эскроу дансанд хадгалагдаж байна.
-          </Text>
+          <Text style={styles.description}>Төлбөр аюулгүй эскроу дансанд хадгалагдаж байна.</Text>
         </View>
       </ScrollView>
     );
@@ -86,7 +85,11 @@ export default function EscrowScreen() {
           <Text style={styles.featureItem}>Автомат шилжүүлэг</Text>
         </View>
 
-        <Button label="Эскроу ашиглах" onPress={() => setState('confirm')} testID="booking-escrow-screen-cta" />
+        <Button
+          label="Эскроу ашиглах"
+          onPress={() => setState('confirm')}
+          testID="booking-escrow-screen-cta"
+        />
 
         {state === 'confirm' && (
           <View style={styles.sheet} testID="booking-escrow-confirm-sheet">
@@ -113,24 +116,38 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.xl, gap: spacing.lg },
   title: { fontSize: typography.heading, fontWeight: '700', color: colors.primaryDeep },
-  card: { backgroundColor: '#f4f3f0', borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md },
-  errorCard: { backgroundColor: '#fcefee', borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md },
-  successCard: { backgroundColor: '#edf7ef', borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md },
+  card: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
+    gap: spacing.md,
+    ...elevations.soft,
+  },
+  errorCard: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
+  successCard: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
   cardTitle: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep },
   successTitle: { fontSize: typography.body, fontWeight: '700', color: colors.primaryDeep },
   description: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
   featureList: {
-    backgroundColor: '#fbfaf7',
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
   },
   featureItem: { fontSize: typography.body, color: colors.primaryDeep, fontWeight: '500' },
   sheet: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: '#ece5d8',
     padding: spacing.xl,
     gap: spacing.md,
   },

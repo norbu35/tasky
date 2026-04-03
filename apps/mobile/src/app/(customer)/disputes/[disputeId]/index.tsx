@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -42,8 +43,7 @@ type DisputeLike = {
   reason: string;
   status: DisputeStatus | string;
   evidence?: Array<
-    | string
-    | { type: string; text_payload?: string | null; storage_key?: string | null }
+    string | { type: string; text_payload?: string | null; storage_key?: string | null }
   >;
   created_at: string;
   resolved_at?: string | null;
@@ -150,14 +150,20 @@ function getTimelineState(status: DisputeStatus, index: number): TimelineState {
   return 'future';
 }
 
-function getResolutionText(status: DisputeStatus, t: (key: string, fallback: string) => string): string {
+function getResolutionText(
+  status: DisputeStatus,
+  t: (key: string, fallback: string) => string,
+): string {
   switch (status) {
     case 'ESCALATED':
       return t('customer.disputes.resolutionEscalated', 'Маргааныг нэмэлт шалгалтад шилжүүлсэн.');
     case 'RESOLVED_CUSTOMER':
       return t('customer.disputes.resolutionResolvedCustomer', 'Маргаан таны талд шийдэгдлээ.');
     case 'RESOLVED_TASKER':
-      return t('customer.disputes.resolutionResolvedTasker', 'Маргаан гүйцэтгэгчийн талд шийдэгдлээ.');
+      return t(
+        'customer.disputes.resolutionResolvedTasker',
+        'Маргаан гүйцэтгэгчийн талд шийдэгдлээ.',
+      );
     case 'CLOSED_INSUFFICIENT_EVIDENCE':
       return t(
         'customer.disputes.resolutionClosedInsufficient',
@@ -196,7 +202,12 @@ function BottomNav({
   const items = [
     { id: 'home' as const, label: 'Нүүр', icon: House, href: '/(customer)/tasks' },
     { id: 'search' as const, label: 'Хайлт', icon: Search, href: '/(tabs)' },
-    { id: 'tasks' as const, label: 'Миний даалгавар', icon: ClipboardList, href: '/(customer)/tasks' },
+    {
+      id: 'tasks' as const,
+      label: 'Миний даалгавар',
+      icon: ClipboardList,
+      href: '/(customer)/tasks',
+    },
     { id: 'profile' as const, label: 'Профайл', icon: UserRound, href: '/(tabs)/profile' },
   ];
 
@@ -256,7 +267,8 @@ export default function DisputeStatusScreen() {
   const status = getStatus(dispute?.status);
   const meta = STATUS_META[status];
   const booking = dispute?.booking;
-  const bookingCategory = booking?.task?.category?.name ?? t('customer.disputes.defaultCategory', 'Чанарын гомдол');
+  const bookingCategory =
+    booking?.task?.category?.name ?? t('customer.disputes.defaultCategory', 'Чанарын гомдол');
   const bookingReference = booking?.id ?? dispute?.booking_id ?? disputeId ?? '—';
   const submittedAt = parseDate(dispute?.created_at);
   const evidenceItems = Array.isArray(dispute?.evidence) ? dispute.evidence : [];
@@ -270,13 +282,18 @@ export default function DisputeStatusScreen() {
       },
       {
         title: t('customer.disputes.timelineAssigned', 'Хянагч хуваарилагдсан'),
-        description: t('customer.disputes.timelineAssignedDesc', 'Маргаан хариуцсан мэргэжилтэн томилогдлоо'),
+        description: t(
+          'customer.disputes.timelineAssignedDesc',
+          'Маргаан хариуцсан мэргэжилтэн томилогдлоо',
+        ),
         date: submittedAt ? formatMongolianDate(submittedAt) : '2024.05.21',
       },
       {
         title: t('customer.disputes.timelineDecision', 'Шийдвэр'),
         description: getResolutionText(status, t),
-        date: dispute?.resolved_at ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date()) : undefined,
+        date: dispute?.resolved_at
+          ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date())
+          : undefined,
       },
     ],
     [dispute?.resolved_at, status, submittedAt, t],
@@ -340,7 +357,9 @@ export default function DisputeStatusScreen() {
                   {t('customer.disputes.sectionSummary', 'Маргааны товч')}
                 </Text>
                 <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{t('customer.disputes.detailType', 'Төрөл')}</Text>
+                  <Text style={styles.summaryLabel}>
+                    {t('customer.disputes.detailType', 'Төрөл')}
+                  </Text>
                   <Text style={styles.summaryValue}>{bookingCategory}</Text>
                 </View>
                 <View style={styles.summaryRow}>
@@ -368,7 +387,9 @@ export default function DisputeStatusScreen() {
               </View>
 
               <View style={styles.timelineSection}>
-                <Text style={styles.timelineTitle}>{t('customer.disputes.sectionProcess', 'Үйл явц')}</Text>
+                <Text style={styles.timelineTitle}>
+                  {t('customer.disputes.sectionProcess', 'Үйл явц')}
+                </Text>
                 <View style={styles.timelineTrack}>
                   {timeline.map((item, index) => {
                     const state = getTimelineState(status, index);
@@ -437,7 +458,7 @@ export default function DisputeStatusScreen() {
                 {evidenceItems.length > 0 ? (
                   evidenceItems.map((item, index) => (
                     <View
-                      key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : item.storage_key ?? 'item'}`}
+                      key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
                       style={styles.evidenceRow}
                     >
                       <View style={styles.evidenceBullet} />
@@ -637,7 +658,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: radius.full,
     borderWidth: 2,
-    borderColor: '#795900',
+    borderColor: colors.secondary,
     backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
@@ -647,7 +668,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: radius.full,
-    backgroundColor: '#795900',
+    backgroundColor: colors.secondary,
   },
   timelineDotFuture: {
     width: 24,
@@ -732,11 +753,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
-    shadowColor: 'rgba(26,28,26,0.04)',
-    shadowOpacity: 1,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 2,
+    ...elevations.soft,
   },
   evidenceRow: {
     flexDirection: 'row',

@@ -8,10 +8,14 @@ import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { PriceTag } from '../../../../components/ui/PriceTag';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { ConfirmCompletionSheet } from '../../../../features/bookings/components/ConfirmCompletionSheet';
-import { CustomerCancelSheet, type CancelType } from '../../../../features/bookings/components/CustomerCancelSheet';
+import {
+  CustomerCancelSheet,
+  type CancelType,
+} from '../../../../features/bookings/components/CustomerCancelSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing, typography, radius } = mobileTheme;
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   const lower = status.toLowerCase();
@@ -63,8 +67,8 @@ function getCtaConfig(
 function hasSubmittedReview(booking: any): boolean {
   return Boolean(
     booking?.customer_review_submitted_at ??
-      booking?.review_submitted_at ??
-      booking?.review?.submitted_at,
+    booking?.review_submitted_at ??
+    booking?.review?.submitted_at,
   );
 }
 
@@ -79,7 +83,10 @@ function getCancelType(booking: any): CancelType {
   }
 
   const recentIncidents =
-    booking?.customer_incidents_28d ?? booking?.customer?.incidents_28d ?? booking?.incidents_28d ?? 0;
+    booking?.customer_incidents_28d ??
+    booking?.customer?.incidents_28d ??
+    booking?.incidents_28d ??
+    0;
   return recentIncidents > 0 ? 'late_cancel_incident_count' : 'late_cancel_warning';
 }
 
@@ -174,7 +181,7 @@ export default function BookingDetailScreen() {
               {t('customer.bookings.sectionTasker', 'Tasker')}
             </Text>
             <Pressable
-              style={styles.taskerRow}
+              style={[styles.taskerRow, styles.taskerCard]}
               onPress={() => router.push(`/(customer)/taskers/${booking.tasker?.id}`)}
               testID="booking-detail-screen-tasker-card"
             >
@@ -328,10 +335,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
     marginBottom: spacing.md,
+  },
+  taskerCard: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.xs,
   },
   taskerRow: {
     flexDirection: 'row',

@@ -10,16 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Bell,
-  Hammer,
-  Leaf,
-  Package,
-  Plus,
-  Sparkles,
-  Wrench,
-  Zap,
-} from 'lucide-react-native';
+import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
@@ -51,16 +42,6 @@ function formatMoney(amount?: number | null) {
   return `₮${(amount ?? 0).toLocaleString('en-US')}`;
 }
 
-function formatSchedule(value?: string | null) {
-  if (!value) return '';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
-  const year = parsed.getFullYear();
-  const month = String(parsed.getMonth() + 1).padStart(2, '0');
-  const day = String(parsed.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
-
 function getTaskVisual(categoryName?: string | null) {
   const name = (categoryName ?? '').toLowerCase();
 
@@ -83,32 +64,34 @@ function getTaskVisual(categoryName?: string | null) {
   return { Icon: Zap, tint: colors.primaryDeep, tone: `${colors.primaryDeep}12` };
 }
 
-function TaskCard({
-  task,
-  onPress,
-}: {
-  task: TaskLike;
-  onPress: () => void;
-}) {
+function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const { t } = useTranslation();
   const status = mapStatus(task.status ?? 'open');
   const visual = getTaskVisual(task.category?.name);
   const Icon = visual.Icon;
 
   return (
-    <Pressable
-      testID={`task-card-${task.id}`}
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-    >
-      <View style={styles.cardHeader}>
-        <View style={[styles.cardIcon, { backgroundColor: visual.tone }]}>
-          <Icon color={visual.tint} size={20} />
+    <View style={styles.cardOuter}>
+      <Pressable
+        testID={`task-card-${task.id}`}
+        accessibilityRole="button"
+        onPress={onPress}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      >
+        <View style={[styles.cardImage, { backgroundColor: visual.tone }]}>
+          <Icon color={visual.tint} size={28} />
         </View>
-        <View style={styles.cardHeaderCopy}>
-          <Text style={styles.cardCategory} numberOfLines={1}>
-            {task.category?.name ?? t('customer.taskList.categoryFallback', 'Task')}
+        <View style={styles.cardContent}>
+          <View style={styles.cardTopRow}>
+            <View style={styles.cardChip}>
+              <Text style={styles.cardChipText} numberOfLines={1}>
+                {task.category?.name ?? t('customer.taskList.categoryFallback', 'Task')}
+              </Text>
+            </View>
+            <StatusBadge status={status} />
+          </View>
+          <Text style={styles.cardTitle} numberOfLines={2}>
+            {task.description ?? t('customer.taskList.noTitle', 'Untitled task')}
           </Text>
           <Text
             style={styles.cardBudget}
@@ -118,44 +101,22 @@ function TaskCard({
             {formatMoney(task.budget)}
           </Text>
         </View>
-        <StatusBadge status={status} />
-      </View>
-
-      <Text style={styles.cardTitle} numberOfLines={2}>
-        {task.description ?? t('customer.taskList.noTitle', 'Untitled task')}
-      </Text>
-
-      <View style={styles.cardMeta}>
-        <View style={styles.cardMetaRow}>
-          <Text style={styles.cardMetaLabel}>{t('customer.taskList.schedule', 'Schedule')}</Text>
-          <Text style={styles.cardMetaValue} numberOfLines={1}>
-            {formatSchedule(task.scheduled_at) || t('customer.taskList.flexible', 'Flexible')}
-          </Text>
-        </View>
-        <View style={styles.cardMetaRow}>
-          <Text style={styles.cardMetaLabel}>{t('customer.taskList.status', 'Status')}</Text>
-          <Text style={styles.cardMetaValue} numberOfLines={1}>
-            {task.status ?? t('customer.taskList.open', 'Open')}
-          </Text>
-        </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
 function SkeletonCard() {
   return (
-    <View style={styles.skeletonCard}>
-      <View style={styles.skeletonHeader}>
-        <View style={styles.skeletonIcon} />
-        <View style={styles.skeletonHeaderText}>
-          <View style={styles.skeletonLineLong} />
+    <View style={styles.cardOuter}>
+      <View style={styles.skeletonCard}>
+        <View style={styles.skeletonImage} />
+        <View style={styles.skeletonContent}>
           <View style={styles.skeletonLineShort} />
+          <View style={styles.skeletonLineXL} />
+          <View style={styles.skeletonLineMid} />
         </View>
-        <View style={styles.skeletonBadge} />
       </View>
-      <View style={styles.skeletonLineXL} />
-      <View style={styles.skeletonLineMid} />
     </View>
   );
 }
@@ -204,11 +165,15 @@ function Header({
           </View>
           <View style={styles.statChip}>
             <Text style={styles.statValue}>{counts.assigned}</Text>
-            <Text style={styles.statLabel}>{t('customer.taskList.filterAssigned', 'Assigned')}</Text>
+            <Text style={styles.statLabel}>
+              {t('customer.taskList.filterAssigned', 'Assigned')}
+            </Text>
           </View>
           <View style={styles.statChip}>
             <Text style={styles.statValue}>{counts.completed}</Text>
-            <Text style={styles.statLabel}>{t('customer.taskList.filterCompleted', 'Completed')}</Text>
+            <Text style={styles.statLabel}>
+              {t('customer.taskList.filterCompleted', 'Completed')}
+            </Text>
           </View>
         </View>
       </View>
@@ -226,10 +191,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
       </View>
       <Text style={styles.emptyTitle}>{t('customer.taskList.emptyTitle', 'No tasks yet')}</Text>
       <Text style={styles.emptyBody}>
-        {t(
-          'customer.taskList.emptyDescription',
-          'Post your first task and find a trusted tasker',
-        )}
+        {t('customer.taskList.emptyDescription', 'Post your first task and find a trusted tasker')}
       </Text>
       <Pressable
         onPress={onPostTask}
@@ -237,9 +199,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
         accessibilityRole="button"
         testID="my-tasks-feed-empty-cta"
       >
-        <Text style={styles.emptyCtaText}>
-          {t('customer.taskList.emptyCta', 'Post a Task')}
-        </Text>
+        <Text style={styles.emptyCtaText}>{t('customer.taskList.emptyCta', 'Post a Task')}</Text>
       </Pressable>
     </View>
   );
@@ -287,13 +247,16 @@ export default function MyTasksListScreen() {
           acc[status] += 1;
           return acc;
         },
-        { open: 0, assigned: 0, completed: 0, cancelled: 0, no_show: 0 } as Record<TaskState, number>,
+        { open: 0, assigned: 0, completed: 0, cancelled: 0, no_show: 0 } as Record<
+          TaskState,
+          number
+        >,
       ),
     [tasks],
   );
 
   const handleFabPress = useCallback(() => {
-    router.push('/(customer)/tasks/new/category');
+    router.push('/(customer)/tasks/new');
   }, [router]);
 
   const handleNotificationsPress = useCallback(() => {
@@ -332,7 +295,9 @@ export default function MyTasksListScreen() {
         <FlatList
           data={tasks}
           keyExtractor={(task) => task.id}
-          renderItem={({ item }) => <TaskCard task={item} onPress={() => handleTaskPress(item.id)} />}
+          renderItem={({ item }) => (
+            <TaskCard task={item} onPress={() => handleTaskPress(item.id)} />
+          )}
           ListHeaderComponent={header}
           ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
           contentContainerStyle={styles.listContent}
@@ -402,8 +367,8 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     marginTop: spacing.xs,
-    fontSize: typography.heading,
-    fontWeight: '800',
+    fontSize: 30,
+    fontWeight: '900',
     color: colors.primaryDeep,
   },
   notificationsButton: {
@@ -412,19 +377,15 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...elevations.card,
+    backgroundColor: colors.muted,
+    ...elevations.soft,
   },
   heroCard: {
     borderRadius: radius.lg,
     padding: spacing.lg,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.md,
-    ...elevations.card,
+    ...elevations.soft,
   },
   heroTitle: {
     fontSize: typography.subtitle,
@@ -463,28 +424,25 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   skeletonCard: {
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.lg,
-    gap: spacing.md,
-    ...elevations.card,
-  },
-  skeletonHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
+    alignItems: 'flex-start',
+    ...elevations.soft,
   },
-  skeletonIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
+  skeletonImage: {
+    width: 96,
+    height: 96,
+    borderRadius: radius.md,
     backgroundColor: colors.muted,
+    flexShrink: 0,
   },
-  skeletonHeaderText: {
+  skeletonContent: {
     flex: 1,
-    gap: spacing.xs,
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
   },
   skeletonLineLong: {
     height: 12,
@@ -497,12 +455,6 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
     backgroundColor: colors.muted,
     width: '45%',
-  },
-  skeletonBadge: {
-    width: 56,
-    height: 22,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
   },
   skeletonLineXL: {
     height: 16,
@@ -524,9 +476,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     alignItems: 'center',
     gap: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...elevations.card,
+    ...elevations.soft,
   },
   emptyBadge: {
     width: 64,
@@ -567,10 +517,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.xl,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     gap: spacing.md,
-    ...elevations.card,
+    ...elevations.soft,
   },
   errorTitle: {
     fontSize: typography.subtitle,
@@ -597,72 +545,67 @@ const styles = StyleSheet.create({
   listSeparator: {
     height: spacing.md,
   },
-  card: {
+  cardOuter: {
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
+    padding: 4,
+  },
+  card: {
+    borderRadius: radius.md,
     backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.lg,
+    flexDirection: 'row',
     gap: spacing.md,
-    ...elevations.card,
+    alignItems: 'flex-start',
+    ...elevations.soft,
   },
   cardPressed: {
-    opacity: 0.96,
+    opacity: 0.92,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  cardIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
+  cardImage: {
+    width: 96,
+    height: 96,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
-  cardHeaderCopy: {
+  cardContent: {
     flex: 1,
+    gap: spacing.sm,
     minWidth: 0,
   },
-  cardCategory: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  cardBudget: {
-    marginTop: 2,
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  cardTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    lineHeight: typography.subtitle * 1.3,
-  },
-  cardMeta: {
+  cardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: spacing.sm,
   },
-  cardMetaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  cardMetaLabel: {
+  cardChip: {
     flex: 1,
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+    backgroundColor: `${colors.primary}10`,
+  },
+  cardChipText: {
+    fontSize: 10,
     fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    color: colors.primaryDeep,
   },
-  cardMetaValue: {
-    flex: 1,
-    fontSize: typography.caption,
-    color: colors.foreground,
-    textAlign: 'right',
-    fontWeight: '600',
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    lineHeight: 24,
+  },
+  cardBudget: {
+    fontSize: typography.subtitle,
+    fontWeight: '800',
+    color: colors.secondary,
   },
   fab: {
     position: 'absolute',

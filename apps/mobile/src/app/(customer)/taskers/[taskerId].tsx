@@ -6,6 +6,7 @@ import { CalendarDays, ShieldCheck, Star } from 'lucide-react-native';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { elevations } from '../../../design/elevations';
 import { useTaskerProfile } from '../../../features/profile/hooks/useTaskerProfile';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -124,7 +125,9 @@ export default function TaskerProfileScreen() {
                         <Text style={styles.reviewRatingText}>{review.quality_rating}</Text>
                       </View>
                     </View>
-                    {review.comment ? <Text style={styles.reviewComment}>{review.comment}</Text> : null}
+                    {review.comment ? (
+                      <Text style={styles.reviewComment}>{review.comment}</Text>
+                    ) : null}
                   </View>
                 ))}
               </View>
@@ -194,8 +197,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     alignItems: 'center',
     gap: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevations.soft,
   },
   statValue: {
     fontSize: typography.heroTitle,
@@ -211,9 +213,9 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sectionTitle: {
-    fontSize: typography.title,
-    fontWeight: '800',
-    color: colors.foreground,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primaryDeep,
   },
   aboutText: {
     fontSize: typography.body,
@@ -250,12 +252,10 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   reviewCard: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.muted,
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   reviewHeader: {
     flexDirection: 'row',

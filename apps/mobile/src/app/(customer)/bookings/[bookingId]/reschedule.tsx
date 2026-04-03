@@ -10,11 +10,20 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CalendarDays, ChevronLeft as ChevronLeftIcon, ChevronRight, Clock3, Info, CalendarRange } from 'lucide-react-native';
+import {
+  ArrowRight,
+  CalendarDays,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight,
+  Clock3,
+  Info,
+  CalendarRange,
+} from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -52,7 +61,11 @@ function buildCalendarCells(date: Date): Array<Date | null> {
 }
 
 function sameDay(a: Date, b: Date): boolean {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
 }
 
 export default function RescheduleScreen() {
@@ -79,17 +92,14 @@ export default function RescheduleScreen() {
     ? formatDateTime(booking.task.scheduled_at)
     : t('customer.bookings.scheduleUnavailable', 'Хуваарь тодорхойгүй');
 
-  const updateSelectedTime = React.useCallback(
-    (time: string) => {
-      const [hours, minutes] = time.split(':').map(Number);
-      setSelectedDateTime((current) => {
-        const next = new Date(current);
-        next.setHours(hours, minutes, 0, 0);
-        return next;
-      });
-    },
-    [],
-  );
+  const updateSelectedTime = React.useCallback((time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    setSelectedDateTime((current) => {
+      const next = new Date(current);
+      next.setHours(hours, minutes, 0, 0);
+      return next;
+    });
+  }, []);
 
   const updateSelectedDay = React.useCallback((date: Date) => {
     setSelectedDateTime((current) => {
@@ -222,7 +232,9 @@ export default function RescheduleScreen() {
             </View>
             <View style={styles.timeRow}>
               {['09:00', '10:00', '11:00', '14:00', '15:00'].map((time) => {
-                const isSelected = formatDateTime(selectedDateTime).endsWith(` ${time}`) || time === '10:00' && formatDateTime(selectedDateTime).endsWith(' 10:00');
+                const isSelected =
+                  formatDateTime(selectedDateTime).endsWith(` ${time}`) ||
+                  (time === '10:00' && formatDateTime(selectedDateTime).endsWith(' 10:00'));
                 return (
                   <Pressable
                     key={time}
@@ -284,10 +296,10 @@ export default function RescheduleScreen() {
                 {requestState === 'awaiting_response'
                   ? t('customer.bookings.statusAwaiting', 'Хүлээж байна')
                   : requestState === 'accepted'
-                  ? t('customer.bookings.statusAccepted', 'Зөвшөөрсөн')
-                  : requestState === 'declined'
-                  ? t('customer.bookings.statusDeclined', 'Татгалзсан')
-                  : t('customer.bookings.statusExpired', 'Хугацаа дууссан')}
+                    ? t('customer.bookings.statusAccepted', 'Зөвшөөрсөн')
+                    : requestState === 'declined'
+                      ? t('customer.bookings.statusDeclined', 'Татгалзсан')
+                      : t('customer.bookings.statusExpired', 'Хугацаа дууссан')}
               </Text>
               <Text style={styles.stateMessage}>
                 {requestState === 'awaiting_response'
@@ -296,19 +308,19 @@ export default function RescheduleScreen() {
                       'Таны хүсэлт илгээгдсэн. Нөгөө тал зөвшөөрөхийг хүлээж байна.',
                     )
                   : requestState === 'accepted'
-                  ? t(
-                      'customer.bookings.acceptedMessage',
-                      'Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ.',
-                    )
-                  : requestState === 'declined'
-                  ? t(
-                      'customer.bookings.declinedMessage',
-                      'Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр.',
-                    )
-                  : t(
-                      'customer.bookings.expiredMessage',
-                      'Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр.',
-                    )}
+                    ? t(
+                        'customer.bookings.acceptedMessage',
+                        'Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ.',
+                      )
+                    : requestState === 'declined'
+                      ? t(
+                          'customer.bookings.declinedMessage',
+                          'Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр.',
+                        )
+                      : t(
+                          'customer.bookings.expiredMessage',
+                          'Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр.',
+                        )}
               </Text>
             </View>
           ) : null}
@@ -449,11 +461,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    shadowColor: 'rgba(26,28,26,0.04)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 2,
+    ...elevations.soft,
     gap: spacing.lg,
   },
   calendarHeader: {

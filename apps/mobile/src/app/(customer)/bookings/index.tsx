@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +14,7 @@ import {
   CalendarDays,
 } from 'lucide-react-native';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
+import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
@@ -211,12 +205,11 @@ function EmptyState({ onPress }: { onPress: () => void }) {
       <View style={styles.emptyIconWrap}>
         <ClipboardList size={28} color={colors.secondary} />
       </View>
-      <Text style={styles.emptyTitle}>{t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')}</Text>
+      <Text style={styles.emptyTitle}>
+        {t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')}
+      </Text>
       <Text style={styles.emptyDescription}>
-        {t(
-          'customer.bookings.emptyDescription',
-          'Даалгавар нийтэлж, гүйцэтгэгч сонгоорой',
-        )}
+        {t('customer.bookings.emptyDescription', 'Даалгавар нийтэлж, гүйцэтгэгч сонгоорой')}
       </Text>
       <Pressable onPress={onPress} style={styles.emptyButton} testID="bookings-empty-cta">
         <Text style={styles.emptyButtonText}>
@@ -288,11 +281,11 @@ export default function BookingsListScreen() {
   );
 
   const handlePostTask = React.useCallback(() => {
-    router.push('/(customer)/tasks/new/category');
+    router.push('/(customer)/tasks/new');
   }, [router]);
 
   const handleFabPress = React.useCallback(() => {
-    router.push('/(customer)/tasks/new/category');
+    router.push('/(customer)/tasks/new');
   }, [router]);
 
   const handleNavigate = React.useCallback(
@@ -313,9 +306,7 @@ export default function BookingsListScreen() {
           <Pressable style={styles.headerIconButton} accessibilityRole="button">
             <Menu size={22} color={colors.primaryDeep} />
           </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('customer.bookings.pageTitle', 'Захиалгууд')}
-          </Text>
+          <Text style={styles.headerTitle}>{t('customer.bookings.pageTitle', 'Захиалгууд')}</Text>
           <Pressable style={styles.headerIconButton} accessibilityRole="button">
             <Search size={20} color={colors.primaryDeep} />
           </Pressable>
@@ -490,12 +481,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.lg,
-    shadowColor: 'rgba(26,28,26,0.06)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 2,
     gap: spacing.md,
+    ...elevations.soft,
   },
   cardTopRow: {
     flexDirection: 'row',
@@ -602,11 +589,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.md,
-    shadowColor: 'rgba(26,28,26,0.06)',
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 2,
+    ...elevations.soft,
   },
   skeletonTopRow: {
     flexDirection: 'row',
