@@ -557,11 +557,12 @@ components:
           format: uuid
         description:
           type: string
+          minLength: 10
           maxLength: 2000
         budget:
           type: integer
-          minimum: 1001
-          description: Fixed budget in MNT. Must be greater than 1,000 MNT.
+          minimum: 5000
+          description: Fixed budget in MNT. Must be at least ₮5,000.
         location_lat:
           type: number
           format: double
