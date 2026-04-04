@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Pressable,
-  ScrollView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,6 +12,8 @@ import {
   CalendarRange,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
+import { Input } from '../../../../components/ui/Input';
 import { useReschedule } from '../../../../features/bookings/hooks/useReschedule';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -121,13 +115,13 @@ export default function RescheduleScreen() {
   }, [bookingId, reason, reschedule, selectedDateTime]);
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="reschedule-screen">
-      <View style={styles.shell}>
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+    <ScreenContainer testID="reschedule-screen">
+      <InsetScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        extraBottomInset={120}
+      >
           <View style={styles.currentScheduleCard}>
             <View style={styles.currentScheduleCopy}>
               <Text style={styles.currentScheduleLabel}>
@@ -257,7 +251,7 @@ export default function RescheduleScreen() {
               {t('customer.bookings.labelReason', 'Шалтгаан (заавал биш)')}
             </Text>
             <View style={styles.reasonInputWrap}>
-              <TextInput
+              <Input
                 style={styles.reasonInput}
                 placeholder={t(
                   'customer.bookings.placeholderReason',
@@ -324,8 +318,9 @@ export default function RescheduleScreen() {
               </Text>
             </View>
           ) : null}
-        </ScrollView>
+      </InsetScrollView>
 
+      <StickyActionBar>
         <View style={styles.footer}>
           <Pressable
             accessibilityRole="button"
@@ -347,26 +342,18 @@ export default function RescheduleScreen() {
             </LinearGradient>
           </Pressable>
         </View>
-      </View>
-    </SafeAreaView>
+      </StickyActionBar>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   scroll: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: 140,
+    paddingBottom: spacing['2xl'],
     gap: spacing.lg,
   },
   currentScheduleCard: {
@@ -638,10 +625,9 @@ const styles = StyleSheet.create({
     lineHeight: typography.label * 1.5,
   },
   footer: {
-    position: 'absolute',
-    left: spacing.lg,
-    right: spacing.lg,
-    bottom: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   submitButtonWrap: {
     borderRadius: radius.md,

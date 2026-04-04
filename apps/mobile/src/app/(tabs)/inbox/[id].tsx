@@ -7,8 +7,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,6 +15,7 @@ import { Briefcase, ChevronLeft, Paperclip, ShieldAlert } from 'lucide-react-nat
 import { useMessages } from '../../../features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../features/chat/hooks/useSendMessage';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
+import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAuthStore } from '../../../store/authStore';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
@@ -216,7 +215,7 @@ export default function ChatDetailScreen() {
         <Pressable style={styles.attachButton} accessibilityRole="button">
           <Paperclip size={18} color={colors.foreground} />
         </Pressable>
-        <TextInput
+        <Input
           testID="chat-input"
           style={styles.input}
           value={draft}
@@ -226,14 +225,18 @@ export default function ChatDetailScreen() {
           maxLength={500}
           multiline
         />
-        <TouchableOpacity
+        <Pressable
           testID="chat-send-button"
-          style={[styles.sendBtn, draft.trim().length === 0 && styles.sendBtnDisabled]}
+          style={({ pressed }) => [
+            styles.sendBtn,
+            draft.trim().length === 0 && styles.sendBtnDisabled,
+            pressed && draft.trim().length > 0 && styles.pressed,
+          ]}
           onPress={handleSend}
           disabled={draft.trim().length === 0 || isPending}
         >
           <Text style={styles.sendBtnText}>{t('chat.send', 'Илгээх')}</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
@@ -458,6 +461,9 @@ const styles = StyleSheet.create({
   },
   sendBtnDisabled: {
     opacity: 0.5,
+  },
+  pressed: {
+    opacity: 0.85,
   },
   sendBtnText: {
     color: colors.primaryForeground,

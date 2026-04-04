@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
+import { Input } from '../../../../components/ui/Input';
 import { PhotoGrid } from '../../../../components/ui/PhotoGrid';
 import { useDisputeCreate } from '../../../../features/disputes/hooks/useDisputeCreate';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -137,7 +138,7 @@ export default function DisputeRaiseScreen() {
           <Text style={styles.fieldLabel}>
             {t('customer.disputes.labelDescription', 'Description')}
           </Text>
-          <TextInput
+          <Input
             style={styles.textInput}
             placeholder={t(
               'customer.disputes.placeholderDescription',

@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react-native';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
+import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 
@@ -114,7 +115,7 @@ export default function ConversationListScreen() {
 
       <View style={styles.searchShell}>
         <Search size={18} color={colors.textTertiary} />
-        <TextInput
+        <Input
           value={search}
           onChangeText={setSearch}
           placeholder={t('shared.inbox.searchPlaceholder', 'Хайх...')}
