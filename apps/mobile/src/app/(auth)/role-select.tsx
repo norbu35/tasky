@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   roleCardSelected: {
     borderWidth: 2,
     borderColor: colors.primaryDeep,
-    backgroundColor: colors.background,
+    backgroundColor: '#ffffff',
     ...elevations.soft,
   },
   roleCardContent: {
