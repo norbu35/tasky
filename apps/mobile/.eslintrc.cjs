@@ -19,7 +19,13 @@ module.exports = {
                         importNames: ["SafeAreaView", "TextInput", "TouchableOpacity", "TouchableHighlight", "TouchableWithoutFeedback"],
                         message: "Use shared shells/primitives (`ScreenContainer`, `Input`, `Pressable`) instead of route-local primitives."
                     }]
-                }]
+                }],
+                "no-restricted-syntax": ["error",
+                    {
+                        selector: "CallExpression[callee.object.name='StyleSheet'][callee.property.name='create'] Property[key.type='Identifier'][key.name=/^(gap|paddingVertical|paddingHorizontal|marginTop|marginBottom|paddingTop|paddingBottom)$/] > Literal[value=/^[0-9]+$/]",
+                        message: "Use tokenized spacing (`spacing.*` or `screenRhythm.*`) instead of raw numeric spacing literals in route styles."
+                    }
+                ]
             }
         },
         {
