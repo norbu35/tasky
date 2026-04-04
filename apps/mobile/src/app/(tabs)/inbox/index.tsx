@@ -28,7 +28,7 @@ export default function ConversationListScreen() {
   const [search, setSearch] = useState('');
   const [mode, setMode] = useState<'all' | 'unread' | 'important'>('all');
 
-  const conversations: ConversationItem[] = data?.data ?? [];
+  const conversations = useMemo<ConversationItem[]>(() => data?.data ?? [], [data?.data]);
   const filteredConversations = useMemo(() => {
     const normalizedQuery = search.trim().toLowerCase();
     const sorted = [...conversations].sort((a, b) => {

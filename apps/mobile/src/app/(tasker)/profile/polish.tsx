@@ -1,7 +1,6 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Sparkles } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { CategoryChip } from '../../../components/ui/CategoryChip';
@@ -30,7 +29,6 @@ const TONE_LABELS: Record<Tone, string> = {
 const MAX_BIO_LENGTH = 300;
 
 export default function ProfilePolishScreen() {
-  const router = useRouter();
   const { t, i18n } = useTranslation();
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const updateProfile = useUpdateProfile();

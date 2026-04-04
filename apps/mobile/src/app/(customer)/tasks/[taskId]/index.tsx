@@ -86,7 +86,7 @@ export default function TaskDetailCustomerScreen() {
       return () => setShowCancelSheet(true);
     }
     return undefined;
-  }, [isAssigned, isOpen, isTaskerMarkedDone, router, taskId, tasker]);
+  }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, router, taskId, tasker]);
 
   const secondaryCtaLabel = useMemo(() => {
     if ((isOpen && hasApplicants) || isAssigned) {

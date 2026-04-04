@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Circle } from 'lucide-react-native';
+import { AlertTriangle } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../components/ui/Button';
 import { useCancelBooking } from '../hooks/useCancelBooking';

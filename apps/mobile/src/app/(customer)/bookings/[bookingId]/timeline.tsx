@@ -109,12 +109,16 @@ export default function BookingTimelineScreen() {
   const { data: events, isLoading, isError, refetch } = useBookingTimeline(bookingId);
   const { data: booking } = useBookingDetail(bookingId);
 
-  const timelineEvents = (events ?? []) as Array<{
-    event: string;
-    timestamp: string;
-    description?: string | null;
-    is_future?: boolean;
-  }>;
+  const timelineEvents = React.useMemo(
+    () =>
+      ((events ?? []) as {
+        event: string;
+        timestamp: string;
+        description?: string | null;
+        is_future?: boolean;
+      }[]),
+    [events],
+  );
   const activeIndex = React.useMemo(() => {
     const lastNonFuture = timelineEvents.reduce<number>((acc, event, index) => {
       if (!event.is_future) return index;

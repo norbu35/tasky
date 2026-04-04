@@ -9,7 +9,7 @@ describe('NativeWind configuration', () => {
     };
     const babelSource = readFileSync(resolve(process.cwd(), 'babel.config.js'), 'utf8');
     const appConfig = JSON.parse(readFileSync(resolve(process.cwd(), 'app.json'), 'utf8')) as {
-      expo?: { plugins?: Array<string | [string, Record<string, unknown>]> };
+      expo?: { plugins?: (string | [string, Record<string, unknown>])[] };
     };
     const tsconfig = JSON.parse(readFileSync(resolve(process.cwd(), 'tsconfig.json'), 'utf8')) as {
       include?: string[];

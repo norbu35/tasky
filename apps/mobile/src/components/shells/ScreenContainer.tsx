@@ -12,7 +12,7 @@ type ScreenContainerProps = {
   testID?: string;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
-  edges?: ReadonlyArray<Edge>;
+  edges?: readonly Edge[];
 } & Pick<SafeAreaViewProps, 'mode'>;
 
 export function ScreenContainer({

@@ -13,6 +13,8 @@ import '../utils/i18n';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
 
+import { StyleSheet } from 'react-native';
+
 // Firebase native modules only work in EAS/bare builds, not Expo Go.
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
@@ -76,8 +78,6 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
-
-import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {

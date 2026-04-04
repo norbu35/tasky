@@ -2,7 +2,7 @@ import React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 const mockBack = jest.fn();
-const trackedEvents: Array<{ event_name: string; locale: string; actor_role: string }> = [];
+const trackedEvents: { event_name: string; locale: string; actor_role: string }[] = [];
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: mockBack }),

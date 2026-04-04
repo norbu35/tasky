@@ -40,14 +40,14 @@ function formatMonthTitle(date: Date): string {
   return `${year} оны ${month}-р сар`;
 }
 
-function buildCalendarCells(date: Date): Array<Date | null> {
+function buildCalendarCells(date: Date): (Date | null)[] {
   const year = date.getFullYear();
   const month = date.getMonth();
   const firstDay = new Date(year, month, 1);
   const offset = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
-  const cells: Array<Date | null> = Array.from({ length: totalCells }, (_, index) => {
+  const cells: (Date | null)[] = Array.from({ length: totalCells }, (_, index) => {
     if (index < offset || index >= offset + daysInMonth) return null;
     return new Date(year, month, index - offset + 1);
   });

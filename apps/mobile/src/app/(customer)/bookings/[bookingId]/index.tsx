@@ -13,7 +13,6 @@ import {
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
-import { elevations } from '../../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 

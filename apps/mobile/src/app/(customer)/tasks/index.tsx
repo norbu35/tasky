@@ -228,7 +228,6 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
 }
 
 export default function MyTasksListScreen() {
-  const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isFetching, refetch } = useMyTasks();
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { StatCard } from '../../components/ui/StatCard';
@@ -23,7 +22,6 @@ function formatRating(value: number | undefined): string {
 
 export default function TaskerStatsScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { data, isLoading, isError, refetch } = useMyStats();
 
   const rawStats = (data ?? {}) as Record<string, unknown>;

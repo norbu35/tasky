@@ -47,7 +47,7 @@ export function ChatDetailScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [session, id]);
+  }, [session, id, t]);
 
   useEffect(() => {
     loadMessages();

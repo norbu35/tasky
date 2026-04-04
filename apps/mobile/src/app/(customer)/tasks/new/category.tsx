@@ -118,7 +118,7 @@ export default function CategorySelectionScreen() {
   const { data, isLoading, isError, refetch } = useCategories();
   const [query, setQuery] = useState('');
 
-  const categories = data?.data ?? [];
+  const categories = useMemo(() => data?.data ?? [], [data?.data]);
   const filteredCategories = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return categories;

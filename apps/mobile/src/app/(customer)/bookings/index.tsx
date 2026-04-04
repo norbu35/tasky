@@ -19,7 +19,7 @@ const { colors, spacing, typography, radius } = mobileTheme;
 
 type BookingTab = 'active' | 'completed';
 
-const TAB_LABELS: Array<{ id: BookingTab; label: string }> = [
+const TAB_LABELS: { id: BookingTab; label: string }[] = [
   { id: 'active', label: 'Идэвхтэй' },
   { id: 'completed', label: 'Дууссан' },
 ];

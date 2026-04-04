@@ -116,7 +116,7 @@ export default function NotificationCenterScreen() {
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useNotifications();
 
-  const notifications = data?.data ?? [];
+  const notifications = useMemo(() => data?.data ?? [], [data?.data]);
   const rows = useMemo(
     () => buildRows(notifications, t('label.today', 'Өнөөдөр'), t('label.earlier', 'Өмнөх')),
     [notifications, t],

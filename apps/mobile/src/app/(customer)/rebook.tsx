@@ -91,7 +91,7 @@ export default function RebookScreen() {
         taskerAvatar: params.taskerAvatar,
       },
     });
-  }, [params, budgetTooLow, numericBudget, selectedDate, createTask, createBookingIntent, router]);
+  }, [params, budget, budgetTooLow, numericBudget, selectedDate, createTask, createBookingIntent, router]);
 
   return (
     <FormWizardTemplate

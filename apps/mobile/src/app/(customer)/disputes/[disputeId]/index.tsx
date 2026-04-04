@@ -37,9 +37,7 @@ type DisputeLike = {
   booking_id: string;
   reason: string;
   status: DisputeStatus | string;
-  evidence?: Array<
-    string | { type: string; text_payload?: string | null; storage_key?: string | null }
-  >;
+  evidence?: (string | { type: string; text_payload?: string | null; storage_key?: string | null })[];
   created_at: string;
   resolved_at?: string | null;
   booking?: {

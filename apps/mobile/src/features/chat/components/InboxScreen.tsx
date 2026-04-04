@@ -36,7 +36,7 @@ export function InboxScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [session]);
+  }, [session, t]);
 
   useEffect(() => {
     loadConversations();

@@ -54,7 +54,7 @@ export default function MyJobsScreen() {
   const { data, isLoading, isError, isRefetching, refetch } = useBookings();
   const [activeFilters, setActiveFilters] = useState<string[]>(['active']);
 
-  const bookings = data?.data ?? [];
+  const bookings = useMemo(() => data?.data ?? [], [data?.data]);
   const filteredBookings = useMemo(() => {
     if (activeFilters.includes('completed')) {
       return bookings.filter((booking) => booking.status === 'COMPLETED');

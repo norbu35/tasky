@@ -30,10 +30,12 @@ jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock
 jest.mock('@react-native-community/datetimepicker', () => {
   const React = require('react');
   const { View } = require('react-native');
-
-  return ({ mode, testID, ...props }: any) => (
+  const MockDateTimePicker = ({ mode, testID, ...props }: any) => (
     <View testID={testID ?? `schedule-${mode}-picker`} {...props} />
   );
+  MockDateTimePicker.displayName = 'MockDateTimePicker';
+
+  return MockDateTimePicker;
 });
 
 jest.mock('lucide-react-native', () => {

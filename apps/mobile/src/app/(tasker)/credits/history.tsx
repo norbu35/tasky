@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { EmptyStateTemplate } from '../../../components/templates/EmptyStateTemplate';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
@@ -25,7 +25,6 @@ function resolveState(value: string | string[] | undefined): RouteState {
 
 export default function TaskerCreditsHistoryScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const params = useLocalSearchParams();
   const state = resolveState(params.state);
 
