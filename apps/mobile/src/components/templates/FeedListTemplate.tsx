@@ -126,6 +126,7 @@ export function FeedListTemplate<T>({
   if (isError) {
     return (
       <View style={styles.container} testID={testID}>
+        {ListHeaderComponent}
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage', 'Failed to load content')}
           onRetry={onRetry}
@@ -140,6 +141,7 @@ export function FeedListTemplate<T>({
     return (
       <View style={styles.container} testID={testID}>
         {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
+        {ListHeaderComponent}
         <EmptyStateTemplate
           title={emptyTitle ?? t('feed.emptyTitle', 'Nothing here yet')}
           description={emptyDescription}

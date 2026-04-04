@@ -27,7 +27,6 @@ export default function ConversationListScreen() {
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useConversations();
   const [search, setSearch] = useState('');
-  const [mode, setMode] = useState<'all' | 'unread' | 'important'>('all');
 
   const conversations = useMemo<ConversationItem[]>(() => data?.data ?? [], [data?.data]);
   const filteredConversations = useMemo(() => {
@@ -38,29 +37,13 @@ export default function ConversationListScreen() {
       return bTime - aTime;
     });
 
-    if (!normalizedQuery) {
-      return sorted.filter((item) => {
-        if (mode === 'unread') {
-          return (item.unread_count ?? 0) > 0;
-        }
-        if (mode === 'important') {
-          return (item.unread_count ?? 0) > 0;
-        }
-        return true;
-      });
-    }
+    if (!normalizedQuery) return sorted;
 
     return sorted.filter((item) => {
-      const haystack = `${item.counterparty_name ?? ''} ${item.task_title ?? ''}`.toLowerCase();
-      const matchesQuery = haystack.includes(normalizedQuery);
-      const matchesMode =
-        mode === 'all' ||
-        mode === 'important' ||
-        (mode === 'unread' && (item.unread_count ?? 0) > 0);
-
-      return matchesQuery && matchesMode;
+      const haystack = `${item.counterparty_name ?? ''}`.toLowerCase();
+      return haystack.includes(normalizedQuery);
     });
-  }, [conversations, mode, search]);
+  }, [conversations, search]);
 
   const formatTimestamp = useCallback((value?: string) => {
     if (!value) return '';
@@ -75,45 +58,16 @@ export default function ConversationListScreen() {
     return timestamp.toLocaleDateString();
   }, []);
 
-  const filterBar = (
+  const listHeader = (
     <View style={styles.headerShell}>
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Мессеж')}</Text>
-        <Pressable style={styles.headerIconButton} accessibilityRole="button">
-          <Search size={20} color={colors.primary} />
-        </Pressable>
+        <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Чат')}</Text>
       </View>
+    </View>
+  );
 
-      <View style={styles.chipRow}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => setMode('all')}
-          style={[styles.chip, mode === 'all' && styles.chipActive]}
-        >
-          <Text style={[styles.chipLabel, mode === 'all' && styles.chipLabelActive]}>
-            {t('shared.inbox.all', 'Бүх мессеж')}
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => setMode('unread')}
-          style={[styles.chip, mode === 'unread' && styles.chipActive]}
-        >
-          <Text style={[styles.chipLabel, mode === 'unread' && styles.chipLabelActive]}>
-            {t('shared.inbox.unread', 'Уншаагүй')}
-          </Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => setMode('important')}
-          style={[styles.chip, mode === 'important' && styles.chipActive]}
-        >
-          <Text style={[styles.chipLabel, mode === 'important' && styles.chipLabelActive]}>
-            {t('shared.inbox.important', 'Чухал')}
-          </Text>
-        </Pressable>
-      </View>
-
+  const filterBar =
+    !isLoading && !isError ? (
       <View style={styles.searchShell}>
         <Search size={18} color={colors.textTertiary} />
         <Input
@@ -125,8 +79,7 @@ export default function ConversationListScreen() {
           testID="conversation-search-input"
         />
       </View>
-    </View>
-  );
+    ) : null;
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
@@ -191,6 +144,7 @@ export default function ConversationListScreen() {
       errorMessage={t('shared.inbox.errorMessage', 'Мессежүүдийг ачаалж чадсангүй')}
       retryLabel={t('shared.inbox.retry', 'Дахин оролдох')}
       filterBar={filterBar}
+      ListHeaderComponent={listHeader}
     />
   );
 }
@@ -205,38 +159,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  chipRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  chip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  chipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  chipLabel: {
-    fontSize: typography.label,
-    color: colors.foreground,
-    fontWeight: '600',
-  },
-  chipLabelActive: {
-    color: colors.primaryForeground,
+    justifyContent: 'flex-start',
   },
   searchShell: {
     flexDirection: 'row',
