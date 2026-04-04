@@ -81,11 +81,11 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
 
   it('shows a live character counter for the description field', () => {
     render(<IntakeFormScreen />);
-    expect(screen.getByText('0 / 500')).toBeTruthy();
+    expect(screen.getByText('0 / 2000')).toBeTruthy();
 
     fireEvent.changeText(screen.getByTestId('intake-description-input'), 'Fix sink');
 
-    expect(screen.getByText('8 / 500')).toBeTruthy();
+    expect(screen.getByText('8 / 2000')).toBeTruthy();
   });
 
   it('back button returns to category selection', () => {
