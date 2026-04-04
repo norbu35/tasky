@@ -1,58 +1,47 @@
+import { primitiveTokens } from './primitives';
+import { semanticTokens } from './semantic';
+import { webTokens } from './platform/web';
+
+const px = (value: number) => `${value}px`;
+
+// Legacy web-facing export. Prefer `webTokens` or `semanticTokens` in new code.
 export const spacing = {
-  0: '0px',
-  1: '4px',
-  2: '8px',
-  3: '12px',
-  4: '16px',
-  5: '20px',
-  6: '24px',
-  8: '32px',
-  10: '40px',
-  12: '48px',
-  16: '64px',
-};
+  0: px(primitiveTokens.spacingScale[0]),
+  1: px(primitiveTokens.spacingScale[1]),
+  2: px(primitiveTokens.spacingScale[2]),
+  3: px(primitiveTokens.spacingScale[3]),
+  4: px(primitiveTokens.spacingScale[4]),
+  5: px(primitiveTokens.spacingScale[5]),
+  6: px(primitiveTokens.spacingScale[6]),
+  8: px(primitiveTokens.spacingScale[8]),
+  10: px(primitiveTokens.spacingScale[10]),
+  12: px(primitiveTokens.spacingScale[12]),
+  16: px(primitiveTokens.spacingScale[16]),
+} as const;
 
 export const radius = {
-  none: '0px',
-  sm: '2px',
-  DEFAULT: '4px',
-  md: '6px',
-  lg: '8px',
-  xl: '12px',
-  full: '9999px',
-};
+  none: px(primitiveTokens.radiusScale.none),
+  sm: px(semanticTokens.radius.xs),
+  DEFAULT: px(semanticTokens.radius.sm),
+  md: px(semanticTokens.radius.md),
+  lg: px(semanticTokens.radius.lg),
+  xl: px(semanticTokens.radius.lg),
+  full: px(semanticTokens.radius.full),
+} as const;
 
 export const typography = {
-  fontFamily: {
-    sans: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
-    display: "'Manrope', Roboto, system-ui, -apple-system, sans-serif",
-    // Roboto is listed as fallback for full Mongolian Cyrillic glyph support (Ү/Ө)
-  },
+  fontFamily: webTokens.typography.fontFamily,
   fontSize: {
-    xs: '12px',
-    sm: '14px',
-    base: '16px',
-    lg: '18px',
-    xl: '20px',
-    '2xl': '24px',
-    '3xl': '30px',
+    xs: webTokens.typography.fontSize.caption,
+    sm: webTokens.typography.fontSize.label,
+    base: webTokens.typography.fontSize.body,
+    lg: webTokens.typography.fontSize.subtitle,
+    xl: webTokens.typography.fontSize.title,
+    '2xl': webTokens.typography.fontSize.heading,
+    '3xl': webTokens.typography.fontSize.heroTitle,
   },
-  fontWeight: {
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-  },
-  // Cyrillic-optimized spacing — more generous than Latin defaults
-  lineHeight: {
-    tight: '1.3',
-    normal: '1.6',   // body text; prevents Cyrillic "fence" letterforms from colliding
-    loose: '1.8',
-  },
-  letterSpacing: {
-    tight: '-0.01em',
-    normal: '0em',
-    // never use wide tracking on Cyrillic body text
-  },
-  minBodySize: '16px',  // strict accessibility floor per research
-};
+  fontWeight: webTokens.typography.fontWeight,
+  lineHeight: webTokens.typography.lineHeight,
+  letterSpacing: webTokens.typography.letterSpacing,
+  minBodySize: webTokens.typography.minBodySize,
+} as const;

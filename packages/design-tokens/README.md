@@ -4,66 +4,70 @@ Cross-platform design tokens for the Tasky brand system ("Tengger / Sky" palette
 
 ## Purpose
 
-Single source of truth for colors, spacing, typography, border radii, and motion values used by both web (Tailwind CSS) and mobile (React Native) clients.
+Single source of truth for colors, spacing, typography, border radii, shadows, and motion values used by both web and mobile clients. The package is layered so restyling happens by changing tokens rather than rewriting components.
 
-## Token Categories
+## Token Layers
 
-### Colors (`src/colors.ts`)
+### 1. Primitives (`src/primitives.ts`)
 
-The "Tengger" (Sky) palette -- Mongolian-inspired color system:
+- Raw palette values (`hex` + `hsl`)
+- Base spacing/radius scales
+- Font families, weights, line-height, and letter-spacing metadata
+- Shadow definitions
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary` | `#1B3A5C` (Deep Sky Blue) | Primary actions, headings |
-| `secondary` | `#8B6914` (Dark Steppe Gold) | Accents, highlights |
-| `accent` | `#6BA3BE` (Open Sky) | Secondary actions |
-| `background` | `#F9F8F5` (Clean Off-White) | Page background |
-| `destructive` | `#EF4444` | Error states, destructive actions |
-| `muted` | `#F3F1EC` / `#576473` | Subdued backgrounds / text |
-| `border` | `#C7D0D9` (Soft Blue-Grey) | Borders, dividers |
+### 2. Semantic Tokens (`src/semantic.ts`)
 
-### Layout (`src/layout.ts`)
+- Product-facing aliases like `primary`, `statusAssigned`, `body`, `label`
+- Cross-platform meaning shared by web and mobile
+- Typography recipes for Mongolian Cyrillic-friendly text styles
 
-- **Spacing** -- 4px base scale (0-64px)
-- **Border radius** -- `none` through `full` (9999px)
-- **Typography** -- font families (Plus Jakarta Sans / Manrope with Roboto fallback for Mongolian Cyrillic), sizes (12-30px), weights, line heights (Cyrillic-optimized), letter spacing, 16px minimum body size
+### 3. Platform Outputs (`src/platform/*.ts`)
 
-### Motion (`src/motion.ts`)
+- `nativeTokens` for React Native / NativeWind consumers
+- `webTokens` for CSS variables / Tailwind consumers
+- Both outputs are derived from the same semantic graph
 
-Animation timing tuned for Mongolia's mobile network conditions:
+## Public API
 
-| Token | Duration | Usage |
-|-------|----------|-------|
-| `instant` | 80ms | Micro-feedback (button press) |
-| `fast` | 150ms | Hover states, badge pop |
-| `normal` | 250ms | Panel slides, card expand |
-| `slow` | 400ms | Page transitions, modal open |
-| `skeleton` | 1500ms | Skeleton pulse loop |
+```ts
+import {
+  primitiveTokens,
+  semanticTokens,
+  nativeTokens,
+  webTokens,
+  motionTokens,
+} from '@tasky/design-tokens';
+```
 
-Four easing curves: `standard`, `decelerate`, `accelerate`, `spring`.
+Compatibility exports remain available during migration:
+- `designTokens`
+- `colors`
+- `spacing`
+- `radius`
+- `typography`
 
 ## Usage
 
-### In web (Tailwind)
+### In web
 
-Tokens are integrated via `tailwind.config.ts`:
+```ts
+import { webTokens } from '@tasky/design-tokens';
 
-```typescript
-import { colors, spacing, radius, typography } from "@tasky/design-tokens";
+webTokens.cssVariables['--tasky-color-primary'];
+webTokens.typography.fontFamily.sans;
 ```
 
-### In mobile (React Native)
+### In mobile
 
-Import TypeScript constants directly:
+```ts
+import { nativeTokens } from '@tasky/design-tokens';
 
-```typescript
-import { colors, spacing, motionTokens } from "@tasky/design-tokens";
+nativeTokens.colors.primary;
+nativeTokens.typography.styles.body;
 ```
 
 ## Build
 
 ```bash
-pnpm --filter @tasky/design-tokens build   # Compile to dist/
+pnpm --filter @tasky/design-tokens build
 ```
-
-Output: `dist/` with `.js` and `.d.ts` files.

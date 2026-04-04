@@ -1,33 +1,33 @@
-// Тэнгэр (Sky) palette — aligned with tokens.ts and tokens.css
-// This file is the legacy shadcn-compatible export; prefer tokens.ts for new code.
+import { semanticTokens } from './semantic';
+
 export const colors = {
   primary: {
-    DEFAULT: '#1B3A5C', // Deep Sky Blue
-    foreground: '#F9F8F5', // Clean Off-White
+    DEFAULT: semanticTokens.colors.primary.hex,
+    foreground: semanticTokens.colors.primaryForeground.hex,
   },
   secondary: {
-    DEFAULT: '#8B6914', // Dark Steppe Gold
-    foreground: '#FFFFFF',
+    DEFAULT: semanticTokens.colors.secondary.hex,
+    foreground: semanticTokens.colors.secondaryForeground.hex,
   },
   destructive: {
-    DEFAULT: '#EF4444', // Red 500
-    foreground: '#FFFFFF',
+    DEFAULT: semanticTokens.colors.danger.hex,
+    foreground: semanticTokens.colors.dangerForeground.hex,
   },
   muted: {
-    DEFAULT: '#F3F1EC', // Light Warm
-    foreground: '#576473', // Muted Blue
+    DEFAULT: semanticTokens.colors.muted.hex,
+    foreground: semanticTokens.colors.mutedForeground.hex,
   },
   accent: {
-    DEFAULT: '#6BA3BE', // Open Sky
-    foreground: '#FFFFFF',
+    DEFAULT: semanticTokens.colors.accent.hex,
+    foreground: semanticTokens.colors.accentForeground.hex,
   },
-  background: '#F9F8F5', // Clean Off-White
-  foreground: '#1B3A5C', // Deep Sky Blue
+  background: semanticTokens.colors.background.hex,
+  foreground: semanticTokens.colors.foreground.hex,
   card: {
-    DEFAULT: '#FFFFFF',
-    foreground: '#1B3A5C',
+    DEFAULT: semanticTokens.colors.card.hex,
+    foreground: semanticTokens.colors.cardForeground.hex,
   },
-  border: '#C7D0D9', // Soft Blue-Grey
-  input: '#DBE0E5',
-  ring: '#1B3A5C',
-};
+  border: semanticTokens.colors.border.hex,
+  input: semanticTokens.colors.input.hex,
+  ring: semanticTokens.colors.ring.hex,
+} as const;

@@ -2,6 +2,7 @@ import { expectTypeOf } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { semanticTokens, webTokens } from '@tasky/design-tokens';
 import type { components } from '@tasky/sdk';
 import type { ApiClient } from '../../src/lib/apiClient';
 import type { MobileApiClient } from '../../../mobile/src/lib/mobileApiClient';
@@ -19,6 +20,16 @@ describe('Token Binding', () => {
     expect(stylesSource).toContain('--background: var(--tasky-color-background);');
     expect(sharedTokenSource).toContain('--tasky-color-primary:');
     expect(tailwindConfigSource).toContain('background: "hsl(var(--background))"');
+  });
+
+  it('TID-TASK-115-WEB-TOKEN-PLATFORM-OUTPUTS derive web bindings from the canonical semantic graph', () => {
+    expect(webTokens.colors.primary.hsl).toBe(semanticTokens.colors.primary.hsl);
+    expect(webTokens.cssVariables['--tasky-color-primary']).toBe(semanticTokens.colors.primary.hsl);
+    expect(webTokens.cssVariables['--tasky-font-family-sans']).toBe(
+      semanticTokens.typography.families.sans.web,
+    );
+    expect(webTokens.spacing.lg).toBe('16px');
+    expect(webTokens.typography.fontSize.body).toBe('16px');
   });
 
   it('TID-TASK-115-WEB-TOKEN-PACKAGE-BOUNDARY imports shared token CSS through the package boundary', () => {

@@ -181,6 +181,7 @@ describe('Accessibility and parity gates', () => {
     expect(mobileButton).toContain('isLoading');
     expect(mobileButton).toContain('disabled');
     expect(mobileInput).toContain('invalid');
-    expect(mobileAdapter).toContain('designTokens.colors.primary.hex');
+    expect(mobileAdapter).toContain('nativeTokens');
+    expect(mobileAdapter).not.toContain('designTokens.colors.primary.hex');
   });
 });

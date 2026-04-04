@@ -1,5 +1,4 @@
 :root {
-  /* Palette: Deep Sky Blue #1B3A5C, Steppe Gold #C49A3C, Open Sky #6BA3BE, Clean Off-White #F9F8F5 */
   --tasky-color-background: 40 25% 97%;
   --tasky-color-foreground: 211.5 48% 23.3%;
   --tasky-color-card: 0 0% 100%;
@@ -8,6 +7,7 @@
   --tasky-color-popover-foreground: 211.5 48% 23.3%;
   --tasky-color-primary: 211.5 48% 23.3%;
   --tasky-color-primary-foreground: 40 25% 97%;
+  --tasky-color-primary-deep: 212 55% 14%;
   --tasky-color-secondary: 42.9 74.8% 31.2%;
   --tasky-color-secondary-foreground: 0 0% 100%;
   --tasky-color-muted: 40 20% 94%;
@@ -19,10 +19,6 @@
   --tasky-color-ring: 211.5 48% 23.3%;
   --tasky-color-destructive: 0 84% 60%;
   --tasky-color-destructive-foreground: 0 0% 100%;
-  --tasky-radius: 0.5rem;
-
-  /* Semantic tokens */
-  --tasky-color-primary-deep: 212 55% 14%;
   --tasky-color-trust: 211 50% 42%;
   --tasky-color-trust-foreground: 0 0% 100%;
   --tasky-color-trust-muted: 211 30% 78%;
@@ -31,9 +27,26 @@
   --tasky-color-status-assigned: 211.5 48% 23.3%;
   --tasky-color-status-assigned-foreground: 0 0% 100%;
   --tasky-color-verified: 160 35% 42%;
+  --tasky-color-verified-foreground: 0 0% 100%;
   --tasky-color-subtle-violet: 40 20% 94%;
   --tasky-color-chip-inactive: 210 14% 87%;
+  --tasky-color-text-secondary: 211 12% 42%;
+  --tasky-color-text-tertiary: 210 10% 55%;
   --tasky-color-nav-inactive: 210 12% 48%;
+
+  --tasky-radius: 12px;
+  --tasky-radius-xs: 6px;
+  --tasky-radius-sm: 8px;
+  --tasky-radius-md: 12px;
+  --tasky-radius-lg: 16px;
+  --tasky-radius-full: 9999px;
+
+  --tasky-font-family-sans: 'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif;
+  --tasky-font-family-display: 'Manrope', Roboto, system-ui, -apple-system, sans-serif;
+  --tasky-font-size-body: 16px;
+  --tasky-font-size-label: 14px;
+  --tasky-line-height-normal: 1.6;
+  --tasky-letter-spacing-tight: -0.01em;
 }
 
 .dark {
@@ -69,7 +82,10 @@
   --tasky-color-status-assigned: 200 35% 58%;
   --tasky-color-status-assigned-foreground: 212 35% 6%;
   --tasky-color-verified: 160 32% 55%;
+  --tasky-color-verified-foreground: 0 0% 100%;
   --tasky-color-subtle-violet: 212 15% 13%;
   --tasky-color-chip-inactive: 211 10% 20%;
+  --tasky-color-text-secondary: 210 12% 62%;
+  --tasky-color-text-tertiary: 210 10% 50%;
   --tasky-color-nav-inactive: 210 10% 50%;
 }
