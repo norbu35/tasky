@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   heading: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
     lineHeight: 24 * 1.2,

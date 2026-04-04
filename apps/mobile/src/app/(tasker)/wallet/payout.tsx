@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.background,
   },
-  title: { fontSize: 24, fontWeight: '800', color: colors.primaryDeep },
+  title: { fontSize: typography.heading, fontWeight: '800', color: colors.primaryDeep },
   balance: { fontSize: typography.body, color: colors.textSecondary },
   input: {
     borderWidth: 1,

@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
   },

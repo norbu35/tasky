@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   title: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
   },

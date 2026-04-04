@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   headline: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '900',
     color: colors.primaryDeep,
     textAlign: 'center',

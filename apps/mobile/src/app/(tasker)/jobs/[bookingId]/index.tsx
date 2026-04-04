@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     color: colors.foreground,
   },
   priceText: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.secondary,
   },

@@ -15,8 +15,8 @@ export const screenRhythm = {
 } as const;
 
 export const screenTypography = {
-  sectionTitleSize: typography.subtitle,
-  sectionTitleLineHeight: Math.round(typography.subtitle * 1.25),
+  sectionTitleSize: typography.heading,
+  sectionTitleLineHeight: Math.round(typography.heading * 1.25),
   cardTitleSize: typography.body,
   cardTitleLineHeight: Math.round(typography.body * 1.35),
 } as const;

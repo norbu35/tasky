@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
     textAlign: 'center',

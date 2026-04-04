@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.primaryDeep,
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: -0.6,

@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: colors.primaryDeep,
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     letterSpacing: -0.6,
     lineHeight: 30,

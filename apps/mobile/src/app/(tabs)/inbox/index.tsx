@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
   },

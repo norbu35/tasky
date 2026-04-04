@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
     lineHeight: 32,

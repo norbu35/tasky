@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   fieldLabel: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
     marginBottom: spacing.md,

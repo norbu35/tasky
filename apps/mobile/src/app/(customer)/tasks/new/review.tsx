@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   pageTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     color: colors.primaryDeep,
     fontWeight: '800',
   },

@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
     marginBottom: spacing.md,

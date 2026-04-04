@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   timelineTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   resolutionTitle: {
-    fontSize: 24,
+    fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
   },
