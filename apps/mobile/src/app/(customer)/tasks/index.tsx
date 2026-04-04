@@ -3,18 +3,19 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
+import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { FAB } from '../../../components/ui/FAB';
+import { ScreenContainer } from '../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -276,7 +277,7 @@ export default function MyTasksListScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} testID="my-tasks-screen">
+    <ScreenContainer testID="my-tasks-screen">
       {isLoading ? (
         <View style={styles.loadingContainer} testID="my-tasks-loading-state">
           {header}
@@ -315,16 +316,8 @@ export default function MyTasksListScreen() {
         />
       )}
 
-      <Pressable
-        onPress={handleFabPress}
-        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
-        testID="my-tasks-fab"
-        accessibilityRole="button"
-      >
-        <Plus size={20} color={colors.primaryForeground} />
-        <Text style={styles.fabLabel}>{t('customer.taskList.fabLabel', 'Post Task')}</Text>
-      </Pressable>
-    </SafeAreaView>
+      <FAB bottomOffset={16} testID="my-tasks-fab" authGuard={false} />
+    </ScreenContainer>
   );
 }
 
@@ -606,26 +599,5 @@ const styles = StyleSheet.create({
     fontSize: typography.subtitle,
     fontWeight: '800',
     color: colors.secondary,
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.lg,
-    bottom: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.primary,
-    ...elevations.navBar,
-  },
-  fabPressed: {
-    opacity: 0.92,
-  },
-  fabLabel: {
-    fontSize: typography.body,
-    color: colors.primaryForeground,
-    fontWeight: '800',
   },
 });

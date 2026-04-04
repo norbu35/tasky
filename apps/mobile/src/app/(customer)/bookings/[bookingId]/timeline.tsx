@@ -1,25 +1,17 @@
 import React from 'react';
-import { Image, Pressable, ScrollView, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CircleHelp, ClipboardList, House, MessageSquare, UserRound } from 'lucide-react-native';
+import { CircleHelp } from 'lucide-react-native';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
-import { elevations } from '../../../../design/elevations';
-import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
+import { ScreenContainer } from '../../../../components/shells';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
 const figmaServiceImageUri =
   'https://www.figma.com/api/mcp/asset/0cf8176a-cff9-4d3a-9418-2a2d334f986f';
-
-const CUSTOMER_NAV_ITEMS = [
-  { id: 'tasks', label: 'Даалгавар', icon: House, href: '/(customer)/tasks' },
-  { id: 'bookings', label: 'Захиалга', icon: ClipboardList, href: '/(customer)/bookings' },
-  { id: 'inbox', label: 'Мэдэгдэл', icon: MessageSquare, href: '/(tabs)/inbox' },
-  { id: 'profile', label: 'Профайл', icon: UserRound, href: '/(tabs)/profile' },
-] as const;
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts);
@@ -57,37 +49,6 @@ function getEventLabel(event: string): string {
     default:
       return event;
   }
-}
-
-function CustomerBottomNav({
-  activeId,
-  onNavigate,
-}: {
-  activeId: (typeof CUSTOMER_NAV_ITEMS)[number]['id'];
-  onNavigate: (href: string) => void;
-}) {
-  return (
-    <View style={styles.bottomNav}>
-      {CUSTOMER_NAV_ITEMS.map((item) => {
-        const isActive = item.id === activeId;
-        const Icon = item.icon;
-        return (
-          <Pressable
-            key={item.id}
-            onPress={() => onNavigate(item.href)}
-            style={[styles.bottomNavItem, isActive && styles.bottomNavItemActive]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isActive }}
-          >
-            <Icon size={18} color={isActive ? colors.primaryForeground : colors.textSecondary} />
-            <Text style={[styles.bottomNavLabel, isActive && styles.bottomNavLabelActive]}>
-              {item.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
 }
 
 function TimelineEventRow({
@@ -162,15 +123,8 @@ export default function BookingTimelineScreen() {
     return lastNonFuture;
   }, [timelineEvents]);
 
-  const handleNavigate = React.useCallback(
-    (href: string) => {
-      router.push(href as never);
-    },
-    [router],
-  );
-
   return (
-    <SafeAreaView style={styles.safeArea} testID="booking-timeline-screen">
+    <ScreenContainer testID="booking-timeline-screen">
       <View style={styles.shell}>
         <ScrollView
           style={styles.scroll}
@@ -261,18 +215,12 @@ export default function BookingTimelineScreen() {
             </Pressable>
           ) : null}
         </ScrollView>
-
-        <CustomerBottomNav activeId="bookings" onNavigate={handleNavigate} />
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   shell: {
     flex: 1,
     backgroundColor: colors.background,
@@ -282,7 +230,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: 164,
+    paddingBottom: spacing['3xl'],
     gap: spacing.lg,
   },
   contextCard: {
@@ -458,41 +406,5 @@ const styles = StyleSheet.create({
     fontSize: typography.label,
     fontWeight: '600',
     color: colors.dangerForeground,
-  },
-  bottomNav: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    ...elevations.soft,
-  },
-  bottomNavItem: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-  },
-  bottomNavItemActive: {
-    backgroundColor: colors.primary,
-  },
-  bottomNavLabel: {
-    fontSize: typography.micro,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  bottomNavLabelActive: {
-    color: colors.primaryForeground,
   },
 });

@@ -1,16 +1,11 @@
 import React from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   ClipboardList,
-  House,
   Menu,
-  Plus,
   Search,
-  UserRound,
-  MessageSquare,
   CalendarDays,
 } from 'lucide-react-native';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
@@ -18,6 +13,7 @@ import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
+import { ScreenContainer } from '../../../components/shells';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -27,13 +23,6 @@ const TAB_LABELS: Array<{ id: BookingTab; label: string }> = [
   { id: 'active', label: 'Идэвхтэй' },
   { id: 'completed', label: 'Дууссан' },
 ];
-
-const CUSTOMER_NAV_ITEMS = [
-  { id: 'tasks', label: 'Даалгавар', icon: House, href: '/(customer)/tasks' },
-  { id: 'bookings', label: 'Захиалгууд', icon: ClipboardList, href: '/(customer)/bookings' },
-  { id: 'inbox', label: 'Шинэ', icon: MessageSquare, href: '/(tabs)/inbox' },
-  { id: 'profile', label: 'Профайл', icon: UserRound, href: '/(tabs)/profile' },
-] as const;
 
 function formatSchedule(value?: string | null): string | null {
   if (!value) return null;
@@ -220,38 +209,6 @@ function EmptyState({ onPress }: { onPress: () => void }) {
   );
 }
 
-function CustomerBottomNav({
-  activeId,
-  onNavigate,
-}: {
-  activeId: (typeof CUSTOMER_NAV_ITEMS)[number]['id'];
-  onNavigate: (href: string) => void;
-}) {
-  return (
-    <View style={styles.bottomNav}>
-      {CUSTOMER_NAV_ITEMS.map((item) => {
-        const isActive = item.id === activeId;
-        const Icon = item.icon;
-        return (
-          <Pressable
-            key={item.id}
-            onPress={() => onNavigate(item.href)}
-            style={[styles.bottomNavItem, isActive && styles.bottomNavItemActive]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isActive }}
-            testID={`bottom-nav-${item.id}`}
-          >
-            <Icon size={18} color={isActive ? colors.primaryForeground : colors.textSecondary} />
-            <Text style={[styles.bottomNavLabel, isActive && styles.bottomNavLabelActive]}>
-              {item.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 export default function BookingsListScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -284,23 +241,12 @@ export default function BookingsListScreen() {
     router.push('/(customer)/tasks/new');
   }, [router]);
 
-  const handleFabPress = React.useCallback(() => {
-    router.push('/(customer)/tasks/new');
-  }, [router]);
-
-  const handleNavigate = React.useCallback(
-    (href: string) => {
-      router.push(href as never);
-    },
-    [router],
-  );
-
   const showEmptyState = !isLoading && bookings.length === 0;
   const showList = !isLoading && bookings.length > 0;
   const showOfflineBanner = isError && bookings.length > 0;
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="bookings-list-screen">
+    <ScreenContainer testID="bookings-list-screen">
       <View style={styles.shell}>
         <View style={styles.header}>
           <Pressable style={styles.headerIconButton} accessibilityRole="button">
@@ -376,27 +322,12 @@ export default function BookingsListScreen() {
             </View>
           )}
         </ScrollView>
-
-        <Pressable
-          accessibilityRole="button"
-          onPress={handleFabPress}
-          style={styles.fab}
-          testID="bookings-fab"
-        >
-          <Plus size={22} color={colors.primaryForeground} />
-        </Pressable>
-
-        <CustomerBottomNav activeId="bookings" onNavigate={handleNavigate} />
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   shell: {
     flex: 1,
     backgroundColor: colors.background,
@@ -454,7 +385,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: 168,
+    paddingBottom: spacing['3xl'],
   },
   scrollContentWithList: {
     gap: spacing.lg,
@@ -654,53 +585,5 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     color: colors.textSecondary,
     textAlign: 'center',
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.lg,
-    bottom: 112,
-    width: 56,
-    height: 56,
-    borderRadius: radius.lg,
-    backgroundColor: colors.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevations.elevated,
-  },
-  bottomNav: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    backgroundColor: colors.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    ...elevations.navBar,
-  },
-  bottomNavItem: {
-    flex: 1,
-    minWidth: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-  },
-  bottomNavItemActive: {
-    backgroundColor: colors.primary,
-  },
-  bottomNavLabel: {
-    fontSize: typography.micro,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  bottomNavLabelActive: {
-    color: colors.primaryForeground,
   },
 });

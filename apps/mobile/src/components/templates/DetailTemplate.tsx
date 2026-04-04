@@ -1,12 +1,14 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 import { useTranslation } from 'react-i18next';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 
 const { colors, spacing } = mobileTheme;
+const CTA_BAR_HEIGHT = 88;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
@@ -70,7 +72,11 @@ export function DetailTemplate({
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
   return (
-    <SafeAreaView style={[styles.safeArea, hideHeader && styles.safeAreaNoTop]} testID={testID}>
+    <ScreenContainer
+      style={hideHeader ? styles.safeAreaNoTop : undefined}
+      testID={testID}
+      edges={hideHeader ? ['left', 'right'] : ['top', 'left', 'right']}
+    >
       {/* Body */}
       {isError ? (
         <ErrorStateTemplate
@@ -81,54 +87,48 @@ export function DetailTemplate({
       ) : isLoading ? (
         <DetailSkeleton />
       ) : (
-        <ScrollView
+        <InsetScrollView
           style={styles.scrollView}
           contentContainerStyle={[
             styles.scrollContent,
-            hasBottomBar && styles.scrollContentWithCta,
+            hasBottomBar && styles.scrollContentWithActionBar,
           ]}
+          extraBottomInset={hasBottomBar ? CTA_BAR_HEIGHT : 0}
           showsVerticalScrollIndicator={false}
         >
           {children}
-        </ScrollView>
+        </InsetScrollView>
       )}
 
       {/* Sticky Bottom CTA */}
       {hasBottomBar && !isLoading && !isError && (
-        <BlurView
-          intensity={40}
-          tint="light"
-          style={styles.bottomBar}
-          testID={testID ? `${testID}-bottom-bar` : undefined}
-        >
-          {secondaryCtaLabel && secondaryCtaOnPress && (
+        <StickyActionBar testID={testID ? `${testID}-bottom-bar` : undefined}>
+          <BlurView intensity={40} tint="light" style={styles.bottomBar}>
+            {secondaryCtaLabel && secondaryCtaOnPress && (
+              <Button
+                label={secondaryCtaLabel}
+                variant="outline"
+                onPress={secondaryCtaOnPress}
+                style={styles.secondaryCta}
+                testID={testID ? `${testID}-secondary-cta` : undefined}
+              />
+            )}
             <Button
-              label={secondaryCtaLabel}
-              variant="outline"
-              onPress={secondaryCtaOnPress}
-              style={styles.secondaryCta}
-              testID={testID ? `${testID}-secondary-cta` : undefined}
+              label={ctaLabel}
+              onPress={ctaOnPress}
+              isLoading={ctaLoading}
+              disabled={ctaDisabled}
+              style={styles.primaryCta}
+              testID={testID ? `${testID}-cta` : undefined}
             />
-          )}
-          <Button
-            label={ctaLabel}
-            onPress={ctaOnPress}
-            isLoading={ctaLoading}
-            disabled={ctaDisabled}
-            style={styles.primaryCta}
-            testID={testID ? `${testID}-cta` : undefined}
-          />
-        </BlurView>
+          </BlurView>
+        </StickyActionBar>
       )}
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   safeAreaNoTop: {
     // Used when hideHeader=true — removes SafeArea top inset so
     // full-bleed hero content can extend behind the status bar.
@@ -140,18 +140,13 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: spacing.xl,
     paddingHorizontal: spacing.lg,
+  },
+  scrollContentWithActionBar: {
     paddingBottom: spacing.xl,
   },
-  scrollContentWithCta: {
-    paddingBottom: 120,
-  },
   bottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: spacing.md,
-    paddingBottom: spacing.lg,
+    borderRadius: mobileTheme.radius.lg,
     overflow: 'hidden',
   },
   primaryCta: {
