@@ -1,7 +1,8 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -30,7 +31,7 @@ export default function WalletPayoutScreen() {
     >
       <Text style={styles.title}>Мөнгө татах</Text>
       <Text style={styles.balance}>Боломжит үлдэгдэл: ₮120,000</Text>
-      <TextInput
+      <Input
         value={amount}
         onChangeText={setAmount}
         placeholder="₮0"

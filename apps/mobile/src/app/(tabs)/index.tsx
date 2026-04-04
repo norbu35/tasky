@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react-native';
 import { FeedListTemplate } from '../../components/templates/FeedListTemplate';
 import { SplitCard } from '../../components/ui/SplitCard';
 import { FilterBar } from '../../components/ui/FilterBar';
+import { Input } from '../../components/ui/Input';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
@@ -145,7 +146,7 @@ export default function FeedScreen() {
               {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
             </Text>
           </View>
-          <TextInput
+          <Input
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}

@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../components/templates/FormWizardTemplate';
+import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
@@ -150,7 +151,7 @@ export default function RebookScreen() {
       {/* Budget */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t('customer.bookings.labelBudget', 'Budget')}</Text>
-        <TextInput
+        <Input
           style={styles.budgetInput}
           value={budget}
           onChangeText={setBudget}
