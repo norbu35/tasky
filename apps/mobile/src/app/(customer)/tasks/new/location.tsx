@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     ...elevations.soft,
   },
   map: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: 280,
   },
   mapOverlay: {

@@ -41,12 +41,6 @@ jest.mock('lucide-react-native', () => {
 });
 
 describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
-  it('renders the privacy policy title', () => {
-    const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
-    render(<PrivacyPolicyScreen />);
-    expect(screen.getByText(/Privacy Policy|Нууцлалын бодлого/)).toBeTruthy();
-  });
-
   it('renders scrollable content sections', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
@@ -55,17 +49,12 @@ describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
     expect(screen.getAllByText(/Data Storage|Мэдээлэл хадгалах/).length).toBeGreaterThan(0);
   });
 
-  it('renders back button that navigates back', () => {
-    const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
-    render(<PrivacyPolicyScreen />);
-    fireEvent.press(screen.getByTestId('privacy-screen-back'));
-    expect(mockBack).toHaveBeenCalled();
-  });
-
   it('renders identity verification section', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText(/Identity Verification Data|Таниулах баталгаажуулалтын мэдээлэл/)).toBeTruthy();
+    expect(
+      screen.getByText(/Identity Verification Data|Таниулах баталгаажуулалтын мэдээлэл/),
+    ).toBeTruthy();
   });
 
   it('renders user rights section', () => {

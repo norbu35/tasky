@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.card}`,
   },
   photoImage: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   photoFallback: {

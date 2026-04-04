@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   submitButton: {
-    width: '100%',
+    alignSelf: 'stretch',
     justifyContent: 'center',
     gap: spacing.sm,
   },

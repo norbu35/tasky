@@ -97,7 +97,7 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
             variant="ghost"
             onPress={onClose}
             disabled={isApplying}
-            style={{ marginTop: 8 }}
+            style={styles.cancelBtn}
           />
         </View>
       </ScrollView>
@@ -181,5 +181,8 @@ const styles = StyleSheet.create({
   actions: {
     marginTop: 32,
     marginBottom: 60,
+  },
+  cancelBtn: {
+    marginTop: 8,
   },
 });

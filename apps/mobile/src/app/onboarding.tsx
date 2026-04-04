@@ -218,21 +218,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.muted,
   },
   illustrationCard: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
     borderRadius: 32,
     backgroundColor: colors.background,
     overflow: 'hidden',
   },
   heroImage: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   badge: {
     position: 'absolute',
     bottom: 24,
     left: 24,
-    backgroundColor: '#1b3a5c',
+    backgroundColor: colors.primaryDeep,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   button: {
-    width: '100%',
+    alignSelf: 'stretch',
     minHeight: 56,
   },
   skipSpacer: {

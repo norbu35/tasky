@@ -90,12 +90,12 @@ const styles = StyleSheet.create({
   description: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
   activeBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#dbe8d6',
+    backgroundColor: colors.trustMuted,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
   },
-  activeText: { fontSize: typography.body, fontWeight: '700', color: '#214d24' },
+  activeText: { fontSize: typography.body, fontWeight: '700', color: colors.trustForeground },
   sheet: {
     padding: spacing.xl,
     gap: spacing.md,

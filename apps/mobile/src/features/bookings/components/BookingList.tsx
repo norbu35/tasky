@@ -9,7 +9,7 @@ export function BookingList() {
   const { t } = useTranslation();
   const { data, isLoading } = useBookings();
 
-  if (isLoading) return <Text style={{ padding: 20 }}>{t('bookingList.loading')}</Text>;
+  if (isLoading) return <Text style={styles.loadingText}>{t('bookingList.loading')}</Text>;
 
   return (
     <FlatList
@@ -54,5 +54,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing['2xl'],
     color: colors.textSecondary,
+  },
+  loadingText: {
+    padding: 20,
   },
 });

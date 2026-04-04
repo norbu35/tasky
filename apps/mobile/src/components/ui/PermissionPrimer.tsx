@@ -179,11 +179,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   actions: {
-    width: '100%',
+    alignSelf: 'stretch',
     gap: spacing.sm,
   },
   grantButton: {
-    width: '100%',
+    alignSelf: 'stretch',
     minHeight: 56,
     borderRadius: radius.md,
     backgroundColor: colors.primaryDeep,

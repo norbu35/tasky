@@ -127,12 +127,20 @@ export default function CategorySelectionScreen() {
 
   const handleCategoryPress = useCallback(
     (categoryId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
       router.push({
         pathname: '/(customer)/tasks/new/intake',
-        params: { categoryId },
+        params: {
+          categoryId,
+          intakeEnabled: category?.intake_enabled ? '1' : '0',
+          intakeSchemaVersion: String(category?.intake_schema_version ?? ''),
+          intakeSchemaJson: category?.intake_schema_json
+            ? JSON.stringify(category.intake_schema_json)
+            : '',
+        },
       });
     },
-    [router],
+    [router, categories],
   );
 
   return (

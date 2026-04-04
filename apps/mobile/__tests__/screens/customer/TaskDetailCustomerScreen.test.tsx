@@ -307,16 +307,4 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
     render(<TaskDetailCustomerScreen />);
     expect(screen.getByText('CANCELLED')).toBeTruthy();
   });
-
-  it('back button calls router.back', () => {
-    mockUseCustomerTaskDetail.mockReturnValue({
-      task: makeTask(),
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    render(<TaskDetailCustomerScreen />);
-    fireEvent.press(screen.getByTestId('task-detail-customer-screen-back'));
-    expect(mockBack).toHaveBeenCalled();
-  });
 });

@@ -1,8 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/tasky
-    username: tasky
-    password: tasky
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:tasky}
+    username: ${APP_DB_USER:tasky_app}
+    password: ${APP_DB_PASSWORD:tasky_app}
+  flyway:
+    # In containerized local mode, migrations should bypass PgBouncer and connect directly.
+    url: jdbc:postgresql://${FLYWAY_HOST:localhost}:${FLYWAY_PORT:5432}/${POSTGRES_DB:tasky}
+    user: ${POSTGRES_USER:tasky}
+    password: ${POSTGRES_PASSWORD:tasky}
 
 tasky:
   dev-auth:

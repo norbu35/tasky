@@ -127,8 +127,8 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
     const unselectedCard = StyleSheet.flatten(screen.getByTestId('role-card-tasker').props.style);
 
     expect(selectedCard.backgroundColor).toBe('#ffffff');
-    expect(String(selectedCard.borderColor).toLowerCase()).toBe('#1b3a5c');
-    expect(unselectedCard.backgroundColor).toBe('#f4f3f0');
+    expect(String(selectedCard.borderColor).toLowerCase()).toBe('#102638');
+    expect(unselectedCard.backgroundColor).toBe('#F3F1EC');
     expect(screen.getByTestId('role-card-customer-check')).toBeTruthy();
   });
 

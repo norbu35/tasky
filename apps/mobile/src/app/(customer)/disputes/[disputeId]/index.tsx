@@ -546,16 +546,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statusBadgeWarning: {
-    backgroundColor: '#fdce6a',
+    backgroundColor: colors.statusOpen,
   },
   statusBadgeSuccess: {
-    backgroundColor: '#e7f4ef',
+    backgroundColor: colors.statusAssigned,
   },
   statusBadgeNeutral: {
     backgroundColor: colors.muted,
   },
   statusBadgeDanger: {
-    backgroundColor: '#ffdad6',
+    backgroundColor: colors.danger,
   },
   statusBadgeText: {
     fontSize: typography.label,
@@ -563,16 +563,16 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   statusBadgeTextWarning: {
-    color: '#765600',
+    color: colors.statusOpenForeground,
   },
   statusBadgeTextSuccess: {
-    color: '#3a7a65',
+    color: colors.statusAssignedForeground,
   },
   statusBadgeTextNeutral: {
     color: colors.primaryDeep,
   },
   statusBadgeTextDanger: {
-    color: colors.danger,
+    color: colors.primaryForeground,
   },
   statusDescription: {
     fontSize: typography.body,
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: radius.lg,
-    backgroundColor: '#fff3d8',
+    backgroundColor: colors.chipInactive,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -784,7 +784,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   decorativeImage: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   bottomNav: {

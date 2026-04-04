@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   rowUnread: {
-    backgroundColor: '#e7f1fb',
+    backgroundColor: colors.muted,
   },
   rowRead: {
     backgroundColor: colors.background,

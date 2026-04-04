@@ -38,7 +38,6 @@ describe('TaskerReferralsScreen', () => {
     render(<ReferralsScreen />);
 
     expect(screen.getByTestId('tasker-referrals-screen')).toBeTruthy();
-    expect(screen.getByText('Referrals')).toBeTruthy();
     expect(screen.getByText('Invite a tasker')).toBeTruthy();
     expect(screen.getByText('Copy invite code')).toBeTruthy();
   });

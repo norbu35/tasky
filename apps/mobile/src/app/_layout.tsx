@@ -61,7 +61,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.container}>
       <SafeAreaProvider>
         <NotificationProvider>
           <QueryClientProvider client={queryClient}>
@@ -75,3 +75,11 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

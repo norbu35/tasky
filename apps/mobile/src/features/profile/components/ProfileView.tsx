@@ -17,7 +17,7 @@ export function ProfileView() {
     if (profile) setName(profile.full_name);
   }, [profile]);
 
-  if (isLoading) return <Text style={{ padding: 20 }}>{t('common.loading')}</Text>;
+  if (isLoading) return <Text style={styles.loadingText}>{t('common.loading')}</Text>;
 
   return (
     <View style={styles.container}>
@@ -58,5 +58,8 @@ const styles = StyleSheet.create({
   },
   spacer: {
     height: 20,
+  },
+  loadingText: {
+    padding: 20,
   },
 });

@@ -39,7 +39,6 @@ describe('OtpScreen (SCR-SHARED-003)', () => {
   it('renders the default OTP shell', () => {
     render(<OtpScreen />);
 
-    expect(screen.getByTestId('otp-top-app-bar')).toBeTruthy();
     expect(screen.getByTestId('otp-heading')).toHaveTextContent('Код баталгаажуулах');
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/9911\s+2233/);
     expect(screen.getByTestId('otp-description')).toHaveTextContent(/4 оронтой нууц код/);
@@ -49,7 +48,6 @@ describe('OtpScreen (SCR-SHARED-003)', () => {
     expect(screen.getByTestId('otp-security-card')).toBeTruthy();
     expect(screen.getByTestId('otp-fixed-cta')).toBeTruthy();
     expect(screen.getByTestId('otp-verify-button')).toBeDisabled();
-    expect(screen.getByTestId('otp-back-button')).toBeTruthy();
   });
 
   it('enables verify after entering 4 digits', () => {

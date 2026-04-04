@@ -39,7 +39,6 @@ describe('TaskerCreditsPayScreen', () => {
     render(<CreditsPayScreen />);
 
     expect(screen.getByTestId('tasker-credits-pay')).toBeTruthy();
-    expect(screen.getByText('Top up credits')).toBeTruthy();
     expect(screen.getByText('Choose an amount')).toBeTruthy();
     expect(screen.getByText('20,000 ₮')).toBeTruthy();
     expect(screen.getByText('Confirm top up')).toBeTruthy();

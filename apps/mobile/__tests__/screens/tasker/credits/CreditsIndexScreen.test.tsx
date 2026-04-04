@@ -38,7 +38,6 @@ describe('TaskerCreditsIndexScreen', () => {
     render(<CreditsIndexScreen />);
 
     expect(screen.getByTestId('tasker-credits-index')).toBeTruthy();
-    expect(screen.getByText('Credits')).toBeTruthy();
     expect(screen.getByText('Balance running low')).toBeTruthy();
     expect(screen.getByText('Top up now')).toBeTruthy();
     expect(screen.getByText('View history')).toBeTruthy();

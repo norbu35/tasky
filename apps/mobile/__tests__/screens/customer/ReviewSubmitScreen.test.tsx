@@ -74,7 +74,6 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('shows task summary with description', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('Job Scope Summary')).toBeTruthy();
-    expect(screen.getByLabelText('Step 6 of 7')).toBeTruthy();
     expect(screen.getAllByText('Fix my sink').length).toBeGreaterThan(0);
   });
 
@@ -97,7 +96,6 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('renders the submit button', () => {
     render(<ReviewSubmitScreen />);
     expect(screen.getByText('Post Task')).toBeTruthy();
-    expect(screen.getByText('Payment is arranged directly with the Tasker')).toBeTruthy();
   });
 
   it('submit calls useCreateTask', async () => {

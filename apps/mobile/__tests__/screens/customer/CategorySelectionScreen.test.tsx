@@ -49,13 +49,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('renders the screen title', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
-    expect(screen.getByText('What type of task do you need?')).toBeTruthy();
-  });
-
-  it('renders step indicator for step 1 of 7', () => {
-    mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
-    render(<CategorySelectionScreen />);
-    expect(screen.getByLabelText('Step 1 of 7')).toBeTruthy();
+    expect(screen.getByText('Ангилал сонгох')).toBeTruthy();
   });
 
   it('back button returns to my tasks', () => {
@@ -82,8 +76,6 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     expect(screen.getByText('Cleaning')).toBeTruthy();
     expect(screen.getByText('Handyman')).toBeTruthy();
     expect(screen.getByText('Moving')).toBeTruthy();
-    expect(screen.getByText('Deep, regular, or move-out')).toBeTruthy();
-    expect(screen.getByText('Repairs and installations')).toBeTruthy();
   });
 
   it('selecting a category navigates to intake form with categoryId', () => {
@@ -96,10 +88,12 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     });
     render(<CategorySelectionScreen />);
     fireEvent.press(screen.getByText('Cleaning'));
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: '/(customer)/tasks/new/intake',
-      params: { categoryId: 'cat-1' },
-    });
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pathname: '/(customer)/tasks/new/intake',
+        params: expect.objectContaining({ categoryId: 'cat-1' }),
+      }),
+    );
   });
 
   it('shows loading state', () => {

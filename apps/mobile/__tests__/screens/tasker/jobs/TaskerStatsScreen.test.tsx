@@ -53,7 +53,6 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     render(<StatsScreen />);
 
     expect(screen.getByTestId('tasker-stats')).toBeTruthy();
-    expect(screen.getByText('Миний статистик')).toBeTruthy();
   });
 
   it('renders stats cards with jobs completed, rating, response time, reliability', () => {

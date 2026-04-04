@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.muted,
   },
   photo: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   removeButton: {

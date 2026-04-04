@@ -110,7 +110,7 @@ export function ChatDetailScreen() {
           <Text style={styles.backText}>{t('chat.back')}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('chat.title')}</Text>
-        <View style={{ width: 60 }} />
+        <View style={styles.headerRightPlaceholder} />
       </View>
 
       <FlatList
@@ -194,12 +194,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.cardForeground,
   },
+  headerRightPlaceholder: {
+    width: 60,
+  },
   messageList: {
     padding: 16,
     paddingBottom: 24,
   },
   messageBubbleWrapper: {
-    width: '100%',
+    alignSelf: 'stretch',
     marginBottom: 12,
     flexDirection: 'row',
   },

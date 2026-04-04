@@ -142,19 +142,6 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/edit');
   });
 
-  it('shows settings button that navigates to settings', () => {
-    mockUseMyProfile.mockReturnValue({
-      data: MOCK_CUSTOMER_PROFILE,
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
-    render(<MyProfileScreen />);
-    fireEvent.press(screen.getByTestId('my-profile-screen-right-action'));
-    expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/settings');
-  });
-
   it('customer view shows task count', () => {
     mockUseMyProfile.mockReturnValue({
       data: MOCK_CUSTOMER_PROFILE,

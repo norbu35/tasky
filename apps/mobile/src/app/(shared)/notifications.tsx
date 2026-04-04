@@ -94,10 +94,10 @@ function buildRows(notifications: Notification[], todayLabel: string, earlierLab
 
 function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor: string } {
   if (/message/i.test(title)) {
-    return { icon: <MessageSquare size={18} color={colors.foreground} />, shellColor: '#e3e2e0' };
+    return { icon: <MessageSquare size={18} color={colors.foreground} />, shellColor: colors.chipInactive };
   }
   if (/booking/i.test(title)) {
-    return { icon: <Briefcase size={18} color={colors.primaryDeep} />, shellColor: '#fdce6a' };
+    return { icon: <Briefcase size={18} color={colors.primaryDeep} />, shellColor: colors.statusOpen };
   }
   if (/dispute/i.test(title)) {
     return {
@@ -106,9 +106,9 @@ function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor
     };
   }
   if (/review/i.test(title)) {
-    return { icon: <Star size={18} color={colors.primaryDeep} />, shellColor: '#ecbf80' };
+    return { icon: <Star size={18} color={colors.primaryDeep} />, shellColor: colors.muted };
   }
-  return { icon: <Bell size={18} color={colors.primaryForeground} />, shellColor: '#1b3a5c' };
+  return { icon: <Bell size={18} color={colors.primaryForeground} />, shellColor: colors.primaryDeep };
 }
 
 export default function NotificationCenterScreen() {
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   cardUnread: {
-    backgroundColor: '#e7f1fb',
+    backgroundColor: colors.muted,
   },
   iconShell: {
     width: 40,

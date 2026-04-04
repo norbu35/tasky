@@ -142,12 +142,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: 4,
     borderRadius: radius.full,
-    backgroundColor: '#d2e4ff',
+    backgroundColor: colors.secondary,
   },
   roleBadgeText: {
     fontSize: typography.caption,
     fontWeight: '600',
-    color: '#2b486b',
+    color: colors.secondaryForeground,
   },
   statsRow: {
     flexDirection: 'row',

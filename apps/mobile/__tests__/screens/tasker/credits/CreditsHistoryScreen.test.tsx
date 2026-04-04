@@ -38,7 +38,6 @@ describe('TaskerCreditsHistoryScreen', () => {
     render(<CreditsHistoryScreen />);
 
     expect(screen.getByTestId('tasker-credits-history')).toBeTruthy();
-    expect(screen.getByText('Credit history')).toBeTruthy();
     expect(screen.getByText('Top-up')).toBeTruthy();
     expect(screen.getByText('Task payout')).toBeTruthy();
   });

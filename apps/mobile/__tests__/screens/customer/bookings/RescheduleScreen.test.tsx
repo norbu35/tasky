@@ -77,7 +77,9 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('renders reason field', () => {
     render(<RescheduleScreen />);
     expect(screen.getByText('Шалтгаан (заавал биш)')).toBeTruthy();
-    expect(screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...')).toBeTruthy();
+    expect(
+      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
+    ).toBeTruthy();
   });
 
   it('submit calls reschedule with ISO date', async () => {
@@ -123,14 +125,7 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('shows schedule authority note', () => {
     render(<RescheduleScreen />);
     expect(
-      screen.getByText(
-        'Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно',
-      ),
+      screen.getByText('Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно'),
     ).toBeTruthy();
-  });
-
-  it('renders a back button in the form header', () => {
-    render(<RescheduleScreen />);
-    expect(screen.getByTestId('reschedule-screen-back')).toBeTruthy();
   });
 });

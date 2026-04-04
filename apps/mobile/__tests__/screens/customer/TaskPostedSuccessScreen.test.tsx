@@ -63,7 +63,7 @@ describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
   it('renders primary and secondary CTAs', () => {
     render(<TaskPostedSuccessScreen />);
     expect(screen.getByText('View Task')).toBeTruthy();
-    expect(screen.getByText('Done')).toBeTruthy();
+    expect(screen.getByText('Дуусгах')).toBeTruthy();
   });
 
   it('CTA navigates to task detail when task id is present', () => {

@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     height: spacing.lg,
     backgroundColor: colors.chipInactive,
     borderRadius: radius.xs,
-    width: '100%',
+    alignSelf: 'stretch',
   },
   skeletonLineShort: {
     height: spacing.md,

@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     color: colors.cardForeground,
   },
   preview: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: 200,
     borderRadius: 8,
     backgroundColor: colors.muted,

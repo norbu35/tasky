@@ -7,9 +7,8 @@ services:
     container_name: tasky-app
     environment:
       PORT: 8080
-      # In-container dev uses production profile wiring (PgBouncer + service DNS),
-      # while external deployment hardening remains out of scope for now.
-      SPRING_PROFILES_ACTIVE: prod
+      # Dev compose should run with local profile so dev-auth bypass is allowed.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
       POSTGRES_HOST: pgbouncer
       POSTGRES_PORT: 5432
       PGBOUNCER_PORT: 5432
@@ -32,7 +31,7 @@ services:
       TASKY_QPAY_WEBHOOK_SECRET: ${TASKY_QPAY_WEBHOOK_SECRET}
       TASKY_CORS_ALLOWED_ORIGINS: ${TASKY_CORS_ALLOWED_ORIGINS:-http://localhost:5173}
       TASKY_WEBSOCKET_ALLOWED_ORIGINS: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS:-http://localhost:5173}
-      TASKY_DEV_AUTH_ENABLED: "false"
+      TASKY_DEV_AUTH_ENABLED: ${TASKY_DEV_AUTH_ENABLED:-false}
       TASKY_OTP_TEST_CODE: ""
     ports:
       - "${APP_PORT:-8080}:8080"

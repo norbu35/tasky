@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
   },
   contextImage: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   contextCopy: {

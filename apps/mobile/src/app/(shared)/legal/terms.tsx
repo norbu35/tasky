@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   errorDocumentLine: {
     height: 8,
-    width: '100%',
+    alignSelf: 'stretch',
     borderRadius: mobileTheme.radius.xs,
     backgroundColor: colors.border,
   },

@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   reviewThumb: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: 96,
     borderRadius: radius.md,
     backgroundColor: colors.muted,

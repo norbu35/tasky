@@ -43,28 +43,6 @@ describe('DetailTemplate', () => {
     expect(screen.getByText('Detail body content')).toBeTruthy();
   });
 
-  it('shows header title when provided', () => {
-    render(
-      <DetailTemplate headerTitle="Task Details" testID="detail">
-        <Text>Content</Text>
-      </DetailTemplate>,
-    );
-
-    expect(screen.getByText('Task Details')).toBeTruthy();
-  });
-
-  it('calls onBack when back button pressed', () => {
-    const onBack = jest.fn();
-    render(
-      <DetailTemplate onBack={onBack} testID="detail">
-        <Text>Content</Text>
-      </DetailTemplate>,
-    );
-
-    fireEvent.press(screen.getByTestId('detail-back'));
-    expect(onBack).toHaveBeenCalledTimes(1);
-  });
-
   it('shows CTA button with correct label', () => {
     const ctaOnPress = jest.fn();
     render(

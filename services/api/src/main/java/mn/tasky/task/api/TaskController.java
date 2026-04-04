@@ -304,7 +304,7 @@ public class TaskController {
                         body.locationText(),
                         body.scheduledAt(),
                         body.photoKeys() != null ? body.photoKeys() : List.of(),
-                        body.intakeAnswersJson(),
+                        body.intakeAnswersJson() != null ? body.intakeAnswersJson().toString() : null,
                         body.intakeSchemaVersion(),
                         body.scopeSummary(),
                         body.draftId()));
@@ -754,7 +754,9 @@ public class TaskController {
             HttpServletRequest request) {
         try {
             TaskDraft updated =
-                    taskDraftService.updateDraft(id, principal.userId(), body.intakeAnswers(), body.summaryDraft());
+                    taskDraftService.updateDraft(id, principal.userId(),
+                            body.intakeAnswers() != null ? body.intakeAnswers().toString() : null,
+                            body.summaryDraft());
             return ResponseEntity.ok(TaskDraftResponse.from(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -76,7 +76,7 @@ export default function RoleSelectScreen() {
           </View>
           {isSelected ? (
             <View testID={`role-card-${role}-check`} style={styles.checkMark}>
-              <Check size={14} color="#ffffff" />
+              <Check size={14} color={colors.primaryForeground} />
             </View>
           ) : null}
         </View>
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   roleCardSelected: {
     borderWidth: 2,
     borderColor: colors.primaryDeep,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
     ...elevations.soft,
   },
   roleCardContent: {
@@ -185,10 +185,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   roleIconSelected: {
-    backgroundColor: '#d2e4ff',
+    backgroundColor: colors.secondary,
   },
   roleIconUnselected: {
-    backgroundColor: '#e3e2e0',
+    backgroundColor: colors.chipInactive,
   },
   roleCopy: {
     flex: 1,

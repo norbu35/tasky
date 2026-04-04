@@ -14,7 +14,7 @@ export default function TabsLayout() {
   const { isCustomer } = useRole();
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   tabItem: {
     borderRadius: radius.md,
     paddingVertical: 6,
-    paddingHorizontal: 16,
+    flex: 1,
   },
   tabLabel: {
     fontSize: typography.navLabel,
@@ -106,5 +106,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: radius.md,
     borderTopRightRadius: radius.md,
     overflow: 'hidden',
+  },
+  container: {
+    flex: 1,
   },
 });

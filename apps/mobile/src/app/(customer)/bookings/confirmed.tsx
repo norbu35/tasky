@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.muted,
   },
   providerAvatar: {
-    width: '100%',
+    alignSelf: 'stretch',
     height: '100%',
   },
   providerCopy: {

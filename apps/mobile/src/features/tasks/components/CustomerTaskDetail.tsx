@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   bentoCardSpan: {
-    width: '100%',
+    alignSelf: 'stretch',
   },
   bentoLabel: {
     fontSize: typography.caption,

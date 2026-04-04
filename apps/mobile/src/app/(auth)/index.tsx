@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   illustration: {
-    width: '100%',
+    alignSelf: 'stretch',
     aspectRatio: 326 / 128,
     resizeMode: 'cover',
   },

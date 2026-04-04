@@ -127,7 +127,7 @@ export function LoginForm() {
             variant="ghost"
             onPress={() => setStep(step === 'otp' ? 'phone' : 'options')}
             disabled={busy}
-            style={{ marginTop: 8 }}
+            style={styles.backButton}
           />
         )}
       </View>
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     color: colors.foreground,
   },
   optionsContainer: {
-    width: '100%',
+    alignSelf: 'stretch',
   },
   fbButton: {
     backgroundColor: colors.accent, // Facebook-style CTA
@@ -191,5 +191,8 @@ const styles = StyleSheet.create({
     color: colors.danger,
     marginTop: spacing.md,
     textAlign: 'center',
+  },
+  backButton: {
+    marginTop: 8,
   },
 });

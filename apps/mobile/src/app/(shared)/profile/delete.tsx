@@ -166,6 +166,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   button: {
-    width: '100%',
+    alignSelf: 'stretch',
   },
 });

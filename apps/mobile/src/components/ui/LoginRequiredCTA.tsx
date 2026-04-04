@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   button: {
-    width: '100%',
+    alignSelf: 'stretch',
     maxWidth: 300,
   },
 });

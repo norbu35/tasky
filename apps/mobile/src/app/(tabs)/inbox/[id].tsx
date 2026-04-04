@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     height: spacing.xl,
   },
   bubbleWrapper: {
-    width: '100%',
+    alignSelf: 'stretch',
     marginBottom: spacing.md,
     flexDirection: 'row',
   },

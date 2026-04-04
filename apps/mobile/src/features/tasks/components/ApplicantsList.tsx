@@ -241,7 +241,7 @@ export function ApplicantsList() {
 
       {/* Content */}
       {isLoading ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={colors.primaryDeep} />
         </View>
       ) : applicants.length === 0 ? (
@@ -473,5 +473,10 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
