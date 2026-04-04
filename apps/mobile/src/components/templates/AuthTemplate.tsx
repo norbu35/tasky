@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.primaryDeep,
     textAlign: 'center',
-    fontFamily: 'Manrope',
+    fontFamily: 'Manrope_700Bold',
     marginBottom: spacing['2xl'],
   },
   headline: {

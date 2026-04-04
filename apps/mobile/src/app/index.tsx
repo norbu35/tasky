@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 56,
     fontWeight: '700',
     color: colors.primaryForeground,
-    fontFamily: 'Manrope',
+    fontFamily: 'Manrope_700Bold',
     marginBottom: spacing.sm,
     letterSpacing: -1.8,
   },

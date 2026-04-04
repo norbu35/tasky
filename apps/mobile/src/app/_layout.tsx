@@ -11,6 +11,7 @@ import { RoleProvider } from '../providers/RoleProvider';
 import '../utils/i18n';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import '../../global.css';
 
 // Firebase native modules only work in EAS/bare builds, not Expo Go.
 const isExpoGo = Constants.executionEnvironment === 'storeClient';

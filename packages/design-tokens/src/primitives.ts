@@ -50,27 +50,27 @@ const typography = {
   families: {
     sans: {
       web: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'PlusJakartaSans-Regular',
+      native: 'PlusJakartaSans_400Regular',
     },
     sansMedium: {
       web: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'PlusJakartaSans-Medium',
+      native: 'PlusJakartaSans_500Medium',
     },
     sansSemibold: {
       web: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'PlusJakartaSans-SemiBold',
+      native: 'PlusJakartaSans_600SemiBold',
     },
     sansBold: {
       web: "'Plus Jakarta Sans', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'PlusJakartaSans-Bold',
+      native: 'PlusJakartaSans_700Bold',
     },
     display: {
       web: "'Manrope', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'Manrope-SemiBold',
+      native: 'Manrope_600SemiBold',
     },
     displayBold: {
       web: "'Manrope', Roboto, system-ui, -apple-system, sans-serif",
-      native: 'Manrope-Bold',
+      native: 'Manrope_700Bold',
     },
   },
   fontSizes: {
