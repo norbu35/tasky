@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: typography.body,
     color: colors.foreground,
-    lineHeight: 22,
+    lineHeight: typography.body * 1.375,
   },
   scheduleText: {
     fontSize: typography.body,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   paymentNoteText: {
     fontSize: typography.micro,
     color: colors.mutedForeground,
-    lineHeight: 18,
+    lineHeight: typography.micro * 1.8,
   },
   noteText: {
     fontSize: typography.caption,

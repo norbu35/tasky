@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 32,
-    lineHeight: 38,
+    lineHeight: 32 * (19 / 16),
     fontWeight: '800',
     color: colors.card,
   },

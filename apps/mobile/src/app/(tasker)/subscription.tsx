@@ -87,7 +87,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   cardTitle: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep },
-  description: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
+  description: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
   activeBadge: {
     alignSelf: 'flex-start',
     backgroundColor: colors.trustMuted,

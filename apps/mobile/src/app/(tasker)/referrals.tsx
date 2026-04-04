@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontSize: 28,
-    lineHeight: 34,
+    lineHeight: 28 * (17 / 14),
     fontWeight: '800',
     color: colors.card,
   },

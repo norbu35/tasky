@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   heroValue: {
     fontSize: 36,
-    lineHeight: 42,
+    lineHeight: 36 * (7 / 6),
     fontWeight: '800',
     color: colors.card,
   },
