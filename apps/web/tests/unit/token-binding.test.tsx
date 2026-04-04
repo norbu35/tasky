@@ -18,8 +18,10 @@ describe('Token Binding', () => {
 
     expect(stylesSource).toContain("@import '@tasky/design-tokens/tokens.css'");
     expect(stylesSource).toContain('--background: var(--tasky-color-background);');
+    expect(stylesSource).toContain('--text-secondary: var(--tasky-color-text-secondary);');
     expect(sharedTokenSource).toContain('--tasky-color-primary:');
-    expect(tailwindConfigSource).toContain('background: "hsl(var(--background))"');
+    expect(tailwindConfigSource).toContain('webTokens');
+    expect(tailwindConfigSource).toContain("background: 'hsl(var(--background))'");
   });
 
   it('TID-TASK-115-WEB-TOKEN-PLATFORM-OUTPUTS derive web bindings from the canonical semantic graph', () => {

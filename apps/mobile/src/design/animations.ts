@@ -1,19 +1,26 @@
 import { Easing } from 'react-native-reanimated';
+import { motionTokens } from '@tasky/design-tokens';
 
-// Motion tokens from design-system-additions.yaml
-export const durations = {
-  instant: 80,
-  fast: 150,
-  normal: 250,
-  slow: 400,
-  skeleton: 1500,
-} as const;
+const motionCurvePattern = /^cubic-bezier\(([^)]+)\)$/;
+
+const toEasing = (curve: string) => {
+  const match = motionCurvePattern.exec(curve);
+
+  if (!match) {
+    throw new Error(`Unsupported motion curve token: ${curve}`);
+  }
+
+  const [x1, y1, x2, y2] = match[1].split(',').map((value) => Number.parseFloat(value.trim()));
+  return Easing.bezier(x1, y1, x2, y2);
+};
+
+export const durations = motionTokens.duration;
 
 export const easings = {
-  standard: Easing.bezier(0.4, 0, 0.2, 1),
-  decelerate: Easing.bezier(0, 0, 0.2, 1),
-  accelerate: Easing.bezier(0.4, 0, 1, 1),
-  spring: Easing.bezier(0.34, 1.56, 0.64, 1),
+  standard: toEasing(motionTokens.easing.standard),
+  decelerate: toEasing(motionTokens.easing.decelerate),
+  accelerate: toEasing(motionTokens.easing.accelerate),
+  spring: toEasing(motionTokens.easing.spring),
 } as const;
 
 export const animationPresets = {

@@ -1,7 +1,17 @@
 import { Platform, type ViewStyle } from 'react-native';
-import { designTokens } from '@tasky/design-tokens';
+import { nativeTokens, semanticTokens } from '@tasky/design-tokens';
 
-const { shadows } = designTokens;
+const { shadows } = nativeTokens;
+const primaryDeep = semanticTokens.colors.primaryDeep.hex;
+
+const hexToRgba = (hex: string, alpha: number) => {
+  const normalized = hex.replace('#', '');
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${alpha.toFixed(2)})`;
+};
 
 export const elevations = {
   none: {},
@@ -37,7 +47,7 @@ export const elevations = {
 
 // Overlay scrims from design-system-additions.yaml — branded primaryDeep, not generic black
 export const overlays = {
-  modal: 'rgba(16, 38, 56, 0.50)',
-  sheet: 'rgba(16, 38, 56, 0.35)',
-  toast: 'rgba(16, 38, 56, 0.20)',
+  modal: hexToRgba(primaryDeep, 0.5),
+  sheet: hexToRgba(primaryDeep, 0.35),
+  toast: hexToRgba(primaryDeep, 0.2),
 } as const;

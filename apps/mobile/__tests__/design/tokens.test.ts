@@ -9,14 +9,18 @@ describe('Design Token Boundaries', () => {
       'utf8',
     );
     const elevationsSource = readFileSync(resolve(process.cwd(), 'src/design/elevations.ts'), 'utf8');
+    const animationsSource = readFileSync(resolve(process.cwd(), 'src/design/animations.ts'), 'utf8');
 
     expect(tokenAdapterSource).toContain("from '@tasky/design-tokens'");
     expect(tokenAdapterSource).not.toContain('packages/design-tokens');
     expect(elevationsSource).toContain("from '@tasky/design-tokens'");
     expect(elevationsSource).not.toContain('packages/design-tokens');
+    expect(animationsSource).toContain("from '@tasky/design-tokens'");
+    expect(animationsSource).not.toContain('packages/design-tokens');
     expect(tokenAdapterSource).toContain('nativeTokens');
+    expect(elevationsSource).toContain('nativeTokens');
+    expect(animationsSource).toContain('motionTokens');
     expect(tokenAdapterSource).not.toContain('designTokens.colors.primary.hex');
-    expect(tokenAdapterSource).toContain('motionTokens');
   });
 
   it('TID-TASK-115-MOBILE-NATIVE-TOKENS are derived from the canonical semantic token graph', () => {

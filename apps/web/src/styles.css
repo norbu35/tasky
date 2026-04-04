@@ -40,7 +40,11 @@
   --verified: var(--tasky-color-verified);
   --subtle-violet: var(--tasky-color-subtle-violet);
   --chip-inactive: var(--tasky-color-chip-inactive);
+  --text-secondary: var(--tasky-color-text-secondary);
+  --text-tertiary: var(--tasky-color-text-tertiary);
   --nav-inactive: var(--tasky-color-nav-inactive);
+  --font-sans: var(--tasky-font-family-sans);
+  --font-display: var(--tasky-font-family-display);
 }
 
 * {
