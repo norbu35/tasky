@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   helpCard: {
     backgroundColor: colors.primaryDeep,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.md,
   },

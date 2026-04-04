@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   pinCore: {
     width: 56,
     height: 56,
-    borderRadius: 18,
+    borderRadius: radius.lg,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',

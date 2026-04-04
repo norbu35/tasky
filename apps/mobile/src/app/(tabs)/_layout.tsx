@@ -79,9 +79,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     elevation: 0,
     height: Platform.OS === 'ios' ? 88 : 64,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 8,
-    paddingTop: 8,
-    paddingHorizontal: 17,
+    paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.sm,
+    paddingTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
     backgroundColor: 'transparent',
     borderTopLeftRadius: radius.md,
     borderTopRightRadius: radius.md,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   tabItem: {
     borderRadius: radius.md,
-    paddingVertical: 6,
+    paddingVertical: spacing.xs + spacing.xs / 2,
     flex: 1,
   },
   tabLabel: {
