@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     backgroundColor: `${colors.primary}10`,
   },

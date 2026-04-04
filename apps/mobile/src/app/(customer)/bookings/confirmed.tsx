@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   sectionHeadingPill: {
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     backgroundColor: colors.muted,
     alignSelf: 'center',
   },
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   },
   providerCopy: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   providerLabel: {
     fontSize: typography.micro,

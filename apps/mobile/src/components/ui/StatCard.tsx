@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 interface StatCardProps {
   value: string;
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginTop: 4,
+    marginTop: spacing.xs,
     textAlign: 'center',
   },
 });

@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     lineHeight: typography.body * 1.5,
     color: colors.primaryDeep,
-    marginTop: 1,
+    marginTop: spacing.xs / 4,
   },
   clauseText: {
     fontSize: typography.body,

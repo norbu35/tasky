@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   cardIdentityCopy: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   cardTitle: {
     fontSize: typography.body,

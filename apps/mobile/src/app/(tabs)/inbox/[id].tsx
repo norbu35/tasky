@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    marginTop: 2,
+    marginTop: spacing.xs / 2,
   },
   onlineDot: {
     width: 8,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   contextBody: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   contextLabel: {
     fontSize: typography.micro,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   },
   contextStatusPill: {
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     backgroundColor: colors.accent,
   },

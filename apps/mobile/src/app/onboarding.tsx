@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.xl,
-    gap: 6,
+    gap: spacing.md / 2,
   },
   dot: {
     height: 3,

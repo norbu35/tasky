@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   sectionPill: {
     minWidth: 28,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     backgroundColor: `${colors.primary}12`,
     color: colors.primaryDeep,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   applicantChip: {
     paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     backgroundColor: `${colors.primaryForeground}1A`,
   },
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   },
   taskerInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   taskerName: {
     fontSize: typography.subtitle,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   ratingText: {
     fontSize: typography.label,

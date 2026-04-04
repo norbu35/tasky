@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.md / 2,
   },
   ratingText: {
     fontSize: typography.subtitle,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   verifiedRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.md / 2,
     backgroundColor: colors.trust,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   memberRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.md / 2,
   },
   memberText: {
     fontSize: typography.caption,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   reviewRating: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   reviewRatingText: {
     fontSize: typography.label,

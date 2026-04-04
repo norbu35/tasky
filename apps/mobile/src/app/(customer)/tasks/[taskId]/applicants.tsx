@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   headerCopy: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   pageTitle: {
     fontSize: typography.heading,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   cardName: {
     fontSize: typography.subtitle,
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   ratingValue: {
     fontSize: typography.label,
@@ -379,9 +379,9 @@ const styles = StyleSheet.create({
   recommendedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     backgroundColor: `${colors.trust}22`,
   },
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   },
   confirmTaskerCopy: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   confirmTaskerName: {
     fontSize: typography.subtitle,

@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   promoBannerBody: {
     fontSize: typography.caption,
     color: `${colors.primaryForeground}99`,
-    marginTop: 4,
+    marginTop: spacing.xs,
     lineHeight: typography.caption * 1.5,
   },
   skeletonList: {

@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   preview: {
     fontSize: typography.label,
     color: colors.mutedForeground,
-    marginTop: 2,
+    marginTop: spacing.xs / 2,
   },
   unreadDotWrap: {
     width: 10,

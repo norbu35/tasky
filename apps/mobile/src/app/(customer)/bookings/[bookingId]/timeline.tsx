@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   contextCopy: {
     flex: 1,
-    gap: 2,
+    gap: spacing.xs / 2,
   },
   contextId: {
     fontSize: typography.micro,

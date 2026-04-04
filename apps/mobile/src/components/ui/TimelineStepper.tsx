@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   line: {
     width: 2,
@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: typography.caption,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: spacing.xs / 2,
   },
 });

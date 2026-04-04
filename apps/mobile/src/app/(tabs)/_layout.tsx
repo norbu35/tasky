@@ -7,7 +7,7 @@ import { FAB } from '../../components/ui/FAB';
 import { useTranslation } from 'react-i18next';
 import { useRole } from '../../providers/RoleProvider';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.275,
     textTransform: 'uppercase',
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   blurBackground: {
     borderTopLeftRadius: radius.md,

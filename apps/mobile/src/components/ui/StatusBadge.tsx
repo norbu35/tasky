@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
@@ -32,7 +32,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: radius.full,
     alignSelf: 'flex-start',
   },

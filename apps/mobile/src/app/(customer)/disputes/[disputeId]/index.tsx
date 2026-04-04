@@ -531,14 +531,14 @@ const styles = StyleSheet.create({
     color: colors.primaryDeep,
   },
   summaryRow: {
-    gap: 4,
+    gap: spacing.xs,
   },
   summaryRowLast: {
-    gap: 4,
+    gap: spacing.xs,
     paddingBottom: 2,
   },
   summaryReasonWrap: {
-    gap: 4,
+    gap: spacing.xs,
   },
   summaryLabel: {
     fontSize: typography.caption,
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     backgroundColor: colors.muted,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
   },
   timelineDateText: {
     fontSize: typography.caption,
