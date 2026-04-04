@@ -27,7 +27,9 @@
       "facebookButton": "Facebook-ээр нэвтрэх",
       "terms": "Үйлчилгээний нөхцөл",
       "privacy": "Нууцлалын бодлого",
-      "error": "Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу."
+      "error": "Нэвтрэхэд алдаа гарлаа. Дахин оролдоно уу.",
+      "copyright": "© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.",
+      "languageSwitcher": "MN/EN"
     },
     "otp": {
       "heading": "Баталгаажуулах код",
@@ -50,7 +52,8 @@
       "submit": "Код авах",
       "skip": "Дараа хийх",
       "errorInvalidPhone": "Утасны дугаар буруу байна",
-      "securityNote": "АЮУЛГҮЙ БАЙДЛЫН ХАМГААЛАЛТТАЙ"
+      "securityNote": "АЮУЛГҮЙ БАЙДЛЫН ХАМГААЛАЛТТАЙ",
+      "errorNetwork": "Интернэт холболтоо шалгана уу"
     },
     "onboarding": {
       "slide1Title": "Найдвартай гүйцэтгэгч олох",
@@ -61,7 +64,8 @@
       "slide3Body": "Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг",
       "skip": "Алгасах",
       "next": "Дараагийх",
-      "getStarted": "Эхлэх"
+      "getStarted": "Эхлэх",
+      "badge": "БАТАЛГААЖСАН"
     },
     "roleSelection": {
       "title": "Та хэн бэ?",
@@ -74,7 +78,9 @@
       "confirmSheetTitle": "Та итгэлтэй байна уу?",
       "confirmSheetMessage": "{{role}} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.",
       "confirmSheetPrimary": "Тийм, баталгаажуулах",
-      "confirmSheetSecondary": "Буцах"
+      "confirmSheetSecondary": "Буцах",
+      "header": " ",
+      "heading": "Баталгаажуулалт хийж, ажил аваарай!"
     },
     "permissions": {
       "cameraTitle": "Камерын зөвшөөрөл",
@@ -138,7 +144,10 @@
     "optional": "заавал биш",
     "yes": "Тийм",
     "no": "Үгүй",
-    "yesterday": "Өчигдөр"
+    "yesterday": "Өчигдөр",
+    "addPhoto": "Add Photo",
+    "continue": "Үргэлжлүүлэх",
+    "tryAgain": "Дахин оролдох"
   },
   "status": {
     "open": "НЭЭЛТТЭЙ",
@@ -336,7 +345,8 @@
     "electricianDesc": "Кабель, гэрэлтүүлэг, залгуур",
     "electric": "Цахилгаан",
     "gardening": "Цэцэрлэгжүүлэлт",
-    "gardeningDesc": "Хадах, суулгах, тариалах"
+    "gardeningDesc": "Хадах, суулгах, тариалах",
+    "empty": "No categories available"
   },
   "verification": {
     "title": "Иргэний үнэмлэх баталгаажуулалт",
@@ -395,7 +405,12 @@
       "filterAssigned": "Томилогдсон",
       "filterCompleted": "Дууссан",
       "heroEyebrow": "Таны ажлын самбар",
-      "heroTitle": "Нээлттэй, томилогдсон, дууссан даалгавруудаа нэг дороос хянаарай"
+      "heroTitle": "Нээлттэй, томилогдсон, дууссан даалгавруудаа нэг дороос хянаарай",
+      "categoryFallback": "Task",
+      "errorNetwork": "Интернэт холболтоо шалгана уу",
+      "errorTitle": "Алдаа гарлаа",
+      "greeting": "Сайн байна уу",
+      "noTitle": "Untitled task"
     },
     "postTask": {
       "categoryTitle": "Танд юунд тусламж хэрэгтэй вэ?",
@@ -439,7 +454,55 @@
       "successBody": "Ойролцоох гүйцэтгэгчдэд мэдэгдэл илгээгдлээ",
       "successNext1": "Удахгүй өргөдлүүд ирнэ",
       "successNext2": "Гүйцэтгэгчийн профайл болон үнэлгээг үзнэ үү",
-      "successCta": "Миний даалгавруудыг харах"
+      "successCta": "Миний даалгавруудыг харах",
+      "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
+      "categoryLabel": "Category",
+      "categoryRetry": "Дахин оролдох",
+      "edit": "Edit",
+      "featuredTitle": "Мэргэжлийн зөвлөгөө",
+      "finalStep": "Final Step",
+      "flexible": "Flexible",
+      "intakeInstruction": "Fill in the task details",
+      "intakePageTitle": "Task Details",
+      "locationDescriptionLabel": "Location description",
+      "locationInstruction": "Pin the task location on the map",
+      "locationPageTitle": "Set Location",
+      "locationPinnedArea": "Ulaanbaatar, Bayangol district",
+      "noPhotos": "No photos added",
+      "notSet": "Not set",
+      "photosHeroTitle": "Show your task workspace",
+      "photosInstruction": "Add photos related to your task (up to 3)",
+      "photosOptional": "Photos are optional — you can skip",
+      "photosProgressHint": "Almost done",
+      "photosSkip": "Алгасах",
+      "pickHere": "Pick here",
+      "quickLocationHome": "Home",
+      "quickLocationSukhbaatar": "Sukhbaatar Square",
+      "quickLocationWork": "Work",
+      "quickLocationsLabel": "Popular locations",
+      "removePhoto": "Remove photo",
+      "scheduleHelper": "Огноо болон цагийг сонгоно уу",
+      "scheduleLabel": "Хуваарь",
+      "schedulePageTitle": "Schedule & Budget",
+      "schedulePastError": "Cannot select a past date/time",
+      "schedulePickerHint": "Confirm your selection",
+      "searchCategories": "Ангилал хайх...",
+      "sectionBudget": "Төсөв",
+      "sectionCategory": "Ангилал",
+      "sectionDetails": "Даалгаврын дэлгэрэнгүй",
+      "sectionLocation": "Байршил",
+      "sectionPhotos": "Зурагнууд",
+      "sectionSchedule": "Товлосон цаг",
+      "sectionScope": "Job Scope Summary",
+      "stepCategory": "Алхам 1/7 • Ангилал",
+      "successBadge": "БАТАЛГААЖСАН",
+      "successNextLabel": "ДАРААГИЙН АЛХАМ",
+      "successNextTitle": "What happens next",
+      "validation": {
+        "required": "This field is required"
+      },
+      "viewLess": "View less",
+      "viewMore": "View more"
     },
     "taskDetail": {
       "applicants": "Өргөдөл гаргагчид",
@@ -449,7 +512,17 @@
       "messageTasker": "Гүйцэтгэгчид мессеж",
       "markComplete": "Дуусгасан гэж тэмдэглэх",
       "completed": "Дууссан",
-      "cancelled": "Цуцлагдсан"
+      "cancelled": "Цуцлагдсан",
+      "assignedTasker": "Томилогдсон гүйцэтгэгч",
+      "cancelledBody": "This task is no longer active",
+      "cancelledTitle": "Task cancelled",
+      "completedBody": "Thanks for using Tasky",
+      "completedTitle": "Task completed",
+      "errorNetwork": "Интернэт холболтоо шалгана уу",
+      "noPhotos": "No photos",
+      "sectionDetails": "Даалгаврын дэлгэрэнгүй",
+      "sectionPhotos": "Зурагнууд",
+      "title": "Гүйцэтгэгч олдсонгүй"
     },
     "applicants": {
       "title": "Өргөдөл гаргагчид",
@@ -457,7 +530,14 @@
       "emptyDescription": "Гүйцэтгэгчид таны ажилд хүсэлт илгээх үед энд харагдах болно.",
       "accept": "Зөвшөөрөх",
       "viewProfile": "Профайл харах",
-      "recommended": "Санал болгосон"
+      "recommended": "Санал болгосон",
+      "confirmCancel": "Буцах",
+      "confirmCta": "Баталгаажуулах",
+      "confirmTitle": "Энэ гүйцэтгэгчийг сонгох уу?",
+      "count": "{{count}} applications",
+      "errorNetwork": "Интернэт холболтоо шалгана уу",
+      "pageTitle": "Нууцлалын бодлого",
+      "taskTitleFallback": "Task"
     },
     "bookings": {
       "title": "Миний захиалгууд",
@@ -491,7 +571,77 @@
       "cancelLateIncident": "Ажил эхлэхэд 4-өөс бага цаг үлдсэн. Энэ цуцлалт найдвартай байдалд бүртгэгдэнэ.",
       "cancelIncidentWarning": "Сүүлийн 28 хоногт 1 удаа цуцалсан байна. Дахин цуцалбал зэрэглэл буурах эрсдэлтэй.",
       "confirmCompletionDesc": "Баталгаажуулсны дараа та үнэлгээ үлдээх боломжтой. Төлбөрийг Гүйцэтгэгчид шууд төлнө.",
-      "noShowWarning": "Мэдэгдсэний дараа захиалгыг шалгана. Худал мэдээлэл өгвөл арга хэмжээтэй."
+      "noShowWarning": "Мэдэгдсэний дараа захиалгыг шалгана. Худал мэдээлэл өгвөл арга хэмжээтэй.",
+      "calendarPromptTitle": "Календарьт нэмэх үү?",
+      "cancelDetailsPlaceholder": "Дэлгэрэнгүй тайлбар...",
+      "cancelPrompt": "Цуцлах шалтгаанаа сонгоно уу",
+      "cancelQuestion": "Захиалга цуцлах уу?",
+      "confirmCompletionTitle": "Ажил дууссан уу?",
+      "confirmedHeadline": "Захиалга баталгаажлаа!",
+      "ctaCancel": "Захиалга цуцлах",
+      "ctaCancelConfirm": "Тийм, цуцлах",
+      "ctaConfirm": "Батлах",
+      "ctaConfirmComplete": "Дуусгасныг баталгаажуулах",
+      "ctaDismiss": "Хаах",
+      "ctaDone": "Дууслаа",
+      "ctaFlagNoShow": "Ирээгүй гэж тэмдэглэх",
+      "ctaGoBack": "Буцах",
+      "ctaLeaveReview": "Үнэлгээ өгөх",
+      "ctaMessage": "Зурвас илгээх",
+      "ctaNotYet": "Үгүй, ирээгүй",
+      "ctaRebook": "Дахин захиалах",
+      "ctaRebookSubmit": "Continue to Booking",
+      "ctaReportIssue": "Асуудал мэдэгдэх",
+      "ctaReschedule": "Цаг өөрчлөх",
+      "ctaSubmitReschedule": "Хүсэлт илгээх",
+      "ctaTaskerArrived": "Тийм, ирсэн",
+      "ctaTimeline": "Түүх харах",
+      "ctaViewBooking": "Захиалга харах",
+      "detailTitle": "Booking Detail",
+      "disclaimerAcknowledge": "Би энэ нөхцлийг зөвшөөрч байна",
+      "dispute": "Raise Dispute",
+      "emptyCta": "Даалгавар оруулах",
+      "escrow": "Escrow",
+      "helpCta": "Оператортой холбогдох",
+      "helpTitle": "Тусламж хэрэгтэй юу?",
+      "helperReason": "Заавал биш",
+      "labelBudget": "Шинэ төсөв",
+      "labelNewSchedule": "New Schedule",
+      "labelReason": "Шалтгаан",
+      "nextStepsHeading": "Дараагийн алхам",
+      "nextStepsTitle": "Товлосон цагтаа ирнэ",
+      "noShowFlagTitle": "Tasker did not show up",
+      "noShowFlaggedSuccess": "No-show flagged successfully",
+      "noShowReminderTitle": "Has the Tasker arrived?",
+      "pageTitle": "Нууцлалын бодлого",
+      "paymentNote": "Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно",
+      "prefilledNote": "Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой.",
+      "providerLabel": "Гүйцэтгэгч",
+      "providerName": "Б. Тэмүүлэн",
+      "rebookBudgetLow": "Budget must be above ₮1,001",
+      "scheduleUnavailable": "Хуваарь тодорхойгүй",
+      "sectionAvailableTimes": "Боломжит цагууд",
+      "sectionCurrentSchedule": "Одоогийн хуваарь",
+      "sectionDisclaimer": "Хариуцлагын мэдэгдэл",
+      "sectionPreviousTasker": "Previous Tasker",
+      "sectionTask": "Даалгаврын мэдээлэл",
+      "sectionTaskDetails": "Task Details",
+      "sectionTaskSummary": "Даалгаврын товч",
+      "sectionTasker": "Гүйцэтгэгч",
+      "statusAccepted": "Зөвшөөрсөн",
+      "statusAssigned": "Баталгаажсан",
+      "statusAwaiting": "Хүлээж байна",
+      "statusCancelled": "Цуцалсан",
+      "statusCompleted": "Дууссан",
+      "statusDeclined": "Татгалзсан",
+      "statusExpired": "Хугацаа дууссан",
+      "statusMarkedDone": "Marked as done",
+      "statusNoShow": "Ирээгүй",
+      "stepChooseDay": "Өдөр сонгох",
+      "stepConfirm": "Баталгаажуулах",
+      "timelineFallbackTitle": "Даалгаврын дэлгэрэнгүй",
+      "timelineTasker": "Гүйцэтгэгч",
+      "timelineTaskerFallback": "Гүйцэтгэгч"
     },
     "disputes": {
       "raiseTitle": "Асуудал мэдэгдэх",
@@ -502,20 +652,70 @@
       "statusTitle": "Маргааны статус",
       "statusOpen": "Хянагдаж байна",
       "statusEscalated": "Дээшлүүлэгдсэн",
-      "statusResolved": "Шийдвэрлэгдсэн"
+      "statusResolved": "Шийдвэрлэгдсэн",
+      "ctaSubmit": "Сэтгэгдэл илгээх",
+      "defaultCategory": "Чанарын гомдол",
+      "detailBooking": "Захиалгын дугаар",
+      "detailReason": "Гомдлын шалтгаан",
+      "detailSubmitted": "Илгээсэн огноо",
+      "detailType": "Төрөл",
+      "errorToast": "Захиалгын мэдээлэл ачааллахад алдаа гарлаа",
+      "labelDescription": "Дэлгэрэнгүй тайлбар",
+      "labelEvidence": "Нотлох баримт",
+      "labelReason": "Шалтгаан",
+      "noEvidence": "Ноотлох баримт байхгүй",
+      "pageTitle": "Нууцлалын бодлого",
+      "resolutionEscalated": "Маргааныг нэмэлт шалгалтад шилжүүлсэн.",
+      "resolutionOpen": "Маргаан одоогоор хянагдаж байна.",
+      "resolutionResolvedCustomer": "Маргаан таны талд шийдэгдлээ.",
+      "retry": "Дахин оролдох",
+      "sectionBookingRef": "Захиалгын мэдээлэл",
+      "sectionEvidence": "Илгээсэн нотлох баримт",
+      "sectionProcess": "Үйл явц",
+      "sectionResolution": "Шийдвэр",
+      "sectionSummary": "Маргааны товч",
+      "statusFinal": "Хүлээгдэж байна",
+      "timelineAssigned": "Хянагч хуваарилагдсан",
+      "timelineDecision": "Шийдвэр",
+      "timelineSubmitted": "Маргаан илгээсэн",
+      "timelineSubmittedDesc": "Системд амжилттай бүртгэгдсэн"
     },
     "noApplicantRescue": {
       "title": "Одоохондоо өргөдөл байхгүй",
       "adjustBudget": "Үнийг нэмэгдүүлэх",
       "adjustSchedule": "Хуваарь өөрчлөх",
-      "requestConcierge": "Тусламж хүсэх"
+      "requestConcierge": "Тусламж хүсэх",
+      "dismiss": "Хаах"
     },
     "taskerProfile": {
       "reviews": "Үнэлгээ",
       "completedJobs": "Гүйцэтгэсэн ажлууд",
       "rating": "Үнэлгээний дундаж",
       "responseTime": "Хариу өгөх хугацаа",
-      "verified": "Баталгаажсан"
+      "verified": "Баталгаажсан",
+      "about": "About",
+      "categories": "Categories",
+      "ctaMessage": "Зурвас илгээх",
+      "errorNetwork": "Интернэт холболтоо шалгана уу",
+      "memberSince": "Бүртгүүлсэн: {date}",
+      "noBio": "No bio yet",
+      "noCategories": "No categories listed",
+      "noReviews": "No reviews yet",
+      "title": "Гүйцэтгэгч олдсонгүй"
+    },
+    "cancelSheet": {
+      "bodyOpen": "Энэ даалгаврыг цуцлахад ямар нэг торгууль ногдохгүй",
+      "confirm": "Yes, Cancel",
+      "goBack": "Буцах",
+      "titleAssigned": "Cancel this booking?",
+      "titleLate": "Late Cancellation",
+      "titleOpen": "Даалгавар цуцлах уу?"
+    },
+    "dispute": {
+      "statusTitle": "Dispute"
+    },
+    "rebook": {
+      "title": "Гүйцэтгэгч олдсонгүй"
     }
   },
   "tasker": {
@@ -527,7 +727,11 @@
       "filterDistance": "Зай",
       "apply": "Өргөдөл гаргах",
       "applied": "Өргөдөл гаргасан",
-      "capReached": "Өргөдлийн хязгаарт хүрлээ"
+      "capReached": "Өргөдлийн хязгаарт хүрлээ",
+      "emptyCta": "Даалгавар оруулах",
+      "searchPlaceholder": "Асуулт хайх...",
+      "subtitle": "Шинэ даалгаврууд ойрхон",
+      "trustTitle": "Баталгаажсан даалгавар гүйцэтгэгч"
     },
     "taskDetail": {
       "applyButton": "Ажилд өргөдөл гаргах",
@@ -536,7 +740,14 @@
       "alreadyApplied": "Өргөдөл илгээгдлээ",
       "applicationSentTitle": "Өргөдөл илгээгдлээ!",
       "applicationSentBody": "Захиалагч таны профайлыг хянана",
-      "applicationSentCta": "Бусад ажлуудыг харах"
+      "applicationSentCta": "Бусад ажлуудыг харах",
+      "messageButton": "Зурвас илгээх",
+      "nextStep1": "Захиалагч анкетуудыг хянаж, сонголт хийнэ",
+      "nextStep2": "Таныг сонговол мэдэгдэл авна",
+      "nextStep3": "Бусад даалгавруудад ч анкет илгээх боломжтой",
+      "photosLabel": "Зурагнууд",
+      "trustTitle": "Platform trust",
+      "viewTask": "Даалгавар харах"
     },
     "verification": {
       "gateTitle": "Баталгаажуулах",
@@ -575,7 +786,9 @@
       "rejectedBrowse": "Ажлуудыг харах",
       "rejectedTipLighting": "Тод гэрэлтэй газар зурагла",
       "rejectedTipFlat": "Иргэний үнэмлэхийг хавтгай дээр тавь",
-      "rejectedTipFace": "Нүүрээ тодорхой харагдуул"
+      "rejectedTipFace": "Нүүрээ тодорхой харагдуул",
+      "consentPurpose": "Таниулах баталгаажуулалт",
+      "maybeLater": "Дараа хийе"
     },
     "jobs": {
       "title": "Миний ажлууд",
@@ -586,7 +799,44 @@
       "cancelWarning": "Цуцалснаар ажил дахин нээлттэй болно. Цуцлалт нь таны найдвартай байдлын оноонд нөлөөлнө.",
       "cancelConfirm": "Тийм, цуцлах",
       "noShowFlag": "Захиалагч ирсэнгүй",
-      "stats": "Миний статистик"
+      "stats": "Миний статистик",
+      "awaitingConfirmation": "Захиалагч баталгаажуулахыг хүлээж байна",
+      "bookingDetail": "Захиалгын дэлгэрэнгүй",
+      "budget": "Төсөв",
+      "cancel": {
+        "backButton": "Буцах",
+        "confirmButton": "Цуцлахыг баталгаажуулах",
+        "confirmDanger": "Цуцлах (түдгэлзүүлэх эрсдэлтэй!)",
+        "heading": "Баталгаажуулалт хийж, ажил аваарай!",
+        "reasonEmergency": "Яаралтай нөхцөл байдал",
+        "reasonLabel": "Цуцлах шалтгаан",
+        "reasonOther": "Бусад",
+        "reasonPersonal": "Хувийн шалтгаан",
+        "reasonScheduleConflict": "Цагийн хуваарь таарахгүй болсон",
+        "strikeCountLabel": "цуцлалт (30 хоногт)",
+        "title": "Гүйцэтгэгч олдсонгүй"
+      },
+      "cancelBooking": "Захиалга цуцлах",
+      "customerLabel": "Захиалагч",
+      "emptyCta": "Даалгавар оруулах",
+      "exactAddress": "Тодорхой хаяг",
+      "exactAddressNote": "Энэ хаяг зөвхөн танд харагдана",
+      "leaveReview": "Leave Review",
+      "messageButton": "Зурвас илгээх",
+      "noShow": {
+        "arrivedButton": "Би ирсэн",
+        "dismissButton": "Хаах",
+        "doneButton": "Ойлголоо",
+        "flagButton": "Ирээгүй гэж тэмдэглэх",
+        "flagHeading": "Захиалагч ирээгүй",
+        "flaggedHeading": "Ирээгүй тэмдэглэгдлээ",
+        "reminderHeading": "Захиалагчтайгаа уулзсан уу?",
+        "title": "Гүйцэтгэгч олдсонгүй",
+        "waitButton": "Хүлээх"
+      },
+      "paymentNoteHeading": "Төлбөрийн мэдээлэл",
+      "schedule": "Хуваарь",
+      "taskDescription": "Даалгаврын тайлбар"
     },
     "stats": {
       "title": "Миний статистик",
@@ -594,7 +844,23 @@
       "averageRating": "Дундаж үнэлгээ",
       "responseTime": "Хариу өгөх хугацаа",
       "reliability": "Найдвартай байдлын оноо",
-      "reliabilityDesc": "Ажлын гүйцэтгэл, цаг баримтлалт, үнэлгээ болон цуцлалтын түүхээс хамаарна"
+      "reliabilityDesc": "Ажлын гүйцэтгэл, цаг баримтлалт, үнэлгээ болон цуцлалтын түүхээс хамаарна",
+      "activityHeading": "Идэвхжил",
+      "applicationSuccess": "Анкетын амжилт",
+      "cancellations30d": "Цуцлалт (30 хоногт)",
+      "completionRate": "Гүйцэтгэлийн хувь",
+      "heroLabel": "Таны үнэлгээ",
+      "heroMeta": "Захиалагчийн үнэлгээнээс",
+      "proBadgeEarned": "Pro Badge олдсон!",
+      "punctuality": "Цаг баримтлал",
+      "ratingBreakdown": "Үнэлгээний задаргаа",
+      "reliabilityHeading": "Найдвартай байдал",
+      "reliabilityLabel": "Найдвартай байдлын оноо",
+      "reliabilityScore": "Найдвартай байдлын оноо",
+      "respectfulness": "Хүндэтгэлтэй хандлага",
+      "sectionHeading": "Ерөнхий үзүүлэлтүүд",
+      "taskClarity": "Даалгаврын тодорхой байдал",
+      "unlockConversion": "Түгжээ тайлалтын хувь"
     },
     "credits": {
       "balanceLow": "Үлдэгдэл дуусаж байна",
@@ -620,7 +886,8 @@
       "netMovement": "Цэнэглэлт болон зарлагын цэвэр хөдөлгөөн",
       "today": "Өнөөдөр",
       "taskPayout": "Ажлын төлбөр",
-      "completedBooking": "Дууссан захиалга"
+      "completedBooking": "Дууссан захиалга",
+      "title": "Гүйцэтгэгч олдсонгүй"
     },
     "subscription": {
       "title": "Таскер Про"
@@ -643,6 +910,18 @@
     },
     "polish": {
       "aiPowered": "ХИЙМЭЛ ОЮУН АШИГЛАСАН"
+    },
+    "profilePolish": {
+      "apply": "Энэ хувилбарыг хэрэглэх",
+      "generate": "Санал болгох",
+      "heroTitle": "Профайл засах",
+      "manualEdit": "Гараар засах",
+      "polishedLabel": "Санал болгосон хувилбар",
+      "sourceLabel": "Одоогийн тайлбар",
+      "title": "Гүйцэтгэгч олдсонгүй",
+      "toastError": "Маргаан илгээхэд алдаа гарлаа",
+      "toastSuccess": "Санал болгосон текст хадгалагдлаа",
+      "toneLabel": "Хэв маяг"
     }
   },
   "shared": {
@@ -653,7 +932,15 @@
       "phoneWarning": "Аппаас гадуур утасны дугаар хуваалцахыг зөвлөхгүй",
       "sendPlaceholder": "Мессеж бичих...",
       "errorLoading": "Харилцан яриаг ачааллахад алдаа гарлаа.",
-      "errorMessages": "Зурвасуудыг ачааллахад алдаа гарлаа"
+      "errorMessages": "Зурвасуудыг ачааллахад алдаа гарлаа",
+      "chatTitle": "Чат",
+      "contextStatus": "Баталгаажсан",
+      "contextSubtitle": "Захиалгын дэлгэрэнгүй",
+      "contextTitle": "Үйлчилгээ",
+      "errorMessage": "Мессежүүдийг ачаалж чадсангүй",
+      "online": "Онлайн",
+      "retry": "Дахин оролдох",
+      "searchPlaceholder": "Асуулт хайх..."
     },
     "notifications": {
       "title": "Мэдэгдлүүд",
@@ -667,7 +954,8 @@
       "reviewReminder": "Үнэлгээний сануулга",
       "newMessage": "Шинэ зурвас",
       "taskCompleted": "Ажил дууссан",
-      "reviewReminderBody": "Тэмүүлэнтэй хийсэн ажилдаа үнэлгээ өгөөгүй байна. Бусдад туслах үүднээс үнэлгээ үлдээнэ үү."
+      "reviewReminderBody": "Тэмүүлэнтэй хийсэн ажилдаа үнэлгээ өгөөгүй байна. Бусдад туслах үүднээс үнэлгээ үлдээнэ үү.",
+      "promoBannerTitle": "Tasky Premium"
     },
     "profile": {
       "title": "Профайл",
@@ -678,7 +966,28 @@
       "bio": "Танилцуулга",
       "changeAvatar": "Зураг солих",
       "save": "Өөрчлөлт хадгалах",
-      "saving": "Хадгалж байна..."
+      "saving": "Хадгалж байна...",
+      "aboutMe": "Миний тухай",
+      "avgRating": "Дундаж үнэлгээ",
+      "bioLabel": "Миний тухай",
+      "bioPlaceholder": "Өөрийнхөө тухай бичнэ үү",
+      "changePhoto": "Зураг солих",
+      "completedJobs": "Дууссан ажил",
+      "deleteCancel": "Болих",
+      "deleteConfirm": "Бүртгэлээ устгах",
+      "deleteConfirmationPlaceholder": "DELETE",
+      "deleteTitle": "Бүртгэл устгах",
+      "errorNetwork": "Интернэт холболтоо шалгана уу",
+      "memberSince": "Бүртгүүлсэн: {date}",
+      "nameLabel": "Нэр",
+      "namePlaceholder": "Нэрээ оруулна уу",
+      "nameRequired": "Нэр хоосон байж болохгүй",
+      "phone": "Утас",
+      "roleCustomer": "Захиалагч",
+      "roleTasker": "Гүйцэтгэгч",
+      "trustTitle": "Баталгаажсан гүйцэтгэгч",
+      "understood": "Ойлголоо",
+      "viewStats": "Статистик харах"
     },
     "settings": {
       "title": "Тохиргоо",
@@ -693,7 +1002,21 @@
       "deleteConfirmTitle": "Бүртгэлээ устгах уу?",
       "deleteConfirmBody": "Энэ үйлдлийг буцаах боломжгүй",
       "deleteConfirmButton": "Бүртгэл устгах",
-      "deleteBlockedBookings": "Идэвхтэй захиалгуудаа эхлэн дуусгах эсвэл цуцлана уу"
+      "deleteBlockedBookings": "Идэвхтэй захиалгуудаа эхлэн дуусгах эсвэл цуцлана уу",
+      "account": "Бүртгэл",
+      "confirm": "Батлах",
+      "customer": "Захиалагч",
+      "dangerZone": "Аюултай бүс",
+      "deleteTitle": "Бүртгэл устгах уу?",
+      "help": "Тусламж & Дэмжлэг",
+      "languageValue": "Монгол",
+      "legal": "Хуулийн мэдээлэл",
+      "preferences": "Тохируулга",
+      "privacy": "Нууцлалын бодлого",
+      "switchRoleBody": "Та гүйцэтгэгч болж өөрчлөхдөө итгэлтэй байна уу?",
+      "switchRoleTitle": "Дүр солих уу?",
+      "tasker": "Гүйцэтгэгч",
+      "terms": "Үйлчилгээний нөхцөл"
     },
     "review": {
       "title": "Үнэлгээ үлдээх",
@@ -712,7 +1035,10 @@
       "hardLockTitle": "Үнэлгээ шаардлагатай",
       "hardLockBody": "Үргэлжлүүлэхийн тулд хүлээгдэж буй үнэлгээгээ шийдвэрлэнэ үү",
       "successTitle": "Баярлалаа!",
-      "successBody": "Таны үнэлгээ амжилттай илгээгдлээ."
+      "successBody": "Таны үнэлгээ амжилттай илгээгдлээ.",
+      "cta_submit": "Сэтгэгдэл илгээх",
+      "label_comment": "Нэмэлт тайлбар (сонголтот)",
+      "navTitle": "Сэтгэгдэл бичих"
     },
     "account": {
       "suspendedTitle": "Бүртгэл түр хааглагдсан",
@@ -720,14 +1046,35 @@
       "suspendedExpiry": "Хаалт дуусах: {{date}}",
       "suspendedAppeal": "Гомдол гаргах",
       "bannedTitle": "Бүртгэл хориглогдсон",
-      "bannedBody": "Таны бүртгэл бүрмөсөн хориглогдсон байна"
+      "bannedBody": "Таны бүртгэл бүрмөсөн хориглогдсон байна",
+      "contactSupport": "Тусламж авах",
+      "logout": "Гарах"
+    },
+    "help": {
+      "title": "Гүйцэтгэгч олдсонгүй"
+    },
+    "legal": {
+      "contact": "Холбоо барих",
+      "contactEmail": "Имэйл",
+      "dataCollection": "Мэдээлэл цуглуулах",
+      "dataRetention": "Мэдээлэл хадгалах хугацаа",
+      "dataSharing": "Мэдээлэл хуваалцах",
+      "dataStorage": "Мэдээлэл хадгалах",
+      "dataUsage": "Мэдээллийн ашиглалт",
+      "identityData": "Таниулах баталгаажуулалтын мэдээлэл",
+      "privacyTitle": "Нууцлалын бодлого",
+      "termsTitle": "Terms of Service",
+      "updated": "Сүүлд шинэчлэгдсэн: 2026.01.01",
+      "userRights": "Хэрэглэгчийн эрх"
     }
   },
   "infra": {
     "networkError": {
       "noConnection": "Интернэт холболт байхгүй байна",
       "slowConnection": "Холболт удаан байна",
-      "retry": "Дахин оролдох"
+      "retry": "Дахин оролдох",
+      "restored": "Холболт сэргэлээ",
+      "slowDescription": "Сүлжээний холболт удаан байна. Түр хүлээнэ үү"
     },
     "appUpdate": {
       "softTitle": "Шинэчлэлт байна",
@@ -790,5 +1137,60 @@
       "errorRetry": "Дахин оролдох",
       "errorDescription": "Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу"
     }
+  },
+  "detail": {
+    "errorMessage": "Мессежүүдийг ачаалж чадсангүй"
+  },
+  "error": {
+    "generic": "Something went wrong",
+    "goBack": "Go back",
+    "retry": "Дахин оролдох"
+  },
+  "feed": {
+    "emptyTitle": "Nothing here yet",
+    "errorMessage": "Мессежүүдийг ачаалж чадсангүй"
+  },
+  "label": {
+    "earlier": "Өмнөх",
+    "today": "Өнөөдөр"
+  },
+  "matching": {
+    "instantMatch": {
+      "backToTask": "Back to task",
+      "confirmBooking": "Confirm booking",
+      "countdownLabel": "Хариу хүлээх хугацаа",
+      "declineCount": "{count}/3 татгалзсан",
+      "heroError": "No eligible taskers nearby",
+      "heroFallback": "Instant match could not secure a tasker.",
+      "heroFallbackBody": "Your task is now open for applications.",
+      "heroMatched": "Tasker found",
+      "heroSearching": "Finding your tasker",
+      "matchedStatus": "Гүйцэтгэгч олдлоо! Хариу хүлээж байна...",
+      "noEligibleTitle": "No eligible taskers nearby",
+      "pageTitle": "Нууцлалын бодлого",
+      "previewMeta": "Matching in progress",
+      "previewName": "Tasky instant match",
+      "sampleTaskerName": "Sampletaskername",
+      "taskLabel": "Даалгавар",
+      "verifiedTasker": "Verified Tasker",
+      "viewApplicants": "View applicants"
+    }
+  },
+  "offline": {
+    "banner": "Banner"
+  },
+  "success": {
+    "whatHappensNext": "What happens next"
+  },
+  "wizard": {
+    "back": "Back",
+    "close": "Хаах",
+    "next": "Дараах",
+    "stepCategory": "Category",
+    "stepDetails": "Details",
+    "stepLocation": "Location",
+    "stepPhotos": "Photos",
+    "stepReview": "Review",
+    "stepSchedule": "Schedule"
   }
 }
