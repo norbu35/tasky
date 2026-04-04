@@ -22,6 +22,7 @@ interface PermissionPrimerProps {
   skipLabel?: string;
   badgeLabel?: string;
   footerNote?: string;
+  className?: string;
 }
 
 export function PermissionPrimer({
@@ -40,9 +41,10 @@ export function PermissionPrimer({
   skipLabel = 'Дараа',
   badgeLabel = '✦',
   footerNote,
+  className,
 }: PermissionPrimerProps) {
   return (
-    <View style={styles.container} testID={testID}>
+    <View style={styles.container} testID={testID} className={className}>
       <View style={styles.mockBackdrop} />
       <View style={styles.scrim} />
       <View style={styles.sheet}>

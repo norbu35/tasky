@@ -5,18 +5,23 @@ import { mobileTheme } from '../../design/tokenAdapter';
 
 type Props = TextInputProps & {
   invalid?: boolean;
+  readOnly?: boolean;
+  className?: string;
 };
 
 export const Input = forwardRef<TextInput, Props>(function Input(
-  { invalid = false, editable = true, style, ...props },
+  { invalid = false, editable = true, readOnly = false, style, className, ...props },
   ref,
 ) {
+  const isEditable = editable && !readOnly;
+
   return (
     <TextInput
       ref={ref}
-      editable={editable}
+      editable={isEditable}
       placeholderTextColor={mobileTheme.colors.mutedForeground}
-      style={[styles.base, invalid && styles.invalid, !editable && styles.disabled, style]}
+      style={[styles.base, invalid && styles.invalid, !isEditable && styles.disabled, style]}
+      className={className}
       {...props}
     />
   );

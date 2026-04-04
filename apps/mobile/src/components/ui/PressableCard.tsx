@@ -10,9 +10,16 @@ interface PressableCardProps {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  className?: string;
 }
 
-export function PressableCard({ children, onPress, style, testID }: PressableCardProps) {
+export function PressableCard({
+  children,
+  onPress,
+  style,
+  testID,
+  className,
+}: PressableCardProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -38,6 +45,7 @@ export function PressableCard({ children, onPress, style, testID }: PressableCar
       onPressOut={handlePressOut}
       style={[style, animatedStyle]}
       testID={testID}
+      className={className}
       accessibilityRole="button"
     >
       {children}

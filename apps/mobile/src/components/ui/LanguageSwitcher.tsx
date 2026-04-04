@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,21 +23,21 @@ export function LanguageSwitcher() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.btn, currentLang === 'en' && styles.active]}
+      <Pressable
+        style={({ pressed }) => [styles.btn, currentLang === 'en' && styles.active, pressed && styles.pressed]}
         onPress={() => changeLanguage('en')}
       >
         <Text style={[styles.text, currentLang === 'en' && styles.activeText]}>English</Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <View style={styles.divider} />
 
-      <TouchableOpacity
-        style={[styles.btn, currentLang === 'mn' && styles.active]}
+      <Pressable
+        style={({ pressed }) => [styles.btn, currentLang === 'mn' && styles.active, pressed && styles.pressed]}
         onPress={() => changeLanguage('mn')}
       >
         <Text style={[styles.text, currentLang === 'mn' && styles.activeText]}>Монгол</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -60,6 +60,9 @@ const styles = StyleSheet.create({
   },
   active: {
     backgroundColor: mobileTheme.colors.primary,
+  },
+  pressed: {
+    opacity: 0.9,
   },
   divider: {
     width: StyleSheet.hairlineWidth,

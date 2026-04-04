@@ -8,14 +8,15 @@ import { Lock } from 'lucide-react-native';
 
 interface LoginRequiredCTAProps {
   message?: string;
+  testID?: string;
 }
 
-export function LoginRequiredCTA({ message }: LoginRequiredCTAProps) {
+export function LoginRequiredCTA({ message, testID }: LoginRequiredCTAProps) {
   const router = useRouter();
   const { t } = useTranslation();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID={testID}>
       <View style={styles.iconContainer}>
         <Lock color={mobileTheme.colors.primary} size={48} />
       </View>

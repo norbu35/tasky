@@ -17,6 +17,7 @@ export * from './StepIndicator';
 export * from './FilterBar';
 export * from './SkeletonLoader';
 export * from './LanguageSwitcher';
+export * from './LoginRequiredCTA';
 export * from './OfflineBanner';
 export * from './PressableCard';
 export * from './PermissionPrimer';

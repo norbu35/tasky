@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import { PriceTag } from '../../../src/components/ui/PriceTag';
 import { InfoRow } from '../../../src/components/ui/InfoRow';
 import { FilterBar } from '../../../src/components/ui/FilterBar';
+import { Button } from '../../../src/components/ui/Button';
+import { Input } from '../../../src/components/ui/Input';
 
 describe('PriceTag', () => {
   it('renders formatted amount with tugrik symbol', () => {
@@ -113,5 +115,17 @@ describe('FilterBar', () => {
 
     fireEvent.press(screen.getByText('Cleaning'));
     expect(onToggle).toHaveBeenCalledWith('cleaning');
+  });
+});
+
+describe('Primitive NativeWind surface', () => {
+  it('Button exposes className passthrough for NativeWind usage', () => {
+    render(<Button label="Continue" className="rounded-xl" testID="button-surface" />);
+    expect(screen.getByTestId('button-surface').props.className).toBe('rounded-xl');
+  });
+
+  it('Input exposes className passthrough for NativeWind usage', () => {
+    render(<Input className="px-4" testID="input-surface" />);
+    expect(screen.getByTestId('input-surface').props.className).toBe('px-4');
   });
 });

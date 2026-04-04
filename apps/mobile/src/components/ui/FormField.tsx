@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 
@@ -7,13 +8,15 @@ type Props = {
   helperText?: string;
   errorText?: string;
   children: ReactNode;
+  className?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function FormField({ label, helperText, errorText, children }: Props) {
+export function FormField({ label, helperText, errorText, children, className, style }: Props) {
   const hasError = Boolean(errorText);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]} className={className}>
       <Text style={styles.label}>{label}</Text>
       {children}
       {hasError ? (

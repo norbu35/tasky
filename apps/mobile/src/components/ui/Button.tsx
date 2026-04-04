@@ -25,8 +25,10 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   textStyle?: TextStyle;
+  className?: string;
+  labelClassName?: string;
   children?: React.ReactNode;
 }
 
@@ -40,6 +42,8 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
       disabled,
       style,
       textStyle,
+      className,
+      labelClassName,
       children,
       ...props
     },
@@ -88,6 +92,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
         disabled={!isInteractive}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        className={className}
         {...props}
       >
         {isLoading ? (
@@ -102,6 +107,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
               { color: textColor },
               textStyle,
             ]}
+            className={labelClassName}
           >
             {label}
           </Text>

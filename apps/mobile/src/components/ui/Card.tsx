@@ -5,28 +5,31 @@ import { elevations } from '../../design/elevations';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
-export function Card({ style, ...props }: ViewProps) {
-  return <View style={[styles.card, style]} {...props} />;
+type CardViewProps = ViewProps & { className?: string };
+type CardTextProps = TextProps & { className?: string };
+
+export function Card({ style, className, ...props }: CardViewProps) {
+  return <View style={[styles.card, style]} className={className} {...props} />;
 }
 
-export function CardHeader({ style, ...props }: ViewProps) {
-  return <View style={[styles.header, style]} {...props} />;
+export function CardHeader({ style, className, ...props }: CardViewProps) {
+  return <View style={[styles.header, style]} className={className} {...props} />;
 }
 
-export function CardTitle({ style, ...props }: TextProps) {
-  return <Text style={[styles.title, style]} {...props} />;
+export function CardTitle({ style, className, ...props }: CardTextProps) {
+  return <Text style={[styles.title, style]} className={className} {...props} />;
 }
 
-export function CardDescription({ style, ...props }: TextProps) {
-  return <Text style={[styles.description, style]} {...props} />;
+export function CardDescription({ style, className, ...props }: CardTextProps) {
+  return <Text style={[styles.description, style]} className={className} {...props} />;
 }
 
-export function CardContent({ style, ...props }: ViewProps) {
-  return <View style={[styles.content, style]} {...props} />;
+export function CardContent({ style, className, ...props }: CardViewProps) {
+  return <View style={[styles.content, style]} className={className} {...props} />;
 }
 
-export function CardFooter({ style, ...props }: ViewProps) {
-  return <View style={[styles.footer, style]} {...props} />;
+export function CardFooter({ style, className, ...props }: CardViewProps) {
+  return <View style={[styles.footer, style]} className={className} {...props} />;
 }
 
 const styles = StyleSheet.create({
