@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-04: Messaging
+# Goal: Exchange messages about a booking
+
+- launchApp
+
+# Step 1: Open conversation list
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-010"
+    timeout: 5000
+# TODO: Add specific interactions for "Open conversation list"
+
+# Step 2: Read/send messages
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-011"
+    timeout: 5000
+# TODO: Add specific interactions for "Read/send messages"

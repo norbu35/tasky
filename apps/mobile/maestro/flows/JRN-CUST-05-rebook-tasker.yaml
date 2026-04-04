@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-05: Rebook Tasker
+# Goal: Quickly rebook a previously hired Tasker
+
+- launchApp
+
+# Step 1: Tap 'Rebook' on completed booking
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Rebook' on completed booking"
+
+# Step 2: Review prefilled task, edit if needed
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-023"
+    timeout: 5000
+# TODO: Add specific interactions for "Review prefilled task, edit if needed"
+
+# Step 3: Confirm booking
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-014"
+    timeout: 5000
+# TODO: Add specific interactions for "Confirm booking"

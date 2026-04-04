@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-08: Instant Match (Phase 3+)
+# Goal: Auto-match with best Tasker
+
+- launchApp
+
+# Step 1: Tap 'Match me now'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-009"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Match me now'"
+
+# Step 2: System auto-assigns top Tasker
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-027"
+    timeout: 5000
+# TODO: Add specific interactions for "System auto-assigns top Tasker"
+
+# Step 3: Confirm booking
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-014"
+    timeout: 5000
+# TODO: Add specific interactions for "Confirm booking"

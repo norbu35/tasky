@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-B2B-04: Business Subscription Billing
+# Goal: View or activate Host Lite / Ops Standard for a business account
+
+- launchApp
+
+# Step 1: View available plans and current status
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-007"
+    timeout: 5000
+# TODO: Add specific interactions for "View available plans and current status"
+
+# Step 2: Activate or renew plan via QPay
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-007"
+    timeout: 5000
+# TODO: Add specific interactions for "Activate or renew plan via QPay"

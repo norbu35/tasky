@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-07: Tasker Pro Subscription (Phase 3+)
+# Goal: Subscribe to Tasker Pro for benefits
+
+- launchApp
+
+# Step 1: View plans (Standard/Premium)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P3-004"
+    timeout: 5000
+# TODO: Add specific interactions for "View plans (Standard/Premium)"
+
+# Step 2: Subscribe via QPay
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P3-004"
+    timeout: 5000
+# TODO: Add specific interactions for "Subscribe via QPay"

@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-05: Profile Management
+# Goal: View and edit profile
+
+- launchApp
+
+# Step 1: View profile
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-012"
+    timeout: 5000
+# TODO: Add specific interactions for "View profile"
+
+# Step 2: Edit name, avatar, etc.
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-013"
+    timeout: 5000
+# TODO: Add specific interactions for "Edit name, avatar, etc."

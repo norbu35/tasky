@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-03: Lead Unlock Accept/Decline (Phase 2)
+# Goal: Accept or decline selected lead
+
+- launchApp
+
+# Step 1: Receive selection notification
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Receive selection notification"
+
+# Step 2: Tap 'Accept' — credits deducted
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Accept' — credits deducted"

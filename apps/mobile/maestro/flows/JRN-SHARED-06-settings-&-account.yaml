@@ -1,0 +1,13 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-06: Settings & Account
+# Goal: Manage settings, role switch, or delete account
+
+- launchApp
+
+# Step 1: View settings
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-014"
+    timeout: 5000
+# TODO: Add specific interactions for "View settings"

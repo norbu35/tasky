@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-07: Review Submission
+# Goal: Submit mandatory review after booking completion
+
+- launchApp
+
+# Step 1: Rate categories + optional freetext
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Rate categories + optional freetext"
+
+# Step 2: Submit review
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Submit review"

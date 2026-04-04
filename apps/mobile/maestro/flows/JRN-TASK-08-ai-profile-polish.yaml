@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-08: AI Profile Polish
+# Goal: Improve a tasker profile bio with AI assistance before saving
+
+- launchApp
+
+# Step 1: Tap 'AI polish'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-013"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'AI polish'"
+
+# Step 2: Generate polished suggestion and compare before/after
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-019"
+    timeout: 5000
+# TODO: Add specific interactions for "Generate polished suggestion and compare before/after"
+
+# Step 3: Apply suggested text
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-019"
+    timeout: 5000
+# TODO: Add specific interactions for "Apply suggested text"

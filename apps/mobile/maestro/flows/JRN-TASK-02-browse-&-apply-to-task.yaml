@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-02: Browse & Apply to Task
+# Goal: Find and apply to a task
+
+- launchApp
+
+# Step 1: Browse task feed, filter by category/distance
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-001"
+    timeout: 5000
+# TODO: Add specific interactions for "Browse task feed, filter by category/distance"
+
+# Step 2: View task detail
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-002"
+    timeout: 5000
+# TODO: Add specific interactions for "View task detail"
+
+# Step 3: Tap 'Apply'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Apply'"

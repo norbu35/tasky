@@ -1,0 +1,48 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-01: Tasker Verification
+# Goal: Complete identity verification to unlock applications
+
+- launchApp
+
+# Step 1: Tap 'Apply' while unverified
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Apply' while unverified"
+
+# Step 2: View verification encouragement
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-003"
+    timeout: 5000
+# TODO: Add specific interactions for "View verification encouragement"
+
+# Step 3: Accept verification consent
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-004"
+    timeout: 5000
+# TODO: Add specific interactions for "Accept verification consent"
+
+# Step 4: Upload ID front, back, selfie
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-005"
+    timeout: 5000
+# TODO: Add specific interactions for "Upload ID front, back, selfie"
+
+# Step 5: Success — submitted
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-010"
+    timeout: 5000
+# TODO: Add specific interactions for "Success — submitted"
+
+# Step 6: Wait for admin review (24h SLA)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-007"
+    timeout: 5000
+# TODO: Add specific interactions for "Wait for admin review (24h SLA)"

@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-B2B-02: Post Task as Business
+# Goal: Start the standard task-posting flow with business account context
+
+- launchApp
+
+# Step 1: Tap 'Post Task as Business'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-006"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Post Task as Business'"
+
+# Step 2: Select business account and location
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-005"
+    timeout: 5000
+# TODO: Add specific interactions for "Select business account and location"
+
+# Step 3: Continue the standard task-posting flow
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Continue the standard task-posting flow"

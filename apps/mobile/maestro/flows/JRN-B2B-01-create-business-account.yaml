@@ -1,0 +1,34 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-B2B-01: Create Business Account
+# Goal: Set up a business account with a location and members
+
+- launchApp
+
+# Step 1: Tap 'Create account'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-001"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Create account'"
+
+# Step 2: Enter business details and save
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Enter business details and save"
+
+# Step 3: Add primary business location
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-003"
+    timeout: 5000
+# TODO: Add specific interactions for "Add primary business location"
+
+# Step 4: Invite a manager or finish setup
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-004"
+    timeout: 5000
+# TODO: Add specific interactions for "Invite a manager or finish setup"

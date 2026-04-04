@@ -1,0 +1,6 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-INFRA-02: Suspended/Banned Account
+# Goal: Inform user of account restriction
+
+- launchApp

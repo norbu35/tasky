@@ -1,0 +1,34 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-04: Manage Active Booking (Tasker)
+# Goal: Complete assigned work and mark done
+
+- launchApp
+
+# Step 1: View My Jobs list
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-012"
+    timeout: 5000
+# TODO: Add specific interactions for "View My Jobs list"
+
+# Step 2: View booking detail with exact address
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-013"
+    timeout: 5000
+# TODO: Add specific interactions for "View booking detail with exact address"
+
+# Step 3: Tap 'Mark Done'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-013"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Mark Done'"
+
+# Step 4: Wait for customer confirmation
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-013"
+    timeout: 5000
+# TODO: Add specific interactions for "Wait for customer confirmation"

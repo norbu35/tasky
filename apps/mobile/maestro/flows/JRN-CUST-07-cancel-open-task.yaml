@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-07: Cancel Open Task
+# Goal: Cancel a task before booking
+
+- launchApp
+
+# Step 1: Tap 'Cancel Task'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-009"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Cancel Task'"
+
+# Step 2: Confirm cancellation
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-010"
+    timeout: 5000
+# TODO: Add specific interactions for "Confirm cancellation"

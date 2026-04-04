@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-09: Purchase Task Boost (Phase 2)
+# Goal: Buy promoted or urgent visibility for an open task
+
+- launchApp
+
+# Step 1: Tap 'Boost Task'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-009"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Boost Task'"
+
+# Step 2: Select Promoted or Urgent and continue
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-028"
+    timeout: 5000
+# TODO: Add specific interactions for "Select Promoted or Urgent and continue"
+
+# Step 3: Complete QPay payment and activate boost
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-029"
+    timeout: 5000
+# TODO: Add specific interactions for "Complete QPay payment and activate boost"

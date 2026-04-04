@@ -1,0 +1,34 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-03: Review Applicants & Confirm Booking (Phase 2 — Lead Unlock)
+# Goal: Select a Tasker who then accepts with lead credits
+
+- launchApp
+
+# Step 1: Browse applicants sorted by relevance, 'Recommended' label
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-011"
+    timeout: 5000
+# TODO: Add specific interactions for "Browse applicants sorted by relevance, 'Recommended' label"
+
+# Step 2: Tap 'Select' on preferred applicant
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-011"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Select' on preferred applicant"
+
+# Step 3: Wait for Tasker to accept
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-011"
+    timeout: 5000
+# TODO: Add specific interactions for "Wait for Tasker to accept"
+
+# Step 4: Confirm booking
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-014"
+    timeout: 5000
+# TODO: Add specific interactions for "Confirm booking"

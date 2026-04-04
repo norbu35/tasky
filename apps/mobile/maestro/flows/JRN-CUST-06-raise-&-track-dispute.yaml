@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-06: Raise & Track Dispute
+# Goal: Report an issue with a booking
+
+- launchApp
+
+# Step 1: Tap 'Report Issue'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-017"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Report Issue'"
+
+# Step 2: Submit dispute with evidence
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-024"
+    timeout: 5000
+# TODO: Add specific interactions for "Submit dispute with evidence"
+
+# Step 3: Track dispute status
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-025"
+    timeout: 5000
+# TODO: Add specific interactions for "Track dispute status"

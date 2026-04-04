@@ -1,0 +1,62 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-CUST-01: Post a Task
+# Goal: Create and publish a new task
+
+- launchApp
+
+# Step 1: Tap FAB 'Post Task'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-001"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap FAB 'Post Task'"
+
+# Step 2: Select category
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Select category"
+
+# Step 3: Complete intake form
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-003"
+    timeout: 5000
+# TODO: Add specific interactions for "Complete intake form"
+
+# Step 4: Upload photos (0-3)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-004"
+    timeout: 5000
+# TODO: Add specific interactions for "Upload photos (0-3)"
+
+# Step 5: Review auto-generated Job Scope Summary (editable)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-007"
+    timeout: 5000
+# TODO: Add specific interactions for "Review auto-generated Job Scope Summary (editable)"
+
+# Step 6: Pin location on map
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-005"
+    timeout: 5000
+# TODO: Add specific interactions for "Pin location on map"
+
+# Step 7: Set schedule and budget, then Post Task
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-006"
+    timeout: 5000
+# TODO: Add specific interactions for "Set schedule and budget, then Post Task"
+
+# Step 8: Success — task posted
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-008"
+    timeout: 5000
+# TODO: Add specific interactions for "Success — task posted"

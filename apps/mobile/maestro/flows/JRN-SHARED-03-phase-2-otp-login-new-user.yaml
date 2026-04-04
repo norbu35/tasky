@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-03: Phase 2 OTP Login (New User)
+# Goal: New user signs up with phone OTP
+
+- launchApp
+
+# Step 1: Tap 'Login with Phone'
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Tap 'Login with Phone'"
+
+# Step 2: Enter phone number
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Enter phone number"
+
+# Step 3: Enter OTP code, verified
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-003"
+    timeout: 5000
+# TODO: Add specific interactions for "Enter OTP code, verified"

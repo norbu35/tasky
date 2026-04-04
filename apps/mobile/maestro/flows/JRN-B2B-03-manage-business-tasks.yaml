@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-B2B-03: Manage Business Tasks
+# Goal: Review account-scoped tasks and open a task detail
+
+- launchApp
+
+# Step 1: Open business account tasks
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-001"
+    timeout: 5000
+# TODO: Add specific interactions for "Open business account tasks"
+
+# Step 2: Browse business-scoped tasks
+- extendedWaitUntil:
+    visible:
+      id: "SCR-B2B-006"
+    timeout: 5000
+# TODO: Add specific interactions for "Browse business-scoped tasks"
+
+# Step 3: Open standard task detail with business context
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-009"
+    timeout: 5000
+# TODO: Add specific interactions for "Open standard task detail with business context"

@@ -1,0 +1,6 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-INFRA-01: Error Recovery
+# Goal: Recover from network/session errors
+
+- launchApp

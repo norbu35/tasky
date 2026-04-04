@@ -1,0 +1,27 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-TASK-05: Credit Purchase
+# Goal: Buy lead-unlock credits via QPay
+
+- launchApp
+
+# Step 1: View balance, select credit pack
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-001"
+    timeout: 5000
+# TODO: Add specific interactions for "View balance, select credit pack"
+
+# Step 2: Scan QPay QR or deeplink
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Scan QPay QR or deeplink"
+
+# Step 3: Payment confirmed
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-002"
+    timeout: 5000
+# TODO: Add specific interactions for "Payment confirmed"
