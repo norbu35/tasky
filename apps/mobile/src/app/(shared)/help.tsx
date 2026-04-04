@@ -1,17 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronDown, ChevronLeft, ChevronUp, Search } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { InsetScrollView, ScreenContainer } from '../../components/shells';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -250,7 +244,7 @@ export default function HelpScreen() {
   const searchPlaceholder = t('infra.help.searchPlaceholder', 'Асуулт хайх...');
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="help-screen">
+    <ScreenContainer testID="help-screen">
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
@@ -281,7 +275,7 @@ export default function HelpScreen() {
         <View style={styles.content}>
           <View style={styles.stickySearchBar}>
             <Search size={18} color={colors.textSecondary} />
-            <TextInput
+            <Input
               placeholder={searchPlaceholder}
               placeholderTextColor={colors.textSecondary}
               value={query}
@@ -290,10 +284,11 @@ export default function HelpScreen() {
               testID="help-search-input"
             />
           </View>
-          <ScrollView
+          <InsetScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
+            extraBottomInset={spacing.lg}
           >
             {visibleSections.map((section) => (
               <View key={section.id} style={styles.section}>
@@ -308,18 +303,14 @@ export default function HelpScreen() {
                 ))}
               </View>
             ))}
-          </ScrollView>
+          </InsetScrollView>
         </View>
       )}
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     height: 56,
     flexDirection: 'row',

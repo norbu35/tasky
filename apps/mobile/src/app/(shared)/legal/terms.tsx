@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
+import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -109,10 +110,11 @@ function TermsContent() {
   );
 
   return (
-    <ScrollView
+    <InsetScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
+      extraBottomInset={spacing.lg}
     >
       {sections.map((section, index) => (
         <View key={section.title} style={styles.section}>
@@ -134,7 +136,7 @@ function TermsContent() {
           </View>
         </View>
       ))}
-    </ScrollView>
+    </InsetScrollView>
   );
 }
 
@@ -151,7 +153,7 @@ export default function TermsScreen() {
   const title = t('infra.terms.title', 'Үйлчилгээний нөхцөл');
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="terms-screen">
+    <ScreenContainer testID="terms-screen">
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
@@ -189,15 +191,11 @@ export default function TermsScreen() {
       ) : (
         <TermsContent />
       )}
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     height: 56,
     flexDirection: 'row',
