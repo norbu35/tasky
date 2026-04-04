@@ -54,11 +54,11 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
     render(<BookingEscrowScreen />);
 
     expect(screen.getByTestId('booking-escrow-screen')).toBeTruthy();
-    expect(screen.getByText('Эскроу төлбөр')).toBeTruthy();
-    expect(screen.getByText('Эскроу ашиглах')).toBeTruthy();
-    expect(screen.getByText('Мөнгөн хамгаалалт')).toBeTruthy();
-    expect(screen.getByText('Маргаан шийдвэрлэх боломж')).toBeTruthy();
-    expect(screen.getByText('Автомат шилжүүлэг')).toBeTruthy();
+    expect(screen.getByText('Escrow Payment')).toBeTruthy();
+    expect(screen.getByText('Use Escrow')).toBeTruthy();
+    expect(screen.getByText('Money protection')).toBeTruthy();
+    expect(screen.getByText('Dispute resolution')).toBeTruthy();
+    expect(screen.getByText('Automatic transfer')).toBeTruthy();
   });
 
   it('opens a confirmation sheet before confirming escrow', () => {
@@ -66,8 +66,8 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
     render(<BookingEscrowScreen />);
 
     fireEvent.press(screen.getByTestId('booking-escrow-screen-cta'));
-    expect(screen.getByText('Баталгаажуулах')).toBeTruthy();
-    expect(screen.getByText('Эскроу ашиглах')).toBeTruthy();
+    expect(screen.getByText('Confirm')).toBeTruthy();
+    expect(screen.getByText('Use Escrow')).toBeTruthy();
   });
 
   it('shows the demo error state when requested', () => {
@@ -76,7 +76,7 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
     render(<BookingEscrowScreen />);
 
     expect(screen.getByTestId('booking-escrow-screen-error')).toBeTruthy();
-    expect(screen.getByText('Төлбөр амжилтгүй')).toBeTruthy();
+    expect(screen.getByText('Payment failed')).toBeTruthy();
   });
 
   it('lands on the success state after confirming escrow', async () => {
@@ -87,7 +87,7 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
     fireEvent.press(screen.getByTestId('booking-escrow-confirm'));
 
     await waitFor(() => {
-      expect(screen.getByText('Эскроу амжилттай!')).toBeTruthy();
+      expect(screen.getByText('Escrow successful!')).toBeTruthy();
     });
   });
 });

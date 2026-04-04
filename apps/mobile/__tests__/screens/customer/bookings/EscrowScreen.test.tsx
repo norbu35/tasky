@@ -1,17 +1,17 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-
+import { useLocalSearchParams } from 'expo-router';
 import EscrowScreen from '../../../../src/app/(customer)/bookings/[bookingId]/escrow';
 
 let mockParams: Record<string, string> = {};
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
-  useLocalSearchParams: () => mockParams,
+  useLocalSearchParams: jest.fn(() => mockParams),
 }));
 
 beforeEach(() => {
-  mockParams = { bookingId: 'booking-123' };
+  mockParams = {};
 });
 
 describe('EscrowScreen (SCR-P3-003)', () => {
@@ -19,14 +19,14 @@ describe('EscrowScreen (SCR-P3-003)', () => {
     render(<EscrowScreen />);
 
     expect(screen.getByTestId('escrow-screen')).toBeTruthy();
-    expect(screen.getByText('Эскроу төлбөр')).toBeTruthy();
-    expect(screen.getByText('Эскроу ашиглах')).toBeTruthy();
+    expect(screen.getByText('Escrow Payment')).toBeTruthy();
+    expect(screen.getByText('Use Escrow')).toBeTruthy();
   });
 
   it('renders the escrowed confirmation state', () => {
-    mockParams = { bookingId: 'booking-123', state: 'escrowed' };
+    mockParams = { state: 'escrowed' };
     render(<EscrowScreen />);
 
-    expect(screen.getByText('Төлбөр баталгаажлаа')).toBeTruthy();
+    expect(screen.getByText('Payment confirmed')).toBeTruthy();
   });
 });

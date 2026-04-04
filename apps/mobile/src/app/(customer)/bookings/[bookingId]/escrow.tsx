@@ -4,12 +4,14 @@ import { useLocalSearchParams } from 'expo-router';
 import { Button } from '../../../../components/ui/Button';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
+import { useTranslation } from 'react-i18next';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
 type EscrowState = 'shell' | 'confirm' | 'success' | 'error';
 
 export default function EscrowScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ state?: string; demoState?: string }>();
   const [state, setState] = React.useState<EscrowState>(() => {
     if (params.demoState === 'error') return 'error';
@@ -39,9 +41,9 @@ export default function EscrowScreen() {
        
       >
         <View style={styles.errorCard} testID="booking-escrow-screen-error">
-          <Text style={styles.cardTitle}>Төлбөр амжилтгүй</Text>
+          <Text style={styles.cardTitle}>{t('customer.bookings.escrowFlow.paymentFailed', 'Payment failed')}</Text>
           <Text style={styles.description}>
-            Эскроу төлбөрийг одоогоор үргэлжлүүлэх боломжгүй байна.
+            {t('customer.bookings.escrowFlow.errorDescription', 'Escrow payment cannot proceed currently.')}
           </Text>
         </View>
       </ScrollView>
@@ -56,9 +58,9 @@ export default function EscrowScreen() {
         testID="booking-escrow-screen"
       >
         <View style={styles.successCard}>
-          <Text style={styles.cardTitle}>Төлбөр баталгаажлаа</Text>
-          <Text style={styles.successTitle}>Эскроу амжилттай!</Text>
-          <Text style={styles.description}>Төлбөр аюулгүй эскроу дансанд хадгалагдаж байна.</Text>
+          <Text style={styles.cardTitle}>{t('customer.bookings.escrowFlow.paymentConfirmed', 'Payment confirmed')}</Text>
+          <Text style={styles.successTitle}>{t('customer.bookings.escrowFlow.escrowSuccess', 'Escrow successful!')}</Text>
+          <Text style={styles.description}>{t('customer.bookings.escrowFlow.escrowHeldDescription', 'Payment is securely held in escrow.')}</Text>
         </View>
       </ScrollView>
     );
@@ -71,39 +73,39 @@ export default function EscrowScreen() {
       testID="booking-escrow-screen"
     >
       <View testID="escrow-screen">
-        <Text style={styles.title}>Эскроу төлбөр</Text>
+        <Text style={styles.title}>{t('customer.bookings.escrowFlow.title', 'Escrow Payment')}</Text>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Эскроу төлбөрөөр хамгаалалт нэмэх</Text>
+          <Text style={styles.cardTitle}>{t('customer.bookings.escrowFlow.optInTitle', 'Add protection with escrow payment')}</Text>
           <Text style={styles.description}>
-            Төлбөрийг аюулгүй данс руу байршуулна. Ажил дууссаны дараа л гүйцэтгэгч мөнгөө авна
+            {t('customer.bookings.escrowFlow.optInDescription', 'Payment will be securely deposited. Tasker receives money only after completion.')}
           </Text>
         </View>
 
         <View style={styles.featureList}>
-          <Text style={styles.featureItem}>Мөнгөн хамгаалалт</Text>
-          <Text style={styles.featureItem}>Маргаан шийдвэрлэх боломж</Text>
-          <Text style={styles.featureItem}>Автомат шилжүүлэг</Text>
+          <Text style={styles.featureItem}>{t('customer.bookings.escrowFlow.featureProtection', 'Money protection')}</Text>
+          <Text style={styles.featureItem}>{t('customer.bookings.escrowFlow.featureDispute', 'Dispute resolution')}</Text>
+          <Text style={styles.featureItem}>{t('customer.bookings.escrowFlow.featureAutoTransfer', 'Automatic transfer')}</Text>
         </View>
 
         <Button
-          label="Эскроу ашиглах"
+          label={t('customer.bookings.escrowFlow.useEscrow', 'Use Escrow')}
           onPress={() => setState('confirm')}
           testID="booking-escrow-screen-cta"
         />
 
         {state === 'confirm' && (
           <View style={styles.sheet} testID="booking-escrow-confirm-sheet">
-            <Text style={styles.sheetTitle}>Баталгаажуулах</Text>
+            <Text style={styles.sheetTitle}>{t('customer.bookings.escrowFlow.confirmTitle', 'Confirm')}</Text>
             <Text style={styles.sheetDescription}>
-              Эскроу ашиглахыг баталгаажуулснаар төлбөр аюулгүй хадгалагдана.
+              {t('customer.bookings.escrowFlow.sheetDescription', 'By confirming to use Escrow, your payment will be securely held.')}
             </Text>
             <Button
-              label="Үргэлжлүүлэх"
+              label={t('customer.bookings.escrowFlow.continueBtn', 'Continue')}
               onPress={() => setState('success')}
               testID="booking-escrow-confirm"
             />
             <Pressable onPress={() => setState('shell')}>
-              <Text style={styles.cancelText}>Буцах</Text>
+              <Text style={styles.cancelText}>{t('customer.bookings.escrowFlow.cancelText', 'Go back')}</Text>
             </Pressable>
           </View>
         )}

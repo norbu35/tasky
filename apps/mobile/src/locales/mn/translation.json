@@ -641,7 +641,25 @@
       "stepConfirm": "Баталгаажуулах",
       "timelineFallbackTitle": "Даалгаврын дэлгэрэнгүй",
       "timelineTasker": "Гүйцэтгэгч",
-      "timelineTaskerFallback": "Гүйцэтгэгч"
+      "timelineTaskerFallback": "Гүйцэтгэгч",
+      "escrowFlow": {
+        "title": "Эскроу төлбөр",
+        "optInTitle": "Эскроу төлбөрөөр хамгаалалт нэмэх",
+        "featureProtection": "Мөнгөн хамгаалалт",
+        "featureDispute": "Маргаан шийдвэрлэх боломж",
+        "featureAutoTransfer": "Автомат шилжүүлэг",
+        "confirmTitle": "Баталгаажуулах",
+        "cancelText": "Буцах",
+        "paymentFailed": "Төлбөр амжилтгүй",
+        "paymentConfirmed": "Төлбөр баталгаажлаа",
+        "escrowSuccess": "Эскроу амжилттай!",
+        "escrowHeldDescription": "Төлбөр аюулгүй эскроу дансанд хадгалагдаж байна.",
+        "errorDescription": "Эскроу төлбөрийг одоогоор үргэлжлүүлэх боломжгүй байна.",
+        "optInDescription": "Төлбөрийг аюулгүй данс руу байршуулна. Ажил дууссаны дараа л гүйцэтгэгч мөнгөө авна",
+        "useEscrow": "Эскроу ашиглах",
+        "sheetDescription": "Эскроу ашиглахыг баталгаажуулснаар төлбөр аюулгүй хадгалагдана.",
+        "continueBtn": "Үргэлжлүүлэх"
+      }
     },
     "disputes": {
       "raiseTitle": "Асуудал мэдэгдэх",

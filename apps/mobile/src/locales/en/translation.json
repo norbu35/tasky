@@ -641,7 +641,25 @@
       "stepConfirm": "Баталгаажуулах",
       "timelineFallbackTitle": "Даалгаврын дэлгэрэнгүй",
       "timelineTasker": "Гүйцэтгэгч",
-      "timelineTaskerFallback": "Гүйцэтгэгч"
+      "timelineTaskerFallback": "Гүйцэтгэгч",
+      "escrowFlow": {
+        "title": "Escrow Payment",
+        "optInTitle": "Add protection with escrow payment",
+        "featureProtection": "Money protection",
+        "featureDispute": "Dispute resolution",
+        "featureAutoTransfer": "Automatic transfer",
+        "confirmTitle": "Confirm",
+        "cancelText": "Go back",
+        "paymentFailed": "Payment failed",
+        "paymentConfirmed": "Payment confirmed",
+        "escrowSuccess": "Escrow successful!",
+        "escrowHeldDescription": "Payment is securely held in escrow.",
+        "errorDescription": "Escrow payment cannot proceed currently.",
+        "optInDescription": "Payment will be securely deposited. Tasker receives money only after completion.",
+        "useEscrow": "Use Escrow",
+        "sheetDescription": "By confirming to use Escrow, your payment will be securely held.",
+        "continueBtn": "Continue"
+      }
     },
     "disputes": {
       "raiseTitle": "Report an Issue",
