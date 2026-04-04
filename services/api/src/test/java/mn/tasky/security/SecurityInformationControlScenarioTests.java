@@ -197,12 +197,13 @@ class SecurityInformationControlScenarioTests extends IntegrationTestBase {
 
         Map<String, Object> body = Map.of(
                 "category_id", categoryId,
-                "description", "Security test task",
+                "description", "Security test task description",
                 "budget", 50000,
                 "location_lat", 47.9077,
                 "location_lng", 106.8832,
                 "location_text", "Test Street 1, UB",
-                "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString());
+                "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                "intake_answers", Map.of());
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", customer.token(), body);
         return resp.getBody().get("id").toString();

@@ -310,7 +310,8 @@ class BookingScenarioTests {
                     "budget", 50000,
                     "location_lat", 47.9, "location_lng", 106.9,
                     "location_text", "Test Street 1, UB",
-                    "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString());
+                    "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString(),
+                    "intake_answers", Map.of());
             ResponseEntity<Map> taskCreateResp = http.exchange(url("/api/v1/tasks"), HttpMethod.POST,
                     new HttpEntity<>(taskBody, auth), Map.class);
             assertThat(taskCreateResp.getStatusCode().value())
