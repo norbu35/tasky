@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-04-04
+- **Mobile NativeWind foundation + token/shell consolidation**: Completed architecture-first mobile styling migration to shared NativeWind/token boundaries, moved route-level shell ownership to shared containers/action bars, removed most route-local raw input primitives, added lint guardrails for route primitive imports (with OTP exception), stabilized auth/env test behavior, and re-verified mobile suites (`typecheck`, `lint`, full `test`).
+
 ## 2026-04-03
 - **Infrastructure & Mobile Navigation**: Remediated Docker Compose environment variables for PgBouncer/Flyway connectivity and standardized mobile application navigation by migrating customer/tasker screen headers to a native Expo Router stack-based configuration.
 
