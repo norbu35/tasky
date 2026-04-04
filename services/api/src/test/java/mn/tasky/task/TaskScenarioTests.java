@@ -49,9 +49,11 @@ class TaskScenarioTests extends IntegrationTestBase {
     private String taskerToken;
     private String categoryId;
     // The Cleaning category schema has 4 required questions (version 1)
-    private static final String CLEANING_INTAKE_ANSWERS =
-            "{\"property_type\":\"Apartment\",\"size_or_rooms\":2,"
-            + "\"cleaning_type\":\"Standard\",\"supplies_provided\":true}";
+    private static final Map<String, Object> CLEANING_INTAKE_ANSWERS = Map.of(
+            "property_type", "Apartment",
+            "size_or_rooms", 2,
+            "cleaning_type", "Standard",
+            "supplies_provided", true);
     private static final int CLEANING_SCHEMA_VERSION = 1;
 
     @BeforeEach
@@ -85,7 +87,7 @@ class TaskScenarioTests extends IntegrationTestBase {
         // Provide schema version with answers that are missing required fields
         // The Cleaning schema requires: property_type, size_or_rooms, cleaning_type, supplies_provided
         // Provide only one answer — three required fields are absent
-        String partialAnswers = "{\"property_type\":\"Apartment\"}";
+        Map<String, Object> partialAnswers = Map.of("property_type", "Apartment");
         Map body = Map.of(
                 "category_id", categoryId,
                 "description", "Task with partial intake answers",
@@ -135,7 +137,7 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-005 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-005: Budget greater than 1000 MNT is accepted")
+    @DisplayName("SCN-TASK-005: Budget of 5000 MNT is accepted, 4999 is rejected")
     void budgetOf1001Accepted() {
         // @Min(5000) on the DTO — the actual minimum validated by Spring is 5000
         // The PRD says > 1000 MNT. The current implementation enforces @Min(5000).
@@ -383,7 +385,8 @@ class TaskScenarioTests extends IntegrationTestBase {
                 "location_text", "Test Street 1, UB",
                 "scheduled_at", future(),
                 "draft_id", draftId,
-                "intake_answers", CLEANING_INTAKE_ANSWERS
+                "intake_answers", CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version", CLEANING_SCHEMA_VERSION
         );
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
@@ -410,7 +413,8 @@ class TaskScenarioTests extends IntegrationTestBase {
                 "location_text", "Test Street 1, UB",
                 "scheduled_at", future(),
                 "draft_id", draftId,
-                "intake_answers", CLEANING_INTAKE_ANSWERS
+                "intake_answers", CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version", CLEANING_SCHEMA_VERSION
         );
 
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks", body, custToken);
@@ -438,7 +442,8 @@ class TaskScenarioTests extends IntegrationTestBase {
                 "budget", 50000,
                 "location_lat", 47.9, "location_lng", 106.9,
                 "location_text", "Test Street 1, UB",
-                "scheduled_at", future());
+                "scheduled_at", future(),
+                "intake_answers", Map.of());
         ResponseEntity<Map> existing = postWithAuth("/api/v1/tasks", body, custToken);
         assertThat(existing.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         String existingTaskId = existing.getBody().get("id").toString();
@@ -490,7 +495,9 @@ class TaskScenarioTests extends IntegrationTestBase {
                 "budget", budget,
                 "location_lat", 47.9077, "location_lng", 106.8832,
                 "location_text", "Test Street 1, Ulaanbaatar",
-                "scheduled_at", future());
+                "scheduled_at", future(),
+                "intake_answers", CLEANING_INTAKE_ANSWERS,
+                "intake_schema_version", CLEANING_SCHEMA_VERSION);
     }
 
     private String future() {
