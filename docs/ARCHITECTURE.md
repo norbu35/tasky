@@ -62,7 +62,7 @@ Cross-domain communication uses internal Java method calls only — no network h
 ### 3.2 Frontend Stack
 
 * **Web**: React 18, Vite, TailwindCSS, TanStack Query, Radix UI primitives + Tailwind (shadcn file conventions; not CLI-managed).
-* **Mobile**: React Native (Expo), NativeWind, React Navigation, token-driven native component library (Radix/shadcn not used on mobile).
+* **Mobile**: React Native (Expo) with Expo Router-owned navigation chrome, NativeWind-first styling, and a layered token contract (`primitive` -> `semantic` -> `platform outputs`); shared shell components own safe areas and screen chrome, and Radix/shadcn remain web-only.
 * **API Client**: TypeScript SDK generated from OpenAPI.
 
 ### 3.3 Infrastructure Services (AWS & Containers)
@@ -103,13 +103,14 @@ Cross-domain communication uses internal Java method calls only — no network h
     * Product-level components are composed from those primitives in feature folders.
     * Additional third-party UI frameworks (MUI, Ant, Chakra, etc.) are forbidden for web runtime components.
 * **Token Source of Truth (Cross-Platform)**:
-    * Canonical design tokens live in a shared package (recommended: `packages/design-tokens`).
-    * Web consumes tokens via Tailwind/theme variables.
-    * Mobile consumes the same tokens through a React Native adapter layer.
+    * Canonical design tokens live in a shared package (recommended: `packages/design-tokens`) and are structured as primitive values, semantic aliases, and platform outputs.
+    * Web consumes the same token graph via Tailwind/theme variables.
+    * Mobile consumes the same token graph via NativeWind theme bindings and shared shell/primitive adapters.
 * **Parity Contract (Web <-> Mobile)**:
     * Each shared UX pattern (Button, Input, Select, Modal/Sheet, Toast, Form Field, Empty State) has a parity record
       defining states, spacing, typography, and interaction behavior.
-    * Mobile keeps native rendering patterns while matching token values and state semantics.
+    * Parity records are validation references, not implementation drivers, until the mobile NativeWind/token/shell foundation is stable.
+    * Mobile keeps native rendering patterns while matching token values and state semantics after the foundation lands.
   * Canonical parity baseline table: see §7.2 below.
 * **Accessibility Baseline**:
     * Web components must preserve Radix/shadcn accessibility defaults and satisfy keyboard navigation + WCAG AA
@@ -514,9 +515,11 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 
 #### Mobile (`apps/mobile`)
 
-* Framework: React Native + Expo.
+* Framework: React Native + Expo Router.
 * **Primitives (Atoms):** Always build native component equivalents. Never import `shadcn/ui` into the mobile app.
-* Styling pipeline: React Native `StyleSheet.create` or inline styles using constants from `@tasky/design-tokens`.
+* Styling pipeline: NativeWind utility classes backed by the `@tasky/design-tokens` platform outputs are the default for layout, spacing, color, typography, radius, border, and state styling. `StyleSheet.create` and inline object styles are exceptions reserved for Reanimated styles, platform shadow/elevation helpers, safe-area/inset calculations, and third-party APIs that require object styles.
+* Shell ownership: Expo Router layouts and shared shell components own tab bars, FAB placement, stack headers, modal presentation, and safe-area policy. Route screens compose approved shells and must not recreate navigation chrome locally.
+* Forbidden escape hatches: core `SafeAreaView`, raw `TextInput` outside approved input/form wrappers, `TouchableOpacity` where shared pressable/button primitives apply, and ad hoc token lookups outside the canonical token graph.
 * If a component exists in `apps/web/src/components/ui/` (e.g., `Button`), a functionally and visually parallel
   component **must** exist in `apps/mobile/src/components/ui/`.
 
@@ -536,11 +539,12 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 | Modal/Sheet | dialog/sheet pattern                      | `ModalSheet.tsx`                                | open, close, backdrop-dismiss                | Backdrop dismiss is enabled by default.   |
 | Toast       | toast/badge pattern                       | `Toast.tsx`                                     | info, success, error                         | Alert role for accessibility semantics.   |
 
-**Token contract:** All parity components consume tokens from `packages/design-tokens/tokens.ts` (typed source),
-`packages/design-tokens/tokens.css` (web CSS variables), and `apps/mobile/src/design/tokenAdapter.ts` (mobile adapter).
+**Token contract:** All parity components consume the canonical token graph from `packages/design-tokens` via platform outputs
+(`packages/design-tokens/tokens.css` for web CSS variables, NativeWind bindings for mobile, and the shared semantic source of truth).
+During the NativeWind foundation refactor, this table is reference-only and does not drive implementation sequencing.
 
 **Validation:** `TID-TASK-070-WEB-*` validates web primitives and token usage. `TID-TASK-071-MOBILE-*` validates mobile
-token adapter, component parity, and this table.
+NativeWind token bindings, shell ownership boundaries, component parity, and this table.
 
 ### 7.3 File Structure
 
@@ -551,7 +555,8 @@ apps/web/src/components/
 
 apps/mobile/src/components/
   ui/       ← native atomic components matching web primitives
-  feature/  ← domain-specific mobile components
+  shells/   ← safe-area, header, CTA-bar, and route-shell ownership boundaries
+  feature/  ← domain-specific mobile components composed from shells + primitives
 ```
 
 ### 7.4 Delivery Phases
@@ -574,19 +579,20 @@ token binding.
 Exit criteria: `t("key")` translations work on both platforms; language switcher (EN/MN) is implemented; mobile defaults
 to `mn`.
 
-#### Phase 2 — Mobile Parity Base (TASK-071)
+#### Phase 2 — Mobile Foundation Validation Base (TASK-071, after foundation)
 
-1. Add mobile token adapter consuming shared tokens.
+1. Validate the mobile NativeWind/token/shell foundation across the shared primitives and representative routes.
 2. Implement core component equivalents: Button, Input, FormField, Modal/Sheet, Toast.
-3. Publish parity matrix (§7.2) with states and interaction rules.
+3. Publish parity matrix (§7.2) with states and interaction rules as a validation reference.
 
-Exit criteria: shared tokens used on mobile; state semantics match parity matrix; tests verify token + state behavior.
+Exit criteria: shared tokens used on mobile; shell ownership rules are enforced; state semantics match parity matrix;
+tests verify token, shell, and state behavior.
 
-#### Phase 3 — Accessibility and Parity Gate (TASK-072)
+#### Phase 3 — Accessibility and Parity Gate (TASK-072, after foundation)
 
 1. Add web keyboard navigation checks for touched flows.
 2. Add WCAG 2.1 AA contrast checks for touched flows.
-3. Add cross-platform parity checks against token and state contracts.
+3. Add cross-platform parity checks against token, shell, and state contracts.
 
 Exit criteria: a11y checks pass in CI for affected web flows; parity checks pass for shared components; ticket AC
 evidence includes `TID-*` test IDs.

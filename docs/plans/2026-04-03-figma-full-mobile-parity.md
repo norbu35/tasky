@@ -1,5 +1,7 @@
 # Tranche Plan: Full Mobile Figma Parity (All Screens)
 
+> **Superseded on 2026-04-04:** Architecture-first mobile restructuring now takes precedence. See [2026-04-04-mobile-nativewind-foundation-plan.md](./2026-04-04-mobile-nativewind-foundation-plan.md). No new parity implementation work should continue from this plan until the NativeWind, token-consolidation, and shell-ownership tranches are complete. After that work lands, parity is re-audited as a validation tranche rather than used as the primary implementation driver.
+
 **Status:** planned
 **Priority:** critical
 **Depends on:** none
