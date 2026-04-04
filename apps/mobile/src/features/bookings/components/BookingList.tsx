@@ -13,6 +13,7 @@ export function BookingList() {
 
   return (
     <FlatList
+      style={{ flex: 1 }}
       data={data?.data ?? []}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.list}

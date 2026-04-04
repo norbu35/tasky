@@ -175,14 +175,13 @@ export default function ScheduleBudgetScreen() {
   };
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-CUST-006"
       currentStep={4}
       totalSteps={7}
       onNext={handleNext}
       onBack={() => router.back()}
       nextLabel={t('common.continue', 'Continue')}
       nextDisabled={!canContinue}
-      testID="schedule-budget-screen"
     >
       <View style={styles.hero}>
         <Text style={styles.stepLabel}>

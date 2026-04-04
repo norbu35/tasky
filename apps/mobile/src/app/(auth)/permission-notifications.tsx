@@ -32,7 +32,7 @@ export default function PermissionNotificationsScreen() {
   };
 
   return (
-    <View style={styles.container} testID="permission-notifications-screen">
+    <View testID="SCR-SHARED-009" style={styles.container}>
       <PermissionPrimer
         icon={<Bell size={48} color={colors.primaryDeep} />}
         title={t('auth.permissions.notificationsTitle', 'Мэдэгдэл авах зөвшөөрөл')}

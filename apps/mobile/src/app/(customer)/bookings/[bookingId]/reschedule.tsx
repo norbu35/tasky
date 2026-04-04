@@ -114,7 +114,7 @@ export default function RescheduleScreen() {
   }, [bookingId, reason, reschedule, selectedDateTime]);
 
   return (
-    <ScreenContainer testID="reschedule-screen">
+    <ScreenContainer testID="SCR-CUST-020">
       <InsetScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}

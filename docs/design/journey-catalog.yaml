@@ -259,18 +259,18 @@ journeys:
       - step: 4
         screen: SCR-CUST-004
         action: "Upload photos (0-3)"
-        next: SCR-CUST-005
+        next: SCR-CUST-007
       - step: 5
+        screen: SCR-CUST-007
+        action: "Review auto-generated Job Scope Summary (editable)"
+        next: SCR-CUST-005
+      - step: 6
         screen: SCR-CUST-005
         action: "Pin location on map"
         next: SCR-CUST-006
-      - step: 6
-        screen: SCR-CUST-006
-        action: "Set schedule and budget"
-        next: SCR-CUST-007
       - step: 7
-        screen: SCR-CUST-007
-        action: "Review summary, edit if needed, submit"
+        screen: SCR-CUST-006
+        action: "Set schedule and budget, then Post Task"
         next: SCR-CUST-008
         lifecycle: "TASK-T01 (customer_publishes_task)"
       - step: 8
@@ -282,7 +282,7 @@ journeys:
         name: "Validation error"
         branch_at: 7
         condition: "Invalid form data"
-        screens: [SCR-CUST-007]
+        screens: [SCR-CUST-006]
         outcome: "Inline errors, user corrects"
       - id: JRN-CUST-01-A2
         name: "Photo upload fails"
@@ -292,7 +292,7 @@ journeys:
         outcome: "Error state, retry"
       - id: JRN-CUST-01-A3
         name: "Location permission denied"
-        branch_at: 5
+        branch_at: 6
         condition: "No location permission"
         screens: [SCR-CUST-005]
         outcome: "Manual pin placement"
@@ -300,8 +300,8 @@ journeys:
         name: "Skip photos"
         branch_at: 4
         condition: "User chooses no photos"
-        screens: [SCR-CUST-004, SCR-CUST-005]
-        outcome: "Proceed to location without photos"
+        screens: [SCR-CUST-004, SCR-CUST-007]
+        outcome: "Proceed to Job Scope Summary without photos"
 
   - id: JRN-CUST-02
     name: "Review Applicants & Confirm Booking (Phase 0-1)"
@@ -450,6 +450,13 @@ journeys:
         condition: "Customer taps timeline"
         screens: [SCR-CUST-019]
         outcome: "View immutable booking event history"
+      - id: JRN-CUST-04-A5
+        name: "Respond to reschedule"
+        branch_at: 2
+        condition: "Tasker requests reschedule"
+        screens: [SCR-CUST-017]
+        outcome: "Customer accepts or declines reschedule"
+        lifecycle: "BOOK-T08 (reschedule_accepted) or BOOK-T09 (reschedule_declined)"
 
   - id: JRN-CUST-05
     name: "Rebook Tasker"
@@ -780,6 +787,27 @@ journeys:
         screens: [SCR-TASK-014]
         outcome: "Flag no-show after 15min"
         lifecycle: "BOOK-T06 (counterparty_flags_no_show)"
+      - id: JRN-TASK-04-A3
+        name: "Tasker cancels (Safety/Fraud)"
+        branch_at: 2
+        condition: "Tasker cancels booking selecting Safety/Fraud"
+        screens: [SCR-TASK-015]
+        outcome: "No strike, booking cancelled, trust investigation opens"
+        lifecycle: "BOOK-T05 (tasker_cancels)"
+      - id: JRN-TASK-04-A4
+        name: "Reschedule"
+        branch_at: 2
+        condition: "Tasker requests reschedule"
+        screens: [SCR-TASK-013]
+        outcome: "Submit request, wait for Customer response"
+        lifecycle: "BOOK-T07 (reschedule_requested)"
+      - id: JRN-TASK-04-A5
+        name: "Respond to reschedule"
+        branch_at: 2
+        condition: "Customer requests reschedule"
+        screens: [SCR-TASK-013]
+        outcome: "Tasker accepts or declines reschedule"
+        lifecycle: "BOOK-T08 (reschedule_accepted) or BOOK-T09 (reschedule_declined)"
 
   - id: JRN-TASK-05
     name: "Credit Purchase"

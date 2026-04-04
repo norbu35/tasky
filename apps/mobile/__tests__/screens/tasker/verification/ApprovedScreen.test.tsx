@@ -52,14 +52,14 @@ describe('ApprovedScreen (SCR-TASK-008)', () => {
     const ApprovedScreen = require('../../../../src/app/(tasker)/verification/approved').default;
     render(<ApprovedScreen />);
 
-    expect(screen.getByTestId('approved-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-008')).toBeTruthy();
   });
 
   it('CTA navigates to browse tasks via replace', () => {
     const ApprovedScreen = require('../../../../src/app/(tasker)/verification/approved').default;
     render(<ApprovedScreen />);
 
-    fireEvent.press(screen.getByTestId('approved-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-008-cta'));
     expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 });

@@ -133,7 +133,7 @@ function filterSections(sections: FaqSection[], query: string): FaqSection[] {
 
 function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }) {
   return (
-    <View style={styles.loadingContainer} testID="help-screen-loading">
+    <View testID="SCR-INFRA-005" style={styles.loadingContainer}>
       <View style={styles.stickySearchBar}>
         <Search size={18} color={colors.textSecondary} />
         <Text style={styles.searchPlaceholder}>{searchPlaceholder}</Text>

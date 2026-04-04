@@ -27,7 +27,7 @@ const CATEGORIES = [
 
 function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
-    <View style={styles.cardHeader}>
+    <View testID="SCR-TASK-001" style={styles.cardHeader}>
       <Text style={styles.customerName} numberOfLines={1}>
         {task.customer.full_name}
       </Text>

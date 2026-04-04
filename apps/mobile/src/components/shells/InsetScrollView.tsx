@@ -24,6 +24,7 @@ export function InsetScrollView({
 
   return (
     <ScrollView
+      style={[styles.scrollView, scrollProps.style]}
       {...scrollProps}
       contentContainerStyle={[
         styles.contentContainer,
@@ -37,6 +38,9 @@ export function InsetScrollView({
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     flexGrow: 1,
   },

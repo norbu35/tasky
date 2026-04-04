@@ -37,7 +37,7 @@ beforeEach(() => {
 describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
   it('has a testID on the screen container', () => {
     render(<TaskPostedSuccessScreen />);
-    expect(screen.getByTestId('task-posted-success-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-008')).toBeTruthy();
   });
 
   it('shows success headline', () => {

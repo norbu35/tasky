@@ -90,7 +90,7 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View testID="SCR-SHARED-014" style={styles.container}>
       <SettingsTemplate sections={sections} testID="settings-screen" />
       <ConfirmSheet
         isOpen={showRoleConfirm}

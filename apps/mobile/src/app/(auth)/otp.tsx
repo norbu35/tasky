@@ -43,7 +43,7 @@ export default function OtpScreen() {
   const activeCellIndex = sanitizedCode.length >= 4 ? 3 : sanitizedCode.length;
 
   return (
-    <ScreenContainer testID="otp-screen">
+    <ScreenContainer testID="SCR-SHARED-003">
       <InsetScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}

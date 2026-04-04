@@ -97,12 +97,12 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
 
   it('displays the auth hero badge icon container', () => {
     render(<LoginScreen />);
-    expect(screen.getByTestId('login-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-002')).toBeTruthy();
   });
 
   it('has a testID on the screen container', () => {
     render(<LoginScreen />);
-    expect(screen.getByTestId('login-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-002')).toBeTruthy();
   });
 
   it('shows Facebook button label text', () => {

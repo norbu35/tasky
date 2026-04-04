@@ -190,7 +190,7 @@ function getEvidenceLabel(
 function TimelineDot({ state }: { state: TimelineState }) {
   if (state === 'done') {
     return (
-      <View style={styles.timelineDotDone}>
+      <View testID="SCR-CUST-025" style={styles.timelineDotDone}>
         <CircleCheckBig size={10} color={colors.primaryForeground} />
       </View>
     );

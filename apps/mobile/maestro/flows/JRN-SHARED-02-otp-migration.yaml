@@ -1,0 +1,37 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-02: Phase 2 OTP Migration
+# Goal: Existing Facebook-only user adds phone OTP
+
+- launchApp:
+    clearState: true
+
+# Step 1: Migration gate shown on first Phase 2 session
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-004"
+    timeout: 10000
+
+# Step 2: Enter phone number
+- tapOn:
+    id: "phone-input"
+- inputText: "99112233"
+- tapOn:
+    id: "submit-phone-button"
+
+# Step 3: Enter OTP code on verification screen
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-003"
+    timeout: 5000
+
+- tapOn:
+    id: "otp-input"
+- inputText: "123456"
+- tapOn:
+    id: "verify-otp-button"
+
+# Exit: Wait for previous screen to become visible
+- extendedWaitUntil:
+    visible: "Welcome"
+    timeout: 5000

@@ -1,0 +1,53 @@
+appId: mn.tasky.mobile
+---
+# Journey JRN-SHARED-01: First Launch & Onboarding
+# Goal: New user completes signup and reaches home screen
+
+- launchApp:
+    clearState: true
+
+# Step 1: App launches, splash animation (Implicitly handled by Maestro waiting for first screen)
+
+# Step 2 & 3: Swipe through 3 onboarding slides
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-005"
+    timeout: 10000
+
+# Tap 'Next' to swipe through the slides
+- tapOn:
+    id: "SCR-SHARED-005-next"
+- tapOn:
+    id: "SCR-SHARED-005-next"
+
+# Tap "Get Started" on the last slide
+- tapOn: "Get Started"
+
+# Step 4: Select role (Customer or Tasker)
+- assertVisible:
+    id: "SCR-SHARED-006"
+
+- tapOn:
+    id: "role-card-customer"
+
+- tapOn:
+    id: "role-confirm-button"
+
+# Step 5, 6, 7: Grant/skip camera, location, and notification permissions
+- extendedWaitUntil:
+    visible: "Camera"
+    timeout: 5000
+- tapOn: "Allow"
+
+- extendedWaitUntil:
+    visible: "Location"
+    timeout: 5000
+- tapOn: "Allow"
+
+- extendedWaitUntil:
+    visible: "Notifications"
+    timeout: 5000
+- tapOn: "Allow"
+
+# Finally, reach the Customer Home Screen
+- assertVisible: "Welcome to Tasky"

@@ -37,7 +37,7 @@ export default function TaskPostedSuccessScreen() {
   };
 
   return (
-    <ScreenContainer testID="task-posted-success-screen">
+    <ScreenContainer testID="SCR-CUST-008">
       <InsetScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}

@@ -354,7 +354,7 @@ nodes:
   SCR-CUST-004:
     label: "Photo Upload"
     edges:
-      - to: SCR-CUST-005
+      - to: SCR-CUST-007
         type: push
         guard: "photos uploaded or skipped"
       - to: SCR-CUST-003
@@ -362,38 +362,38 @@ nodes:
         guard: "back"
     data_deps: [photo_upload_urls]
 
+  SCR-CUST-007:
+    label: "Job Scope Summary"
+    edges:
+      - to: SCR-CUST-005
+        type: push
+        guard: "summary reviewed"
+      - to: SCR-CUST-004
+        type: pop
+        guard: "back"
+    data_deps: [job_scope_summary]
+
   SCR-CUST-005:
     label: "Location Pin"
     edges:
       - to: SCR-CUST-006
         type: push
         guard: "location set"
-      - to: SCR-CUST-004
+      - to: SCR-CUST-007
         type: pop
         guard: "back"
     data_deps: [location_lat, location_lng, location_text]
 
   SCR-CUST-006:
-    label: "Schedule & Budget"
-    edges:
-      - to: SCR-CUST-007
-        type: push
-        guard: "schedule and budget set"
-      - to: SCR-CUST-005
-        type: pop
-        guard: "back"
-    data_deps: [scheduled_at, budget]
-
-  SCR-CUST-007:
-    label: "Review & Submit"
+    label: "Schedule, Budget & Submit"
     edges:
       - to: SCR-CUST-008
         type: replace
         guard: "submit success"
-      - to: SCR-CUST-006
+      - to: SCR-CUST-005
         type: pop
         guard: "back"
-    data_deps: [task_draft, job_scope_summary]
+    data_deps: [scheduled_at, budget, task_draft]
 
   SCR-CUST-008:
     label: "Task Posted Success"

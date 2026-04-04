@@ -52,7 +52,7 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     const StatsScreen = require('../../../../src/app/(tasker)/stats').default;
     render(<StatsScreen />);
 
-    expect(screen.getByTestId('tasker-stats')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-016')).toBeTruthy();
   });
 
   it('renders stats cards with jobs completed, rating, response time, reliability', () => {
@@ -170,6 +170,6 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     const StatsScreen = require('../../../../src/app/(tasker)/stats').default;
     render(<StatsScreen />);
 
-    expect(screen.getByTestId('tasker-stats-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-016-error')).toBeTruthy();
   });
 });

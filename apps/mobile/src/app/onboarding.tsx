@@ -92,7 +92,7 @@ export default function OnboardingScreen() {
     const titleText = item.titleFallback ?? t(item.titleKey);
     const bodyText = item.bodyFallback ?? t(item.bodyKey);
     return (
-      <View style={styles.slide}>
+      <View testID="SCR-SHARED-005" style={styles.slide}>
         <View style={styles.illustrationWrap}>
           <View style={styles.illustrationBackdrop} />
           <View style={styles.illustrationCard}>
@@ -132,6 +132,7 @@ export default function OnboardingScreen() {
         )}
       </View>
       <FlatList
+        style={{ flex: 1 }}
         ref={flatListRef}
         data={SLIDES}
         renderItem={renderItem}

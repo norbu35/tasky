@@ -1,865 +1,1320 @@
-# Screen Inventory v3 — Tasky Mobile Core Pack
-# 91 screens in the current generation pack: 66 Phase 0-1, 18 Phase 2, 7 Phase 3+
-# `states[]` here is a summary/planning list. Exhaustive state coverage lives in
-# `state-matrix.yaml` and `screen-specs/SCR-*.yaml`.
-# This inventory does not yet include every PRD roadmap surface; see
-# `evaluation-report.md` for uncovered mobile modules.
-# Each screen: id, name, route, role, phase, template, states[], api_endpoints[]
-
 screens:
-
-  # ═══════════════════════════════════════════════════
-  # SHARED — Both Roles (21 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-SHARED-001
-    name: "Splash / Launch Screen"
-    route: "/"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: auth
-    states: [default, loading]
-    api_endpoints: []
-
-  - id: SCR-SHARED-002
-    name: "Auth — Login"
-    route: "/auth/login"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: auth
-    states: [default, loading, facebook_loading, otp_form, error]
-    api_endpoints: [POST /auth/facebook, POST /auth/otp/request]
-
-  - id: SCR-SHARED-003
-    name: "Auth — OTP Verification"
-    route: "/auth/otp-verify"
-    role: [customer, tasker]
-    phase: "2"
-    template: auth
-    states: [default, code_entry, verifying, error, resend_cooldown]
-    api_endpoints: [POST /auth/otp/verify, POST /auth/otp/request]
-
-  - id: SCR-SHARED-004
-    name: "Auth — OTP Migration Gate"
-    route: "/auth/otp-migration"
-    role: [customer, tasker]
-    phase: "2"
-    template: auth
-    states: [default, phone_entry, verifying, error]
-    api_endpoints: [POST /auth/otp/request, POST /auth/otp/verify]
-
-  - id: SCR-SHARED-005
-    name: "Onboarding Carousel"
-    route: "/onboarding"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: auth
-    states: [slide_1, slide_2, slide_3]
-    api_endpoints: []
-
-  - id: SCR-SHARED-006
-    name: "Role Selection"
-    route: "/onboarding/role"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: auth
-    states: [default, confirming]
-    api_endpoints: [PUT /users/me/role]
-
-  - id: SCR-SHARED-007
-    name: "Permission Primer — Camera"
-    route: "/onboarding/permission-camera"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, granted, denied]
-    api_endpoints: []
-
-  - id: SCR-SHARED-008
-    name: "Permission Primer — Location"
-    route: "/onboarding/permission-location"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, granted, denied]
-    api_endpoints: []
-
-  - id: SCR-SHARED-009
-    name: "Permission Primer — Notifications"
-    route: "/onboarding/permission-notifications"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, granted, denied]
-    api_endpoints: []
-
-  - id: SCR-SHARED-010
-    name: "Inbox — Conversation List"
-    route: "/inbox"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty, populated, error, offline]
-    api_endpoints: [GET /conversations]
-
-  - id: SCR-SHARED-011
-    name: "Inbox — Chat Detail"
-    route: "/inbox/:conversationId"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, populated, sending, phone_warning, error, offline]
-    api_endpoints: [GET /conversations/:id/messages, POST /conversations/:id/messages]
-
-  - id: SCR-SHARED-012
-    name: "Profile — My Profile"
-    route: "/profile"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, customer_view, tasker_view, error]
-    api_endpoints: [GET /users/me]
-
-  - id: SCR-SHARED-013
-    name: "Profile — Edit Profile"
-    route: "/profile/edit"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: form_wizard
-    states: [default, editing, uploading_avatar, saving, validation_error, success]
-    api_endpoints: [PUT /users/me, POST /users/me/avatar/upload-url]
-
-  - id: SCR-SHARED-014
-    name: "Profile — Settings"
-    route: "/profile/settings"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: settings
-    states: [default, language_toggle, notification_toggle, role_switch_confirm, delete_confirm]
-    api_endpoints: [GET /users/me, PUT /users/me/role]
-
-  - id: SCR-SHARED-015
-    name: "Account Deletion Confirmation"
-    route: "/profile/settings/delete"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, confirming, deleting, blocked_active_bookings]
-    api_endpoints: [DELETE /users/me]
-
-  - id: SCR-SHARED-016
-    name: "Notification Center"
-    route: "/notifications"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty, populated, error]
-    api_endpoints: [GET /notifications]
-
-  - id: SCR-SHARED-017
-    name: "Review Form"
-    route: "/(shared)/review/:bookingId"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: form_wizard
-    states: [default, rating_entry, text_entry, submitting, success, error]
-    api_endpoints: [POST /bookings/:id/reviews]
-
-  - id: SCR-SHARED-018
-    name: "Review Reminder"
-    route: null
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [reminder_24h, reminder_72h]
-    api_endpoints: []
-    note: "Bottom sheet overlay, not a standalone route"
-
-  - id: SCR-SHARED-019
-    name: "Review Hard Lock"
-    route: null
-    role: [customer, tasker]
-    phase: "0-1"
-    template: error_state
-    states: [locked_dispute, locked_missed_reviews, locked_investigation]
-    api_endpoints: []
-    note: "Full-screen blocker when risk conditions trigger"
-
-  - id: SCR-SHARED-020
-    name: "Suspended Account"
-    route: "/account/suspended"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: error_state
-    states: [default, with_expiry, appeal_sent]
-    api_endpoints: [GET /users/me]
-
-  - id: SCR-SHARED-021
-    name: "Banned Account"
-    route: "/account/banned"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: error_state
-    states: [default]
-    api_endpoints: [GET /users/me]
-
-  # ═══════════════════════════════════════════════════
-  # INFRASTRUCTURE (5 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-INFRA-001
-    name: "Network Error / Offline"
-    route: null
-    role: [customer, tasker]
-    phase: "0-1"
-    template: error_state
-    states: [no_connection, slow_connection, retry_loading]
-    api_endpoints: []
-
-  - id: SCR-INFRA-002
-    name: "App Update"
-    route: null
-    role: [customer, tasker]
-    phase: "0-1"
-    template: error_state
-    states: [soft_update, force_update]
-    api_endpoints: [GET /system/version]
-
-  - id: SCR-INFRA-003
-    name: "Session Expired"
-    route: null
-    role: [customer, tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default]
-    api_endpoints: []
-    note: "Bottom sheet prompting re-login"
-
-  - id: SCR-INFRA-004
-    name: "Terms of Service"
-    route: "/legal/terms"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, loaded]
-    api_endpoints: []
-
-  - id: SCR-INFRA-005
-    name: "Help & Support / FAQ"
-    route: "/help"
-    role: [customer, tasker]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, loaded, error]
-    api_endpoints: []
-
-  # ═══════════════════════════════════════════════════
-  # CUSTOMER FLOW (29 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-CUST-001
-    name: "My Tasks — Task List"
-    route: "/(customer)/tasks"
-    role: [customer]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty_activation, populated, refreshing, error, offline]
-    api_endpoints: [GET /tasks/mine]
-
-  - id: SCR-CUST-002
-    name: "Post Task — Category Selection"
-    route: "/(customer)/tasks/new/category"
-    role: [customer]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, loaded]
-    api_endpoints: [GET /categories]
-
-  - id: SCR-CUST-003
-    name: "Post Task — Intake Form"
-    route: "/(customer)/tasks/new/intake"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [loading_schema, form_entry, validation_error]
-    api_endpoints: [GET /categories/:id]
-
-  - id: SCR-CUST-004
-    name: "Post Task — Photo Upload"
-    route: "/(customer)/tasks/new/photos"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [empty, uploading, uploaded, max_reached, error]
-    api_endpoints: [POST /tasks/photos/upload-url]
-
-  - id: SCR-CUST-005
-    name: "Post Task — Location Pin"
-    route: "/(customer)/tasks/new/location"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [default, pin_placed, text_entry, permission_denied]
-    api_endpoints: []
-
-  - id: SCR-CUST-006
-    name: "Post Task — Schedule & Budget"
-    route: "/(customer)/tasks/new/schedule"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [default, date_picking, budget_entry, validation_error]
-    api_endpoints: []
-
-  - id: SCR-CUST-007
-    name: "Post Task — Review & Submit"
-    route: "/(customer)/tasks/new/review"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [review, editing_summary, submitting, error]
-    api_endpoints: [POST /tasks]
-
-  - id: SCR-CUST-008
-    name: "Task Posted — Success"
-    route: "/(customer)/tasks/new/success"
-    role: [customer]
-    phase: "0-1"
-    template: success_celebration
-    states: [default]
-    api_endpoints: []
-
-  - id: SCR-CUST-009
-    name: "Task Detail (Customer)"
-    route: "/(customer)/tasks/:taskId"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [loading, open, assigned, tasker_marked_done, completed, cancelled, no_show, error]
-    api_endpoints: [GET /tasks/:id, PUT /tasks/:id/complete, DELETE /tasks/:id]
-
-  - id: SCR-CUST-010
-    name: "Task Cancel Confirmation"
-    route: null
-    role: [customer]
-    phase: "0-1"
-    template: modal_sheet
-    states: [open_task_cancel, assigned_task_cancel, late_cancel_warning]
-    api_endpoints: [DELETE /tasks/:id, PUT /bookings/:id/cancel]
-
-  - id: SCR-CUST-011
-    name: "Applicants List"
-    route: "/(customer)/tasks/:taskId/applicants"
-    role: [customer]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty, populated, accept_confirm_sheet, recommended_label]
-    api_endpoints: [GET /tasks/:id/applications]
-
-  - id: SCR-CUST-012
-    name: "Applicant Timeout/Decline"
-    route: null
-    role: [customer]
-    phase: "2"
-    template: modal_sheet
-    states: [timeout_notification, decline_notification, select_next_prompt]
-    api_endpoints: []
-
-  - id: SCR-CUST-013
-    name: "Tasker Public Profile"
-    route: "/(customer)/taskers/:taskerId"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [loading, loaded, error]
-    api_endpoints: [GET /users/:id/profile]
-
-  - id: SCR-CUST-014
-    name: "Booking Confirmation"
-    route: "/(customer)/bookings/confirm"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [default, disclaimer_review, confirming, error, add_to_calendar]
-    api_endpoints: [POST /bookings]
-
-  - id: SCR-CUST-015
-    name: "Booking Confirmed — Success"
-    route: "/(customer)/bookings/confirmed"
-    role: [customer]
-    phase: "0-1"
-    template: success_celebration
-    states: [default]
-    api_endpoints: []
-
-  - id: SCR-CUST-016
-    name: "Customer Bookings List"
-    route: "/(customer)/bookings"
-    role: [customer]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty, populated, refreshing, error, offline]
-    api_endpoints: [GET /bookings/mine]
-
-  - id: SCR-CUST-017
-    name: "Booking Detail (Customer)"
-    route: "/(customer)/bookings/:bookingId"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [loading, assigned, tasker_marked_done, completed, completed_rebook, cancelled, no_show, escrow_pending, error]
-    api_endpoints: [GET /bookings/:id]
-
-  - id: SCR-CUST-018
-    name: "Confirm Completion — Decision"
-    route: null
-    role: [customer]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, confirming]
-    api_endpoints: [PUT /bookings/:id/complete]
-
-  - id: SCR-CUST-019
-    name: "Booking Timeline"
-    route: "/(customer)/bookings/:bookingId/timeline"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [loading, loaded]
-    api_endpoints: [GET /bookings/:id/timeline]
-
-  - id: SCR-CUST-020
-    name: "Reschedule"
-    route: "/(customer)/bookings/:bookingId/reschedule"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [request_form, awaiting_response, accepted, declined, expired]
-    api_endpoints: [POST /bookings/:id/reschedule, PUT /bookings/:id/reschedule/:rescheduleId]
-
-  - id: SCR-CUST-021
-    name: "No-Show Flag + Reminder"
-    route: null
-    role: [customer]
-    phase: "0-1"
-    template: modal_sheet
-    states: [reminder_10min, flag_available_15min, flagging, flagged]
-    api_endpoints: [POST /bookings/:id/no-show]
-
-  - id: SCR-CUST-022
-    name: "Booking Cancel (Customer)"
-    route: null
-    role: [customer]
-    phase: "0-1"
-    template: modal_sheet
-    states: [free_cancel, late_cancel_warning, confirming]
-    api_endpoints: [PUT /bookings/:id/cancel]
-
-  - id: SCR-CUST-023
-    name: "Rebook Shortcut"
-    route: "/(customer)/rebook"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [prefilled, editing, submitting, success]
-    api_endpoints: [POST /tasks, POST /bookings]
-
-  - id: SCR-CUST-024
-    name: "Dispute — Raise"
-    route: "/(customer)/bookings/:bookingId/dispute"
-    role: [customer]
-    phase: "0-1"
-    template: form_wizard
-    states: [default, evidence_upload, submitting, success, error]
-    api_endpoints: [POST /disputes]
-
-  - id: SCR-CUST-025
-    name: "Dispute — Status"
-    route: "/(customer)/disputes/:disputeId"
-    role: [customer]
-    phase: "0-1"
-    template: detail
-    states: [loading, open, escalated, resolved_customer, resolved_tasker, closed_insufficient]
-    api_endpoints: [GET /disputes/:id]
-
-  - id: SCR-CUST-026
-    name: "No Applicant Rescue"
-    route: null
-    role: [customer]
-    phase: "0-1"
-    template: modal_sheet
-    states: [rescue_prompt, adjust_budget, adjust_schedule, concierge_queued]
-    api_endpoints: [PUT /tasks/:id]
-
-  - id: SCR-CUST-027
-    name: "Instant Match Customer"
-    route: "/(customer)/tasks/:taskId/instant-match"
-    role: [customer]
-    phase: "3+"
-    template: detail
-    states: [matching, matched, declined_retry, fallback_to_open]
-    api_endpoints: [POST /tasks/:id/instant-match]
-
-  - id: SCR-CUST-028
-    name: "Task Boost Options"
-    route: "/(customer)/tasks/:taskId/boost"
-    role: [customer]
-    phase: "2"
-    template: detail
-    states: [loading_initial, options_available, promoted_selected, urgent_selected, already_active, error_network]
-    api_endpoints: [GET /tasks/:id/boost-options]
-
-  - id: SCR-CUST-029
-    name: "Task Boost Payment"
-    route: "/(customer)/tasks/:taskId/boost/pay"
-    role: [customer]
-    phase: "2"
-    template: detail
-    states: [qr_display, deeplink_redirect, payment_pending, payment_success, payment_failed, payment_timeout]
-    api_endpoints: [POST /tasks/:id/boost-purchases, GET /payments/:id/status]
-
-  # ═══════════════════════════════════════════════════
-  # TASKER FLOW (19 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-TASK-001
-    name: "Browse — Task Feed"
-    route: "/(tasker)/browse"
-    role: [tasker]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty_activation, populated, refreshing, filtering, error, offline]
-    api_endpoints: [GET /tasks]
-
-  - id: SCR-TASK-002
-    name: "Task Detail (Tasker)"
-    route: "/(tasker)/tasks/:taskId"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, viewable_unverified, apply_verified, already_applied, cap_reached, error]
-    api_endpoints: [GET /tasks/:id, POST /tasks/:id/applications]
-
-  - id: SCR-TASK-003
-    name: "Verification Gate"
-    route: "/(tasker)/verification"
-    role: [tasker]
-    phase: "0-1"
-    template: auth
-    states: [encouraging_interstitial]
-    api_endpoints: []
-
-  - id: SCR-TASK-004
-    name: "Verification — Consent"
-    route: "/(tasker)/verification/consent"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [default, agreed]
-    api_endpoints: []
-
-  - id: SCR-TASK-005
-    name: "Verification — ID Upload"
-    route: "/(tasker)/verification/upload"
-    role: [tasker]
-    phase: "0-1"
-    template: form_wizard
-    states: [front_upload, back_upload, selfie_upload, uploading, review, error]
-    api_endpoints: [POST /verification/upload-url, POST /verification/submit]
-
-  - id: SCR-TASK-006
-    name: "Verification — DAN Fast-Path"
-    route: "/(tasker)/verification/dan"
-    role: [tasker]
-    phase: "2"
-    template: auth
-    states: [default, verifying, success, error]
-    api_endpoints: [POST /verification/dan/verify]
-
-  - id: SCR-TASK-007
-    name: "Verification — Pending"
-    route: "/(tasker)/verification/pending"
-    role: [tasker]
-    phase: "0-1"
-    template: empty_state
-    states: [default, sla_reminder]
-    api_endpoints: [GET /verification/status]
-
-  - id: SCR-TASK-008
-    name: "Verification — Approved"
-    route: "/(tasker)/verification/approved"
-    role: [tasker]
-    phase: "0-1"
-    template: success_celebration
-    states: [default]
-    api_endpoints: []
-
-  - id: SCR-TASK-009
-    name: "Verification — Rejected"
-    route: "/(tasker)/verification/rejected"
-    role: [tasker]
-    phase: "0-1"
-    template: error_state
-    states: [default_with_reason, resubmit_prompt]
-    api_endpoints: [GET /verification/status]
-
-  - id: SCR-TASK-010
-    name: "Verification Submitted — Success"
-    route: "/(tasker)/verification/submitted"
-    role: [tasker]
-    phase: "0-1"
-    template: success_celebration
-    states: [default]
-    api_endpoints: []
-
-  - id: SCR-TASK-011
-    name: "Application Sent"
-    route: null
-    role: [tasker]
-    phase: "0-1"
-    template: success_celebration
-    states: [default]
-    api_endpoints: []
-    note: "Inline success after apply action"
-
-  - id: SCR-TASK-012
-    name: "Tasker Bookings (My Jobs)"
-    route: "/(tasker)/jobs"
-    role: [tasker]
-    phase: "0-1"
-    template: feed_list
-    states: [loading, empty, populated, refreshing, error, offline]
-    api_endpoints: [GET /bookings/mine]
-
-  - id: SCR-TASK-013
-    name: "Booking Detail (Tasker)"
-    route: "/(tasker)/jobs/:bookingId"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, assigned, mark_done, completed, cancelled, no_show, error]
-    api_endpoints: [GET /bookings/:id, PUT /bookings/:id/mark-done]
-
-  - id: SCR-TASK-014
-    name: "No-Show Flag (Tasker)"
-    route: null
-    role: [tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [reminder_10min, flag_available_15min, flagging, flagged]
-    api_endpoints: [POST /bookings/:id/no-show]
-
-  - id: SCR-TASK-015
-    name: "Booking Cancel (Tasker)"
-    route: null
-    role: [tasker]
-    phase: "0-1"
-    template: modal_sheet
-    states: [default, strike_warning, confirming]
-    api_endpoints: [PUT /bookings/:id/cancel]
-
-  - id: SCR-TASK-016
-    name: "Tasker Stats Dashboard"
-    route: "/(tasker)/stats"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, loaded, error]
-    api_endpoints: [GET /users/me/stats]
-
-  - id: SCR-TASK-017
-    name: "Lead Unlock — Accept/Decline"
-    route: null
-    role: [tasker]
-    phase: "2"
-    template: modal_sheet
-    states: [notification_received, grandfathered_discount_applied, accepting, accepted_credits_deducted, declined, insufficient_credits, expired_15min]
-    api_endpoints: [POST /applications/:id/accept, POST /applications/:id/decline]
-
-  - id: SCR-TASK-018
-    name: "Privacy Policy"
-    route: "/legal/privacy"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading, loaded]
-    api_endpoints: []
-
-  - id: SCR-TASK-019
-    name: "AI Profile Polish"
-    route: "/(tasker)/profile/polish"
-    role: [tasker]
-    phase: "0-1"
-    template: detail
-    states: [loading_initial, draft_ready, generating, suggestion_ready, apply_success, error_network]
-    api_endpoints: [POST /users/me/profile-polish-preview, PUT /users/me]
-
-  # ═══════════════════════════════════════════════════
-  # B2B SCREENS (7 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-B2B-001
-    name: "Business Accounts"
-    route: "/(customer)/business/accounts"
-    role: [customer]
-    phase: "2"
-    template: feed_list
-    states: [loading_initial, empty_activation, populated_owner, populated_member, error_network]
-    api_endpoints: [GET /business/accounts]
-
-  - id: SCR-B2B-002
-    name: "Business Account Editor"
-    route: "/(customer)/business/accounts/:accountId/edit"
-    role: [customer]
-    phase: "2"
-    template: form_wizard
-    states: [create_default, edit_default, saving, success, validation_error, error_network]
-    api_endpoints: [POST /business/accounts, PUT /business/accounts/:id]
-
-  - id: SCR-B2B-003
-    name: "Business Location Editor"
-    route: "/(customer)/business/accounts/:accountId/locations/:locationId"
-    role: [customer]
-    phase: "2"
-    template: form_wizard
-    states: [default, map_picking, saving, success, validation_error, error_network]
-    api_endpoints: [POST /business/accounts/:id/locations, PUT /business/accounts/:id/locations/:locationId]
-
-  - id: SCR-B2B-004
-    name: "Business Members"
-    route: "/(customer)/business/accounts/:accountId/members"
-    role: [customer]
-    phase: "2"
-    template: detail
-    states: [loading_initial, empty, populated, invite_sheet, role_updating, error_network]
-    api_endpoints: [GET /business/accounts/:id/members, POST /business/accounts/:id/members, PUT /business/accounts/:id/members/:memberId]
-
-  - id: SCR-B2B-005
-    name: "Post Task as Business"
-    route: "/(customer)/tasks/new/business-context"
-    role: [customer]
-    phase: "2"
-    template: detail
-    states: [loading_initial, account_selected, location_selected, ready_continue, error_network]
-    api_endpoints: [GET /business/accounts, GET /business/accounts/:id/locations]
-
-  - id: SCR-B2B-006
-    name: "Business Tasks"
-    route: "/(customer)/business/accounts/:accountId/tasks"
-    role: [customer]
-    phase: "2"
-    template: feed_list
-    states: [loading_initial, empty, populated_open, populated_mixed, error_network]
-    api_endpoints: [GET /business/accounts/:id/tasks]
-
-  - id: SCR-B2B-007
-    name: "Business Subscription Billing"
-    route: "/(customer)/business/accounts/:accountId/billing"
-    role: [customer]
-    phase: "3+"
-    template: detail
-    states: [loading_initial, eligible_view_plans, active_host_lite, active_ops_standard, renewal_failed, cancelled_resubscribe, error_network]
-    api_endpoints: [GET /business/accounts/:id/subscription, POST /business/accounts/:id/subscription]
-
-  # ═══════════════════════════════════════════════════
-  # PHASE 2 SCREENS (5 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-P2-001
-    name: "Credits — Balance & Purchase"
-    route: "/(tasker)/credits"
-    role: [tasker]
-    phase: "2"
-    template: detail
-    states: [loading, loaded, purchasing, error]
-    api_endpoints: [GET /credits/balance, GET /credits/packs]
-
-  - id: SCR-P2-002
-    name: "Credits — QPay Payment"
-    route: "/(tasker)/credits/pay"
-    role: [tasker]
-    phase: "2"
-    template: detail
-    states: [qr_display, deeplink_redirect, payment_pending, payment_success, payment_failed]
-    api_endpoints: [POST /credits/purchase, GET /payments/:id/status]
-
-  - id: SCR-P2-003
-    name: "Credits — Transaction History"
-    route: "/(tasker)/credits/history"
-    role: [tasker]
-    phase: "2"
-    template: feed_list
-    states: [loading, empty, populated, error]
-    api_endpoints: [GET /credits/transactions]
-
-  - id: SCR-P2-004
-    name: "Credits — Low Balance Alert"
-    route: null
-    role: [tasker]
-    phase: "2"
-    template: modal_sheet
-    states: [alert_1_credit, alert_0_credits]
-    api_endpoints: []
-
-  - id: SCR-P2-005
-    name: "Referral — My Code & Stats"
-    route: "/referrals"
-    role: [customer, tasker]
-    phase: "2"
-    template: detail
-    states: [loading, loaded, sharing, error]
-    api_endpoints: [GET /referrals/mine]
-
-  # ═══════════════════════════════════════════════════
-  # PHASE 3+ SCREENS (5 screens)
-  # ═══════════════════════════════════════════════════
-
-  - id: SCR-P3-001
-    name: "Wallet — Balance & Payouts"
-    route: "/(tasker)/wallet"
-    role: [tasker]
-    phase: "3+"
-    template: detail
-    states: [loading, loaded, error]
-    api_endpoints: [GET /wallet/balance, GET /wallet/transactions]
-
-  - id: SCR-P3-002
-    name: "Wallet — Request Payout"
-    route: "/(tasker)/wallet/payout"
-    role: [tasker]
-    phase: "3+"
-    template: form_wizard
-    states: [default, confirming, submitted, error]
-    api_endpoints: [POST /wallet/payout-request]
-
-  - id: SCR-P3-003
-    name: "Escrow — Payment Flow"
-    route: "/(customer)/bookings/:bookingId/escrow"
-    role: [customer]
-    phase: "3+"
-    template: detail
-    states: [opt_in_prompt, qpay_payment, payment_pending, escrowed, released, error]
-    api_endpoints: [POST /payments/escrow, GET /payments/:id/status]
-
-  - id: SCR-P3-004
-    name: "Subscription — Tasker Pro"
-    route: "/(tasker)/subscription"
-    role: [tasker]
-    phase: "3+"
-    template: detail
-    states: [loading, eligible_standard, eligible_premium, active_standard, active_premium, ineligible, cancelled, error]
-    api_endpoints: [GET /subscriptions/plans, POST /subscriptions, DELETE /subscriptions]
-
-  - id: SCR-P3-005
-    name: "Instant Match — Tasker"
-    route: null
-    role: [tasker]
-    phase: "3+"
-    template: modal_sheet
-    states: [match_notification, accepting, accepted, declined, expired]
-    api_endpoints: [POST /tasks/:id/instant-match/respond]
-
-# ─── Summary ────────────────────────────────────────
+- id: SCR-SHARED-001
+  name: Splash / Launch Screen
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: auth
+  states:
+  - default
+  - loading
+  api_endpoints: []
+- id: SCR-SHARED-002
+  name: "Auth \u2014 Login"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: auth
+  states:
+  - default
+  - loading
+  - facebook_loading
+  - otp_form
+  - error
+  api_endpoints:
+  - POST /auth/facebook
+  - POST /auth/otp/request
+- id: SCR-SHARED-003
+  name: "Auth \u2014 OTP Verification"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: '2'
+  template: auth
+  states:
+  - default
+  - code_entry
+  - verifying
+  - error
+  - resend_cooldown
+  api_endpoints:
+  - POST /auth/otp/verify
+  - POST /auth/otp/request
+- id: SCR-SHARED-004
+  name: "Auth \u2014 OTP Migration Gate"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: '2'
+  template: auth
+  states:
+  - default
+  - phone_entry
+  - verifying
+  - error
+  api_endpoints:
+  - POST /auth/otp/request
+  - POST /auth/otp/verify
+- id: SCR-SHARED-005
+  name: Onboarding Carousel
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: auth
+  states:
+  - slide_1
+  - slide_2
+  - slide_3
+  api_endpoints: []
+- id: SCR-SHARED-006
+  name: Role Selection
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: auth
+  states:
+  - default
+  - confirming
+  api_endpoints:
+  - PUT /users/me/role
+- id: SCR-SHARED-007
+  name: "Permission Primer \u2014 Camera"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - granted
+  - denied
+  api_endpoints: []
+- id: SCR-SHARED-008
+  name: "Permission Primer \u2014 Location"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - granted
+  - denied
+  api_endpoints: []
+- id: SCR-SHARED-009
+  name: "Permission Primer \u2014 Notifications"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - granted
+  - denied
+  api_endpoints: []
+- id: SCR-SHARED-010
+  name: "Inbox \u2014 Conversation List"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - error
+  - offline
+  api_endpoints:
+  - GET /conversations
+- id: SCR-SHARED-011
+  name: "Inbox \u2014 Chat Detail"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - populated
+  - sending
+  - phone_warning
+  - error
+  - offline
+  api_endpoints:
+  - GET /conversations/:id/messages
+  - POST /conversations/:id/messages
+- id: SCR-SHARED-012
+  name: "Profile \u2014 My Profile"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - customer_view
+  - tasker_view
+  - error
+  api_endpoints:
+  - GET /users/me
+- id: SCR-SHARED-013
+  name: "Profile \u2014 Edit Profile"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: form_wizard
+  states:
+  - default
+  - editing
+  - uploading_avatar
+  - saving
+  - validation_error
+  - success
+  api_endpoints:
+  - PUT /users/me
+  - POST /users/me/avatar/upload-url
+- id: SCR-SHARED-014
+  name: "Profile \u2014 Settings"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: settings
+  states:
+  - default
+  - language_toggle
+  - notification_toggle
+  - role_switch_confirm
+  - delete_confirm
+  api_endpoints:
+  - GET /users/me
+  - PUT /users/me/role
+- id: SCR-SHARED-015
+  name: Account Deletion Confirmation
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - confirming
+  - deleting
+  - blocked_active_bookings
+  api_endpoints:
+  - DELETE /users/me
+- id: SCR-SHARED-016
+  name: Notification Center
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - error
+  api_endpoints:
+  - GET /notifications
+- id: SCR-SHARED-017
+  name: Review Form
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: form_wizard
+  states:
+  - default
+  - rating_entry
+  - text_entry
+  - submitting
+  - success
+  - error
+  api_endpoints:
+  - POST /bookings/:id/reviews
+- id: SCR-SHARED-018
+  name: Review Reminder
+  route: null
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - reminder_24h
+  - reminder_72h
+  api_endpoints: []
+  note: Bottom sheet overlay, not a standalone route
+- id: SCR-SHARED-019
+  name: Review Hard Lock
+  route: null
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - locked_dispute
+  - locked_missed_reviews
+  - locked_investigation
+  api_endpoints: []
+  note: Full-screen blocker when risk conditions trigger
+- id: SCR-SHARED-020
+  name: Suspended Account
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - default
+  - with_expiry
+  - appeal_sent
+  api_endpoints:
+  - GET /users/me
+- id: SCR-SHARED-021
+  name: Banned Account
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - default
+  api_endpoints:
+  - GET /users/me
+- id: SCR-INFRA-001
+  name: Network Error / Offline
+  route: null
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - no_connection
+  - slow_connection
+  - retry_loading
+  api_endpoints: []
+- id: SCR-INFRA-002
+  name: App Update
+  route: null
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - soft_update
+  - force_update
+  api_endpoints:
+  - GET /system/version
+- id: SCR-INFRA-003
+  name: Session Expired
+  route: null
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  api_endpoints: []
+  note: Bottom sheet prompting re-login
+- id: SCR-INFRA-004
+  name: Terms of Service
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - loaded
+  api_endpoints: []
+- id: SCR-INFRA-005
+  name: Help & Support / FAQ
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - loaded
+  - error
+  api_endpoints: []
+- id: SCR-CUST-001
+  name: "My Tasks \u2014 Task List"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty_activation
+  - populated
+  - refreshing
+  - error
+  - offline
+  api_endpoints:
+  - GET /tasks/mine
+- id: SCR-CUST-002
+  name: "Post Task \u2014 Category Selection"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - loaded
+  api_endpoints:
+  - GET /categories
+- id: SCR-CUST-003
+  name: "Post Task \u2014 Intake Form"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - loading_schema
+  - form_entry
+  - validation_error
+  api_endpoints:
+  - GET /categories/:id
+- id: SCR-CUST-004
+  name: "Post Task \u2014 Photo Upload"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - empty
+  - uploading
+  - uploaded
+  - max_reached
+  - error
+  api_endpoints:
+  - POST /tasks/photos/upload-url
+- id: SCR-CUST-005
+  name: "Post Task \u2014 Location Pin"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - default
+  - pin_placed
+  - text_entry
+  - permission_denied
+  api_endpoints: []
+- id: SCR-CUST-006
+  name: "Post Task — Schedule, Budget & Submit"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - default
+  - date_picking
+  - budget_entry
+  - validation_error
+  - submitting
+  - submit_error
+  api_endpoints: []
+- id: SCR-CUST-007
+  name: "Post Task — Job Scope Summary"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - review
+  - editing_summary
+  api_endpoints:
+  - POST /tasks
+- id: SCR-CUST-008
+  name: "Task Posted \u2014 Success"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: success_celebration
+  states:
+  - default
+  api_endpoints: []
+- id: SCR-CUST-009
+  name: Task Detail (Customer)
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - open
+  - assigned
+  - tasker_marked_done
+  - completed
+  - cancelled
+  - no_show
+  - error
+  api_endpoints:
+  - GET /tasks/:id
+  - PUT /tasks/:id/complete
+  - DELETE /tasks/:id
+- id: SCR-CUST-010
+  name: Task Cancel Confirmation
+  route: null
+  role:
+  - customer
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - open_task_cancel
+  - assigned_task_cancel
+  - late_cancel_warning
+  api_endpoints:
+  - DELETE /tasks/:id
+  - PUT /bookings/:id/cancel
+- id: SCR-CUST-011
+  name: Applicants List
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - accept_confirm_sheet
+  - recommended_label
+  api_endpoints:
+  - GET /tasks/:id/applications
+- id: SCR-CUST-012
+  name: Applicant Timeout/Decline
+  route: null
+  role:
+  - customer
+  phase: '2'
+  template: modal_sheet
+  states:
+  - timeout_notification
+  - decline_notification
+  - select_next_prompt
+  api_endpoints: []
+- id: SCR-CUST-013
+  name: Tasker Public Profile
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - loaded
+  - error
+  api_endpoints:
+  - GET /users/:id/profile
+- id: SCR-CUST-014
+  name: Booking Confirmation
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - default
+  - disclaimer_review
+  - confirming
+  - error
+  - add_to_calendar
+  api_endpoints:
+  - POST /bookings
+- id: SCR-CUST-015
+  name: "Booking Confirmed \u2014 Success"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: success_celebration
+  states:
+  - default
+  api_endpoints: []
+- id: SCR-CUST-016
+  name: Customer Bookings List
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - refreshing
+  - error
+  - offline
+  api_endpoints:
+  - GET /bookings/mine
+- id: SCR-CUST-017
+  name: Booking Detail (Customer)
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - assigned
+  - tasker_marked_done
+  - completed
+  - completed_rebook
+  - cancelled
+  - no_show
+  - escrow_pending
+  - error
+  api_endpoints:
+  - GET /bookings/:id
+- id: SCR-CUST-018
+  name: "Confirm Completion \u2014 Decision"
+  route: null
+  role:
+  - customer
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - confirming
+  api_endpoints:
+  - PUT /bookings/:id/complete
+- id: SCR-CUST-019
+  name: Booking Timeline
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - loaded
+  api_endpoints:
+  - GET /bookings/:id/timeline
+- id: SCR-CUST-020
+  name: Reschedule
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - request_form
+  - awaiting_response
+  - accepted
+  - declined
+  - expired
+  api_endpoints:
+  - POST /bookings/:id/reschedule
+  - PUT /bookings/:id/reschedule/:rescheduleId
+- id: SCR-CUST-021
+  name: No-Show Flag + Reminder
+  route: null
+  role:
+  - customer
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - reminder_10min
+  - flag_available_15min
+  - flagging
+  - flagged
+  api_endpoints:
+  - POST /bookings/:id/no-show
+- id: SCR-CUST-022
+  name: Booking Cancel (Customer)
+  route: null
+  role:
+  - customer
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - free_cancel
+  - late_cancel_warning
+  - confirming
+  api_endpoints:
+  - PUT /bookings/:id/cancel
+- id: SCR-CUST-023
+  name: Rebook Shortcut
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - prefilled
+  - editing
+  - submitting
+  - success
+  api_endpoints:
+  - POST /tasks
+  - POST /bookings
+- id: SCR-CUST-024
+  name: "Dispute \u2014 Raise"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: form_wizard
+  states:
+  - default
+  - evidence_upload
+  - submitting
+  - success
+  - error
+  api_endpoints:
+  - POST /disputes
+- id: SCR-CUST-025
+  name: "Dispute \u2014 Status"
+  route: /
+  role:
+  - customer
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - open
+  - escalated
+  - resolved_customer
+  - resolved_tasker
+  - closed_insufficient
+  api_endpoints:
+  - GET /disputes/:id
+- id: SCR-CUST-026
+  name: No Applicant Rescue
+  route: null
+  role:
+  - customer
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - rescue_prompt
+  - adjust_budget
+  - adjust_schedule
+  - concierge_queued
+  api_endpoints:
+  - PUT /tasks/:id
+- id: SCR-CUST-027
+  name: Instant Match Customer
+  route: /
+  role:
+  - customer
+  phase: 3+
+  template: detail
+  states:
+  - matching
+  - matched
+  - declined_retry
+  - fallback_to_open
+  api_endpoints:
+  - POST /tasks/:id/instant-match
+- id: SCR-CUST-028
+  name: Task Boost Options
+  route: /(customer)/tasks/:taskId/boost
+  role:
+  - customer
+  phase: '2'
+  template: detail
+  states:
+  - loading_initial
+  - options_available
+  - promoted_selected
+  - urgent_selected
+  - already_active
+  - error_network
+  api_endpoints:
+  - GET /tasks/:id/boost-options
+- id: SCR-CUST-029
+  name: Task Boost Payment
+  route: /(customer)/tasks/:taskId/boost/pay
+  role:
+  - customer
+  phase: '2'
+  template: detail
+  states:
+  - qr_display
+  - deeplink_redirect
+  - payment_pending
+  - payment_success
+  - payment_failed
+  - payment_timeout
+  api_endpoints:
+  - POST /tasks/:id/boost-purchases
+  - GET /payments/:id/status
+- id: SCR-TASK-001
+  name: "Browse \u2014 Task Feed"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty_activation
+  - populated
+  - refreshing
+  - filtering
+  - error
+  - offline
+  api_endpoints:
+  - GET /tasks
+- id: SCR-TASK-002
+  name: Task Detail (Tasker)
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - viewable_unverified
+  - apply_verified
+  - already_applied
+  - cap_reached
+  - error
+  api_endpoints:
+  - GET /tasks/:id
+  - POST /tasks/:id/applications
+- id: SCR-TASK-003
+  name: Verification Gate
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: auth
+  states:
+  - encouraging_interstitial
+  api_endpoints: []
+- id: SCR-TASK-004
+  name: "Verification \u2014 Consent"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - default
+  - agreed
+  api_endpoints: []
+- id: SCR-TASK-005
+  name: "Verification \u2014 ID Upload"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: form_wizard
+  states:
+  - front_upload
+  - back_upload
+  - selfie_upload
+  - uploading
+  - review
+  - error
+  api_endpoints:
+  - POST /verification/upload-url
+  - POST /verification/submit
+- id: SCR-TASK-006
+  name: "Verification \u2014 DAN Fast-Path"
+  route: /
+  role:
+  - tasker
+  phase: '2'
+  template: auth
+  states:
+  - default
+  - verifying
+  - success
+  - error
+  api_endpoints:
+  - POST /verification/dan/verify
+- id: SCR-TASK-007
+  name: "Verification \u2014 Pending"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: empty_state
+  states:
+  - default
+  - sla_reminder
+  api_endpoints:
+  - GET /verification/status
+- id: SCR-TASK-008
+  name: "Verification \u2014 Approved"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: success_celebration
+  states:
+  - default
+  api_endpoints: []
+- id: SCR-TASK-009
+  name: "Verification \u2014 Rejected"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: error_state
+  states:
+  - default_with_reason
+  - resubmit_prompt
+  api_endpoints:
+  - GET /verification/status
+- id: SCR-TASK-010
+  name: "Verification Submitted \u2014 Success"
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: success_celebration
+  states:
+  - default
+  api_endpoints: []
+- id: SCR-TASK-011
+  name: Application Sent
+  route: null
+  role:
+  - tasker
+  phase: 0-1
+  template: success_celebration
+  states:
+  - default
+  api_endpoints: []
+  note: Inline success after apply action
+- id: SCR-TASK-012
+  name: Tasker Bookings (My Jobs)
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - refreshing
+  - error
+  - offline
+  api_endpoints:
+  - GET /bookings/mine
+- id: SCR-TASK-013
+  name: Booking Detail (Tasker)
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - assigned
+  - mark_done
+  - completed
+  - cancelled
+  - no_show
+  - error
+  api_endpoints:
+  - GET /bookings/:id
+  - PUT /bookings/:id/mark-done
+- id: SCR-TASK-014
+  name: No-Show Flag (Tasker)
+  route: null
+  role:
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - reminder_10min
+  - flag_available_15min
+  - flagging
+  - flagged
+  api_endpoints:
+  - POST /bookings/:id/no-show
+- id: SCR-TASK-015
+  name: Booking Cancel (Tasker)
+  route: null
+  role:
+  - tasker
+  phase: 0-1
+  template: modal_sheet
+  states:
+  - default
+  - strike_warning
+  - confirming
+  api_endpoints:
+  - PUT /bookings/:id/cancel
+- id: SCR-TASK-016
+  name: Tasker Stats Dashboard
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - loaded
+  - error
+  api_endpoints:
+  - GET /users/me/stats
+- id: SCR-TASK-017
+  name: "Lead Unlock \u2014 Accept/Decline"
+  route: null
+  role:
+  - tasker
+  phase: '2'
+  template: modal_sheet
+  states:
+  - notification_received
+  - grandfathered_discount_applied
+  - accepting
+  - accepted_credits_deducted
+  - declined
+  - insufficient_credits
+  - expired_15min
+  api_endpoints:
+  - POST /applications/:id/accept
+  - POST /applications/:id/decline
+- id: SCR-TASK-018
+  name: Privacy Policy
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading
+  - loaded
+  api_endpoints: []
+- id: SCR-TASK-019
+  name: AI Profile Polish
+  route: /
+  role:
+  - tasker
+  phase: 0-1
+  template: detail
+  states:
+  - loading_initial
+  - draft_ready
+  - generating
+  - suggestion_ready
+  - apply_success
+  - error_network
+  api_endpoints:
+  - POST /users/me/profile-polish-preview
+  - PUT /users/me
+- id: SCR-B2B-001
+  name: Business Accounts
+  route: /(customer)/business/accounts
+  role:
+  - customer
+  phase: '2'
+  template: feed_list
+  states:
+  - loading_initial
+  - empty_activation
+  - populated_owner
+  - populated_member
+  - error_network
+  api_endpoints:
+  - GET /business/accounts
+- id: SCR-B2B-002
+  name: Business Account Editor
+  route: /(customer)/business/accounts/:accountId/edit
+  role:
+  - customer
+  phase: '2'
+  template: form_wizard
+  states:
+  - create_default
+  - edit_default
+  - saving
+  - success
+  - validation_error
+  - error_network
+  api_endpoints:
+  - POST /business/accounts
+  - PUT /business/accounts/:id
+- id: SCR-B2B-003
+  name: Business Location Editor
+  route: /(customer)/business/accounts/:accountId/locations/:locationId
+  role:
+  - customer
+  phase: '2'
+  template: form_wizard
+  states:
+  - default
+  - map_picking
+  - saving
+  - success
+  - validation_error
+  - error_network
+  api_endpoints:
+  - POST /business/accounts/:id/locations
+  - PUT /business/accounts/:id/locations/:locationId
+- id: SCR-B2B-004
+  name: Business Members
+  route: /(customer)/business/accounts/:accountId/members
+  role:
+  - customer
+  phase: '2'
+  template: detail
+  states:
+  - loading_initial
+  - empty
+  - populated
+  - invite_sheet
+  - role_updating
+  - error_network
+  api_endpoints:
+  - GET /business/accounts/:id/members
+  - POST /business/accounts/:id/members
+  - PUT /business/accounts/:id/members/:memberId
+- id: SCR-B2B-005
+  name: Post Task as Business
+  route: /(customer)/tasks/new/business-context
+  role:
+  - customer
+  phase: '2'
+  template: detail
+  states:
+  - loading_initial
+  - account_selected
+  - location_selected
+  - ready_continue
+  - error_network
+  api_endpoints:
+  - GET /business/accounts
+  - GET /business/accounts/:id/locations
+- id: SCR-B2B-006
+  name: Business Tasks
+  route: /(customer)/business/accounts/:accountId/tasks
+  role:
+  - customer
+  phase: '2'
+  template: feed_list
+  states:
+  - loading_initial
+  - empty
+  - populated_open
+  - populated_mixed
+  - error_network
+  api_endpoints:
+  - GET /business/accounts/:id/tasks
+- id: SCR-B2B-007
+  name: Business Subscription Billing
+  route: /(customer)/business/accounts/:accountId/billing
+  role:
+  - customer
+  phase: 3+
+  template: detail
+  states:
+  - loading_initial
+  - eligible_view_plans
+  - active_host_lite
+  - active_ops_standard
+  - renewal_failed
+  - cancelled_resubscribe
+  - error_network
+  api_endpoints:
+  - GET /business/accounts/:id/subscription
+  - POST /business/accounts/:id/subscription
+- id: SCR-P2-001
+  name: "Credits \u2014 Balance & Purchase"
+  route: /
+  role:
+  - tasker
+  phase: '2'
+  template: detail
+  states:
+  - loading
+  - loaded
+  - purchasing
+  - error
+  api_endpoints:
+  - GET /credits/balance
+  - GET /credits/packs
+- id: SCR-P2-002
+  name: "Credits \u2014 QPay Payment"
+  route: /
+  role:
+  - tasker
+  phase: '2'
+  template: detail
+  states:
+  - qr_display
+  - deeplink_redirect
+  - payment_pending
+  - payment_success
+  - payment_failed
+  api_endpoints:
+  - POST /credits/purchase
+  - GET /payments/:id/status
+- id: SCR-P2-003
+  name: "Credits \u2014 Transaction History"
+  route: /
+  role:
+  - tasker
+  phase: '2'
+  template: feed_list
+  states:
+  - loading
+  - empty
+  - populated
+  - error
+  api_endpoints:
+  - GET /credits/transactions
+- id: SCR-P2-004
+  name: "Credits \u2014 Low Balance Alert"
+  route: null
+  role:
+  - tasker
+  phase: '2'
+  template: modal_sheet
+  states:
+  - alert_1_credit
+  - alert_0_credits
+  api_endpoints: []
+- id: SCR-P2-005
+  name: "Referral \u2014 My Code & Stats"
+  route: /
+  role:
+  - customer
+  - tasker
+  phase: '2'
+  template: detail
+  states:
+  - loading
+  - loaded
+  - sharing
+  - error
+  api_endpoints:
+  - GET /referrals/mine
+- id: SCR-P3-001
+  name: "Wallet \u2014 Balance & Payouts"
+  route: /
+  role:
+  - tasker
+  phase: 3+
+  template: detail
+  states:
+  - loading
+  - loaded
+  - error
+  api_endpoints:
+  - GET /wallet/balance
+  - GET /wallet/transactions
+- id: SCR-P3-002
+  name: "Wallet \u2014 Request Payout"
+  route: /
+  role:
+  - tasker
+  phase: 3+
+  template: form_wizard
+  states:
+  - default
+  - confirming
+  - submitted
+  - error
+  api_endpoints:
+  - POST /wallet/payout-request
+- id: SCR-P3-003
+  name: "Escrow \u2014 Payment Flow"
+  route: /
+  role:
+  - customer
+  phase: 3+
+  template: detail
+  states:
+  - opt_in_prompt
+  - qpay_payment
+  - payment_pending
+  - escrowed
+  - released
+  - error
+  api_endpoints:
+  - POST /payments/escrow
+  - GET /payments/:id/status
+- id: SCR-P3-004
+  name: "Subscription \u2014 Tasker Pro"
+  route: /
+  role:
+  - tasker
+  phase: 3+
+  template: detail
+  states:
+  - loading
+  - eligible_standard
+  - eligible_premium
+  - active_standard
+  - active_premium
+  - ineligible
+  - cancelled
+  - error
+  api_endpoints:
+  - GET /subscriptions/plans
+  - POST /subscriptions
+  - DELETE /subscriptions
+- id: SCR-P3-005
+  name: "Instant Match \u2014 Tasker"
+  route: null
+  role:
+  - tasker
+  phase: 3+
+  template: modal_sheet
+  states:
+  - match_notification
+  - accepting
+  - accepted
+  - declined
+  - expired
+  api_endpoints:
+  - POST /tasks/:id/instant-match/respond
 summary:
   total_screens: 91
   by_section:
@@ -871,9 +1326,9 @@ summary:
     phase_2: 5
     phase_3_plus: 5
   by_phase:
-    "0-1": 66
-    "2": 18
-    "3+": 7
+    0-1: 66
+    '2': 18
+    3+: 7
   by_template:
     auth: 8
     feed_list: 12

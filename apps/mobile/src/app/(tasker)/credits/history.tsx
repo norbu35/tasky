@@ -46,7 +46,7 @@ export default function TaskerCreditsHistoryScreen() {
   ];
 
   return (
-    <DetailTemplate testID="tasker-credits-history">
+    <DetailTemplate testID="SCR-P2-003">
       {state === 'empty' ? (
         <EmptyStateTemplate
           testID="tasker-credits-history-empty"

@@ -92,7 +92,7 @@ describe('HelpScreen', () => {
     render(<HelpScreen />);
 
     expect(screen.getByTestId('help-screen')).toBeTruthy();
-    expect(screen.getByTestId('help-screen-loading')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-005')).toBeTruthy();
     expect(screen.queryByText('What is Tasky?')).toBeNull();
   });
 

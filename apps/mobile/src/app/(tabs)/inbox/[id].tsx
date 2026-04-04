@@ -107,7 +107,7 @@ export default function ChatDetailScreen() {
     return (
       <KeyboardAvoidingView
         style={styles.container}
-        testID="chat-detail"
+        testID="SCR-SHARED-011"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
@@ -143,7 +143,7 @@ export default function ChatDetailScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      testID="chat-detail"
+      testID="SCR-SHARED-011"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >

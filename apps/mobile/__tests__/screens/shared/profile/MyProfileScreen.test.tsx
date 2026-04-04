@@ -102,7 +102,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
-    expect(screen.getByTestId('my-profile-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-012')).toBeTruthy();
   });
 
   it('renders user name and avatar in customer view', () => {
@@ -138,7 +138,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
-    fireEvent.press(screen.getByTestId('my-profile-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-SHARED-012-cta'));
     expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/edit');
   });
 
@@ -184,7 +184,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
-    expect(screen.getByTestId('my-profile-screen-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-012-error')).toBeTruthy();
   });
 
   it('tasker view shows a stats action that navigates to the tasker stats screen', () => {

@@ -23,7 +23,7 @@ function BookingCardHeader({ booking }: { booking: Booking }) {
   const status = booking.status.toLowerCase() as 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
   return (
-    <View style={styles.headerRow}>
+    <View testID="SCR-TASK-012" style={styles.headerRow}>
       <Text style={styles.customerName} numberOfLines={1}>
         {customerName}
       </Text>

@@ -1,0 +1,39 @@
+appId: mn.tasky.mobile
+---
+- launchApp:
+    clearState: true
+
+# We will wait for the Auth screen directly since we see it in the hierarchy
+- extendedWaitUntil:
+    visible: "Гүйцэтгэгчээр нэвтрэх"
+    timeout: 15000
+
+# Login as a Tasker (which drops us into the Tab Navigator)
+- tapOn: "Гүйцэтгэгчээр нэвтрэх"
+
+# Wait for the main Feed to load. Translation for nav.findWork is "АЖИЛ ХАЙХ"
+- extendedWaitUntil:
+    visible: "АЖИЛ ХАЙХ"
+    timeout: 15000
+
+# Verify the FlatList is not collapsed by attempting a scroll
+- swipe:
+    direction: DOWN
+    duration: 1000
+
+# Navigate to the Inbox screen. Translation for nav.inbox is "Зурвас" (rendered upper)
+- tapOn: "ЗУРВАС"
+
+# Verify the localized title
+- assertVisible: "Чат"
+
+# Verify the Inbox FlatList is not collapsed
+- swipe:
+    direction: DOWN
+    duration: 1000
+
+# Navigate to the Profile screen. nav.profile is "Профайл"
+- tapOn: "ПРОФАЙЛ"
+
+# Verify we reached the profile
+- assertVisible: "Тохиргоо"

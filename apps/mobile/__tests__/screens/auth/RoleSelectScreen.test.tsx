@@ -134,6 +134,6 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
 
   it('has a testID on the screen container', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByTestId('role-select-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-006')).toBeTruthy();
   });
 });

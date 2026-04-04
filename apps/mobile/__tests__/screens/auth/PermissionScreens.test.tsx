@@ -104,7 +104,7 @@ describe('Permission Camera Screen (SCR-SHARED-007)', () => {
 
   it('has a testID on the screen container', () => {
     render(<PermissionCameraScreen />);
-    expect(screen.getByTestId('permission-camera-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-007')).toBeTruthy();
   });
 });
 
@@ -149,7 +149,7 @@ describe('Permission Location Screen (SCR-SHARED-008)', () => {
 
   it('has a testID on the screen container', () => {
     render(<PermissionLocationScreen />);
-    expect(screen.getByTestId('permission-location-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-008')).toBeTruthy();
   });
 });
 
@@ -227,6 +227,6 @@ describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
 
   it('has a testID on the screen container', () => {
     render(<PermissionNotificationsScreen />);
-    expect(screen.getByTestId('permission-notifications-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-009')).toBeTruthy();
   });
 });

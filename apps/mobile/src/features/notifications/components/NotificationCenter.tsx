@@ -156,6 +156,7 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
         <Text style={styles.headerTitle}>{t('notifications.title', 'Notifications')}</Text>
       </View>
       <FlatList
+        style={{ flex: 1 }}
         data={notifications}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}

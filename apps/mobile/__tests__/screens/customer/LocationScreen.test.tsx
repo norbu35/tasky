@@ -57,7 +57,7 @@ beforeEach(() => {
 describe('LocationScreen (SCR-CUST-005)', () => {
   it('has a testID on the screen container', () => {
     render(<LocationScreen />);
-    expect(screen.getByTestId('location-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-005')).toBeTruthy();
   });
 
   it('renders location text input', () => {
@@ -81,7 +81,7 @@ describe('LocationScreen (SCR-CUST-005)', () => {
         coordinate: { latitude: 47.92123, longitude: 106.91876 },
       },
     });
-    fireEvent.press(screen.getByTestId('location-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-005-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/schedule',
@@ -101,13 +101,13 @@ describe('LocationScreen (SCR-CUST-005)', () => {
 
   it('back button returns to photo upload', () => {
     render(<LocationScreen />);
-    fireEvent.press(screen.getByTestId('location-screen-back'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-005-back'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
   it('keeps next disabled until a pin is placed', () => {
     render(<LocationScreen />);
-    const nextButton = screen.getByTestId('location-screen-next');
+    const nextButton = screen.getByTestId('SCR-CUST-005-next');
 
     expect(nextButton).toBeDisabled();
     fireEvent.press(nextButton);

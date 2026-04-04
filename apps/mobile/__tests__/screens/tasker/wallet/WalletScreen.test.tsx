@@ -12,7 +12,7 @@ describe('WalletScreen (SCR-P3-001)', () => {
   it('renders the wallet balance shell', () => {
     render(<WalletScreen />);
 
-    expect(screen.getByTestId('wallet-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P3-001')).toBeTruthy();
     expect(screen.getByText('Хэтэвч')).toBeTruthy();
     expect(screen.getByText('Боломжит үлдэгдэл')).toBeTruthy();
     expect(screen.getByText('Мөнгө татах')).toBeTruthy();

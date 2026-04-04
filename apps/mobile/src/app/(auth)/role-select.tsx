@@ -85,7 +85,7 @@ export default function RoleSelectScreen() {
   };
 
   return (
-    <AuthTemplate testID="role-select-screen" contentStyle={styles.contentStyle}>
+    <AuthTemplate testID="SCR-SHARED-006" contentStyle={styles.contentStyle}>
       <View style={styles.hero}>
         <Text style={styles.heading}>{t('auth.roleSelection.heading', 'Та хэн бэ?')}</Text>
         <Text style={styles.subtitle}>

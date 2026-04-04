@@ -103,7 +103,7 @@ export default function TaskDetailScreen() {
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}
-        testID="task-detail"
+        testID="SCR-TASK-002"
       >
         {task && (
           <View style={styles.content}>

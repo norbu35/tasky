@@ -60,7 +60,7 @@ beforeEach(() => {
 describe('RescheduleScreen (SCR-CUST-020)', () => {
   it('has a testID on the screen container', () => {
     render(<RescheduleScreen />);
-    expect(screen.getByTestId('reschedule-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-020')).toBeTruthy();
   });
 
   it('renders date/time picker field', () => {

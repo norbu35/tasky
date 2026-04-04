@@ -73,7 +73,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const Icon = visual.Icon;
 
   return (
-    <View style={styles.cardOuter}>
+    <View testID="SCR-CUST-001" style={styles.cardOuter}>
       <Pressable
         testID={`task-card-${task.id}`}
         accessibilityRole="button"
@@ -294,6 +294,7 @@ export default function MyTasksListScreen() {
         </View>
       ) : (
         <FlatList
+          style={{ flex: 1 }}
           data={tasks}
           keyExtractor={(task) => task.id}
           renderItem={({ item }) => (

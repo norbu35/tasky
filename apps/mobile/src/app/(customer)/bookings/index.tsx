@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,7 +14,7 @@ import { mobileTheme } from '../../../design/tokenAdapter';
 import { screenRhythm } from '../../../design/screenRhythm';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
-import { ScreenContainer } from '../../../components/shells';
+import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -101,7 +101,7 @@ function FilterTab({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Pressable testID="SCR-CUST-016"
       onPress={onPress}
       style={styles.filterTab}
       accessibilityRole="button"
@@ -270,7 +270,7 @@ export default function BookingsListScreen() {
           ))}
         </View>
 
-        <ScrollView
+        <InsetScrollView
           style={styles.scroll}
           contentContainerStyle={[
             styles.scrollContent,
@@ -322,7 +322,7 @@ export default function BookingsListScreen() {
               ) : null}
             </View>
           )}
-        </ScrollView>
+        </InsetScrollView>
       </View>
     </ScreenContainer>
   );

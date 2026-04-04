@@ -83,7 +83,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
   it('renders the edit profile header with Save button', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
-    expect(screen.getByTestId('edit-profile-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-013')).toBeTruthy();
     expect(screen.getByText('Хадгалах')).toBeTruthy();
   });
 
@@ -104,7 +104,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     render(<EditProfileScreen />);
     const nameInput = screen.getByDisplayValue('Батбаяр');
     fireEvent.changeText(nameInput, 'Болд');
-    fireEvent.press(screen.getByTestId('edit-profile-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-SHARED-013-next'));
     expect(mockMutate).toHaveBeenCalledWith(
       expect.objectContaining({ full_name: 'Болд' }),
       expect.anything(),
@@ -116,7 +116,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     render(<EditProfileScreen />);
     const nameInput = screen.getByDisplayValue('Батбаяр');
     fireEvent.changeText(nameInput, '');
-    fireEvent.press(screen.getByTestId('edit-profile-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-SHARED-013-next'));
     expect(screen.getByText('Нэр хоосон байж болохгүй')).toBeTruthy();
   });
 
@@ -124,7 +124,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     mockUseUpdateProfile.mockReturnValue({ mutate: mockMutate, isPending: true });
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
-    expect(screen.getByTestId('edit-profile-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-013')).toBeTruthy();
   });
 
   it('prefills the bio field from the current profile', () => {
@@ -138,13 +138,13 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
 
-    expect(screen.getByTestId('edit-profile-screen-next').props.accessibilityState.disabled).toBe(
+    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(
       true,
     );
 
     fireEvent.changeText(screen.getByDisplayValue('Батбаяр'), 'Болд');
 
-    expect(screen.getByTestId('edit-profile-screen-next').props.accessibilityState.disabled).toBe(
+    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(
       false,
     );
   });

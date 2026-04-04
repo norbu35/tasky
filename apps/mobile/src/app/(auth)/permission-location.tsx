@@ -26,7 +26,7 @@ export default function PermissionLocationScreen() {
   };
 
   return (
-    <View style={styles.container} testID="permission-location-screen">
+    <View testID="SCR-SHARED-008" style={styles.container}>
       <PermissionPrimer
         icon={<MapPin size={48} color={colors.primaryDeep} />}
         title="Байршил ашиглах зөвшөөрөл"

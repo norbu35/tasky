@@ -24,8 +24,8 @@ export default function TaskerProfileScreen() {
   const categories = ((profile as any)?.categories ?? []) as string[];
 
   return (
-    <DetailTemplate
-      testID="tasker-profile-screen"
+    <DetailTemplate testID="SCR-CUST-013"
+     
       isLoading={isLoading}
       isError={isError}
       onRetry={profileQuery.refetch}

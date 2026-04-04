@@ -14,7 +14,7 @@ export default function RejectedScreen() {
   const { reason } = useLocalSearchParams<{ reason?: string }>();
 
   return (
-    <View style={styles.container} testID="rejected-screen">
+    <View testID="SCR-TASK-009" style={styles.container}>
       <View style={styles.iconContainer}>
         <AlertTriangle size={48} color={colors.danger} />
       </View>

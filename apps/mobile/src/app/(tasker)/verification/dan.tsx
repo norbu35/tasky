@@ -16,7 +16,7 @@ export default function DanVerificationScreen() {
 
   if (state === 'success') {
     return (
-      <AuthTemplate testID="dan-verification-screen">
+      <AuthTemplate testID="SCR-TASK-006">
         <View style={styles.content}>
           <View style={styles.logoBadge}>
             <Text style={styles.logoBadgeText}>DAN</Text>

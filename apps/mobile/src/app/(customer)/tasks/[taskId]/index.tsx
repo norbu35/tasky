@@ -29,7 +29,7 @@ function formatSchedule(value?: string | null) {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.detailRow}>
+    <View testID="SCR-CUST-009" style={styles.detailRow}>
       <Text style={styles.detailLabel}>{label}</Text>
       <Text style={styles.detailValue}>{value}</Text>
     </View>

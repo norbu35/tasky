@@ -114,6 +114,7 @@ export function ChatDetailScreen() {
       </View>
 
       <FlatList
+        style={{ flex: 1 }}
         ref={flatListRef}
         data={messages}
         keyExtractor={(item, index) => item.id || index.toString()}

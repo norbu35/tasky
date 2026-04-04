@@ -52,7 +52,7 @@ describe('SubmittedScreen (SCR-TASK-010)', () => {
     const SubmittedScreen = require('../../../../src/app/(tasker)/verification/submitted').default;
     render(<SubmittedScreen />);
 
-    fireEvent.press(screen.getByTestId('submitted-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-010-cta'));
     expect(mockReplace).toHaveBeenCalledWith('/(tasker)/verification/pending');
   });
 
@@ -60,6 +60,6 @@ describe('SubmittedScreen (SCR-TASK-010)', () => {
     const SubmittedScreen = require('../../../../src/app/(tasker)/verification/submitted').default;
     render(<SubmittedScreen />);
 
-    expect(screen.getByTestId('submitted-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-010')).toBeTruthy();
   });
 });

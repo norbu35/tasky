@@ -86,7 +86,7 @@ function ChipGroup({
   };
 
   return (
-    <View style={styles.chipRow}>
+    <View testID="SCR-CUST-003" style={styles.chipRow}>
       {options.map((opt) => {
         const active = selected.includes(opt);
         return (

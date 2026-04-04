@@ -164,7 +164,7 @@ export default function NotificationCenterScreen() {
   };
 
   return (
-    <View style={styles.container} testID="notifications-screen">
+    <View style={styles.container} testID="SCR-SHARED-016">
       <View style={styles.header}>
         <Pressable
           testID="notifications-back"

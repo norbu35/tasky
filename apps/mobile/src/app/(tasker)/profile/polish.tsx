@@ -176,7 +176,7 @@ export default function ProfilePolishScreen() {
   };
 
   return (
-    <DetailTemplate
+    <DetailTemplate testID="SCR-TASK-019"
       ctaLabel={
         screenState === 'suggestion_ready'
           ? t('tasker.profilePolish.apply', 'Энэ хувилбарыг хэрэглэх')
@@ -203,7 +203,6 @@ export default function ProfilePolishScreen() {
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-      testID="profile-polish-screen"
     >
       <View style={styles.content}>
         <View style={styles.introCard}>

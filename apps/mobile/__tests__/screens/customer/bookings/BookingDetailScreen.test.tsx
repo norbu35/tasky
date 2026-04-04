@@ -111,7 +111,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
-    expect(screen.getByTestId('booking-detail-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-017')).toBeTruthy();
   });
 
   it('renders loading state', () => {
@@ -122,7 +122,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
-    expect(screen.getByTestId('booking-detail-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-017')).toBeTruthy();
   });
 
   it('renders booking info when assigned', () => {
@@ -168,7 +168,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
     });
     render(<BookingDetailScreen />);
 
-    fireEvent.press(screen.getByTestId('booking-detail-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-017-cta'));
     expect(mockPush).toHaveBeenCalledWith('/inbox/b-1');
   });
 
@@ -335,6 +335,6 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
-    expect(screen.getByTestId('booking-detail-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-017')).toBeTruthy();
   });
 });

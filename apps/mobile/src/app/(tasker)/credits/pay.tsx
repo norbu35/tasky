@@ -25,11 +25,10 @@ export default function TaskerCreditsPayScreen() {
 
   if (state === 'error') {
     return (
-      <DetailTemplate
+      <DetailTemplate testID="SCR-P2-002"
         isError
         onRetry={() => router.replace('/(tasker)/credits/pay')}
         errorMessage="Could not load top-up options"
-        testID="tasker-credits-pay"
       >
         <View />
       </DetailTemplate>
@@ -40,7 +39,7 @@ export default function TaskerCreditsPayScreen() {
     <DetailTemplate
       ctaLabel="Confirm top up"
       ctaOnPress={() => router.replace('/(tasker)/credits/history')}
-      testID="tasker-credits-pay"
+      testID="SCR-P2-002"
     >
       <View style={styles.stack}>
         <View style={styles.section}>

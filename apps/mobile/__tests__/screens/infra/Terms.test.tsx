@@ -72,7 +72,7 @@ describe('TermsScreen', () => {
     render(<TermsScreen />);
 
     expect(screen.getByTestId('terms-screen')).toBeTruthy();
-    expect(screen.getByTestId('terms-screen-loading')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-004')).toBeTruthy();
     expect(screen.queryByText('1. Acceptance of Terms')).toBeNull();
   });
 

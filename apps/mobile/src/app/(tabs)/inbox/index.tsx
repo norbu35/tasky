@@ -126,7 +126,7 @@ export default function ConversationListScreen() {
 
   return (
     <FeedListTemplate
-      testID="conversation-list"
+      testID="SCR-SHARED-010"
       data={filteredConversations}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}

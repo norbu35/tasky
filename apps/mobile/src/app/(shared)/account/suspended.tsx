@@ -21,7 +21,7 @@ export default function SuspendedAccountScreen() {
   const { expiryDate } = useLocalSearchParams<{ expiryDate?: string }>();
 
   return (
-    <View style={styles.container} testID="suspended-screen">
+    <View testID="SCR-SHARED-020" style={styles.container}>
       <View style={styles.iconShell}>
         <TriangleAlert size={32} color={colors.danger} />
       </View>

@@ -13,7 +13,7 @@ export default function BannedAccountScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container} testID="banned-screen">
+    <View testID="SCR-SHARED-021" style={styles.container}>
       <View style={styles.iconShell}>
         <Ban size={32} color={colors.danger} />
       </View>

@@ -68,7 +68,7 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
       reviews: { data: { data: [] }, isLoading: false, isError: false },
     });
     render(<TaskerProfileScreen />);
-    expect(screen.getByTestId('tasker-profile-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-013')).toBeTruthy();
   });
 
   it('renders loading state', () => {
@@ -77,7 +77,7 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
       reviews: { data: null, isLoading: true, isError: false },
     });
     render(<TaskerProfileScreen />);
-    expect(screen.getByTestId('tasker-profile-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-013')).toBeTruthy();
   });
 
   it('renders error state', () => {
@@ -86,7 +86,7 @@ describe('TaskerProfileScreen (SCR-CUST-013)', () => {
       reviews: { data: null, isLoading: false, isError: true },
     });
     render(<TaskerProfileScreen />);
-    expect(screen.getByTestId('tasker-profile-screen-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-013-error')).toBeTruthy();
   });
 
   it('renders tasker name and avatar', () => {

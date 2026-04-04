@@ -145,7 +145,7 @@ export default function CategorySelectionScreen() {
   );
 
   return (
-    <ScreenContainer testID="category-selection-screen">
+    <ScreenContainer testID="SCR-CUST-002">
       {/* Header — frosted bar with back + title */}
       <View style={styles.header}>
         <Pressable

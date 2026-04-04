@@ -59,7 +59,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScreenContainer testID="login-screen">
+    <ScreenContainer testID="SCR-SHARED-002">
       <Pressable
         testID="language-switcher"
         onPress={toggleLanguage}

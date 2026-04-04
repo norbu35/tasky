@@ -61,7 +61,7 @@ export default function PhotoUploadScreen() {
   };
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-CUST-004"
       currentStep={2}
       totalSteps={7}
       onNext={handleNext}
@@ -71,7 +71,6 @@ export default function PhotoUploadScreen() {
           ? t('common.continue', 'Continue')
           : t('customer.postTask.photosSkip', 'Skip')
       }
-      testID="photo-upload-screen"
     >
       <View style={styles.progressHeader}>
         <Text style={styles.stepLabel}>

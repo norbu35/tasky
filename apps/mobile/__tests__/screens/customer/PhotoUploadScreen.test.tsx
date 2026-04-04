@@ -39,7 +39,7 @@ beforeEach(() => {
 describe('PhotoUploadScreen (SCR-CUST-004)', () => {
   it('has a testID on the screen container', () => {
     render(<PhotoUploadScreen />);
-    expect(screen.getByTestId('photo-upload-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-004')).toBeTruthy();
   });
 
   it('renders the PhotoGrid component', () => {
@@ -56,7 +56,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
   it('can skip photos and navigate to location', () => {
     render(<PhotoUploadScreen />);
-    fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/location',
@@ -72,7 +72,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
   it('back button returns to intake form', () => {
     render(<PhotoUploadScreen />);
-    fireEvent.press(screen.getByTestId('photo-upload-screen-back'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-004-back'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
@@ -102,7 +102,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
 
     render(<PhotoUploadScreen />);
     fireEvent.press(screen.getByTestId('photo-upload-remove-0'));
-    fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
 
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -122,7 +122,7 @@ describe('PhotoUploadScreen (SCR-CUST-004)', () => {
     });
 
     render(<PhotoUploadScreen />);
-    fireEvent.press(screen.getByTestId('photo-upload-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-004-next'));
 
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -10,10 +10,10 @@ export default function WalletScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView
+    <ScrollView testID="SCR-P3-001"
       style={styles.container}
       contentContainerStyle={styles.content}
-      testID="wallet-screen"
+     
     >
       <Text style={styles.navTitle}>Хэтэвч</Text>
       <View style={styles.heroCard}>

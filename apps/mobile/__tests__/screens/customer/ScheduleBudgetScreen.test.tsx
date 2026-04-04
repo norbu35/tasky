@@ -78,7 +78,7 @@ function pickDateAndTime(date: Date, time: Date) {
 describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
   it('has a testID on the screen container', () => {
     render(<ScheduleBudgetScreen />);
-    expect(screen.getByTestId('schedule-budget-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-006')).toBeTruthy();
   });
 
   it('renders date field', () => {
@@ -110,7 +110,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
     expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
-    expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
+    expect(screen.getByTestId('SCR-CUST-006-next')).toBeDisabled();
   });
 
   it('shows schedule validation when a past date is selected', () => {
@@ -122,12 +122,12 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
     expect(screen.getByText('Cannot select a past date/time')).toBeTruthy();
-    expect(screen.getByTestId('schedule-budget-screen-next')).toBeDisabled();
+    expect(screen.getByTestId('SCR-CUST-006-next')).toBeDisabled();
   });
 
   it('keeps next disabled until schedule and budget are valid', () => {
     render(<ScheduleBudgetScreen />);
-    const nextButton = screen.getByTestId('schedule-budget-screen-next');
+    const nextButton = screen.getByTestId('SCR-CUST-006-next');
     expect(nextButton).toBeDisabled();
 
     const date = getFutureDate(1);
@@ -155,7 +155,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     pickDateAndTime(date, time);
 
     fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '50000');
-    fireEvent.press(screen.getByTestId('schedule-budget-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-006-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/review',
@@ -190,7 +190,7 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
 
   it('back button returns to location pin', () => {
     render(<ScheduleBudgetScreen />);
-    fireEvent.press(screen.getByTestId('schedule-budget-screen-back'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-006-back'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 

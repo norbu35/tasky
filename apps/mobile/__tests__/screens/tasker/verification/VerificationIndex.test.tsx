@@ -55,7 +55,7 @@ describe('VerificationIndex (SCR-TASK-003)', () => {
     const VerificationIndex = require('../../../../src/app/(tasker)/verification/index').default;
     render(<VerificationIndex />);
 
-    fireEvent.press(screen.getByTestId('verification-gate-secondary-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-003-secondary-cta'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 });

@@ -76,7 +76,7 @@ export default function BookingConfirmedScreen() {
   }, []);
 
   return (
-    <ScreenContainer testID="booking-confirmed-screen">
+    <ScreenContainer testID="SCR-CUST-015">
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"

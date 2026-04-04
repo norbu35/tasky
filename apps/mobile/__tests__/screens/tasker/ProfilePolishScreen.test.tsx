@@ -115,7 +115,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    expect(screen.getByTestId('profile-polish-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-019')).toBeTruthy();
     expect(screen.queryByText('Одоогийн тайлбар')).toBeNull();
     expect(screen.queryByText('Санал болгох')).toBeNull();
     expect(getEventNames()).toContain('profile_polish_viewed');
@@ -143,7 +143,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
 
     expect(screen.getByTestId('profile-polish-suggestion-loading')).toBeTruthy();
     await act(async () => {
@@ -174,7 +174,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
 
     await waitFor(() => {
       expect(screen.getByText('Сүлжээний алдаа гарлаа')).toBeTruthy();
@@ -191,7 +191,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
     fireEvent.changeText(
       screen.getByDisplayValue(MOCK_PROFILE.bio),
       'Шинэ засварын текст орууллаа.',
@@ -217,12 +217,12 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
     await waitFor(() => {
       expect(screen.getByText('Энэ хувилбарыг хэрэглэх')).toBeTruthy();
     });
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
 
     expect(mockMutate).toHaveBeenCalledWith(
       { bio: 'Би 5 жилийн туршлагатай, захиалгыг найдвартай гүйцэтгэдэг.' },
@@ -267,7 +267,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
 
     await waitFor(() => {
       expect(screen.getByText('Сүлжээний алдаа гарлаа')).toBeTruthy();
@@ -285,7 +285,7 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
 
     const view = renderScreen();
 
-    fireEvent.press(screen.getByTestId('profile-polish-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-019-cta'));
     await waitFor(() => {
       expect(screen.getByText('Энэ хувилбарыг хэрэглэх')).toBeTruthy();
     });

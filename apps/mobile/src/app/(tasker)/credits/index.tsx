@@ -17,7 +17,7 @@ export default function TaskerCreditsIndexScreen() {
   const router = useRouter();
 
   return (
-    <DetailTemplate testID="tasker-credits-index">
+    <DetailTemplate testID="SCR-P2-001">
       <View style={styles.stack}>
         <View style={styles.heroCard}>
           <Text style={styles.heroLabel}>

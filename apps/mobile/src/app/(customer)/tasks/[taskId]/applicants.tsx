@@ -38,7 +38,7 @@ function ApplicantCard({
   const { t } = useTranslation();
 
   return (
-    <View style={styles.card}>
+    <View testID="SCR-CUST-011" style={styles.card}>
       <View style={styles.cardTopRow}>
         <ProfileAvatar
           uri={applicant.avatarUrl}
@@ -182,6 +182,7 @@ export default function ApplicantsListScreen() {
           </View>
         ) : (
           <FlatList
+            style={{ flex: 1 }}
             data={applicants}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}

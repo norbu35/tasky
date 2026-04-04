@@ -58,12 +58,12 @@ export default function BookingConfirmScreen() {
   }, [params, acceptApplication, confirmBookingIntent, router]);
 
   return (
-    <DetailTemplate
+    <DetailTemplate testID="SCR-CUST-014"
       ctaLabel={t('customer.bookings.ctaConfirm', 'Confirm Booking')}
       ctaOnPress={handleConfirm}
       ctaLoading={isPending || isConfirmingIntent}
       ctaDisabled={!disclaimerChecked}
-      testID="booking-confirm-screen"
+     
     >
       {/* Tasker Info */}
       <View style={styles.section}>

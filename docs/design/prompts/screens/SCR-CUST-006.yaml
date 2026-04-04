@@ -1,5 +1,5 @@
 screen_id: SCR-CUST-006
-name: Post Task — Schedule & Budget
+name: Post Task — Schedule, Budget & Submit
 role:
   - customer
 phase: 0-1
@@ -10,7 +10,7 @@ context_refs:
   journeys:
     - prompts/journeys/JRN-CUST-01.yaml
 stitch_prompt: >-
-  Design a mobile app screen for "Post Task — Schedule & Budget" (SCR-CUST-006) in the Tasky app — Mongolia's domestic
+  Design a mobile app screen for "Post Task — Schedule, Budget & Submit" (SCR-CUST-006) in the Tasky app — Mongolia's domestic
   service marketplace.
 
   This screen is used by Customer role.
@@ -18,11 +18,11 @@ stitch_prompt: >-
   Template: form_wizard — Step indicator showing progress, scrollable form fields, back/next navigation at bottom.
   Keyboard-aware scrolling.
 
-  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(date_picker +
-  budget_input) -> bottom_nav(back + next)
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 7/7) -> scrollview(date_picker +
+  budget_input) -> bottom_nav(back + submit)
 
   Components used:
-    • COMP-STEPINDICATOR (horizontal): Shows step 5 of 7 in the Post Task wizard flow
+    • COMP-STEPINDICATOR (horizontal): Shows step 7 of 7 in the Post Task wizard flow
     • COMP-DATEPICKER (date_time): Date and time selector for scheduling the task; minimum date is tomorrow
     • COMP-FORMFIELD (default): Wraps DatePicker and budget Input with labels and inline error
     • COMP-INPUT (default): Numeric input for budget amount in MNT with currency prefix

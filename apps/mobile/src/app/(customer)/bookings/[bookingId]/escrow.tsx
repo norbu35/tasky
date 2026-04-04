@@ -33,10 +33,10 @@ export default function EscrowScreen() {
 
   if (state === 'error') {
     return (
-      <ScrollView
+      <ScrollView testID="SCR-P3-003"
         style={styles.container}
         contentContainerStyle={styles.content}
-        testID="booking-escrow-screen"
+       
       >
         <View style={styles.errorCard} testID="booking-escrow-screen-error">
           <Text style={styles.cardTitle}>Төлбөр амжилтгүй</Text>

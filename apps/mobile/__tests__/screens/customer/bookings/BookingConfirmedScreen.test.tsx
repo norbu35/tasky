@@ -39,7 +39,7 @@ beforeEach(() => {
 describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
   it('has a testID on the screen container', () => {
     render(<BookingConfirmedScreen />);
-    expect(screen.getByTestId('booking-confirmed-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-015')).toBeTruthy();
   });
 
   it('shows success headline', () => {

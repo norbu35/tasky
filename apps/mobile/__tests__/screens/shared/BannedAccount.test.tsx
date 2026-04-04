@@ -77,6 +77,6 @@ describe('BannedAccountScreen (SCR-SHARED-021)', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    expect(screen.getByTestId('banned-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-021')).toBeTruthy();
   });
 });

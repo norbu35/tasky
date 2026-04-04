@@ -30,24 +30,24 @@ happy_path:
     screen_id: SCR-CUST-004
     screen_name: Post Task — Photo Upload
     action: Upload photos (0-3)
-    next: SCR-CUST-005
+    next: SCR-CUST-007
     lifecycle: null
   - step: 5
+    screen_id: SCR-CUST-007
+    screen_name: Post Task — Job Scope Summary
+    action: Review auto-generated Job Scope Summary (editable)
+    next: SCR-CUST-005
+    lifecycle: null
+  - step: 6
     screen_id: SCR-CUST-005
     screen_name: Post Task — Location Pin
     action: Pin location on map
     next: SCR-CUST-006
     lifecycle: null
-  - step: 6
-    screen_id: SCR-CUST-006
-    screen_name: Post Task — Schedule & Budget
-    action: Set schedule and budget
-    next: SCR-CUST-007
-    lifecycle: null
   - step: 7
-    screen_id: SCR-CUST-007
-    screen_name: Post Task — Review & Submit
-    action: Review summary, edit if needed, submit
+    screen_id: SCR-CUST-006
+    screen_name: Post Task — Schedule, Budget & Submit
+    action: Set schedule and budget, then Post Task
     next: SCR-CUST-008
     lifecycle: TASK-T01 (customer_publishes_task)
   - step: 8
@@ -62,7 +62,7 @@ alternate_paths:
     branch_at_step: 7
     condition: Invalid form data
     screens:
-      - SCR-CUST-007
+      - SCR-CUST-006
     outcome: Inline errors, user corrects
   - id: JRN-CUST-01-A2
     name: Photo upload fails
@@ -73,7 +73,7 @@ alternate_paths:
     outcome: Error state, retry
   - id: JRN-CUST-01-A3
     name: Location permission denied
-    branch_at_step: 5
+    branch_at_step: 6
     condition: No location permission
     screens:
       - SCR-CUST-005
@@ -84,8 +84,8 @@ alternate_paths:
     condition: User chooses no photos
     screens:
       - SCR-CUST-004
-      - SCR-CUST-005
-    outcome: Proceed to location without photos
+      - SCR-CUST-007
+    outcome: Proceed to Job Scope Summary without photos
 visual_consistency_note: >-
   All screens in this journey should share visual continuity — consistent header style, navigation patterns, and color
   usage. Screens in sequence should feel like a cohesive flow.

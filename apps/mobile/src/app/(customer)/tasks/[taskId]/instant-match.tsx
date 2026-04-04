@@ -150,7 +150,7 @@ export default function CustomerInstantMatchScreen() {
           );
 
   return (
-    <DetailTemplate testID="instant-match-customer-screen" onBack={onBack}>
+    <DetailTemplate testID="SCR-CUST-027" onBack={onBack}>
       <View style={styles.container}>
         <View style={styles.heroBlock}>
           <Text style={styles.heroTitle}>{heroTitle}</Text>

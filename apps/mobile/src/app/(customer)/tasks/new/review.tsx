@@ -116,7 +116,7 @@ function SectionCard({
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.card, featured && styles.cardFeatured]} testID={testID}>
+    <View testID="SCR-CUST-007" style={[styles.card, featured && styles.cardFeatured]} >
       <View style={styles.cardHeader}>
         <Text style={[styles.cardLabel, featured && styles.cardLabelFeatured]}>{label}</Text>
         {onEdit ? (

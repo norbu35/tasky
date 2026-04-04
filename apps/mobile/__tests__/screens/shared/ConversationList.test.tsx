@@ -62,7 +62,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByTestId('conversation-list')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-010')).toBeTruthy();
   });
 
   it('shows empty state when no conversations exist', () => {
@@ -183,7 +183,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('Мессеж')).toBeTruthy();
+    expect(screen.getByText('Чат')).toBeTruthy();
     fireEvent.changeText(screen.getByPlaceholderText('Хайх...'), 'Jane');
 
     expect(screen.queryByText('John Doe')).toBeNull();

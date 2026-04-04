@@ -116,7 +116,7 @@ export default function UploadScreen() {
   const nextLabel = isLastStep ? t('tasker.verification.submitButton') : t('common.next');
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-TASK-005"
       currentStep={currentStep}
       totalSteps={STEPS.length}
       onNext={handleNext}
@@ -124,7 +124,7 @@ export default function UploadScreen() {
       nextLabel={nextLabel}
       nextDisabled={!hasPhoto}
       nextLoading={isSubmitting}
-      testID="upload-wizard"
+     
     >
       <Text style={styles.stepLabel}>{t(STEP_LABELS[currentSide])}</Text>
 

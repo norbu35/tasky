@@ -64,7 +64,7 @@ export default function DisputeRaiseScreen() {
   const isLastStep = currentStep === TOTAL_STEPS - 1;
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-CUST-024"
       currentStep={currentStep}
       totalSteps={TOTAL_STEPS}
       onNext={handleNext}
@@ -75,7 +75,6 @@ export default function DisputeRaiseScreen() {
       nextDisabled={isNextDisabled}
       nextLoading={isPending}
       showBack={currentStep > 0}
-      testID="dispute-raise-screen"
     >
       <View style={styles.referenceSection}>
         <Text style={styles.fieldLabel}>

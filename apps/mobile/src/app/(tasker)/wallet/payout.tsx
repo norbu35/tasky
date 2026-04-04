@@ -17,7 +17,7 @@ export default function WalletPayoutScreen() {
 
   if (state === 'submitted') {
     return (
-      <View style={styles.successContainer} testID="wallet-payout-screen">
+      <View testID="SCR-P3-002" style={styles.successContainer}>
         <Text style={styles.title}>Хүсэлт амжилттай илгээгдлээ</Text>
       </View>
     );

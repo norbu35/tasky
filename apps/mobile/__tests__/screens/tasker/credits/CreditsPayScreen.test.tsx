@@ -38,7 +38,7 @@ describe('TaskerCreditsPayScreen', () => {
     const CreditsPayScreen = require('../../../../src/app/(tasker)/credits/pay').default;
     render(<CreditsPayScreen />);
 
-    expect(screen.getByTestId('tasker-credits-pay')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P2-002')).toBeTruthy();
     expect(screen.getByText('Choose an amount')).toBeTruthy();
     expect(screen.getByText('20,000 ₮')).toBeTruthy();
     expect(screen.getByText('Confirm top up')).toBeTruthy();
@@ -49,7 +49,7 @@ describe('TaskerCreditsPayScreen', () => {
     const CreditsPayScreen = require('../../../../src/app/(tasker)/credits/pay').default;
     render(<CreditsPayScreen />);
 
-    expect(screen.getByTestId('tasker-credits-pay-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P2-002-error')).toBeTruthy();
     expect(screen.getByText('Could not load top-up options')).toBeTruthy();
   });
 });

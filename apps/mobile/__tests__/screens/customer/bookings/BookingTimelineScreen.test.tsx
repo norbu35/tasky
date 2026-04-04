@@ -63,7 +63,7 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
       refetch: jest.fn(),
     });
     render(<BookingTimelineScreen />);
-    expect(screen.getByTestId('booking-timeline-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-019')).toBeTruthy();
   });
 
   it('renders timeline events', () => {
@@ -154,6 +154,6 @@ describe('BookingTimelineScreen (SCR-CUST-019)', () => {
       refetch: jest.fn(),
     });
     render(<BookingTimelineScreen />);
-    expect(screen.getByTestId('booking-timeline-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-019')).toBeTruthy();
   });
 });

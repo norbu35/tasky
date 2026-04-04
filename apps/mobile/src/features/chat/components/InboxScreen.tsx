@@ -63,6 +63,7 @@ export function InboxScreen() {
       <Text style={styles.headerTitle}>{t('messaging.inboxTitle', 'Inbox')}</Text>
 
       <FlatList
+        style={{ flex: 1 }}
         data={conversations}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}

@@ -54,7 +54,7 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-SHARED-013"
       currentStep={0}
       totalSteps={1}
       onNext={handleSave}
@@ -63,7 +63,6 @@ export default function EditProfileScreen() {
       nextDisabled={isLoading || !isDirty}
       nextLoading={updateMutation.isPending}
       showBack={true}
-      testID="edit-profile-screen"
     >
       {/* Avatar Section */}
       <View style={styles.avatarSection}>

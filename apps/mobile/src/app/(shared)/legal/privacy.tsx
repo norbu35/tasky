@@ -10,7 +10,7 @@ export default function PrivacyPolicyScreen() {
   const { t } = useTranslation();
 
   return (
-    <DetailTemplate testID="privacy-screen">
+    <DetailTemplate testID="SCR-TASK-018">
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>
           {t('shared.legal.updated', 'Сүүлд шинэчлэгдсэн: 2026.01.01')}

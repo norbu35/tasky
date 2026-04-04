@@ -68,6 +68,6 @@ describe('PendingScreen (SCR-TASK-007)', () => {
     const PendingScreen = require('../../../../src/app/(tasker)/verification/pending').default;
     render(<PendingScreen />);
 
-    expect(screen.getByTestId('pending-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-007')).toBeTruthy();
   });
 });

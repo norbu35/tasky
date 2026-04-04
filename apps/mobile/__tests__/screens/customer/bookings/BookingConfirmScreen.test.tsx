@@ -77,7 +77,7 @@ beforeEach(() => {
 describe('BookingConfirmScreen (SCR-CUST-014)', () => {
   it('has a testID on the screen container', () => {
     render(<BookingConfirmScreen />);
-    expect(screen.getByTestId('booking-confirm-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-014')).toBeTruthy();
   });
 
   it('renders task summary info', () => {
@@ -97,14 +97,14 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
 
   it('CTA is disabled until disclaimer is checked', () => {
     render(<BookingConfirmScreen />);
-    const cta = screen.getByTestId('booking-confirm-screen-cta');
+    const cta = screen.getByTestId('SCR-CUST-014-cta');
     expect(cta).toBeDisabled();
   });
 
   it('CTA becomes enabled after disclaimer is checked', () => {
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
-    const cta = screen.getByTestId('booking-confirm-screen-cta');
+    const cta = screen.getByTestId('SCR-CUST-014-cta');
     expect(cta).not.toBeDisabled();
   });
 
@@ -112,7 +112,7 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
     mockAcceptApplication.mockResolvedValue({ id: 'booking-1' });
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
-    fireEvent.press(screen.getByTestId('booking-confirm-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-014-cta'));
     await waitFor(() => {
       expect(mockAcceptApplication).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -152,7 +152,7 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
     mockConfirmBookingIntent.mockResolvedValue({ id: 'booking-2' });
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
-    fireEvent.press(screen.getByTestId('booking-confirm-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-014-cta'));
     await waitFor(() => {
       expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -182,7 +182,7 @@ describe('BookingConfirmScreen (SCR-CUST-014)', () => {
     mockConfirmBookingIntent.mockResolvedValue({ id: 'booking-3' });
     render(<BookingConfirmScreen />);
     fireEvent.press(screen.getByTestId('booking-confirm-screen-disclaimer'));
-    fireEvent.press(screen.getByTestId('booking-confirm-screen-cta'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-014-cta'));
     await waitFor(() => {
       expect(mockConfirmBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({

@@ -230,12 +230,12 @@ matrix:
     budget_entry: R
     validation_budget_low: R
     validation_schedule_past: R
+    submitting: R
+    submit_error: R
 
   SCR-CUST-007:
     review: R
     editing_summary: R
-    submitting: R
-    submit_error: R
 
   SCR-CUST-008:
     default: R

@@ -48,7 +48,7 @@ beforeEach(() => {
 describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
   it('has a testID on the screen container', () => {
     render(<DisputeRaiseScreen />);
-    expect(screen.getByTestId('dispute-raise-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-024')).toBeTruthy();
   });
 
   it('renders reason selection on step 0', () => {
@@ -73,24 +73,24 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
   it('advances to evidence step after selecting reason and pressing Next', () => {
     render(<DisputeRaiseScreen />);
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     expect(screen.getByText('Evidence')).toBeTruthy();
   });
 
   it('renders photo upload area on evidence step', () => {
     render(<DisputeRaiseScreen />);
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     expect(screen.getByTestId('dispute-evidence-photos')).toBeTruthy();
   });
 
   it('keeps submit disabled on the final step until evidence is provided', () => {
     render(<DisputeRaiseScreen />);
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
 
-    const submit = screen.getByTestId('dispute-raise-screen-next');
+    const submit = screen.getByTestId('SCR-CUST-024-next');
     expect(submit).toBeDisabled();
 
     fireEvent.changeText(
@@ -105,9 +105,9 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
     render(<DisputeRaiseScreen />);
     // Step 0 -> select reason
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 1 -> evidence (skip, just press next)
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 2 -> description
     expect(screen.getByText('Description')).toBeTruthy();
     expect(screen.getByPlaceholderText('Describe the issue in detail...')).toBeTruthy();
@@ -118,15 +118,15 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
     render(<DisputeRaiseScreen />);
     // Step 0 -> select reason
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 1 -> evidence
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 2 -> description + submit
     fireEvent.changeText(
       screen.getByPlaceholderText('Describe the issue in detail...'),
       'The work was not done properly',
     );
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     await waitFor(() => {
       expect(mockRaiseDispute).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -143,15 +143,15 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
     render(<DisputeRaiseScreen />);
     // Step 0
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 1
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     // Step 2
     fireEvent.changeText(
       screen.getByPlaceholderText('Describe the issue in detail...'),
       'Issue description',
     );
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith(expect.stringContaining('/disputes/dispute-456'));
     });
@@ -160,14 +160,14 @@ describe('DisputeRaiseScreen (SCR-CUST-024)', () => {
   it('shows back button on step 1+', () => {
     render(<DisputeRaiseScreen />);
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
-    expect(screen.getByTestId('dispute-raise-screen-back')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
+    expect(screen.getByTestId('SCR-CUST-024-back')).toBeTruthy();
   });
 
   it('shows evidence deadline note', () => {
     render(<DisputeRaiseScreen />);
     fireEvent.press(screen.getByText('Poor quality work'));
-    fireEvent.press(screen.getByTestId('dispute-raise-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-024-next'));
     expect(
       screen.getByText('Dispute auto-closes if evidence is not provided within 24 hours'),
     ).toBeTruthy();

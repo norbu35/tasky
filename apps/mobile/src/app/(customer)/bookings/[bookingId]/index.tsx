@@ -158,13 +158,13 @@ export default function BookingDetailScreen() {
   }, [router, bookingId]);
 
   return (
-    <DetailTemplate
+    <DetailTemplate testID="SCR-CUST-017"
       ctaLabel={ctaConfig?.label}
       ctaOnPress={ctaConfig ? handleCtaPress : undefined}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-      testID="booking-detail-screen"
+     
     >
       {booking && (
         <>

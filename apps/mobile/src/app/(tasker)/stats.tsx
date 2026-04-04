@@ -42,7 +42,7 @@ export default function TaskerStatsScreen() {
   const isPro = Boolean(rawStats.is_pro);
 
   return (
-    <DetailTemplate isLoading={isLoading} isError={isError} onRetry={refetch} testID="tasker-stats">
+    <DetailTemplate testID="SCR-TASK-016" isLoading={isLoading} isError={isError} onRetry={refetch}>
       {data && (
         <View style={styles.content}>
           <View style={styles.heroCard} testID="tasker-stats-hero">

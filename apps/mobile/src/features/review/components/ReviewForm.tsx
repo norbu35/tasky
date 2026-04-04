@@ -174,7 +174,7 @@ export default function ReviewFormScreen() {
   const submitLabel = t('shared.review.cta_submit', 'Илгээх');
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="review-form">
+    <SafeAreaView style={styles.safeArea} testID="SCR-SHARED-017">
       <View style={styles.screen}>
         <View style={styles.header} testID="review-form-header">
           <Pressable

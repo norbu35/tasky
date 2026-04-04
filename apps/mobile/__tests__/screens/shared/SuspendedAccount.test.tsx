@@ -92,6 +92,6 @@ describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    expect(screen.getByTestId('suspended-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-020')).toBeTruthy();
   });
 });

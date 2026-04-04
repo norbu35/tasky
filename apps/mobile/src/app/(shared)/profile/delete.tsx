@@ -29,7 +29,7 @@ export default function AccountDeletionScreen() {
   };
 
   return (
-    <View style={styles.container} testID="delete-account-screen">
+    <View testID="SCR-SHARED-015" style={styles.container}>
       <View style={styles.content}>
         <View style={styles.iconContainer}>
           <AlertTriangle size={48} color={colors.danger} />

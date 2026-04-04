@@ -128,7 +128,7 @@ export default function BookingTimelineScreen() {
   }, [timelineEvents]);
 
   return (
-    <ScreenContainer testID="booking-timeline-screen">
+    <ScreenContainer testID="SCR-CUST-019">
       <View style={styles.shell}>
         <ScrollView
           style={styles.scroll}

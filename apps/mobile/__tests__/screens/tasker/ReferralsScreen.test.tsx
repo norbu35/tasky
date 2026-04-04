@@ -37,7 +37,7 @@ describe('TaskerReferralsScreen', () => {
     const ReferralsScreen = require('../../../src/app/(tasker)/referrals').default;
     render(<ReferralsScreen />);
 
-    expect(screen.getByTestId('tasker-referrals-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P2-005')).toBeTruthy();
     expect(screen.getByText('Invite a tasker')).toBeTruthy();
     expect(screen.getByText('Copy invite code')).toBeTruthy();
   });

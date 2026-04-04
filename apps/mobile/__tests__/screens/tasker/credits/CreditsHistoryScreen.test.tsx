@@ -37,7 +37,7 @@ describe('TaskerCreditsHistoryScreen', () => {
     const CreditsHistoryScreen = require('../../../../src/app/(tasker)/credits/history').default;
     render(<CreditsHistoryScreen />);
 
-    expect(screen.getByTestId('tasker-credits-history')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P2-003')).toBeTruthy();
     expect(screen.getByText('Top-up')).toBeTruthy();
     expect(screen.getByText('Task payout')).toBeTruthy();
   });

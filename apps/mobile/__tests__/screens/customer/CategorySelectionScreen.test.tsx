@@ -43,7 +43,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('has a testID on the screen container', () => {
     mockUseCategories.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false });
     render(<CategorySelectionScreen />);
-    expect(screen.getByTestId('category-selection-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-002')).toBeTruthy();
   });
 
   it('renders the screen title', () => {
@@ -99,12 +99,12 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
   it('shows loading state', () => {
     mockUseCategories.mockReturnValue({ data: null, isLoading: true, isError: false });
     render(<CategorySelectionScreen />);
-    expect(screen.getByTestId('category-selection-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-002')).toBeTruthy();
   });
 
   it('shows error state when API fails', () => {
     mockUseCategories.mockReturnValue({ data: null, isLoading: false, isError: true });
     render(<CategorySelectionScreen />);
-    expect(screen.getByTestId('category-selection-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-002')).toBeTruthy();
   });
 });

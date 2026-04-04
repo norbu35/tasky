@@ -18,7 +18,7 @@ function resolveState(value: string | string[] | undefined): ScreenState {
 
 function TermsLoading() {
   return (
-    <View style={styles.loadingContainer} testID="terms-screen-loading">
+    <View testID="SCR-INFRA-004" style={styles.loadingContainer}>
       <View style={styles.loadingBlockLarge} />
       <View style={styles.loadingBlockMedium} />
       <View style={styles.loadingBlockShort} />

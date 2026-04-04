@@ -35,7 +35,7 @@ function AuthenticatedProfile() {
   const { isTasker } = useRole();
 
   return (
-    <DetailTemplate
+    <DetailTemplate testID="SCR-SHARED-012"
       headerTitle={t('shared.profile.title', 'Профайл')}
       rightAction={{
         icon: <Settings size={24} color={colors.primary} />,
@@ -49,7 +49,6 @@ function AuthenticatedProfile() {
       isError={isError}
       onRetry={refetch}
       errorMessage={t('shared.profile.errorNetwork', 'Сүлжээний алдаа гарлаа')}
-      testID="my-profile-screen"
     >
       {profile && (
         <View style={styles.content}>

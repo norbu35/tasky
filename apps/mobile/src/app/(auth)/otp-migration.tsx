@@ -56,7 +56,7 @@ export default function OtpMigrationScreen() {
   };
 
   return (
-    <ScreenContainer testID="otp-migration-screen">
+    <ScreenContainer testID="SCR-SHARED-004">
       <InsetScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}

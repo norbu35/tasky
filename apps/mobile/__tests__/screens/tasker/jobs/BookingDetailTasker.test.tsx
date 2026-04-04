@@ -164,7 +164,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByTestId('booking-detail-tasker')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-013')).toBeTruthy();
   });
 
   it('renders booking info for assigned status', () => {
@@ -337,7 +337,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByTestId('booking-detail-tasker-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-013-error')).toBeTruthy();
   });
 
   it('back button calls router.back', () => {

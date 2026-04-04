@@ -157,6 +157,7 @@ export function FeedListTemplate<T>({
     <View style={styles.container} testID={testID}>
       {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
       <FlatList
+        style={{ flex: 1 }}
         data={data}
         renderItem={renderListItem}
         keyExtractor={keyExtractor}

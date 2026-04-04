@@ -17,7 +17,7 @@ export default function SubscriptionScreen() {
   const [status, setStatus] = React.useState<SubscriptionStatus>('idle');
 
   return (
-    <View style={styles.screen}>
+    <View testID="SCR-P3-004" style={styles.screen}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}

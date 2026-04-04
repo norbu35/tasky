@@ -69,14 +69,13 @@ export default function LocationScreen() {
   };
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-CUST-005"
       currentStep={3}
       totalSteps={7}
       onNext={handleNext}
       onBack={() => router.back()}
       nextLabel={t('common.continue', 'Continue')}
       nextDisabled={!pin}
-      testID="location-screen"
     >
       <View style={styles.hero}>
         <Text style={styles.stepLabel}>

@@ -37,7 +37,7 @@ describe('TaskerCreditsIndexScreen', () => {
     const CreditsIndexScreen = require('../../../../src/app/(tasker)/credits/index').default;
     render(<CreditsIndexScreen />);
 
-    expect(screen.getByTestId('tasker-credits-index')).toBeTruthy();
+    expect(screen.getByTestId('SCR-P2-001')).toBeTruthy();
     expect(screen.getByText('Balance running low')).toBeTruthy();
     expect(screen.getByText('Top up now')).toBeTruthy();
     expect(screen.getByText('View history')).toBeTruthy();

@@ -1,5 +1,5 @@
 screen_id: SCR-CUST-007
-name: Post Task — Review & Submit
+name: Post Task — Job Scope Summary
 role:
   - customer
 phase: 0-1
@@ -10,15 +10,15 @@ context_refs:
   journeys:
     - prompts/journeys/JRN-CUST-01.yaml
 stitch_prompt: >-
-  Design a mobile app screen for "Post Task — Review & Submit" (SCR-CUST-007) in the Tasky app — Mongolia's domestic
+  Design a mobile app screen for "Post Task — Job Scope Summary" (SCR-CUST-007) in the Tasky app — Mongolia's domestic
   service marketplace.
 
   This screen is used by Customer role.
 
   Template: detail — Navigation header at top, scrollable content area, sticky bottom CTA bar for primary action.
 
-  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 6/7) -> scrollview(summary_sections) ->
-  sticky_bottom_cta(submit)
+  Layout structure: safe_area -> nav_header(back + title) -> step_indicator(step 5/7) -> scrollview(summary_sections) ->
+  sticky_bottom_cta(continue)
 
   Components used:
     • COMP-STEPINDICATOR (horizontal): Shows step 6 of 7 in the Post Task wizard flow

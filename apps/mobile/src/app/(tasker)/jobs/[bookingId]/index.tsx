@@ -40,7 +40,7 @@ export default function BookingDetailTaskerScreen() {
   ) as 'assigned' | 'completed' | 'cancelled' | 'no_show' | undefined;
 
   return (
-    <DetailTemplate
+    <DetailTemplate testID="SCR-TASK-013"
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -53,7 +53,6 @@ export default function BookingDetailTaskerScreen() {
       secondaryCtaOnPress={
         isAssigned || isMarkedDone ? () => router.push(`/inbox/${bookingId}`) : undefined
       }
-      testID="booking-detail-tasker"
     >
       {booking && (
         <View style={styles.content}>

@@ -26,7 +26,7 @@ export default function PermissionCameraScreen() {
   };
 
   return (
-    <View style={styles.container} testID="permission-camera-screen">
+    <View testID="SCR-SHARED-007" style={styles.container}>
       <PermissionPrimer
         icon={<Camera size={48} color={colors.primaryDeep} />}
         title="Камер ашиглах зөвшөөрөл"

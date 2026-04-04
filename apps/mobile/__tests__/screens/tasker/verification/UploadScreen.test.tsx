@@ -77,7 +77,7 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     const UploadScreen = require('../../../../src/app/(tasker)/verification/upload').default;
     render(<UploadScreen />);
 
-    expect(screen.getByTestId('upload-wizard')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-005')).toBeTruthy();
     expect(screen.getByText('tasker.verification.uploadFront')).toBeTruthy();
   });
 
@@ -97,10 +97,10 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
 
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(screen.getByText('tasker.verification.uploadBack')).toBeTruthy();
@@ -114,9 +114,9 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     // Step 1 - front
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     // Step 2 - back
     await waitFor(() => {
@@ -124,9 +124,9 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     });
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     // Step 3 - selfie
     await waitFor(() => {
@@ -141,9 +141,9 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     // Step 1 - front
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     // Step 2 - back
     await waitFor(() => {
@@ -151,9 +151,9 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     });
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     // Step 3 - selfie
     await waitFor(() => {
@@ -161,11 +161,11 @@ describe('UploadScreen (SCR-TASK-005)', () => {
     });
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
 
     // Submit (final step next label becomes submit)
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(mockSubmitVerification).toHaveBeenCalledTimes(1);
@@ -189,18 +189,18 @@ describe('UploadScreen (SCR-TASK-005)', () => {
 
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(screen.getByText('tasker.verification.uploadBack')).toBeTruthy();
     });
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(screen.getByText('tasker.verification.uploadSelfie')).toBeTruthy();
@@ -221,18 +221,18 @@ describe('UploadScreen (SCR-TASK-005)', () => {
 
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(screen.getByText('tasker.verification.uploadBack')).toBeTruthy();
     });
     fireEvent.press(screen.getByTestId('capture-camera-btn'));
     await waitFor(() => {
-      expect(screen.getByTestId('upload-wizard-next')).not.toBeDisabled();
+      expect(screen.getByTestId('SCR-TASK-005-next')).not.toBeDisabled();
     });
-    fireEvent.press(screen.getByTestId('upload-wizard-next'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-005-next'));
 
     await waitFor(() => {
       expect(screen.getByText('tasker.verification.uploadSelfie')).toBeTruthy();

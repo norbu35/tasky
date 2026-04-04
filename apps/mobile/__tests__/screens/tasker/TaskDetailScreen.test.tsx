@@ -135,8 +135,8 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByTestId('task-detail')).toBeTruthy();
-    expect(screen.getByTestId('task-detail-cta')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-cta')).toBeTruthy();
   });
 
   it('renders task title and description', () => {
@@ -202,7 +202,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    fireEvent.press(screen.getByTestId('task-detail-cta'));
+    fireEvent.press(screen.getByTestId('SCR-TASK-002-cta'));
     expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification');
   });
 
@@ -255,7 +255,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByTestId('task-detail-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-TASK-002-error')).toBeTruthy();
   });
 
   it('shows a secondary message button for verified taskers', () => {

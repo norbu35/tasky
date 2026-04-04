@@ -14,7 +14,7 @@ export default function TaskerReferralsScreen() {
   const router = useRouter();
 
   return (
-    <DetailTemplate testID="tasker-referrals-screen">
+    <DetailTemplate testID="SCR-P2-005">
       <View style={styles.stack}>
         <View style={styles.heroCard}>
           <Text style={styles.heroTitle}>{t('tasker.referrals.heroTitle', 'Invite a tasker')}</Text>

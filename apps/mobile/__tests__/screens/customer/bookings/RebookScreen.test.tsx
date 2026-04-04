@@ -64,7 +64,7 @@ beforeEach(() => {
 describe('RebookScreen (SCR-CUST-023)', () => {
   it('has a testID on the screen container', () => {
     render(<RebookScreen />);
-    expect(screen.getByTestId('rebook-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-023')).toBeTruthy();
   });
 
   it('shows prefilled form with previous booking data', () => {
@@ -86,14 +86,14 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('renders a back button and returns to booking detail', () => {
     render(<RebookScreen />);
-    fireEvent.press(screen.getByTestId('rebook-screen-back'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-023-back'));
     expect(mockBack).toHaveBeenCalled();
   });
 
   it('disables continue when budget is at or below the minimum threshold', () => {
     render(<RebookScreen />);
     fireEvent.changeText(screen.getByTestId('rebook-screen-budget'), '1001');
-    fireEvent.press(screen.getByTestId('rebook-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
 
     expect(mockCreateTask).not.toHaveBeenCalled();
     expect(screen.getByText('Budget must be above ₮1,001')).toBeTruthy();
@@ -103,7 +103,7 @@ describe('RebookScreen (SCR-CUST-023)', () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
     mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
-    fireEvent.press(screen.getByTestId('rebook-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
     await waitFor(() => {
       expect(mockCreateTask).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -120,7 +120,7 @@ describe('RebookScreen (SCR-CUST-023)', () => {
     mockCreateTask.mockResolvedValue({ id: 'new-task-1' });
     mockCreateBookingIntent.mockResolvedValue({ id: 'intent-1' });
     render(<RebookScreen />);
-    fireEvent.press(screen.getByTestId('rebook-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
     await waitFor(() => {
       expect(mockCreateBookingIntent).toHaveBeenCalledWith(
         expect.objectContaining({

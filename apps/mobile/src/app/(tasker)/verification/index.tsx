@@ -6,7 +6,7 @@ export default function VerificationIndexScreen() {
   const router = useRouter();
 
   return (
-    <VerificationGate
+    <VerificationGate testID="SCR-TASK-003"
       onStartVerification={() => router.push('/(tasker)/verification/consent')}
       onMaybeLater={() => router.back()}
     />

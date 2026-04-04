@@ -40,7 +40,7 @@ export default function ConsentScreen() {
   };
 
   return (
-    <ScreenContainer testID="consent-screen">
+    <ScreenContainer testID="SCR-TASK-004">
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}

@@ -13,7 +13,7 @@ export default function PendingScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container} testID="pending-screen">
+    <View testID="SCR-TASK-007" style={styles.container}>
       <View style={styles.iconContainer}>
         <Clock size={40} color={colors.accent} />
       </View>

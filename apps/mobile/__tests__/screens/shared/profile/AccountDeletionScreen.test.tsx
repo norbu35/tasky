@@ -102,7 +102,7 @@ describe('AccountDeletionScreen (SCR-SHARED-015)', () => {
     });
     const AccountDeletionScreen = require('../../../../src/app/(shared)/profile/delete').default;
     render(<AccountDeletionScreen />);
-    expect(screen.getByTestId('delete-account-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-015')).toBeTruthy();
   });
 
   it('shows blocked state when active bookings', () => {

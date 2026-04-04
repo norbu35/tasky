@@ -95,7 +95,7 @@ export default function RebookScreen() {
   }, [params, budget, budgetTooLow, numericBudget, selectedDate, createTask, createBookingIntent, router]);
 
   return (
-    <FormWizardTemplate
+    <FormWizardTemplate testID="SCR-CUST-023"
       currentStep={0}
       totalSteps={1}
       onNext={handleSubmit}
@@ -104,7 +104,6 @@ export default function RebookScreen() {
       nextDisabled={budgetTooLow}
       nextLoading={isPending || isCreatingBookingIntent}
       showBack
-      testID="rebook-screen"
     >
       {/* Prefilled Note */}
       <Text style={styles.prefilledNote}>

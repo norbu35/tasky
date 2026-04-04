@@ -257,6 +257,7 @@ export function ApplicantsList() {
         />
       ) : (
         <FlatList
+          style={{ flex: 1 }}
           data={listData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
