@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield } from 'lucide-react-native';
@@ -8,6 +8,7 @@ import { FormField } from '../../components/ui/FormField';
 import { Input } from '../../components/ui/Input';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { InsetScrollView, ScreenContainer } from '../../components/shells';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
@@ -55,8 +56,13 @@ export default function OtpMigrationScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} testID="otp-migration-screen">
-      <View style={styles.content}>
+    <ScreenContainer testID="otp-migration-screen">
+      <InsetScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        extraBottomInset={spacing.lg}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.hero}>
           <View style={styles.backShell}>
             <ArrowLeft size={18} color={colors.primaryDeep} />
@@ -130,15 +136,14 @@ export default function OtpMigrationScreen() {
             />
           ) : null}
         </View>
-      </View>
-    </SafeAreaView>
+      </InsetScrollView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   backShell: {
     width: 40,

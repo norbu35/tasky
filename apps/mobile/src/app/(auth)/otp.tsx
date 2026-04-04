@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, RefreshCw } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../components/shells';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
@@ -20,7 +21,6 @@ function resolveOtpState(value?: string): OtpState {
 
 export default function OtpScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const params = useLocalSearchParams<{ phone?: string; state?: string }>();
   const phone = typeof params.phone === 'string' && params.phone ? params.phone : '9911 2233';
   const state = resolveOtpState(typeof params.state === 'string' ? params.state : undefined);
@@ -43,8 +43,14 @@ export default function OtpScreen() {
   const activeCellIndex = sanitizedCode.length >= 4 ? 3 : sanitizedCode.length;
 
   return (
-    <SafeAreaView style={styles.container} testID="otp-screen">
-      <View style={styles.content}>
+    <ScreenContainer testID="otp-screen">
+      <InsetScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        extraBottomInset={96}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.hero}>
           <Text style={styles.heading} testID="otp-heading">
             {t('auth.otp.heading', 'Код баталгаажуулах')}
@@ -141,32 +147,32 @@ export default function OtpScreen() {
             </Text>
           </View>
         </View>
-      </View>
+      </InsetScrollView>
 
-      <View style={styles.footer} testID="otp-fixed-cta">
-        <Button
-          testID="otp-verify-button"
-          label={t('auth.otp.verify', 'Баталгаажуулах')}
-          isLoading={isVerifying}
-          disabled={sanitizedCode.length !== 4 || isVerifying}
-          style={styles.verifyButton}
-        />
-      </View>
-    </SafeAreaView>
+      <StickyActionBar testID="otp-fixed-cta">
+        <View style={styles.footer}>
+          <Button
+            testID="otp-verify-button"
+            label={t('auth.otp.verify', 'Баталгаажуулах')}
+            isLoading={isVerifying}
+            disabled={sanitizedCode.length !== 4 || isVerifying}
+            style={styles.verifyButton}
+          />
+        </View>
+      </StickyActionBar>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
-    flex: 1,
     paddingHorizontal: spacing.lg,
     paddingTop: 72,
-    paddingBottom: spacing.xl,
-    justifyContent: 'space-between',
+    paddingBottom: spacing['2xl'],
+    gap: spacing.xl,
   },
   hero: {
     gap: spacing.md,

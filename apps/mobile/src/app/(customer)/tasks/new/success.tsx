@@ -1,12 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { Button } from '../../../../components/ui/Button';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -37,76 +37,82 @@ export default function TaskPostedSuccessScreen() {
   };
 
   return (
-    <SafeAreaView
-      edges={['top', 'bottom']}
-      style={styles.container}
-      testID="task-posted-success-screen"
-    >
-      <View style={styles.hero}>
-        <Animated.View style={[styles.checkWrap, animatedCheckStyle]}>
-          <CheckCircle2 size={50} color={colors.verified} />
-        </Animated.View>
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeLabel}>
-            {t('customer.postTask.successBadge', 'БАТАЛГААЖСАН')}
+    <ScreenContainer testID="task-posted-success-screen">
+      <InsetScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        extraBottomInset={120}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.hero}>
+          <Animated.View style={[styles.checkWrap, animatedCheckStyle]}>
+            <CheckCircle2 size={50} color={colors.verified} />
+          </Animated.View>
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusBadgeLabel}>
+              {t('customer.postTask.successBadge', 'БАТАЛГААЖСАН')}
+            </Text>
+          </View>
+          <Text style={styles.headline}>
+            {t('customer.postTask.successTitle', 'Task posted successfully!')}
+          </Text>
+          <Text style={styles.body}>
+            {t(
+              'customer.postTask.successBody',
+              'Taskers can now see your task and apply. You will be notified when new applications arrive',
+            )}
+          </Text>
+          <View style={styles.decorDots}>
+            <View style={[styles.decorDot, { backgroundColor: colors.primary }]} />
+            <View style={[styles.decorDot, { backgroundColor: colors.secondary }]} />
+            <View style={[styles.decorDot, { backgroundColor: colors.verified }]} />
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardDarkLabel}>
+            {t('customer.postTask.successNextLabel', 'ДАРААГИЙН АЛХАМ')}
+          </Text>
+          <Text style={styles.cardTitle}>
+            {t('customer.postTask.successNextTitle', 'What happens next')}
+          </Text>
+          <Text style={styles.cardBody}>
+            {t('customer.postTask.successNext1', "You'll get applications soon")}
+          </Text>
+          <Text style={styles.cardBody}>
+            {t('customer.postTask.successNext2', 'Review Tasker profiles and ratings')}
           </Text>
         </View>
-        <Text style={styles.headline}>
-          {t('customer.postTask.successTitle', 'Task posted successfully!')}
-        </Text>
-        <Text style={styles.body}>
-          {t(
-            'customer.postTask.successBody',
-            'Taskers can now see your task and apply. You will be notified when new applications arrive',
-          )}
-        </Text>
-        <View style={styles.decorDots}>
-          <View style={[styles.decorDot, { backgroundColor: colors.primary }]} />
-          <View style={[styles.decorDot, { backgroundColor: colors.secondary }]} />
-          <View style={[styles.decorDot, { backgroundColor: colors.verified }]} />
+      </InsetScrollView>
+
+      <StickyActionBar>
+        <View style={styles.actions}>
+          <Button
+            label={t('customer.postTask.successCta', 'View Task')}
+            onPress={handleViewTask}
+            testID="task-posted-success-screen-cta"
+          />
+          <Button
+            label="Дуусгах"
+            variant="outline"
+            onPress={handleDone}
+            testID="task-posted-success-screen-done"
+          />
         </View>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardDarkLabel}>
-          {t('customer.postTask.successNextLabel', 'ДАРААГИЙН АЛХАМ')}
-        </Text>
-        <Text style={styles.cardTitle}>
-          {t('customer.postTask.successNextTitle', 'What happens next')}
-        </Text>
-        <Text style={styles.cardBody}>
-          {t('customer.postTask.successNext1', "You'll get applications soon")}
-        </Text>
-        <Text style={styles.cardBody}>
-          {t('customer.postTask.successNext2', 'Review Tasker profiles and ratings')}
-        </Text>
-      </View>
-
-      <View style={styles.actions}>
-        <Button
-          label={t('customer.postTask.successCta', 'View Task')}
-          onPress={handleViewTask}
-          testID="task-posted-success-screen-cta"
-        />
-        <Button
-          label="Дуусгах"
-          variant="outline"
-          onPress={handleDone}
-          testID="task-posted-success-screen-done"
-        />
-      </View>
-    </SafeAreaView>
+      </StickyActionBar>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    backgroundColor: colors.background,
+  },
+  content: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
-    justifyContent: 'space-between',
+    paddingBottom: spacing['2xl'],
+    gap: spacing['2xl'],
   },
   hero: {
     alignItems: 'center',
@@ -182,6 +188,9 @@ const styles = StyleSheet.create({
     lineHeight: typography.caption * 1.6,
   },
   actions: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
     gap: spacing.sm,
   },
 });

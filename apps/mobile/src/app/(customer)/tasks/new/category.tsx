@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Bolt,
   ChevronLeft,
@@ -18,6 +17,7 @@ import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import type { Category } from '../../../../lib/mobileApiClient';
+import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -144,7 +144,7 @@ export default function CategorySelectionScreen() {
   );
 
   return (
-    <SafeAreaView edges={['top']} style={styles.container} testID="category-selection-screen">
+    <ScreenContainer testID="category-selection-screen">
       {/* Header — frosted bar with back + title */}
       <View style={styles.header}>
         <Pressable
@@ -161,10 +161,11 @@ export default function CategorySelectionScreen() {
         </Text>
       </View>
 
-      <ScrollView
+      <InsetScrollView
         testID="category-selection-scroll"
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        extraBottomInset={spacing.xl}
       >
         {/* Search — flat tonal */}
         <View style={styles.searchWrap}>
@@ -244,8 +245,8 @@ export default function CategorySelectionScreen() {
             )}
           </Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </InsetScrollView>
+    </ScreenContainer>
   );
 }
 

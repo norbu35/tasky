@@ -3,8 +3,6 @@ import {
   ActivityIndicator,
   Image,
   Pressable,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -14,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useDevLogin } from '../../features/auth/hooks/useAuth';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { InsetScrollView, ScreenContainer } from '../../components/shells';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -32,8 +31,9 @@ export default function LoginScreen() {
   const [state, setState] = useState<LoginState>('default');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const devLogin = useDevLogin();
+  const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
 
-  const devAuthEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
+  const devAuthEnabled = runtimeEnv?.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
   const isFacebookLoading = state === 'facebook_loading';
   const busy = devLogin.isPending;
 
@@ -59,7 +59,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} testID="login-screen">
+    <ScreenContainer testID="login-screen">
       <Pressable
         testID="language-switcher"
         onPress={toggleLanguage}
@@ -70,10 +70,11 @@ export default function LoginScreen() {
         <Text style={styles.languagePillText}>MN/EN</Text>
       </Pressable>
 
-      <ScrollView
+      <InsetScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        extraBottomInset={spacing.xl}
       >
         <View style={styles.brandBlock}>
           <View style={styles.brandIconWrap}>
@@ -175,16 +176,12 @@ export default function LoginScreen() {
             {devLogin.error ? <Text style={styles.errorText}>{devLogin.error.message}</Text> : null}
           </View>
         ) : null}
-      </ScrollView>
-    </SafeAreaView>
+      </InsetScrollView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   languagePill: {
     position: 'absolute',
     right: spacing.xl,

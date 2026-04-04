@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
 import { Button } from '../components/ui';
+import { ScreenContainer } from '../components/shells';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing, typography } = mobileTheme;
@@ -118,7 +118,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} testID="onboarding-screen">
+    <ScreenContainer testID="onboarding-screen">
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
           <ArrowLeft size={24} color={colors.primaryDeep} />
@@ -171,15 +171,11 @@ export default function OnboardingScreen() {
           style={styles.button}
         />
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     position: 'absolute',
     top: spacing.lg,

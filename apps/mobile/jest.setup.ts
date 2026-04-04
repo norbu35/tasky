@@ -13,3 +13,4 @@ jest.mock('react-native-safe-area-context', () => {
   };
 });
 
+jest.mock('expo/virtual/env', () => ({}), { virtual: true });
