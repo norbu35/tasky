@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Award, ChevronLeft, ShieldCheck, Star } from 'lucide-react-native';
+import { Award, ChevronLeft, Star } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
 import { ScreenContainer } from '../../../../components/shells';
 import { Button } from '../../../../components/ui/Button';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -64,7 +64,6 @@ function sameDay(a: Date, b: Date): boolean {
 
 export default function RescheduleScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { mutateAsync: reschedule, isPending } = useReschedule();
   const { data: booking } = useBookingDetail(bookingId);
