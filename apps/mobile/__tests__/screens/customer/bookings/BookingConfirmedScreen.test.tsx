@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { Linking } from 'react-native';
 
 import BookingConfirmedScreen from '../../../../src/app/(customer)/bookings/confirmed';
 
@@ -31,6 +32,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.spyOn(Linking, 'canOpenURL').mockResolvedValue(false);
+  jest.spyOn(Linking, 'openURL').mockResolvedValue('ok');
 });
 
 describe('BookingConfirmedScreen (SCR-CUST-015)', () => {

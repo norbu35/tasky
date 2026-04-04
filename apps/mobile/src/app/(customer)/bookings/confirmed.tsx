@@ -27,6 +27,11 @@ export default function BookingConfirmedScreen() {
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const [canAddToCalendar, setCanAddToCalendar] = React.useState(false);
+  const canAddToCalendarRef = React.useRef(canAddToCalendar);
+
+  React.useEffect(() => {
+    canAddToCalendarRef.current = canAddToCalendar;
+  }, [canAddToCalendar]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -34,12 +39,14 @@ export default function BookingConfirmedScreen() {
 
     void Linking.canOpenURL(candidate)
       .then((canOpen) => {
-        if (!cancelled) {
+        if (!cancelled && canOpen !== canAddToCalendarRef.current) {
+          canAddToCalendarRef.current = canOpen;
           setCanAddToCalendar(canOpen);
         }
       })
       .catch(() => {
-        if (!cancelled) {
+        if (!cancelled && canAddToCalendarRef.current) {
+          canAddToCalendarRef.current = false;
           setCanAddToCalendar(false);
         }
       });
