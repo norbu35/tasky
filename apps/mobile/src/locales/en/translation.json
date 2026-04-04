@@ -8,7 +8,7 @@
     "continue": "Continue",
     "verifyLogin": "Verify & Login",
     "loginRequired": "Log in to continue",
-    "loginReason": "You need to be logged in to view this content.",
+    "loginReason": "You need to be logged in to view and send messages.",
     "loginButton": "Log In or Sign Up",
     "continueFacebook": "Continue with Facebook",
     "continuePhone": "Login with Phone (OTP)",
@@ -887,7 +887,10 @@
       "today": "Today",
       "taskPayout": "Task payout",
       "completedBooking": "Completed booking",
-      "title": "Credits"
+      "title": "Credits",
+      "emptyTitle": "No credit activity yet",
+      "emptyDescription": "Top up credits or finish more tasks to populate this timeline.",
+      "lowBalanceDescription": "Task applications are moving fast. Add credits before your balance drops to zero."
     },
     "subscription": {
       "title": "Tasker Pro"

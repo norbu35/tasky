@@ -50,8 +50,8 @@ export default function TaskerCreditsHistoryScreen() {
       {state === 'empty' ? (
         <EmptyStateTemplate
           testID="tasker-credits-history-empty"
-          title="No credit activity yet"
-          description="Top up credits or finish more tasks to populate this timeline."
+          title={t('tasker.credits.emptyTitle', 'No credit activity yet')}
+          description={t('tasker.credits.emptyDescription', 'Top up credits or finish more tasks to populate this timeline.')}
         />
       ) : (
         <View style={styles.stack}>

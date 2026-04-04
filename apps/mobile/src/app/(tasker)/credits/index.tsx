@@ -32,7 +32,7 @@ export default function TaskerCreditsIndexScreen() {
         <LowBalanceAlert
           testID="credits-low-balance-alert"
           balanceText={balanceText}
-          description="Task applications are moving fast. Add credits before your balance drops to zero."
+          description={t('tasker.credits.lowBalanceDescription', 'Task applications are moving fast. Add credits before your balance drops to zero.')}
           primaryActionLabel="Top up now"
           onPrimaryActionPress={() => router.push('/(tasker)/credits/pay')}
           secondaryActionLabel="View history"
