@@ -13,6 +13,7 @@ import {
   Search,
 } from 'lucide-react-native';
 import { Input } from '../../../../components/ui/Input';
+import { StepIndicator } from '../../../../components/ui/StepIndicator';
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -167,6 +168,13 @@ export default function CategorySelectionScreen() {
         showsVerticalScrollIndicator={false}
         extraBottomInset={spacing.xl}
       >
+        <View style={styles.stepIndicatorBlock}>
+          <Text style={styles.stepLabel}>
+            {t('customer.postTask.stepCategory', 'Алхам 1/7 • Ангилал')}
+          </Text>
+          <StepIndicator currentStep={1} totalSteps={7} testID="category-selection-step-indicator" />
+        </View>
+
         {/* Search — flat tonal */}
         <View style={styles.searchWrap}>
           <Search size={18} color={`${colors.textSecondary}99`} />
@@ -277,6 +285,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingBottom: spacing['3xl'],
     gap: spacing.xl,
+  },
+  stepIndicatorBlock: {
+    gap: spacing.sm,
+  },
+  stepLabel: {
+    fontSize: typography.caption,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
   },
   searchWrap: {
     flexDirection: 'row',

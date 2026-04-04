@@ -7,10 +7,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangle,
+  ChevronLeft,
   CircleCheckBig,
   CircleAlert,
   Circle,
@@ -210,6 +211,7 @@ function TimelineDot({ state }: { state: TimelineState }) {
 
 export default function DisputeStatusScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { disputeId } = useLocalSearchParams<{ disputeId: string }>();
   const { data: disputeData, isLoading, isError, refetch } = useDisputeDetail(disputeId);
 
@@ -251,6 +253,21 @@ export default function DisputeStatusScreen() {
 
   return (
     <ScreenContainer testID="dispute-status-screen">
+        <View style={styles.header}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.back()}
+            style={styles.headerBackButton}
+            hitSlop={spacing.sm}
+            testID="dispute-status-back"
+          >
+            <ChevronLeft size={22} color={colors.primary} />
+          </Pressable>
+          <Text style={styles.headerTitle}>
+            {t('customer.disputes.pageTitle', 'Маргааны төлөв')}
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
         <InsetScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -433,6 +450,31 @@ export default function DisputeStatusScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingBottom: screenRhythm.microGap,
+  },
+  headerBackButton: {
+    width: spacing['3xl'],
+    height: spacing['3xl'],
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: typography.subtitle,
+    fontWeight: '700',
+    color: colors.primaryDeep,
+    textAlign: 'center',
+    marginHorizontal: spacing.sm,
+  },
+  headerSpacer: {
+    width: spacing['3xl'],
+  },
   scrollContent: {
     paddingHorizontal: screenRhythm.contentInsetX,
     paddingTop: screenRhythm.blockGap,

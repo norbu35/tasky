@@ -13,6 +13,22 @@ export default function ConsentScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
+  const dataItems = [
+    t(
+      'tasker.verification.consentIdPhotos',
+      'Иргэний үнэмлэхний зураг (урд, ар тал)',
+    ),
+    t('tasker.verification.uploadSelfie', 'Амьд зураг (selfie)'),
+    t('tasker.verification.consentPurpose', 'Таниулах баталгаажуулалт'),
+    t(
+      'tasker.verification.consentRetention',
+      'Бүртгэл хүчинтэй байх хугацаанд хадгалагдана',
+    ),
+    t(
+      'tasker.verification.consentDeletion',
+      'Бүртгэл устгахад мэдээлэл устгагдана',
+    ),
+  ];
 
   const handleScroll = (event: any) => {
     const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
@@ -51,9 +67,11 @@ export default function ConsentScreen() {
         <Text style={styles.body}>{t('tasker.verification.consentBody')}</Text>
 
         <View style={styles.dataItems} testID="consent-data-items">
-          <Text style={styles.dataItem}>{t('tasker.verification.uploadFront')}</Text>
-          <Text style={styles.dataItem}>{t('tasker.verification.uploadBack')}</Text>
-          <Text style={styles.dataItem}>{t('tasker.verification.uploadSelfie')}</Text>
+          {dataItems.map((item) => (
+            <Text key={item} style={styles.dataItem}>
+              {item}
+            </Text>
+          ))}
         </View>
 
         <Pressable
