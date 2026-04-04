@@ -52,6 +52,7 @@ describe('DetailTemplate', () => {
     );
 
     expect(screen.getByText('Apply Now')).toBeTruthy();
+    expect(screen.getByTestId('detail-bottom-bar')).toBeTruthy();
   });
 
   it('calls ctaOnPress when CTA pressed', () => {

@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
 import { Button } from './Button';
@@ -30,6 +31,7 @@ export function ConfirmSheet({
   testID,
 }: ConfirmSheetProps) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
@@ -40,7 +42,7 @@ export function ConfirmSheet({
           style={StyleSheet.absoluteFill}
           testID="confirm-sheet-backdrop"
         />
-        <View style={styles.sheet} testID={testID}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.xl }]} testID={testID}>
           {isDestructive && (
             <View style={styles.iconContainer}>
               <AlertTriangle size={32} color={colors.danger} />

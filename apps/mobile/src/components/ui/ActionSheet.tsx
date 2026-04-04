@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
 
@@ -22,6 +23,7 @@ interface ActionSheetProps {
 
 export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetProps) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
@@ -32,7 +34,7 @@ export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetPro
           style={StyleSheet.absoluteFill}
           testID="action-sheet-backdrop"
         />
-        <View style={styles.sheet} testID={testID}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]} testID={testID}>
           {actions.map((action, index) => (
             <Pressable
               key={index}

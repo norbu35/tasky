@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
 import { Button } from './Button';
@@ -33,6 +34,7 @@ export function ModalSheet({
   dismissible = true,
 }: Props) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
@@ -47,7 +49,7 @@ export function ModalSheet({
         ) : (
           <View style={StyleSheet.absoluteFill} pointerEvents="none" />
         )}
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { paddingBottom: insets.bottom + mobileTheme.spacing.xl }]}>
           <View style={styles.handle} />
           <Text style={styles.title}>{title}</Text>
           <View style={styles.content}>{children}</View>

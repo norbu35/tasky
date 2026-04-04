@@ -1,9 +1,10 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../ui/Button';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 
 const { colors, spacing, radius } = mobileTheme;
 
@@ -38,7 +39,7 @@ export function FormWizardTemplate({
   const showBackButton = showBack && onBack && (currentStep > 0 || totalSteps === 1);
 
   return (
-    <View style={styles.container} testID={testID}>
+    <ScreenContainer testID={testID}>
       {/* Step Indicator — bar segments */}
       <View
         testID="wizard-progress"
@@ -60,50 +61,53 @@ export function FormWizardTemplate({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
-        <ScrollView
+        <InsetScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
+          extraBottomInset={96}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
           {children}
-        </ScrollView>
+        </InsetScrollView>
       </KeyboardAvoidingView>
 
       {/* Sticky Bottom Bar — frosted glass */}
-      <BlurView intensity={40} tint="light" style={styles.bottomBar} testID="wizard-bottom-bar">
-        <View style={styles.bottomBarInner}>
-          {showBackButton ? (
-            <View style={styles.buttonRow}>
-              <Button
-                label={t('wizard.back', 'Back')}
-                variant="outline"
-                onPress={onBack}
-                style={styles.backButton}
-                testID={testID ? `${testID}-back` : undefined}
-              />
+      <StickyActionBar testID="wizard-bottom-bar">
+        <BlurView intensity={40} tint="light" style={styles.bottomBar}>
+          <View style={styles.bottomBarInner}>
+            {showBackButton ? (
+              <View style={styles.buttonRow}>
+                <Button
+                  label={t('wizard.back', 'Back')}
+                  variant="outline"
+                  onPress={onBack}
+                  style={styles.backButton}
+                  testID={testID ? `${testID}-back` : undefined}
+                />
+                <Button
+                  label={nextLabel ?? t('wizard.next', 'Next')}
+                  onPress={onNext}
+                  disabled={nextDisabled}
+                  isLoading={nextLoading}
+                  style={styles.nextButton}
+                  testID={testID ? `${testID}-next` : undefined}
+                />
+              </View>
+            ) : (
               <Button
                 label={nextLabel ?? t('wizard.next', 'Next')}
                 onPress={onNext}
                 disabled={nextDisabled}
                 isLoading={nextLoading}
-                style={styles.nextButton}
+                style={styles.nextButtonFull}
                 testID={testID ? `${testID}-next` : undefined}
               />
-            </View>
-          ) : (
-            <Button
-              label={nextLabel ?? t('wizard.next', 'Next')}
-              onPress={onNext}
-              disabled={nextDisabled}
-              isLoading={nextLoading}
-              style={styles.nextButtonFull}
-              testID={testID ? `${testID}-next` : undefined}
-            />
-          )}
-        </View>
-      </BlurView>
-    </View>
+            )}
+          </View>
+        </BlurView>
+      </StickyActionBar>
+    </ScreenContainer>
   );
 }
 
@@ -143,11 +147,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing['2xl'],
   },
   bottomBar: {
+    borderRadius: radius.lg,
     overflow: 'hidden',
   },
   bottomBarInner: {
     paddingTop: spacing.lg,
-    paddingBottom: spacing['2xl'],
     paddingHorizontal: spacing.lg,
   },
   buttonRow: {

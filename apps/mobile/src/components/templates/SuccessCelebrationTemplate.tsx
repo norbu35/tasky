@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../ui/Button';
+import { InsetScrollView, ScreenContainer } from '../shells';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -54,48 +55,49 @@ export function SuccessCelebrationTemplate({
   const { t } = useTranslation();
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      testID={testID}
-    >
-      <AnimatedCheckmark />
+    <ScreenContainer testID={testID}>
+      <InsetScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <AnimatedCheckmark />
 
-      <Text style={styles.headline}>{headline}</Text>
-      <Text style={styles.body}>{body}</Text>
+        <Text style={styles.headline}>{headline}</Text>
+        <Text style={styles.body}>{body}</Text>
 
-      {nextSteps && nextSteps.length > 0 && (
-        <View style={styles.nextStepsSection}>
-          <Text style={styles.nextStepsHeader}>
-            {t('success.whatHappensNext', 'What happens next')}
-          </Text>
-          {nextSteps.map((step, index) => (
-            <View key={index} style={styles.stepRow}>
-              <Text style={styles.stepBullet}>{'\u2022'}</Text>
-              <Text style={styles.stepText}>{step}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+        {nextSteps && nextSteps.length > 0 && (
+          <View style={styles.nextStepsSection}>
+            <Text style={styles.nextStepsHeader}>
+              {t('success.whatHappensNext', 'What happens next')}
+            </Text>
+            {nextSteps.map((step, index) => (
+              <View key={index} style={styles.stepRow}>
+                <Text style={styles.stepBullet}>{'\u2022'}</Text>
+                <Text style={styles.stepText}>{step}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
-      <Button
-        label={ctaLabel}
-        onPress={ctaOnPress}
-        style={styles.cta}
-        testID={testID ? `${testID}-cta` : undefined}
-      />
-
-      {secondaryCtaLabel && secondaryCtaOnPress && (
         <Button
-          label={secondaryCtaLabel}
-          variant="outline"
-          onPress={secondaryCtaOnPress}
-          style={styles.secondaryCta}
-          testID={testID ? `${testID}-secondary-cta` : undefined}
+          label={ctaLabel}
+          onPress={ctaOnPress}
+          style={styles.cta}
+          testID={testID ? `${testID}-cta` : undefined}
         />
-      )}
-    </ScrollView>
+
+        {secondaryCtaLabel && secondaryCtaOnPress && (
+          <Button
+            label={secondaryCtaLabel}
+            variant="outline"
+            onPress={secondaryCtaOnPress}
+            style={styles.secondaryCta}
+            testID={testID ? `${testID}-secondary-cta` : undefined}
+          />
+        )}
+      </InsetScrollView>
+    </ScreenContainer>
   );
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { FeedListTemplate } from '../../../src/components/templates/FeedListTemplate';
 
@@ -114,6 +114,13 @@ describe('FeedListTemplate', () => {
     // The FlatList should be rendered with a RefreshControl
     // We verify the component renders without crashing when onRefresh is provided
     expect(screen.getByTestId('feed-list')).toBeTruthy();
+  });
+
+  it('does not use hard-coded template bottom padding values', () => {
+    const { UNSAFE_getByType } = render(<FeedListTemplate {...defaultProps} />);
+    const list = UNSAFE_getByType(FlatList);
+    const contentStyle = StyleSheet.flatten(list.props.contentContainerStyle);
+    expect(contentStyle?.paddingBottom).not.toBe(120);
   });
 
   it('shows empty state when data array is empty even without isEmpty flag', () => {

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,6 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -37,34 +37,36 @@ export function AuthTemplate({
   contentStyle,
 }: AuthTemplateProps) {
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      testID={testID}
-    >
-      {topRightSlot ? <View style={styles.topRight}>{topRightSlot}</View> : null}
-      <ScrollView
-        contentContainerStyle={[styles.scrollContent, contentStyle]}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+    <ScreenContainer testID={testID}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Logo / Branding */}
-        {showLogo && <Text style={styles.logo}>Tasky</Text>}
+        {topRightSlot ? <View style={styles.topRight}>{topRightSlot}</View> : null}
+        <InsetScrollView
+          contentContainerStyle={[styles.scrollContent, contentStyle]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          extraBottomInset={bottomSlot ? spacing['3xl'] : 0}
+        >
+          {/* Logo / Branding */}
+          {showLogo && <Text style={styles.logo}>Tasky</Text>}
 
-        {/* Headline */}
-        {headline && <Text style={styles.headline}>{headline}</Text>}
+          {/* Headline */}
+          {headline && <Text style={styles.headline}>{headline}</Text>}
 
-        {/* Subtitle */}
-        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {/* Subtitle */}
+          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
 
-        {/* Form Content */}
-        <View style={styles.formContent}>{children}</View>
+          {/* Form Content */}
+          <View style={styles.formContent}>{children}</View>
 
-        {/* Trust Message */}
-        {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
-      </ScrollView>
-      {bottomSlot ? <View style={styles.bottomCenter}>{bottomSlot}</View> : null}
-    </KeyboardAvoidingView>
+          {/* Trust Message */}
+          {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
+        </InsetScrollView>
+        {bottomSlot ? <StickyActionBar>{bottomSlot}</StickyActionBar> : null}
+      </KeyboardAvoidingView>
+    </ScreenContainer>
   );
 }
 
@@ -109,10 +111,6 @@ const styles = StyleSheet.create({
   formContent: {
     marginTop: spacing['2xl'],
     gap: spacing.lg,
-  },
-  bottomCenter: {
-    alignItems: 'center',
-    paddingBottom: spacing['2xl'],
   },
   trustMessage: {
     fontSize: typography.caption,

@@ -5,6 +5,7 @@ import BottomSheet, {
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
 
@@ -31,6 +32,7 @@ export function ModalSheetTemplate({
   testID,
 }: ModalSheetTemplateProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (isOpen) {
@@ -74,7 +76,9 @@ export function ModalSheetTemplate({
         backgroundStyle={styles.sheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
-        <BottomSheetView style={styles.contentContainer}>
+        <BottomSheetView
+          style={[styles.contentContainer, { paddingBottom: insets.bottom + spacing.lg }]}
+        >
           {title && <Text style={styles.title}>{title}</Text>}
           <View style={styles.content}>{children}</View>
         </BottomSheetView>
