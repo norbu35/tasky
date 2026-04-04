@@ -24,33 +24,33 @@ export default function SubscriptionScreen() {
         testID="subscription-screen"
       >
         <Text style={styles.title}>{t('tasker.subscription.title', 'Tasker Pro')}</Text>
-        <Text style={styles.subtitle}>Tasker Pro болоорой</Text>
+        <Text style={styles.subtitle}>{t('tasker.subscription.heroTitle', 'Become a Tasker Pro')}</Text>
 
         {isLockedDemo ? (
           <View style={styles.card} testID="subscription-screen-locked">
-            <Text style={styles.cardTitle}>Шаардлага хангаагүй</Text>
+            <Text style={styles.cardTitle}>{t('tasker.subscription.ineligibleTitle', 'Not eligible')}</Text>
             <Text style={styles.description}>
-              Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай
+              {t('tasker.subscription.ineligibleDesc', 'Tasker Pro requires 4.5+ rating to be eligible')}
             </Text>
           </View>
         ) : (
           <>
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>Стандарт</Text>
-              <Text style={styles.description}>Илүү харагдах байдал ба илүү итгэлцэл.</Text>
+              <Text style={styles.cardTitle}>{t('tasker.subscription.planStandard', 'Standard')}</Text>
+              <Text style={styles.description}>{t('tasker.subscription.planStandardDesc', 'More visibility and more trust.')}</Text>
             </View>
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>Премиум</Text>
-              <Text style={styles.description}>Priority boost болон нэмэлт боломжууд.</Text>
+              <Text style={styles.cardTitle}>{t('tasker.subscription.planPremium', 'Premium')}</Text>
+              <Text style={styles.description}>{t('tasker.subscription.heroDescription', 'Priority boost and additional benefits.')}</Text>
             </View>
             {status === 'active' ? (
               <View style={styles.activeBadge}>
-                <Text style={styles.activeText}>Идэвхтэй</Text>
+                <Text style={styles.activeText}>{t('tasker.subscription.activeLabel', 'Active')}</Text>
               </View>
             ) : (
               <Button
                 testID="subscription-screen-cta"
-                label="Бүртгүүлэх"
+                label={t('tasker.subscription.subscribeAction', 'Subscribe')}
                 onPress={() => setStatus('confirming')}
               />
             )}
@@ -60,14 +60,14 @@ export default function SubscriptionScreen() {
 
       {status === 'confirming' ? (
         <View style={styles.sheet} testID="subscription-confirm-sheet">
-          <Text style={styles.sheetTitle}>Сонголтоо шалгана уу</Text>
-          <Text style={styles.description}>Tasker Pro subscription-ийг идэвхжүүлэх үү?</Text>
+          <Text style={styles.sheetTitle}>{t('tasker.subscription.confirmTitle', 'Confirm your choice')}</Text>
+          <Text style={styles.description}>{t('tasker.subscription.confirmBody', 'Activate Tasker Pro subscription?')}</Text>
           <Button
             testID="subscription-confirm"
-            label="Баталгаажуулах"
+            label={t('tasker.subscription.confirmTitle', 'Confirm')}
             onPress={() => setStatus('active')}
           />
-          <Button label="Буцах" variant="ghost" onPress={() => setStatus('idle')} />
+          <Button label={t('tasker.subscription.cancelText', 'Cancel')} variant="ghost" onPress={() => setStatus('idle')} />
         </View>
       ) : null}
     </View>

@@ -911,7 +911,18 @@
       "lowBalanceDescription": "Ажлын санал хурдан ирж байна. Үлдэгдэл тэг болохоос өмнө кредит нэмээрэй."
     },
     "subscription": {
-      "title": "Таскер Про"
+      "title": "Таскер Про",
+      "heroTitle": "Tasker Pro болоорой",
+      "heroDescription": "Priority boost болон нэмэлт боломжууд.",
+      "ineligibleTitle": "Шаардлага хангаагүй",
+      "planStandard": "Стандарт",
+      "planPremium": "Премиум",
+      "activeLabel": "Идэвхтэй",
+      "planStandardDesc": "Илүү харагдах байдал ба илүү итгэлцэл.",
+      "confirmBody": "Tasker Pro subscription-ийг идэвхжүүлэх үү?",
+      "confirmTitle": "Сонголтоо шалгана уу",
+      "subscribeAction": "Бүртгүүлэх",
+      "ineligibleDesc": "Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай"
     },
     "referrals": {
       "heroTitle": "Гүйцэтгэгч урих",

@@ -27,13 +27,13 @@ describe('SubscriptionScreen (SCR-P3-004)', () => {
 
     expect(screen.getByTestId('subscription-screen')).toBeTruthy();
     expect(screen.getByText('Tasker Pro')).toBeTruthy();
-    expect(screen.getByText('Бүртгүүлэх')).toBeTruthy();
+    expect(screen.getByText('Subscribe')).toBeTruthy();
   });
 
   it('renders the ineligible shell state', () => {
     mockParams = { state: 'ineligible' };
     render(<SubscriptionScreen />);
 
-    expect(screen.getByText('Шаардлага хангаагүй')).toBeTruthy();
+    expect(screen.getByText('Not eligible')).toBeTruthy();
   });
 });

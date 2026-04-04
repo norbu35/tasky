@@ -55,10 +55,10 @@ describe('SubscriptionScreen (SCR-P3-004)', () => {
 
     expect(screen.getByTestId('subscription-screen')).toBeTruthy();
     expect(screen.getByText('Tasker Pro')).toBeTruthy();
-    expect(screen.getByText('Tasker Pro болоорой')).toBeTruthy();
-    expect(screen.getByText('Стандарт')).toBeTruthy();
-    expect(screen.getByText('Премиум')).toBeTruthy();
-    expect(screen.getByText('Бүртгүүлэх')).toBeTruthy();
+    expect(screen.getByText('Become a Tasker Pro')).toBeTruthy();
+    expect(screen.getByText('Standard')).toBeTruthy();
+    expect(screen.getByText('Premium')).toBeTruthy();
+    expect(screen.getByText('Subscribe')).toBeTruthy();
   });
 
   it('shows the confirmation sheet and active success state after subscribe', async () => {
@@ -66,12 +66,12 @@ describe('SubscriptionScreen (SCR-P3-004)', () => {
     render(<SubscriptionScreen />);
 
     fireEvent.press(screen.getByTestId('subscription-screen-cta'));
-    expect(screen.getByText('Баталгаажуулах')).toBeTruthy();
+    expect(screen.getByText('Confirm')).toBeTruthy();
 
     fireEvent.press(screen.getByTestId('subscription-confirm'));
 
     await waitFor(() => {
-      expect(screen.getByText('Идэвхтэй')).toBeTruthy();
+      expect(screen.getByText('Active')).toBeTruthy();
     });
   });
 
@@ -82,7 +82,7 @@ describe('SubscriptionScreen (SCR-P3-004)', () => {
     fireEvent.press(screen.getByTestId('subscription-screen-cta'));
     expect(screen.getByTestId('subscription-confirm-sheet')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Буцах'));
+    fireEvent.press(screen.getByText('Cancel'));
 
     expect(screen.queryByTestId('subscription-confirm-sheet')).toBeNull();
     expect(screen.getByTestId('subscription-screen-cta')).toBeTruthy();
@@ -94,6 +94,6 @@ describe('SubscriptionScreen (SCR-P3-004)', () => {
     render(<SubscriptionScreen />);
 
     expect(screen.getByTestId('subscription-screen-locked')).toBeTruthy();
-    expect(screen.getByText('Шаардлага хангаагүй')).toBeTruthy();
+    expect(screen.getByText('Not eligible')).toBeTruthy();
   });
 });

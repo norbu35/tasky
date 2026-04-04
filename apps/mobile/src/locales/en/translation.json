@@ -911,7 +911,18 @@
       "lowBalanceDescription": "Task applications are moving fast. Add credits before your balance drops to zero."
     },
     "subscription": {
-      "title": "Tasker Pro"
+      "title": "Tasker Pro",
+      "heroTitle": "Become a Tasker Pro",
+      "heroDescription": "Priority boost and additional benefits.",
+      "ineligibleTitle": "Not eligible",
+      "planStandard": "Standard",
+      "planPremium": "Premium",
+      "activeLabel": "Active",
+      "planStandardDesc": "More visibility and more trust.",
+      "confirmBody": "Activate Tasker Pro subscription?",
+      "confirmTitle": "Confirm your choice",
+      "subscribeAction": "Subscribe",
+      "ineligibleDesc": "Tasker Pro requires 4.5+ rating to be eligible"
     },
     "referrals": {
       "heroTitle": "Invite a tasker",
