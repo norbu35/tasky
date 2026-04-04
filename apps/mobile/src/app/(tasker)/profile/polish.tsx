@@ -336,13 +336,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontSize: typography.heading,
-    lineHeight: 38,
+    lineHeight: typography.heading * (19 / 12),
     fontWeight: '800',
     color: colors.primaryDeep,
   },
   heroBody: {
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     color: colors.textSecondary,
   },
   section: {
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: typography.caption,
-    lineHeight: 20,
+    lineHeight: typography.caption * (5 / 3),
     fontWeight: '700',
     color: colors.textSecondary,
     letterSpacing: 0.8,
@@ -381,12 +381,12 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     color: colors.foreground,
   },
   placeholderText: {
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     color: colors.mutedForeground,
   },
   toastWrap: {

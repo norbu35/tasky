@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '800',
     color: colors.primaryDeep,
-    lineHeight: 24 * 1.2,
+    lineHeight: typography.heading * 1.2,
   },
   body: {
     fontSize: typography.body,

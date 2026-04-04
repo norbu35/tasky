@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: typography.body,
     color: colors.textSecondary,
-    lineHeight: 24,
+    lineHeight: typography.body * 1.5,
     textAlign: 'center',
   },
 });
