@@ -182,13 +182,13 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '800',
     letterSpacing: -0.6,
-    lineHeight: 30,
+    lineHeight: typography.heading * 1.25,
     textAlign: 'center',
   },
   description: {
     color: colors.textSecondary,
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     textAlign: 'center',
   },
   descriptionMuted: {
@@ -233,9 +233,9 @@ const styles = StyleSheet.create({
     borderColor: colors.danger,
   },
   codeCellText: {
-    fontSize: 20,
+    fontSize: typography.title,
     fontWeight: '800',
-    lineHeight: 28,
+    lineHeight: typography.title * 1.4,
     color: colors.primaryDeep,
   },
   codeCellTextActive: {
@@ -248,9 +248,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   resendButtonDisabled: {
     opacity: 0.8,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   resendLabel: {
     color: colors.primaryDeep,
-    fontSize: 14,
+    fontSize: typography.label,
     fontWeight: '600',
   },
   resendLabelMuted: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.danger,
     fontSize: typography.caption,
-    lineHeight: 20,
+    lineHeight: typography.caption * 1.667,
     textAlign: 'center',
   },
   securityCard: {
@@ -301,13 +301,13 @@ const styles = StyleSheet.create({
   },
   securityTitle: {
     color: colors.primaryDeep,
-    fontSize: 14,
+    fontSize: typography.label,
     fontWeight: '700',
   },
   securityBody: {
     color: colors.textSecondary,
-    fontSize: 12,
-    lineHeight: 19.5,
+    fontSize: typography.caption,
+    lineHeight: typography.caption * 1.625,
   },
   footer: {
     paddingHorizontal: spacing.lg,

@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(195,198,207,0.2)',
     borderRadius: radius.md,
-    paddingHorizontal: 13,
-    paddingVertical: 5,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs / 2,
     backgroundColor: colors.background,
   },
   languagePillText: {
     color: colors.primaryDeep,
-    fontSize: 14,
+    fontSize: typography.label,
     fontWeight: '600',
     letterSpacing: 0.35,
   },
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   subtitleLine: {
     color: colors.textSecondary,
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     textAlign: 'center',
   },
   actions: {

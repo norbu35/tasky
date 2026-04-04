@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: typography.body,
-    lineHeight: 20,
+    lineHeight: typography.body * 1.25,
   },
   textMine: {
     color: colors.card,

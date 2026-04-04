@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '800',
     letterSpacing: -0.6,
-    lineHeight: 30,
+    lineHeight: typography.heading * 1.25,
     textAlign: 'center',
   },
   description: {
     color: colors.textSecondary,
     fontSize: typography.body,
-    lineHeight: 26,
+    lineHeight: typography.body * 1.625,
     textAlign: 'center',
     maxWidth: 320,
   },
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   countryCodeShell: {
     position: 'absolute',
-    left: 16,
+    left: spacing.lg,
     top: 0,
     bottom: 0,
     justifyContent: 'center',
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   },
   countryCode: {
     color: colors.textSecondary,
-    fontSize: 14,
+    fontSize: typography.label,
     fontWeight: '500',
   },
   phoneInput: {
