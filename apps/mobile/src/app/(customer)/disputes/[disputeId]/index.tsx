@@ -19,6 +19,7 @@ import { InsetScrollView, ScreenContainer } from '../../../../components/shells'
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
+import { screenRhythm } from '../../../../design/screenRhythm';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -433,10 +434,10 @@ export default function DisputeStatusScreen() {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingTop: screenRhythm.blockGap,
     paddingBottom: spacing['2xl'],
-    gap: spacing.lg,
+    gap: screenRhythm.blockGap,
   },
   loadingState: {
     alignItems: 'center',
@@ -535,7 +536,7 @@ const styles = StyleSheet.create({
   },
   summaryRowLast: {
     gap: spacing.xs,
-    paddingBottom: 2,
+    paddingBottom: spacing.xs / 2,
   },
   summaryReasonWrap: {
     gap: spacing.xs,
@@ -703,7 +704,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: radius.full,
     backgroundColor: colors.primaryDeep,
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   evidenceText: {
     flex: 1,

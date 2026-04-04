@@ -316,7 +316,7 @@ export default function MyTasksListScreen() {
         />
       )}
 
-      <FAB bottomOffset={16} testID="my-tasks-fab" authGuard={false} />
+      <FAB bottomOffset={spacing.lg} testID="my-tasks-fab" authGuard={false} />
     </ScreenContainer>
   );
 }

@@ -11,6 +11,7 @@ import {
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { screenRhythm } from '../../../design/screenRhythm';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { ScreenContainer } from '../../../components/shells';
@@ -336,9 +337,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
+    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingTop: screenRhythm.itemGap,
+    paddingBottom: screenRhythm.itemGap,
   },
   headerIconButton: {
     width: 40,
@@ -357,9 +358,9 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    gap: spacing.xl,
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.lg,
+    gap: screenRhythm.sectionGap,
+    paddingHorizontal: screenRhythm.contentInsetX,
+    marginBottom: screenRhythm.blockGap,
   },
   filterTab: {
     paddingBottom: spacing.xs,
@@ -384,11 +385,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: screenRhythm.contentInsetX,
     paddingBottom: spacing['3xl'],
   },
   scrollContentWithList: {
-    gap: spacing.lg,
+    gap: screenRhythm.blockGap,
   },
   scrollContentWithEmpty: {
     flexGrow: 1,
@@ -399,32 +400,32 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginBottom: spacing.md,
+    marginBottom: screenRhythm.itemGap,
   },
   offlineBannerText: {
     fontSize: typography.label,
     color: colors.textSecondary,
   },
   cardList: {
-    gap: spacing.md,
+    gap: screenRhythm.itemGap,
   },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
+    padding: screenRhythm.cardPadding,
+    gap: screenRhythm.itemGap,
     ...elevations.soft,
   },
   cardTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: spacing.md,
+    gap: screenRhythm.itemGap,
   },
   cardIdentity: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: screenRhythm.itemGap,
     flex: 1,
   },
   cardIdentityCopy: {
