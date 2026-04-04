@@ -794,13 +794,21 @@ export class HttpMobileApiClient implements MobileApiClient {
       });
     }
 
-    const response = await fetch(url.toString(), {
-      ...init,
-      headers,
-    });
+    let response: Response;
+    try {
+      response = await fetch(url.toString(), {
+        ...init,
+        headers,
+      });
+    } catch (err) {
+      console.error(`[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url.toString()}:`, err);
+      throw err;
+    }
 
     if (!response.ok) {
-      throw new ApiError(response.status, await readErrorMessage(response));
+      const errorMessage = await readErrorMessage(response);
+      console.error(`[ApiClient Error] ${init.method || 'GET'} ${url.toString()} failed with status ${response.status}: ${errorMessage}`);
+      throw new ApiError(response.status, errorMessage);
     }
 
     return (await response.json()) as T;
@@ -813,13 +821,23 @@ export class HttpMobileApiClient implements MobileApiClient {
       headers.set('Authorization', `Bearer ${accessToken}`);
     }
 
-    const response = await fetch(resolveApiUrl(this.baseUrl, path).toString(), {
-      ...init,
-      headers,
-    });
+    const url = resolveApiUrl(this.baseUrl, path).toString();
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...init,
+        headers,
+      });
+    } catch (err) {
+      console.error(`[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url}:`, err);
+      throw err;
+    }
 
     if (!response.ok) {
-      throw new ApiError(response.status, await readErrorMessage(response));
+      const errorMessage = await readErrorMessage(response);
+      console.error(`[ApiClient Error] ${init.method || 'GET'} ${url} failed with status ${response.status}: ${errorMessage}`);
+      throw new ApiError(response.status, errorMessage);
     }
   }
 }

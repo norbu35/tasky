@@ -52,8 +52,8 @@ BEGIN
         INSERT INTO users (id, phone, phone_blind_idx, role, status, created_at)
         VALUES (
             user_id,
-            phone_prefix || lpad(i::text, 6, '0'),
-            md5(phone_prefix || lpad(i::text, 6, '0')),
+            NULL,
+            NULL,
             CASE WHEN i <= customer_count THEN 'CUSTOMER' ELSE 'TASKER' END,
             'ACTIVE',
             now_ts - (user_count - i) * interval '15 minutes'
