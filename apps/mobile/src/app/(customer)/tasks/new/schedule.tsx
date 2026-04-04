@@ -12,7 +12,7 @@ import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
-const MIN_BUDGET = 1001;
+const MIN_BUDGET = 5000;
 
 type PickerMode = 'date' | 'time' | null;
 type ActivePickerState = { mode: Exclude<PickerMode, null>; draftValue: Date } | null;
@@ -95,7 +95,7 @@ export default function ScheduleBudgetScreen() {
 
   const budgetError =
     touchedBudget && budget !== '' && !isBudgetValid
-      ? t('customer.postTask.budgetError', 'Budget must be at least ₮1,001')
+      ? t('customer.postTask.budgetError', 'Budget must be at least ₮5,000')
       : '';
   const scheduleError =
     touchedSchedule && selectedDate && selectedTime && !isScheduleValid
@@ -261,10 +261,10 @@ export default function ScheduleBudgetScreen() {
       </View>
 
       <View style={styles.budgetSection}>
-        <Text style={styles.budgetHeading}>{t('customer.postTask.budgetLabel', 'Budget')}</Text>
         <FormField
+          label={t('customer.postTask.budgetLabel', 'Budget')}
           errorText={budgetError || undefined}
-          helperText={t('customer.postTask.budgetHelper', 'Enter a fixed amount. Minimum: ₮1,001')}
+          helperText={t('customer.postTask.budgetHelper', 'Enter a fixed amount. Minimum: ₮5,000')}
         >
           <Input
             testID="schedule-budget-input"
