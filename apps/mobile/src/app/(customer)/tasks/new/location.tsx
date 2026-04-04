@@ -172,7 +172,7 @@ export default function LocationScreen() {
               'customer.postTask.locationPlaceholder',
               'e.g., Behind State Dept Store, 5th floor',
             )}
-            maxLength={100}
+            maxLength={500}
           />
         </FormField>
 
