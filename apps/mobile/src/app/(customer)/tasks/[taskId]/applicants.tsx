@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Award, ChevronLeft, ShieldCheck, Star } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
+import { ScreenContainer } from '../../../../components/shells';
 import { Button } from '../../../../components/ui/Button';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../../design/tokenAdapter';
@@ -138,7 +139,7 @@ export default function ApplicantsListScreen() {
 
   return (
     <>
-      <SafeAreaView style={styles.container} testID="applicants-list-screen">
+      <ScreenContainer testID="applicants-list-screen">
         <View style={styles.header}>
           <Pressable
             onPress={() => router.back()}
@@ -205,7 +206,7 @@ export default function ApplicantsListScreen() {
             showsVerticalScrollIndicator={false}
           />
         )}
-      </SafeAreaView>
+      </ScreenContainer>
 
       <ModalSheetTemplate
         isOpen={Boolean(selectedApplicant)}
@@ -257,10 +258,6 @@ export default function ApplicantsListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

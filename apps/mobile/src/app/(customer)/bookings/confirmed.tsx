@@ -4,8 +4,6 @@ import {
   Linking,
   Platform,
   Pressable,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -14,6 +12,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowRight, CalendarPlus2, Check, ChevronLeft, MessageSquare } from 'lucide-react-native';
+import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
@@ -70,8 +69,7 @@ export default function BookingConfirmedScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="booking-confirmed-screen">
-      <View style={styles.shell}>
+    <ScreenContainer testID="booking-confirmed-screen">
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
@@ -84,10 +82,11 @@ export default function BookingConfirmedScreen() {
           <View style={styles.headerSpacer} />
         </View>
 
-        <ScrollView
+        <InsetScrollView
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
           bounces={false}
+          extraBottomInset={spacing.xl}
         >
           <View style={styles.successIconWrap}>
             <View style={styles.successIconBackground}>
@@ -191,23 +190,14 @@ export default function BookingConfirmedScreen() {
               testID="booking-confirmed-screen-secondary-cta"
             />
           </View>
-        </ScrollView>
+        </InsetScrollView>
 
         <View pointerEvents="none" style={styles.bottomAccent} />
-      </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

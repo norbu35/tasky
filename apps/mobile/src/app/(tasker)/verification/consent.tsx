@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ExternalLink } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../components/shells';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -23,7 +24,7 @@ export default function ConsentScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="consent-screen">
+    <ScreenContainer testID="consent-screen">
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
@@ -37,13 +38,14 @@ export default function ConsentScreen() {
         <View style={styles.headerAction} />
       </View>
 
-      <ScrollView
+      <InsetScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         testID="consent-scroll"
+        extraBottomInset={96}
       >
         <Text style={styles.heading}>{t('tasker.verification.consentTitle')}</Text>
         <Text style={styles.body}>{t('tasker.verification.consentBody')}</Text>
@@ -62,26 +64,24 @@ export default function ConsentScreen() {
           <Text style={styles.linkText}>{t('tasker.verification.consentPrivacy')}</Text>
           <ExternalLink size={18} color={colors.accent} />
         </Pressable>
-      </ScrollView>
+      </InsetScrollView>
 
-      <View style={styles.bottomBar}>
-        <Button
-          label={t('tasker.verification.consentContinue')}
-          onPress={() => router.push('/(tasker)/verification/upload')}
-          disabled={!hasScrolledToEnd}
-          style={styles.cta}
-          testID="consent-screen-cta"
-        />
-      </View>
-    </SafeAreaView>
+      <StickyActionBar>
+        <View style={styles.bottomBar}>
+          <Button
+            label={t('tasker.verification.consentContinue')}
+            onPress={() => router.push('/(tasker)/verification/upload')}
+            disabled={!hasScrolledToEnd}
+            style={styles.cta}
+            testID="consent-screen-cta"
+          />
+        </View>
+      </StickyActionBar>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   header: {
     minHeight: 56,
     flexDirection: 'row',
@@ -146,8 +146,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   bottomBar: {
-    padding: spacing.md,
-    backgroundColor: colors.card,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.md,
   },
   cta: {
     alignSelf: 'stretch',

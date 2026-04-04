@@ -3,24 +3,19 @@ import {
   ActivityIndicator,
   Image,
   Pressable,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
-  ClipboardList,
-  House,
-  Search,
-  UserRound,
   AlertTriangle,
   CircleCheckBig,
   CircleAlert,
   Circle,
 } from 'lucide-react-native';
+import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
@@ -192,49 +187,6 @@ function getEvidenceLabel(
   }
 }
 
-function BottomNav({
-  activeId,
-  onNavigate,
-}: {
-  activeId: 'home' | 'search' | 'tasks' | 'profile';
-  onNavigate: (href: string) => void;
-}) {
-  const items = [
-    { id: 'home' as const, label: 'Нүүр', icon: House, href: '/(customer)/tasks' },
-    { id: 'search' as const, label: 'Хайлт', icon: Search, href: '/(tabs)' },
-    {
-      id: 'tasks' as const,
-      label: 'Миний даалгавар',
-      icon: ClipboardList,
-      href: '/(customer)/tasks',
-    },
-    { id: 'profile' as const, label: 'Профайл', icon: UserRound, href: '/(tabs)/profile' },
-  ];
-
-  return (
-    <View style={styles.bottomNav}>
-      {items.map((item) => {
-        const active = item.id === activeId;
-        const Icon = item.icon;
-        return (
-          <Pressable
-            key={item.id}
-            onPress={() => onNavigate(item.href)}
-            style={[styles.bottomNavItem, active && styles.bottomNavItemActive]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: active }}
-          >
-            <Icon size={18} color={active ? colors.primaryForeground : colors.textSecondary} />
-            <Text style={[styles.bottomNavLabel, active && styles.bottomNavLabelActive]}>
-              {item.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
 function TimelineDot({ state }: { state: TimelineState }) {
   if (state === 'done') {
     return (
@@ -259,7 +211,6 @@ function TimelineDot({ state }: { state: TimelineState }) {
 
 export default function DisputeStatusScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { disputeId } = useLocalSearchParams<{ disputeId: string }>();
   const { data: disputeData, isLoading, isError, refetch } = useDisputeDetail(disputeId);
 
@@ -300,12 +251,12 @@ export default function DisputeStatusScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} testID="dispute-status-screen">
-      <View style={styles.shell}>
-        <ScrollView
+    <ScreenContainer testID="dispute-status-screen">
+        <InsetScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           bounces={false}
+          extraBottomInset={spacing.xl}
         >
           {isLoading ? (
             <View style={styles.loadingState}>
@@ -477,27 +428,16 @@ export default function DisputeStatusScreen() {
               </View>
             </>
           ) : null}
-        </ScrollView>
-
-        <BottomNav activeId="tasks" onNavigate={(href) => router.push(href as never)} />
-      </View>
-    </SafeAreaView>
+        </InsetScrollView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   scrollContent: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
-    paddingBottom: 168,
+    paddingBottom: spacing['2xl'],
     gap: spacing.lg,
   },
   loadingState: {
@@ -786,39 +726,5 @@ const styles = StyleSheet.create({
   decorativeImage: {
     alignSelf: 'stretch',
     height: '100%',
-  },
-  bottomNav: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    backgroundColor: 'rgba(250,249,246,0.92)',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(195,198,207,0.15)',
-    ...elevations.elevated,
-  },
-  bottomNavItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 6,
-    borderRadius: radius.md,
-  },
-  bottomNavItemActive: {
-    backgroundColor: colors.primaryDeep,
-  },
-  bottomNavLabel: {
-    fontSize: 11,
-    color: colors.textSecondary,
-  },
-  bottomNavLabelActive: {
-    color: colors.primaryForeground,
   },
 });
