@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../ui/Button';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+import { screenRhythm } from '../../design/screenRhythm';
 
 const { colors, spacing, radius } = mobileTheme;
 
@@ -119,10 +120,10 @@ const styles = StyleSheet.create({
   stepIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: 6,
+    paddingTop: screenRhythm.contentInsetTop,
+    paddingBottom: screenRhythm.itemGap,
+    paddingHorizontal: screenRhythm.contentInsetX,
+    gap: screenRhythm.stepIndicatorGap,
   },
   bar: {
     flex: 1,
@@ -142,17 +143,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.lg,
-    paddingBottom: spacing['2xl'],
+    paddingHorizontal: screenRhythm.contentInsetX,
+    gap: screenRhythm.blockGap,
+    paddingBottom: screenRhythm.sectionGap,
   },
   bottomBar: {
     borderRadius: radius.lg,
     overflow: 'hidden',
   },
   bottomBarInner: {
-    paddingTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingTop: screenRhythm.itemGap,
+    paddingHorizontal: screenRhythm.contentInsetX,
   },
   buttonRow: {
     flexDirection: 'row',

@@ -9,6 +9,7 @@ import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { screenRhythm, screenTypography } from '../../design/screenRhythm';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -174,20 +175,21 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     color: colors.accent,
     fontStyle: 'italic',
-    marginBottom: spacing.md,
+    marginBottom: screenRhythm.itemGap,
   },
   taskerCard: {
-    marginBottom: spacing.xl,
+    marginBottom: screenRhythm.sectionGap,
     backgroundColor: colors.muted,
     borderRadius: radius.md,
-    padding: spacing.md,
+    padding: screenRhythm.cardPadding,
     ...elevations.soft,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: screenTypography.sectionTitleSize,
+    lineHeight: screenTypography.sectionTitleLineHeight,
     fontWeight: '700',
     color: colors.primaryDeep,
-    marginBottom: spacing.md,
+    marginBottom: screenRhythm.itemGap,
   },
   taskerRow: {
     flexDirection: 'row',
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     color: colors.primaryDeep,
   },
   section: {
-    marginBottom: spacing.xl,
+    marginBottom: screenRhythm.sectionGap,
   },
   categoryName: {
     fontSize: typography.body,
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     borderRadius: radius.md,
-    padding: spacing.md,
+    padding: screenRhythm.cardPadding,
     backgroundColor: colors.muted,
   },
   dateText: {
@@ -231,9 +233,6 @@ const styles = StyleSheet.create({
   },
   budgetInput: {
     borderRadius: radius.md,
-    padding: spacing.md,
-    fontSize: typography.body,
-    color: colors.primaryDeep,
     backgroundColor: colors.muted,
   },
   errorText: {

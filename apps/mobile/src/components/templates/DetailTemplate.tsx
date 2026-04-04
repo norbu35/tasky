@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 import { useTranslation } from 'react-i18next';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+import { screenRhythm } from '../../design/screenRhythm';
 
 const { colors, spacing } = mobileTheme;
 const CTA_BAR_HEIGHT = 88;
@@ -138,14 +139,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: spacing.xl,
-    paddingHorizontal: spacing.lg,
+    paddingTop: screenRhythm.contentInsetTop,
+    paddingHorizontal: screenRhythm.contentInsetX,
   },
   scrollContentWithActionBar: {
-    paddingBottom: spacing.xl,
+    paddingBottom: screenRhythm.sectionGap,
   },
   bottomBar: {
-    padding: spacing.md,
+    padding: screenRhythm.stickyBarPadding,
     borderRadius: mobileTheme.radius.lg,
     overflow: 'hidden',
   },
@@ -158,9 +159,9 @@ const styles = StyleSheet.create({
   },
   skeletonContainer: {
     flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    gap: spacing.lg,
+    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingTop: screenRhythm.contentInsetTop,
+    gap: screenRhythm.blockGap,
   },
   skeletonBlockLarge: {
     height: 200,
