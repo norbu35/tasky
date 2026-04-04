@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
     fontSize: 36,
     fontWeight: '800',
-    lineHeight: 40,
+    lineHeight: 36 * (10 / 9),
   },
   descriptionText: {
     fontSize: typography.body,

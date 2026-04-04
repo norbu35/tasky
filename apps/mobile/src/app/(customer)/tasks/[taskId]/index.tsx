@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     fontSize: typography.heading,
     fontWeight: '700',
     color: colors.primaryDeep,
-    lineHeight: 32,
+    lineHeight: typography.heading * (4 / 3),
   },
   subtitle: {
     fontSize: typography.caption,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '800',
     color: colors.secondary,
-    lineHeight: 40,
+    lineHeight: 36 * (10 / 9),
   },
   taskerCard: {
     backgroundColor: colors.card,

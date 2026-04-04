@@ -147,14 +147,14 @@ const styles = StyleSheet.create({
   decorDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   headline: {
     fontSize: typography.heading,
     fontWeight: '900',
     color: colors.primaryDeep,
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: typography.heading * 1.25,
   },
   body: {
     fontSize: typography.body,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: radius.md,
     backgroundColor: colors.muted,
-    padding: 32,
+    padding: spacing['2xl'],
     gap: spacing.sm,
     ...elevations.soft,
   },

@@ -137,7 +137,11 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep },
   successTitle: { fontSize: typography.body, fontWeight: '700', color: colors.primaryDeep },
-  description: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
+  description: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
   featureList: {
     backgroundColor: colors.muted,
     borderRadius: radius.lg,
@@ -152,6 +156,10 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   sheetTitle: { fontSize: typography.title, fontWeight: '700', color: colors.primaryDeep },
-  sheetDescription: { fontSize: typography.body, color: colors.textSecondary, lineHeight: 24 },
+  sheetDescription: {
+    fontSize: typography.body,
+    color: colors.textSecondary,
+    lineHeight: typography.body * 1.5,
+  },
   cancelText: { fontSize: typography.body, color: colors.textSecondary, textAlign: 'center' },
 });
