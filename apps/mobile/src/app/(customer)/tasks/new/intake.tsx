@@ -9,6 +9,9 @@ import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
+const DESCRIPTION_MIN_LENGTH = 10;
+const DESCRIPTION_MAX_LENGTH = 2000;
+
 const intakeTypes = ['One-time', 'Recurring', 'Urgent'] as const;
 
 function parseIntakeAnswers(value?: string): {
@@ -75,6 +78,15 @@ export default function IntakeFormScreen() {
       setError(t('customer.postTask.validation.required', 'This field is required'));
       return;
     }
+    if (description.trim().length < DESCRIPTION_MIN_LENGTH) {
+      setError(
+        t(
+          'customer.postTask.validation.descriptionMin',
+          'Description must be at least {{min}} characters',
+        ).replace('{{min}}', String(DESCRIPTION_MIN_LENGTH)),
+      );
+      return;
+    }
     setError('');
     router.push({
       pathname: '/(customer)/tasks/new/photos',
@@ -134,7 +146,7 @@ export default function IntakeFormScreen() {
           placeholder={t('customer.postTask.intakePlaceholder', 'What needs to be done?')}
           multiline
           numberOfLines={4}
-          maxLength={500}
+          maxLength={DESCRIPTION_MAX_LENGTH}
           invalid={!!error}
           style={styles.descriptionInput}
         />
@@ -145,7 +157,7 @@ export default function IntakeFormScreen() {
               'Include size, access, timing, and any tools or materials involved.',
             )}
           </Text>
-          <Text style={styles.counter}>{`${descriptionLength} / 500`}</Text>
+          <Text style={styles.counter}>{`${descriptionLength} / ${DESCRIPTION_MAX_LENGTH}`}</Text>
         </View>
       </FormField>
 
