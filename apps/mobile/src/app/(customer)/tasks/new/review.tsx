@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
-import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
+import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { Toast } from '../../../../components/ui/Toast';
 import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
@@ -49,7 +49,7 @@ function formatBudget(amount: string): string {
 
 function formatSchedule(scheduledAt?: string): string {
   if (!scheduledAt) {
-    return 'Flexible';
+    return '';
   }
 
   const parsed = new Date(scheduledAt);
@@ -116,7 +116,7 @@ function SectionCard({
   const { t } = useTranslation();
 
   return (
-    <View testID="SCR-CUST-007" style={[styles.card, featured && styles.cardFeatured]} >
+    <View testID={testID} style={[styles.card, featured && styles.cardFeatured]}>
       <View style={styles.cardHeader}>
         <Text style={[styles.cardLabel, featured && styles.cardLabelFeatured]}>{label}</Text>
         {onEdit ? (
@@ -226,7 +226,19 @@ export default function ReviewSubmitScreen() {
     budget: params.budget ?? '',
   };
 
+  const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
+  const devAuthEnabled = runtimeEnv?.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
+
   const handleSubmit = async () => {
+    // Dev bypass: skip API call and navigate directly to success screen
+    if (devAuthEnabled) {
+      router.replace({
+        pathname: '/(customer)/tasks/new/success',
+        params: { taskId: 'dev-task-00000000' },
+      });
+      return;
+    }
+
     try {
       setSubmitError(null);
       const locationLat = Number(params.lat);
@@ -268,12 +280,15 @@ export default function ReviewSubmitScreen() {
     description.length > 140 ? `${description.slice(0, 140).trimEnd()}...` : description;
 
   return (
-    <DetailTemplate
-      ctaLabel={t('customer.postTask.postButton', 'Post Task')}
-      ctaOnPress={handleSubmit}
-      ctaLoading={isPending}
-      ctaDisabled={!hasRequiredPayload}
-      testID="review-submit-screen"
+    <FormWizardTemplate
+      currentStep={5}
+      totalSteps={7}
+      onNext={handleSubmit}
+      onBack={() => router.back()}
+      nextLabel={t('customer.postTask.postButton', 'Захиалга өгөх')}
+      nextLoading={isPending}
+      nextDisabled={isPending || !hasRequiredPayload}
+      testID="SCR-CUST-007"
     >
       <View style={styles.headerBlock}>
         <Text style={styles.stepKicker}>{t('customer.postTask.finalStep', 'Final Step')}</Text>
@@ -376,7 +391,9 @@ export default function ReviewSubmitScreen() {
 
       <SectionCard
         label={t('customer.postTask.sectionSchedule', 'Schedule')}
-        value={formatSchedule(params.scheduledAt) || t('customer.postTask.flexible', 'Flexible')}
+        value={
+          formatSchedule(params.scheduledAt) || t('customer.postTask.flexibleSchedule', 'Flexible')
+        }
         onEdit={() =>
           router.push({
             pathname: '/(customer)/tasks/new/schedule',
@@ -434,7 +451,7 @@ export default function ReviewSubmitScreen() {
           <Toast message={submitError} variant="error" />
         </View>
       ) : null}
-    </DetailTemplate>
+    </FormWizardTemplate>
   );
 }
 
