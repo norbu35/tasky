@@ -1,42 +1,55 @@
+// apps/mobile/src/components/ui/FAB.tsx
 import React from 'react';
-import { StyleSheet, Pressable } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated';
 import { Plus } from 'lucide-react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuthStore } from '../../store/authStore';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
-import { useRouter } from 'expo-router';
-import { useAuthStore } from '../../store/authStore';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { screenLayout } from '../../design/screenLayout';
 
-const { colors, radius, spacing } = mobileTheme;
+const { colors, radius } = mobileTheme;
+const { fabSize, fabInsetRight, fabBottom, tabBarHeight, tabBarBottom } = screenLayout.chrome;
+const DRAG_THRESHOLD = 8;
+const SPRING_CONFIG = { damping: 18, stiffness: 220 };
 
 type FABProps = {
-  bottomOffset?: number;
   testID?: string;
   authGuard?: boolean;
 };
 
-export function FAB({ bottomOffset = 72, testID = 'global-fab', authGuard = true }: FABProps) {
-  const scale = useSharedValue(1);
+export function FAB({ testID = 'global-fab', authGuard = true }: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
   const insets = useSafeAreaInsets();
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
+  // Default position: bottom-right, above tab bar
+  const defaultX = screenWidth - fabSize - fabInsetRight;
+  const defaultY = screenHeight - insets.bottom - fabBottom - fabSize;
 
-  const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
-  };
+  // Boundaries
+  const minX = fabInsetRight;
+  const maxX = screenWidth - fabSize - fabInsetRight;
+  const minY = insets.top + mobileTheme.spacing.md;
+  const maxY = screenHeight - insets.bottom - tabBarHeight - tabBarBottom - fabSize;
 
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-  };
+  const translateX = useSharedValue(defaultX);
+  const translateY = useSharedValue(defaultY);
+  const startX = useSharedValue(defaultX);
+  const startY = useSharedValue(defaultY);
+  const scale = useSharedValue(1);
+  const isDragging = useSharedValue(false);
 
-  const handlePress = () => {
+  const navigateToNewTask = () => {
     if (authGuard && !session) {
       router.push('/(auth)');
     } else {
@@ -44,37 +57,68 @@ export function FAB({ bottomOffset = 72, testID = 'global-fab', authGuard = true
     }
   };
 
+  const tap = Gesture.Tap()
+    .onEnd(() => {
+      if (!isDragging.value) {
+        runOnJS(navigateToNewTask)();
+      }
+    });
+
+  const pan = Gesture.Pan()
+    .minDistance(DRAG_THRESHOLD)
+    .onStart(() => {
+      startX.value = translateX.value;
+      startY.value = translateY.value;
+      isDragging.value = false;
+      scale.value = withSpring(0.95, SPRING_CONFIG);
+    })
+    .onUpdate((event) => {
+      isDragging.value = true;
+      const newX = startX.value + event.translationX;
+      const newY = startY.value + event.translationY;
+      translateX.value = Math.max(minX, Math.min(maxX, newX));
+      translateY.value = Math.max(minY, Math.min(maxY, newY));
+    })
+    .onEnd(() => {
+      // Snap to nearest horizontal edge
+      const midX = screenWidth / 2;
+      const snapX = translateX.value + fabSize / 2 < midX ? minX : maxX;
+      translateX.value = withSpring(snapX, SPRING_CONFIG);
+      scale.value = withSpring(1, SPRING_CONFIG);
+      isDragging.value = false;
+    });
+
+  const composed = Gesture.Race(pan, tap);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
   return (
-    <Pressable
-      style={[styles.container, { bottom: insets.bottom + bottomOffset }]}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={handlePress}
-      testID={testID}
-    >
-      <Animated.View style={[styles.inner, animatedStyle]}>
+    <GestureDetector gesture={composed}>
+      <Animated.View style={[styles.fab, animatedStyle]} testID={testID}>
         <Plus color={colors.primaryForeground} size={28} />
       </Animated.View>
-    </Pressable>
+    </GestureDetector>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  fab: {
     position: 'absolute',
-    right: spacing.lg,
-    width: 60,
-    height: 60,
+    left: 0,
+    top: 0,
+    width: fabSize,
+    height: fabSize,
     borderRadius: radius.full,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...elevations.elevated,
     zIndex: 999,
-  },
-  inner: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
