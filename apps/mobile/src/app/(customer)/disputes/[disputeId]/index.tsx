@@ -14,7 +14,7 @@ import { InsetScrollView, ScreenContainer } from '../../../../components/shells'
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
-import { screenRhythm } from '../../../../design/screenRhythm';
+import { screenLayout } from '../../../../design/screenLayout';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -445,8 +445,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingBottom: screenRhythm.microGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingBottom: screenLayout.body.microGap,
   },
   headerBackButton: {
     width: spacing['3xl'],
@@ -466,10 +466,10 @@ const styles = StyleSheet.create({
     width: spacing['3xl'],
   },
   scrollContent: {
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.blockGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.body.blockGap,
     paddingBottom: spacing['2xl'],
-    gap: screenRhythm.blockGap,
+    gap: screenLayout.body.blockGap,
   },
   loadingState: {
     alignItems: 'center',

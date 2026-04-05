@@ -5,7 +5,7 @@ import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { StatCard } from '../../components/ui/StatCard';
 import { useMyStats } from '../../features/profile/hooks/useMyStats';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { screenRhythm, screenTypography } from '../../design/screenRhythm';
+import { screenLayout, screenTypography } from '../../design/screenLayout';
 
 const { spacing } = mobileTheme;
 
@@ -149,7 +149,7 @@ export default function TaskerStatsScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    gap: screenRhythm.blockGap,
+    gap: screenLayout.body.blockGap,
   },
   heroCard: {
     backgroundColor: mobileTheme.colors.primaryDeep,
@@ -179,11 +179,11 @@ const styles = StyleSheet.create({
   },
   statsGrid: {
     flexDirection: 'row',
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
   },
   section: {
-    gap: screenRhythm.microGap,
-    paddingTop: screenRhythm.itemGap,
+    gap: screenLayout.body.microGap,
+    paddingTop: screenLayout.body.itemGap,
   },
   sectionTitle: {
     fontSize: mobileTheme.typography.subtitle,

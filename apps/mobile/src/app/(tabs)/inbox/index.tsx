@@ -8,7 +8,7 @@ import { FeedListTemplate } from '../../../components/templates/FeedListTemplate
 import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
-import { screenRhythm } from '../../../design/screenRhythm';
+import { screenLayout } from '../../../design/screenLayout';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -151,10 +151,10 @@ export default function ConversationListScreen() {
 
 const styles = StyleSheet.create({
   headerShell: {
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.contentInsetTop,
-    paddingBottom: screenRhythm.itemGap,
-    gap: screenRhythm.itemGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.header.topInset,
+    paddingBottom: screenLayout.body.itemGap,
+    gap: screenLayout.body.itemGap,
   },
   headerRow: {
     flexDirection: 'row',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: radius.lg,
-    padding: screenRhythm.itemGap,
+    padding: screenLayout.body.itemGap,
   },
   rowUnread: {
     backgroundColor: colors.muted,

@@ -2,16 +2,11 @@ import React from 'react';
 import { Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  ClipboardList,
-  Menu,
-  Search,
-  CalendarDays,
-} from 'lucide-react-native';
+import { ClipboardList, Menu, Search, CalendarDays } from 'lucide-react-native';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { screenRhythm } from '../../../design/screenRhythm';
+import { screenLayout } from '../../../design/screenLayout';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
@@ -101,7 +96,8 @@ function FilterTab({
   onPress: () => void;
 }) {
   return (
-    <Pressable testID="SCR-CUST-016"
+    <Pressable
+      testID="SCR-CUST-016"
       onPress={onPress}
       style={styles.filterTab}
       accessibilityRole="button"
@@ -337,9 +333,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.itemGap,
-    paddingBottom: screenRhythm.itemGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.body.itemGap,
+    paddingBottom: screenLayout.body.itemGap,
   },
   headerIconButton: {
     width: 40,
@@ -358,9 +354,9 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    gap: screenRhythm.sectionGap,
-    paddingHorizontal: screenRhythm.contentInsetX,
-    marginBottom: screenRhythm.blockGap,
+    gap: screenLayout.body.sectionGap,
+    paddingHorizontal: screenLayout.insetX,
+    marginBottom: screenLayout.body.blockGap,
   },
   filterTab: {
     paddingBottom: spacing.xs,
@@ -385,11 +381,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingHorizontal: screenLayout.insetX,
     paddingBottom: spacing['3xl'],
   },
   scrollContentWithList: {
-    gap: screenRhythm.blockGap,
+    gap: screenLayout.body.blockGap,
   },
   scrollContentWithEmpty: {
     flexGrow: 1,
@@ -400,32 +396,32 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginBottom: screenRhythm.itemGap,
+    marginBottom: screenLayout.body.itemGap,
   },
   offlineBannerText: {
     fontSize: typography.label,
     color: colors.textSecondary,
   },
   cardList: {
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
   },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
-    padding: screenRhythm.cardPadding,
-    gap: screenRhythm.itemGap,
+    padding: screenLayout.body.cardPadding,
+    gap: screenLayout.body.itemGap,
     ...elevations.soft,
   },
   cardTopRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
   },
   cardIdentity: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
     flex: 1,
   },
   cardIdentityCopy: {

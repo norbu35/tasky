@@ -9,7 +9,7 @@ import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
-import { screenRhythm, screenTypography } from '../../design/screenRhythm';
+import { screenLayout, screenTypography } from '../../design/screenLayout';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -92,10 +92,20 @@ export default function RebookScreen() {
         taskerAvatar: params.taskerAvatar,
       },
     });
-  }, [params, budget, budgetTooLow, numericBudget, selectedDate, createTask, createBookingIntent, router]);
+  }, [
+    params,
+    budget,
+    budgetTooLow,
+    numericBudget,
+    selectedDate,
+    createTask,
+    createBookingIntent,
+    router,
+  ]);
 
   return (
-    <FormWizardTemplate testID="SCR-CUST-023"
+    <FormWizardTemplate
+      testID="SCR-CUST-023"
       currentStep={0}
       totalSteps={1}
       onNext={handleSubmit}
@@ -174,13 +184,13 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     color: colors.accent,
     fontStyle: 'italic',
-    marginBottom: screenRhythm.itemGap,
+    marginBottom: screenLayout.body.itemGap,
   },
   taskerCard: {
-    marginBottom: screenRhythm.sectionGap,
+    marginBottom: screenLayout.body.sectionGap,
     backgroundColor: colors.muted,
     borderRadius: radius.md,
-    padding: screenRhythm.cardPadding,
+    padding: screenLayout.body.cardPadding,
     ...elevations.soft,
   },
   sectionTitle: {
@@ -188,7 +198,7 @@ const styles = StyleSheet.create({
     lineHeight: screenTypography.sectionTitleLineHeight,
     fontWeight: '700',
     color: colors.primaryDeep,
-    marginBottom: screenRhythm.itemGap,
+    marginBottom: screenLayout.body.itemGap,
   },
   taskerRow: {
     flexDirection: 'row',
@@ -204,7 +214,7 @@ const styles = StyleSheet.create({
     color: colors.primaryDeep,
   },
   section: {
-    marginBottom: screenRhythm.sectionGap,
+    marginBottom: screenLayout.body.sectionGap,
   },
   categoryName: {
     fontSize: typography.body,
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     borderRadius: radius.md,
-    padding: screenRhythm.cardPadding,
+    padding: screenLayout.body.cardPadding,
     backgroundColor: colors.muted,
   },
   dateText: {
