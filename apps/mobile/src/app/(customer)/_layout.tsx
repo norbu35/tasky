@@ -8,13 +8,7 @@ export default function CustomerLayout() {
     <Stack screenOptions={defaultStackScreenOptions}>
       {/* Task flows */}
       <Stack.Screen name="tasks/index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="tasks/new"
-        options={{
-          ...modalStackScreenOptions,
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen name="tasks/new" options={{ headerShown: false }} />
       <Stack.Screen
         name="tasks/[taskId]/index"
         options={{ title: t('customer.taskDetail.title', 'Task Detail') }}
@@ -28,18 +22,12 @@ export default function CustomerLayout() {
         options={{ title: t('matching.instantMatch.pageTitle', 'Instant Match') }}
       />
       {/* Booking flows */}
-      <Stack.Screen
-        name="bookings/index"
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="bookings/index" options={{ headerShown: false }} />
       <Stack.Screen
         name="bookings/confirm"
         options={{ title: t('customer.bookings.confirmTitle', 'Confirm Booking') }}
       />
-      <Stack.Screen
-        name="bookings/confirmed"
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="bookings/confirmed" options={{ headerShown: false }} />
       <Stack.Screen
         name="bookings/[bookingId]/index"
         options={{ title: t('customer.bookings.detailTitle', 'Booking Detail') }}
@@ -72,10 +60,7 @@ export default function CustomerLayout() {
         options={{ title: t('customer.taskerProfile.title', 'Tasker Profile') }}
       />
       {/* Rebook */}
-      <Stack.Screen
-        name="rebook"
-        options={{ title: t('customer.rebook.title', 'Rebook') }}
-      />
+      <Stack.Screen name="rebook" options={{ title: t('customer.rebook.title', 'Rebook') }} />
       {/* Disputes hub */}
       <Stack.Screen
         name="disputes/[disputeId]/index"

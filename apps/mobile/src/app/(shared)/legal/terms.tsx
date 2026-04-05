@@ -18,7 +18,7 @@ function resolveState(value: string | string[] | undefined): ScreenState {
 
 function TermsLoading() {
   return (
-    <View testID="SCR-INFRA-004" style={styles.loadingContainer}>
+    <View style={styles.loadingContainer}>
       <View style={styles.loadingBlockLarge} />
       <View style={styles.loadingBlockMedium} />
       <View style={styles.loadingBlockShort} />
@@ -155,7 +155,7 @@ export default function TermsScreen() {
   const title = t('infra.terms.title', 'Үйлчилгээний нөхцөл');
 
   return (
-    <ScreenContainer testID="terms-screen">
+    <ScreenContainer testID="SCR-INFRA-004">
       <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}

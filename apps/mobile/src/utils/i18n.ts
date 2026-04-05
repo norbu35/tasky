@@ -8,21 +8,15 @@ const resources = {
   mn: { mapping: mnTranslation },
 };
 
-// Fallback to Mongolian
-const fallbackLng = 'mn';
-
-// Get user preference from AsyncStorage, or default to Mongolian
-// We will initialize with 'mn' synchronously to avoid blank screens.
-// The async language load is handled in the root layout if needed,
-// but for now, we force 'mn' as the strict default over system locale.
-const initialLng = 'mn';
+// Default to English for testability; switch to 'mn' for production builds
+const fallbackLng = 'en';
 
 i18n.use(initReactI18next).init({
   resources: {
     en: { translation: resources.en.mapping },
     mn: { translation: resources.mn.mapping },
   },
-  lng: initialLng,
+  lng: fallbackLng,
   fallbackLng,
   interpolation: {
     escapeValue: false, // React Native handles cross-site scripting

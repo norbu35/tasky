@@ -9,7 +9,6 @@ import { useAuthStore } from '../../store/authStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { colors, radius, spacing } = mobileTheme;
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type FABProps = {
   bottomOffset?: number;
@@ -17,11 +16,7 @@ type FABProps = {
   authGuard?: boolean;
 };
 
-export function FAB({
-  bottomOffset = 72,
-  testID = 'global-fab',
-  authGuard = true,
-}: FABProps) {
+export function FAB({ bottomOffset = 72, testID = 'global-fab', authGuard = true }: FABProps) {
   const scale = useSharedValue(1);
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
@@ -50,19 +45,17 @@ export function FAB({
   };
 
   return (
-    <AnimatedPressable
-      style={[
-        styles.container,
-        { bottom: insets.bottom + bottomOffset },
-        animatedStyle,
-      ]}
+    <Pressable
+      style={[styles.container, { bottom: insets.bottom + bottomOffset }]}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onPress={handlePress}
       testID={testID}
     >
-      <Plus color={colors.primaryForeground} size={28} />
-    </AnimatedPressable>
+      <Animated.View style={[styles.inner, animatedStyle]}>
+        <Plus color={colors.primaryForeground} size={28} />
+      </Animated.View>
+    </Pressable>
   );
 }
 
@@ -78,5 +71,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     ...elevations.elevated,
     zIndex: 999,
+  },
+  inner: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -1,12 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import {
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
@@ -15,7 +8,6 @@ import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { screenRhythm, screenTypography } from '../../../design/screenRhythm';
-import { FAB } from '../../../components/ui/FAB';
 import { ScreenContainer } from '../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -73,7 +65,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const Icon = visual.Icon;
 
   return (
-    <View testID="SCR-CUST-001" style={styles.cardOuter}>
+    <View style={styles.cardOuter}>
       <Pressable
         testID={`task-card-${task.id}`}
         accessibilityRole="button"
@@ -277,7 +269,7 @@ export default function MyTasksListScreen() {
   );
 
   return (
-    <ScreenContainer testID="my-tasks-screen">
+    <ScreenContainer testID="SCR-CUST-001">
       {isLoading ? (
         <View style={styles.loadingContainer} testID="my-tasks-loading-state">
           {header}
@@ -316,8 +308,6 @@ export default function MyTasksListScreen() {
           testID="my-tasks-feed"
         />
       )}
-
-      <FAB bottomOffset={spacing.lg} testID="my-tasks-fab" authGuard={false} />
     </ScreenContainer>
   );
 }

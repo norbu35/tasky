@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react-native';
+import { useRole } from '../../providers/RoleProvider';
+import CustomerMyTasks from '../(customer)/tasks/index';
 import { FeedListTemplate } from '../../components/templates/FeedListTemplate';
 import { SplitCard } from '../../components/ui/SplitCard';
 import { FilterBar } from '../../components/ui/FilterBar';
@@ -27,7 +29,7 @@ const CATEGORIES = [
 
 function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
-    <View testID="SCR-TASK-001" style={styles.cardHeader}>
+    <View style={styles.cardHeader}>
       <Text style={styles.customerName} numberOfLines={1}>
         {task.customer.full_name}
       </Text>
@@ -61,7 +63,13 @@ function TaskCardBody({ task }: { task: PublicTask }) {
   );
 }
 
-export default function FeedScreen() {
+export default function HomeTab() {
+  const { isCustomer } = useRole();
+  if (isCustomer) return <CustomerMyTasks />;
+  return <TaskerBrowseScreen />;
+}
+
+function TaskerBrowseScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useTasks() as {
@@ -128,62 +136,67 @@ export default function FeedScreen() {
   const keyExtractor = useCallback((task: PublicTask) => task.id, []);
 
   return (
-    <FeedListTemplate
-      data={filteredTasks}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      isLoading={isLoading}
-      isError={isError}
-      isEmpty={filteredTasks.length === 0 && !isLoading}
-      onRefresh={refetch}
-      isRefreshing={isRefetching}
-      onRetry={refetch}
-      ListHeaderComponent={
-        <View style={styles.headerContent}>
-          <View style={styles.headerCopy}>
-            <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Даалгаврууд')}</Text>
-            <Text style={styles.screenSubtitle}>
-              {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
-            </Text>
+    <View testID="SCR-TASK-001" style={styles.screenContainer}>
+      <FeedListTemplate
+        data={filteredTasks}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={filteredTasks.length === 0 && !isLoading}
+        onRefresh={refetch}
+        isRefreshing={isRefetching}
+        onRetry={refetch}
+        ListHeaderComponent={
+          <View style={styles.headerContent}>
+            <View style={styles.headerCopy}>
+              <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Даалгаврууд')}</Text>
+              <Text style={styles.screenSubtitle}>
+                {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
+              </Text>
+            </View>
+            <Input
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder={t('tasker.browse.searchPlaceholder', 'Даалгавар хайх...')}
+              placeholderTextColor={colors.textTertiary}
+            />
+            <TrustBanner
+              title={t('tasker.browse.trustTitle', 'Баталгаажсан даалгавар гүйцэтгэгч')}
+              description={t(
+                'tasker.browse.trustDescription',
+                'Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.',
+              )}
+            />
           </View>
-          <Input
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder={t('tasker.browse.searchPlaceholder', 'Даалгавар хайх...')}
-            placeholderTextColor={colors.textTertiary}
+        }
+        emptyTitle={t('tasker.browse.emptyTitle', 'Одоогоор даалгавар байхгүй байна')}
+        emptyDescription={t(
+          'tasker.browse.emptyDescription',
+          'Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу',
+        )}
+        emptyCtaLabel={t('tasker.browse.emptyCta', 'Шүүлтүүр цэвэрлэх')}
+        emptyCtaOnPress={handleClearFilters}
+        errorMessage={t('common.error')}
+        filterBar={
+          <FilterBar
+            filters={CATEGORIES}
+            activeFilters={activeFilters}
+            onToggle={handleToggleFilter}
+            testID="task-feed-filter-bar"
           />
-          <TrustBanner
-            title={t('tasker.browse.trustTitle', 'Баталгаажсан даалгавар гүйцэтгэгч')}
-            description={t(
-              'tasker.browse.trustDescription',
-              'Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.',
-            )}
-          />
-        </View>
-      }
-      emptyTitle={t('tasker.browse.emptyTitle', 'Одоогоор даалгавар байхгүй байна')}
-      emptyDescription={t(
-        'tasker.browse.emptyDescription',
-        'Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу',
-      )}
-      emptyCtaLabel={t('tasker.browse.emptyCta', 'Шүүлтүүр цэвэрлэх')}
-      emptyCtaOnPress={handleClearFilters}
-      errorMessage={t('common.error')}
-      filterBar={
-        <FilterBar
-          filters={CATEGORIES}
-          activeFilters={activeFilters}
-          onToggle={handleToggleFilter}
-          testID="task-feed-filter-bar"
-        />
-      }
-      testID="task-feed"
-    />
+        }
+        testID="task-feed"
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+  },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',

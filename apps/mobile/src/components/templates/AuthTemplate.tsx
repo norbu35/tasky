@@ -49,7 +49,7 @@ export function AuthTemplate({
           contentContainerStyle={[styles.scrollContent, contentStyle]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          extraBottomInset={bottomSlot ? spacing['3xl'] : 0}
+          extraBottomInset={bottomSlot ? 210 : 0}
         >
           {/* Logo / Branding */}
           {showLogo && <Text style={styles.logo}>Tasky</Text>}
@@ -65,8 +65,10 @@ export function AuthTemplate({
 
           {/* Trust Message */}
           {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
+
+          {/* Footer links — inside scroll content so they scroll above the StickyActionBar */}
+          {footerSlot ? <View style={styles.footer}>{footerSlot}</View> : null}
         </InsetScrollView>
-        {footerSlot ? <View style={styles.footer}>{footerSlot}</View> : null}
         {bottomSlot ? <StickyActionBar>{bottomSlot}</StickyActionBar> : null}
       </KeyboardAvoidingView>
     </ScreenContainer>

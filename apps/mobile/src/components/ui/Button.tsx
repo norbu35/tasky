@@ -13,8 +13,6 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 const { colors, radius, spacing, typography } = mobileTheme;
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
@@ -86,33 +84,35 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
     };
 
     return (
-      <AnimatedPressable
+      <Pressable
         ref={ref}
-        style={[buttonStyles, animatedStyle]}
+        style={buttonStyles}
         disabled={!isInteractive}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         className={className}
         {...props}
       >
-        {isLoading ? (
-          <ActivityIndicator color={textColor} />
-        ) : children ? (
-          children
-        ) : (
-          <Text
-            style={[
-              styles.text,
-              styles[`${size}Text` as keyof typeof styles],
-              { color: textColor },
-              textStyle,
-            ]}
-            className={labelClassName}
-          >
-            {label}
-          </Text>
-        )}
-      </AnimatedPressable>
+        <Animated.View style={[styles.buttonInner, animatedStyle]}>
+          {isLoading ? (
+            <ActivityIndicator color={textColor} />
+          ) : children ? (
+            children
+          ) : (
+            <Text
+              style={[
+                styles.text,
+                styles[`${size}Text` as keyof typeof styles],
+                { color: textColor },
+                textStyle,
+              ]}
+              className={labelClassName}
+            >
+              {label}
+            </Text>
+          )}
+        </Animated.View>
+      </Pressable>
     );
   },
 );
@@ -140,6 +140,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.md,
+  },
+  buttonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   disabled: {
     opacity: 0.5,

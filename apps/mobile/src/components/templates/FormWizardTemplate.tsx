@@ -56,11 +56,11 @@ export function FormWizardTemplate({
         ))}
       </View>
 
-      {/* Scrollable Form Content */}
+      {/* Scrollable Form Content + Sticky Bottom Bar */}
       <KeyboardAvoidingView
         style={styles.keyboardAvoid}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        behavior={Platform.OS === 'ios' ? 'height' : 'height'}
+        keyboardVerticalOffset={0}
       >
         <InsetScrollView
           style={styles.scrollView}
@@ -71,43 +71,43 @@ export function FormWizardTemplate({
         >
           {children}
         </InsetScrollView>
-      </KeyboardAvoidingView>
 
-      {/* Sticky Bottom Bar — frosted glass */}
-      <StickyActionBar testID="wizard-bottom-bar">
-        <BlurView intensity={40} tint="light" style={styles.bottomBar}>
-          <View style={styles.bottomBarInner}>
-            {showBackButton ? (
-              <View style={styles.buttonRow}>
-                <Button
-                  label={t('wizard.back', 'Back')}
-                  variant="outline"
-                  onPress={onBack}
-                  style={styles.backButton}
-                  testID={testID ? `${testID}-back` : undefined}
-                />
+        {/* Sticky Bottom Bar — frosted glass — inside KAV so it rises above keyboard */}
+        <StickyActionBar testID="wizard-bottom-bar">
+          <BlurView intensity={40} tint="light" style={styles.bottomBar}>
+            <View style={styles.bottomBarInner}>
+              {showBackButton ? (
+                <View style={styles.buttonRow}>
+                  <Button
+                    label={t('wizard.back', 'Back')}
+                    variant="outline"
+                    onPress={onBack}
+                    style={styles.backButton}
+                    testID={testID ? `${testID}-back` : undefined}
+                  />
+                  <Button
+                    label={nextLabel ?? t('wizard.next', 'Next')}
+                    onPress={onNext}
+                    disabled={nextDisabled}
+                    isLoading={nextLoading}
+                    style={styles.nextButton}
+                    testID={testID ? `${testID}-next` : undefined}
+                  />
+                </View>
+              ) : (
                 <Button
                   label={nextLabel ?? t('wizard.next', 'Next')}
                   onPress={onNext}
                   disabled={nextDisabled}
                   isLoading={nextLoading}
-                  style={styles.nextButton}
+                  style={styles.nextButtonFull}
                   testID={testID ? `${testID}-next` : undefined}
                 />
-              </View>
-            ) : (
-              <Button
-                label={nextLabel ?? t('wizard.next', 'Next')}
-                onPress={onNext}
-                disabled={nextDisabled}
-                isLoading={nextLoading}
-                style={styles.nextButtonFull}
-                testID={testID ? `${testID}-next` : undefined}
-              />
-            )}
-          </View>
-        </BlurView>
-      </StickyActionBar>
+              )}
+            </View>
+          </BlurView>
+        </StickyActionBar>
+      </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }

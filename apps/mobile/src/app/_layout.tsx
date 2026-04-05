@@ -13,7 +13,11 @@ import '../utils/i18n';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
 
-import { StyleSheet } from 'react-native';
+import { LogBox, StyleSheet } from 'react-native';
+
+// Suppress all LogBox warnings to prevent the yellow dev bar from
+// overlaying UI elements during Maestro E2E tests.
+LogBox.ignoreAllLogs();
 
 // Firebase native modules only work in EAS/bare builds, not Expo Go.
 const isExpoGo = Constants.executionEnvironment === 'storeClient';

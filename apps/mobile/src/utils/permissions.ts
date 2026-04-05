@@ -13,22 +13,12 @@ export async function requestCameraPermission(): Promise<{ status: string }> {
   }
 }
 
+// expo-location is not yet installed — return unavailable until it is added
 export async function requestLocationPermission(): Promise<{ status: string }> {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Location = require('expo-location');
-    return await Location.requestForegroundPermissionsAsync();
-  } catch {
-    return { status: 'unavailable' };
-  }
+  return { status: 'unavailable' };
 }
 
+// expo-notifications is not yet installed — return unavailable until it is added
 export async function requestNotificationPermission(): Promise<{ status: string }> {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Notifications = require('expo-notifications');
-    return await Notifications.requestPermissionsAsync();
-  } catch {
-    return { status: 'unavailable' };
-  }
+  return { status: 'unavailable' };
 }

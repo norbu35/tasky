@@ -35,6 +35,8 @@ export interface DetailTemplateProps {
    * useful for full-bleed hero screens where the native header is hidden.
    */
   hideHeader?: boolean;
+  /** Extra bottom padding for the sticky CTA bar — pass tab bar height when inside a Tab navigator. */
+  ctaBarExtraBottomPadding?: number;
 }
 
 function DetailSkeleton() {
@@ -68,6 +70,7 @@ export function DetailTemplate({
   errorMessage,
   testID,
   hideHeader = false,
+  ctaBarExtraBottomPadding = 0,
 }: DetailTemplateProps) {
   const { t } = useTranslation();
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
@@ -103,7 +106,10 @@ export function DetailTemplate({
 
       {/* Sticky Bottom CTA */}
       {hasBottomBar && !isLoading && !isError && (
-        <StickyActionBar testID={testID ? `${testID}-bottom-bar` : undefined}>
+        <StickyActionBar
+          testID={testID ? `${testID}-bottom-bar` : undefined}
+          extraBottomPadding={ctaBarExtraBottomPadding}
+        >
           <BlurView intensity={40} tint="light" style={styles.bottomBar}>
             {secondaryCtaLabel && secondaryCtaOnPress && (
               <Button

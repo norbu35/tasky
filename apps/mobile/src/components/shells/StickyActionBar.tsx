@@ -7,16 +7,23 @@ type StickyActionBarProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  /** Extra bottom offset in px — use when rendered inside a Tab navigator to clear the tab bar. */
+  extraBottomPadding?: number;
 };
 
-export function StickyActionBar({ children, style, testID }: StickyActionBarProps) {
+export function StickyActionBar({
+  children,
+  style,
+  testID,
+  extraBottomPadding = 0,
+}: StickyActionBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <View
       style={[
         styles.container,
-        { paddingBottom: insets.bottom + mobileTheme.spacing.md },
+        { paddingBottom: insets.bottom + mobileTheme.spacing.md + extraBottomPadding },
         style,
       ]}
       testID={testID}
@@ -36,4 +43,3 @@ const styles = StyleSheet.create({
     paddingTop: mobileTheme.spacing.md,
   },
 });
-
