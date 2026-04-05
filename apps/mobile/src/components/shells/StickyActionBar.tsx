@@ -1,29 +1,32 @@
 import React from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { screenLayout } from '../../design/screenLayout';
 
 type StickyActionBarProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   testID?: string;
-  /** Extra bottom offset in px — use when rendered inside a Tab navigator to clear the tab bar. */
-  extraBottomPadding?: number;
+  /** When true, adds tab bar clearance to bottom padding automatically. */
+  insideTabNavigator?: boolean;
 };
 
 export function StickyActionBar({
   children,
   style,
   testID,
-  extraBottomPadding = 0,
+  insideTabNavigator = false,
 }: StickyActionBarProps) {
   const insets = useSafeAreaInsets();
+  const tabClearance = insideTabNavigator
+    ? screenLayout.chrome.tabBarHeight + screenLayout.chrome.tabBarBottom
+    : 0;
 
   return (
     <View
       style={[
         styles.container,
-        { paddingBottom: insets.bottom + mobileTheme.spacing.md + extraBottomPadding },
+        { paddingBottom: insets.bottom + screenLayout.actions.barPadding + tabClearance },
         style,
       ]}
       testID={testID}
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: mobileTheme.spacing.md,
-    paddingTop: mobileTheme.spacing.md,
+    paddingHorizontal: screenLayout.actions.barPadding,
+    paddingTop: screenLayout.actions.barPadding,
   },
 });
