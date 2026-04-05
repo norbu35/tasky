@@ -42,27 +42,27 @@ describe('DanVerificationScreen (SCR-TASK-006)', () => {
     render(<DanVerificationScreen />);
 
     expect(screen.getByTestId('dan-verification-screen')).toBeTruthy();
-    expect(screen.getByText('Хурдан баталгаажуулалт')).toBeTruthy();
+    expect(screen.getByText('Fast-track verification')).toBeTruthy();
     expect(
       screen.getByText(
-        'E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй.',
+        'E-Mongolia (DAN) will automatically verify your identity. No photos required.',
       ),
     ).toBeTruthy();
-    expect(screen.getByText('E-Mongolia-р баталгаажуулах')).toBeTruthy();
-    expect(screen.getByText('Гар аргаар баталгаажуулах')).toBeTruthy();
+    expect(screen.getByText('Verify with E-Mongolia')).toBeTruthy();
+    expect(screen.getByText('Verify manually')).toBeTruthy();
   });
 
   it('renders the success shell state', () => {
     mockParams = { state: 'success' };
     render(<DanVerificationScreen />);
 
-    expect(screen.getByText('Баталгаажуулалт амжилттай!')).toBeTruthy();
+    expect(screen.getByText('Verification successful!')).toBeTruthy();
     expect(
       screen.getByText(
-        'Таны хаяг E-Mongolia-р баталгаажлаа. Одоо даалгавруудад анкет илгээх боломжтой.',
+        'Your address has been verified via E-Mongolia. You can now apply for tasks.',
       ),
     ).toBeTruthy();
-    expect(screen.getByText('Даалгавар хайх')).toBeTruthy();
+    expect(screen.getByText('Find tasks')).toBeTruthy();
   });
 
   it('manual fallback routes to upload flow', () => {

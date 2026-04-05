@@ -806,7 +806,14 @@
       "rejectedTipFlat": "Place your ID on a flat surface",
       "rejectedTipFace": "Keep your face clearly visible",
       "consentPurpose": "Таниулах баталгаажуулалт",
-      "maybeLater": "Maybe later"
+      "maybeLater": "Maybe later",
+      "danTitle": "Fast-track verification",
+      "danSuccess": "Verification successful!",
+      "danSuccessDescription": "Your address has been verified via E-Mongolia. You can now apply for tasks.",
+      "danDescription": "E-Mongolia (DAN) will automatically verify your identity. No photos required.",
+      "danEmongoliaButton": "Verify with E-Mongolia",
+      "danManualButton": "Verify manually",
+      "danBrowseButton": "Find tasks"
     },
     "jobs": {
       "title": "My Jobs",
@@ -1199,24 +1206,12 @@
   },
   "matching": {
     "instantMatch": {
-      "backToTask": "Back to task",
-      "confirmBooking": "Confirm booking",
-      "countdownLabel": "Waiting for acceptance",
-      "declineCount": "{{count}}/3 declined",
-      "heroError": "No eligible taskers nearby",
-      "heroFallback": "Instant match could not secure a tasker.",
-      "heroFallbackBody": "Your task is now open for applications.",
-      "heroMatched": "Tasker found",
-      "heroSearching": "Finding your tasker",
-      "matchedStatus": "Tasker found",
-      "noEligibleTitle": "No eligible taskers nearby",
-      "pageTitle": "Instant Match",
-      "previewMeta": "Matching in progress",
-      "previewName": "Tasky instant match",
-      "sampleTaskerName": "Sampletaskername",
-      "taskLabel": "Task",
-      "verifiedTasker": "Verified Tasker",
-      "viewApplicants": "View applicants"
+      "successTitle": "Success!",
+      "successDescription": "A new booking was created. Check My Jobs section.",
+      "newOfferTitle": "New offer!",
+      "newOfferDescription": "You have a new instant match offer.",
+      "acceptButton": "Accept",
+      "declineButton": "Decline"
     }
   },
   "offline": {

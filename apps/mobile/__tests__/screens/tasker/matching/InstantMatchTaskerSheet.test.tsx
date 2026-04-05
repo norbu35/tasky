@@ -43,47 +43,59 @@ beforeEach(() => {
 
 describe('InstantMatchTaskerSheet (SCR-P3-005)', () => {
   it('renders the incoming match notification shell', () => {
-    const { InstantMatchTaskerSheet } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
+    const {
+      InstantMatchTaskerSheet,
+    } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
     render(<InstantMatchTaskerSheet isOpen={true} onClose={mockClose} />);
 
-    expect(screen.getByText('Шинэ санал!')).toBeTruthy();
+    expect(screen.getByText('New offer!')).toBeTruthy();
     expect(screen.getByText('5:00')).toBeTruthy();
-    expect(screen.getByText('Хүлээн авах')).toBeTruthy();
-    expect(screen.getByText('Татгалзах')).toBeTruthy();
+    expect(screen.getByText('Accept')).toBeTruthy();
+    expect(screen.getByText('Decline')).toBeTruthy();
     expect(screen.getByText('₮45,000')).toBeTruthy();
   });
 
   it('shows the accepted success state after tapping accept', () => {
-    const { InstantMatchTaskerSheet } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
+    const {
+      InstantMatchTaskerSheet,
+    } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
     render(<InstantMatchTaskerSheet isOpen={true} onClose={mockClose} />);
 
-    fireEvent.press(screen.getByText('Хүлээн авах'));
+    fireEvent.press(screen.getByText('Accept'));
 
-    expect(screen.getByText('Амжилттай!')).toBeTruthy();
-    expect(screen.getByText('Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу')).toBeTruthy();
+    expect(screen.getByText('Success!')).toBeTruthy();
+    expect(screen.getByText('A new booking was created. Check My Jobs section.')).toBeTruthy();
   });
 
   it('calls onClose when declining', () => {
-    const { InstantMatchTaskerSheet } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
+    const {
+      InstantMatchTaskerSheet,
+    } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
     render(<InstantMatchTaskerSheet isOpen={true} onClose={mockClose} />);
 
-    fireEvent.press(screen.getByText('Татгалзах'));
+    fireEvent.press(screen.getByText('Decline'));
     expect(mockClose).toHaveBeenCalled();
   });
 
   it('resets from the accepted state when reopened for a new task', () => {
-    const { InstantMatchTaskerSheet } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
+    const {
+      InstantMatchTaskerSheet,
+    } = require('../../../../src/features/matching/components/InstantMatchTaskerSheet');
     const { rerender } = render(
       <InstantMatchTaskerSheet isOpen={true} onClose={mockClose} taskTitle="Эхний санал" />,
     );
 
-    fireEvent.press(screen.getByText('Хүлээн авах'));
-    expect(screen.getByText('Амжилттай!')).toBeTruthy();
+    fireEvent.press(screen.getByText('Accept'));
+    expect(screen.getByText('Success!')).toBeTruthy();
 
-    rerender(<InstantMatchTaskerSheet isOpen={false} onClose={mockClose} taskTitle="Эхний санал" />);
-    rerender(<InstantMatchTaskerSheet isOpen={true} onClose={mockClose} taskTitle="Хоёр дахь санал" />);
+    rerender(
+      <InstantMatchTaskerSheet isOpen={false} onClose={mockClose} taskTitle="Эхний санал" />,
+    );
+    rerender(
+      <InstantMatchTaskerSheet isOpen={true} onClose={mockClose} taskTitle="Хоёр дахь санал" />,
+    );
 
-    expect(screen.queryByText('Амжилттай!')).toBeNull();
+    expect(screen.queryByText('Success!')).toBeNull();
     expect(screen.getByText('Хоёр дахь санал')).toBeTruthy();
   });
 });

@@ -3,6 +3,13 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { InstantMatchTaskerSheet } from '../../../src/features/matching/components/InstantMatchTaskerSheet';
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, fallback?: string) => fallback || key,
+    i18n: { language: 'en' },
+  }),
+}));
+
 describe('InstantMatchTaskerSheet (SCR-P3-005)', () => {
   it('renders the default instant match shell', () => {
     render(
@@ -17,10 +24,10 @@ describe('InstantMatchTaskerSheet (SCR-P3-005)', () => {
     );
 
     expect(screen.getByTestId('instant-match-sheet')).toBeTruthy();
-    expect(screen.getByText('Шинэ санал!')).toBeTruthy();
+    expect(screen.getByText('New offer!')).toBeTruthy();
     expect(screen.getByText('Гал тогооны цэвэрлэгээ')).toBeTruthy();
-    expect(screen.getByText('Хүлээн авах')).toBeTruthy();
-    expect(screen.getByText('Татгалзах')).toBeTruthy();
+    expect(screen.getByText('Accept')).toBeTruthy();
+    expect(screen.getByText('Decline')).toBeTruthy();
   });
 
   it('accept triggers the callback', () => {

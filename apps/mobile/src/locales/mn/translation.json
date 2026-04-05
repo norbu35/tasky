@@ -806,7 +806,14 @@
       "rejectedTipFlat": "Иргэний үнэмлэхийг хавтгай дээр тавь",
       "rejectedTipFace": "Нүүрээ тодорхой харагдуул",
       "consentPurpose": "Таниулах баталгаажуулалт",
-      "maybeLater": "Дараа хийе"
+      "maybeLater": "Дараа хийе",
+      "danTitle": "Хурдан баталгаажуулалт",
+      "danSuccess": "Баталгаажуулалт амжилттай!",
+      "danSuccessDescription": "Таны хаяг E-Mongolia-р баталгаажлаа. Одоо даалгавруудад анкет илгээх боломжтой.",
+      "danDescription": "E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй.",
+      "danEmongoliaButton": "E-Mongolia-р баталгаажуулах",
+      "danManualButton": "Гар аргаар баталгаажуулах",
+      "danBrowseButton": "Даалгавар хайх"
     },
     "jobs": {
       "title": "Миний ажлууд",
@@ -1199,24 +1206,12 @@
   },
   "matching": {
     "instantMatch": {
-      "backToTask": "Back to task",
-      "confirmBooking": "Confirm booking",
-      "countdownLabel": "Хариу хүлээх хугацаа",
-      "declineCount": "{count}/3 татгалзсан",
-      "heroError": "No eligible taskers nearby",
-      "heroFallback": "Instant match could not secure a tasker.",
-      "heroFallbackBody": "Your task is now open for applications.",
-      "heroMatched": "Tasker found",
-      "heroSearching": "Finding your tasker",
-      "matchedStatus": "Гүйцэтгэгч олдлоо! Хариу хүлээж байна...",
-      "noEligibleTitle": "No eligible taskers nearby",
-      "pageTitle": "Нууцлалын бодлого",
-      "previewMeta": "Matching in progress",
-      "previewName": "Tasky instant match",
-      "sampleTaskerName": "Sampletaskername",
-      "taskLabel": "Даалгавар",
-      "verifiedTasker": "Verified Tasker",
-      "viewApplicants": "View applicants"
+      "successTitle": "Амжилттай!",
+      "successDescription": "Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу",
+      "newOfferTitle": "Шинэ санал!",
+      "newOfferDescription": "Танд шинэ шууд холболтын санал ирлээ.",
+      "acceptButton": "Хүлээн авах",
+      "declineButton": "Татгалзах"
     }
   },
   "offline": {

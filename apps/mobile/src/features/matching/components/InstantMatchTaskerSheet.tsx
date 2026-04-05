@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -26,6 +27,7 @@ export function InstantMatchTaskerSheet({
   onAccept,
   onDecline,
 }: InstantMatchTaskerSheetProps) {
+  const { t } = useTranslation();
   const [isAccepted, setIsAccepted] = React.useState(false);
 
   React.useEffect(() => {
@@ -54,9 +56,12 @@ export function InstantMatchTaskerSheet({
     return (
       <View style={styles.scrim}>
         <View style={styles.sheet} testID="instant-match-sheet">
-          <Text style={styles.title}>Амжилттай!</Text>
+          <Text style={styles.title}>{t('matching.instantMatch.successTitle', 'Success!')}</Text>
           <Text style={styles.description}>
-            Шинэ захиалга үүслээ. Миний ажлууд хэсгээс харна уу
+            {t(
+              'matching.instantMatch.successDescription',
+              'A new booking was created. Check My Jobs section.',
+            )}
           </Text>
         </View>
       </View>
@@ -67,15 +72,25 @@ export function InstantMatchTaskerSheet({
     <View style={styles.scrim}>
       <View style={styles.sheet} testID="instant-match-sheet">
         <View style={styles.handle} />
-        <Text style={styles.title}>Шинэ санал!</Text>
-        <Text style={styles.description}>Танд шинэ шууд холболтын санал ирлээ.</Text>
+        <Text style={styles.title}>{t('matching.instantMatch.newOfferTitle', 'New offer!')}</Text>
+        <Text style={styles.description}>
+          {t('matching.instantMatch.newOfferDescription', 'You have a new instant match offer.')}
+        </Text>
         <View style={styles.card}>
           <Text style={styles.taskTitle}>{taskTitle}</Text>
           <Text style={styles.budget}>{budgetLabel}</Text>
           <Text style={styles.timer}>{DEFAULT_TIME_REMAINING}</Text>
         </View>
-        <Button testID="instant-match-accept" label="Хүлээн авах" onPress={handleAccept} />
-        <Button label="Татгалзах" variant="ghost" onPress={handleDecline} />
+        <Button
+          testID="instant-match-accept"
+          label={t('matching.instantMatch.acceptButton', 'Accept')}
+          onPress={handleAccept}
+        />
+        <Button
+          label={t('matching.instantMatch.declineButton', 'Decline')}
+          variant="ghost"
+          onPress={handleDecline}
+        />
       </View>
     </View>
   );
