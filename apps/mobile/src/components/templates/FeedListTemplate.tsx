@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { screenLayout } from '../../design/screenLayout';
 import { animationPresets } from '../../design/animations';
 import { EmptyStateTemplate } from './EmptyStateTemplate';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
@@ -189,20 +190,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.header.topInset,
+    paddingBottom: screenLayout.chrome.contentBottomClearance,
   },
   separator: {
-    height: spacing.md,
+    height: screenLayout.body.itemGap,
   },
   skeletonList: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.header.topInset,
   },
   skeletonCard: {
     backgroundColor: colors.muted,
     borderRadius: radius.md,
-    padding: spacing.lg,
+    padding: screenLayout.body.cardPadding,
     gap: spacing.sm,
   },
   skeletonLine: {
