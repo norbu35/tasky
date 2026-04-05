@@ -30,7 +30,7 @@ function formatSchedule(value?: string | null) {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <View testID="SCR-CUST-009" style={styles.detailRow}>
+    <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>{label}</Text>
       <Text style={styles.detailValue}>{value}</Text>
     </View>
@@ -106,7 +106,7 @@ export default function TaskDetailCustomerScreen() {
   return (
     <>
       <DetailTemplate
-        testID="task-detail-customer-screen"
+        testID="SCR-CUST-009"
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}
