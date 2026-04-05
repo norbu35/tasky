@@ -10,6 +10,13 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
 }));
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, fallback?: string) => fallback || key,
+    i18n: { language: 'en' },
+  }),
+}));
+
 beforeEach(() => {
   mockParams = {};
 });
@@ -19,7 +26,7 @@ describe('WalletPayoutScreen (SCR-P3-002)', () => {
     render(<WalletPayoutScreen />);
 
     expect(screen.getByTestId('wallet-payout-screen')).toBeTruthy();
-    expect(screen.getByText('Мөнгө татах')).toBeTruthy();
+    expect(screen.getByText('Request Payout')).toBeTruthy();
     expect(screen.getByPlaceholderText('₮0')).toBeTruthy();
   });
 
@@ -27,7 +34,7 @@ describe('WalletPayoutScreen (SCR-P3-002)', () => {
     mockParams = { state: 'submitted' };
     render(<WalletPayoutScreen />);
 
-    expect(screen.getByText('Хүсэлт амжилттай илгээгдлээ')).toBeTruthy();
+    expect(screen.getByText('Request submitted successfully')).toBeTruthy();
   });
 
   it('shows below-minimum validation', () => {
@@ -35,6 +42,6 @@ describe('WalletPayoutScreen (SCR-P3-002)', () => {
 
     fireEvent.changeText(screen.getByPlaceholderText('₮0'), '5000');
     fireEvent.press(screen.getByTestId('wallet-payout-submit'));
-    expect(screen.getByText('Хамгийн бага дүн: ₮10,000')).toBeTruthy();
+    expect(screen.getByText('Minimum amount: ₮10,000')).toBeTruthy();
   });
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -11,6 +12,7 @@ type PayoutState = 'default' | 'submitted';
 
 export default function WalletPayoutScreen() {
   const params = useLocalSearchParams<{ state?: PayoutState }>();
+  const { t } = useTranslation();
   const [amount, setAmount] = React.useState('');
   const [showError, setShowError] = React.useState(false);
   const state = params.state === 'submitted' ? 'submitted' : 'default';
@@ -18,7 +20,9 @@ export default function WalletPayoutScreen() {
   if (state === 'submitted') {
     return (
       <View testID="SCR-P3-002" style={styles.successContainer}>
-        <Text style={styles.title}>Хүсэлт амжилттай илгээгдлээ</Text>
+        <Text style={styles.title}>
+          {t('tasker.wallet.payoutSuccess', 'Request submitted successfully')}
+        </Text>
       </View>
     );
   }
@@ -29,8 +33,10 @@ export default function WalletPayoutScreen() {
       contentContainerStyle={styles.content}
       testID="wallet-payout-screen"
     >
-      <Text style={styles.title}>Мөнгө татах</Text>
-      <Text style={styles.balance}>Боломжит үлдэгдэл: ₮120,000</Text>
+      <Text style={styles.title}>{t('tasker.wallet.payoutTitle', 'Request Payout')}</Text>
+      <Text style={styles.balance}>
+        {t('tasker.wallet.payoutBalance', 'Available balance: ₮120,000')}
+      </Text>
       <Input
         value={amount}
         onChangeText={setAmount}
@@ -38,10 +44,14 @@ export default function WalletPayoutScreen() {
         placeholderTextColor={colors.textSecondary}
         style={styles.input}
       />
-      {showError ? <Text style={styles.error}>Хамгийн бага дүн: ₮10,000</Text> : null}
+      {showError ? (
+        <Text style={styles.error}>
+          {t('tasker.wallet.payoutMinError', 'Minimum amount: ₮10,000')}
+        </Text>
+      ) : null}
       <Button
         testID="wallet-payout-submit"
-        label="Хүсэлт илгээх"
+        label={t('tasker.wallet.payoutSubmit', 'Submit request')}
         onPress={() => setShowError(Number(amount || 0) < 10000)}
       />
     </ScrollView>

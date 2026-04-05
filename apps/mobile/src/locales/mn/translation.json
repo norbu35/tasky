@@ -954,6 +954,17 @@
       "toastError": "Маргаан илгээхэд алдаа гарлаа",
       "toastSuccess": "Санал болгосон текст хадгалагдлаа",
       "toneLabel": "Хэв маяг"
+    },
+    "wallet": {
+      "title": "Хэтэвч",
+      "availableBalance": "Боломжит үлдэгдэл",
+      "totalEarnings": "Нийт орлого",
+      "pending": "Хүлээгдэж буй",
+      "payoutTitle": "Мөнгө татах",
+      "payoutBalance": "Боломжит үлдэгдэл: ₮120,000",
+      "payoutMinError": "Хамгийн бага дүн: ₮10,000",
+      "payoutSuccess": "Хүсэлт амжилттай илгээгдлээ",
+      "payoutSubmit": "Хүсэлт илгээх"
     }
   },
   "shared": {

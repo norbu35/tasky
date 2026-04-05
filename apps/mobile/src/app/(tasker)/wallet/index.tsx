@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -8,29 +9,31 @@ const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function WalletScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
-    <ScrollView testID="SCR-P3-001"
-      style={styles.container}
-      contentContainerStyle={styles.content}
-     
-    >
-      <Text style={styles.navTitle}>Хэтэвч</Text>
+    <ScrollView testID="SCR-P3-001" style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.navTitle}>{t('tasker.wallet.title', 'Wallet')}</Text>
       <View style={styles.heroCard}>
-        <Text style={styles.heroLabel}>Боломжит үлдэгдэл</Text>
+        <Text style={styles.heroLabel}>
+          {t('tasker.wallet.availableBalance', 'Available Balance')}
+        </Text>
         <Text style={styles.heroAmount}>₮120,000</Text>
       </View>
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Нийт орлого</Text>
+          <Text style={styles.statLabel}>{t('tasker.wallet.totalEarnings', 'Total Earnings')}</Text>
           <Text style={styles.statValue}>₮450,000</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Хүлээгдэж буй</Text>
+          <Text style={styles.statLabel}>{t('tasker.wallet.pending', 'Pending')}</Text>
           <Text style={styles.statValue}>₮80,000</Text>
         </View>
       </View>
-      <Button label="Мөнгө татах" onPress={() => router.push('/(tasker)/wallet/payout')} />
+      <Button
+        label={t('tasker.wallet.payoutTitle', 'Request Payout')}
+        onPress={() => router.push('/(tasker)/wallet/payout')}
+      />
     </ScrollView>
   );
 }
