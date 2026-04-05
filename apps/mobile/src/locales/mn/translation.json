@@ -894,7 +894,8 @@
       "confirmBody": "Tasker Pro subscription-ийг идэвхжүүлэх үү?",
       "confirmTitle": "Сонголтоо шалгана уу",
       "subscribeAction": "Бүртгүүлэх",
-      "ineligibleDesc": "Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай"
+      "ineligibleDesc": "Tasker Pro бүртгэлд нийцэхийн тулд 4.5+ үнэлгээ шаардлагатай",
+      "cancelText": "Цуцлах"
     },
     "referrals": {
       "heroTitle": "Гүйцэтгэгч урих",
@@ -1176,7 +1177,25 @@
       "newOfferTitle": "Шинэ санал!",
       "newOfferDescription": "Танд шинэ шууд холболтын санал ирлээ.",
       "acceptButton": "Хүлээн авах",
-      "declineButton": "Татгалзах"
+      "declineButton": "Татгалзах",
+      "backToTask": "Даалгавар руу буцах",
+      "confirmBooking": "Захиалга баталгаажуулах",
+      "countdownLabel": "Хүлээж байна",
+      "heroError": "Ойролцоо боломжтой таскер байхгүй",
+      "heroFallback": "Шууд тохирол боломжгүй болов.",
+      "heroFallbackBody": "Таны даалгавар өргөдөл хүлээн авах болов.",
+      "heroMatched": "Таскер олдлоо",
+      "heroSearching": "Таскер хайж байна",
+      "matchedStatus": "Таскер олдлоо",
+      "noEligibleTitle": "Ойролцоо боломжтой таскер байхгүй",
+      "pageTitle": "Шууд тохирол",
+      "previewMeta": "Тохирол хийж байна",
+      "previewName": "Tasky шууд тохирол",
+      "sampleTaskerName": "Таскер",
+      "taskLabel": "Даалгавар",
+      "verifiedTasker": "Баталгаажсан таскер",
+      "viewApplicants": "Өргөдлүүдийг харах",
+      "declineCount": "{{count}}/3 татгалзсан"
     }
   },
   "offline": {

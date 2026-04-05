@@ -894,7 +894,8 @@
       "confirmBody": "Activate Tasker Pro subscription?",
       "confirmTitle": "Confirm your choice",
       "subscribeAction": "Subscribe",
-      "ineligibleDesc": "Tasker Pro requires 4.5+ rating to be eligible"
+      "ineligibleDesc": "Tasker Pro requires 4.5+ rating to be eligible",
+      "cancelText": "Cancel"
     },
     "referrals": {
       "heroTitle": "Invite a tasker",
@@ -1176,7 +1177,25 @@
       "newOfferTitle": "New offer!",
       "newOfferDescription": "You have a new instant match offer.",
       "acceptButton": "Accept",
-      "declineButton": "Decline"
+      "declineButton": "Decline",
+      "backToTask": "Back to task",
+      "confirmBooking": "Confirm booking",
+      "countdownLabel": "Waiting for acceptance",
+      "heroError": "No eligible taskers nearby",
+      "heroFallback": "Instant match could not secure a tasker.",
+      "heroFallbackBody": "Your task is now open for applications.",
+      "heroMatched": "Tasker found",
+      "heroSearching": "Finding your tasker",
+      "matchedStatus": "Tasker found",
+      "noEligibleTitle": "No eligible taskers nearby",
+      "pageTitle": "Instant Match",
+      "previewMeta": "Matching in progress",
+      "previewName": "Tasky instant match",
+      "sampleTaskerName": "Tasker",
+      "taskLabel": "Task",
+      "verifiedTasker": "Verified Tasker",
+      "viewApplicants": "View applicants",
+      "declineCount": "{{count}}/3 declined"
     }
   },
   "offline": {
