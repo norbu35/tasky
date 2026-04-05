@@ -76,9 +76,7 @@ function ChipGroup({
 
   const toggle = (opt: string) => {
     if (multi) {
-      const arr = selected.includes(opt)
-        ? selected.filter((s) => s !== opt)
-        : [...selected, opt];
+      const arr = selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt];
       onChange(arr);
     } else {
       onChange(opt);
@@ -86,7 +84,7 @@ function ChipGroup({
   };
 
   return (
-    <View testID="SCR-CUST-003" style={styles.chipRow}>
+    <View style={styles.chipRow}>
       {options.map((opt) => {
         const active = selected.includes(opt);
         return (
@@ -114,10 +112,11 @@ function YesNo({
   onChange: (v: boolean) => void;
   testIDPrefix: string;
 }) {
+  const { t } = useTranslation();
   return (
     <View style={styles.chipRow}>
       {([true, false] as const).map((opt) => {
-        const label = opt ? 'Yes' : 'No';
+        const label = opt ? t('common.yes', 'Тийм') : t('common.no', 'Үгүй');
         const active = value === opt;
         return (
           <Pressable
@@ -290,9 +289,7 @@ export default function IntakeFormScreen() {
             onChangeText={(text: string) => {
               setField(field.key, text === '' ? '' : Number(text));
             }}
-            placeholder={
-              field.min != null && field.max != null ? `${field.min}–${field.max}` : ''
-            }
+            placeholder={field.min != null && field.max != null ? `${field.min}–${field.max}` : ''}
             keyboardType="numeric"
             maxLength={3}
             invalid={!!error}
@@ -310,14 +307,9 @@ export default function IntakeFormScreen() {
       onNext={handleNext}
       onBack={() => router.back()}
       nextLabel={t('common.continue', 'Continue')}
-      testID="intake-form-screen"
+      testID="SCR-CUST-003"
     >
-      <View style={styles.headerBlock}>
-        <Text style={styles.stepLabel}>
-          {t('taskPost.step', 'Step {{current}} of {{total}}')
-            .replace('{{current}}', '2')
-            .replace('{{total}}', '7')}
-        </Text>
+      <View style={styles.headerBlock} testID="intake-header">
         <Text style={styles.title}>{t('customer.postTask.intakePageTitle', 'Task Details')}</Text>
         <Text style={styles.instruction}>
           {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
@@ -356,13 +348,6 @@ const styles = StyleSheet.create({
   headerBlock: {
     gap: spacing.sm,
     paddingTop: spacing.sm,
-  },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
   },
   title: {
     fontSize: typography.heading,

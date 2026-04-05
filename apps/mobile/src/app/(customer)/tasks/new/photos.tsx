@@ -61,7 +61,8 @@ export default function PhotoUploadScreen() {
   };
 
   return (
-    <FormWizardTemplate testID="SCR-CUST-004"
+    <FormWizardTemplate
+      testID="SCR-CUST-004"
       currentStep={2}
       totalSteps={7}
       onNext={handleNext}
@@ -73,11 +74,6 @@ export default function PhotoUploadScreen() {
       }
     >
       <View style={styles.progressHeader}>
-        <Text style={styles.stepLabel}>
-          {t('taskPost.step', 'Step {{current}} of {{total}}')
-            .replace('{{current}}', '3')
-            .replace('{{total}}', '7')}
-        </Text>
         <Text style={styles.progressHint}>
           {t('customer.postTask.photosProgressHint', 'Almost done')}
         </Text>
@@ -148,13 +144,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.sm,
-  },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
   },
   progressHint: {
     fontSize: typography.caption,

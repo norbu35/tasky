@@ -69,7 +69,8 @@ export default function LocationScreen() {
   };
 
   return (
-    <FormWizardTemplate testID="SCR-CUST-005"
+    <FormWizardTemplate
+      testID="SCR-CUST-005"
       currentStep={3}
       totalSteps={7}
       onNext={handleNext}
@@ -78,11 +79,6 @@ export default function LocationScreen() {
       nextDisabled={!pin}
     >
       <View style={styles.hero}>
-        <Text style={styles.stepLabel}>
-          {t('taskPost.step', 'Step {{current}} of {{total}}')
-            .replace('{{current}}', '4')
-            .replace('{{total}}', '7')}
-        </Text>
         <Text style={styles.title}>{t('customer.postTask.locationPageTitle', 'Set Location')}</Text>
         <Text style={styles.instruction}>
           {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
@@ -210,13 +206,6 @@ export default function LocationScreen() {
 const styles = StyleSheet.create({
   hero: {
     gap: spacing.sm,
-  },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
   },
   title: {
     fontSize: typography.heading,

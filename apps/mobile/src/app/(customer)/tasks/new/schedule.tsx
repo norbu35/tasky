@@ -175,7 +175,8 @@ export default function ScheduleBudgetScreen() {
   };
 
   return (
-    <FormWizardTemplate testID="SCR-CUST-006"
+    <FormWizardTemplate
+      testID="SCR-CUST-006"
       currentStep={4}
       totalSteps={7}
       onNext={handleNext}
@@ -183,12 +184,7 @@ export default function ScheduleBudgetScreen() {
       nextLabel={t('common.continue', 'Continue')}
       nextDisabled={!canContinue}
     >
-      <View style={styles.hero}>
-        <Text style={styles.stepLabel}>
-          {t('taskPost.step', 'Step {{current}} of {{total}}')
-            .replace('{{current}}', '5')
-            .replace('{{total}}', '7')}
-        </Text>
+      <View style={styles.hero} testID="schedule-header">
         <Text style={styles.title}>
           {t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}
         </Text>
@@ -296,17 +292,6 @@ export default function ScheduleBudgetScreen() {
                 {t('customer.postTask.schedulePickerHint', 'Confirm your selection')}
               </Text>
             </View>
-            <DateTimePicker
-              testID={
-                activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'
-              }
-              value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
-              mode={activePicker.mode}
-              display="spinner"
-              is24Hour
-              onChange={handlePickerChange}
-              minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
-            />
             <View style={styles.iosPickerActions}>
               <Button
                 testID="schedule-picker-cancel"
@@ -322,6 +307,17 @@ export default function ScheduleBudgetScreen() {
                 style={styles.iosPickerActionButton}
               />
             </View>
+            <DateTimePicker
+              testID={
+                activePicker.mode === 'date' ? 'schedule-date-picker' : 'schedule-time-picker'
+              }
+              value={toValidDate(activePicker.draftValue, createDefaultScheduleDate())}
+              mode={activePicker.mode}
+              display="spinner"
+              is24Hour
+              onChange={handlePickerChange}
+              minimumDate={activePicker.mode === 'date' ? new Date() : undefined}
+            />
           </View>
         ) : (
           <DateTimePicker
@@ -341,13 +337,6 @@ export default function ScheduleBudgetScreen() {
 const styles = StyleSheet.create({
   hero: {
     gap: spacing.sm,
-  },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
   },
   title: {
     fontSize: typography.heading,
