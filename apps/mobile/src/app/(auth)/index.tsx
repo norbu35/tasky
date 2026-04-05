@@ -70,8 +70,9 @@ export default function LoginScreen() {
         <View style={styles.actions}>
           <Button
             testID="facebook-login-button"
-            label={t('auth.login.facebookButton', 'Facebook-ээр нэвтрэх')}
-            onPress={() => { void handleFacebookLogin(); }}
+            onPress={() => {
+              void handleFacebookLogin();
+            }}
             disabled={isFacebookLoading}
             isLoading={isFacebookLoading}
             style={styles.facebookButton}
@@ -87,7 +88,9 @@ export default function LoginScreen() {
           </Button>
 
           {state === 'error' && errorMessage ? (
-            <Text testID="login-error" style={styles.errorText}>{errorMessage}</Text>
+            <Text testID="login-error" style={styles.errorText}>
+              {errorMessage}
+            </Text>
           ) : null}
 
           {devAuthEnabled ? (
@@ -117,20 +120,18 @@ export default function LoginScreen() {
       footerSlot={
         <View style={styles.footerLinks}>
           <Pressable
+            testID="login-footer-terms"
             onPress={() => router.push('/(shared)/legal/terms')}
             accessibilityRole="link"
           >
-            <Text style={styles.footerLink}>
-              {t('auth.login.terms', 'Үйлчилгээний нөхцөл')}
-            </Text>
+            <Text style={styles.footerLink}>{t('auth.login.terms', 'Үйлчилгээний нөхцөл')}</Text>
           </Pressable>
           <Pressable
+            testID="login-footer-privacy"
             onPress={() => router.push('/(shared)/legal/privacy')}
             accessibilityRole="link"
           >
-            <Text style={styles.footerLink}>
-              {t('auth.login.privacy', 'Нууцлалын бодлого')}
-            </Text>
+            <Text style={styles.footerLink}>{t('auth.login.privacy', 'Нууцлалын бодлого')}</Text>
           </Pressable>
           <Text style={styles.copyright}>
             {t('auth.login.copyright', '© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')}
