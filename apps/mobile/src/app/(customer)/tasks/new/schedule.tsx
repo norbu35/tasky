@@ -403,11 +403,6 @@ const styles = StyleSheet.create({
   budgetSection: {
     gap: spacing.sm,
   },
-  budgetHeading: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
   budgetGoldHint: {
     fontSize: typography.caption,
     color: colors.secondary,
