@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { StyleSheet, Platform, Pressable, View } from 'react-native';
+import { StyleSheet, Pressable, View } from 'react-native';
 import {
   Briefcase,
   ClipboardList,
@@ -10,6 +10,7 @@ import {
   User,
 } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { screenLayout } from '../../design/screenLayout';
 import { FAB } from '../../components/ui/FAB';
 import { useTranslation } from 'react-i18next';
 import { useRole } from '../../providers/RoleProvider';
@@ -103,8 +104,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderTopWidth: 0,
     elevation: 0,
-    height: Platform.OS === 'ios' ? 88 : 64,
-    paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.sm,
+    height: screenLayout.chrome.tabBarHeight,
+    bottom: screenLayout.chrome.tabBarBottom,
+    paddingBottom: spacing.sm,
     paddingTop: spacing.sm,
     paddingHorizontal: spacing.lg,
     backgroundColor: 'transparent',
