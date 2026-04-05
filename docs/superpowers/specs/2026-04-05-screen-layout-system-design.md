@@ -70,13 +70,9 @@ export const screenLayout = {
     get fabBottom() {
       return this.tabBarHeight + this.tabBarBottom + spacing.sm;
     },
-    /** Minimum clearance for scrollable content — clears tab bar only (e.g., profile, inbox) */
+    /** Minimum clearance for scrollable content — clears tab bar. FAB intentionally floats over scroll content (standard pattern). */
     get contentBottomClearance() {
       return this.tabBarHeight + this.tabBarBottom + spacing.md;
-    },
-    /** Minimum clearance for scrollable content on screens with a FAB (e.g., customer My Tasks) */
-    get contentBottomClearanceWithFab() {
-      return this.fabBottom + this.fabSize + spacing.sm;
     },
   },
 
@@ -134,7 +130,7 @@ export const screenTypography = {
 - `listContent.paddingHorizontal` -> `screenLayout.insetX`
 - `listContent.paddingTop` -> `screenLayout.header.topInset`
 - `separator.height` -> `screenLayout.body.itemGap`
-- Add `listContent.paddingBottom` -> `screenLayout.chrome.contentBottomClearanceWithFab` (FeedListTemplate is always used inside tab screens that may have a FAB; the extra clearance is harmless on tasker screens where no FAB renders)
+- Add `listContent.paddingBottom` -> `screenLayout.chrome.contentBottomClearance`
 - `skeletonList` padding matches the same tokens.
 
 ### 2.2 `DetailTemplate`
@@ -188,7 +184,7 @@ export const screenTypography = {
 - `headerCopy` gap (greeting to title): `screenLayout.header.greetingGap` (4px)
 - `pageTitle.marginTop` -> `screenLayout.header.greetingGap` (replacing `screenRhythm.microGap`)
 - Hero card gap to first list item: `screenLayout.header.bottomGap` (24px)
-- `listContent.paddingBottom` -> `screenLayout.chrome.contentBottomClearanceWithFab` (customer My Tasks has the FAB)
+- `listContent.paddingBottom` -> `screenLayout.chrome.contentBottomClearance`
 - All `screenRhythm.*` imports replaced with `screenLayout.*` equivalents.
 
 ### 3.2 Profile Tab — Edit Action UX Redesign
