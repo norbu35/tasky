@@ -83,6 +83,27 @@
       "heading": "Та хэн бэ?"
     },
     "permissions": {
+      "continueLabel": "Continue",
+      "allowLabel": "Allow",
+      "skipLabel": "Skip for now",
+      "camera": {
+        "title": "Camera Permission",
+        "description": "Camera is needed for photos and verification",
+        "denied": "Camera permission denied",
+        "settingsHint": "You can enable camera in Settings"
+      },
+      "location": {
+        "title": "Location Permission",
+        "description": "Needed to show nearby tasks and set location",
+        "denied": "Location permission denied",
+        "settingsHint": "You can enable location in Settings"
+      },
+      "notifications": {
+        "title": "Notification Permission",
+        "description": "Get notified about task updates and messages",
+        "denied": "Notification permission denied",
+        "settingsHint": "You can enable notifications in Settings"
+      },
       "cameraTitle": "Camera Permission",
       "cameraDescription": "Camera is needed for photos and verification",
       "cameraDenied": "Camera permission denied",
@@ -113,15 +134,15 @@
   },
   "nav": {
     "profile": "Profile",
-    "tasks": "My Tasks",
     "inbox": "Inbox",
-    "explore": "Explore",
-    "bookings": "Bookings",
-    "messages": "Messages",
-    "findWork": "FIND WORK",
-    "myJobs": "MY JOBS",
-    "myTasks": "MY TASKS",
-    "myBookings": "BOOKINGS"
+    "customer": {
+      "myTasks": "My Tasks",
+      "bookings": "Bookings"
+    },
+    "tasker": {
+      "browse": "Browse",
+      "myJobs": "My Jobs"
+    }
   },
   "common": {
     "loading": "Loading...",

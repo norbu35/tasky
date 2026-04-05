@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react-native';
 import { PermissionPrimer } from '../../components/ui';
+import { ScreenContainer } from '../../components/shells';
 import { requestNotificationPermission } from '../../utils/permissions';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -24,7 +24,7 @@ export default function PermissionNotificationsScreen() {
 
   const handleGrant = async () => {
     const result = await requestNotificationPermission();
-    if (result.status === 'granted') {
+    if (result.status === 'granted' || result.status === 'unavailable') {
       finishFlow();
       return;
     }
@@ -32,22 +32,22 @@ export default function PermissionNotificationsScreen() {
   };
 
   return (
-    <View testID="SCR-SHARED-009" style={styles.container}>
+    <ScreenContainer testID="SCR-SHARED-009">
       <PermissionPrimer
         icon={<Bell size={48} color={colors.primaryDeep} />}
-        title={t('auth.permissions.notificationsTitle', 'Мэдэгдэл авах зөвшөөрөл')}
+        title={t('auth.permissions.notifications.title', 'Мэдэгдэл авах зөвшөөрөл')}
         description={t(
-          'auth.permissions.notificationsDescription',
+          'auth.permissions.notifications.description',
           'Шинэ өргөдөл, захиалгын мэдээллийг цаг тухайд нь авахын тулд мэдэгдлийг зөвшөөрнө үү',
         )}
-        deniedMessage={t('auth.permissions.notificationsDenied', 'Мэдэгдлийн зөвшөөрөл хаагдсан')}
+        deniedMessage={t('auth.permissions.notifications.denied', 'Мэдэгдлийн зөвшөөрөл хаагдсан')}
         settingsHint={t(
-          'auth.permissions.notificationsSettings',
+          'auth.permissions.notifications.settingsHint',
           'Тохиргооноос мэдэгдлийг нээх боломжтой',
         )}
-        continueLabel={t('auth.permissions.continue', 'Үргэлжлүүлэх')}
-        allowLabel={t('auth.permissions.allow', 'Зөвшөөрөх')}
-        skipLabel={t('auth.permissions.skip', 'Дараа хийх')}
+        continueLabel={t('auth.permissions.continueLabel', 'Үргэлжлүүлэх')}
+        allowLabel={t('auth.permissions.allowLabel', 'Зөвшөөрөх')}
+        skipLabel={t('auth.permissions.skipLabel', 'Дараа хийх')}
         isDenied={isDenied}
         onGrant={() => {
           void handleGrant();
@@ -56,14 +56,6 @@ export default function PermissionNotificationsScreen() {
         onContinue={finishFlow}
         testID="permission-notifications-primer"
       />
-
-    </View>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-});
