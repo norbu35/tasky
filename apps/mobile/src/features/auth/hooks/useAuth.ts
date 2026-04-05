@@ -122,12 +122,7 @@ export function useDevLogin() {
           console.error('Failed to fetch profile after dev login', e);
         }
       }
-      const { hasSeenOnboarding } = useAppStore.getState();
-      if (!hasSeenOnboarding) {
-        router.replace('/onboarding');
-      } else {
-        router.replace('/(tabs)');
-      }
+      router.replace('/(tabs)');
     },
   });
 }
