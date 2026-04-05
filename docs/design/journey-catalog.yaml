@@ -259,18 +259,18 @@ journeys:
       - step: 4
         screen: SCR-CUST-004
         action: "Upload photos (0-3)"
-        next: SCR-CUST-007
-      - step: 5
-        screen: SCR-CUST-007
-        action: "Review auto-generated Job Scope Summary (editable)"
         next: SCR-CUST-005
-      - step: 6
+      - step: 5
         screen: SCR-CUST-005
         action: "Pin location on map"
         next: SCR-CUST-006
-      - step: 7
+      - step: 6
         screen: SCR-CUST-006
-        action: "Set schedule and budget, then Post Task"
+        action: "Set schedule and budget"
+        next: SCR-CUST-007
+      - step: 7
+        screen: SCR-CUST-007
+        action: "Review auto-generated Job Scope Summary (editable), then Post Task"
         next: SCR-CUST-008
         lifecycle: "TASK-T01 (customer_publishes_task)"
       - step: 8
@@ -281,8 +281,8 @@ journeys:
       - id: JRN-CUST-01-A1
         name: "Validation error"
         branch_at: 7
-        condition: "Invalid form data"
-        screens: [SCR-CUST-006]
+        condition: "Invalid form data on review"
+        screens: [SCR-CUST-007]
         outcome: "Inline errors, user corrects"
       - id: JRN-CUST-01-A2
         name: "Photo upload fails"
@@ -292,7 +292,7 @@ journeys:
         outcome: "Error state, retry"
       - id: JRN-CUST-01-A3
         name: "Location permission denied"
-        branch_at: 6
+        branch_at: 5
         condition: "No location permission"
         screens: [SCR-CUST-005]
         outcome: "Manual pin placement"
@@ -300,8 +300,8 @@ journeys:
         name: "Skip photos"
         branch_at: 4
         condition: "User chooses no photos"
-        screens: [SCR-CUST-004, SCR-CUST-007]
-        outcome: "Proceed to Job Scope Summary without photos"
+        screens: [SCR-CUST-004, SCR-CUST-005]
+        outcome: "Proceed to location without photos"
 
   - id: JRN-CUST-02
     name: "Review Applicants & Confirm Booking (Phase 0-1)"

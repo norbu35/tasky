@@ -120,8 +120,8 @@ technical capability.
 1. **Onboarding**: User downloads app → Authenticates (Phase 0-1: Facebook OAuth; Phase 2+: Phone OTP) → Creates
    Profile (Name, Avatar).
 2. **Post a Task**: User selects "Cleaning" → Completes category-specific structured intake form (3-5 fixed questions)
-   → Reviews auto-generated "Job Scope Summary" (editable) → Sets Location (Pin + "Behind State Dept Store") → Sets
-   Schedule ("Tomorrow 10 AM") → Sets Budget ("50,000 MNT") → Posts Task.
+   → Uploads Photos (0-3, optional) → Sets Location (Pin + "Behind State Dept Store") → Sets Schedule ("Tomorrow
+   10 AM") → Sets Budget ("50,000 MNT") → Reviews auto-generated "Job Scope Summary" (editable) → Posts Task.
 3. **Matching and Fast Confirmation** *(model evolves by phase — see Section 7.3)*:
     * *Phase 0–1 (Open Application):* User receives notifications of interested Taskers who applied → Views Tasker
       Profiles (Rating, Verified Badge, Review Count) → Accepts one.
