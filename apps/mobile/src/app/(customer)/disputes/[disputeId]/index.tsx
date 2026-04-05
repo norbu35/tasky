@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,6 +8,7 @@ import {
   CircleCheckBig,
   CircleAlert,
   Circle,
+  Scale,
 } from 'lucide-react-native';
 import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
 import { useDisputeDetail } from '../../../../features/disputes/hooks/useDisputeDetail';
@@ -23,9 +17,6 @@ import { elevations } from '../../../../design/elevations';
 import { screenRhythm } from '../../../../design/screenRhythm';
 
 const { colors, spacing, typography, radius } = mobileTheme;
-
-const imgDisputeDecorative =
-  'https://www.figma.com/api/mcp/asset/bc24413e-83d2-4bf1-8f8d-ca5ab7389b01';
 
 type DisputeStatus =
   | 'OPEN'
@@ -39,7 +30,10 @@ type DisputeLike = {
   booking_id: string;
   reason: string;
   status: DisputeStatus | string;
-  evidence?: (string | { type: string; text_payload?: string | null; storage_key?: string | null })[];
+  evidence?: (
+    | string
+    | { type: string; text_payload?: string | null; storage_key?: string | null }
+  )[];
   created_at: string;
   resolved_at?: string | null;
   booking?: {
@@ -253,198 +247,194 @@ export default function DisputeStatusScreen() {
 
   return (
     <ScreenContainer testID="dispute-status-screen">
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => router.back()}
-            style={styles.headerBackButton}
-            hitSlop={spacing.sm}
-            testID="dispute-status-back"
-          >
-            <ChevronLeft size={22} color={colors.primary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>
-            {t('customer.disputes.pageTitle', 'Маргааны төлөв')}
-          </Text>
-          <View style={styles.headerSpacer} />
-        </View>
-        <InsetScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          extraBottomInset={spacing.xl}
+      <View style={styles.header}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.back()}
+          style={styles.headerBackButton}
+          hitSlop={spacing.sm}
+          testID="dispute-status-back"
         >
-          {isLoading ? (
-            <View style={styles.loadingState}>
-              <ActivityIndicator size="small" color={colors.primaryDeep} />
-            </View>
-          ) : isError ? (
-            <View style={styles.errorCard}>
-              <CircleAlert size={28} color={colors.danger} />
-              <Text style={styles.errorTitle}>
-                {t('customer.disputes.errorToast', 'Маргааны мэдээлэл ачааллахад алдаа гарлаа')}
-              </Text>
-              <Pressable onPress={() => void refetch()} style={styles.retryButton}>
-                <Text style={styles.retryLabel}>
-                  {t('customer.disputes.retry', 'Дахин оролдох')}
-                </Text>
-              </Pressable>
-            </View>
-          ) : dispute ? (
-            <>
-              <View style={styles.statusHeader}>
-                <View style={styles.badgeWrap}>
-                  <View
+          <ChevronLeft size={22} color={colors.primary} />
+        </Pressable>
+        <Text style={styles.headerTitle}>{t('customer.disputes.pageTitle', 'Маргааны төлөв')}</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+      <InsetScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        extraBottomInset={spacing.xl}
+      >
+        {isLoading ? (
+          <View style={styles.loadingState}>
+            <ActivityIndicator size="small" color={colors.primaryDeep} />
+          </View>
+        ) : isError ? (
+          <View style={styles.errorCard}>
+            <CircleAlert size={28} color={colors.danger} />
+            <Text style={styles.errorTitle}>
+              {t('customer.disputes.errorToast', 'Маргааны мэдээлэл ачааллахад алдаа гарлаа')}
+            </Text>
+            <Pressable onPress={() => void refetch()} style={styles.retryButton}>
+              <Text style={styles.retryLabel}>{t('customer.disputes.retry', 'Дахин оролдох')}</Text>
+            </Pressable>
+          </View>
+        ) : dispute ? (
+          <>
+            <View style={styles.statusHeader}>
+              <View style={styles.badgeWrap}>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    meta.badgeStyle === 'warning' && styles.statusBadgeWarning,
+                    meta.badgeStyle === 'success' && styles.statusBadgeSuccess,
+                    meta.badgeStyle === 'neutral' && styles.statusBadgeNeutral,
+                    meta.badgeStyle === 'danger' && styles.statusBadgeDanger,
+                  ]}
+                >
+                  <Text
                     style={[
-                      styles.statusBadge,
-                      meta.badgeStyle === 'warning' && styles.statusBadgeWarning,
-                      meta.badgeStyle === 'success' && styles.statusBadgeSuccess,
-                      meta.badgeStyle === 'neutral' && styles.statusBadgeNeutral,
-                      meta.badgeStyle === 'danger' && styles.statusBadgeDanger,
+                      styles.statusBadgeText,
+                      meta.badgeStyle === 'warning' && styles.statusBadgeTextWarning,
+                      meta.badgeStyle === 'success' && styles.statusBadgeTextSuccess,
+                      meta.badgeStyle === 'neutral' && styles.statusBadgeTextNeutral,
+                      meta.badgeStyle === 'danger' && styles.statusBadgeTextDanger,
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.statusBadgeText,
-                        meta.badgeStyle === 'warning' && styles.statusBadgeTextWarning,
-                        meta.badgeStyle === 'success' && styles.statusBadgeTextSuccess,
-                        meta.badgeStyle === 'neutral' && styles.statusBadgeTextNeutral,
-                        meta.badgeStyle === 'danger' && styles.statusBadgeTextDanger,
-                      ]}
-                    >
-                      {meta.label}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.statusDescription}>{meta.description}</Text>
-              </View>
-
-              <View style={styles.detailCard}>
-                <Text style={styles.cardTitle}>
-                  {t('customer.disputes.sectionSummary', 'Маргааны товч')}
-                </Text>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>
-                    {t('customer.disputes.detailType', 'Төрөл')}
+                    {meta.label}
                   </Text>
-                  <Text style={styles.summaryValue}>{bookingCategory}</Text>
-                </View>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>
-                    {t('customer.disputes.detailBooking', 'Захиалгын дугаар')}
-                  </Text>
-                  <Text style={styles.summaryValue}>
-                    {String(bookingReference).slice(0, 8).toUpperCase()}
-                  </Text>
-                </View>
-                <View style={styles.summaryRowLast}>
-                  <Text style={styles.summaryLabel}>
-                    {t('customer.disputes.detailSubmitted', 'Илгээсэн огноо')}
-                  </Text>
-                  <Text style={styles.summaryValue}>
-                    {submittedAt ? formatMongolianDate(submittedAt) : '2024 оны 5-р сарын 20'}
-                  </Text>
-                </View>
-                <View style={styles.summaryReasonWrap}>
-                  <Text style={styles.summaryLabel}>
-                    {t('customer.disputes.detailReason', 'Гомдлын шалтгаан')}
-                  </Text>
-                  <Text style={styles.summaryValue}>{dispute.reason}</Text>
                 </View>
               </View>
+              <Text style={styles.statusDescription}>{meta.description}</Text>
+            </View>
 
-              <View style={styles.timelineSection}>
-                <Text style={styles.timelineTitle}>
-                  {t('customer.disputes.sectionProcess', 'Үйл явц')}
+            <View style={styles.detailCard}>
+              <Text style={styles.cardTitle}>
+                {t('customer.disputes.sectionSummary', 'Маргааны товч')}
+              </Text>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>
+                  {t('customer.disputes.detailType', 'Төрөл')}
                 </Text>
-                <View style={styles.timelineTrack}>
-                  {timeline.map((item, index) => {
-                    const state = getTimelineState(status, index);
-                    const isLast = index === timeline.length - 1;
-                    return (
-                      <View key={item.title} style={styles.timelineRow}>
-                        <View style={styles.timelineRail}>
-                          <TimelineDot state={state} />
-                          {!isLast ? <View style={styles.timelineConnector} /> : null}
-                        </View>
-                        <View style={styles.timelineContent}>
-                          <Text
-                            style={[
-                              styles.timelineItemTitle,
-                              state === 'future' && styles.timelineItemTitleFuture,
-                            ]}
-                          >
-                            {item.title}
-                          </Text>
-                          <Text
-                            style={[
-                              styles.timelineItemDescription,
-                              state === 'future' && styles.timelineItemDescriptionFuture,
-                            ]}
-                          >
-                            {item.description}
-                          </Text>
-                          {item.date ? (
-                            <View style={styles.timelineDatePill}>
-                              <Text style={styles.timelineDateText}>{item.date}</Text>
-                            </View>
-                          ) : null}
-                        </View>
+                <Text style={styles.summaryValue}>{bookingCategory}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>
+                  {t('customer.disputes.detailBooking', 'Захиалгын дугаар')}
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {String(bookingReference).slice(0, 8).toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.summaryRowLast}>
+                <Text style={styles.summaryLabel}>
+                  {t('customer.disputes.detailSubmitted', 'Илгээсэн огноо')}
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {submittedAt ? formatMongolianDate(submittedAt) : '2024 оны 5-р сарын 20'}
+                </Text>
+              </View>
+              <View style={styles.summaryReasonWrap}>
+                <Text style={styles.summaryLabel}>
+                  {t('customer.disputes.detailReason', 'Гомдлын шалтгаан')}
+                </Text>
+                <Text style={styles.summaryValue}>{dispute.reason}</Text>
+              </View>
+            </View>
+
+            <View style={styles.timelineSection}>
+              <Text style={styles.timelineTitle}>
+                {t('customer.disputes.sectionProcess', 'Үйл явц')}
+              </Text>
+              <View style={styles.timelineTrack}>
+                {timeline.map((item, index) => {
+                  const state = getTimelineState(status, index);
+                  const isLast = index === timeline.length - 1;
+                  return (
+                    <View key={item.title} style={styles.timelineRow}>
+                      <View style={styles.timelineRail}>
+                        <TimelineDot state={state} />
+                        {!isLast ? <View style={styles.timelineConnector} /> : null}
                       </View>
-                    );
-                  })}
-                </View>
-              </View>
-
-              <View style={styles.resolutionCard}>
-                <Text style={styles.resolutionTitle}>
-                  {t('customer.disputes.sectionResolution', 'Эцсийн шийдвэр')}
-                </Text>
-                <View style={styles.resolutionInner}>
-                  <View style={styles.resolutionIconWrap}>
-                    <AlertTriangle size={22} color={colors.secondary} />
-                  </View>
-                  <Text style={styles.resolutionHeading}>
-                    {status === 'OPEN'
-                      ? t('customer.disputes.statusOpen', 'Хүлээгдэж байна')
-                      : t('customer.disputes.statusFinal', 'Хүлээгдэж байна')}
-                  </Text>
-                  <Text style={styles.resolutionText}>
-                    {t(
-                      'customer.disputes.mediationNote',
-                      'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.',
-                    )}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.evidenceCard}>
-                <Text style={styles.cardTitle}>
-                  {t('customer.disputes.sectionEvidence', 'Илгээсэн нотлох баримт')}
-                </Text>
-                {evidenceItems.length > 0 ? (
-                  evidenceItems.map((item, index) => (
-                    <View
-                      key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
-                      style={styles.evidenceRow}
-                    >
-                      <View style={styles.evidenceBullet} />
-                      <Text style={styles.evidenceText}>{getEvidenceLabel(item)}</Text>
+                      <View style={styles.timelineContent}>
+                        <Text
+                          style={[
+                            styles.timelineItemTitle,
+                            state === 'future' && styles.timelineItemTitleFuture,
+                          ]}
+                        >
+                          {item.title}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.timelineItemDescription,
+                            state === 'future' && styles.timelineItemDescriptionFuture,
+                          ]}
+                        >
+                          {item.description}
+                        </Text>
+                        {item.date ? (
+                          <View style={styles.timelineDatePill}>
+                            <Text style={styles.timelineDateText}>{item.date}</Text>
+                          </View>
+                        ) : null}
+                      </View>
                     </View>
-                  ))
-                ) : (
-                  <Text style={styles.emptyEvidence}>
-                    {t('customer.disputes.noEvidence', 'Ноотлох баримт байхгүй')}
-                  </Text>
-                )}
+                  );
+                })}
               </View>
+            </View>
 
-              <View style={styles.decorativeImageWrap}>
-                <Image source={{ uri: imgDisputeDecorative }} style={styles.decorativeImage} />
+            <View style={styles.resolutionCard}>
+              <Text style={styles.resolutionTitle}>
+                {t('customer.disputes.sectionResolution', 'Эцсийн шийдвэр')}
+              </Text>
+              <View style={styles.resolutionInner}>
+                <View style={styles.resolutionIconWrap}>
+                  <AlertTriangle size={22} color={colors.secondary} />
+                </View>
+                <Text style={styles.resolutionHeading}>
+                  {status === 'OPEN'
+                    ? t('customer.disputes.statusOpen', 'Хүлээгдэж байна')
+                    : t('customer.disputes.statusFinal', 'Хүлээгдэж байна')}
+                </Text>
+                <Text style={styles.resolutionText}>
+                  {t(
+                    'customer.disputes.mediationNote',
+                    'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.',
+                  )}
+                </Text>
               </View>
-            </>
-          ) : null}
-        </InsetScrollView>
+            </View>
+
+            <View style={styles.evidenceCard}>
+              <Text style={styles.cardTitle}>
+                {t('customer.disputes.sectionEvidence', 'Илгээсэн нотлох баримт')}
+              </Text>
+              {evidenceItems.length > 0 ? (
+                evidenceItems.map((item, index) => (
+                  <View
+                    key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
+                    style={styles.evidenceRow}
+                  >
+                    <View style={styles.evidenceBullet} />
+                    <Text style={styles.evidenceText}>{getEvidenceLabel(item)}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.emptyEvidence}>
+                  {t('customer.disputes.noEvidence', 'Ноотлох баримт байхгүй')}
+                </Text>
+              )}
+            </View>
+
+            <View style={styles.decorativeImageWrap}>
+              <Scale size={64} color={colors.textSecondary} />
+            </View>
+          </>
+        ) : null}
+      </InsetScrollView>
     </ScreenContainer>
   );
 }
@@ -763,9 +753,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     overflow: 'hidden',
     opacity: 0.4,
-  },
-  decorativeImage: {
-    alignSelf: 'stretch',
-    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

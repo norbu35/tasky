@@ -1,26 +1,22 @@
 import React from 'react';
-import {
-  Image,
-  Linking,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowRight, CalendarPlus2, Check, ChevronLeft, MessageSquare } from 'lucide-react-native';
+import {
+  ArrowRight,
+  CalendarPlus2,
+  Check,
+  ChevronLeft,
+  MessageSquare,
+  UserRound,
+} from 'lucide-react-native';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
 
 const { colors, spacing, typography, radius } = mobileTheme;
-
-const figmaTaskerAvatarUri =
-  'https://www.figma.com/api/mcp/asset/e3050260-fefb-4ecc-82bc-e2a7ac3e17af';
 
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
@@ -77,129 +73,129 @@ export default function BookingConfirmedScreen() {
 
   return (
     <ScreenContainer testID="SCR-CUST-015">
-        <View style={styles.header}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={handleDone}
-            style={styles.iconButton}
-            testID="booking-confirmed-screen-close"
-          >
-            <ChevronLeft size={22} color={colors.primaryDeep} />
-          </Pressable>
-          <View style={styles.headerSpacer} />
+      <View style={styles.header}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={handleDone}
+          style={styles.iconButton}
+          testID="booking-confirmed-screen-close"
+        >
+          <ChevronLeft size={22} color={colors.primaryDeep} />
+        </Pressable>
+        <View style={styles.headerSpacer} />
+      </View>
+
+      <InsetScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        extraBottomInset={spacing.xl}
+      >
+        <View style={styles.successIconWrap}>
+          <View style={styles.successIconBackground}>
+            <Check size={36} color={colors.verified} strokeWidth={3} />
+          </View>
         </View>
 
-        <InsetScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          extraBottomInset={spacing.xl}
-        >
-          <View style={styles.successIconWrap}>
-            <View style={styles.successIconBackground}>
-              <Check size={36} color={colors.verified} strokeWidth={3} />
-            </View>
+        <Text style={styles.headline}>
+          {t('customer.bookings.confirmedHeadline', 'Захиалга баталгаажлаа!')}
+        </Text>
+
+        <Text style={styles.body}>
+          {t(
+            'customer.bookings.confirmedNextSteps',
+            'Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.',
+          )}
+        </Text>
+
+        <View style={styles.sectionHeadingWrap}>
+          <View style={styles.sectionHeadingPill}>
+            <Text style={styles.sectionHeading}>
+              {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
+            </Text>
           </View>
+        </View>
 
-          <Text style={styles.headline}>
-            {t('customer.bookings.confirmedHeadline', 'Захиалга баталгаажлаа!')}
-          </Text>
+        <View style={styles.nextStepsCard}>
+          <View style={styles.nextStepsIcon}>
+            <CalendarPlus2 size={20} color={colors.primaryDeep} />
+          </View>
+          <View style={styles.nextStepsCopy}>
+            <Text style={styles.nextStepsTitle}>
+              {t('customer.bookings.nextStepsTitle', 'Товлосон цагтаа ирнэ')}
+            </Text>
+            <Text style={styles.nextStepsBody}>
+              {t(
+                'customer.bookings.nextStepsBody',
+                'Таны сонгосон цагт гүйцэтгэгч заасан хаяг дээр очиж үйлчилгээг эхлүүлнэ. Түүнээс өмнө танд сануулах мессеж очно.',
+              )}
+            </Text>
+          </View>
+        </View>
 
-          <Text style={styles.body}>
-            {t(
-              'customer.bookings.confirmedNextSteps',
-              'Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.',
-            )}
-          </Text>
-
-          <View style={styles.sectionHeadingWrap}>
-            <View style={styles.sectionHeadingPill}>
-              <Text style={styles.sectionHeading}>
-                {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
+        <View style={styles.providerCard}>
+          <View style={styles.providerLeft}>
+            <View style={styles.providerAvatarWrap}>
+              <UserRound size={28} color={colors.textSecondary} />
+            </View>
+            <View style={styles.providerCopy}>
+              <Text style={styles.providerLabel}>
+                {t('customer.bookings.providerLabel', 'Гүйцэтгэгч')}
+              </Text>
+              <Text style={styles.providerName}>
+                {t('customer.bookings.providerName', 'Б. Тэмүүлэн')}
               </Text>
             </View>
           </View>
+          <Pressable style={styles.messageButton} accessibilityRole="button">
+            <MessageSquare size={18} color={colors.primaryDeep} />
+          </Pressable>
+        </View>
 
-          <View style={styles.nextStepsCard}>
-            <View style={styles.nextStepsIcon}>
-              <CalendarPlus2 size={20} color={colors.primaryDeep} />
-            </View>
-            <View style={styles.nextStepsCopy}>
-              <Text style={styles.nextStepsTitle}>
-                {t('customer.bookings.nextStepsTitle', 'Товлосон цагтаа ирнэ')}
-              </Text>
-              <Text style={styles.nextStepsBody}>
-                {t(
-                  'customer.bookings.nextStepsBody',
-                  'Таны сонгосон цагт гүйцэтгэгч заасан хаяг дээр очиж үйлчилгээг эхлүүлнэ. Түүнээс өмнө танд сануулах мессеж очно.',
-                )}
-              </Text>
-            </View>
-          </View>
+        {canAddToCalendar ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleCalendar}
+            style={styles.calendarCta}
+            testID="booking-confirmed-screen-calendar"
+          >
+            <CalendarPlus2 size={18} color={colors.secondary} />
+            <Text style={styles.calendarCtaText}>
+              {t('customer.bookings.addToCalendar', 'Календарьт нэмэх')}
+            </Text>
+          </Pressable>
+        ) : null}
 
-          <View style={styles.providerCard}>
-            <View style={styles.providerLeft}>
-              <View style={styles.providerAvatarWrap}>
-                <Image source={{ uri: figmaTaskerAvatarUri }} style={styles.providerAvatar} />
-              </View>
-              <View style={styles.providerCopy}>
-                <Text style={styles.providerLabel}>
-                  {t('customer.bookings.providerLabel', 'Гүйцэтгэгч')}
-                </Text>
-                <Text style={styles.providerName}>
-                  {t('customer.bookings.providerName', 'Б. Тэмүүлэн')}
-                </Text>
-              </View>
-            </View>
-            <Pressable style={styles.messageButton} accessibilityRole="button">
-              <MessageSquare size={18} color={colors.primaryDeep} />
-            </Pressable>
-          </View>
-
-          {canAddToCalendar ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={handleCalendar}
-              style={styles.calendarCta}
-              testID="booking-confirmed-screen-calendar"
+        <View style={styles.actions}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleViewBooking}
+            style={styles.primaryButtonWrap}
+            testID="booking-confirmed-screen-cta"
+          >
+            <LinearGradient
+              colors={[colors.primaryDeep, colors.primary]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.primaryButton}
             >
-              <CalendarPlus2 size={18} color={colors.secondary} />
-              <Text style={styles.calendarCtaText}>
-                {t('customer.bookings.addToCalendar', 'Календарьт нэмэх')}
+              <Text style={styles.primaryButtonText}>
+                {t('customer.bookings.ctaViewBooking', 'Захиалга харах')}
               </Text>
-            </Pressable>
-          ) : null}
+              <ArrowRight size={18} color={colors.primaryForeground} />
+            </LinearGradient>
+          </Pressable>
 
-          <View style={styles.actions}>
-            <Pressable
-              accessibilityRole="button"
-              onPress={handleViewBooking}
-              style={styles.primaryButtonWrap}
-              testID="booking-confirmed-screen-cta"
-            >
-              <LinearGradient
-                colors={[colors.primaryDeep, colors.primary]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.primaryButton}
-              >
-                <Text style={styles.primaryButtonText}>
-                  {t('customer.bookings.ctaViewBooking', 'Захиалга харах')}
-                </Text>
-                <ArrowRight size={18} color={colors.primaryForeground} />
-              </LinearGradient>
-            </Pressable>
+          <Button
+            label={t('customer.bookings.ctaDone', 'Дууслаа')}
+            variant="outline"
+            onPress={handleDone}
+            testID="booking-confirmed-screen-secondary-cta"
+          />
+        </View>
+      </InsetScrollView>
 
-            <Button
-              label={t('customer.bookings.ctaDone', 'Дууслаа')}
-              variant="outline"
-              onPress={handleDone}
-              testID="booking-confirmed-screen-secondary-cta"
-            />
-          </View>
-        </InsetScrollView>
-
-        <View pointerEvents="none" style={styles.bottomAccent} />
+      <View pointerEvents="none" style={styles.bottomAccent} />
     </ScreenContainer>
   );
 }
@@ -330,10 +326,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     overflow: 'hidden',
     backgroundColor: colors.muted,
-  },
-  providerAvatar: {
-    alignSelf: 'stretch',
-    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   providerCopy: {
     flex: 1,

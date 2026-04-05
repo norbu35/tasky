@@ -1,17 +1,14 @@
 import React from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { CircleHelp } from 'lucide-react-native';
+import { CircleHelp, Clock } from 'lucide-react-native';
 import { useBookingTimeline } from '../../../../features/bookings/hooks/useBookingTimeline';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { ScreenContainer } from '../../../../components/shells';
 
 const { colors, spacing, typography, radius } = mobileTheme;
-
-const figmaServiceImageUri =
-  'https://www.figma.com/api/mcp/asset/0cf8176a-cff9-4d3a-9418-2a2d334f986f';
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts);
@@ -111,12 +108,12 @@ export default function BookingTimelineScreen() {
 
   const timelineEvents = React.useMemo(
     () =>
-      ((events ?? []) as {
+      (events ?? []) as {
         event: string;
         timestamp: string;
         description?: string | null;
         is_future?: boolean;
-      }[]),
+      }[],
     [events],
   );
   const activeIndex = React.useMemo(() => {
@@ -137,7 +134,7 @@ export default function BookingTimelineScreen() {
         >
           <View style={styles.contextCard}>
             <View style={styles.contextImageWrap}>
-              <Image source={{ uri: figmaServiceImageUri }} style={styles.contextImage} />
+              <Clock size={32} color={colors.secondary} />
             </View>
             <View style={styles.contextCopy}>
               <Text style={styles.contextId}>
@@ -251,10 +248,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     overflow: 'hidden',
     backgroundColor: colors.card,
-  },
-  contextImage: {
-    alignSelf: 'stretch',
-    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contextCopy: {
     flex: 1,
