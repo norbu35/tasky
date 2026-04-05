@@ -29,11 +29,11 @@ export default function TaskPostedSuccessScreen() {
       router.replace(`/(customer)/tasks/${taskId}`);
       return;
     }
-    router.replace('/(customer)/tasks');
+    router.replace('/(tabs)');
   };
 
   const handleDone = () => {
-    router.replace('/(customer)/tasks');
+    router.replace('/(tabs)');
   };
 
   return (

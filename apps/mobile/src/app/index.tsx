@@ -23,9 +23,7 @@ export default function SplashScreen() {
       ? '/onboarding'
       : session.user.primary_auth === 'FACEBOOK'
         ? '/(auth)/otp-migration'
-        : session.user.role === 'CUSTOMER'
-          ? '/(customer)/tasks'
-          : '/(tabs)';
+        : '/(tabs)';
 
   return (
     <LinearGradient

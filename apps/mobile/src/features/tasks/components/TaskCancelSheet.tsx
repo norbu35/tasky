@@ -61,7 +61,7 @@ export function TaskCancelSheet({
         });
       }
       onClose();
-      router.replace('/(customer)/tasks');
+      router.replace('/(tabs)');
     } catch {
       // Error state is handled by the mutation hook and toast layer.
     }
