@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Settings } from 'lucide-react-native';
+import { Pencil, Settings } from 'lucide-react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
@@ -14,6 +14,7 @@ import { useRole } from '../../providers/RoleProvider';
 import { useAuthStore } from '../../store/authStore';
 import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { screenLayout } from '../../design/screenLayout';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -36,16 +37,19 @@ function AuthenticatedProfile() {
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
-      insideTabNavigator
       headerTitle={t('shared.profile.title', 'Профайл')}
-      rightAction={{
-        icon: <Settings size={24} color={colors.primary} />,
-        onPress: () => router.push('/(shared)/profile/settings'),
-      }}
-      ctaLabel={t('shared.profile.editProfile', 'Профайл засах')}
-      ctaOnPress={() => router.push('/(shared)/profile/edit')}
-      secondaryCtaLabel={isTasker ? t('shared.profile.viewStats', 'Статистик харах') : undefined}
-      secondaryCtaOnPress={isTasker ? () => router.push('/(tasker)/stats') : undefined}
+      rightActions={[
+        {
+          icon: <Pencil size={22} color={colors.primary} />,
+          onPress: () => router.push('/(shared)/profile/edit'),
+          testID: 'profile-edit-action',
+        },
+        {
+          icon: <Settings size={22} color={colors.primary} />,
+          onPress: () => router.push('/(shared)/profile/settings'),
+          testID: 'profile-settings-action',
+        },
+      ]}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -118,6 +122,19 @@ function AuthenticatedProfile() {
               )}
             />
           )}
+
+          {/* Stats Link for Taskers */}
+          {isTasker && (
+            <Pressable
+              onPress={() => router.push('/(tasker)/stats')}
+              style={styles.statsLink}
+              testID="profile-stats-link"
+            >
+              <Text style={styles.statsLinkText}>
+                {t('shared.profile.viewStats', 'Статистик харах')}
+              </Text>
+            </Pressable>
+          )}
         </View>
       )}
     </DetailTemplate>
@@ -127,6 +144,7 @@ function AuthenticatedProfile() {
 const styles = StyleSheet.create({
   content: {
     gap: spacing.xl,
+    paddingBottom: screenLayout.chrome.contentBottomClearance,
   },
   heroSection: {
     alignItems: 'center',
@@ -177,5 +195,17 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     color: colors.foreground,
     fontWeight: '500',
+  },
+  statsLink: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    alignItems: 'center',
+  },
+  statsLinkText: {
+    fontSize: typography.body,
+    fontWeight: '600',
+    color: colors.primary,
   },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../ui/Button';
@@ -59,10 +59,8 @@ export function DetailTemplate({
   ctaDisabled = false,
   secondaryCtaLabel,
   secondaryCtaOnPress,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rightAction: _rightAction,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rightActions: _rightActions,
+  rightAction,
+  rightActions,
   isLoading = false,
   isError = false,
   onRetry,
@@ -74,12 +72,31 @@ export function DetailTemplate({
   const { t } = useTranslation();
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
+  const effectiveActions = rightActions ?? (rightAction ? [rightAction] : null);
+
   return (
     <ScreenContainer
       style={hideHeader ? styles.safeAreaNoTop : undefined}
       testID={testID}
       edges={hideHeader ? ['left', 'right'] : ['top', 'left', 'right']}
     >
+      {/* Right action icons — absolute overlay top-right */}
+      {effectiveActions && !isLoading && !isError && (
+        <View style={styles.rightActionsRow} pointerEvents="box-none">
+          {effectiveActions.map((action, i) => (
+            <Pressable
+              key={i}
+              onPress={action.onPress}
+              style={styles.rightActionButton}
+              testID={(action as { testID?: string }).testID}
+              hitSlop={8}
+            >
+              {action.icon}
+            </Pressable>
+          ))}
+        </View>
+      )}
+
       {/* Body */}
       {isError ? (
         <ErrorStateTemplate
@@ -165,6 +182,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenLayout.insetX,
     paddingTop: screenLayout.header.topInset,
     gap: screenLayout.body.blockGap,
+  },
+  rightActionsRow: {
+    position: 'absolute',
+    top: screenLayout.header.topInset,
+    right: screenLayout.insetX,
+    flexDirection: 'row',
+    gap: screenLayout.body.microGap,
+    zIndex: 10,
+  },
+  rightActionButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   skeletonBlockLarge: {
     height: 200,
