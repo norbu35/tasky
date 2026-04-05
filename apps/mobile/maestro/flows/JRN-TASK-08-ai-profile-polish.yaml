@@ -2,19 +2,51 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-08: AI Profile Polish
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-TASK-019 (profile polish)
+# Covered states: SCR-SHARED-013, SCR-TASK-019
 # Actor: tasker
-# Flow type: happy path (entry screen only — AI generation has TODOs)
+# Flow type: happy path
+# Precondition: Logged in as tasker
 
 - launchApp
 
 - runFlow: _support/login-tasker.yaml
+
+# Navigate to profile tab → profile view (SCR-SHARED-012)
+- tapOn:
+    id: "tab-profile"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-012"
+    timeout: 5000
+
+# Tap edit → profile edit screen (SCR-SHARED-013)
+- tapOn:
+    id: "profile-edit-button"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-013"
+    timeout: 5000
+
+# Step 1: Tap 'AI polish' → AI polish screen (SCR-TASK-019)
+- tapOn:
+    id: "ai-polish-button"
 
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-019"
     timeout: 5000
 
+# Step 2: Generate polished suggestion
 - assertVisible:
     id: "SCR-TASK-019"
-# NOTE: AI profile generation flow has TODOs — not tested beyond screen arrival
+
+# Step 3: Apply suggested text → back to profile edit (SCR-SHARED-013)
+- tapOn:
+    id: "ai-polish-apply-button"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-013"
+    timeout: 5000

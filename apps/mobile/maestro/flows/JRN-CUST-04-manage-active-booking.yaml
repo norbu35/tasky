@@ -2,16 +2,16 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-04: Manage Active Booking (Customer)
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-CUST-016, SCR-CUST-017, SCR-CUST-019
+# Covered states: SCR-CUST-016, SCR-CUST-017, SCR-CUST-018, SCR-SHARED-017
 # Actor: customer
 # Flow type: happy path
-# Precondition: Logged in as customer; active (assigned) booking exists
+# Precondition: Logged in as customer; active (assigned) booking exists; tasker marks done
 
 - launchApp
 
 - runFlow: _support/login-customer.yaml
 
-# Navigate to Bookings tab
+# Step 1: Navigate to Bookings list (SCR-CUST-016)
 - tapOn:
     id: "tab-bookings"
 
@@ -20,7 +20,7 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-016"
     timeout: 5000
 
-# Open active booking
+# Step 2: Open active booking → Booking detail (SCR-CUST-017)
 - tapOn:
     id: "booking-card-active"
 
@@ -29,23 +29,17 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-017"
     timeout: 5000
 
-# Verify key elements on booking detail
-- assertVisible:
-    id: "booking-detail-screen-tasker-card"
-- assertVisible:
-    id: "booking-detail-screen-timeline-link"
+# Step 3: Tasker marks done → Confirm completion screen (SCR-CUST-018)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-018"
+    timeout: 10000
 
-# Open timeline view
+# Step 4: Tap 'Confirm Complete' → Review screen (SCR-SHARED-017)
 - tapOn:
-    id: "booking-detail-screen-timeline-link"
+    id: "confirm-complete-button"
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-019"
+      id: "SCR-SHARED-017"
     timeout: 5000
-
-# Go back to booking detail
-- tapOn: "Back"
-
-- assertVisible:
-    id: "SCR-CUST-017"

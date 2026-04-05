@@ -2,7 +2,7 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-07: Cancel Open Task
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-CUST-009 (task detail), cancel sheet
+# Covered states: SCR-CUST-009, SCR-CUST-010, SCR-CUST-001
 # Actor: customer
 # Flow type: happy path
 # Precondition: Logged in as customer; open task (no applicants) exists
@@ -16,7 +16,7 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-001"
     timeout: 5000
 
-# Tap open task
+# Step 1: Open task detail (SCR-CUST-009)
 - tapOn:
     id: "my-tasks-feed"
 
@@ -25,19 +25,19 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-009"
     timeout: 5000
 
-# Open cancel sheet
+# Tap 'Cancel Task' → Cancel confirmation screen (SCR-CUST-010)
 - tapOn:
     id: "task-detail-cancel-button"
 
-# TaskCancelSheet — confirm cancellation
 - extendedWaitUntil:
     visible:
-      id: "task-cancel-sheet"
+      id: "SCR-CUST-010"
     timeout: 3000
+
+# Step 2: Confirm cancellation → return to home (SCR-CUST-001)
 - tapOn:
     id: "task-cancel-confirm"
 
-# Return to task list with task removed or marked cancelled
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-001"

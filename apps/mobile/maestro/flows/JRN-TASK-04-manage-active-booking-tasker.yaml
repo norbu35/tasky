@@ -2,7 +2,7 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-04: Manage Active Booking (Tasker)
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-TASK-012, SCR-TASK-013
+# Covered states: SCR-TASK-012, SCR-TASK-013, SCR-SHARED-017
 # Actor: tasker
 # Flow type: happy path
 # Precondition: Logged in as tasker; assigned booking exists
@@ -16,11 +16,11 @@ appId: mn.tasky.mobile
       id: "SCR-TASK-012"
     timeout: 5000
 
-# Filter to active jobs
+# Step 1: Filter to active jobs
 - tapOn:
     id: "my-jobs-filter-bar"
 
-# Open active job
+# Step 2: Open active job → Booking detail (SCR-TASK-013)
 - tapOn:
     id: "job-card-active"
 
@@ -33,7 +33,7 @@ appId: mn.tasky.mobile
 - assertVisible:
     id: "booking-detail-tasker-cancel"
 
-# Mark job as done
+# Step 3: Mark job as done
 - tapOn:
     id: "booking-detail-mark-done"
 
@@ -45,7 +45,8 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "booking-detail-confirm-done"
 
+# Step 4: Customer confirms → Review screen (SCR-SHARED-017)
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-012"
-    timeout: 5000
+      id: "SCR-SHARED-017"
+    timeout: 10000

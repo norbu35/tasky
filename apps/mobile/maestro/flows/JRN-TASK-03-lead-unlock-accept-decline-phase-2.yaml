@@ -2,45 +2,30 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-03: Lead Unlock Accept/Decline (Phase 2)
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-TASK-013 (tasker booking detail), LeadUnlockSheet
+# Covered states: SCR-TASK-017, SCR-TASK-012
 # Actor: tasker
 # Flow type: happy path
 # Phase gate: Phase 2
-# Precondition: Logged in as tasker; booking with unlock prompt available
+# Precondition: Logged in as tasker; selection notification received
 
 - launchApp
 
 - runFlow: _support/login-tasker.yaml
 
-- extendedWaitUntil:
-    visible:
-      id: "SCR-TASK-012"
-    timeout: 5000
-
-# Open booking requiring lead unlock
+# Step 1: Navigate to lead unlock notification screen (SCR-TASK-017)
 - tapOn:
-    id: "job-card-pending-unlock"
+    id: "tab-notifications"
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-013"
+      id: "SCR-TASK-017"
     timeout: 5000
 
-# Lead unlock sheet appears
-- extendedWaitUntil:
-    visible:
-      id: "lead-unlock-sheet"
-    timeout: 3000
-
-# Accept unlock (spend credits)
+# Step 2: Tap 'Accept' — credits deducted → My Jobs (SCR-TASK-012)
 - tapOn:
     id: "lead-unlock-accept"
 
-# Confirm decision
 - extendedWaitUntil:
-    anyOf:
-      - visible:
-          id: "SCR-TASK-013"
-      - visible:
-          id: "lead-unlock-success"
+    visible:
+      id: "SCR-TASK-012"
     timeout: 5000

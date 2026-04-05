@@ -2,7 +2,7 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-05: Rebook Tasker
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-CUST-017, SCR-CUST-023, SCR-CUST-015
+# Covered states: SCR-CUST-017, SCR-CUST-023, SCR-CUST-014, SCR-CUST-015
 # Actor: customer
 # Flow type: happy path
 # Precondition: Logged in as customer; completed booking with same tasker exists
@@ -28,7 +28,7 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-017"
     timeout: 5000
 
-# Tap 'Rebook' action
+# Step 1: Tap 'Rebook' on completed booking → Rebook screen (SCR-CUST-023)
 - tapOn:
     id: "booking-detail-rebook-button"
 
@@ -47,9 +47,18 @@ appId: mn.tasky.mobile
 - clearText
 - inputText: "50000"
 
-# Confirm rebook
+# Step 2: Confirm rebook → Booking confirmation (SCR-CUST-014)
 - tapOn:
     id: "rebook-confirm-button"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-014"
+    timeout: 5000
+
+# Step 3: Confirm booking → Success (SCR-CUST-015)
+- tapOn:
+    id: "booking-confirm-button"
 
 - extendedWaitUntil:
     visible:

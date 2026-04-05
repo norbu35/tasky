@@ -2,7 +2,7 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-08: Instant Match (Phase 3)
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-CUST-027 / SCR-P3-005 (instant match modal)
+# Covered states: SCR-CUST-009, SCR-CUST-027, SCR-CUST-014, SCR-CUST-015
 # Actor: customer
 # Flow type: happy path
 # Phase gate: Phase 3
@@ -17,7 +17,7 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-001"
     timeout: 5000
 
-# Open a task that supports instant match
+# Step 1: Open task detail (SCR-CUST-009)
 - tapOn:
     id: "my-tasks-feed"
 
@@ -26,21 +26,28 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-009"
     timeout: 5000
 
-# Tap 'Instant Match' button on task detail
+# Tap 'Instant Match' → Instant match modal (SCR-CUST-027)
 - tapOn:
     id: "task-detail-instant-match-button"
 
-# Instant match modal appears
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-027"
     timeout: 5000
 
-# Confirm instant match
+# Step 2: System auto-assigns top Tasker → Booking confirmation (SCR-CUST-014)
 - tapOn:
     id: "instant-match-confirm-button"
 
-# Success — booking confirmed
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-014"
+    timeout: 10000
+
+# Step 3: Confirm booking → Success (SCR-CUST-015)
+- tapOn:
+    id: "booking-confirm-button"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-015"
