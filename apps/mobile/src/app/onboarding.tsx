@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
@@ -12,26 +11,21 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Shield, Sparkles, Users } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
-import { Button } from '../components/ui';
 import { ScreenContainer } from '../components/shells';
+import { Button } from '../components/ui/Button';
 
 const { width } = Dimensions.get('window');
 const { colors, spacing, typography } = mobileTheme;
-
-const ONBOARDING_IMAGES = [
-  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
-  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
-  'https://www.figma.com/api/mcp/asset/04e70df9-10b5-41ff-a560-297e68b06e74',
-];
 
 const SLIDES = [
   {
     id: '1',
     titleKey: 'auth.onboarding.slide1Title',
     bodyKey: 'auth.onboarding.slide1Body',
-    imageUri: ONBOARDING_IMAGES[0],
+    icon: Users,
+    iconColor: colors.primary,
     titleFallback: 'Найдвартай гүйцэтгэгч олох',
     bodyFallback: 'Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой',
   },
@@ -39,7 +33,8 @@ const SLIDES = [
     id: '2',
     titleKey: 'auth.onboarding.slide2Title',
     bodyKey: 'auth.onboarding.slide2Body',
-    imageUri: ONBOARDING_IMAGES[1],
+    icon: Sparkles,
+    iconColor: colors.secondary,
     titleFallback: 'Захиалга хийх амархан',
     bodyFallback: 'Ажлаа нийтэлж, хэдхэн товшилтоор захиалга хийгээрэй',
   },
@@ -47,7 +42,8 @@ const SLIDES = [
     id: '3',
     titleKey: 'auth.onboarding.slide3Title',
     bodyKey: 'auth.onboarding.slide3Body',
-    imageUri: ONBOARDING_IMAGES[2],
+    icon: Shield,
+    iconColor: colors.verified,
     titleFallback: 'Аюулгүй, итгэлтэй',
     bodyFallback: 'Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг',
   },
@@ -58,19 +54,23 @@ export default function OnboardingScreen() {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+  const slideRef = useRef(0);
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
     const index = Math.round(x / width);
+    slideRef.current = index;
     if (index !== currentIndex) {
       setCurrentIndex(index);
     }
   };
 
   const handleNext = () => {
-    if (currentIndex < SLIDES.length - 1) {
+    if (slideRef.current < SLIDES.length - 1) {
+      slideRef.current += 1;
+      setCurrentIndex(slideRef.current);
       flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
+        index: slideRef.current,
         animated: true,
       });
     } else {
@@ -92,16 +92,11 @@ export default function OnboardingScreen() {
     const titleText = item.titleFallback ?? t(item.titleKey);
     const bodyText = item.bodyFallback ?? t(item.bodyKey);
     return (
-      <View testID="SCR-SHARED-005" style={styles.slide}>
+      <View style={styles.slide}>
         <View style={styles.illustrationWrap}>
           <View style={styles.illustrationBackdrop} />
-          <View style={styles.illustrationCard}>
-            <Image
-              source={{ uri: item.imageUri }}
-              style={styles.heroImage}
-              resizeMode="cover"
-              testID={item.id === '1' ? 'onboarding-slide-image' : undefined}
-            />
+          <View style={[styles.illustrationCard, { backgroundColor: `${item.iconColor}15` }]}>
+            <item.icon size={80} color={item.iconColor} />
             {item.id === '1' ? (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{t('auth.onboarding.badge', 'БАТАЛГААЖСАН')}</Text>
@@ -118,7 +113,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <ScreenContainer testID="onboarding-screen">
+    <ScreenContainer testID="SCR-SHARED-005">
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
           <ArrowLeft size={24} color={colors.primaryDeep} />
@@ -144,7 +139,6 @@ export default function OnboardingScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
       />
-
       <View style={styles.footer}>
         <View style={styles.pagination}>
           {SLIDES.map((_, index) => (
@@ -163,13 +157,11 @@ export default function OnboardingScreen() {
         </View>
         <Button
           testID="onboarding-next"
-          label={
-            isLastSlide
-              ? t('auth.onboarding.getStarted', 'Эхлэх')
-              : t('auth.onboarding.next', 'Дараагийх')
-          }
+          label={isLastSlide
+            ? t('auth.onboarding.getStarted', 'Эхлэх')
+            : t('auth.onboarding.next', 'Дараагийх')}
           onPress={handleNext}
-          style={styles.button}
+          style={styles.nextButton}
         />
       </View>
     </ScreenContainer>
@@ -218,12 +210,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     height: '100%',
     borderRadius: 32,
-    backgroundColor: colors.background,
     overflow: 'hidden',
-  },
-  heroImage: {
-    alignSelf: 'stretch',
-    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
@@ -257,11 +246,8 @@ const styles = StyleSheet.create({
     lineHeight: typography.body * 1.6,
   },
   footer: {
-    position: 'absolute',
-    bottom: spacing['3xl'],
-    left: 0,
-    right: 0,
     paddingHorizontal: spacing.xl,
+    paddingBottom: spacing['3xl'],
   },
   pagination: {
     flexDirection: 'row',
@@ -274,9 +260,8 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 999,
   },
-  button: {
+  nextButton: {
     alignSelf: 'stretch',
-    minHeight: 56,
   },
   skipSpacer: {
     width: 56,
