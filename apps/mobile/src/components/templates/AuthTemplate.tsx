@@ -22,6 +22,7 @@ export interface AuthTemplateProps {
   testID?: string;
   topRightSlot?: React.ReactNode;
   bottomSlot?: React.ReactNode;
+  footerSlot?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
 }
 
@@ -34,6 +35,7 @@ export function AuthTemplate({
   testID,
   topRightSlot,
   bottomSlot,
+  footerSlot,
   contentStyle,
 }: AuthTemplateProps) {
   return (
@@ -64,6 +66,7 @@ export function AuthTemplate({
           {/* Trust Message */}
           {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
         </InsetScrollView>
+        {footerSlot ? <View style={styles.footer}>{footerSlot}</View> : null}
         {bottomSlot ? <StickyActionBar>{bottomSlot}</StickyActionBar> : null}
       </KeyboardAvoidingView>
     </ScreenContainer>
@@ -118,5 +121,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing['2xl'],
     lineHeight: typography.caption * 1.6,
+  },
+  footer: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.md,
   },
 });
