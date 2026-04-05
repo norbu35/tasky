@@ -200,17 +200,25 @@ export const screenTypography = {
 - `content` bottom padding: `screenLayout.chrome.contentBottomClearance` — prevents scroll content from hiding behind tab bar.
 - Remove the hardcoded `TAB_BAR_HEIGHT` constant.
 
-### 3.3 FAB — Centralized Positioning
+### 3.3 FAB — Centralized Positioning + Draggable
 
 **File:** `apps/mobile/src/components/ui/FAB.tsx`
 
-**Problem:** `bottomOffset` prop defaults to `72` — a magic number. Position uses `insets.bottom + bottomOffset` which doesn't account for the floating tab bar.
+**Problem:** `bottomOffset` prop defaults to `72` — a magic number. Position uses `insets.bottom + bottomOffset` which doesn't account for the floating tab bar. Also, the FAB intentionally floats over scroll content, but users have no way to move it if it covers something they need to read.
 
-**Fix:**
+**Fix — positioning:**
 - Remove `bottomOffset` prop.
 - `bottom` -> `screenLayout.chrome.fabBottom` (no longer needs safe area insets since the tab bar already accounts for them).
 - `right` -> `screenLayout.chrome.fabInsetRight`
 - `width` / `height` -> `screenLayout.chrome.fabSize`
+
+**Fix — draggable:**
+- Wrap the FAB in a `PanGestureHandler` (from `react-native-gesture-handler`, already a project dependency via Expo).
+- Track position with `useSharedValue` for `translateX` and `translateY`.
+- On drag end, snap to the nearest screen edge (left or right) using `withSpring` — the FAB always hugs the left or right edge, never floats in the middle. Vertical position is unconstrained within safe bounds (above tab bar, below status bar).
+- Short press triggers navigation (existing behavior). Drag gesture must exceed a small threshold (e.g., 8px) before it activates, so taps don't misfire as drags.
+- Position resets to default (`fabBottom`, right edge) on tab change — no persistence needed.
+- Boundary clamping: `minY` = status bar inset + `spacing.md`, `maxY` = screen height - `chrome.tabBarHeight` - `chrome.tabBarBottom` - `chrome.fabSize`.
 
 ### 3.4 Tab Bar — Read From `screenLayout.chrome`
 
