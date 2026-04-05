@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Settings } from 'lucide-react-native';
@@ -33,13 +33,10 @@ function AuthenticatedProfile() {
   const router = useRouter();
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const { isTasker } = useRole();
-  // Tab bar height (from (tabs)/_layout.tsx) — needed to clear the sticky CTA above the tab bar
-  const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 88 : 64;
-
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
-      ctaBarExtraBottomPadding={TAB_BAR_HEIGHT}
+      insideTabNavigator
       headerTitle={t('shared.profile.title', 'Профайл')}
       rightAction={{
         icon: <Settings size={24} color={colors.primary} />,

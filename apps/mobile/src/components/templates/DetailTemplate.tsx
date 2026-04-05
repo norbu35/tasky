@@ -6,10 +6,9 @@ import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 import { useTranslation } from 'react-i18next';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
-import { screenRhythm } from '../../design/screenRhythm';
+import { screenLayout } from '../../design/screenLayout';
 
 const { colors, spacing } = mobileTheme;
-const CTA_BAR_HEIGHT = 88;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
@@ -23,20 +22,18 @@ export interface DetailTemplateProps {
   ctaDisabled?: boolean;
   secondaryCtaLabel?: string;
   secondaryCtaOnPress?: () => void;
-  /** @deprecated Use Stack.Screen headerRight in your layout instead. */
+  /** @deprecated Use rightActions instead. */
   rightAction?: { icon: React.ReactNode; onPress: () => void };
+  /** Multiple header action icons (e.g., edit + settings). Renders as a horizontal row. */
+  rightActions?: Array<{ icon: React.ReactNode; onPress: () => void; testID?: string }>;
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
   errorMessage?: string;
   testID?: string;
-  /**
-   * When true the template renders without top SafeArea padding,
-   * useful for full-bleed hero screens where the native header is hidden.
-   */
   hideHeader?: boolean;
-  /** Extra bottom padding for the sticky CTA bar — pass tab bar height when inside a Tab navigator. */
-  ctaBarExtraBottomPadding?: number;
+  /** When true, the sticky CTA bar adds tab bar clearance automatically. */
+  insideTabNavigator?: boolean;
 }
 
 function DetailSkeleton() {
@@ -64,13 +61,15 @@ export function DetailTemplate({
   secondaryCtaOnPress,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rightAction: _rightAction,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rightActions: _rightActions,
   isLoading = false,
   isError = false,
   onRetry,
   errorMessage,
   testID,
   hideHeader = false,
-  ctaBarExtraBottomPadding = 0,
+  insideTabNavigator = false,
 }: DetailTemplateProps) {
   const { t } = useTranslation();
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
@@ -97,7 +96,7 @@ export function DetailTemplate({
             styles.scrollContent,
             hasBottomBar && styles.scrollContentWithActionBar,
           ]}
-          extraBottomInset={hasBottomBar ? CTA_BAR_HEIGHT : 0}
+          extraBottomInset={0}
           showsVerticalScrollIndicator={false}
         >
           {children}
@@ -108,7 +107,7 @@ export function DetailTemplate({
       {hasBottomBar && !isLoading && !isError && (
         <StickyActionBar
           testID={testID ? `${testID}-bottom-bar` : undefined}
-          extraBottomPadding={ctaBarExtraBottomPadding}
+          insideTabNavigator={insideTabNavigator}
         >
           <BlurView intensity={40} tint="light" style={styles.bottomBar}>
             {secondaryCtaLabel && secondaryCtaOnPress && (
@@ -137,22 +136,20 @@ export function DetailTemplate({
 
 const styles = StyleSheet.create({
   safeAreaNoTop: {
-    // Used when hideHeader=true — removes SafeArea top inset so
-    // full-bleed hero content can extend behind the status bar.
     paddingTop: 0,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: screenRhythm.contentInsetTop,
-    paddingHorizontal: screenRhythm.contentInsetX,
+    paddingTop: screenLayout.header.topInset,
+    paddingHorizontal: screenLayout.insetX,
   },
   scrollContentWithActionBar: {
-    paddingBottom: screenRhythm.sectionGap,
+    paddingBottom: screenLayout.body.sectionGap,
   },
   bottomBar: {
-    padding: screenRhythm.stickyBarPadding,
+    padding: screenLayout.actions.barPadding,
     borderRadius: mobileTheme.radius.lg,
     overflow: 'hidden',
   },
@@ -161,13 +158,13 @@ const styles = StyleSheet.create({
   },
   secondaryCta: {
     alignSelf: 'stretch',
-    marginBottom: spacing.sm,
+    marginBottom: screenLayout.actions.buttonGap,
   },
   skeletonContainer: {
     flex: 1,
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.contentInsetTop,
-    gap: screenRhythm.blockGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.header.topInset,
+    gap: screenLayout.body.blockGap,
   },
   skeletonBlockLarge: {
     height: 200,
