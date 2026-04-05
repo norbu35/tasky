@@ -1,6 +1,58 @@
 appId: mn.tasky.mobile
 ---
-# Journey JRN-INFRA-02: Suspended/Banned Account
-# Goal: Inform user of account restriction
+# Journey JRN-INFRA-02: Suspended / Banned Account
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-020 (suspended), SCR-SHARED-021 (banned)
+# Actor: customer or tasker
+# Flow type: blocker surface
+# Precondition: Test account that is suspended exists; separate test account that is banned exists
 
-- launchApp
+# --- Part A: Suspended ---
+- launchApp:
+    clearState: true
+
+- runFlow: _support/login-customer.yaml
+# Assumes login-customer.yaml uses the suspended test account
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-020"
+    timeout: 10000
+
+- assertVisible:
+    id: "suspended-appeal-button"
+- assertVisible:
+    id: "suspended-logout-button"
+
+# Tap logout
+- tapOn:
+    id: "suspended-logout-button"
+
+# Return to login screen
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 5000
+
+# --- Part B: Banned (separate launch) ---
+- launchApp:
+    clearState: true
+
+# Use banned test account
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 5000
+- tapOn:
+    id: "facebook-login-button"
+# Assumes banned account logs in and is redirected to banned screen
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-021"
+    timeout: 15000
+
+- assertVisible:
+    id: "banned-support-button"
+- assertVisible:
+    id: "banned-logout-button"

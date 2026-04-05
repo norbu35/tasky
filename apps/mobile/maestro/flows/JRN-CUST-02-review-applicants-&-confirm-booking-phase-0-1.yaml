@@ -1,48 +1,79 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-02: Review Applicants & Confirm Booking (Phase 0-1)
-# Goal: Select a Tasker and create a booking
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-CUST-009, SCR-CUST-011, SCR-CUST-013, SCR-CUST-014, SCR-CUST-015
+# Actor: customer
+# Flow type: happy path
+# Precondition: Logged in as customer; posted task has at least 1 applicant
 
 - launchApp
 
-# Step 1: View task detail, tap 'View Applicants'
+- runFlow: _support/login-customer.yaml
+
+# Customer home → open a task with applicants
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-001"
+    timeout: 5000
+- tapOn:
+    id: "my-tasks-feed"
+
+# Task detail
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-009"
     timeout: 5000
-# TODO: Add specific interactions for "View task detail, tap 'View Applicants'"
 
-# Step 2: Browse applicants, view profiles
+# Tap 'View Applicants'
+- tapOn:
+    id: "task-detail-view-applicants"
+
+# Applicants list
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-011"
     timeout: 5000
-# TODO: Add specific interactions for "Browse applicants, view profiles"
 
-# Step 3: View Tasker profile, reviews
+# Tap first applicant card to see public profile
+- tapOn:
+    id: "applicant-card-0"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-013"
     timeout: 5000
-# TODO: Add specific interactions for "View Tasker profile, reviews"
 
-# Step 4: Tap 'Accept' on preferred applicant
-- extendedWaitUntil:
-    visible:
-      id: "SCR-CUST-011"
-    timeout: 5000
-# TODO: Add specific interactions for "Tap 'Accept' on preferred applicant"
+# Go back to applicants list
+- tapOn:
+    id: "applicants-list-back"
 
-# Step 5: Accept liability disclaimer, confirm booking
+- assertVisible:
+    id: "SCR-CUST-011"
+
+# Accept the applicant
+- tapOn:
+    id: "applicant-card-0"
+- tapOn:
+    id: "applicant-accept-sheet"
+- tapOn:
+    id: "applicant-accept-sheet-confirm"
+
+# Booking confirmation screen
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-014"
     timeout: 5000
-# TODO: Add specific interactions for "Accept liability disclaimer, confirm booking"
 
-# Step 6: Success — booking confirmed
+# Confirm
+- tapOn:
+    id: "booking-confirm-cta"
+
+# Booking confirmed screen
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-015"
     timeout: 5000
-# TODO: Add specific interactions for "Success — booking confirmed"
+
+- assertVisible:
+    id: "booking-confirmed-screen-cta"

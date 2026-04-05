@@ -1,20 +1,45 @@
 appId: mn.tasky.mobile
 ---
-# Journey JRN-TASK-07: Tasker Pro Subscription (Phase 3+)
-# Goal: Subscribe to Tasker Pro for benefits
+# Journey JRN-TASK-07: Tasker Pro Subscription (Phase 3)
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-P3-004 (subscription), subscription confirm sheet
+# Actor: tasker
+# Flow type: happy path
+# Phase gate: Phase 3
+# Precondition: Logged in as tasker; eligible for subscription (not already subscribed)
 
 - launchApp
 
-# Step 1: View plans (Standard/Premium)
-- extendedWaitUntil:
-    visible:
-      id: "SCR-P3-004"
-    timeout: 5000
-# TODO: Add specific interactions for "View plans (Standard/Premium)"
+- runFlow: _support/login-tasker.yaml
 
-# Step 2: Subscribe via QPay
+# Navigate to subscription screen (likely from profile or settings)
 - extendedWaitUntil:
     visible:
       id: "SCR-P3-004"
     timeout: 5000
-# TODO: Add specific interactions for "Subscribe via QPay"
+
+- assertVisible:
+    id: "subscription-screen-cta"
+
+# Tap subscribe
+- tapOn:
+    id: "subscription-screen-cta"
+
+# Confirmation sheet
+- extendedWaitUntil:
+    visible:
+      id: "subscription-confirm-sheet"
+    timeout: 3000
+
+- tapOn:
+    id: "subscription-confirm"
+
+# Subscribed state — screen updates
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P3-004"
+    timeout: 10000
+
+# The locked indicator should be gone
+- assertNotVisible:
+    id: "subscription-screen-locked"

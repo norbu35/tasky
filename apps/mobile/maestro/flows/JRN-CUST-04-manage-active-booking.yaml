@@ -1,34 +1,51 @@
 appId: mn.tasky.mobile
 ---
-# Journey JRN-CUST-04: Manage Active Booking
-# Goal: Track booking, handle reschedule, confirm completion
+# Journey JRN-CUST-04: Manage Active Booking (Customer)
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-CUST-016, SCR-CUST-017, SCR-CUST-019
+# Actor: customer
+# Flow type: happy path
+# Precondition: Logged in as customer; active (assigned) booking exists
 
 - launchApp
 
-# Step 1: View bookings list
+- runFlow: _support/login-customer.yaml
+
+# Navigate to Bookings tab
+- tapOn:
+    id: "tab-bookings"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-016"
     timeout: 5000
-# TODO: Add specific interactions for "View bookings list"
 
-# Step 2: View booking detail
+# Open active booking
+- tapOn:
+    id: "booking-card-active"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-017"
     timeout: 5000
-# TODO: Add specific interactions for "View booking detail"
 
-# Step 3: Tasker marks done → confirm completion
+# Verify key elements on booking detail
+- assertVisible:
+    id: "booking-detail-screen-tasker-card"
+- assertVisible:
+    id: "booking-detail-screen-timeline-link"
+
+# Open timeline view
+- tapOn:
+    id: "booking-detail-screen-timeline-link"
+
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-017"
+      id: "SCR-CUST-019"
     timeout: 5000
-# TODO: Add specific interactions for "Tasker marks done → confirm completion"
 
-# Step 4: Tap 'Confirm Complete'
-- extendedWaitUntil:
-    visible:
-      id: "SCR-CUST-018"
-    timeout: 5000
-# TODO: Add specific interactions for "Tap 'Confirm Complete'"
+# Go back to booking detail
+- tapOn: "Back"
+
+- assertVisible:
+    id: "SCR-CUST-017"

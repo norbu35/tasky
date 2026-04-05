@@ -1,27 +1,57 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-05: Rebook Tasker
-# Goal: Quickly rebook a previously hired Tasker
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-CUST-017, SCR-CUST-023, SCR-CUST-015
+# Actor: customer
+# Flow type: happy path
+# Precondition: Logged in as customer; completed booking with same tasker exists
 
 - launchApp
 
-# Step 1: Tap 'Rebook' on completed booking
+- runFlow: _support/login-customer.yaml
+
+# Navigate to completed booking
+- tapOn:
+    id: "tab-bookings"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-016"
+    timeout: 5000
+
+- tapOn:
+    id: "booking-card-completed"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-017"
     timeout: 5000
-# TODO: Add specific interactions for "Tap 'Rebook' on completed booking"
 
-# Step 2: Review prefilled task, edit if needed
+# Tap 'Rebook' action
+- tapOn:
+    id: "booking-detail-rebook-button"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-023"
     timeout: 5000
-# TODO: Add specific interactions for "Review prefilled task, edit if needed"
 
-# Step 3: Confirm booking
+# Set date and budget
+- tapOn:
+    id: "rebook-screen-date-picker"
+- inputText: "2026.05.01 10:00"
+
+- tapOn:
+    id: "rebook-screen-budget"
+- clearText
+- inputText: "50000"
+
+# Confirm rebook
+- tapOn:
+    id: "rebook-confirm-button"
+
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-014"
-    timeout: 5000
-# TODO: Add specific interactions for "Confirm booking"
+      id: "SCR-CUST-015"
+    timeout: 10000

@@ -1,27 +1,47 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-03: Phase 2 OTP Login (New User)
-# Goal: New user signs up with phone OTP
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-002 (login), SCR-SHARED-003 (OTP verify)
+# Actor: new or returning user with phone number
+# Flow type: happy path
+# Phase gate: Phase 2 (OTP auth)
 
-- launchApp
+- launchApp:
+    clearState: true
 
-# Step 1: Tap 'Login with Phone'
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-002"
-    timeout: 5000
-# TODO: Add specific interactions for "Tap 'Login with Phone'"
+    timeout: 10000
 
-# Step 2: Enter phone number
+# Switch to OTP tab / phone entry if visible
+# (Phase 2 adds OTP option alongside Facebook)
+- tapOn: "Утасны дугаар"  # "Phone Number" in Mongolian — or the OTP tab label
+
+- assertVisible:
+    id: "SCR-SHARED-003"
+
+# Enter test phone number
+- tapOn:
+    id: "otp-phone-input"
+- inputText: "+97699000001"
+- tapOn:
+    id: "otp-send-button"
+
+# OTP code entry — use a test code seeded in the backend
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-002"
+      id: "otp-code-input"
     timeout: 5000
-# TODO: Add specific interactions for "Enter phone number"
+- tapOn:
+    id: "otp-code-input"
+- inputText: "000000"
+- tapOn:
+    id: "otp-verify-button"
 
-# Step 3: Enter OTP code, verified
+# Success — reach home screen
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-003"
-    timeout: 5000
-# TODO: Add specific interactions for "Enter OTP code, verified"
+      id: "SCR-CUST-001"
+    timeout: 15000

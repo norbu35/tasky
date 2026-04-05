@@ -1,27 +1,51 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-05: Credit Purchase
-# Goal: Buy lead-unlock credits via QPay
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-P2-001 (credits balance), SCR-P2-002 (QPay payment)
+# Actor: tasker
+# Flow type: happy path
+# Phase gate: Phase 2
+# Precondition: Logged in as tasker
 
 - launchApp
 
-# Step 1: View balance, select credit pack
+- runFlow: _support/login-tasker.yaml
+
+# Navigate to Credits via profile or tab
 - extendedWaitUntil:
     visible:
       id: "SCR-P2-001"
     timeout: 5000
-# TODO: Add specific interactions for "View balance, select credit pack"
 
-# Step 2: Scan QPay QR or deeplink
+# Verify balance screen
+- assertVisible:
+    id: "tasker-credits-topup-secondary"
+
+# Tap to top up
+- tapOn:
+    id: "tasker-credits-topup-secondary"
+
+# Payment screen
 - extendedWaitUntil:
     visible:
       id: "SCR-P2-002"
     timeout: 5000
-# TODO: Add specific interactions for "Scan QPay QR or deeplink"
 
-# Step 3: Payment confirmed
+# QPay QR code or pack selection visible
+- assertVisible:
+    id: "credits-pack-selection"
+
+# Select first pack
+- tapOn:
+    id: "credits-pack-0"
+
+# Initiate payment
+- tapOn:
+    id: "credits-pay-button"
+
+# Wait for payment confirmation (QPay returns async)
 - extendedWaitUntil:
     visible:
-      id: "SCR-P2-002"
-    timeout: 5000
-# TODO: Add specific interactions for "Payment confirmed"
+      id: "SCR-P2-001"
+    timeout: 30000

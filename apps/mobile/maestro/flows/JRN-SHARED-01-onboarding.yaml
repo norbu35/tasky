@@ -1,53 +1,61 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-01: First Launch & Onboarding
-# Goal: New user completes signup and reaches home screen
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-001 (splash), SCR-SHARED-005 (onboarding),
+#   SCR-SHARED-006 (role select), SCR-SHARED-007/008/009 (permissions)
+# Actor: new user (no role yet)
+# Flow type: happy path
 
 - launchApp:
     clearState: true
 
-# Step 1: App launches, splash animation (Implicitly handled by Maestro waiting for first screen)
-
-# Step 2 & 3: Swipe through 3 onboarding slides
+# Splash → Onboarding carousel
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-005"
     timeout: 10000
 
-# Tap 'Next' to swipe through the slides
+# Swipe through 3 slides using Next button
 - tapOn:
-    id: "SCR-SHARED-005-next"
+    id: "onboarding-next"
 - tapOn:
-    id: "SCR-SHARED-005-next"
-
-# Tap "Get Started" on the last slide
+    id: "onboarding-next"
+# Third slide: Get Started button
 - tapOn: "Get Started"
 
-# Step 4: Select role (Customer or Tasker)
+# Role selection screen
 - assertVisible:
     id: "SCR-SHARED-006"
-
 - tapOn:
     id: "role-card-customer"
-
 - tapOn:
     id: "role-confirm-button"
 
-# Step 5, 6, 7: Grant/skip camera, location, and notification permissions
+# Camera permission system dialog
 - extendedWaitUntil:
-    visible: "Camera"
+    visible:
+      id: "SCR-SHARED-007"
     timeout: 5000
-- tapOn: "Allow"
+- tapOn:
+    id: "permission-allow-button"
 
+# Location permission system dialog
 - extendedWaitUntil:
-    visible: "Location"
+    visible:
+      id: "SCR-SHARED-008"
     timeout: 5000
-- tapOn: "Allow"
+- tapOn:
+    id: "permission-allow-button"
 
+# Notification permission system dialog
 - extendedWaitUntil:
-    visible: "Notifications"
+    visible:
+      id: "SCR-SHARED-009"
     timeout: 5000
-- tapOn: "Allow"
+- tapOn:
+    id: "permission-allow-button"
 
-# Finally, reach the Customer Home Screen
-- assertVisible: "Welcome to Tasky"
+# Login screen (fresh state — user must log in after onboarding)
+- assertVisible:
+    id: "SCR-SHARED-002"

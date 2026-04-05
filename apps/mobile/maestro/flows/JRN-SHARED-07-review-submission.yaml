@@ -1,20 +1,61 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-07: Review Submission
-# Goal: Submit mandatory review after booking completion
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-017 (review form)
+# Actor: customer (post-booking)
+# Flow type: happy path
+# Precondition: Logged in as customer; completed booking exists
 
 - launchApp
 
-# Step 1: Rate categories + optional freetext
-- extendedWaitUntil:
-    visible:
-      id: "SCR-SHARED-017"
-    timeout: 5000
-# TODO: Add specific interactions for "Rate categories + optional freetext"
+- runFlow: _support/login-customer.yaml
 
-# Step 2: Submit review
+# Navigate to bookings list
+- tapOn:
+    id: "tab-bookings"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-016"
+    timeout: 5000
+
+# Tap first completed booking
+- tapOn:
+    id: "booking-card-completed"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-017"
+    timeout: 5000
+
+# Tap 'Leave a review' link
+- tapOn:
+    id: "booking-detail-screen-review-link"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-017"
     timeout: 5000
-# TODO: Add specific interactions for "Submit review"
+
+# Rate 5 stars
+- tapOn:
+    id: "review-star-5"
+
+# Write comment
+- tapOn:
+    id: "review-comment-input"
+- inputText: "Маш сайн ажиллав. Цаг баримталсан."
+
+# Submit
+- tapOn:
+    id: "review-submit-button"
+
+# Confirm we returned to booking detail or task list
+- extendedWaitUntil:
+    anyOf:
+      - visible:
+          id: "SCR-CUST-017"
+      - visible:
+          id: "SCR-CUST-001"
+    timeout: 5000

@@ -1,34 +1,51 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-04: Manage Active Booking (Tasker)
-# Goal: Complete assigned work and mark done
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-TASK-012, SCR-TASK-013
+# Actor: tasker
+# Flow type: happy path
+# Precondition: Logged in as tasker; assigned booking exists
 
 - launchApp
 
-# Step 1: View My Jobs list
+- runFlow: _support/login-tasker.yaml
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-012"
     timeout: 5000
-# TODO: Add specific interactions for "View My Jobs list"
 
-# Step 2: View booking detail with exact address
+# Filter to active jobs
+- tapOn:
+    id: "my-jobs-filter-bar"
+
+# Open active job
+- tapOn:
+    id: "job-card-active"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-013"
     timeout: 5000
-# TODO: Add specific interactions for "View booking detail with exact address"
 
-# Step 3: Tap 'Mark Done'
+# Verify key elements
+- assertVisible:
+    id: "booking-detail-tasker-cancel"
+
+# Mark job as done
+- tapOn:
+    id: "booking-detail-mark-done"
+
+# Confirm completion
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-013"
-    timeout: 5000
-# TODO: Add specific interactions for "Tap 'Mark Done'"
+      id: "booking-detail-confirm-completion-sheet"
+    timeout: 3000
+- tapOn:
+    id: "booking-detail-confirm-done"
 
-# Step 4: Wait for customer confirmation
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-013"
+      id: "SCR-TASK-012"
     timeout: 5000
-# TODO: Add specific interactions for "Wait for customer confirmation"
