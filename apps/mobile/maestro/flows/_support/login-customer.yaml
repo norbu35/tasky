@@ -1,3 +1,5 @@
+appId: mn.tasky.mobile
+---
 # _support/login-customer.yaml
 # Precondition: App is launched and at login screen (SCR-SHARED-002)
 # Postcondition: User is logged in as Customer and on customer task list (SCR-CUST-001)

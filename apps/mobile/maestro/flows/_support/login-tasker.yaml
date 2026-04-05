@@ -1,3 +1,5 @@
+appId: mn.tasky.mobile
+---
 # _support/login-tasker.yaml
 # Precondition: App is launched and at login screen (SCR-SHARED-002)
 # Postcondition: User is logged in as Tasker and on tasker feed (SCR-TASK-001)
