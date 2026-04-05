@@ -89,8 +89,8 @@ export default function OnboardingScreen() {
   const isLastSlide = currentIndex === SLIDES.length - 1;
 
   const renderItem = ({ item }: { item: (typeof SLIDES)[0] }) => {
-    const titleText = item.titleFallback ?? t(item.titleKey);
-    const bodyText = item.bodyFallback ?? t(item.bodyKey);
+    const titleText = t(item.titleKey, item.titleFallback);
+    const bodyText = t(item.bodyKey, item.bodyFallback);
     return (
       <View style={styles.slide}>
         <View style={styles.illustrationWrap}>
@@ -157,9 +157,11 @@ export default function OnboardingScreen() {
         </View>
         <Button
           testID="onboarding-next"
-          label={isLastSlide
-            ? t('auth.onboarding.getStarted', 'Эхлэх')
-            : t('auth.onboarding.next', 'Дараагийх')}
+          label={
+            isLastSlide
+              ? t('auth.onboarding.getStarted', 'Эхлэх')
+              : t('auth.onboarding.next', 'Дараагийх')
+          }
           onPress={handleNext}
           style={styles.nextButton}
         />
