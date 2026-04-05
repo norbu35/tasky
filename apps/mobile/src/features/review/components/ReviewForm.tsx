@@ -19,6 +19,7 @@ import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 import { Button } from '../../../components/ui/Button';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useSubmitReview } from '../hooks/useSubmitReview';
+import { ConfirmSheet } from '../../../components/ui/ConfirmSheet';
 
 const { colors, radius, spacing, typography } = mobileTheme;
 
@@ -117,6 +118,7 @@ export default function ReviewFormScreen() {
   const role: ReviewRole = params.role === 'tasker' ? 'tasker' : 'customer';
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showReminderSheet, setShowReminderSheet] = useState(false);
   const successScale = useMemo(() => new Animated.Value(0.88), []);
 
   const [categories, setCategories] = useState<CategoryRating[]>(() => createCategories(role));
@@ -315,6 +317,18 @@ export default function ReviewFormScreen() {
           </View>
         ) : null}
       </View>
+      <ConfirmSheet
+        testID="SCR-SHARED-018"
+        isOpen={showReminderSheet}
+        onClose={() => setShowReminderSheet(false)}
+        title={t('review.reminder.title', 'Review Required')}
+        description={t(
+          'review.reminder.description',
+          'Please submit your review for this booking.',
+        )}
+        confirmLabel={t('review.reminder.confirm', 'Write Review')}
+        onConfirm={() => setShowReminderSheet(false)}
+      />
     </SafeAreaView>
   );
 }

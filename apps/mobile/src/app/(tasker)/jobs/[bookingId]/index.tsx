@@ -8,6 +8,7 @@ import { Button } from '../../../../components/ui/Button';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useMarkBookingDone } from '../../../../features/bookings/hooks/useMarkBookingDone';
 import { TaskerCancelSheet } from '../../../../features/bookings/components/TaskerCancelSheet';
+import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -19,6 +20,7 @@ export default function BookingDetailTaskerScreen() {
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
   const markDone = useMarkBookingDone();
   const [cancelSheetOpen, setCancelSheetOpen] = useState(false);
+  const [showNoShowSheet, setShowNoShowSheet] = useState(false);
   const bookingStatus = booking?.status as string | undefined;
 
   const isAssigned = bookingStatus === 'ASSIGNED';
@@ -40,7 +42,8 @@ export default function BookingDetailTaskerScreen() {
   ) as 'assigned' | 'completed' | 'cancelled' | 'no_show' | undefined;
 
   return (
-    <DetailTemplate testID="SCR-TASK-013"
+    <DetailTemplate
+      testID="SCR-TASK-013"
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -173,6 +176,22 @@ export default function BookingDetailTaskerScreen() {
               }}
             />
           ) : null}
+          <ConfirmSheet
+            testID="SCR-TASK-014"
+            isOpen={showNoShowSheet}
+            onClose={() => setShowNoShowSheet(false)}
+            title={t('tasker.noShow.title', 'Report Customer No-Show')}
+            description={t(
+              'tasker.noShow.description',
+              'Report that the customer was not present. Only use after waiting 15+ minutes.',
+            )}
+            confirmLabel={t('tasker.noShow.confirm', 'Report No-Show')}
+            onConfirm={() => {
+              // TODO: wire real no-show API
+              setShowNoShowSheet(false);
+            }}
+            isDestructive
+          />
         </View>
       )}
     </DetailTemplate>

@@ -12,6 +12,7 @@ import {
   CustomerCancelSheet,
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
+import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors, spacing, typography, radius } = mobileTheme;
@@ -96,6 +97,8 @@ export default function BookingDetailScreen() {
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
   const [showCompletionSheet, setShowCompletionSheet] = useState(false);
   const [showCancelSheet, setShowCancelSheet] = useState(false);
+  const [showCompleteSheet, setShowCompleteSheet] = useState(false);
+  const [showNoShowSheet, setShowNoShowSheet] = useState(false);
 
   const status: string = booking?.status ?? 'ASSIGNED';
   const ctaConfig = getCtaConfig(booking, t);
@@ -158,13 +161,13 @@ export default function BookingDetailScreen() {
   }, [router, bookingId]);
 
   return (
-    <DetailTemplate testID="SCR-CUST-017"
+    <DetailTemplate
+      testID="SCR-CUST-017"
       ctaLabel={ctaConfig?.label}
       ctaOnPress={ctaConfig ? handleCtaPress : undefined}
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-     
     >
       {booking && (
         <>
@@ -311,6 +314,37 @@ export default function BookingDetailScreen() {
               setShowCancelSheet(false);
               router.replace('/(customer)/bookings');
             }}
+          />
+          <ConfirmSheet
+            testID="SCR-CUST-018"
+            isOpen={showCompleteSheet}
+            onClose={() => setShowCompleteSheet(false)}
+            title={t('customer.confirmComplete.title', 'Confirm Completion')}
+            description={t(
+              'customer.confirmComplete.description',
+              'Confirm that the work has been completed satisfactorily.',
+            )}
+            confirmLabel={t('customer.confirmComplete.confirm', 'Confirm Complete')}
+            onConfirm={() => {
+              // TODO: wire real completion API
+              setShowCompleteSheet(false);
+            }}
+          />
+          <ConfirmSheet
+            testID="SCR-CUST-021"
+            isOpen={showNoShowSheet}
+            onClose={() => setShowNoShowSheet(false)}
+            title={t('customer.noShow.title', 'Report No-Show')}
+            description={t(
+              'customer.noShow.description',
+              'Report that the tasker did not arrive. Only use after waiting 15+ minutes past the scheduled time.',
+            )}
+            confirmLabel={t('customer.noShow.confirm', 'Report No-Show')}
+            onConfirm={() => {
+              // TODO: wire real no-show API
+              setShowNoShowSheet(false);
+            }}
+            isDestructive
           />
         </>
       )}

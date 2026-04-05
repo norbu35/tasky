@@ -10,6 +10,7 @@ import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
+import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 
 const { colors, spacing, typography, radius } = mobileTheme;
 
@@ -274,6 +275,22 @@ export default function TaskDetailCustomerScreen() {
         taskId={taskId}
         taskStatus={status}
         bookingId={(task as any)?.booking?.id}
+      />
+      <ConfirmSheet
+        testID="SCR-CUST-010"
+        isOpen={showCancelSheet}
+        onClose={() => setShowCancelSheet(false)}
+        title={t('customer.cancelTask.title', 'Cancel Task')}
+        description={t(
+          'customer.cancelTask.description',
+          'This will remove the task and notify all applicants. This cannot be undone.',
+        )}
+        confirmLabel={t('customer.cancelTask.confirm', 'Cancel Task')}
+        onConfirm={() => {
+          // TODO: wire real cancellation API
+          setShowCancelSheet(false);
+        }}
+        isDestructive
       />
     </>
   );

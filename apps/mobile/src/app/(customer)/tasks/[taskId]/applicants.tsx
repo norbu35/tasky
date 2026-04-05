@@ -95,6 +95,7 @@ export default function ApplicantsListScreen() {
   const { data, isLoading, isError, refetch } = useApplications(taskId);
   const { task } = useCustomerTaskDetail(taskId);
   const [selectedApplicant, setSelectedApplicant] = useState<ApplicantItem | null>(null);
+  const [declineNotification, setDeclineNotification] = useState<string | null>(null);
 
   const applicants: ApplicantItem[] = useMemo(
     () =>
@@ -162,6 +163,17 @@ export default function ApplicantsListScreen() {
             </Text>
           </View>
         </View>
+
+        {declineNotification ? (
+          <View testID="SCR-CUST-012" style={styles.declineBanner}>
+            <Text style={styles.declineText}>{declineNotification}</Text>
+            <Button
+              label={t('common.dismiss', 'Dismiss')}
+              variant="ghost"
+              onPress={() => setDeclineNotification(null)}
+            />
+          </View>
+        ) : null}
 
         {isLoading ? (
           <View style={styles.stateCard}>
@@ -459,5 +471,22 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     fontWeight: '700',
     color: colors.textSecondary,
+  },
+  declineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    backgroundColor: `${colors.danger}14`,
+  },
+  declineText: {
+    flex: 1,
+    fontSize: typography.caption,
+    color: colors.danger,
+    fontWeight: '600',
+    lineHeight: typography.caption * 1.5,
   },
 });
