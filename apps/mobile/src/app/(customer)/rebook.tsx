@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     ...elevations.soft,
   },
   sectionTitle: {
-    fontSize: screenTypography.sectionTitleSize,
-    lineHeight: screenTypography.sectionTitleLineHeight,
+    fontSize: screenTypography.sectionTitle.fontSize,
+    lineHeight: screenTypography.sectionTitle.lineHeight,
     fontWeight: '700',
     color: colors.primaryDeep,
     marginBottom: screenLayout.body.itemGap,

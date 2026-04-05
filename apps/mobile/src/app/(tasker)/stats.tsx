@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
     color: mobileTheme.colors.primaryForeground,
   },
   sectionHeading: {
-    fontSize: screenTypography.sectionTitleSize,
-    lineHeight: screenTypography.sectionTitleLineHeight,
+    fontSize: screenTypography.sectionTitle.fontSize,
+    lineHeight: screenTypography.sectionTitle.lineHeight,
     fontWeight: '700',
     color: mobileTheme.colors.primaryDeep,
   },
