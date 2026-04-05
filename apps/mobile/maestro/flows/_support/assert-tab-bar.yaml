@@ -1,0 +1,5 @@
+# _support/assert-tab-bar.yaml
+# Asserts the main tab bar is visible — used as sanity check after login
+
+- assertVisible:
+    id: "SCR-SHARED-012"

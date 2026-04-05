@@ -1,0 +1,13 @@
+# _support/login-tasker.yaml
+# Precondition: App is launched and at login screen (SCR-SHARED-002)
+# Postcondition: User is logged in as Tasker and on tasker feed (SCR-TASK-001)
+# Requires: Test device configured with a Facebook test account that has tasker role
+
+- assertVisible:
+    id: "SCR-SHARED-002"
+- tapOn:
+    id: "facebook-login-button"
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-001"
+    timeout: 30000

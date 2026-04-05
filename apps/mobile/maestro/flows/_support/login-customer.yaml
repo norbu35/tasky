@@ -1,0 +1,14 @@
+# _support/login-customer.yaml
+# Precondition: App is launched and at login screen (SCR-SHARED-002)
+# Postcondition: User is logged in as Customer and on customer task list (SCR-CUST-001)
+# Requires: Test device configured with a Facebook test account that has customer role
+
+- assertVisible:
+    id: "SCR-SHARED-002"
+- tapOn:
+    id: "facebook-login-button"
+# Facebook OAuth opens — wait for return to app
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-001"
+    timeout: 30000
