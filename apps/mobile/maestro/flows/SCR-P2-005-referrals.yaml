@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-P2-005: Referral Code & Stats
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-tasker.yaml
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-001"
+    timeout: 5000
+
+- tapOn:
+    id: "tasker-credits-referrals"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-005"
+    timeout: 5000

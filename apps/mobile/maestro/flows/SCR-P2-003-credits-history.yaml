@@ -1,0 +1,20 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-P2-003: Credits Transaction History
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-tasker.yaml
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-001"
+    timeout: 5000
+
+- tapOn:
+    id: "tasker-credits-history-secondary"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-003"
+    timeout: 5000

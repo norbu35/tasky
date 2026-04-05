@@ -1,0 +1,19 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-SHARED-016: Notification Center
+# Required states: loading_initial, empty, populated, loading_refresh, error_network
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-customer.yaml
+
+- tapOn:
+    id: "my-tasks-notifications"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-016"
+    timeout: 5000
+
+- assertVisible:
+    id: "SCR-SHARED-016"

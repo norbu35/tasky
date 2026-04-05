@@ -1,0 +1,32 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-P3-003: Escrow Payment Flow
+# Flow type: smoke test
+# Precondition: Logged in as customer; booking eligible for escrow payment exists
+
+- launchApp
+- runFlow: _support/login-customer.yaml
+
+- tapOn:
+    id: "tab-bookings"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-016"
+    timeout: 5000
+
+- tapOn:
+    id: "booking-card-escrow-eligible"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-017"
+    timeout: 5000
+
+- tapOn:
+    id: "booking-detail-escrow-link"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P3-003"
+    timeout: 5000

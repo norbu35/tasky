@@ -1,0 +1,17 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-P2-001: Credits Balance & Purchase
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-tasker.yaml
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-P2-001"
+    timeout: 5000
+
+- assertVisible:
+    id: "tasker-credits-topup-secondary"
+- assertVisible:
+    id: "tasker-credits-history-secondary"

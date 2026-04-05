@@ -1,0 +1,19 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-INFRA-004: Terms of Service
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-customer.yaml
+
+- tapOn:
+    id: "tab-profile"
+- tapOn:
+    id: "profile-settings-button"
+- tapOn:
+    id: "settings-terms-link"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-INFRA-004"
+    timeout: 5000

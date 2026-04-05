@@ -1,0 +1,17 @@
+appId: mn.tasky.mobile
+---
+# Screen SCR-TASK-016: Tasker Stats Dashboard
+# Flow type: smoke test
+
+- launchApp
+- runFlow: _support/login-tasker.yaml
+
+- tapOn:
+    id: "tab-profile"
+- tapOn:
+    id: "profile-stats-link"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-016"
+    timeout: 5000
