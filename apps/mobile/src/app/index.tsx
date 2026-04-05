@@ -4,6 +4,7 @@ import { Redirect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../store/authStore';
+import { useAppStore } from '../store/appStore';
 import { CircleCheckBig } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
 
@@ -12,9 +13,12 @@ const { colors, spacing, typography } = mobileTheme;
 export default function SplashScreen() {
   const { t } = useTranslation();
   const session = useAuthStore((state) => state.session);
+  const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding);
 
   const nextHref = !session
-    ? '/(auth)'
+    ? hasSeenOnboarding
+      ? '/(auth)'
+      : '/onboarding'
     : session.user.primary_auth === 'FACEBOOK'
       ? '/(auth)/otp-migration'
       : session.user.role === 'CUSTOMER'
@@ -43,9 +47,7 @@ export default function SplashScreen() {
         <View style={styles.progressTrack}>
           <View style={styles.progressFill} />
         </View>
-        <Text style={styles.poweredBy}>
-          {t('auth.splash.poweredBy', 'Powered by secure tech')}
-        </Text>
+        <Text style={styles.poweredBy}>{t('auth.splash.poweredBy', 'Powered by secure tech')}</Text>
       </View>
       <ActivityIndicator
         testID="splash-loading"
