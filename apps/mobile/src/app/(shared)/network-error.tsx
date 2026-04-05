@@ -47,7 +47,7 @@ export default function NetworkErrorScreen() {
   }, [router]);
 
   return (
-    <View style={styles.container} testID="network-error-screen">
+    <View style={styles.container} testID="SCR-INFRA-001">
       <View style={styles.iconShell}>
         <WifiOff size={40} color={colors.danger} />
       </View>

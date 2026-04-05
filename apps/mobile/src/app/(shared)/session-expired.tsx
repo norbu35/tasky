@@ -20,7 +20,7 @@ export default function SessionExpiredScreen() {
   }, [router, setSession]);
 
   return (
-    <View style={styles.container} testID="session-expired-screen">
+    <View style={styles.container} testID="SCR-INFRA-003">
       <View style={styles.scrim} />
       <ModalSheet
         visible

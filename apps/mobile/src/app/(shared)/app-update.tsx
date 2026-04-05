@@ -44,7 +44,7 @@ export default function AppUpdateScreen() {
   }, [router]);
 
   return (
-    <View style={styles.container} testID="app-update-screen">
+    <View style={styles.container} testID="SCR-INFRA-002">
       <View style={styles.iconShell}>
         <Download size={32} color={colors.primary} />
       </View>
