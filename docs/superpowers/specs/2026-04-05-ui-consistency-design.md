@@ -11,7 +11,7 @@ AI agents generated mobile screens by reading AI-generated Figma designs through
 
 1. **Runtime breakages** — Figma internal asset URLs (`figma.com/api/mcp/asset/...`) embedded as `<Image source>` props. These require Figma auth and fail silently in production.
 2. **Component bypass** — screens rolled their own `Pressable` + `StyleSheet.create` instead of using the shared `Button`, `AuthTemplate`, `ScreenContainer`, etc.
-3. **Coverage gaps** — ~17 screens referenced in the journey catalog have no implementation.
+3. **Coverage gaps** — ~21 screens referenced in the journey catalog have no implementation.
 
 ---
 
@@ -24,7 +24,7 @@ Layer 1: SWEEP          Layer 2: SCAFFOLD         Layer 3: WIRE
 ─────────────────       ──────────────────────    ────────────────────
 Existing screens only   Missing screens only      All screens
 Fix violations          Create from templates     Fix router.push() chains
-~15 screens             ~17 screens               Per-journey smoke check
+~18 screens             ~21 screens               Per-journey smoke check
 Output: clean files     Output: stub screens      Output: navigable paths
 ```
 
@@ -34,16 +34,19 @@ Layers run sequentially. Within each layer, work across journeys is parallelisab
 
 ## Layer 1: Sweep — Violation Rules
 
-Six violation classes. Each has a deterministic fix. No new `StyleSheet.create` blocks are permitted except for layout adjustments that cannot be expressed through component props.
+Nine violation classes. Each has a deterministic fix. No new `StyleSheet.create` blocks are permitted except for layout adjustments that cannot be expressed through component props.
 
 | # | Violation | Affected Files | Fix |
 |---|-----------|---------------|-----|
 | V1 | Figma MCP asset URL as `<Image source>` | `login.tsx`, `onboarding.tsx` | Remove `<Image>`. Replace brand icon with Lucide `Zap` in a styled `View`, Facebook button icon with Lucide `Facebook`, onboarding slides with a coloured `View` + per-slide Lucide icon |
 | V2 | Raw `Pressable` used as a CTA button | `login.tsx` (Facebook btn), `onboarding.tsx` (Next/Skip) | Swap for `<Button variant="default">` or `<Button variant="outline">` as appropriate. Role-selection tiles in `role-select.tsx` are exempt — they are selection tiles, not CTA buttons |
-| V3 | Screen root is bare `<View>` instead of `ScreenContainer` | `permission-location.tsx`, `permission-notifications.tsx` | Wrap in `<ScreenContainer testID="SCR-xxx">` |
-| V4 | Auth screen does not use `AuthTemplate` | `login.tsx` | Refactor to `<AuthTemplate showLogo topRightSlot={<LanguageSwitcher>} bottomSlot={<Button label="Facebook-ээр нэвтрэх">}>` |
-| V5 | Hardcoded user-visible strings (no `t()`) | `permission-location.tsx`, `permission-notifications.tsx`, `review.tsx` (`'Flexible'`), `intake.tsx` (`'Yes'`/`'No'`) | Wrap every user-visible string in `t('namespace.key', 'fallback')` following existing key conventions |
-| V6 | Duplicate step label inside `FormWizardTemplate` children | `intake.tsx` (renders own "Step X of Y" text while template's progress bar already shows position) | Remove the manual `<Text>` step label — `FormWizardTemplate`'s progress bar is the sole authoritative indicator |
+| V3 | Screen root is bare `<View>` instead of `ScreenContainer` | `permission-camera.tsx`, `permission-location.tsx`, `permission-notifications.tsx` | Wrap in `<ScreenContainer testID="SCR-xxx">` |
+| V4 | Auth screen does not use `AuthTemplate` | `login.tsx` | Refactor to use `AuthTemplate`. **Prerequisite:** extend `AuthTemplate` with a `footerSlot` prop for footer links (Terms/Privacy). The login screen's brand icon uses a Lucide icon (V1), headline + subtitle map to existing props, Facebook CTA goes in `bottomSlot`, footer links go in the new `footerSlot`. |
+| V5 | Hardcoded user-visible strings (no `t()`) | `permission-camera.tsx`, `permission-location.tsx`, `permission-notifications.tsx`, `review.tsx` (`'Flexible'`), `intake.tsx` (`'Yes'`/`'No'`) | Wrap every user-visible string in `t('namespace.key', 'fallback')` following existing key conventions. **Also add the corresponding keys to `locales/en/translation.json` and `locales/mn/translation.json`.** |
+| V6 | Duplicate step label inside `FormWizardTemplate` children | `intake.tsx`, `photos.tsx`, `location.tsx`, `schedule.tsx` (each renders its own "Step X of Y" text while the template's progress bar already shows position) | Remove the manual `<Text>` step label from all four screens — `FormWizardTemplate`'s progress bar is the sole authoritative indicator |
+| V7 | Wizard step uses wrong template | `review.tsx` (step 7 of JRN-CUST-01 uses `DetailTemplate` instead of `FormWizardTemplate`) | Refactor to `FormWizardTemplate` with `currentStep={5}` and `totalSteps={7}` so the progress bar is continuous across the entire wizard. The review screen's content (summary cards, edit links, Post button) becomes children of the template; the Post CTA moves to the template's `onNext` handler |
+| V8 | Wizard entry step bypasses `FormWizardTemplate` | `category.tsx` (step 1 of JRN-CUST-01 uses `ScreenContainer` + `InsetScrollView` + `StepIndicator` directly) | Refactor to `FormWizardTemplate` with `currentStep={0}` and `totalSteps={7}`. Remove the standalone `StepIndicator` and manual step label — the template handles both. Category grid and search become children of the template |
+| V9 | New i18n keys not added to locale files | (any file touched by V5) | Every `t('key', 'fallback')` call must have a corresponding entry in both `locales/en/translation.json` and `locales/mn/translation.json`. The Mongolian fallback in the `t()` call serves as the `mn` value; derive the `en` value from the English translation |
 
 ---
 
@@ -54,6 +57,13 @@ Every scaffolded screen must:
 - Use `t('key', 'fallback')` for all user-visible strings
 - Show a functional loading/empty state
 - Include a `// TODO: wire real data` comment at the data-fetch site
+
+**Inline screens** (rendered as `ConfirmSheet` or inline state on a parent) must also carry `testID="SCR-xxx"` on the `ConfirmSheet` component itself so Gate 2 can verify them.
+
+**New route groups require `_layout.tsx` files.** When scaffolding creates a new directory that doesn't exist yet, also create a `_layout.tsx` with a `<Stack>` navigator. Required for:
+- `(customer)/business/_layout.tsx`
+- `(customer)/business/new/_layout.tsx`
+- `(customer)/business/[businessId]/_layout.tsx`
 
 ### Template decision rules
 
@@ -138,14 +148,9 @@ grep -r "figma.com/api/mcp" apps/mobile/src/  # must return no matches
 ```
 
 **Gate 2 — Full catalog coverage**
-Every `screen:` ID in `journey-catalog.yaml` is either:
-- Implemented as a file with matching `testID="SCR-xxx"`, OR
-- Listed in the known-inline set below (a `ConfirmSheet` or inline state on a parent screen, not a route)
+Every `screen:` ID in `journey-catalog.yaml` has a matching `testID="SCR-xxx"` somewhere in `apps/mobile/src/`. This includes both route-level screens (own file) and inline screens (`ConfirmSheet` or inline state on a parent — the `testID` goes on the `ConfirmSheet` component).
 
-**Known inline screens** (hardcoded in coverage script):
-`SCR-SHARED-018`, `SCR-CUST-010`, `SCR-CUST-012`, `SCR-CUST-018`, `SCR-CUST-021`, `SCR-TASK-014`
-
-A coverage script reads the catalog, extracts all `screen:` values, subtracts the known-inline set, then checks that every remaining ID appears in a `testID` prop somewhere in `apps/mobile/src/`.
+A coverage script reads the catalog, extracts all unique `screen:` values, then greps for each as a `testID` prop in the source tree. Pass = zero unresolved IDs.
 
 **Gate 3 — All happy paths navigable**
 The smoke-check table (Layer 3 output) is fully populated with ✓ on all three checks for all 29 journeys (7 shared, 9 customer, 8 tasker, 4 B2B, 1 infra).
