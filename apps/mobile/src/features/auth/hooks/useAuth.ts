@@ -125,8 +125,6 @@ export function useDevLogin() {
       const { hasSeenOnboarding } = useAppStore.getState();
       if (!hasSeenOnboarding) {
         router.replace('/onboarding');
-      } else if (variables.role === 'CUSTOMER') {
-        router.replace('/(customer)/tasks');
       } else {
         router.replace('/(tabs)');
       }
