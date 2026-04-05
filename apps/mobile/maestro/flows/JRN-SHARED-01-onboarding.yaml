@@ -2,29 +2,34 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-01: First Launch & Onboarding
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-SHARED-001 (splash), SCR-SHARED-005 (onboarding),
-#   SCR-SHARED-006 (role select), SCR-SHARED-007/008/009 (permissions)
+# Covered states: SCR-SHARED-005 (onboarding), SCR-SHARED-006 (role select)
 # Actor: new user (no role yet)
 # Flow type: happy path
+#
+# INFRA_DEPENDENCY: iOS preserves onboarding-seen flags outside AsyncStorage.
+# clearState alone does NOT re-trigger onboarding on an already-installed app.
+# To run this flow, uninstall first:
+#   xcrun simctl uninstall booted mn.tasky.mobile
+#   pnpm --filter @tasky/mobile run ios
+# Then run this flow before any other flow.
 
 - launchApp:
     clearState: true
 
-# Splash → Onboarding carousel
+# Fresh install → splash → onboarding carousel
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-005"
     timeout: 10000
 
-# Swipe through 3 slides using Next button
+# Swipe through 3 slides
 - tapOn:
     id: "onboarding-next"
 - tapOn:
     id: "onboarding-next"
-# Third slide: Get Started button
 - tapOn: "Get Started"
 
-# Role selection screen
+# Role selection
 - assertVisible:
     id: "SCR-SHARED-006"
 - tapOn:
@@ -32,30 +37,29 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "role-confirm-button"
 
-# Camera permission system dialog
+# iOS permission dialogs appear as native system prompts — tap Allow via text match
 - extendedWaitUntil:
-    visible:
-      id: "SCR-SHARED-007"
-    timeout: 5000
-- tapOn:
-    id: "permission-allow-button"
-
-# Location permission system dialog
+    anyOf:
+      - visible: "Allow"
+      - visible:
+          id: "SCR-SHARED-002"
+    timeout: 8000
+- tapOn: "Allow"
 - extendedWaitUntil:
-    visible:
-      id: "SCR-SHARED-008"
+    anyOf:
+      - visible: "Allow"
+      - visible:
+          id: "SCR-SHARED-002"
     timeout: 5000
-- tapOn:
-    id: "permission-allow-button"
-
-# Notification permission system dialog
+- tapOn: "Allow"
 - extendedWaitUntil:
-    visible:
-      id: "SCR-SHARED-009"
+    anyOf:
+      - visible: "Allow"
+      - visible:
+          id: "SCR-SHARED-002"
     timeout: 5000
-- tapOn:
-    id: "permission-allow-button"
+- tapOn: "Allow"
 
-# Login screen (fresh state — user must log in after onboarding)
+# End state: login screen
 - assertVisible:
     id: "SCR-SHARED-002"
