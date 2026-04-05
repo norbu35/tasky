@@ -96,7 +96,7 @@ export function DetailTemplate({
             styles.scrollContent,
             hasBottomBar && styles.scrollContentWithActionBar,
           ]}
-          extraBottomInset={0}
+          extraBottomInset={hasBottomBar ? screenLayout.chrome.tabBarHeight : 0}
           showsVerticalScrollIndicator={false}
         >
           {children}
