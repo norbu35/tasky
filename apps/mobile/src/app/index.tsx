@@ -31,7 +31,7 @@ export default function SplashScreen() {
     <LinearGradient
       colors={[colors.primaryDeep, colors.primary, colors.primaryDeep]}
       style={styles.container}
-      testID="splash-screen"
+      testID="SCR-SHARED-001"
     >
       <Redirect href={nextHref} />
       <View style={styles.content}>
