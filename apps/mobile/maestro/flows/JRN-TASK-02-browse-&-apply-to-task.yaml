@@ -1,27 +1,43 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-02: Browse & Apply to Task
-# Goal: Find and apply to a task
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-TASK-001 (feed), SCR-TASK-002 (task detail)
+# Actor: tasker (verified)
+# Flow type: happy path
 
 - launchApp
 
-# Step 1: Browse task feed, filter by category/distance
+- runFlow: _support/login-tasker.yaml
+
+# Tasker feed
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-001"
     timeout: 5000
-# TODO: Add specific interactions for "Browse task feed, filter by category/distance"
 
-# Step 2: View task detail
+# Use filter
+- tapOn:
+    id: "task-feed-filter-bar"
+
+# Tap first task card
+- tapOn:
+    id: "task-feed"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-002"
     timeout: 5000
-# TODO: Add specific interactions for "View task detail"
 
-# Step 3: Tap 'Apply'
+- assertVisible:
+    id: "task-detail-photos"
+
+# Apply to task
+- tapOn:
+    id: "task-detail-apply-button"
+
+# Success state — application sent
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-002"
-    timeout: 5000
-# TODO: Add specific interactions for "Tap 'Apply'"
+      id: "application-sent-success"
+    timeout: 10000

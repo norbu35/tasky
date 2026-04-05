@@ -1,13 +1,31 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-06: Settings & Account
-# Goal: Manage settings, role switch, or delete account
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-014 (settings)
+# Actor: customer or tasker
+# Flow type: happy path
+# Note: profile/delete.tsx has TODOs; navigate to settings only
 
 - launchApp
 
-# Step 1: View settings
+- runFlow: _support/login-customer.yaml
+
+- tapOn:
+    id: "tab-profile"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-012"
+    timeout: 5000
+
+- tapOn:
+    id: "profile-settings-button"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-014"
     timeout: 5000
-# TODO: Add specific interactions for "View settings"
+
+- assertVisible:
+    id: "settings-screen"

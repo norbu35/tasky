@@ -1,48 +1,74 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-TASK-01: Tasker Verification
-# Goal: Complete identity verification to unlock applications
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-TASK-003, SCR-TASK-004, SCR-TASK-005, SCR-TASK-010
+# Actor: tasker (unverified)
+# Flow type: happy path
+# Note: upload.tsx has TODOs; navigate through screens without actual file upload
 
 - launchApp
 
-# Step 1: Tap 'Apply' while unverified
+- runFlow: _support/login-tasker.yaml
+
+# Verification gate appears when unverified tasker taps Apply
+- extendedWaitUntil:
+    visible:
+      id: "SCR-TASK-001"
+    timeout: 5000
+
+- tapOn:
+    id: "task-feed"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-002"
     timeout: 5000
-# TODO: Add specific interactions for "Tap 'Apply' while unverified"
 
-# Step 2: View verification encouragement
+# Apply — triggers verification gate
+- tapOn:
+    id: "task-detail-apply-button"
+
+# Verification gate screen
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-003"
     timeout: 5000
-# TODO: Add specific interactions for "View verification encouragement"
 
-# Step 3: Accept verification consent
+- tapOn:
+    id: "verification-gate-start-button"
+
+# Consent screen
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-004"
     timeout: 5000
-# TODO: Add specific interactions for "Accept verification consent"
 
-# Step 4: Upload ID front, back, selfie
+- assertVisible:
+    id: "consent-screen-cta"
+- tapOn:
+    id: "consent-screen-cta"
+
+# Upload screen
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-005"
     timeout: 5000
-# TODO: Add specific interactions for "Upload ID front, back, selfie"
 
-# Step 5: Success — submitted
+# Tap upload ID front (system picker opens — dismiss or mock)
+- tapOn:
+    id: "upload-id-front-button"
+# NOTE: File picker opens; Maestro cannot select files from gallery without OS interaction.
+# If this step fails, document as KNOWN-LIMITATION: file picker requires device setup.
+
+# Navigate to submitted state if picker is skippable
+- tapOn:
+    id: "upload-submit-button"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-010"
-    timeout: 5000
-# TODO: Add specific interactions for "Success — submitted"
+    timeout: 10000
 
-# Step 6: Wait for admin review (24h SLA)
-- extendedWaitUntil:
-    visible:
-      id: "SCR-TASK-007"
-    timeout: 5000
-# TODO: Add specific interactions for "Wait for admin review (24h SLA)"
+- assertVisible:
+    id: "SCR-TASK-010"

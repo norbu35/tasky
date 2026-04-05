@@ -1,20 +1,42 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-04: Messaging
-# Goal: Exchange messages about a booking
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-SHARED-010 (inbox list), SCR-SHARED-011 (chat detail)
+# Actor: customer or tasker
+# Flow type: happy path
+# Precondition: Logged in; at least one conversation exists
 
 - launchApp
 
-# Step 1: Open conversation list
+- runFlow: _support/login-customer.yaml
+
+# Navigate to Inbox tab
+- tapOn:
+    id: "tab-inbox"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-010"
     timeout: 5000
-# TODO: Add specific interactions for "Open conversation list"
 
-# Step 2: Read/send messages
+# Open first conversation
+- tapOn:
+    id: "conversation-card-0"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-011"
     timeout: 5000
-# TODO: Add specific interactions for "Read/send messages"
+
+# Send a message
+- tapOn:
+    id: "chat-message-input"
+- inputText: "Сайн байна уу? Захиалга баталгаажих уу?"
+- tapOn:
+    id: "chat-send-button"
+
+# Message visible in thread
+- extendedWaitUntil:
+    visible: "Сайн байна уу?"
+    timeout: 5000

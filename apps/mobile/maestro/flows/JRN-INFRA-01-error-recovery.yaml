@@ -1,6 +1,36 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-INFRA-01: Error Recovery
-# Goal: Recover from network/session errors
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-INFRA-001 (network error), SCR-INFRA-003 (session expired)
+# Actor: any
+# Flow type: infrastructure blocker surface
+# Precondition: Test can trigger network error (e.g. airplane mode or backend unreachable)
+# Note: SCR testIDs added in Phase 1 Task 2
 
+# --- Part A: Network Error Screen ---
 - launchApp
+
+# Trigger network error by navigating when network is unavailable
+# (This requires the device to be in airplane mode or the API to be unreachable)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-INFRA-001"
+    timeout: 15000
+
+- assertVisible:
+    id: "network-error-screen-retry"
+
+# Tap retry
+- tapOn:
+    id: "network-error-screen-retry"
+
+# --- Part B: Session Expired ---
+# Trigger by invalidating token (backend-controlled test setup)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-INFRA-003"
+    timeout: 15000
+
+- assertVisible:
+    id: "session-expired-screen"

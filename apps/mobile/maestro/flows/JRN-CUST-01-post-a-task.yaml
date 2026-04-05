@@ -1,62 +1,104 @@
 appId: mn.tasky.mobile
 ---
 # Journey JRN-CUST-01: Post a Task
-# Goal: Create and publish a new task
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-CUST-001..008 (full wizard)
+# Actor: customer
+# Flow type: happy path
+# Note: category/intake/location/schedule have TODOs but happy path navigation works
 
 - launchApp
 
-# Step 1: Tap FAB 'Post Task'
+- runFlow: _support/login-customer.yaml
+
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-001"
     timeout: 5000
-# TODO: Add specific interactions for "Tap FAB 'Post Task'"
 
-# Step 2: Select category
+# Tap FAB to post new task
+- tapOn:
+    id: "my-tasks-fab"
+
+# Step 1: Category selection
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-002"
     timeout: 5000
-# TODO: Add specific interactions for "Select category"
 
-# Step 3: Complete intake form
+# Tap first category card in grid
+- tapOn:
+    id: "category-selection-grid"
+
+# Step 2: Intake form
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-003"
     timeout: 5000
-# TODO: Add specific interactions for "Complete intake form"
 
-# Step 4: Upload photos (0-3)
+- tapOn:
+    id: "intake-description-input"
+- inputText: "Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин."
+
+- tapOn:
+    id: "intake-next-button"
+
+# Step 3: Photo upload (skip — tap next/continue)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-004"
     timeout: 5000
-# TODO: Add specific interactions for "Upload photos (0-3)"
 
-# Step 5: Review auto-generated Job Scope Summary (editable)
-- extendedWaitUntil:
-    visible:
-      id: "SCR-CUST-007"
-    timeout: 5000
-# TODO: Add specific interactions for "Review auto-generated Job Scope Summary (editable)"
+- tapOn:
+    id: "photo-upload-next-button"
 
-# Step 6: Pin location on map
+# Step 4: Location pin
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-005"
     timeout: 5000
-# TODO: Add specific interactions for "Pin location on map"
 
-# Step 7: Set schedule and budget, then Post Task
+# Accept current location or use default
+- tapOn:
+    id: "location-use-current"
+
+- tapOn:
+    id: "location-next-button"
+
+# Step 5: Schedule & budget
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-006"
     timeout: 5000
-# TODO: Add specific interactions for "Set schedule and budget, then Post Task"
 
-# Step 8: Success — task posted
+- tapOn:
+    id: "schedule-budget-input"
+- clearText
+- inputText: "50000"
+
+- tapOn:
+    id: "schedule-next-button"
+
+# Step 6: Review & submit
+- extendedWaitUntil:
+    visible:
+      id: "SCR-CUST-007"
+    timeout: 5000
+
+- assertVisible:
+    id: "review-submit-screen"
+
+- tapOn:
+    id: "review-submit-button"
+
+# Step 7: Success
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-008"
-    timeout: 5000
-# TODO: Add specific interactions for "Success — task posted"
+    timeout: 10000
+
+- tapOn:
+    id: "task-posted-success-screen-done"
+
+- assertVisible:
+    id: "SCR-CUST-001"

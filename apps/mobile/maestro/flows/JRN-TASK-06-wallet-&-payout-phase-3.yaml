@@ -1,20 +1,23 @@
 appId: mn.tasky.mobile
 ---
-# Journey JRN-TASK-06: Wallet & Payout (Phase 3+)
-# Goal: View earnings and request payout
+# Journey JRN-TASK-06: Wallet & Payout (Phase 3)
+# Source: docs/design/journey-catalog.yaml
+# Covered states: SCR-P3-001 (wallet balance)
+# Note: SCR-P3-002 (payout) has TODOs — navigate to wallet only
+# Actor: tasker
+# Flow type: happy path (wallet view only)
 
 - launchApp
 
-# Step 1: View wallet balance
+- runFlow: _support/login-tasker.yaml
+
+# Navigate to wallet (from profile or tab)
 - extendedWaitUntil:
     visible:
       id: "SCR-P3-001"
     timeout: 5000
-# TODO: Add specific interactions for "View wallet balance"
 
-# Step 2: Request payout
-- extendedWaitUntil:
-    visible:
-      id: "SCR-P3-002"
-    timeout: 5000
-# TODO: Add specific interactions for "Request payout"
+# Verify wallet screen loaded
+- assertVisible:
+    id: "SCR-P3-001"
+# NOTE: payout form has TODOs — not tested in this flow
