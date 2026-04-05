@@ -7,7 +7,7 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { screenRhythm, screenTypography } from '../../../design/screenRhythm';
+import { screenLayout, screenTypography } from '../../../design/screenLayout';
 import { ScreenContainer } from '../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
@@ -324,14 +324,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingBottom: spacing['3xl'],
+    paddingHorizontal: screenLayout.insetX,
+    paddingBottom: screenLayout.chrome.contentBottomClearance,
   },
   headerWrap: {
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.itemGap,
-    paddingBottom: screenRhythm.itemGap,
-    gap: screenRhythm.itemGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.header.topInset,
+    paddingBottom: screenLayout.header.bottomGap,
+    gap: screenLayout.body.itemGap,
   },
   topBar: {
     flexDirection: 'row',
@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
   headerCopy: {
     flex: 1,
     paddingRight: spacing.md,
+    gap: screenLayout.header.greetingGap,
   },
   greeting: {
     fontSize: typography.caption,
@@ -350,7 +351,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   pageTitle: {
-    marginTop: screenRhythm.microGap,
     fontSize: typography.heroTitle,
     fontWeight: '900',
     color: colors.primaryDeep,
@@ -366,9 +366,9 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     borderRadius: radius.lg,
-    padding: screenRhythm.cardPadding,
+    padding: screenLayout.body.cardPadding,
     backgroundColor: colors.card,
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
     ...elevations.soft,
   },
   heroTitle: {
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    gap: screenRhythm.microGap,
+    gap: screenLayout.body.microGap,
   },
   statChip: {
     flex: 1,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
     backgroundColor: `${colors.primary}10`,
-    gap: screenRhythm.microGap / 2,
+    gap: screenLayout.body.microGap / 2,
   },
   statValue: {
     fontSize: typography.subtitle,
@@ -403,9 +403,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   skeletonList: {
-    paddingHorizontal: screenRhythm.contentInsetX,
-    paddingTop: screenRhythm.itemGap,
-    gap: screenRhythm.itemGap,
+    paddingHorizontal: screenLayout.insetX,
+    paddingTop: screenLayout.body.itemGap,
+    gap: screenLayout.body.itemGap,
   },
   skeletonCard: {
     borderRadius: radius.md,
@@ -453,13 +453,13 @@ const styles = StyleSheet.create({
     width: '72%',
   },
   emptyCard: {
-    marginHorizontal: screenRhythm.contentInsetX,
-    marginTop: screenRhythm.blockGap,
+    marginHorizontal: screenLayout.insetX,
+    marginTop: screenLayout.body.blockGap,
     borderRadius: radius.lg,
-    padding: screenRhythm.sectionGap,
+    padding: screenLayout.body.sectionGap,
     backgroundColor: colors.card,
     alignItems: 'center',
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
     ...elevations.soft,
   },
   emptyBadge: {
@@ -496,12 +496,12 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
   },
   errorCard: {
-    marginHorizontal: screenRhythm.contentInsetX,
-    marginTop: screenRhythm.blockGap,
+    marginHorizontal: screenLayout.insetX,
+    marginTop: screenLayout.body.blockGap,
     borderRadius: radius.lg,
-    padding: screenRhythm.sectionGap,
+    padding: screenLayout.body.sectionGap,
     backgroundColor: colors.card,
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
     ...elevations.soft,
   },
   errorTitle: {
@@ -532,14 +532,14 @@ const styles = StyleSheet.create({
   cardOuter: {
     backgroundColor: colors.muted,
     borderRadius: radius.lg,
-    padding: screenRhythm.microGap / 2,
+    padding: screenLayout.body.microGap / 2,
   },
   card: {
     borderRadius: radius.md,
     backgroundColor: colors.card,
-    padding: screenRhythm.cardPadding,
+    padding: screenLayout.body.cardPadding,
     flexDirection: 'row',
-    gap: screenRhythm.itemGap,
+    gap: screenLayout.body.itemGap,
     alignItems: 'flex-start',
     ...elevations.soft,
   },
@@ -556,14 +556,14 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    gap: screenRhythm.microGap,
+    gap: screenLayout.body.microGap,
     minWidth: 0,
   },
   cardTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: screenRhythm.microGap,
+    gap: screenLayout.body.microGap,
   },
   cardChip: {
     flex: 1,
@@ -581,10 +581,10 @@ const styles = StyleSheet.create({
     color: colors.primaryDeep,
   },
   cardTitle: {
-    fontSize: screenTypography.cardTitleSize,
+    fontSize: screenTypography.cardTitle.fontSize,
     fontWeight: '700',
     color: colors.primaryDeep,
-    lineHeight: screenTypography.cardTitleLineHeight,
+    lineHeight: screenTypography.cardTitle.lineHeight,
   },
   cardBudget: {
     fontSize: typography.subtitle,
