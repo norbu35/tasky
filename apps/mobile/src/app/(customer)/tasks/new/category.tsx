@@ -2,23 +2,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Bolt,
-  ChevronLeft,
-  Hammer,
-  Leaf,
-  Package,
-  Shirt,
-  Sparkles,
-  Search,
-} from 'lucide-react-native';
+import { Bolt, Hammer, Leaf, Package, Shirt, Sparkles, Search } from 'lucide-react-native';
 import { Input } from '../../../../components/ui/Input';
-import { StepIndicator } from '../../../../components/ui/StepIndicator';
+import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import type { Category } from '../../../../lib/mobileApiClient';
-import { InsetScrollView, ScreenContainer } from '../../../../components/shells';
 
 const { colors, spacing, radius, typography } = mobileTheme;
 
@@ -118,6 +108,7 @@ export default function CategorySelectionScreen() {
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useCategories();
   const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const categories = useMemo(() => data?.data ?? [], [data?.data]);
   const filteredCategories = useMemo(() => {
@@ -126,176 +117,115 @@ export default function CategorySelectionScreen() {
     return categories.filter((category) => category.name.toLowerCase().includes(normalizedQuery));
   }, [categories, query]);
 
-  const handleCategoryPress = useCallback(
-    (categoryId: string) => {
-      const category = categories.find((c) => c.id === categoryId);
-      router.push({
-        pathname: '/(customer)/tasks/new/intake',
-        params: {
-          categoryId,
-          intakeEnabled: category?.intake_enabled ? '1' : '0',
-          intakeSchemaVersion: String(category?.intake_schema_version ?? ''),
-          intakeSchemaJson: category?.intake_schema_json
-            ? JSON.stringify(category.intake_schema_json)
-            : '',
-        },
-      });
-    },
-    [router, categories],
-  );
+  const handleCategorySelect = useCallback(() => {
+    if (!selectedCategory) return;
+    const category = categories.find((c) => c.id === selectedCategory);
+    router.push({
+      pathname: '/(customer)/tasks/new/intake',
+      params: {
+        categoryId: selectedCategory,
+        intakeEnabled: category?.intake_enabled ? '1' : '0',
+        intakeSchemaVersion: String(category?.intake_schema_version ?? ''),
+        intakeSchemaJson: category?.intake_schema_json
+          ? JSON.stringify(category.intake_schema_json)
+          : '',
+      },
+    });
+  }, [router, categories, selectedCategory]);
 
   return (
-    <ScreenContainer testID="SCR-CUST-002">
-      {/* Header — frosted bar with back + title */}
-      <View style={styles.header}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('wizard.close', 'Close')}
-          onPress={() => router.back()}
-          style={styles.backButton}
-          testID="category-selection-back"
-        >
-          <ChevronLeft size={20} color={colors.primaryDeep} />
-        </Pressable>
-        <Text style={styles.headerTitle}>
-          {t('customer.postTask.categoryInstruction', 'Ангилал сонгох')}
-        </Text>
+    <FormWizardTemplate
+      currentStep={0}
+      totalSteps={7}
+      onNext={handleCategorySelect}
+      showBack={false}
+      nextLabel={t('common.continue', 'Continue')}
+      nextDisabled={!selectedCategory}
+      testID="SCR-CUST-002"
+    >
+      {/* Search — flat tonal */}
+      <View style={styles.searchWrap}>
+        <Search size={18} color={`${colors.textSecondary}99`} />
+        <Input
+          value={query}
+          onChangeText={setQuery}
+          placeholder={t('customer.postTask.searchCategories', 'Ангилал хайх...')}
+          testID="category-selection-search"
+          style={styles.searchInput}
+        />
       </View>
 
-      <InsetScrollView
-        testID="category-selection-scroll"
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        extraBottomInset={spacing.xl}
-      >
-        <View style={styles.stepIndicatorBlock}>
-          <Text style={styles.stepLabel}>
-            {t('customer.postTask.stepCategory', 'Алхам 1/7 • Ангилал')}
-          </Text>
-          <StepIndicator currentStep={1} totalSteps={7} testID="category-selection-step-indicator" />
-        </View>
+      {/* Editorial intro */}
+      <Text style={styles.editorialIntro}>
+        {t(
+          'customer.postTask.categorySupport',
+          'Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.',
+        )}
+      </Text>
 
-        {/* Search — flat tonal */}
-        <View style={styles.searchWrap}>
-          <Search size={18} color={`${colors.textSecondary}99`} />
-          <Input
-            value={query}
-            onChangeText={setQuery}
-            placeholder={t('customer.postTask.searchCategories', 'Ангилал хайх...')}
-            testID="category-selection-search"
-            style={styles.searchInput}
-          />
-        </View>
-
-        {/* Editorial intro */}
-        <Text style={styles.editorialIntro}>
-          {t(
-            'customer.postTask.categorySupport',
-            'Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.',
-          )}
-        </Text>
-
-        {/* Category grid */}
-        {isLoading ? (
-          <View style={styles.loadingState} testID="category-selection-loading">
-            <ActivityIndicator color={colors.primary} />
-            <View style={styles.grid}>
-              {Array.from({ length: 8 }).map((_, index) => (
-                <View key={index} style={styles.loadingCard} />
-              ))}
-            </View>
-          </View>
-        ) : isError ? (
-          <View style={styles.messageCard}>
-            <Text style={styles.messageTitle}>
-              {t('customer.postTask.categoryLoadError', 'Failed to load categories')}
-            </Text>
-            <Text style={styles.messageBody}>
-              {t('customer.postTask.categoryLoadHint', 'Pull to refresh or try again shortly.')}
-            </Text>
-            <Pressable
-              onPress={() => refetch()}
-              style={styles.retryButton}
-              testID="category-selection-retry"
-            >
-              <Text style={styles.retryLabel}>
-                {t('customer.postTask.categoryRetry', 'Try again')}
-              </Text>
-            </Pressable>
-          </View>
-        ) : filteredCategories.length === 0 ? (
-          <View style={styles.messageCard}>
-            <Text style={styles.messageTitle}>
-              {t('categories.empty', 'No categories available')}
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.grid} testID="category-selection-grid">
-            {filteredCategories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                onPress={() => handleCategoryPress(category.id)}
-              />
+      {/* Category grid */}
+      {isLoading ? (
+        <View style={styles.loadingState} testID="category-selection-loading">
+          <ActivityIndicator color={colors.primary} />
+          <View style={styles.grid}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <View key={index} style={styles.loadingCard} />
             ))}
           </View>
-        )}
-
-        {/* Featured banner — dark navy */}
-        <View style={styles.featuredBanner}>
-          <Text style={styles.featuredTitle}>
-            {t('customer.postTask.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
+        </View>
+      ) : isError ? (
+        <View style={styles.messageCard}>
+          <Text style={styles.messageTitle}>
+            {t('customer.postTask.categoryLoadError', 'Failed to load categories')}
           </Text>
-          <Text style={styles.featuredBody}>
-            {t(
-              'customer.postTask.featuredBody',
-              'Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя.',
-            )}
+          <Text style={styles.messageBody}>
+            {t('customer.postTask.categoryLoadHint', 'Pull to refresh or try again shortly.')}
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            style={styles.retryButton}
+            testID="category-selection-retry"
+          >
+            <Text style={styles.retryLabel}>
+              {t('customer.postTask.categoryRetry', 'Try again')}
+            </Text>
+          </Pressable>
+        </View>
+      ) : filteredCategories.length === 0 ? (
+        <View style={styles.messageCard}>
+          <Text style={styles.messageTitle}>
+            {t('categories.empty', 'No categories available')}
           </Text>
         </View>
-      </InsetScrollView>
-    </ScreenContainer>
+      ) : (
+        <View style={styles.grid} testID="category-selection-grid">
+          {filteredCategories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              onPress={() => setSelectedCategory(category.id)}
+            />
+          ))}
+        </View>
+      )}
+
+      {/* Featured banner — dark navy */}
+      <View style={styles.featuredBanner}>
+        <Text style={styles.featuredTitle}>
+          {t('customer.postTask.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
+        </Text>
+        <Text style={styles.featuredBody}>
+          {t(
+            'customer.postTask.featuredBody',
+            'Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя.',
+          )}
+        </Text>
+      </View>
+    </FormWizardTemplate>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    height: 64,
-  },
-  backButton: {
-    width: 32,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing['3xl'],
-    gap: spacing.xl,
-  },
-  stepIndicatorBlock: {
-    gap: spacing.sm,
-  },
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-  },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
