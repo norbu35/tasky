@@ -40,8 +40,9 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "otp-verify-button"
 
-# Success — reach home screen
+# Success — new user has session but hasSeenOnboarding=false → onboarding
+# Per journey catalog: exit is SCR-SHARED-005 (onboarding)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-001"
+      id: "SCR-SHARED-005"
     timeout: 15000

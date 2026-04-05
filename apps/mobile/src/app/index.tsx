@@ -15,15 +15,17 @@ export default function SplashScreen() {
   const session = useAuthStore((state) => state.session);
   const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding);
 
+  // PRD §6.1 / JRN-SHARED-01: authenticate FIRST, then onboard new users.
+  // No session → login. Session + first time → onboarding. Session + done → home.
   const nextHref = !session
-    ? hasSeenOnboarding
-      ? '/(auth)'
-      : '/onboarding'
-    : session.user.primary_auth === 'FACEBOOK'
-      ? '/(auth)/otp-migration'
-      : session.user.role === 'CUSTOMER'
-        ? '/(customer)/tasks'
-        : '/(tabs)';
+    ? '/(auth)'
+    : !hasSeenOnboarding
+      ? '/onboarding'
+      : session.user.primary_auth === 'FACEBOOK'
+        ? '/(auth)/otp-migration'
+        : session.user.role === 'CUSTOMER'
+          ? '/(customer)/tasks'
+          : '/(tabs)';
 
   return (
     <LinearGradient

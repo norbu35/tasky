@@ -2,27 +2,38 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-01: First Launch & Onboarding
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-SHARED-005 (onboarding), SCR-SHARED-006 (role select),
+# Covered states: SCR-SHARED-001 (splash), SCR-SHARED-002 (login),
+#   SCR-SHARED-005 (onboarding), SCR-SHARED-006 (role select),
 #   SCR-SHARED-007/008/009 (permission primers)
 # Actor: new user (no role yet)
 # Flow type: happy path
+# Per PRD §6.1: Authenticate FIRST, then onboard.
 
 - launchApp:
     clearState: true
 
-# clearState clears AsyncStorage (where hasSeenOnboarding is stored via Zustand persist).
-# With hasSeenOnboarding=false and no session, index.tsx now routes to /onboarding.
+# clearState clears AsyncStorage → session=null, hasSeenOnboarding=false.
+# index.tsx: !session → /(auth) (login screen).
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 10000
+
+# Step 2: Log in with Facebook (first-time signup)
+- tapOn:
+    id: "facebook-login-button"
+
+# After first-time auth: session exists, hasSeenOnboarding=false → /onboarding
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-005"
-    timeout: 10000
+    timeout: 30000
 
-# Swipe through 3 slides using Next button
+# Swipe through 3 onboarding slides
 - tapOn:
     id: "onboarding-next"
 - tapOn:
     id: "onboarding-next"
-# Third slide: Get Started button
 - tapOn: "Get Started"
 
 # Role selection screen
@@ -49,7 +60,7 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "permission-allow-button"
 
-# Notifications permission primer
+# Notifications permission primer — calls completeOnboarding()
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-009"
@@ -57,7 +68,7 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "permission-allow-button"
 
-# completeOnboarding() is called in permission-notifications — lands on customer task list
+# Exit: customer home (role was set to customer)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-001"
