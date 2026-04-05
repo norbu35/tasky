@@ -122,7 +122,9 @@ function TermsContent() {
           <Text style={styles.sectionBody}>{section.lead}</Text>
           {index === 0 ? (
             <Text style={styles.sectionLead}>
-              <Text style={styles.sectionLeadStrong}>Санамж: </Text>
+              <Text style={styles.sectionLeadStrong}>
+                {t('shared.legal.noteLabel', 'Санамж: ')}
+              </Text>
               {section.points[0]}
             </Text>
           ) : null}

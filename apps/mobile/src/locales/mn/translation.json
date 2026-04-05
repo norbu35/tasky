@@ -467,7 +467,8 @@
         "required": "This field is required"
       },
       "viewLess": "View less",
-      "viewMore": "View more"
+      "viewMore": "View more",
+      "successDone": "Дуусгах"
     },
     "taskDetail": {
       "applicants": "Өргөдөл гаргагчид",
@@ -778,7 +779,8 @@
       "danDescription": "E-Mongolia (ДАН) системээр таниулах баталгаажуулалтыг автоматаар хийнэ. Зураг оруулах шаардлагагүй.",
       "danEmongoliaButton": "E-Mongolia-р баталгаажуулах",
       "danManualButton": "Гар аргаар баталгаажуулах",
-      "danBrowseButton": "Даалгавар хайх"
+      "danBrowseButton": "Даалгавар хайх",
+      "backButton": "Буцах"
     },
     "jobs": {
       "title": "Миний ажлууд",
@@ -1081,7 +1083,8 @@
       "privacyTitle": "Нууцлалын бодлого",
       "termsTitle": "Terms of Service",
       "updated": "Сүүлд шинэчлэгдсэн: 2026.01.01",
-      "userRights": "Хэрэглэгчийн эрх"
+      "userRights": "Хэрэглэгчийн эрх",
+      "noteLabel": "Санамж: "
     }
   },
   "infra": {

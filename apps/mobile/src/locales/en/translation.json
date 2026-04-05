@@ -467,7 +467,8 @@
         "required": "This field is required"
       },
       "viewLess": "View less",
-      "viewMore": "View more"
+      "viewMore": "View more",
+      "successDone": "Done"
     },
     "taskDetail": {
       "applicants": "Applicants",
@@ -778,7 +779,8 @@
       "danDescription": "E-Mongolia (DAN) will automatically verify your identity. No photos required.",
       "danEmongoliaButton": "Verify with E-Mongolia",
       "danManualButton": "Verify manually",
-      "danBrowseButton": "Find tasks"
+      "danBrowseButton": "Find tasks",
+      "backButton": "Back"
     },
     "jobs": {
       "title": "My Jobs",
@@ -1081,7 +1083,8 @@
       "privacyTitle": "Нууцлалын бодлого",
       "termsTitle": "Terms of Service",
       "updated": "Сүүлд шинэчлэгдсэн: 2026.01.01",
-      "userRights": "Хэрэглэгчийн эрх"
+      "userRights": "Хэрэглэгчийн эрх",
+      "noteLabel": "Note:"
     }
   },
   "infra": {

@@ -93,7 +93,7 @@ export default function TaskPostedSuccessScreen() {
             testID="task-posted-success-screen-cta"
           />
           <Button
-            label="Дуусгах"
+            label={t('customer.postTask.successDone', 'Дуусгах')}
             variant="outline"
             onPress={handleDone}
             testID="task-posted-success-screen-done"

@@ -39,7 +39,7 @@ export default function PendingScreen() {
         testID="pending-screen-cta"
       />
       <Button
-        label="Буцах"
+        label={t('tasker.verification.backButton', 'Буцах')}
         variant="outline"
         onPress={() => router.back()}
         style={styles.secondaryBtn}
