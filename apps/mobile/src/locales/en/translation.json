@@ -162,29 +162,6 @@
     "taskDiscussion": "Task Discussion",
     "bookingRef": "Booking #{{id}}"
   },
-  "onboarding": {
-    "slide1_title": "Welcome to Tasky",
-    "slide1_desc": "The modern task-matching engine for everyday heroes.",
-    "slide2_title": "Find or Offer Help",
-    "slide2_desc": "Need a hand? Or want to earn extra cash? We connect Customers and Taskers instantly.",
-    "slide3_title": "Secure & Trusted",
-    "slide3_desc": "Verified identities and secure payments ensure peace of mind for everyone."
-  },
-  "createTask": {
-    "title": "Post Task",
-    "stepTarget": "Step {{current}}/{{total}}",
-    "qHelp": "What do you need help with?",
-    "qHelpPlaceholder": "e.g. Mount my TV to the wall",
-    "qCategory": "Category",
-    "qCategoryPlaceholder": "e.g. Handyman",
-    "qLocation": "Where is the task located?",
-    "qLocationPlaceholder": "Enter neighborhood or address",
-    "mapPinHelper": "A map pin drop would go here natively.",
-    "qBudget": "What is your budget? (MNT)",
-    "qBudgetPlaceholder": "150000",
-    "reviewText": "Review: {{title}} in {{location}} for {{budget}} MNT.",
-    "postTask": "Post Task"
-  },
   "taskFeed": {
     "listMode": "List",
     "mapMode": "Map",
@@ -214,18 +191,6 @@
     "recentReviews": "Recent Reviews",
     "viewAll": "View All",
     "bookSession": "BOOK A SESSION"
-  },
-  "review": {
-    "rateExperience": "Rate your experience",
-    "qualityOfWork": "Quality of work",
-    "punctuality": "Punctuality",
-    "communication": "Communication",
-    "taskDescriptionClarity": "Task description clarity",
-    "respectfulness": "Respectfulness",
-    "commentPlaceholder": "Share your experience...",
-    "submitReview": "Submit Review",
-    "skipForNow": "Skip for now",
-    "mandatoryNote": "Reviews are mandatory and will be required before your next booking."
   },
   "booking": {
     "confirmTitle": "Confirm Booking",
