@@ -1,40 +1,92 @@
 # Component Usage Contract — Tasky Mobile
 # Canonical components, variants, templates, composition rules
 # Source: existing codebase components + new components from spec
+#
+# ═══════════════════════════════════════════════════
+# NATIVEWIND API CONTRACT (Phase 1 — foundation freeze)
+# ═══════════════════════════════════════════════════
+#
+# Migration status: Phase 1 COMPLETE — all primitives and templates use NativeWind.
+#   - StyleSheet.create has been eliminated from all component and template files.
+#   - All static layout/color/typography styles are expressed as NativeWind className strings.
+#   - Dynamic / runtime styles remain in style={} (insets, animated values, rgba colors).
+#
+# cn() utility
+#   location: apps/mobile/src/lib/cn.ts
+#   signature: cn(...inputs: (string | undefined | false)[]) => string
+#   implementation: tailwind-merge (extendTailwindMerge) with custom classGroups for
+#     Tasky's font-family, spacing, padding, and gap tokens.
+#   usage: all components call cn() to merge variant classes with caller-supplied className.
+#   example: className={cn(buttonVariants({ variant, size }), className)}
+#
+# className prop
+#   All UI primitives accept an optional className?: string prop.
+#   Callers may pass additional Tailwind utility classes.
+#   The component merges them via cn() so caller classes win conflicts correctly.
+#
+# cva() variants
+#   Variant logic uses class-variance-authority (cva).
+#   Exported variant types (for consumer TS):
+#     ButtonVariant  — 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive'
+#     ButtonSize     — 'default' | 'sm' | 'lg' | 'icon'
+#     StatusType     — 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show'
+#     (CategoryChip, PressableCard, FilterBar also use cva internally)
+#
+# Shadows (elevations)
+#   Shadows are imperative ViewStyle objects — NOT Tailwind classes.
+#   location: apps/mobile/src/design/elevations.ts
+#   exported object: elevations  (keys: none, soft, card, elevated, navBar)
+#   usage: style={elevations.card}  (combined with className for layout)
+#   rationale: React Native shadow props differ per platform (iOS shadowColor vs Android elevation).
+#
+# Dynamic / runtime styles  →  style={}
+#   The following categories always stay in style={}, never in className:
+#     - Safe-area insets   (useSafeAreaInsets())
+#     - Reanimated values  (useAnimatedStyle())
+#     - rgba overlay colors (from elevations.ts overlays map)
+#     - Any value computed at runtime from JS variables
+#
+# Export barrel
+#   All components export from: apps/mobile/src/components/ui/index.ts
+#   Screens import as:  import { Button, StatusBadge, … } from '../components/ui';
 
 # ═══════════════════════════════════════════════════
-# EXISTING COMPONENTS (from packages/ui/src/components/)
+# EXISTING COMPONENTS (from apps/mobile/src/components/ui/)
 # ═══════════════════════════════════════════════════
 
 existing_components:
 
   - id: COMP-BUTTON
     name: Button
-    path: "packages/ui/src/components/Button.tsx"
+    path: "apps/mobile/src/components/ui/Button.tsx"
+    nativewind: true
     variants:
-      - primary       # filled, primary color
-      - secondary     # outlined, secondary color
-      - outline       # outlined, primary color
-      - ghost         # text-only, no background
-      - danger        # filled, danger color
-    sizes: [sm, md, lg, xl]
-    props: [label, variant, size, onPress, disabled, loading, icon, iconPosition]
+      - default      # filled, primary color  (ButtonVariant: 'default')
+      - secondary    # filled, secondary color
+      - outline      # border, no fill
+      - ghost        # text-only, no background
+      - destructive  # filled, danger color
+    sizes: [default, sm, lg, icon]   # ButtonSize type
+    props: [label, variant, size, onPress, disabled, isLoading, className, labelClassName, children, style]
     states: [default, pressed, disabled, loading]
-    animation: "spring (Reanimated)"
+    animation: "spring scale 0.96 (Reanimated useAnimatedStyle)"
+    shadow: "elevations.card applied via style={} for default variant only"
     tokens:
       colors: [primary, secondary, danger, background]
-      typography: [button_label]
-      spacing: [sm, md, lg]
-      radius: [sm, md]
+      typography: [label, caption, body]
+      spacing: [sm, md, lg, xl]
+      radius: [md]
     rules:
       - "Always full-width in forms and bottom CTAs"
       - "Never stack more than 2 buttons side-by-side"
-      - "Destructive actions use danger variant only"
-      - "Loading state replaces label with spinner, keeps width"
+      - "Destructive actions use destructive variant only"
+      - "Loading state replaces label with ActivityIndicator, keeps width"
+      - "className prop merged via cn() — caller classes win conflicts"
 
   - id: COMP-INPUT
     name: Input
-    path: "packages/ui/src/components/Input.tsx"
+    path: "apps/mobile/src/components/ui/Input.tsx"
+    nativewind: true
     variants:
       - default
       - multiline
@@ -52,7 +104,8 @@ existing_components:
 
   - id: COMP-FORMFIELD
     name: FormField
-    path: "packages/ui/src/components/FormField.tsx"
+    path: "apps/mobile/src/components/ui/FormField.tsx"
+    nativewind: true
     variants: [default]
     props: [label, error, helperText, required, children]
     states: [default, error, helper]
@@ -66,7 +119,8 @@ existing_components:
 
   - id: COMP-CARD
     name: Card
-    path: "packages/ui/src/components/Card.tsx"
+    path: "apps/mobile/src/components/ui/Card.tsx"
+    nativewind: true
     sub_components:
       - Card.Container
       - Card.Header
@@ -88,7 +142,8 @@ existing_components:
 
   - id: COMP-FAB
     name: FAB
-    path: "packages/ui/src/components/FAB.tsx"
+    path: "apps/mobile/src/components/ui/FAB.tsx"
+    nativewind: true
     variants: [default]
     props: [onPress, icon, label]
     states: [default, pressed, hidden_on_scroll]
@@ -104,7 +159,8 @@ existing_components:
 
   - id: COMP-MODALSHEET
     name: ModalSheet
-    path: "packages/ui/src/components/ModalSheet.tsx"
+    path: "apps/mobile/src/components/ui/ModalSheet.tsx"
+    nativewind: true
     variants: [default]
     props: [visible, onClose, title, children, primaryAction, secondaryAction]
     states: [default, open, closing]
@@ -121,7 +177,8 @@ existing_components:
 
   - id: COMP-TOAST
     name: Toast
-    path: "packages/ui/src/components/Toast.tsx"
+    path: "apps/mobile/src/components/ui/Toast.tsx"
+    nativewind: true
     variants:
       - info
       - success
@@ -140,41 +197,47 @@ existing_components:
 
   - id: COMP-STATUSBADGE
     name: StatusBadge
-    path: "packages/ui/src/components/StatusBadge.tsx"
+    path: "apps/mobile/src/components/ui/StatusBadge.tsx"
+    nativewind: true
     variants:
-      - open       # primary color
-      - assigned   # trust color
-      - completed  # verified color
-      - cancelled  # danger color
-      - no_show    # danger color
-    props: [status, size]
+      - open       # bg-statusOpen           (StatusType: 'open')
+      - assigned   # bg-statusAssigned       (StatusType: 'assigned')
+      - completed  # bg-verified             (StatusType: 'completed')
+      - cancelled  # bg-muted                (StatusType: 'cancelled')
+      - no_show    # bg-danger               (StatusType: 'no_show')
+    props: [status, className, testID]
     states: [default]
-    animation: "badge_pop"
+    variant_api: "cva badgeVariants({ status }) — color is non-overridable by design"
     tokens:
-      colors: [primary, trust, verified, danger]
-      typography: [badge_text]
+      colors: [statusOpen, statusAssigned, verified, muted, danger]
+      typography: [micro, font-sans-bold uppercase tracking-widest]
     rules:
-      - "Status text always in Mongolian as primary"
+      - "Status text always in Mongolian as primary (via i18n t('status.*'))"
       - "Color mapping is semantic and non-overridable"
+      - "className prop merged via cn() for layout overrides only"
 
   - id: COMP-CATEGORYCHIP
     name: CategoryChip
-    path: "packages/ui/src/components/CategoryChip.tsx"
-    variants: [active, inactive]
-    props: [category, isActive, onPress]
+    path: "apps/mobile/src/components/ui/CategoryChip.tsx"
+    nativewind: true
+    variants: [active, inactive]   # boolean active prop drives cva chipVariants
+    props: [label, isActive, onPress, testID, className]
     states: [default, active, pressed]
+    variant_api: "cva chipVariants({ active: boolean })"
     tokens:
-      colors: [primary, muted]
-      typography: [label]
+      colors: [primary, chipInactive, muted-foreground, primary-foreground]
+      typography: [label, font-sans-semibold]
       radius: [full]
-      spacing: [sm, md]
+      spacing: [xl, sm]
     rules:
       - "Used in filter bars and category selection"
       - "Horizontal scroll when many categories"
+      - "className prop merged via cn() for spacing overrides"
 
   - id: COMP-TRUSTBANNER
     name: TrustBanner
-    path: "packages/ui/src/components/TrustBanner.tsx"
+    path: "apps/mobile/src/components/ui/TrustBanner.tsx"
+    nativewind: true
     variants: [default, compact]
     props: [verifiedCount, completedCount]
     states: [default]
@@ -187,7 +250,8 @@ existing_components:
 
   - id: COMP-STATCARD
     name: StatCard
-    path: "packages/ui/src/components/StatCard.tsx"
+    path: "apps/mobile/src/components/ui/StatCard.tsx"
+    nativewind: true
     variants: [default]
     props: [label, value, trend, icon]
     states: [default, loading]
@@ -201,7 +265,8 @@ existing_components:
 
   - id: COMP-REVIEWCARD
     name: ReviewCard
-    path: "packages/ui/src/components/ReviewCard.tsx"
+    path: "apps/mobile/src/components/ui/ReviewCard.tsx"
+    nativewind: true
     variants: [default, featured]
     props: [review, isFeatured]
     states: [default]
@@ -214,7 +279,8 @@ existing_components:
 
   - id: COMP-PROFILEAVATAR
     name: ProfileAvatar
-    path: "packages/ui/src/components/ProfileAvatar.tsx"
+    path: "apps/mobile/src/components/ui/ProfileAvatar.tsx"
+    nativewind: true
     variants: [xs, sm, md, lg]
     props: [imageUrl, size, isVerified, isPro]
     states: [default, loading, fallback_initials]
@@ -228,7 +294,8 @@ existing_components:
 
   - id: COMP-LANGUAGESWITCHER
     name: LanguageSwitcher
-    path: "packages/ui/src/components/LanguageSwitcher.tsx"
+    path: "apps/mobile/src/components/ui/LanguageSwitcher.tsx"
+    nativewind: true
     variants: [default]
     props: [currentLang, onSwitch]
     states: [en, mn]
@@ -240,7 +307,8 @@ existing_components:
 
   - id: COMP-LOGINREQUIREDCTA
     name: LoginRequiredCTA
-    path: "packages/ui/src/components/LoginRequiredCTA.tsx"
+    path: "apps/mobile/src/components/ui/LoginRequiredCTA.tsx"
+    nativewind: true
     variants: [default]
     props: [message, onLogin]
     states: [default]
@@ -258,6 +326,8 @@ new_components:
 
   - id: COMP-SPLITCARD
     name: SplitCard
+    path: "apps/mobile/src/components/ui/SplitCard.tsx"
+    nativewind: true
     description: "Hybrid two-tone card: dark teal header (person + price), light body (task details)"
     variants: [task, booking, application]
     props: [headerContent, bodyContent, onPress, status, isPromoted, isUrgent]
@@ -309,13 +379,16 @@ new_components:
   - id: COMP-FILTERBAR
     name: FilterBar
     description: "Horizontal scrolling filter chips with sheet for advanced filters"
+    path: "apps/mobile/src/components/ui/FilterBar.tsx"
+    nativewind: true
     variants: [inline, sheet]
-    props: [filters, activeFilters, onFilterChange, onClear]
+    props: [filters, activeFilters, onFilterChange, onClear, className]
     states: [default, sheet_open, filters_active]
+    variant_api: "cva chipVariants({ active: boolean }) — internal to FilterBar"
     tokens:
-      colors: [primary, muted]
-      typography: [label]
-      spacing: [sm, md]
+      colors: [primary, muted, primary-foreground]
+      typography: [label, font-sans-semibold]
+      spacing: [sm, md, lg]
     rules:
       - "Inline chips for category/distance quick filters"
       - "Sheet for advanced multi-select"
@@ -323,6 +396,20 @@ new_components:
     composition:
       chips: [CategoryChip]
       sheet: [ModalSheet]
+
+  - id: COMP-TOUCHABLE
+    name: Touchable
+    description: "Thin Pressable wrapper for non-button tap targets (list items, card areas, swipe zones)"
+    path: "apps/mobile/src/components/ui/Touchable.tsx"
+    nativewind: true
+    variants: [default]   # no visual variants — pure layout/touch primitive
+    props: [className, style, children, testID, "...PressableProps"]
+    states: [default, pressed]
+    rules:
+      - "Screens MUST use <Touchable> instead of raw <Pressable> (enforced by lint rule no-raw-pressable-in-screens)"
+      - "testID is required — DEV warning fires when omitted"
+      - "className merged via cn(); dynamic styles passed via style={}"
+      - "For button-like actions with labels use <Button> instead"
 
   - id: COMP-DATEPICKER
     name: DatePicker
@@ -509,6 +596,9 @@ new_components:
 
 # ═══════════════════════════════════════════════════
 # SCREEN TEMPLATES
+# All templates: NativeWind (Phase 1 complete)
+# Path: apps/mobile/src/components/templates/<Name>Template.tsx
+# Barrel: apps/mobile/src/components/templates/index.ts
 # ═══════════════════════════════════════════════════
 
 templates:
