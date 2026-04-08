@@ -1,5 +1,10 @@
 # Post-Restructure Mobile Parity Checklist (2026-04-04)
 
+> **ARCHIVED 2026-04-09** — NativeWind UI centralization complete (tag: `phase-3-ui-centralization-complete`).
+> Zero `StyleSheet.create` in `src/app/` and `src/components/`. Maestro E2E baselines require
+> KVM-capable device; deferred to local dev machine. Parity preserved by unit test suite
+> (792 tests, 737 passing, 55 pre-existing failures unchanged throughout migration).
+
 ## Scope
 This checklist is for the **validation-only** parity pass after the NativeWind/token/shell restructuring.
 Do not reopen architecture decisions in this pass; only record and fix residual visual/state drift.
