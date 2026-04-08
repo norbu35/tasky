@@ -1,19 +1,57 @@
 import React from 'react';
 import {
   ActivityIndicator,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
   Pressable,
   PressableProps,
-  ViewStyle,
+  Text,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../lib/cn';
 import { elevations } from '../../design/elevations';
+import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
+
+const buttonVariants = cva('flex-row items-center justify-center rounded-md', {
+  variants: {
+    variant: {
+      default: 'bg-primary',
+      secondary: 'bg-secondary',
+      outline: 'bg-transparent border border-input',
+      ghost: 'bg-transparent',
+      destructive: 'bg-danger',
+    },
+    size: {
+      default: 'px-lg py-sm min-h-[48px]',
+      sm: 'px-md min-h-[36px]',
+      lg: 'px-xl min-h-[52px]',
+      icon: 'w-[36px] h-[36px] p-0',
+    },
+  },
+  defaultVariants: { variant: 'default', size: 'default' },
+});
+
+const textVariants = cva('text-center font-sans-bold', {
+  variants: {
+    variant: {
+      default: 'text-primary-foreground',
+      secondary: 'text-secondary-foreground',
+      outline: 'text-foreground',
+      ghost: 'text-foreground',
+      destructive: 'text-danger-foreground',
+    },
+    size: {
+      default: 'text-label',
+      sm: 'text-caption',
+      lg: 'text-body',
+      icon: 'hidden',
+    },
+  },
+  defaultVariants: { variant: 'default', size: 'default' },
+});
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
@@ -24,100 +62,10 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   size?: ButtonSize;
   isLoading?: boolean;
   style?: StyleProp<ViewStyle>;
-  textStyle?: TextStyle;
   className?: string;
   labelClassName?: string;
   children?: React.ReactNode;
 }
-
-export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-  (
-    {
-      label,
-      variant = 'default',
-      size = 'default',
-      isLoading = false,
-      disabled,
-      style,
-      textStyle,
-      className,
-      labelClassName,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const isInteractive = !disabled && !isLoading;
-
-    const buttonStyles: StyleProp<ViewStyle> = [
-      styles.base,
-      styles[`${variant}Variant` as keyof typeof styles] as ViewStyle,
-      styles[`${size}Size` as keyof typeof styles] as ViewStyle,
-      !isInteractive ? styles.disabled : undefined,
-      style,
-    ];
-
-    const textColor = getTextColor(variant);
-
-    const scale = useSharedValue(1);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: scale.value }],
-      };
-    });
-
-    const handlePressIn = (e: any) => {
-      scale.value = withSpring(0.96, {
-        damping: 15,
-        stiffness: 300,
-      });
-      props.onPressIn?.(e);
-    };
-
-    const handlePressOut = (e: any) => {
-      scale.value = withSpring(1, {
-        damping: 15,
-        stiffness: 300,
-      });
-      props.onPressOut?.(e);
-    };
-
-    return (
-      <Pressable
-        ref={ref}
-        style={buttonStyles}
-        disabled={!isInteractive}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        className={className}
-        {...props}
-      >
-        <Animated.View style={[styles.buttonInner, animatedStyle]}>
-          {isLoading ? (
-            <ActivityIndicator color={textColor} />
-          ) : children ? (
-            children
-          ) : (
-            <Text
-              style={[
-                styles.text,
-                styles[`${size}Text` as keyof typeof styles],
-                { color: textColor },
-                textStyle,
-              ]}
-              className={labelClassName}
-            >
-              {label}
-            </Text>
-          )}
-        </Animated.View>
-      </Pressable>
-    );
-  },
-);
-
-Button.displayName = 'Button';
 
 function getTextColor(variant: ButtonVariant): string {
   switch (variant) {
@@ -134,77 +82,68 @@ function getTextColor(variant: ButtonVariant): string {
   }
 }
 
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-  },
-  buttonInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  disabled: {
-    opacity: 0.5,
-  },
+export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
+  (
+    {
+      label,
+      variant = 'default',
+      size = 'default',
+      isLoading = false,
+      disabled,
+      style,
+      className,
+      labelClassName,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const isInteractive = !disabled && !isLoading;
+    const textColor = getTextColor(variant);
 
-  // Variants
-  defaultVariant: {
-    backgroundColor: colors.primary,
-    ...elevations.card,
-  },
-  secondaryVariant: {
-    backgroundColor: colors.secondary,
-  },
-  outlineVariant: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.input,
-  },
-  ghostVariant: {
-    backgroundColor: 'transparent',
-  },
-  destructiveVariant: {
-    backgroundColor: colors.danger,
-  },
+    const scale = useSharedValue(1);
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+    }));
 
-  // Sizes
-  defaultSize: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    minHeight: 48,
-  },
-  smSize: {
-    paddingHorizontal: spacing.md,
-    minHeight: 36,
-  },
-  lgSize: {
-    paddingHorizontal: spacing.xl,
-    minHeight: 52,
-  },
-  iconSize: {
-    width: 36,
-    height: 36,
-    padding: 0,
-  },
+    const handlePressIn = (e: any) => {
+      scale.value = withSpring(0.96, { damping: 15, stiffness: 300 });
+      props.onPressIn?.(e);
+    };
 
-  // Text
-  text: {
-    fontWeight: '700',
-    textAlign: 'center',
-  } as TextStyle,
-  defaultText: {
-    fontSize: typography.label,
+    const handlePressOut = (e: any) => {
+      scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      props.onPressOut?.(e);
+    };
+
+    return (
+      <Pressable
+        ref={ref}
+        style={[variant === 'default' && elevations.card, style]}
+        className={cn(
+          buttonVariants({ variant, size }),
+          !isInteractive && 'opacity-50',
+          className,
+        )}
+        disabled={!isInteractive}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        {...props}
+      >
+        <Animated.View style={animatedStyle} className="flex-row items-center justify-center">
+          {isLoading ? (
+            <ActivityIndicator color={textColor} />
+          ) : children ? (
+            children
+          ) : (
+            <Text className={cn(textVariants({ variant, size }), labelClassName)}>
+              {label}
+            </Text>
+          )}
+        </Animated.View>
+      </Pressable>
+    );
   },
-  smText: {
-    fontSize: typography.caption,
-  },
-  lgText: {
-    fontSize: typography.body,
-  },
-  iconText: {
-    display: 'none',
-  },
-});
+);
+
+Button.displayName = 'Button';

@@ -41,6 +41,86 @@ describe('Button', () => {
 
   it('passes nativewind className through', () => {
     render(<Button label="Continue" className="rounded-xl" testID="button" />);
-    expect(screen.getByTestId('button').props.className).toBe('rounded-xl');
+    expect(screen.getByTestId('button').props.className).toContain('rounded-xl');
+  });
+
+  it('renders children instead of label when provided', () => {
+    render(
+      <Button testID="button">
+        <></>
+      </Button>,
+    );
+    expect(screen.getByTestId('button')).toBeTruthy();
+  });
+
+  // cva variant class tests
+  it('applies default variant classes by default', () => {
+    render(<Button label="Go" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('bg-primary');
+  });
+
+  it('applies secondary variant classes', () => {
+    render(<Button label="Go" variant="secondary" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('bg-secondary');
+  });
+
+  it('applies outline variant classes', () => {
+    render(<Button label="Go" variant="outline" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('bg-transparent');
+    expect(el.props.className).toContain('border');
+  });
+
+  it('applies ghost variant classes', () => {
+    render(<Button label="Go" variant="ghost" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('bg-transparent');
+  });
+
+  it('applies destructive variant classes', () => {
+    render(<Button label="Go" variant="destructive" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('bg-danger');
+  });
+
+  it('applies sm size classes', () => {
+    render(<Button label="Go" size="sm" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('px-md');
+  });
+
+  it('applies lg size classes', () => {
+    render(<Button label="Go" size="lg" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('px-xl');
+  });
+
+  it('applies icon size classes', () => {
+    render(<Button size="icon" testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('w-[36px]');
+  });
+
+  it('applies opacity-50 class when disabled', () => {
+    render(<Button label="Go" disabled testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('opacity-50');
+  });
+
+  it('applies opacity-50 class when loading', () => {
+    render(<Button label="Go" isLoading testID="button" />);
+    const el = screen.getByTestId('button');
+    expect(el.props.className).toContain('opacity-50');
+  });
+
+  it('does not have textStyle prop (removed in cva migration)', () => {
+    // textStyle prop was removed — labelClassName is the replacement
+    const { rerender } = render(<Button label="Go" labelClassName="text-red-500" testID="button" />);
+    rerender(<Button label="Go" labelClassName="text-red-500" testID="button" />);
+    // labelClassName should be accepted without TypeScript error (compile-time check)
+    // At runtime just verify the button renders
+    expect(screen.getByTestId('button')).toBeTruthy();
   });
 });

@@ -141,7 +141,7 @@ export default function BookingDetailTaskerScreen() {
                 label={t('tasker.jobs.cancelBooking', 'Захиалга цуцлах')}
                 variant="ghost"
                 onPress={() => setCancelSheetOpen(true)}
-                textStyle={styles.cancelText}
+                labelClassName="text-danger"
                 testID="booking-detail-tasker-cancel"
               />
             </View>
