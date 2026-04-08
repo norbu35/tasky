@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,8 +15,9 @@ import { useDisputeDetail } from '../../../../features/disputes/hooks/useDispute
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
 import { screenLayout } from '../../../../design/screenLayout';
+import { cn } from '../../../../lib/cn';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 type DisputeStatus =
   | 'OPEN'
@@ -184,20 +185,30 @@ function getEvidenceLabel(
 function TimelineDot({ state }: { state: TimelineState }) {
   if (state === 'done') {
     return (
-      <View testID="SCR-CUST-025" style={styles.timelineDotDone}>
+      <View
+        testID="SCR-CUST-025"
+        className="w-[24px] h-[24px] rounded-full bg-primary-deep items-center justify-center border-[4px] border-background"
+        style={{ zIndex: 2 }}
+      >
         <CircleCheckBig size={10} color={colors.primaryForeground} />
       </View>
     );
   }
   if (state === 'current') {
     return (
-      <View style={styles.timelineDotCurrent}>
-        <View style={styles.timelineDotCurrentInner} />
+      <View
+        className="w-[24px] h-[24px] rounded-full border-[2px] border-secondary bg-background items-center justify-center"
+        style={{ zIndex: 2 }}
+      >
+        <View className="w-[8px] h-[8px] rounded-full bg-secondary" />
       </View>
     );
   }
   return (
-    <View style={styles.timelineDotFuture}>
+    <View
+      className="w-[24px] h-[24px] rounded-full border-[2px] border-border bg-background items-center justify-center"
+      style={{ zIndex: 2 }}
+    >
       <Circle size={8} color={colors.border} fill={colors.border} />
     </View>
   );
@@ -247,136 +258,166 @@ export default function DisputeStatusScreen() {
 
   return (
     <ScreenContainer testID="dispute-status-screen">
-      <View style={styles.header}>
+      <View className="min-h-[56px] flex-row items-center justify-between px-screen-x pb-micro">
         <Pressable
           accessibilityRole="button"
           onPress={() => router.back()}
-          style={styles.headerBackButton}
+          className="w-3xl h-3xl items-start justify-center"
           hitSlop={spacing.sm}
           testID="dispute-status-back"
         >
           <ChevronLeft size={22} color={colors.primary} />
         </Pressable>
-        <Text style={styles.headerTitle}>{t('customer.disputes.pageTitle', 'Маргааны төлөв')}</Text>
-        <View style={styles.headerSpacer} />
+        <Text className="flex-1 text-subtitle font-sans-bold text-primary-deep text-center mx-sm">
+          {t('customer.disputes.pageTitle', 'Маргааны төлөв')}
+        </Text>
+        <View className="w-3xl" />
       </View>
       <InsetScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{
+          paddingHorizontal: screenLayout.insetX,
+          paddingTop: screenLayout.body.blockGap,
+          paddingBottom: spacing['2xl'],
+          gap: screenLayout.body.blockGap,
+        }}
         showsVerticalScrollIndicator={false}
         bounces={false}
         extraBottomInset={spacing.xl}
       >
         {isLoading ? (
-          <View style={styles.loadingState}>
+          <View className="items-center justify-center py-3xl">
             <ActivityIndicator size="small" color={colors.primaryDeep} />
           </View>
         ) : isError ? (
-          <View style={styles.errorCard}>
+          <View className="bg-card rounded-lg p-lg items-center gap-sm">
             <CircleAlert size={28} color={colors.danger} />
-            <Text style={styles.errorTitle}>
+            <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('customer.disputes.errorToast', 'Маргааны мэдээлэл ачааллахад алдаа гарлаа')}
             </Text>
-            <Pressable onPress={() => void refetch()} style={styles.retryButton}>
-              <Text style={styles.retryLabel}>{t('customer.disputes.retry', 'Дахин оролдох')}</Text>
+            <Pressable
+              onPress={() => void refetch()}
+              className="px-lg py-sm rounded-md border border-primary-deep"
+            >
+              <Text className="text-body text-primary-deep font-sans-bold">
+                {t('customer.disputes.retry', 'Дахин оролдох')}
+              </Text>
             </Pressable>
           </View>
         ) : dispute ? (
           <>
-            <View style={styles.statusHeader}>
-              <View style={styles.badgeWrap}>
+            {/* Status header */}
+            <View className="items-center gap-sm">
+              <View className="items-center pb-xs">
                 <View
-                  style={[
-                    styles.statusBadge,
-                    meta.badgeStyle === 'warning' && styles.statusBadgeWarning,
-                    meta.badgeStyle === 'success' && styles.statusBadgeSuccess,
-                    meta.badgeStyle === 'neutral' && styles.statusBadgeNeutral,
-                    meta.badgeStyle === 'danger' && styles.statusBadgeDanger,
-                  ]}
+                  className={cn(
+                    'rounded-full px-md py-xs items-center justify-center',
+                    meta.badgeStyle === 'warning' && 'bg-status-open',
+                    meta.badgeStyle === 'success' && 'bg-status-assigned',
+                    meta.badgeStyle === 'neutral' && 'bg-muted',
+                    meta.badgeStyle === 'danger' && 'bg-danger',
+                  )}
                 >
                   <Text
-                    style={[
-                      styles.statusBadgeText,
-                      meta.badgeStyle === 'warning' && styles.statusBadgeTextWarning,
-                      meta.badgeStyle === 'success' && styles.statusBadgeTextSuccess,
-                      meta.badgeStyle === 'neutral' && styles.statusBadgeTextNeutral,
-                      meta.badgeStyle === 'danger' && styles.statusBadgeTextDanger,
-                    ]}
+                    className={cn(
+                      'text-label font-sans-bold tracking-wide',
+                      meta.badgeStyle === 'warning' && 'text-status-open-foreground',
+                      meta.badgeStyle === 'success' && 'text-status-assigned-foreground',
+                      meta.badgeStyle === 'neutral' && 'text-primary-deep',
+                      meta.badgeStyle === 'danger' && 'text-primary-foreground',
+                    )}
                   >
                     {meta.label}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.statusDescription}>{meta.description}</Text>
+              <Text className="text-body text-text-secondary text-center px-md leading-loose">
+                {meta.description}
+              </Text>
             </View>
 
-            <View style={styles.detailCard}>
-              <Text style={styles.cardTitle}>
+            {/* Detail card */}
+            <View className="bg-muted rounded-lg p-lg gap-item">
+              <Text className="text-heading font-sans-bold text-primary-deep">
                 {t('customer.disputes.sectionSummary', 'Маргааны товч')}
               </Text>
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>
+              <View className="gap-xs">
+                <Text className="text-caption text-text-secondary uppercase tracking-widest">
                   {t('customer.disputes.detailType', 'Төрөл')}
                 </Text>
-                <Text style={styles.summaryValue}>{bookingCategory}</Text>
+                <Text className="text-body font-sans-bold text-primary-deep leading-snug">
+                  {bookingCategory}
+                </Text>
               </View>
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>
+              <View className="gap-xs">
+                <Text className="text-caption text-text-secondary uppercase tracking-widest">
                   {t('customer.disputes.detailBooking', 'Захиалгын дугаар')}
                 </Text>
-                <Text style={styles.summaryValue}>
+                <Text className="text-body font-sans-bold text-primary-deep leading-snug">
                   {String(bookingReference).slice(0, 8).toUpperCase()}
                 </Text>
               </View>
-              <View style={styles.summaryRowLast}>
-                <Text style={styles.summaryLabel}>
+              <View className="gap-xs" style={{ paddingBottom: spacing.xs / 2 }}>
+                <Text className="text-caption text-text-secondary uppercase tracking-widest">
                   {t('customer.disputes.detailSubmitted', 'Илгээсэн огноо')}
                 </Text>
-                <Text style={styles.summaryValue}>
+                <Text className="text-body font-sans-bold text-primary-deep leading-snug">
                   {submittedAt ? formatMongolianDate(submittedAt) : '2024 оны 5-р сарын 20'}
                 </Text>
               </View>
-              <View style={styles.summaryReasonWrap}>
-                <Text style={styles.summaryLabel}>
+              <View className="gap-xs">
+                <Text className="text-caption text-text-secondary uppercase tracking-widest">
                   {t('customer.disputes.detailReason', 'Гомдлын шалтгаан')}
                 </Text>
-                <Text style={styles.summaryValue}>{dispute.reason}</Text>
+                <Text className="text-body font-sans-bold text-primary-deep leading-snug">
+                  {dispute.reason}
+                </Text>
               </View>
             </View>
 
-            <View style={styles.timelineSection}>
-              <Text style={styles.timelineTitle}>
+            {/* Timeline section */}
+            <View className="gap-lg">
+              <Text className="text-heading font-sans-bold text-primary-deep">
                 {t('customer.disputes.sectionProcess', 'Үйл явц')}
               </Text>
-              <View style={styles.timelineTrack}>
+              <View className="gap-lg" style={{ position: 'relative' }}>
                 {timeline.map((item, index) => {
                   const state = getTimelineState(status, index);
                   const isLast = index === timeline.length - 1;
                   return (
-                    <View key={item.title} style={styles.timelineRow}>
-                      <View style={styles.timelineRail}>
+                    <View key={item.title} className="flex-row gap-item">
+                      <View className="w-[24px] items-center" style={{ position: 'relative' }}>
                         <TimelineDot state={state} />
-                        {!isLast ? <View style={styles.timelineConnector} /> : null}
+                        {!isLast ? (
+                          <View
+                            className="absolute w-[2px]"
+                            style={{
+                              top: 24,
+                              bottom: -spacing.lg,
+                              backgroundColor: 'rgba(195,198,207,0.5)',
+                            }}
+                          />
+                        ) : null}
                       </View>
-                      <View style={styles.timelineContent}>
+                      <View className="flex-1 gap-xs pb-item">
                         <Text
-                          style={[
-                            styles.timelineItemTitle,
-                            state === 'future' && styles.timelineItemTitleFuture,
-                          ]}
+                          className={cn(
+                            'text-body font-sans-bold text-primary-deep',
+                            state === 'future' && 'text-text-secondary',
+                          )}
                         >
                           {item.title}
                         </Text>
                         <Text
-                          style={[
-                            styles.timelineItemDescription,
-                            state === 'future' && styles.timelineItemDescriptionFuture,
-                          ]}
+                          className={cn(
+                            'text-body text-text-secondary leading-normal',
+                            state === 'future' && 'text-text-tertiary',
+                          )}
                         >
                           {item.description}
                         </Text>
                         {item.date ? (
-                          <View style={styles.timelineDatePill}>
-                            <Text style={styles.timelineDateText}>{item.date}</Text>
+                          <View className="self-start rounded-sm bg-muted px-sm py-xs">
+                            <Text className="text-caption text-text-secondary">{item.date}</Text>
                           </View>
                         ) : null}
                       </View>
@@ -386,20 +427,21 @@ export default function DisputeStatusScreen() {
               </View>
             </View>
 
-            <View style={styles.resolutionCard}>
-              <Text style={styles.resolutionTitle}>
+            {/* Resolution card */}
+            <View className="bg-muted rounded-lg p-lg gap-item">
+              <Text className="text-heading font-sans-bold text-primary-deep">
                 {t('customer.disputes.sectionResolution', 'Эцсийн шийдвэр')}
               </Text>
-              <View style={styles.resolutionInner}>
-                <View style={styles.resolutionIconWrap}>
+              <View className="items-center gap-sm">
+                <View className="w-[64px] h-[64px] rounded-lg bg-chip-inactive items-center justify-center">
                   <AlertTriangle size={22} color={colors.secondary} />
                 </View>
-                <Text style={styles.resolutionHeading}>
+                <Text className="text-body font-sans-bold text-primary-deep text-center">
                   {status === 'OPEN'
                     ? t('customer.disputes.statusOpen', 'Хүлээгдэж байна')
                     : t('customer.disputes.statusFinal', 'Хүлээгдэж байна')}
                 </Text>
-                <Text style={styles.resolutionText}>
+                <Text className="text-body text-text-secondary text-center leading-normal">
                   {t(
                     'customer.disputes.mediationNote',
                     'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.',
@@ -408,28 +450,38 @@ export default function DisputeStatusScreen() {
               </View>
             </View>
 
-            <View style={styles.evidenceCard}>
-              <Text style={styles.cardTitle}>
+            {/* Evidence card */}
+            <View
+              className="bg-card rounded-lg p-lg gap-sm"
+              style={elevations.soft}
+            >
+              <Text className="text-heading font-sans-bold text-primary-deep">
                 {t('customer.disputes.sectionEvidence', 'Илгээсэн нотлох баримт')}
               </Text>
               {evidenceItems.length > 0 ? (
                 evidenceItems.map((item, index) => (
                   <View
                     key={`${index}-${typeof item === 'string' ? item : item.type}-${typeof item === 'string' ? 'string' : (item.storage_key ?? 'item')}`}
-                    style={styles.evidenceRow}
+                    className="flex-row items-start gap-sm"
                   >
-                    <View style={styles.evidenceBullet} />
-                    <Text style={styles.evidenceText}>{getEvidenceLabel(item)}</Text>
+                    <View className="w-[8px] h-[8px] rounded-full bg-primary-deep mt-sm" />
+                    <Text className="flex-1 text-body text-primary-deep leading-snug">
+                      {getEvidenceLabel(item)}
+                    </Text>
                   </View>
                 ))
               ) : (
-                <Text style={styles.emptyEvidence}>
+                <Text className="text-body text-text-secondary">
                   {t('customer.disputes.noEvidence', 'Ноотлох баримт байхгүй')}
                 </Text>
               )}
             </View>
 
-            <View style={styles.decorativeImageWrap}>
+            {/* Decorative icon */}
+            <View
+              className="h-[192px] rounded-lg overflow-hidden items-center justify-center"
+              style={{ opacity: 0.4 }}
+            >
               <Scale size={64} color={colors.textSecondary} />
             </View>
           </>
@@ -438,322 +490,3 @@ export default function DisputeStatusScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    minHeight: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: screenLayout.insetX,
-    paddingBottom: screenLayout.body.microGap,
-  },
-  headerBackButton: {
-    width: spacing['3xl'],
-    height: spacing['3xl'],
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    marginHorizontal: spacing.sm,
-  },
-  headerSpacer: {
-    width: spacing['3xl'],
-  },
-  scrollContent: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.body.blockGap,
-    paddingBottom: spacing['2xl'],
-    gap: screenLayout.body.blockGap,
-  },
-  loadingState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing['3xl'],
-  },
-  errorCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  errorTitle: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.4,
-  },
-  retryButton: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.primaryDeep,
-  },
-  retryLabel: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  statusHeader: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  badgeWrap: {
-    alignItems: 'center',
-    paddingBottom: spacing.xs,
-  },
-  statusBadge: {
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusBadgeWarning: {
-    backgroundColor: colors.statusOpen,
-  },
-  statusBadgeSuccess: {
-    backgroundColor: colors.statusAssigned,
-  },
-  statusBadgeNeutral: {
-    backgroundColor: colors.muted,
-  },
-  statusBadgeDanger: {
-    backgroundColor: colors.danger,
-  },
-  statusBadgeText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-  },
-  statusBadgeTextWarning: {
-    color: colors.statusOpenForeground,
-  },
-  statusBadgeTextSuccess: {
-    color: colors.statusAssignedForeground,
-  },
-  statusBadgeTextNeutral: {
-    color: colors.primaryDeep,
-  },
-  statusBadgeTextDanger: {
-    color: colors.primaryForeground,
-  },
-  statusDescription: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
-    textAlign: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  detailCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  cardTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  summaryRow: {
-    gap: spacing.xs,
-  },
-  summaryRowLast: {
-    gap: spacing.xs,
-    paddingBottom: spacing.xs / 2,
-  },
-  summaryReasonWrap: {
-    gap: spacing.xs,
-  },
-  summaryLabel: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-  summaryValue: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    lineHeight: typography.body * 1.4,
-  },
-  timelineSection: {
-    gap: spacing.lg,
-  },
-  timelineTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  timelineTrack: {
-    gap: spacing.lg,
-    position: 'relative',
-  },
-  timelineRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  timelineRail: {
-    width: 24,
-    alignItems: 'center',
-    position: 'relative',
-  },
-  timelineConnector: {
-    position: 'absolute',
-    top: 24,
-    bottom: -spacing.lg,
-    width: 2,
-    backgroundColor: 'rgba(195,198,207,0.5)',
-  },
-  timelineDotDone: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: colors.background,
-    zIndex: 2,
-  },
-  timelineDotCurrent: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    borderColor: colors.secondary,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  timelineDotCurrentInner: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.full,
-    backgroundColor: colors.secondary,
-  },
-  timelineDotFuture: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  timelineContent: {
-    flex: 1,
-    gap: spacing.xs,
-    paddingBottom: spacing.md,
-  },
-  timelineItemTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  timelineItemTitleFuture: {
-    color: colors.textSecondary,
-  },
-  timelineItemDescription: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  timelineItemDescriptionFuture: {
-    color: colors.textTertiary,
-  },
-  timelineDatePill: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.sm,
-    backgroundColor: colors.muted,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  timelineDateText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  resolutionCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  resolutionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  resolutionInner: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  resolutionIconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.lg,
-    backgroundColor: colors.chipInactive,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resolutionHeading: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  resolutionText: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.5,
-  },
-  evidenceCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    ...elevations.soft,
-  },
-  evidenceRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-  },
-  evidenceBullet: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryDeep,
-    marginTop: spacing.sm,
-  },
-  evidenceText: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    lineHeight: typography.body * 1.4,
-  },
-  emptyEvidence: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  decorativeImageWrap: {
-    height: 192,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    opacity: 0.4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
