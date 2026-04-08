@@ -1,8 +1,27 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { Pressable, ScrollView, Text } from 'react-native';
+import { cva } from 'class-variance-authority';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const chipVariants = cva('px-lg py-sm rounded-full', {
+  variants: {
+    active: {
+      true: 'bg-primary',
+      false: 'bg-muted',
+    },
+  },
+  defaultVariants: { active: false },
+});
+
+const textVariants = cva('text-label font-sans-semibold', {
+  variants: {
+    active: {
+      true: 'text-primary-foreground',
+      false: 'text-primary',
+    },
+  },
+  defaultVariants: { active: false },
+});
 
 interface FilterItem {
   id: string;
@@ -14,14 +33,21 @@ interface FilterBarProps {
   activeFilters: string[];
   onToggle: (id: string) => void;
   testID?: string;
+  className?: string;
 }
 
-export function FilterBar({ filters, activeFilters, onToggle, testID }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  activeFilters,
+  onToggle,
+  testID,
+  className,
+}: FilterBarProps) {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}
+      contentContainerClassName={cn('px-lg gap-sm items-center', className)}
       testID={testID}
     >
       {filters.map((filter) => {
@@ -30,46 +56,15 @@ export function FilterBar({ filters, activeFilters, onToggle, testID }: FilterBa
           <Pressable
             key={filter.id}
             onPress={() => onToggle(filter.id)}
-            style={[styles.chip, isActive ? styles.activeChip : styles.inactiveChip]}
+            className={chipVariants({ active: isActive })}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
             accessibilityLabel={filter.label}
           >
-            <Text style={[styles.chipText, isActive ? styles.activeText : styles.inactiveText]}>
-              {filter.label}
-            </Text>
+            <Text className={textVariants({ active: isActive })}>{filter.label}</Text>
           </Pressable>
         );
       })}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
-    alignItems: 'center',
-  },
-  chip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.full,
-  },
-  activeChip: {
-    backgroundColor: colors.primary,
-  },
-  inactiveChip: {
-    backgroundColor: colors.muted,
-  },
-  chipText: {
-    fontSize: typography.label,
-    fontWeight: '600',
-  },
-  activeText: {
-    color: colors.primaryForeground,
-  },
-  inactiveText: {
-    color: colors.primary,
-  },
-});

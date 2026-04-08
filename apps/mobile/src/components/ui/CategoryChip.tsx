@@ -1,48 +1,51 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { Pressable, Text } from 'react-native';
+import { cva } from 'class-variance-authority';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, typography } = mobileTheme;
+const chipVariants = cva('px-xl py-sm rounded-full', {
+  variants: {
+    active: {
+      true: 'bg-primary',
+      false: 'bg-chipInactive',
+    },
+  },
+  defaultVariants: { active: false },
+});
+
+const textVariants = cva('text-label font-sans-semibold', {
+  variants: {
+    active: {
+      true: 'text-primary-foreground',
+      false: 'text-muted-foreground',
+    },
+  },
+  defaultVariants: { active: false },
+});
 
 interface CategoryChipProps {
   label: string;
   isActive?: boolean;
   onPress?: () => void;
+  testID?: string;
+  className?: string;
 }
 
-export function CategoryChip({ label, isActive = false, onPress }: CategoryChipProps) {
+export function CategoryChip({
+  label,
+  isActive = false,
+  onPress,
+  testID,
+  className,
+}: CategoryChipProps) {
   return (
-    <Pressable onPress={onPress} style={[styles.chip, isActive ? styles.active : styles.inactive]}>
-      <Text style={[styles.text, isActive ? styles.activeText : styles.inactiveText]}>{label}</Text>
+    <Pressable
+      onPress={onPress}
+      className={cn(chipVariants({ active: isActive }), className)}
+      testID={testID}
+      accessibilityRole="button"
+    >
+      <Text className={textVariants({ active: isActive })}>{label}</Text>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: radius.full,
-  },
-  active: {
-    backgroundColor: colors.primary,
-    shadowColor: colors.primaryDeep,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-    elevation: 3,
-  },
-  inactive: {
-    backgroundColor: colors.chipInactive,
-  },
-  text: {
-    fontSize: typography.label,
-    fontWeight: '600',
-  },
-  activeText: {
-    color: colors.primaryForeground,
-  },
-  inactiveText: {
-    color: colors.mutedForeground,
-  },
-});

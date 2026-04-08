@@ -1,45 +1,46 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { mobileTheme } from '../../design/tokenAdapter';
-
-const { colors, spacing, radius, typography } = mobileTheme;
+import { cva } from 'class-variance-authority';
+import { cn } from '../../lib/cn';
 
 type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
-const statusColors: Record<StatusType, { bg: string; fg: string }> = {
-  open: { bg: colors.statusOpen, fg: colors.statusOpenForeground },
-  assigned: { bg: colors.statusAssigned, fg: colors.statusAssignedForeground },
-  completed: { bg: colors.verified, fg: colors.verifiedForeground },
-  cancelled: { bg: colors.muted, fg: colors.mutedForeground },
-  no_show: { bg: colors.danger, fg: colors.dangerForeground },
-};
+const badgeVariants = cva('self-start px-md py-xs rounded-full', {
+  variants: {
+    status: {
+      open: 'bg-statusOpen',
+      assigned: 'bg-statusAssigned',
+      completed: 'bg-verified',
+      cancelled: 'bg-muted',
+      no_show: 'bg-danger',
+    },
+  },
+});
+
+const textVariants = cva('text-micro font-sans-bold uppercase tracking-widest', {
+  variants: {
+    status: {
+      open: 'text-statusOpenForeground',
+      assigned: 'text-statusAssignedForeground',
+      completed: 'text-verifiedForeground',
+      cancelled: 'text-muted-foreground',
+      no_show: 'text-danger-foreground',
+    },
+  },
+});
 
 interface StatusBadgeProps {
   status: StatusType;
+  className?: string;
+  testID?: string;
 }
 
-export function StatusBadge({ status }: StatusBadgeProps) {
+export function StatusBadge({ status, className, testID }: StatusBadgeProps) {
   const { t } = useTranslation();
-  const style = statusColors[status];
   return (
-    <View style={[styles.badge, { backgroundColor: style.bg }]}>
-      <Text style={[styles.text, { color: style.fg }]}>{t(`status.${status}`)}</Text>
+    <View className={cn(badgeVariants({ status }), className)} testID={testID}>
+      <Text className={textVariants({ status })}>{t(`status.${status}`)}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    alignSelf: 'flex-start',
-  },
-  text: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-});
