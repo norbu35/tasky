@@ -1255,6 +1255,13 @@
     "cancelConfirmTitle": "",
     "cancelConfirmMessage": "",
     "yesCancel": "",
-    "goBack": ""
+    "goBack": "",
+    "sectionDetails": "Details",
+    "assignedTasker": "Assigned Tasker",
+    "completedTitle": "Task completed",
+    "completedBody": "Thanks for using Tasky",
+    "cancelledTitle": "Task cancelled",
+    "cancelledBody": "This task is no longer active",
+    "locationNote": "Taskers see approximate location until the booking is confirmed."
   }
 }
