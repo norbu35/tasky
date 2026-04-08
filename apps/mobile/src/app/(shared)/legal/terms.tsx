@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, radius, spacing } = mobileTheme;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -18,26 +18,72 @@ function resolveState(value: string | string[] | undefined): ScreenState {
 
 function TermsLoading() {
   return (
-    <View style={styles.loadingContainer}>
-      <View style={styles.loadingBlockLarge} />
-      <View style={styles.loadingBlockMedium} />
-      <View style={styles.loadingBlockShort} />
-      <View style={styles.loadingBlockMedium} />
+    <View className="flex-1 px-lg pt-xl gap-lg">
+      <View style={{ height: 200, backgroundColor: colors.muted, borderRadius: radius.md }} />
+      <View style={{ height: spacing['3xl'], width: '80%', backgroundColor: colors.muted, borderRadius: radius.md }} />
+      <View style={{ height: spacing.xl, width: '55%', backgroundColor: colors.muted, borderRadius: radius.md }} />
+      <View style={{ height: spacing['3xl'], width: '80%', backgroundColor: colors.muted, borderRadius: radius.md }} />
     </View>
   );
 }
 
 function TermsErrorVisual() {
   return (
-    <View style={styles.errorVisual} accessibilityRole="image">
-      <View style={styles.errorDocument}>
-        <View style={styles.errorDocumentFold} />
-        <View style={styles.errorDocumentLineShort} />
-        <View style={styles.errorDocumentLine} />
-        <View style={styles.errorDocumentLine} />
+    <View
+      className="w-[128px] h-[128px] items-center justify-center mb-lg"
+      accessibilityRole="image"
+    >
+      <View
+        style={{
+          width: 88,
+          height: 108,
+          borderRadius: radius.lg,
+          backgroundColor: colors.muted,
+          padding: 12,
+          gap: 8,
+          position: 'relative',
+        }}
+      >
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: 28,
+            height: 28,
+            backgroundColor: colors.border,
+            borderTopRightRadius: radius.lg,
+            borderBottomLeftRadius: radius.md,
+          }}
+        />
+        <View
+          style={{
+            height: 8,
+            width: '60%',
+            borderRadius: radius.xs,
+            backgroundColor: colors.border,
+            marginTop: spacing.lg,
+          }}
+        />
+        <View style={{ height: 8, alignSelf: 'stretch', borderRadius: radius.xs, backgroundColor: colors.border }} />
+        <View style={{ height: 8, alignSelf: 'stretch', borderRadius: radius.xs, backgroundColor: colors.border }} />
       </View>
-      <View style={styles.errorBadge}>
-        <Text style={styles.errorBadgeText}>!</Text>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 6,
+          right: 6,
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          backgroundColor: colors.danger,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text className="text-caption font-sans-bold" style={{ color: colors.dangerForeground }}>
+          !
+        </Text>
       </View>
     </View>
   );
@@ -111,28 +157,49 @@ function TermsContent() {
 
   return (
     <InsetScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollContent}
+      className="flex-1"
+      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 24 }}
       showsVerticalScrollIndicator={false}
       extraBottomInset={spacing.lg}
     >
       {sections.map((section, index) => (
-        <View key={section.title} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-          <Text style={styles.sectionBody}>{section.lead}</Text>
+        <View
+          key={section.title}
+          className="mb-lg p-lg"
+          style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
+        >
+          <Text
+            className="text-subtitle font-sans-semibold mb-sm"
+            style={{ color: colors.primaryDeep }}
+          >
+            {section.title}
+          </Text>
+          <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
+            {section.lead}
+          </Text>
           {index === 0 ? (
-            <Text style={styles.sectionLead}>
-              <Text style={styles.sectionLeadStrong}>
+            <Text
+              className="text-body mb-lg"
+              style={{ color: colors.textSecondary, lineHeight: 24 }}
+            >
+              <Text className="font-sans-bold" style={{ color: colors.primaryDeep }}>
                 {t('shared.legal.noteLabel', 'Санамж: ')}
               </Text>
               {section.points[0]}
             </Text>
           ) : null}
-          <View style={styles.clauses}>
+          <View className="mt-sm gap-sm">
             {section.points.map((point) => (
-              <View key={point} style={styles.clauseRow}>
-                <Text style={styles.clauseBullet}>•</Text>
-                <Text style={styles.clauseText}>{point}</Text>
+              <View key={point} className="flex-row items-start gap-sm">
+                <Text className="text-body" style={{ color: colors.primaryDeep, lineHeight: 24 }}>
+                  •
+                </Text>
+                <Text
+                  className="text-body flex-1"
+                  style={{ color: colors.foreground, lineHeight: 24 }}
+                >
+                  {point}
+                </Text>
               </View>
             ))}
           </View>
@@ -156,29 +223,42 @@ export default function TermsScreen() {
 
   return (
     <ScreenContainer testID="SCR-INFRA-004">
-      <View style={styles.header}>
+      <View className="h-[56px] flex-row items-center justify-between px-md">
         <Pressable
           onPress={() => router.back()}
-          style={styles.backButton}
+          className="min-h-[44px] px-xs flex-row items-center gap-xs"
           hitSlop={spacing.sm}
           testID="terms-screen-back"
         >
           <ChevronLeft size={24} color={colors.primary} />
-          <Text style={styles.backLabel}>{t('infra.terms.backLabel', 'Буцах')}</Text>
+          <Text className="text-body font-sans-medium" style={{ color: colors.primaryDeep }}>
+            {t('infra.terms.backLabel', 'Буцах')}
+          </Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{title}</Text>
-        <View style={styles.headerAction} />
+        <Text
+          className="flex-1 text-subtitle font-sans-semibold text-center mx-sm"
+          style={{ color: colors.primaryDeep }}
+        >
+          {title}
+        </Text>
+        <View style={{ width: spacing['3xl'], height: spacing['3xl'] }} className="justify-center items-center" />
       </View>
 
       {state === 'loading' ? (
         <TermsLoading />
       ) : state === 'error' ? (
-        <View style={styles.errorContainer}>
+        <View className="flex-1 px-lg pt-xl items-center">
           <TermsErrorVisual />
-          <Text style={styles.errorHeadline}>
+          <Text
+            className="text-title font-sans-bold text-center mb-sm"
+            style={{ color: colors.foreground }}
+          >
             {t('infra.terms.errorHeadline', 'Ачааллах боломжгүй')}
           </Text>
-          <Text style={styles.errorDescription}>
+          <Text
+            className="text-body text-center"
+            style={{ color: colors.textSecondary, lineHeight: 26 }}
+          >
             {t(
               'infra.terms.errorDescription',
               'Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу',
@@ -187,7 +267,7 @@ export default function TermsScreen() {
           <Button
             label={t('infra.terms.errorRetry', 'Дахин оролдох')}
             onPress={() => setState('loaded')}
-            style={styles.errorButton}
+            style={{ marginTop: spacing.xl, alignSelf: 'stretch' }}
           />
         </View>
       ) : (
@@ -196,196 +276,3 @@ export default function TermsScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-  },
-  headerAction: {
-    width: spacing['3xl'],
-    height: spacing['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButton: {
-    minHeight: 44,
-    paddingHorizontal: spacing.xs,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  backLabel: {
-    fontSize: typography.body,
-    fontWeight: '500',
-    color: colors.primaryDeep,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    marginHorizontal: spacing.sm,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xl,
-  },
-  section: {
-    marginBottom: spacing.lg,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-  },
-  sectionLead: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: 24,
-    marginBottom: spacing.lg,
-  },
-  sectionLeadStrong: {
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    marginBottom: spacing.sm,
-  },
-  sectionBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: 24,
-  },
-  clauses: {
-    marginTop: spacing.sm,
-    gap: spacing.sm,
-  },
-  clauseRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-  },
-  clauseBullet: {
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.5,
-    color: colors.primaryDeep,
-    marginTop: spacing.xs / 4,
-  },
-  clauseText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.5,
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    gap: spacing.lg,
-  },
-  loadingBlockLarge: {
-    height: 200,
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-  },
-  loadingBlockMedium: {
-    height: spacing['3xl'],
-    width: '80%',
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-  },
-  loadingBlockShort: {
-    height: spacing.xl,
-    width: '55%',
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-  },
-  errorContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    alignItems: 'center',
-  },
-  errorVisual: {
-    width: 128,
-    height: 128,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  errorDocument: {
-    width: 88,
-    height: 108,
-    borderRadius: mobileTheme.radius.lg,
-    backgroundColor: colors.muted,
-    padding: spacing.md,
-    gap: spacing.sm,
-    position: 'relative',
-  },
-  errorDocumentFold: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 28,
-    height: 28,
-    backgroundColor: colors.border,
-    borderTopRightRadius: mobileTheme.radius.lg,
-    borderBottomLeftRadius: mobileTheme.radius.md,
-  },
-  errorDocumentLineShort: {
-    height: 8,
-    width: '60%',
-    borderRadius: mobileTheme.radius.xs,
-    backgroundColor: colors.border,
-    marginTop: spacing.lg,
-  },
-  errorDocumentLine: {
-    height: 8,
-    alignSelf: 'stretch',
-    borderRadius: mobileTheme.radius.xs,
-    backgroundColor: colors.border,
-  },
-  errorBadge: {
-    position: 'absolute',
-    bottom: 6,
-    right: 6,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorBadgeText: {
-    color: colors.dangerForeground,
-    fontSize: typography.caption,
-    fontWeight: '700',
-  },
-  errorDescription: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-  },
-  errorButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  errorHeadline: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-});

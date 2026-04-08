@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bolt, Hammer, Leaf, Package, Shirt, Sparkles, Search } from 'lucide-react-native';
@@ -8,9 +8,10 @@ import { FormWizardTemplate } from '../../../../components/templates/FormWizardT
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { cn } from '../../../../lib/cn';
 import type { Category } from '../../../../lib/mobileApiClient';
 
-const { colors, spacing, radius, typography } = mobileTheme;
+const { colors, radius } = mobileTheme;
 
 type CategoryVisual = {
   description: string;
@@ -93,12 +94,27 @@ function CategoryCard({ category, onPress }: { category: Category; onPress: () =
       accessibilityRole="button"
       onPress={onPress}
       testID={`category-item-${category.id}`}
-      style={({ pressed }) => [styles.categoryCard, pressed && styles.categoryCardPressed]}
+      style={({ pressed }) => [
+        {
+          width: '47%',
+          minHeight: 163,
+          padding: 20,
+          borderRadius: radius.md,
+          backgroundColor: colors.muted,
+          justifyContent: 'space-between',
+        },
+        pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+      ]}
     >
-      <View style={[styles.categoryIconWrap, { backgroundColor: visual.tone }]}>
+      <View
+        className="w-[48px] h-[48px] items-center justify-center"
+        style={{ borderRadius: radius.md, backgroundColor: visual.tone }}
+      >
         <Icon color={visual.tint} size={22} />
       </View>
-      <Text style={styles.categoryName}>{category.name}</Text>
+      <Text className="text-body font-sans-semibold mt-xl" style={{ color: colors.primaryDeep }}>
+        {category.name}
+      </Text>
     </Pressable>
   );
 }
@@ -144,19 +160,25 @@ export default function CategorySelectionScreen() {
       testID="SCR-CUST-002"
     >
       {/* Search — flat tonal */}
-      <View style={styles.searchWrap}>
+      <View
+        className="flex-row items-center gap-sm px-lg h-[56px]"
+        style={{ borderRadius: radius.sm, backgroundColor: colors.muted }}
+      >
         <Search size={18} color={`${colors.textSecondary}99`} />
         <Input
           value={query}
           onChangeText={setQuery}
           placeholder={t('customer.postTask.searchCategories', 'Ангилал хайх...')}
           testID="category-selection-search"
-          style={styles.searchInput}
+          style={{ flex: 1, borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0, minHeight: 40, backgroundColor: 'transparent' }}
         />
       </View>
 
       {/* Editorial intro */}
-      <Text style={styles.editorialIntro}>
+      <Text
+        className="text-label"
+        style={{ color: colors.textSecondary, lineHeight: 22, maxWidth: 274 }}
+      >
         {t(
           'customer.postTask.categorySupport',
           'Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.',
@@ -165,40 +187,53 @@ export default function CategorySelectionScreen() {
 
       {/* Category grid */}
       {isLoading ? (
-        <View style={styles.loadingState} testID="category-selection-loading">
+        <View className="gap-md" testID="category-selection-loading">
           <ActivityIndicator color={colors.primary} />
-          <View style={styles.grid}>
+          <View className="flex-row flex-wrap gap-lg">
             {Array.from({ length: 8 }).map((_, index) => (
-              <View key={index} style={styles.loadingCard} />
+              <View
+                key={index}
+                style={{ width: '47%', minHeight: 163, borderRadius: radius.md, backgroundColor: colors.muted }}
+              />
             ))}
           </View>
         </View>
       ) : isError ? (
-        <View style={styles.messageCard}>
-          <Text style={styles.messageTitle}>
+        <View
+          className="p-xl gap-sm"
+          style={[{ borderRadius: radius.md, backgroundColor: colors.card }, elevations.soft]}
+        >
+          <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
             {t('customer.postTask.categoryLoadError', 'Failed to load categories')}
           </Text>
-          <Text style={styles.messageBody}>
+          <Text
+            className="text-caption"
+            style={{ color: colors.textSecondary, lineHeight: 18 }}
+          >
             {t('customer.postTask.categoryLoadHint', 'Pull to refresh or try again shortly.')}
           </Text>
           <Pressable
             onPress={() => refetch()}
-            style={styles.retryButton}
+            className="min-h-[44px] self-start px-md items-center justify-center"
+            style={{ borderRadius: radius.md, backgroundColor: colors.secondary }}
             testID="category-selection-retry"
           >
-            <Text style={styles.retryLabel}>
+            <Text className="text-caption font-sans-bold" style={{ color: colors.secondaryForeground }}>
               {t('customer.postTask.categoryRetry', 'Try again')}
             </Text>
           </Pressable>
         </View>
       ) : filteredCategories.length === 0 ? (
-        <View style={styles.messageCard}>
-          <Text style={styles.messageTitle}>
+        <View
+          className="p-xl gap-sm"
+          style={{ borderRadius: radius.md, backgroundColor: colors.card }}
+        >
+          <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
             {t('categories.empty', 'No categories available')}
           </Text>
         </View>
       ) : (
-        <View style={styles.grid} testID="category-selection-grid">
+        <View className="flex-row flex-wrap gap-lg" testID="category-selection-grid">
           {filteredCategories.map((category) => (
             <CategoryCard
               key={category.id}
@@ -210,11 +245,20 @@ export default function CategorySelectionScreen() {
       )}
 
       {/* Featured banner — dark navy */}
-      <View style={styles.featuredBanner}>
-        <Text style={styles.featuredTitle}>
+      <View
+        className="p-xl overflow-hidden"
+        style={{ borderRadius: radius.md, backgroundColor: colors.primary }}
+      >
+        <Text
+          className="text-subtitle font-sans-bold mb-xs"
+          style={{ color: colors.primaryForeground }}
+        >
           {t('customer.postTask.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
         </Text>
-        <Text style={styles.featuredBody}>
+        <Text
+          className="text-caption"
+          style={{ color: colors.primaryForeground, opacity: 0.8, lineHeight: 18, maxWidth: 180 }}
+        >
           {t(
             'customer.postTask.featuredBody',
             'Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя.',
@@ -224,119 +268,3 @@ export default function CategorySelectionScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  searchWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    borderRadius: radius.sm,
-    backgroundColor: colors.muted,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    height: 56,
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 0,
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    minHeight: 40,
-    backgroundColor: 'transparent',
-  },
-  editorialIntro: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    lineHeight: typography.label * 1.625,
-    maxWidth: 274,
-  },
-  loadingState: {
-    gap: spacing.md,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.lg,
-  },
-  loadingCard: {
-    width: '47%',
-    minHeight: 163,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  messageCard: {
-    padding: spacing.xl,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    gap: spacing.sm,
-    ...elevations.soft,
-  },
-  messageTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  messageBody: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-  retryButton: {
-    minHeight: 44,
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.secondary,
-  },
-  retryLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.secondaryForeground,
-  },
-  categoryCard: {
-    width: '47%',
-    minHeight: 163,
-    padding: 20,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    justifyContent: 'space-between',
-  },
-  categoryCardPressed: {
-    opacity: 0.85,
-    transform: [{ scale: 0.98 }],
-  },
-  categoryIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    marginTop: spacing.xl,
-  },
-  featuredBanner: {
-    padding: spacing.xl,
-    borderRadius: radius.md,
-    backgroundColor: colors.primary,
-    overflow: 'hidden',
-  },
-  featuredTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-    marginBottom: spacing.xs,
-  },
-  featuredBody: {
-    fontSize: typography.caption,
-    color: colors.primaryForeground,
-    opacity: 0.8,
-    lineHeight: typography.caption * 1.35,
-    maxWidth: 180,
-  },
-});
