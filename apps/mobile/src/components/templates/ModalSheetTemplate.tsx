@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
@@ -8,8 +8,9 @@ import BottomSheet, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing, radius } = mobileTheme;
 
 const HANDLE_HEIGHT = spacing.xs;
 const HANDLE_WIDTH = spacing['3xl'];
@@ -21,6 +22,7 @@ export interface ModalSheetTemplateProps {
   children: React.ReactNode;
   snapPoints?: (string | number)[];
   testID?: string;
+  className?: string;
 }
 
 export function ModalSheetTemplate({
@@ -30,6 +32,7 @@ export function ModalSheetTemplate({
   children,
   snapPoints = ['50%', '70%'],
   testID,
+  className,
 }: ModalSheetTemplateProps) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const insets = useSafeAreaInsets();
@@ -65,7 +68,7 @@ export function ModalSheetTemplate({
   );
 
   return (
-    <View testID={testID}>
+    <View testID={testID} className={cn(className)}>
       <BottomSheet
         ref={bottomSheetRef}
         index={isOpen ? 0 : -1}
@@ -73,43 +76,27 @@ export function ModalSheetTemplate({
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
         enablePanDownToClose
-        backgroundStyle={styles.sheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
+        backgroundStyle={{
+          backgroundColor: colors.card,
+          borderTopLeftRadius: radius.lg,
+          borderTopRightRadius: radius.lg,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: colors.chipInactive,
+          width: HANDLE_WIDTH,
+          height: HANDLE_HEIGHT,
+          borderRadius: radius.full,
+        }}
       >
         <BottomSheetView
-          style={[styles.contentContainer, { paddingBottom: insets.bottom + spacing.lg }]}
+          style={{ paddingHorizontal: spacing.lg, paddingBottom: insets.bottom + spacing.lg }}
         >
-          {title && <Text style={styles.title}>{title}</Text>}
-          <View style={styles.content}>{children}</View>
+          {title && (
+            <Text className="text-title font-semibold text-primary mb-lg">{title}</Text>
+          )}
+          <View className="gap-md">{children}</View>
         </BottomSheetView>
       </BottomSheet>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sheetBackground: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-  },
-  handleIndicator: {
-    backgroundColor: colors.chipInactive,
-    width: HANDLE_WIDTH,
-    height: HANDLE_HEIGHT,
-    borderRadius: radius.full,
-  },
-  contentContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '600',
-    color: colors.primary,
-    marginBottom: spacing.lg,
-  },
-  content: {
-    gap: spacing.md,
-  },
-});

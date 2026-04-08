@@ -1,14 +1,15 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 import { useTranslation } from 'react-i18next';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 import { screenLayout } from '../../design/screenLayout';
 
-const { colors, spacing } = mobileTheme;
+const { colors } = mobileTheme;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
@@ -34,15 +35,29 @@ export interface DetailTemplateProps {
   hideHeader?: boolean;
   /** When true, the sticky CTA bar adds tab bar clearance automatically. */
   insideTabNavigator?: boolean;
+  className?: string;
 }
 
 function DetailSkeleton() {
   return (
-    <View style={styles.skeletonContainer}>
-      <View style={styles.skeletonBlockLarge} />
-      <View style={styles.skeletonBlockMedium} />
-      <View style={styles.skeletonBlockSmall} />
-      <View style={styles.skeletonBlockMedium} />
+    <View className="flex-1 px-screen-x pt-header-top gap-block">
+      {/* Large skeleton block — dynamic size, kept imperative */}
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: 200 }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: 32, width: '70%' }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: 24, width: '45%' }}
+      />
+      <View
+        className="bg-muted rounded-md"
+        style={{ height: 32, width: '70%' }}
+      />
     </View>
   );
 }
@@ -68,6 +83,7 @@ export function DetailTemplate({
   testID,
   hideHeader = false,
   insideTabNavigator = false,
+  className,
 }: DetailTemplateProps) {
   const { t } = useTranslation();
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
@@ -76,18 +92,23 @@ export function DetailTemplate({
 
   return (
     <ScreenContainer
-      style={hideHeader ? styles.safeAreaNoTop : undefined}
+      style={hideHeader ? { paddingTop: 0 } : undefined}
       testID={testID}
       edges={hideHeader ? ['left', 'right'] : ['top', 'left', 'right']}
+      className={className}
     >
       {/* Right action icons — absolute overlay top-right */}
       {effectiveActions && !isLoading && !isError && (
-        <View style={styles.rightActionsRow} pointerEvents="box-none">
+        <View
+          className="absolute right-screen-x flex-row gap-micro z-10"
+          style={{ top: screenLayout.header.topInset }}
+          pointerEvents="box-none"
+        >
           {effectiveActions.map((action, i) => (
             <Pressable
               key={i}
               onPress={action.onPress}
-              style={styles.rightActionButton}
+              className="w-11 h-11 items-center justify-center"
               testID={(action as { testID?: string }).testID}
               hitSlop={8}
             >
@@ -108,10 +129,13 @@ export function DetailTemplate({
         <DetailSkeleton />
       ) : (
         <InsetScrollView
-          style={styles.scrollView}
+          className="flex-1"
           contentContainerStyle={[
-            styles.scrollContent,
-            hasBottomBar && styles.scrollContentWithActionBar,
+            {
+              paddingTop: screenLayout.header.topInset,
+              paddingHorizontal: screenLayout.insetX,
+            },
+            hasBottomBar && { paddingBottom: screenLayout.body.sectionGap },
           ]}
           extraBottomInset={hasBottomBar ? screenLayout.chrome.tabBarHeight : 0}
           showsVerticalScrollIndicator={false}
@@ -126,13 +150,22 @@ export function DetailTemplate({
           testID={testID ? `${testID}-bottom-bar` : undefined}
           insideTabNavigator={insideTabNavigator}
         >
-          <BlurView intensity={40} tint="light" style={styles.bottomBar}>
+          {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
+          <BlurView
+            intensity={40}
+            tint="light"
+            style={{
+              padding: screenLayout.actions.barPadding,
+              borderRadius: mobileTheme.radius.lg,
+              overflow: 'hidden',
+            }}
+          >
             {secondaryCtaLabel && secondaryCtaOnPress && (
               <Button
                 label={secondaryCtaLabel}
                 variant="outline"
                 onPress={secondaryCtaOnPress}
-                style={styles.secondaryCta}
+                style={{ alignSelf: 'stretch', marginBottom: screenLayout.actions.buttonGap }}
                 testID={testID ? `${testID}-secondary-cta` : undefined}
               />
             )}
@@ -141,7 +174,7 @@ export function DetailTemplate({
               onPress={ctaOnPress}
               isLoading={ctaLoading}
               disabled={ctaDisabled}
-              style={styles.primaryCta}
+              style={{ alignSelf: 'stretch' }}
               testID={testID ? `${testID}-cta` : undefined}
             />
           </BlurView>
@@ -150,68 +183,3 @@ export function DetailTemplate({
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  safeAreaNoTop: {
-    paddingTop: 0,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: screenLayout.header.topInset,
-    paddingHorizontal: screenLayout.insetX,
-  },
-  scrollContentWithActionBar: {
-    paddingBottom: screenLayout.body.sectionGap,
-  },
-  bottomBar: {
-    padding: screenLayout.actions.barPadding,
-    borderRadius: mobileTheme.radius.lg,
-    overflow: 'hidden',
-  },
-  primaryCta: {
-    alignSelf: 'stretch',
-  },
-  secondaryCta: {
-    alignSelf: 'stretch',
-    marginBottom: screenLayout.actions.buttonGap,
-  },
-  skeletonContainer: {
-    flex: 1,
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.header.topInset,
-    gap: screenLayout.body.blockGap,
-  },
-  rightActionsRow: {
-    position: 'absolute',
-    top: screenLayout.header.topInset,
-    right: screenLayout.insetX,
-    flexDirection: 'row',
-    gap: screenLayout.body.microGap,
-    zIndex: 10,
-  },
-  rightActionButton: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  skeletonBlockLarge: {
-    height: 200,
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-  },
-  skeletonBlockMedium: {
-    height: spacing['3xl'],
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-    width: '70%',
-  },
-  skeletonBlockSmall: {
-    height: spacing.xl,
-    backgroundColor: colors.muted,
-    borderRadius: mobileTheme.radius.md,
-    width: '45%',
-  },
-});

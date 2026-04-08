@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,10 +10,11 @@ import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { screenLayout } from '../../design/screenLayout';
 import { animationPresets } from '../../design/animations';
+import { cn } from '../../lib/cn';
 import { EmptyStateTemplate } from './EmptyStateTemplate';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 
-const { colors, spacing, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export interface FeedListTemplateProps<T> {
   data: T[];
@@ -36,6 +37,7 @@ export interface FeedListTemplateProps<T> {
   filterBar?: React.ReactNode;
   ListHeaderComponent?: React.ReactElement;
   testID?: string;
+  className?: string;
 }
 
 function SkeletonCard() {
@@ -57,16 +59,19 @@ function SkeletonCard() {
   }));
 
   return (
-    <Animated.View style={[styles.skeletonCard, animatedStyle]}>
-      <View style={styles.skeletonLine} />
-      <View style={styles.skeletonLineShort} />
-      <View style={styles.skeletonLineMiddle} />
+    <Animated.View
+      className="bg-muted rounded-md gap-sm"
+      style={[animatedStyle, { padding: screenLayout.body.cardPadding }]}
+    >
+      <View className="h-lg bg-chipInactive rounded-xs self-stretch" />
+      <View className="h-md bg-chipInactive rounded-xs" style={{ width: '60%' }} />
+      <View className="h-md bg-chipInactive rounded-xs" style={{ width: '80%' }} />
     </Animated.View>
   );
 }
 
 function ItemSeparator() {
-  return <View style={styles.separator} />;
+  return <View className="h-item" />;
 }
 
 export function FeedListTemplate<T>({
@@ -90,6 +95,7 @@ export function FeedListTemplate<T>({
   filterBar,
   ListHeaderComponent,
   testID,
+  className,
 }: FeedListTemplateProps<T>) {
   const { t } = useTranslation();
 
@@ -101,7 +107,7 @@ export function FeedListTemplate<T>({
   const renderFooter = useCallback(() => {
     if (!isLoadingMore) return null;
     return (
-      <View style={styles.footerLoader}>
+      <View className="py-xl items-center">
         <ActivityIndicator color={colors.primary} />
       </View>
     );
@@ -109,10 +115,10 @@ export function FeedListTemplate<T>({
 
   if (isLoading) {
     return (
-      <View style={styles.container} testID={testID}>
-        {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
+      <View className={cn('flex-1 bg-background', className)} testID={testID}>
+        {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
         {ListHeaderComponent}
-        <View style={styles.skeletonList}>
+        <View className="px-screen-x pt-header-top">
           {Array.from({ length: 5 }).map((_, i) => (
             <React.Fragment key={i}>
               {i > 0 && <ItemSeparator />}
@@ -126,7 +132,7 @@ export function FeedListTemplate<T>({
 
   if (isError) {
     return (
-      <View style={styles.container} testID={testID}>
+      <View className={cn('flex-1 bg-background', className)} testID={testID}>
         {ListHeaderComponent}
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage', 'Failed to load content')}
@@ -140,8 +146,8 @@ export function FeedListTemplate<T>({
 
   if (isEmpty || data.length === 0) {
     return (
-      <View style={styles.container} testID={testID}>
-        {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
+      <View className={cn('flex-1 bg-background', className)} testID={testID}>
+        {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
         {ListHeaderComponent}
         <EmptyStateTemplate
           title={emptyTitle ?? t('feed.emptyTitle', 'Nothing here yet')}
@@ -155,14 +161,18 @@ export function FeedListTemplate<T>({
   }
 
   return (
-    <View style={styles.container} testID={testID}>
-      {filterBar ? <View style={styles.filterBarWrapper}>{filterBar}</View> : null}
+    <View className={cn('flex-1 bg-background', className)} testID={testID}>
+      {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
       <FlatList
         style={{ flex: 1 }}
         data={data}
         renderItem={renderListItem}
         keyExtractor={keyExtractor}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{
+          paddingHorizontal: screenLayout.insetX,
+          paddingTop: screenLayout.header.topInset,
+          paddingBottom: screenLayout.chrome.contentBottomClearance,
+        }}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={renderFooter}
@@ -183,53 +193,3 @@ export function FeedListTemplate<T>({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  listContent: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.header.topInset,
-    paddingBottom: screenLayout.chrome.contentBottomClearance,
-  },
-  separator: {
-    height: screenLayout.body.itemGap,
-  },
-  skeletonList: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.header.topInset,
-  },
-  skeletonCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: screenLayout.body.cardPadding,
-    gap: spacing.sm,
-  },
-  skeletonLine: {
-    height: spacing.lg,
-    backgroundColor: colors.chipInactive,
-    borderRadius: radius.xs,
-    alignSelf: 'stretch',
-  },
-  skeletonLineShort: {
-    height: spacing.md,
-    backgroundColor: colors.chipInactive,
-    borderRadius: radius.xs,
-    width: '60%',
-  },
-  skeletonLineMiddle: {
-    height: spacing.md,
-    backgroundColor: colors.chipInactive,
-    borderRadius: radius.xs,
-    width: '80%',
-  },
-  filterBarWrapper: {
-    flexShrink: 0,
-  },
-  footerLoader: {
-    paddingVertical: spacing.xl,
-    alignItems: 'center',
-  },
-});

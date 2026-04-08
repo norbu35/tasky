@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import { InsetScrollView, ScreenContainer } from '../shells';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 export interface SuccessCelebrationTemplateProps {
   headline: string;
@@ -18,6 +19,7 @@ export interface SuccessCelebrationTemplateProps {
   secondaryCtaLabel?: string;
   secondaryCtaOnPress?: () => void;
   testID?: string;
+  className?: string;
 }
 
 function AnimatedCheckmark() {
@@ -36,7 +38,7 @@ function AnimatedCheckmark() {
   }));
 
   return (
-    <Animated.View style={[styles.checkmarkContainer, animatedStyle]}>
+    <Animated.View className="mb-xl" style={animatedStyle}>
       <CheckCircle size={64} color={colors.verified} />
     </Animated.View>
   );
@@ -51,30 +53,31 @@ export function SuccessCelebrationTemplate({
   secondaryCtaLabel,
   secondaryCtaOnPress,
   testID,
+  className,
 }: SuccessCelebrationTemplateProps) {
   const { t } = useTranslation();
 
   return (
-    <ScreenContainer testID={testID}>
+    <ScreenContainer testID={testID} className={className}>
       <InsetScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.container}
+        className="flex-1 bg-background"
+        contentContainerStyle={{ alignItems: 'center', paddingTop: 40, paddingHorizontal: 16, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
         <AnimatedCheckmark />
 
-        <Text style={styles.headline}>{headline}</Text>
-        <Text style={styles.body}>{body}</Text>
+        <Text className="text-heading font-semibold text-primaryDeep text-center">{headline}</Text>
+        <Text className="text-body text-primary text-center mt-md leading-relaxed">{body}</Text>
 
         {nextSteps && nextSteps.length > 0 && (
-          <View style={styles.nextStepsSection}>
-            <Text style={styles.nextStepsHeader}>
+          <View className="self-stretch mt-xl px-sm">
+            <Text className="text-subtitle font-semibold text-primary mb-md">
               {t('success.whatHappensNext', 'What happens next')}
             </Text>
             {nextSteps.map((step, index) => (
-              <View key={index} style={styles.stepRow}>
-                <Text style={styles.stepBullet}>{'\u2022'}</Text>
-                <Text style={styles.stepText}>{step}</Text>
+              <View key={index} className="flex-row mb-sm pl-xs">
+                <Text className="text-body text-accent mr-sm leading-relaxed">{'\u2022'}</Text>
+                <Text className="flex-1 text-body text-accent leading-relaxed">{step}</Text>
               </View>
             ))}
           </View>
@@ -83,7 +86,7 @@ export function SuccessCelebrationTemplate({
         <Button
           label={ctaLabel}
           onPress={ctaOnPress}
-          style={styles.cta}
+          style={{ alignSelf: 'stretch', marginTop: 24 }}
           testID={testID ? `${testID}-cta` : undefined}
         />
 
@@ -92,7 +95,7 @@ export function SuccessCelebrationTemplate({
             label={secondaryCtaLabel}
             variant="outline"
             onPress={secondaryCtaOnPress}
-            style={styles.secondaryCta}
+            style={{ alignSelf: 'stretch', marginTop: 12 }}
             testID={testID ? `${testID}-secondary-cta` : undefined}
           />
         )}
@@ -100,68 +103,3 @@ export function SuccessCelebrationTemplate({
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  container: {
-    alignItems: 'center',
-    paddingTop: spacing['3xl'],
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  checkmarkContainer: {
-    marginBottom: spacing.xl,
-  },
-  headline: {
-    fontSize: typography.heading,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.primary,
-    textAlign: 'center',
-    marginTop: spacing.md,
-    lineHeight: typography.body * 1.6,
-  },
-  nextStepsSection: {
-    alignSelf: 'stretch',
-    marginTop: spacing.xl,
-    paddingHorizontal: spacing.sm,
-  },
-  nextStepsHeader: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
-    marginBottom: spacing.md,
-  },
-  stepRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.sm,
-    paddingLeft: spacing.xs,
-  },
-  stepBullet: {
-    fontSize: typography.body,
-    color: colors.accent,
-    marginRight: spacing.sm,
-    lineHeight: typography.body * 1.6,
-  },
-  stepText: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.accent,
-    lineHeight: typography.body * 1.6,
-  },
-  cta: {
-    alignSelf: 'stretch',
-    marginTop: spacing.xl,
-  },
-  secondaryCta: {
-    alignSelf: 'stretch',
-    marginTop: spacing.md,
-  },
-});

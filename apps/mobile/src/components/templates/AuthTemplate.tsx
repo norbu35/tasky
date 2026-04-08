@@ -2,16 +2,13 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   View,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
-
-const { colors, spacing, typography } = mobileTheme;
 
 export interface AuthTemplateProps {
   children: React.ReactNode;
@@ -24,6 +21,7 @@ export interface AuthTemplateProps {
   bottomSlot?: React.ReactNode;
   footerSlot?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
+  className?: string;
 }
 
 export function AuthTemplate({
@@ -37,97 +35,61 @@ export function AuthTemplate({
   bottomSlot,
   footerSlot,
   contentStyle,
+  className,
 }: AuthTemplateProps) {
   return (
-    <ScreenContainer testID={testID}>
+    <ScreenContainer testID={testID} className={className}>
       <KeyboardAvoidingView
-        style={styles.container}
+        className="flex-1 bg-background"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {topRightSlot ? <View style={styles.topRight}>{topRightSlot}</View> : null}
+        {topRightSlot ? (
+          <View className="absolute top-xl right-xl z-10">{topRightSlot}</View>
+        ) : null}
         <InsetScrollView
-          contentContainerStyle={[styles.scrollContent, contentStyle]}
+          contentContainerStyle={[{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }, contentStyle]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           extraBottomInset={bottomSlot ? 210 : 0}
         >
           {/* Logo / Branding */}
-          {showLogo && <Text style={styles.logo}>Tasky</Text>}
+          {showLogo && (
+            <Text className="text-hero-title font-display-bold text-primaryDeep text-center mb-2xl">
+              Tasky
+            </Text>
+          )}
 
           {/* Headline */}
-          {headline && <Text style={styles.headline}>{headline}</Text>}
+          {headline && (
+            <Text className="text-heading font-semibold text-primaryDeep text-center">
+              {headline}
+            </Text>
+          )}
 
           {/* Subtitle */}
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {subtitle && (
+            <Text className="text-body text-primary text-center mt-sm leading-relaxed">
+              {subtitle}
+            </Text>
+          )}
 
           {/* Form Content */}
-          <View style={styles.formContent}>{children}</View>
+          <View className="mt-2xl gap-lg">{children}</View>
 
           {/* Trust Message */}
-          {trustMessage && <Text style={styles.trustMessage}>{trustMessage}</Text>}
+          {trustMessage && (
+            <Text className="text-caption text-textTertiary text-center mt-2xl leading-relaxed">
+              {trustMessage}
+            </Text>
+          )}
 
           {/* Footer links — inside scroll content so they scroll above the StickyActionBar */}
-          {footerSlot ? <View style={styles.footer}>{footerSlot}</View> : null}
+          {footerSlot ? (
+            <View className="px-xl pb-lg items-center gap-md">{footerSlot}</View>
+          ) : null}
         </InsetScrollView>
         {bottomSlot ? <StickyActionBar>{bottomSlot}</StickyActionBar> : null}
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing['3xl'],
-  },
-  topRight: {
-    position: 'absolute',
-    top: spacing.xl,
-    right: spacing.xl,
-    zIndex: 10,
-  },
-  logo: {
-    fontSize: typography.heroTitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    fontFamily: 'Manrope_700Bold',
-    marginBottom: spacing['2xl'],
-  },
-  headline: {
-    fontSize: typography.heading,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.primary,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    lineHeight: typography.body * 1.6,
-  },
-  formContent: {
-    marginTop: spacing['2xl'],
-    gap: spacing.lg,
-  },
-  trustMessage: {
-    fontSize: typography.caption,
-    color: colors.textTertiary,
-    textAlign: 'center',
-    marginTop: spacing['2xl'],
-    lineHeight: typography.caption * 1.6,
-  },
-  footer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-});
