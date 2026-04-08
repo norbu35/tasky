@@ -1371,3 +1371,542 @@ git tag phase-3-ui-centralization-complete
 | Phase 2 | Tasks 16–44 | ~30 commits |
 | Phase 3 | Tasks 45–46 | 2 commits |
 | **Total** | **46 tasks** | **~47 commits** |
+
+---
+
+## Appendix A — Additional Primitive Rewrites
+
+The main plan shows Card.tsx and Button.tsx as representative examples. This appendix provides full rewrites for three additional primitives that cover the remaining edge cases: TextInput binding (Input), error state variants (FormField), and heavily-animated components (FAB).
+
+### Input.tsx — full rewrite
+
+Edge case: `TextInput` needs `cssInterop` OR keeps `style={}` because `placeholderTextColor` is a prop, not a style. NativeWind v4 does NOT support `placeholderTextColor` via className. Keep imperative for placeholder color.
+
+```tsx
+// apps/mobile/src/components/ui/Input.tsx
+import { forwardRef } from 'react';
+import type { TextInputProps } from 'react-native';
+import { TextInput } from 'react-native';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
+
+type Props = TextInputProps & {
+  invalid?: boolean;
+  readOnly?: boolean;
+  className?: string;
+};
+
+export const Input = forwardRef<TextInput, Props>(function Input(
+  { invalid = false, editable = true, readOnly = false, style, className, ...props },
+  ref,
+) {
+  const isEditable = editable && !readOnly;
+
+  return (
+    <TextInput
+      ref={ref}
+      editable={isEditable}
+      placeholderTextColor={mobileTheme.colors.mutedForeground}
+      style={style}
+      className={cn(
+        'min-h-[44px] rounded-md border border-input bg-card text-foreground px-md py-sm text-body font-sans',
+        invalid && 'border-danger',
+        !isEditable && 'opacity-60',
+        className,
+      )}
+      {...props}
+    />
+  );
+});
+```
+
+**Key decisions:**
+- `placeholderTextColor` stays as prop (no Tailwind equivalent)
+- `style` prop kept for consumer overrides (runtime-computed only)
+- `min-h-[44px]` is an arbitrary value — acceptable in primitives (lint rule only bans these in `src/app/**`)
+- `opacity-60` replaces `opacity: 0.6`
+
+### FormField.tsx — full rewrite
+
+```tsx
+// apps/mobile/src/components/ui/FormField.tsx
+import type { ReactNode } from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
+import { Text, View } from 'react-native';
+import { cn } from '../../lib/cn';
+
+type Props = {
+  label: string;
+  helperText?: string;
+  errorText?: string;
+  children: ReactNode;
+  className?: string;
+  style?: StyleProp<ViewStyle>;
+};
+
+export function FormField({ label, helperText, errorText, children, className, style }: Props) {
+  const hasError = Boolean(errorText);
+
+  return (
+    <View style={style} className={cn('gap-sm', className)}>
+      <Text className="text-body font-sans-semibold text-foreground">{label}</Text>
+      {children}
+      {hasError ? (
+        <Text accessibilityLiveRegion="polite" className="text-caption font-sans-medium text-danger">
+          {errorText}
+        </Text>
+      ) : null}
+      {!hasError && helperText ? (
+        <Text className="text-caption font-sans-medium text-muted-foreground">{helperText}</Text>
+      ) : null}
+    </View>
+  );
+}
+```
+
+### FAB.tsx — full rewrite (heavily animated)
+
+Edge case: FAB is almost entirely animated — position, scale, drag gestures. Most styles MUST stay imperative. Only the static visual properties (background, border-radius, z-index) move to className.
+
+```tsx
+// apps/mobile/src/components/ui/FAB.tsx
+import React from 'react';
+import { Dimensions } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated';
+import { Plus } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuthStore } from '../../store/authStore';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { elevations } from '../../design/elevations';
+import { screenLayout } from '../../design/screenLayout';
+
+const { colors } = mobileTheme;
+const { fabSize, fabInsetRight, fabBottom, tabBarHeight, tabBarBottom } = screenLayout.chrome;
+const DRAG_THRESHOLD = 8;
+const SPRING_CONFIG = { damping: 18, stiffness: 220 };
+
+type FABProps = {
+  testID?: string;
+  authGuard?: boolean;
+};
+
+export function FAB({ testID = 'global-fab', authGuard = true }: FABProps) {
+  const router = useRouter();
+  const session = useAuthStore((state) => state.session);
+  const insets = useSafeAreaInsets();
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+  const defaultX = screenWidth - fabSize - fabInsetRight;
+  const defaultY = screenHeight - insets.bottom - fabBottom - fabSize;
+
+  const minX = fabInsetRight;
+  const maxX = screenWidth - fabSize - fabInsetRight;
+  const minY = insets.top + mobileTheme.spacing.md;
+  const maxY = screenHeight - insets.bottom - tabBarHeight - tabBarBottom - fabSize;
+
+  const translateX = useSharedValue(defaultX);
+  const translateY = useSharedValue(defaultY);
+  const startX = useSharedValue(defaultX);
+  const startY = useSharedValue(defaultY);
+  const scale = useSharedValue(1);
+  const isDragging = useSharedValue(false);
+
+  const navigateToNewTask = () => {
+    if (authGuard && !session) {
+      router.push('/(auth)');
+    } else {
+      router.push('/(customer)/tasks/new');
+    }
+  };
+
+  const tap = Gesture.Tap().onEnd(() => {
+    if (!isDragging.value) runOnJS(navigateToNewTask)();
+  });
+
+  const pan = Gesture.Pan()
+    .minDistance(DRAG_THRESHOLD)
+    .onStart(() => {
+      startX.value = translateX.value;
+      startY.value = translateY.value;
+      isDragging.value = false;
+      scale.value = withSpring(0.95, SPRING_CONFIG);
+    })
+    .onUpdate((event) => {
+      isDragging.value = true;
+      translateX.value = Math.max(minX, Math.min(maxX, startX.value + event.translationX));
+      translateY.value = Math.max(minY, Math.min(maxY, startY.value + event.translationY));
+    })
+    .onEnd(() => {
+      const midX = screenWidth / 2;
+      const snapX = translateX.value + fabSize / 2 < midX ? minX : maxX;
+      translateX.value = withSpring(snapX, SPRING_CONFIG);
+      scale.value = withSpring(1, SPRING_CONFIG);
+      isDragging.value = false;
+    });
+
+  const composed = Gesture.Race(pan, tap);
+
+  // animated-partial: entire position + scale is animated, stays on style={}
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
+  return (
+    <GestureDetector gesture={composed}>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: fabSize,
+            height: fabSize,
+          },
+          elevations.elevated,
+          animatedStyle,
+        ]}
+        className="rounded-full bg-primary items-center justify-center z-[999]"
+        testID={testID}
+      >
+        <Plus color={colors.primaryForeground} size={28} />
+      </Animated.View>
+    </GestureDetector>
+  );
+}
+```
+
+**Key decisions:**
+- `position: absolute`, `left: 0`, `top: 0`, `width`, `height` stay imperative — they're the base for animated transforms
+- `elevations.elevated` stays imperative (shadow exception)
+- `animatedStyle` stays imperative (animated exception)
+- Only `rounded-full`, `bg-primary`, `items-center`, `justify-center`, `z-[999]` move to className
+- This is the pattern for ALL heavily-animated components: static visuals → className, dynamic geometry → style
+
+---
+
+## Appendix B — Template Rewrites
+
+### EmptyStateTemplate.tsx — full rewrite
+
+```tsx
+// apps/mobile/src/components/templates/EmptyStateTemplate.tsx
+import React from 'react';
+import { Text, View } from 'react-native';
+import { Button } from '../ui/Button';
+import { cn } from '../../lib/cn';
+
+export interface EmptyStateTemplateProps {
+  title: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaOnPress?: () => void;
+  icon?: React.ReactNode;
+  testID?: string;
+  className?: string;
+}
+
+export function EmptyStateTemplate({
+  title,
+  description,
+  ctaLabel,
+  ctaOnPress,
+  icon,
+  testID,
+  className,
+}: EmptyStateTemplateProps) {
+  return (
+    <View className={cn('flex-1 justify-center items-center px-lg', className)} testID={testID}>
+      {icon && (
+        <View className="w-[80px] h-[80px] rounded-full bg-muted justify-center items-center mb-xl">
+          {icon}
+        </View>
+      )}
+      <Text className="text-title font-sans-bold text-primary text-center">{title}</Text>
+      {description && (
+        <Text className="text-body font-sans text-text-secondary text-center mt-sm leading-[25.6px]">
+          {description}
+        </Text>
+      )}
+      {ctaLabel && ctaOnPress && (
+        <Button
+          label={ctaLabel}
+          onPress={ctaOnPress}
+          className="mt-xl self-stretch"
+          testID={testID ? `${testID}-cta` : undefined}
+        />
+      )}
+    </View>
+  );
+}
+```
+
+**Note:** `leading-[25.6px]` comes from `typography.body * 1.6 = 16 * 1.6 = 25.6`. This could also be expressed as a custom Tailwind `lineHeight` token if the computed lineHeight pattern recurs in more than 3 places.
+
+### DetailTemplate.tsx — full rewrite
+
+```tsx
+// apps/mobile/src/components/templates/DetailTemplate.tsx
+import React from 'react';
+import { Pressable, View } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { mobileTheme } from '../../design/tokenAdapter';
+import { Button } from '../ui/Button';
+import { ErrorStateTemplate } from './ErrorStateTemplate';
+import { useTranslation } from 'react-i18next';
+import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
+import { screenLayout } from '../../design/screenLayout';
+
+export interface DetailTemplateProps {
+  children: React.ReactNode;
+  /** @deprecated Title is now set via Stack.Screen options in the layout. */
+  headerTitle?: string;
+  /** @deprecated Back navigation is now handled by the native Stack header. */
+  onBack?: () => void;
+  ctaLabel?: string;
+  ctaOnPress?: () => void;
+  ctaLoading?: boolean;
+  ctaDisabled?: boolean;
+  secondaryCtaLabel?: string;
+  secondaryCtaOnPress?: () => void;
+  /** @deprecated Use rightActions instead. */
+  rightAction?: { icon: React.ReactNode; onPress: () => void };
+  rightActions?: Array<{ icon: React.ReactNode; onPress: () => void; testID?: string }>;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+  errorMessage?: string;
+  testID?: string;
+  hideHeader?: boolean;
+  insideTabNavigator?: boolean;
+  className?: string;
+}
+
+function DetailSkeleton() {
+  return (
+    <View className="flex-1 px-screen-x pt-header-top gap-block">
+      <View style={{ height: 200 }} className="bg-muted rounded-md" />
+      <View style={{ height: 40, width: '70%' }} className="bg-muted rounded-md" />
+      <View style={{ height: 24, width: '45%' }} className="bg-muted rounded-md" />
+      <View style={{ height: 40, width: '70%' }} className="bg-muted rounded-md" />
+    </View>
+  );
+}
+
+export function DetailTemplate({
+  children,
+  headerTitle: _headerTitle,
+  onBack: _onBack,
+  ctaLabel,
+  ctaOnPress,
+  ctaLoading = false,
+  ctaDisabled = false,
+  secondaryCtaLabel,
+  secondaryCtaOnPress,
+  rightAction,
+  rightActions,
+  isLoading = false,
+  isError = false,
+  onRetry,
+  errorMessage,
+  testID,
+  hideHeader = false,
+  insideTabNavigator = false,
+}: DetailTemplateProps) {
+  const { t } = useTranslation();
+  const hasBottomBar = !!(ctaLabel && ctaOnPress);
+  const effectiveActions = rightActions ?? (rightAction ? [rightAction] : null);
+
+  return (
+    <ScreenContainer
+      style={hideHeader ? { paddingTop: 0 } : undefined}
+      testID={testID}
+      edges={hideHeader ? ['left', 'right'] : ['top', 'left', 'right']}
+    >
+      {/* Right action icons — absolute overlay */}
+      {effectiveActions && !isLoading && !isError && (
+        <View
+          className="absolute right-screen-x flex-row gap-micro z-10"
+          style={{ top: screenLayout.header.topInset }}
+          pointerEvents="box-none"
+        >
+          {effectiveActions.map((action, i) => (
+            <Pressable
+              key={i}
+              onPress={action.onPress}
+              className="w-[44px] h-[44px] items-center justify-center"
+              testID={(action as { testID?: string }).testID}
+              hitSlop={8}
+            >
+              {action.icon}
+            </Pressable>
+          ))}
+        </View>
+      )}
+
+      {/* Body */}
+      {isError ? (
+        <ErrorStateTemplate
+          message={errorMessage ?? t('detail.errorMessage', 'Could not load details')}
+          onRetry={onRetry}
+          testID={testID ? `${testID}-error` : undefined}
+        />
+      ) : isLoading ? (
+        <DetailSkeleton />
+      ) : (
+        <InsetScrollView
+          className="flex-1"
+          contentContainerStyle={[
+            {
+              paddingTop: screenLayout.header.topInset,
+              paddingHorizontal: screenLayout.insetX,
+            },
+            hasBottomBar && { paddingBottom: screenLayout.body.sectionGap },
+          ]}
+          extraBottomInset={hasBottomBar ? screenLayout.chrome.tabBarHeight : 0}
+          showsVerticalScrollIndicator={false}
+        >
+          {children}
+        </InsetScrollView>
+      )}
+
+      {/* Sticky Bottom CTA */}
+      {hasBottomBar && !isLoading && !isError && (
+        <StickyActionBar
+          testID={testID ? `${testID}-bottom-bar` : undefined}
+          insideTabNavigator={insideTabNavigator}
+        >
+          <BlurView
+            intensity={40}
+            tint="light"
+            style={{
+              padding: screenLayout.actions.barPadding,
+              borderRadius: mobileTheme.radius.lg,
+              overflow: 'hidden',
+            }}
+          >
+            {secondaryCtaLabel && secondaryCtaOnPress && (
+              <Button
+                label={secondaryCtaLabel}
+                variant="outline"
+                onPress={secondaryCtaOnPress}
+                className="self-stretch mb-action-buttons"
+                testID={testID ? `${testID}-secondary-cta` : undefined}
+              />
+            )}
+            <Button
+              label={ctaLabel}
+              onPress={ctaOnPress}
+              isLoading={ctaLoading}
+              disabled={ctaDisabled}
+              className="self-stretch"
+              testID={testID ? `${testID}-cta` : undefined}
+            />
+          </BlurView>
+        </StickyActionBar>
+      )}
+    </ScreenContainer>
+  );
+}
+```
+
+**Key decisions:**
+- `BlurView` keeps `style={}` — it's a third-party component without `cssInterop` registered (could add it in Phase 0 but low value since it's only used in 2 templates)
+- `InsetScrollView.contentContainerStyle` stays imperative — runtime-computed conditional
+- `rightActionsRow` uses `className` for layout + `style={{ top: ... }}` for the runtime value from `screenLayout`
+- Skeleton block heights stay as `style={{ height: N }}` — these are fixed visual sizes, not tokens
+- `Pressable` is acceptable inside templates (lint rule only applies to `src/app/**`)
+
+### FeedListTemplate.tsx — migration notes (not full rewrite)
+
+FeedListTemplate is the most complex template (180+ lines) with Reanimated skeleton animations, FlatList with runtime `contentContainerStyle`, and multiple conditional branches. Key migration decisions:
+
+1. **SkeletonCard** — animated opacity stays `style={[animatedStyle]}`, static card shape moves to `className="bg-muted rounded-md p-card gap-sm"`
+2. **FlatList contentContainerStyle** — stays imperative: `{ paddingHorizontal, paddingTop, paddingBottom }` because `paddingBottom` comes from `screenLayout.chrome.contentBottomClearance` (runtime getter)
+3. **Container** — `className="flex-1 bg-background"` replaces `styles.container`
+4. **ItemSeparator** — `className="h-item"` replaces `styles.separator` (custom spacing token)
+5. **RefreshControl** — `tintColor` and `colors` are props, not styles — stay imperative
+
+The remaining 6 templates (AuthTemplate, FormWizardTemplate, ModalSheetTemplate, SettingsTemplate, SuccessCelebrationTemplate, ErrorStateTemplate) follow the same patterns. The agent executing Task 13 should read each file and apply based on these established patterns.
+
+---
+
+## Appendix C — Assessment Context & Design Decisions
+
+This section preserves the full assessment context from the brainstorming session so it is available across sessions.
+
+### Initial assessment (before spec)
+
+The codebase was evaluated using repomix on `apps/mobile/` (254 files, ~75k tokens). Key findings:
+
+- **Design tokens already exist:** `packages/design-tokens/` with colors, layout, motion, semantic, primitives. Mobile has `tokenAdapter.ts`.
+- **Layout system already exists:** `screenLayout.ts` with header/body/actions/chrome/wizard rhythm tokens.
+- **33 primitives exist** in `components/ui/`, **9 templates** in `components/templates/`, **3 shells** in `components/shells/`.
+- **Component contract exists:** `docs/design/component-contract.yaml`.
+- **Parity audit started:** `docs/design/parity-post-restructure-2026-04-04.md` — 15 routes still `pending`.
+- **81% of `.tsx` files (144/177) define `StyleSheet.create` inline**, including 73 screen files in `src/app/`.
+- **NativeWind v4.2.3 was half-installed** — config files present, zero screen adoption, zero `className` usage in screens.
+- **A `screenRhythm → screenLayout` migration was in-flight** per recent git commits.
+
+The failure mode: **"LLMs bypassed the design system because `StyleSheet.create` is easier to generate than learning the primitive API."**
+
+### User's proposed methodology evaluation
+
+The user shared a React Native UI refactoring methodology for LLM-driven work. Assessment:
+- **~60% of the methodology was already done** (tokens, primitives, templates, shells, component contract)
+- The actual problem was **adoption**, not **extraction**
+- The methodology was reframed from "extract a design system" to "enforce adoption of the design system that already exists"
+- NativeWind v4 was chosen over staying on StyleSheet because **LLMs produce Tailwind more reliably than StyleSheet patterns**, and the co-location benefit eliminates the failure mode
+
+### NativeWind decision rationale
+
+Initially recommended ripping NativeWind out (Option B). Changed recommendation to committing to NativeWind v4 (Option A) because:
+1. The existing investment (tokens, primitives, templates, screenLayout) is **not NativeWind-incompatible** — only primitive internals change
+2. LLMs are dramatically better at producing Tailwind class strings than coordinating StyleSheet objects
+3. Diffs are more reviewable (className changes vs. style property reshuffling)
+4. `cva` + Tailwind is the de facto pattern for variant-heavy component libraries
+5. Web parity is possible (`apps/web/` exists in the same monorepo)
+
+### Two code review passes
+
+**First review (8 real issues, 3 blocking):**
+1. B1: `cssInterop` missing for `Animated.View` — `className` silently ignored → fixed in Phase 0 Task 4
+2. B2: Shadow tokens are RN-native format, not CSS box-shadow → shadows stay imperative
+3. B3: Only 2 of 6 font families registered → all 6 registered in Phase 0 Task 3
+4. S1: Color opacity suffix (`${colors.primary}14`) has no Tailwind equivalent → imperative exception
+5. S2: `screenTypography` conflicts with `nativeTokens.typography.styles` → resolved: screen-level override
+6. S3: RTL tests using `StyleSheet.flatten` will break → test migration strategy in Phase 1 Task 14
+7. S4: No `twMerge` strategy → `cn()` utility with `extendTailwindMerge` in Phase 0 Task 2
+8. S5: Lint Rule 3 too broad → `Touchable` wrapper + escape hatch
+
+**Second review (2 factual errors, 2 contradictions, 3 gaps):**
+1. Wave 2 count: 73 → 57 (after auto-pass classification removed 16 files)
+2. Phase 1 exit gate included features (which are explicitly out of scope) → corrected
+3. `Touchable` wrapper referenced in lint rule but not created → added to Phase 1 Task 12
+4. Per-batch contract rules omitted imperative exceptions → added to contract
+5. `tailwind-merge` needs `extendTailwindMerge` for custom keys → added to `cn()` utility
+6. Per-batch contract inputs missing `cn.ts`, `elevations.ts`, `Touchable.tsx` → added
+7. `screenLayout` import path into `tailwind.config.ts` unspecified → direct import, pick static fields
+
+### Key invariants for future sessions
+
+- **No screen work until Phase 1 exit gate passes** (hard phase gate)
+- **Shadows stay imperative** (`style={elevations.*}`) — NativeWind shadow utilities produce different values
+- **Dynamic color opacity stays imperative** — `${colors.primary}14` pattern has no className equivalent
+- **Animated styles stay imperative** — Reanimated `useAnimatedStyle` can't be driven by NativeWind
+- **Font weight uses font-family** in RN — `font-sans-bold` (not `font-bold`) because each weight is a separate font file
+- **`cn()` merges classNames** — every component accepting `className` must use it
+- **`cssInterop` required** for `Animated.View/Text/ScrollView` before they can accept `className`
+- **Lint rules are warnings in Phase 2, errors in Phase 3** — ratchet mechanism
+- **Figma reconciliation only in Wave 1** (15 audit rows) — all other waves use code-is-floor
+- **Maestro screenshots are local-only** (not in CI) — run before/after each batch merge
