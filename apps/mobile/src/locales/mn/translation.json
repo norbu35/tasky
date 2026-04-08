@@ -1295,5 +1295,21 @@
     "viewLess": "View less",
     "viewMore": "View more",
     "reviewGuidance": "Taskers will review your task and send offers. Double-check details before posting."
+  },
+  "ScheduleBudgetScreen": {
+    "budgetError": "Budget must be at least ₮5,000",
+    "schedulePastError": "Cannot select a past date/time",
+    "schedulePageTitle": "Schedule & Budget",
+    "scheduleInstruction": "Pick when the task should happen and set your budget.",
+    "scheduleLabel": "When do you need this done?",
+    "scheduleDate": "Date",
+    "scheduleHelper": "Select a date and time",
+    "scheduleDatePlaceholder": "Pick a date",
+    "scheduleTimePlaceholder": "Pick a time",
+    "budgetLabel": "Budget",
+    "budgetHelper": "Enter a fixed amount. Minimum: ₮5,000",
+    "budgetPlaceholder": "₮50,000",
+    "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
+    "schedulePickerHint": "Confirm your selection"
   }
 }

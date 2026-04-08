@@ -96,11 +96,11 @@ export default function ScheduleBudgetScreen() {
 
   const budgetError =
     touchedBudget && budget !== '' && !isBudgetValid
-      ? t('customer.postTask.budgetError', 'Budget must be at least ₮5,000')
+      ? t('ScheduleBudgetScreen.budgetError', 'Budget must be at least ₮5,000')
       : '';
   const scheduleError =
     touchedSchedule && selectedDate && selectedTime && !isScheduleValid
-      ? t('customer.postTask.schedulePastError', 'Cannot select a past date/time')
+      ? t('ScheduleBudgetScreen.schedulePastError', 'Cannot select a past date/time')
       : '';
 
   const openPicker = (mode: Exclude<PickerMode, null>) => {
@@ -187,7 +187,7 @@ export default function ScheduleBudgetScreen() {
     >
       <View className="gap-sm" testID="schedule-header">
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}
+          {t('ScheduleBudgetScreen.schedulePageTitle', 'Schedule & Budget')}
         </Text>
         <Text className="text-body text-textSecondary leading-relaxed">
           {t(
@@ -205,14 +205,14 @@ export default function ScheduleBudgetScreen() {
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
           <Text className="text-body font-extrabold text-primaryDeep">
-            {t('customer.postTask.scheduleLabel', 'When do you need this done?')}
+            {t('ScheduleBudgetScreen.scheduleLabel', 'When do you need this done?')}
           </Text>
         </View>
 
         <FormField
-          label={t('customer.postTask.scheduleDate', 'Date')}
+          label={t('ScheduleBudgetScreen.scheduleDate', 'Date')}
           errorText={scheduleError || undefined}
-          helperText={t('customer.postTask.scheduleHelper', 'Select a date and time')}
+          helperText={t('ScheduleBudgetScreen.scheduleHelper', 'Select a date and time')}
         >
           <View className="flex-row gap-sm">
             <Pressable
@@ -242,7 +242,7 @@ export default function ScheduleBudgetScreen() {
               >
                 {selectedDate
                   ? formatDateValue(selectedDate)
-                  : t('customer.postTask.scheduleDatePlaceholder', 'Pick a date')}
+                  : t('ScheduleBudgetScreen.scheduleDatePlaceholder', 'Pick a date')}
               </Text>
             </Pressable>
 
@@ -273,7 +273,7 @@ export default function ScheduleBudgetScreen() {
               >
                 {selectedTime
                   ? formatTimeValue(selectedTime)
-                  : t('customer.postTask.scheduleTimePlaceholder', 'Pick a time')}
+                  : t('ScheduleBudgetScreen.scheduleTimePlaceholder', 'Pick a time')}
               </Text>
             </Pressable>
           </View>
@@ -282,9 +282,9 @@ export default function ScheduleBudgetScreen() {
 
       <View className="gap-sm">
         <FormField
-          label={t('customer.postTask.budgetLabel', 'Budget')}
+          label={t('ScheduleBudgetScreen.budgetLabel', 'Budget')}
           errorText={budgetError || undefined}
-          helperText={t('customer.postTask.budgetHelper', 'Enter a fixed amount. Minimum: ₮5,000')}
+          helperText={t('ScheduleBudgetScreen.budgetHelper', 'Enter a fixed amount. Minimum: ₮5,000')}
         >
           <Input
             testID="schedule-budget-input"
@@ -294,13 +294,13 @@ export default function ScheduleBudgetScreen() {
               setTouchedBudget(true);
             }}
             onBlur={() => setTouchedBudget(true)}
-            placeholder={t('customer.postTask.budgetPlaceholder', '₮50,000')}
+            placeholder={t('ScheduleBudgetScreen.budgetPlaceholder', '₮50,000')}
             keyboardType="numeric"
             invalid={Boolean(budgetError)}
           />
         </FormField>
         <Text className="text-caption font-semibold text-secondary leading-relaxed">
-          {t('customer.postTask.budgetGoldHint', 'Set a fair budget to attract skilled Taskers')}
+          {t('ScheduleBudgetScreen.budgetGoldHint', 'Set a fair budget to attract skilled Taskers')}
         </Text>
       </View>
 
@@ -316,11 +316,11 @@ export default function ScheduleBudgetScreen() {
                 style={{ letterSpacing: 0.6 }}
               >
                 {activePicker.mode === 'date'
-                  ? t('customer.postTask.scheduleDate', 'Date')
+                  ? t('ScheduleBudgetScreen.scheduleDate', 'Date')
                   : t('customer.postTask.scheduleTime', 'Time')}
               </Text>
               <Text className="text-caption text-textSecondary">
-                {t('customer.postTask.schedulePickerHint', 'Confirm your selection')}
+                {t('ScheduleBudgetScreen.schedulePickerHint', 'Confirm your selection')}
               </Text>
             </View>
             <View className="flex-row gap-sm mt-xs">
