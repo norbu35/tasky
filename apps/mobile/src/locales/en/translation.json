@@ -1267,5 +1267,15 @@
   "SplashScreen": {
     "tagline": "Trusted taskers, easy booking",
     "poweredBy": "Powered by secure tech"
+  },
+  "TaskerBrowseScreen": {
+    "title": "Даалгаврууд",
+    "subtitle": "Шинэ даалгаврууд ойрхон",
+    "searchPlaceholder": "Даалгавар хайх...",
+    "trustTitle": "Баталгаажсан даалгавар гүйцэтгэгч",
+    "trustDescription": "Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.",
+    "emptyTitle": "Одоогоор даалгавар байхгүй байна",
+    "emptyDescription": "Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу",
+    "emptyCta": "Шүүлтүүр цэвэрлэх"
   }
 }
