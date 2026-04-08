@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react-native';
@@ -8,7 +8,7 @@ import { Input } from '../../../components/ui/Input';
 import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function AccountDeletionScreen() {
   const { t } = useTranslation();
@@ -29,17 +29,19 @@ export default function AccountDeletionScreen() {
   };
 
   return (
-    <View testID="SCR-SHARED-015" style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.iconContainer}>
+    <View testID="SCR-SHARED-015" className="flex-1 bg-background justify-center">
+      <View className="px-lg items-center">
+        <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
           <AlertTriangle size={48} color={colors.danger} />
         </View>
 
-        <Text style={styles.title}>{t('shared.profile.deleteTitle', 'Бүртгэл устгах')}</Text>
+        <Text className="text-title font-bold text-foreground text-center mb-md">
+          {t('shared.profile.deleteTitle', 'Бүртгэл устгах')}
+        </Text>
 
         {isBlocked ? (
           <>
-            <Text style={styles.body}>
+            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
               {t(
                 'shared.profile.deleteBlockedBookings',
                 'Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай.',
@@ -49,12 +51,12 @@ export default function AccountDeletionScreen() {
               label={t('shared.profile.understood', 'Ойлголоо')}
               variant="outline"
               onPress={() => router.back()}
-              style={styles.button}
+              style={{ alignSelf: 'stretch' }}
             />
           </>
         ) : isDisputeBlocked ? (
           <>
-            <Text style={styles.body}>
+            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
               {t(
                 'shared.profile.deleteBlockedDisputes',
                 'Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай.',
@@ -64,18 +66,18 @@ export default function AccountDeletionScreen() {
               label={t('shared.profile.understood', 'Ойлголоо')}
               variant="outline"
               onPress={() => router.back()}
-              style={styles.button}
+              style={{ alignSelf: 'stretch' }}
             />
           </>
         ) : (
           <>
-            <Text style={styles.body}>
+            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
               {t(
                 'shared.profile.deleteWarning',
                 'Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана.',
               )}
             </Text>
-            <Text style={styles.confirmationLabel}>
+            <Text className="text-label text-foreground font-semibold self-stretch mb-sm">
               {t(
                 'shared.profile.deleteConfirmationPrompt',
                 "Баталгаажуулахын тулд 'DELETE' гэж бичнэ үү",
@@ -88,17 +90,17 @@ export default function AccountDeletionScreen() {
               autoCapitalize="characters"
               autoCorrect={false}
               placeholder={t('shared.profile.deleteConfirmationPlaceholder', 'DELETE')}
-              style={styles.confirmationInput}
+              style={{ alignSelf: 'stretch', marginBottom: 24 }}
             />
 
-            <View style={styles.actions}>
+            <View className="self-stretch gap-sm">
               <Button
                 label={t('shared.profile.deleteConfirm', 'Бүртгэлээ устгах')}
                 variant="destructive"
                 onPress={handleDelete}
                 isLoading={isPending}
                 disabled={isPending || !canDelete}
-                style={styles.button}
+                style={{ alignSelf: 'stretch' }}
                 testID="delete-confirm-button"
               />
               <Button
@@ -106,7 +108,7 @@ export default function AccountDeletionScreen() {
                 variant="ghost"
                 onPress={() => router.back()}
                 disabled={isPending}
-                style={styles.button}
+                style={{ alignSelf: 'stretch' }}
                 testID="delete-cancel-button"
               />
             </View>
@@ -116,56 +118,3 @@ export default function AccountDeletionScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    justifyContent: 'center',
-  },
-  content: {
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: spacing.xl,
-  },
-  actions: {
-    alignSelf: 'stretch',
-    gap: spacing.sm,
-  },
-  confirmationLabel: {
-    fontSize: typography.label,
-    color: colors.foreground,
-    fontWeight: '600',
-    alignSelf: 'stretch',
-    marginBottom: spacing.sm,
-  },
-  confirmationInput: {
-    alignSelf: 'stretch',
-    marginBottom: spacing.lg,
-  },
-  button: {
-    alignSelf: 'stretch',
-  },
-});

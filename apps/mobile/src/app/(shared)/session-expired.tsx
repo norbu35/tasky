@@ -7,7 +7,7 @@ import { mobileTheme } from '../../design/tokenAdapter';
 import { ModalSheet } from '../../components/ui/ModalSheet';
 import { useAuthStore } from '../../store/authStore';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function SessionExpiredScreen() {
   const { t } = useTranslation();
@@ -20,8 +20,8 @@ export default function SessionExpiredScreen() {
   }, [router, setSession]);
 
   return (
-    <View style={styles.container} testID="SCR-INFRA-003">
-      <View style={styles.scrim} />
+    <View className="flex-1 bg-background" style={{ position: 'relative', zIndex: 30 }} testID="SCR-INFRA-003">
+      <View style={StyleSheet.absoluteFillObject} className="bg-[rgba(16,38,56,0.35)]" />
       <ModalSheet
         visible
         title={t('infra.sessionExpired.title', 'Хугацаа дууссан')}
@@ -33,11 +33,11 @@ export default function SessionExpiredScreen() {
           testID: 'session-expired-screen-login',
         }}
       >
-        <View style={styles.content}>
-          <View style={styles.iconShell}>
+        <View className="items-center pt-sm">
+          <View className="w-[72px] h-[72px] rounded-full items-center justify-center bg-muted mb-lg">
             <LogIn size={28} color={colors.primary} />
           </View>
-          <Text style={styles.body}>
+          <Text className="text-body text-textSecondary text-center leading-6">
             {t(
               'infra.sessionExpired.body',
               'Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү',
@@ -48,35 +48,3 @@ export default function SessionExpiredScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    zIndex: 30,
-    backgroundColor: colors.background,
-  },
-  scrim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(16, 38, 56, 0.35)',
-  },
-  content: {
-    alignItems: 'center',
-    paddingTop: spacing.sm,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-    marginBottom: spacing.lg,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-});

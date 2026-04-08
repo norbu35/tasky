@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Download } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { openURL } from 'expo-linking';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../../components/ui/Button';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 const APP_STORE_URL = Platform.select({
   ios: 'https://apps.apple.com/app/tasky',
@@ -44,16 +44,16 @@ export default function AppUpdateScreen() {
   }, [router]);
 
   return (
-    <View style={styles.container} testID="SCR-INFRA-002">
-      <View style={styles.iconShell}>
+    <View className="flex-1 justify-center items-center px-xl bg-background" testID="SCR-INFRA-002">
+      <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
         <Download size={32} color={colors.primary} />
       </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.body}>{body}</Text>
+      <Text className="text-title font-bold text-foreground text-center">{title}</Text>
+      <Text className="text-body text-textSecondary text-center mt-sm leading-6">{body}</Text>
       <Button
         label={t('infra.appUpdate.softUpdate', 'Шинэчлэх')}
         onPress={handleUpdate}
-        style={styles.updateButton}
+        className="self-stretch mt-xl"
         testID="app-update-screen-update"
       />
       {!isForce && (
@@ -61,50 +61,10 @@ export default function AppUpdateScreen() {
           label={t('infra.appUpdate.softDismiss', 'Дараа нь')}
           variant="ghost"
           onPress={handleDismiss}
-          style={styles.dismissButton}
+          className="self-stretch mt-md"
           testID="app-update-screen-dismiss"
         />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.background,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    lineHeight: 24,
-  },
-  updateButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  dismissButton: {
-    marginTop: spacing.md,
-    alignSelf: 'stretch',
-  },
-});

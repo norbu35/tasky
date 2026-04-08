@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WifiOff } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { mobileTheme } from '../../design/tokenAdapter';
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 type ConnectionType = 'no_connection' | 'slow_connection';
 
@@ -47,66 +47,27 @@ export default function NetworkErrorScreen() {
   }, [router]);
 
   return (
-    <View style={styles.container} testID="SCR-INFRA-001">
-      <View style={styles.iconShell}>
+    <View className="flex-1 justify-center items-center px-xl bg-background" testID="SCR-INFRA-001">
+      <View
+        className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
+        style={{ backgroundColor: `${colors.danger}1A` }}
+      >
         <WifiOff size={40} color={colors.danger} />
       </View>
-      <Text style={styles.headline}>{headline}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
+      <Text className="text-body text-textSecondary text-center mt-sm leading-6">{description}</Text>
       <Button
         label={t('infra.networkError.retry', 'Дахин оролдох')}
         onPress={handleRetry}
         isLoading={isRetrying}
-        style={styles.retryButton}
+        className="self-stretch mt-xl"
         testID="network-error-screen-retry"
       />
       {isRestored ? (
-        <View style={styles.toastWrap}>
+        <View className="absolute left-lg right-lg bottom-2xl">
           <Toast message={t('infra.networkError.restored', 'Холболт сэргэлээ')} variant="success" />
         </View>
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.background,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.danger}1A`,
-    marginBottom: spacing.lg,
-  },
-  headline: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    lineHeight: 24,
-  },
-  retryButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  toastWrap: {
-    position: 'absolute',
-    left: spacing.lg,
-    right: spacing.lg,
-    bottom: spacing['2xl'],
-  },
-});

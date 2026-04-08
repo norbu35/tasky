@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TriangleAlert } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 function formatDate(value?: string) {
   if (!value) return '';
@@ -21,19 +21,24 @@ export default function SuspendedAccountScreen() {
   const { expiryDate } = useLocalSearchParams<{ expiryDate?: string }>();
 
   return (
-    <View testID="SCR-SHARED-020" style={styles.container}>
-      <View style={styles.iconShell}>
+    <View testID="SCR-SHARED-020" className="flex-1 justify-center items-center px-lg bg-background">
+      <View
+        className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
+        style={{ backgroundColor: `${colors.danger}1A` }}
+      >
         <TriangleAlert size={32} color={colors.danger} />
       </View>
-      <Text style={styles.title}>{t('shared.account.suspendedTitle', 'Бүртгэл түр хаагдсан')}</Text>
-      <Text style={styles.body}>
+      <Text className="text-title font-bold text-foreground text-center mb-md">
+        {t('shared.account.suspendedTitle', 'Бүртгэл түр хаагдсан')}
+      </Text>
+      <Text className="text-body text-textSecondary text-center leading-6">
         {t(
           'shared.account.suspendedBody',
           'Таны хаягийг манай үйлчилгээний нөхцөл зөрчсөн тул түр хугацаагаар хязгаарлалаа.',
         )}
       </Text>
       {expiryDate && (
-        <Text style={styles.expiry}>
+        <Text className="text-body font-semibold text-danger text-center mt-md">
           {t('shared.account.suspendedExpiry', { date: formatDate(expiryDate) })}
         </Text>
       )}
@@ -42,63 +47,16 @@ export default function SuspendedAccountScreen() {
         onPress={() => {
           // Appeal flow - will be connected in a later phase
         }}
-        style={styles.button}
+        className="self-stretch mt-xl"
         testID="suspended-appeal-button"
       />
       <Button
         label={t('shared.account.logout', 'Гарах')}
         variant="ghost"
         onPress={() => router.replace('/(auth)')}
-        style={styles.secondaryButton}
+        className="self-stretch mt-sm"
         testID="suspended-logout-button"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.danger}1A`,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  expiry: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.danger,
-    textAlign: 'center',
-    marginTop: spacing.md,
-  },
-  button: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  secondaryButton: {
-    marginTop: spacing.sm,
-    alignSelf: 'stretch',
-  },
-});

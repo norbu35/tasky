@@ -1,24 +1,29 @@
 import React from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ban } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function BannedAccountScreen() {
   const { t } = useTranslation();
   const router = useRouter();
 
   return (
-    <View testID="SCR-SHARED-021" style={styles.container}>
-      <View style={styles.iconShell}>
+    <View testID="SCR-SHARED-021" className="flex-1 justify-center items-center px-lg bg-background">
+      <View
+        className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
+        style={{ backgroundColor: `${colors.danger}1A` }}
+      >
         <Ban size={32} color={colors.danger} />
       </View>
-      <Text style={styles.title}>{t('shared.account.bannedTitle', 'Бүртгэл хаагдсан')}</Text>
-      <Text style={styles.body}>
+      <Text className="text-title font-bold text-foreground text-center mb-md">
+        {t('shared.account.bannedTitle', 'Бүртгэл хаагдсан')}
+      </Text>
+      <Text className="text-body text-textSecondary text-center leading-6">
         {t(
           'shared.account.bannedBody',
           'Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй.',
@@ -30,55 +35,15 @@ export default function BannedAccountScreen() {
         onPress={() => {
           void Linking.openURL('mailto:support@tasky.mn');
         }}
-        style={styles.supportButton}
+        className="self-stretch mt-xl"
         testID="banned-support-button"
       />
       <Button
         label={t('shared.account.logout', 'Гарах')}
         onPress={() => router.replace('/(auth)')}
-        style={styles.logoutButton}
+        className="self-stretch mt-sm"
         testID="banned-logout-button"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  iconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.danger}1A`,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  supportButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  logoutButton: {
-    marginTop: spacing.sm,
-    alignSelf: 'stretch',
-  },
-});

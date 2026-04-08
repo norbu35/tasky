@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Camera } from 'lucide-react-native';
@@ -7,10 +7,11 @@ import { FormWizardTemplate } from '../../../components/templates/FormWizardTemp
 import { FormField } from '../../../components/ui/FormField';
 import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { Touchable } from '../../../components/ui/Touchable';
 import { useMyProfile, useUpdateProfile } from '../../../features/profile/hooks/useProfile';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function EditProfileScreen() {
   const { t } = useTranslation();
@@ -65,14 +66,14 @@ export default function EditProfileScreen() {
       showBack={true}
     >
       {/* Avatar Section */}
-      <View style={styles.avatarSection}>
+      <View className="items-center gap-md py-lg bg-muted rounded-md px-lg">
         <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name} size="xl" />
-        <Pressable style={styles.changePhotoButton}>
+        <Touchable testID="edit-profile-change-photo" className="flex-row items-center gap-xs">
           <Camera size={16} color={colors.primary} />
-          <Text style={styles.changePhotoText}>
+          <Text className="text-body text-primary font-medium">
             {t('shared.profile.changePhoto', 'Зураг солих')}
           </Text>
-        </Pressable>
+        </Touchable>
       </View>
 
       {/* Name Field */}
@@ -97,34 +98,9 @@ export default function EditProfileScreen() {
           maxLength={200}
           multiline
           numberOfLines={4}
-          style={styles.bioInput}
+          style={{ minHeight: 100, textAlignVertical: 'top' }}
         />
       </FormField>
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  avatarSection: {
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.lg,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-  },
-  changePhotoButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  changePhotoText: {
-    fontSize: typography.body,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  bioInput: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-});
