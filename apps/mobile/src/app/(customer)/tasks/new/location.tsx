@@ -43,9 +43,9 @@ export default function LocationScreen() {
   );
 
   const quickLocations = [
-    t('customer.postTask.quickLocationHome', 'Home'),
-    t('customer.postTask.quickLocationWork', 'Work'),
-    t('customer.postTask.quickLocationSukhbaatar', 'Sukhbaatar Square'),
+    t('LocationScreen.quickLocationHome', 'Home'),
+    t('LocationScreen.quickLocationWork', 'Work'),
+    t('LocationScreen.quickLocationSukhbaatar', 'Sukhbaatar Square'),
   ];
 
   const handleNext = () => {
@@ -80,10 +80,10 @@ export default function LocationScreen() {
     >
       <View className="gap-sm">
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('customer.postTask.locationPageTitle', 'Set Location')}
+          {t('LocationScreen.locationPageTitle', 'Set Location')}
         </Text>
         <Text className="text-body text-textSecondary leading-relaxed">
-          {t('customer.postTask.locationInstruction', 'Pin the task location on the map')}
+          {t('LocationScreen.locationInstruction', 'Pin the task location on the map')}
         </Text>
       </View>
 
@@ -121,7 +121,7 @@ export default function LocationScreen() {
         >
           <View className="px-lg py-sm rounded-md bg-primaryDeep">
             <Text className="text-label font-bold text-primaryForeground">
-              {t('customer.postTask.pickHere', 'Pick here')}
+              {t('LocationScreen.pickHere', 'Pick here')}
             </Text>
           </View>
           <View className="w-8 h-8 rounded-full items-center justify-center bg-primary">
@@ -162,18 +162,18 @@ export default function LocationScreen() {
         <View className="gap-xs">
           <Text className="text-subtitle font-extrabold text-primaryDeep">
             {pin
-              ? t('customer.postTask.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
-              : t('customer.postTask.locationAwaitingPin', 'Drop a pin to unlock the next step')}
+              ? t('LocationScreen.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
+              : t('LocationScreen.locationAwaitingPin', 'Drop a pin to unlock the next step')}
           </Text>
           <Text className="text-caption text-textSecondary">
             {pin
-              ? t('customer.postTask.pinSet', 'Pin placed - tap to move it')
-              : t('customer.postTask.tapToPin', 'Tap the map to pin the location')}
+              ? t('LocationScreen.pinSet', 'Pin placed - tap to move it')
+              : t('LocationScreen.tapToPin', 'Tap the map to pin the location')}
           </Text>
         </View>
 
         <FormField
-          label={t('customer.postTask.locationDescriptionLabel', 'Location description')}
+          label={t('LocationScreen.locationDescriptionLabel', 'Location description')}
           helperText={t(
             'customer.postTask.locationHelper',
             'Provide details helpful for the Tasker',
@@ -193,7 +193,7 @@ export default function LocationScreen() {
 
         <View className="gap-sm">
           <Text className="text-body font-bold text-primaryDeep">
-            {t('customer.postTask.quickLocationsLabel', 'Popular locations')}
+            {t('LocationScreen.quickLocationsLabel', 'Popular locations')}
           </Text>
           <View className="flex-row flex-wrap gap-sm">
             {quickLocations.map((location) => (

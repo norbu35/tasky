@@ -1322,5 +1322,22 @@
     "successNext2": "Review Tasker profiles and ratings",
     "successCta": "View Task",
     "successDone": "Дуусгах"
+  },
+  "LocationScreen": {
+    "locationPageTitle": "Set Location",
+    "locationInstruction": "Pin the task location on the map",
+    "pickHere": "Pick here",
+    "locationPinnedArea": "Ulaanbaatar, Bayangol district",
+    "locationAwaitingPin": "Drop a pin to unlock the next step",
+    "pinSet": "Pin placed - tap to move it",
+    "tapToPin": "Tap the map to pin the location",
+    "locationDescriptionLabel": "Location description",
+    "locationHelper": "Provide details helpful for the Tasker",
+    "locationPlaceholder": "e.g., Behind State Dept Store, 5th floor",
+    "quickLocationsLabel": "Popular locations",
+    "quickLocationHome": "Home",
+    "quickLocationWork": "Work",
+    "quickLocationSukhbaatar": "Sukhbaatar Square",
+    "locationPrivacy": "Taskers see approximate location. Exact address shown after booking confirmation"
   }
 }
