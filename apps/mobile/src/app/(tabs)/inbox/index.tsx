@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react-native';
@@ -10,7 +10,7 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 import { screenLayout } from '../../../design/screenLayout';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface ConversationItem {
   id: string;
@@ -59,23 +59,36 @@ export default function ConversationListScreen() {
   }, []);
 
   const listHeader = (
-    <View style={styles.headerShell}>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>{t('shared.inbox.title', 'Чат')}</Text>
+    <View
+      style={{
+        paddingHorizontal: screenLayout.insetX,
+        paddingTop: screenLayout.header.topInset,
+        paddingBottom: screenLayout.body.itemGap,
+        gap: screenLayout.body.itemGap,
+      }}
+    >
+      <View className="flex-row items-center justify-start">
+        <Text className="text-heading font-sans-bold text-primaryDeep">
+          {t('shared.inbox.title', 'Чат')}
+        </Text>
       </View>
     </View>
   );
 
   const filterBar =
     !isLoading && !isError ? (
-      <View style={styles.searchShell}>
+      <View
+        className="flex-row items-center gap-sm bg-card rounded-lg px-md py-sm border border-border"
+        style={elevations.card}
+      >
         <Search size={18} color={colors.textTertiary} />
         <Input
           value={search}
           onChangeText={setSearch}
           placeholder={t('shared.inbox.searchPlaceholder', 'Хайх...')}
           placeholderTextColor={colors.textTertiary}
-          style={styles.searchInput}
+          className="flex-1 text-body text-foreground"
+          style={{ paddingVertical: 2 }}
           testID="conversation-search-input"
         />
       </View>
@@ -89,33 +102,38 @@ export default function ConversationListScreen() {
       return (
         <Pressable
           testID={`conversation-row-${item.id}`}
-          style={[styles.row, isUnread ? styles.rowUnread : styles.rowRead]}
+          className={`flex-row items-center rounded-lg p-item ${isUnread ? 'bg-muted' : 'bg-background'}`}
           onPress={() => router.push(`/inbox/${item.id}`)}
           accessibilityRole="button"
         >
-          <View style={styles.avatarShell}>
+          <View className="mr-md">
             <ProfileAvatar uri={item.counterparty_avatar_url ?? undefined} name={title} size="md" />
           </View>
-          <View style={styles.content}>
-            <View style={styles.topRow}>
-              <Text style={[styles.name, isUnread && styles.nameUnread]} numberOfLines={1}>
+          <View className="flex-1">
+            <View className="flex-row justify-between items-center">
+              <Text
+                className={`text-body font-semibold flex-1 mr-sm ${isUnread ? 'text-primaryDeep font-bold' : 'text-foreground'}`}
+                numberOfLines={1}
+              >
                 {title}
               </Text>
               {item.last_message_at && (
-                <Text style={[styles.timestamp, isUnread && styles.timestampUnread]}>
+                <Text
+                  className={`text-micro ${isUnread ? 'text-primaryDeep font-bold' : 'text-mutedForeground'}`}
+                >
                   {formatTimestamp(item.last_message_at)}
                 </Text>
               )}
             </View>
             {item.last_message_preview && (
-              <Text style={styles.preview} numberOfLines={1}>
+              <Text className="text-label text-mutedForeground mt-[2px]" numberOfLines={1}>
                 {item.last_message_preview}
               </Text>
             )}
           </View>
           {isUnread && (
-            <View style={styles.unreadDotWrap}>
-              <View style={styles.unreadDot} />
+            <View className="w-[10px] h-[10px] rounded-full items-center justify-center ml-sm">
+              <View className="w-[10px] h-[10px] rounded-full bg-secondary" />
             </View>
           )}
         </Pressable>
@@ -148,101 +166,3 @@ export default function ConversationListScreen() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  headerShell: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.header.topInset,
-    paddingBottom: screenLayout.body.itemGap,
-    gap: screenLayout.body.itemGap,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  searchShell: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...elevations.card,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.foreground,
-    paddingVertical: spacing.xs / 2,
-  },
-  headerTitle: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: radius.lg,
-    padding: screenLayout.body.itemGap,
-  },
-  rowUnread: {
-    backgroundColor: colors.muted,
-  },
-  rowRead: {
-    backgroundColor: colors.background,
-  },
-  avatarShell: {
-    marginRight: spacing.md,
-  },
-  content: {
-    flex: 1,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.foreground,
-    flex: 1,
-    marginRight: spacing.sm,
-  },
-  nameUnread: {
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  timestamp: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-  },
-  timestampUnread: {
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  preview: {
-    fontSize: typography.label,
-    color: colors.mutedForeground,
-    marginTop: spacing.xs / 2,
-  },
-  unreadDotWrap: {
-    width: 10,
-    height: 10,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: spacing.sm,
-  },
-  unreadDot: {
-    width: 10,
-    height: 10,
-    borderRadius: radius.full,
-    backgroundColor: colors.secondary,
-  },
-});

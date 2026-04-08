@@ -3,7 +3,6 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  StyleSheet,
   Text,
   View,
   type ListRenderItem,
@@ -19,7 +18,7 @@ import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplat
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 type Row =
   | { type: 'section'; id: string; label: string }
@@ -124,7 +123,14 @@ export default function NotificationCenterScreen() {
 
   const renderRow: ListRenderItem<Row> = ({ item }) => {
     if (item.type === 'section') {
-      return <Text style={styles.sectionLabel}>{item.label}</Text>;
+      return (
+        <Text
+          className="text-caption font-bold text-textTertiary uppercase mt-lg mb-sm"
+          style={{ letterSpacing: 1.2 }}
+        >
+          {item.label}
+        </Text>
+      );
     }
 
     const notification = item.notification;
@@ -133,29 +139,35 @@ export default function NotificationCenterScreen() {
     return (
       <Pressable
         testID={`notification-item-${notification.id}`}
-        style={[styles.card, !notification.read && styles.cardUnread]}
+        className={`flex-row gap-md p-md mb-[2px]${!notification.read ? ' bg-muted' : ''}`}
         accessibilityRole="button"
         onPress={() => router.push('/(tabs)/inbox' as never)}
       >
-        <View style={[styles.iconShell, { backgroundColor: meta.shellColor }]}>{meta.icon}</View>
-        <View style={styles.textBlock}>
-          <View style={styles.titleRow}>
-            <Text style={styles.title} numberOfLines={1}>
+        {/* iconShell: runtime shellColor from getNotificationMeta → imperative */}
+        <View
+          className="w-10 h-10 rounded-md items-center justify-center"
+          style={{ backgroundColor: meta.shellColor }}
+        >
+          {meta.icon}
+        </View>
+        <View className="flex-1">
+          <View className="flex-row items-center justify-between gap-sm">
+            <Text className="flex-1 text-body font-bold text-foreground" numberOfLines={1}>
               {notification.title}
             </Text>
-            <View style={styles.titleMeta}>
-              <Text style={styles.timestamp}>
+            <View className="flex-row items-center gap-xs">
+              <Text className="text-micro text-textTertiary">
                 {formatRelativeTimestamp(notification.created_at)}
               </Text>
               {!notification.read ? (
                 <View
                   testID={`notification-unread-dot-${notification.id}`}
-                  style={styles.unreadDot}
+                  className="w-2 h-2 rounded-full bg-secondary"
                 />
               ) : null}
             </View>
           </View>
-          <Text style={styles.body} numberOfLines={2}>
+          <Text className="mt-xs text-body text-textSecondary" style={{ lineHeight: 22 }} numberOfLines={2}>
             {notification.body}
           </Text>
         </View>
@@ -164,34 +176,36 @@ export default function NotificationCenterScreen() {
   };
 
   return (
-    <View style={styles.container} testID="SCR-SHARED-016">
-      <View style={styles.header}>
+    <View className="flex-1 bg-background" testID="SCR-SHARED-016">
+      <View className="flex-row items-center gap-md px-lg pt-xl pb-md">
         <Pressable
           testID="notifications-back"
-          style={styles.backButton}
+          className="w-10 h-10 rounded-full items-center justify-center bg-card border border-border"
           onPress={() => router.back()}
           accessibilityRole="button"
         >
           <ArrowLeft size={20} color={colors.foreground} />
         </Pressable>
-        <Text style={styles.screenTitle}>{t('shared.notifications.title', 'Мэдэгдлүүд')}</Text>
+        <Text className="text-title font-bold text-foreground">
+          {t('shared.notifications.title', 'Мэдэгдлүүд')}
+        </Text>
       </View>
 
       {isLoading ? (
-        <View style={styles.skeletonList} testID="notifications-loading">
+        <View className="px-lg py-lg gap-sm" testID="notifications-loading">
           {Array.from({ length: 6 }).map((_, index) => (
-            <View key={index} style={styles.skeletonCard} />
+            <View key={index} className="h-[88px] rounded-md bg-muted" />
           ))}
         </View>
       ) : isError ? (
-        <View style={styles.errorState} testID="notifications-error">
-          <View style={styles.errorIconShell}>
+        <View className="flex-1 items-center justify-center px-xl" testID="notifications-error">
+          <View className="w-[72px] h-[72px] rounded-full items-center justify-center bg-muted mb-lg">
             <Bell size={32} color={colors.danger} />
           </View>
-          <Text style={styles.errorTitle}>
+          <Text className="text-title font-bold text-foreground text-center">
             {t('shared.notifications.errorTitle', 'Алдаа гарлаа')}
           </Text>
-          <Text style={styles.errorBody}>
+          <Text className="mt-sm text-body text-textSecondary text-center" style={{ lineHeight: 24 }}>
             {t('shared.notifications.errorBody', 'Мэдэгдлүүдийг ачаалахад алдаа гарлаа')}
           </Text>
           <Button
@@ -200,7 +214,7 @@ export default function NotificationCenterScreen() {
             onPress={() => {
               void refetch();
             }}
-            style={styles.errorButton}
+            style={{ marginTop: 24, alignSelf: 'stretch' }}
           />
         </View>
       ) : notifications.length === 0 ? (
@@ -218,13 +232,16 @@ export default function NotificationCenterScreen() {
           data={rows}
           renderItem={renderRow}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           ListFooterComponent={
-            <View style={styles.promoBanner}>
-              <Text style={styles.promoBannerTitle}>
+            <View className="mt-xl bg-primaryDeep rounded-lg p-lg justify-end" style={{ height: 128 }}>
+              <Text className="text-[18px] font-extrabold text-primaryForeground">
                 {t('shared.notifications.promoBannerTitle', 'Tasky Premium')}
               </Text>
-              <Text style={styles.promoBannerBody}>
+              <Text
+                className="text-caption mt-xs leading-relaxed"
+                style={{ color: `${colors.primaryForeground}99` }}
+              >
                 {t(
                   'shared.notifications.promoBannerBody',
                   'Баталгаажсан гүйцэтгэгчидтэй хурдан холбогдоорой',
@@ -246,159 +263,3 @@ export default function NotificationCenterScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.md,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  screenTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  sectionLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textTertiary,
-    textTransform: 'uppercase',
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    letterSpacing: 1.2,
-  },
-  card: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    padding: spacing.md,
-    marginBottom: 2,
-  },
-  cardUnread: {
-    backgroundColor: colors.muted,
-  },
-  iconShell: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textBlock: {
-    flex: 1,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  titleMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  title: {
-    flex: 1,
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.full,
-    backgroundColor: colors.secondary,
-  },
-  body: {
-    marginTop: spacing.xs,
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-  timestamp: {
-    fontSize: typography.micro,
-    color: colors.textTertiary,
-  },
-  promoBanner: {
-    marginTop: spacing.xl,
-    backgroundColor: colors.primaryDeep,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    height: 128,
-    justifyContent: 'flex-end',
-  },
-  promoBannerTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.primaryForeground,
-  },
-  promoBannerBody: {
-    fontSize: typography.caption,
-    color: `${colors.primaryForeground}99`,
-    marginTop: spacing.xs,
-    lineHeight: typography.caption * 1.5,
-  },
-  skeletonList: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
-    gap: spacing.sm,
-  },
-  skeletonCard: {
-    height: 88,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  errorState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  errorIconShell: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-    marginBottom: spacing.lg,
-  },
-  errorTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  errorBody: {
-    marginTop: spacing.sm,
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  errorButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-});

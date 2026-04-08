@@ -5,7 +5,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -20,7 +19,7 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAuthStore } from '../../../store/authStore';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 const PHONE_REGEX = /(\+?976)?[\s-]?\d{4}[\s-]?\d{4}|\d{8,}/;
 
@@ -73,18 +72,34 @@ export default function ChatDetailScreen() {
       return (
         <View
           testID={`message-bubble-${item.id}`}
-          style={[styles.bubbleWrapper, isMine ? styles.bubbleRight : styles.bubbleLeft]}
+          className={`self-stretch mb-md flex-row${isMine ? ' justify-end' : ' justify-start'}`}
         >
           <View
             testID={isMine ? `message-sent-${item.id}` : `message-received-${item.id}`}
-            style={[styles.bubble, isMine ? styles.bubbleMine : styles.bubbleTheirs]}
+            className="max-w-[75%] px-md py-md rounded-lg"
+            style={
+              isMine
+                ? { backgroundColor: colors.primaryDeep, borderBottomRightRadius: 6 }
+                : { backgroundColor: colors.muted, borderBottomLeftRadius: 6 }
+            }
           >
-            <Text style={[styles.messageText, isMine ? styles.textMine : styles.textTheirs]}>
+            <Text
+              className="text-body"
+              style={[
+                { lineHeight: 16 * 1.25 },
+                isMine ? { color: colors.card } : { color: colors.foreground },
+              ]}
+            >
               {item.content}
             </Text>
             <Text
               testID={`message-timestamp-${item.id}`}
-              style={[styles.timestamp, isMine ? styles.timestampMine : styles.timestampTheirs]}
+              className="mt-xs text-caption"
+              style={
+                isMine
+                  ? { color: colors.card, opacity: 0.7, textAlign: 'right' as const }
+                  : { color: colors.textSecondary }
+              }
             >
               {timestamp}
             </Text>
@@ -97,7 +112,7 @@ export default function ChatDetailScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.center} testID="chat-loading">
+      <View className="flex-1 justify-center items-center bg-background" testID="chat-loading">
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -106,25 +121,27 @@ export default function ChatDetailScreen() {
   if (isError) {
     return (
       <KeyboardAvoidingView
-        style={styles.container}
+        className="flex-1 bg-background"
         testID="SCR-SHARED-011"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn} testID="chat-back">
+        <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
+          <Pressable onPress={() => router.back()} className="w-10 h-10 justify-center items-center" testID="chat-back">
             <ChevronLeft size={24} color={colors.primary} />
           </Pressable>
-          <View style={styles.headerTitleShell}>
-            <Text style={styles.headerTitle} numberOfLines={1}>
+          <View className="flex-1 items-center">
+            <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
               {t('shared.inbox.chatTitle', 'Чат')}
             </Text>
-            <View style={styles.onlineRow}>
-              <View style={styles.onlineDot} />
-              <Text style={styles.onlineText}>{t('shared.inbox.online', 'Онлайн')}</Text>
+            <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
+              <View className="w-2 h-2 rounded-full bg-verified" />
+              <Text className="text-micro text-mutedForeground">
+                {t('shared.inbox.online', 'Онлайн')}
+              </Text>
             </View>
           </View>
-          <View style={styles.headerAvatarShell}>
+          <View className="w-10 items-end">
             <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
           </View>
         </View>
@@ -142,47 +159,58 @@ export default function ChatDetailScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-background"
       testID="SCR-SHARED-011"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn} testID="chat-back">
+      <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
+        <Pressable onPress={() => router.back()} className="w-10 h-10 justify-center items-center" testID="chat-back">
           <ChevronLeft size={24} color={colors.primary} />
         </Pressable>
-        <View style={styles.headerTitleShell}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
+        <View className="flex-1 items-center">
+          <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
             {t('shared.inbox.chatTitle', 'Чат')}
           </Text>
-          <View style={styles.onlineRow}>
-            <View style={styles.onlineDot} />
-            <Text style={styles.onlineText}>{t('shared.inbox.online', 'Онлайн')}</Text>
+          <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
+            <View className="w-2 h-2 rounded-full bg-verified" />
+            <Text className="text-micro text-mutedForeground">
+              {t('shared.inbox.online', 'Онлайн')}
+            </Text>
           </View>
         </View>
-        <View style={styles.headerAvatarShell}>
+        <View className="w-10 items-end">
           <ProfileAvatar uri={profile?.avatar_url} name={profile?.full_name ?? 'T'} size="sm" />
         </View>
       </View>
 
-      <View style={styles.contextCard}>
-        <View style={styles.contextIcon}>
+      {/* contextCard: shadow → imperative */}
+      <View
+        className="flex-row items-center gap-md mx-lg mt-md p-md rounded-lg bg-card"
+        style={elevations.card}
+      >
+        <View className="w-10 h-10 rounded-md bg-primary items-center justify-center">
           <Briefcase size={18} color={colors.primaryForeground} />
         </View>
-        <View style={styles.contextBody}>
-          <Text style={styles.contextLabel}>{activeTask.title}</Text>
-          <Text style={styles.contextTitle} numberOfLines={2}>
+        <View className="flex-1" style={{ gap: 2 }}>
+          <Text
+            className="text-micro font-bold text-mutedForeground uppercase"
+            style={{ letterSpacing: 0.8 }}
+          >
+            {activeTask.title}
+          </Text>
+          <Text className="text-body font-bold text-foreground" numberOfLines={2}>
             {activeTask.subtitle}
           </Text>
         </View>
-        <View style={styles.contextStatusPill}>
-          <Text style={styles.contextStatus}>{activeTask.status}</Text>
+        <View className="px-sm py-xs rounded-full bg-accent">
+          <Text className="text-micro font-bold text-primary">{activeTask.status}</Text>
         </View>
       </View>
 
-      <View style={styles.warningBanner}>
+      <View className="flex-row items-center gap-sm mt-md mx-lg px-md py-sm rounded-md bg-secondary">
         <ShieldAlert size={16} color={colors.primary} />
-        <Text style={styles.warningText}>
+        <Text className="flex-1 text-label text-foreground">
           {t(
             'shared.inbox.phoneWarning',
             'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
@@ -195,14 +223,14 @@ export default function ChatDetailScreen() {
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={renderMessage}
-        contentContainerStyle={styles.messageList}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 }}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        ListFooterComponent={<View style={styles.listFooterSpacer} />}
+        ListFooterComponent={<View style={{ height: 24 }} />}
       />
 
       {showPhoneWarning && (
-        <View testID="phone-warning" style={styles.phoneWarning}>
-          <Text style={styles.phoneWarningText}>
+        <View testID="phone-warning" className="bg-secondary py-sm px-md">
+          <Text className="text-label text-foreground text-center">
             {t(
               'shared.inbox.phoneWarning',
               'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
@@ -211,13 +239,26 @@ export default function ChatDetailScreen() {
         </View>
       )}
 
-      <View style={styles.inputBar}>
-        <Pressable style={styles.attachButton} accessibilityRole="button">
+      {/* inputBar: Platform.OS conditional paddingBottom → imperative */}
+      <View
+        className="flex-row gap-sm px-lg pt-md bg-card border-t border-border items-center"
+        style={{ paddingBottom: Platform.OS === 'ios' ? 24 : 12 }}
+      >
+        <Pressable className="w-10 h-10 rounded-md bg-muted items-center justify-center" accessibilityRole="button">
           <Paperclip size={18} color={colors.foreground} />
         </Pressable>
         <Input
           testID="chat-input"
-          style={styles.input}
+          style={{
+            flex: 1,
+            backgroundColor: colors.muted,
+            borderRadius: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            color: colors.foreground,
+            maxHeight: 96,
+            fontSize: 16,
+          }}
           value={draft}
           onChangeText={setDraft}
           placeholder={t('shared.inbox.sendPlaceholder', 'Мессеж бичих...')}
@@ -228,246 +269,23 @@ export default function ChatDetailScreen() {
         <Pressable
           testID="chat-send-button"
           style={({ pressed }) => [
-            styles.sendBtn,
-            draft.trim().length === 0 && styles.sendBtnDisabled,
-            pressed && draft.trim().length > 0 && styles.pressed,
+            {
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              backgroundColor: colors.primary,
+              borderRadius: 12,
+            },
+            draft.trim().length === 0 && { opacity: 0.5 },
+            pressed && draft.trim().length > 0 && { opacity: 0.85 },
           ]}
           onPress={handleSend}
           disabled={draft.trim().length === 0 || isPending}
         >
-          <Text style={styles.sendBtnText}>{t('chat.send', 'Илгээх')}</Text>
+          <Text className="text-primaryForeground font-bold text-body">
+            {t('chat.send', 'Илгээх')}
+          </Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.card,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitleShell: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  onlineRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginTop: spacing.xs / 2,
-  },
-  onlineDot: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.full,
-    backgroundColor: colors.verified,
-  },
-  onlineText: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-  },
-  headerAvatarShell: {
-    width: 40,
-    alignItems: 'flex-end',
-  },
-  contextCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.md,
-    padding: spacing.md,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    ...elevations.card,
-  },
-  contextIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contextBody: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  contextLabel: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.mutedForeground,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  contextTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  contextStatusPill: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: colors.accent,
-  },
-  contextStatus: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  warningBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.md,
-    marginHorizontal: spacing.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-    backgroundColor: colors.secondary,
-  },
-  warningText: {
-    flex: 1,
-    fontSize: typography.label,
-    color: colors.foreground,
-  },
-  messageList: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  listFooterSpacer: {
-    height: spacing.xl,
-  },
-  bubbleWrapper: {
-    alignSelf: 'stretch',
-    marginBottom: spacing.md,
-    flexDirection: 'row',
-  },
-  bubbleRight: {
-    justifyContent: 'flex-end',
-  },
-  bubbleLeft: {
-    justifyContent: 'flex-start',
-  },
-  bubble: {
-    maxWidth: '75%',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    borderRadius: radius.lg,
-  },
-  bubbleMine: {
-    backgroundColor: colors.primaryDeep,
-    borderBottomRightRadius: 6,
-  },
-  bubbleTheirs: {
-    backgroundColor: colors.muted,
-    borderBottomLeftRadius: 6,
-  },
-  messageText: {
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.25,
-  },
-  textMine: {
-    color: colors.card,
-  },
-  textTheirs: {
-    color: colors.foreground,
-  },
-  timestamp: {
-    marginTop: spacing.xs,
-    fontSize: typography.caption,
-  },
-  timestampMine: {
-    color: colors.card,
-    opacity: 0.7,
-    textAlign: 'right',
-  },
-  timestampTheirs: {
-    color: colors.textSecondary,
-  },
-  phoneWarning: {
-    backgroundColor: colors.secondary,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  phoneWarningText: {
-    fontSize: typography.label,
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  inputBar: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: Platform.OS === 'ios' ? spacing.xl : spacing.md,
-    backgroundColor: colors.card,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    alignItems: 'center',
-  },
-  attachButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    color: colors.foreground,
-    maxHeight: 96,
-    fontSize: typography.body,
-  },
-  sendBtn: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-  },
-  sendBtnDisabled: {
-    opacity: 0.5,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-  sendBtnText: {
-    color: colors.primaryForeground,
-    fontWeight: '700',
-    fontSize: typography.body,
-  },
-});

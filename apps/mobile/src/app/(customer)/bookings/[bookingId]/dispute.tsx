@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
@@ -8,7 +8,7 @@ import { PhotoGrid } from '../../../../components/ui/PhotoGrid';
 import { useDisputeCreate } from '../../../../features/disputes/hooks/useDisputeCreate';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 const TOTAL_STEPS = 3;
 
@@ -76,32 +76,36 @@ export default function DisputeRaiseScreen() {
       nextLoading={isPending}
       showBack={currentStep > 0}
     >
-      <View style={styles.referenceSection}>
-        <Text style={styles.fieldLabel}>
+      <View className="mb-xl">
+        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
           {t('customer.disputes.sectionBookingRef', 'Booking Reference')}
         </Text>
-        <Text style={styles.referenceValue}>{bookingId}</Text>
+        <Text className="text-body text-primaryDeep">{bookingId}</Text>
       </View>
 
       {currentStep === 0 && (
         <View>
-          <Text style={styles.fieldLabel}>{t('customer.disputes.labelReason', 'Issue Type')}</Text>
-          <View style={styles.reasonList}>
+          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+            {t('customer.disputes.labelReason', 'Issue Type')}
+          </Text>
+          <View className="gap-sm">
             {DISPUTE_REASONS.map((reason) => (
               <Pressable
                 key={reason}
-                style={[
-                  styles.reasonOption,
-                  selectedReason === reason && styles.reasonOptionSelected,
-                ]}
+                className={
+                  selectedReason === reason
+                    ? 'rounded-md p-md bg-card border-[1.5px] border-primaryDeep'
+                    : 'rounded-md p-md bg-muted border-[1.5px] border-transparent'
+                }
                 onPress={() => setSelectedReason(reason)}
                 testID={`reason-${reason}`}
               >
                 <Text
-                  style={[
-                    styles.reasonText,
-                    selectedReason === reason && styles.reasonTextSelected,
-                  ]}
+                  className={
+                    selectedReason === reason
+                      ? 'text-body text-accent font-semibold'
+                      : 'text-body text-primaryDeep'
+                  }
                 >
                   {reason}
                 </Text>
@@ -113,7 +117,9 @@ export default function DisputeRaiseScreen() {
 
       {currentStep === 1 && (
         <View>
-          <Text style={styles.fieldLabel}>{t('customer.disputes.labelEvidence', 'Evidence')}</Text>
+          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+            {t('customer.disputes.labelEvidence', 'Evidence')}
+          </Text>
           <PhotoGrid
             photos={photos}
             maxPhotos={5}
@@ -121,8 +127,8 @@ export default function DisputeRaiseScreen() {
             showAddButton
             testID="dispute-evidence-photos"
           />
-          <View style={styles.noteContainer}>
-            <Text style={styles.noteText}>
+          <View className="bg-muted rounded-md p-md mt-md">
+            <Text className="text-caption text-textSecondary leading-[20px]">
               {t(
                 'customer.disputes.evidenceDeadlineNote',
                 'Dispute auto-closes if evidence is not provided within 24 hours',
@@ -134,11 +140,12 @@ export default function DisputeRaiseScreen() {
 
       {currentStep === 2 && (
         <View>
-          <Text style={styles.fieldLabel}>
+          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
             {t('customer.disputes.labelDescription', 'Description')}
           </Text>
           <Input
-            style={styles.textInput}
+            className="border border-border rounded-md p-md text-body text-primaryDeep bg-card"
+            style={{ minHeight: 120, textAlignVertical: 'top' }}
             placeholder={t(
               'customer.disputes.placeholderDescription',
               'Describe the issue in detail...',
@@ -151,7 +158,7 @@ export default function DisputeRaiseScreen() {
             numberOfLines={5}
             testID="dispute-description-input"
           />
-          <Text style={styles.helperText}>
+          <Text className="text-caption text-textSecondary mt-sm">
             {t(
               'customer.disputes.validationNoEvidence',
               'At least 1 evidence artifact is required',
@@ -162,69 +169,3 @@ export default function DisputeRaiseScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  referenceSection: {
-    marginBottom: spacing.xl,
-  },
-  fieldLabel: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    marginBottom: spacing.md,
-  },
-  referenceValue: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-  },
-  reasonList: {
-    gap: spacing.sm,
-  },
-  reasonOption: {
-    borderRadius: radius.md,
-    padding: spacing.md,
-    backgroundColor: colors.muted,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  reasonOptionSelected: {
-    borderWidth: 1.5,
-    borderColor: colors.primaryDeep,
-    backgroundColor: colors.card,
-  },
-  reasonText: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-  },
-  reasonTextSelected: {
-    color: colors.accent,
-    fontWeight: '600',
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    backgroundColor: colors.card,
-    minHeight: 120,
-    textAlignVertical: 'top',
-  },
-  noteContainer: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginTop: spacing.md,
-  },
-  helperText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
-  },
-  noteText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-});

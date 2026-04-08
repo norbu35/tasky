@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CreditCard } from 'lucide-react-native';
@@ -7,7 +7,7 @@ import { DetailTemplate } from '../../../../components/templates/DetailTemplate'
 import { Button } from '../../../../components/ui/Button';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function TaskBoostPayScreen() {
   const { t } = useTranslation();
@@ -17,12 +17,12 @@ export default function TaskBoostPayScreen() {
 
   return (
     <DetailTemplate testID="SCR-CUST-029">
-      <View style={styles.content}>
+      <View className="items-center py-xl gap-lg">
         <CreditCard size={48} color={colors.primary} />
-        <Text style={styles.headline}>
+        <Text className="text-heading font-semibold text-primaryDeep text-center">
           {t('customer.boostPay.headline', 'Complete Payment')}
         </Text>
-        <Text style={styles.body}>
+        <Text className="text-body text-mutedForeground text-center leading-6">
           {t('customer.boostPay.body', 'Pay securely via QPay to activate your boost.')}
         </Text>
         <Button
@@ -31,22 +31,15 @@ export default function TaskBoostPayScreen() {
             // TODO: wire QPay integration
             router.back();
           }}
-          style={styles.button}
+          className="self-stretch"
         />
         <Button
           label={t('common.goBack', 'Go Back')}
           variant="ghost"
           onPress={() => router.back()}
-          style={styles.button}
+          className="self-stretch"
         />
       </View>
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: { alignItems: 'center', paddingVertical: spacing.xl, gap: spacing.lg },
-  headline: { fontSize: typography.heading, fontWeight: '600', color: colors.primaryDeep, textAlign: 'center' },
-  body: { fontSize: typography.body, color: colors.mutedForeground, textAlign: 'center', lineHeight: typography.body * 1.6 },
-  button: { alignSelf: 'stretch' },
-});

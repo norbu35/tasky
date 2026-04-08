@@ -19,26 +19,64 @@ const { colors, spacing, radius, typography } = mobileTheme;
 
 const TAB_ICON_SIZE = 24;
 
+// Tab bar style objects — must remain imperative: passed to Tabs screenOptions (not NativeWind-compatible)
+const tabBarStyle = {
+  position: 'absolute' as const,
+  borderTopWidth: 0,
+  elevation: 0,
+  height: screenLayout.chrome.tabBarHeight,
+  bottom: screenLayout.chrome.tabBarBottom,
+  paddingBottom: spacing.sm,
+  paddingTop: spacing.sm,
+  paddingHorizontal: spacing.lg,
+  backgroundColor: 'transparent',
+  borderTopLeftRadius: radius.md,
+  borderTopRightRadius: radius.md,
+  shadowColor: colors.foreground,
+  shadowOffset: { width: 0, height: -4 },
+  shadowOpacity: 0.04,
+  shadowRadius: 24,
+};
+
+const tabItemStyle = {
+  borderRadius: radius.md,
+  paddingVertical: spacing.xs + spacing.xs / 2,
+  flex: 1,
+};
+
+const tabLabelStyle = {
+  fontSize: typography.navLabel,
+  fontWeight: '500' as const,
+  letterSpacing: 0,
+  marginTop: spacing.xs,
+};
+
+const blurBackgroundStyle = {
+  borderTopLeftRadius: radius.md,
+  borderTopRightRadius: radius.md,
+  overflow: 'hidden' as const,
+};
+
 export default function TabsLayout() {
   const { t } = useTranslation();
   const { isCustomer } = useRole();
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: colors.primaryForeground,
           tabBarInactiveTintColor: colors.navInactive,
-          tabBarLabelStyle: styles.tabLabel,
-          tabBarStyle: styles.tabBar,
-          tabBarItemStyle: styles.tabItem,
+          tabBarLabelStyle: tabLabelStyle,
+          tabBarStyle: tabBarStyle,
+          tabBarItemStyle: tabItemStyle,
           tabBarActiveBackgroundColor: colors.primary,
           tabBarBackground: () => (
             <BlurView
               tint="regular"
               intensity={80}
-              style={[StyleSheet.absoluteFill, styles.blurBackground]}
+              style={[StyleSheet.absoluteFill, blurBackgroundStyle]}
             />
           ),
         }}
@@ -95,42 +133,3 @@ export default function TabsLayout() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabBar: {
-    position: 'absolute',
-    borderTopWidth: 0,
-    elevation: 0,
-    height: screenLayout.chrome.tabBarHeight,
-    bottom: screenLayout.chrome.tabBarBottom,
-    paddingBottom: spacing.sm,
-    paddingTop: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: 'transparent',
-    borderTopLeftRadius: radius.md,
-    borderTopRightRadius: radius.md,
-    shadowColor: colors.foreground,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 24,
-  },
-  tabItem: {
-    borderRadius: radius.md,
-    paddingVertical: spacing.xs + spacing.xs / 2,
-    flex: 1,
-  },
-  tabLabel: {
-    fontSize: typography.navLabel,
-    fontWeight: '500',
-    letterSpacing: 0,
-    marginTop: spacing.xs,
-  },
-  blurBackground: {
-    borderTopLeftRadius: radius.md,
-    borderTopRightRadius: radius.md,
-    overflow: 'hidden',
-  },
-});

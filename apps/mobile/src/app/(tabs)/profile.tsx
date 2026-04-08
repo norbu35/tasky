@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pencil, Settings } from 'lucide-react-native';
@@ -16,7 +16,7 @@ import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { screenLayout } from '../../design/screenLayout';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function MyProfileScreen() {
   const session = useAuthStore((state) => state.session);
@@ -56,18 +56,23 @@ function AuthenticatedProfile() {
       errorMessage={t('shared.profile.errorNetwork', 'Сүлжээний алдаа гарлаа')}
     >
       {profile && (
-        <View style={styles.content}>
+        <View
+          className="gap-xl"
+          style={{ paddingBottom: screenLayout.chrome.contentBottomClearance }}
+        >
           {/* Hero Section */}
-          <View style={styles.heroSection}>
+          <View className="items-center gap-md">
             <ProfileAvatar
               uri={profile.avatar_url}
               name={profile.full_name}
               size="xl"
               showVerified={isTasker && profile.status === 'VERIFIED'}
             />
-            <Text style={styles.name}>{profile.full_name}</Text>
-            <View style={styles.roleBadge}>
-              <Text style={styles.roleBadgeText}>
+            <Text className="text-[20px] font-semibold text-primaryDeep text-center">
+              {profile.full_name}
+            </Text>
+            <View className="px-md py-xs rounded-full bg-secondary">
+              <Text className="text-caption font-semibold text-secondaryForeground">
                 {isTasker
                   ? t('shared.profile.roleTasker', 'Гүйцэтгэгч')
                   : t('shared.profile.roleCustomer', 'Захиалагч')}
@@ -80,7 +85,7 @@ function AuthenticatedProfile() {
           </View>
 
           {/* Stats Section */}
-          <View style={styles.statsRow}>
+          <View className="flex-row gap-md">
             <StatCard
               value={String(profile.completed_tasks)}
               label={t('shared.profile.completedJobs', 'Дууссан ажил')}
@@ -94,19 +99,23 @@ function AuthenticatedProfile() {
           </View>
 
           {/* Info Section */}
-          <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>{t('shared.profile.aboutMe', 'Миний тухай')}</Text>
+          <View className="bg-muted rounded-md p-lg gap-md">
+            <Text className="text-subtitle font-sans-bold text-primaryDeep">
+              {t('shared.profile.aboutMe', 'Миний тухай')}
+            </Text>
             {profile.phone_masked && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>{t('shared.profile.phone', 'Утас')}</Text>
-                <Text style={styles.infoValue}>{profile.phone_masked}</Text>
+              <View className="flex-row justify-between py-sm">
+                <Text className="text-body text-textSecondary">
+                  {t('shared.profile.phone', 'Утас')}
+                </Text>
+                <Text className="text-body text-foreground font-medium">{profile.phone_masked}</Text>
               </View>
             )}
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>
+            <View className="flex-row justify-between py-sm">
+              <Text className="text-body text-textSecondary">
                 {t('shared.profile.memberSince', 'Нэгдсэн огноо')}
               </Text>
-              <Text style={styles.infoValue}>
+              <Text className="text-body text-foreground font-medium">
                 {new Date(profile.created_at).toLocaleDateString()}
               </Text>
             </View>
@@ -127,10 +136,10 @@ function AuthenticatedProfile() {
           {isTasker && (
             <Pressable
               onPress={() => router.push('/(tasker)/stats')}
-              style={styles.statsLink}
+              className="bg-muted rounded-md py-md px-lg items-center"
               testID="profile-stats-link"
             >
-              <Text style={styles.statsLinkText}>
+              <Text className="text-body font-semibold text-primary">
                 {t('shared.profile.viewStats', 'Статистик харах')}
               </Text>
             </Pressable>
@@ -140,72 +149,3 @@ function AuthenticatedProfile() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: spacing.xl,
-    paddingBottom: screenLayout.chrome.contentBottomClearance,
-  },
-  heroSection: {
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  roleBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: colors.secondary,
-  },
-  roleBadgeText: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.secondaryForeground,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  infoSection: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-  },
-  infoLabel: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  infoValue: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    fontWeight: '500',
-  },
-  statsLink: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: 'center',
-  },
-  statsLinkText: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-});

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Shield } from 'lucide-react-native';
@@ -10,7 +10,7 @@ import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
 import { InsetScrollView, ScreenContainer } from '../../components/shells';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors, radius, spacing } = mobileTheme;
 
 type MigrationState = 'default' | 'invalid_phone' | 'verifying' | 'error_network';
 
@@ -58,27 +58,53 @@ export default function OtpMigrationScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-004">
       <InsetScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        className="flex-1"
+        contentContainerStyle={{
+          flex: 1,
+          paddingHorizontal: spacing.lg,
+          paddingTop: 72,
+          paddingBottom: spacing.lg,
+          justifyContent: 'space-between',
+        }}
         extraBottomInset={spacing.lg}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <View style={styles.backShell}>
+        <View className="items-center gap-lg">
+          <View
+            className="w-[40px] h-[40px] items-center justify-center"
+            style={{ borderRadius: radius.md }}
+          >
             <ArrowLeft size={18} color={colors.primaryDeep} />
           </View>
-          <View style={styles.securityShell}>
-            <View style={styles.securityGlow} />
-            <View style={styles.securityIconCard}>
+          <View className="w-[96px] h-[96px] items-center justify-center">
+            <View
+              style={{
+                position: 'absolute',
+                width: 144,
+                height: 144,
+                borderRadius: radius.lg,
+                backgroundColor: 'rgba(171, 201, 242, 0.2)',
+              }}
+            />
+            <View
+              className="w-[96px] h-[96px] items-center justify-center bg-muted"
+              style={{ borderRadius: radius.lg, ...elevations.soft }}
+            >
               <Shield size={28} color={colors.primaryDeep} />
             </View>
           </View>
 
-          <Text style={styles.heading}>
+          <Text
+            className="text-heading font-extrabold text-center text-primary-deep"
+            style={{ letterSpacing: -0.6, lineHeight: undefined }}
+          >
             {t('auth.otpMigration.heading', 'Утасны дугаараа бүртгүүлнэ үү')}
           </Text>
           {!isLoading ? (
-            <Text style={styles.description}>
+            <Text
+              className="text-body text-text-secondary text-center"
+              style={{ maxWidth: 320, lineHeight: undefined }}
+            >
               {t(
                 'auth.otpMigration.description',
                 'Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү',
@@ -87,7 +113,7 @@ export default function OtpMigrationScreen() {
           ) : null}
         </View>
 
-        <View style={styles.formArea}>
+        <View className="gap-xl">
           <FormField
             label={t('auth.otpMigration.label', 'Утасны дугаар')}
             helperText={t('auth.otpMigration.helper', 'Facebook нэвтрэлтэд утасны дугаар нэмнэ')}
@@ -99,9 +125,18 @@ export default function OtpMigrationScreen() {
                   : undefined
             }
           >
-            <View style={styles.phoneInputShell}>
-              <View style={styles.countryCodeShell}>
-                <Text style={styles.countryCode}>+976</Text>
+            <View style={{ position: 'relative' }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  left: spacing.lg,
+                  top: 0,
+                  bottom: 0,
+                  justifyContent: 'center',
+                  zIndex: 1,
+                }}
+              >
+                <Text className="text-label font-medium text-text-secondary">+976</Text>
               </View>
               <Input
                 testID="otp-migration-phone-input"
@@ -112,7 +147,7 @@ export default function OtpMigrationScreen() {
                 maxLength={8}
                 editable={!isLoading}
                 invalid={showError}
-                style={styles.phoneInput}
+                style={{ paddingLeft: 64 }}
               />
             </View>
           </FormField>
@@ -123,7 +158,7 @@ export default function OtpMigrationScreen() {
             isLoading={isLoading}
             disabled={isSubmitDisabled}
             onPress={handleSubmit}
-            style={styles.submitButton}
+            style={{ minHeight: 56, borderRadius: radius.md, ...elevations.soft }}
           />
 
           {!isLoading ? (
@@ -132,7 +167,7 @@ export default function OtpMigrationScreen() {
               label={t('auth.otpMigration.skip', 'Дараа хийх')}
               variant="ghost"
               onPress={handleSkip}
-              style={styles.skipButton}
+              style={{ minHeight: 44 }}
             />
           ) : null}
         </View>
@@ -140,94 +175,3 @@ export default function OtpMigrationScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  backShell: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: 72,
-    paddingBottom: spacing.lg,
-    justifyContent: 'space-between',
-  },
-  hero: {
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  securityShell: {
-    width: 96,
-    height: 96,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  securityGlow: {
-    position: 'absolute',
-    width: 144,
-    height: 144,
-    borderRadius: radius.lg,
-    backgroundColor: 'rgba(171, 201, 242, 0.2)',
-  },
-  securityIconCard: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-    ...elevations.soft,
-  },
-  heading: {
-    color: colors.primaryDeep,
-    fontSize: typography.heading,
-    fontWeight: '800',
-    letterSpacing: -0.6,
-    lineHeight: typography.heading * 1.25,
-    textAlign: 'center',
-  },
-  description: {
-    color: colors.textSecondary,
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.625,
-    textAlign: 'center',
-    maxWidth: 320,
-  },
-  formArea: {
-    gap: spacing.xl,
-  },
-  phoneInputShell: {
-    position: 'relative',
-  },
-  countryCodeShell: {
-    position: 'absolute',
-    left: spacing.lg,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    zIndex: 1,
-  },
-  countryCode: {
-    color: colors.textSecondary,
-    fontSize: typography.label,
-    fontWeight: '500',
-  },
-  phoneInput: {
-    paddingLeft: 64,
-  },
-  submitButton: {
-    minHeight: 56,
-    borderRadius: radius.md,
-    ...elevations.soft,
-  },
-  skipButton: {
-    minHeight: 44,
-  },
-});

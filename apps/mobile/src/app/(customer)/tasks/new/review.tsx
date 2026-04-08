@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, CircleAlert, CircleDollarSign, MapPin, Sparkles } from 'lucide-react-native';
@@ -9,7 +9,7 @@ import { useCreateTask } from '../../../../features/tasks/hooks/useCreateTask';
 import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { parseError } from '../../../../utils/errorHandling';
 
-const { colors, spacing, radius, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 function parsePhotoKeys(value?: string): string[] {
   if (!value) {
@@ -116,23 +116,39 @@ function SectionCard({
   const { t } = useTranslation();
 
   return (
-    <View testID={testID} style={[styles.card, featured && styles.cardFeatured]}>
-      <View style={styles.cardHeader}>
-        <Text style={[styles.cardLabel, featured && styles.cardLabelFeatured]}>{label}</Text>
+    <View
+      testID={testID}
+      className={`rounded-sm p-lg mb-md gap-sm${featured ? ' bg-primaryDeep rounded-lg' : ' bg-muted'}`}
+      style={featured ? elevations.soft : undefined}
+    >
+      <View className="flex-row justify-between items-center">
+        <Text className={`text-caption font-bold${featured ? ' text-primaryForeground/80' : ' text-textSecondary'}`}>
+          {label}
+        </Text>
         {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
-            <Text style={[styles.editLink, featured && styles.editLinkFeatured]}>
+            <Text className={`text-caption font-bold${featured ? ' text-accent' : ' text-primaryDeep'}`}>
               {t('customer.postTask.edit', 'Edit')}
             </Text>
           </Pressable>
         ) : null}
       </View>
 
-      <View style={styles.cardValueRow}>
+      <View className="flex-row items-center gap-sm">
         {icon ? (
-          <View style={[styles.cardIconWrap, featured && styles.cardIconWrapFeatured]}>{icon}</View>
+          <View
+            className="w-7 h-7 rounded-md items-center justify-center"
+            style={{ backgroundColor: featured ? `${colors.primaryForeground}1F` : `${colors.primary}14` }}
+          >
+            {icon}
+          </View>
         ) : null}
-        <Text style={[styles.cardValue, featured && styles.cardValueFeatured]}>{value}</Text>
+        <Text
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primaryForeground' : ' text-foreground'}`}
+          style={featured ? { fontSize: 36, fontWeight: '800', lineHeight: 40 } : undefined}
+        >
+          {value}
+        </Text>
       </View>
       {children}
     </View>
@@ -144,36 +160,48 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
   const slots = photos.slice(0, 3);
 
   return (
-    <View style={styles.card} testID="review-section-photos">
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardLabel}>
+    <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
+      <View className="flex-row justify-between items-center">
+        <Text className="text-caption font-bold text-textSecondary">
           {t('customer.postTask.sectionPhotos', 'Photos')}{' '}
           {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
         <Pressable onPress={onEdit} accessibilityRole="button">
-          <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
+          <Text className="text-caption font-bold text-primaryDeep">
+            {t('customer.postTask.edit', 'Edit')}
+          </Text>
         </Pressable>
       </View>
 
-      <View style={styles.photoGrid}>
+      <View className="flex-row gap-sm">
         {slots.map((photo, index) => (
-          <View key={`${photo}-${index}`} style={styles.photoSlot}>
+          <View
+            key={`${photo}-${index}`}
+            className="w-32 h-32 rounded-md overflow-hidden bg-muted items-center justify-center"
+          >
             {isImageUri(photo) ? (
-              <Image source={{ uri: photo }} style={styles.photoImage} />
+              <Image source={{ uri: photo }} className="self-stretch h-full" />
             ) : (
-              <Text style={styles.photoFallback}>{String(index + 1)}</Text>
+              <Text className="text-caption font-bold text-primaryDeep">{String(index + 1)}</Text>
             )}
           </View>
         ))}
         {Array.from({ length: Math.max(0, 3 - slots.length) }).map((_, idx) => (
-          <View key={`empty-${idx}`} style={[styles.photoSlot, styles.photoSlotEmpty]}>
-            <Text style={styles.photoEmptyPlus}>+</Text>
+          <View
+            key={`empty-${idx}`}
+            className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chipInactive bg-card"
+          >
+            <Text className="text-heading text-textSecondary" style={{ lineHeight: 24 }}>
+              +
+            </Text>
           </View>
         ))}
       </View>
 
       {photos.length === 0 ? (
-        <Text style={styles.photosHint}>{t('customer.postTask.noPhotos', 'No photos added')}</Text>
+        <Text className="text-caption text-textSecondary">
+          {t('customer.postTask.noPhotos', 'No photos added')}
+        </Text>
       ) : null}
     </View>
   );
@@ -290,9 +318,11 @@ export default function ReviewSubmitScreen() {
       nextDisabled={isPending || !hasRequiredPayload}
       testID="SCR-CUST-007"
     >
-      <View style={styles.headerBlock}>
-        <Text style={styles.stepKicker}>{t('customer.postTask.finalStep', 'Final Step')}</Text>
-        <Text style={styles.pageTitle}>
+      <View className="gap-xs mb-sm">
+        <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
+          {t('customer.postTask.finalStep', 'Final Step')}
+        </Text>
+        <Text className="text-heading font-extrabold text-primaryDeep">
           {t('customer.postTask.reviewTitle', 'Review & Submit')}
         </Text>
       </View>
@@ -317,9 +347,9 @@ export default function ReviewSubmitScreen() {
         testID="review-section-title"
       />
 
-      <View style={styles.card} testID="review-section-description">
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardLabel}>
+      <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-description">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-caption font-bold text-textSecondary">
             {t('customer.postTask.sectionDetails', 'Task Details')}
           </Text>
           <Pressable
@@ -331,10 +361,12 @@ export default function ReviewSubmitScreen() {
             }
             accessibilityRole="button"
           >
-            <Text style={styles.editLink}>{t('customer.postTask.edit', 'Edit')}</Text>
+            <Text className="text-caption font-bold text-primaryDeep">
+              {t('customer.postTask.edit', 'Edit')}
+            </Text>
           </Pressable>
         </View>
-        <Text style={styles.descriptionText}>
+        <Text className="text-body text-foreground leading-loose">
           {showFullDescription ? description : shortDescription}
         </Text>
         {description.length > 140 ? (
@@ -342,7 +374,7 @@ export default function ReviewSubmitScreen() {
             onPress={() => setShowFullDescription((prev) => !prev)}
             accessibilityRole="button"
           >
-            <Text style={styles.viewMoreLink}>
+            <Text className="text-caption font-bold text-accent">
               {showFullDescription
                 ? t('customer.postTask.viewLess', 'View less')
                 : t('customer.postTask.viewMore', 'View more')}
@@ -436,9 +468,9 @@ export default function ReviewSubmitScreen() {
         featured
       />
 
-      <View style={styles.guidanceCard}>
+      <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">
         <CircleAlert size={16} color={colors.accent} />
-        <Text style={styles.guidanceText}>
+        <Text className="flex-1 text-caption leading-relaxed text-textSecondary">
           {t(
             'customer.postTask.reviewGuidance',
             'Taskers will review your task and send offers. Double-check details before posting.',
@@ -447,157 +479,10 @@ export default function ReviewSubmitScreen() {
       </View>
 
       {submitError ? (
-        <View style={styles.errorBox} testID="review-submit-error">
+        <View className="rounded-md mb-md" testID="review-submit-error">
           <Toast message={submitError} variant="error" />
         </View>
       ) : null}
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  headerBlock: {
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
-  },
-  stepKicker: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    fontWeight: '700',
-  },
-  pageTitle: {
-    fontSize: typography.heading,
-    color: colors.primaryDeep,
-    fontWeight: '800',
-  },
-  card: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.sm,
-    padding: spacing.lg,
-    marginBottom: spacing.md,
-    gap: spacing.sm,
-  },
-  cardFeatured: {
-    backgroundColor: colors.primaryDeep,
-    borderRadius: radius.lg,
-    ...elevations.soft,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  cardLabelFeatured: {
-    color: `${colors.primaryForeground}CC`,
-  },
-  editLink: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  editLinkFeatured: {
-    color: colors.accent,
-  },
-  cardValueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  cardIconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}14`,
-  },
-  cardIconWrapFeatured: {
-    backgroundColor: `${colors.primaryForeground}1F`,
-  },
-  cardValue: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.foreground,
-    fontWeight: '700',
-    lineHeight: typography.body * 1.45,
-  },
-  cardValueFeatured: {
-    color: colors.primaryForeground,
-    fontSize: 36,
-    fontWeight: '800',
-    lineHeight: 36 * (10 / 9),
-  },
-  descriptionText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.6,
-  },
-  viewMoreLink: {
-    fontSize: typography.caption,
-    color: colors.accent,
-    fontWeight: '700',
-  },
-  photoGrid: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  photoSlot: {
-    width: 128,
-    height: 128,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoSlotEmpty: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: colors.chipInactive,
-    backgroundColor: `${colors.card}`,
-  },
-  photoImage: {
-    alignSelf: 'stretch',
-    height: '100%',
-  },
-  photoFallback: {
-    fontSize: typography.caption,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-  },
-  photoEmptyPlus: {
-    fontSize: typography.heading,
-    color: colors.textSecondary,
-    lineHeight: typography.heading,
-  },
-  photosHint: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  guidanceCard: {
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    padding: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  guidanceText: {
-    flex: 1,
-    fontSize: typography.caption,
-    lineHeight: typography.caption * 1.6,
-    color: colors.textSecondary,
-  },
-  errorBox: {
-    borderRadius: radius.md,
-    marginBottom: spacing.md,
-  },
-});

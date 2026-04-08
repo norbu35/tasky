@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
@@ -7,10 +7,7 @@ import { FilterBar } from '../../../components/ui/FilterBar';
 import { SplitCard } from '../../../components/ui/SplitCard';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import type { Booking } from '../../../lib/mobileApiClient';
-
-const { colors, spacing, typography } = mobileTheme;
 
 const JOB_FILTERS = [
   { id: 'active', label: 'Идэвхтэй' },
@@ -23,8 +20,8 @@ function BookingCardHeader({ booking }: { booking: Booking }) {
   const status = booking.status.toLowerCase() as 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
   return (
-    <View testID="SCR-TASK-012" style={styles.headerRow}>
-      <Text style={styles.customerName} numberOfLines={1}>
+    <View testID="SCR-TASK-012" className="flex-row items-center justify-between">
+      <Text className="text-body font-semibold text-primaryForeground flex-1 mr-sm" numberOfLines={1}>
         {customerName}
       </Text>
       <StatusBadge status={status} />
@@ -39,11 +36,11 @@ function BookingCardBody({ booking }: { booking: Booking }) {
     : '';
 
   return (
-    <View style={styles.bodyContent}>
-      <Text style={styles.taskTitle} numberOfLines={2}>
+    <View className="gap-xs">
+      <Text className="text-body font-medium text-foreground" numberOfLines={2}>
         {taskTitle}
       </Text>
-      <Text style={styles.schedule}>{scheduledDate}</Text>
+      <Text className="text-micro text-mutedForeground">{scheduledDate}</Text>
     </View>
   );
 }
@@ -117,30 +114,3 @@ export default function MyJobsScreen() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  customerName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryForeground,
-    flex: 1,
-    marginRight: spacing.sm,
-  },
-  bodyContent: {
-    gap: spacing.xs,
-  },
-  taskTitle: {
-    fontSize: typography.body,
-    fontWeight: '500',
-    color: colors.foreground,
-  },
-  schedule: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-  },
-});

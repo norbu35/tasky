@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -90,7 +90,7 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <View testID="SCR-SHARED-014" style={styles.container}>
+    <View testID="SCR-SHARED-014" className="flex-1">
       <SettingsTemplate sections={sections} testID="settings-screen" />
       <ConfirmSheet
         isOpen={showRoleConfirm}
@@ -120,9 +120,3 @@ export default function SettingsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react-native';
@@ -8,7 +8,7 @@ import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetT
 import { Button } from '../../../../components/ui/Button';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function TaskerCancelBookingScreen() {
   const { t } = useTranslation();
@@ -31,36 +31,25 @@ export default function TaskerCancelBookingScreen() {
         title={t('tasker.cancelBooking.title', 'Cancel Booking')}
         testID="tasker-cancel-booking-sheet"
       >
-        <View style={styles.content}>
+        <View className="items-center gap-lg">
           <AlertTriangle size={32} color={colors.danger} />
-          <Text style={styles.warning}>
+          <Text className="text-body text-mutedForeground text-center leading-6">
             {t('tasker.cancelBooking.warning', 'Cancelling a confirmed booking will add a strike to your account. Select Safety/Fraud if applicable to avoid a strike.')}
           </Text>
           <Button
             label={t('tasker.cancelBooking.confirm', 'Cancel Booking')}
             variant="destructive"
             onPress={handleCancel}
-            style={styles.button}
+            className="self-stretch"
           />
           <Button
             label={t('common.goBack', 'Go Back')}
             variant="ghost"
             onPress={() => { setIsOpen(false); router.back(); }}
-            style={styles.button}
+            className="self-stretch"
           />
         </View>
       </ModalSheetTemplate>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: { alignItems: 'center', gap: spacing.lg },
-  warning: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-  },
-  button: { alignSelf: 'stretch' },
-});
