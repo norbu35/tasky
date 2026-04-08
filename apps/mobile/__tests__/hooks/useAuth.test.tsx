@@ -31,10 +31,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 type DevLoginMutation = {
-  mutateAsync: (variables: {
-    phone: string;
-    role: 'CUSTOMER' | 'TASKER';
-  }) => Promise<unknown>;
+  mutateAsync: (variables: { phone: string; role: 'CUSTOMER' | 'TASKER' }) => Promise<unknown>;
 };
 
 let latestMutation: DevLoginMutation | null = null;
@@ -54,9 +51,7 @@ function DevLoginHarness() {
 
 function createWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   };
 }
 

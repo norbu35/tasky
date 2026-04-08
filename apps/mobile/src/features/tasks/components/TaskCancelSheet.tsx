@@ -77,9 +77,7 @@ export function TaskCancelSheet({
 
         {isLate ? (
           <View style={styles.warningBox}>
-            <Text style={styles.warningText}>
-              {t('TaskCancelSheet.copy3')}
-            </Text>
+            <Text style={styles.warningText}>{t('TaskCancelSheet.copy3')}</Text>
           </View>
         ) : null}
 

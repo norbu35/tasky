@@ -8,8 +8,14 @@ describe('Design Token Boundaries', () => {
       resolve(process.cwd(), 'src/design/tokenAdapter.ts'),
       'utf8',
     );
-    const elevationsSource = readFileSync(resolve(process.cwd(), 'src/design/elevations.ts'), 'utf8');
-    const animationsSource = readFileSync(resolve(process.cwd(), 'src/design/animations.ts'), 'utf8');
+    const elevationsSource = readFileSync(
+      resolve(process.cwd(), 'src/design/elevations.ts'),
+      'utf8',
+    );
+    const animationsSource = readFileSync(
+      resolve(process.cwd(), 'src/design/animations.ts'),
+      'utf8',
+    );
 
     expect(tokenAdapterSource).toContain("from '@tasky/design-tokens'");
     expect(tokenAdapterSource).not.toContain('packages/design-tokens');

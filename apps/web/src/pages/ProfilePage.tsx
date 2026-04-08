@@ -176,7 +176,11 @@ export function ProfilePage() {
               <div
                 className={`mt-1 rounded-xl p-2 ${statusVerified ? 'bg-emerald-500/20 text-emerald-600' : 'bg-accent/20 text-accent-foreground'}`}
               >
-                {statusVerified ? <ShieldCheck className="h-6 w-6" /> : <ShieldAlert className="h-6 w-6" />}
+                {statusVerified ? (
+                  <ShieldCheck className="h-6 w-6" />
+                ) : (
+                  <ShieldAlert className="h-6 w-6" />
+                )}
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-semibold">{t('profile.status', 'Status')}</p>
@@ -313,7 +317,11 @@ export function ProfilePage() {
                 disabled={working || !fullName.trim()}
                 onClick={saveProfile}
               >
-                {working ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
+                {working ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-5 w-5" />
+                )}
                 {t('profile.saveChanges', 'Save Changes')}
               </Button>
             </div>

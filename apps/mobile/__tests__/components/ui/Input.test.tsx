@@ -29,4 +29,3 @@ describe('Input', () => {
     expect(screen.getByTestId('input').props.className).toContain('px-4');
   });
 });
-

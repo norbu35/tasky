@@ -127,9 +127,7 @@ export function CustomerTaskDetail() {
             style={styles.messageButton}
             onPress={() => router.push(`/inbox/${booking.task_id}`)}
           >
-            <Text style={styles.messageButtonText}>
-              {t('taskDetail.messageTasker')}
-            </Text>
+            <Text style={styles.messageButtonText}>{t('taskDetail.messageTasker')}</Text>
           </Pressable>
         </View>
 
@@ -144,11 +142,7 @@ export function CustomerTaskDetail() {
             <Text style={styles.bentoBudget}>{(booking.task?.budget ?? 0).toLocaleString()}₮</Text>
           </DetailBentoCard>
 
-          <DetailBentoCard
-            icon={MapPin}
-            label={t('taskDetail.serviceAddress')}
-            span
-          >
+          <DetailBentoCard icon={MapPin} label={t('taskDetail.serviceAddress')} span>
             <Text style={styles.bentoAddress}>{booking.task?.location_text ?? ''}</Text>
           </DetailBentoCard>
         </View>
@@ -179,16 +173,12 @@ export function CustomerTaskDetail() {
               end={{ x: 1, y: 1 }}
               style={styles.primaryActionGradient}
             >
-              <Text style={styles.primaryActionText}>
-                {t('taskDetail.markComplete')}
-              </Text>
+              <Text style={styles.primaryActionText}>{t('taskDetail.markComplete')}</Text>
             </LinearGradient>
           </Pressable>
 
           <Pressable style={styles.secondaryAction} onPress={() => setShowReschedule(true)}>
-            <Text style={styles.secondaryActionText}>
-              {t('taskDetail.reschedule')}
-            </Text>
+            <Text style={styles.secondaryActionText}>{t('taskDetail.reschedule')}</Text>
           </Pressable>
         </View>
 

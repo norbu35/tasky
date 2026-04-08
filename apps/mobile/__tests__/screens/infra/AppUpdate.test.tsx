@@ -59,7 +59,9 @@ describe('AppUpdateScreen', () => {
 
     expect(screen.getByText('Шинэ хувилбар гарлаа')).toBeTruthy();
     expect(
-      screen.getByText('Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой'),
+      screen.getByText(
+        'Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой',
+      ),
     ).toBeTruthy();
   });
 
@@ -77,7 +79,9 @@ describe('AppUpdateScreen', () => {
 
     expect(screen.getByText('Шинэчлэлт шаардлагатай')).toBeTruthy();
     expect(screen.getByText('Шинэчлэх')).toBeTruthy();
-    expect(screen.getByText('Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай')).toBeTruthy();
+    expect(
+      screen.getByText('Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай'),
+    ).toBeTruthy();
     expect(screen.queryByText('Дараа нь')).toBeFalsy();
   });
 

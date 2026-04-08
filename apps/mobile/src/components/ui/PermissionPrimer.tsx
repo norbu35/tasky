@@ -52,15 +52,9 @@ export function PermissionPrimer({
         className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
         style={elevations.card}
       >
-        <View
-          className="w-10 h-[4px] rounded-full bg-border mb-lg"
-        />
+        <View className="w-10 h-[4px] rounded-full bg-border mb-lg" />
         <View className="mt-sm mb-lg items-center">
-          <View
-            className="w-24 h-24 rounded-md items-center justify-center bg-muted"
-          >
-            {icon}
-          </View>
+          <View className="w-24 h-24 rounded-md items-center justify-center bg-muted">{icon}</View>
           <View
             className="absolute -top-2 -right-2 w-8 h-8 rounded-md items-center justify-center bg-accent border-[4px] border-background"
             style={elevations.card}

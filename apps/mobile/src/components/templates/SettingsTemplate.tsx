@@ -38,12 +38,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
       {...(isInteractive ? { accessibilityRole: 'button' as const } : {})}
     >
       {row.icon && <View className="mr-md">{row.icon}</View>}
-      <Text
-        className={cn(
-          'flex-1 text-body text-primary',
-          row.destructive && 'text-danger',
-        )}
-      >
+      <Text className={cn('flex-1 text-body text-primary', row.destructive && 'text-danger')}>
         {row.label}
       </Text>
       <View className="flex-row items-center">
@@ -77,10 +72,7 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
         <>
           <SettingsRowItem row={item} testID={testID ? `${testID}-row-${index}` : undefined} />
           {index < section.data.length - 1 && (
-            <View
-              className="bg-border ml-lg"
-              style={{ height: 1 }}
-            />
+            <View className="bg-border ml-lg" style={{ height: 1 }} />
           )}
         </>
       )}

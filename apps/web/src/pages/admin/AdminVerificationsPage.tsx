@@ -27,12 +27,18 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
   const remainingMs = deadlineMs - now.getTime();
 
   if (remainingMs <= 0) {
-    return { label: t('admin.verifications.overdue', 'Overdue'), colorClass: 'bg-red-700 text-white' };
+    return {
+      label: t('admin.verifications.overdue', 'Overdue'),
+      colorClass: 'bg-red-700 text-white',
+    };
   }
 
   const hoursLeft = differenceInHours(deadlineMs, now);
   const minutesLeft = differenceInMinutes(deadlineMs, now) % 60;
-  const label = t('admin.verifications.slaTimeLeft', '{{hours}}h {{minutes}}m', { hours: hoursLeft, minutes: minutesLeft });
+  const label = t('admin.verifications.slaTimeLeft', '{{hours}}h {{minutes}}m', {
+    hours: hoursLeft,
+    minutes: minutesLeft,
+  });
 
   if (hoursLeft >= 12) {
     return { label, colorClass: 'bg-green-100 text-green-800 border-green-300' };

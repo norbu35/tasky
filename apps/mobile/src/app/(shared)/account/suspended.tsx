@@ -21,7 +21,10 @@ export default function SuspendedAccountScreen() {
   const { expiryDate } = useLocalSearchParams<{ expiryDate?: string }>();
 
   return (
-    <View testID="SCR-SHARED-020" className="flex-1 justify-center items-center px-lg bg-background">
+    <View
+      testID="SCR-SHARED-020"
+      className="flex-1 justify-center items-center px-lg bg-background"
+    >
       <View
         className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
         style={{ backgroundColor: `${colors.danger}1A` }}

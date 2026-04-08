@@ -20,9 +20,30 @@ function TermsLoading() {
   return (
     <View className="flex-1 px-lg pt-xl gap-lg">
       <View style={{ height: 200, backgroundColor: colors.muted, borderRadius: radius.md }} />
-      <View style={{ height: spacing['3xl'], width: '80%', backgroundColor: colors.muted, borderRadius: radius.md }} />
-      <View style={{ height: spacing.xl, width: '55%', backgroundColor: colors.muted, borderRadius: radius.md }} />
-      <View style={{ height: spacing['3xl'], width: '80%', backgroundColor: colors.muted, borderRadius: radius.md }} />
+      <View
+        style={{
+          height: spacing['3xl'],
+          width: '80%',
+          backgroundColor: colors.muted,
+          borderRadius: radius.md,
+        }}
+      />
+      <View
+        style={{
+          height: spacing.xl,
+          width: '55%',
+          backgroundColor: colors.muted,
+          borderRadius: radius.md,
+        }}
+      />
+      <View
+        style={{
+          height: spacing['3xl'],
+          width: '80%',
+          backgroundColor: colors.muted,
+          borderRadius: radius.md,
+        }}
+      />
     </View>
   );
 }
@@ -65,8 +86,22 @@ function TermsErrorVisual() {
             marginTop: spacing.lg,
           }}
         />
-        <View style={{ height: 8, alignSelf: 'stretch', borderRadius: radius.xs, backgroundColor: colors.border }} />
-        <View style={{ height: 8, alignSelf: 'stretch', borderRadius: radius.xs, backgroundColor: colors.border }} />
+        <View
+          style={{
+            height: 8,
+            alignSelf: 'stretch',
+            borderRadius: radius.xs,
+            backgroundColor: colors.border,
+          }}
+        />
+        <View
+          style={{
+            height: 8,
+            alignSelf: 'stretch',
+            borderRadius: radius.xs,
+            backgroundColor: colors.border,
+          }}
+        />
       </View>
       <View
         style={{
@@ -102,30 +137,22 @@ function TermsContent() {
       {
         title: t('infra.terms.section1Title'),
         lead: t('TermsScreen.copy2'),
-        points: [
-          t('TermsScreen.copy3'),
-        ],
+        points: [t('TermsScreen.copy3')],
       },
       {
         title: t('infra.terms.section2Title'),
         lead: t('TermsScreen.copy4'),
-        points: [
-          t('infra.terms.section2Note'),
-        ],
+        points: [t('infra.terms.section2Note')],
       },
       {
         title: t('infra.terms.section3Title'),
         lead: t('TermsScreen.copy5'),
-        points: [
-          t('TermsScreen.copy6'),
-        ],
+        points: [t('TermsScreen.copy6')],
       },
       {
         title: t('infra.terms.section4Title'),
         lead: t('TermsScreen.copy7'),
-        points: [
-          t('TermsScreen.copy8'),
-        ],
+        points: [t('TermsScreen.copy8')],
       },
     ],
     [t],
@@ -217,7 +244,10 @@ export default function TermsScreen() {
         >
           {title}
         </Text>
-        <View style={{ width: spacing['3xl'], height: spacing['3xl'] }} className="justify-center items-center" />
+        <View
+          style={{ width: spacing['3xl'], height: spacing['3xl'] }}
+          className="justify-center items-center"
+        />
       </View>
 
       {state === 'loading' ? (

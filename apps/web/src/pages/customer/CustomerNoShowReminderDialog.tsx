@@ -26,7 +26,10 @@ export function CustomerNoShowReminderDialog({
         <DialogHeader>
           <DialogTitle>{t('customerPages.noShowReminder.title', 'No-show reminder')}</DialogTitle>
           <DialogDescription>
-            {t('customerPages.noShowReminder.description', 'Remind the tasker that the booking is still active and the customer is waiting.')}
+            {t(
+              'customerPages.noShowReminder.description',
+              'Remind the tasker that the booking is still active and the customer is waiting.',
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

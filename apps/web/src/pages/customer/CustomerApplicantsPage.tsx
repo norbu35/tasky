@@ -182,13 +182,15 @@ export function CustomerApplicantsPage() {
                           {application.tasker.rating_avg.toFixed(1)}
                         </span>
                         <span>
-                          {t('customerPages.applicants.completedTasks', '{{count}} completed tasks', {
-                            count: application.tasker.completed_tasks,
-                          })}
+                          {t(
+                            'customerPages.applicants.completedTasks',
+                            '{{count}} completed tasks',
+                            {
+                              count: application.tasker.completed_tasks,
+                            },
+                          )}
                         </span>
-                        {application.tasker.is_pro ? (
-                          <Badge variant="secondary">PRO</Badge>
-                        ) : null}
+                        {application.tasker.is_pro ? <Badge variant="secondary">PRO</Badge> : null}
                       </div>
                     </div>
                   </div>
@@ -197,9 +199,7 @@ export function CustomerApplicantsPage() {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() =>
-                        navigate(`/customer/taskers/${application.tasker.id}`)
-                      }
+                      onClick={() => navigate(`/customer/taskers/${application.tasker.id}`)}
                     >
                       {t('customerPages.applicants.viewProfile', 'View profile')}
                     </Button>

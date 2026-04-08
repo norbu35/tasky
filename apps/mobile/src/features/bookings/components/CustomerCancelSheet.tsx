@@ -53,7 +53,8 @@ export function CustomerCancelSheet({
     { id: 'schedule', label: t('CustomerCancelSheet.reasonSchedule') },
     { id: 'other', label: t('CustomerCancelSheet.reasonOther') },
   ] as const;
-  const [selectedReason, setSelectedReason] = React.useState<(typeof cancelReasons)[number]['id']>('other');
+  const [selectedReason, setSelectedReason] =
+    React.useState<(typeof cancelReasons)[number]['id']>('other');
   const [details, setDetails] = React.useState('');
 
   const handleCancel = useCallback(async () => {
@@ -67,11 +68,16 @@ export function CustomerCancelSheet({
     cancelType === 'free_cancel'
       ? t('CustomerCancelSheet.copy1')
       : cancelType === 'late_cancel_incident_count'
-      ? t('CustomerCancelSheet.copy2')
-      : t('CustomerCancelSheet.copy3');
+        ? t('CustomerCancelSheet.copy2')
+        : t('CustomerCancelSheet.copy3');
 
   return (
-    <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="customer-cancel-sheet" snapPoints={['88%']}>
+    <ModalSheetTemplate
+      isOpen={isOpen}
+      onClose={onClose}
+      testID="customer-cancel-sheet"
+      snapPoints={['88%']}
+    >
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
           <AlertTriangle size={28} color={colors.danger} />
@@ -79,9 +85,7 @@ export function CustomerCancelSheet({
       </View>
 
       <Text style={styles.title}>{t('customer.bookings.cancelQuestion')}</Text>
-      <Text style={styles.subtitle}>
-        {t('customer.bookings.cancelPrompt')}
-      </Text>
+      <Text style={styles.subtitle}>{t('customer.bookings.cancelPrompt')}</Text>
 
       <View style={styles.warningCard}>
         <Text style={styles.warningText}>{warningText}</Text>
@@ -113,9 +117,7 @@ export function CustomerCancelSheet({
       </View>
 
       <View style={styles.policyNote}>
-        <Text style={styles.policyNoteText}>
-          {t('CustomerCancelSheet.copy4')}
-        </Text>
+        <Text style={styles.policyNoteText}>{t('CustomerCancelSheet.copy4')}</Text>
       </View>
 
       <View style={styles.actions}>
@@ -133,9 +135,7 @@ export function CustomerCancelSheet({
           style={styles.secondaryButton}
           testID="cancel-go-back-btn"
         >
-          <Text style={styles.secondaryButtonText}>
-            {t('customer.bookings.ctaGoBack')}
-          </Text>
+          <Text style={styles.secondaryButtonText}>{t('customer.bookings.ctaGoBack')}</Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>

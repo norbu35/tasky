@@ -36,7 +36,9 @@ export function TimelineList({ items, className }: TimelineListProps) {
               <div className="font-semibold text-foreground">{item.label}</div>
               {item.time ? <div className="text-xs text-muted-foreground">{item.time}</div> : null}
             </div>
-            {item.detail ? <div className="mt-1 text-sm text-muted-foreground">{item.detail}</div> : null}
+            {item.detail ? (
+              <div className="mt-1 text-sm text-muted-foreground">{item.detail}</div>
+            ) : null}
           </div>
         </li>
       ))}

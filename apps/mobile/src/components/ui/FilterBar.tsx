@@ -36,13 +36,7 @@ interface FilterBarProps {
   className?: string;
 }
 
-export function FilterBar({
-  filters,
-  activeFilters,
-  onToggle,
-  testID,
-  className,
-}: FilterBarProps) {
+export function FilterBar({ filters, activeFilters, onToggle, testID, className }: FilterBarProps) {
   return (
     <ScrollView
       horizontal

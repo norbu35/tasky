@@ -99,7 +99,13 @@ function ChipGroup({
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, '-')}`}
           >
-            <Text className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}>
+            <Text
+              className={
+                active
+                  ? 'text-caption font-bold text-primaryForeground'
+                  : 'text-caption font-bold text-textSecondary'
+              }
+            >
               {opt}
             </Text>
           </Pressable>
@@ -138,7 +144,13 @@ function YesNo({
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${label.toLowerCase()}`}
           >
-            <Text className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}>
+            <Text
+              className={
+                active
+                  ? 'text-caption font-bold text-primaryForeground'
+                  : 'text-caption font-bold text-textSecondary'
+              }
+            >
               {label}
             </Text>
           </Pressable>
@@ -190,7 +202,9 @@ export default function IntakeFormScreen() {
       setDescriptionError(t('Intake.required'));
       valid = false;
     } else if (description.trim().length < DESCRIPTION_MIN_LENGTH) {
-      setDescriptionError(t('Intake.descriptionMin').replace('{{min}}', String(DESCRIPTION_MIN_LENGTH)));
+      setDescriptionError(
+        t('Intake.descriptionMin').replace('{{min}}', String(DESCRIPTION_MIN_LENGTH)),
+      );
       valid = false;
     } else {
       setDescriptionError('');
@@ -315,10 +329,7 @@ export default function IntakeFormScreen() {
         </Text>
       </View>
 
-      <FormField
-        label={t('Intake.intakeDescription')}
-        errorText={descriptionError || undefined}
-      >
+      <FormField label={t('Intake.intakeDescription')} errorText={descriptionError || undefined}>
         <Input
           testID="intake-description-input"
           value={description}

@@ -9,7 +9,10 @@ export function SessionExpiredPage() {
     <ScreenFrame maxWidth="narrow">
       <StatePanel
         title={t('sharedPages.sessionExpired.title', 'Session expired')}
-        description={t('sharedPages.sessionExpired.description', 'Sign in again to continue where you left off.')}
+        description={t(
+          'sharedPages.sessionExpired.description',
+          'Sign in again to continue where you left off.',
+        )}
         tone="muted"
       />
     </ScreenFrame>

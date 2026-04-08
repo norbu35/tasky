@@ -8,7 +8,8 @@ export default function ApprovedScreen() {
   const router = useRouter();
 
   return (
-    <SuccessCelebrationTemplate testID="SCR-TASK-008"
+    <SuccessCelebrationTemplate
+      testID="SCR-TASK-008"
       headline={t('tasker.verification.approvedTitle')}
       body={t('tasker.verification.approvedBody')}
       nextSteps={[t('tasker.verification.approvedCta')]}

@@ -9,7 +9,10 @@ export function CustomerReschedulePage() {
   return (
     <ResponsiveDetailShell
       title={t('customerPages.reschedule.title', 'Reschedule booking')}
-      description={t('customerPages.reschedule.description', 'Update the booking time while preserving the Phase 1 direct settlement flow.')}
+      description={t(
+        'customerPages.reschedule.description',
+        'Update the booking time while preserving the Phase 1 direct settlement flow.',
+      )}
       primaryAction={
         <Button type="button" variant="secondary">
           {t('customerPages.reschedule.saveChanges', 'Save changes')}
@@ -21,7 +24,10 @@ export function CustomerReschedulePage() {
           <CardTitle>{t('customerPages.reschedule.cardTitle', 'Choose a new time')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          {t('customerPages.reschedule.cardDesc', 'Keep the booking on the customer timeline until the new time is confirmed.')}
+          {t(
+            'customerPages.reschedule.cardDesc',
+            'Keep the booking on the customer timeline until the new time is confirmed.',
+          )}
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

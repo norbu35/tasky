@@ -166,10 +166,7 @@ export interface ApiClient {
 
   listCategories(accessToken: string): Promise<CursorPage<Category>>;
 
-  createTask(
-    accessToken: string,
-    payload: CreateTaskRequest,
-  ): Promise<Task>;
+  createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task>;
 
   listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
 
@@ -524,10 +521,7 @@ export class HttpApiClient implements ApiClient {
     });
   }
 
-  createTask(
-    accessToken: string,
-    payload: CreateTaskRequest,
-  ): Promise<Task> {
+  createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task> {
     return this.requestJson<Task>(
       '/tasks',
       {

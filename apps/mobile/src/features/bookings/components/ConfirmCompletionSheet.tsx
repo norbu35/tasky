@@ -53,13 +53,9 @@ export function ConfirmCompletionSheet({
         </View>
       </View>
 
-      <Text style={styles.title}>
-        {t('customer.bookings.confirmCompletionTitle')}
-      </Text>
+      <Text style={styles.title}>{t('customer.bookings.confirmCompletionTitle')}</Text>
 
-      <Text style={styles.description}>
-        {t('ConfirmCompletionSheet.copy1')}
-      </Text>
+      <Text style={styles.description}>{t('ConfirmCompletionSheet.copy1')}</Text>
 
       <View style={styles.actions}>
         <Pressable
@@ -88,9 +84,7 @@ export function ConfirmCompletionSheet({
           style={styles.secondaryButton}
           testID="confirm-completion-cancel-btn"
         >
-          <Text style={styles.secondaryButtonText}>
-            {t('customer.bookings.ctaGoBack')}
-          </Text>
+          <Text style={styles.secondaryButtonText}>{t('customer.bookings.ctaGoBack')}</Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>

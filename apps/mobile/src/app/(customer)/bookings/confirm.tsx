@@ -55,7 +55,8 @@ export default function BookingConfirmScreen() {
   }, [params, acceptApplication, confirmBookingIntent, router]);
 
   return (
-    <DetailTemplate testID="SCR-CUST-014"
+    <DetailTemplate
+      testID="SCR-CUST-014"
       ctaLabel={t('customer.bookings.ctaConfirm')}
       ctaOnPress={handleConfirm}
       ctaLoading={isPending || isConfirmingIntent}
@@ -140,9 +141,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-subtitle font-semibold text-primary mb-sm">
           {t('customer.bookings.calendarPromptTitle')}
         </Text>
-        <Text className="text-caption text-textSecondary">
-          {t('BookingConfirmScreen.copy2')}
-        </Text>
+        <Text className="text-caption text-textSecondary">{t('BookingConfirmScreen.copy2')}</Text>
       </View>
     </DetailTemplate>
   );

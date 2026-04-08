@@ -23,7 +23,8 @@ export default function TaskerCreditsPayScreen() {
 
   if (state === 'error') {
     return (
-      <DetailTemplate testID="SCR-P2-002"
+      <DetailTemplate
+        testID="SCR-P2-002"
         isError
         onRetry={() => router.replace('/(tasker)/credits/pay')}
         errorMessage={t('TaskerCreditsPayScreen.copy1')}
@@ -52,7 +53,9 @@ export default function TaskerCreditsPayScreen() {
                   'py-md px-lg rounded-lg bg-muted',
                   amount === '20,000 ₮' && 'border border-primary',
                 )}
-                style={amount === '20,000 ₮' ? { backgroundColor: 'rgba(16, 38, 56, 0.08)' } : undefined}
+                style={
+                  amount === '20,000 ₮' ? { backgroundColor: 'rgba(16, 38, 56, 0.08)' } : undefined
+                }
                 testID={`tasker-credits-amount-${amount.replace(/[^0-9]/g, '')}`}
               >
                 <Text
@@ -73,18 +76,9 @@ export default function TaskerCreditsPayScreen() {
             {t('tasker.credits.topUpPreview')}
           </Text>
           <View className="p-lg rounded-lg bg-muted">
-            <InfoRow
-              label={t('tasker.credits.method')}
-              value={t('tasker.credits.mobileWallet')}
-            />
-            <InfoRow
-              label={t('tasker.credits.processing')}
-              value={t('tasker.credits.instant')}
-            />
-            <InfoRow
-              label={t('tasker.credits.balanceAfterTopUp')}
-              value="32,400 ₮"
-            />
+            <InfoRow label={t('tasker.credits.method')} value={t('tasker.credits.mobileWallet')} />
+            <InfoRow label={t('tasker.credits.processing')} value={t('tasker.credits.instant')} />
+            <InfoRow label={t('tasker.credits.balanceAfterTopUp')} value="32,400 ₮" />
           </View>
         </View>
 
@@ -93,7 +87,8 @@ export default function TaskerCreditsPayScreen() {
             {t('tasker.credits.notes')}
           </Text>
           <Text className="text-body text-textSecondary leading-relaxed">
-            {t('TaskerCreditsPayScreen.copy3')}</Text>
+            {t('TaskerCreditsPayScreen.copy3')}
+          </Text>
         </View>
       </View>
     </DetailTemplate>

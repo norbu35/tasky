@@ -155,12 +155,7 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       TaskerCancelSheet,
     } = require('../../../../src/features/bookings/components/TaskerCancelSheet');
     render(
-      <TaskerCancelSheet
-        isOpen={true}
-        onClose={onClose}
-        bookingId="booking-123"
-        strikeCount={0}
-      />,
+      <TaskerCancelSheet isOpen={true} onClose={onClose} bookingId="booking-123" strikeCount={0} />,
     );
 
     fireEvent.press(screen.getByText('Цуцлахыг баталгаажуулах'));

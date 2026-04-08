@@ -67,16 +67,10 @@ export default function PhotoUploadScreen() {
       totalSteps={7}
       onNext={handleNext}
       onBack={() => router.back()}
-      nextLabel={
-        photos.length > 0
-          ? t('common.continue')
-          : t('Photos.photosSkip')
-      }
+      nextLabel={photos.length > 0 ? t('common.continue') : t('Photos.photosSkip')}
     >
       <View className="flex-row items-center justify-between gap-sm">
-        <Text className="text-caption text-textSecondary">
-          {t('Photos.photosProgressHint')}
-        </Text>
+        <Text className="text-caption text-textSecondary">{t('Photos.photosProgressHint')}</Text>
       </View>
       <Text className="text-heading font-sans-bold text-primaryDeep" style={{ lineHeight: 26 }}>
         {t('Photos.photosHeroTitle')}
@@ -137,9 +131,7 @@ export default function PhotoUploadScreen() {
 
       <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
-        <Text className="flex-1 text-caption text-textSecondary">
-          {t('Photos.photosOptional')}
-        </Text>
+        <Text className="flex-1 text-caption text-textSecondary">{t('Photos.photosOptional')}</Text>
       </View>
 
       <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">

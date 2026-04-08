@@ -36,13 +36,17 @@ function formatMoney(amount?: number | null) {
   return `₮${(amount ?? 0).toLocaleString('en-US')}`;
 }
 
-function getTaskVisual(categoryName?: string | null) {
+function getTaskVisual(categoryName: string | null | undefined, t: (key: string) => string) {
   const name = (categoryName ?? '').toLowerCase();
 
   if (name.includes('clean') || name.includes(t('MyTasksListScreen.copy1'))) {
     return { Icon: Sparkles, tint: colors.primary, tone: `${colors.primary}14` };
   }
-  if (name.includes('hand') || name.includes('repair') || name.includes(t('MyTasksListScreen.copy2'))) {
+  if (
+    name.includes('hand') ||
+    name.includes('repair') ||
+    name.includes(t('MyTasksListScreen.copy2'))
+  ) {
     return { Icon: Wrench, tint: colors.secondary, tone: `${colors.secondary}18` };
   }
   if (name.includes('move') || name.includes(t('MyTasksListScreen.copy3'))) {
@@ -61,7 +65,7 @@ function getTaskVisual(categoryName?: string | null) {
 function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const { t } = useTranslation();
   const status = mapStatus(task.status ?? 'open');
-  const visual = getTaskVisual(task.category?.name);
+  const visual = getTaskVisual(task.category?.name, t);
   const Icon = visual.Icon;
 
   return (
@@ -95,7 +99,10 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
               className="flex-1 self-start px-sm py-xs rounded-full"
               style={{ backgroundColor: `${colors.primary}10` }}
             >
-              <Text className="text-micro font-bold tracking-widest uppercase text-primaryDeep" numberOfLines={1}>
+              <Text
+                className="text-micro font-bold tracking-widest uppercase text-primaryDeep"
+                numberOfLines={1}
+              >
                 {task.category?.name ?? t('customer.taskList.categoryFallback')}
               </Text>
             </View>
@@ -172,11 +179,13 @@ function Header({
           {t('MyTasksListScreen.copy1')}
         </Text>
         <View className="flex-row gap-micro">
-          {([
-            { key: 'open', label: t('customer.taskList.filterOpen') },
-            { key: 'assigned', label: t('customer.taskList.filterAssigned') },
-            { key: 'completed', label: t('customer.taskList.filterCompleted') },
-          ] as { key: TaskState; label: string }[]).map(({ key, label }) => (
+          {(
+            [
+              { key: 'open', label: t('customer.taskList.filterOpen') },
+              { key: 'assigned', label: t('customer.taskList.filterAssigned') },
+              { key: 'completed', label: t('customer.taskList.filterCompleted') },
+            ] as { key: TaskState; label: string }[]
+          ).map(({ key, label }) => (
             <View
               key={key}
               className="flex-1 rounded-md py-sm px-sm"
@@ -248,9 +257,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         accessibilityRole="button"
         testID="my-tasks-feed-error-cta"
       >
-        <Text className="text-body font-bold text-secondaryForeground">
-          {t('common.tryAgain')}
-        </Text>
+        <Text className="text-body font-bold text-secondaryForeground">{t('common.tryAgain')}</Text>
       </Pressable>
     </View>
   );

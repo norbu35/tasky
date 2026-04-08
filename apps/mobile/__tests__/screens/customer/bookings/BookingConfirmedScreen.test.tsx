@@ -50,7 +50,9 @@ describe('BookingConfirmedScreen (SCR-CUST-015)', () => {
   it('shows next steps guidance', () => {
     render(<BookingConfirmedScreen />);
     expect(
-      screen.getByText('Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.'),
+      screen.getByText(
+        'Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.',
+      ),
     ).toBeTruthy();
   });
 

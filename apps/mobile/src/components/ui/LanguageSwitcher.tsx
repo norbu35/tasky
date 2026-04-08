@@ -13,7 +13,7 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const currentLang = i18n.language;
 
@@ -28,7 +28,10 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
 
   return (
     <View
-      className={cn('flex-row rounded-full border border-border overflow-hidden bg-card', className)}
+      className={cn(
+        'flex-row rounded-full border border-border overflow-hidden bg-card',
+        className,
+      )}
       style={elevations.card}
     >
       <Pressable
@@ -69,7 +72,8 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
             color: currentLang === 'mn' ? colors.primaryForeground : colors.foreground,
           }}
         >
-          {t('LanguageSwitcher.copy1')}</Text>
+          {t('LanguageSwitcher.copy1')}
+        </Text>
       </Pressable>
     </View>
   );

@@ -82,11 +82,7 @@ export function InboxScreen() {
             </View>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            {t('messaging.noConversations')}
-          </Text>
-        }
+        ListEmptyComponent={<Text style={styles.emptyText}>{t('messaging.noConversations')}</Text>}
       />
     </SafeAreaView>
   );

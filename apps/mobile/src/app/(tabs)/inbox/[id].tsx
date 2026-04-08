@@ -127,7 +127,11 @@ export default function ChatDetailScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 justify-center items-center" testID="chat-back">
+          <Pressable
+            onPress={() => router.back()}
+            className="w-10 h-10 justify-center items-center"
+            testID="chat-back"
+          >
             <ChevronLeft size={24} color={colors.primary} />
           </Pressable>
           <View className="flex-1 items-center">
@@ -136,9 +140,7 @@ export default function ChatDetailScreen() {
             </Text>
             <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
               <View className="w-2 h-2 rounded-full bg-verified" />
-              <Text className="text-micro text-mutedForeground">
-                {t('shared.inbox.online')}
-              </Text>
+              <Text className="text-micro text-mutedForeground">{t('shared.inbox.online')}</Text>
             </View>
           </View>
           <View className="w-10 items-end">
@@ -165,7 +167,11 @@ export default function ChatDetailScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
-        <Pressable onPress={() => router.back()} className="w-10 h-10 justify-center items-center" testID="chat-back">
+        <Pressable
+          onPress={() => router.back()}
+          className="w-10 h-10 justify-center items-center"
+          testID="chat-back"
+        >
           <ChevronLeft size={24} color={colors.primary} />
         </Pressable>
         <View className="flex-1 items-center">
@@ -174,9 +180,7 @@ export default function ChatDetailScreen() {
           </Text>
           <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
             <View className="w-2 h-2 rounded-full bg-verified" />
-            <Text className="text-micro text-mutedForeground">
-              {t('shared.inbox.online')}
-            </Text>
+            <Text className="text-micro text-mutedForeground">{t('shared.inbox.online')}</Text>
           </View>
         </View>
         <View className="w-10 items-end">
@@ -210,9 +214,7 @@ export default function ChatDetailScreen() {
 
       <View className="flex-row items-center gap-sm mt-md mx-lg px-md py-sm rounded-md bg-secondary">
         <ShieldAlert size={16} color={colors.primary} />
-        <Text className="flex-1 text-label text-foreground">
-          {t('ChatDetailScreen.copy1')}
-        </Text>
+        <Text className="flex-1 text-label text-foreground">{t('ChatDetailScreen.copy1')}</Text>
       </View>
 
       <FlatList
@@ -238,7 +240,10 @@ export default function ChatDetailScreen() {
         className="flex-row gap-sm px-lg pt-md bg-card border-t border-border items-center"
         style={{ paddingBottom: Platform.OS === 'ios' ? 24 : 12 }}
       >
-        <Pressable className="w-10 h-10 rounded-md bg-muted items-center justify-center" accessibilityRole="button">
+        <Pressable
+          className="w-10 h-10 rounded-md bg-muted items-center justify-center"
+          accessibilityRole="button"
+        >
           <Paperclip size={18} color={colors.foreground} />
         </Pressable>
         <Input
@@ -275,9 +280,7 @@ export default function ChatDetailScreen() {
           onPress={handleSend}
           disabled={draft.trim().length === 0 || isPending}
         >
-          <Text className="text-primaryForeground font-bold text-body">
-            {t('chat.send')}
-          </Text>
+          <Text className="text-primaryForeground font-bold text-body">{t('chat.send')}</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>

@@ -8,17 +8,23 @@ const twMerge = extendTailwindMerge({
     classGroups: {
       'font-family': [
         {
-          font: [
-            'sans',
-            'sans-medium',
-            'sans-semibold',
-            'sans-bold',
-            'display',
-            'display-bold',
+          font: ['sans', 'sans-medium', 'sans-semibold', 'sans-bold', 'display', 'display-bold'],
+        },
+      ],
+      gap: [
+        {
+          gap: [
+            'section',
+            'block',
+            'item',
+            'micro',
+            'action-buttons',
+            'header-greeting',
+            'header-title',
+            'header-bottom',
           ],
         },
       ],
-      gap: [{ gap: ['section', 'block', 'item', 'micro', 'action-buttons', 'header-greeting', 'header-title', 'header-bottom'] }],
       p: [{ p: ['card', 'action-bar'] }],
       px: [{ px: ['screen-x', 'action-bar'] }],
       pt: [{ pt: ['header-top', 'action-bar'] }],

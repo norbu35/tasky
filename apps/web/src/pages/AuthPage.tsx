@@ -2,14 +2,7 @@ import type { paths } from '@tasky/sdk';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  AlertTriangle,
-  ArrowRight,
-  Loader2,
-  Shield,
-  User,
-  Wrench,
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight, Loader2, Shield, User, Wrench } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
 import {

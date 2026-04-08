@@ -9,7 +9,10 @@ export function BannedPage() {
     <ScreenFrame maxWidth="narrow">
       <StatePanel
         title={t('sharedPages.banned.title', 'Account banned')}
-        description={t('sharedPages.banned.description', 'This account can no longer access the marketplace.')}
+        description={t(
+          'sharedPages.banned.description',
+          'This account can no longer access the marketplace.',
+        )}
         tone="destructive"
       />
     </ScreenFrame>

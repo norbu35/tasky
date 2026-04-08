@@ -33,18 +33,10 @@ export default function WalletPayoutScreen() {
       <Text className="text-heading font-display-bold text-primaryDeep">
         {t('tasker.wallet.payoutTitle')}
       </Text>
-      <Text className="text-body text-textSecondary">
-        {t('tasker.wallet.payoutBalance')}
-      </Text>
-      <Input
-        value={amount}
-        onChangeText={setAmount}
-        placeholder="₮0"
-      />
+      <Text className="text-body text-textSecondary">{t('tasker.wallet.payoutBalance')}</Text>
+      <Input value={amount} onChangeText={setAmount} placeholder="₮0" />
       {showError ? (
-        <Text className="text-danger text-label">
-          {t('tasker.wallet.payoutMinError')}
-        </Text>
+        <Text className="text-danger text-label">{t('tasker.wallet.payoutMinError')}</Text>
       ) : null}
       <Button
         testID="wallet-payout-submit"

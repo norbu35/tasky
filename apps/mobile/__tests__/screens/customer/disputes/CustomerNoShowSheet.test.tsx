@@ -126,7 +126,9 @@ describe('CustomerNoShowSheet (SCR-CUST-021)', () => {
   it('flag button dismisses the sheet after flagging', async () => {
     const onClose = jest.fn();
     mockFlagNoShow.mockResolvedValue(undefined);
-    render(<CustomerNoShowSheet {...defaultProps} onClose={onClose} state="flag_available_15min" />);
+    render(
+      <CustomerNoShowSheet {...defaultProps} onClose={onClose} state="flag_available_15min" />,
+    );
     fireEvent.press(screen.getByText('Flag No-Show'));
     await waitFor(() => {
       expect(onClose).toHaveBeenCalled();

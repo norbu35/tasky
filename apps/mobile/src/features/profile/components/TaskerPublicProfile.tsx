@@ -99,14 +99,8 @@ export function TaskerPublicProfile() {
 
         {/* Stats Grid */}
         <View style={styles.statsRow}>
-          <StatCard
-            value={`${profile.completed_tasks ?? 0}+`}
-            label={t('profile.tasks')}
-          />
-          <StatCard
-            value={`${profile.is_pro ? 'Pro' : '-'}`}
-            label={t('profile.response')}
-          />
+          <StatCard value={`${profile.completed_tasks ?? 0}+`} label={t('profile.tasks')} />
+          <StatCard value={`${profile.is_pro ? 'Pro' : '-'}`} label={t('profile.response')} />
           <StatCard
             value={`${profile.created_at?.slice(0, 4) ?? ''}`}
             label={t('profile.joined')}

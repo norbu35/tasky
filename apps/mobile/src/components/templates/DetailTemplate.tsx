@@ -42,22 +42,10 @@ function DetailSkeleton() {
   return (
     <View className="flex-1 px-screen-x pt-header-top gap-block">
       {/* Large skeleton block — dynamic size, kept imperative */}
-      <View
-        className="bg-muted rounded-md"
-        style={{ height: 200 }}
-      />
-      <View
-        className="bg-muted rounded-md"
-        style={{ height: 32, width: '70%' }}
-      />
-      <View
-        className="bg-muted rounded-md"
-        style={{ height: 24, width: '45%' }}
-      />
-      <View
-        className="bg-muted rounded-md"
-        style={{ height: 32, width: '70%' }}
-      />
+      <View className="bg-muted rounded-md" style={{ height: 200 }} />
+      <View className="bg-muted rounded-md" style={{ height: 32, width: '70%' }} />
+      <View className="bg-muted rounded-md" style={{ height: 24, width: '45%' }} />
+      <View className="bg-muted rounded-md" style={{ height: 32, width: '70%' }} />
     </View>
   );
 }

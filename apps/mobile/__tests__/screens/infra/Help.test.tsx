@@ -102,7 +102,9 @@ describe('HelpScreen', () => {
     render(<HelpScreen />);
 
     expect(screen.getByText('Ачааллах боломжгүй')).toBeTruthy();
-    expect(screen.getByText('Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу')).toBeTruthy();
+    expect(
+      screen.getByText('Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу'),
+    ).toBeTruthy();
 
     fireEvent.press(screen.getByText('Дахин оролдох'));
 

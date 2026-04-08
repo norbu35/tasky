@@ -12,7 +12,10 @@ export function CustomerTaskerProfilePage() {
   return (
     <ResponsiveDetailShell
       title={t('customerPages.taskerProfile.title', 'Tasker profile')}
-      description={t('customerPages.taskerProfile.description', 'Review the tasker before you confirm or message them.')}
+      description={t(
+        'customerPages.taskerProfile.description',
+        'Review the tasker before you confirm or message them.',
+      )}
       primaryAction={
         <Button type="button" variant="secondary">
           {t('customerPages.taskerProfile.openProfile', 'Open profile')}
@@ -40,9 +43,14 @@ export function CustomerTaskerProfilePage() {
             <AvatarFallback className="bg-primary/10 text-primary">VT</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <CardTitle>{t('customerPages.taskerProfile.verifiedTasker', 'Verified Tasker')}</CardTitle>
+            <CardTitle>
+              {t('customerPages.taskerProfile.verifiedTasker', 'Verified Tasker')}
+            </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {t('customerPages.taskerProfile.trustedDesc', 'Trusted for Phase 1 customer bookings and direct settlement flows.')}
+              {t(
+                'customerPages.taskerProfile.trustedDesc',
+                'Trusted for Phase 1 customer bookings and direct settlement flows.',
+              )}
             </p>
           </div>
         </CardHeader>
@@ -53,7 +61,10 @@ export function CustomerTaskerProfilePage() {
           </div>
           <div className="flex items-center gap-2">
             <MessageSquareText className="h-4 w-4 text-primary" />
-            {t('customerPages.taskerProfile.respondsQuickly', 'Responds quickly during business hours')}
+            {t(
+              'customerPages.taskerProfile.respondsQuickly',
+              'Responds quickly during business hours',
+            )}
           </div>
         </CardContent>
       </Card>

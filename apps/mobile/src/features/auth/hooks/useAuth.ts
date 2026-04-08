@@ -34,9 +34,7 @@ export function useVerifyOtp() {
         // Still navigate, profile might be fetched later or retry.
       }
 
-      router.replace(
-        resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding),
-      );
+      router.replace(resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding));
     },
   });
 }
@@ -126,9 +124,7 @@ export function useDevLogin() {
         }
       }
 
-      router.replace(
-        resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding),
-      );
+      router.replace(resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding));
     },
   });
 }

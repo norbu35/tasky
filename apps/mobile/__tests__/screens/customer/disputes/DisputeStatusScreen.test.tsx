@@ -72,14 +72,18 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('shows open dispute description', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.')).toBeTruthy();
+    expect(
+      screen.getByText('Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.'),
+    ).toBeTruthy();
   });
 
   it('renders escalated status', () => {
     mockDisputeData = { id: 'dispute-123', status: 'ESCALATED', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
     expect(screen.getByText('Мөрдөн шалгаж байна')).toBeTruthy();
-    expect(screen.getByText('Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.')).toBeTruthy();
+    expect(
+      screen.getByText('Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.'),
+    ).toBeTruthy();
   });
 
   it('renders resolved for customer status', () => {
@@ -90,7 +94,9 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
     };
     render(<DisputeStatusScreen />);
     expect(screen.getByText('Хэрэглэгчийн талд шийдэгдсэн')).toBeTruthy();
-    expect(screen.getByText('Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.')).toBeTruthy();
+    expect(
+      screen.getByText('Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.'),
+    ).toBeTruthy();
   });
 
   it('renders resolved for tasker status', () => {
@@ -147,7 +153,9 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('shows mediation note', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.')).toBeTruthy();
+    expect(
+      screen.getByText('Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.'),
+    ).toBeTruthy();
   });
 
   it('shows error state with retry', () => {

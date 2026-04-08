@@ -1,10 +1,6 @@
 import React from 'react';
 import { type StyleProp, type ViewStyle, View } from 'react-native';
-import {
-  SafeAreaView,
-  type Edge,
-  type SafeAreaViewProps,
-} from 'react-native-safe-area-context';
+import { SafeAreaView, type Edge, type SafeAreaViewProps } from 'react-native-safe-area-context';
 import { cn } from '../../lib/cn';
 
 type ScreenContainerProps = {

@@ -91,9 +91,7 @@ export function ModalSheetTemplate({
         <BottomSheetView
           style={{ paddingHorizontal: spacing.lg, paddingBottom: insets.bottom + spacing.lg }}
         >
-          {title && (
-            <Text className="text-title font-semibold text-primary mb-lg">{title}</Text>
-          )}
+          {title && <Text className="text-title font-semibold text-primary mb-lg">{title}</Text>}
           <View className="gap-md">{children}</View>
         </BottomSheetView>
       </BottomSheet>

@@ -149,7 +149,11 @@ export default function CustomerInstantMatchScreen() {
         </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
-          <View className="items-center justify-center" style={{ height: 220 }} testID="instant-match-rings">
+          <View
+            className="items-center justify-center"
+            style={{ height: 220 }}
+            testID="instant-match-rings"
+          >
             {/* rings: absolute positioning + precise pixel sizes → imperative */}
             <View
               style={{
@@ -187,7 +191,11 @@ export default function CustomerInstantMatchScreen() {
           </View>
         )}
 
-        <View className="bg-card rounded-lg p-lg gap-md" style={elevations.soft} testID="instant-match-task-card">
+        <View
+          className="bg-card rounded-lg p-lg gap-md"
+          style={elevations.soft}
+          testID="instant-match-task-card"
+        >
           <View className="flex-row items-center gap-md">
             <ProfileAvatar
               size="md"
@@ -244,7 +252,9 @@ export default function CustomerInstantMatchScreen() {
               {t('matching.instantMatch.matchedStatus')}
             </Text>
             <Text className="text-label text-textSecondary text-center">
-              {t('matching.instantMatch.countdownLabel')}{t('CustomerInstantMatchScreen.copy6')}</Text>
+              {t('matching.instantMatch.countdownLabel')}
+              {t('CustomerInstantMatchScreen.copy6')}
+            </Text>
             <Button
               testID="instant-match-confirm-booking"
               label={t('matching.instantMatch.confirmBooking')}
@@ -272,10 +282,7 @@ export default function CustomerInstantMatchScreen() {
 
         {matchState === 'error_no_eligible' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
-            <Toast
-              variant="error"
-              message={t('matching.instantMatch.noEligibleTitle')}
-            />
+            <Toast variant="error" message={t('matching.instantMatch.noEligibleTitle')} />
             <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {t('CustomerInstantMatchScreen.copy9')}
             </Text>

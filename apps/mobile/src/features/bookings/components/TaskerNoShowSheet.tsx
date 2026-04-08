@@ -50,12 +50,8 @@ export function TaskerNoShowSheet({
         </View>
       ) : hasFlagged ? (
         <View style={styles.contentContainer} testID="no-show-sheet-success">
-          <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.flaggedHeading')}
-          </Text>
-          <Text style={styles.description}>
-            {t('TaskerNoShowSheet.copy1')}
-          </Text>
+          <Text style={styles.heading}>{t('tasker.jobs.noShow.flaggedHeading')}</Text>
+          <Text style={styles.description}>{t('TaskerNoShowSheet.copy1')}</Text>
           <Button
             label={t('tasker.jobs.noShow.doneButton')}
             onPress={onClose}
@@ -64,12 +60,8 @@ export function TaskerNoShowSheet({
         </View>
       ) : isReminderPhase ? (
         <View style={styles.contentContainer}>
-          <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.reminderHeading')}
-          </Text>
-          <Text style={styles.description}>
-            {t('TaskerNoShowSheet.copy2')}
-          </Text>
+          <Text style={styles.heading}>{t('tasker.jobs.noShow.reminderHeading')}</Text>
+          <Text style={styles.description}>{t('TaskerNoShowSheet.copy2')}</Text>
           <Button
             label={t('tasker.jobs.noShow.arrivedButton')}
             variant="outline"
@@ -85,18 +77,11 @@ export function TaskerNoShowSheet({
         </View>
       ) : isFlagAvailable ? (
         <View style={styles.contentContainer}>
-          <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.flagHeading')}
-          </Text>
-          <Text style={styles.description}>
-            {t('TaskerNoShowSheet.copy3')}
-          </Text>
+          <Text style={styles.heading}>{t('tasker.jobs.noShow.flagHeading')}</Text>
+          <Text style={styles.description}>{t('TaskerNoShowSheet.copy3')}</Text>
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              {t(
-                'tasker.jobs.noShow.warning',
-                t('TaskerNoShowSheet.copy4'),
-              )}
+              {t('tasker.jobs.noShow.warning', t('TaskerNoShowSheet.copy4'))}
             </Text>
           </View>
           <Button

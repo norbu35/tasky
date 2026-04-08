@@ -45,7 +45,10 @@ export function ActionSheet({ isOpen, onClose, actions, testID, className }: Act
               className="flex-row items-center px-lg py-md min-h-[48px]"
               style={
                 index < actions.length - 1
-                  ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: mobileTheme.colors.border }
+                  ? {
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      borderBottomColor: mobileTheme.colors.border,
+                    }
                   : undefined
               }
               onPress={() => {
@@ -56,14 +59,22 @@ export function ActionSheet({ isOpen, onClose, actions, testID, className }: Act
               accessibilityLabel={action.label}
             >
               {action.icon && <View className="mr-md">{action.icon}</View>}
-              <Text className={cn('text-body font-sans text-foreground', action.destructive && 'text-danger')}>
+              <Text
+                className={cn(
+                  'text-body font-sans text-foreground',
+                  action.destructive && 'text-danger',
+                )}
+              >
                 {action.label}
               </Text>
             </Pressable>
           ))}
           <Pressable
             className="items-center py-md mt-sm"
-            style={{ borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: mobileTheme.colors.border }}
+            style={{
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: mobileTheme.colors.border,
+            }}
             onPress={onClose}
             accessibilityRole="button"
           >

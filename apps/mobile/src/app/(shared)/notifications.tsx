@@ -1,12 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  FlatList,
-  Pressable,
-  RefreshControl,
-  Text,
-  View,
-  type ListRenderItem,
-} from 'react-native';
+import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Bell, Briefcase, MessageSquare, ShieldAlert, Star } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +17,7 @@ type Row =
   | { type: 'section'; id: string; label: string }
   | { type: 'notification'; id: string; notification: Notification };
 
-function formatRelativeTimestamp(timestamp: string): string {
+function formatRelativeTimestamp(timestamp: string, t: (key: string) => string): string {
   const date = new Date(timestamp);
   const diffMs = Date.now() - date.getTime();
   const diffMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
@@ -93,10 +86,16 @@ function buildRows(notifications: Notification[], todayLabel: string, earlierLab
 
 function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor: string } {
   if (/message/i.test(title)) {
-    return { icon: <MessageSquare size={18} color={colors.foreground} />, shellColor: colors.chipInactive };
+    return {
+      icon: <MessageSquare size={18} color={colors.foreground} />,
+      shellColor: colors.chipInactive,
+    };
   }
   if (/booking/i.test(title)) {
-    return { icon: <Briefcase size={18} color={colors.primaryDeep} />, shellColor: colors.statusOpen };
+    return {
+      icon: <Briefcase size={18} color={colors.primaryDeep} />,
+      shellColor: colors.statusOpen,
+    };
   }
   if (/dispute/i.test(title)) {
     return {
@@ -107,7 +106,10 @@ function getNotificationMeta(title: string): { icon: React.ReactNode; shellColor
   if (/review/i.test(title)) {
     return { icon: <Star size={18} color={colors.primaryDeep} />, shellColor: colors.muted };
   }
-  return { icon: <Bell size={18} color={colors.primaryForeground} />, shellColor: colors.primaryDeep };
+  return {
+    icon: <Bell size={18} color={colors.primaryForeground} />,
+    shellColor: colors.primaryDeep,
+  };
 }
 
 export default function NotificationCenterScreen() {
@@ -157,7 +159,7 @@ export default function NotificationCenterScreen() {
             </Text>
             <View className="flex-row items-center gap-xs">
               <Text className="text-micro text-textTertiary">
-                {formatRelativeTimestamp(notification.created_at)}
+                {formatRelativeTimestamp(notification.created_at, t)}
               </Text>
               {!notification.read ? (
                 <View
@@ -167,7 +169,11 @@ export default function NotificationCenterScreen() {
               ) : null}
             </View>
           </View>
-          <Text className="mt-xs text-body text-textSecondary" style={{ lineHeight: 22 }} numberOfLines={2}>
+          <Text
+            className="mt-xs text-body text-textSecondary"
+            style={{ lineHeight: 22 }}
+            numberOfLines={2}
+          >
             {notification.body}
           </Text>
         </View>
@@ -205,7 +211,10 @@ export default function NotificationCenterScreen() {
           <Text className="text-title font-bold text-foreground text-center">
             {t('shared.notifications.errorTitle')}
           </Text>
-          <Text className="mt-sm text-body text-textSecondary text-center" style={{ lineHeight: 24 }}>
+          <Text
+            className="mt-sm text-body text-textSecondary text-center"
+            style={{ lineHeight: 24 }}
+          >
             {t('shared.notifications.errorBody')}
           </Text>
           <Button
@@ -231,7 +240,10 @@ export default function NotificationCenterScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           ListFooterComponent={
-            <View className="mt-xl bg-primaryDeep rounded-lg p-lg justify-end" style={{ height: 128 }}>
+            <View
+              className="mt-xl bg-primaryDeep rounded-lg p-lg justify-end"
+              style={{ height: 128 }}
+            >
               <Text className="text-[18px] font-extrabold text-primaryForeground">
                 {t('shared.notifications.promoBannerTitle')}
               </Text>

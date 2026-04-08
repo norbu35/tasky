@@ -117,7 +117,9 @@ describe('Button', () => {
 
   it('does not have textStyle prop (removed in cva migration)', () => {
     // textStyle prop was removed — labelClassName is the replacement
-    const { rerender } = render(<Button label="Go" labelClassName="text-red-500" testID="button" />);
+    const { rerender } = render(
+      <Button label="Go" labelClassName="text-red-500" testID="button" />,
+    );
     rerender(<Button label="Go" labelClassName="text-red-500" testID="button" />);
     // labelClassName should be accepted without TypeScript error (compile-time check)
     // At runtime just verify the button renders

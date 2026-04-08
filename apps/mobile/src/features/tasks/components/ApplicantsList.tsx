@@ -247,10 +247,7 @@ export function ApplicantsList() {
       ) : applicants.length === 0 ? (
         <EmptyState
           title={t('applicants.emptyTitle')}
-          subtitle={t(
-            'applicants.emptySubtitle',
-            t('ApplicantsList.copy1'),
-          )}
+          subtitle={t('applicants.emptySubtitle', t('ApplicantsList.copy1'))}
         />
       ) : (
         <FlatList

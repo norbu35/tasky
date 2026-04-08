@@ -29,7 +29,7 @@ function resolveState(value: string | string[] | undefined): ScreenState {
   return state === 'loading' || state === 'error' ? state : 'loaded';
 }
 
-function buildFaqSections(t: (key: string, fallback: string) => string): FaqSection[] {
+function buildFaqSections(t: (key: string) => string): FaqSection[] {
   return [
     {
       id: 'general',
@@ -243,10 +243,7 @@ function HelpErrorVisual() {
             justifyContent: 'center',
           }}
         >
-          <Text
-            className="text-caption font-sans-bold"
-            style={{ color: colors.dangerForeground }}
-          >
+          <Text className="text-caption font-sans-bold" style={{ color: colors.dangerForeground }}>
             ?
           </Text>
         </View>

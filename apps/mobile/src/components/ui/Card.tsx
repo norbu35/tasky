@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, ViewProps, TextProps, type StyleProp, type ViewStyle, type TextStyle } from 'react-native';
+import {
+  View,
+  Text,
+  ViewProps,
+  TextProps,
+  type StyleProp,
+  type ViewStyle,
+  type TextStyle,
+} from 'react-native';
 import { elevations } from '../../design/elevations';
 import { cn } from '../../lib/cn';
 
@@ -45,5 +53,7 @@ export function CardContent({ style, className, ...props }: CardViewProps) {
 }
 
 export function CardFooter({ style, className, ...props }: CardViewProps) {
-  return <View style={style} className={cn('p-lg pt-0 flex-row items-center', className)} {...props} />;
+  return (
+    <View style={style} className={cn('p-lg pt-0 flex-row items-center', className)} {...props} />
+  );
 }

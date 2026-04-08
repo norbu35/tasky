@@ -100,7 +100,9 @@ describe('AdminLeadPricingPage', () => {
   });
 
   it('shows error state on non-503 failure', async () => {
-    vi.mocked(mockApiClient.adminListLeadUnlockPrices!).mockRejectedValue(new Error('Network error'));
+    vi.mocked(mockApiClient.adminListLeadUnlockPrices!).mockRejectedValue(
+      new Error('Network error'),
+    );
     renderPage();
     await waitFor(() => {
       expect(screen.getByText(/load error/i)).toBeInTheDocument();

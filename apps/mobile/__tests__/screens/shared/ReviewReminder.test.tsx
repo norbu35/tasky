@@ -59,9 +59,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
     expect(screen.getByText('Үнэлгээ өгөхөө мартсан уу?')).toBeTruthy();
-    expect(
-      screen.getByText('Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг'),
-    ).toBeTruthy();
+    expect(screen.getByText('Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг')).toBeTruthy();
   });
 
   it('renders "Leave a Review" CTA button', () => {

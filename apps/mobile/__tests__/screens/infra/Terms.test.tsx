@@ -82,7 +82,9 @@ describe('TermsScreen', () => {
     render(<TermsScreen />);
 
     expect(screen.getByText('Ачааллах боломжгүй')).toBeTruthy();
-    expect(screen.getByText('Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу')).toBeTruthy();
+    expect(
+      screen.getByText('Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу'),
+    ).toBeTruthy();
 
     fireEvent.press(screen.getByText('Дахин оролдох'));
 

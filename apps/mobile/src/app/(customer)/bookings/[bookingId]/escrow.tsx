@@ -32,7 +32,8 @@ export default function EscrowScreen() {
 
   if (state === 'error') {
     return (
-      <ScrollView testID="SCR-P3-003"
+      <ScrollView
+        testID="SCR-P3-003"
         className="flex-1 bg-background"
         contentContainerStyle={{ padding: 24, gap: 16 }}
       >
@@ -110,7 +111,10 @@ export default function EscrowScreen() {
         </View>
 
         {state === 'confirm' && (
-          <View className="bg-muted rounded-lg p-xl gap-md mt-lg" testID="booking-escrow-confirm-sheet">
+          <View
+            className="bg-muted rounded-lg p-xl gap-md mt-lg"
+            testID="booking-escrow-confirm-sheet"
+          >
             <Text className="text-title font-sans-bold text-primaryDeep">
               {t('customer.bookings.escrowFlow.confirmTitle')}
             </Text>

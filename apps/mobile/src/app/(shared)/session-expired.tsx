@@ -20,7 +20,11 @@ export default function SessionExpiredScreen() {
   }, [router, setSession]);
 
   return (
-    <View className="flex-1 bg-background" style={{ position: 'relative', zIndex: 30 }} testID="SCR-INFRA-003">
+    <View
+      className="flex-1 bg-background"
+      style={{ position: 'relative', zIndex: 30 }}
+      testID="SCR-INFRA-003"
+    >
       <View style={StyleSheet.absoluteFillObject} className="bg-[rgba(16,38,56,0.35)]" />
       <ModalSheet
         visible

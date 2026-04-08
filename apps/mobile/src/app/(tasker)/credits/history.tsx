@@ -57,7 +57,10 @@ export default function TaskerCreditsHistoryScreen() {
             <Text className="text-label text-primaryForeground opacity-80">
               {t('tasker.credits.thisMonth')}
             </Text>
-            <Text className="font-extrabold text-card" style={{ fontSize: 32, lineHeight: 32 * (19 / 16) }}>
+            <Text
+              className="font-extrabold text-card"
+              style={{ fontSize: 32, lineHeight: 32 * (19 / 16) }}
+            >
               +12,400 ₮
             </Text>
             <Text className="text-body text-primaryForeground opacity-70">
@@ -67,14 +70,16 @@ export default function TaskerCreditsHistoryScreen() {
 
           <View className="gap-sm">
             {transactions.map((transaction) => (
-              <View key={transaction.id} className="p-lg rounded-lg bg-card gap-xs" style={elevations.soft}>
+              <View
+                key={transaction.id}
+                className="p-lg rounded-lg bg-card gap-xs"
+                style={elevations.soft}
+              >
                 <View className="flex-row justify-between gap-md">
                   <Text className="text-body font-bold text-foreground flex-1">
                     {transaction.title}
                   </Text>
-                  <Text className="text-body font-bold text-primary">
-                    {transaction.amount}
-                  </Text>
+                  <Text className="text-body font-bold text-primary">{transaction.amount}</Text>
                 </View>
                 <Text className="text-label text-textSecondary">{transaction.subtitle}</Text>
                 <Text className="text-caption text-textTertiary">{transaction.timestamp}</Text>

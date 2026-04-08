@@ -24,7 +24,9 @@ export function LocationPicker({ lat, lng, onChange }: LocationPickerProps) {
           <Marker width={40} anchor={[lat, lng]} color="hsl(var(--primary))" />
         </Map>
       </div>
-      <p className="text-xs text-muted-foreground">{t('taskCreation.locationPicker.hint', 'Click on the map to place the location pin.')}</p>
+      <p className="text-xs text-muted-foreground">
+        {t('taskCreation.locationPicker.hint', 'Click on the map to place the location pin.')}
+      </p>
     </div>
   );
 }

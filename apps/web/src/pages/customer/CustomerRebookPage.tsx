@@ -9,7 +9,10 @@ export function CustomerRebookPage() {
   return (
     <ResponsiveDetailShell
       title={t('customerPages.rebook.title', 'Rebook task')}
-      description={t('customerPages.rebook.description', 'Start a new booking from the prior task details without breaking direct settlement.')}
+      description={t(
+        'customerPages.rebook.description',
+        'Start a new booking from the prior task details without breaking direct settlement.',
+      )}
       primaryAction={
         <Button type="button" variant="secondary">
           {t('customerPages.rebook.continueAction', 'Continue rebook')}
@@ -21,7 +24,10 @@ export function CustomerRebookPage() {
           <CardTitle>{t('customerPages.rebook.cardTitle', 'Rebook summary')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          {t('customerPages.rebook.cardDesc', 'Reuse the same customer details while letting the user choose a fresh schedule.')}
+          {t(
+            'customerPages.rebook.cardDesc',
+            'Reuse the same customer details while letting the user choose a fresh schedule.',
+          )}
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

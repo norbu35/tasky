@@ -175,7 +175,8 @@ export default function ProfilePolishScreen() {
   };
 
   return (
-    <DetailTemplate testID="SCR-TASK-019"
+    <DetailTemplate
+      testID="SCR-TASK-019"
       ctaLabel={
         screenState === 'suggestion_ready'
           ? t('tasker.profilePolish.apply')
@@ -187,9 +188,7 @@ export default function ProfilePolishScreen() {
       }
       ctaDisabled={!sourceBio.trim()}
       secondaryCtaLabel={
-        screenState === 'generating'
-          ? undefined
-          : t('tasker.profilePolish.manualEdit')
+        screenState === 'generating' ? undefined : t('tasker.profilePolish.manualEdit')
       }
       secondaryCtaOnPress={
         screenState === 'generating'

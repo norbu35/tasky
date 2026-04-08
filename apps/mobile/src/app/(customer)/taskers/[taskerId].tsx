@@ -24,7 +24,8 @@ export default function TaskerProfileScreen() {
   const categories = ((profile as any)?.categories ?? []) as string[];
 
   return (
-    <DetailTemplate testID="SCR-CUST-013"
+    <DetailTemplate
+      testID="SCR-CUST-013"
       isLoading={isLoading}
       isError={isError}
       onRetry={profileQuery.refetch}
@@ -72,7 +73,10 @@ export default function TaskerProfileScreen() {
 
           {/* Stats Grid */}
           <View className="flex-row gap-md">
-            <View className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs" style={elevations.soft}>
+            <View
+              className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs"
+              style={elevations.soft}
+            >
               <Text className="text-heroTitle font-sans-bold text-foreground">
                 {(profile as any).completed_tasks ?? 0}
               </Text>
@@ -80,7 +84,10 @@ export default function TaskerProfileScreen() {
                 {t('customer.taskerProfile.completedJobs')}
               </Text>
             </View>
-            <View className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs" style={elevations.soft}>
+            <View
+              className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs"
+              style={elevations.soft}
+            >
               <Text className="text-heroTitle font-sans-bold text-foreground">
                 {((profile as any).rating_avg ?? 0).toFixed(1)}
               </Text>

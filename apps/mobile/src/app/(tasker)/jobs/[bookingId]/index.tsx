@@ -47,9 +47,7 @@ export default function BookingDetailTaskerScreen() {
       ctaLabel={isAssigned ? t('tasker.jobs.markDone') : undefined}
       ctaOnPress={isAssigned ? handleMarkDone : undefined}
       ctaLoading={markDone.isPending}
-      secondaryCtaLabel={
-        isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined
-      }
+      secondaryCtaLabel={isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined}
       secondaryCtaOnPress={
         isAssigned || isMarkedDone ? () => router.push(`/inbox/${bookingId}`) : undefined
       }

@@ -13,7 +13,12 @@ interface TrustBannerProps {
   className?: string;
 }
 
-export function TrustBanner({ title, description, variant = 'default', className }: TrustBannerProps) {
+export function TrustBanner({
+  title,
+  description,
+  variant = 'default',
+  className,
+}: TrustBannerProps) {
   const isCompact = variant === 'compact';
   return (
     <View
@@ -30,9 +35,7 @@ export function TrustBanner({ title, description, variant = 'default', className
     >
       <View
         style={
-          isCompact
-            ? { backgroundColor: 'rgba(101,62,0,0.1)' }
-            : { backgroundColor: colors.trust }
+          isCompact ? { backgroundColor: 'rgba(101,62,0,0.1)' } : { backgroundColor: colors.trust }
         }
         className={cn(
           'items-center justify-center',

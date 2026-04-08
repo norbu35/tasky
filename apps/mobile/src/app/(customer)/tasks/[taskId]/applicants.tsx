@@ -56,7 +56,9 @@ function ApplicantCard({
           <View className="flex-row items-center" style={{ gap: spacing.xs }}>
             <Star size={12} color={colors.accent} fill={colors.accent} />
             <Text className="text-label font-sans-bold text-foreground">{applicant.rating}</Text>
-            <Text className="text-caption text-text-secondary">({applicant.reviewCount} reviews)</Text>
+            <Text className="text-caption text-text-secondary">
+              ({applicant.reviewCount} reviews)
+            </Text>
           </View>
         </View>
         {applicant.isRecommended ? (
@@ -155,10 +157,7 @@ export default function ApplicantsListScreen() {
   return (
     <>
       <ScreenContainer testID="applicants-list-screen">
-        <View
-          className="flex-row items-center px-lg pt-lg pb-md"
-          style={{ gap: spacing.md }}
-        >
+        <View className="flex-row items-center px-lg pt-lg pb-md" style={{ gap: spacing.md }}>
           <Touchable
             onPress={() => router.back()}
             className="flex-row items-center"
@@ -167,19 +166,14 @@ export default function ApplicantsListScreen() {
             style={{ gap: spacing.xs }}
           >
             <ChevronLeft size={22} color={colors.primary} />
-            <Text className="text-body font-sans-semibold text-primary">
-              {t('common.back')}
-            </Text>
+            <Text className="text-body font-sans-semibold text-primary">{t('common.back')}</Text>
           </Touchable>
           <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
             <Text className="text-heading font-sans-bold text-primary-deep">
               {t('customer.applicants.pageTitle')}
             </Text>
             <Text className="text-caption text-text-secondary">
-              {t('customer.applicants.count').replace(
-                '{{count}}',
-                String(applicants.length),
-              )}
+              {t('customer.applicants.count').replace('{{count}}', String(applicants.length))}
             </Text>
           </View>
         </View>

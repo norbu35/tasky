@@ -31,9 +31,13 @@ export function ResponsiveFeedShell({
               <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
                 {title}
               </h1>
-              {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
+              {description ? (
+                <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>
+              ) : null}
             </div>
-            {primaryAction ? <div className="flex shrink-0 items-center gap-2">{primaryAction}</div> : null}
+            {primaryAction ? (
+              <div className="flex shrink-0 items-center gap-2">{primaryAction}</div>
+            ) : null}
           </header>
 
           <div className="space-y-4">{children}</div>

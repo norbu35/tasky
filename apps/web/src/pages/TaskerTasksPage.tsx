@@ -107,8 +107,12 @@ export function TaskerTasksPage() {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-end gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{t('taskerTasks.title', 'My Bookings')}</h1>
-            <p className="text-muted-foreground mt-1">{t('taskerTasks.subtitle', 'Manage your accepted jobs and past work.')}</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('taskerTasks.title', 'My Bookings')}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {t('taskerTasks.subtitle', 'Manage your accepted jobs and past work.')}
+            </p>
           </div>
           <Button onClick={() => navigate('/tasker/tasks')} variant="secondary" className="gap-2">
             <Rocket className="w-4 h-4" />
@@ -150,16 +154,25 @@ export function TaskerTasksPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
               <Rocket className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="mb-2">{t('taskerTasks.noBookingsTitle', 'No bookings yet')}</CardTitle>
+            <CardTitle className="mb-2">
+              {t('taskerTasks.noBookingsTitle', 'No bookings yet')}
+            </CardTitle>
             <CardDescription className="mb-6 max-w-sm">
-              {t('taskerTasks.noBookingsDesc', "You haven't been assigned to any tasks yet. Head over to the feed to find and apply for jobs.")}
+              {t(
+                'taskerTasks.noBookingsDesc',
+                "You haven't been assigned to any tasks yet. Head over to the feed to find and apply for jobs.",
+              )}
             </CardDescription>
-            <Button onClick={() => navigate('/tasker/tasks')}>{t('taskerTasks.browseAvailableTasks', 'Browse available tasks')}</Button>
+            <Button onClick={() => navigate('/tasker/tasks')}>
+              {t('taskerTasks.browseAvailableTasks', 'Browse available tasks')}
+            </Button>
           </Card>
         ) : (
           <Tabs defaultValue="active" className="w-full mt-4">
             <TabsList className="mb-4">
-              <TabsTrigger value="active">{t('taskerTasks.tabActive', 'Active Bookings')}</TabsTrigger>
+              <TabsTrigger value="active">
+                {t('taskerTasks.tabActive', 'Active Bookings')}
+              </TabsTrigger>
               <TabsTrigger value="past">{t('taskerTasks.tabPast', 'Past Work')}</TabsTrigger>
             </TabsList>
 

@@ -67,15 +67,10 @@ export function TaskerCancelSheet({
         </View>
       ) : (
         <View style={styles.contentContainer}>
-          <Text style={styles.heading}>
-            {t('tasker.jobs.cancel.heading')}
-          </Text>
+          <Text style={styles.heading}>{t('tasker.jobs.cancel.heading')}</Text>
 
           <Text style={styles.description}>
-            {t(
-              'tasker.jobs.cancel.description',
-              t('TaskerCancelSheet.copy1'),
-            )}
+            {t('tasker.jobs.cancel.description', t('TaskerCancelSheet.copy1'))}
           </Text>
 
           {strikeCount > 0 && !hasSuspensionRisk && (
@@ -87,28 +82,22 @@ export function TaskerCancelSheet({
                 )}
               </Text>
               <Text style={styles.strikeCount}>
-                {`${strikeCount}/3`}{' '}
-                {t('tasker.jobs.cancel.strikeCountLabel')}
+                {`${strikeCount}/3`} {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
 
           {hasSuspensionRisk && (
             <View style={styles.dangerBox}>
-              <Text style={styles.suspensionWarning}>
-                {t('TaskerCancelSheet.copy2')}
-              </Text>
+              <Text style={styles.suspensionWarning}>{t('TaskerCancelSheet.copy2')}</Text>
               <Text style={styles.strikeCount}>
-                {`${strikeCount}/3`}{' '}
-                {t('tasker.jobs.cancel.strikeCountLabel')}
+                {`${strikeCount}/3`} {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
 
           <View style={styles.reasonSection}>
-            <Text style={styles.reasonLabel}>
-              {t('tasker.jobs.cancel.reasonLabel')}
-            </Text>
+            <Text style={styles.reasonLabel}>{t('tasker.jobs.cancel.reasonLabel')}</Text>
             <View style={styles.reasonList}>
               {reasons.map((reason) => {
                 const isSelected = selectedReason === reason;
@@ -119,7 +108,9 @@ export function TaskerCancelSheet({
                     style={[styles.reasonChip, isSelected && styles.reasonChipSelected]}
                     testID={`cancel-reason-${reason}`}
                   >
-                    <Text style={[styles.reasonChipText, isSelected && styles.reasonChipTextSelected]}>
+                    <Text
+                      style={[styles.reasonChipText, isSelected && styles.reasonChipTextSelected]}
+                    >
                       {reason}
                     </Text>
                   </Pressable>
@@ -130,9 +121,7 @@ export function TaskerCancelSheet({
 
           {!hasSuspensionRisk && strikeCount === 0 && (
             <View style={styles.noteBox}>
-              <Text style={styles.noteText}>
-                {t('TaskerCancelSheet.copy3')}
-              </Text>
+              <Text style={styles.noteText}>{t('TaskerCancelSheet.copy3')}</Text>
             </View>
           )}
 

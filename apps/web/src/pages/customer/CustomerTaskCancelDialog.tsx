@@ -11,7 +11,10 @@ export function CustomerTaskCancelDialog() {
     <StatePanel
       icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
       title={t('customerPages.taskCancel.title', 'Cancel task?')}
-      description={t('customerPages.taskCancel.description', 'Stopping this task will remove it from the active customer flow.')}
+      description={t(
+        'customerPages.taskCancel.description',
+        'Stopping this task will remove it from the active customer flow.',
+      )}
       tone="warning"
       actions={
         <>

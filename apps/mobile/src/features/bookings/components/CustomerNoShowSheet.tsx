@@ -41,9 +41,7 @@ export function CustomerNoShowSheet({
   if (state === 'flagged') {
     return (
       <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="customer-no-show-sheet">
-        <Text style={styles.successText}>
-          {t('customer.bookings.noShowFlaggedSuccess')}
-        </Text>
+        <Text style={styles.successText}>{t('customer.bookings.noShowFlaggedSuccess')}</Text>
       </ModalSheetTemplate>
     );
   }
@@ -56,9 +54,7 @@ export function CustomerNoShowSheet({
         title={t('customer.bookings.noShowReminderTitle')}
         testID="customer-no-show-sheet"
       >
-        <Text style={styles.description}>
-          {t('CustomerNoShowSheet.copy1')}
-        </Text>
+        <Text style={styles.description}>{t('CustomerNoShowSheet.copy1')}</Text>
         <Button
           label={t('customer.bookings.ctaTaskerArrived')}
           onPress={handleArrived}
@@ -82,9 +78,7 @@ export function CustomerNoShowSheet({
       title={t('customer.bookings.noShowFlagTitle')}
       testID="customer-no-show-sheet"
     >
-      <Text style={styles.description}>
-        {t('CustomerNoShowSheet.copy2')}
-      </Text>
+      <Text style={styles.description}>{t('CustomerNoShowSheet.copy2')}</Text>
       <Button
         label={t('customer.bookings.ctaFlagNoShow')}
         variant="destructive"
@@ -99,9 +93,7 @@ export function CustomerNoShowSheet({
         testID="no-show-dismiss-btn"
       />
       <View style={styles.noteContainer}>
-        <Text style={styles.noteText}>
-          {t('CustomerNoShowSheet.copy3')}
-        </Text>
+        <Text style={styles.noteText}>{t('CustomerNoShowSheet.copy3')}</Text>
       </View>
     </ModalSheetTemplate>
   );

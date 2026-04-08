@@ -66,8 +66,12 @@ export default function LoginScreen() {
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher')}
         >
-          <Text className="text-caption font-sans-bold" style={{ color: colors.primaryDeep, letterSpacing: 0.35 }}>
-            {t('LoginScreen.copy2')}</Text>
+          <Text
+            className="text-caption font-sans-bold"
+            style={{ color: colors.primaryDeep, letterSpacing: 0.35 }}
+          >
+            {t('LoginScreen.copy2')}
+          </Text>
         </Pressable>
       }
       bottomSlot={
@@ -92,14 +96,21 @@ export default function LoginScreen() {
           </Button>
 
           {state === 'error' && errorMessage ? (
-            <Text testID="login-error" className="text-body text-center" style={{ color: colors.danger }}>
+            <Text
+              testID="login-error"
+              className="text-body text-center"
+              style={{ color: colors.danger }}
+            >
               {errorMessage}
             </Text>
           ) : null}
 
           {devAuthEnabled ? (
             <View className="gap-sm border-t border-border pt-lg">
-              <Text className="text-caption text-center uppercase" style={{ color: colors.textSecondary, letterSpacing: 1 }}>
+              <Text
+                className="text-caption text-center uppercase"
+                style={{ color: colors.textSecondary, letterSpacing: 1 }}
+              >
                 {t('auth.devBypass')}
               </Text>
               <Button
@@ -117,7 +128,9 @@ export default function LoginScreen() {
                 disabled={busy}
               />
               {devLogin.error ? (
-                <Text className="text-body text-center" style={{ color: colors.danger }}>{devLogin.error.message}</Text>
+                <Text className="text-body text-center" style={{ color: colors.danger }}>
+                  {devLogin.error.message}
+                </Text>
               ) : null}
             </View>
           ) : null}
@@ -143,7 +156,10 @@ export default function LoginScreen() {
               {t('auth.login.privacy')}
             </Text>
           </Pressable>
-          <Text className="text-body text-center" style={{ color: colors.textSecondary, opacity: 0.6 }}>
+          <Text
+            className="text-body text-center"
+            style={{ color: colors.textSecondary, opacity: 0.6 }}
+          >
             {t('auth.login.copyright')}
           </Text>
         </View>

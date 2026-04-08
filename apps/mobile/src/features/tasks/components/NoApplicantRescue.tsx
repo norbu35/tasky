@@ -51,20 +51,21 @@ export function NoApplicantRescue({
   const { t } = useTranslation();
 
   return (
-    <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="no-applicant-rescue" snapPoints={['86%']}>
+    <ModalSheetTemplate
+      isOpen={isOpen}
+      onClose={onClose}
+      testID="no-applicant-rescue"
+      snapPoints={['86%']}
+    >
       <View style={styles.iconWrap}>
         <View style={styles.iconOuter}>
           <Sparkles size={28} color={colors.secondary} />
         </View>
       </View>
 
-      <Text style={styles.title}>
-        {t('customer.noApplicantRescue.title')}
-      </Text>
+      <Text style={styles.title}>{t('customer.noApplicantRescue.title')}</Text>
 
-      <Text style={styles.description}>
-        {t('NoApplicantRescue.copy1')}
-      </Text>
+      <Text style={styles.description}>{t('NoApplicantRescue.copy1')}</Text>
 
       <View style={styles.cardStack}>
         <RescueButton
@@ -90,9 +91,7 @@ export function NoApplicantRescue({
       </View>
 
       <View style={styles.noteCard}>
-        <Text style={styles.noteText}>
-          {t('NoApplicantRescue.copy5')}
-        </Text>
+        <Text style={styles.noteText}>{t('NoApplicantRescue.copy5')}</Text>
       </View>
 
       <Pressable onPress={onClose} style={styles.dismissButton} accessibilityRole="button">

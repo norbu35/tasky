@@ -27,7 +27,10 @@ export default function TaskerCancelBookingScreen() {
     <ScreenContainer testID="SCR-TASK-015">
       <ModalSheetTemplate
         isOpen={isOpen}
-        onClose={() => { setIsOpen(false); router.back(); }}
+        onClose={() => {
+          setIsOpen(false);
+          router.back();
+        }}
         title={t('tasker.cancelBooking.title')}
         testID="tasker-cancel-booking-sheet"
       >
@@ -45,7 +48,10 @@ export default function TaskerCancelBookingScreen() {
           <Button
             label={t('common.goBack')}
             variant="ghost"
-            onPress={() => { setIsOpen(false); router.back(); }}
+            onPress={() => {
+              setIsOpen(false);
+              router.back();
+            }}
             className="self-stretch"
           />
         </View>

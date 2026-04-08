@@ -55,7 +55,8 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <FormWizardTemplate testID="SCR-SHARED-013"
+    <FormWizardTemplate
+      testID="SCR-SHARED-013"
       currentStep={0}
       totalSteps={1}
       onNext={handleSave}

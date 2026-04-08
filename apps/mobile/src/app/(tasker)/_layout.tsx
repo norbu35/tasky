@@ -7,10 +7,7 @@ export default function TaskerLayout() {
   return (
     <Stack screenOptions={defaultStackScreenOptions}>
       {/* Task browsing */}
-      <Stack.Screen
-        name="tasks/[taskId]"
-        options={{ title: t('taskDetails.title') }}
-      />
+      <Stack.Screen name="tasks/[taskId]" options={{ title: t('taskDetails.title') }} />
       {/* Jobs */}
       <Stack.Screen name="jobs/index" options={{ headerShown: false }} />
       <Stack.Screen
@@ -18,24 +15,12 @@ export default function TaskerLayout() {
         options={{ title: t('tasker.jobs.bookingDetail') }}
       />
       {/* Stats */}
-      <Stack.Screen
-        name="stats"
-        options={{ title: t('tasker.stats.title') }}
-      />
+      <Stack.Screen name="stats" options={{ title: t('tasker.stats.title') }} />
       {/* Referrals */}
-      <Stack.Screen
-        name="referrals"
-        options={{ title: t('tasker.referrals.title') }}
-      />
+      <Stack.Screen name="referrals" options={{ title: t('tasker.referrals.title') }} />
       {/* Credits */}
-      <Stack.Screen
-        name="credits/index"
-        options={{ title: t('tasker.credits.title') }}
-      />
-      <Stack.Screen
-        name="credits/history"
-        options={{ title: t('tasker.credits.history') }}
-      />
+      <Stack.Screen name="credits/index" options={{ title: t('tasker.credits.title') }} />
+      <Stack.Screen name="credits/history" options={{ title: t('tasker.credits.history') }} />
       <Stack.Screen
         name="credits/pay"
         options={{
@@ -44,20 +29,14 @@ export default function TaskerLayout() {
         }}
       />
       {/* Profile polish */}
-      <Stack.Screen
-        name="profile/polish"
-        options={{ title: t('tasker.profilePolish.title') }}
-      />
+      <Stack.Screen name="profile/polish" options={{ title: t('tasker.profilePolish.title') }} />
       {/* Verification */}
       <Stack.Screen
         name="verification/upload"
         options={{ title: t('tasker.verification.uploadTitle') }}
       />
       {/* Subscription */}
-      <Stack.Screen
-        name="subscription"
-        options={{ title: t('tasker.subscription.title') }}
-      />
+      <Stack.Screen name="subscription" options={{ title: t('tasker.subscription.title') }} />
     </Stack>
   );
 }

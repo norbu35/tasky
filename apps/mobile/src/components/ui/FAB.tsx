@@ -59,12 +59,11 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
     }
   };
 
-  const tap = Gesture.Tap()
-    .onEnd(() => {
-      if (!isDragging.value) {
-        runOnJS(navigateToNewTask)();
-      }
-    });
+  const tap = Gesture.Tap().onEnd(() => {
+    if (!isDragging.value) {
+      runOnJS(navigateToNewTask)();
+    }
+  });
 
   const pan = Gesture.Pan()
     .minDistance(DRAG_THRESHOLD)

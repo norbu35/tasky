@@ -116,7 +116,8 @@ export default function UploadScreen() {
   const nextLabel = isLastStep ? t('tasker.verification.submitButton') : t('common.next');
 
   return (
-    <FormWizardTemplate testID="SCR-TASK-005"
+    <FormWizardTemplate
+      testID="SCR-TASK-005"
       currentStep={currentStep}
       totalSteps={STEPS.length}
       onNext={handleNext}
@@ -191,9 +192,7 @@ export default function UploadScreen() {
           testID="capture-camera-btn"
         >
           <Camera size={20} color={colors.primary} />
-          <Text className="text-body text-primary">
-            {t('tasker.verification.uploadCapture')}
-          </Text>
+          <Text className="text-body text-primary">{t('tasker.verification.uploadCapture')}</Text>
         </Pressable>
 
         <Pressable
@@ -202,9 +201,7 @@ export default function UploadScreen() {
           testID="capture-gallery-btn"
         >
           <ImageIcon size={20} color={colors.primary} />
-          <Text className="text-body text-primary">
-            {t('tasker.verification.uploadGallery')}
-          </Text>
+          <Text className="text-body text-primary">{t('tasker.verification.uploadGallery')}</Text>
         </Pressable>
       </View>
     </FormWizardTemplate>

@@ -96,10 +96,7 @@ export function BookingConfirmationPage() {
         <Alert variant="destructive">
           <AlertTitle>{t('bookingConfirmation.invalidRequestTitle', 'Invalid Request')}</AlertTitle>
           <AlertDescription>
-            {t(
-              'bookingConfirmation.invalidRequestDesc',
-              'Booking intent is missing from the URL.',
-            )}
+            {t('bookingConfirmation.invalidRequestDesc', 'Booking intent is missing from the URL.')}
           </AlertDescription>
         </Alert>
         <Button variant="ghost" className="mt-4" onClick={() => navigate('/customer/tasks')}>
@@ -110,7 +107,9 @@ export function BookingConfirmationPage() {
   }
 
   const task = tasksPage?.data.find((t) => t.id === taskId);
-  const application = applicationId ? appsPage?.data.find((a) => a.id === applicationId) : undefined;
+  const application = applicationId
+    ? appsPage?.data.find((a) => a.id === applicationId)
+    : undefined;
 
   if (successBooking) {
     return (
@@ -248,7 +247,10 @@ export function BookingConfirmationPage() {
               ) : (
                 <p className="text-sm text-muted-foreground">
                   {source === 'rebook'
-                    ? t('bookingConfirmation.rebookTaskerPending', 'Tasker details will load after confirmation.')
+                    ? t(
+                        'bookingConfirmation.rebookTaskerPending',
+                        'Tasker details will load after confirmation.',
+                      )
                     : t(
                         'bookingConfirmation.applicantLoadError',
                         'Applicant details could not be loaded.',

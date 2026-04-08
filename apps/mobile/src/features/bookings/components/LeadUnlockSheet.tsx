@@ -87,17 +87,13 @@ export function LeadUnlockSheet({
         ) : isDeclined ? (
           <View style={styles.stateStack}>
             <Text style={styles.title}>{t('LeadUnlockSheet.copy6')}</Text>
-            <Text style={styles.subtitle}>
-              {t('LeadUnlockSheet.copy7')}
-            </Text>
+            <Text style={styles.subtitle}>{t('LeadUnlockSheet.copy7')}</Text>
             <Button label={t('LeadUnlockSheet.copy8')} onPress={onClose} />
           </View>
         ) : isExpired ? (
           <View style={styles.stateStack}>
             <Text style={styles.title}>{t('LeadUnlockSheet.copy9')}</Text>
-            <Text style={styles.subtitle}>
-              {t('LeadUnlockSheet.copy10')}
-            </Text>
+            <Text style={styles.subtitle}>{t('LeadUnlockSheet.copy10')}</Text>
             <Button label={t('LeadUnlockSheet.copy11')} onPress={onClose} />
           </View>
         ) : (

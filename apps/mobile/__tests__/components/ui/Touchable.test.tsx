@@ -42,7 +42,9 @@ describe('Touchable', () => {
         <Text>No testID</Text>
       </Touchable>,
     );
-    expect(warnSpy).toHaveBeenCalledWith('Touchable: testID is required for all interactive elements');
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Touchable: testID is required for all interactive elements',
+    );
     warnSpy.mockRestore();
   });
 

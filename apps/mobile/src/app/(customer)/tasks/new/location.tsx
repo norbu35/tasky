@@ -130,10 +130,7 @@ export default function LocationScreen() {
         </View>
 
         {/* mapControls: absolute position → imperative */}
-        <View
-          style={{ position: 'absolute', right: 12, bottom: 12 }}
-          className="gap-sm"
-        >
+        <View style={{ position: 'absolute', right: 12, bottom: 12 }} className="gap-sm">
           <Pressable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
@@ -161,14 +158,10 @@ export default function LocationScreen() {
       <View className="mt-sm rounded-lg p-lg bg-muted gap-lg" testID="location-current-card">
         <View className="gap-xs">
           <Text className="text-subtitle font-extrabold text-primaryDeep">
-            {pin
-              ? t('LocationScreen.locationPinnedArea')
-              : t('LocationScreen.locationAwaitingPin')}
+            {pin ? t('LocationScreen.locationPinnedArea') : t('LocationScreen.locationAwaitingPin')}
           </Text>
           <Text className="text-caption text-textSecondary">
-            {pin
-              ? t('LocationScreen.pinSet')
-              : t('LocationScreen.tapToPin')}
+            {pin ? t('LocationScreen.pinSet') : t('LocationScreen.tapToPin')}
           </Text>
         </View>
 

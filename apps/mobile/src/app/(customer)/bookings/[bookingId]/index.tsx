@@ -23,7 +23,7 @@ function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancell
   return 'assigned';
 }
 
-function getStatusLabel(status: string, t: (key: string, fb: string) => string): string {
+function getStatusLabel(status: string, t: (key: string) => string): string {
   switch (status) {
     case 'ASSIGNED':
       return t('customer.bookings.statusAssigned');
@@ -42,7 +42,7 @@ function getStatusLabel(status: string, t: (key: string, fb: string) => string):
 
 function getCtaConfig(
   booking: any,
-  t: (key: string, fb: string) => string,
+  t: (key: string) => string,
 ): { label: string; action: string } | null {
   switch (booking?.status) {
     case 'ASSIGNED':

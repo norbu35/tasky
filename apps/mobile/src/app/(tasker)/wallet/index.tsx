@@ -14,9 +14,7 @@ export default function WalletScreen() {
       className="flex-1 bg-background"
       contentContainerClassName="p-xl gap-lg"
     >
-      <Text className="text-heading font-bold text-primaryDeep">
-        {t('tasker.wallet.title')}
-      </Text>
+      <Text className="text-heading font-bold text-primaryDeep">{t('tasker.wallet.title')}</Text>
       <View className="bg-primaryDeep rounded-lg p-xl gap-sm">
         <Text className="text-label text-primaryForeground opacity-80">
           {t('tasker.wallet.availableBalance')}

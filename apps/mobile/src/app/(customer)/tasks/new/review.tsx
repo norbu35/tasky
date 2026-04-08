@@ -122,12 +122,16 @@ function SectionCard({
       style={featured ? elevations.soft : undefined}
     >
       <View className="flex-row justify-between items-center">
-        <Text className={`text-caption font-bold${featured ? ' text-primaryForeground/80' : ' text-textSecondary'}`}>
+        <Text
+          className={`text-caption font-bold${featured ? ' text-primaryForeground/80' : ' text-textSecondary'}`}
+        >
           {label}
         </Text>
         {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
-            <Text className={`text-caption font-bold${featured ? ' text-accent' : ' text-primaryDeep'}`}>
+            <Text
+              className={`text-caption font-bold${featured ? ' text-accent' : ' text-primaryDeep'}`}
+            >
               {t('ReviewSubmitScreen.edit')}
             </Text>
           </Pressable>
@@ -138,7 +142,9 @@ function SectionCard({
         {icon ? (
           <View
             className="w-7 h-7 rounded-md items-center justify-center"
-            style={{ backgroundColor: featured ? `${colors.primaryForeground}1F` : `${colors.primary}14` }}
+            style={{
+              backgroundColor: featured ? `${colors.primaryForeground}1F` : `${colors.primary}14`,
+            }}
           >
             {icon}
           </View>
@@ -160,11 +166,10 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
   const slots = photos.slice(0, 3);
 
   return (
-      <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
+    <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
       <View className="flex-row justify-between items-center">
         <Text className="text-caption font-bold text-textSecondary">
-          {t('ReviewSubmitScreen.sectionPhotos')}{' '}
-          {photos.length > 0 ? `(${photos.length})` : ''}
+          {t('ReviewSubmitScreen.sectionPhotos')} {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
         <Pressable onPress={onEdit} accessibilityRole="button">
           <Text className="text-caption font-bold text-primaryDeep">
@@ -199,9 +204,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
       </View>
 
       {photos.length === 0 ? (
-        <Text className="text-caption text-textSecondary">
-          {t('ReviewSubmitScreen.noPhotos')}
-        </Text>
+        <Text className="text-caption text-textSecondary">{t('ReviewSubmitScreen.noPhotos')}</Text>
       ) : null}
     </View>
   );
@@ -261,11 +264,11 @@ export default function ReviewSubmitScreen() {
     // Dev bypass: skip API call and navigate directly to success screen
     if (devAuthEnabled) {
       router.replace({
-      pathname: '/(customer)/tasks/new/success',
-      params: { taskId: 'dev-task-00000000' },
-    });
-    return;
-  }
+        pathname: '/(customer)/tasks/new/success',
+        params: { taskId: 'dev-task-00000000' },
+      });
+      return;
+    }
 
     try {
       setSubmitError(null);
@@ -286,9 +289,7 @@ export default function ReviewSubmitScreen() {
       });
       const taskId = extractTaskId(createdTask);
       if (!taskId) {
-        throw new Error(
-          t('ReviewSubmitScreen.submitUnexpectedResponse'),
-        );
+        throw new Error(t('ReviewSubmitScreen.submitUnexpectedResponse'));
       }
 
       router.replace({

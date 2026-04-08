@@ -14,7 +14,10 @@ export function ReviewPage() {
   return (
     <ResponsiveWizardShell
       title={t('sharedPages.review.title', 'Leave a review')}
-      description={t('sharedPages.review.description', 'Capture a quick quality signal before the journey closes.')}
+      description={t(
+        'sharedPages.review.description',
+        'Capture a quick quality signal before the journey closes.',
+      )}
       footer={
         <Button onClick={() => setSubmitted(true)} type="button">
           {t('sharedPages.review.submitAction', 'Submit review')}
@@ -46,7 +49,9 @@ export function ReviewPage() {
         {submitted ? (
           <StatePanel
             title={t('sharedPages.review.thanksTitle', 'Thanks for submitting feedback.')}
-            description={t('sharedPages.review.ratingRecorded', 'Rating recorded{{rating}}.', { rating: rating ? `: ${rating}/5` : '' })}
+            description={t('sharedPages.review.ratingRecorded', 'Rating recorded{{rating}}.', {
+              rating: rating ? `: ${rating}/5` : '',
+            })}
             tone="muted"
           />
         ) : null}

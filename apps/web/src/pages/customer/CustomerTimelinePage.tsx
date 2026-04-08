@@ -10,7 +10,10 @@ export function CustomerTimelinePage() {
   return (
     <ResponsiveDetailShell
       title={t('customerPages.timeline.title', 'Booking timeline')}
-      description={t('customerPages.timeline.description', 'Follow the booking from confirmation to completion and disputes.')}
+      description={t(
+        'customerPages.timeline.description',
+        'Follow the booking from confirmation to completion and disputes.',
+      )}
       primaryAction={
         <Button type="button" variant="secondary">
           {t('customerPages.timeline.backAction', 'Back to booking')}
@@ -24,9 +27,23 @@ export function CustomerTimelinePage() {
         <CardContent>
           <TimelineList
             items={[
-              { label: t('customerPages.timeline.step1', 'Booking confirmed'), detail: t('customerPages.timeline.step1Desc', 'Customer accepted the tasker'), tone: 'completed' },
-              { label: t('customerPages.timeline.step2', 'Task in progress'), detail: t('customerPages.timeline.step2Desc', 'Tasker is on the way'), tone: 'active' },
-              { label: t('customerPages.timeline.step3', 'Awaiting completion'), detail: t('customerPages.timeline.step3Desc', 'Capture final review or raise a dispute') },
+              {
+                label: t('customerPages.timeline.step1', 'Booking confirmed'),
+                detail: t('customerPages.timeline.step1Desc', 'Customer accepted the tasker'),
+                tone: 'completed',
+              },
+              {
+                label: t('customerPages.timeline.step2', 'Task in progress'),
+                detail: t('customerPages.timeline.step2Desc', 'Tasker is on the way'),
+                tone: 'active',
+              },
+              {
+                label: t('customerPages.timeline.step3', 'Awaiting completion'),
+                detail: t(
+                  'customerPages.timeline.step3Desc',
+                  'Capture final review or raise a dispute',
+                ),
+              },
             ]}
           />
         </CardContent>

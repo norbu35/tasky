@@ -20,7 +20,10 @@ export default function TaskerCreditsIndexScreen() {
           <Text className="text-label text-primaryForeground opacity-80">
             {t('tasker.credits.availableBalance')}
           </Text>
-          <Text className="font-extrabold text-card" style={{ fontSize: 36, lineHeight: 36 * (7 / 6) }}>
+          <Text
+            className="font-extrabold text-card"
+            style={{ fontSize: 36, lineHeight: 36 * (7 / 6) }}
+          >
             {balanceText}
           </Text>
           <Text className="text-body text-primaryForeground opacity-70">
@@ -64,12 +67,8 @@ export default function TaskerCreditsIndexScreen() {
             onPress={() => router.push('/(tasker)/referrals')}
             testID="tasker-credits-referrals"
           >
-            <Text className="text-label font-bold text-primary">
-              {t('tasker.referrals.title')}
-            </Text>
-            <Text className="text-body text-textSecondary">
-              {t('tasker.referrals.inviteBody')}
-            </Text>
+            <Text className="text-label font-bold text-primary">{t('tasker.referrals.title')}</Text>
+            <Text className="text-body text-textSecondary">{t('tasker.referrals.inviteBody')}</Text>
           </Pressable>
         </View>
 
@@ -78,18 +77,9 @@ export default function TaskerCreditsIndexScreen() {
             {t('tasker.credits.currentSnapshot')}
           </Text>
           <View className="p-lg rounded-lg bg-card">
-            <InfoRow
-              label={t('tasker.credits.reserved')}
-              value="4,800 ₮"
-            />
-            <InfoRow
-              label={t('tasker.credits.lastTopUp')}
-              value={t('tasker.credits.yesterday')}
-            />
-            <InfoRow
-              label={t('tasker.credits.pendingRewards')}
-              value="1,200 ₮"
-            />
+            <InfoRow label={t('tasker.credits.reserved')} value="4,800 ₮" />
+            <InfoRow label={t('tasker.credits.lastTopUp')} value={t('tasker.credits.yesterday')} />
+            <InfoRow label={t('tasker.credits.pendingRewards')} value="1,200 ₮" />
           </View>
         </View>
       </View>

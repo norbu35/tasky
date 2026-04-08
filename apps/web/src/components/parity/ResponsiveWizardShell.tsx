@@ -35,7 +35,9 @@ export function ResponsiveWizardShell({
             <h1 id={titleId} className="text-3xl font-semibold tracking-tight">
               {title}
             </h1>
-            {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
+            {description ? (
+              <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>
+            ) : null}
           </div>
         </header>
 

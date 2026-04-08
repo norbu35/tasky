@@ -245,7 +245,11 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
       const result = await apiClient.adminListCategorySchemas(session.accessToken, categoryId);
       setVersions(result);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.loadSchemasError', 'Failed to load schemas'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.loadSchemasError', 'Failed to load schemas'),
+      );
     } finally {
       setLoading(false);
     }
@@ -267,7 +271,11 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
       setVersions((prev) => [...prev, created]);
       toast.success(t('admin.categories.schemaCreated', 'Schema version created'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.createSchemaError', 'Failed to create schema'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.createSchemaError', 'Failed to create schema'),
+      );
       throw err;
     }
   };
@@ -284,7 +292,11 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
       setVersions((prev) => prev.map((v) => (v.version === updated.version ? updated : v)));
       toast.success(t('admin.categories.schemaActivated', 'Schema version activated'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.activateSchemaError', 'Failed to activate schema'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.activateSchemaError', 'Failed to activate schema'),
+      );
     }
   };
 
@@ -300,7 +312,11 @@ function SchemaVersionsPanel({ categoryId }: { categoryId: string }) {
       setVersions((prev) => prev.map((v) => (v.version === updated.version ? updated : v)));
       toast.success(t('admin.categories.schemaRolledBack', 'Schema version rolled back'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.rollbackSchemaError', 'Failed to rollback schema'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.rollbackSchemaError', 'Failed to rollback schema'),
+      );
     }
   };
 
@@ -390,7 +406,11 @@ export function AdminCategoriesPage() {
       const result = await apiClient.adminListCategories(session.accessToken);
       setCategories(result.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('admin.categories.loadError', 'Failed to load categories'));
+      setError(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.loadError', 'Failed to load categories'),
+      );
     } finally {
       setLoading(false);
     }
@@ -436,7 +456,11 @@ export function AdminCategoriesPage() {
         toast.success(t('admin.categories.created', 'Category created'));
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.saveError', 'Failed to save category'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.saveError', 'Failed to save category'),
+      );
       throw err;
     }
   };
@@ -454,7 +478,11 @@ export function AdminCategoriesPage() {
           : t('admin.categories.deactivated', 'Category deactivated'),
       );
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('admin.categories.toggleStatusError', 'Failed to toggle category status'));
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.categories.toggleStatusError', 'Failed to toggle category status'),
+      );
     }
   };
 

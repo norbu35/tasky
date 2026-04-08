@@ -9,7 +9,10 @@ export function CustomerDisputeStatusPage() {
   return (
     <ResponsiveDetailShell
       title={t('customerPages.disputeStatus.title', 'Dispute status')}
-      description={t('customerPages.disputeStatus.description', 'Review the current dispute state and the next support action.')}
+      description={t(
+        'customerPages.disputeStatus.description',
+        'Review the current dispute state and the next support action.',
+      )}
       primaryAction={
         <Button type="button" variant="secondary">
           {t('customerPages.disputeStatus.contactSupport', 'Contact support')}
@@ -21,7 +24,10 @@ export function CustomerDisputeStatusPage() {
           <CardTitle>{t('customerPages.disputeStatus.cardTitle', 'Resolution status')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          {t('customerPages.disputeStatus.cardDesc', 'The customer can see whether the dispute is open, under review, or resolved.')}
+          {t(
+            'customerPages.disputeStatus.cardDesc',
+            'The customer can see whether the dispute is open, under review, or resolved.',
+          )}
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

@@ -12,6 +12,7 @@ export function useProfilePolishPreview() {
   const token = session?.accessToken;
 
   return useMutation({
-    mutationFn: (payload: ProfilePolishPreviewPayload) => api.getProfilePolishPreview(token!, payload),
+    mutationFn: (payload: ProfilePolishPreviewPayload) =>
+      api.getProfilePolishPreview(token!, payload),
   });
 }

@@ -29,18 +29,18 @@ function formatSchedule(value?: string | null): string | null {
   return `${y}.${m}.${d} ${h}:${min}`;
 }
 
-function getBookingStatusLabel(status?: string, t?: (key: string) => string): string {
+function getBookingStatusLabel(status: string | undefined, t: (key: string) => string): string {
   switch ((status ?? '').toUpperCase()) {
     case 'ASSIGNED':
-      return t?.('BookingsListScreen.assigned') ?? t('BookingsListScreen.copy1');
+      return t('BookingsListScreen.assigned');
     case 'COMPLETED':
-      return t?.('BookingsListScreen.completed') ?? t('BookingsListScreen.copy2');
+      return t('BookingsListScreen.completed');
     case 'CANCELLED':
-      return t?.('BookingsListScreen.cancelled') ?? t('BookingsListScreen.copy3');
+      return t('BookingsListScreen.cancelled');
     case 'NO_SHOW':
-      return t?.('BookingsListScreen.noShow') ?? t('BookingsListScreen.copy4');
+      return t('BookingsListScreen.noShow');
     default:
-      return t?.('BookingsListScreen.pending') ?? t('BookingsListScreen.copy5');
+      return t('BookingsListScreen.pending');
   }
 }
 
@@ -85,12 +85,12 @@ function FilterTab({
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
     >
-      <Text className={`text-label font-semibold${active ? ' text-primaryDeep' : ' text-textSecondary'}`}>
+      <Text
+        className={`text-label font-semibold${active ? ' text-primaryDeep' : ' text-textSecondary'}`}
+      >
         {label}
       </Text>
-      {active ? (
-        <View className="mt-xs w-12 h-1 rounded-full bg-primaryDeep" />
-      ) : null}
+      {active ? <View className="mt-xs w-12 h-1 rounded-full bg-primaryDeep" /> : null}
     </Pressable>
   );
 }
@@ -116,7 +116,11 @@ function BookingCard({
     <Pressable
       onPress={onPress}
       className="bg-card rounded-lg gap-item"
-      style={{ padding: screenLayout.body.cardPadding, gap: screenLayout.body.itemGap, ...elevations.soft }}
+      style={{
+        padding: screenLayout.body.cardPadding,
+        gap: screenLayout.body.itemGap,
+        ...elevations.soft,
+      }}
       testID={`booking-card-${booking.id}`}
     >
       <View
@@ -126,16 +130,16 @@ function BookingCard({
         <View className="flex-row items-center flex-1" style={{ gap: screenLayout.body.itemGap }}>
           <ProfileAvatar
             uri={booking.tasker?.avatar_url}
-            name={booking.tasker?.full_name ?? 'Tasker'}
+            name={booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
             size="md"
             showVerified
           />
           <View className="flex-1" style={{ gap: 2 }}>
             <Text className="text-body font-bold text-primaryDeep" numberOfLines={1}>
-              {booking.tasker?.full_name ?? t('BookingsListScreen.copy6')}
+              {booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
             </Text>
             <Text className="text-caption text-textSecondary" numberOfLines={1}>
-              {booking.task?.description ?? t('BookingsListScreen.copy7')}
+              {booking.task?.description ?? t('BookingsListScreen.taskFallback')}
             </Text>
           </View>
         </View>
@@ -169,10 +173,7 @@ function BookingCard({
 
 function LoadingSkeletonCard() {
   return (
-    <View
-      className="bg-card rounded-lg p-lg gap-md"
-      style={elevations.soft}
-    >
+    <View className="bg-card rounded-lg p-lg gap-md" style={elevations.soft}>
       <View className="flex-row items-center gap-md">
         <View className="w-10 h-10 rounded-md bg-muted" />
         <View className="flex-1 gap-xs">
@@ -264,13 +265,19 @@ export default function BookingsListScreen() {
             paddingBottom: screenLayout.body.itemGap,
           }}
         >
-          <Pressable className="w-10 h-10 rounded-md items-center justify-center bg-card" accessibilityRole="button">
+          <Pressable
+            className="w-10 h-10 rounded-md items-center justify-center bg-card"
+            accessibilityRole="button"
+          >
             <Menu size={22} color={colors.primaryDeep} />
           </Pressable>
           <Text className="flex-1 mx-md text-subtitle font-bold text-primaryDeep">
             {t('customer.bookings.pageTitle')}
           </Text>
-          <Pressable className="w-10 h-10 rounded-md items-center justify-center bg-card" accessibilityRole="button">
+          <Pressable
+            className="w-10 h-10 rounded-md items-center justify-center bg-card"
+            accessibilityRole="button"
+          >
             <Search size={20} color={colors.primaryDeep} />
           </Pressable>
         </View>
@@ -286,10 +293,10 @@ export default function BookingsListScreen() {
         >
           {TAB_IDS.map((tab) => (
             <FilterTab
-              key={tab.id}
-              label={t(`BookingsListScreen.tab.${tab.id}`)}
-              active={activeTab === tab.id}
-              onPress={() => setActiveTab(tab.id)}
+              key={tab}
+              label={t(`BookingsListScreen.tab.${tab}`)}
+              active={activeTab === tab}
+              onPress={() => setActiveTab(tab)}
             />
           ))}
         </View>

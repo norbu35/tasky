@@ -7,7 +7,10 @@ export function SettingsPage() {
   const { t } = useTranslation();
 
   return (
-    <ResponsiveDetailShell title={t('sharedPages.settings.title', 'Settings')} description={t('sharedPages.settings.description', 'Account, safety, and session controls.')}>
+    <ResponsiveDetailShell
+      title={t('sharedPages.settings.title', 'Settings')}
+      description={t('sharedPages.settings.description', 'Account, safety, and session controls.')}
+    >
       <Card>
         <CardContent className="flex flex-col gap-3 p-4">
           <Button type="button" variant="outline">

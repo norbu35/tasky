@@ -48,7 +48,12 @@ describe('PressableCard', () => {
     const onPressIn = jest.fn();
     const onPressOut = jest.fn();
     render(
-      <PressableCard onPress={jest.fn()} onPressIn={onPressIn} onPressOut={onPressOut} testID="card">
+      <PressableCard
+        onPress={jest.fn()}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        testID="card"
+      >
         <Text>Content</Text>
       </PressableCard>,
     );

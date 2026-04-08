@@ -54,7 +54,7 @@ const TASKER_CATEGORIES: CategoryRating[] = [
   { key: 'punctuality', labelKey: 'shared.review.punctuality', value: 0 },
 ];
 
-function getCategoryLabel(role: ReviewRole, categoryKey: string) {
+function getCategoryLabel(role: ReviewRole, categoryKey: string, t: (key: string) => string) {
   if (role === 'tasker') {
     if (categoryKey === 'taskDescriptionClarity') return t('ReviewFormScreen.copy1');
     if (categoryKey === 'respectfulness') return t('ReviewFormScreen.copy2');
@@ -127,8 +127,11 @@ export default function ReviewFormScreen() {
     setShowSuccess(true);
   });
 
-  const counterpartyName = params.name ?? (role === 'customer' ? t('ReviewFormScreen.copy9') : t('ReviewFormScreen.copy10'));
-  const counterpartyRole = role === 'customer' ? t('ReviewFormScreen.copy11') : t('ReviewFormScreen.copy12');
+  const counterpartyName =
+    params.name ??
+    (role === 'customer' ? t('ReviewFormScreen.copy9') : t('ReviewFormScreen.copy10'));
+  const counterpartyRole =
+    role === 'customer' ? t('ReviewFormScreen.copy11') : t('ReviewFormScreen.copy12');
   const avatarUrl = params.avatarUrl ?? 'https://cdn.tasky.mn/avatars/counterparty.jpg';
 
   const allRated = categories.every((category) => category.value > 0);
@@ -210,12 +213,8 @@ export default function ReviewFormScreen() {
                 <View style={styles.successIcon}>
                   <CheckCircle size={34} color={colors.primary} fill={colors.verified} />
                 </View>
-                <Text style={styles.successTitle}>
-                  {t('shared.review.successTitle')}
-                </Text>
-                <Text style={styles.successBody}>
-                  {t('shared.review.successBody')}
-                </Text>
+                <Text style={styles.successTitle}>{t('shared.review.successTitle')}</Text>
+                <Text style={styles.successBody}>{t('shared.review.successBody')}</Text>
               </Animated.View>
             ) : (
               <>
@@ -232,10 +231,12 @@ export default function ReviewFormScreen() {
                     <View key={category.key} style={styles.categoryRow}>
                       <View style={styles.categoryHeader}>
                         <Text style={styles.categoryLabel}>
-                          {getCategoryLabel(role, category.key)}
+                          {getCategoryLabel(role, category.key, t)}
                         </Text>
                         <Text style={styles.categoryValue}>
-                          {category.value > 0 ? category.value.toFixed(1) : t('ReviewFormScreen.copy13')}
+                          {category.value > 0
+                            ? category.value.toFixed(1)
+                            : t('ReviewFormScreen.copy13')}
                         </Text>
                       </View>
                       <StarRatingInput
@@ -248,9 +249,7 @@ export default function ReviewFormScreen() {
                 </View>
 
                 <View style={styles.commentSection}>
-                  <Text style={styles.commentLabel}>
-                    {t('shared.review.label_comment')}
-                  </Text>
+                  <Text style={styles.commentLabel}>{t('shared.review.label_comment')}</Text>
                   <View style={styles.commentCard}>
                     <TextInput
                       testID="review-comment-input"
@@ -275,9 +274,7 @@ export default function ReviewFormScreen() {
 
         {!showSuccess && submitReview.isError ? (
           <View style={styles.errorToast} testID="review-submit-error">
-            <Text style={styles.errorText}>
-              {t('ReviewFormScreen.copy2')}
-            </Text>
+            <Text style={styles.errorText}>{t('ReviewFormScreen.copy2')}</Text>
             <Button
               label={t('common.retry')}
               variant="ghost"

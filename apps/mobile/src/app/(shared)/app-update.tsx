@@ -21,13 +21,9 @@ export default function AppUpdateScreen() {
   const params = useLocalSearchParams<{ type?: string }>();
   const isForce = params.type === 'force';
 
-  const title = isForce
-    ? t('infra.appUpdate.forceTitle')
-    : t('infra.appUpdate.softTitle');
+  const title = isForce ? t('infra.appUpdate.forceTitle') : t('infra.appUpdate.softTitle');
 
-  const body = isForce
-    ? t('AppUpdateScreen.copy1')
-    : t('AppUpdateScreen.copy2');
+  const body = isForce ? t('AppUpdateScreen.copy1') : t('AppUpdateScreen.copy2');
 
   const handleUpdate = useCallback(() => {
     void openURL(APP_STORE_URL);

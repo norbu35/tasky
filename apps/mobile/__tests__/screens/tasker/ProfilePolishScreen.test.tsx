@@ -163,7 +163,9 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
       expect.anything(),
     );
     expect(screen.getByText('Энэ хувилбарыг хэрэглэх')).toBeTruthy();
-    expect(screen.getByText('Би 5 жилийн туршлагатай, найдвартай үйлчилгээ үзүүлдэг мэргэжлийн tasker.')).toBeTruthy();
+    expect(
+      screen.getByText('Би 5 жилийн туршлагатай, найдвартай үйлчилгээ үзүүлдэг мэргэжлийн tasker.'),
+    ).toBeTruthy();
     expect(getEventNames()).toContain('profile_polish_requested');
   });
 
@@ -202,7 +204,9 @@ describe('ProfilePolishScreen (SCR-TASK-019)', () => {
     await waitFor(() => {
       expect(screen.queryByText('Хуучин хүсэлтийн санал')).toBeNull();
     });
-    expect(screen.getByText('AI санал энд харагдана. Эхлээд тайлбараа сайжруулах хүсэлт илгээнэ үү.')).toBeTruthy();
+    expect(
+      screen.getByText('AI санал энд харагдана. Эхлээд тайлбараа сайжруулах хүсэлт илгээнэ үү.'),
+    ).toBeTruthy();
   });
 
   it('applies the suggested bio and tracks the apply event', async () => {

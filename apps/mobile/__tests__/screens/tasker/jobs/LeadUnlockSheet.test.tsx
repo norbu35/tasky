@@ -69,7 +69,9 @@ describe('LeadUnlockSheet (SCR-TASK-017)', () => {
     render(<LeadUnlockSheet {...baseProps} state="accepted_credits_deducted" />);
 
     expect(screen.getByText('Амжилттай!')).toBeTruthy();
-    expect(screen.getByText('Захиалагчийн холбоо барих мэдээлэл нээгдлээ. 2 кредит зарцуулагдлаа.')).toBeTruthy();
+    expect(
+      screen.getByText('Захиалагчийн холбоо барих мэдээлэл нээгдлээ. 2 кредит зарцуулагдлаа.'),
+    ).toBeTruthy();
     expect(screen.getByText('Ойлголоо')).toBeTruthy();
   });
 
@@ -77,7 +79,11 @@ describe('LeadUnlockSheet (SCR-TASK-017)', () => {
     render(<LeadUnlockSheet {...baseProps} state="expired_15min" />);
 
     expect(screen.getByText('Хугацаа дууслаа')).toBeTruthy();
-    expect(screen.getByText('15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй.')).toBeTruthy();
+    expect(
+      screen.getByText(
+        '15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй.',
+      ),
+    ).toBeTruthy();
     expect(screen.getByText('Ойлголоо')).toBeTruthy();
   });
 });

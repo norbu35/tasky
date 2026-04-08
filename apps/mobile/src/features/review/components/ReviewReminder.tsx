@@ -27,9 +27,7 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
     <ModalSheetTemplate isOpen={isOpen} onClose={onDismiss} testID="review-reminder">
       <View style={styles.content}>
         <Text style={styles.title}>{t('shared.review.reminderTitle')}</Text>
-        <Text style={styles.body}>
-          {t('ReviewReminder.copy1')}
-        </Text>
+        <Text style={styles.body}>{t('ReviewReminder.copy1')}</Text>
 
         <Button
           label={t('shared.review.reminderCta')}

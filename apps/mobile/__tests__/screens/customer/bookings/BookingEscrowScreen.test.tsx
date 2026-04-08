@@ -50,7 +50,8 @@ beforeEach(() => {
 
 describe('BookingEscrowScreen (SCR-P3-003)', () => {
   it('shows the default opt-in escrow shell', () => {
-    const BookingEscrowScreen = require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
+    const BookingEscrowScreen =
+      require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
     render(<BookingEscrowScreen />);
 
     expect(screen.getByTestId('booking-escrow-screen')).toBeTruthy();
@@ -62,7 +63,8 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
   });
 
   it('opens a confirmation sheet before confirming escrow', () => {
-    const BookingEscrowScreen = require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
+    const BookingEscrowScreen =
+      require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
     render(<BookingEscrowScreen />);
 
     fireEvent.press(screen.getByTestId('booking-escrow-screen-cta'));
@@ -72,7 +74,8 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
 
   it('shows the demo error state when requested', () => {
     mockParams = { bookingId: 'booking-1', demoState: 'error' };
-    const BookingEscrowScreen = require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
+    const BookingEscrowScreen =
+      require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
     render(<BookingEscrowScreen />);
 
     expect(screen.getByTestId('booking-escrow-screen-error')).toBeTruthy();
@@ -80,7 +83,8 @@ describe('BookingEscrowScreen (SCR-P3-003)', () => {
   });
 
   it('lands on the success state after confirming escrow', async () => {
-    const BookingEscrowScreen = require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
+    const BookingEscrowScreen =
+      require('../../../../src/app/(customer)/bookings/[bookingId]/escrow').default;
     render(<BookingEscrowScreen />);
 
     fireEvent.press(screen.getByTestId('booking-escrow-screen-cta'));

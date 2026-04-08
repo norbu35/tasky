@@ -138,14 +138,10 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
 
-    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(
-      true,
-    );
+    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(true);
 
     fireEvent.changeText(screen.getByDisplayValue('Батбаяр'), 'Болд');
 
-    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(
-      false,
-    );
+    expect(screen.getByTestId('SCR-SHARED-013-next').props.accessibilityState.disabled).toBe(false);
   });
 });

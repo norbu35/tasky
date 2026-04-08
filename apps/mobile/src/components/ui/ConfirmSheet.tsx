@@ -38,10 +38,7 @@ export function ConfirmSheet({
 
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
-      <View
-        className="flex-1 justify-end"
-        style={{ backgroundColor: overlays.sheet }}
-      >
+      <View className="flex-1 justify-end" style={{ backgroundColor: overlays.sheet }}>
         <Pressable
           accessibilityRole="button"
           onPress={onClose}
@@ -61,7 +58,10 @@ export function ConfirmSheet({
           <Text className="text-title font-sans-bold text-foreground text-center mb-sm">
             {title}
           </Text>
-          <Text className="text-body text-muted-foreground text-center mb-xl" style={{ lineHeight: 22 }}>
+          <Text
+            className="text-body text-muted-foreground text-center mb-xl"
+            style={{ lineHeight: 22 }}
+          >
             {description}
           </Text>
           <View className="self-stretch gap-sm">

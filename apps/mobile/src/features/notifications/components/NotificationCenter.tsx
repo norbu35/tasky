@@ -136,12 +136,8 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
         <View style={styles.emptyIconWrapper}>
           <Bell size={48} color={colors.mutedForeground} />
         </View>
-        <Text style={styles.emptyTitle}>
-          {t('notifications.emptyTitle')}
-        </Text>
-        <Text style={styles.emptySubtitle}>
-          {t('notifications.emptySubtitle')}
-        </Text>
+        <Text style={styles.emptyTitle}>{t('notifications.emptyTitle')}</Text>
+        <Text style={styles.emptySubtitle}>{t('notifications.emptySubtitle')}</Text>
       </View>
     ),
     [t],

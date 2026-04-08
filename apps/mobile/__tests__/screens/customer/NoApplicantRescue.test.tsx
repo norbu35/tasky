@@ -135,11 +135,15 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
     );
 
     expect(
-      screen.getByText('120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.'),
+      screen.getByText(
+        '120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.',
+      ),
     ).toBeTruthy();
     expect(screen.getByText('Төсөв нэмснээр гүйцэтгэгч олдох магадлал өснө.')).toBeTruthy();
     expect(screen.getByText('Шинэ цаг сонгосноор илүү олон гүйцэтгэгчид харагдана.')).toBeTruthy();
-    expect(screen.getByText('Туслах ажилтанд илгээж, даалгаврыг гараар хуваарилуулна.')).toBeTruthy();
+    expect(
+      screen.getByText('Туслах ажилтанд илгээж, даалгаврыг гараар хуваарилуулна.'),
+    ).toBeTruthy();
   });
 
   it('calls onAdjustBudget when budget option is pressed', () => {

@@ -13,7 +13,7 @@ export default function BusinessTaskListScreen() {
     <FeedListTemplate
       testID="SCR-B2B-006"
       data={[]}
-      renderItem={() => ({ type: 'placeholder' } as any)}
+      renderItem={() => ({ type: 'placeholder' }) as any}
       keyExtractor={(item: any) => item.type}
       isEmpty
       emptyTitle={t('b2b.tasks.empty')}

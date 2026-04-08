@@ -126,8 +126,12 @@ describe('CustomerInstantMatchScreen (SCR-CUST-027)', () => {
       require('../../../../src/app/(customer)/tasks/[taskId]/instant-match').default;
     render(<CustomerInstantMatchScreen />);
 
-    expect(screen.getAllByText('Instant match could not secure a tasker.').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('Your task is now open for applications.').length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText('Instant match could not secure a tasker.').length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText('Your task is now open for applications.').length,
+    ).toBeGreaterThanOrEqual(1);
     expect(screen.getByTestId('instant-match-view-applicants')).toBeTruthy();
   });
 

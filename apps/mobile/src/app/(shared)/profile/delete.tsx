@@ -41,7 +41,10 @@ export default function AccountDeletionScreen() {
 
         {isBlocked ? (
           <>
-            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
+            <Text
+              className="text-body text-text-secondary text-center mb-xl"
+              style={{ lineHeight: 24 }}
+            >
               {t('AccountDeletionScreen.copy1')}
             </Text>
             <Button
@@ -53,7 +56,10 @@ export default function AccountDeletionScreen() {
           </>
         ) : isDisputeBlocked ? (
           <>
-            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
+            <Text
+              className="text-body text-text-secondary text-center mb-xl"
+              style={{ lineHeight: 24 }}
+            >
               {t('AccountDeletionScreen.copy2')}
             </Text>
             <Button
@@ -65,7 +71,10 @@ export default function AccountDeletionScreen() {
           </>
         ) : (
           <>
-            <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
+            <Text
+              className="text-body text-text-secondary text-center mb-xl"
+              style={{ lineHeight: 24 }}
+            >
               {t('AccountDeletionScreen.copy3')}
             </Text>
             <Text className="text-label text-foreground font-semibold self-stretch mb-sm">

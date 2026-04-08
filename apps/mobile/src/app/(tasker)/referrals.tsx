@@ -14,13 +14,26 @@ export default function TaskerReferralsScreen() {
     <DetailTemplate testID="SCR-P2-005">
       <View className="gap-lg">
         <View className="p-lg rounded-lg bg-primaryDeep gap-md">
-          <Text className="font-extrabold text-card" style={{ fontSize: 28, lineHeight: 28 * (17 / 14) }}>
+          <Text
+            className="font-extrabold text-card"
+            style={{ fontSize: 28, lineHeight: 28 * (17 / 14) }}
+          >
             {t('tasker.referrals.heroTitle')}
           </Text>
-          <Text className="text-body text-primaryForeground leading-relaxed" style={{ opacity: 0.85 }}>
-            {t('TaskerReferralsScreen.copy1')}</Text>
-          <View className="p-md rounded-md gap-xs" style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}>
-            <Text className="text-caption text-primaryForeground uppercase" style={{ letterSpacing: 0.4 }}>
+          <Text
+            className="text-body text-primaryForeground leading-relaxed"
+            style={{ opacity: 0.85 }}
+          >
+            {t('TaskerReferralsScreen.copy1')}
+          </Text>
+          <View
+            className="p-md rounded-md gap-xs"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+          >
+            <Text
+              className="text-caption text-primaryForeground uppercase"
+              style={{ letterSpacing: 0.4 }}
+            >
               {t('tasker.referrals.codeLabel')}
             </Text>
             <Text className="text-subtitle font-extrabold text-card">TASKY-247</Text>
@@ -62,7 +75,10 @@ export default function TaskerReferralsScreen() {
           </View>
         </View>
 
-        <Pressable className="p-lg rounded-lg gap-xs" style={{ backgroundColor: 'rgba(255, 221, 184, 0.22)' }}>
+        <Pressable
+          className="p-lg rounded-lg gap-xs"
+          style={{ backgroundColor: 'rgba(255, 221, 184, 0.22)' }}
+        >
           <Text className="text-body font-bold text-foreground">
             {t('tasker.referrals.bonusPending')}
           </Text>

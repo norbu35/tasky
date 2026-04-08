@@ -160,7 +160,10 @@ function TaskerBrowseScreen() {
         ListHeaderComponent={
           <View className="gap-md mb-md">
             <View className="gap-xs">
-              <Text className="text-heading font-sans-extrabold" style={{ color: colors.primaryDeep }}>
+              <Text
+                className="text-heading font-sans-extrabold"
+                style={{ color: colors.primaryDeep }}
+              >
                 {t('tasker.browse.title')}
               </Text>
               <Text className="text-body" style={{ color: colors.textSecondary }}>
@@ -182,10 +185,7 @@ function TaskerBrowseScreen() {
               placeholder={t('tasker.browse.searchPlaceholder')}
               placeholderTextColor={colors.textTertiary}
             />
-            <TrustBanner
-              title={t('tasker.browse.trustTitle')}
-              description={t('HomeTab.copy1')}
-            />
+            <TrustBanner title={t('tasker.browse.trustTitle')} description={t('HomeTab.copy1')} />
           </View>
         }
         emptyTitle={t('tasker.browse.emptyTitle')}

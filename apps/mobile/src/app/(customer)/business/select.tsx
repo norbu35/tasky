@@ -17,7 +17,10 @@ export default function SelectBusinessAccountScreen() {
     <ScreenContainer testID="SCR-B2B-005">
       <ModalSheetTemplate
         isOpen={isOpen}
-        onClose={() => { setIsOpen(false); router.back(); }}
+        onClose={() => {
+          setIsOpen(false);
+          router.back();
+        }}
         title={t('b2b.select.title')}
         testID="select-business-sheet"
       >

@@ -96,8 +96,7 @@ export default function ConversationListScreen() {
 
   const renderItem = useCallback(
     (item: ConversationItem) => {
-      const title =
-        item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion');
+      const title = item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion');
       const isUnread = (item.unread_count ?? 0) > 0;
       return (
         <Pressable

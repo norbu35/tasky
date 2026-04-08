@@ -44,7 +44,11 @@ export default function TaskerStatsScreen() {
     <DetailTemplate testID="SCR-TASK-016" isLoading={isLoading} isError={isError} onRetry={refetch}>
       {data && (
         <View className="gap-lg">
-          <View className="bg-primaryDeep rounded-lg gap-xs" style={{ padding: spacing.xl }} testID="tasker-stats-hero">
+          <View
+            className="bg-primaryDeep rounded-lg gap-xs"
+            style={{ padding: spacing.xl }}
+            testID="tasker-stats-hero"
+          >
             <Text className="text-label text-primaryForeground opacity-90">
               {t('tasker.stats.heroLabel')}
             </Text>
@@ -61,14 +65,8 @@ export default function TaskerStatsScreen() {
           </Text>
 
           <View className="flex-row gap-md">
-            <StatCard
-              value={String(jobsCompleted ?? 0)}
-              label={t('tasker.stats.jobsCompleted')}
-            />
-            <StatCard
-              value={formatRating(averageRating)}
-              label={t('tasker.stats.averageRating')}
-            />
+            <StatCard value={String(jobsCompleted ?? 0)} label={t('tasker.stats.jobsCompleted')} />
+            <StatCard value={formatRating(averageRating)} label={t('tasker.stats.averageRating')} />
           </View>
           <View className="flex-row gap-md">
             <StatCard
@@ -81,10 +79,7 @@ export default function TaskerStatsScreen() {
             />
           </View>
           <View className="flex-row gap-md">
-            <StatCard
-              value={String(cancellations30d)}
-              label={t('tasker.stats.cancellations30d')}
-            />
+            <StatCard value={String(cancellations30d)} label={t('tasker.stats.cancellations30d')} />
             <StatCard
               value={formatPercent(reliabilityScore)}
               label={t('tasker.stats.reliabilityScore')}
@@ -96,16 +91,13 @@ export default function TaskerStatsScreen() {
               {t('tasker.stats.ratingBreakdown')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.taskClarity')}:{' '}
-              {taskClarity ?? averageRating ?? '—'}
+              {t('tasker.stats.taskClarity')}: {taskClarity ?? averageRating ?? '—'}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.respectfulness')}:{' '}
-              {respectfulness ?? averageRating ?? '—'}
+              {t('tasker.stats.respectfulness')}: {respectfulness ?? averageRating ?? '—'}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.punctuality')}:{' '}
-              {punctuality ?? averageRating ?? '—'}
+              {t('tasker.stats.punctuality')}: {punctuality ?? averageRating ?? '—'}
             </Text>
           </View>
 
@@ -114,8 +106,7 @@ export default function TaskerStatsScreen() {
               {t('tasker.stats.reliabilityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.reliabilityLabel')}:{' '}
-              {formatPercent(reliabilityScore)}
+              {t('tasker.stats.reliabilityLabel')}: {formatPercent(reliabilityScore)}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
               {t('TaskerStatsScreen.copy1')}
@@ -127,17 +118,14 @@ export default function TaskerStatsScreen() {
               {t('tasker.stats.activityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.unlockConversion')}:{' '}
-              {formatPercent(unlockConversionRate)}
+              {t('tasker.stats.unlockConversion')}: {formatPercent(unlockConversionRate)}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.responseTime')}:{' '}
               {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {isPro
-                ? t('tasker.stats.proBadgeEarned')
-                : t('TaskerStatsScreen.copy2')}
+              {isPro ? t('tasker.stats.proBadgeEarned') : t('TaskerStatsScreen.copy2')}
             </Text>
           </View>
         </View>

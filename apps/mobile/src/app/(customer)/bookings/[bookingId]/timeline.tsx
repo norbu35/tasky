@@ -21,7 +21,7 @@ function formatTimestamp(ts: string): string {
   return `${y}.${m}.${day} ${h}:${min}`;
 }
 
-function getEventLabel(event: string): string {
+function getEventLabel(event: string, t: (key: string) => string): string {
   switch (event) {
     case 'booking_created':
       return t('BookingTimelineScreen.copy1');
@@ -53,6 +53,7 @@ function TimelineEventRow({
   event,
   isActive,
   isFuture,
+  t,
 }: {
   index: number;
   event: {
@@ -63,6 +64,7 @@ function TimelineEventRow({
   };
   isActive: boolean;
   isFuture: boolean;
+  t: (key: string) => string;
 }) {
   // Dot colors are runtime-conditional → imperative
   const dotBg = isActive ? colors.secondary : isFuture ? colors.chipInactive : colors.primaryDeep;
@@ -85,11 +87,15 @@ function TimelineEventRow({
         )}
       </View>
       <View className="flex-1 gap-xs">
-        <Text className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-textSecondary'}`}>
+        <Text
+          className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-textSecondary'}`}
+        >
           {formatTimestamp(event.timestamp)}
         </Text>
-        <Text className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primaryDeep'}`}>
-          {getEventLabel(event.event)}
+        <Text
+          className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primaryDeep'}`}
+        >
+          {getEventLabel(event.event, t)}
         </Text>
         {event.description ? (
           <Text className="text-caption text-textSecondary leading-relaxed">
@@ -148,9 +154,11 @@ export default function BookingTimelineScreen() {
                   `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`,
                 )}
               </Text>
-              <Text className="text-title font-bold text-primaryDeep leading-tight" numberOfLines={2}>
-                {booking?.task?.description ??
-                  t('customer.bookings.timelineFallbackTitle')}
+              <Text
+                className="text-title font-bold text-primaryDeep leading-tight"
+                numberOfLines={2}
+              >
+                {booking?.task?.description ?? t('customer.bookings.timelineFallbackTitle')}
               </Text>
               <Text className="text-caption text-textSecondary" numberOfLines={1}>
                 {booking?.tasker?.full_name
@@ -176,6 +184,7 @@ export default function BookingTimelineScreen() {
                 event={event}
                 isActive={index === activeIndex}
                 isFuture={Boolean(event.is_future)}
+                t={t}
               />
             ))}
           </View>

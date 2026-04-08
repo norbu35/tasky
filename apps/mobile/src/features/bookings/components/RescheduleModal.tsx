@@ -59,9 +59,7 @@ export function RescheduleModal({
 
           {/* Current Schedule */}
           <View style={styles.currentSchedule}>
-            <Text style={styles.currentLabel}>
-              {t('reschedule.currentSchedule')}
-            </Text>
+            <Text style={styles.currentLabel}>{t('reschedule.currentSchedule')}</Text>
             <View style={styles.currentRow}>
               <Text style={styles.currentValue}>{currentDate}</Text>
               <Text style={styles.currentSeparator}>|</Text>

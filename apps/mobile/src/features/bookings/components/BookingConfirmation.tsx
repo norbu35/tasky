@@ -104,15 +104,10 @@ export function BookingConfirmation({
         <View style={styles.disclaimerCard} testID="booking-confirmation-disclaimer">
           <View style={styles.disclaimerHeader}>
             <Shield size={20} color={colors.primaryDeep} />
-            <Text style={styles.disclaimerTitle}>
-              {t('booking.liabilityTitle')}
-            </Text>
+            <Text style={styles.disclaimerTitle}>{t('booking.liabilityTitle')}</Text>
           </View>
           <Text style={styles.disclaimerText}>
-            {t(
-              'booking.liabilityBody',
-              t('booking.liabilityBody'),
-            )}
+            {t('booking.liabilityBody', t('booking.liabilityBody'))}
           </Text>
           <Pressable
             style={styles.checkboxRow}
@@ -123,9 +118,7 @@ export function BookingConfirmation({
             <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
               {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
             </View>
-            <Text style={styles.checkboxLabel}>
-              {t('booking.acceptLiability')}
-            </Text>
+            <Text style={styles.checkboxLabel}>{t('booking.acceptLiability')}</Text>
           </Pressable>
         </View>
 
@@ -144,9 +137,7 @@ export function BookingConfirmation({
               style={styles.gradientButton}
             >
               <Text style={styles.gradientButtonText}>
-                {isLoading
-                  ? t('common.loading')
-                  : t('booking.confirmAction')}
+                {isLoading ? t('common.loading') : t('booking.confirmAction')}
               </Text>
             </LinearGradient>
           </Pressable>

@@ -84,10 +84,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: isCustomer
-              ? t('nav.customer.myTasks')
-              : t('nav.tasker.browse'),
-            tabBarTestID: 'tab-browse',
+            title: isCustomer ? t('nav.customer.myTasks') : t('nav.tasker.browse'),
             tabBarIcon: ({ color }) =>
               isCustomer ? (
                 <ListChecks color={color} size={TAB_ICON_SIZE} />
@@ -99,10 +96,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="bookings"
           options={{
-            title: isCustomer
-              ? t('nav.customer.bookings')
-              : t('nav.tasker.myJobs'),
-            tabBarTestID: 'tab-bookings',
+            title: isCustomer ? t('nav.customer.bookings') : t('nav.tasker.myJobs'),
             tabBarIcon: ({ color }) =>
               isCustomer ? (
                 <ClipboardList color={color} size={TAB_ICON_SIZE} />
@@ -115,7 +109,6 @@ export default function TabsLayout() {
           name="inbox"
           options={{
             title: t('nav.inbox'),
-            tabBarTestID: 'tab-inbox',
             tabBarIcon: ({ color }) => <MessageSquare color={color} size={TAB_ICON_SIZE} />,
           }}
         />
@@ -123,8 +116,6 @@ export default function TabsLayout() {
           name="profile"
           options={{
             title: t('nav.profile'),
-            tabBarTestID: 'tab-profile',
-            tabBarButton: (props) => <Pressable {...props} testID="tab-profile" />,
             tabBarIcon: ({ color }) => <User color={color} size={TAB_ICON_SIZE} />,
           }}
         />

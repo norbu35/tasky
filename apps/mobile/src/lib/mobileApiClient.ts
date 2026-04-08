@@ -74,10 +74,7 @@ export interface MobileApiClient {
 
   listCategories(accessToken: string): Promise<CursorPage<Category>>;
 
-  createTask(
-    accessToken: string,
-    payload: CreateTaskRequest,
-  ): Promise<Task>;
+  createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task>;
 
   listTasks(accessToken: string, filters?: TaskFilters): Promise<CursorPage<PublicTask>>;
 
@@ -388,10 +385,7 @@ export class HttpMobileApiClient implements MobileApiClient {
     });
   }
 
-  createTask(
-    accessToken: string,
-    payload: CreateTaskRequest,
-  ): Promise<Task> {
+  createTask(accessToken: string, payload: CreateTaskRequest): Promise<Task> {
     return this.requestJson<Task>(
       '/tasks',
       {
@@ -802,7 +796,7 @@ export class HttpMobileApiClient implements MobileApiClient {
     query?: Record<string, string | number | undefined>,
   ): Promise<T> {
     const headers = new Headers(init.headers);
-    headers.set('Content-Type');
+    headers.set('Content-Type', 'application/json');
     if (accessToken) {
       headers.set('Authorization', `Bearer ${accessToken}`);
     }
@@ -823,13 +817,18 @@ export class HttpMobileApiClient implements MobileApiClient {
         headers,
       });
     } catch (err) {
-      console.error(`[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url.toString()}:`, err);
+      console.error(
+        `[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url.toString()}:`,
+        err,
+      );
       throw err;
     }
 
     if (!response.ok) {
       const errorMessage = await readErrorMessage(response);
-      console.error(`[ApiClient Error] ${init.method || 'GET'} ${url.toString()} failed with status ${response.status}: ${errorMessage}`);
+      console.error(
+        `[ApiClient Error] ${init.method || 'GET'} ${url.toString()} failed with status ${response.status}: ${errorMessage}`,
+      );
       throw new ApiError(response.status, errorMessage);
     }
 
@@ -838,7 +837,7 @@ export class HttpMobileApiClient implements MobileApiClient {
 
   private async requestVoid(path: string, init: RequestInit, accessToken?: string): Promise<void> {
     const headers = new Headers(init.headers);
-    headers.set('Content-Type');
+    headers.set('Content-Type', 'application/json');
     if (accessToken) {
       headers.set('Authorization', `Bearer ${accessToken}`);
     }
@@ -852,13 +851,18 @@ export class HttpMobileApiClient implements MobileApiClient {
         headers,
       });
     } catch (err) {
-      console.error(`[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url}:`, err);
+      console.error(
+        `[ApiClient Error] Network failure fetching ${init.method || 'GET'} ${url}:`,
+        err,
+      );
       throw err;
     }
 
     if (!response.ok) {
       const errorMessage = await readErrorMessage(response);
-      console.error(`[ApiClient Error] ${init.method || 'GET'} ${url} failed with status ${response.status}: ${errorMessage}`);
+      console.error(
+        `[ApiClient Error] ${init.method || 'GET'} ${url} failed with status ${response.status}: ${errorMessage}`,
+      );
       throw new ApiError(response.status, errorMessage);
     }
   }

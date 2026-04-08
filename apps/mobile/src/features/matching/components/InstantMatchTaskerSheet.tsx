@@ -15,20 +15,20 @@ interface InstantMatchTaskerSheetProps {
   onDecline?: () => void;
 }
 
-const DEFAULT_TASK_TITLE = t('InstantMatchTaskerSheet.copy1');
 const DEFAULT_BUDGET_LABEL = '₮45,000';
 const DEFAULT_TIME_REMAINING = '5:00';
 
 export function InstantMatchTaskerSheet({
   isOpen,
   onClose,
-  taskTitle = DEFAULT_TASK_TITLE,
+  taskTitle,
   budgetLabel = DEFAULT_BUDGET_LABEL,
   onAccept,
   onDecline,
 }: InstantMatchTaskerSheetProps) {
   const { t } = useTranslation();
   const [isAccepted, setIsAccepted] = React.useState(false);
+  const resolvedTaskTitle = taskTitle ?? t('InstantMatchTaskerSheet.copy1');
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -38,7 +38,7 @@ export function InstantMatchTaskerSheet({
 
   React.useEffect(() => {
     setIsAccepted(false);
-  }, [taskTitle, budgetLabel]);
+  }, [resolvedTaskTitle, budgetLabel]);
 
   if (!isOpen) return null;
 
@@ -57,9 +57,7 @@ export function InstantMatchTaskerSheet({
       <View style={styles.scrim}>
         <View style={styles.sheet} testID="instant-match-sheet">
           <Text style={styles.title}>{t('matching.instantMatch.successTitle')}</Text>
-          <Text style={styles.description}>
-            {t('InstantMatchTaskerSheet.copy2')}
-          </Text>
+          <Text style={styles.description}>{t('InstantMatchTaskerSheet.copy2')}</Text>
         </View>
       </View>
     );
@@ -70,11 +68,9 @@ export function InstantMatchTaskerSheet({
       <View style={styles.sheet} testID="instant-match-sheet">
         <View style={styles.handle} />
         <Text style={styles.title}>{t('matching.instantMatch.newOfferTitle')}</Text>
-        <Text style={styles.description}>
-          {t('matching.instantMatch.newOfferDescription')}
-        </Text>
+        <Text style={styles.description}>{t('matching.instantMatch.newOfferDescription')}</Text>
         <View style={styles.card}>
-          <Text style={styles.taskTitle}>{taskTitle}</Text>
+          <Text style={styles.taskTitle}>{resolvedTaskTitle}</Text>
           <Text style={styles.budget}>{budgetLabel}</Text>
           <Text style={styles.timer}>{DEFAULT_TIME_REMAINING}</Text>
         </View>

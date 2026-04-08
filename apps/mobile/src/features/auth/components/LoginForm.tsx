@@ -115,11 +115,7 @@ export function LoginForm() {
         )}
 
         {step === 'otp' && (
-          <Button
-            label={t('auth.verifyLogin')}
-            onPress={handleVerify}
-            isLoading={busy}
-          />
+          <Button label={t('auth.verifyLogin')} onPress={handleVerify} isLoading={busy} />
         )}
 
         {(step === 'phone' || step === 'otp') && (

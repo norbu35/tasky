@@ -19,42 +19,41 @@ import { Button } from '../components/ui/Button';
 const { width } = Dimensions.get('window');
 const { colors, spacing } = mobileTheme;
 
-const SLIDES = [
-  {
-    id: '1',
-    titleKey: 'auth.onboarding.slide1Title',
-    bodyKey: 'auth.onboarding.slide1Body',
-    icon: Users,
-    iconColor: colors.primary,
-    titleFallback: t('OnboardingScreen.copy1'),
-    bodyFallback: t('OnboardingScreen.copy2'),
-  },
-  {
-    id: '2',
-    titleKey: 'auth.onboarding.slide2Title',
-    bodyKey: 'auth.onboarding.slide2Body',
-    icon: Sparkles,
-    iconColor: colors.secondary,
-    titleFallback: t('OnboardingScreen.copy3'),
-    bodyFallback: t('OnboardingScreen.copy4'),
-  },
-  {
-    id: '3',
-    titleKey: 'auth.onboarding.slide3Title',
-    bodyKey: 'auth.onboarding.slide3Body',
-    icon: Shield,
-    iconColor: colors.verified,
-    titleFallback: t('OnboardingScreen.copy5'),
-    bodyFallback: t('OnboardingScreen.copy6'),
-  },
-];
-
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const slideRef = useRef(0);
+  const slides = [
+    {
+      id: '1',
+      titleKey: 'auth.onboarding.slide1Title',
+      bodyKey: 'auth.onboarding.slide1Body',
+      icon: Users,
+      iconColor: colors.primary,
+      titleFallback: t('OnboardingScreen.copy1'),
+      bodyFallback: t('OnboardingScreen.copy2'),
+    },
+    {
+      id: '2',
+      titleKey: 'auth.onboarding.slide2Title',
+      bodyKey: 'auth.onboarding.slide2Body',
+      icon: Sparkles,
+      iconColor: colors.secondary,
+      titleFallback: t('OnboardingScreen.copy3'),
+      bodyFallback: t('OnboardingScreen.copy4'),
+    },
+    {
+      id: '3',
+      titleKey: 'auth.onboarding.slide3Title',
+      bodyKey: 'auth.onboarding.slide3Body',
+      icon: Shield,
+      iconColor: colors.verified,
+      titleFallback: t('OnboardingScreen.copy5'),
+      bodyFallback: t('OnboardingScreen.copy6'),
+    },
+  ];
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = e.nativeEvent.contentOffset.x;
@@ -66,7 +65,7 @@ export default function OnboardingScreen() {
   };
 
   const handleNext = () => {
-    if (slideRef.current < SLIDES.length - 1) {
+    if (slideRef.current < slides.length - 1) {
       slideRef.current += 1;
       setCurrentIndex(slideRef.current);
       flatListRef.current?.scrollToIndex({
@@ -86,13 +85,16 @@ export default function OnboardingScreen() {
     router.replace('/(auth)/role-select');
   };
 
-  const isLastSlide = currentIndex === SLIDES.length - 1;
+  const isLastSlide = currentIndex === slides.length - 1;
 
-  const renderItem = ({ item }: { item: (typeof SLIDES)[0] }) => {
+  const renderItem = ({ item }: { item: (typeof slides)[0] }) => {
     const titleText = t(item.titleKey, item.titleFallback);
     const bodyText = t(item.bodyKey, item.bodyFallback);
     return (
-      <View className="items-center px-xl justify-center" style={{ width, paddingTop: spacing['3xl'] }}>
+      <View
+        className="items-center px-xl justify-center"
+        style={{ width, paddingTop: spacing['3xl'] }}
+      >
         <View
           className="mb-[32px] items-center justify-center"
           style={{
@@ -132,11 +134,7 @@ export default function OnboardingScreen() {
             {titleText}
           </Text>
         </View>
-        <Text
-          className="text-body text-center text-muted-foreground"
-        >
-          {bodyText}
-        </Text>
+        <Text className="text-body text-center text-muted-foreground">{bodyText}</Text>
       </View>
     );
   };
@@ -163,7 +161,7 @@ export default function OnboardingScreen() {
       <FlatList
         style={{ flex: 1 }}
         ref={flatListRef}
-        data={SLIDES}
+        data={slides}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         horizontal
@@ -174,8 +172,11 @@ export default function OnboardingScreen() {
         scrollEventThrottle={16}
       />
       <View className="px-xl" style={{ paddingBottom: spacing['3xl'] }}>
-        <View className="flex-row justify-center items-center mb-xl" style={{ gap: spacing.md / 2 }}>
-          {SLIDES.map((_, index) => (
+        <View
+          className="flex-row justify-center items-center mb-xl"
+          style={{ gap: spacing.md / 2 }}
+        >
+          {slides.map((_, index) => (
             <View
               key={index}
               testID={`pagination-dot-${index}`}
@@ -190,11 +191,7 @@ export default function OnboardingScreen() {
         </View>
         <Button
           testID="onboarding-next"
-          label={
-            isLastSlide
-              ? t('auth.onboarding.getStarted')
-              : t('auth.onboarding.next')
-          }
+          label={isLastSlide ? t('auth.onboarding.getStarted') : t('auth.onboarding.next')}
           onPress={handleNext}
           className="self-stretch"
         />

@@ -14,22 +14,20 @@ const { colors } = mobileTheme;
 
 type RoleOption = 'customer' | 'tasker' | null;
 
-const ROLE_LABELS: Record<Exclude<RoleOption, null>, string> = {
-  customer: t('RoleSelectScreen.copy1'),
-  tasker: t('RoleSelectScreen.copy2'),
-};
-
-const ROLE_COPY = {
-  customer: t('RoleSelectScreen.copy3'),
-  tasker: t('RoleSelectScreen.copy4'),
-} as const;
-
 export default function RoleSelectScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const setRole = useAppStore((state) => state.setRole);
   const [selectedRole, setSelectedRole] = useState<RoleOption>(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const roleLabels: Record<Exclude<RoleOption, null>, string> = {
+    customer: t('RoleSelectScreen.copy1'),
+    tasker: t('RoleSelectScreen.copy2'),
+  };
+  const roleCopy = {
+    customer: t('RoleSelectScreen.copy3'),
+    tasker: t('RoleSelectScreen.copy4'),
+  } as const;
 
   const handleConfirm = () => {
     if (!selectedRole) return;
@@ -43,7 +41,7 @@ export default function RoleSelectScreen() {
     router.replace('/(auth)/permission-camera');
   };
 
-  const roleLabel = selectedRole ? ROLE_LABELS[selectedRole] : ROLE_LABELS.customer;
+  const roleLabel = selectedRole ? roleLabels[selectedRole] : roleLabels.customer;
 
   const renderRoleCard = (role: Exclude<RoleOption, null>) => {
     const isSelected = selectedRole === role;
@@ -82,17 +80,14 @@ export default function RoleSelectScreen() {
             <Icon size={28} color={isSelected ? colors.primaryDeep : colors.foreground} />
           </View>
           <View className="flex-1">
-            <Text
-              className="text-title font-sans-semibold"
-              style={{ color: colors.primaryDeep }}
-            >
-              {t(titleKey, ROLE_LABELS[role])}
+            <Text className="text-title font-sans-semibold" style={{ color: colors.primaryDeep }}>
+              {t(titleKey, roleLabels[role])}
             </Text>
             <Text
               className="text-label mt-xs"
               style={{ color: colors.textSecondary, lineHeight: 20 }}
             >
-              {t(descriptionKey, ROLE_COPY[role])}
+              {t(descriptionKey, roleCopy[role])}
             </Text>
           </View>
           {isSelected ? (
@@ -158,10 +153,7 @@ export default function RoleSelectScreen() {
           testID: 'role-sheet-cancel',
         }}
       >
-        <Text
-          className="text-body"
-          style={{ color: colors.textSecondary, lineHeight: 24 }}
-        >
+        <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
           {t(
             'auth.roleSelection.confirmSheetMessage',
             `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,

@@ -48,9 +48,7 @@ export function FormWizardTemplate({
   return (
     <ScreenContainer testID={testID} className={className}>
       {/* Step Indicator — bar segments + close button */}
-      <View
-        className="flex-row items-center pt-header-top pb-item px-screen-x gap-md"
-      >
+      <View className="flex-row items-center pt-header-top pb-item px-screen-x gap-md">
         <View
           testID="wizard-progress"
           className="flex-1 flex-row items-center gap-wizard-step"

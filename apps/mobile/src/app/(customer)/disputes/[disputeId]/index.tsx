@@ -51,38 +51,46 @@ type DisputeLike = {
 
 type TimelineState = 'done' | 'current' | 'future';
 
-const STATUS_META: Record<
+function buildStatusMeta(
+  t: (key: string) => string,
+): Record<
   DisputeStatus,
   { label: string; description: string; badgeStyle: 'warning' | 'success' | 'neutral' | 'danger' }
-> = {
-  OPEN: {
-    label: t('DisputeStatusScreen.copy1'),
-    description: t('DisputeStatusScreen.copy2'),
-    badgeStyle: 'warning',
-  },
-  ESCALATED: {
-    label: t('DisputeStatusScreen.copy3'),
-    description: t('DisputeStatusScreen.copy4'),
-    badgeStyle: 'warning',
-  },
-  RESOLVED_CUSTOMER: {
-    label: t('DisputeStatusScreen.copy5'),
-    description: t('DisputeStatusScreen.copy6'),
-    badgeStyle: 'success',
-  },
-  RESOLVED_TASKER: {
-    label: t('DisputeStatusScreen.copy7'),
-    description: t('DisputeStatusScreen.copy8'),
-    badgeStyle: 'neutral',
-  },
-  CLOSED_INSUFFICIENT_EVIDENCE: {
-    label: t('DisputeStatusScreen.copy9'),
-    description: t('DisputeStatusScreen.copy10'),
-    badgeStyle: 'danger',
-  },
-};
+> {
+  return {
+    OPEN: {
+      label: t('DisputeStatusScreen.copy1'),
+      description: t('DisputeStatusScreen.copy2'),
+      badgeStyle: 'warning',
+    },
+    ESCALATED: {
+      label: t('DisputeStatusScreen.copy3'),
+      description: t('DisputeStatusScreen.copy4'),
+      badgeStyle: 'warning',
+    },
+    RESOLVED_CUSTOMER: {
+      label: t('DisputeStatusScreen.copy5'),
+      description: t('DisputeStatusScreen.copy6'),
+      badgeStyle: 'success',
+    },
+    RESOLVED_TASKER: {
+      label: t('DisputeStatusScreen.copy7'),
+      description: t('DisputeStatusScreen.copy8'),
+      badgeStyle: 'neutral',
+    },
+    CLOSED_INSUFFICIENT_EVIDENCE: {
+      label: t('DisputeStatusScreen.copy9'),
+      description: t('DisputeStatusScreen.copy10'),
+      badgeStyle: 'danger',
+    },
+  };
+}
 
-function formatMongolianDate(date: Date, options?: { includeTime?: boolean }): string {
+function formatMongolianDate(
+  date: Date,
+  t: (key: string) => string,
+  options?: { includeTime?: boolean },
+): string {
   const months = [
     t('DisputeStatusScreen.copy1'),
     t('DisputeStatusScreen.copy2'),
@@ -140,10 +148,7 @@ function getTimelineState(status: DisputeStatus, index: number): TimelineState {
   return 'future';
 }
 
-function getResolutionText(
-  status: DisputeStatus,
-  t: (key: string, fallback: string) => string,
-): string {
+function getResolutionText(status: DisputeStatus, t: (key: string) => string): string {
   switch (status) {
     case 'ESCALATED':
       return t('customer.disputes.resolutionEscalated');
@@ -161,6 +166,7 @@ function getResolutionText(
 
 function getEvidenceLabel(
   item: string | { type: string; text_payload?: string | null; storage_key?: string | null },
+  t: (key: string) => string,
 ) {
   if (typeof item === 'string') return item;
   if (item.text_payload) return item.text_payload;
@@ -216,10 +222,9 @@ export default function DisputeStatusScreen() {
 
   const dispute = disputeData as DisputeLike | undefined;
   const status = getStatus(dispute?.status);
-  const meta = STATUS_META[status];
+  const meta = buildStatusMeta(t)[status];
   const booking = dispute?.booking;
-  const bookingCategory =
-    booking?.task?.category?.name ?? t('customer.disputes.defaultCategory');
+  const bookingCategory = booking?.task?.category?.name ?? t('customer.disputes.defaultCategory');
   const bookingReference = booking?.id ?? dispute?.booking_id ?? disputeId ?? '—';
   const submittedAt = parseDate(dispute?.created_at);
   const evidenceItems = Array.isArray(dispute?.evidence) ? dispute.evidence : [];
@@ -229,18 +234,18 @@ export default function DisputeStatusScreen() {
       {
         title: t('customer.disputes.timelineSubmitted'),
         description: t('customer.disputes.timelineSubmittedDesc'),
-        date: submittedAt ? formatMongolianDate(submittedAt) : '2024.05.20',
+        date: submittedAt ? formatMongolianDate(submittedAt, t) : '2024.05.20',
       },
       {
         title: t('customer.disputes.timelineAssigned'),
         description: t('DisputeStatusScreen.copy13'),
-        date: submittedAt ? formatMongolianDate(submittedAt) : '2024.05.21',
+        date: submittedAt ? formatMongolianDate(submittedAt, t) : '2024.05.21',
       },
       {
         title: t('customer.disputes.timelineDecision'),
         description: getResolutionText(status, t),
         date: dispute?.resolved_at
-          ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date())
+          ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date(), t)
           : undefined,
       },
     ],
@@ -352,7 +357,9 @@ export default function DisputeStatusScreen() {
                   {t('customer.disputes.detailSubmitted')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
-                  {submittedAt ? formatMongolianDate(submittedAt) : t('DisputeStatusScreen.copy17')}
+                  {submittedAt
+                    ? formatMongolianDate(submittedAt, t)
+                    : t('DisputeStatusScreen.copy17')}
                 </Text>
               </View>
               <View className="gap-xs">
@@ -439,10 +446,7 @@ export default function DisputeStatusScreen() {
             </View>
 
             {/* Evidence card */}
-            <View
-              className="bg-card rounded-lg p-lg gap-sm"
-              style={elevations.soft}
-            >
+            <View className="bg-card rounded-lg p-lg gap-sm" style={elevations.soft}>
               <Text className="text-heading font-sans-bold text-primary-deep">
                 {t('customer.disputes.sectionEvidence')}
               </Text>
@@ -454,7 +458,7 @@ export default function DisputeStatusScreen() {
                   >
                     <View className="w-[8px] h-[8px] rounded-full bg-primary-deep mt-sm" />
                     <Text className="flex-1 text-body text-primary-deep leading-snug">
-                      {getEvidenceLabel(item)}
+                      {getEvidenceLabel(item, t)}
                     </Text>
                   </View>
                 ))

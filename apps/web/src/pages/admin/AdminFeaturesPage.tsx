@@ -138,7 +138,9 @@ export function AdminFeaturesPage() {
         <h1 className="text-2xl font-bold">{t('admin.features.title', 'Features')}</h1>
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            <p className="text-destructive">{t('admin.features.loadError', 'Failed to load feature toggles')}</p>
+            <p className="text-destructive">
+              {t('admin.features.loadError', 'Failed to load feature toggles')}
+            </p>
             <Button onClick={fetchToggles}>{t('common.retry', 'Retry')}</Button>
           </CardContent>
         </Card>
@@ -161,7 +163,10 @@ export function AdminFeaturesPage() {
                 {FEATURE_DESCRIPTIONS[toggle.feature_name] ?? ''}
               </p>
               <p className="text-xs text-muted-foreground">
-                {toggle.updated_by && t('admin.features.updatedBy', 'Updated by {{name}} — ', { name: toggle.updated_by })}
+                {toggle.updated_by &&
+                  t('admin.features.updatedBy', 'Updated by {{name}} — ', {
+                    name: toggle.updated_by,
+                  })}
                 {formatTimestamp(toggle.updated_at)}
               </p>
             </div>
@@ -188,7 +193,8 @@ export function AdminFeaturesPage() {
                       action: pendingToggle.newValue
                         ? t('common.enable', 'enable')
                         : t('common.disable', 'disable'),
-                      feature: FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName,
+                      feature:
+                        FEATURE_LABELS[pendingToggle.featureName] ?? pendingToggle.featureName,
                     },
                   )
                 : ''}

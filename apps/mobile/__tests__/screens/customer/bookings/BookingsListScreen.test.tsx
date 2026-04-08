@@ -166,13 +166,21 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
           {
             id: 'b-1',
             status: 'ASSIGNED',
-            task: { description: 'Assigned booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            task: {
+              description: 'Assigned booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
             tasker: { full_name: 'Bold', avatar_url: null },
           },
           {
             id: 'b-2',
             status: 'TASKER_MARKED_DONE',
-            task: { description: 'Marked done booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            task: {
+              description: 'Marked done booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
             tasker: { full_name: 'Saran', avatar_url: null },
           },
         ],
@@ -194,7 +202,11 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
           {
             id: 'b-1',
             status: 'ASSIGNED',
-            task: { description: 'Assigned booking', budget: 50000, scheduled_at: '2026-04-01T10:00:00Z' },
+            task: {
+              description: 'Assigned booking',
+              budget: 50000,
+              scheduled_at: '2026-04-01T10:00:00Z',
+            },
             tasker: { full_name: 'Bold', avatar_url: null },
           },
           {

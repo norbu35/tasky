@@ -35,7 +35,10 @@ export function PhotoGrid({
         <View key={index} className="w-[48%] aspect-square rounded-md overflow-hidden">
           <Image source={{ uri }} className="w-full h-full" />
           {index === maxPhotos - 1 && remainingCount > 0 && (
-            <View style={StyleSheet.absoluteFillObject} className="bg-[rgba(16,38,56,0.5)] items-center justify-center">
+            <View
+              style={StyleSheet.absoluteFillObject}
+              className="bg-[rgba(16,38,56,0.5)] items-center justify-center"
+            >
               <Text className="text-heading font-sans-bold text-primary-foreground">
                 +{remainingCount}
               </Text>
@@ -53,7 +56,10 @@ export function PhotoGrid({
           accessibilityLabel={t('Photos.addPhoto')}
           testID={testID ? `${testID}-add-${index}` : undefined}
         >
-          <View className="w-[36px] h-[36px] rounded-full items-center justify-center" style={{ backgroundColor: colors.primary + '12' }}>
+          <View
+            className="w-[36px] h-[36px] rounded-full items-center justify-center"
+            style={{ backgroundColor: colors.primary + '12' }}
+          >
             <Plus size={20} color={colors.primary} />
           </View>
           <Text className="text-caption font-sans-bold text-primary text-center">

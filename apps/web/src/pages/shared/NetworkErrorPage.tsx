@@ -9,7 +9,10 @@ export function NetworkErrorPage() {
     <ScreenFrame maxWidth="narrow">
       <StatePanel
         title={t('sharedPages.networkError.title', 'Network error')}
-        description={t('sharedPages.networkError.description', 'Check your connection and retry the request.')}
+        description={t(
+          'sharedPages.networkError.description',
+          'Check your connection and retry the request.',
+        )}
         tone="warning"
       />
     </ScreenFrame>

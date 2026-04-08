@@ -88,7 +88,12 @@ export default function BookingConfirmedScreen() {
       </View>
 
       <InsetScrollView
-        contentContainerStyle={{ alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.lg, paddingBottom: spacing['3xl'] }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          gap: spacing.lg,
+          paddingHorizontal: spacing.lg,
+          paddingBottom: spacing['3xl'],
+        }}
         showsVerticalScrollIndicator={false}
         bounces={false}
         extraBottomInset={spacing.xl}
@@ -184,7 +189,14 @@ export default function BookingConfirmedScreen() {
               colors={[colors.primaryDeep, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={{ minHeight: 52, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: spacing.sm }}
+              style={{
+                minHeight: 52,
+                paddingHorizontal: spacing.xl,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: spacing.sm,
+              }}
             >
               <Text className="text-body font-sans-bold text-primary-foreground">
                 {t('customer.bookings.ctaViewBooking')}

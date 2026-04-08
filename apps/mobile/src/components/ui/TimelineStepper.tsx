@@ -19,11 +19,7 @@ interface TimelineStepperProps {
 
 export function TimelineStepper({ events, testID, className }: TimelineStepperProps) {
   return (
-    <View
-      className={cn('py-sm', className)}
-      testID={testID}
-      accessibilityRole="list"
-    >
+    <View className={cn('py-sm', className)} testID={testID} accessibilityRole="list">
       {events.map((event, index) => {
         const isPast = !event.isActive && index < events.findIndex((e) => e.isActive);
         const isFuture = !event.isActive && index > events.findIndex((e) => e.isActive);

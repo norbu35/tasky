@@ -73,9 +73,7 @@ function AuthenticatedProfile() {
             </Text>
             <View className="px-md py-xs rounded-full bg-secondary">
               <Text className="text-caption font-semibold text-secondaryForeground">
-                {isTasker
-                  ? t('shared.profile.roleTasker')
-                  : t('shared.profile.roleCustomer')}
+                {isTasker ? t('shared.profile.roleTasker') : t('shared.profile.roleCustomer')}
               </Text>
             </View>
             {isTasker && profile.status === 'VERIFIED' && (
@@ -91,10 +89,7 @@ function AuthenticatedProfile() {
               label={t('shared.profile.completedJobs')}
             />
             {isTasker && (
-              <StatCard
-                value={String(profile.rating_avg)}
-                label={t('shared.profile.avgRating')}
-              />
+              <StatCard value={String(profile.rating_avg)} label={t('shared.profile.avgRating')} />
             )}
           </View>
 
@@ -105,10 +100,10 @@ function AuthenticatedProfile() {
             </Text>
             {profile.phone_masked && (
               <View className="flex-row justify-between py-sm">
-                <Text className="text-body text-textSecondary">
-                  {t('shared.profile.phone')}
+                <Text className="text-body text-textSecondary">{t('shared.profile.phone')}</Text>
+                <Text className="text-body text-foreground font-medium">
+                  {profile.phone_masked}
                 </Text>
-                <Text className="text-body text-foreground font-medium">{profile.phone_masked}</Text>
               </View>
             )}
             <View className="flex-row justify-between py-sm">

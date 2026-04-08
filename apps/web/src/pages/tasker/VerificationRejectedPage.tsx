@@ -6,10 +6,21 @@ export function VerificationRejectedPage() {
   const { t } = useTranslation();
 
   return (
-    <ResponsiveDetailShell title={t('verification.rejected.title', 'Verification rejected')} description={t('verification.rejected.description', 'Review the rejection reason and try again.')}>
+    <ResponsiveDetailShell
+      title={t('verification.rejected.title', 'Verification rejected')}
+      description={t(
+        'verification.rejected.description',
+        'Review the rejection reason and try again.',
+      )}
+    >
       <Card>
         <CardContent className="space-y-3 p-4 text-sm text-muted-foreground">
-          <p>{t('verification.rejected.content', 'Fix the issues noted by the reviewer before resubmitting.')}</p>
+          <p>
+            {t(
+              'verification.rejected.content',
+              'Fix the issues noted by the reviewer before resubmitting.',
+            )}
+          </p>
         </CardContent>
       </Card>
     </ResponsiveDetailShell>

@@ -27,7 +27,10 @@ export default function CustomerCancelBookingScreen() {
     <ScreenContainer testID="SCR-CUST-022">
       <ModalSheetTemplate
         isOpen={isOpen}
-        onClose={() => { setIsOpen(false); router.back(); }}
+        onClose={() => {
+          setIsOpen(false);
+          router.back();
+        }}
         title={t('customer.cancelBooking.title')}
         testID="cancel-booking-sheet"
       >
@@ -45,7 +48,10 @@ export default function CustomerCancelBookingScreen() {
           <Button
             label={t('common.goBack')}
             variant="ghost"
-            onPress={() => { setIsOpen(false); router.back(); }}
+            onPress={() => {
+              setIsOpen(false);
+              router.back();
+            }}
             className="self-stretch"
           />
         </View>

@@ -95,9 +95,7 @@ export default function ScheduleBudgetScreen() {
   const canContinue = isBudgetValid && isScheduleValid;
 
   const budgetError =
-    touchedBudget && budget !== '' && !isBudgetValid
-      ? t('ScheduleBudgetScreen.budgetError')
-      : '';
+    touchedBudget && budget !== '' && !isBudgetValid ? t('ScheduleBudgetScreen.budgetError') : '';
   const scheduleError =
     touchedSchedule && selectedDate && selectedTime && !isScheduleValid
       ? t('ScheduleBudgetScreen.schedulePastError')
@@ -195,10 +193,7 @@ export default function ScheduleBudgetScreen() {
       </View>
 
       {/* dateCard: shadow → imperative */}
-      <View
-        className="rounded-lg bg-muted gap-lg"
-        style={{ padding: 20, ...elevations.soft }}
-      >
+      <View className="rounded-lg bg-muted gap-lg" style={{ padding: 20, ...elevations.soft }}>
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
           <Text className="text-body font-extrabold text-primaryDeep">

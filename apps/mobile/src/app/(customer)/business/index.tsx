@@ -14,7 +14,7 @@ export default function BusinessDashboardScreen() {
     <FeedListTemplate
       testID="SCR-B2B-001"
       data={[]}
-      renderItem={() => ({ type: 'text', key: 'placeholder' } as any)}
+      renderItem={() => ({ type: 'text', key: 'placeholder' }) as any}
       keyExtractor={(item: any) => item.key}
       isLoading={false}
       isEmpty

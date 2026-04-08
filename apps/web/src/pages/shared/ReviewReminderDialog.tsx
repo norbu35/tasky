@@ -21,9 +21,14 @@ export function ReviewReminderDialog({
     <Dialog modal={false} onOpenChange={onOpenChange} open={open}>
       <DialogContent aria-describedby="review-reminder-description">
         <DialogHeader>
-          <DialogTitle>{t('sharedPages.reviewReminder.title', 'Leave a review reminder')}</DialogTitle>
+          <DialogTitle>
+            {t('sharedPages.reviewReminder.title', 'Leave a review reminder')}
+          </DialogTitle>
           <DialogDescription id="review-reminder-description">
-            {t('sharedPages.reviewReminder.description', 'Reviews help unlock the next booking without forcing a long form.')}
+            {t(
+              'sharedPages.reviewReminder.description',
+              'Reviews help unlock the next booking without forcing a long form.',
+            )}
           </DialogDescription>
         </DialogHeader>
         <Button onClick={() => onOpenChange(false)} type="button">

@@ -142,7 +142,9 @@ export default function RebookScreen() {
         <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
           {t('customer.bookings.sectionTaskDetails')}
         </Text>
-        <Text className="text-body font-semibold text-primaryDeep mb-xs">{params.categoryName}</Text>
+        <Text className="text-body font-semibold text-primaryDeep mb-xs">
+          {params.categoryName}
+        </Text>
         <Text className="text-body text-primaryDeep mb-sm">{params.description}</Text>
         {params.locationText && (
           <Text className="text-caption text-textSecondary">{params.locationText}</Text>

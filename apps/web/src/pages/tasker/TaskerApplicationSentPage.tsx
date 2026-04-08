@@ -12,7 +12,10 @@ export function TaskerApplicationSentPage() {
   return (
     <ResponsiveWizardShell
       title={t('taskerPages.applicationSent.title', 'Application sent')}
-      description={t('taskerPages.applicationSent.description', 'Your application has been sent to the customer and is waiting for review.')}
+      description={t(
+        'taskerPages.applicationSent.description',
+        'Your application has been sent to the customer and is waiting for review.',
+      )}
       footer={
         <Button type="button" onClick={() => navigate('/tasker/tasks')}>
           {t('taskerPages.applicationSent.backAction', 'Back to feed')}
@@ -21,7 +24,9 @@ export function TaskerApplicationSentPage() {
     >
       <Card>
         <CardContent className="space-y-4 p-6">
-          <p className="text-sm text-muted-foreground">{t('taskerPages.applicationSent.content', 'Application sent.')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t('taskerPages.applicationSent.content', 'Application sent.')}
+          </p>
         </CardContent>
       </Card>
     </ResponsiveWizardShell>

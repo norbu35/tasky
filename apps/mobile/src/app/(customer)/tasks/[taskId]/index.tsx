@@ -157,10 +157,7 @@ export default function TaskDetailCustomerScreen() {
             </View>
 
             {/* budgetCard: shadow → imperative */}
-            <View
-              className="bg-primaryDeep rounded-lg p-lg gap-sm"
-              style={elevations.soft}
-            >
+            <View className="bg-primaryDeep rounded-lg p-lg gap-sm" style={elevations.soft}>
               <View className="flex-row items-center justify-between">
                 <Text
                   className="text-caption font-bold uppercase"
@@ -178,7 +175,10 @@ export default function TaskDetailCustomerScreen() {
                   </Text>
                 </View>
               </View>
-              <Text className="text-secondary font-extrabold" style={{ fontSize: 36, lineHeight: 40 }}>
+              <Text
+                className="text-secondary font-extrabold"
+                style={{ fontSize: 36, lineHeight: 40 }}
+              >
                 {formatBudget(task.budget)}
               </Text>
             </View>
@@ -247,8 +247,8 @@ export default function TaskDetailCustomerScreen() {
                   ))
                 ) : (
                   <Text className="text-body text-textSecondary leading-relaxed">
-                  {t('TaskDetailCustomerScreen.noPhotos')}
-                </Text>
+                    {t('TaskDetailCustomerScreen.noPhotos')}
+                  </Text>
                 )}
               </View>
             </View>

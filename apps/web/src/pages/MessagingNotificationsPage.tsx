@@ -169,7 +169,7 @@ export function MessagingNotificationsPage() {
             aria-label={t('messaging.notificationsLabel', 'Notifications')}
             onClick={() => void handlePushToggle(!pushEnabled)}
             className="p-2 rounded-full hover:bg-muted transition-colors"
-            >
+          >
             {pushEnabled ? (
               <Bell className="w-5 h-5 text-primary" />
             ) : (

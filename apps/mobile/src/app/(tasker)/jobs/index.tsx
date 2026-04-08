@@ -15,7 +15,10 @@ function BookingCardHeader({ booking }: { booking: Booking }) {
 
   return (
     <View testID="SCR-TASK-012" className="flex-row items-center justify-between">
-      <Text className="text-body font-semibold text-primaryForeground flex-1 mr-sm" numberOfLines={1}>
+      <Text
+        className="text-body font-semibold text-primaryForeground flex-1 mr-sm"
+        numberOfLines={1}
+      >
         {customerName}
       </Text>
       <StatusBadge status={status} />

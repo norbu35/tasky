@@ -9,7 +9,10 @@ export function SuspendedPage() {
     <ScreenFrame maxWidth="narrow">
       <StatePanel
         title={t('sharedPages.suspended.title', 'Account suspended')}
-        description={t('sharedPages.suspended.description', 'Your account is temporarily paused while support reviews recent activity.')}
+        description={t(
+          'sharedPages.suspended.description',
+          'Your account is temporarily paused while support reviews recent activity.',
+        )}
         tone="warning"
       />
     </ScreenFrame>

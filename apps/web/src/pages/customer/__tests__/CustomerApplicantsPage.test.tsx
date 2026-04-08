@@ -104,7 +104,10 @@ describe('CustomerApplicantsPage', () => {
     expect(await screen.findByRole('heading', { name: 'Applicants' })).toBeInTheDocument();
     expect(await screen.findByText('Tasker One')).toBeInTheDocument();
     await waitFor(() => {
-      expect(apiClient.listTaskApplications).toHaveBeenCalledWith(baseSession.accessToken, 'task-77');
+      expect(apiClient.listTaskApplications).toHaveBeenCalledWith(
+        baseSession.accessToken,
+        'task-77',
+      );
     });
 
     await user.click(screen.getByRole('button', { name: 'View profile' }));
@@ -161,7 +164,9 @@ describe('CustomerApplicantsPage', () => {
       screen.queryByText('Hook this page up to a task ID to show the live applicant queue.'),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText('The customer parity baseline should keep the review flow ready even before route wiring is enabled.'),
+      screen.queryByText(
+        'The customer parity baseline should keep the review flow ready even before route wiring is enabled.',
+      ),
     ).not.toBeInTheDocument();
   });
 });

@@ -118,215 +118,247 @@ export default function RescheduleScreen() {
     <ScreenContainer testID="SCR-CUST-020">
       <InsetScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing['2xl'], gap: spacing.lg }}
+        contentContainerStyle={{
+          paddingHorizontal: spacing.lg,
+          paddingBottom: spacing['2xl'],
+          gap: spacing.lg,
+        }}
         showsVerticalScrollIndicator={false}
         extraBottomInset={120}
       >
-          {/* Current schedule card */}
-          <View className="flex-row items-center justify-between bg-muted rounded-lg p-lg">
-            <View className="flex-1 gap-xs">
-              <Text className="text-body text-text-secondary">
-                {t('customer.bookings.sectionCurrentSchedule')}
-              </Text>
-              <View className="flex-row items-center gap-sm">
-                <CalendarDays size={16} color={colors.primaryDeep} />
-                <Text className="text-body font-sans-bold text-primary-deep">
-                  {scheduledAtLabel}
-                </Text>
-              </View>
-            </View>
-            <View className="w-[34px] h-[34px] rounded-md bg-card items-center justify-center">
-              <Clock3 size={16} color={colors.secondary} />
-            </View>
-          </View>
-
-          {/* Step indicator */}
-          <View className="flex-row items-center justify-between px-sm">
-            <View className="items-center gap-xs">
-              <View className="w-[32px] h-[32px] rounded-md bg-primary-deep items-center justify-center">
-                <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
-              </View>
-              <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
-                {t('customer.bookings.stepChooseDay')}
-              </Text>
-            </View>
-            <View className="flex-1 h-[2px] mx-sm bg-border" />
-            <View className="items-center gap-xs opacity-[0.45]">
-              <View className="w-[32px] h-[32px] rounded-md bg-muted items-center justify-center">
-                <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
-              </View>
-              <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
-                {t('customer.bookings.stepConfirm')}
-              </Text>
-            </View>
-          </View>
-
-          {/* Calendar card */}
-          <View className="bg-muted rounded-lg p-lg gap-lg" style={elevations.soft}>
-            <View className="flex-row items-center justify-between">
-              <Text className="text-subtitle font-sans-bold text-primary-deep">
-                {formatMonthTitle(visibleMonth)}
-              </Text>
-              <View className="flex-row gap-xs">
-                <Pressable className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center" accessibilityRole="button">
-                  <ChevronLeftIcon size={18} color={colors.primaryDeep} />
-                </Pressable>
-                <Pressable className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center" accessibilityRole="button">
-                  <ChevronRight size={18} color={colors.primaryDeep} />
-                </Pressable>
-              </View>
-            </View>
-
-            <View className="flex-row">
-              {[t('RescheduleScreen.copy1'), t('RescheduleScreen.copy2'), t('RescheduleScreen.copy3'), t('RescheduleScreen.copy4'), t('RescheduleScreen.copy5'), t('RescheduleScreen.copy6'), t('RescheduleScreen.copy7')].map((day) => (
-                <Text key={day} className="flex-1 text-center text-micro font-sans-bold text-text-secondary tracking-wide">
-                  {day}
-                </Text>
-              ))}
-            </View>
-
-            <View className="flex-row flex-wrap">
-              {calendarCells.map((cell, index) => {
-                if (!cell) {
-                  return <View key={`empty-${index}`} className="w-[14.2857%] aspect-square items-center justify-center rounded-sm" />;
-                }
-                const isSelected = sameDay(cell, selectedDateTime);
-                const isTomorrow = sameDay(cell, tomorrow);
-                const isPast = cell < tomorrow;
-                const isWeekend = cell.getDay() === 0 || cell.getDay() === 6;
-                return (
-                  <Pressable
-                    key={cell.toISOString()}
-                    onPress={() => updateSelectedDay(cell)}
-                    className={cn(
-                      'w-[14.2857%] aspect-square items-center justify-center rounded-sm',
-                      isSelected && 'bg-primary-deep',
-                      isPast && 'opacity-25',
-                    )}
-                    style={isSelected ? elevations.soft : undefined}
-                    testID={isSelected ? 'reschedule-screen-date-picker' : undefined}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: isSelected, disabled: isPast }}
-                  >
-                    <Text
-                      className={cn(
-                        'text-label text-primary-deep font-medium',
-                        isSelected && 'text-primary-foreground font-sans-bold',
-                        isPast && 'text-text-secondary',
-                        isWeekend && !isSelected && 'text-danger',
-                        isTomorrow && !isSelected && 'text-danger',
-                      )}
-                    >
-                      {cell.getDate()}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
-          {/* Time section */}
-          <View className="gap-md">
-            <View className="flex-row items-center gap-xs">
-              <Clock3 size={14} color={colors.primaryDeep} />
-              <Text className="text-heading font-sans-bold text-primary-deep" style={{ fontWeight: '800' }}>
-                {t('customer.bookings.sectionAvailableTimes')}
-              </Text>
-            </View>
-            <View className="flex-row flex-wrap gap-sm">
-              {['09:00', '10:00', '11:00', '14:00', '15:00'].map((time) => {
-                const isSelected =
-                  formatDateTime(selectedDateTime).endsWith(` ${time}`) ||
-                  (time === '10:00' && formatDateTime(selectedDateTime).endsWith(' 10:00'));
-                return (
-                  <Pressable
-                    key={time}
-                    onPress={() => updateSelectedTime(time)}
-                    className={cn(
-                      'min-w-[72px] min-h-[40px] rounded-md bg-muted items-center justify-center px-lg',
-                      isSelected && 'bg-primary-deep',
-                    )}
-                    style={isSelected ? elevations.soft : undefined}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: isSelected }}
-                  >
-                    <Text
-                      className={cn(
-                        'text-label font-sans-bold text-primary-deep',
-                        isSelected && 'text-primary-foreground',
-                      )}
-                    >
-                      {time}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
-          {/* Reason section */}
-          <View className="gap-md">
-            <Text className="text-body font-sans-bold text-primary-deep">
-              {t('customer.bookings.labelReason')}
+        {/* Current schedule card */}
+        <View className="flex-row items-center justify-between bg-muted rounded-lg p-lg">
+          <View className="flex-1 gap-xs">
+            <Text className="text-body text-text-secondary">
+              {t('customer.bookings.sectionCurrentSchedule')}
             </Text>
-            <View className="min-h-[120px] bg-muted rounded-md p-md">
-              <Input
-                style={{ minHeight: 96, color: colors.primaryDeep, fontSize: typography.body, textAlignVertical: 'top' }}
-                placeholder={t('RescheduleScreen.copy1')}
-                placeholderTextColor={colors.chipInactive}
-                value={reason}
-                onChangeText={setReason}
-                maxLength={200}
-                multiline
-                numberOfLines={4}
-                testID="reschedule-screen-reason"
-              />
+            <View className="flex-row items-center gap-sm">
+              <CalendarDays size={16} color={colors.primaryDeep} />
+              <Text className="text-body font-sans-bold text-primary-deep">{scheduledAtLabel}</Text>
             </View>
-            <Text className="text-caption text-text-secondary">
-              {t('customer.bookings.helperReason')}
+          </View>
+          <View className="w-[34px] h-[34px] rounded-md bg-card items-center justify-center">
+            <Clock3 size={16} color={colors.secondary} />
+          </View>
+        </View>
+
+        {/* Step indicator */}
+        <View className="flex-row items-center justify-between px-sm">
+          <View className="items-center gap-xs">
+            <View className="w-[32px] h-[32px] rounded-md bg-primary-deep items-center justify-center">
+              <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
+            </View>
+            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
+              {t('customer.bookings.stepChooseDay')}
             </Text>
           </View>
-
-          {/* Info tip */}
-          <View className="flex-row gap-sm items-start bg-muted rounded-md p-md">
-            <Info size={16} color={colors.primaryDeep} />
-            <Text
-              className="flex-1 text-caption text-primary-deep"
-              style={{ lineHeight: typography.caption * 1.5 }}
-            >
-              {t('RescheduleScreen.copy2')}
+          <View className="flex-1 h-[2px] mx-sm bg-border" />
+          <View className="items-center gap-xs opacity-[0.45]">
+            <View className="w-[32px] h-[32px] rounded-md bg-muted items-center justify-center">
+              <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
+            </View>
+            <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
+              {t('customer.bookings.stepConfirm')}
             </Text>
           </View>
+        </View>
 
-          {/* State card */}
-          {requestState !== 'request_form' ? (
-            <View className="bg-muted rounded-lg p-lg gap-sm items-start">
-              <View className="w-[40px] h-[40px] rounded-md bg-card items-center justify-center">
-                <CalendarRange size={18} color={colors.secondary} />
-              </View>
-              <Text className="text-body font-sans-bold text-primary-deep">
-                {requestState === 'awaiting_response'
-                  ? t('customer.bookings.statusAwaiting')
-                  : requestState === 'accepted'
-                    ? t('customer.bookings.statusAccepted')
-                    : requestState === 'declined'
-                      ? t('customer.bookings.statusDeclined')
-                      : t('customer.bookings.statusExpired')}
-              </Text>
-              <Text
-                className="text-label text-text-secondary"
-                style={{ lineHeight: typography.label * 1.5 }}
+        {/* Calendar card */}
+        <View className="bg-muted rounded-lg p-lg gap-lg" style={elevations.soft}>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-subtitle font-sans-bold text-primary-deep">
+              {formatMonthTitle(visibleMonth)}
+            </Text>
+            <View className="flex-row gap-xs">
+              <Pressable
+                className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
+                accessibilityRole="button"
               >
-                {requestState === 'awaiting_response'
-                  ? t('RescheduleScreen.copy3')
-                  : requestState === 'accepted'
-                    ? t('RescheduleScreen.copy4')
-                    : requestState === 'declined'
-                      ? t('RescheduleScreen.copy5')
-                      : t('RescheduleScreen.copy6')}
-              </Text>
+                <ChevronLeftIcon size={18} color={colors.primaryDeep} />
+              </Pressable>
+              <Pressable
+                className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center"
+                accessibilityRole="button"
+              >
+                <ChevronRight size={18} color={colors.primaryDeep} />
+              </Pressable>
             </View>
-          ) : null}
+          </View>
+
+          <View className="flex-row">
+            {[
+              t('RescheduleScreen.copy1'),
+              t('RescheduleScreen.copy2'),
+              t('RescheduleScreen.copy3'),
+              t('RescheduleScreen.copy4'),
+              t('RescheduleScreen.copy5'),
+              t('RescheduleScreen.copy6'),
+              t('RescheduleScreen.copy7'),
+            ].map((day) => (
+              <Text
+                key={day}
+                className="flex-1 text-center text-micro font-sans-bold text-text-secondary tracking-wide"
+              >
+                {day}
+              </Text>
+            ))}
+          </View>
+
+          <View className="flex-row flex-wrap">
+            {calendarCells.map((cell, index) => {
+              if (!cell) {
+                return (
+                  <View
+                    key={`empty-${index}`}
+                    className="w-[14.2857%] aspect-square items-center justify-center rounded-sm"
+                  />
+                );
+              }
+              const isSelected = sameDay(cell, selectedDateTime);
+              const isTomorrow = sameDay(cell, tomorrow);
+              const isPast = cell < tomorrow;
+              const isWeekend = cell.getDay() === 0 || cell.getDay() === 6;
+              return (
+                <Pressable
+                  key={cell.toISOString()}
+                  onPress={() => updateSelectedDay(cell)}
+                  className={cn(
+                    'w-[14.2857%] aspect-square items-center justify-center rounded-sm',
+                    isSelected && 'bg-primary-deep',
+                    isPast && 'opacity-25',
+                  )}
+                  style={isSelected ? elevations.soft : undefined}
+                  testID={isSelected ? 'reschedule-screen-date-picker' : undefined}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected, disabled: isPast }}
+                >
+                  <Text
+                    className={cn(
+                      'text-label text-primary-deep font-medium',
+                      isSelected && 'text-primary-foreground font-sans-bold',
+                      isPast && 'text-text-secondary',
+                      isWeekend && !isSelected && 'text-danger',
+                      isTomorrow && !isSelected && 'text-danger',
+                    )}
+                  >
+                    {cell.getDate()}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Time section */}
+        <View className="gap-md">
+          <View className="flex-row items-center gap-xs">
+            <Clock3 size={14} color={colors.primaryDeep} />
+            <Text
+              className="text-heading font-sans-bold text-primary-deep"
+              style={{ fontWeight: '800' }}
+            >
+              {t('customer.bookings.sectionAvailableTimes')}
+            </Text>
+          </View>
+          <View className="flex-row flex-wrap gap-sm">
+            {['09:00', '10:00', '11:00', '14:00', '15:00'].map((time) => {
+              const isSelected =
+                formatDateTime(selectedDateTime).endsWith(` ${time}`) ||
+                (time === '10:00' && formatDateTime(selectedDateTime).endsWith(' 10:00'));
+              return (
+                <Pressable
+                  key={time}
+                  onPress={() => updateSelectedTime(time)}
+                  className={cn(
+                    'min-w-[72px] min-h-[40px] rounded-md bg-muted items-center justify-center px-lg',
+                    isSelected && 'bg-primary-deep',
+                  )}
+                  style={isSelected ? elevations.soft : undefined}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
+                >
+                  <Text
+                    className={cn(
+                      'text-label font-sans-bold text-primary-deep',
+                      isSelected && 'text-primary-foreground',
+                    )}
+                  >
+                    {time}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Reason section */}
+        <View className="gap-md">
+          <Text className="text-body font-sans-bold text-primary-deep">
+            {t('customer.bookings.labelReason')}
+          </Text>
+          <View className="min-h-[120px] bg-muted rounded-md p-md">
+            <Input
+              style={{
+                minHeight: 96,
+                color: colors.primaryDeep,
+                fontSize: typography.body,
+                textAlignVertical: 'top',
+              }}
+              placeholder={t('RescheduleScreen.copy1')}
+              placeholderTextColor={colors.chipInactive}
+              value={reason}
+              onChangeText={setReason}
+              maxLength={200}
+              multiline
+              numberOfLines={4}
+              testID="reschedule-screen-reason"
+            />
+          </View>
+          <Text className="text-caption text-text-secondary">
+            {t('customer.bookings.helperReason')}
+          </Text>
+        </View>
+
+        {/* Info tip */}
+        <View className="flex-row gap-sm items-start bg-muted rounded-md p-md">
+          <Info size={16} color={colors.primaryDeep} />
+          <Text
+            className="flex-1 text-caption text-primary-deep"
+            style={{ lineHeight: typography.caption * 1.5 }}
+          >
+            {t('RescheduleScreen.copy2')}
+          </Text>
+        </View>
+
+        {/* State card */}
+        {requestState !== 'request_form' ? (
+          <View className="bg-muted rounded-lg p-lg gap-sm items-start">
+            <View className="w-[40px] h-[40px] rounded-md bg-card items-center justify-center">
+              <CalendarRange size={18} color={colors.secondary} />
+            </View>
+            <Text className="text-body font-sans-bold text-primary-deep">
+              {requestState === 'awaiting_response'
+                ? t('customer.bookings.statusAwaiting')
+                : requestState === 'accepted'
+                  ? t('customer.bookings.statusAccepted')
+                  : requestState === 'declined'
+                    ? t('customer.bookings.statusDeclined')
+                    : t('customer.bookings.statusExpired')}
+            </Text>
+            <Text
+              className="text-label text-text-secondary"
+              style={{ lineHeight: typography.label * 1.5 }}
+            >
+              {requestState === 'awaiting_response'
+                ? t('RescheduleScreen.copy3')
+                : requestState === 'accepted'
+                  ? t('RescheduleScreen.copy4')
+                  : requestState === 'declined'
+                    ? t('RescheduleScreen.copy5')
+                    : t('RescheduleScreen.copy6')}
+            </Text>
+          </View>
+        ) : null}
       </InsetScrollView>
 
       <StickyActionBar>
@@ -343,7 +375,14 @@ export default function RescheduleScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={[
-                { minHeight: 56, borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
+                {
+                  minHeight: 56,
+                  borderRadius: 8,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: spacing.sm,
+                },
                 isPending && { opacity: 0.7 },
               ]}
             >

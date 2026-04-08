@@ -29,12 +29,23 @@ export function PhotoUploadManager({
     if (!file) return;
 
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setError(t('taskCreation.photoUpload.invalidType', 'Invalid file type. Only JPG, PNG, and WebP are allowed.'));
+      setError(
+        t(
+          'taskCreation.photoUpload.invalidType',
+          'Invalid file type. Only JPG, PNG, and WebP are allowed.',
+        ),
+      );
       return;
     }
 
     if (photoKeys.length >= maxPhotos) {
-      setError(t('taskCreation.photoUpload.maxPhotosError', 'You can only upload up to {{maxPhotos}} photos.', { maxPhotos }));
+      setError(
+        t(
+          'taskCreation.photoUpload.maxPhotosError',
+          'You can only upload up to {{maxPhotos}} photos.',
+          { maxPhotos },
+        ),
+      );
       return;
     }
 
@@ -59,7 +70,9 @@ export function PhotoUploadManager({
       });
 
       if (!uploadResponse.ok) {
-        setError(t('taskCreation.photoUpload.uploadFailed', 'Failed to upload image to storage layer.'));
+        setError(
+          t('taskCreation.photoUpload.uploadFailed', 'Failed to upload image to storage layer.'),
+        );
         return;
       }
 
@@ -117,7 +130,9 @@ export function PhotoUploadManager({
             ) : (
               <>
                 <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{t('taskCreation.photoUpload.addPhoto', 'Add Photo')}</span>
+                <span className="text-xs text-muted-foreground">
+                  {t('taskCreation.photoUpload.addPhoto', 'Add Photo')}
+                </span>
               </>
             )}
           </button>

@@ -47,7 +47,10 @@ export function AuthTemplate({
           <View className="absolute top-xl right-xl z-10">{topRightSlot}</View>
         ) : null}
         <InsetScrollView
-          contentContainerStyle={[{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }, contentStyle]}
+          contentContainerStyle={[
+            { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 },
+            contentStyle,
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           extraBottomInset={bottomSlot ? 210 : 0}

@@ -24,11 +24,7 @@ const variantTextClass: Record<Variant, string> = {
 export function Toast({ message, variant = 'info', className }: Props) {
   return (
     <View
-      className={cn(
-        'rounded-md border px-md py-sm',
-        variantContainerClass[variant],
-        className,
-      )}
+      className={cn('rounded-md border px-md py-sm', variantContainerClass[variant], className)}
       accessibilityRole="alert"
     >
       <Text className={cn('text-caption font-sans-semibold', variantTextClass[variant])}>

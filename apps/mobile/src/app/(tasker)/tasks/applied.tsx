@@ -12,11 +12,7 @@ export default function ApplicationSubmittedScreen() {
       testID="SCR-TASK-011"
       headline={t('tasker.applied.headline')}
       body={t('tasker.applied.body')}
-      nextSteps={[
-        t('tasker.applied.step1'),
-        t('tasker.applied.step2'),
-        t('tasker.applied.step3'),
-      ]}
+      nextSteps={[t('tasker.applied.step1'), t('tasker.applied.step2'), t('tasker.applied.step3')]}
       ctaLabel={t('tasker.applied.cta')}
       ctaOnPress={() => router.replace('/(tabs)')}
       secondaryCtaLabel={t('tasker.applied.secondaryCta')}

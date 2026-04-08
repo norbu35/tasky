@@ -14,10 +14,7 @@ export default function SharedLayout() {
           title: t('shared.profile.editTitle'),
         }}
       />
-      <Stack.Screen
-        name="profile/settings"
-        options={{ title: t('shared.profile.settings') }}
-      />
+      <Stack.Screen name="profile/settings" options={{ title: t('shared.profile.settings') }} />
       <Stack.Screen
         name="profile/delete"
         options={{
@@ -26,10 +23,7 @@ export default function SharedLayout() {
         }}
       />
       {/* Notifications */}
-      <Stack.Screen
-        name="notifications"
-        options={{ title: t('shared.notifications.title') }}
-      />
+      <Stack.Screen name="notifications" options={{ title: t('shared.notifications.title') }} />
       {/* Reviews */}
       <Stack.Screen
         name="review/[bookingId]"
@@ -39,19 +33,10 @@ export default function SharedLayout() {
         }}
       />
       {/* Legal */}
-      <Stack.Screen
-        name="legal/terms"
-        options={{ title: t('shared.legal.termsTitle') }}
-      />
-      <Stack.Screen
-        name="legal/privacy"
-        options={{ title: t('shared.legal.privacyTitle') }}
-      />
+      <Stack.Screen name="legal/terms" options={{ title: t('shared.legal.termsTitle') }} />
+      <Stack.Screen name="legal/privacy" options={{ title: t('shared.legal.privacyTitle') }} />
       {/* Help */}
-      <Stack.Screen
-        name="help"
-        options={{ title: t('shared.help.title') }}
-      />
+      <Stack.Screen name="help" options={{ title: t('shared.help.title') }} />
       {/* Infrastructure — full-screen, no header */}
       <Stack.Screen name="network-error" options={{ headerShown: false }} />
       <Stack.Screen name="app-update" options={{ headerShown: false }} />

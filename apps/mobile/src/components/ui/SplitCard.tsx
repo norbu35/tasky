@@ -17,7 +17,13 @@ interface SplitCardProps {
   className?: string;
 }
 
-export function SplitCard({ headerContent, bodyContent, onPress, testID, className }: SplitCardProps) {
+export function SplitCard({
+  headerContent,
+  bodyContent,
+  onPress,
+  testID,
+  className,
+}: SplitCardProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -61,10 +67,7 @@ export function SplitCard({ headerContent, bodyContent, onPress, testID, classNa
       >
         {headerContent}
       </View>
-      <View
-        style={{ padding: spacing.md }}
-        className="bg-background rounded-bl-lg rounded-br-lg"
-      >
+      <View style={{ padding: spacing.md }} className="bg-background rounded-bl-lg rounded-br-lg">
         {bodyContent}
       </View>
     </Wrapper>

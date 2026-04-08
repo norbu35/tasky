@@ -174,7 +174,14 @@ export default function CategorySelectionScreen() {
           onChangeText={setQuery}
           placeholder={t('CategorySelectionScreen.searchPlaceholder')}
           testID="category-selection-search"
-          style={{ flex: 1, borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0, minHeight: 40, backgroundColor: 'transparent' }}
+          style={{
+            flex: 1,
+            borderWidth: 0,
+            paddingHorizontal: 0,
+            paddingVertical: 0,
+            minHeight: 40,
+            backgroundColor: 'transparent',
+          }}
         />
       </View>
 
@@ -194,7 +201,12 @@ export default function CategorySelectionScreen() {
             {Array.from({ length: 8 }).map((_, index) => (
               <View
                 key={index}
-                style={{ width: '47%', minHeight: 163, borderRadius: radius.md, backgroundColor: colors.muted }}
+                style={{
+                  width: '47%',
+                  minHeight: 163,
+                  borderRadius: radius.md,
+                  backgroundColor: colors.muted,
+                }}
               />
             ))}
           </View>
@@ -207,10 +219,7 @@ export default function CategorySelectionScreen() {
           <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
             {t('CategorySelectionScreen.loadError')}
           </Text>
-          <Text
-            className="text-caption"
-            style={{ color: colors.textSecondary, lineHeight: 18 }}
-          >
+          <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
             {t('CategorySelectionScreen.loadHint')}
           </Text>
           <Pressable
@@ -219,7 +228,10 @@ export default function CategorySelectionScreen() {
             style={{ borderRadius: radius.md, backgroundColor: colors.secondary }}
             testID="category-selection-retry"
           >
-            <Text className="text-caption font-sans-bold" style={{ color: colors.secondaryForeground }}>
+            <Text
+              className="text-caption font-sans-bold"
+              style={{ color: colors.secondaryForeground }}
+            >
               {t('CategorySelectionScreen.retry')}
             </Text>
           </Pressable>

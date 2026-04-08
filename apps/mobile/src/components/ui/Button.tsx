@@ -120,11 +120,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
       <Pressable
         ref={ref}
         style={[variant === 'default' && elevations.card, style]}
-        className={cn(
-          buttonVariants({ variant, size }),
-          !isInteractive && 'opacity-50',
-          className,
-        )}
+        className={cn(buttonVariants({ variant, size }), !isInteractive && 'opacity-50', className)}
         disabled={!isInteractive}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -136,9 +132,7 @@ export const Button = React.forwardRef<React.ElementRef<typeof Pressable>, Butto
           ) : children ? (
             children
           ) : (
-            <Text className={cn(textVariants({ variant, size }), labelClassName)}>
-              {label}
-            </Text>
+            <Text className={cn(textVariants({ variant, size }), labelClassName)}>{label}</Text>
           )}
         </Animated.View>
       </Pressable>

@@ -33,9 +33,7 @@ export default function OtpScreen() {
   const isVerifying = state === 'verifying';
   const sanitizedCode = code.replace(/\D/g, '').slice(0, 4);
 
-  const resendLabel = isExpired
-    ? t('auth.otp.resend')
-    : t('auth.otp.resendCountdown');
+  const resendLabel = isExpired ? t('auth.otp.resend') : t('auth.otp.resendCountdown');
 
   const descriptionPrefix = t('auth.otp.descriptionPrefix');
   const descriptionSuffix = t('OtpScreen.copy1');
@@ -45,7 +43,12 @@ export default function OtpScreen() {
     <ScreenContainer testID="SCR-SHARED-003">
       <InsetScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 72, paddingBottom: 32, gap: 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingTop: 72,
+          paddingBottom: 32,
+          gap: 24,
+        }}
         extraBottomInset={96}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -70,7 +73,10 @@ export default function OtpScreen() {
         </View>
 
         <View
-          className={cn('self-center flex-row gap-sm py-md items-center', isWrongCode && 'opacity-[0.96]')}
+          className={cn(
+            'self-center flex-row gap-sm py-md items-center',
+            isWrongCode && 'opacity-[0.96]',
+          )}
           testID="otp-code-input"
         >
           <TextInput
@@ -141,17 +147,12 @@ export default function OtpScreen() {
         </Pressable>
 
         {(isWrongCode || isExpired) && (
-          <View
-            className="self-center px-md"
-            style={isExpired ? { marginTop: -8 } : undefined}
-          >
+          <View className="self-center px-md" style={isExpired ? { marginTop: -8 } : undefined}>
             <Text
               className="text-caption text-center"
               style={{ color: colors.danger, lineHeight: 20 }}
             >
-              {isWrongCode
-                ? t('auth.otp.errorWrongCode')
-                : t('auth.otp.errorExpired')}
+              {isWrongCode ? t('auth.otp.errorWrongCode') : t('auth.otp.errorExpired')}
             </Text>
           </View>
         )}
@@ -171,10 +172,7 @@ export default function OtpScreen() {
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
               {t('auth.otp.securityTitle')}
             </Text>
-            <Text
-              className="text-caption"
-              style={{ color: colors.textSecondary, lineHeight: 21 }}
-            >
+            <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 21 }}>
               {t('OtpScreen.copy2')}
             </Text>
           </View>
@@ -188,7 +186,10 @@ export default function OtpScreen() {
             label={t('auth.otp.verify')}
             isLoading={isVerifying}
             disabled={sanitizedCode.length !== 4 || isVerifying}
-            style={[{ minHeight: 56, borderRadius: radius.md, backgroundColor: colors.primaryDeep }, elevations.soft]}
+            style={[
+              { minHeight: 56, borderRadius: radius.md, backgroundColor: colors.primaryDeep },
+              elevations.soft,
+            ]}
           />
         </View>
       </StickyActionBar>

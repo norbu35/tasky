@@ -61,7 +61,12 @@ export function SuccessCelebrationTemplate({
     <ScreenContainer testID={testID} className={className}>
       <InsetScrollView
         className="flex-1 bg-background"
-        contentContainerStyle={{ alignItems: 'center', paddingTop: 40, paddingHorizontal: 16, paddingBottom: 24 }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          paddingTop: 40,
+          paddingHorizontal: 16,
+          paddingBottom: 24,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <AnimatedCheckmark />

@@ -33,7 +33,10 @@ export function VerifiedBadge({ status, size = 'sm', testID, className }: Verifi
 
   return (
     <View
-      style={{ backgroundColor: isVerified ? colors.verified : colors.accent, paddingVertical: size === 'sm' ? 2 : undefined }}
+      style={{
+        backgroundColor: isVerified ? colors.verified : colors.accent,
+        paddingVertical: size === 'sm' ? 2 : undefined,
+      }}
       className={cn(
         'flex-row items-center rounded-full self-start',
         size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm gap-xs',
