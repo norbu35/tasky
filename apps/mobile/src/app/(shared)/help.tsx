@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronDown, ChevronLeft, ChevronUp, Search } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { InsetScrollView, ScreenContainer } from '../../components/shells';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing, radius, typography } = mobileTheme;
 
 type ScreenState = 'loaded' | 'loading' | 'error';
 
@@ -133,16 +133,39 @@ function filterSections(sections: FaqSection[], query: string): FaqSection[] {
 
 function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }) {
   return (
-    <View testID="SCR-INFRA-005" style={styles.loadingContainer}>
-      <View style={styles.stickySearchBar}>
+    <View testID="SCR-INFRA-005" className="flex-1 px-lg pt-xl">
+      <View
+        className="min-h-[44px] flex-row items-center gap-sm px-md mb-md"
+        style={{ borderRadius: radius.md, backgroundColor: colors.muted }}
+      >
         <Search size={18} color={colors.textSecondary} />
-        <Text style={styles.searchPlaceholder}>{searchPlaceholder}</Text>
+        <Text className="flex-1 text-body" style={{ color: colors.textSecondary }}>
+          {searchPlaceholder}
+        </Text>
       </View>
-      <View style={styles.loadingList}>
+      <View className="gap-md">
         {Array.from({ length: 6 }).map((_, index) => (
-          <View key={index} style={styles.loadingRow}>
-            <View style={styles.loadingRowTitle} />
-            <View style={styles.loadingRowIcon} />
+          <View
+            key={index}
+            className="min-h-[44px] flex-row items-center justify-between px-md py-md"
+            style={{ borderRadius: radius.md, backgroundColor: colors.muted }}
+          >
+            <View
+              style={{
+                width: '75%',
+                height: 16,
+                borderRadius: radius.xs,
+                backgroundColor: colors.border,
+              }}
+            />
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: radius.full,
+                backgroundColor: colors.border,
+              }}
+            />
           </View>
         ))}
       </View>
@@ -152,17 +175,98 @@ function HelpLoading({ searchPlaceholder }: { searchPlaceholder: string }) {
 
 function HelpErrorVisual() {
   return (
-    <View style={styles.errorVisual} accessibilityRole="image">
-      <View style={styles.errorVisualGlow} />
-      <View style={styles.errorVisualRing}>
-        <View style={styles.errorVisualBubbleLarge}>
-          <View style={styles.errorVisualBubbleTail} />
+    <View
+      className="w-[132px] h-[132px] items-center justify-center mb-lg"
+      accessibilityRole="image"
+    >
+      <View
+        style={{
+          position: 'absolute',
+          width: 108,
+          height: 108,
+          borderRadius: radius.full,
+          backgroundColor: colors.muted,
+          opacity: 0.55,
+        }}
+      />
+      <View
+        style={{
+          width: 92,
+          height: 92,
+          borderRadius: radius.full,
+          borderWidth: 2,
+          borderColor: colors.primary,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <View
+          style={{
+            width: 58,
+            height: 40,
+            borderRadius: 18,
+            backgroundColor: colors.card,
+            borderWidth: 1,
+            borderColor: colors.border,
+            position: 'absolute',
+            left: 8,
+            top: 18,
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              left: 12,
+              bottom: -5,
+              width: 10,
+              height: 10,
+              backgroundColor: colors.card,
+              borderLeftWidth: 1,
+              borderBottomWidth: 1,
+              borderColor: colors.border,
+              transform: [{ rotate: '45deg' }],
+            }}
+          />
         </View>
-        <View style={styles.errorVisualBubbleSmall}>
-          <View style={styles.errorVisualBubbleSmallTail} />
+        <View
+          style={{
+            width: 44,
+            height: 30,
+            borderRadius: 14,
+            backgroundColor: colors.primary,
+            position: 'absolute',
+            right: 10,
+            bottom: 14,
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              right: 10,
+              bottom: -4,
+              width: 8,
+              height: 8,
+              backgroundColor: colors.primary,
+              transform: [{ rotate: '45deg' }],
+            }}
+          />
         </View>
-        <View style={styles.errorVisualBadge}>
-          <Text style={styles.errorVisualBadgeText}>?</Text>
+        <View
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: radius.full,
+            backgroundColor: colors.danger,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text
+            className="text-caption font-sans-bold"
+            style={{ color: colors.dangerForeground }}
+          >
+            ?
+          </Text>
         </View>
       </View>
     </View>
@@ -181,11 +285,25 @@ function HelpErrorState({
   onRetry: () => void;
 }) {
   return (
-    <View style={styles.errorState}>
+    <View className="flex-1 px-lg pt-xl items-center">
       <HelpErrorVisual />
-      <Text style={styles.errorHeadline}>{headline}</Text>
-      <Text style={styles.errorDescription}>{description}</Text>
-      <Button label={retryLabel} onPress={onRetry} style={styles.errorButton} />
+      <Text
+        className="text-title font-sans-bold text-center mb-sm"
+        style={{ color: colors.foreground }}
+      >
+        {headline}
+      </Text>
+      <Text
+        className="text-body text-center"
+        style={{ color: colors.textSecondary, lineHeight: typography.body * 1.6 }}
+      >
+        {description}
+      </Text>
+      <Button
+        label={retryLabel}
+        onPress={onRetry}
+        style={{ marginTop: spacing.xl, alignSelf: 'stretch' }}
+      />
     </View>
   );
 }
@@ -203,13 +321,26 @@ function FaqItemRow({
 
   return (
     <View>
-      <Pressable style={styles.faqRow} onPress={onToggle} testID={`faq-item-${item.id}`}>
-        <Text style={styles.faqQuestion}>{item.question}</Text>
+      <Pressable
+        className="min-h-[44px] flex-row items-center justify-between p-lg mb-sm"
+        style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
+        onPress={onToggle}
+        testID={`faq-item-${item.id}`}
+      >
+        <Text className="flex-1 text-body mr-sm" style={{ color: colors.foreground }}>
+          {item.question}
+        </Text>
         <Icon size={20} color={colors.textSecondary} />
       </Pressable>
       {isExpanded ? (
-        <View style={styles.faqAnswerContainer} testID={`faq-answer-${item.id}`}>
-          <Text style={styles.faqAnswer}>{item.answer}</Text>
+        <View
+          className="p-lg mb-sm"
+          style={{ backgroundColor: colors.muted, borderRadius: radius.md }}
+          testID={`faq-answer-${item.id}`}
+        >
+          <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
+            {item.answer}
+          </Text>
         </View>
       ) : null}
     </View>
@@ -245,18 +376,28 @@ export default function HelpScreen() {
 
   return (
     <ScreenContainer testID="help-screen">
-      <View style={styles.header}>
+      <View className="h-[56px] flex-row items-center justify-between px-md">
         <Pressable
           onPress={() => router.back()}
-          style={styles.backButton}
+          className="min-h-[44px] px-xs flex-row items-center gap-xs"
           hitSlop={spacing.sm}
           testID="help-screen-back"
         >
           <ChevronLeft size={24} color={colors.primary} />
-          <Text style={styles.backLabel}>{t('infra.help.backLabel', 'Буцах')}</Text>
+          <Text className="text-body font-sans-medium" style={{ color: colors.primary }}>
+            {t('infra.help.backLabel', 'Буцах')}
+          </Text>
         </Pressable>
-        <Text style={styles.headerTitle}>{t('infra.help.title', 'Тусламж')}</Text>
-        <View style={styles.headerAction} />
+        <Text
+          className="flex-1 text-subtitle font-sans-semibold text-center mx-sm"
+          style={{ color: colors.primaryDeep }}
+        >
+          {t('infra.help.title', 'Тусламж')}
+        </Text>
+        <View
+          style={{ width: spacing['3xl'], height: spacing['3xl'] }}
+          className="justify-center items-center"
+        />
       </View>
 
       {state === 'loading' ? (
@@ -272,27 +413,36 @@ export default function HelpScreen() {
           onRetry={handleRetry}
         />
       ) : (
-        <View style={styles.content}>
-          <View style={styles.stickySearchBar}>
+        <View className="flex-1">
+          <View
+            className="min-h-[44px] flex-row items-center gap-sm px-md mx-lg mt-xl mb-md"
+            style={{ borderRadius: radius.md, backgroundColor: colors.muted }}
+          >
             <Search size={18} color={colors.textSecondary} />
             <Input
               placeholder={searchPlaceholder}
               placeholderTextColor={colors.textSecondary}
               value={query}
               onChangeText={setQuery}
-              style={styles.searchInput}
+              className="flex-1 text-body py-sm"
+              style={{ color: colors.foreground }}
               testID="help-search-input"
             />
           </View>
           <InsetScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
+            className="flex-1"
+            contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
             showsVerticalScrollIndicator={false}
             extraBottomInset={spacing.lg}
           >
             {visibleSections.map((section) => (
-              <View key={section.id} style={styles.section}>
-                <Text style={styles.sectionTitle}>{section.title}</Text>
+              <View key={section.id} className="mb-xl">
+                <Text
+                  className="text-subtitle font-sans-semibold mb-md"
+                  style={{ color: colors.primaryDeep }}
+                >
+                  {section.title}
+                </Text>
                 {section.items.map((item) => (
                   <FaqItemRow
                     key={item.id}
@@ -309,239 +459,3 @@ export default function HelpScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-  },
-  content: {
-    flex: 1,
-  },
-  headerAction: {
-    width: spacing['3xl'],
-    height: spacing['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButton: {
-    minHeight: 44,
-    paddingHorizontal: spacing.xs,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  backLabel: {
-    fontSize: typography.body,
-    fontWeight: '500',
-    color: colors.primary,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    marginHorizontal: spacing.sm,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  stickySearchBar: {
-    minHeight: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    paddingHorizontal: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
-    marginBottom: spacing.md,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.foreground,
-    paddingVertical: spacing.sm,
-  },
-  searchPlaceholder: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  section: {
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    marginBottom: spacing.md,
-  },
-  faqRow: {
-    minHeight: 44,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.lg,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-  },
-  faqQuestion: {
-    flex: 1,
-    fontSize: typography.body,
-    color: colors.foreground,
-    marginRight: spacing.sm,
-  },
-  faqAnswerContainer: {
-    padding: spacing.lg,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-  },
-  faqAnswer: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: 24,
-  },
-  loadingContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-  },
-  loadingList: {
-    gap: spacing.md,
-  },
-  loadingRow: {
-    minHeight: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  loadingRowTitle: {
-    width: '75%',
-    height: 16,
-    borderRadius: radius.xs,
-    backgroundColor: colors.border,
-  },
-  loadingRowIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: radius.full,
-    backgroundColor: colors.border,
-  },
-  errorState: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    alignItems: 'center',
-  },
-  errorVisual: {
-    width: 132,
-    height: 132,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
-  },
-  errorVisualGlow: {
-    position: 'absolute',
-    width: 108,
-    height: 108,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    opacity: 0.55,
-  },
-  errorVisualRing: {
-    width: 92,
-    height: 92,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorVisualBubbleLarge: {
-    width: 58,
-    height: 40,
-    borderRadius: 18,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    position: 'absolute',
-    left: 8,
-    top: 18,
-  },
-  errorVisualBubbleTail: {
-    position: 'absolute',
-    left: 12,
-    bottom: -5,
-    width: 10,
-    height: 10,
-    backgroundColor: colors.card,
-    borderLeftWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
-    transform: [{ rotate: '45deg' }],
-  },
-  errorVisualBubbleSmall: {
-    width: 44,
-    height: 30,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
-    position: 'absolute',
-    right: 10,
-    bottom: 14,
-  },
-  errorVisualBubbleSmallTail: {
-    position: 'absolute',
-    right: 10,
-    bottom: -4,
-    width: 8,
-    height: 8,
-    backgroundColor: colors.primary,
-    transform: [{ rotate: '45deg' }],
-  },
-  errorVisualBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.full,
-    backgroundColor: colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorVisualBadgeText: {
-    color: colors.dangerForeground,
-    fontSize: typography.caption,
-    fontWeight: '700',
-  },
-  errorHeadline: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  errorDescription: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-  },
-  errorButton: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-});
