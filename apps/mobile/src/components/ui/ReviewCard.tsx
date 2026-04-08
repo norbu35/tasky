@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Star } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface ReviewCardProps {
   reviewerInitials: string;
@@ -12,6 +13,7 @@ interface ReviewCardProps {
   comment: string;
   timeAgo: string;
   featured?: boolean;
+  className?: string;
 }
 
 export function ReviewCard({
@@ -21,17 +23,26 @@ export function ReviewCard({
   comment,
   timeAgo,
   featured = false,
+  className,
 }: ReviewCardProps) {
   return (
-    <View style={[styles.container, featured && styles.featured]}>
-      <View style={styles.header}>
-        <View style={styles.reviewer}>
-          <View style={styles.avatar}>
-            <Text style={styles.initials}>{reviewerInitials}</Text>
+    <View
+      className={cn(
+        'bg-muted rounded-md p-[20px] gap-[11px]',
+        featured && 'border-l-4 border-l-primaryDeep pl-[24px]',
+        className,
+      )}
+    >
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-[12px]">
+          <View className="w-[32px] h-[32px] rounded-full bg-subtleViolet items-center justify-center">
+            <Text className="text-caption font-sans-bold text-textSecondary">
+              {reviewerInitials}
+            </Text>
           </View>
-          <Text style={styles.name}>{reviewerName}</Text>
+          <Text className="text-body font-sans-bold text-foreground">{reviewerName}</Text>
         </View>
-        <View style={styles.stars}>
+        <View className="flex-row gap-[1px]">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
@@ -42,67 +53,10 @@ export function ReviewCard({
           ))}
         </View>
       </View>
-      <Text style={styles.comment}>{comment}</Text>
-      <Text style={styles.time}>{timeAgo}</Text>
+      <Text className="text-label text-muted-foreground leading-[19px] italic">{comment}</Text>
+      <Text className="text-micro font-sans-semibold text-textTertiary uppercase tracking-[1px]">
+        {timeAgo}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: 20,
-    gap: 11,
-  },
-  featured: {
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primaryDeep,
-    paddingLeft: 24,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  reviewer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.full,
-    backgroundColor: colors.subtleViolet,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initials: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  name: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  stars: {
-    flexDirection: 'row',
-    gap: 1,
-  },
-  comment: {
-    fontSize: typography.label,
-    color: colors.mutedForeground,
-    lineHeight: 19,
-    fontStyle: 'italic',
-  },
-  time: {
-    fontSize: typography.micro,
-    fontWeight: '600',
-    color: colors.textTertiary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-});

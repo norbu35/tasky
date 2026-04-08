@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
-const { colors, typography } = mobileTheme;
+const { typography } = mobileTheme;
 
 type PriceSize = 'sm' | 'md' | 'lg';
 
@@ -10,6 +11,7 @@ interface PriceTagProps {
   amount: number;
   size?: PriceSize;
   testID?: string;
+  className?: string;
 }
 
 const fontSizeMap: Record<PriceSize, number> = {
@@ -22,10 +24,11 @@ function formatAmount(amount: number): string {
   return amount.toLocaleString('en-US');
 }
 
-export function PriceTag({ amount, size = 'md', testID }: PriceTagProps) {
+export function PriceTag({ amount, size = 'md', testID, className }: PriceTagProps) {
   return (
     <Text
-      style={[styles.price, { fontSize: fontSizeMap[size] }]}
+      style={{ fontSize: fontSizeMap[size] }}
+      className={cn('text-secondary font-sans-bold', className)}
       testID={testID}
       accessibilityLabel={`${formatAmount(amount)} tugrik`}
     >
@@ -34,10 +37,3 @@ export function PriceTag({ amount, size = 'md', testID }: PriceTagProps) {
     </Text>
   );
 }
-
-const styles = StyleSheet.create({
-  price: {
-    color: colors.secondary,
-    fontWeight: '700',
-  },
-});

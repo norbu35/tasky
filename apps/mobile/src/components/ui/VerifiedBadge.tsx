@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Shield, ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 type VerificationStatus = 'verified' | 'pending' | 'unverified';
 type BadgeSize = 'sm' | 'md';
@@ -13,6 +14,7 @@ interface VerifiedBadgeProps {
   status: VerificationStatus;
   size?: BadgeSize;
   testID?: string;
+  className?: string;
 }
 
 const iconSizeMap: Record<BadgeSize, number> = {
@@ -20,7 +22,7 @@ const iconSizeMap: Record<BadgeSize, number> = {
   md: 16,
 };
 
-export function VerifiedBadge({ status, size = 'sm', testID }: VerifiedBadgeProps) {
+export function VerifiedBadge({ status, size = 'sm', testID, className }: VerifiedBadgeProps) {
   const { t } = useTranslation();
 
   if (status === 'unverified') return null;
@@ -31,40 +33,21 @@ export function VerifiedBadge({ status, size = 'sm', testID }: VerifiedBadgeProp
 
   return (
     <View
-      style={[
-        styles.badge,
-        size === 'md' ? styles.badgeMd : styles.badgeSm,
-        { backgroundColor: isVerified ? colors.verified : colors.accent },
-      ]}
+      style={{ backgroundColor: isVerified ? colors.verified : colors.accent, paddingVertical: size === 'sm' ? 2 : undefined }}
+      className={cn(
+        'flex-row items-center rounded-full self-start',
+        size === 'md' ? 'px-md py-xs gap-xs' : 'px-sm gap-xs',
+        className,
+      )}
       testID={testID}
       accessibilityLabel={t(`verification.${status}`)}
     >
       <Icon size={iconSize} color={colors.primaryForeground} />
-      {size === 'md' && <Text style={styles.text}>{t(`verification.${status}`)}</Text>}
+      {size === 'md' && (
+        <Text className="text-micro font-sans-bold text-primary-foreground">
+          {t(`verification.${status}`)}
+        </Text>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: radius.full,
-    alignSelf: 'flex-start',
-  },
-  badgeSm: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    gap: spacing.xs,
-  },
-  badgeMd: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    gap: spacing.xs,
-  },
-  text: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-});

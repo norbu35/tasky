@@ -1,22 +1,31 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { MapPin } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface LocationPinProps {
   text: string;
   compact?: boolean;
   testID?: string;
+  className?: string;
 }
 
-export function LocationPin({ text, compact = false, testID }: LocationPinProps) {
+export function LocationPin({ text, compact = false, testID, className }: LocationPinProps) {
   return (
-    <View style={styles.container} testID={testID} accessibilityLabel={text}>
+    <View
+      className={cn('flex-row items-center gap-xs', className)}
+      testID={testID}
+      accessibilityLabel={text}
+    >
       <MapPin size={compact ? 14 : 16} color={colors.accent} />
       <Text
-        style={[styles.text, compact && styles.compactText]}
+        className={cn(
+          'text-label text-textSecondary shrink',
+          compact && 'text-caption',
+        )}
         numberOfLines={compact ? 1 : undefined}
       >
         {text}
@@ -24,19 +33,3 @@ export function LocationPin({ text, compact = false, testID }: LocationPinProps)
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  text: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    flexShrink: 1,
-  },
-  compactText: {
-    fontSize: typography.caption,
-  },
-});

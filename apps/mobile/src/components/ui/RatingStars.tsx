@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Star } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
-const { colors, spacing } = mobileTheme;
+const { colors } = mobileTheme;
 
 interface RatingStarsProps {
   value: number;
@@ -11,6 +12,7 @@ interface RatingStarsProps {
   readonly?: boolean;
   size?: number;
   testID?: string;
+  className?: string;
 }
 
 export function RatingStars({
@@ -19,10 +21,11 @@ export function RatingStars({
   readonly = false,
   size = 20,
   testID,
+  className,
 }: RatingStarsProps) {
   return (
     <View
-      style={styles.container}
+      className={cn('flex-row items-center gap-xs', className)}
       testID={testID}
       accessibilityLabel={`Rating: ${value} out of 5 stars`}
       accessibilityRole="adjustable"
@@ -57,11 +60,3 @@ export function RatingStars({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-});

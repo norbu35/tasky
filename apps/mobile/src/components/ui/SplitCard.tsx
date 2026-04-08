@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
 import { interactiveStates } from '../../design/animations';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing } = mobileTheme;
+const { radius, spacing } = mobileTheme;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface SplitCardProps {
@@ -13,9 +14,10 @@ interface SplitCardProps {
   bodyContent: React.ReactNode;
   onPress?: () => void;
   testID?: string;
+  className?: string;
 }
 
-export function SplitCard({ headerContent, bodyContent, onPress, testID }: SplitCardProps) {
+export function SplitCard({ headerContent, bodyContent, onPress, testID, className }: SplitCardProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -36,44 +38,35 @@ export function SplitCard({ headerContent, bodyContent, onPress, testID }: Split
     opacity.value = withSpring(1, { damping: 15, stiffness: 300 });
   };
 
+  const containerClassName = cn('rounded-lg overflow-hidden', className);
+
   const Wrapper = onPress ? AnimatedPressable : View;
   const wrapperProps = onPress
     ? {
         onPress,
         onPressIn: handlePressIn,
         onPressOut: handlePressOut,
-        style: [styles.container, animatedStyle],
+        style: [elevations.card, animatedStyle],
+        className: containerClassName,
         testID,
         accessibilityRole: 'button' as const,
       }
-    : { style: styles.container, testID };
+    : { style: elevations.card, className: containerClassName, testID };
 
   return (
     <Wrapper {...(wrapperProps as any)}>
-      <View style={styles.header}>{headerContent}</View>
-      <View style={styles.body}>{bodyContent}</View>
+      <View
+        style={{ height: 56, paddingHorizontal: spacing.md }}
+        className="bg-primary rounded-tl-lg rounded-tr-lg justify-center"
+      >
+        {headerContent}
+      </View>
+      <View
+        style={{ padding: spacing.md }}
+        className="bg-background rounded-bl-lg rounded-br-lg"
+      >
+        {bodyContent}
+      </View>
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    ...elevations.card,
-  },
-  header: {
-    height: 56,
-    backgroundColor: colors.primary,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    paddingHorizontal: spacing.md,
-    justifyContent: 'center',
-  },
-  body: {
-    backgroundColor: colors.background,
-    borderBottomLeftRadius: radius.lg,
-    borderBottomRightRadius: radius.lg,
-    padding: spacing.md,
-  },
-});

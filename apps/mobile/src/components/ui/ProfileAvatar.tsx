@@ -1,8 +1,9 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 
 const { colors, radius } = mobileTheme;
 
@@ -20,6 +21,7 @@ interface ProfileAvatarProps {
   name?: string;
   size?: AvatarSize;
   showVerified?: boolean;
+  className?: string;
 }
 
 export function ProfileAvatar({
@@ -27,6 +29,7 @@ export function ProfileAvatar({
   name,
   size = 'md',
   showVerified = false,
+  className,
 }: ProfileAvatarProps) {
   const dim = sizeMap[size];
   const initials = name
@@ -38,39 +41,36 @@ export function ProfileAvatar({
         .toUpperCase()
     : '?';
   const badgeSize = Math.max(20, dim * 0.22);
+  const borderRadius = size === 'xl' ? radius.full : radius.md;
 
   return (
-    <View style={{ width: dim, height: dim }}>
+    <View style={{ width: dim, height: dim }} className={cn(className)}>
       {uri ? (
         <Image
           source={{ uri }}
-          style={[
-            styles.image,
-            { width: dim, height: dim, borderRadius: size === 'xl' ? radius.full : radius.md },
-          ]}
+          style={{ width: dim, height: dim, borderRadius, overflow: 'hidden' }}
         />
       ) : (
         <View
-          style={[
-            styles.fallback,
-            { width: dim, height: dim, borderRadius: size === 'xl' ? radius.full : radius.md },
-          ]}
+          style={{ width: dim, height: dim, borderRadius }}
+          className="bg-subtleViolet items-center justify-center"
         >
-          <Text style={[styles.fallbackText, { fontSize: dim * 0.35 }]}>{initials}</Text>
+          <Text style={{ fontSize: dim * 0.35 }} className="font-sans-bold text-primaryDeep">
+            {initials}
+          </Text>
         </View>
       )}
       {showVerified && (
         <View
           style={[
-            styles.badge,
             { width: badgeSize + 8, height: badgeSize + 8, borderRadius: radius.full },
+            elevations.card,
           ]}
+          className="absolute -bottom-[2px] -right-[2px] bg-card items-center justify-center"
         >
           <View
-            style={[
-              styles.badgeInner,
-              { width: badgeSize, height: badgeSize, borderRadius: radius.full },
-            ]}
+            style={{ width: badgeSize, height: badgeSize, borderRadius: radius.full }}
+            className="bg-verified items-center justify-center"
           >
             <CheckCircle
               size={badgeSize * 0.7}
@@ -83,32 +83,3 @@ export function ProfileAvatar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    overflow: 'hidden',
-  },
-  fallback: {
-    backgroundColor: colors.subtleViolet,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fallbackText: {
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  badge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevations.card,
-  },
-  badgeInner: {
-    backgroundColor: colors.verified,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
