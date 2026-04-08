@@ -9,6 +9,7 @@ import Constants from 'expo-constants';
 import { RoleProvider } from '../providers/RoleProvider';
 
 import '../utils/i18n';
+import '../design/nativewind-interop';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
