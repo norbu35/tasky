@@ -46,3 +46,4 @@ research/market-data/unegui/*
 
 # Git worktrees
 .worktrees/
+.worktrees/
