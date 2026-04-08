@@ -20,7 +20,7 @@ export default function PermissionNotificationsScreen() {
 
   const finishFlow = () => {
     completeOnboarding();
-    router.replace(currentRole === 'customer' ? '/(customer)/tasks' : '/(tabs)');
+    router.replace('/(tabs)');
   };
 
   const handleGrant = async () => {

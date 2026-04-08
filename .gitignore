@@ -32,13 +32,15 @@ apps/*/test-results/
 # Local env overrides
 .env
 
-# Artifacts (keep policy-controlled placeholders + self-verify report)
+# Test result dumps (generated, not source)
+test-results.json
+
+# Artifacts (keep policy-controlled placeholders)
 artifacts/*
 !artifacts/.gitkeep
 !artifacts/checks/
 artifacts/checks/*
 !artifacts/checks/.gitkeep
-!artifacts/self-verify.json
 
 # Scraper output (keep directory placeholder)
 research/market-data/unegui/*

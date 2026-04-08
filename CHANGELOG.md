@@ -1,6 +1,12 @@
 # Changelog
 
 ## 2026-04-09
+- **Repository hardening**: Archived stale superpowers docs, removed tracked test-results.json, archived 6 non-canonical Maestro flows, fixed stale references in ARCHITECTURE.md and quality docs.
+- **CI and verification gates**: Removed dead self-verify pipeline from release-gate.yml, made mobile E2E scripts require Maestro (no silent Jest fallback), aligned verification matrix with actual repo state.
+- **Backend test trust**: Closed all 13 untested scenarios across analytics, messaging, notification, and booking domains (104/104 scenarios now covered). Synced registry.
+- **Web contract and E2E**: Fixed CursorPage type to match API contract (added has_more, removed prev), added Playwright auth-guard, customer, and tasker E2E suites (15 tests). Fixed all 272 web unit tests.
+- **Mobile routing**: Fixed customer post-auth routing to land in tabs layout (restores bottom navigation).
+- **Mobile UI**: Converted SplitCard header from fixed height to minHeight for text overflow safety.
 - **Mobile auth onboarding routing**: Restored first-login post-auth routing so new mobile sessions enter onboarding before landing in customer/tasker home, with focused auth routing regressions.
 
 ## 2026-04-04

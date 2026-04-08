@@ -16,5 +16,5 @@ export function resolvePostAuthHref(
     return '/(auth)/otp-migration';
   }
 
-  return session.user.role === 'CUSTOMER' ? '/(customer)/tasks' : '/(tabs)';
+  return '/(tabs)';
 }

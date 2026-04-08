@@ -635,7 +635,7 @@ it('TID-TASK-080-WEB-AUTH-OAUTH-FLOW should allow user to continue with Facebook
 
 ## 8. Development Workflow
 
-1. **Pick up a task**: Run `scripts/task.sh next` and read the task file.
+1. **Pick up a task**: Check the active plan under `docs/plans/` or issue tracker.
 2. **Design**: Update `docs/API.yaml` first (contract-first).
 3. **Generate**: Run `pnpm sdk:generate` to regenerate TypeScript SDK types from the contract.
 4. **Implement**: Write controller implementations and JDBI repositories.

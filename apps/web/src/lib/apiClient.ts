@@ -122,7 +122,7 @@ export interface CursorPage<T> {
   data: T[];
   cursor: {
     next: string | null;
-    prev: string | null;
+    has_more: boolean;
   };
 }
 

@@ -25,7 +25,7 @@ Observations:
 - `./gradlew --no-daemon gateSmoke` passed.
 - `pnpm -r typecheck` passed.
 - `pnpm -r test` failed in `@tasky/web` with deterministic failures:
-- `tests/unit/web-container-overlay.test.ts > TID-TASK-111-DOC-GENERIC-CONTAINER-RUNBOOK` (`ENOENT` for `docs/superpowers/specs/2026-03-26-web-docker-caddy-design.md`)
+- `tests/unit/web-container-overlay.test.ts > TID-TASK-111-DOC-GENERIC-CONTAINER-RUNBOOK` (`ENOENT` — referenced doc archived to `archive/greenfield-docs/`)
 - `tests/integration/navigation-phase1.test.tsx > routes the customer applicants surface through the real app shell` (missing heading `Task applicants`)
 - Non-failing warnings observed:
 - mobile test warnings about React `act(...)` wrapping on `BookingConfirmedScreen`

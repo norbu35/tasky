@@ -78,9 +78,9 @@ Two locales: English (`en`) and Mongolian (`mn`). Translations live in `src/loca
 |------|------|---------|
 | Unit / Component | Jest + React Native Testing Library | `pnpm test:unit` |
 | E2E (device) | Maestro flows | `pnpm test:e2e` |
-| E2E (smoke) | Maestro or component fallback | `pnpm test:e2e:smoke` |
+| E2E (smoke) | Maestro smoke flow | `pnpm test:e2e:smoke` |
 
-Maestro flows are in `maestro/flows/`. E2E runs when `TASKY_RUN_MAESTRO=true`; otherwise a component-test fallback is used.
+Maestro flows are in `maestro/flows/`. E2E commands require Maestro CLI installed — there is no component-test fallback.
 
 ## Development
 

@@ -62,7 +62,7 @@ export function SplitCard({
   return (
     <Wrapper {...(wrapperProps as any)}>
       <View
-        style={{ height: 56, paddingHorizontal: spacing.md }}
+        style={{ minHeight: 56, paddingHorizontal: spacing.md, paddingVertical: spacing.sm }}
         className="bg-primary rounded-tl-lg rounded-tr-lg justify-center"
       >
         {headerContent}

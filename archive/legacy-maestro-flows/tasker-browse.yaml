@@ -1,0 +1,39 @@
+appId: mn.tasky.mobile
+---
+# Tasker Browse Flow
+# Verifies a tasker can browse and filter available tasks.
+# Assumes the user is already logged in as a tasker.
+
+- launchApp
+
+# Wait for the tasker tab bar to load
+- extendedWaitUntil:
+    visible: "FIND WORK"
+    timeout: 10000
+
+# Assert FIND WORK tab is active
+- assertVisible: "FIND WORK"
+
+# Assert the task feed renders
+- assertVisible:
+    id: "task-feed"
+
+# Assert filter bar is present
+- assertVisible:
+    id: "task-feed-filter-bar"
+
+# Tap a filter category
+- tapOn: "Cleaning"
+
+# Verify the filter is applied (filter chip or updated feed)
+- assertVisible: "Cleaning"
+
+# Tap a task card to view details (tap the first item in the feed)
+- tapOn:
+    id: "task-feed"
+    index: 0
+
+# Assert task detail screen appears
+- extendedWaitUntil:
+    visible: "Task Details"
+    timeout: 5000

@@ -91,7 +91,7 @@ function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
   return {
     adminListDisputes: vi.fn().mockResolvedValue({
       data: [DISPUTE_1, DISPUTE_2],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     } satisfies CursorPage<Dispute>),
     adminGetDispute: vi.fn().mockResolvedValue(DISPUTE_DETAIL),
     adminResolveDispute: vi.fn().mockResolvedValue({
@@ -197,7 +197,7 @@ describe('AdminDisputesPage', () => {
     const api = createMockApiClient({
       adminListDisputes: vi.fn().mockResolvedValue({
         data: [],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
     renderListPage(api);

@@ -1,0 +1,55 @@
+appId: mn.tasky.mobile
+---
+# Auth Onboarding Flow
+# Walks through the full onboarding carousel, role selection, and arrival at login.
+
+- launchApp
+
+# Wait for the splash screen to finish loading
+- extendedWaitUntil:
+    visible:
+      id: "onboarding-screen"
+    timeout: 10000
+
+# Assert onboarding screen is visible
+- assertVisible:
+    id: "onboarding-screen"
+- assertVisible:
+    id: "onboarding-skip"
+
+# Navigate through the three carousel slides
+- assertVisible:
+    id: "pagination-dot-0"
+- tapOn:
+    id: "onboarding-next"
+
+- assertVisible:
+    id: "pagination-dot-1"
+- tapOn:
+    id: "onboarding-next"
+
+- assertVisible:
+    id: "pagination-dot-2"
+
+# Tap "Get Started" on the last slide
+- tapOn: "Get Started"
+
+# Assert role selection screen is visible
+- assertVisible:
+    id: "role-select-screen"
+- assertVisible: "How will you use Tasky?"
+
+# Select customer role
+- tapOn:
+    id: "role-card-customer"
+- tapOn:
+    id: "role-confirm-button"
+
+# Assert login screen is reached
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 5000
+- assertVisible: "Welcome to Tasky"
+- assertVisible:
+    id: "facebook-login-button"

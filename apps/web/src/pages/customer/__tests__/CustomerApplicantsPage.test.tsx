@@ -47,7 +47,7 @@ describe('CustomerApplicantsPage', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
       listTaskApplications: vi.fn().mockResolvedValue({
         data: [
@@ -67,7 +67,7 @@ describe('CustomerApplicantsPage', () => {
             },
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
 
@@ -130,11 +130,11 @@ describe('CustomerApplicantsPage', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
       listTaskApplications: vi.fn().mockResolvedValue({
         data: [],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
 

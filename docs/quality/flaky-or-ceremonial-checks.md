@@ -1,13 +1,13 @@
 # Flaky Or Ceremonial Checks
 
-Last updated: 2026-04-02
+Last updated: 2026-04-09
 
 This file captures checks that should not be hard blockers for structural cleanup until fixed.
 
 ## Current Entries
 
 - `pnpm -r test` is currently blocked by deterministic `@tasky/web` failures (not flaky):
-- `tests/unit/web-container-overlay.test.ts` reads a missing design document path (`docs/superpowers/specs/2026-03-26-web-docker-caddy-design.md`).
+- `tests/unit/web-container-overlay.test.ts` reads a missing design document path (formerly `docs/superpowers/specs/2026-03-26-web-docker-caddy-design.md`, now archived).
 - `tests/integration/navigation-phase1.test.tsx` expects heading `Task applicants` and does not find it.
 - `packages/sdk` test script (`echo 'No SDK tests configured yet.'`) is ceremonial and does not validate runtime behavior.
 - Non-blocking warning noise to track:

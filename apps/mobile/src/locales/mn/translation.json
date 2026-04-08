@@ -1,4 +1,8 @@
 {
+  "_translationMeta": {
+    "untranslatedKeyCount": 463,
+    "note": "Keys below without Mongolian (Cyrillic) text will fall back to English. Count as of 2026-04-09."
+  },
   "auth": {
     "welcome": "Tasky програмд тавтай морил",
     "phoneNumber": "Утасны дугаар",

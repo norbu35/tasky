@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "${TASKY_RUN_MAESTRO:-false}" == "true" ]]; then
-  if ! command -v maestro >/dev/null 2>&1; then
-    echo "Maestro CLI is required when TASKY_RUN_MAESTRO=true." >&2
-    exit 1
-  fi
-  maestro test maestro/flows
-  exit 0
+# E2E means Maestro. No fallback to component tests.
+if ! command -v maestro >/dev/null 2>&1; then
+  echo "ERROR: Maestro CLI is required for E2E tests." >&2
+  echo "Install: https://maestro.mobile.dev/getting-started/installing-maestro" >&2
+  exit 1
 fi
 
-echo "TASKY_RUN_MAESTRO is false; running full component test fallback."
-pnpm run test:unit
+maestro test maestro/flows

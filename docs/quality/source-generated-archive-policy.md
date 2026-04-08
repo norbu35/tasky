@@ -1,6 +1,6 @@
 # Source, Generated, And Archive Policy
 
-Last updated: 2026-04-02
+Last updated: 2026-04-09
 
 ## Purpose
 
@@ -20,7 +20,9 @@ Define what is treated as source-of-truth vs reproducible output vs historical e
 
 3. Durable Evidence (versioned)
 - Verification/audit reports under `docs/quality/`
-- Policy-controlled JSON evidence under `artifacts/` (for example `artifacts/self-verify.json`)
+- Policy-controlled JSON evidence under `artifacts/`
+
+Note: test result dumps (e.g. `test-results.json`) are generated local evidence, not source. They must not be committed.
 
 4. Research Inputs (versioned)
 - Market datasets and scraper assets under `research/`
