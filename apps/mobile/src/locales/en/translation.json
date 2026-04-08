@@ -1311,5 +1311,16 @@
     "budgetPlaceholder": "₮50,000",
     "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
     "schedulePickerHint": "Confirm your selection"
+  },
+  "TaskPostedSuccessScreen": {
+    "successBadge": "БАТАЛГААЖСАН",
+    "successTitle": "Task posted successfully!",
+    "successBody": "Taskers can now see your task and apply. You will be notified when new applications arrive",
+    "successNextLabel": "ДАРААГИЙН АЛХАМ",
+    "successNextTitle": "What happens next",
+    "successNext1": "You'll get applications soon",
+    "successNext2": "Review Tasker profiles and ratings",
+    "successCta": "View Task",
+    "successDone": "Дуусгах"
   }
 }
