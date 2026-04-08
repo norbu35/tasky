@@ -1277,5 +1277,15 @@
     "emptyTitle": "Одоогоор даалгавар байхгүй байна",
     "emptyDescription": "Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу",
     "emptyCta": "Шүүлтүүр цэвэрлэх"
+  },
+  "CategorySelectionScreen": {
+    "searchPlaceholder": "Ангилал хайх...",
+    "intro": "Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.",
+    "loadError": "Failed to load categories",
+    "loadHint": "Pull to refresh or try again shortly.",
+    "retry": "Try again",
+    "noCategories": "No categories available",
+    "featuredTitle": "Мэргэжлийн зөвлөгөө",
+    "featuredBody": "Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя."
   }
 }

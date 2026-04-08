@@ -168,7 +168,7 @@ export default function CategorySelectionScreen() {
         <Input
           value={query}
           onChangeText={setQuery}
-          placeholder={t('customer.postTask.searchCategories', 'Ангилал хайх...')}
+          placeholder={t('CategorySelectionScreen.searchPlaceholder', 'Ангилал хайх...')}
           testID="category-selection-search"
           style={{ flex: 1, borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0, minHeight: 40, backgroundColor: 'transparent' }}
         />
@@ -204,13 +204,13 @@ export default function CategorySelectionScreen() {
           style={[{ borderRadius: radius.md, backgroundColor: colors.card }, elevations.soft]}
         >
           <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
-            {t('customer.postTask.categoryLoadError', 'Failed to load categories')}
+            {t('CategorySelectionScreen.loadError', 'Failed to load categories')}
           </Text>
           <Text
             className="text-caption"
             style={{ color: colors.textSecondary, lineHeight: 18 }}
           >
-            {t('customer.postTask.categoryLoadHint', 'Pull to refresh or try again shortly.')}
+            {t('CategorySelectionScreen.loadHint', 'Pull to refresh or try again shortly.')}
           </Text>
           <Pressable
             onPress={() => refetch()}
@@ -219,7 +219,7 @@ export default function CategorySelectionScreen() {
             testID="category-selection-retry"
           >
             <Text className="text-caption font-sans-bold" style={{ color: colors.secondaryForeground }}>
-              {t('customer.postTask.categoryRetry', 'Try again')}
+              {t('CategorySelectionScreen.retry', 'Try again')}
             </Text>
           </Pressable>
         </View>
@@ -229,7 +229,7 @@ export default function CategorySelectionScreen() {
           style={{ borderRadius: radius.md, backgroundColor: colors.card }}
         >
           <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
-            {t('categories.empty', 'No categories available')}
+            {t('CategorySelectionScreen.noCategories', 'No categories available')}
           </Text>
         </View>
       ) : (
@@ -253,7 +253,7 @@ export default function CategorySelectionScreen() {
           className="text-subtitle font-sans-bold mb-xs"
           style={{ color: colors.primaryForeground }}
         >
-          {t('customer.postTask.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
+          {t('CategorySelectionScreen.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
         </Text>
         <Text
           className="text-caption"
