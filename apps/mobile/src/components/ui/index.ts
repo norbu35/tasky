@@ -30,3 +30,4 @@ export * from './ActionSheet';
 export * from './ConfirmSheet';
 export * from './InfoRow';
 export * from './HandDrawnCheck';
+export * from './Touchable';
