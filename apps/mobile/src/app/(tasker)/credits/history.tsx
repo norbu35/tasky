@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { EmptyStateTemplate } from '../../../components/templates/EmptyStateTemplate';
-import { mobileTheme, elevations } from '../../../design/tokenAdapter';
-
-const { colors, spacing, radius, typography } = mobileTheme;
+import { elevations } from '../../../design/tokenAdapter';
 
 type RouteState = 'loaded' | 'empty';
 
@@ -54,24 +52,32 @@ export default function TaskerCreditsHistoryScreen() {
           description={t('tasker.credits.emptyDescription', 'Top up credits or finish more tasks to populate this timeline.')}
         />
       ) : (
-        <View style={styles.stack}>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryLabel}>{t('tasker.credits.thisMonth', 'This month')}</Text>
-            <Text style={styles.summaryValue}>+12,400 ₮</Text>
-            <Text style={styles.summaryCaption}>
+        <View className="gap-lg">
+          <View className="p-lg rounded-lg bg-primaryDeep gap-xs">
+            <Text className="text-label text-primaryForeground opacity-80">
+              {t('tasker.credits.thisMonth', 'This month')}
+            </Text>
+            <Text className="font-extrabold text-card" style={{ fontSize: 32, lineHeight: 32 * (19 / 16) }}>
+              +12,400 ₮
+            </Text>
+            <Text className="text-body text-primaryForeground opacity-70">
               {t('tasker.credits.netMovement', 'Net credit movement from top-ups and payouts')}
             </Text>
           </View>
 
-          <View style={styles.timeline}>
+          <View className="gap-sm">
             {transactions.map((transaction) => (
-              <View key={transaction.id} style={styles.transactionCard}>
-                <View style={styles.transactionHeader}>
-                  <Text style={styles.transactionTitle}>{transaction.title}</Text>
-                  <Text style={styles.transactionAmount}>{transaction.amount}</Text>
+              <View key={transaction.id} className="p-lg rounded-lg bg-card gap-xs" style={elevations.soft}>
+                <View className="flex-row justify-between gap-md">
+                  <Text className="text-body font-bold text-foreground flex-1">
+                    {transaction.title}
+                  </Text>
+                  <Text className="text-body font-bold text-primary">
+                    {transaction.amount}
+                  </Text>
                 </View>
-                <Text style={styles.transactionSubtitle}>{transaction.subtitle}</Text>
-                <Text style={styles.transactionTimestamp}>{transaction.timestamp}</Text>
+                <Text className="text-label text-textSecondary">{transaction.subtitle}</Text>
+                <Text className="text-caption text-textTertiary">{transaction.timestamp}</Text>
               </View>
             ))}
           </View>
@@ -80,65 +86,3 @@ export default function TaskerCreditsHistoryScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  stack: {
-    gap: spacing.lg,
-  },
-  summaryCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primaryDeep,
-    gap: spacing.xs,
-  },
-  summaryLabel: {
-    fontSize: typography.label,
-    color: colors.primaryForeground,
-    opacity: 0.8,
-  },
-  summaryValue: {
-    fontSize: 32,
-    lineHeight: 32 * (19 / 16),
-    fontWeight: '800',
-    color: colors.card,
-  },
-  summaryCaption: {
-    fontSize: typography.body,
-    color: colors.primaryForeground,
-    opacity: 0.7,
-  },
-  timeline: {
-    gap: spacing.sm,
-  },
-  transactionCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    gap: spacing.xs,
-    ...elevations.soft,
-  },
-  transactionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  transactionTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.foreground,
-    flex: 1,
-  },
-  transactionAmount: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  transactionSubtitle: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-  },
-  transactionTimestamp: {
-    fontSize: typography.caption,
-    color: colors.textTertiary,
-  },
-});

@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { StatCard } from '../../components/ui/StatCard';
 import { useMyStats } from '../../features/profile/hooks/useMyStats';
 import { mobileTheme } from '../../design/tokenAdapter';
-import { screenLayout, screenTypography } from '../../design/screenLayout';
 
 const { spacing } = mobileTheme;
 
@@ -44,20 +43,24 @@ export default function TaskerStatsScreen() {
   return (
     <DetailTemplate testID="SCR-TASK-016" isLoading={isLoading} isError={isError} onRetry={refetch}>
       {data && (
-        <View style={styles.content}>
-          <View style={styles.heroCard} testID="tasker-stats-hero">
-            <Text style={styles.heroLabel}>{t('tasker.stats.heroLabel', 'Таны үнэлгээ')}</Text>
-            <Text style={styles.heroValue}>{formatRating(averageRating)}</Text>
-            <Text style={styles.heroMeta}>
+        <View className="gap-lg">
+          <View className="bg-primaryDeep rounded-lg gap-xs" style={{ padding: spacing.xl }} testID="tasker-stats-hero">
+            <Text className="text-label text-primaryForeground opacity-90">
+              {t('tasker.stats.heroLabel', 'Таны үнэлгээ')}
+            </Text>
+            <Text className="text-heroTitle font-bold text-secondary">
+              {formatRating(averageRating)}
+            </Text>
+            <Text className="text-caption text-primaryForeground">
               {t('tasker.stats.heroMeta', 'Захиалагчийн үнэлгээнээс')}
             </Text>
           </View>
 
-          <Text style={styles.sectionHeading}>
+          <Text className="text-heading font-bold text-primaryDeep">
             {t('tasker.stats.sectionHeading', 'Ерөнхий үзүүлэлтүүд')}
           </Text>
 
-          <View style={styles.statsGrid}>
+          <View className="flex-row gap-md">
             <StatCard
               value={String(jobsCompleted ?? 0)}
               label={t('tasker.stats.jobsCompleted', 'Дууссан ажил')}
@@ -67,7 +70,7 @@ export default function TaskerStatsScreen() {
               label={t('tasker.stats.averageRating', 'Ерөнхий үнэлгээ')}
             />
           </View>
-          <View style={styles.statsGrid}>
+          <View className="flex-row gap-md">
             <StatCard
               value={formatPercent(completionRate)}
               label={t('tasker.stats.completionRate', 'Гүйцэтгэлийн хувь')}
@@ -77,7 +80,7 @@ export default function TaskerStatsScreen() {
               label={t('tasker.stats.applicationSuccess', 'Анкетын амжилт')}
             />
           </View>
-          <View style={styles.statsGrid}>
+          <View className="flex-row gap-md">
             <StatCard
               value={String(cancellations30d)}
               label={t('tasker.stats.cancellations30d', 'Цуцлалт (30 хоногт)')}
@@ -88,33 +91,33 @@ export default function TaskerStatsScreen() {
             />
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <View className="gap-xs pt-md">
+            <Text className="text-subtitle font-semibold text-primaryDeep">
               {t('tasker.stats.ratingBreakdown', 'Үнэлгээний задаргаа')}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.taskClarity', 'Даалгаврын тодорхой байдал')}:{' '}
               {taskClarity ?? averageRating ?? '—'}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.respectfulness', 'Хүндэтгэлтэй хандлага')}:{' '}
               {respectfulness ?? averageRating ?? '—'}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.punctuality', 'Цаг баримтлал')}:{' '}
               {punctuality ?? averageRating ?? '—'}
             </Text>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <View className="gap-xs pt-md">
+            <Text className="text-subtitle font-semibold text-primaryDeep">
               {t('tasker.stats.reliabilityHeading', 'Найдвартай байдал')}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.reliabilityLabel', 'Найдвартай байдлын оноо')}:{' '}
               {formatPercent(reliabilityScore)}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t(
                 'tasker.stats.reliabilityDescription',
                 'Гүйцэтгэлийн хувь, цаг баримтлал, үнэлгээ, цуцлалтын түүх дээр суурилсан',
@@ -122,17 +125,19 @@ export default function TaskerStatsScreen() {
             </Text>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('tasker.stats.activityHeading', 'Идэвхжил')}</Text>
-            <Text style={styles.sectionLine}>
+          <View className="gap-xs pt-md">
+            <Text className="text-subtitle font-semibold text-primaryDeep">
+              {t('tasker.stats.activityHeading', 'Идэвхжил')}
+            </Text>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.unlockConversion', 'Түгжээ тайлалтын хувь')}:{' '}
               {formatPercent(unlockConversionRate)}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {t('tasker.stats.responseTime', 'Хариу өгөх хугацаа')}:{' '}
               {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
             </Text>
-            <Text style={styles.sectionLine}>
+            <Text className="text-body text-foreground leading-relaxed">
               {isPro
                 ? t('tasker.stats.proBadgeEarned', 'Pro Badge олдсон!')
                 : t(
@@ -146,53 +151,3 @@ export default function TaskerStatsScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: screenLayout.body.blockGap,
-  },
-  heroCard: {
-    backgroundColor: mobileTheme.colors.primaryDeep,
-    borderRadius: mobileTheme.radius.lg,
-    padding: spacing.xl,
-    gap: spacing.xs,
-  },
-  heroLabel: {
-    fontSize: mobileTheme.typography.label,
-    color: mobileTheme.colors.primaryForeground,
-    opacity: 0.9,
-  },
-  heroValue: {
-    fontSize: mobileTheme.typography.heroTitle,
-    fontWeight: '700',
-    color: mobileTheme.colors.secondary,
-  },
-  heroMeta: {
-    fontSize: mobileTheme.typography.caption,
-    color: mobileTheme.colors.primaryForeground,
-  },
-  sectionHeading: {
-    fontSize: screenTypography.sectionTitle.fontSize,
-    lineHeight: screenTypography.sectionTitle.lineHeight,
-    fontWeight: '700',
-    color: mobileTheme.colors.primaryDeep,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: screenLayout.body.itemGap,
-  },
-  section: {
-    gap: screenLayout.body.microGap,
-    paddingTop: screenLayout.body.itemGap,
-  },
-  sectionTitle: {
-    fontSize: mobileTheme.typography.subtitle,
-    fontWeight: '600',
-    color: mobileTheme.colors.primaryDeep,
-  },
-  sectionLine: {
-    fontSize: mobileTheme.typography.body,
-    color: mobileTheme.colors.foreground,
-    lineHeight: mobileTheme.typography.body * 1.5,
-  },
-});

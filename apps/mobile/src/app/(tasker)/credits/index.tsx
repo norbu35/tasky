@@ -1,14 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { InfoRow } from '../../../components/ui/InfoRow';
 import { Button } from '../../../components/ui/Button';
-import { mobileTheme } from '../../../design/tokenAdapter';
 import { LowBalanceAlert } from '../../../features/credits/components/LowBalanceAlert';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 const balanceText = '12,400 ₮';
 
@@ -18,13 +15,15 @@ export default function TaskerCreditsIndexScreen() {
 
   return (
     <DetailTemplate testID="SCR-P2-001">
-      <View style={styles.stack}>
-        <View style={styles.heroCard}>
-          <Text style={styles.heroLabel}>
+      <View className="gap-lg">
+        <View className="p-lg rounded-lg bg-primaryDeep gap-xs">
+          <Text className="text-label text-primaryForeground opacity-80">
             {t('tasker.credits.availableBalance', 'Available balance')}
           </Text>
-          <Text style={styles.heroValue}>{balanceText}</Text>
-          <Text style={styles.heroCaption}>
+          <Text className="font-extrabold text-card" style={{ fontSize: 36, lineHeight: 36 * (7 / 6) }}>
+            {balanceText}
+          </Text>
+          <Text className="text-body text-primaryForeground opacity-70">
             {t('tasker.credits.enoughForTwoTasks', 'Enough for 2 more average tasks')}
           </Text>
         </View>
@@ -41,42 +40,44 @@ export default function TaskerCreditsIndexScreen() {
           secondaryActionTestID="tasker-credits-history"
         />
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View className="gap-md">
+          <Text className="text-heading font-bold text-primaryDeep">
             {t('tasker.credits.quickActions', 'Quick actions')}
           </Text>
-          <View style={styles.actionRow}>
+          <View className="flex-row gap-sm">
             <Button
               label={t('tasker.credits.topUp', 'Top up')}
               onPress={() => router.push('/(tasker)/credits/pay')}
               testID="tasker-credits-topup-secondary"
-              style={styles.actionButton}
+              style={{ flex: 1 }}
             />
             <Button
               label={t('tasker.credits.history', 'History')}
               variant="outline"
               onPress={() => router.push('/(tasker)/credits/history')}
               testID="tasker-credits-history-secondary"
-              style={styles.actionButton}
+              style={{ flex: 1 }}
             />
           </View>
           <Pressable
-            style={styles.referralLink}
+            className="p-lg rounded-lg bg-muted gap-xs"
             onPress={() => router.push('/(tasker)/referrals')}
             testID="tasker-credits-referrals"
           >
-            <Text style={styles.referralTitle}>{t('tasker.referrals.title', 'Referrals')}</Text>
-            <Text style={styles.referralBody}>
+            <Text className="text-label font-bold text-primary">
+              {t('tasker.referrals.title', 'Referrals')}
+            </Text>
+            <Text className="text-body text-textSecondary">
               {t('tasker.referrals.inviteBody', 'Invite taskers to earn bonus credits.')}
             </Text>
           </Pressable>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View className="gap-md">
+          <Text className="text-heading font-bold text-primaryDeep">
             {t('tasker.credits.currentSnapshot', 'Current snapshot')}
           </Text>
-          <View style={styles.infoCard}>
+          <View className="p-lg rounded-lg bg-card">
             <InfoRow
               label={t('tasker.credits.reserved', 'Reserved for active bookings')}
               value="4,800 ₮"
@@ -95,66 +96,3 @@ export default function TaskerCreditsIndexScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  stack: {
-    gap: spacing.lg,
-  },
-  heroCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primaryDeep,
-    gap: spacing.xs,
-  },
-  heroLabel: {
-    fontSize: typography.label,
-    color: colors.primaryForeground,
-    opacity: 0.8,
-  },
-  heroValue: {
-    fontSize: 36,
-    lineHeight: 36 * (7 / 6),
-    fontWeight: '800',
-    color: colors.card,
-  },
-  heroCaption: {
-    fontSize: typography.body,
-    color: colors.primaryForeground,
-    opacity: 0.7,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  actionButton: {
-    flex: 1,
-  },
-  referralLink: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.muted,
-    gap: spacing.xs,
-  },
-  referralTitle: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  referralBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  infoCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-  },
-});

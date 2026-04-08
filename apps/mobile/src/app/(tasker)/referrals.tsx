@@ -1,13 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { InfoRow } from '../../components/ui/InfoRow';
 import { Button } from '../../components/ui/Button';
-import { mobileTheme } from '../../design/tokenAdapter';
-
-const { colors, spacing, radius, typography } = mobileTheme;
 
 export default function TaskerReferralsScreen() {
   const { t } = useTranslation();
@@ -15,38 +12,42 @@ export default function TaskerReferralsScreen() {
 
   return (
     <DetailTemplate testID="SCR-P2-005">
-      <View style={styles.stack}>
-        <View style={styles.heroCard}>
-          <Text style={styles.heroTitle}>{t('tasker.referrals.heroTitle', 'Invite a tasker')}</Text>
-          <Text style={styles.heroBody}>
+      <View className="gap-lg">
+        <View className="p-lg rounded-lg bg-primaryDeep gap-md">
+          <Text className="font-extrabold text-card" style={{ fontSize: 28, lineHeight: 28 * (17 / 14) }}>
+            {t('tasker.referrals.heroTitle', 'Invite a tasker')}
+          </Text>
+          <Text className="text-body text-primaryForeground leading-relaxed" style={{ opacity: 0.85 }}>
             Share your invite code to grow the network and unlock simple bonus credits.
           </Text>
-          <View style={styles.codePill}>
-            <Text style={styles.codeLabel}>{t('tasker.referrals.codeLabel', 'Invite code')}</Text>
-            <Text style={styles.codeValue}>TASKY-247</Text>
+          <View className="p-md rounded-md gap-xs" style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}>
+            <Text className="text-caption text-primaryForeground uppercase" style={{ letterSpacing: 0.4 }}>
+              {t('tasker.referrals.codeLabel', 'Invite code')}
+            </Text>
+            <Text className="text-subtitle font-extrabold text-card">TASKY-247</Text>
           </View>
-          <View style={styles.actionRow}>
+          <View className="flex-row gap-sm">
             <Button
               label={t('tasker.referrals.copyCode', 'Copy invite code')}
               onPress={() => {}}
               testID="tasker-referrals-copy-code"
-              style={styles.actionButton}
+              style={{ flex: 1 }}
             />
             <Button
               label={t('tasker.referrals.viewCredits', 'View credits')}
               variant="outline"
               onPress={() => router.push('/(tasker)/credits')}
               testID="tasker-referrals-view-credits"
-              style={styles.actionButton}
+              style={{ flex: 1 }}
             />
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View className="gap-md">
+          <Text className="text-heading font-bold text-primaryDeep">
             {t('tasker.referrals.howItWorks', 'How it works')}
           </Text>
-          <View style={styles.infoCard}>
+          <View className="p-lg rounded-lg bg-card">
             <InfoRow
               label={t('tasker.referrals.step1Label', 'Step 1')}
               value={t('tasker.referrals.step1Value', 'Share your code with another tasker')}
@@ -62,89 +63,13 @@ export default function TaskerReferralsScreen() {
           </View>
         </View>
 
-        <Pressable style={styles.banner}>
-          <Text style={styles.bannerTitle}>
+        <Pressable className="p-lg rounded-lg gap-xs" style={{ backgroundColor: 'rgba(255, 221, 184, 0.22)' }}>
+          <Text className="text-body font-bold text-foreground">
             {t('tasker.referrals.bonusPending', 'Referral bonus pending')}
           </Text>
-          <Text style={styles.bannerBody}>1 invite is still in review.</Text>
+          <Text className="text-label text-textSecondary">1 invite is still in review.</Text>
         </Pressable>
       </View>
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  stack: {
-    gap: spacing.lg,
-  },
-  heroCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primaryDeep,
-    gap: spacing.md,
-  },
-  heroTitle: {
-    fontSize: 28,
-    lineHeight: 28 * (17 / 14),
-    fontWeight: '800',
-    color: colors.card,
-  },
-  heroBody: {
-    fontSize: typography.body,
-    color: colors.primaryForeground,
-    opacity: 0.85,
-    lineHeight: typography.body * 1.5,
-  },
-  codePill: {
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    gap: spacing.xs,
-  },
-  codeLabel: {
-    fontSize: typography.caption,
-    color: colors.primaryForeground,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-  },
-  codeValue: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.card,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  actionButton: {
-    flex: 1,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  infoCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-  },
-  banner: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: 'rgba(255, 221, 184, 0.22)',
-    gap: spacing.xs,
-  },
-  bannerTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  bannerBody: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-  },
-});

@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
 import { InfoRow } from '../../../components/ui/InfoRow';
-import { mobileTheme } from '../../../design/tokenAdapter';
-
-const { colors, spacing, radius, typography } = mobileTheme;
+import { cn } from '../../../lib/cn';
 
 type RouteState = 'loaded' | 'error';
 
@@ -41,20 +39,27 @@ export default function TaskerCreditsPayScreen() {
       ctaOnPress={() => router.replace('/(tasker)/credits/history')}
       testID="SCR-P2-002"
     >
-      <View style={styles.stack}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+      <View className="gap-lg">
+        <View className="gap-md">
+          <Text className="text-subtitle font-bold text-foreground">
             {t('tasker.credits.chooseAmount', 'Choose an amount')}
           </Text>
-          <View style={styles.amountGrid}>
+          <View className="gap-sm">
             {amountOptions.map((amount) => (
               <Pressable
                 key={amount}
-                style={[styles.amountCard, amount === '20,000 ₮' && styles.amountCardSelected]}
+                className={cn(
+                  'py-md px-lg rounded-lg bg-muted',
+                  amount === '20,000 ₮' && 'border border-primary',
+                )}
+                style={amount === '20,000 ₮' ? { backgroundColor: 'rgba(16, 38, 56, 0.08)' } : undefined}
                 testID={`tasker-credits-amount-${amount.replace(/[^0-9]/g, '')}`}
               >
                 <Text
-                  style={[styles.amountText, amount === '20,000 ₮' && styles.amountTextSelected]}
+                  className={cn(
+                    'text-body font-semibold text-foreground',
+                    amount === '20,000 ₮' && 'text-primary',
+                  )}
                 >
                   {amount}
                 </Text>
@@ -63,11 +68,11 @@ export default function TaskerCreditsPayScreen() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View className="gap-md">
+          <Text className="text-subtitle font-bold text-foreground">
             {t('tasker.credits.topUpPreview', 'Top-up preview')}
           </Text>
-          <View style={styles.previewCard}>
+          <View className="p-lg rounded-lg bg-muted">
             <InfoRow
               label={t('tasker.credits.method', 'Method')}
               value={t('tasker.credits.mobileWallet', 'Mobile wallet')}
@@ -83,9 +88,11 @@ export default function TaskerCreditsPayScreen() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('tasker.credits.notes', 'Notes')}</Text>
-          <Text style={styles.note}>
+        <View className="gap-md">
+          <Text className="text-subtitle font-bold text-foreground">
+            {t('tasker.credits.notes', 'Notes')}
+          </Text>
+          <Text className="text-body text-textSecondary leading-relaxed">
             This shell uses demo data only. Payment rails are not wired in this lane.
           </Text>
         </View>
@@ -93,48 +100,3 @@ export default function TaskerCreditsPayScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  stack: {
-    gap: spacing.lg,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  amountGrid: {
-    gap: spacing.sm,
-  },
-  amountCard: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.muted,
-  },
-  amountCardSelected: {
-    borderColor: colors.primary,
-    backgroundColor: 'rgba(16, 38, 56, 0.08)',
-  },
-  amountText: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.foreground,
-  },
-  amountTextSelected: {
-    color: colors.primary,
-  },
-  previewCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.muted,
-  },
-  note: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-});

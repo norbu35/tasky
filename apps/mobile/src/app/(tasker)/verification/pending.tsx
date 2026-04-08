@@ -1,114 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock, CircleCheck, CircleDashed } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme, elevations } from '../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 export default function PendingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
 
   return (
-    <View testID="SCR-TASK-007" style={styles.container}>
-      <View style={styles.iconContainer}>
+    <View testID="SCR-TASK-007" className="flex-1 justify-center items-center px-lg">
+      <View className="w-24 h-24 rounded-full bg-muted justify-center items-center mb-xl">
         <Clock size={40} color={colors.accent} />
       </View>
-      <Text style={styles.title}>{t('tasker.verification.pendingTitle')}</Text>
-      <Text style={styles.description}>{t('tasker.verification.pendingBody')}</Text>
-      <Text style={styles.sla}>{t('tasker.verification.pendingSla')}</Text>
+      <Text className="text-title font-bold text-foreground text-center">
+        {t('tasker.verification.pendingTitle')}
+      </Text>
+      <Text className="text-body text-textSecondary text-center mt-sm leading-relaxed">
+        {t('tasker.verification.pendingBody')}
+      </Text>
+      <Text className="text-body text-accent text-center mt-md font-medium">
+        {t('tasker.verification.pendingSla')}
+      </Text>
 
-      <View style={styles.progress} testID="pending-progress">
-        <View style={styles.progressRow}>
+      <View
+        className="self-stretch gap-sm mt-xl p-lg rounded-md bg-muted"
+        style={elevations.soft}
+        testID="pending-progress"
+      >
+        <View className="flex-row items-center gap-sm">
           <CircleCheck size={18} color={colors.verified} />
-          <Text style={styles.progressText}>{t('tasker.verification.pendingSubmitted')}</Text>
+          <Text className="text-body text-primary leading-relaxed">
+            {t('tasker.verification.pendingSubmitted')}
+          </Text>
         </View>
-        <View style={styles.progressRow}>
+        <View className="flex-row items-center gap-sm">
           <CircleDashed size={18} color={colors.accent} />
-          <Text style={styles.progressText}>{t('tasker.verification.pendingReviewing')}</Text>
+          <Text className="text-body text-primary leading-relaxed">
+            {t('tasker.verification.pendingReviewing')}
+          </Text>
         </View>
       </View>
 
       <Button
         label={t('tasker.verification.submittedCta')}
         onPress={() => router.replace('/(tabs)')}
-        style={styles.cta}
+        style={{ marginTop: mobileTheme.spacing.xl, alignSelf: 'stretch' }}
         testID="pending-screen-cta"
       />
       <Button
         label={t('tasker.verification.backButton', 'Буцах')}
         variant="outline"
         onPress={() => router.back()}
-        style={styles.secondaryBtn}
+        style={{ marginTop: mobileTheme.spacing.sm }}
         testID="verification-pending-screen-back"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  iconContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    lineHeight: typography.body * 1.6,
-  },
-  sla: {
-    fontSize: typography.body,
-    color: colors.accent,
-    textAlign: 'center',
-    marginTop: spacing.md,
-    fontWeight: '500',
-  },
-  progress: {
-    alignSelf: 'stretch',
-    gap: spacing.sm,
-    marginTop: spacing.xl,
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    ...elevations.soft,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  progressText: {
-    fontSize: typography.body,
-    color: colors.primary,
-    lineHeight: typography.body * 1.5,
-  },
-  cta: {
-    marginTop: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  secondaryBtn: {
-    marginTop: spacing.sm,
-  },
-});

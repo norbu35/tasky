@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react-native';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
-const { spacing, typography, colors, radius } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 export default function RejectedScreen() {
   const { t } = useTranslation();
@@ -14,25 +14,42 @@ export default function RejectedScreen() {
   const { reason } = useLocalSearchParams<{ reason?: string }>();
 
   return (
-    <View testID="SCR-TASK-009" style={styles.container}>
-      <View style={styles.iconContainer}>
+    <View testID="SCR-TASK-009" className="flex-1 items-center justify-center px-lg">
+      <View
+        className="w-18 h-18 rounded-full justify-center items-center mb-xl"
+        style={{ backgroundColor: `${colors.danger}1A` }}
+      >
         <AlertTriangle size={48} color={colors.danger} />
       </View>
-      <Text style={styles.title}>{t('tasker.verification.rejectedTitle')}</Text>
-      <Text style={styles.description}>{t('tasker.verification.rejectedBody')}</Text>
+      <Text className="text-title font-bold text-danger text-center">
+        {t('tasker.verification.rejectedTitle')}
+      </Text>
+      <Text className="text-body text-textSecondary text-center mt-sm leading-relaxed">
+        {t('tasker.verification.rejectedBody')}
+      </Text>
 
-      {reason ? <Text style={styles.reasonText}>{reason}</Text> : null}
+      {reason ? (
+        <Text className="text-body text-foreground text-center mt-lg leading-relaxed">
+          {reason}
+        </Text>
+      ) : null}
 
-      <View style={styles.tips}>
-        <Text style={styles.tipText}>{t('tasker.verification.rejectedTipLighting')}</Text>
-        <Text style={styles.tipText}>{t('tasker.verification.rejectedTipFlat')}</Text>
-        <Text style={styles.tipText}>{t('tasker.verification.rejectedTipFace')}</Text>
+      <View className="self-stretch mt-lg gap-sm p-lg rounded-md bg-muted">
+        <Text className="text-body text-foreground leading-relaxed">
+          {t('tasker.verification.rejectedTipLighting')}
+        </Text>
+        <Text className="text-body text-foreground leading-relaxed">
+          {t('tasker.verification.rejectedTipFlat')}
+        </Text>
+        <Text className="text-body text-foreground leading-relaxed">
+          {t('tasker.verification.rejectedTipFace')}
+        </Text>
       </View>
 
       <Button
         label={t('tasker.verification.rejectedResubmit')}
         onPress={() => router.push('/(tasker)/verification/upload')}
-        style={styles.primaryCta}
+        style={{ alignSelf: 'stretch', marginTop: spacing.xl }}
         testID="rejected-screen-resubmit"
       />
 
@@ -40,68 +57,9 @@ export default function RejectedScreen() {
         label={t('tasker.verification.rejectedBrowse')}
         variant="ghost"
         onPress={() => router.push('/(tabs)')}
-        style={styles.secondaryCta}
+        style={{ alignSelf: 'stretch', marginTop: spacing.md }}
         testID="rejected-screen-browse"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: `${colors.danger}1A`,
-    marginBottom: spacing.xl,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.danger,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    lineHeight: typography.body * 1.6,
-  },
-  reasonText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    textAlign: 'center',
-    marginTop: spacing.lg,
-    lineHeight: typography.body * 1.6,
-  },
-  tips: {
-    alignSelf: 'stretch',
-    marginTop: spacing.lg,
-    gap: spacing.sm,
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  tipText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.5,
-  },
-  primaryCta: {
-    alignSelf: 'stretch',
-    marginTop: spacing.xl,
-  },
-  secondaryCta: {
-    alignSelf: 'stretch',
-    marginTop: spacing.md,
-  },
-});
