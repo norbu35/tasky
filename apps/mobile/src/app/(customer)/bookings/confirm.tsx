@@ -56,7 +56,7 @@ export default function BookingConfirmScreen() {
 
   return (
     <DetailTemplate testID="SCR-CUST-014"
-      ctaLabel={t('customer.bookings.ctaConfirm', 'Confirm Booking')}
+      ctaLabel={t('customer.bookings.ctaConfirm')}
       ctaOnPress={handleConfirm}
       ctaLoading={isPending || isConfirmingIntent}
       ctaDisabled={!disclaimerChecked}
@@ -64,7 +64,7 @@ export default function BookingConfirmScreen() {
       {/* Tasker Info */}
       <View className="mb-xl">
         <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-          {t('customer.bookings.sectionTasker', 'Tasker')}
+          {t('customer.bookings.sectionTasker')}
         </Text>
         <View className="flex-row items-center gap-md bg-muted rounded-md p-md">
           <ProfileAvatar
@@ -85,7 +85,7 @@ export default function BookingConfirmScreen() {
       {/* Task Summary */}
       <View className="mb-xl">
         <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-          {t('customer.bookings.sectionTask', 'Task')}
+          {t('customer.bookings.sectionTask')}
         </Text>
         <Text className="text-body text-primaryDeep mb-sm">{params.taskTitle}</Text>
         {params.taskSchedule && (
@@ -99,20 +99,17 @@ export default function BookingConfirmScreen() {
       {/* Payment Note */}
       <View className="mb-xl">
         <Text className="text-caption text-accent italic">
-          {t('customer.bookings.paymentNote', 'Payment is arranged directly with the Tasker')}
+          {t('customer.bookings.paymentNote')}
         </Text>
       </View>
 
       {/* Disclaimer */}
       <View className="mb-xl">
         <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-          {t('customer.bookings.sectionDisclaimer', 'Liability Disclaimer')}
+          {t('customer.bookings.sectionDisclaimer')}
         </Text>
         <Text className="text-caption text-textSecondary leading-[20px] mb-md">
-          {t(
-            'customer.bookings.disclaimerText',
-            'Tasky is a platform connecting Customers and Taskers. Payment is arranged directly between parties. The platform is not a payment intermediary and bears no liability for arrangements made off-platform',
-          )}
+          {t('BookingConfirmScreen.copy1')}
         </Text>
         <Pressable
           className="flex-row items-center gap-sm"
@@ -133,7 +130,7 @@ export default function BookingConfirmScreen() {
             )}
           </View>
           <Text className="text-body text-primaryDeep flex-1">
-            {t('customer.bookings.disclaimerAcknowledge', 'I agree to these terms')}
+            {t('customer.bookings.disclaimerAcknowledge')}
           </Text>
         </Pressable>
       </View>
@@ -141,13 +138,10 @@ export default function BookingConfirmScreen() {
       {/* Calendar Prompt */}
       <View className="mb-xl">
         <Text className="text-subtitle font-semibold text-primary mb-sm">
-          {t('customer.bookings.calendarPromptTitle', 'Add to calendar?')}
+          {t('customer.bookings.calendarPromptTitle')}
         </Text>
         <Text className="text-caption text-textSecondary">
-          {t(
-            'customer.bookings.calendarPromptBody',
-            'Add the scheduled time to your calendar for a reminder',
-          )}
+          {t('BookingConfirmScreen.copy2')}
         </Text>
       </View>
     </DetailTemplate>

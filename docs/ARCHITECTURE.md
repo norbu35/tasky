@@ -127,8 +127,8 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `users`: `id (UUID)`, `facebook_id (nullable, UK)`, `phone (nullable, UK)`, `primary_auth` (FACEBOOK, PHONE_OTP),
   `role`, `status` (PENDING, ACTIVE, VERIFIED, SUSPENDED, BANNED), `suspension_end_at`, `created_at`, `updated_at`
 * `profiles`: `user_id (FK)`, `full_name`, `avatar_url`, `rating_avg`
-* `verifications`: `user_id (FK)`, `id_card_front_key`, `id_card_back_key`, `selfie_key`, `status`, `admin_notes`,
-  `submitted_at`, `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
+* `verifications`: `user_id (FK)`, `id_card_front_key`, `id_card_back_key`, `status`, `admin_notes`, `submitted_at`,
+  `reviewed_at`, `consent_policy_version`, `consent_accepted_at`, `dan_reference` (nullable)
   — columns store S3/MinIO object keys, not URLs; download links are generated via presigned GET URLs on demand
 
 #### Marketplace Module
@@ -274,8 +274,7 @@ Cross-domain communication uses internal Java method calls only — no network h
 8. **Identity, Consent, and Outage Posture Flow**:
     * Phase 0-1: Facebook OAuth primary login; Phase 2+ OTP primary with migration of existing users.
     * During OAuth outage, new login/signup fails closed, while existing valid sessions continue until expiry.
-    * Identity upload (ID front, ID back, selfie) is blocked until consent is captured (`consent_policy_version`,
-      timestamp).
+    * Identity upload is blocked until consent is captured (`consent_policy_version`, timestamp).
     * Outage state is surfaced to clients and audit/ops events are emitted.
 9. **Reviews, Disputes, and Enforcement Flow**:
     * Booking completion triggers bilateral review prompt + reminders at 24h and 72h.
@@ -360,7 +359,7 @@ Standardized error response:
 1. Client requests a presigned upload URL:
     * `POST /tasks/photos/upload-url` (task photos before task creation)
     * `POST /tasks/{id}/photos/upload-url` (task photos after task creation)
-    * `POST /verification/upload-url` (ID/selfie verification images)
+    * `POST /verification/upload-url` (ID verification images)
     * `POST /users/me/avatar/upload-url` (avatar)
 2. Backend generates a presigned URL (S3/MinIO) and returns it with a `storage_key`.
     * *Security*: Backend MUST enforce `Content-Type` in the signed URL signature.

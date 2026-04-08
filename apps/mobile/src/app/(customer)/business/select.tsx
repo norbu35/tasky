@@ -18,15 +18,15 @@ export default function SelectBusinessAccountScreen() {
       <ModalSheetTemplate
         isOpen={isOpen}
         onClose={() => { setIsOpen(false); router.back(); }}
-        title={t('b2b.select.title', 'Select Business Account')}
+        title={t('b2b.select.title')}
         testID="select-business-sheet"
       >
         <View className="gap-lg">
           <Text className="text-body text-mutedForeground text-center">
-            {t('b2b.select.empty', 'No business accounts. Create one first.')}
+            {t('b2b.select.empty')}
           </Text>
           <Button
-            label={t('b2b.dashboard.createAccount', 'Create Business Account')}
+            label={t('b2b.dashboard.createAccount')}
             onPress={() => {
               setIsOpen(false);
               router.push('/(customer)/business/new/details');

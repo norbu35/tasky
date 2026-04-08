@@ -20,12 +20,6 @@ interface CustomerCancelSheetProps {
   onCancelled?: () => void;
 }
 
-const CANCEL_REASONS = [
-  { id: 'no_tasker', label: 'Гүйцэтгэгч ирээгүй' },
-  { id: 'schedule', label: 'Хуваарь тохирохгүй' },
-  { id: 'other', label: 'Бусад' },
-] as const;
-
 function ReasonRow({
   label,
   active,
@@ -54,7 +48,12 @@ export function CustomerCancelSheet({
 }: CustomerCancelSheetProps) {
   const { t } = useTranslation();
   const { mutateAsync: cancelBooking, isPending } = useCancelBooking();
-  const [selectedReason, setSelectedReason] = React.useState<(typeof CANCEL_REASONS)[number]['id']>('other');
+  const cancelReasons = [
+    { id: 'no_tasker', label: t('CustomerCancelSheet.reasonNoTasker') },
+    { id: 'schedule', label: t('CustomerCancelSheet.reasonSchedule') },
+    { id: 'other', label: t('CustomerCancelSheet.reasonOther') },
+  ] as const;
+  const [selectedReason, setSelectedReason] = React.useState<(typeof cancelReasons)[number]['id']>('other');
   const [details, setDetails] = React.useState('');
 
   const handleCancel = useCallback(async () => {
@@ -66,19 +65,10 @@ export function CustomerCancelSheet({
 
   const warningText =
     cancelType === 'free_cancel'
-      ? t(
-          'customer.bookings.freeCancelDescription',
-          'Та энэ захиалгыг торгуулгүйгээр цуцлах боломжтой.',
-        )
+      ? t('CustomerCancelSheet.copy1')
       : cancelType === 'late_cancel_incident_count'
-      ? t(
-          'customer.bookings.lateCancelRepeatWarning',
-          'Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь зэрэглэлийн бууралт болон торгуулийн шалгалтыг идэвхжүүлж болно.',
-        )
-      : t(
-          'customer.bookings.lateCancelDescription',
-          'Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ. Энэ цуцлалт таны найдвартай байдлын бүртгэлд тэмдэглэгдэнэ.',
-        );
+      ? t('CustomerCancelSheet.copy2')
+      : t('CustomerCancelSheet.copy3');
 
   return (
     <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="customer-cancel-sheet" snapPoints={['88%']}>
@@ -88,9 +78,9 @@ export function CustomerCancelSheet({
         </View>
       </View>
 
-      <Text style={styles.title}>{t('customer.bookings.cancelQuestion', 'Захиалга цуцлах уу?')}</Text>
+      <Text style={styles.title}>{t('customer.bookings.cancelQuestion')}</Text>
       <Text style={styles.subtitle}>
-        {t('customer.bookings.cancelPrompt', 'Цуцлах шалтгаанаа сонгоно уу')}
+        {t('customer.bookings.cancelPrompt')}
       </Text>
 
       <View style={styles.warningCard}>
@@ -98,7 +88,7 @@ export function CustomerCancelSheet({
       </View>
 
       <View style={styles.reasonList}>
-        {CANCEL_REASONS.map((reason) => (
+        {cancelReasons.map((reason) => (
           <ReasonRow
             key={reason.id}
             label={reason.label}
@@ -111,7 +101,7 @@ export function CustomerCancelSheet({
       <View style={styles.textAreaCard}>
         <TextInput
           style={styles.textArea}
-          placeholder={t('customer.bookings.cancelDetailsPlaceholder', 'Дэлгэрэнгүй тайлбар...')}
+          placeholder={t('customer.bookings.cancelDetailsPlaceholder')}
           placeholderTextColor={colors.textSecondary}
           value={details}
           onChangeText={setDetails}
@@ -124,16 +114,13 @@ export function CustomerCancelSheet({
 
       <View style={styles.policyNote}>
         <Text style={styles.policyNoteText}>
-          {t(
-            'customer.bookings.cancelPolicyNote',
-            'Цуцлалтын бодлого: 4+ цагийн өмнө — торгуулгүй. 4 цагийн дотор — найдвартай байдлын зөрчил.',
-          )}
+          {t('CustomerCancelSheet.copy4')}
         </Text>
       </View>
 
       <View style={styles.actions}>
         <Button
-          label={t('customer.bookings.ctaCancelConfirm', 'Захиалга цуцлах')}
+          label={t('customer.bookings.ctaCancelConfirm')}
           variant="destructive"
           onPress={() => void handleCancel()}
           isLoading={isPending}
@@ -147,7 +134,7 @@ export function CustomerCancelSheet({
           testID="cancel-go-back-btn"
         >
           <Text style={styles.secondaryButtonText}>
-            {t('customer.bookings.ctaGoBack', 'Буцах')}
+            {t('customer.bookings.ctaGoBack')}
           </Text>
         </Pressable>
       </View>

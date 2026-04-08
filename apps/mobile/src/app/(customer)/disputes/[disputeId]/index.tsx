@@ -56,46 +56,46 @@ const STATUS_META: Record<
   { label: string; description: string; badgeStyle: 'warning' | 'success' | 'neutral' | 'danger' }
 > = {
   OPEN: {
-    label: 'Нээлттэй',
-    description: 'Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.',
+    label: t('DisputeStatusScreen.copy1'),
+    description: t('DisputeStatusScreen.copy2'),
     badgeStyle: 'warning',
   },
   ESCALATED: {
-    label: 'Мөрдөн шалгаж байна',
-    description: 'Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.',
+    label: t('DisputeStatusScreen.copy3'),
+    description: t('DisputeStatusScreen.copy4'),
     badgeStyle: 'warning',
   },
   RESOLVED_CUSTOMER: {
-    label: 'Хэрэглэгчийн талд шийдэгдсэн',
-    description: 'Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.',
+    label: t('DisputeStatusScreen.copy5'),
+    description: t('DisputeStatusScreen.copy6'),
     badgeStyle: 'success',
   },
   RESOLVED_TASKER: {
-    label: 'Гүйцэтгэгчийн талд шийдэгдсэн',
-    description: 'Маргаан гүйцэтгэгчийн талд шийдэгдлээ.',
+    label: t('DisputeStatusScreen.copy7'),
+    description: t('DisputeStatusScreen.copy8'),
     badgeStyle: 'neutral',
   },
   CLOSED_INSUFFICIENT_EVIDENCE: {
-    label: 'Нотлох баримт хангалтгүй — хаагдсан',
-    description: 'Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.',
+    label: t('DisputeStatusScreen.copy9'),
+    description: t('DisputeStatusScreen.copy10'),
     badgeStyle: 'danger',
   },
 };
 
 function formatMongolianDate(date: Date, options?: { includeTime?: boolean }): string {
   const months = [
-    '1-р сар',
-    '2-р сар',
-    '3-р сар',
-    '4-р сар',
-    '5-р сар',
-    '6-р сар',
-    '7-р сар',
-    '8-р сар',
-    '9-р сар',
-    '10-р сар',
-    '11-р сар',
-    '12-р сар',
+    t('DisputeStatusScreen.copy1'),
+    t('DisputeStatusScreen.copy2'),
+    t('DisputeStatusScreen.copy3'),
+    t('DisputeStatusScreen.copy4'),
+    t('DisputeStatusScreen.copy5'),
+    t('DisputeStatusScreen.copy6'),
+    t('DisputeStatusScreen.copy7'),
+    t('DisputeStatusScreen.copy8'),
+    t('DisputeStatusScreen.copy9'),
+    t('DisputeStatusScreen.copy10'),
+    t('DisputeStatusScreen.copy11'),
+    t('DisputeStatusScreen.copy12'),
   ];
   const year = date.getFullYear();
   const month = months[date.getMonth()];
@@ -146,22 +146,16 @@ function getResolutionText(
 ): string {
   switch (status) {
     case 'ESCALATED':
-      return t('customer.disputes.resolutionEscalated', 'Маргааныг нэмэлт шалгалтад шилжүүлсэн.');
+      return t('customer.disputes.resolutionEscalated');
     case 'RESOLVED_CUSTOMER':
-      return t('customer.disputes.resolutionResolvedCustomer', 'Маргаан таны талд шийдэгдлээ.');
+      return t('customer.disputes.resolutionResolvedCustomer');
     case 'RESOLVED_TASKER':
-      return t(
-        'customer.disputes.resolutionResolvedTasker',
-        'Маргаан гүйцэтгэгчийн талд шийдэгдлээ.',
-      );
+      return t('DisputeStatusScreen.copy11');
     case 'CLOSED_INSUFFICIENT_EVIDENCE':
-      return t(
-        'customer.disputes.resolutionClosedInsufficient',
-        'Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.',
-      );
+      return t('DisputeStatusScreen.copy12');
     case 'OPEN':
     default:
-      return t('customer.disputes.resolutionOpen', 'Маргаан одоогоор хянагдаж байна.');
+      return t('customer.disputes.resolutionOpen');
   }
 }
 
@@ -172,13 +166,13 @@ function getEvidenceLabel(
   if (item.text_payload) return item.text_payload;
   switch (item.type) {
     case 'PHOTO':
-      return 'Зураг';
+      return t('DisputeStatusScreen.copy13');
     case 'CHAT_EXCERPT':
-      return 'Чат хэсэг';
+      return t('DisputeStatusScreen.copy14');
     case 'WRITTEN_TIMELINE':
-      return 'Бичмэл таймлайн';
+      return t('DisputeStatusScreen.copy15');
     default:
-      return item.storage_key ?? 'Нотлох баримт';
+      return item.storage_key ?? t('DisputeStatusScreen.copy16');
   }
 }
 
@@ -225,7 +219,7 @@ export default function DisputeStatusScreen() {
   const meta = STATUS_META[status];
   const booking = dispute?.booking;
   const bookingCategory =
-    booking?.task?.category?.name ?? t('customer.disputes.defaultCategory', 'Чанарын гомдол');
+    booking?.task?.category?.name ?? t('customer.disputes.defaultCategory');
   const bookingReference = booking?.id ?? dispute?.booking_id ?? disputeId ?? '—';
   const submittedAt = parseDate(dispute?.created_at);
   const evidenceItems = Array.isArray(dispute?.evidence) ? dispute.evidence : [];
@@ -233,20 +227,17 @@ export default function DisputeStatusScreen() {
   const timeline = React.useMemo(
     () => [
       {
-        title: t('customer.disputes.timelineSubmitted', 'Маргаан илгээсэн'),
-        description: t('customer.disputes.timelineSubmittedDesc', 'Системд амжилттай бүртгэгдсэн'),
+        title: t('customer.disputes.timelineSubmitted'),
+        description: t('customer.disputes.timelineSubmittedDesc'),
         date: submittedAt ? formatMongolianDate(submittedAt) : '2024.05.20',
       },
       {
-        title: t('customer.disputes.timelineAssigned', 'Хянагч хуваарилагдсан'),
-        description: t(
-          'customer.disputes.timelineAssignedDesc',
-          'Маргаан хариуцсан мэргэжилтэн томилогдлоо',
-        ),
+        title: t('customer.disputes.timelineAssigned'),
+        description: t('DisputeStatusScreen.copy13'),
         date: submittedAt ? formatMongolianDate(submittedAt) : '2024.05.21',
       },
       {
-        title: t('customer.disputes.timelineDecision', 'Шийдвэр'),
+        title: t('customer.disputes.timelineDecision'),
         description: getResolutionText(status, t),
         date: dispute?.resolved_at
           ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date())
@@ -269,7 +260,7 @@ export default function DisputeStatusScreen() {
           <ChevronLeft size={22} color={colors.primary} />
         </Pressable>
         <Text className="flex-1 text-subtitle font-sans-bold text-primary-deep text-center mx-sm">
-          {t('customer.disputes.pageTitle', 'Маргааны төлөв')}
+          {t('customer.disputes.pageTitle')}
         </Text>
         <View className="w-3xl" />
       </View>
@@ -292,14 +283,14 @@ export default function DisputeStatusScreen() {
           <View className="bg-card rounded-lg p-lg items-center gap-sm">
             <CircleAlert size={28} color={colors.danger} />
             <Text className="text-body text-primary-deep text-center leading-relaxed">
-              {t('customer.disputes.errorToast', 'Маргааны мэдээлэл ачааллахад алдаа гарлаа')}
+              {t('customer.disputes.errorToast')}
             </Text>
             <Pressable
               onPress={() => void refetch()}
               className="px-lg py-sm rounded-md border border-primary-deep"
             >
               <Text className="text-body text-primary-deep font-sans-bold">
-                {t('customer.disputes.retry', 'Дахин оролдох')}
+                {t('customer.disputes.retry')}
               </Text>
             </Pressable>
           </View>
@@ -338,11 +329,11 @@ export default function DisputeStatusScreen() {
             {/* Detail card */}
             <View className="bg-muted rounded-lg p-lg gap-item">
               <Text className="text-heading font-sans-bold text-primary-deep">
-                {t('customer.disputes.sectionSummary', 'Маргааны товч')}
+                {t('customer.disputes.sectionSummary')}
               </Text>
               <View className="gap-xs">
                 <Text className="text-caption text-text-secondary uppercase tracking-widest">
-                  {t('customer.disputes.detailType', 'Төрөл')}
+                  {t('customer.disputes.detailType')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
                   {bookingCategory}
@@ -350,7 +341,7 @@ export default function DisputeStatusScreen() {
               </View>
               <View className="gap-xs">
                 <Text className="text-caption text-text-secondary uppercase tracking-widest">
-                  {t('customer.disputes.detailBooking', 'Захиалгын дугаар')}
+                  {t('customer.disputes.detailBooking')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
                   {String(bookingReference).slice(0, 8).toUpperCase()}
@@ -358,15 +349,15 @@ export default function DisputeStatusScreen() {
               </View>
               <View className="gap-xs" style={{ paddingBottom: spacing.xs / 2 }}>
                 <Text className="text-caption text-text-secondary uppercase tracking-widest">
-                  {t('customer.disputes.detailSubmitted', 'Илгээсэн огноо')}
+                  {t('customer.disputes.detailSubmitted')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
-                  {submittedAt ? formatMongolianDate(submittedAt) : '2024 оны 5-р сарын 20'}
+                  {submittedAt ? formatMongolianDate(submittedAt) : t('DisputeStatusScreen.copy17')}
                 </Text>
               </View>
               <View className="gap-xs">
                 <Text className="text-caption text-text-secondary uppercase tracking-widest">
-                  {t('customer.disputes.detailReason', 'Гомдлын шалтгаан')}
+                  {t('customer.disputes.detailReason')}
                 </Text>
                 <Text className="text-body font-sans-bold text-primary-deep leading-snug">
                   {dispute.reason}
@@ -377,7 +368,7 @@ export default function DisputeStatusScreen() {
             {/* Timeline section */}
             <View className="gap-lg">
               <Text className="text-heading font-sans-bold text-primary-deep">
-                {t('customer.disputes.sectionProcess', 'Үйл явц')}
+                {t('customer.disputes.sectionProcess')}
               </Text>
               <View className="gap-lg" style={{ position: 'relative' }}>
                 {timeline.map((item, index) => {
@@ -430,7 +421,7 @@ export default function DisputeStatusScreen() {
             {/* Resolution card */}
             <View className="bg-muted rounded-lg p-lg gap-item">
               <Text className="text-heading font-sans-bold text-primary-deep">
-                {t('customer.disputes.sectionResolution', 'Эцсийн шийдвэр')}
+                {t('customer.disputes.sectionResolution')}
               </Text>
               <View className="items-center gap-sm">
                 <View className="w-[64px] h-[64px] rounded-lg bg-chip-inactive items-center justify-center">
@@ -438,14 +429,11 @@ export default function DisputeStatusScreen() {
                 </View>
                 <Text className="text-body font-sans-bold text-primary-deep text-center">
                   {status === 'OPEN'
-                    ? t('customer.disputes.statusOpen', 'Хүлээгдэж байна')
-                    : t('customer.disputes.statusFinal', 'Хүлээгдэж байна')}
+                    ? t('customer.disputes.statusOpen')
+                    : t('customer.disputes.statusFinal')}
                 </Text>
                 <Text className="text-body text-text-secondary text-center leading-normal">
-                  {t(
-                    'customer.disputes.mediationNote',
-                    'Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.',
-                  )}
+                  {t('DisputeStatusScreen.copy14')}
                 </Text>
               </View>
             </View>
@@ -456,7 +444,7 @@ export default function DisputeStatusScreen() {
               style={elevations.soft}
             >
               <Text className="text-heading font-sans-bold text-primary-deep">
-                {t('customer.disputes.sectionEvidence', 'Илгээсэн нотлох баримт')}
+                {t('customer.disputes.sectionEvidence')}
               </Text>
               {evidenceItems.length > 0 ? (
                 evidenceItems.map((item, index) => (
@@ -472,7 +460,7 @@ export default function DisputeStatusScreen() {
                 ))
               ) : (
                 <Text className="text-body text-text-secondary">
-                  {t('customer.disputes.noEvidence', 'Ноотлох баримт байхгүй')}
+                  {t('customer.disputes.noEvidence')}
                 </Text>
               )}
             </View>

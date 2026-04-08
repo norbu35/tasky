@@ -128,7 +128,7 @@ function SectionCard({
         {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
             <Text className={`text-caption font-bold${featured ? ' text-accent' : ' text-primaryDeep'}`}>
-              {t('customer.postTask.edit', 'Edit')}
+              {t('ReviewSubmitScreen.edit')}
             </Text>
           </Pressable>
         ) : null}
@@ -160,15 +160,15 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
   const slots = photos.slice(0, 3);
 
   return (
-    <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
+      <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
       <View className="flex-row justify-between items-center">
         <Text className="text-caption font-bold text-textSecondary">
-          {t('customer.postTask.sectionPhotos', 'Photos')}{' '}
+          {t('ReviewSubmitScreen.sectionPhotos')}{' '}
           {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
         <Pressable onPress={onEdit} accessibilityRole="button">
           <Text className="text-caption font-bold text-primaryDeep">
-            {t('customer.postTask.edit', 'Edit')}
+            {t('ReviewSubmitScreen.edit')}
           </Text>
         </Pressable>
       </View>
@@ -200,7 +200,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
 
       {photos.length === 0 ? (
         <Text className="text-caption text-textSecondary">
-          {t('customer.postTask.noPhotos', 'No photos added')}
+          {t('ReviewSubmitScreen.noPhotos')}
         </Text>
       ) : null}
     </View>
@@ -261,11 +261,11 @@ export default function ReviewSubmitScreen() {
     // Dev bypass: skip API call and navigate directly to success screen
     if (devAuthEnabled) {
       router.replace({
-        pathname: '/(customer)/tasks/new/success',
-        params: { taskId: 'dev-task-00000000' },
-      });
-      return;
-    }
+      pathname: '/(customer)/tasks/new/success',
+      params: { taskId: 'dev-task-00000000' },
+    });
+    return;
+  }
 
     try {
       setSubmitError(null);
@@ -287,10 +287,7 @@ export default function ReviewSubmitScreen() {
       const taskId = extractTaskId(createdTask);
       if (!taskId) {
         throw new Error(
-          t(
-            'customer.postTask.submitUnexpectedResponse',
-            'Unexpected server response. Please try again.',
-          ),
+          t('ReviewSubmitScreen.submitUnexpectedResponse'),
         );
       }
 
@@ -313,22 +310,22 @@ export default function ReviewSubmitScreen() {
       totalSteps={7}
       onNext={handleSubmit}
       onBack={() => router.back()}
-      nextLabel={t('ReviewSubmitScreen.postButton', 'Захиалга өгөх')}
+      nextLabel={t('ReviewSubmitScreen.postButton')}
       nextLoading={isPending}
       nextDisabled={isPending || !hasRequiredPayload}
       testID="SCR-CUST-007"
     >
       <View className="gap-xs mb-sm">
         <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
-          {t('ReviewSubmitScreen.finalStep', 'Final Step')}
+          {t('ReviewSubmitScreen.finalStep')}
         </Text>
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('ReviewSubmitScreen.reviewTitle', 'Review & Submit')}
+          {t('ReviewSubmitScreen.reviewTitle')}
         </Text>
       </View>
 
       <SectionCard
-        label={t('customer.postTask.sectionCategory', 'Category')}
+        label={t('ReviewSubmitScreen.sectionCategory')}
         value={params.categoryId ?? ''}
         onEdit={() => router.push('/(customer)/tasks/new/category')}
         testID="review-section-category"
@@ -336,7 +333,7 @@ export default function ReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('customer.postTask.sectionScope', 'Job Scope Summary')}
+        label={t('ReviewSubmitScreen.sectionScope')}
         value={params.description ?? ''}
         onEdit={() =>
           router.push({
@@ -350,7 +347,7 @@ export default function ReviewSubmitScreen() {
       <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-description">
         <View className="flex-row justify-between items-center">
           <Text className="text-caption font-bold text-textSecondary">
-            {t('customer.postTask.sectionDetails', 'Task Details')}
+            {t('ReviewSubmitScreen.sectionDetails')}
           </Text>
           <Pressable
             onPress={() =>
@@ -362,7 +359,7 @@ export default function ReviewSubmitScreen() {
             accessibilityRole="button"
           >
             <Text className="text-caption font-bold text-primaryDeep">
-              {t('customer.postTask.edit', 'Edit')}
+              {t('ReviewSubmitScreen.edit')}
             </Text>
           </Pressable>
         </View>
@@ -376,8 +373,8 @@ export default function ReviewSubmitScreen() {
           >
             <Text className="text-caption font-bold text-accent">
               {showFullDescription
-                ? t('ReviewSubmitScreen.viewLess', 'View less')
-                : t('ReviewSubmitScreen.viewMore', 'View more')}
+                ? t('ReviewSubmitScreen.viewLess')
+                : t('ReviewSubmitScreen.viewMore')}
             </Text>
           </Pressable>
         ) : null}
@@ -400,8 +397,8 @@ export default function ReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('customer.postTask.sectionLocation', 'Location')}
-        value={params.location ?? t('customer.postTask.notSet', 'Not set')}
+        label={t('ReviewSubmitScreen.sectionLocation')}
+        value={params.location ?? t('ReviewSubmitScreen.notSet')}
         onEdit={() =>
           router.push({
             pathname: '/(customer)/tasks/new/location',
@@ -422,10 +419,8 @@ export default function ReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('customer.postTask.sectionSchedule', 'Schedule')}
-        value={
-          formatSchedule(params.scheduledAt) || t('customer.postTask.flexibleSchedule', 'Flexible')
-        }
+        label={t('ReviewSubmitScreen.sectionSchedule')}
+        value={formatSchedule(params.scheduledAt) || t('ReviewSubmitScreen.flexibleSchedule')}
         onEdit={() =>
           router.push({
             pathname: '/(customer)/tasks/new/schedule',
@@ -446,7 +441,7 @@ export default function ReviewSubmitScreen() {
       />
 
       <SectionCard
-        label={t('customer.postTask.sectionBudget', 'Budget')}
+        label={t('ReviewSubmitScreen.sectionBudget')}
         value={formatBudget(params.budget ?? '0')}
         onEdit={() =>
           router.push({
@@ -471,10 +466,7 @@ export default function ReviewSubmitScreen() {
       <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">
         <CircleAlert size={16} color={colors.accent} />
         <Text className="flex-1 text-caption leading-relaxed text-textSecondary">
-          {t(
-            'customer.postTask.reviewGuidance',
-            'Taskers will review your task and send offers. Double-check details before posting.',
-          )}
+          {t('ReviewSubmitScreen.reviewGuidance')}
         </Text>
       </View>
 

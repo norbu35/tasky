@@ -46,104 +46,98 @@ export default function TaskerStatsScreen() {
         <View className="gap-lg">
           <View className="bg-primaryDeep rounded-lg gap-xs" style={{ padding: spacing.xl }} testID="tasker-stats-hero">
             <Text className="text-label text-primaryForeground opacity-90">
-              {t('tasker.stats.heroLabel', 'Таны үнэлгээ')}
+              {t('tasker.stats.heroLabel')}
             </Text>
             <Text className="text-heroTitle font-bold text-secondary">
               {formatRating(averageRating)}
             </Text>
             <Text className="text-caption text-primaryForeground">
-              {t('tasker.stats.heroMeta', 'Захиалагчийн үнэлгээнээс')}
+              {t('tasker.stats.heroMeta')}
             </Text>
           </View>
 
           <Text className="text-heading font-bold text-primaryDeep">
-            {t('tasker.stats.sectionHeading', 'Ерөнхий үзүүлэлтүүд')}
+            {t('tasker.stats.sectionHeading')}
           </Text>
 
           <View className="flex-row gap-md">
             <StatCard
               value={String(jobsCompleted ?? 0)}
-              label={t('tasker.stats.jobsCompleted', 'Дууссан ажил')}
+              label={t('tasker.stats.jobsCompleted')}
             />
             <StatCard
               value={formatRating(averageRating)}
-              label={t('tasker.stats.averageRating', 'Ерөнхий үнэлгээ')}
+              label={t('tasker.stats.averageRating')}
             />
           </View>
           <View className="flex-row gap-md">
             <StatCard
               value={formatPercent(completionRate)}
-              label={t('tasker.stats.completionRate', 'Гүйцэтгэлийн хувь')}
+              label={t('tasker.stats.completionRate')}
             />
             <StatCard
               value={formatPercent(applicationSuccessRate)}
-              label={t('tasker.stats.applicationSuccess', 'Анкетын амжилт')}
+              label={t('tasker.stats.applicationSuccess')}
             />
           </View>
           <View className="flex-row gap-md">
             <StatCard
               value={String(cancellations30d)}
-              label={t('tasker.stats.cancellations30d', 'Цуцлалт (30 хоногт)')}
+              label={t('tasker.stats.cancellations30d')}
             />
             <StatCard
               value={formatPercent(reliabilityScore)}
-              label={t('tasker.stats.reliabilityScore', 'Найдвартай байдлын оноо')}
+              label={t('tasker.stats.reliabilityScore')}
             />
           </View>
 
           <View className="gap-xs pt-md">
             <Text className="text-subtitle font-semibold text-primaryDeep">
-              {t('tasker.stats.ratingBreakdown', 'Үнэлгээний задаргаа')}
+              {t('tasker.stats.ratingBreakdown')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.taskClarity', 'Даалгаврын тодорхой байдал')}:{' '}
+              {t('tasker.stats.taskClarity')}:{' '}
               {taskClarity ?? averageRating ?? '—'}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.respectfulness', 'Хүндэтгэлтэй хандлага')}:{' '}
+              {t('tasker.stats.respectfulness')}:{' '}
               {respectfulness ?? averageRating ?? '—'}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.punctuality', 'Цаг баримтлал')}:{' '}
+              {t('tasker.stats.punctuality')}:{' '}
               {punctuality ?? averageRating ?? '—'}
             </Text>
           </View>
 
           <View className="gap-xs pt-md">
             <Text className="text-subtitle font-semibold text-primaryDeep">
-              {t('tasker.stats.reliabilityHeading', 'Найдвартай байдал')}
+              {t('tasker.stats.reliabilityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.reliabilityLabel', 'Найдвартай байдлын оноо')}:{' '}
+              {t('tasker.stats.reliabilityLabel')}:{' '}
               {formatPercent(reliabilityScore)}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t(
-                'tasker.stats.reliabilityDescription',
-                'Гүйцэтгэлийн хувь, цаг баримтлал, үнэлгээ, цуцлалтын түүх дээр суурилсан',
-              )}
+              {t('TaskerStatsScreen.copy1')}
             </Text>
           </View>
 
           <View className="gap-xs pt-md">
             <Text className="text-subtitle font-semibold text-primaryDeep">
-              {t('tasker.stats.activityHeading', 'Идэвхжил')}
+              {t('tasker.stats.activityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.unlockConversion', 'Түгжээ тайлалтын хувь')}:{' '}
+              {t('tasker.stats.unlockConversion')}:{' '}
               {formatPercent(unlockConversionRate)}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
-              {t('tasker.stats.responseTime', 'Хариу өгөх хугацаа')}:{' '}
+              {t('tasker.stats.responseTime')}:{' '}
               {responseTimeMinutes == null ? '—' : `${responseTimeMinutes} мин`}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
               {isPro
-                ? t('tasker.stats.proBadgeEarned', 'Pro Badge олдсон!')
-                : t(
-                    'tasker.stats.proBadgeEligible',
-                    '15+ ажил, 4.5+ үнэлгээтэй бол Pro Badge авна',
-                  )}
+                ? t('tasker.stats.proBadgeEarned')
+                : t('TaskerStatsScreen.copy2')}
             </Text>
           </View>
         </View>

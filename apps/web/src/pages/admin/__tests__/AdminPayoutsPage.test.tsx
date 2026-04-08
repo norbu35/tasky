@@ -25,7 +25,7 @@ const MOCK_PAYOUTS: CursorPage<PayoutRequest> = {
       processed_at: null,
     },
   ],
-  cursor: { next: null, has_more: false },
+  cursor: { next: null, prev: null },
 };
 
 const mockApiClient: Partial<ApiClient> = {
@@ -83,7 +83,7 @@ describe('AdminPayoutsPage', () => {
   it('shows empty state when no payouts', async () => {
     vi.mocked(mockApiClient.adminListPendingPayouts!).mockResolvedValue({
       data: [],
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
     renderPage();
     await waitFor(() => {

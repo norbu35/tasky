@@ -25,15 +25,12 @@ export function ReviewHardLock({ bookingId }: ReviewHardLockProps) {
       <View style={styles.iconShell}>
         <Lock size={30} color={colors.primary} />
       </View>
-      <Text style={styles.title}>{t('shared.review.hardLockTitle', 'Үнэлгээ өгөх шаардлагатай')}</Text>
+      <Text style={styles.title}>{t('shared.review.hardLockTitle')}</Text>
       <Text style={styles.body}>
-        {t(
-          'shared.review.hardLockBody',
-          'Та үргэлжлүүлэн ашиглахын тулд өмнөх захиалгын үнэлгээгээ өгөх шаардлагатай.',
-        )}
+        {t('ReviewHardLock.copy1')}
       </Text>
       <Button
-        label={t('shared.review.submit', 'Үнэлгээ өгөх')}
+        label={t('shared.review.submit')}
         onPress={handleSubmitReview}
         style={styles.button}
         testID="review-hard-lock-cta"

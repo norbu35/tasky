@@ -50,7 +50,7 @@ export function VerificationGate({
       />
 
       <Button
-        label={t('tasker.verification.maybeLater', 'Maybe later')}
+        label={t('tasker.verification.maybeLater')}
         variant="ghost"
         onPress={onMaybeLater}
         style={styles.secondaryCta}

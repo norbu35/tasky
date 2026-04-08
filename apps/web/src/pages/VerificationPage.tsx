@@ -29,15 +29,12 @@ export function VerificationPage() {
   // File state
   const [frontFile, setFrontFile] = useState<File | null>(null);
   const [backFile, setBackFile] = useState<File | null>(null);
-  const [selfieFile, setSelfieFile] = useState<File | null>(null);
   const [frontPreview, setFrontPreview] = useState<string | null>(null);
   const [backPreview, setBackPreview] = useState<string | null>(null);
-  const [selfiePreview, setSelfiePreview] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
 
   const frontInputRef = useRef<HTMLInputElement>(null);
   const backInputRef = useRef<HTMLInputElement>(null);
-  const selfieInputRef = useRef<HTMLInputElement>(null);
 
   const accessToken = session?.accessToken;
 
@@ -72,7 +69,7 @@ export function VerificationPage() {
   }, [fetchStatus]);
 
   const handleFileSelect = useCallback(
-    (side: 'front' | 'back' | 'selfie') => (event: React.ChangeEvent<HTMLInputElement>) => {
+    (side: 'front' | 'back') => (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
 
@@ -89,21 +86,17 @@ export function VerificationPage() {
         if (frontPreview) URL.revokeObjectURL(frontPreview);
         setFrontFile(file);
         setFrontPreview(previewUrl);
-      } else if (side === 'back') {
+      } else {
         if (backPreview) URL.revokeObjectURL(backPreview);
         setBackFile(file);
         setBackPreview(previewUrl);
-      } else {
-        if (selfiePreview) URL.revokeObjectURL(selfiePreview);
-        setSelfieFile(file);
-        setSelfiePreview(previewUrl);
       }
     },
-    [frontPreview, backPreview, selfiePreview, t],
+    [frontPreview, backPreview, t],
   );
 
   const handleSubmit = useCallback(async () => {
-    if (!accessToken || !frontFile || !backFile || !selfieFile || !consentAccepted) return;
+    if (!accessToken || !frontFile || !backFile || !consentAccepted) return;
 
     setSubmitting(true);
     try {
@@ -133,24 +126,10 @@ export function VerificationPage() {
         throw new Error(t('verification.uploadFailed', 'Failed to upload ID card back image.'));
       }
 
-      // 5. Get presigned URL for selfie image
-      const selfieUpload = await apiClient.getVerificationUploadUrl(accessToken, selfieFile.type);
-
-      // 6. Upload selfie image
-      const selfieUploadRes = await fetch(selfieUpload.uploadUrl, {
-        method: 'PUT',
-        body: selfieFile,
-        headers: { 'Content-Type': selfieFile.type },
-      });
-      if (!selfieUploadRes.ok) {
-        throw new Error(t('verification.uploadFailedSelfie', 'Failed to upload selfie image.'));
-      }
-
-      // 7. Submit verification
+      // 5. Submit verification
       const result = await apiClient.submitVerification(accessToken, {
         id_card_front_key: frontUpload.storageKey,
         id_card_back_key: backUpload.storageKey,
-        selfie_key: selfieUpload.storageKey,
         consent_policy_version: CONSENT_POLICY_VERSION,
         consent_accepted: true,
       });
@@ -168,19 +147,18 @@ export function VerificationPage() {
     } finally {
       setSubmitting(false);
     }
-  }, [accessToken, frontFile, backFile, selfieFile, consentAccepted, apiClient, derivePageState, t]);
+  }, [accessToken, frontFile, backFile, consentAccepted, apiClient, derivePageState, t]);
 
   // Cleanup preview URLs on unmount
   useEffect(() => {
     return () => {
       if (frontPreview) URL.revokeObjectURL(frontPreview);
       if (backPreview) URL.revokeObjectURL(backPreview);
-      if (selfiePreview) URL.revokeObjectURL(selfiePreview);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const canSubmit = frontFile && backFile && selfieFile && consentAccepted && !submitting;
+  const canSubmit = frontFile && backFile && consentAccepted && !submitting;
 
   // ── Loading State ──────────────────────────────────────────────────
   if (pageState === 'loading') {
@@ -288,7 +266,7 @@ export function VerificationPage() {
             <p className="text-muted-foreground">
               {t(
                 'verification.subtitle',
-                'Upload your government-issued ID and a selfie to verify your identity.',
+                'Upload your government-issued ID to verify your identity.',
               )}
             </p>
           </div>
@@ -317,7 +295,7 @@ export function VerificationPage() {
             <CardDescription>
               {t(
                 'verification.uploadDesc',
-                'Take clear photos of the front and back of your government-issued ID card, plus a selfie.',
+                'Take clear photos of the front and back of your government-issued ID card.',
               )}
             </CardDescription>
           </CardHeader>
@@ -386,40 +364,6 @@ export function VerificationPage() {
                   className="hidden"
                   accept="image/*"
                   onChange={handleFileSelect('back')}
-                  disabled={submitting}
-                />
-              </div>
-            </div>
-
-            {/* Selfie */}
-            <div className="space-y-3">
-              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {t('verification.selfie', 'Selfie')}
-              </Label>
-              <div
-                className="group relative border-2 border-dashed border-border rounded-2xl p-6 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors"
-                onClick={() => !submitting && selfieInputRef.current?.click()}
-              >
-                {selfiePreview ? (
-                  <img
-                    src={selfiePreview}
-                    alt={t('verification.selfiePreview', 'Selfie preview')}
-                    className="mx-auto max-h-48 rounded-lg object-contain"
-                  />
-                ) : (
-                  <div className="space-y-2">
-                    <ImagePlus className="mx-auto w-10 h-10 text-muted-foreground/50" />
-                    <p className="text-sm text-muted-foreground">
-                      {t('verification.clickToUpload', 'Click to select image')}
-                    </p>
-                  </div>
-                )}
-                <input
-                  ref={selfieInputRef}
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleFileSelect('selfie')}
                   disabled={submitting}
                 />
               </div>

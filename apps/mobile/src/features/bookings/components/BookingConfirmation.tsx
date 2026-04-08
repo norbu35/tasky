@@ -51,7 +51,7 @@ export function BookingConfirmation({
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerLabel}>{t('booking.confirmTitle', 'Confirm Booking')}</Text>
+          <Text style={styles.headerLabel}>{t('booking.confirmTitle')}</Text>
           <Text style={styles.taskTitle} numberOfLines={2}>
             {taskTitle}
           </Text>
@@ -72,7 +72,7 @@ export function BookingConfirmation({
                 <Star size={16} color={colors.accent} fill={colors.accent} />
                 <Text style={styles.ratingText}>{tasker.rating.toFixed(1)}</Text>
                 <Text style={styles.reviewCount}>
-                  ({tasker.reviewCount} {t('booking.reviews', 'reviews')})
+                  ({tasker.reviewCount} {t('booking.reviews')})
                 </Text>
               </View>
             </View>
@@ -82,19 +82,19 @@ export function BookingConfirmation({
         {/* Booking Summary */}
         <Card style={styles.card}>
           <CardContent style={styles.summaryContent}>
-            <Text style={styles.sectionTitle}>{t('booking.summaryTitle', 'Booking Summary')}</Text>
+            <Text style={styles.sectionTitle}>{t('booking.summaryTitle')}</Text>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>{t('booking.date', 'Date')}</Text>
+              <Text style={styles.summaryLabel}>{t('booking.date')}</Text>
               <Text style={styles.summaryValue}>{summary.date}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>{t('booking.time', 'Time')}</Text>
+              <Text style={styles.summaryLabel}>{t('booking.time')}</Text>
               <Text style={styles.summaryValue}>{summary.time}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>{t('booking.budget', 'Budget')}</Text>
+              <Text style={styles.summaryLabel}>{t('booking.budget')}</Text>
               <Text style={styles.budgetValue}>{summary.budget}</Text>
             </View>
           </CardContent>
@@ -105,13 +105,13 @@ export function BookingConfirmation({
           <View style={styles.disclaimerHeader}>
             <Shield size={20} color={colors.primaryDeep} />
             <Text style={styles.disclaimerTitle}>
-              {t('booking.liabilityTitle', 'Liability Disclaimer')}
+              {t('booking.liabilityTitle')}
             </Text>
           </View>
           <Text style={styles.disclaimerText}>
             {t(
               'booking.liabilityBody',
-              t('booking.liabilityBody', 'Tasky acts solely as a connector between task posters and taskers. Tasky does not process payments, employ taskers, or guarantee work quality. All arrangements, payments, and liability for task completion are between the poster and the tasker directly.'),
+              t('booking.liabilityBody'),
             )}
           </Text>
           <Pressable
@@ -124,7 +124,7 @@ export function BookingConfirmation({
               {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
             </View>
             <Text style={styles.checkboxLabel}>
-              {t('booking.acceptLiability', 'I accept the liability terms')}
+              {t('booking.acceptLiability')}
             </Text>
           </Pressable>
         </View>
@@ -145,14 +145,14 @@ export function BookingConfirmation({
             >
               <Text style={styles.gradientButtonText}>
                 {isLoading
-                  ? t('common.loading', 'Loading...')
-                  : t('booking.confirmAction', 'Confirm Booking')}
+                  ? t('common.loading')
+                  : t('booking.confirmAction')}
               </Text>
             </LinearGradient>
           </Pressable>
 
           <Button
-            label={t('common.cancel', 'Cancel')}
+            label={t('common.cancel')}
             variant="ghost"
             onPress={onCancel}
             disabled={isLoading}

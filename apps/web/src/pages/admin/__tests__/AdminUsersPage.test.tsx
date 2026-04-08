@@ -78,7 +78,7 @@ describe('AdminUsersPage', () => {
     vi.clearAllMocks();
     vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
       data: MOCK_USERS,
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
     vi.mocked(mockApiClient.adminBanUser!).mockImplementation(
       async (_token: string, userId: string) => ({
@@ -94,7 +94,7 @@ describe('AdminUsersPage', () => {
     );
     vi.mocked(mockApiClient.adminListFlaggedMessages!).mockResolvedValue({
       data: MOCK_FLAGGED_MESSAGES,
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
   });
 
@@ -223,7 +223,7 @@ describe('AdminUsersPage', () => {
   it('empty search results show message', async () => {
     vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
       data: [],
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
 
     renderPage();
@@ -255,7 +255,7 @@ describe('AdminUsersPage', () => {
     // Fix the mock and retry
     vi.mocked(mockApiClient.adminSearchUsers!).mockResolvedValue({
       data: MOCK_USERS,
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /retry/i }));

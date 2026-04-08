@@ -18,14 +18,14 @@ export default function BusinessInviteScreen() {
       totalSteps={3}
       onNext={() => router.replace('/(customer)/business')}
       onBack={() => router.back()}
-      nextLabel={t('b2b.setup.finishSetup', 'Finish Setup')}
+      nextLabel={t('b2b.setup.finishSetup')}
       testID="SCR-B2B-004"
     >
-      <FormField label={t('b2b.setup.managerEmail', 'Manager Email (optional)')}>
+      <FormField label={t('b2b.setup.managerEmail')}>
         <Input
           value={email}
           onChangeText={setEmail}
-          placeholder={t('b2b.setup.managerEmailPlaceholder', 'manager@company.com')}
+          placeholder={t('b2b.setup.managerEmailPlaceholder')}
           keyboardType="email-address"
           autoCapitalize="none"
           testID="b2b-manager-email-input"

@@ -50,14 +50,14 @@ export function PhotoGrid({
           className="w-[48%] aspect-square rounded-md border-2 border-dashed bg-muted items-center justify-center gap-sm p-md"
           onPress={onAddPhoto}
           accessibilityRole="button"
-          accessibilityLabel={t('common.addPhoto', 'Add Photo')}
+          accessibilityLabel={t('Photos.addPhoto')}
           testID={testID ? `${testID}-add-${index}` : undefined}
         >
           <View className="w-[36px] h-[36px] rounded-full items-center justify-center" style={{ backgroundColor: colors.primary + '12' }}>
             <Plus size={20} color={colors.primary} />
           </View>
           <Text className="text-caption font-sans-bold text-primary text-center">
-            {t('customer.postTask.photosAdd', 'Add Photo')}
+            {t('Photos.addPhoto')}
           </Text>
         </Pressable>
       ))}

@@ -95,60 +95,36 @@ function TermsContent() {
   const sections = useMemo(
     () => [
       {
-        title: t('infra.terms.section0Title', 'Эдгээр нөхцөлийг товчоор'),
-        lead: t(
-          'infra.terms.section0Body',
-          'Эдгээр нөхцөлийг анхааралтай уншина уу. Тэд Tasky хэрхэн ажилладаг, үйлчилгээнээс юу хүлээх, ямар хариуцлага танд үлдэхийг тайлбарлана.',
-        ),
-        points: [t('infra.terms.section0Note', 'Энэ товч тайлбар нь доорх бүрэн журмыг орлохгүй.')],
+        title: t('infra.terms.section0Title'),
+        lead: t('TermsScreen.copy1'),
+        points: [t('infra.terms.section0Note')],
       },
       {
-        title: t('infra.terms.section1Title', '1. Нөхцөлийг зөвшөөрөх'),
-        lead: t(
-          'infra.terms.section1Body',
-          'Tasky-г ашигласнаар та эдгээр нөхцөл болон холбогдох бүх хуулийг зөвшөөрч байна.',
-        ),
+        title: t('infra.terms.section1Title'),
+        lead: t('TermsScreen.copy2'),
         points: [
-          t(
-            'infra.terms.section1Note',
-            'Хэрэв та зөвшөөрөхгүй бол аппликейшнийг ашиглахаа зогсооно уу.',
-          ),
+          t('TermsScreen.copy3'),
         ],
       },
       {
-        title: t('infra.terms.section2Title', '2. Үйлчилгээний хэрэглээ'),
-        lead: t(
-          'infra.terms.section2Body',
-          'Tasky нь захиалагч болон үйлчилгээ үзүүлэгчийг холбодог. Зөвхөн хууль ёсны зорилгоор ашиглана уу.',
-        ),
+        title: t('infra.terms.section2Title'),
+        lead: t('TermsScreen.copy4'),
         points: [
-          t('infra.terms.section2Note', 'Оруулж буй мэдээллийн үнэн зөвийг та өөрөө хариуцна.'),
+          t('infra.terms.section2Note'),
         ],
       },
       {
-        title: t('infra.terms.section3Title', '3. Хэрэглэгчийн бүртгэл'),
-        lead: t(
-          'infra.terms.section3Body',
-          'Та өөрийн нэвтрэх мэдээлэл болон бүртгэл дээрх бүх үйлдлийн хариуцлагыг хариуцна.',
-        ),
+        title: t('infra.terms.section3Title'),
+        lead: t('TermsScreen.copy5'),
         points: [
-          t(
-            'infra.terms.section3Note',
-            'Захиалга болон дэмжлэгийн мэдээлэл хүрэхийн тулд холбоо барих мэдээллээ шинэ байлгаарай.',
-          ),
+          t('TermsScreen.copy6'),
         ],
       },
       {
-        title: t('infra.terms.section4Title', '4. Хариуцлага'),
-        lead: t(
-          'infra.terms.section4Body',
-          'Tasky нь захиалагч болон гүйцэтгэгчийг холбох үүрэгтэй бөгөөд ажлын чанарыг баталгаажуулахгүй.',
-        ),
+        title: t('infra.terms.section4Title'),
+        lead: t('TermsScreen.copy7'),
         points: [
-          t(
-            'infra.terms.section4Note',
-            'Захиалагч болон гүйцэтгэгчийн хоорондын шууд тохиролцоо нь өөрсдийн хариуцлага байна.',
-          ),
+          t('TermsScreen.copy8'),
         ],
       },
     ],
@@ -183,7 +159,7 @@ function TermsContent() {
               style={{ color: colors.textSecondary, lineHeight: 24 }}
             >
               <Text className="font-sans-bold" style={{ color: colors.primaryDeep }}>
-                {t('shared.legal.noteLabel', 'Санамж: ')}
+                {t('shared.legal.noteLabel')}
               </Text>
               {section.points[0]}
             </Text>
@@ -219,7 +195,7 @@ export default function TermsScreen() {
     setState(resolveState(params.state));
   }, [params.state]);
 
-  const title = t('infra.terms.title', 'Үйлчилгээний нөхцөл');
+  const title = t('infra.terms.title');
 
   return (
     <ScreenContainer testID="SCR-INFRA-004">
@@ -232,7 +208,7 @@ export default function TermsScreen() {
         >
           <ChevronLeft size={24} color={colors.primary} />
           <Text className="text-body font-sans-medium" style={{ color: colors.primaryDeep }}>
-            {t('infra.terms.backLabel', 'Буцах')}
+            {t('infra.terms.backLabel')}
           </Text>
         </Pressable>
         <Text
@@ -253,19 +229,16 @@ export default function TermsScreen() {
             className="text-title font-sans-bold text-center mb-sm"
             style={{ color: colors.foreground }}
           >
-            {t('infra.terms.errorHeadline', 'Ачааллах боломжгүй')}
+            {t('infra.terms.errorHeadline')}
           </Text>
           <Text
             className="text-body text-center"
             style={{ color: colors.textSecondary, lineHeight: 26 }}
           >
-            {t(
-              'infra.terms.errorDescription',
-              'Үйлчилгээний нөхцлийг ачааллахад алдаа гарлаа. Дахин оролдоно уу',
-            )}
+            {t('TermsScreen.copy9')}
           </Text>
           <Button
-            label={t('infra.terms.errorRetry', 'Дахин оролдох')}
+            label={t('infra.terms.errorRetry')}
             onPress={() => setState('loaded')}
             style={{ marginTop: spacing.xl, alignSelf: 'stretch' }}
           />

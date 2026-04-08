@@ -69,20 +69,20 @@ export default function PhotoUploadScreen() {
       onBack={() => router.back()}
       nextLabel={
         photos.length > 0
-          ? t('common.continue', 'Continue')
-          : t('customer.postTask.photosSkip', 'Skip')
+          ? t('common.continue')
+          : t('Photos.photosSkip')
       }
     >
       <View className="flex-row items-center justify-between gap-sm">
         <Text className="text-caption text-textSecondary">
-          {t('customer.postTask.photosProgressHint', 'Almost done')}
+          {t('Photos.photosProgressHint')}
         </Text>
       </View>
       <Text className="text-heading font-sans-bold text-primaryDeep" style={{ lineHeight: 26 }}>
-        {t('customer.postTask.photosHeroTitle', 'Show your task workspace')}
+        {t('Photos.photosHeroTitle')}
       </Text>
       <Text className="text-body text-textSecondary leading-[24px]">
-        {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
+        {t('Photos.photosInstruction')}
       </Text>
 
       <View className="flex-row flex-wrap gap-sm" testID="photo-upload-grid">
@@ -106,7 +106,7 @@ export default function PhotoUploadScreen() {
                 }}
                 testID={`photo-upload-remove-${index}`}
                 accessibilityRole="button"
-                accessibilityLabel={t('customer.postTask.removePhoto', 'Remove photo')}
+                accessibilityLabel={t('Photos.removePhoto')}
               >
                 <CircleX size={16} color={colors.primaryForeground} />
               </Pressable>
@@ -119,7 +119,7 @@ export default function PhotoUploadScreen() {
               onPress={handleAddPhoto}
               testID={`photo-upload-add-${index}`}
               accessibilityRole="button"
-              accessibilityLabel={t('common.addPhoto', 'Add Photo')}
+              accessibilityLabel={t('Photos.addPhoto')}
             >
               <View
                 className="w-9 h-9 rounded-full items-center justify-center"
@@ -128,7 +128,7 @@ export default function PhotoUploadScreen() {
                 <Plus size={20} color={colors.primaryDeep} />
               </View>
               <Text className="text-caption text-primaryDeep font-sans-bold uppercase text-center">
-                {t('common.addPhoto', 'Add Photo')}
+                {t('Photos.addPhoto')}
               </Text>
             </Pressable>
           ),
@@ -138,19 +138,16 @@ export default function PhotoUploadScreen() {
       <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
         <Text className="flex-1 text-caption text-textSecondary">
-          {t('customer.postTask.photosOptional', 'Photos are optional — you can skip')}
+          {t('Photos.photosOptional')}
         </Text>
       </View>
 
       <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">
         <Text className="text-body font-sans-bold text-primaryDeep">
-          {t('customer.postTask.photosTipTitle', 'Photo tip')}
+          {t('Photos.photosTipTitle')}
         </Text>
         <Text className="text-caption text-primary leading-[20px]">
-          {t(
-            'customer.postTask.photosTipBody',
-            'Natural light and wide shots help Taskers price the work more accurately.',
-          )}
+          {t('Photos.photosTipBody')}
         </Text>
       </View>
     </FormWizardTemplate>

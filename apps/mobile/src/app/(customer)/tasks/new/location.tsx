@@ -43,9 +43,9 @@ export default function LocationScreen() {
   );
 
   const quickLocations = [
-    t('LocationScreen.quickLocationHome', 'Home'),
-    t('LocationScreen.quickLocationWork', 'Work'),
-    t('LocationScreen.quickLocationSukhbaatar', 'Sukhbaatar Square'),
+    t('LocationScreen.quickLocationHome'),
+    t('LocationScreen.quickLocationWork'),
+    t('LocationScreen.quickLocationSukhbaatar'),
   ];
 
   const handleNext = () => {
@@ -75,15 +75,15 @@ export default function LocationScreen() {
       totalSteps={7}
       onNext={handleNext}
       onBack={() => router.back()}
-      nextLabel={t('common.continue', 'Continue')}
+      nextLabel={t('common.continue')}
       nextDisabled={!pin}
     >
       <View className="gap-sm">
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('LocationScreen.locationPageTitle', 'Set Location')}
+          {t('LocationScreen.locationPageTitle')}
         </Text>
         <Text className="text-body text-textSecondary leading-relaxed">
-          {t('LocationScreen.locationInstruction', 'Pin the task location on the map')}
+          {t('LocationScreen.locationInstruction')}
         </Text>
       </View>
 
@@ -121,7 +121,7 @@ export default function LocationScreen() {
         >
           <View className="px-lg py-sm rounded-md bg-primaryDeep">
             <Text className="text-label font-bold text-primaryForeground">
-              {t('LocationScreen.pickHere', 'Pick here')}
+              {t('LocationScreen.pickHere')}
             </Text>
           </View>
           <View className="w-8 h-8 rounded-full items-center justify-center bg-primary">
@@ -162,38 +162,32 @@ export default function LocationScreen() {
         <View className="gap-xs">
           <Text className="text-subtitle font-extrabold text-primaryDeep">
             {pin
-              ? t('LocationScreen.locationPinnedArea', 'Ulaanbaatar, Bayangol district')
-              : t('LocationScreen.locationAwaitingPin', 'Drop a pin to unlock the next step')}
+              ? t('LocationScreen.locationPinnedArea')
+              : t('LocationScreen.locationAwaitingPin')}
           </Text>
           <Text className="text-caption text-textSecondary">
             {pin
-              ? t('LocationScreen.pinSet', 'Pin placed - tap to move it')
-              : t('LocationScreen.tapToPin', 'Tap the map to pin the location')}
+              ? t('LocationScreen.pinSet')
+              : t('LocationScreen.tapToPin')}
           </Text>
         </View>
 
         <FormField
-          label={t('LocationScreen.locationDescriptionLabel', 'Location description')}
-          helperText={t(
-            'customer.postTask.locationHelper',
-            'Provide details helpful for the Tasker',
-          )}
+          label={t('LocationScreen.locationDescriptionLabel')}
+          helperText={t('LocationScreen.locationHelper')}
         >
           <Input
             testID="location-text-input"
             value={locationText}
             onChangeText={setLocationText}
-            placeholder={t(
-              'customer.postTask.locationPlaceholder',
-              'e.g., Behind State Dept Store, 5th floor',
-            )}
+            placeholder={t('LocationScreen.locationPlaceholder')}
             maxLength={500}
           />
         </FormField>
 
         <View className="gap-sm">
           <Text className="text-body font-bold text-primaryDeep">
-            {t('LocationScreen.quickLocationsLabel', 'Popular locations')}
+            {t('LocationScreen.quickLocationsLabel')}
           </Text>
           <View className="flex-row flex-wrap gap-sm">
             {quickLocations.map((location) => (
@@ -213,10 +207,7 @@ export default function LocationScreen() {
 
         <View className="pt-xs">
           <Text className="text-caption text-textSecondary leading-relaxed">
-            {t(
-              'customer.postTask.locationPrivacy',
-              'Taskers see approximate location. Exact address shown after booking confirmation',
-            )}
+            {t('LocationScreen.locationPrivacy')}
           </Text>
         </View>
       </View>

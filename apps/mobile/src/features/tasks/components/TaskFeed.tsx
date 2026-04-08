@@ -102,16 +102,16 @@ export function TaskFeed() {
       {/* Search & Greeting */}
       <View style={styles.heroSection}>
         <Text style={styles.heroTitle}>
-          {t('taskFeed.heroLine1', 'Find your next')}
+          {t('taskFeed.heroLine1')}
           {'\n'}
-          <Text style={styles.heroAccent}>{t('taskFeed.heroLine2', 'Service Task')}</Text>
+          <Text style={styles.heroAccent}>{t('taskFeed.heroLine2')}</Text>
         </Text>
 
         <View style={styles.searchContainer}>
           <Search size={18} color={colors.mutedForeground} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder={t('taskFeed.searchPlaceholder', 'Search for jobs...')}
+            placeholder={t('taskFeed.searchPlaceholder')}
             placeholderTextColor={colors.mutedForeground}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -139,16 +139,16 @@ export function TaskFeed() {
       {/* Trust Banner */}
       <View style={styles.bannerContainer}>
         <TrustBanner
-          title={t('taskFeed.verifiedTasker', 'Verified Tasker')}
-          description={t('taskFeed.trustBannerDesc', 'Get premium badges for high quality work.')}
+          title={t('taskFeed.verifiedTasker')}
+          description={t('taskFeed.trustBannerDesc')}
         />
       </View>
 
       {/* Section Header */}
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t('taskFeed.availableTasks', 'Available Tasks')}</Text>
+        <Text style={styles.sectionTitle}>{t('taskFeed.availableTasks')}</Text>
         <Pressable>
-          <Text style={styles.seeMapLink}>{t('taskFeed.seeMap', 'See map')}</Text>
+          <Text style={styles.seeMapLink}>{t('taskFeed.seeMap')}</Text>
         </Pressable>
       </View>
     </>

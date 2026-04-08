@@ -21,7 +21,7 @@ const MOCK_PRICES: CursorPage<LeadUnlockPrice> = {
       effective_to: '2026-06-01T00:00:00Z',
     },
   ],
-  cursor: { next: null, has_more: false },
+  cursor: { next: null, prev: null },
 };
 
 const mockApiClient: Partial<ApiClient> = {
@@ -81,7 +81,7 @@ describe('AdminLeadPricingPage', () => {
   it('shows empty state when no prices', async () => {
     vi.mocked(mockApiClient.adminListLeadUnlockPrices!).mockResolvedValue({
       data: [],
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
     renderPage();
     await waitFor(() => {

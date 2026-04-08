@@ -20,12 +20,6 @@ const { colors } = mobileTheme;
 
 type Tone = 'friendly' | 'professional' | 'concise';
 type ScreenState = 'draft_ready' | 'generating' | 'suggestion_ready';
-
-const TONE_LABELS: Record<Tone, string> = {
-  friendly: 'Найрсаг',
-  professional: 'Мэргэжлийн',
-  concise: 'Товч',
-};
 const MAX_BIO_LENGTH = 300;
 
 export default function ProfilePolishScreen() {
@@ -36,6 +30,11 @@ export default function ProfilePolishScreen() {
   const profileDetails = profile as ({ bio?: string | null } & Record<string, unknown>) | undefined;
   const analyticsTracker = React.useMemo(() => createConsoleClientAnalyticsTracker(), []);
   const locale = React.useMemo(() => resolveClientLocale(i18n.language), [i18n.language]);
+  const toneLabels: Record<Tone, string> = {
+    friendly: t('ProfilePolishScreen.friendly'),
+    professional: t('ProfilePolishScreen.professional'),
+    concise: t('ProfilePolishScreen.concise'),
+  };
 
   const [sourceBio, setSourceBio] = React.useState('');
   const [tone, setTone] = React.useState<Tone>('professional');
@@ -116,7 +115,7 @@ export default function ProfilePolishScreen() {
           if (!nextSuggestion) {
             resetSuggestion();
             setToast({
-              message: t('tasker.profilePolish.toastError', 'Сүлжээний алдаа гарлаа'),
+              message: t('tasker.profilePolish.toastError'),
               variant: 'error',
             });
             return;
@@ -133,7 +132,7 @@ export default function ProfilePolishScreen() {
 
           resetSuggestion();
           setToast({
-            message: t('tasker.profilePolish.toastError', 'Сүлжээний алдаа гарлаа'),
+            message: t('tasker.profilePolish.toastError'),
             variant: 'error',
           });
         },
@@ -152,13 +151,13 @@ export default function ProfilePolishScreen() {
           setSourceBio(suggestion.trim());
           trackEvent('profile_polish_applied');
           setToast({
-            message: t('tasker.profilePolish.toastSuccess', 'Санал болгосон текст хадгалагдлаа'),
+            message: t('tasker.profilePolish.toastSuccess'),
             variant: 'success',
           });
         },
         onError: () => {
           setToast({
-            message: t('tasker.profilePolish.toastError', 'Сүлжээний алдаа гарлаа'),
+            message: t('tasker.profilePolish.toastError'),
             variant: 'error',
           });
         },
@@ -179,8 +178,8 @@ export default function ProfilePolishScreen() {
     <DetailTemplate testID="SCR-TASK-019"
       ctaLabel={
         screenState === 'suggestion_ready'
-          ? t('tasker.profilePolish.apply', 'Энэ хувилбарыг хэрэглэх')
-          : t('tasker.profilePolish.generate', 'Санал болгох')
+          ? t('tasker.profilePolish.apply')
+          : t('tasker.profilePolish.generate')
       }
       ctaOnPress={handlePrimaryAction}
       ctaLoading={
@@ -190,7 +189,7 @@ export default function ProfilePolishScreen() {
       secondaryCtaLabel={
         screenState === 'generating'
           ? undefined
-          : t('tasker.profilePolish.manualEdit', 'Гараар засах')
+          : t('tasker.profilePolish.manualEdit')
       }
       secondaryCtaOnPress={
         screenState === 'generating'
@@ -213,17 +212,14 @@ export default function ProfilePolishScreen() {
           >
             <Sparkles size={14} color={colors.secondary} />
             <Text className="text-micro font-bold text-secondary" style={{ letterSpacing: 0.5 }}>
-              {t('tasker.polish.aiPowered', 'AI POWERED')}
+              {t('tasker.polish.aiPowered')}
             </Text>
           </View>
           <Text className="text-heading font-extrabold text-primaryDeep leading-tight">
-            {t('tasker.profilePolish.heroTitle', 'Профайл засах')}
+            {t('tasker.profilePolish.heroTitle')}
           </Text>
           <Text className="text-body text-textSecondary leading-relaxed">
-            {t(
-              'tasker.profilePolish.heroBody',
-              'AI-ийн тусламжтайгаар өөрийн ажлын туршлага, ур чадвараа илүү мэргэжлийн түвшинд харагдуулаарай.',
-            )}
+            {t('ProfilePolishScreen.copy1')}
           </Text>
         </View>
 
@@ -232,7 +228,7 @@ export default function ProfilePolishScreen() {
             className="text-caption font-bold text-textSecondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
-            {t('tasker.profilePolish.sourceLabel', 'Одоогийн тайлбар')}
+            {t('tasker.profilePolish.sourceLabel')}
           </Text>
           <View className="bg-muted rounded-lg p-lg gap-sm">
             <Input
@@ -245,10 +241,7 @@ export default function ProfilePolishScreen() {
                 }
                 setToast(null);
               }}
-              placeholder={t(
-                'tasker.profilePolish.sourcePlaceholder',
-                'Өөрийн ажлын туршлагаа бичнэ үү',
-              )}
+              placeholder={t('ProfilePolishScreen.copy2')}
               multiline
               numberOfLines={6}
               maxLength={MAX_BIO_LENGTH}
@@ -264,13 +257,13 @@ export default function ProfilePolishScreen() {
             className="text-caption font-bold text-textSecondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
-            {t('tasker.profilePolish.toneLabel', 'Хэв маяг')}
+            {t('tasker.profilePolish.toneLabel')}
           </Text>
           <View className="flex-row flex-wrap gap-sm">
-            {(Object.keys(TONE_LABELS) as Tone[]).map((value) => (
+            {(Object.keys(toneLabels) as Tone[]).map((value) => (
               <CategoryChip
                 key={value}
-                label={TONE_LABELS[value]}
+                label={toneLabels[value]}
                 isActive={tone === value}
                 onPress={() => {
                   if (tone !== value) {
@@ -291,7 +284,7 @@ export default function ProfilePolishScreen() {
             className="text-caption font-bold text-textSecondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
-            {t('tasker.profilePolish.polishedLabel', 'Санал болгосон хувилбар')}
+            {t('tasker.profilePolish.polishedLabel')}
           </Text>
           {screenState === 'generating' ? (
             <View
@@ -314,10 +307,7 @@ export default function ProfilePolishScreen() {
                 <Text className="text-body text-foreground leading-relaxed">{suggestion}</Text>
               ) : (
                 <Text className="text-body text-mutedForeground leading-relaxed">
-                  {t(
-                    'tasker.profilePolish.suggestionPlaceholder',
-                    'AI санал энд харагдана. Эхлээд тайлбараа сайжруулах хүсэлт илгээнэ үү.',
-                  )}
+                  {t('ProfilePolishScreen.copy3')}
                 </Text>
               )}
             </View>

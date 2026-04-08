@@ -11,15 +11,12 @@ export default function ReviewHardLockScreen() {
   return (
     <ScreenContainer testID="SCR-SHARED-019">
       <ErrorStateTemplate
-        message={t(
-          'review.hardLock.message',
-          'You must submit your pending review before continuing.',
-        )}
+        message={t('ReviewHardLockScreen.copy1')}
         onRetry={() => {
           // TODO: wire real data — navigate to the pending review
           router.back();
         }}
-        retryLabel={t('review.hardLock.reviewNow', 'Review Now')}
+        retryLabel={t('review.hardLock.reviewNow')}
         testID="review-hard-lock"
       />
     </ScreenContainer>

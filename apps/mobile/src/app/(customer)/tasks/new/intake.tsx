@@ -99,9 +99,7 @@ function ChipGroup({
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, '-')}`}
           >
-            <Text
-              className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}
-            >
+            <Text className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}>
               {opt}
             </Text>
           </Pressable>
@@ -124,7 +122,7 @@ function YesNo({
   return (
     <View className="flex-row flex-wrap gap-sm">
       {([true, false] as const).map((opt) => {
-        const label = opt ? t('common.yes', 'Тийм') : t('common.no', 'Үгүй');
+        const label = opt ? t('Intake.yes') : t('Intake.no');
         const active = value === opt;
         return (
           <Pressable
@@ -140,9 +138,7 @@ function YesNo({
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${label.toLowerCase()}`}
           >
-            <Text
-              className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}
-            >
+            <Text className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}>
               {label}
             </Text>
           </Pressable>
@@ -191,15 +187,10 @@ export default function IntakeFormScreen() {
 
     // Validate description
     if (!description.trim()) {
-      setDescriptionError(t('customer.postTask.validation.required', 'This field is required'));
+      setDescriptionError(t('Intake.required'));
       valid = false;
     } else if (description.trim().length < DESCRIPTION_MIN_LENGTH) {
-      setDescriptionError(
-        t(
-          'customer.postTask.validation.descriptionMin',
-          'Description must be at least {{min}} characters',
-        ).replace('{{min}}', String(DESCRIPTION_MIN_LENGTH)),
-      );
+      setDescriptionError(t('Intake.descriptionMin').replace('{{min}}', String(DESCRIPTION_MIN_LENGTH)));
       valid = false;
     } else {
       setDescriptionError('');
@@ -213,36 +204,24 @@ export default function IntakeFormScreen() {
         const val = answers[field.key];
         if (field.type === 'yes_no') {
           if (val !== true && val !== false) {
-            newErrors[field.key] = t(
-              'customer.postTask.validation.required',
-              'This field is required',
-            );
+            newErrors[field.key] = t('Intake.required');
           }
         } else if (field.type === 'multi_select') {
           if (!Array.isArray(val) || val.length === 0) {
-            newErrors[field.key] = t(
-              'customer.postTask.validation.required',
-              'This field is required',
-            );
+            newErrors[field.key] = t('Intake.required');
           }
         } else if (field.type === 'numeric_counter') {
           const num = Number(val);
           if (val === undefined || val === null || val === '' || !Number.isFinite(num)) {
-            newErrors[field.key] = t(
-              'customer.postTask.validation.required',
-              'This field is required',
-            );
+            newErrors[field.key] = t('Intake.required');
           } else if (field.min != null && num < field.min) {
-            newErrors[field.key] = `Minimum is ${field.min}`;
+            newErrors[field.key] = t('Intake.minimumValue').replace('{{min}}', String(field.min));
           } else if (field.max != null && num > field.max) {
-            newErrors[field.key] = `Maximum is ${field.max}`;
+            newErrors[field.key] = t('Intake.maximumValue').replace('{{max}}', String(field.max));
           }
         } else {
           if (!val) {
-            newErrors[field.key] = t(
-              'customer.postTask.validation.required',
-              'This field is required',
-            );
+            newErrors[field.key] = t('Intake.required');
           }
         }
       }
@@ -324,20 +303,20 @@ export default function IntakeFormScreen() {
       totalSteps={7}
       onNext={handleNext}
       onBack={() => router.back()}
-      nextLabel={t('common.continue', 'Continue')}
+      nextLabel={t('common.continue')}
       testID="SCR-CUST-003"
     >
       <View className="gap-sm pt-sm" testID="intake-header">
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('customer.postTask.intakePageTitle', 'Task Details')}
+          {t('Intake.intakePageTitle')}
         </Text>
         <Text className="text-body text-textSecondary leading-relaxed">
-          {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
+          {t('Intake.intakeInstruction')}
         </Text>
       </View>
 
       <FormField
-        label={t('customer.postTask.intakeDescription', 'Description')}
+        label={t('Intake.intakeDescription')}
         errorText={descriptionError || undefined}
       >
         <Input
@@ -347,7 +326,7 @@ export default function IntakeFormScreen() {
             setDescription(text);
             if (descriptionError) setDescriptionError('');
           }}
-          placeholder={t('customer.postTask.intakePlaceholder', 'What needs to be done?')}
+          placeholder={t('Intake.intakePlaceholder')}
           multiline
           numberOfLines={4}
           maxLength={DESCRIPTION_MAX_LENGTH}

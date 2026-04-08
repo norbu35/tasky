@@ -15,20 +15,11 @@ export default function ConsentScreen() {
   const router = useRouter();
   const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
   const dataItems = [
-    t(
-      'tasker.verification.consentIdPhotos',
-      'Иргэний үнэмлэхний зураг (урд, ар тал)',
-    ),
-    t('tasker.verification.uploadSelfie', 'Амьд зураг (selfie)'),
-    t('tasker.verification.consentPurpose', 'Таниулах баталгаажуулалт'),
-    t(
-      'tasker.verification.consentRetention',
-      'Бүртгэл хүчинтэй байх хугацаанд хадгалагдана',
-    ),
-    t(
-      'tasker.verification.consentDeletion',
-      'Бүртгэл устгахад мэдээлэл устгагдана',
-    ),
+    t('ConsentScreen.copy1'),
+    t('tasker.verification.uploadSelfie'),
+    t('tasker.verification.consentPurpose'),
+    t('ConsentScreen.copy2'),
+    t('ConsentScreen.copy3'),
   ];
 
   const handleScroll = (event: any) => {

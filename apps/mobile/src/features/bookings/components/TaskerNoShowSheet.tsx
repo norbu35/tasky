@@ -41,7 +41,7 @@ export function TaskerNoShowSheet({
     <ModalSheetTemplate
       isOpen={isOpen}
       onClose={onClose}
-      title={t('tasker.jobs.noShow.title', 'Захиалагч ирээгүй')}
+      title={t('tasker.jobs.noShow.title')}
       testID="tasker-no-show-sheet"
     >
       {flagNoShow.isPending ? (
@@ -51,16 +51,13 @@ export function TaskerNoShowSheet({
       ) : hasFlagged ? (
         <View style={styles.contentContainer} testID="no-show-sheet-success">
           <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.flaggedHeading', 'Ирээгүй тэмдэглэгдлээ')}
+            {t('tasker.jobs.noShow.flaggedHeading')}
           </Text>
           <Text style={styles.description}>
-            {t(
-              'tasker.jobs.noShow.flaggedDescription',
-              'Захиалга хянагдахаар илгээгдлээ. Дараагийн алхмын талаар мэдэгдэл авна.',
-            )}
+            {t('TaskerNoShowSheet.copy1')}
           </Text>
           <Button
-            label={t('tasker.jobs.noShow.doneButton', 'Ойлголоо')}
+            label={t('tasker.jobs.noShow.doneButton')}
             onPress={onClose}
             testID="no-show-done"
           />
@@ -68,22 +65,19 @@ export function TaskerNoShowSheet({
       ) : isReminderPhase ? (
         <View style={styles.contentContainer}>
           <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.reminderHeading', 'Захиалагчтайгаа уулзсан уу?')}
+            {t('tasker.jobs.noShow.reminderHeading')}
           </Text>
           <Text style={styles.description}>
-            {t(
-              'tasker.jobs.noShow.reminderDescription',
-              'Хуваарьт цагаас 10 минут өнгөрлөө. Ирсэн эсэхээ мэдэгдэнэ үү.',
-            )}
+            {t('TaskerNoShowSheet.copy2')}
           </Text>
           <Button
-            label={t('tasker.jobs.noShow.arrivedButton', 'Би ирсэн')}
+            label={t('tasker.jobs.noShow.arrivedButton')}
             variant="outline"
             onPress={onClose}
             testID="no-show-arrived"
           />
           <Button
-            label={t('tasker.jobs.noShow.dismissButton', 'Хаах')}
+            label={t('tasker.jobs.noShow.dismissButton')}
             variant="outline"
             onPress={onClose}
             testID="no-show-dismiss"
@@ -92,33 +86,27 @@ export function TaskerNoShowSheet({
       ) : isFlagAvailable ? (
         <View style={styles.contentContainer}>
           <Text style={styles.heading}>
-            {t('tasker.jobs.noShow.flagHeading', 'Захиалагч ирээгүй')}
+            {t('tasker.jobs.noShow.flagHeading')}
           </Text>
           <Text style={styles.description}>
-            {t(
-              'tasker.jobs.noShow.flagDescription',
-              'Хуваарьт цагаас 15 минут өнгөрсөн бөгөөд захиалагч холбогдоогүй байна.',
-            )}
+            {t('TaskerNoShowSheet.copy3')}
           </Text>
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
               {t(
                 'tasker.jobs.noShow.warning',
-                t(
-                  'customer.bookings.noShowWarning',
-                  'Ирээгүй тэмдэглэсний дараа захиалгыг хянуулна. Худал мэдээлэл өгвөл хариуцлага хүлээнэ.',
-                ),
+                t('TaskerNoShowSheet.copy4'),
               )}
             </Text>
           </View>
           <Button
-            label={t('tasker.jobs.noShow.flagButton', 'Ирээгүй гэж тэмдэглэх')}
+            label={t('tasker.jobs.noShow.flagButton')}
             variant="destructive"
             onPress={handleFlag}
             testID="no-show-flag"
           />
           <Button
-            label={t('tasker.jobs.noShow.waitButton', 'Хүлээх')}
+            label={t('tasker.jobs.noShow.waitButton')}
             variant="outline"
             onPress={onClose}
             testID="no-show-wait"

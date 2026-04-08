@@ -20,18 +20,18 @@ export default function NoApplicantRescueScreen() {
       <View className="items-center py-xl gap-lg">
         <Lightbulb size={48} color={colors.secondary} />
         <Text className="text-heading font-semibold text-primaryDeep text-center">
-          {t('customer.rescue.headline', 'No applicants yet')}
+          {t('customer.rescue.headline')}
         </Text>
         <Text className="text-body text-mutedForeground text-center leading-6">
-          {t('customer.rescue.body', 'Try adjusting your budget or schedule to attract more taskers.')}
+          {t('customer.rescue.body')}
         </Text>
         <Button
-          label={t('customer.rescue.adjustTask', 'Adjust Task')}
+          label={t('customer.rescue.adjustTask')}
           onPress={() => router.back()}
           className="self-stretch"
         />
         <Button
-          label={t('customer.rescue.contactSupport', 'Contact Concierge')}
+          label={t('customer.rescue.contactSupport')}
           variant="outline"
           onPress={() => {
             // TODO: wire concierge support

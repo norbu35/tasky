@@ -44,11 +44,11 @@ export default function BookingDetailTaskerScreen() {
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-      ctaLabel={isAssigned ? t('tasker.jobs.markDone', 'Ажил дууссан') : undefined}
+      ctaLabel={isAssigned ? t('tasker.jobs.markDone') : undefined}
       ctaOnPress={isAssigned ? handleMarkDone : undefined}
       ctaLoading={markDone.isPending}
       secondaryCtaLabel={
-        isAssigned || isMarkedDone ? t('tasker.jobs.messageButton', 'Зурвас илгээх') : undefined
+        isAssigned || isMarkedDone ? t('tasker.jobs.messageButton') : undefined
       }
       secondaryCtaOnPress={
         isAssigned || isMarkedDone ? () => router.push(`/inbox/${bookingId}`) : undefined
@@ -66,7 +66,7 @@ export default function BookingDetailTaskerScreen() {
           {/* Customer Info */}
           <View className="gap-xs">
             <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.customerLabel', 'Захиалагч')}
+              {t('tasker.jobs.customerLabel')}
             </Text>
             <Text className="text-subtitle font-semibold text-foreground">
               {booking.customer?.full_name ?? ''}
@@ -76,7 +76,7 @@ export default function BookingDetailTaskerScreen() {
           {/* Task Description */}
           <View className="gap-xs">
             <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.taskDescription', 'Даалгаврын тайлбар')}
+              {t('tasker.jobs.taskDescription')}
             </Text>
             <Text className="text-body text-foreground leading-[22px]">
               {booking.task?.description ?? ''}
@@ -86,13 +86,13 @@ export default function BookingDetailTaskerScreen() {
           {(isAssigned || isMarkedDone) && (
             <View className="gap-xs">
               <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
-                {t('tasker.jobs.exactAddress', 'Тодорхой хаяг')}
+                {t('tasker.jobs.exactAddress')}
               </Text>
               <Text className="text-body text-foreground leading-[22px]">
                 {booking.task?.location_text ?? ''}
               </Text>
               <Text className="text-caption text-textSecondary leading-[20px]">
-                {t('tasker.jobs.exactAddressNote', 'Энэ хаяг зөвхөн танд харагдана')}
+                {t('tasker.jobs.exactAddressNote')}
               </Text>
             </View>
           )}
@@ -100,7 +100,7 @@ export default function BookingDetailTaskerScreen() {
           {/* Schedule */}
           <View className="gap-xs">
             <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.schedule', 'Хуваарь')}
+              {t('tasker.jobs.schedule')}
             </Text>
             <Text className="text-body text-foreground">
               {booking.confirmed_scheduled_at
@@ -112,7 +112,7 @@ export default function BookingDetailTaskerScreen() {
           {/* Budget */}
           <View className="gap-xs">
             <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
-              {t('tasker.jobs.budget', 'Төсөв')}
+              {t('tasker.jobs.budget')}
             </Text>
             <Text className="text-heading font-sans-bold text-secondary">
               {'\u20AE'}
@@ -124,13 +124,10 @@ export default function BookingDetailTaskerScreen() {
           {isAssigned && (
             <View className="bg-muted rounded-md p-md">
               <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px] mb-xs">
-                {t('tasker.jobs.paymentNoteHeading', 'Төлбөрийн мэдээлэл')}
+                {t('tasker.jobs.paymentNoteHeading')}
               </Text>
               <Text className="text-micro text-mutedForeground leading-[20px]">
-                {t(
-                  'tasker.jobs.paymentNote',
-                  'Төлбөр нь захиалагчтай шууд тохиролцоно. Tasky нь зуучлагч биш.',
-                )}
+                {t('BookingDetailTaskerScreen.copy1')}
               </Text>
             </View>
           )}
@@ -138,7 +135,7 @@ export default function BookingDetailTaskerScreen() {
           {isMarkedDone && (
             <View className="bg-muted rounded-md p-md">
               <Text className="text-body text-foreground font-semibold">
-                {t('tasker.jobs.awaitingConfirmation', 'Захиалагч баталгаажуулахыг хүлээж байна')}
+                {t('tasker.jobs.awaitingConfirmation')}
               </Text>
             </View>
           )}
@@ -147,7 +144,7 @@ export default function BookingDetailTaskerScreen() {
           {isAssigned && (
             <View className="items-center pt-md">
               <Button
-                label={t('tasker.jobs.cancelBooking', 'Захиалга цуцлах')}
+                label={t('tasker.jobs.cancelBooking')}
                 variant="ghost"
                 onPress={() => setCancelSheetOpen(true)}
                 labelClassName="text-danger"
@@ -160,7 +157,7 @@ export default function BookingDetailTaskerScreen() {
           {isCompleted && (
             <View className="gap-xs">
               <Button
-                label={t('tasker.jobs.leaveReview', 'Leave Review')}
+                label={t('tasker.jobs.leaveReview')}
                 variant="outline"
                 onPress={() =>
                   router.push({
@@ -189,12 +186,9 @@ export default function BookingDetailTaskerScreen() {
             testID="SCR-TASK-014"
             isOpen={showNoShowSheet}
             onClose={() => setShowNoShowSheet(false)}
-            title={t('tasker.noShow.title', 'Report Customer No-Show')}
-            description={t(
-              'tasker.noShow.description',
-              'Report that the customer was not present. Only use after waiting 15+ minutes.',
-            )}
-            confirmLabel={t('tasker.noShow.confirm', 'Report No-Show')}
+            title={t('tasker.noShow.title')}
+            description={t('BookingDetailTaskerScreen.copy2')}
+            confirmLabel={t('tasker.noShow.confirm')}
             onConfirm={() => {
               // TODO: wire real no-show API
               setShowNoShowSheet(false);

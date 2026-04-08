@@ -135,7 +135,7 @@ export function FeedListTemplate<T>({
       <View className={cn('flex-1 bg-background', className)} testID={testID}>
         {ListHeaderComponent}
         <ErrorStateTemplate
-          message={errorMessage ?? t('feed.errorMessage', 'Failed to load content')}
+          message={errorMessage ?? t('feed.errorMessage')}
           onRetry={onRetry}
           retryLabel={retryLabel}
           testID={testID ? `${testID}-error` : undefined}
@@ -150,7 +150,7 @@ export function FeedListTemplate<T>({
         {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
         {ListHeaderComponent}
         <EmptyStateTemplate
-          title={emptyTitle ?? t('feed.emptyTitle', 'Nothing here yet')}
+          title={emptyTitle ?? t('feed.emptyTitle')}
           description={emptyDescription}
           ctaLabel={emptyCtaLabel}
           ctaOnPress={emptyCtaOnPress}

@@ -53,7 +53,7 @@ export default function PendingScreen() {
         testID="pending-screen-cta"
       />
       <Button
-        label={t('tasker.verification.backButton', 'Буцах')}
+        label={t('tasker.verification.backButton')}
         variant="outline"
         onPress={() => router.back()}
         style={{ marginTop: mobileTheme.spacing.sm }}

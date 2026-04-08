@@ -11,7 +11,6 @@ import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
-const MIN_REBOOK_BUDGET = 20_000;
 
 function formatDateTime(value: Date): string {
   const y = value.getFullYear();
@@ -56,7 +55,7 @@ export default function RebookScreen() {
   });
 
   const numericBudget = Number(budget);
-  const budgetTooLow = !Number.isFinite(numericBudget) || numericBudget < MIN_REBOOK_BUDGET;
+  const budgetTooLow = Number.isFinite(numericBudget) && numericBudget <= 1001;
 
   const handleSubmit = useCallback(async () => {
     if (budgetTooLow) return;
@@ -110,20 +109,20 @@ export default function RebookScreen() {
       totalSteps={1}
       onNext={handleSubmit}
       onBack={() => router.back()}
-      nextLabel={t('customer.bookings.ctaRebookSubmit', 'Continue to Booking')}
+      nextLabel={t('customer.bookings.ctaRebookSubmit')}
       nextDisabled={budgetTooLow}
       nextLoading={isPending || isCreatingBookingIntent}
       showBack
     >
       {/* Prefilled Note */}
       <Text className="text-caption text-accent italic mb-item">
-        {t('customer.bookings.prefilledNote', 'Prefilled from previous booking. You can edit.')}
+        {t('customer.bookings.prefilledNote')}
       </Text>
 
       {/* Tasker Info Card */}
       <View className="mb-section bg-muted rounded-md p-card" style={elevations.soft}>
         <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
-          {t('customer.bookings.sectionPreviousTasker', 'Previous Tasker')}
+          {t('customer.bookings.sectionPreviousTasker')}
         </Text>
         <View className="flex-row items-center gap-md">
           <ProfileAvatar
@@ -141,7 +140,7 @@ export default function RebookScreen() {
       {/* Task Details */}
       <View className="mb-section">
         <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
-          {t('customer.bookings.sectionTaskDetails', 'Task Details')}
+          {t('customer.bookings.sectionTaskDetails')}
         </Text>
         <Text className="text-body font-semibold text-primaryDeep mb-xs">{params.categoryName}</Text>
         <Text className="text-body text-primaryDeep mb-sm">{params.description}</Text>
@@ -153,7 +152,7 @@ export default function RebookScreen() {
       {/* Schedule */}
       <View className="mb-section">
         <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
-          {t('customer.bookings.labelNewSchedule', 'New Schedule')}
+          {t('customer.bookings.labelNewSchedule')}
         </Text>
         <Pressable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
           <Text className="text-body text-primaryDeep">{formatDateTime(selectedDate)}</Text>
@@ -163,7 +162,7 @@ export default function RebookScreen() {
       {/* Budget */}
       <View className="mb-section">
         <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
-          {t('customer.bookings.labelBudget', 'Budget')}
+          {t('customer.bookings.labelBudget')}
         </Text>
         <Input
           className="rounded-md bg-muted"
@@ -175,7 +174,7 @@ export default function RebookScreen() {
         />
         {budgetTooLow ? (
           <Text className="text-caption text-danger mt-xs">
-            {t('customer.bookings.rebookBudgetLow', 'Budget must be at least ₮20,000')}
+            {t('customer.bookings.rebookBudgetLow')}
           </Text>
         ) : null}
       </View>

@@ -37,7 +37,7 @@ function AuthenticatedProfile() {
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
-      headerTitle={t('shared.profile.title', 'Профайл')}
+      headerTitle={t('shared.profile.title')}
       rightActions={[
         {
           icon: <Pencil size={22} color={colors.primary} />,
@@ -53,7 +53,7 @@ function AuthenticatedProfile() {
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
-      errorMessage={t('shared.profile.errorNetwork', 'Сүлжээний алдаа гарлаа')}
+      errorMessage={t('shared.profile.errorNetwork')}
     >
       {profile && (
         <View
@@ -74,8 +74,8 @@ function AuthenticatedProfile() {
             <View className="px-md py-xs rounded-full bg-secondary">
               <Text className="text-caption font-semibold text-secondaryForeground">
                 {isTasker
-                  ? t('shared.profile.roleTasker', 'Гүйцэтгэгч')
-                  : t('shared.profile.roleCustomer', 'Захиалагч')}
+                  ? t('shared.profile.roleTasker')
+                  : t('shared.profile.roleCustomer')}
               </Text>
             </View>
             {isTasker && profile.status === 'VERIFIED' && (
@@ -88,12 +88,12 @@ function AuthenticatedProfile() {
           <View className="flex-row gap-md">
             <StatCard
               value={String(profile.completed_tasks)}
-              label={t('shared.profile.completedJobs', 'Дууссан ажил')}
+              label={t('shared.profile.completedJobs')}
             />
             {isTasker && (
               <StatCard
                 value={String(profile.rating_avg)}
-                label={t('shared.profile.avgRating', 'Дундаж үнэлгээ')}
+                label={t('shared.profile.avgRating')}
               />
             )}
           </View>
@@ -101,19 +101,19 @@ function AuthenticatedProfile() {
           {/* Info Section */}
           <View className="bg-muted rounded-md p-lg gap-md">
             <Text className="text-subtitle font-sans-bold text-primaryDeep">
-              {t('shared.profile.aboutMe', 'Миний тухай')}
+              {t('shared.profile.aboutMe')}
             </Text>
             {profile.phone_masked && (
               <View className="flex-row justify-between py-sm">
                 <Text className="text-body text-textSecondary">
-                  {t('shared.profile.phone', 'Утас')}
+                  {t('shared.profile.phone')}
                 </Text>
                 <Text className="text-body text-foreground font-medium">{profile.phone_masked}</Text>
               </View>
             )}
             <View className="flex-row justify-between py-sm">
               <Text className="text-body text-textSecondary">
-                {t('shared.profile.memberSince', 'Нэгдсэн огноо')}
+                {t('shared.profile.memberSince')}
               </Text>
               <Text className="text-body text-foreground font-medium">
                 {new Date(profile.created_at).toLocaleDateString()}
@@ -124,11 +124,8 @@ function AuthenticatedProfile() {
           {/* Trust Banner for Taskers */}
           {isTasker && (
             <TrustBanner
-              title={t('shared.profile.trustTitle', 'Баталгаажсан гүйцэтгэгч')}
-              description={t(
-                'shared.profile.trustDescription',
-                'Таны мэдээлэл баталгаажсан бөгөөд итгэлцэл нэмэгдүүлэхэд ашиглагдана.',
-              )}
+              title={t('shared.profile.trustTitle')}
+              description={t('MyProfileScreen.copy1')}
             />
           )}
 
@@ -140,7 +137,7 @@ function AuthenticatedProfile() {
               testID="profile-stats-link"
             >
               <Text className="text-body font-semibold text-primary">
-                {t('shared.profile.viewStats', 'Статистик харах')}
+                {t('shared.profile.viewStats')}
               </Text>
             </Pressable>
           )}

@@ -230,7 +230,7 @@ The following rules are normative and mapped to Section 7 requirements.
   fixed-choice primitives (single-select, multi-select, dropdown, yes/no toggle, numeric counter). Conversational LLM
   chat-style intake is out of scope in Phase 0-2. `[F17]`
 * **REQ-TASK-01**: Customer MUST be able to create a task with: Category, Description, Photos (max 3), Location (
-  Lat/Long + Text), Schedule (Date/Time), and Budget (Fixed Amount >= 20,000 MNT to prevent placeholders). Description
+  Lat/Long + Text), Schedule (Date/Time), and Budget (Fixed Amount > 1,000 MNT to prevent placeholders). Description
   MAY be prefilled from REQ-TASK-07 and edited by the Customer before submit. `[F14]`
 * **REQ-TASK-02**: Task status lifecycle MUST be: `OPEN` → `ASSIGNED` → `COMPLETED` | `CANCELLED` | `NO_SHOW`. A task
   moves to `ASSIGNED` when a Customer accepts a Tasker's application and confirms liability disclaimer acceptance. A
@@ -522,7 +522,7 @@ flow — B2B is a thin coordination layer, not a parallel system.
 * **REQ-SAFE-06**: System MUST track and surface "Tasker Reliability Score" based on: completion rate, punctuality
   rating average, overall review average, and cancellation history. This score influences search ranking in Phase 2+
   algorithmic matching.
-* **REQ-SAFE-07**: Before ID front/ID back/selfie upload, user MUST explicitly consent to identity-data processing. Consent record
+* **REQ-SAFE-07**: Before ID/selfie upload, user MUST explicitly consent to identity-data processing. Consent record
   MUST include policy version, timestamp, and user ID.
 * **REQ-SAFE-08**: Admin access to verification media MUST be audit-logged (viewer ID, action, timestamp, object key).
 * **REQ-SAFE-09**: Identity data retention/deletion MUST follow policy-driven lifecycle rules and support user-initiated
@@ -637,7 +637,7 @@ flow — B2B is a thin coordination layer, not a parallel system.
   errors.
   In Phase 0-2, no conversational intake path is invoked on posting.
 * **REQ-TASK-01**: Task creation fails unless Category, Description, Location (`lat`,`lng`,`text`), Schedule (
-  `ISO-8601`), and Budget are provided; Budget must be integer >= 20,000 MNT; photo count is 0-3; validation errors are
+  `ISO-8601`), and Budget are provided; Budget must be integer > 1,000 MNT; photo count is 0-3; validation errors are
   field-specific.
 * **REQ-TASK-02**: Task state transitions only follow `OPEN -> ASSIGNED -> COMPLETED|CANCELLED|NO_SHOW`; invalid
   transitions are rejected with `409 INVALID_STATE_TRANSITION`; transition audit records are immutable.
@@ -811,7 +811,7 @@ flow — B2B is a thin coordination layer, not a parallel system.
   manual review route remains available without blocking applicant submission.
 * **REQ-SAFE-06**: Reliability score is computed from completion rate, punctuality average, overall average, and
   cancellation history with documented weighting; Phase 2 ranking consumes this score in applicant ordering.
-* **REQ-SAFE-07**: Identity upload (ID front, ID back, selfie) cannot proceed until consent checkbox is accepted; persisted consent record includes
+* **REQ-SAFE-07**: Identity upload cannot proceed until consent checkbox is accepted; persisted consent record includes
   `user_id`, `policy_version`, and timestamp.
 * **REQ-SAFE-08**: Every admin read/download action on verification media writes immutable audit log (`viewer_id`,
   action, timestamp, object_key); audit queries support incident lookups by user and date range.

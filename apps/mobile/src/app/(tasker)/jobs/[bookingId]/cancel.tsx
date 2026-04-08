@@ -28,22 +28,22 @@ export default function TaskerCancelBookingScreen() {
       <ModalSheetTemplate
         isOpen={isOpen}
         onClose={() => { setIsOpen(false); router.back(); }}
-        title={t('tasker.cancelBooking.title', 'Cancel Booking')}
+        title={t('tasker.cancelBooking.title')}
         testID="tasker-cancel-booking-sheet"
       >
         <View className="items-center gap-lg">
           <AlertTriangle size={32} color={colors.danger} />
           <Text className="text-body text-mutedForeground text-center leading-6">
-            {t('tasker.cancelBooking.warning', 'Cancelling a confirmed booking will add a strike to your account. Select Safety/Fraud if applicable to avoid a strike.')}
+            {t('tasker.cancelBooking.warning')}
           </Text>
           <Button
-            label={t('tasker.cancelBooking.confirm', 'Cancel Booking')}
+            label={t('tasker.cancelBooking.confirm')}
             variant="destructive"
             onPress={handleCancel}
             className="self-stretch"
           />
           <Button
-            label={t('common.goBack', 'Go Back')}
+            label={t('common.goBack')}
             variant="ghost"
             onPress={() => { setIsOpen(false); router.back(); }}
             className="self-stretch"

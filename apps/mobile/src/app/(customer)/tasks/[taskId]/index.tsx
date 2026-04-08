@@ -62,16 +62,16 @@ export default function TaskDetailCustomerScreen() {
 
   const ctaLabel = useMemo(() => {
     if (isOpen && hasApplicants) {
-      return t('customer.taskDetail.viewApplicants', 'View Applicants');
+      return t('TaskDetailCustomerScreen.viewApplicants');
     }
     if (isTaskerMarkedDone) {
-      return t('customer.taskDetail.markComplete', 'Confirm Complete');
+      return t('TaskDetailCustomerScreen.markComplete');
     }
     if (isAssigned && tasker) {
-      return t('customer.taskDetail.messageTasker', 'Message Tasker');
+      return t('TaskDetailCustomerScreen.messageTasker');
     }
     if (isOpen) {
-      return t('customer.taskDetail.cancel', 'Cancel Task');
+      return t('TaskDetailCustomerScreen.cancel');
     }
     return undefined;
   }, [hasApplicants, isAssigned, isOpen, isTaskerMarkedDone, tasker, t]);
@@ -96,7 +96,7 @@ export default function TaskDetailCustomerScreen() {
 
   const secondaryCtaLabel = useMemo(() => {
     if ((isOpen && hasApplicants) || isAssigned) {
-      return t('customer.taskDetail.cancel', 'Cancel Task');
+      return t('TaskDetailCustomerScreen.cancel');
     }
     return undefined;
   }, [hasApplicants, isAssigned, isOpen, t]);
@@ -115,7 +115,7 @@ export default function TaskDetailCustomerScreen() {
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}
-        errorMessage={t('TaskDetailCustomerScreen.errorNetwork', 'Failed to load task detail')}
+        errorMessage={t('TaskDetailCustomerScreen.errorNetwork')}
         ctaLabel={ctaLabel}
         ctaOnPress={ctaOnPress}
         secondaryCtaLabel={secondaryCtaLabel}
@@ -141,17 +141,17 @@ export default function TaskDetailCustomerScreen() {
                 className="text-caption font-bold text-textSecondary uppercase"
                 style={{ letterSpacing: 0.8 }}
               >
-                {t('TaskDetailCustomerScreen.sectionDetails', 'Details')}
+                {t('TaskDetailCustomerScreen.sectionDetails')}
               </Text>
             </View>
 
             <View className="bg-muted rounded-sm p-lg gap-md">
               <DetailRow
-                label={t('customer.postTask.categoryLabel', 'Category')}
-                value={(task as any)?.category?.name ?? t('customer.postTask.notSet', 'Not set')}
+                label={t('TaskDetailCustomerScreen.categoryLabel')}
+                value={(task as any)?.category?.name ?? t('TaskDetailCustomerScreen.notSet')}
               />
               <DetailRow
-                label={t('customer.postTask.scheduleDate', 'Date')}
+                label={t('TaskDetailCustomerScreen.scheduleDate')}
                 value={formatSchedule(task.scheduled_at)}
               />
             </View>
@@ -166,7 +166,7 @@ export default function TaskDetailCustomerScreen() {
                   className="text-caption font-bold uppercase"
                   style={{ letterSpacing: 0.8, color: `${colors.primaryForeground}99` }}
                 >
-                  {t('customer.postTask.budgetLabel', 'Budget')}
+                  {t('TaskDetailCustomerScreen.budgetLabel')}
                 </Text>
                 <View
                   className="px-sm py-xs rounded-full"
@@ -174,7 +174,7 @@ export default function TaskDetailCustomerScreen() {
                 >
                   <Text className="text-micro font-bold text-primaryForeground">
                     {Number((task as any)?.applicant_count ?? 0)}{' '}
-                    {t('customer.applicants.title', 'applicants')}
+                    {t('TaskDetailCustomerScreen.applicants')}
                   </Text>
                 </View>
               </View>
@@ -186,7 +186,7 @@ export default function TaskDetailCustomerScreen() {
             <View className="bg-muted rounded-sm p-lg gap-sm">
               <View className="flex-row justify-between items-center">
                 <Text className="text-subtitle font-extrabold text-foreground">
-                  {t('TaskDetailCustomerScreen.applicants', 'Applicants')}
+                  {t('TaskDetailCustomerScreen.applicants')}
                 </Text>
                 <Text
                   className="text-caption font-extrabold text-center text-primaryDeep"
@@ -203,11 +203,11 @@ export default function TaskDetailCustomerScreen() {
               </View>
               {hasApplicants ? (
                 <Text className="text-body text-textSecondary leading-relaxed">
-                  {t('customer.applicants.title', 'applications received')}
+                  {t('TaskDetailCustomerScreen.applicationsReceived')}
                 </Text>
               ) : (
                 <Text className="text-body text-textSecondary leading-relaxed">
-                  {t('TaskDetailCustomerScreen.noApplicants', 'No applicants yet')}
+                  {t('TaskDetailCustomerScreen.noApplicants')}
                 </Text>
               )}
             </View>
@@ -215,7 +215,7 @@ export default function TaskDetailCustomerScreen() {
             <View className="bg-muted rounded-sm p-lg gap-sm">
               <View className="flex-row justify-between items-center">
                 <Text className="text-subtitle font-extrabold text-foreground">
-                  {t('TaskDetailCustomerScreen.photos', 'Photos')}
+                  {t('TaskDetailCustomerScreen.photos')}
                 </Text>
                 <Text
                   className="text-caption font-extrabold text-center text-primaryDeep"
@@ -247,8 +247,8 @@ export default function TaskDetailCustomerScreen() {
                   ))
                 ) : (
                   <Text className="text-body text-textSecondary leading-relaxed">
-                    {t('TaskDetailCustomerScreen.noPhotos', 'No photos')}
-                  </Text>
+                  {t('TaskDetailCustomerScreen.noPhotos')}
+                </Text>
                 )}
               </View>
             </View>
@@ -265,10 +265,7 @@ export default function TaskDetailCustomerScreen() {
                 </Text>
               </View>
               <Text className="text-caption text-textSecondary leading-relaxed">
-                {t(
-                  'customer.taskDetail.locationNote',
-                  'Taskers see approximate location until the booking is confirmed.',
-                )}
+                {t('TaskDetailCustomerScreen.locationNote')}
               </Text>
             </View>
 
@@ -298,7 +295,7 @@ export default function TaskDetailCustomerScreen() {
                       </Text>
                     </View>
                     <Text className="text-caption text-textSecondary">
-                      {t('TaskDetailCustomerScreen.assignedTasker', 'Assigned Tasker')}
+                      {t('TaskDetailCustomerScreen.assignedTasker')}
                     </Text>
                   </View>
                 </View>
@@ -311,10 +308,10 @@ export default function TaskDetailCustomerScreen() {
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
                 <Text className="text-body font-extrabold text-primaryDeep">
-                  {t('TaskDetailCustomerScreen.completedTitle', 'Task completed')}
+                  {t('TaskDetailCustomerScreen.completedTitle')}
                 </Text>
                 <Text className="text-caption text-textSecondary">
-                  {t('TaskDetailCustomerScreen.completedBody', 'Thanks for using Tasky')}
+                  {t('TaskDetailCustomerScreen.completedBody')}
                 </Text>
               </View>
             ) : null}
@@ -325,10 +322,10 @@ export default function TaskDetailCustomerScreen() {
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
                 <Text className="text-body font-extrabold text-primaryDeep">
-                  {t('TaskDetailCustomerScreen.cancelledTitle', 'Task cancelled')}
+                  {t('TaskDetailCustomerScreen.cancelledTitle')}
                 </Text>
                 <Text className="text-caption text-textSecondary">
-                  {t('TaskDetailCustomerScreen.cancelledBody', 'This task is no longer active')}
+                  {t('TaskDetailCustomerScreen.cancelledBody')}
                 </Text>
               </View>
             ) : null}
@@ -347,12 +344,9 @@ export default function TaskDetailCustomerScreen() {
         testID="SCR-CUST-010"
         isOpen={showCancelSheet}
         onClose={() => setShowCancelSheet(false)}
-        title={t('customer.cancelTask.title', 'Cancel Task')}
-        description={t(
-          'customer.cancelTask.description',
-          'This will remove the task and notify all applicants. This cannot be undone.',
-        )}
-        confirmLabel={t('customer.cancelTask.confirm', 'Cancel Task')}
+        title={t('TaskDetailCustomerScreen.cancelTitle')}
+        description={t('TaskDetailCustomerScreen.cancelDescription')}
+        confirmLabel={t('TaskDetailCustomerScreen.cancelConfirm')}
         onConfirm={() => {
           // TODO: wire real cancellation API
           setShowCancelSheet(false);

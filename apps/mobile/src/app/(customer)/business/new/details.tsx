@@ -18,16 +18,16 @@ export default function BusinessDetailsScreen() {
       currentStep={0}
       totalSteps={3}
       onNext={() => router.push('/(customer)/business/new/location')}
-      nextLabel={t('common.continue', 'Continue')}
+      nextLabel={t('common.continue')}
       nextDisabled={!name.trim()}
       showBack={false}
       testID="SCR-B2B-002"
     >
-      <FormField label={t('b2b.setup.businessName', 'Business Name')}>
+      <FormField label={t('b2b.setup.businessName')}>
         <Input
           value={name}
           onChangeText={setName}
-          placeholder={t('b2b.setup.businessNamePlaceholder', 'Enter business name')}
+          placeholder={t('b2b.setup.businessNamePlaceholder')}
           testID="b2b-business-name-input"
         />
       </FormField>

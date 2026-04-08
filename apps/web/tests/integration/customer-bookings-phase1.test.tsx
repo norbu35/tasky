@@ -93,7 +93,7 @@ describe('Customer bookings phase 1 parity', () => {
     const apiClient = buildApiClientMock({
       listBookings: vi.fn().mockResolvedValue({
         data: [{ ...baseBooking, id: 'booking-1', status: 'ASSIGNED' }],
-        cursor: { next: null, has_more: false },
+        cursor: { next: null, prev: null },
       }),
       getBooking: vi.fn().mockResolvedValue({ ...baseBooking, id: 'booking-1' }),
     });

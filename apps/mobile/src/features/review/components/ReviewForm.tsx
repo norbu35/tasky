@@ -56,16 +56,16 @@ const TASKER_CATEGORIES: CategoryRating[] = [
 
 function getCategoryLabel(role: ReviewRole, categoryKey: string) {
   if (role === 'tasker') {
-    if (categoryKey === 'taskDescriptionClarity') return 'Ажлын тайлбарын тодорхой байдал';
-    if (categoryKey === 'respectfulness') return 'Хүндэтгэл';
-    if (categoryKey === 'punctuality') return 'Цаг баримтлал';
-    return 'Үнэлгээ';
+    if (categoryKey === 'taskDescriptionClarity') return t('ReviewFormScreen.copy1');
+    if (categoryKey === 'respectfulness') return t('ReviewFormScreen.copy2');
+    if (categoryKey === 'punctuality') return t('ReviewFormScreen.copy3');
+    return t('ReviewFormScreen.copy4');
   }
 
-  if (categoryKey === 'qualityOfWork') return 'Ажлын чанар';
-  if (categoryKey === 'punctuality') return 'Цаг баримтлал';
-  if (categoryKey === 'communication') return 'Харилцаа';
-  return 'Үнэлгээ';
+  if (categoryKey === 'qualityOfWork') return t('ReviewFormScreen.copy5');
+  if (categoryKey === 'punctuality') return t('ReviewFormScreen.copy6');
+  if (categoryKey === 'communication') return t('ReviewFormScreen.copy7');
+  return t('ReviewFormScreen.copy8');
 }
 
 function createCategories(role: ReviewRole) {
@@ -127,8 +127,8 @@ export default function ReviewFormScreen() {
     setShowSuccess(true);
   });
 
-  const counterpartyName = params.name ?? (role === 'customer' ? 'Болд Б.' : 'Батбаяр Б.');
-  const counterpartyRole = role === 'customer' ? 'Гүйцэтгэгч' : 'Захиалагч';
+  const counterpartyName = params.name ?? (role === 'customer' ? t('ReviewFormScreen.copy9') : t('ReviewFormScreen.copy10'));
+  const counterpartyRole = role === 'customer' ? t('ReviewFormScreen.copy11') : t('ReviewFormScreen.copy12');
   const avatarUrl = params.avatarUrl ?? 'https://cdn.tasky.mn/avatars/counterparty.jpg';
 
   const allRated = categories.every((category) => category.value > 0);
@@ -173,7 +173,7 @@ export default function ReviewFormScreen() {
     router.back();
   }, [router]);
 
-  const submitLabel = t('shared.review.cta_submit', 'Илгээх');
+  const submitLabel = t('shared.review.cta_submit');
 
   return (
     <SafeAreaView style={styles.safeArea} testID="SCR-SHARED-017">
@@ -181,14 +181,14 @@ export default function ReviewFormScreen() {
         <View style={styles.header} testID="review-form-header">
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t('common.close', 'Close')}
+            accessibilityLabel={t('common.close')}
             onPress={handleClose}
             style={styles.closeButton}
             testID="review-form-close"
           >
             <ArrowLeft size={22} color={colors.primaryDeep} />
           </Pressable>
-          <Text style={styles.headerTitle}>{t('shared.review.navTitle', 'Сэтгэгдэл бичих')}</Text>
+          <Text style={styles.headerTitle}>{t('shared.review.navTitle')}</Text>
         </View>
 
         <KeyboardAvoidingView
@@ -211,10 +211,10 @@ export default function ReviewFormScreen() {
                   <CheckCircle size={34} color={colors.primary} fill={colors.verified} />
                 </View>
                 <Text style={styles.successTitle}>
-                  {t('shared.review.successTitle', 'Баярлалаа!')}
+                  {t('shared.review.successTitle')}
                 </Text>
                 <Text style={styles.successBody}>
-                  {t('shared.review.successBody', 'Таны сэтгэгдэл амжилттай бүртгэгдлээ')}
+                  {t('shared.review.successBody')}
                 </Text>
               </Animated.View>
             ) : (
@@ -235,7 +235,7 @@ export default function ReviewFormScreen() {
                           {getCategoryLabel(role, category.key)}
                         </Text>
                         <Text style={styles.categoryValue}>
-                          {category.value > 0 ? category.value.toFixed(1) : 'Хүлээгдэж буй'}
+                          {category.value > 0 ? category.value.toFixed(1) : t('ReviewFormScreen.copy13')}
                         </Text>
                       </View>
                       <StarRatingInput
@@ -249,16 +249,13 @@ export default function ReviewFormScreen() {
 
                 <View style={styles.commentSection}>
                   <Text style={styles.commentLabel}>
-                    {t('shared.review.label_comment', 'Нэмэлт тайлбар (сонголтот)')}
+                    {t('shared.review.label_comment')}
                   </Text>
                   <View style={styles.commentCard}>
                     <TextInput
                       testID="review-comment-input"
                       style={styles.commentInput}
-                      placeholder={t(
-                        'shared.review.commentPlaceholder',
-                        'Туршлагаасаа хуваалцана уу...',
-                      )}
+                      placeholder={t('ReviewFormScreen.copy1')}
                       placeholderTextColor={colors.textTertiary}
                       multiline
                       textAlignVertical="top"
@@ -279,13 +276,10 @@ export default function ReviewFormScreen() {
         {!showSuccess && submitReview.isError ? (
           <View style={styles.errorToast} testID="review-submit-error">
             <Text style={styles.errorText}>
-              {t(
-                'shared.review.errorSubmit',
-                'Сэтгэгдэл илгээхэд алдаа гарлаа. Дахин оролдоно уу.',
-              )}
+              {t('ReviewFormScreen.copy2')}
             </Text>
             <Button
-              label={t('common.retry', 'Дахин оролдох')}
+              label={t('common.retry')}
               variant="ghost"
               onPress={handleSubmit}
               style={styles.errorAction}
@@ -321,12 +315,9 @@ export default function ReviewFormScreen() {
         testID="SCR-SHARED-018"
         isOpen={showReminderSheet}
         onClose={() => setShowReminderSheet(false)}
-        title={t('review.reminder.title', 'Review Required')}
-        description={t(
-          'review.reminder.description',
-          'Please submit your review for this booking.',
-        )}
-        confirmLabel={t('review.reminder.confirm', 'Write Review')}
+        title={t('review.reminder.title')}
+        description={t('ReviewFormScreen.copy3')}
+        confirmLabel={t('review.reminder.confirm')}
         onConfirm={() => setShowReminderSheet(false)}
       />
     </SafeAreaView>

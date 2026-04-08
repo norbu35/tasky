@@ -20,13 +20,13 @@ export default function LeadUnlockScreen() {
       <View className="items-center py-xl gap-lg">
         <Unlock size={48} color={colors.primary} />
         <Text className="text-heading font-semibold text-primaryDeep text-center">
-          {t('tasker.leadUnlock.headline', 'Lead Unlock Request')}
+          {t('tasker.leadUnlock.headline')}
         </Text>
         <Text className="text-body text-mutedForeground text-center leading-6">
-          {t('tasker.leadUnlock.body', 'A customer has selected you. Accept to unlock the lead using credits, or decline.')}
+          {t('tasker.leadUnlock.body')}
         </Text>
         <Button
-          label={t('tasker.leadUnlock.accept', 'Accept & Unlock')}
+          label={t('tasker.leadUnlock.accept')}
           onPress={() => {
             // TODO: wire accept + credit deduction
             router.back();
@@ -34,7 +34,7 @@ export default function LeadUnlockScreen() {
           className="self-stretch"
         />
         <Button
-          label={t('tasker.leadUnlock.decline', 'Decline')}
+          label={t('tasker.leadUnlock.decline')}
           variant="outline"
           onPress={() => router.back()}
           className="self-stretch"

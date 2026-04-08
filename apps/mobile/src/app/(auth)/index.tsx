@@ -34,7 +34,7 @@ export default function LoginScreen() {
       );
     } catch {
       setState('error');
-      setErrorMessage(t('auth.login.error', 'Login failed. Please try again.'));
+      setErrorMessage(t('auth.login.error'));
     }
   };
 
@@ -51,11 +51,8 @@ export default function LoginScreen() {
     <AuthTemplate
       testID="SCR-SHARED-002"
       showLogo
-      headline={t('auth.login.title', 'Tasky-д тавтай морил')}
-      subtitle={t(
-        'auth.login.description',
-        'Найдвартай гүйцэтгэгчтэй холбогдож, ажлаа хялбар захиалаарай',
-      )}
+      headline={t('auth.login.title')}
+      subtitle={t('LoginScreen.copy1')}
       topRightSlot={
         <Pressable
           testID="language-switcher"
@@ -67,11 +64,10 @@ export default function LoginScreen() {
             paddingVertical: 4,
           }}
           accessibilityRole="button"
-          accessibilityLabel={t('auth.login.languageSwitcher', 'MN/EN')}
+          accessibilityLabel={t('auth.login.languageSwitcher')}
         >
           <Text className="text-caption font-sans-bold" style={{ color: colors.primaryDeep, letterSpacing: 0.35 }}>
-            MN/EN
-          </Text>
+            {t('LoginScreen.copy2')}</Text>
         </Pressable>
       }
       bottomSlot={
@@ -89,7 +85,7 @@ export default function LoginScreen() {
               <View className="flex-row items-center gap-sm">
                 <Facebook size={20} color={colors.primaryForeground} />
                 <Text className="text-label font-sans-bold text-primary-foreground">
-                  {t('auth.login.facebookButton', 'Facebook-ээр нэвтрэх')}
+                  {t('auth.login.facebookButton')}
                 </Text>
               </View>
             ) : undefined}
@@ -104,18 +100,18 @@ export default function LoginScreen() {
           {devAuthEnabled ? (
             <View className="gap-sm border-t border-border pt-lg">
               <Text className="text-caption text-center uppercase" style={{ color: colors.textSecondary, letterSpacing: 1 }}>
-                {t('auth.devBypass', 'Dev bypass')}
+                {t('auth.devBypass')}
               </Text>
               <Button
                 testID="dev-login-customer"
-                label={t('auth.loginAsCustomer', 'Login as Customer')}
+                label={t('auth.loginAsCustomer')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('CUSTOMER')}
                 disabled={busy}
               />
               <Button
                 testID="dev-login-tasker"
-                label={t('auth.loginAsTasker', 'Login as Tasker')}
+                label={t('auth.loginAsTasker')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('TASKER')}
                 disabled={busy}
@@ -135,7 +131,7 @@ export default function LoginScreen() {
             accessibilityRole="link"
           >
             <Text className="text-body" style={{ color: colors.textSecondary }}>
-              {t('auth.login.terms', 'Үйлчилгээний нөхцөл')}
+              {t('auth.login.terms')}
             </Text>
           </Pressable>
           <Pressable
@@ -144,11 +140,11 @@ export default function LoginScreen() {
             accessibilityRole="link"
           >
             <Text className="text-body" style={{ color: colors.textSecondary }}>
-              {t('auth.login.privacy', 'Нууцлалын бодлого')}
+              {t('auth.login.privacy')}
             </Text>
           </Pressable>
           <Text className="text-body text-center" style={{ color: colors.textSecondary, opacity: 0.6 }}>
-            {t('auth.login.copyright', '© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')}
+            {t('auth.login.copyright')}
           </Text>
         </View>
       }

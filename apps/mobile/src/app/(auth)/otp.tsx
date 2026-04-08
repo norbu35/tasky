@@ -34,14 +34,11 @@ export default function OtpScreen() {
   const sanitizedCode = code.replace(/\D/g, '').slice(0, 4);
 
   const resendLabel = isExpired
-    ? t('auth.otp.resend', 'Код дахин илгээх')
-    : t('auth.otp.resendCountdown', 'Код дахин илгээх (60с)');
+    ? t('auth.otp.resend')
+    : t('auth.otp.resendCountdown');
 
-  const descriptionPrefix = t('auth.otp.descriptionPrefix', 'Бид таны ');
-  const descriptionSuffix = t(
-    'auth.otp.descriptionSuffix',
-    ' дугаарт 4 оронтой нууц код илгээлээ.',
-  );
+  const descriptionPrefix = t('auth.otp.descriptionPrefix');
+  const descriptionSuffix = t('OtpScreen.copy1');
   const activeCellIndex = sanitizedCode.length >= 4 ? 3 : sanitizedCode.length;
 
   return (
@@ -59,7 +56,7 @@ export default function OtpScreen() {
             style={{ color: colors.primaryDeep, letterSpacing: -0.6 }}
             testID="otp-heading"
           >
-            {t('auth.otp.heading', 'Код баталгаажуулах')}
+            {t('auth.otp.heading')}
           </Text>
           <Text
             className="text-body text-center"
@@ -153,8 +150,8 @@ export default function OtpScreen() {
               style={{ color: colors.danger, lineHeight: 20 }}
             >
               {isWrongCode
-                ? t('auth.otp.errorWrongCode', 'Буруу код оруулсан байна. Дахин оролдоно уу.')
-                : t('auth.otp.errorExpired', 'Кодын хугацаа дууссан. Шинэ код авна уу.')}
+                ? t('auth.otp.errorWrongCode')
+                : t('auth.otp.errorExpired')}
             </Text>
           </View>
         )}
@@ -172,16 +169,13 @@ export default function OtpScreen() {
           </View>
           <View className="flex-1 gap-xs">
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
-              {t('auth.otp.securityTitle', 'Аюулгүй байдал')}
+              {t('auth.otp.securityTitle')}
             </Text>
             <Text
               className="text-caption"
               style={{ color: colors.textSecondary, lineHeight: 21 }}
             >
-              {t(
-                'auth.otp.securityBody',
-                'Таны хувийн мэдээлэл болон гүйлгээ хамгаалагдсан. Нууц кодыг бусдад бүү дамжуул.',
-              )}
+              {t('OtpScreen.copy2')}
             </Text>
           </View>
         </View>
@@ -191,7 +185,7 @@ export default function OtpScreen() {
         <View className="px-lg pb-lg">
           <Button
             testID="otp-verify-button"
-            label={t('auth.otp.verify', 'Баталгаажуулах')}
+            label={t('auth.otp.verify')}
             isLoading={isVerifying}
             disabled={sanitizedCode.length !== 4 || isVerifying}
             style={[{ minHeight: 56, borderRadius: radius.md, backgroundColor: colors.primaryDeep }, elevations.soft]}

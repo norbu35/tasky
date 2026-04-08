@@ -9,12 +9,6 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useBookings } from '../../../features/bookings/hooks/useBookings';
 import type { Booking } from '../../../lib/mobileApiClient';
 
-const JOB_FILTERS = [
-  { id: 'active', label: 'Идэвхтэй' },
-  { id: 'completed', label: 'Дууссан' },
-  { id: 'cancelled', label: 'Цуцлагдсан' },
-];
-
 function BookingCardHeader({ booking }: { booking: Booking }) {
   const customerName = booking.customer?.full_name ?? '';
   const status = booking.status.toLowerCase() as 'assigned' | 'completed' | 'cancelled' | 'no_show';
@@ -50,6 +44,14 @@ export default function MyJobsScreen() {
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useBookings();
   const [activeFilters, setActiveFilters] = useState<string[]>(['active']);
+  const jobFilters = useMemo(
+    () => [
+      { id: 'active', label: t('MyJobsScreen.active') },
+      { id: 'completed', label: t('MyJobsScreen.completed') },
+      { id: 'cancelled', label: t('MyJobsScreen.cancelled') },
+    ],
+    [t],
+  );
 
   const bookings = useMemo(() => data?.data ?? [], [data?.data]);
   const filteredBookings = useMemo(() => {
@@ -92,19 +94,13 @@ export default function MyJobsScreen() {
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
-      emptyTitle={t('tasker.jobs.emptyTitle', 'Одоогоор ажил байхгүй байна')}
-      emptyDescription={t(
-        'tasker.jobs.emptyDescription',
-        'Даалгавруудад анкет илгээж, эхний ажлаа аваарай',
-      )}
-      emptyCtaLabel={t('tasker.jobs.emptyCta', 'Даалгавар хайх')}
+      emptyTitle={t('tasker.jobs.emptyTitle')}
+      emptyDescription={t('MyJobsScreen.copy1')}
+      emptyCtaLabel={t('tasker.jobs.emptyCta')}
       emptyCtaOnPress={() => router.push('/(tabs)')}
       filterBar={
         <FilterBar
-          filters={JOB_FILTERS.map((filter) => ({
-            id: filter.id,
-            label: t(`tasker.jobs.filter.${filter.id}`, filter.label),
-          }))}
+          filters={jobFilters}
           activeFilters={activeFilters}
           onToggle={handleToggleFilter}
           testID="my-jobs-filter-bar"

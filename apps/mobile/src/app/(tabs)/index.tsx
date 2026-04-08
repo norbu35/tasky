@@ -19,14 +19,6 @@ import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 
-const CATEGORIES = [
-  { id: 'all', label: 'Бүгд' },
-  { id: 'cleaning', label: 'Цэвэрлэгээ' },
-  { id: 'repair', label: 'Засвар' },
-  { id: 'moving', label: 'Зөөвөр' },
-  { id: 'electrician', label: 'Цахилгаан' },
-];
-
 function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
     <View className="flex-row items-center justify-between">
@@ -90,6 +82,16 @@ function TaskerBrowseScreen() {
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const categories = useMemo(
+    () => [
+      { id: 'all', label: t('TaskerBrowseScreen.all') },
+      { id: 'cleaning', label: t('TaskerBrowseScreen.cleaning') },
+      { id: 'repair', label: t('TaskerBrowseScreen.repair') },
+      { id: 'moving', label: t('TaskerBrowseScreen.moving') },
+      { id: 'electrician', label: t('TaskerBrowseScreen.electrician') },
+    ],
+    [t],
+  );
 
   const handleClearFilters = useCallback(() => {
     setActiveFilters([]);
@@ -159,10 +161,10 @@ function TaskerBrowseScreen() {
           <View className="gap-md mb-md">
             <View className="gap-xs">
               <Text className="text-heading font-sans-extrabold" style={{ color: colors.primaryDeep }}>
-                {t('tasker.browse.title', 'Даалгаврууд')}
+                {t('tasker.browse.title')}
               </Text>
               <Text className="text-body" style={{ color: colors.textSecondary }}>
-                {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
+                {t('tasker.browse.subtitle')}
               </Text>
             </View>
             <Input
@@ -177,29 +179,23 @@ function TaskerBrowseScreen() {
               }}
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder={t('tasker.browse.searchPlaceholder', 'Даалгавар хайх...')}
+              placeholder={t('tasker.browse.searchPlaceholder')}
               placeholderTextColor={colors.textTertiary}
             />
             <TrustBanner
-              title={t('tasker.browse.trustTitle', 'Баталгаажсан даалгавар гүйцэтгэгч')}
-              description={t(
-                'tasker.browse.trustDescription',
-                'Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.',
-              )}
+              title={t('tasker.browse.trustTitle')}
+              description={t('HomeTab.copy1')}
             />
           </View>
         }
-        emptyTitle={t('tasker.browse.emptyTitle', 'Одоогоор даалгавар байхгүй байна')}
-        emptyDescription={t(
-          'tasker.browse.emptyDescription',
-          'Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу',
-        )}
-        emptyCtaLabel={t('tasker.browse.emptyCta', 'Шүүлтүүр цэвэрлэх')}
+        emptyTitle={t('tasker.browse.emptyTitle')}
+        emptyDescription={t('HomeTab.copy2')}
+        emptyCtaLabel={t('tasker.browse.emptyCta')}
         emptyCtaOnPress={handleClearFilters}
         errorMessage={t('common.error')}
         filterBar={
           <FilterBar
-            filters={CATEGORIES}
+            filters={categories}
             activeFilters={activeFilters}
             onToggle={handleToggleFilter}
             testID="task-feed-filter-bar"

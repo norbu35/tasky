@@ -26,23 +26,20 @@ export function ReviewReminder({ isOpen, onDismiss, bookingId }: ReviewReminderP
   return (
     <ModalSheetTemplate isOpen={isOpen} onClose={onDismiss} testID="review-reminder">
       <View style={styles.content}>
-        <Text style={styles.title}>{t('shared.review.reminderTitle', 'Үнэлгээ өгөхөө мартсан уу?')}</Text>
+        <Text style={styles.title}>{t('shared.review.reminderTitle')}</Text>
         <Text style={styles.body}>
-          {t(
-            'shared.review.reminderBody',
-            'Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг',
-          )}
+          {t('ReviewReminder.copy1')}
         </Text>
 
         <Button
-          label={t('shared.review.reminderCta', 'Үнэлгээ өгөх')}
+          label={t('shared.review.reminderCta')}
           onPress={handleReviewNow}
           style={styles.ctaButton}
           testID="review-reminder-cta"
         />
 
         <Button
-          label={t('shared.review.reminderLater', 'Дараа')}
+          label={t('shared.review.reminderLater')}
           variant="ghost"
           onPress={onDismiss}
           style={styles.laterButton}

@@ -18,7 +18,7 @@ export default function WalletPayoutScreen() {
     return (
       <View testID="SCR-P3-002" className="flex-1 items-center justify-center bg-background">
         <Text className="text-heading font-display-bold text-primaryDeep">
-          {t('tasker.wallet.payoutSuccess', 'Request submitted successfully')}
+          {t('tasker.wallet.payoutSuccess')}
         </Text>
       </View>
     );
@@ -31,10 +31,10 @@ export default function WalletPayoutScreen() {
       testID="wallet-payout-screen"
     >
       <Text className="text-heading font-display-bold text-primaryDeep">
-        {t('tasker.wallet.payoutTitle', 'Request Payout')}
+        {t('tasker.wallet.payoutTitle')}
       </Text>
       <Text className="text-body text-textSecondary">
-        {t('tasker.wallet.payoutBalance', 'Available balance: ₮120,000')}
+        {t('tasker.wallet.payoutBalance')}
       </Text>
       <Input
         value={amount}
@@ -43,12 +43,12 @@ export default function WalletPayoutScreen() {
       />
       {showError ? (
         <Text className="text-danger text-label">
-          {t('tasker.wallet.payoutMinError', 'Minimum amount: ₮10,000')}
+          {t('tasker.wallet.payoutMinError')}
         </Text>
       ) : null}
       <Button
         testID="wallet-payout-submit"
-        label={t('tasker.wallet.payoutSubmit', 'Submit request')}
+        label={t('tasker.wallet.payoutSubmit')}
         onPress={() => setShowError(Number(amount || 0) < 10000)}
       />
     </ScrollView>

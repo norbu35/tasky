@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { CheckCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -48,6 +49,7 @@ export function LeadUnlockSheet({
   onBuyCredits,
   onClose,
 }: LeadUnlockSheetProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const isInsufficient = state === 'insufficient_credits';
@@ -64,43 +66,43 @@ export function LeadUnlockSheet({
 
         {isAccepting ? (
           <View style={styles.stateStack}>
-            <Text style={styles.title}>{'Захиалагч таныг сонголоо!'}</Text>
+            <Text style={styles.title}>{t('LeadUnlockSheet.copy1')}</Text>
             <ActivityIndicator color={colors.primary} size="large" />
-            <Text style={styles.subtitle}>{'Кредит зарцуулж байна...'}</Text>
+            <Text style={styles.subtitle}>{t('LeadUnlockSheet.copy2')}</Text>
           </View>
         ) : isAccepted ? (
           <View style={styles.stateStack}>
             <CheckCircle size={64} color={colors.verified} />
-            <Text style={styles.title}>{'Амжилттай!'}</Text>
+            <Text style={styles.title}>{t('LeadUnlockSheet.copy3')}</Text>
             <Text style={styles.subtitle}>
               {`Захиалагчийн холбоо барих мэдээлэл нээгдлээ. ${creditCost} кредит зарцуулагдлаа.`}
             </Text>
             <View style={styles.inlineCard}>
-              <Text style={styles.cardTitle}>{'Холбоо барих'}</Text>
+              <Text style={styles.cardTitle}>{t('LeadUnlockSheet.copy4')}</Text>
               <Text style={styles.meta}>{customerName}</Text>
               <Text style={styles.meta}>{taskTitle}</Text>
             </View>
-            <Button label={'Ойлголоо'} onPress={onClose} />
+            <Button label={t('LeadUnlockSheet.copy5')} onPress={onClose} />
           </View>
         ) : isDeclined ? (
           <View style={styles.stateStack}>
-            <Text style={styles.title}>{'Татгалзсан'}</Text>
+            <Text style={styles.title}>{t('LeadUnlockSheet.copy6')}</Text>
             <Text style={styles.subtitle}>
-              {'Кредит зарцуулагдаагүй. Дараагийн боломжийг хүлээнэ үү.'}
+              {t('LeadUnlockSheet.copy7')}
             </Text>
-            <Button label={'Ойлголоо'} onPress={onClose} />
+            <Button label={t('LeadUnlockSheet.copy8')} onPress={onClose} />
           </View>
         ) : isExpired ? (
           <View style={styles.stateStack}>
-            <Text style={styles.title}>{'Хугацаа дууслаа'}</Text>
+            <Text style={styles.title}>{t('LeadUnlockSheet.copy9')}</Text>
             <Text style={styles.subtitle}>
-              {'15 минутын хугацаа дууссан тул автоматаар татгалзсан. Кредит зарцуулагдаагүй.'}
+              {t('LeadUnlockSheet.copy10')}
             </Text>
-            <Button label={'Ойлголоо'} onPress={onClose} />
+            <Button label={t('LeadUnlockSheet.copy11')} onPress={onClose} />
           </View>
         ) : (
           <View style={styles.stateStack}>
-            <Text style={styles.title}>{'Захиалагч таныг сонголоо!'}</Text>
+            <Text style={styles.title}>{t('LeadUnlockSheet.copy12')}</Text>
             <Text style={styles.subtitle}>{customerName}</Text>
 
             <View style={styles.inlineCard}>
@@ -111,31 +113,31 @@ export function LeadUnlockSheet({
                 style={styles.meta}
               >{`Хүлээх хугацаа: ${formatTimer(minutesRemaining, secondsRemaining)}`}</Text>
               <Text style={styles.meta}>
-                {`Холбоо барих мэдээлэл ${isDiscounted ? '5% хөнгөлөлттэй' : ''}`.trim()}
+                {`Холбоо барих мэдээлэл ${isDiscounted ? t('LeadUnlockSheet.copy13') : ''}`.trim()}
               </Text>
             </View>
 
-            <Text style={styles.refundNotice}>{'Захиалагч цуцалвал кредит буцаагдана'}</Text>
+            <Text style={styles.refundNotice}>{t('LeadUnlockSheet.copy14')}</Text>
 
             {isInsufficient ? (
               <>
-                <Text style={styles.warning}>{'Кредит хүрэлцэхгүй байна'}</Text>
+                <Text style={styles.warning}>{t('LeadUnlockSheet.copy15')}</Text>
                 <Button
                   testID="lead-unlock-buy-credits"
-                  label={'Кредит худалдаж авах'}
+                  label={t('LeadUnlockSheet.copy16')}
                   onPress={onBuyCredits}
                   style={styles.primaryButton}
                 />
-                <Button label={'Татгалзах'} variant="ghost" onPress={onDecline} />
+                <Button label={t('LeadUnlockSheet.copy17')} variant="ghost" onPress={onDecline} />
               </>
             ) : (
               <>
                 <Button
-                  label={'Зөвшөөрч, кредит зарцуулах'}
+                  label={t('LeadUnlockSheet.copy18')}
                   onPress={onAccept}
                   style={styles.primaryButton}
                 />
-                <Button label={'Татгалзах'} variant="ghost" onPress={onDecline} />
+                <Button label={t('LeadUnlockSheet.copy19')} variant="ghost" onPress={onDecline} />
               </>
             )}
           </View>

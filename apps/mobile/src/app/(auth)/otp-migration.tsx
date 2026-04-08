@@ -98,30 +98,27 @@ export default function OtpMigrationScreen() {
             className="text-heading font-extrabold text-center text-primary-deep"
             style={{ letterSpacing: -0.6, lineHeight: undefined }}
           >
-            {t('auth.otpMigration.heading', 'Утасны дугаараа бүртгүүлнэ үү')}
+            {t('auth.otpMigration.heading')}
           </Text>
           {!isLoading ? (
             <Text
               className="text-body text-text-secondary text-center"
               style={{ maxWidth: 320, lineHeight: undefined }}
             >
-              {t(
-                'auth.otpMigration.description',
-                'Аюулгүй байдлыг сайжруулахын тулд утасны дугаараа нэмнэ үү',
-              )}
+              {t('OtpMigrationScreen.copy1')}
             </Text>
           ) : null}
         </View>
 
         <View className="gap-xl">
           <FormField
-            label={t('auth.otpMigration.label', 'Утасны дугаар')}
-            helperText={t('auth.otpMigration.helper', 'Facebook нэвтрэлтэд утасны дугаар нэмнэ')}
+            label={t('auth.otpMigration.label')}
+            helperText={t('auth.otpMigration.helper')}
             errorText={
               showError
-                ? t('auth.otpMigration.errorInvalidPhone', 'Утасны дугаар буруу байна')
+                ? t('auth.otpMigration.errorInvalidPhone')
                 : showNetworkError
-                  ? t('auth.otpMigration.errorNetwork', 'Интернэт холболтоо шалгана уу')
+                  ? t('auth.otpMigration.errorNetwork')
                   : undefined
             }
           >
@@ -142,7 +139,7 @@ export default function OtpMigrationScreen() {
                 testID="otp-migration-phone-input"
                 value={phone}
                 onChangeText={(text) => setPhone(text.replace(/\D/g, '').slice(0, 8))}
-                placeholder={t('auth.otpMigration.placeholder', '9911 2233')}
+                placeholder={t('auth.otpMigration.placeholder')}
                 keyboardType="number-pad"
                 maxLength={8}
                 editable={!isLoading}
@@ -154,7 +151,7 @@ export default function OtpMigrationScreen() {
 
           <Button
             testID="otp-migration-submit-button"
-            label={t('auth.otpMigration.submit', 'Код авах')}
+            label={t('auth.otpMigration.submit')}
             isLoading={isLoading}
             disabled={isSubmitDisabled}
             onPress={handleSubmit}
@@ -164,7 +161,7 @@ export default function OtpMigrationScreen() {
           {!isLoading ? (
             <Button
               testID="otp-migration-skip-button"
-              label={t('auth.otpMigration.skip', 'Дараа хийх')}
+              label={t('auth.otpMigration.skip')}
               variant="ghost"
               onPress={handleSkip}
               style={{ minHeight: 44 }}

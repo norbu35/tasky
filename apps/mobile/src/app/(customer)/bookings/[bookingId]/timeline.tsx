@@ -24,25 +24,25 @@ function formatTimestamp(ts: string): string {
 function getEventLabel(event: string): string {
   switch (event) {
     case 'booking_created':
-      return 'Захиалга үүсгэсэн';
+      return t('BookingTimelineScreen.copy1');
     case 'tasker_assigned':
-      return 'Гүйцэтгэгч томилогдсон';
+      return t('BookingTimelineScreen.copy2');
     case 'reschedule_requested':
-      return 'Цаг өөрчлөх хүсэлт';
+      return t('BookingTimelineScreen.copy3');
     case 'reschedule_accepted':
-      return 'Цаг өөрчлөлт зөвшөөрсөн';
+      return t('BookingTimelineScreen.copy4');
     case 'reschedule_declined':
-      return 'Цаг өөрчлөлт татгалзсан';
+      return t('BookingTimelineScreen.copy5');
     case 'reschedule_expired':
-      return 'Хүсэлт дууссан';
+      return t('BookingTimelineScreen.copy6');
     case 'tasker_marked_done':
-      return 'Гүйцэтгэгч дуусгасан';
+      return t('BookingTimelineScreen.copy7');
     case 'customer_confirmed':
-      return 'Хэрэглэгч баталгаажуулсан';
+      return t('BookingTimelineScreen.copy8');
     case 'cancelled':
-      return 'Захиалга цуцалсан';
+      return t('BookingTimelineScreen.copy9');
     case 'no_show':
-      return 'Ирээгүй гэж тэмдэглэсэн';
+      return t('BookingTimelineScreen.copy10');
     default:
       return event;
   }
@@ -150,12 +150,12 @@ export default function BookingTimelineScreen() {
               </Text>
               <Text className="text-title font-bold text-primaryDeep leading-tight" numberOfLines={2}>
                 {booking?.task?.description ??
-                  t('customer.bookings.timelineFallbackTitle', 'Даалгаврын дэлгэрэнгүй')}
+                  t('customer.bookings.timelineFallbackTitle')}
               </Text>
               <Text className="text-caption text-textSecondary" numberOfLines={1}>
                 {booking?.tasker?.full_name
-                  ? `${booking.tasker.full_name} (${t('customer.bookings.timelineTasker', 'Гүйцэтгэгч')})`
-                  : t('customer.bookings.timelineTaskerFallback', 'Гүйцэтгэгч')}
+                  ? `${booking.tasker.full_name} (${t('customer.bookings.timelineTasker')})`
+                  : t('customer.bookings.timelineTaskerFallback')}
               </Text>
             </View>
           </View>
@@ -183,15 +183,12 @@ export default function BookingTimelineScreen() {
           <View className="bg-primaryDeep rounded-lg p-lg gap-md">
             <View className="flex-row items-center justify-between">
               <Text className="text-title font-bold text-primaryForeground">
-                {t('customer.bookings.helpTitle', 'Тусламж хэрэгтэй юу?')}
+                {t('customer.bookings.helpTitle')}
               </Text>
               <CircleHelp size={18} color={colors.secondary} />
             </View>
             <Text className="text-body text-accent leading-relaxed">
-              {t(
-                'customer.bookings.helpBody',
-                'Хэрэв танд захиалгын талаар асуулт гарвал манай дэмжлэгийн багтай холбогдоорой.',
-              )}
+              {t('BookingTimelineScreen.copy1')}
             </Text>
             <Pressable
               accessibilityRole="button"
@@ -200,7 +197,7 @@ export default function BookingTimelineScreen() {
               testID="booking-timeline-help-cta"
             >
               <Text className="text-label font-bold text-secondaryForeground">
-                {t('customer.bookings.helpCta', 'Оператортой холбогдох')}
+                {t('customer.bookings.helpCta')}
               </Text>
             </Pressable>
           </View>
@@ -213,10 +210,7 @@ export default function BookingTimelineScreen() {
               testID="booking-timeline-error"
             >
               <Text className="text-label font-semibold text-dangerForeground">
-                {t(
-                  'customer.bookings.timelineError',
-                  'Захиалгын түүх ачааллахад алдаа гарлаа. Дахин оролдох.',
-                )}
+                {t('BookingTimelineScreen.copy2')}
               </Text>
             </Pressable>
           ) : null}

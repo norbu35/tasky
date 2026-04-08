@@ -14,7 +14,7 @@ import type { Category } from '../../../../lib/mobileApiClient';
 const { colors, radius } = mobileTheme;
 
 type CategoryVisual = {
-  description: string;
+  descriptionKey: string;
   icon: typeof Sparkles;
   tint: string;
   tone: string;
@@ -25,7 +25,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('clean')) {
     return {
-      description: 'Deep, regular, or move-out',
+      descriptionKey: 'CategorySelectionScreen.cleaningDescription',
       icon: Sparkles,
       tint: colors.primary,
       tone: `${colors.primary}12`,
@@ -34,7 +34,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('handy') || normalized.includes('repair')) {
     return {
-      description: 'Repairs and installations',
+      descriptionKey: 'CategorySelectionScreen.repairDescription',
       icon: Hammer,
       tint: colors.secondary,
       tone: `${colors.secondary}1A`,
@@ -43,7 +43,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('moving')) {
     return {
-      description: 'Furniture, boxes, delivery',
+      descriptionKey: 'CategorySelectionScreen.movingDescription',
       icon: Package,
       tint: colors.accent,
       tone: `${colors.accent}1A`,
@@ -52,7 +52,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('laundry')) {
     return {
-      description: 'Wash, fold, and iron',
+      descriptionKey: 'CategorySelectionScreen.laundryDescription',
       icon: Shirt,
       tint: colors.primaryDeep,
       tone: `${colors.primaryDeep}14`,
@@ -61,7 +61,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('electric')) {
     return {
-      description: 'Wiring, lighting, outlets',
+      descriptionKey: 'CategorySelectionScreen.electricDescription',
       icon: Bolt,
       tint: colors.secondary,
       tone: `${colors.secondary}1A`,
@@ -70,7 +70,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 
   if (normalized.includes('garden')) {
     return {
-      description: 'Mowing, weeding, planting',
+      descriptionKey: 'CategorySelectionScreen.gardenDescription',
       icon: Leaf,
       tint: colors.trust,
       tone: `${colors.trust}18`,
@@ -78,7 +78,7 @@ function getCategoryVisual(name: string): CategoryVisual {
   }
 
   return {
-    description: 'Pick the best fit and add details next',
+    descriptionKey: 'CategorySelectionScreen.defaultDescription',
     icon: Sparkles,
     tint: colors.primary,
     tone: `${colors.primary}12`,
@@ -86,6 +86,7 @@ function getCategoryVisual(name: string): CategoryVisual {
 }
 
 function CategoryCard({ category, onPress }: { category: Category; onPress: () => void }) {
+  const { t } = useTranslation();
   const visual = getCategoryVisual(category.name);
   const Icon = visual.icon;
 
@@ -114,6 +115,9 @@ function CategoryCard({ category, onPress }: { category: Category; onPress: () =
       </View>
       <Text className="text-body font-sans-semibold mt-xl" style={{ color: colors.primaryDeep }}>
         {category.name}
+      </Text>
+      <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
+        {t(visual.descriptionKey)}
       </Text>
     </Pressable>
   );
@@ -155,7 +159,7 @@ export default function CategorySelectionScreen() {
       totalSteps={7}
       onNext={handleCategorySelect}
       showBack={false}
-      nextLabel={t('common.continue', 'Continue')}
+      nextLabel={t('common.continue')}
       nextDisabled={!selectedCategory}
       testID="SCR-CUST-002"
     >
@@ -168,7 +172,7 @@ export default function CategorySelectionScreen() {
         <Input
           value={query}
           onChangeText={setQuery}
-          placeholder={t('CategorySelectionScreen.searchPlaceholder', 'Ангилал хайх...')}
+          placeholder={t('CategorySelectionScreen.searchPlaceholder')}
           testID="category-selection-search"
           style={{ flex: 1, borderWidth: 0, paddingHorizontal: 0, paddingVertical: 0, minHeight: 40, backgroundColor: 'transparent' }}
         />
@@ -179,10 +183,7 @@ export default function CategorySelectionScreen() {
         className="text-label"
         style={{ color: colors.textSecondary, lineHeight: 22, maxWidth: 274 }}
       >
-        {t(
-          'customer.postTask.categorySupport',
-          'Танд тусламж хэрэгтэй байгаа салбараа сонгоно уу. Бид танд мэргэжлийн гүйцэтгэгчийг санал болгох болно.',
-        )}
+        {t('CategorySelectionScreen.intro')}
       </Text>
 
       {/* Category grid */}
@@ -204,13 +205,13 @@ export default function CategorySelectionScreen() {
           style={[{ borderRadius: radius.md, backgroundColor: colors.card }, elevations.soft]}
         >
           <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
-            {t('CategorySelectionScreen.loadError', 'Failed to load categories')}
+            {t('CategorySelectionScreen.loadError')}
           </Text>
           <Text
             className="text-caption"
             style={{ color: colors.textSecondary, lineHeight: 18 }}
           >
-            {t('CategorySelectionScreen.loadHint', 'Pull to refresh or try again shortly.')}
+            {t('CategorySelectionScreen.loadHint')}
           </Text>
           <Pressable
             onPress={() => refetch()}
@@ -219,7 +220,7 @@ export default function CategorySelectionScreen() {
             testID="category-selection-retry"
           >
             <Text className="text-caption font-sans-bold" style={{ color: colors.secondaryForeground }}>
-              {t('CategorySelectionScreen.retry', 'Try again')}
+              {t('CategorySelectionScreen.retry')}
             </Text>
           </Pressable>
         </View>
@@ -229,7 +230,7 @@ export default function CategorySelectionScreen() {
           style={{ borderRadius: radius.md, backgroundColor: colors.card }}
         >
           <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
-            {t('CategorySelectionScreen.noCategories', 'No categories available')}
+            {t('CategorySelectionScreen.noCategories')}
           </Text>
         </View>
       ) : (
@@ -253,16 +254,13 @@ export default function CategorySelectionScreen() {
           className="text-subtitle font-sans-bold mb-xs"
           style={{ color: colors.primaryForeground }}
         >
-          {t('CategorySelectionScreen.featuredTitle', 'Мэргэжлийн зөвлөгөө')}
+          {t('CategorySelectionScreen.featuredTitle')}
         </Text>
         <Text
           className="text-caption"
           style={{ color: colors.primaryForeground, opacity: 0.8, lineHeight: 18, maxWidth: 180 }}
         >
-          {t(
-            'customer.postTask.featuredBody',
-            'Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя.',
-          )}
+          {t('CategorySelectionScreen.featuredBody')}
         </Text>
       </View>
     </FormWizardTemplate>

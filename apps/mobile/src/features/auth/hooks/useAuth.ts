@@ -33,6 +33,7 @@ export function useVerifyOtp() {
         console.error('Failed to fetch profile after login', e);
         // Still navigate, profile might be fetched later or retry.
       }
+
       router.replace(
         resolvePostAuthHref(session, useAppStore.getState().hasSeenOnboarding),
       );

@@ -40,7 +40,7 @@ export default function EditProfileScreen() {
     setNameError('');
 
     if (!name.trim()) {
-      setNameError(t('shared.profile.nameRequired', 'Нэр хоосон байж болохгүй'));
+      setNameError(t('shared.profile.nameRequired'));
       return;
     }
 
@@ -60,7 +60,7 @@ export default function EditProfileScreen() {
       totalSteps={1}
       onNext={handleSave}
       onBack={() => router.back()}
-      nextLabel={t('shared.profile.save', 'Хадгалах')}
+      nextLabel={t('shared.profile.save')}
       nextDisabled={isLoading || !isDirty}
       nextLoading={updateMutation.isPending}
       showBack={true}
@@ -71,30 +71,30 @@ export default function EditProfileScreen() {
         <Touchable testID="edit-profile-change-photo" className="flex-row items-center gap-xs">
           <Camera size={16} color={colors.primary} />
           <Text className="text-body text-primary font-medium">
-            {t('shared.profile.changePhoto', 'Зураг солих')}
+            {t('shared.profile.changePhoto')}
           </Text>
         </Touchable>
       </View>
 
       {/* Name Field */}
-      <FormField label={t('shared.profile.nameLabel', 'Нэр')} errorText={nameError || undefined}>
+      <FormField label={t('shared.profile.nameLabel')} errorText={nameError || undefined}>
         <Input
           value={name}
           onChangeText={(text) => {
             setName(text);
             if (nameError) setNameError('');
           }}
-          placeholder={t('shared.profile.namePlaceholder', 'Нэрээ оруулна уу')}
+          placeholder={t('shared.profile.namePlaceholder')}
           maxLength={50}
         />
       </FormField>
 
       {/* Bio Field */}
-      <FormField label={t('shared.profile.bioLabel', 'Миний тухай')}>
+      <FormField label={t('shared.profile.bioLabel')}>
         <Input
           value={bio}
           onChangeText={setBio}
-          placeholder={t('shared.profile.bioPlaceholder', 'Өөрийнхөө тухай бичнэ үү')}
+          placeholder={t('shared.profile.bioPlaceholder')}
           maxLength={200}
           multiline
           numberOfLines={4}

@@ -26,7 +26,7 @@ export default function TaskerCreditsPayScreen() {
       <DetailTemplate testID="SCR-P2-002"
         isError
         onRetry={() => router.replace('/(tasker)/credits/pay')}
-        errorMessage="Could not load top-up options"
+        errorMessage={t('TaskerCreditsPayScreen.copy1')}
       >
         <View />
       </DetailTemplate>
@@ -35,14 +35,14 @@ export default function TaskerCreditsPayScreen() {
 
   return (
     <DetailTemplate
-      ctaLabel="Confirm top up"
+      ctaLabel={t('TaskerCreditsPayScreen.copy2')}
       ctaOnPress={() => router.replace('/(tasker)/credits/history')}
       testID="SCR-P2-002"
     >
       <View className="gap-lg">
         <View className="gap-md">
           <Text className="text-subtitle font-bold text-foreground">
-            {t('tasker.credits.chooseAmount', 'Choose an amount')}
+            {t('tasker.credits.chooseAmount')}
           </Text>
           <View className="gap-sm">
             {amountOptions.map((amount) => (
@@ -70,19 +70,19 @@ export default function TaskerCreditsPayScreen() {
 
         <View className="gap-md">
           <Text className="text-subtitle font-bold text-foreground">
-            {t('tasker.credits.topUpPreview', 'Top-up preview')}
+            {t('tasker.credits.topUpPreview')}
           </Text>
           <View className="p-lg rounded-lg bg-muted">
             <InfoRow
-              label={t('tasker.credits.method', 'Method')}
-              value={t('tasker.credits.mobileWallet', 'Mobile wallet')}
+              label={t('tasker.credits.method')}
+              value={t('tasker.credits.mobileWallet')}
             />
             <InfoRow
-              label={t('tasker.credits.processing', 'Processing')}
-              value={t('tasker.credits.instant', 'Instant')}
+              label={t('tasker.credits.processing')}
+              value={t('tasker.credits.instant')}
             />
             <InfoRow
-              label={t('tasker.credits.balanceAfterTopUp', 'Balance after top up')}
+              label={t('tasker.credits.balanceAfterTopUp')}
               value="32,400 ₮"
             />
           </View>
@@ -90,11 +90,10 @@ export default function TaskerCreditsPayScreen() {
 
         <View className="gap-md">
           <Text className="text-subtitle font-bold text-foreground">
-            {t('tasker.credits.notes', 'Notes')}
+            {t('tasker.credits.notes')}
           </Text>
           <Text className="text-body text-textSecondary leading-relaxed">
-            This shell uses demo data only. Payment rails are not wired in this lane.
-          </Text>
+            {t('TaskerCreditsPayScreen.copy3')}</Text>
         </View>
       </View>
     </DetailTemplate>

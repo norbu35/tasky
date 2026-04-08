@@ -9,7 +9,6 @@ public record VerificationDetail(
         String userName,
         String idCardFrontUrl,
         String idCardBackUrl,
-        String selfieUrl,
         String status,
         String adminNotes,
         String submittedAt,

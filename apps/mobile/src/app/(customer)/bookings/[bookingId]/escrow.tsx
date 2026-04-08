@@ -38,10 +38,10 @@ export default function EscrowScreen() {
       >
         <View className="bg-muted rounded-lg p-xl gap-md" testID="booking-escrow-screen-error">
           <Text className="text-title font-sans-bold text-primaryDeep">
-            {t('customer.bookings.escrowFlow.paymentFailed', 'Payment failed')}
+            {t('customer.bookings.escrowFlow.paymentFailed')}
           </Text>
           <Text className="text-body text-textSecondary leading-[24px]">
-            {t('customer.bookings.escrowFlow.errorDescription', 'Escrow payment cannot proceed currently.')}
+            {t('customer.bookings.escrowFlow.errorDescription')}
           </Text>
         </View>
       </ScrollView>
@@ -57,13 +57,13 @@ export default function EscrowScreen() {
       >
         <View className="bg-muted rounded-lg p-xl gap-md">
           <Text className="text-title font-sans-bold text-primaryDeep">
-            {t('customer.bookings.escrowFlow.paymentConfirmed', 'Payment confirmed')}
+            {t('customer.bookings.escrowFlow.paymentConfirmed')}
           </Text>
           <Text className="text-body font-sans-bold text-primaryDeep">
-            {t('customer.bookings.escrowFlow.escrowSuccess', 'Escrow successful!')}
+            {t('customer.bookings.escrowFlow.escrowSuccess')}
           </Text>
           <Text className="text-body text-textSecondary leading-[24px]">
-            {t('customer.bookings.escrowFlow.escrowHeldDescription', 'Payment is securely held in escrow.')}
+            {t('customer.bookings.escrowFlow.escrowHeldDescription')}
           </Text>
         </View>
       </ScrollView>
@@ -78,32 +78,32 @@ export default function EscrowScreen() {
     >
       <View testID="escrow-screen">
         <Text className="text-heading font-sans-bold text-primaryDeep mb-lg">
-          {t('customer.bookings.escrowFlow.title', 'Escrow Payment')}
+          {t('customer.bookings.escrowFlow.title')}
         </Text>
         <View className="bg-muted rounded-lg p-xl gap-md" style={elevations.soft}>
           <Text className="text-title font-sans-bold text-primaryDeep">
-            {t('customer.bookings.escrowFlow.optInTitle', 'Add protection with escrow payment')}
+            {t('customer.bookings.escrowFlow.optInTitle')}
           </Text>
           <Text className="text-body text-textSecondary leading-[24px]">
-            {t('customer.bookings.escrowFlow.optInDescription', 'Payment will be securely deposited. Tasker receives money only after completion.')}
+            {t('customer.bookings.escrowFlow.optInDescription')}
           </Text>
         </View>
 
         <View className="bg-muted rounded-lg p-lg gap-sm mt-lg">
           <Text className="text-body text-primaryDeep font-medium">
-            {t('customer.bookings.escrowFlow.featureProtection', 'Money protection')}
+            {t('customer.bookings.escrowFlow.featureProtection')}
           </Text>
           <Text className="text-body text-primaryDeep font-medium">
-            {t('customer.bookings.escrowFlow.featureDispute', 'Dispute resolution')}
+            {t('customer.bookings.escrowFlow.featureDispute')}
           </Text>
           <Text className="text-body text-primaryDeep font-medium">
-            {t('customer.bookings.escrowFlow.featureAutoTransfer', 'Automatic transfer')}
+            {t('customer.bookings.escrowFlow.featureAutoTransfer')}
           </Text>
         </View>
 
         <View className="mt-lg">
           <Button
-            label={t('customer.bookings.escrowFlow.useEscrow', 'Use Escrow')}
+            label={t('customer.bookings.escrowFlow.useEscrow')}
             onPress={() => setState('confirm')}
             testID="booking-escrow-screen-cta"
           />
@@ -112,19 +112,19 @@ export default function EscrowScreen() {
         {state === 'confirm' && (
           <View className="bg-muted rounded-lg p-xl gap-md mt-lg" testID="booking-escrow-confirm-sheet">
             <Text className="text-title font-sans-bold text-primaryDeep">
-              {t('customer.bookings.escrowFlow.confirmTitle', 'Confirm')}
+              {t('customer.bookings.escrowFlow.confirmTitle')}
             </Text>
             <Text className="text-body text-textSecondary leading-[24px]">
-              {t('customer.bookings.escrowFlow.sheetDescription', 'By confirming to use Escrow, your payment will be securely held.')}
+              {t('customer.bookings.escrowFlow.sheetDescription')}
             </Text>
             <Button
-              label={t('customer.bookings.escrowFlow.continueBtn', 'Continue')}
+              label={t('customer.bookings.escrowFlow.continueBtn')}
               onPress={() => setState('success')}
               testID="booking-escrow-confirm"
             />
             <Pressable onPress={() => setState('shell')}>
               <Text className="text-body text-textSecondary text-center">
-                {t('customer.bookings.escrowFlow.cancelText', 'Go back')}
+                {t('customer.bookings.escrowFlow.cancelText')}
               </Text>
             </Pressable>
           </View>

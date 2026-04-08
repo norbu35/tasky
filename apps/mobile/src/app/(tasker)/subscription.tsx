@@ -21,49 +21,49 @@ export default function SubscriptionScreen() {
         testID="subscription-screen"
       >
         <Text className="text-heading font-bold text-primaryDeep">
-          {t('tasker.subscription.title', 'Tasker Pro')}
+          {t('tasker.subscription.title')}
         </Text>
         <Text className="text-title font-semibold text-primaryDeep">
-          {t('tasker.subscription.heroTitle', 'Become a Tasker Pro')}
+          {t('tasker.subscription.heroTitle')}
         </Text>
 
         {isLockedDemo ? (
           <View className="bg-muted rounded-lg p-xl gap-sm" testID="subscription-screen-locked">
             <Text className="text-title font-bold text-primaryDeep">
-              {t('tasker.subscription.ineligibleTitle', 'Not eligible')}
+              {t('tasker.subscription.ineligibleTitle')}
             </Text>
             <Text className="text-body text-textSecondary leading-relaxed">
-              {t('tasker.subscription.ineligibleDesc', 'Tasker Pro requires 4.5+ rating to be eligible')}
+              {t('tasker.subscription.ineligibleDesc')}
             </Text>
           </View>
         ) : (
           <>
             <View className="bg-muted rounded-lg p-xl gap-sm">
               <Text className="text-title font-bold text-primaryDeep">
-                {t('tasker.subscription.planStandard', 'Standard')}
+                {t('tasker.subscription.planStandard')}
               </Text>
               <Text className="text-body text-textSecondary leading-relaxed">
-                {t('tasker.subscription.planStandardDesc', 'More visibility and more trust.')}
+                {t('tasker.subscription.planStandardDesc')}
               </Text>
             </View>
             <View className="bg-muted rounded-lg p-xl gap-sm">
               <Text className="text-title font-bold text-primaryDeep">
-                {t('tasker.subscription.planPremium', 'Premium')}
+                {t('tasker.subscription.planPremium')}
               </Text>
               <Text className="text-body text-textSecondary leading-relaxed">
-                {t('tasker.subscription.heroDescription', 'Priority boost and additional benefits.')}
+                {t('tasker.subscription.heroDescription')}
               </Text>
             </View>
             {status === 'active' ? (
               <View className="self-start bg-trustMuted rounded-lg px-lg py-sm">
                 <Text className="text-body font-bold text-trustForeground">
-                  {t('tasker.subscription.activeLabel', 'Active')}
+                  {t('tasker.subscription.activeLabel')}
                 </Text>
               </View>
             ) : (
               <Button
                 testID="subscription-screen-cta"
-                label={t('tasker.subscription.subscribeAction', 'Subscribe')}
+                label={t('tasker.subscription.subscribeAction')}
                 onPress={() => setStatus('confirming')}
               />
             )}
@@ -74,18 +74,18 @@ export default function SubscriptionScreen() {
       {status === 'confirming' ? (
         <View className="p-xl gap-md bg-background" testID="subscription-confirm-sheet">
           <Text className="text-title font-bold text-primaryDeep">
-            {t('tasker.subscription.confirmTitle', 'Confirm your choice')}
+            {t('tasker.subscription.confirmTitle')}
           </Text>
           <Text className="text-body text-textSecondary leading-relaxed">
-            {t('tasker.subscription.confirmBody', 'Activate Tasker Pro subscription?')}
+            {t('tasker.subscription.confirmBody')}
           </Text>
           <Button
             testID="subscription-confirm"
-            label={t('tasker.subscription.confirmTitle', 'Confirm')}
+            label={t('tasker.subscription.confirmTitle')}
             onPress={() => setStatus('active')}
           />
           <Button
-            label={t('tasker.subscription.cancelText', 'Cancel')}
+            label={t('tasker.subscription.cancelText')}
             variant="ghost"
             onPress={() => setStatus('idle')}
           />

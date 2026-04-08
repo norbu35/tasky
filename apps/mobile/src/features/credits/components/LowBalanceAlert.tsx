@@ -38,7 +38,7 @@ export function LowBalanceAlert({
         <AlertTriangle size={20} color={colors.danger} />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{t('tasker.credits.balanceLow', 'Balance running low')}</Text>
+        <Text style={styles.title}>{t('tasker.credits.balanceLow')}</Text>
         <Text style={styles.balance}>{balanceText}</Text>
         <Text style={styles.description}>{description}</Text>
         <View style={styles.actions}>

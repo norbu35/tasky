@@ -23,16 +23,13 @@ export default function NetworkErrorScreen() {
 
   const headline =
     connectionType === 'slow_connection'
-      ? t('infra.networkError.slowConnection', 'Холболт удаан байна')
-      : t('infra.networkError.noConnection', 'Интернэт холболтгүй байна');
+      ? t('infra.networkError.slowConnection')
+      : t('infra.networkError.noConnection');
 
   const description =
     connectionType === 'slow_connection'
-      ? t('infra.networkError.slowDescription', 'Сүлжээний холболт удаан байна. Түр хүлээнэ үү')
-      : t(
-          'infra.networkError.noConnectionDescription',
-          'Сүлжээний холболтоо шалгаад дахин оролдоно уу',
-        );
+      ? t('infra.networkError.slowDescription')
+      : t('NetworkErrorScreen.copy1');
 
   const handleRetry = useCallback(() => {
     setIsRetrying(true);
@@ -57,7 +54,7 @@ export default function NetworkErrorScreen() {
       <Text className="text-title font-bold text-foreground text-center">{headline}</Text>
       <Text className="text-body text-textSecondary text-center mt-sm leading-6">{description}</Text>
       <Button
-        label={t('infra.networkError.retry', 'Дахин оролдох')}
+        label={t('infra.networkError.retry')}
         onPress={handleRetry}
         isLoading={isRetrying}
         className="self-stretch mt-xl"
@@ -65,7 +62,7 @@ export default function NetworkErrorScreen() {
       />
       {isRestored ? (
         <View className="absolute left-lg right-lg bottom-2xl">
-          <Toast message={t('infra.networkError.restored', 'Холболт сэргэлээ')} variant="success" />
+          <Toast message={t('infra.networkError.restored')} variant="success" />
         </View>
       ) : null}
     </View>

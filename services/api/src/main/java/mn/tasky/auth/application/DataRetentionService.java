@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Handles data retention lifecycle for banned users.
- * After a 90-day retention period, identity data (ID card images, selfie images, DAN references)
+ * After a 90-day retention period, identity data (ID card images, DAN references)
  * is anonymized from verification records.
  */
 @Service
@@ -55,8 +55,8 @@ public class DataRetentionService {
         List<AuthUser> eligible = new ArrayList<>();
         for (AuthUser user : bannedUsers) {
             List<VerificationRequest> verifications = verificationDao.findByUserId(user.id());
-            boolean hasStorageKeys = verifications.stream()
-                    .anyMatch(v -> v.idCardFrontKey() != null || v.idCardBackKey() != null || v.selfieKey() != null);
+            boolean hasStorageKeys =
+                    verifications.stream().anyMatch(v -> v.idCardFrontKey() != null || v.idCardBackKey() != null);
             if (hasStorageKeys) {
                 eligible.add(user);
             }
@@ -72,19 +72,17 @@ public class DataRetentionService {
         List<VerificationRequest> verifications = verificationDao.findByUserId(userId);
 
         for (VerificationRequest v : verifications) {
-            if (v.idCardFrontKey() == null && v.idCardBackKey() == null && v.selfieKey() == null) {
+            if (v.idCardFrontKey() == null && v.idCardBackKey() == null) {
                 continue;
             }
 
             if (featureToggleService.isEnabled("data_retention_dry_run")) {
                 log.info(
-                        "[DRY-RUN] Would anonymize verification {} for user {} "
-                                + "(front_key={}, back_key={}, selfie_key={})",
+                        "[DRY-RUN] Would anonymize verification {} for user {} " + "(front_key={}, back_key={})",
                         v.id(),
                         userId,
                         v.idCardFrontKey(),
-                        v.idCardBackKey(),
-                        v.selfieKey());
+                        v.idCardBackKey());
                 continue;
             }
 
@@ -93,9 +91,6 @@ public class DataRetentionService {
             }
             if (v.idCardBackKey() != null) {
                 s3StorageService.deleteObject(v.idCardBackKey());
-            }
-            if (v.selfieKey() != null) {
-                s3StorageService.deleteObject(v.selfieKey());
             }
             verificationDao.anonymize(v.id());
 

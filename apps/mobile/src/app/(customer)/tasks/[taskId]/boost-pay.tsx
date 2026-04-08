@@ -20,13 +20,13 @@ export default function TaskBoostPayScreen() {
       <View className="items-center py-xl gap-lg">
         <CreditCard size={48} color={colors.primary} />
         <Text className="text-heading font-semibold text-primaryDeep text-center">
-          {t('customer.boostPay.headline', 'Complete Payment')}
+          {t('customer.boostPay.headline')}
         </Text>
         <Text className="text-body text-mutedForeground text-center leading-6">
-          {t('customer.boostPay.body', 'Pay securely via QPay to activate your boost.')}
+          {t('customer.boostPay.body')}
         </Text>
         <Button
-          label={t('customer.boostPay.payNow', 'Pay with QPay')}
+          label={t('customer.boostPay.payNow')}
           onPress={() => {
             // TODO: wire QPay integration
             router.back();
@@ -34,7 +34,7 @@ export default function TaskBoostPayScreen() {
           className="self-stretch"
         />
         <Button
-          label={t('common.goBack', 'Go Back')}
+          label={t('common.goBack')}
           variant="ghost"
           onPress={() => router.back()}
           className="self-stretch"

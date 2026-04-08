@@ -35,22 +35,16 @@ export function TaskCancelSheet({
   const isAssigned = taskStatus === 'ASSIGNED';
   const isLate = isAssigned && isLateCancellation;
   const title = isLate
-    ? t('customer.cancelSheet.titleLate', 'Late Cancellation')
+    ? t('customer.cancelSheet.titleLate')
     : isAssigned
-      ? t('customer.cancelSheet.titleAssigned', 'Cancel this booking?')
-      : t('customer.cancelSheet.titleOpen', 'Cancel this task?');
+      ? t('customer.cancelSheet.titleAssigned')
+      : t('customer.cancelSheet.titleOpen');
 
   const body = isLate
-    ? t(
-        'customer.cancelSheet.bodyLate',
-        'Cancelling within 4 hours of schedule. This will be recorded as a reliability incident',
-      )
+    ? t('TaskCancelSheet.copy1')
     : isAssigned
-      ? t(
-          'customer.cancelSheet.bodyAssigned',
-          'Cancelling more than 4 hours before schedule incurs no penalty',
-        )
-      : t('customer.cancelSheet.bodyOpen', 'Cancelling this task has no penalty');
+      ? t('TaskCancelSheet.copy2')
+      : t('customer.cancelSheet.bodyOpen');
 
   const handleConfirmCancel = async () => {
     try {
@@ -84,16 +78,13 @@ export function TaskCancelSheet({
         {isLate ? (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              {t(
-                'customer.cancelSheet.lateWarningDetail',
-                '2 late cancellations within 28 days will affect your ranking',
-              )}
+              {t('TaskCancelSheet.copy3')}
             </Text>
           </View>
         ) : null}
 
         <Button
-          label={t('customer.cancelSheet.confirm', 'Yes, Cancel')}
+          label={t('customer.cancelSheet.confirm')}
           variant="destructive"
           onPress={handleConfirmCancel}
           isLoading={cancelBooking.isPending}
@@ -101,7 +92,7 @@ export function TaskCancelSheet({
         />
 
         <Pressable onPress={onClose} style={styles.goBackButton}>
-          <Text style={styles.goBackText}>{t('customer.cancelSheet.goBack', 'Go Back')}</Text>
+          <Text style={styles.goBackText}>{t('customer.cancelSheet.goBack')}</Text>
         </Pressable>
       </View>
     </ModalSheetTemplate>

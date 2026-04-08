@@ -100,20 +100,17 @@ export default function BookingConfirmedScreen() {
         </View>
 
         <Text className="text-heading font-sans-bold text-primary-deep text-center tracking-tight px-md leading-tight">
-          {t('customer.bookings.confirmedHeadline', 'Захиалга баталгаажлаа!')}
+          {t('customer.bookings.confirmedHeadline')}
         </Text>
 
         <Text className="text-body text-text-secondary text-center px-md leading-relaxed">
-          {t(
-            'customer.bookings.confirmedNextSteps',
-            'Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.',
-          )}
+          {t('BookingConfirmedScreen.copy1')}
         </Text>
 
         <View className="self-stretch mt-md">
           <View className="rounded-full px-md py-xs bg-muted self-center">
             <Text className="text-label font-sans-bold text-secondary uppercase tracking-wide">
-              {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
+              {t('customer.bookings.nextStepsHeading')}
             </Text>
           </View>
         </View>
@@ -127,13 +124,10 @@ export default function BookingConfirmedScreen() {
           </View>
           <View className="flex-1" style={{ gap: spacing.xs }}>
             <Text className="text-body font-sans-bold text-primary-deep leading-snug">
-              {t('customer.bookings.nextStepsTitle', 'Товлосон цагтаа ирнэ')}
+              {t('customer.bookings.nextStepsTitle')}
             </Text>
             <Text className="text-label text-text-secondary leading-relaxed">
-              {t(
-                'customer.bookings.nextStepsBody',
-                'Таны сонгосон цагт гүйцэтгэгч заасан хаяг дээр очиж үйлчилгээг эхлүүлнэ. Түүнээс өмнө танд сануулах мессеж очно.',
-              )}
+              {t('BookingConfirmedScreen.copy2')}
             </Text>
           </View>
         </View>
@@ -148,10 +142,10 @@ export default function BookingConfirmedScreen() {
             </View>
             <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
               <Text className="text-micro text-text-secondary">
-                {t('customer.bookings.providerLabel', 'Гүйцэтгэгч')}
+                {t('customer.bookings.providerLabel')}
               </Text>
               <Text className="text-body font-sans-bold text-primary-deep">
-                {t('customer.bookings.providerName', 'Б. Тэмүүлэн')}
+                {t('customer.bookings.providerName')}
               </Text>
             </View>
           </View>
@@ -174,7 +168,7 @@ export default function BookingConfirmedScreen() {
           >
             <CalendarPlus2 size={18} color={colors.secondary} />
             <Text className="text-label font-sans-bold text-secondary">
-              {t('customer.bookings.addToCalendar', 'Календарьт нэмэх')}
+              {t('customer.bookings.addToCalendar')}
             </Text>
           </Touchable>
         ) : null}
@@ -193,14 +187,14 @@ export default function BookingConfirmedScreen() {
               style={{ minHeight: 52, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: spacing.sm }}
             >
               <Text className="text-body font-sans-bold text-primary-foreground">
-                {t('customer.bookings.ctaViewBooking', 'Захиалга харах')}
+                {t('customer.bookings.ctaViewBooking')}
               </Text>
               <ArrowRight size={18} color={colors.primaryForeground} />
             </LinearGradient>
           </Touchable>
 
           <Button
-            label={t('customer.bookings.ctaDone', 'Дууслаа')}
+            label={t('customer.bookings.ctaDone')}
             variant="outline"
             onPress={handleDone}
             testID="booking-confirmed-screen-secondary-cta"

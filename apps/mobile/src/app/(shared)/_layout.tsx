@@ -11,46 +11,46 @@ export default function SharedLayout() {
         name="profile/edit"
         options={{
           ...modalStackScreenOptions,
-          title: t('shared.profile.editTitle', 'Edit Profile'),
+          title: t('shared.profile.editTitle'),
         }}
       />
       <Stack.Screen
         name="profile/settings"
-        options={{ title: t('shared.profile.settings', 'Settings') }}
+        options={{ title: t('shared.profile.settings') }}
       />
       <Stack.Screen
         name="profile/delete"
         options={{
           ...modalStackScreenOptions,
-          title: t('shared.profile.deleteTitle', 'Delete Account'),
+          title: t('shared.profile.deleteTitle'),
         }}
       />
       {/* Notifications */}
       <Stack.Screen
         name="notifications"
-        options={{ title: t('shared.notifications.title', 'Notifications') }}
+        options={{ title: t('shared.notifications.title') }}
       />
       {/* Reviews */}
       <Stack.Screen
         name="review/[bookingId]"
         options={{
           ...modalStackScreenOptions,
-          title: t('shared.review.title', 'Leave a Review'),
+          title: t('shared.review.title'),
         }}
       />
       {/* Legal */}
       <Stack.Screen
         name="legal/terms"
-        options={{ title: t('shared.legal.termsTitle', 'Terms of Service') }}
+        options={{ title: t('shared.legal.termsTitle') }}
       />
       <Stack.Screen
         name="legal/privacy"
-        options={{ title: t('shared.legal.privacyTitle', 'Нууцлалын бодлого') }}
+        options={{ title: t('shared.legal.privacyTitle') }}
       />
       {/* Help */}
       <Stack.Screen
         name="help"
-        options={{ title: t('shared.help.title', 'Help & Support') }}
+        options={{ title: t('shared.help.title') }}
       />
       {/* Infrastructure — full-screen, no header */}
       <Stack.Screen name="network-error" options={{ headerShown: false }} />

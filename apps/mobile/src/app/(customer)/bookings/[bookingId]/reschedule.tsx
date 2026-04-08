@@ -84,7 +84,7 @@ export default function RescheduleScreen() {
   const calendarCells = React.useMemo(() => buildCalendarCells(visibleMonth), [visibleMonth]);
   const scheduledAtLabel = booking?.task?.scheduled_at
     ? formatDateTime(booking.task.scheduled_at)
-    : t('customer.bookings.scheduleUnavailable', 'Хуваарь тодорхойгүй');
+    : t('customer.bookings.scheduleUnavailable');
 
   const updateSelectedTime = React.useCallback((time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
@@ -126,7 +126,7 @@ export default function RescheduleScreen() {
           <View className="flex-row items-center justify-between bg-muted rounded-lg p-lg">
             <View className="flex-1 gap-xs">
               <Text className="text-body text-text-secondary">
-                {t('customer.bookings.sectionCurrentSchedule', 'Одоогийн хуваарь')}
+                {t('customer.bookings.sectionCurrentSchedule')}
               </Text>
               <View className="flex-row items-center gap-sm">
                 <CalendarDays size={16} color={colors.primaryDeep} />
@@ -147,7 +147,7 @@ export default function RescheduleScreen() {
                 <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
               </View>
               <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
-                {t('customer.bookings.stepChooseDay', 'Өдөр сонгох')}
+                {t('customer.bookings.stepChooseDay')}
               </Text>
             </View>
             <View className="flex-1 h-[2px] mx-sm bg-border" />
@@ -156,7 +156,7 @@ export default function RescheduleScreen() {
                 <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
               </View>
               <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
-                {t('customer.bookings.stepConfirm', 'Баталгаажуулах')}
+                {t('customer.bookings.stepConfirm')}
               </Text>
             </View>
           </View>
@@ -178,7 +178,7 @@ export default function RescheduleScreen() {
             </View>
 
             <View className="flex-row">
-              {['Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя', 'Ня'].map((day) => (
+              {[t('RescheduleScreen.copy1'), t('RescheduleScreen.copy2'), t('RescheduleScreen.copy3'), t('RescheduleScreen.copy4'), t('RescheduleScreen.copy5'), t('RescheduleScreen.copy6'), t('RescheduleScreen.copy7')].map((day) => (
                 <Text key={day} className="flex-1 text-center text-micro font-sans-bold text-text-secondary tracking-wide">
                   {day}
                 </Text>
@@ -230,7 +230,7 @@ export default function RescheduleScreen() {
             <View className="flex-row items-center gap-xs">
               <Clock3 size={14} color={colors.primaryDeep} />
               <Text className="text-heading font-sans-bold text-primary-deep" style={{ fontWeight: '800' }}>
-                {t('customer.bookings.sectionAvailableTimes', 'Боломжит цагууд')}
+                {t('customer.bookings.sectionAvailableTimes')}
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-sm">
@@ -267,15 +267,12 @@ export default function RescheduleScreen() {
           {/* Reason section */}
           <View className="gap-md">
             <Text className="text-body font-sans-bold text-primary-deep">
-              {t('customer.bookings.labelReason', 'Шалтгаан (заавал биш)')}
+              {t('customer.bookings.labelReason')}
             </Text>
             <View className="min-h-[120px] bg-muted rounded-md p-md">
               <Input
                 style={{ minHeight: 96, color: colors.primaryDeep, fontSize: typography.body, textAlignVertical: 'top' }}
-                placeholder={t(
-                  'customer.bookings.placeholderReason',
-                  'Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...',
-                )}
+                placeholder={t('RescheduleScreen.copy1')}
                 placeholderTextColor={colors.chipInactive}
                 value={reason}
                 onChangeText={setReason}
@@ -286,7 +283,7 @@ export default function RescheduleScreen() {
               />
             </View>
             <Text className="text-caption text-text-secondary">
-              {t('customer.bookings.helperReason', 'Заавал биш')}
+              {t('customer.bookings.helperReason')}
             </Text>
           </View>
 
@@ -297,10 +294,7 @@ export default function RescheduleScreen() {
               className="flex-1 text-caption text-primary-deep"
               style={{ lineHeight: typography.caption * 1.5 }}
             >
-              {t(
-                'customer.bookings.scheduleAuthorityNote',
-                'Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно',
-              )}
+              {t('RescheduleScreen.copy2')}
             </Text>
           </View>
 
@@ -312,36 +306,24 @@ export default function RescheduleScreen() {
               </View>
               <Text className="text-body font-sans-bold text-primary-deep">
                 {requestState === 'awaiting_response'
-                  ? t('customer.bookings.statusAwaiting', 'Хүлээж байна')
+                  ? t('customer.bookings.statusAwaiting')
                   : requestState === 'accepted'
-                    ? t('customer.bookings.statusAccepted', 'Зөвшөөрсөн')
+                    ? t('customer.bookings.statusAccepted')
                     : requestState === 'declined'
-                      ? t('customer.bookings.statusDeclined', 'Татгалзсан')
-                      : t('customer.bookings.statusExpired', 'Хугацаа дууссан')}
+                      ? t('customer.bookings.statusDeclined')
+                      : t('customer.bookings.statusExpired')}
               </Text>
               <Text
                 className="text-label text-text-secondary"
                 style={{ lineHeight: typography.label * 1.5 }}
               >
                 {requestState === 'awaiting_response'
-                  ? t(
-                      'customer.bookings.awaitingMessage',
-                      'Таны хүсэлт илгээгдсэн. Нөгөө тал зөвшөөрөхийг хүлээж байна.',
-                    )
+                  ? t('RescheduleScreen.copy3')
                   : requestState === 'accepted'
-                    ? t(
-                        'customer.bookings.acceptedMessage',
-                        'Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ.',
-                      )
+                    ? t('RescheduleScreen.copy4')
                     : requestState === 'declined'
-                      ? t(
-                          'customer.bookings.declinedMessage',
-                          'Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр.',
-                        )
-                      : t(
-                          'customer.bookings.expiredMessage',
-                          'Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр.',
-                        )}
+                      ? t('RescheduleScreen.copy5')
+                      : t('RescheduleScreen.copy6')}
               </Text>
             </View>
           ) : null}
@@ -366,7 +348,7 @@ export default function RescheduleScreen() {
               ]}
             >
               <Text className="text-body font-sans-bold text-primary-foreground">
-                {t('customer.bookings.ctaSubmitReschedule', 'Хүсэлт илгээх')}
+                {t('customer.bookings.ctaSubmitReschedule')}
               </Text>
               <ArrowRight size={18} color={colors.primaryForeground} />
             </LinearGradient>

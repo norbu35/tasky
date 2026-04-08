@@ -29,13 +29,10 @@ export default function SuspendedAccountScreen() {
         <TriangleAlert size={32} color={colors.danger} />
       </View>
       <Text className="text-title font-bold text-foreground text-center mb-md">
-        {t('shared.account.suspendedTitle', 'Бүртгэл түр хаагдсан')}
+        {t('shared.account.suspendedTitle')}
       </Text>
       <Text className="text-body text-textSecondary text-center leading-6">
-        {t(
-          'shared.account.suspendedBody',
-          'Таны хаягийг манай үйлчилгээний нөхцөл зөрчсөн тул түр хугацаагаар хязгаарлалаа.',
-        )}
+        {t('SuspendedAccountScreen.copy1')}
       </Text>
       {expiryDate && (
         <Text className="text-body font-semibold text-danger text-center mt-md">
@@ -43,7 +40,7 @@ export default function SuspendedAccountScreen() {
         </Text>
       )}
       <Button
-        label={t('shared.account.suspendedAppeal', 'Гомдол гаргах')}
+        label={t('shared.account.suspendedAppeal')}
         onPress={() => {
           // Appeal flow - will be connected in a later phase
         }}
@@ -51,7 +48,7 @@ export default function SuspendedAccountScreen() {
         testID="suspended-appeal-button"
       />
       <Button
-        label={t('shared.account.logout', 'Гарах')}
+        label={t('shared.account.logout')}
         variant="ghost"
         onPress={() => router.replace('/(auth)')}
         className="self-stretch mt-sm"

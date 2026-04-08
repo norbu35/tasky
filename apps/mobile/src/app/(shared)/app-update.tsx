@@ -22,18 +22,12 @@ export default function AppUpdateScreen() {
   const isForce = params.type === 'force';
 
   const title = isForce
-    ? t('infra.appUpdate.forceTitle', 'Шинэчлэлт шаардлагатай')
-    : t('infra.appUpdate.softTitle', 'Шинэ хувилбар гарлаа');
+    ? t('infra.appUpdate.forceTitle')
+    : t('infra.appUpdate.softTitle');
 
   const body = isForce
-    ? t(
-        'infra.appUpdate.forceBody',
-        'Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай',
-      )
-    : t(
-        'infra.appUpdate.softBody',
-        'Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой',
-      );
+    ? t('AppUpdateScreen.copy1')
+    : t('AppUpdateScreen.copy2');
 
   const handleUpdate = useCallback(() => {
     void openURL(APP_STORE_URL);
@@ -51,14 +45,14 @@ export default function AppUpdateScreen() {
       <Text className="text-title font-bold text-foreground text-center">{title}</Text>
       <Text className="text-body text-textSecondary text-center mt-sm leading-6">{body}</Text>
       <Button
-        label={t('infra.appUpdate.softUpdate', 'Шинэчлэх')}
+        label={t('infra.appUpdate.softUpdate')}
         onPress={handleUpdate}
         className="self-stretch mt-xl"
         testID="app-update-screen-update"
       />
       {!isForce && (
         <Button
-          label={t('infra.appUpdate.softDismiss', 'Дараа нь')}
+          label={t('infra.appUpdate.softDismiss')}
           variant="ghost"
           onPress={handleDismiss}
           className="self-stretch mt-md"

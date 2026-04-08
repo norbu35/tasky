@@ -31,7 +31,7 @@ function formatRelativeTimestamp(timestamp: string): string {
   const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
 
   if (diffMinutes < 1) {
-    return 'Дөнгөж сая';
+    return t('NotificationCenterScreen.copy1');
   }
 
   if (diffMinutes < 60) {
@@ -117,7 +117,7 @@ export default function NotificationCenterScreen() {
 
   const notifications = useMemo(() => data?.data ?? [], [data?.data]);
   const rows = useMemo(
-    () => buildRows(notifications, t('label.today', 'Өнөөдөр'), t('label.earlier', 'Өмнөх')),
+    () => buildRows(notifications, t('label.today'), t('label.earlier')),
     [notifications, t],
   );
 
@@ -187,7 +187,7 @@ export default function NotificationCenterScreen() {
           <ArrowLeft size={20} color={colors.foreground} />
         </Pressable>
         <Text className="text-title font-bold text-foreground">
-          {t('shared.notifications.title', 'Мэдэгдлүүд')}
+          {t('shared.notifications.title')}
         </Text>
       </View>
 
@@ -203,14 +203,14 @@ export default function NotificationCenterScreen() {
             <Bell size={32} color={colors.danger} />
           </View>
           <Text className="text-title font-bold text-foreground text-center">
-            {t('shared.notifications.errorTitle', 'Алдаа гарлаа')}
+            {t('shared.notifications.errorTitle')}
           </Text>
           <Text className="mt-sm text-body text-textSecondary text-center" style={{ lineHeight: 24 }}>
-            {t('shared.notifications.errorBody', 'Мэдэгдлүүдийг ачаалахад алдаа гарлаа')}
+            {t('shared.notifications.errorBody')}
           </Text>
           <Button
             testID="notifications-error-retry"
-            label={t('shared.notifications.retry', 'Дахин оролдох')}
+            label={t('shared.notifications.retry')}
             onPress={() => {
               void refetch();
             }}
@@ -220,11 +220,8 @@ export default function NotificationCenterScreen() {
       ) : notifications.length === 0 ? (
         <EmptyStateTemplate
           testID="notifications-empty"
-          title={t('shared.notifications.emptyTitle', 'Мэдэгдэл алга')}
-          description={t(
-            'shared.notifications.emptyDescription',
-            'Танд одоогоор мэдэгдэл ирээгүй байна',
-          )}
+          title={t('shared.notifications.emptyTitle')}
+          description={t('NotificationCenterScreen.copy1')}
           icon={<Bell size={32} color={colors.textSecondary} />}
         />
       ) : (
@@ -236,16 +233,13 @@ export default function NotificationCenterScreen() {
           ListFooterComponent={
             <View className="mt-xl bg-primaryDeep rounded-lg p-lg justify-end" style={{ height: 128 }}>
               <Text className="text-[18px] font-extrabold text-primaryForeground">
-                {t('shared.notifications.promoBannerTitle', 'Tasky Premium')}
+                {t('shared.notifications.promoBannerTitle')}
               </Text>
               <Text
                 className="text-caption mt-xs leading-relaxed"
                 style={{ color: `${colors.primaryForeground}99` }}
               >
-                {t(
-                  'shared.notifications.promoBannerBody',
-                  'Баталгаажсан гүйцэтгэгчидтэй хурдан холбогдоорой',
-                )}
+                {t('NotificationCenterScreen.copy2')}
               </Text>
             </View>
           }

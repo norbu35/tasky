@@ -96,7 +96,7 @@ export default function TaskDetailScreen() {
         ctaOnPress={ctaOnPress}
         ctaLoading={isApplying}
         ctaDisabled={ctaDisabled}
-        secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton', 'Message') : undefined}
+        secondaryCtaLabel={isVerified ? t('tasker.taskDetail.messageButton') : undefined}
         secondaryCtaOnPress={isVerified ? handleMessageCustomer : undefined}
         isLoading={isLoading}
         isError={isError}
@@ -143,10 +143,7 @@ export default function TaskDetailScreen() {
                 </Text>
                 <LocationPin text={task.approximate_location} />
                 <Text className="text-caption text-textSecondary leading-[20px] mt-xs">
-                  {t(
-                    'tasker.taskDetail.locationApproximateNote',
-                    'Approximate location (exact address shown after booking confirmed)',
-                  )}
+                  {t('TaskDetailScreen.copy1')}
                 </Text>
               </View>
             )}
@@ -155,7 +152,7 @@ export default function TaskDetailScreen() {
             {task.scheduled_at && (
               <View className="gap-xs bg-muted rounded-md p-md">
                 <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
-                  {t('taskDetail.dateTime', 'Date & Time')}
+                  {t('taskDetail.dateTime')}
                 </Text>
                 <Text className="text-body text-foreground">
                   {new Date(task.scheduled_at).toLocaleDateString('en', {
@@ -172,7 +169,7 @@ export default function TaskDetailScreen() {
             {task.photo_urls.length > 0 && (
               <View className="gap-xs bg-muted rounded-md p-md">
                 <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
-                  {t('tasker.taskDetail.photosLabel', 'Photos')}
+                  {t('tasker.taskDetail.photosLabel')}
                 </Text>
                 <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
               </View>
@@ -181,16 +178,13 @@ export default function TaskDetailScreen() {
             {/* Application count */}
             {task.application_count > 0 && (
               <Text className="text-label text-textSecondary mt-sm">
-                {task.application_count} {t('customer.taskDetail.applicants', 'applicants')}
+                {task.application_count} {t('TaskDetailCustomerScreen.applicants')}
               </Text>
             )}
 
             <TrustBanner
-              title={t('tasker.taskDetail.trustTitle', 'Platform trust')}
-              description={t(
-                'tasker.taskDetail.trustDescription',
-                'Verified taskers and consistent reviews help protect both sides of every booking.',
-              )}
+              title={t('tasker.taskDetail.trustTitle')}
+              description={t('TaskDetailScreen.copy2')}
               variant="compact"
             />
           </View>

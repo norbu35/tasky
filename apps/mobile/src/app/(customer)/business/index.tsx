@@ -18,13 +18,13 @@ export default function BusinessDashboardScreen() {
       keyExtractor={(item: any) => item.key}
       isLoading={false}
       isEmpty
-      emptyTitle={t('b2b.dashboard.empty', 'No business accounts yet')}
-      emptyDescription={t('b2b.dashboard.emptyDesc', 'Create a business account to manage tasks for your team.')}
-      emptyCtaLabel={t('b2b.dashboard.createAccount', 'Create Business Account')}
+      emptyTitle={t('b2b.dashboard.empty')}
+      emptyDescription={t('b2b.dashboard.emptyDesc')}
+      emptyCtaLabel={t('b2b.dashboard.createAccount')}
       emptyCtaOnPress={() => router.push('/(customer)/business/new/details')}
       ListHeaderComponent={
         <Button
-          label={t('b2b.dashboard.createAccount', 'Create Business Account')}
+          label={t('b2b.dashboard.createAccount')}
           onPress={() => router.push('/(customer)/business/new/details')}
         />
       }

@@ -80,7 +80,7 @@ const MOCK_CATEGORIES: Category[] = [
 
 const MOCK_CATEGORIES_PAGE: CursorPage<Category> = {
   data: MOCK_CATEGORIES,
-  cursor: { next: null, has_more: false },
+  cursor: { next: null, prev: null },
 };
 
 const MOCK_SCHEMA_VERSIONS: CategorySchemaVersion[] = [
@@ -213,7 +213,7 @@ describe('AdminCategoriesPage', () => {
   it('shows empty state when no categories', async () => {
     vi.mocked(mockApiClient.adminListCategories!).mockResolvedValue({
       data: [],
-      cursor: { next: null, has_more: false },
+      cursor: { next: null, prev: null },
     });
 
     renderPage();

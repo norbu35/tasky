@@ -10,8 +10,8 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 const { colors } = mobileTheme;
 
 const BOOST_OPTIONS = [
-  { id: 'promoted', labelKey: 'customer.boost.promoted', fallback: 'Promoted Listing', price: 5000 },
-  { id: 'urgent', labelKey: 'customer.boost.urgent', fallback: 'Urgent (2x visibility)', price: 10000 },
+  { id: 'promoted', labelKey: 'customer.boost.promoted', fallback: t('TaskBoostScreen.copy1'), price: 5000 },
+  { id: 'urgent', labelKey: 'customer.boost.urgent', fallback: t('TaskBoostScreen.copy2'), price: 10000 },
 ];
 
 export default function TaskBoostScreen() {
@@ -26,10 +26,10 @@ export default function TaskBoostScreen() {
       <View className="items-center py-xl gap-lg">
         <Zap size={48} color={colors.secondary} />
         <Text className="text-heading font-semibold text-primaryDeep text-center">
-          {t('customer.boost.headline', 'Boost Your Task')}
+          {t('customer.boost.headline')}
         </Text>
         <Text className="text-body text-mutedForeground text-center leading-6">
-          {t('customer.boost.body', 'Increase visibility to attract more applicants faster.')}
+          {t('customer.boost.body')}
         </Text>
         {BOOST_OPTIONS.map((opt) => (
           <Button
@@ -41,7 +41,7 @@ export default function TaskBoostScreen() {
           />
         ))}
         <Button
-          label={t('customer.boost.continue', 'Continue to Payment')}
+          label={t('customer.boost.continue')}
           onPress={() => router.push('/(customer)/tasks/[taskId]/boost-pay')}
           disabled={!selected}
           className="self-stretch"

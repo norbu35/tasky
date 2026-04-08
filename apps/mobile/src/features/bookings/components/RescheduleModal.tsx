@@ -55,12 +55,12 @@ export function RescheduleModal({
         />
         <View style={styles.sheet}>
           {/* Title */}
-          <Text style={styles.title}>{t('reschedule.title', 'Propose New Schedule')}</Text>
+          <Text style={styles.title}>{t('reschedule.title')}</Text>
 
           {/* Current Schedule */}
           <View style={styles.currentSchedule}>
             <Text style={styles.currentLabel}>
-              {t('reschedule.currentSchedule', 'Current Schedule')}
+              {t('reschedule.currentSchedule')}
             </Text>
             <View style={styles.currentRow}>
               <Text style={styles.currentValue}>{currentDate}</Text>
@@ -71,9 +71,9 @@ export function RescheduleModal({
 
           {/* Date Input */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>{t('reschedule.newDate', 'New Date')}</Text>
+            <Text style={styles.fieldLabel}>{t('reschedule.newDate')}</Text>
             <Input
-              placeholder={t('reschedule.datePlaceholder', 'Select new date')}
+              placeholder={t('reschedule.datePlaceholder')}
               value={newDate}
               onChangeText={setNewDate}
             />
@@ -81,9 +81,9 @@ export function RescheduleModal({
 
           {/* Time Input */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>{t('reschedule.newTime', 'New Time')}</Text>
+            <Text style={styles.fieldLabel}>{t('reschedule.newTime')}</Text>
             <Input
-              placeholder={t('reschedule.timePlaceholder', 'Select new time')}
+              placeholder={t('reschedule.timePlaceholder')}
               value={newTime}
               onChangeText={setNewTime}
             />
@@ -92,11 +92,11 @@ export function RescheduleModal({
           {/* Reason Input */}
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>
-              {t('reschedule.reason', 'Reason')}{' '}
-              <Text style={styles.optionalTag}>({t('common.optional', 'optional')})</Text>
+              {t('reschedule.reason')}{' '}
+              <Text style={styles.optionalTag}>({t('common.optional')})</Text>
             </Text>
             <Input
-              placeholder={t('reschedule.reasonPlaceholder', 'Why do you need to reschedule?')}
+              placeholder={t('reschedule.reasonPlaceholder')}
               value={reason}
               onChangeText={setReason}
               multiline
@@ -107,14 +107,14 @@ export function RescheduleModal({
 
           {/* Actions */}
           <Button
-            label={t('reschedule.submit', 'Send Request')}
+            label={t('reschedule.submit')}
             onPress={handleSubmit}
             disabled={!canSubmit}
             style={styles.submitButton}
           />
 
           <Pressable onPress={handleClose} style={styles.cancelLink}>
-            <Text style={styles.cancelText}>{t('common.cancel', 'Cancel')}</Text>
+            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
           </Pressable>
         </View>
       </View>

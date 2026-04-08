@@ -31,19 +31,13 @@ export default function PermissionCameraScreen() {
     <ScreenContainer testID="SCR-SHARED-007">
       <PermissionPrimer
         icon={<Camera size={48} color={colors.primaryDeep} />}
-        title={t('auth.permissions.camera.title', 'Камер ашиглах зөвшөөрөл')}
-        description={t(
-          'auth.permissions.camera.description',
-          'Зураг оруулах, баталгаажуулалт хийхэд камер хэрэгтэй',
-        )}
-        deniedMessage={t('auth.permissions.camera.denied', 'Камерын зөвшөөрөл хаагдсан')}
-        settingsHint={t(
-          'auth.permissions.camera.settingsHint',
-          'Тохиргооноос камерыг нээх боломжтой',
-        )}
-        continueLabel={t('auth.permissions.continueLabel', 'Үргэлжлүүлэх')}
-        allowLabel={t('auth.permissions.allowLabel', 'Зөвшөөрөх')}
-        skipLabel={t('auth.permissions.skipLabel', 'Дараа хийх')}
+        title={t('auth.permissions.camera.title')}
+        description={t('PermissionCameraScreen.copy1')}
+        deniedMessage={t('auth.permissions.camera.denied')}
+        settingsHint={t('PermissionCameraScreen.copy2')}
+        continueLabel={t('auth.permissions.continueLabel')}
+        allowLabel={t('auth.permissions.allowLabel')}
+        skipLabel={t('auth.permissions.skipLabel')}
         isDenied={isDenied}
         onGrant={() => {
           void handleGrant();

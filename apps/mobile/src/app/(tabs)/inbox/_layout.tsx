@@ -11,7 +11,7 @@ export default function InboxLayout() {
   if (!session) {
     return (
       <SafeAreaView edges={['top']} className="flex-1 bg-background">
-        <LoginRequiredCTA message={t('auth.loginReason', 'You need to be logged in to view and send messages.')} />
+        <LoginRequiredCTA message={t('auth.loginReason')} />
       </SafeAreaView>
     );
   }

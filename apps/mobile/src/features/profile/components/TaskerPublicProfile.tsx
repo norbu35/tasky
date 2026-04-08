@@ -67,7 +67,7 @@ export function TaskerPublicProfile() {
         <Pressable onPress={() => router.back()} style={styles.headerButton}>
           <ChevronLeft size={16} color={colors.foreground} />
         </Pressable>
-        <Text style={styles.headerTitle}>{t('profile.title', 'Profile')}</Text>
+        <Text style={styles.headerTitle}>{t('profile.title')}</Text>
         <Pressable style={styles.headerButton}>
           <SlidersHorizontal size={18} color={colors.foreground} />
         </Pressable>
@@ -92,7 +92,7 @@ export function TaskerPublicProfile() {
             <Star size={16} color={colors.trustMuted} fill={colors.trustMuted} />
             <Text style={styles.trustRating}>{(profile.rating_avg ?? 0).toFixed(1)}</Text>
             <Text style={styles.trustReviews}>
-              ({profile.completed_tasks ?? 0} {t('profile.reviews', 'reviews')})
+              ({profile.completed_tasks ?? 0} {t('profile.reviews')})
             </Text>
           </View>
         </View>
@@ -101,21 +101,21 @@ export function TaskerPublicProfile() {
         <View style={styles.statsRow}>
           <StatCard
             value={`${profile.completed_tasks ?? 0}+`}
-            label={t('profile.tasks', 'Tasks')}
+            label={t('profile.tasks')}
           />
           <StatCard
             value={`${profile.is_pro ? 'Pro' : '-'}`}
-            label={t('profile.response', 'Status')}
+            label={t('profile.response')}
           />
           <StatCard
             value={`${profile.created_at?.slice(0, 4) ?? ''}`}
-            label={t('profile.joined', 'Joined')}
+            label={t('profile.joined')}
           />
         </View>
 
         {/* Bio */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.bio', 'Bio')}</Text>
+          <Text style={styles.sectionTitle}>{t('profile.bio')}</Text>
           <View style={styles.bioCard}>
             <Text style={styles.bioText}>{profile.full_name}</Text>
           </View>
@@ -124,9 +124,9 @@ export function TaskerPublicProfile() {
         {/* Reviews */}
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>{t('profile.recentReviews', 'Recent Reviews')}</Text>
+            <Text style={styles.sectionTitle}>{t('profile.recentReviews')}</Text>
             <Pressable>
-              <Text style={styles.viewAllLink}>{t('profile.viewAll', 'View All')}</Text>
+              <Text style={styles.viewAllLink}>{t('profile.viewAll')}</Text>
             </Pressable>
           </View>
           <View style={styles.reviewsList}>
@@ -161,7 +161,7 @@ export function TaskerPublicProfile() {
             end={{ x: 1, y: 1 }}
             style={styles.ctaGradient}
           >
-            <Text style={styles.ctaText}>{t('profile.bookSession', 'BOOK A SESSION')}</Text>
+            <Text style={styles.ctaText}>{t('profile.bookSession')}</Text>
           </LinearGradient>
         </Pressable>
       </ScrollView>

@@ -27,60 +27,60 @@ export default function SettingsScreen() {
 
   const sections = [
     {
-      title: t('shared.settings.preferences', 'Тохируулга'),
+      title: t('shared.settings.preferences'),
       rows: [
         {
-          label: t('shared.settings.language', 'Хэл'),
-          value: t('shared.settings.languageValue', 'Монгол'),
+          label: t('shared.settings.language'),
+          value: t('shared.settings.languageValue'),
           onPress: () => {},
           icon: <Globe size={20} color={colors.primary} />,
         },
         {
-          label: t('shared.settings.notifications', 'Мэдэгдэл'),
+          label: t('shared.settings.notifications'),
           onPress: () => router.push('/(shared)/notifications'),
           icon: <Bell size={20} color={colors.primary} />,
         },
       ],
     },
     {
-      title: t('shared.settings.account', 'Бүртгэл'),
+      title: t('shared.settings.account'),
       rows: [
         {
-          label: t('shared.settings.switchRole', 'Дүр солих'),
+          label: t('shared.settings.switchRole'),
           value:
             currentRole === 'customer'
-              ? t('shared.settings.customer', 'Захиалагч')
-              : t('shared.settings.tasker', 'Гүйцэтгэгч'),
+              ? t('shared.settings.customer')
+              : t('shared.settings.tasker'),
           onPress: () => setShowRoleConfirm(true),
           icon: <ArrowLeftRight size={20} color={colors.primary} />,
         },
       ],
     },
     {
-      title: t('shared.settings.legal', 'Хуулийн мэдээлэл'),
+      title: t('shared.settings.legal'),
       rows: [
         {
-          label: t('shared.settings.terms', 'Үйлчилгээний нөхцөл'),
+          label: t('shared.settings.terms'),
           onPress: () => router.push('/(shared)/legal/terms'),
           icon: <FileText size={20} color={colors.primary} />,
         },
         {
-          label: t('shared.settings.privacy', 'Нууцлалын бодлого'),
+          label: t('shared.settings.privacy'),
           onPress: () => router.push('/(shared)/legal/privacy'),
           icon: <Shield size={20} color={colors.primary} />,
         },
         {
-          label: t('shared.settings.help', 'Тусламж & Дэмжлэг'),
+          label: t('shared.settings.help'),
           onPress: () => router.push('/(shared)/help'),
           icon: <HelpCircle size={20} color={colors.primary} />,
         },
       ],
     },
     {
-      title: t('shared.settings.dangerZone', 'Аюултай бүс'),
+      title: t('shared.settings.dangerZone'),
       rows: [
         {
-          label: t('shared.settings.deleteAccount', 'Бүртгэл устгах'),
+          label: t('shared.settings.deleteAccount'),
           onPress: () => setShowDeleteConfirm(true),
           icon: <Trash2 size={20} color={colors.danger} />,
           destructive: true,
@@ -95,9 +95,9 @@ export default function SettingsScreen() {
       <ConfirmSheet
         isOpen={showRoleConfirm}
         onClose={() => setShowRoleConfirm(false)}
-        title={t('shared.settings.switchRoleTitle', 'Дүр солих уу?')}
-        description={t('shared.settings.switchRoleBody', 'Та гүйцэтгэгч болж өөрчлөхдөө итгэлтэй байна уу?')}
-        confirmLabel={t('shared.settings.confirm', 'Батлах')}
+        title={t('shared.settings.switchRoleTitle')}
+        description={t('shared.settings.switchRoleBody')}
+        confirmLabel={t('shared.settings.confirm')}
         onConfirm={() => {
           switchRole();
           setShowRoleConfirm(false);
@@ -106,12 +106,9 @@ export default function SettingsScreen() {
       <ConfirmSheet
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
-        title={t('shared.settings.deleteTitle', 'Бүртгэл устгах уу?')}
-        description={t(
-          'shared.settings.deleteBody',
-          'Энэ үйлдлийг буцаах боломжгүй. Таны бүх мэдээлэл бүрмөсөн устгагдана.',
-        )}
-        confirmLabel={t('shared.settings.confirm', 'Батлах')}
+        title={t('shared.settings.deleteTitle')}
+        description={t('SettingsScreen.copy1')}
+        confirmLabel={t('shared.settings.confirm')}
         isDestructive={true}
         onConfirm={() => {
           router.push('/(shared)/profile/delete');

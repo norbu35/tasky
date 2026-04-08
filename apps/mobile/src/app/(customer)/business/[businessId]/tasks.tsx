@@ -16,8 +16,8 @@ export default function BusinessTaskListScreen() {
       renderItem={() => ({ type: 'placeholder' } as any)}
       keyExtractor={(item: any) => item.type}
       isEmpty
-      emptyTitle={t('b2b.tasks.empty', 'No business tasks yet')}
-      emptyDescription={t('b2b.tasks.emptyDesc', 'Post a task for your business to get started.')}
+      emptyTitle={t('b2b.tasks.empty')}
+      emptyDescription={t('b2b.tasks.emptyDesc')}
     />
   );
 }

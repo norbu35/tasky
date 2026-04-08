@@ -69,8 +69,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
             color: currentLang === 'mn' ? colors.primaryForeground : colors.foreground,
           }}
         >
-          Монгол
-        </Text>
+          {t('LanguageSwitcher.copy1')}</Text>
       </Pressable>
     </View>
   );

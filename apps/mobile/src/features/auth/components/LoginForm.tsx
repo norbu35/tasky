@@ -43,12 +43,12 @@ export function LoginForm() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('auth.welcome', 'Welcome to Tasky')}</Text>
+      <Text style={styles.title}>{t('auth.welcome')}</Text>
 
       {step === 'options' && (
         <View style={styles.optionsContainer}>
           <Button
-            label={t('auth.continueFacebook', 'Continue with Facebook')}
+            label={t('auth.continueFacebook')}
             onPress={handleFacebookLogin}
             style={styles.fbButton}
           />
@@ -60,7 +60,7 @@ export function LoginForm() {
           </View>
 
           <Button
-            label={t('auth.continuePhone', 'Login with Phone (OTP)')}
+            label={t('auth.continuePhone')}
             variant="outline"
             onPress={() => setStep('phone')}
           />
@@ -68,14 +68,14 @@ export function LoginForm() {
           {devAuthEnabled && (
             <>
               <Button
-                label="Dev: Login as Customer"
+                label={t('LoginForm.copy1')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('CUSTOMER')}
                 style={styles.devButton}
                 isLoading={busy}
               />
               <Button
-                label="Dev: Login as Tasker"
+                label={t('LoginForm.copy2')}
                 variant="secondary"
                 onPress={() => handleDevLoginAs('TASKER')}
                 style={styles.devButtonTasker}
@@ -87,11 +87,11 @@ export function LoginForm() {
       )}
 
       {step === 'phone' && (
-        <FormField label={t('auth.phoneNumber', 'Phone Number')}>
+        <FormField label={t('auth.phoneNumber')}>
           <Input
             value={phone}
             onChangeText={setPhone}
-            placeholder={t('auth.phonePlaceholder', '+976...')}
+            placeholder={t('auth.phonePlaceholder')}
             keyboardType="phone-pad"
             editable={!busy && step === 'phone'}
           />
@@ -99,11 +99,11 @@ export function LoginForm() {
       )}
 
       {step === 'otp' && (
-        <FormField label={t('auth.otpCode', 'OTP Code')}>
+        <FormField label={t('auth.otpCode')}>
           <Input
             value={code}
             onChangeText={setCode}
-            placeholder={t('auth.otpPlaceholder', '123456')}
+            placeholder={t('auth.otpPlaceholder')}
             keyboardType="number-pad"
           />
         </FormField>
@@ -111,12 +111,12 @@ export function LoginForm() {
 
       <View style={styles.actions}>
         {step === 'phone' && (
-          <Button label={t('auth.continue', 'Continue')} onPress={handleRequest} isLoading={busy} />
+          <Button label={t('auth.continue')} onPress={handleRequest} isLoading={busy} />
         )}
 
         {step === 'otp' && (
           <Button
-            label={t('auth.verifyLogin', 'Verify & Login')}
+            label={t('auth.verifyLogin')}
             onPress={handleVerify}
             isLoading={busy}
           />
@@ -124,7 +124,7 @@ export function LoginForm() {
 
         {(step === 'phone' || step === 'otp') && (
           <Button
-            label={t('common.back', 'Back')}
+            label={t('common.back')}
             variant="ghost"
             onPress={() => setStep(step === 'otp' ? 'phone' : 'options')}
             disabled={busy}

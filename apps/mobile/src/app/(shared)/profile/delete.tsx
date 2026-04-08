@@ -36,19 +36,16 @@ export default function AccountDeletionScreen() {
         </View>
 
         <Text className="text-title font-bold text-foreground text-center mb-md">
-          {t('shared.profile.deleteTitle', 'Бүртгэл устгах')}
+          {t('shared.profile.deleteTitle')}
         </Text>
 
         {isBlocked ? (
           <>
             <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
-              {t(
-                'shared.profile.deleteBlockedBookings',
-                'Танд идэвхтэй захиалга байна. Бүртгэлээ устгахын өмнө бүх захиалгаа дуусгах эсвэл цуцлах шаардлагатай.',
-              )}
+              {t('AccountDeletionScreen.copy1')}
             </Text>
             <Button
-              label={t('shared.profile.understood', 'Ойлголоо')}
+              label={t('shared.profile.understood')}
               variant="outline"
               onPress={() => router.back()}
               style={{ alignSelf: 'stretch' }}
@@ -57,13 +54,10 @@ export default function AccountDeletionScreen() {
         ) : isDisputeBlocked ? (
           <>
             <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
-              {t(
-                'shared.profile.deleteBlockedDisputes',
-                'Танд шийдвэрлэгдээгүй маргаан байна. Бүртгэлээ устгахын өмнө бүх маргааныг шийдвэрлэх шаардлагатай.',
-              )}
+              {t('AccountDeletionScreen.copy2')}
             </Text>
             <Button
-              label={t('shared.profile.understood', 'Ойлголоо')}
+              label={t('shared.profile.understood')}
               variant="outline"
               onPress={() => router.back()}
               style={{ alignSelf: 'stretch' }}
@@ -72,16 +66,10 @@ export default function AccountDeletionScreen() {
         ) : (
           <>
             <Text className="text-body text-text-secondary text-center mb-xl" style={{ lineHeight: 24 }}>
-              {t(
-                'shared.profile.deleteWarning',
-                'Та бүртгэлээ устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй бөгөөд таны бүх мэдээлэл бүрмөсөн устгагдана.',
-              )}
+              {t('AccountDeletionScreen.copy3')}
             </Text>
             <Text className="text-label text-foreground font-semibold self-stretch mb-sm">
-              {t(
-                'shared.profile.deleteConfirmationPrompt',
-                "Баталгаажуулахын тулд 'DELETE' гэж бичнэ үү",
-              )}
+              {t('AccountDeletionScreen.copy4')}
             </Text>
             <Input
               testID="delete-confirmation-input"
@@ -89,13 +77,13 @@ export default function AccountDeletionScreen() {
               onChangeText={setConfirmationText}
               autoCapitalize="characters"
               autoCorrect={false}
-              placeholder={t('shared.profile.deleteConfirmationPlaceholder', 'DELETE')}
+              placeholder={t('shared.profile.deleteConfirmationPlaceholder')}
               style={{ alignSelf: 'stretch', marginBottom: 24 }}
             />
 
             <View className="self-stretch gap-sm">
               <Button
-                label={t('shared.profile.deleteConfirm', 'Бүртгэлээ устгах')}
+                label={t('shared.profile.deleteConfirm')}
                 variant="destructive"
                 onPress={handleDelete}
                 isLoading={isPending}
@@ -104,7 +92,7 @@ export default function AccountDeletionScreen() {
                 testID="delete-confirm-button"
               />
               <Button
-                label={t('shared.profile.deleteCancel', 'Болих')}
+                label={t('shared.profile.deleteCancel')}
                 variant="ghost"
                 onPress={() => router.back()}
                 disabled={isPending}

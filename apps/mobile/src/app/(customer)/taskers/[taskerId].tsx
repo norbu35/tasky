@@ -28,8 +28,8 @@ export default function TaskerProfileScreen() {
       isLoading={isLoading}
       isError={isError}
       onRetry={profileQuery.refetch}
-      errorMessage={t('customer.taskerProfile.errorNetwork', 'Failed to load profile')}
-      ctaLabel={t('customer.taskerProfile.ctaMessage', 'Message')}
+      errorMessage={t('customer.taskerProfile.errorNetwork')}
+      ctaLabel={t('customer.taskerProfile.ctaMessage')}
       ctaOnPress={() => router.push('/inbox')}
     >
       {profile ? (
@@ -55,14 +55,14 @@ export default function TaskerProfileScreen() {
               <View className="flex-row items-center gap-[8px] bg-trust px-md py-xs rounded-full">
                 <ShieldCheck size={16} color={colors.trustMuted} />
                 <Text className="text-label font-sans-bold text-trustMuted">
-                  {t('customer.taskerProfile.verified', 'Identity Verified')}
+                  {t('customer.taskerProfile.verified')}
                 </Text>
               </View>
             ) : null}
             <View className="flex-row items-center gap-[8px]">
               <CalendarDays size={14} color={colors.textSecondary} />
               <Text className="text-caption text-textSecondary">
-                {t('customer.taskerProfile.memberSince', 'Member since: {date}').replace(
+                {t('customer.taskerProfile.memberSince').replace(
                   '{date}',
                   new Date((profile as any).created_at ?? Date.now()).toLocaleDateString(),
                 )}
@@ -77,7 +77,7 @@ export default function TaskerProfileScreen() {
                 {(profile as any).completed_tasks ?? 0}
               </Text>
               <Text className="text-caption text-textSecondary text-center">
-                {t('customer.taskerProfile.completedJobs', 'Jobs Completed')}
+                {t('customer.taskerProfile.completedJobs')}
               </Text>
             </View>
             <View className="flex-1 bg-muted rounded-lg p-lg items-center gap-xs" style={elevations.soft}>
@@ -85,7 +85,7 @@ export default function TaskerProfileScreen() {
                 {((profile as any).rating_avg ?? 0).toFixed(1)}
               </Text>
               <Text className="text-caption text-textSecondary text-center">
-                {t('customer.taskerProfile.rating', 'Rating')}
+                {t('customer.taskerProfile.rating')}
               </Text>
             </View>
           </View>
@@ -93,17 +93,17 @@ export default function TaskerProfileScreen() {
           {/* About */}
           <View className="gap-md">
             <Text className="text-heading font-sans-bold text-primaryDeep">
-              {t('customer.taskerProfile.about', 'About')}
+              {t('customer.taskerProfile.about')}
             </Text>
             <Text className="text-body text-textSecondary leading-[24px]">
-              {(profile as any).bio ?? t('customer.taskerProfile.noBio', 'No bio yet')}
+              {(profile as any).bio ?? t('customer.taskerProfile.noBio')}
             </Text>
           </View>
 
           {/* Categories */}
           <View className="gap-md">
             <Text className="text-heading font-sans-bold text-primaryDeep">
-              {t('customer.taskerProfile.categories', 'Categories')}
+              {t('customer.taskerProfile.categories')}
             </Text>
             <View className="flex-row flex-wrap gap-sm">
               {categories.length > 0 ? (
@@ -118,7 +118,7 @@ export default function TaskerProfileScreen() {
                 ))
               ) : (
                 <Text className="text-body text-textSecondary">
-                  {t('customer.taskerProfile.noCategories', 'No categories listed')}
+                  {t('customer.taskerProfile.noCategories')}
                 </Text>
               )}
             </View>
@@ -127,12 +127,12 @@ export default function TaskerProfileScreen() {
           {/* Reviews */}
           <View className="gap-md">
             <Text className="text-heading font-sans-bold text-primaryDeep">
-              {t('customer.taskerProfile.reviews', 'Reviews')}
+              {t('customer.taskerProfile.reviews')}
             </Text>
 
             {reviews.length === 0 ? (
               <Text className="text-body text-textSecondary text-center py-xl">
-                {t('customer.taskerProfile.noReviews', 'No reviews yet')}
+                {t('customer.taskerProfile.noReviews')}
               </Text>
             ) : (
               <View className="gap-md">

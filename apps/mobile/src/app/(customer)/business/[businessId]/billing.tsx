@@ -19,10 +19,10 @@ export default function BusinessBillingScreen() {
       <View className="items-center py-xl gap-lg">
         <Receipt size={48} color={colors.primary} />
         <Text className="text-heading font-semibold text-primaryDeep text-center">
-          {t('b2b.billing.headline', 'Business Subscription')}
+          {t('b2b.billing.headline')}
         </Text>
         <Text className="text-body text-mutedForeground text-center leading-6">
-          {t('b2b.billing.body', 'Manage your subscription plan and billing history.')}
+          {t('b2b.billing.body')}
         </Text>
       </View>
     </DetailTemplate>

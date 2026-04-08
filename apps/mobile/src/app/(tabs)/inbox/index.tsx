@@ -69,7 +69,7 @@ export default function ConversationListScreen() {
     >
       <View className="flex-row items-center justify-start">
         <Text className="text-heading font-sans-bold text-primaryDeep">
-          {t('shared.inbox.title', 'Чат')}
+          {t('shared.inbox.title')}
         </Text>
       </View>
     </View>
@@ -85,7 +85,7 @@ export default function ConversationListScreen() {
         <Input
           value={search}
           onChangeText={setSearch}
-          placeholder={t('shared.inbox.searchPlaceholder', 'Хайх...')}
+          placeholder={t('shared.inbox.searchPlaceholder')}
           placeholderTextColor={colors.textTertiary}
           className="flex-1 text-body text-foreground"
           style={{ paddingVertical: 2 }}
@@ -97,7 +97,7 @@ export default function ConversationListScreen() {
   const renderItem = useCallback(
     (item: ConversationItem) => {
       const title =
-        item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion', 'Чат');
+        item.counterparty_name ?? item.task_title ?? t('messaging.taskDiscussion');
       const isUnread = (item.unread_count ?? 0) > 0;
       return (
         <Pressable
@@ -154,13 +154,10 @@ export default function ConversationListScreen() {
       onRefresh={refetch}
       isRefreshing={isRefetching}
       onRetry={refetch}
-      emptyTitle={t('shared.inbox.emptyTitle', 'Мессеж байхгүй')}
-      emptyDescription={t(
-        'shared.inbox.emptyDescription',
-        'Захиалга хийсний дараа энд мессежүүд харагдана',
-      )}
-      errorMessage={t('shared.inbox.errorMessage', 'Мессежүүдийг ачаалж чадсангүй')}
-      retryLabel={t('shared.inbox.retry', 'Дахин оролдох')}
+      emptyTitle={t('shared.inbox.emptyTitle')}
+      emptyDescription={t('shared.inbox.emptyDescription')}
+      errorMessage={t('shared.inbox.errorMessage')}
+      retryLabel={t('shared.inbox.retry')}
       filterBar={filterBar}
       ListHeaderComponent={listHeader}
     />

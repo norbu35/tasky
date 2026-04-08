@@ -15,13 +15,13 @@ const { colors } = mobileTheme;
 type RoleOption = 'customer' | 'tasker' | null;
 
 const ROLE_LABELS: Record<Exclude<RoleOption, null>, string> = {
-  customer: 'Захиалагч',
-  tasker: 'Гүйцэтгэгч',
+  customer: t('RoleSelectScreen.copy1'),
+  tasker: t('RoleSelectScreen.copy2'),
 };
 
 const ROLE_COPY = {
-  customer: 'Даалгавар оруулж, гүйцэтгэгч олох',
-  tasker: 'Даалгавар хүлээж аваад орлого олох',
+  customer: t('RoleSelectScreen.copy3'),
+  tasker: t('RoleSelectScreen.copy4'),
 } as const;
 
 export default function RoleSelectScreen() {
@@ -116,16 +116,13 @@ export default function RoleSelectScreen() {
           className="text-heading font-sans-bold text-center"
           style={{ color: colors.primaryDeep, lineHeight: undefined }}
         >
-          {t('auth.roleSelection.heading', 'Та хэн бэ?')}
+          {t('auth.roleSelection.heading')}
         </Text>
         <Text
           className="text-body text-center"
           style={{ color: colors.textSecondary, lineHeight: 24 }}
         >
-          {t(
-            'auth.roleSelection.subtitle',
-            'Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.',
-          )}
+          {t('RoleSelectScreen.copy5')}
         </Text>
       </View>
 
@@ -139,7 +136,7 @@ export default function RoleSelectScreen() {
       >
         <View className="flex-row items-center justify-center gap-sm">
           <Text className="text-label font-sans-bold text-primary-foreground">
-            {t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}
+            {t('auth.roleSelection.confirm')}
           </Text>
           <ArrowRight size={16} color={colors.primaryForeground} />
         </View>
@@ -147,16 +144,16 @@ export default function RoleSelectScreen() {
 
       <ModalSheet
         visible={isConfirming}
-        title={t('auth.roleSelection.confirmSheetTitle', 'Та итгэлтэй байна уу?')}
+        title={t('auth.roleSelection.confirmSheetTitle')}
         onClose={() => setIsConfirming(false)}
         dismissible={false}
         primaryAction={{
-          label: t('auth.roleSelection.confirmSheetPrimary', 'Тийм, баталгаажуулах'),
+          label: t('auth.roleSelection.confirmSheetPrimary'),
           onPress: handleConfirmSelection,
           testID: 'role-sheet-confirm',
         }}
         secondaryAction={{
-          label: t('auth.roleSelection.confirmSheetSecondary', 'Буцах'),
+          label: t('auth.roleSelection.confirmSheetSecondary'),
           onPress: () => setIsConfirming(false),
           testID: 'role-sheet-cancel',
         }}

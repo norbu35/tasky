@@ -2,7 +2,6 @@
 
 ## 2026-04-09
 - **Mobile auth onboarding routing**: Restored first-login post-auth routing so new mobile sessions enter onboarding before landing in customer/tasker home, with focused auth routing regressions.
-- **Verification selfie + ₮20,000 minimum alignment**: Realigned PRD/API/backend/mobile/web boundaries to require selfie-based verification submission, raised the authoritative task budget minimum to ₮20,000 across validation layers, regenerated the SDK, and added boundary regression coverage.
 
 ## 2026-04-04
 - **Mobile NativeWind foundation + token/shell consolidation**: Completed architecture-first mobile styling migration to shared NativeWind/token boundaries, moved route-level shell ownership to shared containers/action bars, removed most route-local raw input primitives, added lint guardrails for route primitive imports (with OTP exception), stabilized auth/env test behavior, and re-verified mobile suites (`typecheck`, `lint`, full `test`).

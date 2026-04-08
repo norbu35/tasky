@@ -31,11 +31,11 @@ export function ErrorStateTemplate({
     <View className={cn('flex-1 justify-center items-center px-lg', className)} testID={testID}>
       <AlertTriangle size={48} color={colors.danger} />
       <Text className="text-body text-primary text-center mt-lg leading-relaxed">
-        {message ?? t('error.generic', 'Something went wrong')}
+        {message ?? t('error.generic')}
       </Text>
       {onRetry && (
         <Button
-          label={retryLabel ?? t('error.retry', 'Try again')}
+          label={retryLabel ?? t('error.retry')}
           onPress={onRetry}
           style={{ marginTop: 24, alignSelf: 'stretch' }}
           testID={testID ? `${testID}-retry` : undefined}
@@ -43,7 +43,7 @@ export function ErrorStateTemplate({
       )}
       {onBack && (
         <Button
-          label={t('error.goBack', 'Go back')}
+          label={t('error.goBack')}
           variant="outline"
           onPress={onBack}
           style={{ marginTop: 12, alignSelf: 'stretch' }}

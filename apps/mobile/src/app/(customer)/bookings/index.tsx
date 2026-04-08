@@ -15,10 +15,7 @@ const { colors } = mobileTheme;
 
 type BookingTab = 'active' | 'completed';
 
-const TAB_LABELS: { id: BookingTab; label: string }[] = [
-  { id: 'active', label: 'Идэвхтэй' },
-  { id: 'completed', label: 'Дууссан' },
-];
+const TAB_IDS: BookingTab[] = ['active', 'completed'];
 
 function formatSchedule(value?: string | null): string | null {
   if (!value) return null;
@@ -32,18 +29,18 @@ function formatSchedule(value?: string | null): string | null {
   return `${y}.${m}.${d} ${h}:${min}`;
 }
 
-function getBookingStatusLabel(status?: string): string {
+function getBookingStatusLabel(status?: string, t?: (key: string) => string): string {
   switch ((status ?? '').toUpperCase()) {
     case 'ASSIGNED':
-      return 'Хувиарласан';
+      return t?.('BookingsListScreen.assigned') ?? t('BookingsListScreen.copy1');
     case 'COMPLETED':
-      return 'Дууссан';
+      return t?.('BookingsListScreen.completed') ?? t('BookingsListScreen.copy2');
     case 'CANCELLED':
-      return 'Цуцлагдсан';
+      return t?.('BookingsListScreen.cancelled') ?? t('BookingsListScreen.copy3');
     case 'NO_SHOW':
-      return 'Ирээгүй';
+      return t?.('BookingsListScreen.noShow') ?? t('BookingsListScreen.copy4');
     default:
-      return 'Хүлээгдэж буй';
+      return t?.('BookingsListScreen.pending') ?? t('BookingsListScreen.copy5');
   }
 }
 
@@ -100,6 +97,7 @@ function FilterTab({
 
 function BookingCard({
   booking,
+  t,
   onPress,
 }: {
   booking: {
@@ -108,6 +106,7 @@ function BookingCard({
     task?: { description?: string | null; budget?: number | null; scheduled_at?: string | null };
     tasker?: { full_name?: string | null; avatar_url?: string | null };
   };
+  t: (key: string) => string;
   onPress: () => void;
 }) {
   const schedule = formatSchedule(booking.task?.scheduled_at);
@@ -133,10 +132,10 @@ function BookingCard({
           />
           <View className="flex-1" style={{ gap: 2 }}>
             <Text className="text-body font-bold text-primaryDeep" numberOfLines={1}>
-              {booking.tasker?.full_name ?? 'Гүйцэтгэгч'}
+              {booking.tasker?.full_name ?? t('BookingsListScreen.copy6')}
             </Text>
             <Text className="text-caption text-textSecondary" numberOfLines={1}>
-              {booking.task?.description ?? 'Даалгавар'}
+              {booking.task?.description ?? t('BookingsListScreen.copy7')}
             </Text>
           </View>
         </View>
@@ -150,7 +149,7 @@ function BookingCard({
             className="text-micro font-bold uppercase"
             style={{ color: statusColors.text, letterSpacing: 0.6 }}
           >
-            {getBookingStatusLabel(booking.status)}
+            {getBookingStatusLabel(booking.status, t)}
           </Text>
         </View>
       </View>
@@ -199,10 +198,10 @@ function EmptyState({ onPress }: { onPress: () => void }) {
         <ClipboardList size={28} color={colors.secondary} />
       </View>
       <Text className="text-title font-bold text-primaryDeep text-center">
-        {t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')}
+        {t('customer.bookings.emptyTitle')}
       </Text>
       <Text className="text-body text-textSecondary text-center leading-relaxed">
-        {t('customer.bookings.emptyDescription', 'Даалгавар нийтэлж, гүйцэтгэгч сонгоорой')}
+        {t('customer.bookings.emptyDescription')}
       </Text>
       <Pressable
         onPress={onPress}
@@ -210,7 +209,7 @@ function EmptyState({ onPress }: { onPress: () => void }) {
         testID="bookings-empty-cta"
       >
         <Text className="text-label font-bold text-secondaryForeground">
-          {t('customer.bookings.emptyCta', 'Даалгавар нийтлэх')}
+          {t('customer.bookings.emptyCta')}
         </Text>
       </Pressable>
     </View>
@@ -269,7 +268,7 @@ export default function BookingsListScreen() {
             <Menu size={22} color={colors.primaryDeep} />
           </Pressable>
           <Text className="flex-1 mx-md text-subtitle font-bold text-primaryDeep">
-            {t('customer.bookings.pageTitle', 'Захиалгууд')}
+            {t('customer.bookings.pageTitle')}
           </Text>
           <Pressable className="w-10 h-10 rounded-md items-center justify-center bg-card" accessibilityRole="button">
             <Search size={20} color={colors.primaryDeep} />
@@ -285,10 +284,10 @@ export default function BookingsListScreen() {
             marginBottom: screenLayout.body.blockGap,
           }}
         >
-          {TAB_LABELS.map((tab) => (
+          {TAB_IDS.map((tab) => (
             <FilterTab
               key={tab.id}
-              label={t(`customer.bookings.tab.${tab.id}`, tab.label)}
+              label={t(`BookingsListScreen.tab.${tab.id}`)}
               active={activeTab === tab.id}
               onPress={() => setActiveTab(tab.id)}
             />
@@ -314,10 +313,7 @@ export default function BookingsListScreen() {
               style={{ marginBottom: screenLayout.body.itemGap }}
             >
               <Text className="text-label text-textSecondary">
-                {t(
-                  'customer.bookings.offlineBanner',
-                  'Офлайн горим — хуучин мэдээлэл харагдаж байна',
-                )}
+                {t('BookingsListScreen.offlineBanner')}
               </Text>
             </View>
           ) : null}
@@ -336,6 +332,7 @@ export default function BookingsListScreen() {
                 <BookingCard
                   key={booking.id}
                   booking={booking}
+                  t={t}
                   onPress={() => handleBookingPress(booking.id)}
                 />
               ))}
@@ -343,11 +340,8 @@ export default function BookingsListScreen() {
                 <View className="items-center py-2xl">
                   <Text className="text-body text-textSecondary text-center">
                     {activeTab === 'active'
-                      ? t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')
-                      : t(
-                          'customer.bookings.completedEmptyTitle',
-                          'Энэ ангилалд захиалга алга байна',
-                        )}
+                      ? t('BookingsListScreen.emptyTitle')
+                      : t('BookingsListScreen.completedEmptyTitle')}
                   </Text>
                 </View>
               ) : null}

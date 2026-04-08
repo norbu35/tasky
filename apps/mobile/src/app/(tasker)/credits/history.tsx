@@ -29,17 +29,17 @@ export default function TaskerCreditsHistoryScreen() {
   const transactions: Transaction[] = [
     {
       id: 'top-up-1',
-      title: 'Top-up',
+      title: t('TaskerCreditsHistoryScreen.copy1'),
       amount: '+20,000 ₮',
-      subtitle: t('tasker.credits.mobileWallet', 'Mobile wallet'),
-      timestamp: t('tasker.credits.today', 'Today'),
+      subtitle: t('tasker.credits.mobileWallet'),
+      timestamp: t('tasker.credits.today'),
     },
     {
       id: 'payout-1',
-      title: t('tasker.credits.taskPayout', 'Task payout'),
+      title: t('tasker.credits.taskPayout'),
       amount: '-7,600 ₮',
-      subtitle: t('tasker.credits.completedBooking', 'Completed booking'),
-      timestamp: t('tasker.credits.yesterday', 'Yesterday'),
+      subtitle: t('tasker.credits.completedBooking'),
+      timestamp: t('tasker.credits.yesterday'),
     },
   ];
 
@@ -48,20 +48,20 @@ export default function TaskerCreditsHistoryScreen() {
       {state === 'empty' ? (
         <EmptyStateTemplate
           testID="tasker-credits-history-empty"
-          title={t('tasker.credits.emptyTitle', 'No credit activity yet')}
-          description={t('tasker.credits.emptyDescription', 'Top up credits or finish more tasks to populate this timeline.')}
+          title={t('tasker.credits.emptyTitle')}
+          description={t('tasker.credits.emptyDescription')}
         />
       ) : (
         <View className="gap-lg">
           <View className="p-lg rounded-lg bg-primaryDeep gap-xs">
             <Text className="text-label text-primaryForeground opacity-80">
-              {t('tasker.credits.thisMonth', 'This month')}
+              {t('tasker.credits.thisMonth')}
             </Text>
             <Text className="font-extrabold text-card" style={{ fontSize: 32, lineHeight: 32 * (19 / 16) }}>
               +12,400 ₮
             </Text>
             <Text className="text-body text-primaryForeground opacity-70">
-              {t('tasker.credits.netMovement', 'Net credit movement from top-ups and payouts')}
+              {t('tasker.credits.netMovement')}
             </Text>
           </View>
 

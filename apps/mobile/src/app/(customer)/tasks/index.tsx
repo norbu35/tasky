@@ -39,19 +39,19 @@ function formatMoney(amount?: number | null) {
 function getTaskVisual(categoryName?: string | null) {
   const name = (categoryName ?? '').toLowerCase();
 
-  if (name.includes('clean') || name.includes('цэвэр')) {
+  if (name.includes('clean') || name.includes(t('MyTasksListScreen.copy1'))) {
     return { Icon: Sparkles, tint: colors.primary, tone: `${colors.primary}14` };
   }
-  if (name.includes('hand') || name.includes('repair') || name.includes('зас')) {
+  if (name.includes('hand') || name.includes('repair') || name.includes(t('MyTasksListScreen.copy2'))) {
     return { Icon: Wrench, tint: colors.secondary, tone: `${colors.secondary}18` };
   }
-  if (name.includes('move') || name.includes('зөөв')) {
+  if (name.includes('move') || name.includes(t('MyTasksListScreen.copy3'))) {
     return { Icon: Package, tint: colors.accent, tone: `${colors.accent}18` };
   }
-  if (name.includes('garden') || name.includes('цэц')) {
+  if (name.includes('garden') || name.includes(t('MyTasksListScreen.copy4'))) {
     return { Icon: Leaf, tint: colors.trust, tone: `${colors.trust}18` };
   }
-  if (name.includes('paint') || name.includes('буд')) {
+  if (name.includes('paint') || name.includes(t('MyTasksListScreen.copy5'))) {
     return { Icon: Hammer, tint: colors.primaryDeep, tone: `${colors.primaryDeep}12` };
   }
 
@@ -96,13 +96,13 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
               style={{ backgroundColor: `${colors.primary}10` }}
             >
               <Text className="text-micro font-bold tracking-widest uppercase text-primaryDeep" numberOfLines={1}>
-                {task.category?.name ?? t('customer.taskList.categoryFallback', 'Task')}
+                {task.category?.name ?? t('customer.taskList.categoryFallback')}
               </Text>
             </View>
             <StatusBadge status={status} />
           </View>
           <Text className="font-screen-card-title font-bold text-primaryDeep" numberOfLines={2}>
-            {task.description ?? t('customer.taskList.noTitle', 'Untitled task')}
+            {task.description ?? t('customer.taskList.noTitle')}
           </Text>
           <Text
             className="text-subtitle font-extrabold text-secondary"
@@ -146,10 +146,10 @@ function Header({
       <View className="flex-row items-center justify-between">
         <View className="flex-1 pr-md gap-header-greeting">
           <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
-            {t('customer.taskList.greeting', 'Сайн байна уу')}
+            {t('customer.taskList.greeting')}
           </Text>
           <Text className="text-heroTitle font-black text-primaryDeep">
-            {t('customer.taskList.title', 'Миний даалгаврууд')}
+            {t('customer.taskList.title')}
           </Text>
         </View>
         <Pressable
@@ -158,7 +158,7 @@ function Header({
           onPress={onNotificationsPress}
           testID="my-tasks-notifications"
           accessibilityRole="button"
-          accessibilityLabel={t('shared.notifications.title', 'Notifications')}
+          accessibilityLabel={t('shared.notifications.title')}
         >
           <Bell size={20} color={colors.primary} />
         </Pressable>
@@ -166,19 +166,16 @@ function Header({
 
       <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
         <Text className="text-subtitle font-extrabold text-primaryDeep">
-          {t('customer.taskList.heroTitle', 'Таны идэвхтэй даалгаврууд')}
+          {t('customer.taskList.heroTitle')}
         </Text>
         <Text className="text-body text-textSecondary leading-relaxed">
-          {t(
-            'customer.taskList.heroBody',
-            'Одоо идэвхтэй, хуваарилагдсан, дууссан даалгавруудаа нэг дороос хянаарай.',
-          )}
+          {t('MyTasksListScreen.copy1')}
         </Text>
         <View className="flex-row gap-micro">
           {([
-            { key: 'open', label: t('customer.taskList.filterOpen', 'Open') },
-            { key: 'assigned', label: t('customer.taskList.filterAssigned', 'Assigned') },
-            { key: 'completed', label: t('customer.taskList.filterCompleted', 'Completed') },
+            { key: 'open', label: t('customer.taskList.filterOpen') },
+            { key: 'assigned', label: t('customer.taskList.filterAssigned') },
+            { key: 'completed', label: t('customer.taskList.filterCompleted') },
           ] as { key: TaskState; label: string }[]).map(({ key, label }) => (
             <View
               key={key}
@@ -211,10 +208,10 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
         <Sparkles size={24} color={colors.primary} />
       </View>
       <Text className="text-subtitle font-extrabold text-primaryDeep text-center">
-        {t('customer.taskList.emptyTitle', 'No tasks yet')}
+        {t('customer.taskList.emptyTitle')}
       </Text>
       <Text className="text-body text-textSecondary text-center leading-relaxed">
-        {t('customer.taskList.emptyDescription', 'Post your first task and find a trusted tasker')}
+        {t('customer.taskList.emptyDescription')}
       </Text>
       <Pressable
         onPress={onPostTask}
@@ -223,7 +220,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
         testID="my-tasks-feed-empty-cta"
       >
         <Text className="text-body font-bold text-primaryForeground">
-          {t('customer.taskList.emptyCta', 'Post a Task')}
+          {t('customer.taskList.emptyCta')}
         </Text>
       </Pressable>
     </View>
@@ -240,10 +237,10 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       testID="my-tasks-error-state"
     >
       <Text className="text-subtitle font-extrabold text-primaryDeep">
-        {t('customer.taskList.errorTitle', 'Network error')}
+        {t('customer.taskList.errorTitle')}
       </Text>
       <Text className="text-body text-textSecondary leading-relaxed">
-        {t('customer.taskList.errorNetwork', 'Network error. Please try again')}
+        {t('customer.taskList.errorNetwork')}
       </Text>
       <Pressable
         onPress={onRetry}
@@ -252,7 +249,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         testID="my-tasks-feed-error-cta"
       >
         <Text className="text-body font-bold text-secondaryForeground">
-          {t('common.tryAgain', 'Try again')}
+          {t('common.tryAgain')}
         </Text>
       </Pressable>
     </View>

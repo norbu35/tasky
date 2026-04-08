@@ -21,16 +21,13 @@ export default function BannedAccountScreen() {
         <Ban size={32} color={colors.danger} />
       </View>
       <Text className="text-title font-bold text-foreground text-center mb-md">
-        {t('shared.account.bannedTitle', 'Бүртгэл хаагдсан')}
+        {t('shared.account.bannedTitle')}
       </Text>
       <Text className="text-body text-textSecondary text-center leading-6">
-        {t(
-          'shared.account.bannedBody',
-          'Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй.',
-        )}
+        {t('BannedAccountScreen.copy1')}
       </Text>
       <Button
-        label={t('shared.account.contactSupport', 'Тусламж авах')}
+        label={t('shared.account.contactSupport')}
         variant="ghost"
         onPress={() => {
           void Linking.openURL('mailto:support@tasky.mn');
@@ -39,7 +36,7 @@ export default function BannedAccountScreen() {
         testID="banned-support-button"
       />
       <Button
-        label={t('shared.account.logout', 'Гарах')}
+        label={t('shared.account.logout')}
         onPress={() => router.replace('/(auth)')}
         className="self-stretch mt-sm"
         testID="banned-logout-button"

@@ -54,14 +54,11 @@ export function ConfirmCompletionSheet({
       </View>
 
       <Text style={styles.title}>
-        {t('customer.bookings.confirmCompletionTitle', 'Ажил дууссан уу?')}
+        {t('customer.bookings.confirmCompletionTitle')}
       </Text>
 
       <Text style={styles.description}>
-        {t(
-          'customer.bookings.confirmCompletionDescription',
-          'Ажил хүлээн зөвшөөрснөөр гүйцэтгэгчид төлбөр олгогдоно',
-        )}
+        {t('ConfirmCompletionSheet.copy1')}
       </Text>
 
       <View style={styles.actions}>
@@ -79,7 +76,7 @@ export function ConfirmCompletionSheet({
             style={[styles.primaryButton, isPending && styles.buttonDisabled]}
           >
             <Text style={styles.primaryButtonText}>
-              {t('customer.bookings.ctaConfirmComplete', 'Баталгаажуулах')}
+              {t('customer.bookings.ctaConfirmComplete')}
             </Text>
             <ArrowRight size={18} color={colors.primaryForeground} />
           </LinearGradient>
@@ -92,7 +89,7 @@ export function ConfirmCompletionSheet({
           testID="confirm-completion-cancel-btn"
         >
           <Text style={styles.secondaryButtonText}>
-            {t('customer.bookings.ctaGoBack', 'Буцах')}
+            {t('customer.bookings.ctaGoBack')}
           </Text>
         </Pressable>
       </View>

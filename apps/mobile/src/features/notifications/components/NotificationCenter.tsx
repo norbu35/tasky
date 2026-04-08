@@ -27,44 +27,41 @@ function buildMockNotifications(t: TFunction): NotificationItem[] {
     {
       id: '1',
       type: 'info',
-      title: t('shared.notifications.newApplicant', 'New Applicant'),
-      body: 'Batbayar applied to your task "Move furniture to new apartment".',
-      timestamp: '2 min ago',
+      title: t('shared.notifications.newApplicant'),
+      body: t('NotificationCenter.copy1'),
+      timestamp: t('NotificationCenter.copy2'),
       read: false,
     },
     {
       id: '2',
       type: 'success',
-      title: t('shared.notifications.bookingConfirmed', 'Booking Confirmed'),
-      body: 'Your booking with Sarnai for "Deep clean 2-bedroom apartment" has been confirmed.',
-      timestamp: '1 hour ago',
+      title: t('shared.notifications.bookingConfirmed'),
+      body: t('NotificationCenter.copy3'),
+      timestamp: t('NotificationCenter.copy4'),
       read: false,
     },
     {
       id: '3',
       type: 'warning',
-      title: t('shared.notifications.reviewReminder', 'Review Reminder'),
-      body: t(
-        'shared.notifications.reviewReminderBody',
-        'You have not reviewed your completed task with Temuulen yet. Leave a review to help the community.',
-      ),
-      timestamp: '3 hours ago',
+      title: t('shared.notifications.reviewReminder'),
+      body: t('NotificationCenter.copy5'),
+      timestamp: t('NotificationCenter.copy6'),
       read: true,
     },
     {
       id: '4',
       type: 'message',
-      title: t('shared.notifications.newMessage', 'New Message'),
-      body: 'Oyungerel sent you a message about "Install air conditioner".',
-      timestamp: t('common.yesterday', 'Yesterday'),
+      title: t('shared.notifications.newMessage'),
+      body: t('NotificationCenter.copy7'),
+      timestamp: t('common.yesterday'),
       read: true,
     },
     {
       id: '5',
       type: 'success',
-      title: t('shared.notifications.taskCompleted', 'Task Completed'),
-      body: 'Your task "Assemble IKEA bookshelf" has been marked as completed. Don\'t forget to leave a review!',
-      timestamp: '2 days ago',
+      title: t('shared.notifications.taskCompleted'),
+      body: t('NotificationCenter.copy8'),
+      timestamp: t('NotificationCenter.copy9'),
       read: true,
     },
   ];
@@ -140,10 +137,10 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
           <Bell size={48} color={colors.mutedForeground} />
         </View>
         <Text style={styles.emptyTitle}>
-          {t('notifications.emptyTitle', 'No notifications yet')}
+          {t('notifications.emptyTitle')}
         </Text>
         <Text style={styles.emptySubtitle}>
-          {t('notifications.emptySubtitle', "When you get notifications, they'll show up here.")}
+          {t('notifications.emptySubtitle')}
         </Text>
       </View>
     ),
@@ -153,7 +150,7 @@ export function NotificationCenter({ onPressNotification }: NotificationCenterPr
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('notifications.title', 'Notifications')}</Text>
+        <Text style={styles.headerTitle}>{t('notifications.title')}</Text>
       </View>
       <FlatList
         style={{ flex: 1 }}

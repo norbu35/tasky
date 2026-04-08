@@ -193,7 +193,7 @@ export function ApplicantsList() {
     if (others.length > 0) {
       listData.push({
         type: 'separator',
-        label: t('applicants.otherApplicants', 'Other Applicants'),
+        label: t('applicants.otherApplicants'),
       });
     }
   }
@@ -201,10 +201,10 @@ export function ApplicantsList() {
     listData.push({ type: 'applicant', data: a });
   }
 
-  const reviewsLabel = t('applicants.reviews', 'reviews');
-  const recommendedLabel = t('applicants.recommended', 'Recommended');
-  const acceptLabel = t('applicants.accept', 'ACCEPT');
-  const viewProfileLabel = t('applicants.viewProfile', 'View Profile');
+  const reviewsLabel = t('applicants.reviews');
+  const recommendedLabel = t('applicants.recommended');
+  const acceptLabel = t('applicants.accept');
+  const viewProfileLabel = t('applicants.viewProfile');
 
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === 'separator') {
@@ -234,7 +234,7 @@ export function ApplicantsList() {
           <ChevronLeft size={16} color={colors.foreground} />
         </Pressable>
         <Text style={styles.headerTitle}>
-          {t('applicants.title', 'Applicants')} ({applicants.length})
+          {t('applicants.title')} ({applicants.length})
         </Text>
         <View style={styles.headerButton} />
       </View>
@@ -246,13 +246,10 @@ export function ApplicantsList() {
         </View>
       ) : applicants.length === 0 ? (
         <EmptyState
-          title={t('applicants.emptyTitle', 'No applicants yet')}
+          title={t('applicants.emptyTitle')}
           subtitle={t(
             'applicants.emptySubtitle',
-            t(
-              'customer.applicants.emptyDescription',
-              'Once taskers apply to your task, they will appear here.',
-            ),
+            t('ApplicantsList.copy1'),
           )}
         />
       ) : (

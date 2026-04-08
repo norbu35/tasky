@@ -83,7 +83,7 @@ const MOCK_TASKS: CursorPage<PublicTask> = {
       created_at: '2026-03-22T10:00:00Z',
     },
   ],
-  cursor: { next: null, has_more: false },
+  cursor: { next: null, prev: null },
 };
 
 const MOCK_TASKER_USERS: CursorPage<User> = {
@@ -107,7 +107,7 @@ const MOCK_TASKER_USERS: CursorPage<User> = {
       created_at: '2026-02-10T00:00:00Z',
     },
   ],
-  cursor: { next: null, has_more: false },
+  cursor: { next: null, prev: null },
 };
 
 const MOCK_BOOKING: Booking = {

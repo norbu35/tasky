@@ -33,79 +33,61 @@ function buildFaqSections(t: (key: string, fallback: string) => string): FaqSect
   return [
     {
       id: 'general',
-      title: t('infra.help.sectionGeneral', 'Ерөнхий'),
+      title: t('infra.help.sectionGeneral'),
       items: [
         {
           id: 'general-what-is-tasky',
-          question: t('infra.help.qWhatIsTasky', 'Tasky гэж юу вэ?'),
-          answer: t(
-            'infra.help.aWhatIsTasky',
-            'Tasky бол Монгол дахь хэрэглэгчдийг үйлчилгээ үзүүлэгчидтэй холбодог найдвартай үйлчилгээний зах зээл юм.',
-          ),
+          question: t('infra.help.qWhatIsTasky'),
+          answer: t('HelpScreen.copy1'),
         },
         {
           id: 'general-how-it-works',
-          question: t('infra.help.qHowItWorks', 'Tasky хэрхэн ажилладаг вэ?'),
-          answer: t(
-            'infra.help.aHowItWorks',
-            'Ажлаа нийтэлж, өргөдөл хүлээн авч, хамгийн тохирохыг сонгон, захиалга дуусах хүртэл хянаарай.',
-          ),
+          question: t('infra.help.qHowItWorks'),
+          answer: t('HelpScreen.copy2'),
         },
       ],
     },
     {
       id: 'tasks',
-      title: t('infra.help.sectionTasks', 'Даалгаврын тухай'),
+      title: t('infra.help.sectionTasks'),
       items: [
         {
           id: 'tasks-post-task',
-          question: t('infra.help.qPostTask', 'Ажлаа хэрхэн нийтлэх вэ?'),
-          answer: t(
-            'infra.help.aPostTask',
-            'Ажил оруулах хэсгээс дэлгэрэнгүй мэдээллээ бөглөж, төсвөө сонгоод, бүгд зөв бол илгээнэ үү.',
-          ),
+          question: t('infra.help.qPostTask'),
+          answer: t('HelpScreen.copy3'),
         },
       ],
     },
     {
       id: 'bookings',
-      title: t('infra.help.sectionBookings', 'Захиалгын тухай'),
+      title: t('infra.help.sectionBookings'),
       items: [
         {
           id: 'bookings-cancel',
-          question: t('infra.help.qCancelBooking', 'Захиалгаа цуцалж болох уу?'),
-          answer: t(
-            'infra.help.aCancelBooking',
-            'Тийм. Захиалга эхлэхээс өмнө цуцалж болно, харин оройтож цуцлах нь бүртгэлийн байдалд нөлөөлж магадгүй.',
-          ),
+          question: t('infra.help.qCancelBooking'),
+          answer: t('HelpScreen.copy4'),
         },
       ],
     },
     {
       id: 'payments',
-      title: t('infra.help.sectionPayments', 'Төлбөрийн тухай'),
+      title: t('infra.help.sectionPayments'),
       items: [
         {
           id: 'payments-how-paid',
-          question: t('infra.help.qHowPaid', 'Төлбөр хэрхэн ажиллах вэ?'),
-          answer: t(
-            'infra.help.aHowPaid',
-            'Төлбөрийн дэмжлэгийг үе шаттай нэвтрүүлж байна. Боломжтой үед та захиалгын урсгалаас дэмжигдэх сонголтуудыг харна.',
-          ),
+          question: t('infra.help.qHowPaid'),
+          answer: t('HelpScreen.copy5'),
         },
       ],
     },
     {
       id: 'account',
-      title: t('infra.help.sectionAccount', 'Бүртгэлийн тухай'),
+      title: t('infra.help.sectionAccount'),
       items: [
         {
           id: 'account-update',
-          question: t('infra.help.qUpdateAccount', 'Бүртгэлээ хэрхэн шинэчлэх вэ?'),
-          answer: t(
-            'infra.help.aUpdateAccount',
-            'Профайл эсвэл Тохиргоо хэсгээс хувийн мэдээлэл, холбоо барих мэдээлэл, тохиргоогоо шинэчилнэ үү.',
-          ),
+          question: t('infra.help.qUpdateAccount'),
+          answer: t('HelpScreen.copy6'),
         },
       ],
     },
@@ -372,7 +354,7 @@ export default function HelpScreen() {
     setState('loaded');
   };
 
-  const searchPlaceholder = t('infra.help.searchPlaceholder', 'Асуулт хайх...');
+  const searchPlaceholder = t('infra.help.searchPlaceholder');
 
   return (
     <ScreenContainer testID="help-screen">
@@ -385,14 +367,14 @@ export default function HelpScreen() {
         >
           <ChevronLeft size={24} color={colors.primary} />
           <Text className="text-body font-sans-medium" style={{ color: colors.primary }}>
-            {t('infra.help.backLabel', 'Буцах')}
+            {t('infra.help.backLabel')}
           </Text>
         </Pressable>
         <Text
           className="flex-1 text-subtitle font-sans-semibold text-center mx-sm"
           style={{ color: colors.primaryDeep }}
         >
-          {t('infra.help.title', 'Тусламж')}
+          {t('infra.help.title')}
         </Text>
         <View
           style={{ width: spacing['3xl'], height: spacing['3xl'] }}
@@ -404,12 +386,9 @@ export default function HelpScreen() {
         <HelpLoading searchPlaceholder={searchPlaceholder} />
       ) : state === 'error' ? (
         <HelpErrorState
-          headline={t('infra.help.errorHeadline', 'Ачааллах боломжгүй')}
-          description={t(
-            'infra.help.errorDescription',
-            'Тусламжийн мэдээллийг ачааллахад алдаа гарлаа. Дахин оролдоно уу',
-          )}
-          retryLabel={t('infra.help.errorRetry', 'Дахин оролдох')}
+          headline={t('infra.help.errorHeadline')}
+          description={t('HelpScreen.copy7')}
+          retryLabel={t('infra.help.errorRetry')}
           onRetry={handleRetry}
         />
       ) : (

@@ -68,7 +68,7 @@ export function ActionSheet({ isOpen, onClose, actions, testID, className }: Act
             accessibilityRole="button"
           >
             <Text className="text-body font-sans-semibold text-muted-foreground">
-              {t('common.cancel', 'Cancel')}
+              {t('common.cancel')}
             </Text>
           </Pressable>
         </View>

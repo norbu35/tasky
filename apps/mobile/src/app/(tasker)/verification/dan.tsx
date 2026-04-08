@@ -21,16 +21,13 @@ export default function DanVerificationScreen() {
             <Text className="text-primaryDeep text-label font-bold">DAN</Text>
           </View>
           <Text className="text-heading font-extrabold text-primaryDeep text-center">
-            {t('tasker.verification.danSuccess', 'Verification successful!')}
+            {t('tasker.verification.danSuccess')}
           </Text>
           <Text className="text-body text-textSecondary text-center leading-relaxed">
-            {t(
-              'tasker.verification.danSuccessDescription',
-              'Your address has been verified via E-Mongolia. You can now apply for tasks.',
-            )}
+            {t('DanVerificationScreen.copy1')}
           </Text>
           <Button
-            label={t('tasker.verification.danBrowseButton', 'Find tasks')}
+            label={t('tasker.verification.danBrowseButton')}
             onPress={() => router.push('/(tabs)')}
           />
         </View>
@@ -45,21 +42,18 @@ export default function DanVerificationScreen() {
           <Text className="text-primaryDeep text-label font-bold">E-Mongolia</Text>
         </View>
         <Text className="text-heading font-extrabold text-primaryDeep text-center">
-          {t('tasker.verification.danTitle', 'Fast-track verification')}
+          {t('tasker.verification.danTitle')}
         </Text>
         <Text className="text-body text-textSecondary text-center leading-relaxed">
-          {t(
-            'tasker.verification.danDescription',
-            'E-Mongolia (DAN) will automatically verify your identity. No photos required.',
-          )}
+          {t('DanVerificationScreen.copy2')}
         </Text>
         <Button
-          label={t('tasker.verification.danEmongoliaButton', 'Verify with E-Mongolia')}
+          label={t('tasker.verification.danEmongoliaButton')}
           onPress={() => router.push('/(tasker)/verification/dan?state=success')}
         />
         <Button
           testID="dan-manual-fallback"
-          label={t('tasker.verification.danManualButton', 'Verify manually')}
+          label={t('tasker.verification.danManualButton')}
           variant="ghost"
           onPress={() => router.push('/(tasker)/verification/upload')}
         />

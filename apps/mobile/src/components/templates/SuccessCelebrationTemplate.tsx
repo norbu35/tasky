@@ -72,7 +72,7 @@ export function SuccessCelebrationTemplate({
         {nextSteps && nextSteps.length > 0 && (
           <View className="self-stretch mt-xl px-sm">
             <Text className="text-subtitle font-semibold text-primary mb-md">
-              {t('success.whatHappensNext', 'What happens next')}
+              {t('success.whatHappensNext')}
             </Text>
             {nextSteps.map((step, index) => (
               <View key={index} className="flex-row mb-sm pl-xs">

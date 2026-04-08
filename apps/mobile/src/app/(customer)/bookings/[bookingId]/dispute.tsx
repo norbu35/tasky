@@ -12,13 +12,6 @@ const { colors } = mobileTheme;
 
 const TOTAL_STEPS = 3;
 
-const DISPUTE_REASONS = [
-  'Poor quality work',
-  'Tasker was late',
-  'Incomplete work',
-  'Other',
-] as const;
-
 export default function DisputeRaiseScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -30,6 +23,12 @@ export default function DisputeRaiseScreen() {
   const [photos] = useState<string[]>([]);
   const [description, setDescription] = useState('');
   const hasEvidence = photos.length > 0 || description.trim().length > 0;
+  const disputeReasons = [
+    t('DisputeRaiseScreen.reasonQuality'),
+    t('DisputeRaiseScreen.reasonLate'),
+    t('DisputeRaiseScreen.reasonIncomplete'),
+    t('DisputeRaiseScreen.reasonOther'),
+  ] as const;
 
   const handleNext = useCallback(async () => {
     if (currentStep < TOTAL_STEPS - 1) {
@@ -69,16 +68,14 @@ export default function DisputeRaiseScreen() {
       totalSteps={TOTAL_STEPS}
       onNext={handleNext}
       onBack={handleBack}
-      nextLabel={
-        isLastStep ? t('customer.disputes.ctaSubmit', 'Submit Dispute') : t('wizard.next', 'Next')
-      }
+      nextLabel={isLastStep ? t('customer.disputes.ctaSubmit') : t('wizard.next')}
       nextDisabled={isNextDisabled}
       nextLoading={isPending}
       showBack={currentStep > 0}
     >
       <View className="mb-xl">
         <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-          {t('customer.disputes.sectionBookingRef', 'Booking Reference')}
+          {t('customer.disputes.sectionBookingRef')}
         </Text>
         <Text className="text-body text-primaryDeep">{bookingId}</Text>
       </View>
@@ -86,10 +83,10 @@ export default function DisputeRaiseScreen() {
       {currentStep === 0 && (
         <View>
           <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-            {t('customer.disputes.labelReason', 'Issue Type')}
+            {t('customer.disputes.labelReason')}
           </Text>
           <View className="gap-sm">
-            {DISPUTE_REASONS.map((reason) => (
+            {disputeReasons.map((reason) => (
               <Pressable
                 key={reason}
                 className={
@@ -118,7 +115,7 @@ export default function DisputeRaiseScreen() {
       {currentStep === 1 && (
         <View>
           <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-            {t('customer.disputes.labelEvidence', 'Evidence')}
+            {t('customer.disputes.labelEvidence')}
           </Text>
           <PhotoGrid
             photos={photos}
@@ -129,10 +126,7 @@ export default function DisputeRaiseScreen() {
           />
           <View className="bg-muted rounded-md p-md mt-md">
             <Text className="text-caption text-textSecondary leading-[20px]">
-              {t(
-                'customer.disputes.evidenceDeadlineNote',
-                'Dispute auto-closes if evidence is not provided within 24 hours',
-              )}
+              {t('DisputeRaiseScreen.validationNoEvidence')}
             </Text>
           </View>
         </View>
@@ -141,15 +135,12 @@ export default function DisputeRaiseScreen() {
       {currentStep === 2 && (
         <View>
           <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
-            {t('customer.disputes.labelDescription', 'Description')}
+            {t('customer.disputes.labelDescription')}
           </Text>
           <Input
             className="border border-border rounded-md p-md text-body text-primaryDeep bg-card"
             style={{ minHeight: 120, textAlignVertical: 'top' }}
-            placeholder={t(
-              'customer.disputes.placeholderDescription',
-              'Describe the issue in detail...',
-            )}
+            placeholder={t('customer.disputes.placeholderDescription')}
             placeholderTextColor={colors.textTertiary}
             value={description}
             onChangeText={setDescription}
@@ -159,10 +150,7 @@ export default function DisputeRaiseScreen() {
             testID="dispute-description-input"
           />
           <Text className="text-caption text-textSecondary mt-sm">
-            {t(
-              'customer.disputes.validationNoEvidence',
-              'At least 1 evidence artifact is required',
-            )}
+            {t('DisputeRaiseScreen.validationNoEvidence')}
           </Text>
         </View>
       )}

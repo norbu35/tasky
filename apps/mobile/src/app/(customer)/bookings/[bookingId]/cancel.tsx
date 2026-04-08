@@ -28,22 +28,22 @@ export default function CustomerCancelBookingScreen() {
       <ModalSheetTemplate
         isOpen={isOpen}
         onClose={() => { setIsOpen(false); router.back(); }}
-        title={t('customer.cancelBooking.title', 'Cancel Booking')}
+        title={t('customer.cancelBooking.title')}
         testID="cancel-booking-sheet"
       >
         <View className="items-center gap-lg">
           <AlertTriangle size={32} color={colors.danger} />
           <Text className="text-body text-mutedForeground text-center leading-6">
-            {t('customer.cancelBooking.warning', 'Late cancellations may incur a fee. Free cancellation is available up to 2 hours before the scheduled time.')}
+            {t('customer.cancelBooking.warning')}
           </Text>
           <Button
-            label={t('customer.cancelBooking.confirm', 'Confirm Cancellation')}
+            label={t('customer.cancelBooking.confirm')}
             variant="destructive"
             onPress={handleCancel}
             className="self-stretch"
           />
           <Button
-            label={t('common.goBack', 'Go Back')}
+            label={t('common.goBack')}
             variant="ghost"
             onPress={() => { setIsOpen(false); router.back(); }}
             className="self-stretch"

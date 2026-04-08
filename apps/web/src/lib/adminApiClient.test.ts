@@ -170,7 +170,7 @@ describe('Admin API Client', () => {
       it('sends GET to /admin/messages/flagged', async () => {
         fetchMock = vi
           .spyOn(globalThis, 'fetch')
-          .mockResolvedValue(mockOkResponse({ data: [], cursor: { next: null, has_more: false } }));
+          .mockResolvedValue(mockOkResponse({ data: [], cursor: { next: null, prev: null } }));
         setupClient();
 
         await client.adminListFlaggedMessages(adminToken);
@@ -311,7 +311,7 @@ describe('Admin API Client', () => {
         fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
           mockOkResponse({
             data: [],
-            cursor: { next: null, has_more: false },
+            cursor: { next: null, prev: null },
           }),
         );
         setupClient();
@@ -692,7 +692,7 @@ describe('Admin API Client', () => {
         fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
           mockOkResponse({
             data: [{ id: 'cat-1', name: 'Cleaning' }],
-            cursor: { next: null, has_more: false },
+            cursor: { next: null, prev: null },
           }),
         );
         setupClient();

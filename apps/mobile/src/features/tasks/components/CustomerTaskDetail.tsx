@@ -108,7 +108,7 @@ export function CustomerTaskDetail() {
                   <Star size={12} color={colors.accent} fill={colors.accent} />
                   <Text style={styles.ratingValue}>{booking.tasker?.rating_avg ?? 0}</Text>
                   <Text style={styles.ratingCount}>
-                    ({booking.tasker?.completed_tasks ?? 0} {t('taskDetail.reviews', 'reviews')})
+                    ({booking.tasker?.completed_tasks ?? 0} {t('taskDetail.reviews')})
                   </Text>
                 </View>
               </View>
@@ -116,7 +116,7 @@ export function CustomerTaskDetail() {
             {booking.tasker?.is_pro && (
               <View style={styles.verifiedBadge}>
                 <ShieldCheck size={13} color={colors.trustMuted} />
-                <Text style={styles.verifiedText}>{t('taskDetail.verified', 'VERIFIED')}</Text>
+                <Text style={styles.verifiedText}>{t('taskDetail.verified')}</Text>
               </View>
             )}
           </View>
@@ -128,25 +128,25 @@ export function CustomerTaskDetail() {
             onPress={() => router.push(`/inbox/${booking.task_id}`)}
           >
             <Text style={styles.messageButtonText}>
-              {t('taskDetail.messageTasker', 'Message Tasker')}
+              {t('taskDetail.messageTasker')}
             </Text>
           </Pressable>
         </View>
 
         {/* Detail Bento Grid */}
         <View style={styles.bentoGrid}>
-          <DetailBentoCard icon={Calendar} label={t('taskDetail.dateTime', 'DATE & TIME')}>
+          <DetailBentoCard icon={Calendar} label={t('taskDetail.dateTime')}>
             <Text style={styles.bentoValue}>{scheduledDate}</Text>
             <Text style={styles.bentoValue}>{scheduledTime}</Text>
           </DetailBentoCard>
 
-          <DetailBentoCard icon={Banknote} label={t('taskDetail.totalBudget', 'TOTAL BUDGET')}>
+          <DetailBentoCard icon={Banknote} label={t('taskDetail.totalBudget')}>
             <Text style={styles.bentoBudget}>{(booking.task?.budget ?? 0).toLocaleString()}₮</Text>
           </DetailBentoCard>
 
           <DetailBentoCard
             icon={MapPin}
-            label={t('taskDetail.serviceAddress', 'SERVICE ADDRESS')}
+            label={t('taskDetail.serviceAddress')}
             span
           >
             <Text style={styles.bentoAddress}>{booking.task?.location_text ?? ''}</Text>
@@ -158,7 +158,7 @@ export function CustomerTaskDetail() {
           <View style={styles.mapPin}>
             <MapPin size={14} color={colors.primaryForeground} />
           </View>
-          <Text style={styles.mapPlaceholder}>{t('taskDetail.mapPreview', 'Map Preview')}</Text>
+          <Text style={styles.mapPlaceholder}>{t('taskDetail.mapPreview')}</Text>
         </View>
 
         {/* Actions */}
@@ -180,14 +180,14 @@ export function CustomerTaskDetail() {
               style={styles.primaryActionGradient}
             >
               <Text style={styles.primaryActionText}>
-                {t('taskDetail.markComplete', 'MARK AS COMPLETE')}
+                {t('taskDetail.markComplete')}
               </Text>
             </LinearGradient>
           </Pressable>
 
           <Pressable style={styles.secondaryAction} onPress={() => setShowReschedule(true)}>
             <Text style={styles.secondaryActionText}>
-              {t('taskDetail.reschedule', 'Reschedule Task')}
+              {t('taskDetail.reschedule')}
             </Text>
           </Pressable>
         </View>

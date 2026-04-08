@@ -29,15 +29,15 @@ export function TaskerCancelSheet({
 
   const hasSuspensionRisk = strikeCount >= 2;
   const confirmLabel = hasSuspensionRisk
-    ? t('tasker.jobs.cancel.confirmDanger', 'Цуцлах (түдгэлзүүлэх эрсдэлтэй!)')
-    : t('tasker.jobs.cancel.confirmButton', 'Цуцлахыг баталгаажуулах');
+    ? t('tasker.jobs.cancel.confirmDanger')
+    : t('tasker.jobs.cancel.confirmButton');
 
   const reasons = useMemo(
     () => [
-      t('tasker.jobs.cancel.reasonScheduleConflict', 'Цагийн хуваарь таарахгүй болсон'),
-      t('tasker.jobs.cancel.reasonPersonal', 'Хувийн шалтгаан'),
-      t('tasker.jobs.cancel.reasonEmergency', 'Яаралтай нөхцөл байдал'),
-      t('tasker.jobs.cancel.reasonOther', 'Бусад'),
+      t('tasker.jobs.cancel.reasonScheduleConflict'),
+      t('tasker.jobs.cancel.reasonPersonal'),
+      t('tasker.jobs.cancel.reasonEmergency'),
+      t('tasker.jobs.cancel.reasonOther'),
     ],
     [t],
   );
@@ -58,7 +58,7 @@ export function TaskerCancelSheet({
     <ModalSheetTemplate
       isOpen={isOpen}
       onClose={onClose}
-      title={t('tasker.jobs.cancel.title', 'Захиалга цуцлах уу?')}
+      title={t('tasker.jobs.cancel.title')}
       testID="tasker-cancel-sheet"
     >
       {cancelBooking.isPending ? (
@@ -68,16 +68,13 @@ export function TaskerCancelSheet({
       ) : (
         <View style={styles.contentContainer}>
           <Text style={styles.heading}>
-            {t('tasker.jobs.cancel.heading', 'Захиалга цуцлах уу?')}
+            {t('tasker.jobs.cancel.heading')}
           </Text>
 
           <Text style={styles.description}>
             {t(
               'tasker.jobs.cancel.description',
-              t(
-                'tasker.jobs.cancelWarning',
-                'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.',
-              ),
+              t('TaskerCancelSheet.copy1'),
             )}
           </Text>
 
@@ -91,7 +88,7 @@ export function TaskerCancelSheet({
               </Text>
               <Text style={styles.strikeCount}>
                 {`${strikeCount}/3`}{' '}
-                {t('tasker.jobs.cancel.strikeCountLabel', 'цуцлалт (30 хоногт)')}
+                {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
@@ -99,21 +96,18 @@ export function TaskerCancelSheet({
           {hasSuspensionRisk && (
             <View style={styles.dangerBox}>
               <Text style={styles.suspensionWarning}>
-                {t(
-                  'tasker.jobs.cancel.suspensionWarning',
-                  'Анхааруулга: Та сүүлийн 30 хоногт 2 удаа цуцалсан байна. Дахин нэг удаа цуцалвал таны бүртгэл 7 хоногоор түдгэлзэнэ!',
-                )}
+                {t('TaskerCancelSheet.copy2')}
               </Text>
               <Text style={styles.strikeCount}>
                 {`${strikeCount}/3`}{' '}
-                {t('tasker.jobs.cancel.strikeCountLabel', 'цуцлалт (30 хоногт)')}
+                {t('tasker.jobs.cancel.strikeCountLabel')}
               </Text>
             </View>
           )}
 
           <View style={styles.reasonSection}>
             <Text style={styles.reasonLabel}>
-              {t('tasker.jobs.cancel.reasonLabel', 'Цуцлах шалтгаан')}
+              {t('tasker.jobs.cancel.reasonLabel')}
             </Text>
             <View style={styles.reasonList}>
               {reasons.map((reason) => {
@@ -137,10 +131,7 @@ export function TaskerCancelSheet({
           {!hasSuspensionRisk && strikeCount === 0 && (
             <View style={styles.noteBox}>
               <Text style={styles.noteText}>
-                {t(
-                  'tasker.jobs.cancel.impactNotice',
-                  'Цуцлалт нь таны хайлтын эрэмбэлэлт болон найдвартай байдлын үнэлгээнд нөлөөлнө.',
-                )}
+                {t('TaskerCancelSheet.copy3')}
               </Text>
             </View>
           )}
@@ -153,7 +144,7 @@ export function TaskerCancelSheet({
             testID="cancel-confirm"
           />
           <Button
-            label={t('tasker.jobs.cancel.backButton', 'Буцах')}
+            label={t('tasker.jobs.cancel.backButton')}
             variant="outline"
             onPress={onClose}
             testID="cancel-back"

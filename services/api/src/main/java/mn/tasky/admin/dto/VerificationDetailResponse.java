@@ -11,7 +11,6 @@ public record VerificationDetailResponse(
         @JsonProperty("user_name") String userName,
         @JsonProperty("id_card_front_url") String idCardFrontUrl,
         @JsonProperty("id_card_back_url") String idCardBackUrl,
-        @JsonProperty("selfie_url") String selfieUrl,
         String status,
         @JsonProperty("admin_notes") String adminNotes,
         @JsonProperty("submitted_at") String submittedAt,

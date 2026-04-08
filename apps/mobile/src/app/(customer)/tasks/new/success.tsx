@@ -64,23 +64,20 @@ export default function TaskPostedSuccessScreen() {
               className="text-caption font-sans-bold"
               style={{ letterSpacing: 0.8, color: colors.verified }}
             >
-              {t('TaskPostedSuccessScreen.successBadge', 'БАТАЛГААЖСАН')}
+              {t('TaskPostedSuccessScreen.successBadge')}
             </Text>
           </View>
           <Text
             className="text-heading font-display-bold text-primaryDeep text-center"
             style={{ lineHeight: typography.heading * 1.25 }}
           >
-            {t('TaskPostedSuccessScreen.successTitle', 'Task posted successfully!')}
+            {t('TaskPostedSuccessScreen.successTitle')}
           </Text>
           <Text
             className="text-body text-textSecondary text-center"
             style={{ lineHeight: typography.body * 1.6 }}
           >
-            {t(
-              'customer.postTask.successBody',
-              'Taskers can now see your task and apply. You will be notified when new applications arrive',
-            )}
+            {t('TaskPostedSuccessScreen.successBody')}
           </Text>
           <View className="flex-row gap-sm mt-sm">
             <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.primary }} />
@@ -94,22 +91,22 @@ export default function TaskPostedSuccessScreen() {
             className="text-caption font-sans-bold uppercase text-primaryDeep mb-xs"
             style={{ letterSpacing: 0.8 }}
           >
-            {t('TaskPostedSuccessScreen.successNextLabel', 'ДАРААГИЙН АЛХАМ')}
+            {t('TaskPostedSuccessScreen.successNextLabel')}
           </Text>
           <Text className="text-body font-sans-bold text-primaryDeep">
-            {t('TaskPostedSuccessScreen.successNextTitle', 'What happens next')}
+            {t('TaskPostedSuccessScreen.successNextTitle')}
           </Text>
           <Text
             className="text-caption text-textSecondary"
             style={{ lineHeight: typography.caption * 1.6 }}
           >
-            {t('TaskPostedSuccessScreen.successNext1', "You'll get applications soon")}
+            {t('TaskPostedSuccessScreen.successNext1')}
           </Text>
           <Text
             className="text-caption text-textSecondary"
             style={{ lineHeight: typography.caption * 1.6 }}
           >
-            {t('TaskPostedSuccessScreen.successNext2', 'Review Tasker profiles and ratings')}
+            {t('TaskPostedSuccessScreen.successNext2')}
           </Text>
         </View>
       </InsetScrollView>
@@ -117,12 +114,12 @@ export default function TaskPostedSuccessScreen() {
       <StickyActionBar>
         <View className="px-lg pt-md pb-lg gap-sm">
           <Button
-            label={t('TaskPostedSuccessScreen.successCta', 'View Task')}
+            label={t('TaskPostedSuccessScreen.successCta')}
             onPress={handleViewTask}
             testID="task-posted-success-screen-cta"
           />
           <Button
-            label={t('TaskPostedSuccessScreen.successDone', 'Дуусгах')}
+            label={t('TaskPostedSuccessScreen.successDone')}
             variant="outline"
             onPress={handleDone}
             testID="task-posted-success-screen-done"

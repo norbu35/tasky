@@ -26,8 +26,8 @@ const SLIDES = [
     bodyKey: 'auth.onboarding.slide1Body',
     icon: Users,
     iconColor: colors.primary,
-    titleFallback: 'Найдвартай гүйцэтгэгч олох',
-    bodyFallback: 'Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой',
+    titleFallback: t('OnboardingScreen.copy1'),
+    bodyFallback: t('OnboardingScreen.copy2'),
   },
   {
     id: '2',
@@ -35,8 +35,8 @@ const SLIDES = [
     bodyKey: 'auth.onboarding.slide2Body',
     icon: Sparkles,
     iconColor: colors.secondary,
-    titleFallback: 'Захиалга хийх амархан',
-    bodyFallback: 'Ажлаа нийтэлж, хэдхэн товшилтоор захиалга хийгээрэй',
+    titleFallback: t('OnboardingScreen.copy3'),
+    bodyFallback: t('OnboardingScreen.copy4'),
   },
   {
     id: '3',
@@ -44,8 +44,8 @@ const SLIDES = [
     bodyKey: 'auth.onboarding.slide3Body',
     icon: Shield,
     iconColor: colors.verified,
-    titleFallback: 'Аюулгүй, итгэлтэй',
-    bodyFallback: 'Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг',
+    titleFallback: t('OnboardingScreen.copy5'),
+    bodyFallback: t('OnboardingScreen.copy6'),
   },
 ];
 
@@ -118,7 +118,7 @@ export default function OnboardingScreen() {
                   className="text-caption font-sans-bold"
                   style={{ color: colors.primaryForeground, letterSpacing: 0.3 }}
                 >
-                  {t('auth.onboarding.badge', 'БАТАЛГААЖСАН')}
+                  {t('auth.onboarding.badge')}
                 </Text>
               </View>
             ) : null}
@@ -155,7 +155,7 @@ export default function OnboardingScreen() {
         ) : (
           <Pressable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
             <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
-              {t('auth.onboarding.skip', 'Алгасах')}
+              {t('auth.onboarding.skip')}
             </Text>
           </Pressable>
         )}
@@ -192,8 +192,8 @@ export default function OnboardingScreen() {
           testID="onboarding-next"
           label={
             isLastSlide
-              ? t('auth.onboarding.getStarted', 'Эхлэх')
-              : t('auth.onboarding.next', 'Дараагийх')
+              ? t('auth.onboarding.getStarted')
+              : t('auth.onboarding.next')
           }
           onPress={handleNext}
           className="self-stretch"

@@ -66,7 +66,7 @@ function ApplicantCard({
           >
             <Award size={12} color={colors.trustMuted} />
             <Text className="text-caption font-sans-bold text-trust-muted">
-              {t('applicants.recommended', 'Recommended')}
+              {t('applicants.recommended')}
             </Text>
           </View>
         ) : null}
@@ -84,7 +84,7 @@ function ApplicantCard({
           accessibilityRole="button"
         >
           <Text className="text-label font-sans-bold text-primary-foreground">
-            {t('customer.applicants.accept', 'Accept')}
+            {t('customer.applicants.accept')}
           </Text>
         </Touchable>
         <Touchable
@@ -94,7 +94,7 @@ function ApplicantCard({
           accessibilityRole="button"
         >
           <Text className="text-label font-sans-bold text-primary-deep">
-            {t('customer.applicants.viewProfile', 'View Profile')}
+            {t('customer.applicants.viewProfile')}
           </Text>
         </Touchable>
       </View>
@@ -140,7 +140,7 @@ export default function ApplicantsListScreen() {
         taskId,
         applicationId: selectedApplicant.id,
         taskerId: selectedApplicant.taskerId,
-        taskTitle: task?.description ?? t('customer.applicants.taskTitleFallback', 'Task'),
+        taskTitle: task?.description ?? t('customer.applicants.taskTitleFallback'),
         taskBudget: String(task?.budget ?? ''),
         taskSchedule: task?.scheduled_at ?? '',
         taskerName: selectedApplicant.name,
@@ -168,15 +168,15 @@ export default function ApplicantsListScreen() {
           >
             <ChevronLeft size={22} color={colors.primary} />
             <Text className="text-body font-sans-semibold text-primary">
-              {t('common.back', 'Back')}
+              {t('common.back')}
             </Text>
           </Touchable>
           <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
             <Text className="text-heading font-sans-bold text-primary-deep">
-              {t('customer.applicants.pageTitle', 'Applications')}
+              {t('customer.applicants.pageTitle')}
             </Text>
             <Text className="text-caption text-text-secondary">
-              {t('customer.applicants.count', '{{count}} applications').replace(
+              {t('customer.applicants.count').replace(
                 '{{count}}',
                 String(applicants.length),
               )}
@@ -194,7 +194,7 @@ export default function ApplicantsListScreen() {
               {declineNotification}
             </Text>
             <Button
-              label={t('common.dismiss', 'Dismiss')}
+              label={t('common.dismiss')}
               variant="ghost"
               onPress={() => setDeclineNotification(null)}
             />
@@ -206,7 +206,7 @@ export default function ApplicantsListScreen() {
             className="mx-lg rounded-lg bg-card p-lg"
             style={{ gap: spacing.sm, ...elevations.soft }}
           >
-            <Text className="text-body text-text-secondary">{t('common.loading', 'Loading')}</Text>
+            <Text className="text-body text-text-secondary">{t('common.loading')}</Text>
           </View>
         ) : isError ? (
           <View
@@ -214,7 +214,7 @@ export default function ApplicantsListScreen() {
             style={{ gap: spacing.sm, ...elevations.soft }}
           >
             <Text className="text-body font-sans-bold text-primary-deep">
-              {t('customer.applicants.errorNetwork', 'Failed to load applications')}
+              {t('customer.applicants.errorNetwork')}
             </Text>
             <Touchable
               onPress={() => refetch()}
@@ -222,7 +222,7 @@ export default function ApplicantsListScreen() {
               testID="applicants-retry"
             >
               <Text className="text-caption font-sans-bold text-secondary-foreground">
-                {t('common.tryAgain', 'Try again')}
+                {t('common.tryAgain')}
               </Text>
             </Touchable>
           </View>
@@ -242,10 +242,10 @@ export default function ApplicantsListScreen() {
             ListEmptyComponent={
               <View className="items-center py-xl" style={{ gap: spacing.sm }}>
                 <Text className="text-subtitle font-sans-bold text-primary-deep">
-                  {t('customer.applicants.emptyTitle', 'No applicants yet')}
+                  {t('customer.applicants.emptyTitle')}
                 </Text>
                 <Text className="text-body text-text-secondary">
-                  {t('customer.applicants.emptyDescription', 'Taskers are being notified')}
+                  {t('customer.applicants.emptyDescription')}
                 </Text>
               </View>
             }
@@ -258,17 +258,14 @@ export default function ApplicantsListScreen() {
       <ModalSheetTemplate
         isOpen={Boolean(selectedApplicant)}
         onClose={() => setSelectedApplicant(null)}
-        title={t('customer.applicants.confirmTitle', 'Select this Tasker?')}
+        title={t('customer.applicants.confirmTitle')}
         testID="applicant-accept-sheet"
         snapPoints={['42%']}
       >
         {selectedApplicant ? (
           <View style={{ gap: spacing.lg }}>
             <Text className="text-body text-text-secondary leading-snug">
-              {t(
-                'customer.applicants.confirmBody',
-                'After selecting, you will proceed to booking confirmation',
-              )}
+              {t('ApplicantsListScreen.copy1')}
             </Text>
             <View className="flex-row items-center" style={{ gap: spacing.md }}>
               <ProfileAvatar
@@ -285,7 +282,7 @@ export default function ApplicantsListScreen() {
               </View>
             </View>
             <Button
-              label={t('customer.applicants.confirmCta', 'Confirm')}
+              label={t('customer.applicants.confirmCta')}
               onPress={handleConfirmAccept}
               testID="applicant-accept-sheet-confirm"
             />
@@ -296,7 +293,7 @@ export default function ApplicantsListScreen() {
               testID="applicant-accept-sheet-cancel"
             >
               <Text className="text-body font-sans-bold text-text-secondary">
-                {t('customer.applicants.confirmCancel', 'Go Back')}
+                {t('customer.applicants.confirmCancel')}
               </Text>
             </Touchable>
           </View>

@@ -42,7 +42,7 @@ export function CustomerNoShowSheet({
     return (
       <ModalSheetTemplate isOpen={isOpen} onClose={onClose} testID="customer-no-show-sheet">
         <Text style={styles.successText}>
-          {t('customer.bookings.noShowFlaggedSuccess', 'No-show flagged successfully')}
+          {t('customer.bookings.noShowFlaggedSuccess')}
         </Text>
       </ModalSheetTemplate>
     );
@@ -53,22 +53,19 @@ export function CustomerNoShowSheet({
       <ModalSheetTemplate
         isOpen={isOpen}
         onClose={onClose}
-        title={t('customer.bookings.noShowReminderTitle', 'Has the Tasker arrived?')}
+        title={t('customer.bookings.noShowReminderTitle')}
         testID="customer-no-show-sheet"
       >
         <Text style={styles.description}>
-          {t(
-            'customer.bookings.noShowReminderDescription',
-            '10 minutes past scheduled time. Please update the status.',
-          )}
+          {t('CustomerNoShowSheet.copy1')}
         </Text>
         <Button
-          label={t('customer.bookings.ctaTaskerArrived', 'Yes, arrived')}
+          label={t('customer.bookings.ctaTaskerArrived')}
           onPress={handleArrived}
           testID="no-show-arrived-btn"
         />
         <Button
-          label={t('customer.bookings.ctaNotYet', 'No, not yet')}
+          label={t('customer.bookings.ctaNotYet')}
           variant="outline"
           onPress={onClose}
           testID="no-show-not-yet-btn"
@@ -82,34 +79,28 @@ export function CustomerNoShowSheet({
     <ModalSheetTemplate
       isOpen={isOpen}
       onClose={onClose}
-      title={t('customer.bookings.noShowFlagTitle', 'Tasker did not show up')}
+      title={t('customer.bookings.noShowFlagTitle')}
       testID="customer-no-show-sheet"
     >
       <Text style={styles.description}>
-        {t(
-          'customer.bookings.noShowFlagDescription',
-          '15 minutes past scheduled time. Flag as no-show? This will cancel the booking and trigger an admin review.',
-        )}
+        {t('CustomerNoShowSheet.copy2')}
       </Text>
       <Button
-        label={t('customer.bookings.ctaFlagNoShow', 'Flag No-Show')}
+        label={t('customer.bookings.ctaFlagNoShow')}
         variant="destructive"
         onPress={handleFlag}
         isLoading={isPending || state === 'flagging'}
         testID="no-show-flag-btn"
       />
       <Button
-        label={t('customer.bookings.ctaDismiss', 'Dismiss')}
+        label={t('customer.bookings.ctaDismiss')}
         variant="outline"
         onPress={onClose}
         testID="no-show-dismiss-btn"
       />
       <View style={styles.noteContainer}>
         <Text style={styles.noteText}>
-          {t(
-            'customer.bookings.noShowStrikeNote',
-            '2 or more no-shows in 28 days triggers a strike review',
-          )}
+          {t('CustomerNoShowSheet.copy3')}
         </Text>
       </View>
     </ModalSheetTemplate>

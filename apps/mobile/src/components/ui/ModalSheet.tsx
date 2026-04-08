@@ -78,7 +78,7 @@ export function ModalSheet({
               ) : null}
             </View>
           ) : (
-            <Button label={t('common.close', 'Close')} variant="secondary" onPress={onClose} />
+            <Button label={t('common.close')} variant="secondary" onPress={onClose} />
           )}
         </View>
       </View>

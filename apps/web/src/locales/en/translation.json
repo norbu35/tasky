@@ -728,7 +728,7 @@
     },
     "upload": {
       "title": "Upload verification documents",
-      "description": "Upload the front and back of your ID card, plus a selfie.",
+      "description": "Upload the front and back of your ID card.",
       "cardDesc": "Phase 1 keeps the upload step simple and reviewable."
     }
   },

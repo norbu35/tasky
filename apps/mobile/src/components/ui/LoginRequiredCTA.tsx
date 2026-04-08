@@ -29,13 +29,13 @@ export function LoginRequiredCTA({ message, testID, className }: LoginRequiredCT
         <Lock color={mobileTheme.colors.primary} size={48} />
       </View>
       <Text className="text-[24px] font-bold text-foreground mb-3 text-center">
-        {t('auth.loginRequired') || 'Log in to continue'}
+        {t('auth.loginRequired') || t('LoginRequiredCTA.copy1')}
       </Text>
       <Text className="text-body text-muted-foreground text-center mb-8" style={{ lineHeight: 24 }}>
-        {message || t('auth.loginReason') || 'You need to be logged in to view this content.'}
+        {message || t('auth.loginReason') || t('LoginRequiredCTA.copy2')}
       </Text>
       <Button
-        label={t('auth.loginButton') || 'Log In or Sign Up'}
+        label={t('auth.loginButton') || t('LoginRequiredCTA.copy3')}
         onPress={() => router.push('/(auth)')}
         style={{ alignSelf: 'stretch', maxWidth: 300 }}
       />

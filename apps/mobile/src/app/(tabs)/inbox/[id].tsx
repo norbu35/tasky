@@ -48,9 +48,9 @@ export default function ChatDetailScreen() {
 
   const activeTask = useMemo(
     () => ({
-      title: t('shared.inbox.contextTitle', 'Үйлчилгээ'),
-      subtitle: t('shared.inbox.contextSubtitle', 'Захиалгын дэлгэрэнгүй'),
-      status: t('shared.inbox.contextStatus', 'Баталгаажсан'),
+      title: t('shared.inbox.contextTitle'),
+      subtitle: t('shared.inbox.contextSubtitle'),
+      status: t('shared.inbox.contextStatus'),
     }),
     [t],
   );
@@ -132,12 +132,12 @@ export default function ChatDetailScreen() {
           </Pressable>
           <View className="flex-1 items-center">
             <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
-              {t('shared.inbox.chatTitle', 'Чат')}
+              {t('shared.inbox.chatTitle')}
             </Text>
             <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
               <View className="w-2 h-2 rounded-full bg-verified" />
               <Text className="text-micro text-mutedForeground">
-                {t('shared.inbox.online', 'Онлайн')}
+                {t('shared.inbox.online')}
               </Text>
             </View>
           </View>
@@ -146,8 +146,8 @@ export default function ChatDetailScreen() {
           </View>
         </View>
         <ErrorStateTemplate
-          message={t('shared.inbox.errorMessage', 'Мессежүүдийг ачаалж чадсангүй')}
-          retryLabel={t('shared.inbox.retry', 'Дахин оролдох')}
+          message={t('shared.inbox.errorMessage')}
+          retryLabel={t('shared.inbox.retry')}
           onRetry={() => {
             void refetch();
           }}
@@ -170,12 +170,12 @@ export default function ChatDetailScreen() {
         </Pressable>
         <View className="flex-1 items-center">
           <Text className="text-subtitle font-bold text-foreground" numberOfLines={1}>
-            {t('shared.inbox.chatTitle', 'Чат')}
+            {t('shared.inbox.chatTitle')}
           </Text>
           <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
             <View className="w-2 h-2 rounded-full bg-verified" />
             <Text className="text-micro text-mutedForeground">
-              {t('shared.inbox.online', 'Онлайн')}
+              {t('shared.inbox.online')}
             </Text>
           </View>
         </View>
@@ -211,10 +211,7 @@ export default function ChatDetailScreen() {
       <View className="flex-row items-center gap-sm mt-md mx-lg px-md py-sm rounded-md bg-secondary">
         <ShieldAlert size={16} color={colors.primary} />
         <Text className="flex-1 text-label text-foreground">
-          {t(
-            'shared.inbox.phoneWarning',
-            'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
-          )}
+          {t('ChatDetailScreen.copy1')}
         </Text>
       </View>
 
@@ -231,10 +228,7 @@ export default function ChatDetailScreen() {
       {showPhoneWarning && (
         <View testID="phone-warning" className="bg-secondary py-sm px-md">
           <Text className="text-label text-foreground text-center">
-            {t(
-              'shared.inbox.phoneWarning',
-              'Аюулгүй байдлын үүднээс утасны дугаар болон хувийн мэдээлэл илгээхгүй байхыг зөвлөж байна',
-            )}
+            {t('ChatDetailScreen.copy2')}
           </Text>
         </View>
       )}
@@ -261,7 +255,7 @@ export default function ChatDetailScreen() {
           }}
           value={draft}
           onChangeText={setDraft}
-          placeholder={t('shared.inbox.sendPlaceholder', 'Мессеж бичих...')}
+          placeholder={t('shared.inbox.sendPlaceholder')}
           placeholderTextColor={colors.mutedForeground}
           maxLength={500}
           multiline
@@ -282,7 +276,7 @@ export default function ChatDetailScreen() {
           disabled={draft.trim().length === 0 || isPending}
         >
           <Text className="text-primaryForeground font-bold text-body">
-            {t('chat.send', 'Илгээх')}
+            {t('chat.send')}
           </Text>
         </Pressable>
       </View>

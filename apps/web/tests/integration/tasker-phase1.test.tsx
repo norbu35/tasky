@@ -113,7 +113,7 @@ describe('Tasker phase 1 parity', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, has_more: false },
+        cursor: { next: null, prev: null },
       }),
       listCategories: vi.fn().mockResolvedValue({
         data: [
@@ -126,7 +126,7 @@ describe('Tasker phase 1 parity', () => {
             sort_order: 1,
           },
         ],
-        cursor: { next: null, has_more: false },
+        cursor: { next: null, prev: null },
       }),
       applyToTask: vi.fn().mockResolvedValue({
         id: 'app-1',
@@ -195,7 +195,7 @@ describe('Tasker phase 1 parity', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, has_more: false },
+        cursor: { next: null, prev: null },
       }),
       getVerificationStatus: vi.fn().mockResolvedValue({
         status: 'APPROVED',

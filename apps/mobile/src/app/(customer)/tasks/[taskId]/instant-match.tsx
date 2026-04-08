@@ -74,11 +74,11 @@ export default function CustomerInstantMatchScreen() {
   const matchState = coerceState(state);
   const declines = coerceDeclineCount(declineCount);
   const hasTaskId = Boolean(taskId);
-  const summaryTitle = coerceString(taskTitle, 'Deep clean apartment');
-  const summaryLocation = coerceString(locationText, '15th khoroo');
+  const summaryTitle = coerceString(taskTitle, t('CustomerInstantMatchScreen.copy1'));
+  const summaryLocation = coerceString(locationText, t('CustomerInstantMatchScreen.copy2'));
   const summaryBudget = Number(coerceString(budget, '45000'));
   const matchedTaskerId = coerceString(taskerId, 'tasker-1');
-  const matchedTaskerName = coerceString(taskerName, 'B. Temuulen');
+  const matchedTaskerName = coerceString(taskerName, t('CustomerInstantMatchScreen.copy3'));
   const matchedTaskerAvatar = coerceString(taskerAvatar, '');
   const matchedTaskerRating = coerceString(taskerRating, '4.7');
 
@@ -126,25 +126,19 @@ export default function CustomerInstantMatchScreen() {
 
   const heroTitle =
     matchState === 'matched_awaiting_accept'
-      ? t('matching.instantMatch.heroMatched', 'Tasker found')
+      ? t('matching.instantMatch.heroMatched')
       : matchState === 'fallback_to_open'
-        ? t('matching.instantMatch.heroFallback', 'Instant match could not secure a tasker.')
+        ? t('matching.instantMatch.heroFallback')
         : matchState === 'error_no_eligible'
-          ? t('matching.instantMatch.heroError', 'No eligible taskers nearby')
-          : t('matching.instantMatch.heroSearching', 'Finding your tasker');
+          ? t('matching.instantMatch.heroError')
+          : t('matching.instantMatch.heroSearching');
 
   const heroSubtitle =
     matchState === 'fallback_to_open'
-      ? t('matching.instantMatch.heroFallbackBody', 'Your task is now open for applications.')
+      ? t('matching.instantMatch.heroFallbackBody')
       : matchState === 'error_no_eligible'
-        ? t(
-            'matching.instantMatch.heroErrorBody',
-            'You can review the task and continue with open applications instead.',
-          )
-        : t(
-            'matching.instantMatch.heroSearchingBody',
-            'We are checking nearby verified taskers right now.',
-          );
+        ? t('CustomerInstantMatchScreen.copy1')
+        : t('CustomerInstantMatchScreen.copy2');
 
   return (
     <DetailTemplate testID="SCR-CUST-027" onBack={onBack}>
@@ -204,12 +198,12 @@ export default function CustomerInstantMatchScreen() {
               <Text className="text-body font-bold text-primaryDeep">
                 {matchState === 'matched_awaiting_accept'
                   ? t('matching.instantMatch.sampleTaskerName', matchedTaskerName)
-                  : t('matching.instantMatch.previewName', 'Tasky instant match')}
+                  : t('matching.instantMatch.previewName')}
               </Text>
               <Text className="text-caption text-textSecondary">
                 {matchState === 'matched_awaiting_accept'
-                  ? t('matching.instantMatch.verifiedTasker', 'Verified Tasker')
-                  : t('matching.instantMatch.previewMeta', 'Matching in progress')}
+                  ? t('matching.instantMatch.verifiedTasker')
+                  : t('matching.instantMatch.previewMeta')}
               </Text>
             </View>
           </View>
@@ -219,7 +213,7 @@ export default function CustomerInstantMatchScreen() {
               className="text-caption text-textSecondary uppercase"
               style={{ letterSpacing: 0.5 }}
             >
-              {t('matching.instantMatch.taskLabel', 'Task')}
+              {t('matching.instantMatch.taskLabel')}
             </Text>
             <PriceTag amount={summaryBudget} size="sm" />
           </View>
@@ -231,18 +225,12 @@ export default function CustomerInstantMatchScreen() {
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {matchState === 'tasker_declined_retry'
-                ? t(
-                    'matching.instantMatch.declinedStatus',
-                    'A tasker declined. We are moving to the next best match...',
-                  )
-                : t(
-                    'matching.instantMatch.matchingStatus',
-                    'Searching for the strongest nearby match...',
-                  )}
+                ? t('CustomerInstantMatchScreen.copy3')
+                : t('CustomerInstantMatchScreen.copy4')}
             </Text>
             {matchState === 'tasker_declined_retry' && (
               <Text className="text-label text-textSecondary text-center">
-                {t('matching.instantMatch.declineCount', '{{count}}/3 declined', {
+                {t('CustomerInstantMatchScreen.copy5', {
                   count: declines,
                 })}
               </Text>
@@ -253,14 +241,13 @@ export default function CustomerInstantMatchScreen() {
         {matchState === 'matched_awaiting_accept' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Text className="text-body text-primaryDeep text-center leading-relaxed">
-              {t('matching.instantMatch.matchedStatus', 'Tasker found')}
+              {t('matching.instantMatch.matchedStatus')}
             </Text>
             <Text className="text-label text-textSecondary text-center">
-              {t('matching.instantMatch.countdownLabel', 'Waiting for acceptance')}: 04:59
-            </Text>
+              {t('matching.instantMatch.countdownLabel')}{t('CustomerInstantMatchScreen.copy6')}</Text>
             <Button
               testID="instant-match-confirm-booking"
-              label={t('matching.instantMatch.confirmBooking', 'Confirm booking')}
+              label={t('matching.instantMatch.confirmBooking')}
               onPress={onConfirmBooking}
               isLoading={isCreatingBookingIntent}
             />
@@ -270,20 +257,14 @@ export default function CustomerInstantMatchScreen() {
         {matchState === 'fallback_to_open' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Text className="text-body text-primaryDeep text-center leading-relaxed">
-              {t(
-                'matching.instantMatch.fallbackStatus',
-                'Instant match could not secure a tasker.',
-              )}
+              {t('CustomerInstantMatchScreen.copy7')}
             </Text>
             <Text className="text-label text-textSecondary text-center">
-              {t(
-                'matching.instantMatch.fallbackDescription',
-                'Your task is now open for applications.',
-              )}
+              {t('CustomerInstantMatchScreen.copy8')}
             </Text>
             <Button
               testID="instant-match-view-applicants"
-              label={t('matching.instantMatch.viewApplicants', 'View applicants')}
+              label={t('matching.instantMatch.viewApplicants')}
               onPress={onViewApplicants}
             />
           </View>
@@ -293,18 +274,15 @@ export default function CustomerInstantMatchScreen() {
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Toast
               variant="error"
-              message={t('matching.instantMatch.noEligibleTitle', 'No eligible taskers nearby')}
+              message={t('matching.instantMatch.noEligibleTitle')}
             />
             <Text className="text-body text-primaryDeep text-center leading-relaxed">
-              {t(
-                'matching.instantMatch.noEligibleDescription',
-                'You can review the task and continue with open applications instead.',
-              )}
+              {t('CustomerInstantMatchScreen.copy9')}
             </Text>
             <Button
               testID="instant-match-back-to-task"
               variant="outline"
-              label={t('matching.instantMatch.backToTask', 'Back to task')}
+              label={t('matching.instantMatch.backToTask')}
               onPress={onBack}
             />
           </View>

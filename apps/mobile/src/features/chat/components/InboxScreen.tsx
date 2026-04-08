@@ -32,7 +32,7 @@ export function InboxScreen() {
       setConversations(res.data);
       setError(null);
     } catch (err: any) {
-      setError(err.message || t('shared.inbox.errorLoading', 'Failed to load conversations.'));
+      setError(err.message || t('shared.inbox.errorLoading'));
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +60,7 @@ export function InboxScreen() {
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <Text style={styles.headerTitle}>{t('messaging.inboxTitle', 'Inbox')}</Text>
+      <Text style={styles.headerTitle}>{t('messaging.inboxTitle')}</Text>
 
       <FlatList
         style={{ flex: 1 }}
@@ -84,7 +84,7 @@ export function InboxScreen() {
         )}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            {t('messaging.noConversations', 'No conversations found.')}
+            {t('messaging.noConversations')}
           </Text>
         }
       />

@@ -72,7 +72,7 @@ export function FormWizardTemplate({
           onPress={() => router.replace('/(tabs)')}
           className="w-8 h-8 items-center justify-center"
           testID="wizard-close"
-          accessibilityLabel={t('wizard.close', 'Close')}
+          accessibilityLabel={t('wizard.close')}
           accessibilityRole="button"
           hitSlop={8}
         >
@@ -117,14 +117,14 @@ export function FormWizardTemplate({
               {showBackButton ? (
                 <View className="flex-row gap-md">
                   <Button
-                    label={t('wizard.back', 'Back')}
+                    label={t('wizard.back')}
                     variant="outline"
                     onPress={onBack}
                     style={{ flex: 1 }}
                     testID={testID ? `${testID}-back` : undefined}
                   />
                   <Button
-                    label={nextLabel ?? t('wizard.next', 'Next')}
+                    label={nextLabel ?? t('wizard.next')}
                     onPress={onNext}
                     disabled={nextDisabled}
                     isLoading={nextLoading}
@@ -134,7 +134,7 @@ export function FormWizardTemplate({
                 </View>
               ) : (
                 <Button
-                  label={nextLabel ?? t('wizard.next', 'Next')}
+                  label={nextLabel ?? t('wizard.next')}
                   onPress={onNext}
                   disabled={nextDisabled}
                   isLoading={nextLoading}

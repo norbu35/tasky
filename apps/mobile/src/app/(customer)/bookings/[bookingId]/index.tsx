@@ -26,15 +26,15 @@ function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancell
 function getStatusLabel(status: string, t: (key: string, fb: string) => string): string {
   switch (status) {
     case 'ASSIGNED':
-      return t('customer.bookings.statusAssigned', 'Assigned');
+      return t('customer.bookings.statusAssigned');
     case 'TASKER_MARKED_DONE':
-      return t('customer.bookings.statusMarkedDone', 'Marked as done');
+      return t('customer.bookings.statusMarkedDone');
     case 'COMPLETED':
-      return t('customer.bookings.statusCompleted', 'Completed');
+      return t('customer.bookings.statusCompleted');
     case 'CANCELLED':
-      return t('customer.bookings.statusCancelled', 'Cancelled');
+      return t('customer.bookings.statusCancelled');
     case 'NO_SHOW':
-      return t('customer.bookings.statusNoShow', 'No-Show');
+      return t('customer.bookings.statusNoShow');
     default:
       return status;
   }
@@ -46,16 +46,16 @@ function getCtaConfig(
 ): { label: string; action: string } | null {
   switch (booking?.status) {
     case 'ASSIGNED':
-      return { label: t('customer.bookings.ctaMessage', 'Message'), action: 'message' };
+      return { label: t('customer.bookings.ctaMessage'), action: 'message' };
     case 'TASKER_MARKED_DONE':
       return {
-        label: t('customer.bookings.ctaConfirmComplete', 'Confirm Complete'),
+        label: t('customer.bookings.ctaConfirmComplete'),
         action: 'confirm_complete',
       };
     case 'COMPLETED':
       return hasSubmittedReview(booking)
-        ? { label: t('customer.bookings.ctaRebook', 'Rebook'), action: 'rebook' }
-        : { label: t('customer.bookings.ctaLeaveReview', 'Leave Review'), action: 'leave_review' };
+        ? { label: t('customer.bookings.ctaRebook'), action: 'rebook' }
+        : { label: t('customer.bookings.ctaLeaveReview'), action: 'leave_review' };
     default:
       return null;
   }
@@ -179,7 +179,7 @@ export default function BookingDetailScreen() {
           {/* Tasker Info */}
           <View className="mb-xl">
             <Text className="text-heading font-bold text-primaryDeep mb-md">
-              {t('customer.bookings.sectionTasker', 'Tasker')}
+              {t('customer.bookings.sectionTasker')}
             </Text>
             <Pressable
               className="flex-row items-center gap-md bg-muted rounded-md p-md mt-xs"
@@ -203,7 +203,7 @@ export default function BookingDetailScreen() {
           {/* Task Summary */}
           <View className="mb-xl">
             <Text className="text-heading font-bold text-primaryDeep mb-md">
-              {t('customer.bookings.sectionTaskSummary', 'Task Summary')}
+              {t('customer.bookings.sectionTaskSummary')}
             </Text>
             <Text className="text-body text-primaryDeep mb-sm">{booking.task?.description}</Text>
             {booking.task?.location_text && (
@@ -222,7 +222,7 @@ export default function BookingDetailScreen() {
           {/* Payment Note */}
           <View className="mb-xl">
             <Text className="text-caption text-accent italic">
-              {t('customer.bookings.paymentNote', 'Payment is settled directly with the Tasker')}
+              {t('customer.bookings.paymentNote')}
             </Text>
           </View>
 
@@ -234,7 +234,7 @@ export default function BookingDetailScreen() {
               testID="booking-detail-screen-timeline-link"
             >
               <Text className="text-body text-primary font-medium">
-                {t('customer.bookings.ctaTimeline', 'View Timeline')}
+                {t('customer.bookings.ctaTimeline')}
               </Text>
             </Pressable>
 
@@ -246,7 +246,7 @@ export default function BookingDetailScreen() {
                   testID="booking-detail-screen-reschedule-link"
                 >
                   <Text className="text-body text-primary font-medium">
-                    {t('customer.bookings.ctaReschedule', 'Reschedule')}
+                    {t('customer.bookings.ctaReschedule')}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -255,7 +255,7 @@ export default function BookingDetailScreen() {
                   testID="booking-detail-screen-cancel-btn"
                 >
                   <Text className="text-body text-danger font-medium">
-                    {t('customer.bookings.ctaCancel', 'Cancel Booking')}
+                    {t('customer.bookings.ctaCancel')}
                   </Text>
                 </Pressable>
               </>
@@ -268,7 +268,7 @@ export default function BookingDetailScreen() {
                 testID="booking-detail-screen-report-issue-link"
               >
                 <Text className="text-body text-danger font-medium">
-                  {t('customer.bookings.ctaReportIssue', 'Report Issue')}
+                  {t('customer.bookings.ctaReportIssue')}
                 </Text>
               </Pressable>
             )}
@@ -280,7 +280,7 @@ export default function BookingDetailScreen() {
                 testID="booking-detail-screen-review-link"
               >
                 <Text className="text-body text-primary font-medium">
-                  {t('shared.review.title', 'Leave a Review')}
+                  {t('shared.review.title')}
                 </Text>
               </Pressable>
             )}
@@ -292,7 +292,7 @@ export default function BookingDetailScreen() {
                 testID="booking-detail-screen-report-issue-link"
               >
                 <Text className="text-body text-danger font-medium">
-                  {t('customer.bookings.ctaReportIssue', 'Report Issue')}
+                  {t('customer.bookings.ctaReportIssue')}
                 </Text>
               </Pressable>
             )}
@@ -322,12 +322,9 @@ export default function BookingDetailScreen() {
             testID="SCR-CUST-018"
             isOpen={showCompleteSheet}
             onClose={() => setShowCompleteSheet(false)}
-            title={t('customer.confirmComplete.title', 'Confirm Completion')}
-            description={t(
-              'customer.confirmComplete.description',
-              'Confirm that the work has been completed satisfactorily.',
-            )}
-            confirmLabel={t('customer.confirmComplete.confirm', 'Confirm Complete')}
+            title={t('customer.confirmComplete.title')}
+            description={t('BookingDetailScreen.copy1')}
+            confirmLabel={t('customer.confirmComplete.confirm')}
             onConfirm={() => {
               // TODO: wire real completion API
               setShowCompleteSheet(false);
@@ -337,12 +334,9 @@ export default function BookingDetailScreen() {
             testID="SCR-CUST-021"
             isOpen={showNoShowSheet}
             onClose={() => setShowNoShowSheet(false)}
-            title={t('customer.noShow.title', 'Report No-Show')}
-            description={t(
-              'customer.noShow.description',
-              'Report that the tasker did not arrive. Only use after waiting 15+ minutes past the scheduled time.',
-            )}
-            confirmLabel={t('customer.noShow.confirm', 'Report No-Show')}
+            title={t('customer.noShow.title')}
+            description={t('BookingDetailScreen.copy2')}
+            confirmLabel={t('customer.noShow.confirm')}
             onConfirm={() => {
               // TODO: wire real no-show API
               setShowNoShowSheet(false);

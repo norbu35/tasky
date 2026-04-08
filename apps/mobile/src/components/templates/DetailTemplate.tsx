@@ -121,7 +121,7 @@ export function DetailTemplate({
       {/* Body */}
       {isError ? (
         <ErrorStateTemplate
-          message={errorMessage ?? t('detail.errorMessage', 'Could not load details')}
+          message={errorMessage ?? t('detail.errorMessage')}
           onRetry={onRetry}
           testID={testID ? `${testID}-error` : undefined}
         />

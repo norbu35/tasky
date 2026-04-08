@@ -10,16 +10,16 @@ export default function ApplicationSubmittedScreen() {
   return (
     <SuccessCelebrationTemplate
       testID="SCR-TASK-011"
-      headline={t('tasker.applied.headline', 'Application Sent!')}
-      body={t('tasker.applied.body', 'The customer will review your application and respond soon.')}
+      headline={t('tasker.applied.headline')}
+      body={t('tasker.applied.body')}
       nextSteps={[
-        t('tasker.applied.step1', 'Customer reviews applicants'),
-        t('tasker.applied.step2', 'You get notified if selected'),
-        t('tasker.applied.step3', 'Booking is confirmed automatically'),
+        t('tasker.applied.step1'),
+        t('tasker.applied.step2'),
+        t('tasker.applied.step3'),
       ]}
-      ctaLabel={t('tasker.applied.cta', 'Browse More Tasks')}
+      ctaLabel={t('tasker.applied.cta')}
       ctaOnPress={() => router.replace('/(tabs)')}
-      secondaryCtaLabel={t('tasker.applied.secondaryCta', 'View My Applications')}
+      secondaryCtaLabel={t('tasker.applied.secondaryCta')}
       secondaryCtaOnPress={() => router.push('/(tasker)/jobs')}
     />
   );

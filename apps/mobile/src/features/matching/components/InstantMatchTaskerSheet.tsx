@@ -15,7 +15,7 @@ interface InstantMatchTaskerSheetProps {
   onDecline?: () => void;
 }
 
-const DEFAULT_TASK_TITLE = 'Гэр цэвэрлэгээ';
+const DEFAULT_TASK_TITLE = t('InstantMatchTaskerSheet.copy1');
 const DEFAULT_BUDGET_LABEL = '₮45,000';
 const DEFAULT_TIME_REMAINING = '5:00';
 
@@ -56,12 +56,9 @@ export function InstantMatchTaskerSheet({
     return (
       <View style={styles.scrim}>
         <View style={styles.sheet} testID="instant-match-sheet">
-          <Text style={styles.title}>{t('matching.instantMatch.successTitle', 'Success!')}</Text>
+          <Text style={styles.title}>{t('matching.instantMatch.successTitle')}</Text>
           <Text style={styles.description}>
-            {t(
-              'matching.instantMatch.successDescription',
-              'A new booking was created. Check My Jobs section.',
-            )}
+            {t('InstantMatchTaskerSheet.copy2')}
           </Text>
         </View>
       </View>
@@ -72,9 +69,9 @@ export function InstantMatchTaskerSheet({
     <View style={styles.scrim}>
       <View style={styles.sheet} testID="instant-match-sheet">
         <View style={styles.handle} />
-        <Text style={styles.title}>{t('matching.instantMatch.newOfferTitle', 'New offer!')}</Text>
+        <Text style={styles.title}>{t('matching.instantMatch.newOfferTitle')}</Text>
         <Text style={styles.description}>
-          {t('matching.instantMatch.newOfferDescription', 'You have a new instant match offer.')}
+          {t('matching.instantMatch.newOfferDescription')}
         </Text>
         <View style={styles.card}>
           <Text style={styles.taskTitle}>{taskTitle}</Text>
@@ -83,11 +80,11 @@ export function InstantMatchTaskerSheet({
         </View>
         <Button
           testID="instant-match-accept"
-          label={t('matching.instantMatch.acceptButton', 'Accept')}
+          label={t('matching.instantMatch.acceptButton')}
           onPress={handleAccept}
         />
         <Button
-          label={t('matching.instantMatch.declineButton', 'Decline')}
+          label={t('matching.instantMatch.declineButton')}
           variant="ghost"
           onPress={handleDecline}
         />

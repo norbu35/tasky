@@ -59,59 +59,44 @@ export function NoApplicantRescue({
       </View>
 
       <Text style={styles.title}>
-        {t('customer.noApplicantRescue.title', 'Гүйцэтгэгч олдсонгүй')}
+        {t('customer.noApplicantRescue.title')}
       </Text>
 
       <Text style={styles.description}>
-        {t(
-          'customer.noApplicantRescue.intro',
-          '120 минутад ямар нэг гүйцэтгэгч хүсэлт гаргаагүй байна. Дараах сонголтуудаас сонгоно уу.',
-        )}
+        {t('NoApplicantRescue.copy1')}
       </Text>
 
       <View style={styles.cardStack}>
         <RescueButton
           icon={Banknote}
-          label={t('customer.noApplicantRescue.adjustBudget', 'Төсөв нэмэх')}
-          description={t(
-            'customer.noApplicantRescue.adjustBudgetDescription',
-            'Төсөв нэмснээр гүйцэтгэгч олдох магадлал өснө.',
-          )}
+          label={t('customer.noApplicantRescue.adjustBudget')}
+          description={t('NoApplicantRescue.copy2')}
           onPress={onAdjustBudget}
         />
 
         <RescueButton
           icon={CalendarDays}
-          label={t('customer.noApplicantRescue.adjustSchedule', 'Цаг өөрчлөх')}
-          description={t(
-            'customer.noApplicantRescue.adjustScheduleDescription',
-            'Шинэ цаг сонгосноор илүү олон гүйцэтгэгчид харагдана.',
-          )}
+          label={t('customer.noApplicantRescue.adjustSchedule')}
+          description={t('NoApplicantRescue.copy3')}
           onPress={onAdjustSchedule}
         />
 
         <RescueButton
           icon={Headphones}
-          label={t('customer.noApplicantRescue.requestConcierge', 'Тусламж хүсэх')}
-          description={t(
-            'customer.noApplicantRescue.requestConciergeDescription',
-            'Туслах ажилтанд илгээж, даалгаврыг гараар хуваарилуулна.',
-          )}
+          label={t('customer.noApplicantRescue.requestConcierge')}
+          description={t('NoApplicantRescue.copy4')}
           onPress={onRequestConcierge}
         />
       </View>
 
       <View style={styles.noteCard}>
         <Text style={styles.noteText}>
-          {t(
-            'customer.noApplicantRescue.note',
-            'Төсөв болон цагийн өөрчлөлт хийсний дараа сонгосон даалгавар дахин идэвхжинэ.',
-          )}
+          {t('NoApplicantRescue.copy5')}
         </Text>
       </View>
 
       <Pressable onPress={onClose} style={styles.dismissButton} accessibilityRole="button">
-        <Text style={styles.dismissText}>{t('customer.noApplicantRescue.dismiss', 'Хаах')}</Text>
+        <Text style={styles.dismissText}>{t('customer.noApplicantRescue.dismiss')}</Text>
       </Pressable>
     </ModalSheetTemplate>
   );

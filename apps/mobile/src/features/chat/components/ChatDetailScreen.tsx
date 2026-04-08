@@ -43,7 +43,7 @@ export function ChatDetailScreen() {
       const res = await client.listMessages(session.accessToken, id);
       setMessages(res.data);
     } catch (err) {
-      console.error(t('shared.inbox.errorMessages', 'Failed to load messages'), err);
+      console.error(t('shared.inbox.errorMessages'), err);
     } finally {
       setIsLoading(false);
     }
@@ -58,13 +58,13 @@ export function ChatDetailScreen() {
       const client = new Client({
         webSocketFactory: () => new SockJS(socketUrl),
         onConnect: () => {
-          console.log('Mobile STOMP Connected');
+          console.log(t('ChatDetailScreen.copy1'));
           client.subscribe(`/topic/conversations/${id}`, (msg) => {
             const newMsg = JSON.parse(msg.body) as Message;
             setMessages((prev) => [...prev, newMsg]);
           });
         },
-        onStompError: (err) => console.error('Mobile STOMP Err', err),
+        onStompError: (err) => console.error(t('ChatDetailScreen.copy2'), err),
       });
 
       client.activate();
@@ -87,7 +87,7 @@ export function ChatDetailScreen() {
       const sent = await client.sendMessage(session.accessToken, id, payload);
       setMessages((prev) => [...prev, sent]);
     } catch (err) {
-      console.error('Failed to send msg', err);
+      console.error(t('ChatDetailScreen.copy3'), err);
     }
   };
 

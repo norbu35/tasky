@@ -46,7 +46,7 @@ export function TaskDetailsModal({ task, visible, onClose }: Props) {
     setIsApplying(true);
     try {
       const client = createMobileApiClient();
-      await client.applyToTask(session.accessToken, task.id, 'I am ready to help with this task!');
+      await client.applyToTask(session.accessToken, task.id, t('TaskDetailsModal.copy1'));
       Alert.alert(t('taskDetails.success'), t('taskDetails.applied'));
       onClose();
     } catch (err: any) {
