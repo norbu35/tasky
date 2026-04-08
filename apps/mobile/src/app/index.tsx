@@ -63,7 +63,7 @@ export default function SplashScreen() {
               lineHeight: 24,
             }}
           >
-            {t('auth.splash.tagline', 'Найдвартай гүйцэтгэгч, хялбар захиалга')}
+            {t('SplashScreen.tagline', 'Trusted taskers, easy booking')}
           </Text>
         </View>
       </View>
@@ -93,7 +93,7 @@ export default function SplashScreen() {
             textTransform: 'uppercase',
           }}
         >
-          {t('auth.splash.poweredBy', 'Powered by secure tech')}
+          {t('SplashScreen.poweredBy', 'Powered by secure tech')}
         </Text>
       </View>
       <ActivityIndicator

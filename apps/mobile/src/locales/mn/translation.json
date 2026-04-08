@@ -1263,5 +1263,9 @@
     "cancelledTitle": "Task cancelled",
     "cancelledBody": "This task is no longer active",
     "locationNote": "Taskers see approximate location until the booking is confirmed."
+  },
+  "SplashScreen": {
+    "tagline": "Trusted taskers, easy booking",
+    "poweredBy": "Powered by secure tech"
   }
 }
