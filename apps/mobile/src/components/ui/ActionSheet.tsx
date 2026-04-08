@@ -4,8 +4,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
-
-const { colors, radius, spacing, typography } = mobileTheme;
+import { cn } from '../../lib/cn';
 
 interface ActionSheetAction {
   label: string;
@@ -19,26 +18,36 @@ interface ActionSheetProps {
   onClose: () => void;
   actions: ActionSheetAction[];
   testID?: string;
+  className?: string;
 }
 
-export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetProps) {
+export function ActionSheet({ isOpen, onClose, actions, testID, className }: ActionSheetProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
-      <View style={styles.backdrop}>
+      <View className="flex-1 justify-end" style={{ backgroundColor: overlays.sheet }}>
         <Pressable
           accessibilityRole="button"
           onPress={onClose}
           style={StyleSheet.absoluteFill}
           testID="action-sheet-backdrop"
         />
-        <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]} testID={testID}>
+        <View
+          className={cn('bg-card rounded-tl-lg rounded-tr-lg pt-sm', className)}
+          style={{ paddingBottom: insets.bottom + mobileTheme.spacing.lg }}
+          testID={testID}
+        >
           {actions.map((action, index) => (
             <Pressable
               key={index}
-              style={[styles.actionRow, index < actions.length - 1 && styles.actionBorder]}
+              className="flex-row items-center px-lg py-md min-h-[48px]"
+              style={
+                index < actions.length - 1
+                  ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: mobileTheme.colors.border }
+                  : undefined
+              }
               onPress={() => {
                 action.onPress();
                 onClose();
@@ -46,65 +55,24 @@ export function ActionSheet({ isOpen, onClose, actions, testID }: ActionSheetPro
               accessibilityRole="button"
               accessibilityLabel={action.label}
             >
-              {action.icon && <View style={styles.iconContainer}>{action.icon}</View>}
-              <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
+              {action.icon && <View className="mr-md">{action.icon}</View>}
+              <Text className={cn('text-body font-sans text-foreground', action.destructive && 'text-danger')}>
                 {action.label}
               </Text>
             </Pressable>
           ))}
-          <Pressable style={styles.cancelRow} onPress={onClose} accessibilityRole="button">
-            <Text style={styles.cancelText}>{t('common.cancel', 'Cancel')}</Text>
+          <Pressable
+            className="items-center py-md mt-sm"
+            style={{ borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: mobileTheme.colors.border }}
+            onPress={onClose}
+            accessibilityRole="button"
+          >
+            <Text className="text-body font-sans-semibold text-muted-foreground">
+              {t('common.cancel', 'Cancel')}
+            </Text>
           </Pressable>
         </View>
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: overlays.sheet,
-  },
-  sheet: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    minHeight: 48,
-  },
-  actionBorder: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
-  },
-  iconContainer: {
-    marginRight: spacing.md,
-  },
-  actionText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-  },
-  destructiveText: {
-    color: colors.danger,
-  },
-  cancelRow: {
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    marginTop: spacing.sm,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
-  cancelText: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-});

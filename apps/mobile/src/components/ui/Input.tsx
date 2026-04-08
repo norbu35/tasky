@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
 import type { TextInputProps } from 'react-native';
-import { StyleSheet, TextInput } from 'react-native';
+import { TextInput } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
 type Props = TextInputProps & {
   invalid?: boolean;
@@ -20,29 +21,14 @@ export const Input = forwardRef<TextInput, Props>(function Input(
       ref={ref}
       editable={isEditable}
       placeholderTextColor={mobileTheme.colors.mutedForeground}
-      style={[styles.base, invalid && styles.invalid, !isEditable && styles.disabled, style]}
-      className={className}
+      style={style}
+      className={cn(
+        'min-h-[44px] rounded-md border border-input bg-card text-foreground px-md py-sm text-body font-sans',
+        invalid && 'border-danger',
+        !isEditable && 'opacity-60',
+        className,
+      )}
       {...props}
     />
   );
-});
-
-const styles = StyleSheet.create({
-  base: {
-    minHeight: 44,
-    borderRadius: mobileTheme.radius.md,
-    borderWidth: 1,
-    borderColor: mobileTheme.colors.input,
-    backgroundColor: mobileTheme.colors.card,
-    color: mobileTheme.colors.foreground,
-    paddingHorizontal: mobileTheme.spacing.md,
-    paddingVertical: mobileTheme.spacing.sm,
-    fontSize: mobileTheme.typography.body,
-  },
-  invalid: {
-    borderColor: mobileTheme.colors.danger,
-  },
-  disabled: {
-    opacity: 0.6,
-  },
 });

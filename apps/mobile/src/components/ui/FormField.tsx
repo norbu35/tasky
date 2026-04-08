@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { Text, View } from 'react-native';
+import { cn } from '../../lib/cn';
 
 type Props = {
   label: string;
@@ -14,36 +14,15 @@ type Props = {
 
 export function FormField({ label, helperText, errorText, children, className, style }: Props) {
   const hasError = Boolean(errorText);
-
   return (
-    <View style={[styles.container, style]} className={className}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={style} className={cn('gap-xs', className)}>
+      <Text className="text-label font-sans-semibold text-foreground">{label}</Text>
       {children}
       {hasError ? (
-        <Text accessibilityLiveRegion="polite" style={styles.error}>
-          {errorText}
-        </Text>
+        <Text className="text-caption font-sans text-danger">{errorText}</Text>
+      ) : helperText ? (
+        <Text className="text-caption font-sans text-muted-foreground">{helperText}</Text>
       ) : null}
-      {!hasError && helperText ? <Text style={styles.helper}>{helperText}</Text> : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: mobileTheme.spacing.sm,
-  },
-  label: {
-    fontSize: mobileTheme.typography.body,
-    fontWeight: '600',
-    color: mobileTheme.colors.foreground,
-  },
-  helper: {
-    fontSize: mobileTheme.typography.caption,
-    color: mobileTheme.colors.mutedForeground,
-  },
-  error: {
-    fontSize: mobileTheme.typography.caption,
-    color: mobileTheme.colors.danger,
-  },
-});

@@ -4,6 +4,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 import { Button } from './Button';
 
 type Props = {
@@ -22,6 +23,7 @@ type Props = {
     testID?: string;
   };
   dismissible?: boolean;
+  className?: string;
 };
 
 export function ModalSheet({
@@ -32,13 +34,14 @@ export function ModalSheet({
   primaryAction,
   secondaryAction,
   dismissible = true,
+  className,
 }: Props) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
-      <View style={styles.backdrop}>
+      <View className="flex-1 justify-end" style={{ backgroundColor: overlays.sheet }}>
         {dismissible ? (
           <Pressable
             accessibilityRole="button"
@@ -49,12 +52,15 @@ export function ModalSheet({
         ) : (
           <View style={StyleSheet.absoluteFill} pointerEvents="none" />
         )}
-        <View style={[styles.sheet, { paddingBottom: insets.bottom + mobileTheme.spacing.xl }]}>
-          <View style={styles.handle} />
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.content}>{children}</View>
+        <View
+          className={cn('bg-background rounded-tl-lg rounded-tr-lg px-lg py-xl gap-md', className)}
+          style={{ paddingBottom: insets.bottom + mobileTheme.spacing.xl }}
+        >
+          <View className="self-center w-11 h-[5px] rounded-full bg-border" />
+          <Text className="text-body font-sans-bold text-foreground">{title}</Text>
+          <View className="gap-sm">{children}</View>
           {primaryAction || secondaryAction ? (
-            <View style={styles.actions}>
+            <View className="gap-sm">
               {primaryAction ? (
                 <Button
                   label={primaryAction.label}
@@ -79,37 +85,3 @@ export function ModalSheet({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: overlays.sheet,
-  },
-  sheet: {
-    backgroundColor: mobileTheme.colors.background,
-    borderTopLeftRadius: mobileTheme.radius.lg,
-    borderTopRightRadius: mobileTheme.radius.lg,
-    paddingHorizontal: mobileTheme.spacing.lg,
-    paddingVertical: mobileTheme.spacing.xl,
-    gap: mobileTheme.spacing.md,
-  },
-  handle: {
-    alignSelf: 'center',
-    width: 44,
-    height: 5,
-    borderRadius: mobileTheme.radius.full,
-    backgroundColor: mobileTheme.colors.border,
-  },
-  title: {
-    fontSize: mobileTheme.typography.body,
-    fontWeight: '700',
-    color: mobileTheme.colors.foreground,
-  },
-  content: {
-    gap: mobileTheme.spacing.sm,
-  },
-  actions: {
-    gap: mobileTheme.spacing.sm,
-  },
-});

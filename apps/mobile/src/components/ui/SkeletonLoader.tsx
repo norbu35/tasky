@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, ViewStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,7 +9,7 @@ import Animated, {
 import { mobileTheme } from '../../design/tokenAdapter';
 import { animationPresets } from '../../design/animations';
 
-const { colors, radius } = mobileTheme;
+const { radius } = mobileTheme;
 
 interface SkeletonLoaderProps {
   width?: number | string;
@@ -45,15 +45,10 @@ export function SkeletonLoader({
 
   return (
     <Animated.View
-      style={[styles.skeleton, { width: width as any, height, borderRadius }, animatedStyle, style]}
+      className="bg-muted"
+      style={[{ width: width as any, height, borderRadius }, animatedStyle, style]}
       testID={testID}
       accessibilityLabel="Loading"
     />
   );
 }
-
-const styles = StyleSheet.create({
-  skeleton: {
-    backgroundColor: colors.muted,
-  },
-});
