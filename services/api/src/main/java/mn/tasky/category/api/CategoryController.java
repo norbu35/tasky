@@ -2,8 +2,10 @@ package mn.tasky.category.api;
 
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.List;
@@ -44,10 +46,15 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     private final CategorySchemaVersionService schemaVersionService;
+    private final ObjectMapper objectMapper;
 
-    public CategoryController(CategoryService categoryService, CategorySchemaVersionService schemaVersionService) {
+    public CategoryController(
+            CategoryService categoryService,
+            CategorySchemaVersionService schemaVersionService,
+            ObjectMapper objectMapper) {
         this.categoryService = categoryService;
         this.schemaVersionService = schemaVersionService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/categories")
@@ -87,11 +94,25 @@ public class CategoryController {
                 sanitize(category.nameMn()),
                 sanitize(category.iconUrl()),
                 category.isActive(),
-                category.sortOrder());
+                category.sortOrder(),
+                Boolean.TRUE.equals(category.intakeEnabled()),
+                category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0,
+                parseJson(category.intakeSchemaJson()));
     }
 
     private String sanitize(String value) {
         return value == null ? null : HtmlUtils.htmlEscape(value);
+    }
+
+    private Object parseJson(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(value, Object.class);
+        } catch (IOException exception) {
+            return null;
+        }
     }
 
     @GetMapping("/admin/categories")

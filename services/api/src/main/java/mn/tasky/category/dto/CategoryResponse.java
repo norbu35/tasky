@@ -8,4 +8,7 @@ public record CategoryResponse(
         @JsonProperty("name_mn") String nameMn,
         @JsonProperty("icon_url") String iconUrl,
         @JsonProperty("is_active") boolean isActive,
-        @JsonProperty("sort_order") int sortOrder) {}
+        @JsonProperty("sort_order") int sortOrder,
+        @JsonProperty("intake_enabled") boolean intakeEnabled,
+        @JsonProperty("intake_schema_version") int intakeSchemaVersion,
+        @JsonProperty("intake_schema_json") Object intakeSchemaJson) {}

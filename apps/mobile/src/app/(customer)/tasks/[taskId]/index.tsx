@@ -115,7 +115,7 @@ export default function TaskDetailCustomerScreen() {
         isLoading={isLoading}
         isError={isError}
         onRetry={refetch}
-        errorMessage={t('customer.taskDetail.errorNetwork', 'Failed to load task detail')}
+        errorMessage={t('TaskDetailCustomerScreen.errorNetwork', 'Failed to load task detail')}
         ctaLabel={ctaLabel}
         ctaOnPress={ctaOnPress}
         secondaryCtaLabel={secondaryCtaLabel}
@@ -141,7 +141,7 @@ export default function TaskDetailCustomerScreen() {
                 className="text-caption font-bold text-textSecondary uppercase"
                 style={{ letterSpacing: 0.8 }}
               >
-                {t('customer.taskDetail.sectionDetails', 'Details')}
+                {t('TaskDetailCustomerScreen.sectionDetails', 'Details')}
               </Text>
             </View>
 
@@ -186,7 +186,7 @@ export default function TaskDetailCustomerScreen() {
             <View className="bg-muted rounded-sm p-lg gap-sm">
               <View className="flex-row justify-between items-center">
                 <Text className="text-subtitle font-extrabold text-foreground">
-                  {t('customer.taskDetail.applicants', 'Applicants')}
+                  {t('TaskDetailCustomerScreen.applicants', 'Applicants')}
                 </Text>
                 <Text
                   className="text-caption font-extrabold text-center text-primaryDeep"
@@ -207,7 +207,7 @@ export default function TaskDetailCustomerScreen() {
                 </Text>
               ) : (
                 <Text className="text-body text-textSecondary leading-relaxed">
-                  {t('customer.taskDetail.noApplicants', 'No applicants yet')}
+                  {t('TaskDetailCustomerScreen.noApplicants', 'No applicants yet')}
                 </Text>
               )}
             </View>
@@ -215,7 +215,7 @@ export default function TaskDetailCustomerScreen() {
             <View className="bg-muted rounded-sm p-lg gap-sm">
               <View className="flex-row justify-between items-center">
                 <Text className="text-subtitle font-extrabold text-foreground">
-                  {t('customer.taskDetail.sectionPhotos', 'Photos')}
+                  {t('TaskDetailCustomerScreen.photos', 'Photos')}
                 </Text>
                 <Text
                   className="text-caption font-extrabold text-center text-primaryDeep"
@@ -247,7 +247,7 @@ export default function TaskDetailCustomerScreen() {
                   ))
                 ) : (
                   <Text className="text-body text-textSecondary leading-relaxed">
-                    {t('customer.taskDetail.noPhotos', 'No photos')}
+                    {t('TaskDetailCustomerScreen.noPhotos', 'No photos')}
                   </Text>
                 )}
               </View>
@@ -298,7 +298,7 @@ export default function TaskDetailCustomerScreen() {
                       </Text>
                     </View>
                     <Text className="text-caption text-textSecondary">
-                      {t('customer.taskDetail.assignedTasker', 'Assigned Tasker')}
+                      {t('TaskDetailCustomerScreen.assignedTasker', 'Assigned Tasker')}
                     </Text>
                   </View>
                 </View>
@@ -311,10 +311,10 @@ export default function TaskDetailCustomerScreen() {
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
                 <Text className="text-body font-extrabold text-primaryDeep">
-                  {t('customer.taskDetail.completedTitle', 'Task completed')}
+                  {t('TaskDetailCustomerScreen.completedTitle', 'Task completed')}
                 </Text>
                 <Text className="text-caption text-textSecondary">
-                  {t('customer.taskDetail.completedBody', 'Thanks for using Tasky')}
+                  {t('TaskDetailCustomerScreen.completedBody', 'Thanks for using Tasky')}
                 </Text>
               </View>
             ) : null}
@@ -325,10 +325,10 @@ export default function TaskDetailCustomerScreen() {
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
                 <Text className="text-body font-extrabold text-primaryDeep">
-                  {t('customer.taskDetail.cancelledTitle', 'Task cancelled')}
+                  {t('TaskDetailCustomerScreen.cancelledTitle', 'Task cancelled')}
                 </Text>
                 <Text className="text-caption text-textSecondary">
-                  {t('customer.taskDetail.cancelledBody', 'This task is no longer active')}
+                  {t('TaskDetailCustomerScreen.cancelledBody', 'This task is no longer active')}
                 </Text>
               </View>
             ) : null}

@@ -71,6 +71,12 @@ class TaskScenarioTests extends IntegrationTestBase {
     @Test
     @DisplayName("SCN-TASK-001: Task-post form loads the active intake schema for the selected category")
     void draftCreationBindsActiveSchemaVersion() {
+        ResponseEntity<Map> categoriesResponse = getWithAuth("/api/v1/categories");
+        assertThat(categoriesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Map firstCategory = (Map) ((List) categoriesResponse.getBody().get("data")).get(0);
+        assertThat(firstCategory)
+                .containsKeys("intake_enabled", "intake_schema_version", "intake_schema_json");
+
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts",
                 Map.of("category_id", categoryId), custToken);
 
@@ -189,6 +195,8 @@ class TaskScenarioTests extends IntegrationTestBase {
         List<Map> tasks = (List<Map>) feed.getBody().get("data");
         for (Map task : tasks) {
             assertThat(task.get("status").toString()).isEqualTo("OPEN");
+            Map category = (Map) task.get("category");
+            assertThat(category).containsKeys("intake_enabled", "intake_schema_version");
         }
     }
 
@@ -334,6 +342,9 @@ class TaskScenarioTests extends IntegrationTestBase {
         ResponseEntity<Map> detail = getWithAuth("/api/v1/tasks/" + taskId);
         // Description in the response should contain the scope summary or intake-derived text
         assertThat(detail.getBody()).containsKey("description");
+        assertThat(detail.getBody()).containsEntry("intake_schema_version", CLEANING_SCHEMA_VERSION);
+        assertThat(detail.getBody()).containsKey("scope_summary_source");
+        assertThat(detail.getBody().get("intake_answers")).isEqualTo(CLEANING_INTAKE_ANSWERS);
     }
 
     // ── SCN-TASK-015 ─────────────────────────────────────────────────────────

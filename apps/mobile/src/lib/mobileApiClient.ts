@@ -14,6 +14,7 @@ export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
 export type Message = components['schemas']['Message'];
 export type BookingScheduleEvent = components['schemas']['BookingScheduleEvent'];
+export type CursorPagination = components['schemas']['CursorPagination'];
 
 export interface AuthTokens {
   accessToken: string;
@@ -23,10 +24,7 @@ export interface AuthTokens {
 
 export interface CursorPage<T> {
   data: T[];
-  cursor: {
-    next: string | null;
-    prev: string | null;
-  };
+  cursor: CursorPagination;
 }
 
 export interface TaskFilters {
@@ -208,6 +206,7 @@ export interface MobileApiClient {
       event: string;
       timestamp: string;
       actor: string;
+      description?: string;
     }[]
   >;
 }
@@ -258,6 +257,21 @@ async function readErrorMessage(response: Response): Promise<string> {
     // Fall back to generic response message.
   }
   return `Request failed with status ${response.status}`;
+}
+
+function mapBookingScheduleEventType(eventType: BookingScheduleEvent['event_type']): string {
+  switch (eventType) {
+    case 'REQUESTED':
+      return 'reschedule_requested';
+    case 'ACCEPTED':
+      return 'reschedule_accepted';
+    case 'DECLINED':
+      return 'reschedule_declined';
+    case 'EXPIRED':
+      return 'reschedule_expired';
+    default:
+      return String(eventType).toLowerCase();
+  }
 }
 
 export class HttpMobileApiClient implements MobileApiClient {
@@ -712,7 +726,7 @@ export class HttpMobileApiClient implements MobileApiClient {
   }
 
   flagNoShow(accessToken: string, bookingId: string): Promise<void> {
-    return this.requestVoid(`/bookings/${bookingId}/no-show`, { method: 'POST' }, accessToken);
+    return this.requestVoid(`/bookings/${bookingId}/no-show/flag`, { method: 'POST' }, accessToken);
   }
 
   deleteMyAccount(accessToken: string): Promise<void> {
@@ -747,7 +761,7 @@ export class HttpMobileApiClient implements MobileApiClient {
     return this.requestJson<Booking>(
       `/bookings/${bookingId}/mark-done`,
       {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Idempotency-Key': idempotencyKey,
         },
@@ -764,12 +778,20 @@ export class HttpMobileApiClient implements MobileApiClient {
       event: string;
       timestamp: string;
       actor: string;
+      description?: string;
     }[]
   > {
-    return this.requestJson<{ event: string; timestamp: string; actor: string }[]>(
-      `/bookings/${bookingId}/timeline`,
+    return this.requestJson<BookingScheduleEvent[]>(
+      `/bookings/${bookingId}/schedule-events`,
       { method: 'GET' },
       accessToken,
+    ).then((events) =>
+      events.map((event) => ({
+        event: mapBookingScheduleEventType(event.event_type),
+        timestamp: event.created_at,
+        actor: event.actor_user_id,
+        description: event.reason ?? undefined,
+      })),
     );
   }
 

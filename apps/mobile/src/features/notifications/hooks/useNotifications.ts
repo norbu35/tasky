@@ -18,7 +18,7 @@ export function useNotifications() {
     queryKey: ['notifications'],
     queryFn: async () => ({
       data: [],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
   });
 }

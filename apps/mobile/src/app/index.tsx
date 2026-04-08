@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 import { useAppStore } from '../store/appStore';
 import { CircleCheckBig } from 'lucide-react-native';
 import { mobileTheme } from '../design/tokenAdapter';
+import { resolvePostAuthHref } from '../utils/authRouting';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -14,18 +15,7 @@ export default function SplashScreen() {
   const { t } = useTranslation();
   const session = useAuthStore((state) => state.session);
   const hasSeenOnboarding = useAppStore((state) => state.hasSeenOnboarding);
-
-  // PRD §6.1 / JRN-SHARED-01: authenticate FIRST, then onboard new users.
-  // No session → login. Session + first time → onboarding. Session + done → role-specific home.
-  const nextHref = !session
-    ? '/(auth)'
-    : !hasSeenOnboarding
-      ? '/onboarding'
-      : session.user.primary_auth === 'FACEBOOK'
-        ? '/(auth)/otp-migration'
-        : session.user.role === 'CUSTOMER'
-          ? '/(customer)/tasks'
-          : '/(tabs)';
+  const nextHref = resolvePostAuthHref(session, hasSeenOnboarding);
 
   return (
     <LinearGradient
