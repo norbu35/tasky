@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import { useAuthStore } from '../../../src/store/authStore';
+import { useAppStore } from '../../../src/store/appStore';
 
 import SplashScreen from '../../../src/app/index';
 
@@ -68,6 +69,7 @@ function expectRedirectHref(expectedHref: string) {
 beforeEach(() => {
   jest.clearAllMocks();
   useAuthStore.setState({ session: null, profile: null, deviceToken: null });
+  useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
 });
 
 describe('SplashScreen (SCR-SHARED-001)', () => {

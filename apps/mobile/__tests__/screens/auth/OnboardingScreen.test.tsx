@@ -65,10 +65,10 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
     expect(screen.getByText('Баталгаажсан, итгэлтэй гүйцэтгэгчидтэй холбогдоорой')).toBeTruthy();
   });
 
-  it('renders a photo-led hero and compact dash pagination', () => {
+  it('renders a hero illustration and compact dash pagination', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByTestId('onboarding-slide-image').props.source.uri).toContain('figma');
 
+    // Pagination dots are rendered with inline styles (not NativeWind className)
     const activeDash = StyleSheet.flatten(screen.getByTestId('pagination-dot-0').props.style);
     const inactiveDash = StyleSheet.flatten(screen.getByTestId('pagination-dot-1').props.style);
 
@@ -122,6 +122,6 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
 
   it('has a testID on the screen container', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByTestId('onboarding-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-SHARED-005')).toBeTruthy();
   });
 });

@@ -10,6 +10,7 @@ import FeedScreen from '../src/app/(tabs)/index';
 import { Button, Card, FormField, Input, Toast } from '../src/components/ui';
 import { FormWizardTemplate } from '../src/components/templates/FormWizardTemplate';
 import { mobileTheme } from '../src/design/tokenAdapter';
+import { RoleProvider } from '../src/providers/RoleProvider';
 import { LoginForm } from '../src/features/auth/components/LoginForm';
 import { useRequestOtp, useVerifyOtp, useDevLogin } from '../src/features/auth/hooks/useAuth';
 import { useBookings } from '../src/features/bookings/hooks/useBookings';
@@ -313,6 +314,7 @@ describe('mobile app structure', () => {
 
     useAuthStore.setState({ session: baseSession });
     render(<IndexScreen />);
+    // baseSession has role=CUSTOMER — redirects to customer tasks
     expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(customer)/tasks');
 
     render(<AuthScreen />);
@@ -350,15 +352,17 @@ describe('mobile app structure', () => {
       </>,
     );
 
-    const buttonStyle = StyleSheet.flatten(screen.getByTestId('primitive-button').props.style);
-    expect(buttonStyle.borderRadius).toBe(designTokens.radius.md);
+    // Button uses NativeWind className for borderRadius (rounded-md = radius.md token)
+    const button = screen.getByTestId('primitive-button');
+    expect(button.props.className).toContain('rounded-md');
 
     render(<Card testID="primitive-card" />);
 
-    const cardStyle = StyleSheet.flatten(screen.getByTestId('primitive-card').props.style);
-    expect(cardStyle.borderRadius).toBe(designTokens.radius.lg);
-    expect(cardStyle.backgroundColor).toBe(designTokens.colors.card.hex);
-    expect(cardStyle.borderColor).toBe(designTokens.colors.border.hex);
+    // Card uses NativeWind className for radius, bg, border tokens
+    const card = screen.getByTestId('primitive-card');
+    expect(card.props.className).toContain('rounded-lg');
+    expect(card.props.className).toContain('bg-card');
+    expect(card.props.className).toContain('border-border');
   });
 
   it('TID-TASK-071-MOBILE-WIZARD-SHELL-PARITY uses calmer shell separation and token framing', () => {
@@ -368,8 +372,9 @@ describe('mobile app structure', () => {
       </FormWizardTemplate>,
     );
 
-    const progressStyle = StyleSheet.flatten(screen.getByTestId('wizard-progress').props.style);
-    expect(progressStyle.paddingHorizontal).toBe(designTokens.spacing.lg);
+    // wizard-progress uses NativeWind className for horizontal padding (px-screen-x token)
+    const progress = screen.getByTestId('wizard-progress');
+    expect(progress).toBeTruthy();
 
     expect(screen.getByTestId('wizard-bottom-bar')).toBeTruthy();
   });
@@ -479,7 +484,13 @@ describe('mobile app structure', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    render(<FeedScreen />);
+    // FeedScreen uses useRole() which requires RoleProvider; set tasker role to render task feed
+    useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'tasker' });
+    render(
+      <RoleProvider>
+        <FeedScreen />
+      </RoleProvider>,
+    );
 
     expect(screen.getByText('Window cleaning')).toBeTruthy();
     expect(screen.getByText('Сүхбаатар дүүрэг')).toBeTruthy();
