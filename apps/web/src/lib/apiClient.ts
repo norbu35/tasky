@@ -13,6 +13,7 @@ export type Review = components['schemas']['Review'];
 export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
 export type Message = components['schemas']['Message'];
+type CursorPagination = components['schemas']['CursorPagination'];
 
 export interface VerificationDetail {
   id: string;
@@ -120,10 +121,7 @@ export interface AuthTokens {
 
 export interface CursorPage<T> {
   data: T[];
-  cursor: {
-    next: string | null;
-    prev: string | null;
-  };
+  cursor: CursorPagination;
 }
 
 export interface TaskFilters {
@@ -268,6 +266,7 @@ export interface ApiClient {
     payload: {
       id_card_front_key: string;
       id_card_back_key: string;
+      selfie_key: string;
       consent_policy_version: string;
       consent_accepted: boolean;
     },
@@ -848,6 +847,7 @@ export class HttpApiClient implements ApiClient {
     payload: {
       id_card_front_key: string;
       id_card_back_key: string;
+      selfie_key: string;
       consent_policy_version: string;
       consent_accepted: boolean;
     },

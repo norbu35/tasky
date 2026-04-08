@@ -99,12 +99,12 @@ function createMockApiClient(overrides: Partial<ApiClient> = {}): ApiClient {
   return {
     listCategories: vi.fn().mockResolvedValue({
       data: [CATEGORY_WITH_SCHEMA, CATEGORY_WITHOUT_SCHEMA],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     } satisfies CursorPage<Category>),
     createTask: vi.fn().mockResolvedValue(TASK_RESPONSE),
     listTaskApplications: vi.fn().mockResolvedValue({
       data: [],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     ...overrides,
   } as unknown as ApiClient;

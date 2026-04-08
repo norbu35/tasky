@@ -430,8 +430,8 @@
       "scheduleTimePlaceholder": "Pick a time",
       "scheduleRequired": "Choose a date and time",
       "budgetLabel": "Budget",
-      "budgetHelper": "Enter a fixed amount. Minimum: ₮5,000",
-      "budgetError": "Budget must be at least ₮5,000",
+      "budgetHelper": "Enter a fixed amount. Minimum: ₮20,000",
+      "budgetError": "Budget must be at least ₮20,000",
       "budgetPlaceholder": "₮ Amount",
       "reviewTitle": "Review & Post",
       "postButton": "Post Task",
@@ -605,7 +605,7 @@
       "prefilledNote": "Prefilled from previous booking. You can edit.",
       "providerLabel": "Гүйцэтгэгч",
       "providerName": "Б. Тэмүүлэн",
-      "rebookBudgetLow": "Budget must be above ₮1,001",
+      "rebookBudgetLow": "Budget must be at least ₮20,000",
       "scheduleUnavailable": "Хуваарь тодорхойгүй",
       "sectionAvailableTimes": "Боломжит цагууд",
       "sectionCurrentSchedule": "Одоогийн хуваарь",
@@ -1297,7 +1297,7 @@
     "reviewGuidance": "Taskers will review your task and send offers. Double-check details before posting."
   },
   "ScheduleBudgetScreen": {
-    "budgetError": "Budget must be at least ₮5,000",
+    "budgetError": "Budget must be at least ₮20,000",
     "schedulePastError": "Cannot select a past date/time",
     "schedulePageTitle": "Schedule & Budget",
     "scheduleInstruction": "Pick when the task should happen and set your budget.",
@@ -1307,7 +1307,7 @@
     "scheduleDatePlaceholder": "Pick a date",
     "scheduleTimePlaceholder": "Pick a time",
     "budgetLabel": "Budget",
-    "budgetHelper": "Enter a fixed amount. Minimum: ₮5,000",
+    "budgetHelper": "Enter a fixed amount. Minimum: ₮20,000",
     "budgetPlaceholder": "₮50,000",
     "budgetGoldHint": "Set a fair budget to attract skilled Taskers",
     "schedulePickerHint": "Confirm your selection"
@@ -1624,7 +1624,7 @@
     "sectionTaskDetails": "Task Details",
     "labelNewSchedule": "New Schedule",
     "labelBudget": "Budget",
-    "rebookBudgetLow": "Budget must be above ₮1,001"
+    "rebookBudgetLow": "Budget must be at least ₮20,000"
   },
   "Id": {
     "messageButton": "Message",

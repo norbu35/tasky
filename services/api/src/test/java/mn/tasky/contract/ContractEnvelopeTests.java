@@ -125,7 +125,7 @@ class ContractEnvelopeTests extends IntegrationTestBase {
                 new HttpEntity<>(authH), Map.class).getBody();
         String catId = ((Map) ((java.util.List) cats.get("data")).get(0)).get("id").toString();
 
-        // POST task with budget below @Min(5000)
+        // POST task with budget below @Min(20000)
         HttpHeaders postH = new HttpHeaders();
         postH.setBearerAuth(token);
         postH.setContentType(MediaType.APPLICATION_JSON);

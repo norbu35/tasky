@@ -339,6 +339,10 @@ components:
         id_card_back_url:
           type: string
           format: uri
+        selfie_url:
+          type: string
+          format: uri
+          nullable: true
         status:
           type: string
           enum: [ PENDING, APPROVED, REJECTED ]
@@ -561,8 +565,8 @@ components:
           maxLength: 2000
         budget:
           type: integer
-          minimum: 5000
-          description: Fixed budget in MNT. Must be at least ₮5,000.
+          minimum: 20000
+          description: Fixed budget in MNT. Must be at least ₮20,000.
         location_lat:
           type: number
           format: double
@@ -609,7 +613,7 @@ components:
           maxLength: 2000
         budget:
           type: integer
-          minimum: 1001
+          minimum: 20000
         location_lat:
           type: number
           format: double
@@ -1666,7 +1670,7 @@ paths:
       tags: [ Verification ]
       summary: Get presigned URL for verification image upload
       description: |
-        Returns a presigned URL to upload government ID images used in verification submission.
+        Returns a presigned URL to upload government ID and selfie images used in verification submission.
       operationId: getVerificationUploadUrl
       security:
         - BearerAuth: [ ]
@@ -1697,9 +1701,9 @@ paths:
   /verification/submit:
     post:
       tags: [ Verification ]
-      summary: Submit ID verification
+      summary: Submit ID + selfie verification
       description: |
-        Tasker submits government ID photos for manual verification.
+        Tasker submits government ID front, ID back, and selfie images for manual verification.
         The storage keys must reference previously uploaded files via presigned URL.
       operationId: submitVerification
       security:
@@ -1710,7 +1714,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ id_card_front_key, id_card_back_key, consent_policy_version, consent_accepted ]
+              required: [ id_card_front_key, id_card_back_key, selfie_key, consent_policy_version, consent_accepted ]
               properties:
                 id_card_front_key:
                   type: string
@@ -1718,6 +1722,9 @@ paths:
                 id_card_back_key:
                   type: string
                   description: Storage key of the uploaded ID card back image.
+                selfie_key:
+                  type: string
+                  description: Storage key of the uploaded selfie image used for identity verification.
                 consent_policy_version:
                   type: string
                   description: Policy version accepted by the user before identity upload.

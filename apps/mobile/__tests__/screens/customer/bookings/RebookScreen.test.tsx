@@ -92,11 +92,11 @@ describe('RebookScreen (SCR-CUST-023)', () => {
 
   it('disables continue when budget is at or below the minimum threshold', () => {
     render(<RebookScreen />);
-    fireEvent.changeText(screen.getByTestId('rebook-screen-budget'), '1001');
+    fireEvent.changeText(screen.getByTestId('rebook-screen-budget'), '19999');
     fireEvent.press(screen.getByTestId('SCR-CUST-023-next'));
 
     expect(mockCreateTask).not.toHaveBeenCalled();
-    expect(screen.getByText('Budget must be above ₮1,001')).toBeTruthy();
+    expect(screen.getByText('Budget must be at least ₮20,000')).toBeTruthy();
   });
 
   it('submit creates new task', async () => {

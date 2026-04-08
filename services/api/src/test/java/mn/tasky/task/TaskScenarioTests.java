@@ -143,17 +143,16 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-005 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-005: Budget of 5000 MNT is accepted, 4999 is rejected")
-    void budgetOf1001Accepted() {
-        // @Min(5000) on the DTO — the actual minimum validated by Spring is 5000
-        // The PRD says > 1000 MNT. The current implementation enforces @Min(5000).
-        // This test documents current enforcement: 5000 is accepted, 4999 is rejected.
-        ResponseEntity<Map> resp5000 = postWithAuth("/api/v1/tasks", taskBody(5000), custToken);
-        assertThat(resp5000.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp5000.getBody().get("id")).isNotNull();
+    @DisplayName("SCN-TASK-005: Budget of 20000 MNT is accepted, 19999 is rejected")
+    void budgetOf20000Accepted() {
+        // The QA scenario text still references the older 1000 MNT threshold.
+        // The authoritative product decision now sets the minimum task budget at 20,000 MNT.
+        ResponseEntity<Map> resp20000 = postWithAuth("/api/v1/tasks", taskBody(20000), custToken);
+        assertThat(resp20000.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp20000.getBody().get("id")).isNotNull();
 
-        ResponseEntity<Map> resp4999 = postWithAuth("/api/v1/tasks", taskBody(4999), custToken);
-        assertThat(resp4999.getStatusCode().value()).isBetween(400, 422);
+        ResponseEntity<Map> resp19999 = postWithAuth("/api/v1/tasks", taskBody(19999), custToken);
+        assertThat(resp19999.getStatusCode().value()).isBetween(400, 422);
     }
 
     // ── SCN-TASK-006 ─────────────────────────────────────────────────────────

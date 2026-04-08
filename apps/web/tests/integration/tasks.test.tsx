@@ -121,7 +121,7 @@ describe('Tasks Integration', () => {
       getMyProfile: vi.fn().mockResolvedValue(taskerProfile),
       listTasks: vi.fn().mockResolvedValue({
         data: [privacySafeTask],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
 

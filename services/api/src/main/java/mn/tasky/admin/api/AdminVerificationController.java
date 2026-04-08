@@ -77,6 +77,14 @@ public class AdminVerificationController {
                                 detail.id(),
                                 "{\"field\":\"id_card_back\"}");
                     }
+                    if (detail.selfieUrl() != null) {
+                        auditEventDao.insert(
+                                principal.userId(),
+                                "VERIFICATION_MEDIA_VIEWED",
+                                "VERIFICATION",
+                                detail.id(),
+                                "{\"field\":\"selfie\"}");
+                    }
                     return ResponseEntity.ok(toDetailBody(detail));
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -97,6 +105,7 @@ public class AdminVerificationController {
                 detail.userName(),
                 detail.idCardFrontUrl(),
                 detail.idCardBackUrl(),
+                detail.selfieUrl(),
                 detail.status(),
                 detail.adminNotes(),
                 detail.submittedAt(),

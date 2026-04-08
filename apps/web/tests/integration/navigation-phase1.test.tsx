@@ -36,7 +36,7 @@ function renderApp(initialRoute: string, role: 'CUSTOMER' | 'TASKER' = 'CUSTOMER
     }),
     listMyTasks: async () => ({
       data: [task],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
   });
 

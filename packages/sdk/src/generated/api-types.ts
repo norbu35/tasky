@@ -214,7 +214,7 @@ export interface paths {
         put?: never;
         /**
          * Get presigned URL for verification image upload
-         * @description Returns a presigned URL to upload government ID images used in verification submission.
+         * @description Returns a presigned URL to upload government ID and selfie images used in verification submission.
          */
         post: operations["getVerificationUploadUrl"];
         delete?: never;
@@ -233,8 +233,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Submit ID verification
-         * @description Tasker submits government ID photos for manual verification.
+         * Submit ID + selfie verification
+         * @description Tasker submits government ID front, ID back, and selfie images for manual verification.
          *     The storage keys must reference previously uploaded files via presigned URL.
          */
         post: operations["submitVerification"];
@@ -1928,6 +1928,8 @@ export interface components {
             id_card_front_url?: string;
             /** Format: uri */
             id_card_back_url?: string;
+            /** Format: uri */
+            selfie_url?: string | null;
             /** @enum {string} */
             status: "PENDING" | "APPROVED" | "REJECTED";
             admin_notes?: string | null;
@@ -2060,7 +2062,7 @@ export interface components {
             /** Format: uuid */
             category_id: string;
             description: string;
-            /** @description Fixed budget in MNT. Must be greater than 1,000 MNT. */
+            /** @description Fixed budget in MNT. Must be at least ₮20,000. */
             budget: number;
             /** Format: double */
             location_lat: number;
@@ -2932,6 +2934,8 @@ export interface operations {
                     id_card_front_key: string;
                     /** @description Storage key of the uploaded ID card back image. */
                     id_card_back_key: string;
+                    /** @description Storage key of the uploaded selfie image used for identity verification. */
+                    selfie_key: string;
                     /** @description Policy version accepted by the user before identity upload. */
                     consent_policy_version: string;
                     /** @enum {boolean} */

@@ -72,7 +72,7 @@ describe('Customer phase 1 parity', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
 
@@ -105,7 +105,7 @@ describe('Customer phase 1 parity', () => {
             ],
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
       createTask: vi.fn().mockResolvedValue({
         id: 'task-created-1',
@@ -180,7 +180,7 @@ describe('Customer phase 1 parity', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
       listTaskApplications: vi.fn().mockResolvedValue({
         data: [
@@ -200,7 +200,7 @@ describe('Customer phase 1 parity', () => {
             created_at: '2026-02-14T00:00:00Z',
           },
         ],
-        cursor: { next: null, prev: null },
+        cursor: { next: null, has_more: false },
       }),
     });
 

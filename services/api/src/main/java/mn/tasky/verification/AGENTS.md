@@ -6,8 +6,8 @@ Tasker identity verification upload + submission flow.
 
 | Method | Path                              | Notes                             |
 |--------|-----------------------------------|-----------------------------------|
-| `POST` | `/api/v1/verification/upload-url` | Signed upload URL for ID images   |
-| `POST` | `/api/v1/verification/submit`     | Submit front/back keys for review |
+| `POST` | `/api/v1/verification/upload-url` | Signed upload URL for ID/selfie images |
+| `POST` | `/api/v1/verification/submit`     | Submit front/back/selfie keys for review |
 | `GET`  | `/api/v1/verification/status`     | Current verification status       |
 
 ## Rules

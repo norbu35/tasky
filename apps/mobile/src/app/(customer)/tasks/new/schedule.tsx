@@ -13,7 +13,7 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
 
-const MIN_BUDGET = 5000;
+const MIN_BUDGET = 20_000;
 
 type PickerMode = 'date' | 'time' | null;
 type ActivePickerState = { mode: Exclude<PickerMode, null>; draftValue: Date } | null;
@@ -96,7 +96,7 @@ export default function ScheduleBudgetScreen() {
 
   const budgetError =
     touchedBudget && budget !== '' && !isBudgetValid
-      ? t('ScheduleBudgetScreen.budgetError', 'Budget must be at least ₮5,000')
+      ? t('ScheduleBudgetScreen.budgetError', 'Budget must be at least ₮20,000')
       : '';
   const scheduleError =
     touchedSchedule && selectedDate && selectedTime && !isScheduleValid
@@ -284,7 +284,10 @@ export default function ScheduleBudgetScreen() {
         <FormField
           label={t('ScheduleBudgetScreen.budgetLabel', 'Budget')}
           errorText={budgetError || undefined}
-          helperText={t('ScheduleBudgetScreen.budgetHelper', 'Enter a fixed amount. Minimum: ₮5,000')}
+          helperText={t(
+            'ScheduleBudgetScreen.budgetHelper',
+            'Enter a fixed amount. Minimum: ₮20,000',
+          )}
         >
           <Input
             testID="schedule-budget-input"

@@ -28,10 +28,10 @@ describe('Messaging & Notifications Integration', () => {
       getMyProfile: vi.fn().mockResolvedValue(baseProfile),
       listConversations: vi
         .fn()
-        .mockResolvedValue({ data: [mockConv], cursor: { next: null, prev: null } }),
+        .mockResolvedValue({ data: [mockConv], cursor: { next: null, has_more: false } }),
       listMessages: vi
         .fn()
-        .mockResolvedValue({ data: [{ ...mockMsg }], cursor: { next: null, prev: null } }),
+        .mockResolvedValue({ data: [{ ...mockMsg }], cursor: { next: null, has_more: false } }),
       sendMessage: vi.fn().mockResolvedValue({
         ...mockMsg,
         id: 'msg-2',
