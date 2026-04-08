@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2 } from 'lucide-react-native';
@@ -8,7 +8,7 @@ import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
 import { Button } from '../../../../components/ui/Button';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../../../../components/shells';
 
-const { colors, spacing, radius, typography } = mobileTheme;
+const { colors, spacing, typography } = mobileTheme;
 
 export default function TaskPostedSuccessScreen() {
   const { t } = useTranslation();
@@ -39,54 +39,83 @@ export default function TaskPostedSuccessScreen() {
   return (
     <ScreenContainer testID="SCR-CUST-008">
       <InsetScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        className="flex-1"
+        contentContainerStyle={{
+          paddingHorizontal: spacing.lg,
+          paddingTop: spacing.lg,
+          paddingBottom: spacing['2xl'],
+          gap: spacing['2xl'],
+        }}
         extraBottomInset={120}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <Animated.View style={[styles.checkWrap, animatedCheckStyle]}>
+        <View className="items-center gap-md pt-lg">
+          <Animated.View
+            className="w-24 h-24 rounded-full items-center justify-center"
+            style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
+          >
             <CheckCircle2 size={50} color={colors.verified} />
           </Animated.View>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusBadgeLabel}>
+          <View
+            className="px-md py-xs rounded-full"
+            style={{ backgroundColor: `${colors.verified}1A` }}
+          >
+            <Text
+              className="text-caption font-sans-bold"
+              style={{ letterSpacing: 0.8, color: colors.verified }}
+            >
               {t('customer.postTask.successBadge', 'БАТАЛГААЖСАН')}
             </Text>
           </View>
-          <Text style={styles.headline}>
+          <Text
+            className="text-heading font-display-bold text-primaryDeep text-center"
+            style={{ lineHeight: typography.heading * 1.25 }}
+          >
             {t('customer.postTask.successTitle', 'Task posted successfully!')}
           </Text>
-          <Text style={styles.body}>
+          <Text
+            className="text-body text-textSecondary text-center"
+            style={{ lineHeight: typography.body * 1.6 }}
+          >
             {t(
               'customer.postTask.successBody',
               'Taskers can now see your task and apply. You will be notified when new applications arrive',
             )}
           </Text>
-          <View style={styles.decorDots}>
-            <View style={[styles.decorDot, { backgroundColor: colors.primary }]} />
-            <View style={[styles.decorDot, { backgroundColor: colors.secondary }]} />
-            <View style={[styles.decorDot, { backgroundColor: colors.verified }]} />
+          <View className="flex-row gap-sm mt-sm">
+            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.primary }} />
+            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.secondary }} />
+            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.verified }} />
           </View>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardDarkLabel}>
+        <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
+          <Text
+            className="text-caption font-sans-bold uppercase text-primaryDeep mb-xs"
+            style={{ letterSpacing: 0.8 }}
+          >
             {t('customer.postTask.successNextLabel', 'ДАРААГИЙН АЛХАМ')}
           </Text>
-          <Text style={styles.cardTitle}>
+          <Text className="text-body font-sans-bold text-primaryDeep">
             {t('customer.postTask.successNextTitle', 'What happens next')}
           </Text>
-          <Text style={styles.cardBody}>
+          <Text
+            className="text-caption text-textSecondary"
+            style={{ lineHeight: typography.caption * 1.6 }}
+          >
             {t('customer.postTask.successNext1', "You'll get applications soon")}
           </Text>
-          <Text style={styles.cardBody}>
+          <Text
+            className="text-caption text-textSecondary"
+            style={{ lineHeight: typography.caption * 1.6 }}
+          >
             {t('customer.postTask.successNext2', 'Review Tasker profiles and ratings')}
           </Text>
         </View>
       </InsetScrollView>
 
       <StickyActionBar>
-        <View style={styles.actions}>
+        <View className="px-lg pt-md pb-lg gap-sm">
           <Button
             label={t('customer.postTask.successCta', 'View Task')}
             onPress={handleViewTask}
@@ -103,94 +132,3 @@ export default function TaskPostedSuccessScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing['2xl'],
-    gap: spacing['2xl'],
-  },
-  hero: {
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingTop: spacing.lg,
-  },
-  checkWrap: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.verified}1A`,
-  },
-  statusBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.verified}1A`,
-  },
-  statusBadgeLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    color: colors.verified,
-  },
-  decorDots: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  decorDot: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.xs,
-  },
-  headline: {
-    fontSize: typography.heading,
-    fontWeight: '900',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    lineHeight: typography.heading * 1.25,
-  },
-  body: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-  },
-  card: {
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    padding: spacing['2xl'],
-    gap: spacing.sm,
-    ...elevations.soft,
-  },
-  cardDarkLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.primaryDeep,
-    marginBottom: spacing.xs,
-  },
-  cardTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  cardBody: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.6,
-  },
-  actions: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-});

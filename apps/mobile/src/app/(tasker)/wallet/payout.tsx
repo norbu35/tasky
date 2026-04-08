@@ -1,12 +1,9 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
-import { mobileTheme } from '../../../design/tokenAdapter';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 type PayoutState = 'default' | 'submitted';
 
@@ -19,8 +16,8 @@ export default function WalletPayoutScreen() {
 
   if (state === 'submitted') {
     return (
-      <View testID="SCR-P3-002" style={styles.successContainer}>
-        <Text style={styles.title}>
+      <View testID="SCR-P3-002" className="flex-1 items-center justify-center bg-background">
+        <Text className="text-heading font-display-bold text-primaryDeep">
           {t('tasker.wallet.payoutSuccess', 'Request submitted successfully')}
         </Text>
       </View>
@@ -29,23 +26,23 @@ export default function WalletPayoutScreen() {
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
+      className="flex-1 bg-background"
+      contentContainerStyle={{ padding: 24, gap: 16 }}
       testID="wallet-payout-screen"
     >
-      <Text style={styles.title}>{t('tasker.wallet.payoutTitle', 'Request Payout')}</Text>
-      <Text style={styles.balance}>
+      <Text className="text-heading font-display-bold text-primaryDeep">
+        {t('tasker.wallet.payoutTitle', 'Request Payout')}
+      </Text>
+      <Text className="text-body text-textSecondary">
         {t('tasker.wallet.payoutBalance', 'Available balance: ₮120,000')}
       </Text>
       <Input
         value={amount}
         onChangeText={setAmount}
         placeholder="₮0"
-        placeholderTextColor={colors.textSecondary}
-        style={styles.input}
       />
       {showError ? (
-        <Text style={styles.error}>
+        <Text className="text-danger text-label">
           {t('tasker.wallet.payoutMinError', 'Minimum amount: ₮10,000')}
         </Text>
       ) : null}
@@ -57,25 +54,3 @@ export default function WalletPayoutScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, gap: spacing.lg },
-  successContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-  title: { fontSize: typography.heading, fontWeight: '800', color: colors.primaryDeep },
-  balance: { fontSize: typography.body, color: colors.textSecondary },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    color: colors.primaryDeep,
-  },
-  error: { color: colors.danger, fontSize: typography.label },
-});
