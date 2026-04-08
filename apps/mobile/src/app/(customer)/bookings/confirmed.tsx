@@ -1,5 +1,5 @@
 import React from 'react';
-import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,10 +13,12 @@ import {
 } from 'lucide-react-native';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 import { Button } from '../../../components/ui/Button';
+import { Touchable } from '../../../components/ui/Touchable';
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { elevations } from '../../../design/elevations';
+import { cn } from '../../../lib/cn';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 export default function BookingConfirmedScreen() {
   const { t } = useTranslation();
@@ -73,58 +75,61 @@ export default function BookingConfirmedScreen() {
 
   return (
     <ScreenContainer testID="SCR-CUST-015">
-      <View style={styles.header}>
-        <Pressable
+      <View className="flex-row items-center justify-between px-lg pt-sm pb-md">
+        <Touchable
           accessibilityRole="button"
           onPress={handleDone}
-          style={styles.iconButton}
+          className="w-[40px] h-[40px] rounded-md items-center justify-center bg-card"
           testID="booking-confirmed-screen-close"
         >
           <ChevronLeft size={22} color={colors.primaryDeep} />
-        </Pressable>
-        <View style={styles.headerSpacer} />
+        </Touchable>
+        <View className="flex-1" />
       </View>
 
       <InsetScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.lg, paddingBottom: spacing['3xl'] }}
         showsVerticalScrollIndicator={false}
         bounces={false}
         extraBottomInset={spacing.xl}
       >
-        <View style={styles.successIconWrap}>
-          <View style={styles.successIconBackground}>
+        <View className="pt-2xl">
+          <View className="w-[96px] h-[96px] rounded-full bg-muted items-center justify-center">
             <Check size={36} color={colors.verified} strokeWidth={3} />
           </View>
         </View>
 
-        <Text style={styles.headline}>
+        <Text className="text-heading font-sans-bold text-primary-deep text-center tracking-tight px-md leading-tight">
           {t('customer.bookings.confirmedHeadline', 'Захиалга баталгаажлаа!')}
         </Text>
 
-        <Text style={styles.body}>
+        <Text className="text-body text-text-secondary text-center px-md leading-relaxed">
           {t(
             'customer.bookings.confirmedNextSteps',
             'Таны хүсэлтийг амжилттай хүлээн авлаа. Манай мэргэжилтэн тун удахгүй тантай холбогдох болно.',
           )}
         </Text>
 
-        <View style={styles.sectionHeadingWrap}>
-          <View style={styles.sectionHeadingPill}>
-            <Text style={styles.sectionHeading}>
+        <View className="self-stretch mt-md">
+          <View className="rounded-full px-md py-xs bg-muted self-center">
+            <Text className="text-label font-sans-bold text-secondary uppercase tracking-wide">
               {t('customer.bookings.nextStepsHeading', 'Дараагийн алхам')}
             </Text>
           </View>
         </View>
 
-        <View style={styles.nextStepsCard}>
-          <View style={styles.nextStepsIcon}>
+        <View
+          className="self-stretch flex-row rounded-md bg-muted p-lg"
+          style={{ gap: spacing.md, ...elevations.soft }}
+        >
+          <View className="w-[40px] h-[40px] rounded-md items-center justify-center bg-card">
             <CalendarPlus2 size={20} color={colors.primaryDeep} />
           </View>
-          <View style={styles.nextStepsCopy}>
-            <Text style={styles.nextStepsTitle}>
+          <View className="flex-1" style={{ gap: spacing.xs }}>
+            <Text className="text-body font-sans-bold text-primary-deep leading-snug">
               {t('customer.bookings.nextStepsTitle', 'Товлосон цагтаа ирнэ')}
             </Text>
-            <Text style={styles.nextStepsBody}>
+            <Text className="text-label text-text-secondary leading-relaxed">
               {t(
                 'customer.bookings.nextStepsBody',
                 'Таны сонгосон цагт гүйцэтгэгч заасан хаяг дээр очиж үйлчилгээг эхлүүлнэ. Түүнээс өмнө танд сануулах мессеж очно.',
@@ -133,58 +138,66 @@ export default function BookingConfirmedScreen() {
           </View>
         </View>
 
-        <View style={styles.providerCard}>
-          <View style={styles.providerLeft}>
-            <View style={styles.providerAvatarWrap}>
+        <View
+          className="self-stretch flex-row items-center justify-between rounded-md bg-card p-lg"
+          style={{ gap: spacing.md, ...elevations.soft }}
+        >
+          <View className="flex-row items-center flex-1" style={{ gap: spacing.md }}>
+            <View className="w-[48px] h-[48px] rounded-md overflow-hidden bg-muted items-center justify-center">
               <UserRound size={28} color={colors.textSecondary} />
             </View>
-            <View style={styles.providerCopy}>
-              <Text style={styles.providerLabel}>
+            <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+              <Text className="text-micro text-text-secondary">
                 {t('customer.bookings.providerLabel', 'Гүйцэтгэгч')}
               </Text>
-              <Text style={styles.providerName}>
+              <Text className="text-body font-sans-bold text-primary-deep">
                 {t('customer.bookings.providerName', 'Б. Тэмүүлэн')}
               </Text>
             </View>
           </View>
-          <Pressable style={styles.messageButton} accessibilityRole="button">
+          <Touchable
+            className="w-[40px] h-[40px] rounded-md bg-muted items-center justify-center"
+            accessibilityRole="button"
+            testID="booking-confirmed-screen-message"
+          >
             <MessageSquare size={18} color={colors.primaryDeep} />
-          </Pressable>
+          </Touchable>
         </View>
 
         {canAddToCalendar ? (
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             onPress={handleCalendar}
-            style={styles.calendarCta}
+            className="self-stretch flex-row items-center rounded-md bg-muted px-md py-sm"
             testID="booking-confirmed-screen-calendar"
+            style={{ gap: spacing.sm }}
           >
             <CalendarPlus2 size={18} color={colors.secondary} />
-            <Text style={styles.calendarCtaText}>
+            <Text className="text-label font-sans-bold text-secondary">
               {t('customer.bookings.addToCalendar', 'Календарьт нэмэх')}
             </Text>
-          </Pressable>
+          </Touchable>
         ) : null}
 
-        <View style={styles.actions}>
-          <Pressable
+        <View className="self-stretch mt-md" style={{ gap: spacing.md }}>
+          <Touchable
             accessibilityRole="button"
             onPress={handleViewBooking}
-            style={styles.primaryButtonWrap}
+            className="self-stretch rounded-md overflow-hidden"
             testID="booking-confirmed-screen-cta"
           >
             <LinearGradient
               colors={[colors.primaryDeep, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={styles.primaryButton}
+              style={{ minHeight: 52, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: spacing.sm }}
             >
-              <Text style={styles.primaryButtonText}>
+              <Text className="text-body font-sans-bold text-primary-foreground">
                 {t('customer.bookings.ctaViewBooking', 'Захиалга харах')}
               </Text>
               <ArrowRight size={18} color={colors.primaryForeground} />
             </LinearGradient>
-          </Pressable>
+          </Touchable>
 
           <Button
             label={t('customer.bookings.ctaDone', 'Дууслаа')}
@@ -195,208 +208,11 @@ export default function BookingConfirmedScreen() {
         </View>
       </InsetScrollView>
 
-      <View pointerEvents="none" style={styles.bottomAccent} />
+      <View
+        pointerEvents="none"
+        className="absolute left-0 right-0 bottom-0 h-[80px] bg-background"
+        style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40, opacity: 0.7 }}
+      />
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  headerSpacer: {
-    flex: 1,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing['3xl'],
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  successIconWrap: {
-    paddingTop: spacing['2xl'],
-  },
-  successIconBackground: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headline: {
-    fontSize: typography.heading,
-    lineHeight: typography.heading * 1.25,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    letterSpacing: -0.6,
-    paddingHorizontal: spacing.md,
-  },
-  body: {
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.6,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  sectionHeadingWrap: {
-    alignSelf: 'stretch',
-    marginTop: spacing.md,
-  },
-  sectionHeadingPill: {
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    backgroundColor: colors.muted,
-    alignSelf: 'center',
-  },
-  sectionHeading: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.secondary,
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  nextStepsCard: {
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    gap: spacing.md,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    ...elevations.soft,
-  },
-  nextStepsIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  nextStepsCopy: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  nextStepsTitle: {
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.5,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  nextStepsBody: {
-    fontSize: typography.label,
-    lineHeight: typography.label * 1.6,
-    color: colors.textSecondary,
-  },
-  providerCard: {
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    ...elevations.soft,
-  },
-  providerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    flex: 1,
-  },
-  providerAvatarWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  providerCopy: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  providerLabel: {
-    fontSize: typography.micro,
-    color: colors.textSecondary,
-  },
-  providerName: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  messageButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  calendarCta: {
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  calendarCtaText: {
-    fontSize: typography.label,
-    color: colors.secondary,
-    fontWeight: '700',
-  },
-  actions: {
-    alignSelf: 'stretch',
-    gap: spacing.md,
-    marginTop: spacing.md,
-  },
-  primaryButtonWrap: {
-    alignSelf: 'stretch',
-    borderRadius: radius.md,
-    overflow: 'hidden',
-  },
-  primaryButton: {
-    minHeight: 52,
-    paddingHorizontal: spacing.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  primaryButtonText: {
-    fontSize: typography.body,
-    color: colors.primaryForeground,
-    fontWeight: '700',
-  },
-  bottomAccent: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 80,
-    backgroundColor: colors.background,
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    opacity: 0.7,
-  },
-});

@@ -1,18 +1,19 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Award, ChevronLeft, Star } from 'lucide-react-native';
 import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
 import { ScreenContainer } from '../../../../components/shells';
 import { Button } from '../../../../components/ui/Button';
+import { Touchable } from '../../../../components/ui/Touchable';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
 import { useApplications } from '../../../../features/tasks/hooks/useApplications';
 import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCustomerTaskDetail';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 interface ApplicantItem {
   id: string;
@@ -38,51 +39,64 @@ function ApplicantCard({
   const { t } = useTranslation();
 
   return (
-    <View testID="SCR-CUST-011" style={styles.card}>
-      <View style={styles.cardTopRow}>
+    <View
+      testID="SCR-CUST-011"
+      className="rounded-lg bg-card p-lg"
+      style={{ gap: spacing.md, ...elevations.soft }}
+    >
+      <View className="flex-row items-center" style={{ gap: spacing.md }}>
         <ProfileAvatar
           uri={applicant.avatarUrl}
           name={applicant.name}
           size="md"
           showVerified={applicant.isVerified}
         />
-        <View style={styles.cardInfo}>
-          <Text style={styles.cardName}>{applicant.name}</Text>
-          <View style={styles.ratingRow}>
+        <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+          <Text className="text-subtitle font-sans-bold text-foreground">{applicant.name}</Text>
+          <View className="flex-row items-center" style={{ gap: spacing.xs }}>
             <Star size={12} color={colors.accent} fill={colors.accent} />
-            <Text style={styles.ratingValue}>{applicant.rating}</Text>
-            <Text style={styles.ratingCount}>({applicant.reviewCount} reviews)</Text>
+            <Text className="text-label font-sans-bold text-foreground">{applicant.rating}</Text>
+            <Text className="text-caption text-text-secondary">({applicant.reviewCount} reviews)</Text>
           </View>
         </View>
         {applicant.isRecommended ? (
-          <View style={styles.recommendedBadge}>
+          <View
+            className="flex-row items-center rounded-full px-sm py-xs"
+            style={{ gap: spacing.xs, backgroundColor: `${colors.trust}22` }}
+          >
             <Award size={12} color={colors.trustMuted} />
-            <Text style={styles.recommendedText}>{t('applicants.recommended', 'Recommended')}</Text>
+            <Text className="text-caption font-sans-bold text-trust-muted">
+              {t('applicants.recommended', 'Recommended')}
+            </Text>
           </View>
         ) : null}
       </View>
 
-      {applicant.message ? <Text style={styles.messagePreview}>{applicant.message}</Text> : null}
+      {applicant.message ? (
+        <Text className="text-label text-muted-foreground leading-snug">{applicant.message}</Text>
+      ) : null}
 
-      <View style={styles.cardActions}>
-        <Pressable
-          style={styles.acceptButton}
+      <View className="flex-row items-center pt-xs" style={{ gap: spacing.md }}>
+        <Touchable
+          className="flex-1 min-h-[44px] bg-primary rounded-md items-center justify-center"
           onPress={() => onAccept(applicant)}
           testID={`applicant-accept-${applicant.taskerId}`}
           accessibilityRole="button"
         >
-          <Text style={styles.acceptText}>{t('customer.applicants.accept', 'Accept')}</Text>
-        </Pressable>
-        <Pressable
-          style={styles.viewProfileButton}
+          <Text className="text-label font-sans-bold text-primary-foreground">
+            {t('customer.applicants.accept', 'Accept')}
+          </Text>
+        </Touchable>
+        <Touchable
+          className="py-sm px-xs items-center"
           onPress={() => onViewProfile(applicant.taskerId)}
           testID={`applicant-view-profile-${applicant.taskerId}`}
           accessibilityRole="button"
         >
-          <Text style={styles.viewProfileText}>
+          <Text className="text-label font-sans-bold text-primary-deep">
             {t('customer.applicants.viewProfile', 'View Profile')}
           </Text>
-        </Pressable>
+        </Touchable>
       </View>
     </View>
   );
@@ -141,21 +155,27 @@ export default function ApplicantsListScreen() {
   return (
     <>
       <ScreenContainer testID="applicants-list-screen">
-        <View style={styles.header}>
-          <Pressable
+        <View
+          className="flex-row items-center px-lg pt-lg pb-md"
+          style={{ gap: spacing.md }}
+        >
+          <Touchable
             onPress={() => router.back()}
-            style={styles.backButton}
+            className="flex-row items-center"
             testID="applicants-list-back"
             accessibilityRole="button"
+            style={{ gap: spacing.xs }}
           >
             <ChevronLeft size={22} color={colors.primary} />
-            <Text style={styles.backLabel}>{t('common.back', 'Back')}</Text>
-          </Pressable>
-          <View style={styles.headerCopy}>
-            <Text style={styles.pageTitle}>
+            <Text className="text-body font-sans-semibold text-primary">
+              {t('common.back', 'Back')}
+            </Text>
+          </Touchable>
+          <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+            <Text className="text-heading font-sans-bold text-primary-deep">
               {t('customer.applicants.pageTitle', 'Applications')}
             </Text>
-            <Text style={styles.countText}>
+            <Text className="text-caption text-text-secondary">
               {t('customer.applicants.count', '{{count}} applications').replace(
                 '{{count}}',
                 String(applicants.length),
@@ -165,8 +185,14 @@ export default function ApplicantsListScreen() {
         </View>
 
         {declineNotification ? (
-          <View testID="SCR-CUST-012" style={styles.declineBanner}>
-            <Text style={styles.declineText}>{declineNotification}</Text>
+          <View
+            testID="SCR-CUST-012"
+            className="flex-row items-center justify-between mx-lg mb-sm p-md rounded-md"
+            style={{ backgroundColor: `${colors.danger}14` }}
+          >
+            <Text className="flex-1 text-caption font-sans-semibold text-danger leading-snug">
+              {declineNotification}
+            </Text>
             <Button
               label={t('common.dismiss', 'Dismiss')}
               variant="ghost"
@@ -176,28 +202,36 @@ export default function ApplicantsListScreen() {
         ) : null}
 
         {isLoading ? (
-          <View style={styles.stateCard}>
-            <Text style={styles.stateText}>{t('common.loading', 'Loading')}</Text>
+          <View
+            className="mx-lg rounded-lg bg-card p-lg"
+            style={{ gap: spacing.sm, ...elevations.soft }}
+          >
+            <Text className="text-body text-text-secondary">{t('common.loading', 'Loading')}</Text>
           </View>
         ) : isError ? (
-          <View style={styles.stateCard}>
-            <Text style={styles.stateTitle}>
+          <View
+            className="mx-lg rounded-lg bg-card p-lg"
+            style={{ gap: spacing.sm, ...elevations.soft }}
+          >
+            <Text className="text-body font-sans-bold text-primary-deep">
               {t('customer.applicants.errorNetwork', 'Failed to load applications')}
             </Text>
-            <Pressable
+            <Touchable
               onPress={() => refetch()}
-              style={styles.retryButton}
+              className="self-start min-h-[44px] px-md rounded-md items-center justify-center bg-secondary"
               testID="applicants-retry"
             >
-              <Text style={styles.retryText}>{t('common.tryAgain', 'Try again')}</Text>
-            </Pressable>
+              <Text className="text-caption font-sans-bold text-secondary-foreground">
+                {t('common.tryAgain', 'Try again')}
+              </Text>
+            </Touchable>
           </View>
         ) : (
           <FlatList
             style={{ flex: 1 }}
             data={applicants}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
             renderItem={({ item }) => (
               <ApplicantCard
                 applicant={item}
@@ -206,16 +240,16 @@ export default function ApplicantsListScreen() {
               />
             )}
             ListEmptyComponent={
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyTitle}>
+              <View className="items-center py-xl" style={{ gap: spacing.sm }}>
+                <Text className="text-subtitle font-sans-bold text-primary-deep">
                   {t('customer.applicants.emptyTitle', 'No applicants yet')}
                 </Text>
-                <Text style={styles.emptyBody}>
+                <Text className="text-body text-text-secondary">
                   {t('customer.applicants.emptyDescription', 'Taskers are being notified')}
                 </Text>
               </View>
             }
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
             showsVerticalScrollIndicator={false}
           />
         )}
@@ -229,23 +263,25 @@ export default function ApplicantsListScreen() {
         snapPoints={['42%']}
       >
         {selectedApplicant ? (
-          <View style={styles.confirmSheetContent}>
-            <Text style={styles.confirmBody}>
+          <View style={{ gap: spacing.lg }}>
+            <Text className="text-body text-text-secondary leading-snug">
               {t(
                 'customer.applicants.confirmBody',
                 'After selecting, you will proceed to booking confirmation',
               )}
             </Text>
-            <View style={styles.confirmTaskerRow}>
+            <View className="flex-row items-center" style={{ gap: spacing.md }}>
               <ProfileAvatar
                 uri={selectedApplicant.avatarUrl}
                 name={selectedApplicant.name}
                 size="lg"
                 showVerified={selectedApplicant.isVerified}
               />
-              <View style={styles.confirmTaskerCopy}>
-                <Text style={styles.confirmTaskerName}>{selectedApplicant.name}</Text>
-                <Text style={styles.confirmTaskerRating}>{selectedApplicant.rating}</Text>
+              <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+                <Text className="text-subtitle font-sans-bold text-primary-deep">
+                  {selectedApplicant.name}
+                </Text>
+                <Text className="text-body text-text-secondary">{selectedApplicant.rating}</Text>
               </View>
             </View>
             <Button
@@ -253,240 +289,19 @@ export default function ApplicantsListScreen() {
               onPress={handleConfirmAccept}
               testID="applicant-accept-sheet-confirm"
             />
-            <Pressable
+            <Touchable
               onPress={() => setSelectedApplicant(null)}
-              style={styles.confirmCancelButton}
+              className="items-center py-sm"
               accessibilityRole="button"
               testID="applicant-accept-sheet-cancel"
             >
-              <Text style={styles.confirmCancelText}>
+              <Text className="text-body font-sans-bold text-text-secondary">
                 {t('customer.applicants.confirmCancel', 'Go Back')}
               </Text>
-            </Pressable>
+            </Touchable>
           </View>
         ) : null}
       </ModalSheetTemplate>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  backLabel: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  headerCopy: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  pageTitle: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  countText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  stateCard: {
-    marginHorizontal: spacing.lg,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    ...elevations.soft,
-    gap: spacing.sm,
-  },
-  stateTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  stateText: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  retryButton: {
-    alignSelf: 'flex-start',
-    minHeight: 44,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.secondary,
-  },
-  retryText: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.secondaryForeground,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
-    gap: spacing.sm,
-  },
-  emptyTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  emptyBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  separator: {
-    height: spacing.md,
-  },
-  card: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    ...elevations.soft,
-    gap: spacing.md,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  cardInfo: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  cardName: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.foreground,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  ratingValue: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  ratingCount: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  recommendedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.trust}22`,
-  },
-  recommendedText: {
-    fontSize: typography.caption,
-    color: colors.trustMuted,
-    fontWeight: '700',
-  },
-  messagePreview: {
-    fontSize: typography.label,
-    color: colors.mutedForeground,
-    lineHeight: typography.label * 1.5,
-  },
-  cardActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingTop: spacing.xs,
-  },
-  acceptButton: {
-    flex: 1,
-    minHeight: 44,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  acceptText: {
-    fontSize: typography.label,
-    fontWeight: '800',
-    color: colors.primaryForeground,
-  },
-  viewProfileButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
-    alignItems: 'center',
-  },
-  viewProfileText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  confirmSheetContent: {
-    gap: spacing.lg,
-  },
-  confirmBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  confirmTaskerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  confirmTaskerCopy: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  confirmTaskerName: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  confirmTaskerRating: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  confirmCancelButton: {
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  confirmCancelText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  declineBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    backgroundColor: `${colors.danger}14`,
-  },
-  declineText: {
-    flex: 1,
-    fontSize: typography.caption,
-    color: colors.danger,
-    fontWeight: '600',
-    lineHeight: typography.caption * 1.5,
-  },
-});
