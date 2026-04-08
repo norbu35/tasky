@@ -1287,5 +1287,13 @@
     "noCategories": "No categories available",
     "featuredTitle": "Мэргэжлийн зөвлөгөө",
     "featuredBody": "Аль ангиллыг сонгохоо мэдэхгүй байна уу? Бид танд тусалъя."
+  },
+  "ReviewSubmitScreen": {
+    "finalStep": "Final Step",
+    "reviewTitle": "Review & Submit",
+    "postButton": "Захиалга өгөх",
+    "viewLess": "View less",
+    "viewMore": "View more",
+    "reviewGuidance": "Taskers will review your task and send offers. Double-check details before posting."
   }
 }

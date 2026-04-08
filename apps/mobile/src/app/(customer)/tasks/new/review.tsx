@@ -313,17 +313,17 @@ export default function ReviewSubmitScreen() {
       totalSteps={7}
       onNext={handleSubmit}
       onBack={() => router.back()}
-      nextLabel={t('customer.postTask.postButton', 'Захиалга өгөх')}
+      nextLabel={t('ReviewSubmitScreen.postButton', 'Захиалга өгөх')}
       nextLoading={isPending}
       nextDisabled={isPending || !hasRequiredPayload}
       testID="SCR-CUST-007"
     >
       <View className="gap-xs mb-sm">
         <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
-          {t('customer.postTask.finalStep', 'Final Step')}
+          {t('ReviewSubmitScreen.finalStep', 'Final Step')}
         </Text>
         <Text className="text-heading font-extrabold text-primaryDeep">
-          {t('customer.postTask.reviewTitle', 'Review & Submit')}
+          {t('ReviewSubmitScreen.reviewTitle', 'Review & Submit')}
         </Text>
       </View>
 
@@ -376,8 +376,8 @@ export default function ReviewSubmitScreen() {
           >
             <Text className="text-caption font-bold text-accent">
               {showFullDescription
-                ? t('customer.postTask.viewLess', 'View less')
-                : t('customer.postTask.viewMore', 'View more')}
+                ? t('ReviewSubmitScreen.viewLess', 'View less')
+                : t('ReviewSubmitScreen.viewMore', 'View more')}
             </Text>
           </Pressable>
         ) : null}
