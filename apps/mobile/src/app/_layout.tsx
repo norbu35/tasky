@@ -14,7 +14,7 @@ import '../design/nativewind-interop';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
 
-import { LogBox, StyleSheet } from 'react-native';
+import { LogBox } from 'react-native';
 
 // Suppress all LogBox warnings to prevent the yellow dev bar from
 // overlaying UI elements during Maestro E2E tests.
@@ -69,7 +69,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <GestureHandlerRootView className="flex-1">
       <SafeAreaProvider>
         <NotificationProvider>
           <QueryClientProvider client={queryClient}>
@@ -84,8 +84,3 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
