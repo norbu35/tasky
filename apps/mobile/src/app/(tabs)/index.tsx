@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react-native';
@@ -17,7 +17,7 @@ import { useTasks } from '../../features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../lib/mobileApiClient';
 import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 const CATEGORIES = [
   { id: 'all', label: 'Бүгд' },
@@ -29,8 +29,12 @@ const CATEGORIES = [
 
 function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
-    <View style={styles.cardHeader}>
-      <Text style={styles.customerName} numberOfLines={1}>
+    <View className="flex-row items-center justify-between">
+      <Text
+        className="text-label font-sans-semibold flex-1 mr-sm"
+        style={{ color: colors.primaryForeground }}
+        numberOfLines={1}
+      >
         {task.customer.full_name}
       </Text>
       <PriceTag amount={task.budget} size="sm" />
@@ -40,17 +44,21 @@ function TaskCardHeader({ task }: { task: PublicTask }) {
 
 function TaskCardBody({ task }: { task: PublicTask }) {
   return (
-    <View style={styles.cardBody}>
-      <Text style={styles.taskDescription} numberOfLines={2}>
+    <View className="gap-sm">
+      <Text
+        className="text-body font-sans-medium"
+        style={{ color: colors.foreground, lineHeight: undefined }}
+        numberOfLines={2}
+      >
         {task.description}
       </Text>
-      <View style={styles.cardMeta}>
+      <View className="flex-row flex-wrap items-center gap-sm mt-xs">
         {task.category && <CategoryChip label={task.category.name} isActive />}
         {task.approximate_location && <LocationPin text={task.approximate_location} compact />}
         {task.scheduled_at && (
-          <View style={styles.scheduleRow}>
+          <View className="flex-row items-center gap-xs">
             <Clock size={14} color={colors.textSecondary} />
-            <Text style={styles.scheduleText}>
+            <Text className="text-caption" style={{ color: colors.textSecondary }}>
               {new Date(task.scheduled_at).toLocaleDateString('en', {
                 month: 'short',
                 day: 'numeric',
@@ -136,7 +144,7 @@ function TaskerBrowseScreen() {
   const keyExtractor = useCallback((task: PublicTask) => task.id, []);
 
   return (
-    <View testID="SCR-TASK-001" style={styles.screenContainer}>
+    <View testID="SCR-TASK-001" className="flex-1">
       <FeedListTemplate
         data={filteredTasks}
         renderItem={renderItem}
@@ -148,15 +156,25 @@ function TaskerBrowseScreen() {
         isRefreshing={isRefetching}
         onRetry={refetch}
         ListHeaderComponent={
-          <View style={styles.headerContent}>
-            <View style={styles.headerCopy}>
-              <Text style={styles.screenTitle}>{t('tasker.browse.title', 'Даалгаврууд')}</Text>
-              <Text style={styles.screenSubtitle}>
+          <View className="gap-md mb-md">
+            <View className="gap-xs">
+              <Text className="text-heading font-sans-extrabold" style={{ color: colors.primaryDeep }}>
+                {t('tasker.browse.title', 'Даалгаврууд')}
+              </Text>
+              <Text className="text-body" style={{ color: colors.textSecondary }}>
                 {t('tasker.browse.subtitle', 'Шинэ даалгаврууд ойрхон')}
               </Text>
             </View>
             <Input
-              style={styles.searchInput}
+              style={{
+                borderWidth: 0,
+                borderRadius: mobileTheme.radius.md,
+                paddingHorizontal: mobileTheme.spacing.md,
+                paddingVertical: mobileTheme.spacing.sm,
+                fontSize: mobileTheme.typography.body,
+                color: colors.foreground,
+                backgroundColor: colors.muted,
+              }}
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder={t('tasker.browse.searchPlaceholder', 'Даалгавар хайх...')}
@@ -192,71 +210,3 @@ function TaskerBrowseScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  screenContainer: {
-    flex: 1,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  customerName: {
-    fontSize: typography.label,
-    fontWeight: '600',
-    color: colors.primaryForeground,
-    flex: 1,
-    marginRight: spacing.sm,
-  },
-  cardBody: {
-    gap: spacing.sm,
-  },
-  taskDescription: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    fontWeight: '500',
-    lineHeight: typography.body * 1.5,
-  },
-  cardMeta: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  scheduleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  scheduleText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  headerContent: {
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-  headerCopy: {
-    gap: spacing.xs,
-  },
-  screenTitle: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  screenSubtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  searchInput: {
-    borderWidth: 0,
-    borderRadius: mobileTheme.radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: typography.body,
-    color: colors.foreground,
-    backgroundColor: colors.muted,
-  },
-});

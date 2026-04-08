@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Zap } from 'lucide-react-native';
@@ -8,8 +8,9 @@ import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 type LoginState = 'default' | 'facebook_loading' | 'error';
 
@@ -59,15 +60,22 @@ export default function LoginScreen() {
         <Pressable
           testID="language-switcher"
           onPress={toggleLanguage}
-          style={styles.languagePill}
+          className="rounded-md px-md bg-background"
+          style={{
+            borderWidth: 1,
+            borderColor: 'rgba(195,198,207,0.2)',
+            paddingVertical: 4,
+          }}
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher', 'MN/EN')}
         >
-          <Text style={styles.languagePillText}>MN/EN</Text>
+          <Text className="text-caption font-sans-bold" style={{ color: colors.primaryDeep, letterSpacing: 0.35 }}>
+            MN/EN
+          </Text>
         </Pressable>
       }
       bottomSlot={
-        <View style={styles.actions}>
+        <View className="gap-lg px-xl">
           <Button
             testID="facebook-login-button"
             onPress={() => {
@@ -75,12 +83,12 @@ export default function LoginScreen() {
             }}
             disabled={isFacebookLoading}
             isLoading={isFacebookLoading}
-            style={styles.facebookButton}
+            style={{ minHeight: 56, backgroundColor: colors.primaryDeep }}
           >
             {!isFacebookLoading ? (
-              <View style={styles.facebookContent}>
+              <View className="flex-row items-center gap-sm">
                 <Facebook size={20} color={colors.primaryForeground} />
-                <Text style={styles.facebookText}>
+                <Text className="text-label font-sans-bold text-primary-foreground">
                   {t('auth.login.facebookButton', 'Facebook-ээр нэвтрэх')}
                 </Text>
               </View>
@@ -88,14 +96,16 @@ export default function LoginScreen() {
           </Button>
 
           {state === 'error' && errorMessage ? (
-            <Text testID="login-error" style={styles.errorText}>
+            <Text testID="login-error" className="text-body text-center" style={{ color: colors.danger }}>
               {errorMessage}
             </Text>
           ) : null}
 
           {devAuthEnabled ? (
-            <View style={styles.devSection}>
-              <Text style={styles.devLabel}>{t('auth.devBypass', 'Dev bypass')}</Text>
+            <View className="gap-sm border-t border-border pt-lg">
+              <Text className="text-caption text-center uppercase" style={{ color: colors.textSecondary, letterSpacing: 1 }}>
+                {t('auth.devBypass', 'Dev bypass')}
+              </Text>
               <Button
                 testID="dev-login-customer"
                 label={t('auth.loginAsCustomer', 'Login as Customer')}
@@ -111,120 +121,47 @@ export default function LoginScreen() {
                 disabled={busy}
               />
               {devLogin.error ? (
-                <Text style={styles.errorText}>{devLogin.error.message}</Text>
+                <Text className="text-body text-center" style={{ color: colors.danger }}>{devLogin.error.message}</Text>
               ) : null}
             </View>
           ) : null}
         </View>
       }
       footerSlot={
-        <View style={styles.footerLinks}>
+        <View className="items-center gap-md">
           <Pressable
             testID="login-footer-terms"
             onPress={() => router.push('/(shared)/legal/terms')}
             accessibilityRole="link"
           >
-            <Text style={styles.footerLink}>{t('auth.login.terms', 'Үйлчилгээний нөхцөл')}</Text>
+            <Text className="text-body" style={{ color: colors.textSecondary }}>
+              {t('auth.login.terms', 'Үйлчилгээний нөхцөл')}
+            </Text>
           </Pressable>
           <Pressable
             testID="login-footer-privacy"
             onPress={() => router.push('/(shared)/legal/privacy')}
             accessibilityRole="link"
           >
-            <Text style={styles.footerLink}>{t('auth.login.privacy', 'Нууцлалын бодлого')}</Text>
+            <Text className="text-body" style={{ color: colors.textSecondary }}>
+              {t('auth.login.privacy', 'Нууцлалын бодлого')}
+            </Text>
           </Pressable>
-          <Text style={styles.copyright}>
+          <Text className="text-body text-center" style={{ color: colors.textSecondary, opacity: 0.6 }}>
             {t('auth.login.copyright', '© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')}
           </Text>
         </View>
       }
     >
       {/* Brand icon — replaces Figma asset */}
-      <View style={styles.brandIconWrap}>
-        <View style={styles.brandIconCard}>
+      <View className="items-center mb-lg">
+        <View
+          className="w-[80px] h-[80px] rounded-sm items-center justify-center"
+          style={{ backgroundColor: colors.primaryDeep, ...elevations.card }}
+        >
           <Zap size={32} color={colors.primaryForeground} />
         </View>
       </View>
     </AuthTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  languagePill: {
-    borderWidth: 1,
-    borderColor: 'rgba(195,198,207,0.2)',
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs / 2,
-    backgroundColor: colors.background,
-  },
-  languagePillText: {
-    color: colors.primaryDeep,
-    fontSize: typography.label,
-    fontWeight: '600',
-    letterSpacing: 0.35,
-  },
-  brandIconWrap: {
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  brandIconCard: {
-    width: 80,
-    height: 80,
-    borderRadius: radius.sm,
-    backgroundColor: colors.primaryDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...elevations.card,
-  },
-  actions: {
-    gap: spacing.lg,
-    paddingHorizontal: spacing.xl,
-  },
-  facebookButton: {
-    minHeight: 56,
-    backgroundColor: colors.primaryDeep,
-  },
-  facebookContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  facebookText: {
-    color: colors.primaryForeground,
-    fontSize: typography.label,
-    fontWeight: '600',
-  },
-  errorText: {
-    color: colors.danger,
-    fontSize: typography.body,
-    textAlign: 'center',
-  },
-  devSection: {
-    gap: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: spacing.lg,
-  },
-  devLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  footerLinks: {
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  footerLink: {
-    color: colors.textSecondary,
-    fontSize: typography.body,
-  },
-  copyright: {
-    color: colors.textSecondary,
-    fontSize: typography.body,
-    opacity: 0.6,
-    textAlign: 'center',
-  },
-});

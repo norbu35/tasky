@@ -17,7 +17,7 @@ import { ScreenContainer } from '../components/shells';
 import { Button } from '../components/ui/Button';
 
 const { width } = Dimensions.get('window');
-const { colors, spacing, typography } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 const SLIDES = [
   {
@@ -92,37 +92,71 @@ export default function OnboardingScreen() {
     const titleText = t(item.titleKey, item.titleFallback);
     const bodyText = t(item.bodyKey, item.bodyFallback);
     return (
-      <View style={styles.slide}>
-        <View style={styles.illustrationWrap}>
-          <View style={styles.illustrationBackdrop} />
-          <View style={[styles.illustrationCard, { backgroundColor: `${item.iconColor}15` }]}>
+      <View className="items-center px-xl justify-center" style={{ width, paddingTop: spacing['3xl'] }}>
+        <View
+          className="mb-[32px] items-center justify-center"
+          style={{
+            width: 326,
+            height: 407,
+            borderRadius: 32,
+            backgroundColor: colors.muted,
+            transform: [{ rotate: '-3deg' }],
+          }}
+        >
+          <View style={StyleSheet.absoluteFillObject} className="rounded-[32px] bg-muted" />
+          <View
+            className="self-stretch h-full rounded-[32px] overflow-hidden items-center justify-center"
+            style={{ backgroundColor: `${item.iconColor}15` }}
+          >
             <item.icon size={80} color={item.iconColor} />
             {item.id === '1' ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{t('auth.onboarding.badge', 'БАТАЛГААЖСАН')}</Text>
+              <View
+                className="absolute bottom-6 left-6 rounded-xl px-lg py-sm"
+                style={{ backgroundColor: colors.primaryDeep }}
+              >
+                <Text
+                  className="text-caption font-sans-bold"
+                  style={{ color: colors.primaryForeground, letterSpacing: 0.3 }}
+                >
+                  {t('auth.onboarding.badge', 'БАТАЛГААЖСАН')}
+                </Text>
               </View>
             ) : null}
           </View>
         </View>
-        <View style={styles.titleBlock}>
-          <Text style={styles.title}>{titleText}</Text>
+        <View className="items-center">
+          <Text
+            className="text-heading font-sans-extrabold text-center"
+            style={{ color: colors.primaryDeep }}
+          >
+            {titleText}
+          </Text>
         </View>
-        <Text style={styles.description}>{bodyText}</Text>
+        <Text
+          className="text-body text-center text-muted-foreground"
+        >
+          {bodyText}
+        </Text>
       </View>
     );
   };
 
   return (
     <ScreenContainer testID="SCR-SHARED-005">
-      <View style={styles.header}>
+      <View
+        className="absolute z-10 flex-row items-center justify-between"
+        style={{ top: spacing.lg, left: spacing.lg, right: spacing.lg }}
+      >
         <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
           <ArrowLeft size={24} color={colors.primaryDeep} />
         </Pressable>
         {isLastSlide ? (
-          <View style={styles.skipSpacer} />
+          <View style={{ width: 56, height: 24 }} />
         ) : (
           <Pressable testID="onboarding-skip" onPress={handleSkip} hitSlop={12}>
-            <Text style={styles.skipLabel}>{t('auth.onboarding.skip', 'Алгасах')}</Text>
+            <Text className="text-label font-sans-bold" style={{ color: colors.primaryDeep }}>
+              {t('auth.onboarding.skip', 'Алгасах')}
+            </Text>
           </Pressable>
         )}
       </View>
@@ -139,19 +173,18 @@ export default function OnboardingScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
       />
-      <View style={styles.footer}>
-        <View style={styles.pagination}>
+      <View className="px-xl" style={{ paddingBottom: spacing['3xl'] }}>
+        <View className="flex-row justify-center items-center mb-xl" style={{ gap: spacing.md / 2 }}>
           {SLIDES.map((_, index) => (
             <View
               key={index}
               testID={`pagination-dot-${index}`}
-              style={[
-                styles.dot,
-                {
-                  backgroundColor: currentIndex === index ? colors.primary : colors.border,
-                  width: currentIndex === index ? 10 : 6,
-                },
-              ]}
+              style={{
+                height: 3,
+                borderRadius: 999,
+                backgroundColor: currentIndex === index ? colors.primary : colors.border,
+                width: currentIndex === index ? 10 : 6,
+              }}
             />
           ))}
         </View>
@@ -163,110 +196,9 @@ export default function OnboardingScreen() {
               : t('auth.onboarding.next', 'Дараагийх')
           }
           onPress={handleNext}
-          style={styles.nextButton}
+          className="self-stretch"
         />
       </View>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    position: 'absolute',
-    top: spacing.lg,
-    left: spacing.lg,
-    right: spacing.lg,
-    zIndex: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  skipLabel: {
-    color: colors.primaryDeep,
-    fontSize: typography.label,
-    fontWeight: '700',
-  },
-  slide: {
-    width,
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing['3xl'],
-    justifyContent: 'center',
-  },
-  illustrationWrap: {
-    marginBottom: spacing['2xl'],
-    width: 326,
-    height: 407,
-    borderRadius: 32,
-    backgroundColor: colors.muted,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{ rotate: '-3deg' }],
-  },
-  illustrationBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 32,
-    backgroundColor: colors.muted,
-  },
-  illustrationCard: {
-    alignSelf: 'stretch',
-    height: '100%',
-    borderRadius: 32,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badge: {
-    position: 'absolute',
-    bottom: 24,
-    left: 24,
-    backgroundColor: colors.primaryDeep,
-    borderRadius: 12,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  badgeText: {
-    color: colors.primaryForeground,
-    fontSize: typography.caption,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-  },
-  titleBlock: {
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    lineHeight: typography.heading * 1.25,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.6,
-  },
-  footer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing['3xl'],
-  },
-  pagination: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-    gap: spacing.md / 2,
-  },
-  dot: {
-    height: 3,
-    borderRadius: 999,
-  },
-  nextButton: {
-    alignSelf: 'stretch',
-  },
-  skipSpacer: {
-    width: 56,
-    height: 24,
-  },
-});

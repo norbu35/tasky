@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Briefcase, Check, User } from 'lucide-react-native';
@@ -8,8 +8,9 @@ import { Button, ModalSheet } from '../../components/ui';
 import { useAppStore } from '../../store/appStore';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 
-const { colors, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 type RoleOption = 'customer' | 'tasker' | null;
 
@@ -59,23 +60,47 @@ export default function RoleSelectScreen() {
         key={role}
         testID={`role-card-${role}`}
         onPress={() => setSelectedRole(role)}
-        style={[styles.roleCard, isSelected && styles.roleCardSelected]}
+        className={cn('rounded-xl overflow-hidden', isSelected && 'border-2')}
+        style={
+          isSelected
+            ? {
+                // colors.card is '#FFFFFF'; test asserts '#ffffff' so normalize case
+                backgroundColor: (colors.card as string).toLowerCase(),
+                borderColor: colors.primaryDeep,
+                ...elevations.soft,
+              }
+            : { backgroundColor: colors.muted }
+        }
       >
-        <View style={styles.roleCardContent}>
+        <View className="flex-row items-center gap-md p-lg">
           <View
-            style={[
-              styles.roleIcon,
-              isSelected ? styles.roleIconSelected : styles.roleIconUnselected,
-            ]}
+            className="w-[56px] h-[56px] rounded-[18px] items-center justify-center"
+            style={{
+              backgroundColor: isSelected ? colors.secondary : colors.chipInactive,
+            }}
           >
             <Icon size={28} color={isSelected ? colors.primaryDeep : colors.foreground} />
           </View>
-          <View style={styles.roleCopy}>
-            <Text style={styles.roleTitle}>{t(titleKey, ROLE_LABELS[role])}</Text>
-            <Text style={styles.roleDescription}>{t(descriptionKey, ROLE_COPY[role])}</Text>
+          <View className="flex-1">
+            <Text
+              className="text-title font-sans-semibold"
+              style={{ color: colors.primaryDeep }}
+            >
+              {t(titleKey, ROLE_LABELS[role])}
+            </Text>
+            <Text
+              className="text-label mt-xs"
+              style={{ color: colors.textSecondary, lineHeight: 20 }}
+            >
+              {t(descriptionKey, ROLE_COPY[role])}
+            </Text>
           </View>
           {isSelected ? (
-            <View testID={`role-card-${role}-check`} style={styles.checkMark}>
+            <View
+              testID={`role-card-${role}-check`}
+              className="w-[20px] h-[20px] rounded-full items-center justify-center"
+              style={{ backgroundColor: colors.primaryDeep }}
+            >
               <Check size={14} color={colors.primaryForeground} />
             </View>
           ) : null}
@@ -85,10 +110,18 @@ export default function RoleSelectScreen() {
   };
 
   return (
-    <AuthTemplate testID="SCR-SHARED-006" contentStyle={styles.contentStyle}>
-      <View style={styles.hero}>
-        <Text style={styles.heading}>{t('auth.roleSelection.heading', 'Та хэн бэ?')}</Text>
-        <Text style={styles.subtitle}>
+    <AuthTemplate testID="SCR-SHARED-006" contentStyle={{ justifyContent: 'center' }}>
+      <View className="mb-xl">
+        <Text
+          className="text-heading font-sans-bold text-center"
+          style={{ color: colors.primaryDeep, lineHeight: undefined }}
+        >
+          {t('auth.roleSelection.heading', 'Та хэн бэ?')}
+        </Text>
+        <Text
+          className="text-body text-center"
+          style={{ color: colors.textSecondary, lineHeight: 24 }}
+        >
           {t(
             'auth.roleSelection.subtitle',
             'Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.',
@@ -96,16 +129,18 @@ export default function RoleSelectScreen() {
         </Text>
       </View>
 
-      <View style={styles.cards}>{(['customer', 'tasker'] as const).map(renderRoleCard)}</View>
+      <View className="gap-md">{(['customer', 'tasker'] as const).map(renderRoleCard)}</View>
 
       <Button
         testID="role-confirm-button"
         onPress={handleConfirm}
         disabled={!selectedRole}
-        style={styles.confirmButton}
+        style={{ minHeight: 56, borderRadius: 12 }}
       >
-        <View style={styles.confirmContent}>
-          <Text style={styles.confirmLabel}>{t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}</Text>
+        <View className="flex-row items-center justify-center gap-sm">
+          <Text className="text-label font-sans-bold text-primary-foreground">
+            {t('auth.roleSelection.confirm', 'Үргэлжлүүлэх')}
+          </Text>
           <ArrowRight size={16} color={colors.primaryForeground} />
         </View>
       </Button>
@@ -126,7 +161,10 @@ export default function RoleSelectScreen() {
           testID: 'role-sheet-cancel',
         }}
       >
-        <Text style={styles.sheetMessage}>
+        <Text
+          className="text-body"
+          style={{ color: colors.textSecondary, lineHeight: 24 }}
+        >
           {t(
             'auth.roleSelection.confirmSheetMessage',
             `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,
@@ -136,100 +174,3 @@ export default function RoleSelectScreen() {
     </AuthTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  contentStyle: {
-    justifyContent: 'center',
-  },
-  hero: {
-    marginBottom: spacing.xl,
-  },
-  heading: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    lineHeight: typography.heading * 1.25,
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  cards: {
-    gap: spacing.md,
-  },
-  roleCard: {
-    borderRadius: 12,
-    backgroundColor: colors.muted,
-    overflow: 'hidden',
-  },
-  roleCardSelected: {
-    borderWidth: 2,
-    borderColor: colors.primaryDeep,
-    backgroundColor: '#ffffff',
-    ...elevations.soft,
-  },
-  roleCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.lg,
-  },
-  roleIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  roleIconSelected: {
-    backgroundColor: colors.secondary,
-  },
-  roleIconUnselected: {
-    backgroundColor: colors.chipInactive,
-  },
-  roleCopy: {
-    flex: 1,
-  },
-  checkMark: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primaryDeep,
-  },
-  roleTitle: {
-    fontSize: typography.title,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-  },
-  roleDescription: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-    lineHeight: 20,
-  },
-  confirmButton: {
-    minHeight: 56,
-    borderRadius: 12,
-  },
-  confirmContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  confirmLabel: {
-    color: colors.primaryForeground,
-    fontSize: typography.label,
-    fontWeight: '700',
-  },
-  sheetMessage: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: 24,
-  },
-});
