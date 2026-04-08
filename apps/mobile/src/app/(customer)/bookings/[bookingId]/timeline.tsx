@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CircleHelp, Clock } from 'lucide-react-native';
@@ -8,7 +8,7 @@ import { useBookingDetail } from '../../../../features/bookings/hooks/useBooking
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { ScreenContainer } from '../../../../components/shells';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts);
@@ -64,35 +64,37 @@ function TimelineEventRow({
   isActive: boolean;
   isFuture: boolean;
 }) {
+  // Dot colors are runtime-conditional → imperative
+  const dotBg = isActive ? colors.secondary : isFuture ? colors.chipInactive : colors.primaryDeep;
+
   return (
     <View
-      style={[styles.timelineRow, isFuture && styles.timelineRowFuture]}
+      className={`flex-row gap-md items-start${isFuture ? ' opacity-[0.45]' : ''}`}
       testID={`timeline-event-${index}-${isFuture ? 'future' : isActive ? 'active' : 'past'}`}
     >
-      <View style={styles.timelineRail}>
+      {/* timelineRail */}
+      <View className="w-6 items-center">
         <View
-          style={[
-            styles.timelineDot,
-            isActive && styles.timelineDotActive,
-            isFuture && styles.timelineDotFuture,
-            !isActive && !isFuture && styles.timelineDotPast,
-          ]}
+          className="w-6 h-6 rounded-full border-[3px] z-[1]"
+          style={{ borderColor: colors.background, backgroundColor: dotBg }}
         />
         {!isFuture ? (
-          <View style={styles.timelineLine} />
+          <View className="w-[2px] flex-1 min-h-[28px] -mt-[1px] bg-border" />
         ) : (
-          <View style={styles.timelineLineMuted} />
+          <View className="w-[2px] flex-1 min-h-[28px] -mt-[1px] bg-border opacity-50" />
         )}
       </View>
-      <View style={styles.timelineCopy}>
-        <Text style={[styles.timelineTimestamp, isActive && styles.timelineTimestampActive]}>
+      <View className="flex-1 gap-xs">
+        <Text className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-textSecondary'}`}>
           {formatTimestamp(event.timestamp)}
         </Text>
-        <Text style={[styles.timelineLabel, isActive && styles.timelineLabelActive]}>
+        <Text className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primaryDeep'}`}>
           {getEventLabel(event.event)}
         </Text>
         {event.description ? (
-          <Text style={styles.timelineDescription}>{event.description}</Text>
+          <Text className="text-caption text-textSecondary leading-relaxed">
+            {event.description}
+          </Text>
         ) : null}
       </View>
     </View>
@@ -126,28 +128,31 @@ export default function BookingTimelineScreen() {
 
   return (
     <ScreenContainer testID="SCR-CUST-019">
-      <View style={styles.shell}>
+      <View className="flex-1 bg-background">
         <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
+          className="flex-1"
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 16 }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.contextCard}>
-            <View style={styles.contextImageWrap}>
+          <View className="flex-row items-center gap-md bg-muted rounded-lg p-lg">
+            <View className="w-16 h-16 rounded-md overflow-hidden bg-card items-center justify-center">
               <Clock size={32} color={colors.secondary} />
             </View>
-            <View style={styles.contextCopy}>
-              <Text style={styles.contextId}>
+            <View className="flex-1" style={{ gap: 2 }}>
+              <Text
+                className="text-micro font-bold text-secondary uppercase"
+                style={{ letterSpacing: 0.8 }}
+              >
                 {t(
                   'customer.bookings.timelineId',
                   `ID: #${(booking?.task_id ?? bookingId).slice(-6)}`,
                 )}
               </Text>
-              <Text style={styles.contextTitle} numberOfLines={2}>
+              <Text className="text-title font-bold text-primaryDeep leading-tight" numberOfLines={2}>
                 {booking?.task?.description ??
                   t('customer.bookings.timelineFallbackTitle', 'Даалгаврын дэлгэрэнгүй')}
               </Text>
-              <Text style={styles.contextSubtitle} numberOfLines={1}>
+              <Text className="text-caption text-textSecondary" numberOfLines={1}>
                 {booking?.tasker?.full_name
                   ? `${booking.tasker.full_name} (${t('customer.bookings.timelineTasker', 'Гүйцэтгэгч')})`
                   : t('customer.bookings.timelineTaskerFallback', 'Гүйцэтгэгч')}
@@ -156,14 +161,14 @@ export default function BookingTimelineScreen() {
           </View>
 
           {isLoading ? (
-            <View style={styles.loadingBlock}>
-              <View style={styles.loadingLineLarge} />
-              <View style={styles.loadingLineMedium} />
-              <View style={styles.loadingLineMedium} />
+            <View className="py-sm gap-sm">
+              <View className="h-4 rounded-xs bg-muted" style={{ width: '55%' }} />
+              <View className="h-3 rounded-xs bg-muted" style={{ width: '72%' }} />
+              <View className="h-3 rounded-xs bg-muted" style={{ width: '72%' }} />
             </View>
           ) : null}
 
-          <View style={styles.timelineSection}>
+          <View className="gap-lg py-xs">
             {timelineEvents.map((event, index) => (
               <TimelineEventRow
                 key={`${event.event}-${event.timestamp}-${index}`}
@@ -175,14 +180,14 @@ export default function BookingTimelineScreen() {
             ))}
           </View>
 
-          <View style={styles.helpCard}>
-            <View style={styles.helpHeader}>
-              <Text style={styles.helpTitle}>
+          <View className="bg-primaryDeep rounded-lg p-lg gap-md">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-title font-bold text-primaryForeground">
                 {t('customer.bookings.helpTitle', 'Тусламж хэрэгтэй юу?')}
               </Text>
               <CircleHelp size={18} color={colors.secondary} />
             </View>
-            <Text style={styles.helpBody}>
+            <Text className="text-body text-accent leading-relaxed">
               {t(
                 'customer.bookings.helpBody',
                 'Хэрэв танд захиалгын талаар асуулт гарвал манай дэмжлэгийн багтай холбогдоорой.',
@@ -191,10 +196,10 @@ export default function BookingTimelineScreen() {
             <Pressable
               accessibilityRole="button"
               onPress={() => router.push('/(shared)/help')}
-              style={styles.helpButton}
+              className="min-h-[48px] rounded-md bg-secondary items-center justify-center px-lg"
               testID="booking-timeline-help-cta"
             >
-              <Text style={styles.helpButtonText}>
+              <Text className="text-label font-bold text-secondaryForeground">
                 {t('customer.bookings.helpCta', 'Оператортой холбогдох')}
               </Text>
             </Pressable>
@@ -204,10 +209,10 @@ export default function BookingTimelineScreen() {
             <Pressable
               accessibilityRole="button"
               onPress={() => void refetch()}
-              style={styles.errorBanner}
+              className="bg-danger rounded-md p-md"
               testID="booking-timeline-error"
             >
-              <Text style={styles.errorBannerText}>
+              <Text className="text-label font-semibold text-dangerForeground">
                 {t(
                   'customer.bookings.timelineError',
                   'Захиалгын түүх ачааллахад алдаа гарлаа. Дахин оролдох.',
@@ -220,190 +225,3 @@ export default function BookingTimelineScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing['3xl'],
-    gap: spacing.lg,
-  },
-  contextCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-  },
-  contextImageWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contextCopy: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  contextId: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.secondary,
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-  },
-  contextTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    lineHeight: typography.title * 1.2,
-  },
-  contextSubtitle: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  loadingBlock: {
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-  },
-  loadingLineLarge: {
-    height: 16,
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-    width: '55%',
-  },
-  loadingLineMedium: {
-    height: 12,
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-    width: '72%',
-  },
-  timelineSection: {
-    gap: spacing.lg,
-    paddingVertical: spacing.xs,
-  },
-  timelineRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    alignItems: 'flex-start',
-  },
-  timelineRowFuture: {
-    opacity: 0.45,
-  },
-  timelineRail: {
-    width: 24,
-    alignItems: 'center',
-  },
-  timelineDot: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    borderWidth: 3,
-    borderColor: colors.background,
-    backgroundColor: colors.primaryDeep,
-    zIndex: 1,
-  },
-  timelineDotPast: {
-    backgroundColor: colors.primaryDeep,
-  },
-  timelineDotActive: {
-    backgroundColor: colors.secondary,
-  },
-  timelineDotFuture: {
-    backgroundColor: colors.chipInactive,
-  },
-  timelineLine: {
-    width: 2,
-    flex: 1,
-    minHeight: 28,
-    marginTop: -1,
-    backgroundColor: colors.border,
-  },
-  timelineLineMuted: {
-    width: 2,
-    flex: 1,
-    minHeight: 28,
-    marginTop: -1,
-    backgroundColor: colors.border,
-    opacity: 0.5,
-  },
-  timelineCopy: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  timelineTimestamp: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  timelineTimestampActive: {
-    color: colors.secondary,
-  },
-  timelineLabel: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  timelineLabelActive: {
-    color: colors.secondary,
-  },
-  timelineDescription: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-  helpCard: {
-    backgroundColor: colors.primaryDeep,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  helpHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  helpTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  helpBody: {
-    fontSize: typography.body,
-    color: colors.accent,
-    lineHeight: typography.body * 1.5,
-  },
-  helpButton: {
-    minHeight: 48,
-    borderRadius: radius.md,
-    backgroundColor: colors.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  helpButtonText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.secondaryForeground,
-  },
-  errorBanner: {
-    backgroundColor: colors.danger,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  errorBannerText: {
-    fontSize: typography.label,
-    fontWeight: '600',
-    color: colors.dangerForeground,
-  },
-});

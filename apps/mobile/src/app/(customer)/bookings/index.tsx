@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ClipboardList, Menu, Search, CalendarDays } from 'lucide-react-native';
@@ -11,7 +11,7 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 type BookingTab = 'active' | 'completed';
 
@@ -47,33 +47,18 @@ function getBookingStatusLabel(status?: string): string {
   }
 }
 
-function getBookingStatusStyles(status?: string) {
+function getBookingStatusColors(status?: string): { bg: string; text: string } {
   switch ((status ?? '').toUpperCase()) {
     case 'ASSIGNED':
-      return {
-        backgroundColor: colors.statusAssigned,
-        color: colors.statusAssignedForeground,
-      };
+      return { bg: colors.statusAssigned, text: colors.statusAssignedForeground };
     case 'COMPLETED':
-      return {
-        backgroundColor: colors.verified,
-        color: colors.verifiedForeground,
-      };
+      return { bg: colors.verified, text: colors.verifiedForeground };
     case 'CANCELLED':
-      return {
-        backgroundColor: colors.muted,
-        color: colors.textSecondary,
-      };
+      return { bg: colors.muted, text: colors.textSecondary };
     case 'NO_SHOW':
-      return {
-        backgroundColor: colors.danger,
-        color: colors.dangerForeground,
-      };
+      return { bg: colors.danger, text: colors.dangerForeground };
     default:
-      return {
-        backgroundColor: colors.secondary,
-        color: colors.secondaryForeground,
-      };
+      return { bg: colors.secondary, text: colors.secondaryForeground };
   }
 }
 
@@ -99,12 +84,16 @@ function FilterTab({
     <Pressable
       testID="SCR-CUST-016"
       onPress={onPress}
-      style={styles.filterTab}
+      className="pb-xs items-start"
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
     >
-      <Text style={[styles.filterTabLabel, active && styles.filterTabLabelActive]}>{label}</Text>
-      {active ? <View style={styles.filterTabIndicator} /> : null}
+      <Text className={`text-label font-semibold${active ? ' text-primaryDeep' : ' text-textSecondary'}`}>
+        {label}
+      </Text>
+      {active ? (
+        <View className="mt-xs w-12 h-1 rounded-full bg-primaryDeep" />
+      ) : null}
     </Pressable>
   );
 }
@@ -122,41 +111,56 @@ function BookingCard({
   onPress: () => void;
 }) {
   const schedule = formatSchedule(booking.task?.scheduled_at);
-  const statusStyle = getBookingStatusStyles(booking.status);
+  const statusColors = getBookingStatusColors(booking.status);
 
   return (
-    <Pressable onPress={onPress} style={styles.card} testID={`booking-card-${booking.id}`}>
-      <View style={styles.cardTopRow}>
-        <View style={styles.cardIdentity}>
+    <Pressable
+      onPress={onPress}
+      className="bg-card rounded-lg gap-item"
+      style={{ padding: screenLayout.body.cardPadding, gap: screenLayout.body.itemGap, ...elevations.soft }}
+      testID={`booking-card-${booking.id}`}
+    >
+      <View
+        className="flex-row items-start justify-between"
+        style={{ gap: screenLayout.body.itemGap }}
+      >
+        <View className="flex-row items-center flex-1" style={{ gap: screenLayout.body.itemGap }}>
           <ProfileAvatar
             uri={booking.tasker?.avatar_url}
             name={booking.tasker?.full_name ?? 'Tasker'}
             size="md"
             showVerified
           />
-          <View style={styles.cardIdentityCopy}>
-            <Text style={styles.cardTitle} numberOfLines={1}>
+          <View className="flex-1" style={{ gap: 2 }}>
+            <Text className="text-body font-bold text-primaryDeep" numberOfLines={1}>
               {booking.tasker?.full_name ?? 'Гүйцэтгэгч'}
             </Text>
-            <Text style={styles.cardSubtitle} numberOfLines={1}>
+            <Text className="text-caption text-textSecondary" numberOfLines={1}>
               {booking.task?.description ?? 'Даалгавар'}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.statusPill, { backgroundColor: statusStyle.backgroundColor }]}>
-          <Text style={[styles.statusPillText, { color: statusStyle.color }]}>
+        {/* statusPill: runtime colors → imperative */}
+        <View
+          className="self-start rounded-full px-md py-xs"
+          style={{ backgroundColor: statusColors.bg }}
+        >
+          <Text
+            className="text-micro font-bold uppercase"
+            style={{ color: statusColors.text, letterSpacing: 0.6 }}
+          >
             {getBookingStatusLabel(booking.status)}
           </Text>
         </View>
       </View>
 
-      <View style={styles.cardDivider} />
+      <View className="h-[1px] bg-border opacity-40" />
 
-      <View style={styles.cardBottomRow}>
-        <View style={styles.scheduleRow}>
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-xs flex-1">
           <CalendarDays size={14} color={colors.textSecondary} />
-          <Text style={styles.scheduleText}>{schedule ?? '—'}</Text>
+          <Text className="text-caption text-textSecondary flex-1">{schedule ?? '—'}</Text>
         </View>
         <PriceTag amount={booking.task?.budget ?? 0} size="sm" />
       </View>
@@ -166,19 +170,22 @@ function BookingCard({
 
 function LoadingSkeletonCard() {
   return (
-    <View style={styles.skeletonCard}>
-      <View style={styles.skeletonTopRow}>
-        <View style={styles.skeletonAvatar} />
-        <View style={styles.skeletonTitleBlock}>
-          <View style={styles.skeletonLineLong} />
-          <View style={styles.skeletonLineShort} />
+    <View
+      className="bg-card rounded-lg p-lg gap-md"
+      style={elevations.soft}
+    >
+      <View className="flex-row items-center gap-md">
+        <View className="w-10 h-10 rounded-md bg-muted" />
+        <View className="flex-1 gap-xs">
+          <View className="h-3 rounded-xs bg-muted" style={{ width: '72%' }} />
+          <View className="h-[10px] rounded-xs bg-muted" style={{ width: '48%' }} />
         </View>
-        <View style={styles.skeletonChip} />
+        <View className="w-[72px] h-6 rounded-full bg-muted" />
       </View>
-      <View style={styles.skeletonDivider} />
-      <View style={styles.skeletonBottomRow}>
-        <View style={styles.skeletonLineSchedule} />
-        <View style={styles.skeletonPrice} />
+      <View className="h-[1px] bg-border opacity-40" />
+      <View className="flex-row justify-between items-center">
+        <View className="h-[10px] rounded-xs bg-muted" style={{ width: '42%' }} />
+        <View className="h-4 w-[72px] rounded-xs bg-muted" />
       </View>
     </View>
   );
@@ -187,18 +194,22 @@ function LoadingSkeletonCard() {
 function EmptyState({ onPress }: { onPress: () => void }) {
   const { t } = useTranslation();
   return (
-    <View style={styles.emptyState}>
-      <View style={styles.emptyIconWrap}>
+    <View className="items-center gap-md py-2xl px-xl">
+      <View className="w-16 h-16 rounded-lg items-center justify-center bg-muted">
         <ClipboardList size={28} color={colors.secondary} />
       </View>
-      <Text style={styles.emptyTitle}>
+      <Text className="text-title font-bold text-primaryDeep text-center">
         {t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')}
       </Text>
-      <Text style={styles.emptyDescription}>
+      <Text className="text-body text-textSecondary text-center leading-relaxed">
         {t('customer.bookings.emptyDescription', 'Даалгавар нийтэлж, гүйцэтгэгч сонгоорой')}
       </Text>
-      <Pressable onPress={onPress} style={styles.emptyButton} testID="bookings-empty-cta">
-        <Text style={styles.emptyButtonText}>
+      <Pressable
+        onPress={onPress}
+        className="min-h-[48px] px-xl rounded-md bg-secondary items-center justify-center"
+        testID="bookings-empty-cta"
+      >
+        <Text className="text-label font-bold text-secondaryForeground">
           {t('customer.bookings.emptyCta', 'Даалгавар нийтлэх')}
         </Text>
       </Pressable>
@@ -244,18 +255,36 @@ export default function BookingsListScreen() {
 
   return (
     <ScreenContainer testID="bookings-list-screen">
-      <View style={styles.shell}>
-        <View style={styles.header}>
-          <Pressable style={styles.headerIconButton} accessibilityRole="button">
+      <View className="flex-1 bg-background">
+        {/* header: screenLayout runtime values → imperative */}
+        <View
+          className="flex-row items-center justify-between"
+          style={{
+            paddingHorizontal: screenLayout.insetX,
+            paddingTop: screenLayout.body.itemGap,
+            paddingBottom: screenLayout.body.itemGap,
+          }}
+        >
+          <Pressable className="w-10 h-10 rounded-md items-center justify-center bg-card" accessibilityRole="button">
             <Menu size={22} color={colors.primaryDeep} />
           </Pressable>
-          <Text style={styles.headerTitle}>{t('customer.bookings.pageTitle', 'Захиалгууд')}</Text>
-          <Pressable style={styles.headerIconButton} accessibilityRole="button">
+          <Text className="flex-1 mx-md text-subtitle font-bold text-primaryDeep">
+            {t('customer.bookings.pageTitle', 'Захиалгууд')}
+          </Text>
+          <Pressable className="w-10 h-10 rounded-md items-center justify-center bg-card" accessibilityRole="button">
             <Search size={20} color={colors.primaryDeep} />
           </Pressable>
         </View>
 
-        <View style={styles.tabRow}>
+        {/* tabRow: screenLayout runtime values → imperative */}
+        <View
+          className="flex-row"
+          style={{
+            gap: screenLayout.body.sectionGap,
+            paddingHorizontal: screenLayout.insetX,
+            marginBottom: screenLayout.body.blockGap,
+          }}
+        >
           {TAB_LABELS.map((tab) => (
             <FilterTab
               key={tab.id}
@@ -267,18 +296,24 @@ export default function BookingsListScreen() {
         </View>
 
         <InsetScrollView
-          style={styles.scroll}
+          className="flex-1"
           contentContainerStyle={[
-            styles.scrollContent,
-            showList && styles.scrollContentWithList,
-            showEmptyState && styles.scrollContentWithEmpty,
+            {
+              paddingHorizontal: screenLayout.insetX,
+              paddingBottom: 40,
+            },
+            showList && { gap: screenLayout.body.blockGap },
+            showEmptyState && { flexGrow: 1, justifyContent: 'center' },
           ]}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
           showsVerticalScrollIndicator={false}
         >
           {showOfflineBanner ? (
-            <View style={styles.offlineBanner}>
-              <Text style={styles.offlineBannerText}>
+            <View
+              className="bg-muted rounded-md px-md py-sm"
+              style={{ marginBottom: screenLayout.body.itemGap }}
+            >
+              <Text className="text-label text-textSecondary">
                 {t(
                   'customer.bookings.offlineBanner',
                   'Офлайн горим — хуучин мэдээлэл харагдаж байна',
@@ -288,7 +323,7 @@ export default function BookingsListScreen() {
           ) : null}
 
           {isLoading ? (
-            <View style={styles.skeletonList}>
+            <View className="gap-md">
               {Array.from({ length: 3 }).map((_, index) => (
                 <LoadingSkeletonCard key={index} />
               ))}
@@ -296,7 +331,7 @@ export default function BookingsListScreen() {
           ) : showEmptyState ? (
             <EmptyState onPress={handlePostTask} />
           ) : (
-            <View style={styles.cardList}>
+            <View style={{ gap: screenLayout.body.itemGap }}>
               {filteredBookings.map((booking) => (
                 <BookingCard
                   key={booking.id}
@@ -305,8 +340,8 @@ export default function BookingsListScreen() {
                 />
               ))}
               {filteredBookings.length === 0 ? (
-                <View style={styles.tabEmptyState}>
-                  <Text style={styles.tabEmptyTitle}>
+                <View className="items-center py-2xl">
+                  <Text className="text-body text-textSecondary text-center">
                     {activeTab === 'active'
                       ? t('customer.bookings.emptyTitle', 'Захиалга байхгүй байна')
                       : t(
@@ -323,264 +358,3 @@ export default function BookingsListScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.body.itemGap,
-    paddingBottom: screenLayout.body.itemGap,
-  },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.card,
-  },
-  headerTitle: {
-    flex: 1,
-    marginHorizontal: spacing.md,
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  tabRow: {
-    flexDirection: 'row',
-    gap: screenLayout.body.sectionGap,
-    paddingHorizontal: screenLayout.insetX,
-    marginBottom: screenLayout.body.blockGap,
-  },
-  filterTab: {
-    paddingBottom: spacing.xs,
-    alignItems: 'flex-start',
-  },
-  filterTabLabel: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    fontWeight: '600',
-  },
-  filterTabLabelActive: {
-    color: colors.primaryDeep,
-  },
-  filterTabIndicator: {
-    marginTop: spacing.xs,
-    width: 48,
-    height: 4,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryDeep,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingBottom: spacing['3xl'],
-  },
-  scrollContentWithList: {
-    gap: screenLayout.body.blockGap,
-  },
-  scrollContentWithEmpty: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  offlineBanner: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginBottom: screenLayout.body.itemGap,
-  },
-  offlineBannerText: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-  },
-  cardList: {
-    gap: screenLayout.body.itemGap,
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: screenLayout.body.cardPadding,
-    gap: screenLayout.body.itemGap,
-    ...elevations.soft,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: screenLayout.body.itemGap,
-  },
-  cardIdentity: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: screenLayout.body.itemGap,
-    flex: 1,
-  },
-  cardIdentityCopy: {
-    flex: 1,
-    gap: spacing.xs / 2,
-  },
-  cardTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  cardSubtitle: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  statusPill: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  statusPillText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-  },
-  cardDivider: {
-    height: 1,
-    backgroundColor: colors.border,
-    opacity: 0.4,
-  },
-  cardBottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  scheduleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    flex: 1,
-  },
-  scheduleText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    flex: 1,
-  },
-  emptyState: {
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing['2xl'],
-    paddingHorizontal: spacing.xl,
-  },
-  emptyIconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-  },
-  emptyTitle: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  emptyDescription: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.5,
-  },
-  emptyButton: {
-    minHeight: 48,
-    paddingHorizontal: spacing.xl,
-    borderRadius: radius.md,
-    backgroundColor: colors.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyButtonText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.secondaryForeground,
-  },
-  skeletonList: {
-    gap: spacing.md,
-  },
-  skeletonCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-    ...elevations.soft,
-  },
-  skeletonTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  skeletonAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  skeletonTitleBlock: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  skeletonLineLong: {
-    height: 12,
-    width: '72%',
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-  },
-  skeletonLineShort: {
-    height: 10,
-    width: '48%',
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-  },
-  skeletonChip: {
-    width: 72,
-    height: 24,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-  },
-  skeletonDivider: {
-    height: 1,
-    backgroundColor: colors.border,
-    opacity: 0.4,
-  },
-  skeletonBottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  skeletonLineSchedule: {
-    height: 10,
-    width: '42%',
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-  },
-  skeletonPrice: {
-    height: 16,
-    width: 72,
-    borderRadius: radius.xs,
-    backgroundColor: colors.muted,
-  },
-  tabEmptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing['2xl'],
-  },
-  tabEmptyTitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-});

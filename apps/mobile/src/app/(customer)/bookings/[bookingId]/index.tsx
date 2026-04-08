@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
@@ -13,9 +13,6 @@ import {
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
-import { mobileTheme } from '../../../../design/tokenAdapter';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   const lower = status.toLowerCase();
@@ -172,18 +169,20 @@ export default function BookingDetailScreen() {
       {booking && (
         <>
           {/* Status */}
-          <View style={styles.statusSection}>
-            <Text style={styles.statusLabel}>{getStatusLabel(status, t)}</Text>
+          <View className="flex-row justify-between items-center mb-xl">
+            <Text className="text-subtitle font-semibold text-primary">
+              {getStatusLabel(status, t)}
+            </Text>
             <StatusBadge status={mapStatus(status)} />
           </View>
 
           {/* Tasker Info */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <View className="mb-xl">
+            <Text className="text-heading font-bold text-primaryDeep mb-md">
               {t('customer.bookings.sectionTasker', 'Tasker')}
             </Text>
             <Pressable
-              style={[styles.taskerRow, styles.taskerCard]}
+              className="flex-row items-center gap-md bg-muted rounded-md p-md mt-xs"
               onPress={() => router.push(`/(customer)/taskers/${booking.tasker?.id}`)}
               testID="booking-detail-screen-tasker-card"
             >
@@ -193,23 +192,27 @@ export default function BookingDetailScreen() {
                 size="lg"
                 showVerified
               />
-              <View style={styles.taskerInfo}>
-                <Text style={styles.taskerName}>{booking.tasker?.full_name}</Text>
+              <View className="flex-1">
+                <Text className="text-body font-semibold text-primaryDeep">
+                  {booking.tasker?.full_name}
+                </Text>
               </View>
             </Pressable>
           </View>
 
           {/* Task Summary */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+          <View className="mb-xl">
+            <Text className="text-heading font-bold text-primaryDeep mb-md">
               {t('customer.bookings.sectionTaskSummary', 'Task Summary')}
             </Text>
-            <Text style={styles.taskDescription}>{booking.task?.description}</Text>
+            <Text className="text-body text-primaryDeep mb-sm">{booking.task?.description}</Text>
             {booking.task?.location_text && (
-              <Text style={styles.detailText}>{booking.task.location_text}</Text>
+              <Text className="text-caption text-textSecondary mb-sm">
+                {booking.task.location_text}
+              </Text>
             )}
             {booking.task?.scheduled_at && (
-              <Text style={styles.detailText}>
+              <Text className="text-caption text-textSecondary mb-sm">
                 {new Date(booking.task.scheduled_at).toLocaleDateString()}
               </Text>
             )}
@@ -217,20 +220,20 @@ export default function BookingDetailScreen() {
           </View>
 
           {/* Payment Note */}
-          <View style={styles.section}>
-            <Text style={styles.paymentNote}>
+          <View className="mb-xl">
+            <Text className="text-caption text-accent italic">
               {t('customer.bookings.paymentNote', 'Payment is settled directly with the Tasker')}
             </Text>
           </View>
 
           {/* Action Buttons */}
-          <View style={styles.actionsSection}>
+          <View className="gap-md mb-xl">
             <Pressable
-              style={styles.actionLink}
+              className="py-sm"
               onPress={handleTimeline}
               testID="booking-detail-screen-timeline-link"
             >
-              <Text style={styles.actionLinkText}>
+              <Text className="text-body text-primary font-medium">
                 {t('customer.bookings.ctaTimeline', 'View Timeline')}
               </Text>
             </Pressable>
@@ -238,20 +241,20 @@ export default function BookingDetailScreen() {
             {status === 'ASSIGNED' && (
               <>
                 <Pressable
-                  style={styles.actionLink}
+                  className="py-sm"
                   onPress={handleReschedule}
                   testID="booking-detail-screen-reschedule-link"
                 >
-                  <Text style={styles.actionLinkText}>
+                  <Text className="text-body text-primary font-medium">
                     {t('customer.bookings.ctaReschedule', 'Reschedule')}
                   </Text>
                 </Pressable>
                 <Pressable
-                  style={styles.actionLink}
+                  className="py-sm"
                   onPress={() => setShowCancelSheet(true)}
                   testID="booking-detail-screen-cancel-btn"
                 >
-                  <Text style={styles.cancelText}>
+                  <Text className="text-body text-danger font-medium">
                     {t('customer.bookings.ctaCancel', 'Cancel Booking')}
                   </Text>
                 </Pressable>
@@ -260,11 +263,11 @@ export default function BookingDetailScreen() {
 
             {status === 'TASKER_MARKED_DONE' && (
               <Pressable
-                style={styles.actionLink}
+                className="py-sm"
                 onPress={handleReportIssue}
                 testID="booking-detail-screen-report-issue-link"
               >
-                <Text style={styles.cancelText}>
+                <Text className="text-body text-danger font-medium">
                   {t('customer.bookings.ctaReportIssue', 'Report Issue')}
                 </Text>
               </Pressable>
@@ -272,11 +275,11 @@ export default function BookingDetailScreen() {
 
             {status === 'COMPLETED' && !hasSubmittedReview(booking) && (
               <Pressable
-                style={styles.actionLink}
+                className="py-sm"
                 onPress={handleLeaveReview}
                 testID="booking-detail-screen-review-link"
               >
-                <Text style={styles.actionLinkText}>
+                <Text className="text-body text-primary font-medium">
                   {t('shared.review.title', 'Leave a Review')}
                 </Text>
               </Pressable>
@@ -284,11 +287,11 @@ export default function BookingDetailScreen() {
 
             {(status === 'CANCELLED' || status === 'NO_SHOW') && (
               <Pressable
-                style={styles.actionLink}
+                className="py-sm"
                 onPress={handleReportIssue}
                 testID="booking-detail-screen-report-issue-link"
               >
-                <Text style={styles.cancelText}>
+                <Text className="text-body text-danger font-medium">
                   {t('customer.bookings.ctaReportIssue', 'Report Issue')}
                 </Text>
               </Pressable>
@@ -351,77 +354,3 @@ export default function BookingDetailScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  statusSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  statusLabel: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  section: {
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    marginBottom: spacing.md,
-  },
-  taskerCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginTop: spacing.xs,
-  },
-  taskerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  taskerInfo: {
-    flex: 1,
-  },
-  taskerName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-  },
-  taskDescription: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    marginBottom: spacing.sm,
-  },
-  detailText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  paymentNote: {
-    fontSize: typography.caption,
-    color: colors.accent,
-    fontStyle: 'italic',
-  },
-  actionsSection: {
-    gap: spacing.md,
-    marginBottom: spacing.xl,
-  },
-  actionLink: {
-    paddingVertical: spacing.sm,
-  },
-  actionLinkText: {
-    fontSize: typography.body,
-    color: colors.primary,
-    fontWeight: '500',
-  },
-  cancelText: {
-    fontSize: typography.body,
-    color: colors.danger,
-    fontWeight: '500',
-  },
-});

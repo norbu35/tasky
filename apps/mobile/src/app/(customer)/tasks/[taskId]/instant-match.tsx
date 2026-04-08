@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
@@ -8,10 +8,7 @@ import { PriceTag } from '../../../../components/ui/PriceTag';
 import { ProfileAvatar } from '../../../../components/ui/ProfileAvatar';
 import { Toast } from '../../../../components/ui/Toast';
 import { useCreateBookingIntent } from '../../../../features/bookings/hooks/useCreateBookingIntent';
-import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 type InstantMatchState =
   | 'matching_spinner'
@@ -151,37 +148,65 @@ export default function CustomerInstantMatchScreen() {
 
   return (
     <DetailTemplate testID="SCR-CUST-027" onBack={onBack}>
-      <View style={styles.container}>
-        <View style={styles.heroBlock}>
-          <Text style={styles.heroTitle}>{heroTitle}</Text>
-          <Text style={styles.heroSubtitle}>{heroSubtitle}</Text>
+      <View className="gap-lg" style={{ minHeight: 480 }}>
+        <View className="gap-sm">
+          <Text className="text-heading font-bold text-primaryDeep">{heroTitle}</Text>
+          <Text className="text-body text-textSecondary leading-relaxed">{heroSubtitle}</Text>
         </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
-          <View style={styles.rings} testID="instant-match-rings">
-            <View style={styles.ring} />
-            <View style={[styles.ring, styles.ringMiddle]} />
-            <View style={[styles.ring, styles.ringInner]} />
-            <View style={styles.pinCore}>
-              <View style={styles.pinCoreDot} />
+          <View className="items-center justify-center" style={{ height: 220 }} testID="instant-match-rings">
+            {/* rings: absolute positioning + precise pixel sizes → imperative */}
+            <View
+              style={{
+                position: 'absolute',
+                width: 180,
+                height: 180,
+                borderRadius: 9999,
+                borderWidth: 1,
+                borderColor: '#C7D0D9',
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                width: 132,
+                height: 132,
+                borderRadius: 9999,
+                borderWidth: 1,
+                borderColor: '#C7D0D9',
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                width: 88,
+                height: 88,
+                borderRadius: 9999,
+                borderWidth: 1,
+                borderColor: '#C7D0D9',
+              }}
+            />
+            <View className="w-14 h-14 rounded-lg bg-primary items-center justify-center">
+              <View className="w-[14px] h-[14px] rounded-full bg-primaryForeground" />
             </View>
           </View>
         )}
 
-        <View style={styles.taskCard} testID="instant-match-task-card">
-          <View style={styles.taskerPreview}>
+        <View className="bg-card rounded-lg p-lg gap-md" style={elevations.soft} testID="instant-match-task-card">
+          <View className="flex-row items-center gap-md">
             <ProfileAvatar
               size="md"
               showVerified={matchState === 'matched_awaiting_accept'}
               name={matchState === 'matched_awaiting_accept' ? matchedTaskerName : 'Tasky'}
             />
-            <View style={styles.taskerPreviewCopy}>
-              <Text style={styles.taskerPreviewName}>
+            <View className="flex-1 gap-xs">
+              <Text className="text-body font-bold text-primaryDeep">
                 {matchState === 'matched_awaiting_accept'
                   ? t('matching.instantMatch.sampleTaskerName', matchedTaskerName)
                   : t('matching.instantMatch.previewName', 'Tasky instant match')}
               </Text>
-              <Text style={styles.taskerPreviewMeta}>
+              <Text className="text-caption text-textSecondary">
                 {matchState === 'matched_awaiting_accept'
                   ? t('matching.instantMatch.verifiedTasker', 'Verified Tasker')
                   : t('matching.instantMatch.previewMeta', 'Matching in progress')}
@@ -189,17 +214,22 @@ export default function CustomerInstantMatchScreen() {
             </View>
           </View>
 
-          <View style={styles.taskCardHeader}>
-            <Text style={styles.taskCardLabel}>{t('matching.instantMatch.taskLabel', 'Task')}</Text>
+          <View className="flex-row items-center justify-between">
+            <Text
+              className="text-caption text-textSecondary uppercase"
+              style={{ letterSpacing: 0.5 }}
+            >
+              {t('matching.instantMatch.taskLabel', 'Task')}
+            </Text>
             <PriceTag amount={summaryBudget} size="sm" />
           </View>
-          <Text style={styles.taskCardTitle}>{summaryTitle}</Text>
-          <Text style={styles.taskCardMeta}>{summaryLocation}</Text>
+          <Text className="text-subtitle font-bold text-primaryDeep">{summaryTitle}</Text>
+          <Text className="text-caption text-textSecondary">{summaryLocation}</Text>
         </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
-          <View style={styles.centerBlock}>
-            <Text style={styles.statusText}>
+          <View className="bg-muted rounded-lg p-xl gap-md items-center">
+            <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {matchState === 'tasker_declined_retry'
                 ? t(
                     'matching.instantMatch.declinedStatus',
@@ -211,7 +241,7 @@ export default function CustomerInstantMatchScreen() {
                   )}
             </Text>
             {matchState === 'tasker_declined_retry' && (
-              <Text style={styles.metaText}>
+              <Text className="text-label text-textSecondary text-center">
                 {t('matching.instantMatch.declineCount', '{{count}}/3 declined', {
                   count: declines,
                 })}
@@ -221,11 +251,11 @@ export default function CustomerInstantMatchScreen() {
         )}
 
         {matchState === 'matched_awaiting_accept' && (
-          <View style={styles.centerBlock}>
-            <Text style={styles.statusText}>
+          <View className="bg-muted rounded-lg p-xl gap-md items-center">
+            <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {t('matching.instantMatch.matchedStatus', 'Tasker found')}
             </Text>
-            <Text style={styles.metaText}>
+            <Text className="text-label text-textSecondary text-center">
               {t('matching.instantMatch.countdownLabel', 'Waiting for acceptance')}: 04:59
             </Text>
             <Button
@@ -238,14 +268,14 @@ export default function CustomerInstantMatchScreen() {
         )}
 
         {matchState === 'fallback_to_open' && (
-          <View style={styles.centerBlock}>
-            <Text style={styles.statusText}>
+          <View className="bg-muted rounded-lg p-xl gap-md items-center">
+            <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {t(
                 'matching.instantMatch.fallbackStatus',
                 'Instant match could not secure a tasker.',
               )}
             </Text>
-            <Text style={styles.metaText}>
+            <Text className="text-label text-textSecondary text-center">
               {t(
                 'matching.instantMatch.fallbackDescription',
                 'Your task is now open for applications.',
@@ -260,12 +290,12 @@ export default function CustomerInstantMatchScreen() {
         )}
 
         {matchState === 'error_no_eligible' && (
-          <View style={styles.centerBlock}>
+          <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Toast
               variant="error"
               message={t('matching.instantMatch.noEligibleTitle', 'No eligible taskers nearby')}
             />
-            <Text style={styles.statusText}>
+            <Text className="text-body text-primaryDeep text-center leading-relaxed">
               {t(
                 'matching.instantMatch.noEligibleDescription',
                 'You can review the task and continue with open applications instead.',
@@ -283,121 +313,3 @@ export default function CustomerInstantMatchScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.lg,
-    minHeight: 480,
-  },
-  heroBlock: {
-    gap: spacing.sm,
-  },
-  heroTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  heroSubtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  rings: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 220,
-  },
-  ring: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  ringMiddle: {
-    width: 132,
-    height: 132,
-  },
-  ringInner: {
-    width: 88,
-    height: 88,
-  },
-  pinCore: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pinCoreDot: {
-    width: 14,
-    height: 14,
-    borderRadius: radius.full,
-    backgroundColor: colors.primaryForeground,
-  },
-  taskCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
-    ...elevations.soft,
-  },
-  taskerPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  taskerPreviewCopy: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  taskerPreviewName: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  taskerPreviewMeta: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  taskCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  taskCardLabel: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  taskCardTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  taskCardMeta: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  centerBlock: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.xl,
-    gap: spacing.md,
-    alignItems: 'center',
-  },
-  statusText: {
-    fontSize: typography.body,
-    lineHeight: typography.body * 1.6,
-    textAlign: 'center',
-    color: colors.primaryDeep,
-  },
-  metaText: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-});

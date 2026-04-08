@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Star } from 'lucide-react-native';
@@ -12,7 +12,7 @@ import { useCustomerTaskDetail } from '../../../../features/tasks/hooks/useCusto
 import { TaskCancelSheet } from '../../../../features/tasks/components/TaskCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 function formatBudget(value?: number | null) {
   if (typeof value !== 'number') {
@@ -30,9 +30,14 @@ function formatSchedule(value?: string | null) {
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.detailRow}>
-      <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
+    <View className="flex-row justify-between gap-md">
+      <Text
+        className="flex-1 text-label font-bold text-textSecondary uppercase"
+        style={{ letterSpacing: 0.4 }}
+      >
+        {label}
+      </Text>
+      <Text className="flex-1 text-label font-bold text-foreground text-right">{value}</Text>
     </View>
   );
 }
@@ -117,8 +122,8 @@ export default function TaskDetailCustomerScreen() {
         secondaryCtaOnPress={secondaryCtaOnPress}
       >
         {task ? (
-          <View style={styles.content}>
-            <View style={styles.heroCard}>
+          <View className="gap-lg">
+            <View className="gap-sm">
               <StatusBadge
                 status={
                   (status === 'TASKER_MARKED_DONE' ? 'assigned' : status.toLowerCase()) as
@@ -129,13 +134,18 @@ export default function TaskDetailCustomerScreen() {
                     | 'no_show'
                 }
               />
-              <Text style={styles.title}>{task.description}</Text>
-              <Text style={styles.subtitle}>
+              <Text className="text-heading font-bold text-primaryDeep leading-tight">
+                {task.description}
+              </Text>
+              <Text
+                className="text-caption font-bold text-textSecondary uppercase"
+                style={{ letterSpacing: 0.8 }}
+              >
                 {t('customer.taskDetail.sectionDetails', 'Details')}
               </Text>
             </View>
 
-            <View style={styles.detailsCard}>
+            <View className="bg-muted rounded-sm p-lg gap-md">
               <DetailRow
                 label={t('customer.postTask.categoryLabel', 'Category')}
                 value={(task as any)?.category?.name ?? t('customer.postTask.notSet', 'Not set')}
@@ -146,69 +156,115 @@ export default function TaskDetailCustomerScreen() {
               />
             </View>
 
-            <View style={styles.budgetCard}>
-              <View style={styles.budgetCardTop}>
-                <Text style={styles.budgetCardLabel}>
+            {/* budgetCard: shadow → imperative */}
+            <View
+              className="bg-primaryDeep rounded-lg p-lg gap-sm"
+              style={elevations.soft}
+            >
+              <View className="flex-row items-center justify-between">
+                <Text
+                  className="text-caption font-bold uppercase"
+                  style={{ letterSpacing: 0.8, color: `${colors.primaryForeground}99` }}
+                >
                   {t('customer.postTask.budgetLabel', 'Budget')}
                 </Text>
-                <View style={styles.applicantChip}>
-                  <Text style={styles.applicantChipText}>
+                <View
+                  className="px-sm py-xs rounded-full"
+                  style={{ backgroundColor: `${colors.primaryForeground}1A` }}
+                >
+                  <Text className="text-micro font-bold text-primaryForeground">
                     {Number((task as any)?.applicant_count ?? 0)}{' '}
                     {t('customer.applicants.title', 'applicants')}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.budgetAmount}>{formatBudget(task.budget)}</Text>
+              <Text className="text-secondary font-extrabold" style={{ fontSize: 36, lineHeight: 40 }}>
+                {formatBudget(task.budget)}
+              </Text>
             </View>
 
-            <View style={styles.sectionCard}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>
+            <View className="bg-muted rounded-sm p-lg gap-sm">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-subtitle font-extrabold text-foreground">
                   {t('customer.taskDetail.applicants', 'Applicants')}
                 </Text>
-                <Text style={styles.sectionPill}>
+                <Text
+                  className="text-caption font-extrabold text-center text-primaryDeep"
+                  style={{
+                    minWidth: 28,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 9999,
+                    backgroundColor: `${colors.primary}12`,
+                  }}
+                >
                   {Number((task as any)?.applicant_count ?? 0)}
                 </Text>
               </View>
               {hasApplicants ? (
-                <Text style={styles.sectionBody}>
+                <Text className="text-body text-textSecondary leading-relaxed">
                   {t('customer.applicants.title', 'applications received')}
                 </Text>
               ) : (
-                <Text style={styles.sectionBody}>
+                <Text className="text-body text-textSecondary leading-relaxed">
                   {t('customer.taskDetail.noApplicants', 'No applicants yet')}
                 </Text>
               )}
             </View>
 
-            <View style={styles.sectionCard}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>
+            <View className="bg-muted rounded-sm p-lg gap-sm">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-subtitle font-extrabold text-foreground">
                   {t('customer.taskDetail.sectionPhotos', 'Photos')}
                 </Text>
-                <Text style={styles.sectionPill}>{photos.length}</Text>
+                <Text
+                  className="text-caption font-extrabold text-center text-primaryDeep"
+                  style={{
+                    minWidth: 28,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 9999,
+                    backgroundColor: `${colors.primary}12`,
+                  }}
+                >
+                  {photos.length}
+                </Text>
               </View>
-              <View style={styles.photoGrid}>
+              <View className="flex-row flex-wrap gap-sm">
                 {photos.length > 0 ? (
                   photos.slice(0, 4).map((photoKey, index) => (
-                    <View key={`${photoKey}-${index}`} style={styles.photoThumb}>
-                      <Text style={styles.photoThumbText}>{index + 1}</Text>
+                    <View
+                      key={`${photoKey}-${index}`}
+                      className="rounded-md items-center justify-center"
+                      style={{
+                        width: '48%',
+                        height: 163,
+                        backgroundColor: `${colors.primary}12`,
+                      }}
+                    >
+                      <Text className="text-body font-extrabold text-primaryDeep">{index + 1}</Text>
                     </View>
                   ))
                 ) : (
-                  <Text style={styles.sectionBody}>
+                  <Text className="text-body text-textSecondary leading-relaxed">
                     {t('customer.taskDetail.noPhotos', 'No photos')}
                   </Text>
                 )}
               </View>
             </View>
 
-            <View style={styles.locationCard}>
-              <View style={styles.locationRow}>
+            {/* locationCard: rgba background → imperative */}
+            <View
+              className="rounded-lg p-lg gap-sm"
+              style={{ backgroundColor: `${colors.primary}0F` }}
+            >
+              <View className="flex-row items-center gap-sm">
                 <MapPin size={16} color={colors.primaryDeep} />
-                <Text style={styles.locationText}>{(task as any).location_text ?? ''}</Text>
+                <Text className="flex-1 text-body font-bold text-primaryDeep">
+                  {(task as any).location_text ?? ''}
+                </Text>
               </View>
-              <Text style={styles.locationNote}>
+              <Text className="text-caption text-textSecondary leading-relaxed">
                 {t(
                   'customer.taskDetail.locationNote',
                   'Taskers see approximate location until the booking is confirmed.',
@@ -218,25 +274,30 @@ export default function TaskDetailCustomerScreen() {
 
             {(isAssigned || isTaskerMarkedDone) && tasker ? (
               <Pressable
-                style={styles.taskerCard}
+                className="bg-card rounded-lg p-lg"
+                style={elevations.soft}
                 onPress={() => router.push(`/(customer)/taskers/${tasker.id}`)}
                 testID="task-detail-customer-screen-tasker-card"
                 accessibilityRole="button"
               >
-                <View style={styles.taskerRow}>
+                <View className="flex-row items-center gap-md">
                   <ProfileAvatar
                     uri={tasker.avatar_url}
                     name={tasker.full_name}
                     size="lg"
                     showVerified={tasker.is_pro}
                   />
-                  <View style={styles.taskerInfo}>
-                    <Text style={styles.taskerName}>{tasker.full_name}</Text>
-                    <View style={styles.ratingRow}>
+                  <View className="flex-1 gap-xs">
+                    <Text className="text-subtitle font-extrabold text-foreground">
+                      {tasker.full_name}
+                    </Text>
+                    <View className="flex-row items-center gap-xs">
                       <Star size={14} color={colors.accent} fill={colors.accent} />
-                      <Text style={styles.ratingText}>{tasker.rating_avg ?? 0}</Text>
+                      <Text className="text-label font-bold text-foreground">
+                        {tasker.rating_avg ?? 0}
+                      </Text>
                     </View>
-                    <Text style={styles.taskerHint}>
+                    <Text className="text-caption text-textSecondary">
                       {t('customer.taskDetail.assignedTasker', 'Assigned Tasker')}
                     </Text>
                   </View>
@@ -245,22 +306,28 @@ export default function TaskDetailCustomerScreen() {
             ) : null}
 
             {isCompleted ? (
-              <View style={styles.terminalCard}>
-                <Text style={styles.terminalTitle}>
+              <View
+                className="p-lg rounded-lg gap-xs"
+                style={{ backgroundColor: `${colors.muted}80` }}
+              >
+                <Text className="text-body font-extrabold text-primaryDeep">
                   {t('customer.taskDetail.completedTitle', 'Task completed')}
                 </Text>
-                <Text style={styles.terminalBody}>
+                <Text className="text-caption text-textSecondary">
                   {t('customer.taskDetail.completedBody', 'Thanks for using Tasky')}
                 </Text>
               </View>
             ) : null}
 
             {isCancelled ? (
-              <View style={styles.terminalCard}>
-                <Text style={styles.terminalTitle}>
+              <View
+                className="p-lg rounded-lg gap-xs"
+                style={{ backgroundColor: `${colors.muted}80` }}
+              >
+                <Text className="text-body font-extrabold text-primaryDeep">
                   {t('customer.taskDetail.cancelledTitle', 'Task cancelled')}
                 </Text>
-                <Text style={styles.terminalBody}>
+                <Text className="text-caption text-textSecondary">
                   {t('customer.taskDetail.cancelledBody', 'This task is no longer active')}
                 </Text>
               </View>
@@ -295,208 +362,3 @@ export default function TaskDetailCustomerScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: spacing.lg,
-  },
-  heroCard: {
-    gap: spacing.sm,
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    lineHeight: typography.heading * (4 / 3),
-  },
-  subtitle: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    fontWeight: '700',
-  },
-  detailsCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.sm,
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  detailLabel: {
-    flex: 1,
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    fontWeight: '700',
-  },
-  detailValue: {
-    flex: 1,
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'right',
-  },
-  sectionCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.sm,
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.foreground,
-  },
-  sectionPill: {
-    minWidth: 28,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.primary}12`,
-    color: colors.primaryDeep,
-    fontSize: typography.caption,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  sectionBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  photoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  photoThumb: {
-    width: '48%',
-    height: 163,
-    borderRadius: radius.md,
-    backgroundColor: `${colors.primary}12`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoThumbText: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    fontWeight: '800',
-  },
-  locationCard: {
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    backgroundColor: `${colors.primary}0F`,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  locationText: {
-    flex: 1,
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  locationNote: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-  budgetCard: {
-    backgroundColor: colors.primaryDeep,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    ...elevations.soft,
-  },
-  budgetCardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  budgetCardLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: `${colors.primaryForeground}99`,
-  },
-  applicantChip: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.primaryForeground}1A`,
-  },
-  applicantChipText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  budgetAmount: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: colors.secondary,
-    lineHeight: 36 * (10 / 9),
-  },
-  taskerCard: {
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    ...elevations.soft,
-  },
-  taskerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  taskerInfo: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  taskerName: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.foreground,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  ratingText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  taskerHint: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  terminalCard: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: `${colors.muted}80`,
-    gap: spacing.xs,
-  },
-  terminalTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  terminalBody: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-});

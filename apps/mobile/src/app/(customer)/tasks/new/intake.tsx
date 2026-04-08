@@ -1,13 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
-import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
-
-const { colors, spacing, radius, typography } = mobileTheme;
+import { elevations } from '../../../../design/elevations';
 
 const DESCRIPTION_MIN_LENGTH = 10;
 const DESCRIPTION_MAX_LENGTH = 2000;
@@ -84,18 +82,28 @@ function ChipGroup({
   };
 
   return (
-    <View style={styles.chipRow}>
+    <View className="flex-row flex-wrap gap-sm">
       {options.map((opt) => {
         const active = selected.includes(opt);
         return (
           <Pressable
             key={opt}
             onPress={() => toggle(opt)}
-            style={[styles.chip, active && styles.chipActive]}
+            className="px-md py-sm rounded-sm justify-center items-center"
+            style={[
+              { minHeight: 40 },
+              active
+                ? { ...elevations.soft, backgroundColor: '#1B3A5C' }
+                : { backgroundColor: '#F3F1EC' },
+            ]}
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, '-')}`}
           >
-            <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{opt}</Text>
+            <Text
+              className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}
+            >
+              {opt}
+            </Text>
           </Pressable>
         );
       })}
@@ -114,7 +122,7 @@ function YesNo({
 }) {
   const { t } = useTranslation();
   return (
-    <View style={styles.chipRow}>
+    <View className="flex-row flex-wrap gap-sm">
       {([true, false] as const).map((opt) => {
         const label = opt ? t('common.yes', 'Тийм') : t('common.no', 'Үгүй');
         const active = value === opt;
@@ -122,11 +130,21 @@ function YesNo({
           <Pressable
             key={label}
             onPress={() => onChange(opt)}
-            style={[styles.chip, active && styles.chipActive]}
+            className="px-md py-sm rounded-sm justify-center items-center"
+            style={[
+              { minHeight: 40 },
+              active
+                ? { ...elevations.soft, backgroundColor: '#1B3A5C' }
+                : { backgroundColor: '#F3F1EC' },
+            ]}
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${label.toLowerCase()}`}
           >
-            <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{label}</Text>
+            <Text
+              className={active ? 'text-caption font-bold text-primaryForeground' : 'text-caption font-bold text-textSecondary'}
+            >
+              {label}
+            </Text>
           </Pressable>
         );
       })}
@@ -309,9 +327,11 @@ export default function IntakeFormScreen() {
       nextLabel={t('common.continue', 'Continue')}
       testID="SCR-CUST-003"
     >
-      <View style={styles.headerBlock} testID="intake-header">
-        <Text style={styles.title}>{t('customer.postTask.intakePageTitle', 'Task Details')}</Text>
-        <Text style={styles.instruction}>
+      <View className="gap-sm pt-sm" testID="intake-header">
+        <Text className="text-heading font-extrabold text-primaryDeep">
+          {t('customer.postTask.intakePageTitle', 'Task Details')}
+        </Text>
+        <Text className="text-body text-textSecondary leading-relaxed">
           {t('customer.postTask.intakeInstruction', 'Fill in the task details')}
         </Text>
       </View>
@@ -332,10 +352,12 @@ export default function IntakeFormScreen() {
           numberOfLines={4}
           maxLength={DESCRIPTION_MAX_LENGTH}
           invalid={!!descriptionError}
-          style={styles.descriptionInput}
+          style={{ minHeight: 160, textAlignVertical: 'top' }}
         />
-        <View style={styles.fieldMeta}>
-          <Text style={styles.counter}>{`${description.length} / ${DESCRIPTION_MAX_LENGTH}`}</Text>
+        <View className="flex-row justify-end">
+          <Text className="text-caption font-bold text-mutedForeground">
+            {`${description.length} / ${DESCRIPTION_MAX_LENGTH}`}
+          </Text>
         </View>
       </FormField>
 
@@ -343,59 +365,3 @@ export default function IntakeFormScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  headerBlock: {
-    gap: spacing.sm,
-    paddingTop: spacing.sm,
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  instruction: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  descriptionInput: {
-    minHeight: 160,
-    textAlignVertical: 'top',
-  },
-  fieldMeta: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  counter: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.mutedForeground,
-  },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  chip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.sm,
-    backgroundColor: colors.muted,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 40,
-  },
-  chipActive: {
-    backgroundColor: colors.primaryDeep,
-    ...elevations.soft,
-  },
-  chipLabel: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    fontWeight: '700',
-  },
-  chipLabelActive: {
-    color: colors.primaryForeground,
-  },
-});

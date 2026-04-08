@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
@@ -7,10 +7,10 @@ import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
-import { screenLayout, screenTypography } from '../../../design/screenLayout';
+import { screenLayout } from '../../../design/screenLayout';
 import { ScreenContainer } from '../../../components/shells';
 
-const { colors, spacing, radius, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 type TaskState = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 
@@ -65,30 +65,47 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const Icon = visual.Icon;
 
   return (
-    <View style={styles.cardOuter}>
+    <View className="bg-muted rounded-lg p-0.5">
       <Pressable
         testID={`task-card-${task.id}`}
         accessibilityRole="button"
         onPress={onPress}
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+        style={({ pressed }) => [
+          {
+            borderRadius: 12,
+            backgroundColor: colors.card,
+            padding: 16,
+            flexDirection: 'row' as const,
+            gap: 12,
+            alignItems: 'flex-start' as const,
+            ...elevations.soft,
+          },
+          pressed && { opacity: 0.92 },
+        ]}
       >
-        <View style={[styles.cardImage, { backgroundColor: visual.tone }]}>
+        <View
+          className="w-24 h-24 rounded-md items-center justify-center shrink-0"
+          style={{ backgroundColor: visual.tone }}
+        >
           <Icon color={visual.tint} size={28} />
         </View>
-        <View style={styles.cardContent}>
-          <View style={styles.cardTopRow}>
-            <View style={styles.cardChip}>
-              <Text style={styles.cardChipText} numberOfLines={1}>
+        <View className="flex-1 gap-micro min-w-0">
+          <View className="flex-row items-center justify-between gap-micro">
+            <View
+              className="flex-1 self-start px-sm py-xs rounded-full"
+              style={{ backgroundColor: `${colors.primary}10` }}
+            >
+              <Text className="text-micro font-bold tracking-widest uppercase text-primaryDeep" numberOfLines={1}>
                 {task.category?.name ?? t('customer.taskList.categoryFallback', 'Task')}
               </Text>
             </View>
             <StatusBadge status={status} />
           </View>
-          <Text style={styles.cardTitle} numberOfLines={2}>
+          <Text className="font-screen-card-title font-bold text-primaryDeep" numberOfLines={2}>
             {task.description ?? t('customer.taskList.noTitle', 'Untitled task')}
           </Text>
           <Text
-            style={styles.cardBudget}
+            className="text-subtitle font-extrabold text-secondary"
             numberOfLines={1}
             accessibilityLabel={`${(task.budget ?? 0).toLocaleString('en-US')} tugrik`}
           >
@@ -102,13 +119,13 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
 
 function SkeletonCard() {
   return (
-    <View style={styles.cardOuter}>
-      <View style={styles.skeletonCard}>
-        <View style={styles.skeletonImage} />
-        <View style={styles.skeletonContent}>
-          <View style={styles.skeletonLineShort} />
-          <View style={styles.skeletonLineXL} />
-          <View style={styles.skeletonLineMid} />
+    <View className="bg-muted rounded-lg p-0.5">
+      <View className="bg-card rounded-md p-lg flex-row gap-md items-start" style={elevations.soft}>
+        <View className="w-24 h-24 rounded-md bg-muted shrink-0" />
+        <View className="flex-1 gap-sm pt-sm">
+          <View className="h-2.5 rounded-full bg-muted w-[45%]" />
+          <View className="h-4 rounded-full bg-muted w-[92%]" />
+          <View className="h-3 rounded-full bg-muted w-[72%]" />
         </View>
       </View>
     </View>
@@ -125,14 +142,19 @@ function Header({
   const { t } = useTranslation();
 
   return (
-    <View style={styles.headerWrap}>
-      <View style={styles.topBar}>
-        <View style={styles.headerCopy}>
-          <Text style={styles.greeting}>{t('customer.taskList.greeting', 'Сайн байна уу')}</Text>
-          <Text style={styles.pageTitle}>{t('customer.taskList.title', 'Миний даалгаврууд')}</Text>
+    <View className="px-screen-x pt-header-top pb-header-bottom gap-item">
+      <View className="flex-row items-center justify-between">
+        <View className="flex-1 pr-md gap-header-greeting">
+          <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
+            {t('customer.taskList.greeting', 'Сайн байна уу')}
+          </Text>
+          <Text className="text-heroTitle font-black text-primaryDeep">
+            {t('customer.taskList.title', 'Миний даалгаврууд')}
+          </Text>
         </View>
         <Pressable
-          style={styles.notificationsButton}
+          className="w-11 h-11 rounded-full items-center justify-center bg-muted"
+          style={elevations.soft}
           onPress={onNotificationsPress}
           testID="my-tasks-notifications"
           accessibilityRole="button"
@@ -142,33 +164,31 @@ function Header({
         </Pressable>
       </View>
 
-      <View style={styles.heroCard}>
-        <Text style={styles.heroTitle}>
+      <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
+        <Text className="text-subtitle font-extrabold text-primaryDeep">
           {t('customer.taskList.heroTitle', 'Таны идэвхтэй даалгаврууд')}
         </Text>
-        <Text style={styles.heroBody}>
+        <Text className="text-body text-textSecondary leading-relaxed">
           {t(
             'customer.taskList.heroBody',
             'Одоо идэвхтэй, хуваарилагдсан, дууссан даалгавруудаа нэг дороос хянаарай.',
           )}
         </Text>
-        <View style={styles.statsRow}>
-          <View style={styles.statChip}>
-            <Text style={styles.statValue}>{counts.open}</Text>
-            <Text style={styles.statLabel}>{t('customer.taskList.filterOpen', 'Open')}</Text>
-          </View>
-          <View style={styles.statChip}>
-            <Text style={styles.statValue}>{counts.assigned}</Text>
-            <Text style={styles.statLabel}>
-              {t('customer.taskList.filterAssigned', 'Assigned')}
-            </Text>
-          </View>
-          <View style={styles.statChip}>
-            <Text style={styles.statValue}>{counts.completed}</Text>
-            <Text style={styles.statLabel}>
-              {t('customer.taskList.filterCompleted', 'Completed')}
-            </Text>
-          </View>
+        <View className="flex-row gap-micro">
+          {([
+            { key: 'open', label: t('customer.taskList.filterOpen', 'Open') },
+            { key: 'assigned', label: t('customer.taskList.filterAssigned', 'Assigned') },
+            { key: 'completed', label: t('customer.taskList.filterCompleted', 'Completed') },
+          ] as { key: TaskState; label: string }[]).map(({ key, label }) => (
+            <View
+              key={key}
+              className="flex-1 rounded-md py-sm px-sm"
+              style={{ backgroundColor: `${colors.primary}10`, gap: 2 }}
+            >
+              <Text className="text-subtitle font-extrabold text-primaryDeep">{counts[key]}</Text>
+              <Text className="text-caption text-textSecondary">{label}</Text>
+            </View>
+          ))}
         </View>
       </View>
     </View>
@@ -179,21 +199,32 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.emptyCard} testID="my-tasks-empty-state">
-      <View style={styles.emptyBadge}>
+    <View
+      className="mx-screen-x mt-block rounded-lg p-section items-center gap-item bg-card"
+      style={elevations.soft}
+      testID="my-tasks-empty-state"
+    >
+      <View
+        className="w-16 h-16 rounded-full items-center justify-center"
+        style={{ backgroundColor: `${colors.primary}12` }}
+      >
         <Sparkles size={24} color={colors.primary} />
       </View>
-      <Text style={styles.emptyTitle}>{t('customer.taskList.emptyTitle', 'No tasks yet')}</Text>
-      <Text style={styles.emptyBody}>
+      <Text className="text-subtitle font-extrabold text-primaryDeep text-center">
+        {t('customer.taskList.emptyTitle', 'No tasks yet')}
+      </Text>
+      <Text className="text-body text-textSecondary text-center leading-relaxed">
         {t('customer.taskList.emptyDescription', 'Post your first task and find a trusted tasker')}
       </Text>
       <Pressable
         onPress={onPostTask}
-        style={styles.emptyCta}
+        className="min-h-[48px] px-xl rounded-md items-center justify-center bg-primary"
         accessibilityRole="button"
         testID="my-tasks-feed-empty-cta"
       >
-        <Text style={styles.emptyCtaText}>{t('customer.taskList.emptyCta', 'Post a Task')}</Text>
+        <Text className="text-body font-bold text-primaryForeground">
+          {t('customer.taskList.emptyCta', 'Post a Task')}
+        </Text>
       </Pressable>
     </View>
   );
@@ -203,18 +234,26 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.errorCard} testID="my-tasks-error-state">
-      <Text style={styles.errorTitle}>{t('customer.taskList.errorTitle', 'Network error')}</Text>
-      <Text style={styles.errorBody}>
+    <View
+      className="mx-screen-x mt-block rounded-lg p-section gap-item bg-card"
+      style={elevations.soft}
+      testID="my-tasks-error-state"
+    >
+      <Text className="text-subtitle font-extrabold text-primaryDeep">
+        {t('customer.taskList.errorTitle', 'Network error')}
+      </Text>
+      <Text className="text-body text-textSecondary leading-relaxed">
         {t('customer.taskList.errorNetwork', 'Network error. Please try again')}
       </Text>
       <Pressable
         onPress={onRetry}
-        style={styles.errorCta}
+        className="min-h-[48px] rounded-md items-center justify-center bg-secondary"
         accessibilityRole="button"
         testID="my-tasks-feed-error-cta"
       >
-        <Text style={styles.errorCtaText}>{t('common.tryAgain', 'Try again')}</Text>
+        <Text className="text-body font-bold text-secondaryForeground">
+          {t('common.tryAgain', 'Try again')}
+        </Text>
       </Pressable>
     </View>
   );
@@ -271,22 +310,28 @@ export default function MyTasksListScreen() {
   return (
     <ScreenContainer testID="SCR-CUST-001">
       {isLoading ? (
-        <View style={styles.loadingContainer} testID="my-tasks-loading-state">
+        <View className="flex-1" testID="my-tasks-loading-state">
           {header}
-          <View style={styles.skeletonList}>
+          <View
+            className="gap-item"
+            style={{
+              paddingHorizontal: screenLayout.insetX,
+              paddingTop: screenLayout.body.itemGap,
+            }}
+          >
             {Array.from({ length: 4 }).map((_, index) => (
               <SkeletonCard key={index} />
             ))}
           </View>
         </View>
       ) : isError ? (
-        <View style={styles.screenBody}>
+        <View className="flex-1">
           {header}
           <ErrorState onRetry={refetch} />
         </View>
       ) : (
         <FlatList
-          style={{ flex: 1 }}
+          className="flex-1"
           data={tasks}
           keyExtractor={(task) => task.id}
           renderItem={({ item }) => (
@@ -294,7 +339,10 @@ export default function MyTasksListScreen() {
           )}
           ListHeaderComponent={header}
           ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{
+            paddingHorizontal: screenLayout.insetX,
+            paddingBottom: screenLayout.chrome.contentBottomClearance,
+          }}
           refreshControl={
             <RefreshControl
               refreshing={Boolean(isFetching && !isLoading)}
@@ -303,7 +351,7 @@ export default function MyTasksListScreen() {
               colors={[colors.primary]}
             />
           }
-          ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
+          ItemSeparatorComponent={() => <View className="h-md" />}
           showsVerticalScrollIndicator={false}
           testID="my-tasks-feed"
         />
@@ -311,284 +359,3 @@ export default function MyTasksListScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  screenBody: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-  },
-  listContent: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingBottom: screenLayout.chrome.contentBottomClearance,
-  },
-  headerWrap: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.header.topInset,
-    paddingBottom: screenLayout.header.bottomGap,
-    gap: screenLayout.body.itemGap,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerCopy: {
-    flex: 1,
-    paddingRight: spacing.md,
-    gap: screenLayout.header.greetingGap,
-  },
-  greeting: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    fontWeight: '700',
-  },
-  pageTitle: {
-    fontSize: typography.heroTitle,
-    fontWeight: '900',
-    color: colors.primaryDeep,
-  },
-  notificationsButton: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-    ...elevations.soft,
-  },
-  heroCard: {
-    borderRadius: radius.lg,
-    padding: screenLayout.body.cardPadding,
-    backgroundColor: colors.card,
-    gap: screenLayout.body.itemGap,
-    ...elevations.soft,
-  },
-  heroTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  heroBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: screenLayout.body.microGap,
-  },
-  statChip: {
-    flex: 1,
-    borderRadius: radius.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    backgroundColor: `${colors.primary}10`,
-    gap: screenLayout.body.microGap / 2,
-  },
-  statValue: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  statLabel: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  skeletonList: {
-    paddingHorizontal: screenLayout.insetX,
-    paddingTop: screenLayout.body.itemGap,
-    gap: screenLayout.body.itemGap,
-  },
-  skeletonCard: {
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    padding: spacing.lg,
-    flexDirection: 'row',
-    gap: spacing.md,
-    alignItems: 'flex-start',
-    ...elevations.soft,
-  },
-  skeletonImage: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    flexShrink: 0,
-  },
-  skeletonContent: {
-    flex: 1,
-    gap: spacing.sm,
-    paddingTop: spacing.sm,
-  },
-  skeletonLineLong: {
-    height: 12,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    width: '75%',
-  },
-  skeletonLineShort: {
-    height: 10,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    width: '45%',
-  },
-  skeletonLineXL: {
-    height: 16,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    width: '92%',
-  },
-  skeletonLineMid: {
-    height: 12,
-    borderRadius: radius.full,
-    backgroundColor: colors.muted,
-    width: '72%',
-  },
-  emptyCard: {
-    marginHorizontal: screenLayout.insetX,
-    marginTop: screenLayout.body.blockGap,
-    borderRadius: radius.lg,
-    padding: screenLayout.body.sectionGap,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    gap: screenLayout.body.itemGap,
-    ...elevations.soft,
-  },
-  emptyBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.primary}12`,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-  },
-  emptyBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: typography.body * 1.5,
-  },
-  emptyCta: {
-    minHeight: 48,
-    paddingHorizontal: spacing.xl,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primary,
-  },
-  emptyCtaText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  errorCard: {
-    marginHorizontal: screenLayout.insetX,
-    marginTop: screenLayout.body.blockGap,
-    borderRadius: radius.lg,
-    padding: screenLayout.body.sectionGap,
-    backgroundColor: colors.card,
-    gap: screenLayout.body.itemGap,
-    ...elevations.soft,
-  },
-  errorTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  errorBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  errorCta: {
-    minHeight: 48,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.secondary,
-  },
-  errorCtaText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.secondaryForeground,
-  },
-  listSeparator: {
-    height: spacing.md,
-  },
-  cardOuter: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: screenLayout.body.microGap / 2,
-  },
-  card: {
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    padding: screenLayout.body.cardPadding,
-    flexDirection: 'row',
-    gap: screenLayout.body.itemGap,
-    alignItems: 'flex-start',
-    ...elevations.soft,
-  },
-  cardPressed: {
-    opacity: 0.92,
-  },
-  cardImage: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  cardContent: {
-    flex: 1,
-    gap: screenLayout.body.microGap,
-    minWidth: 0,
-  },
-  cardTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: screenLayout.body.microGap,
-  },
-  cardChip: {
-    flex: 1,
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: `${colors.primary}10`,
-  },
-  cardChipText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    color: colors.primaryDeep,
-  },
-  cardTitle: {
-    fontSize: screenTypography.cardTitle.fontSize,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    lineHeight: screenTypography.cardTitle.lineHeight,
-  },
-  cardBudget: {
-    fontSize: typography.subtitle,
-    fontWeight: '800',
-    color: colors.secondary,
-  },
-});

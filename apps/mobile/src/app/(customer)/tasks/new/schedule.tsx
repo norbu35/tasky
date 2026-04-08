@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays } from 'lucide-react-native';
@@ -8,9 +8,10 @@ import { FormWizardTemplate } from '../../../../components/templates/FormWizardT
 import { Button } from '../../../../components/ui/Button';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
-import { mobileTheme, elevations } from '../../../../design/tokenAdapter';
+import { elevations } from '../../../../design/elevations';
+import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors } = mobileTheme;
 
 const MIN_BUDGET = 5000;
 
@@ -184,11 +185,11 @@ export default function ScheduleBudgetScreen() {
       nextLabel={t('common.continue', 'Continue')}
       nextDisabled={!canContinue}
     >
-      <View style={styles.hero} testID="schedule-header">
-        <Text style={styles.title}>
+      <View className="gap-sm" testID="schedule-header">
+        <Text className="text-heading font-extrabold text-primaryDeep">
           {t('customer.postTask.schedulePageTitle', 'Schedule & Budget')}
         </Text>
-        <Text style={styles.subtitle}>
+        <Text className="text-body text-textSecondary leading-relaxed">
           {t(
             'customer.postTask.scheduleInstruction',
             'Pick when the task should happen and set your budget.',
@@ -196,10 +197,14 @@ export default function ScheduleBudgetScreen() {
         </Text>
       </View>
 
-      <View style={styles.dateCard}>
-        <View style={styles.dateCardHeader}>
+      {/* dateCard: shadow → imperative */}
+      <View
+        className="rounded-lg bg-muted gap-lg"
+        style={{ padding: 20, ...elevations.soft }}
+      >
+        <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
-          <Text style={styles.dateCardTitle}>
+          <Text className="text-body font-extrabold text-primaryDeep">
             {t('customer.postTask.scheduleLabel', 'When do you need this done?')}
           </Text>
         </View>
@@ -209,21 +214,31 @@ export default function ScheduleBudgetScreen() {
           errorText={scheduleError || undefined}
           helperText={t('customer.postTask.scheduleHelper', 'Select a date and time')}
         >
-          <View style={styles.scheduleRow}>
+          <View className="flex-row gap-sm">
             <Pressable
               onPress={() => openPicker('date')}
               style={({ pressed }) => [
-                styles.pickerField,
-                selectedDate ? styles.pickerFieldActive : null,
-                pressed ? styles.pickerFieldPressed : null,
+                {
+                  flex: 1,
+                  minHeight: 48,
+                  justifyContent: 'center' as const,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: selectedDate ? colors.primaryDeep : colors.input,
+                  backgroundColor: selectedDate ? colors.primaryDeep : colors.background,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  opacity: pressed ? 0.85 : 1,
+                },
               ]}
               testID="schedule-date-input"
             >
               <Text
-                style={[
-                  styles.pickerText,
-                  selectedDate ? styles.pickerTextActive : styles.pickerPlaceholder,
-                ]}
+                style={{
+                  color: selectedDate ? colors.primaryForeground : colors.mutedForeground,
+                  fontSize: 16,
+                  fontWeight: selectedDate ? '700' : '500',
+                }}
               >
                 {selectedDate
                   ? formatDateValue(selectedDate)
@@ -234,17 +249,27 @@ export default function ScheduleBudgetScreen() {
             <Pressable
               onPress={() => openPicker('time')}
               style={({ pressed }) => [
-                styles.pickerField,
-                selectedTime ? styles.pickerFieldActive : null,
-                pressed ? styles.pickerFieldPressed : null,
+                {
+                  flex: 1,
+                  minHeight: 48,
+                  justifyContent: 'center' as const,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: selectedTime ? colors.primaryDeep : colors.input,
+                  backgroundColor: selectedTime ? colors.primaryDeep : colors.background,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  opacity: pressed ? 0.85 : 1,
+                },
               ]}
               testID="schedule-time-input"
             >
               <Text
-                style={[
-                  styles.pickerText,
-                  selectedTime ? styles.pickerTextActive : styles.pickerPlaceholder,
-                ]}
+                style={{
+                  color: selectedTime ? colors.primaryForeground : colors.mutedForeground,
+                  fontSize: 16,
+                  fontWeight: selectedTime ? '700' : '500',
+                }}
               >
                 {selectedTime
                   ? formatTimeValue(selectedTime)
@@ -255,7 +280,7 @@ export default function ScheduleBudgetScreen() {
         </FormField>
       </View>
 
-      <View style={styles.budgetSection}>
+      <View className="gap-sm">
         <FormField
           label={t('customer.postTask.budgetLabel', 'Budget')}
           errorText={budgetError || undefined}
@@ -274,37 +299,43 @@ export default function ScheduleBudgetScreen() {
             invalid={Boolean(budgetError)}
           />
         </FormField>
-        <Text style={styles.budgetGoldHint}>
+        <Text className="text-caption font-semibold text-secondary leading-relaxed">
           {t('customer.postTask.budgetGoldHint', 'Set a fair budget to attract skilled Taskers')}
         </Text>
       </View>
 
       {activePicker ? (
         Platform.OS === 'ios' ? (
-          <View style={styles.iosPickerCard} testID="schedule-ios-picker-card">
-            <View style={styles.iosPickerHeader}>
-              <Text style={styles.iosPickerTitle}>
+          <View
+            className="rounded-lg border border-border bg-card p-md gap-sm"
+            testID="schedule-ios-picker-card"
+          >
+            <View className="gap-xs">
+              <Text
+                className="text-label font-bold text-primaryDeep uppercase"
+                style={{ letterSpacing: 0.6 }}
+              >
                 {activePicker.mode === 'date'
                   ? t('customer.postTask.scheduleDate', 'Date')
                   : t('customer.postTask.scheduleTime', 'Time')}
               </Text>
-              <Text style={styles.iosPickerHint}>
+              <Text className="text-caption text-textSecondary">
                 {t('customer.postTask.schedulePickerHint', 'Confirm your selection')}
               </Text>
             </View>
-            <View style={styles.iosPickerActions}>
+            <View className="flex-row gap-sm mt-xs">
               <Button
                 testID="schedule-picker-cancel"
                 label={t('common.cancel', 'Cancel')}
                 variant="outline"
                 onPress={handlePickerCancel}
-                style={styles.iosPickerActionButton}
+                style={{ flex: 1 }}
               />
               <Button
                 testID="schedule-picker-confirm"
                 label={t('common.confirm', 'Confirm')}
                 onPress={handlePickerConfirm}
-                style={styles.iosPickerActionButton}
+                style={{ flex: 1 }}
               />
             </View>
             <DateTimePicker
@@ -333,110 +364,3 @@ export default function ScheduleBudgetScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  hero: {
-    gap: spacing.sm,
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  dateCard: {
-    padding: 20,
-    borderRadius: radius.lg,
-    backgroundColor: colors.muted,
-    gap: spacing.lg,
-    ...elevations.soft,
-  },
-  dateCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  dateCardTitle: {
-    fontSize: typography.body,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  scheduleRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  pickerField: {
-    flex: 1,
-    minHeight: 48,
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.input,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  pickerFieldActive: {
-    backgroundColor: colors.primaryDeep,
-    borderColor: colors.primaryDeep,
-  },
-  pickerFieldPressed: {
-    opacity: 0.85,
-  },
-  pickerText: {
-    color: colors.foreground,
-    fontSize: typography.body,
-    fontWeight: '600',
-  },
-  pickerTextActive: {
-    color: colors.primaryForeground,
-    fontWeight: '700',
-  },
-  pickerPlaceholder: {
-    color: colors.mutedForeground,
-    fontWeight: '500',
-  },
-  budgetSection: {
-    gap: spacing.sm,
-  },
-  budgetGoldHint: {
-    fontSize: typography.caption,
-    color: colors.secondary,
-    fontWeight: '600',
-    lineHeight: typography.caption * 1.5,
-  },
-  iosPickerCard: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    padding: spacing.md,
-    gap: spacing.sm,
-  },
-  iosPickerHeader: {
-    gap: spacing.xs,
-  },
-  iosPickerTitle: {
-    fontSize: typography.label,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-  },
-  iosPickerHint: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  iosPickerActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  iosPickerActionButton: {
-    flex: 1,
-  },
-});
