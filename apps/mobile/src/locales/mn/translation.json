@@ -1473,8 +1473,20 @@
     "ctaReschedule": "Reschedule",
     "ctaCancel": "Cancel Booking",
     "ctaReportIssue": "Report Issue",
-    "title": "Report No-Show",
-    "confirm": "Report No-Show"
+    "title": "Report Customer No-Show",
+    "confirm": "Report No-Show",
+    "markDone": "Ажил дууссан",
+    "messageButton": "Зурвас илгээх",
+    "customerLabel": "Захиалагч",
+    "taskDescription": "Даалгаврын тайлбар",
+    "exactAddress": "Тодорхой хаяг",
+    "exactAddressNote": "Энэ хаяг зөвхөн танд харагдана",
+    "schedule": "Хуваарь",
+    "budget": "Төсөв",
+    "paymentNoteHeading": "Төлбөрийн мэдээлэл",
+    "awaitingConfirmation": "Захиалагч баталгаажуулахыг хүлээж байна",
+    "cancelBooking": "Захиалга цуцлах",
+    "leaveReview": "Leave Review"
   },
   "Dispute": {
     "ctaSubmit": "Submit Dispute",
@@ -1504,8 +1516,8 @@
   },
   "Cancel": {
     "title": "Cancel Booking",
-    "warning": "Late cancellations may incur a fee. Free cancellation is available up to 2 hours before the scheduled time.",
-    "confirm": "Confirm Cancellation",
+    "warning": "Cancelling a confirmed booking will add a strike to your account. Select Safety/Fraud if applicable to avoid a strike.",
+    "confirm": "Cancel Booking",
     "goBack": "Go Back"
   },
   "Timeline": {
@@ -1547,5 +1559,289 @@
     "sectionDisclaimer": "Liability Disclaimer",
     "disclaimerAcknowledge": "I agree to these terms",
     "calendarPromptTitle": "Add to calendar?"
+  },
+  "[disputeid]": {
+    "resolutionEscalated": "Маргааныг нэмэлт шалгалтад шилжүүлсэн.",
+    "resolutionResolvedCustomer": "Маргаан таны талд шийдэгдлээ.",
+    "resolutionOpen": "Маргаан одоогоор хянагдаж байна.",
+    "defaultCategory": "Чанарын гомдол",
+    "timelineSubmitted": "Маргаан илгээсэн",
+    "timelineSubmittedDesc": "Системд амжилттай бүртгэгдсэн",
+    "timelineAssigned": "Хянагч хуваарилагдсан",
+    "timelineDecision": "Шийдвэр",
+    "pageTitle": "Маргааны төлөв",
+    "errorToast": "Маргааны мэдээлэл ачааллахад алдаа гарлаа",
+    "retry": "Дахин оролдох",
+    "sectionSummary": "Маргааны товч",
+    "detailType": "Төрөл",
+    "detailBooking": "Захиалгын дугаар",
+    "detailSubmitted": "Илгээсэн огноо",
+    "detailReason": "Гомдлын шалтгаан",
+    "sectionProcess": "Үйл явц",
+    "sectionResolution": "Эцсийн шийдвэр",
+    "statusOpen": "Хүлээгдэж байна",
+    "statusFinal": "Хүлээгдэж байна",
+    "sectionEvidence": "Илгээсэн нотлох баримт",
+    "noEvidence": "Ноотлох баримт байхгүй"
+  },
+  "Business": {
+    "empty": "No business accounts yet",
+    "emptyDesc": "Create a business account to manage tasks for your team.",
+    "createAccount": "Create Business Account"
+  },
+  "Tasks": {
+    "empty": "No business tasks yet",
+    "emptyDesc": "Post a task for your business to get started."
+  },
+  "Billing": {
+    "headline": "Business Subscription",
+    "body": "Manage your subscription plan and billing history."
+  },
+  "Details": {
+    "continue": "Continue",
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "Enter business name"
+  },
+  "Invite": {
+    "finishSetup": "Finish Setup",
+    "managerEmail": "Manager Email (optional)",
+    "managerEmailPlaceholder": "manager@company.com"
+  },
+  "Location": {
+    "continue": "Continue",
+    "businessAddress": "Business Address",
+    "businessAddressPlaceholder": "Enter business address"
+  },
+  "Select": {
+    "title": "Select Business Account",
+    "empty": "No business accounts. Create one first.",
+    "createAccount": "Create Business Account"
+  },
+  "Rebook": {
+    "ctaRebookSubmit": "Continue to Booking",
+    "prefilledNote": "Prefilled from previous booking. You can edit.",
+    "sectionPreviousTasker": "Previous Tasker",
+    "sectionTaskDetails": "Task Details",
+    "labelNewSchedule": "New Schedule",
+    "labelBudget": "Budget",
+    "rebookBudgetLow": "Budget must be above ₮1,001"
+  },
+  "Id": {
+    "messageButton": "Message",
+    "dateTime": "Date & Time",
+    "photosLabel": "Photos",
+    "applicants": "applicants",
+    "trustTitle": "Platform trust"
+  },
+  "Onboarding": {
+    "badge": "БАТАЛГААЖСАН",
+    "skip": "Алгасах",
+    "getStarted": "Эхлэх",
+    "next": "Дараагийх"
+  },
+  "(auth)": {
+    "error": "Login failed. Please try again.",
+    "title": "Tasky-д тавтай морил",
+    "languageSwitcher": "MN/EN",
+    "facebookButton": "Facebook-ээр нэвтрэх",
+    "devBypass": "Dev bypass",
+    "loginAsCustomer": "Login as Customer",
+    "loginAsTasker": "Login as Tasker",
+    "terms": "Үйлчилгээний нөхцөл",
+    "privacy": "Нууцлалын бодлого",
+    "copyright": "© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан."
+  },
+  "Role-select": {
+    "heading": "Та хэн бэ?",
+    "confirm": "Үргэлжлүүлэх",
+    "confirmSheetTitle": "Та итгэлтэй байна уу?",
+    "confirmSheetPrimary": "Тийм, баталгаажуулах",
+    "confirmSheetSecondary": "Буцах"
+  },
+  "Otp-migration": {
+    "heading": "Утасны дугаараа бүртгүүлнэ үү",
+    "label": "Утасны дугаар",
+    "helper": "Facebook нэвтрэлтэд утасны дугаар нэмнэ",
+    "errorInvalidPhone": "Утасны дугаар буруу байна",
+    "errorNetwork": "Интернэт холболтоо шалгана уу",
+    "placeholder": "9911 2233",
+    "submit": "Код авах",
+    "skip": "Дараа хийх"
+  },
+  "Otp": {
+    "resend": "Код дахин илгээх",
+    "resendCountdown": "Код дахин илгээх (60с)",
+    "descriptionPrefix": "Бид таны ",
+    "heading": "Код баталгаажуулах",
+    "errorWrongCode": "Буруу код оруулсан байна. Дахин оролдоно уу.",
+    "errorExpired": "Кодын хугацаа дууссан. Шинэ код авна уу.",
+    "securityTitle": "Аюулгүй байдал",
+    "verify": "Баталгаажуулах"
+  },
+  "Permission-notifications": {
+    "title": "Мэдэгдэл авах зөвшөөрөл",
+    "denied": "Мэдэгдлийн зөвшөөрөл хаагдсан",
+    "continueLabel": "Үргэлжлүүлэх",
+    "allowLabel": "Зөвшөөрөх",
+    "skipLabel": "Дараа хийх"
+  },
+  "Permission-camera": {
+    "title": "Камер ашиглах зөвшөөрөл",
+    "denied": "Камерын зөвшөөрөл хаагдсан",
+    "continueLabel": "Үргэлжлүүлэх",
+    "allowLabel": "Зөвшөөрөх",
+    "skipLabel": "Дараа хийх"
+  },
+  "Permission-location": {
+    "title": "Байршил ашиглах зөвшөөрөл",
+    "denied": "Байршлын зөвшөөрөл хаагдсан",
+    "continueLabel": "Үргэлжлүүлэх",
+    "allowLabel": "Зөвшөөрөх",
+    "skipLabel": "Дараа хийх"
+  },
+  "Applied": {
+    "headline": "Application Sent!",
+    "body": "The customer will review your application and respond soon.",
+    "step1": "Customer reviews applicants",
+    "step2": "You get notified if selected",
+    "step3": "Booking is confirmed automatically",
+    "cta": "Browse More Tasks",
+    "secondaryCta": "View My Applications"
+  },
+  "Subscription": {
+    "title": "Tasker Pro",
+    "heroTitle": "Become a Tasker Pro",
+    "ineligibleTitle": "Not eligible",
+    "ineligibleDesc": "Tasker Pro requires 4.5+ rating to be eligible",
+    "planStandard": "Standard",
+    "planStandardDesc": "More visibility and more trust.",
+    "planPremium": "Premium",
+    "heroDescription": "Priority boost and additional benefits.",
+    "activeLabel": "Active",
+    "subscribeAction": "Subscribe",
+    "confirmTitle": "Confirm",
+    "confirmBody": "Activate Tasker Pro subscription?",
+    "cancelText": "Cancel"
+  },
+  "Dan": {
+    "danSuccess": "Verification successful!",
+    "danBrowseButton": "Find tasks",
+    "danTitle": "Fast-track verification",
+    "danEmongoliaButton": "Verify with E-Mongolia",
+    "danManualButton": "Verify manually"
+  },
+  "Consent": {
+    "uploadSelfie": "Амьд зураг (selfie)",
+    "consentPurpose": "Таниулах баталгаажуулалт"
+  },
+  "Pending": {
+    "backButton": "Буцах"
+  },
+  "Polish": {
+    "toastError": "Сүлжээний алдаа гарлаа",
+    "toastSuccess": "Санал болгосон текст хадгалагдлаа",
+    "apply": "Энэ хувилбарыг хэрэглэх",
+    "generate": "Санал болгох",
+    "manualEdit": "Гараар засах",
+    "aiPowered": "AI POWERED",
+    "heroTitle": "Профайл засах",
+    "sourceLabel": "Одоогийн тайлбар",
+    "toneLabel": "Хэв маяг",
+    "polishedLabel": "Санал болгосон хувилбар"
+  },
+  "Stats": {
+    "heroLabel": "Таны үнэлгээ",
+    "heroMeta": "Захиалагчийн үнэлгээнээс",
+    "sectionHeading": "Ерөнхий үзүүлэлтүүд",
+    "jobsCompleted": "Дууссан ажил",
+    "averageRating": "Ерөнхий үнэлгээ",
+    "completionRate": "Гүйцэтгэлийн хувь",
+    "applicationSuccess": "Анкетын амжилт",
+    "cancellations30d": "Цуцлалт (30 хоногт)",
+    "reliabilityScore": "Найдвартай байдлын оноо",
+    "ratingBreakdown": "Үнэлгээний задаргаа",
+    "taskClarity": "Даалгаврын тодорхой байдал",
+    "respectfulness": "Хүндэтгэлтэй хандлага",
+    "punctuality": "Цаг баримтлал",
+    "reliabilityHeading": "Найдвартай байдал",
+    "reliabilityLabel": "Найдвартай байдлын оноо",
+    "activityHeading": "Идэвхжил",
+    "unlockConversion": "Түгжээ тайлалтын хувь",
+    "responseTime": "Хариу өгөх хугацаа",
+    "proBadgeEarned": "Pro Badge олдсон!"
+  },
+  "Referrals": {
+    "heroTitle": "Invite a tasker",
+    "codeLabel": "Invite code",
+    "copyCode": "Copy invite code",
+    "viewCredits": "View credits",
+    "howItWorks": "How it works",
+    "step1Label": "Step 1",
+    "step1Value": "Share your code with another tasker",
+    "step2Label": "Step 2",
+    "step2Value": "They complete verification",
+    "step3Label": "Step 3",
+    "step3Value": "You both receive a bonus",
+    "bonusPending": "Referral bonus pending"
+  },
+  "Wallet": {
+    "title": "Wallet",
+    "availableBalance": "Available Balance",
+    "totalEarnings": "Total Earnings",
+    "pending": "Pending",
+    "payoutTitle": "Request Payout"
+  },
+  "Payout": {
+    "payoutSuccess": "Request submitted successfully",
+    "payoutTitle": "Request Payout",
+    "payoutBalance": "Available balance: ₮120,000",
+    "payoutMinError": "Minimum amount: ₮10,000",
+    "payoutSubmit": "Submit request"
+  },
+  "Jobs": {
+    "emptyTitle": "Одоогоор ажил байхгүй байна",
+    "emptyCta": "Даалгавар хайх"
+  },
+  "Lead-unlock": {
+    "headline": "Lead Unlock Request",
+    "body": "A customer has selected you. Accept to unlock the lead using credits, or decline.",
+    "accept": "Accept & Unlock",
+    "decline": "Decline"
+  },
+  "Credits": {
+    "availableBalance": "Available balance",
+    "enoughForTwoTasks": "Enough for 2 more average tasks",
+    "lowBalanceDescription": "Task applications are moving fast. Add credits before your balance drops to zero.",
+    "quickActions": "Quick actions",
+    "topUp": "Top up",
+    "history": "History",
+    "title": "Referrals",
+    "inviteBody": "Invite taskers to earn bonus credits.",
+    "currentSnapshot": "Current snapshot",
+    "reserved": "Reserved for active bookings",
+    "lastTopUp": "Last top-up",
+    "yesterday": "Yesterday",
+    "pendingRewards": "Pending rewards"
+  },
+  "Pay": {
+    "chooseAmount": "Choose an amount",
+    "topUpPreview": "Top-up preview",
+    "method": "Method",
+    "mobileWallet": "Mobile wallet",
+    "processing": "Processing",
+    "instant": "Instant",
+    "balanceAfterTopUp": "Balance after top up",
+    "notes": "Notes"
+  },
+  "History": {
+    "mobileWallet": "Mobile wallet",
+    "today": "Today",
+    "taskPayout": "Task payout",
+    "completedBooking": "Completed booking",
+    "yesterday": "Yesterday",
+    "emptyTitle": "No credit activity yet",
+    "emptyDescription": "Top up credits or finish more tasks to populate this timeline.",
+    "thisMonth": "This month",
+    "netMovement": "Net credit movement from top-ups and payouts"
   }
 }
