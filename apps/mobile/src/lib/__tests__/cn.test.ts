@@ -10,6 +10,16 @@ describe('cn() utility', () => {
       expect(cn('px-screen-x', 'px-4')).toBe('px-4');
     });
 
+    it('should merge px-action-bar with other px classes', () => {
+      expect(cn('px-action-bar', 'px-4')).toBe('px-4');
+      expect(cn('px-4', 'px-action-bar')).toBe('px-action-bar');
+    });
+
+    it('should merge pt-action-bar with other pt classes', () => {
+      expect(cn('pt-action-bar', 'pt-4')).toBe('pt-4');
+      expect(cn('pt-4', 'pt-action-bar')).toBe('pt-action-bar');
+    });
+
     it('should merge gap tokens and last wins', () => {
       expect(cn('gap-section', 'gap-block')).toBe('gap-block');
     });
