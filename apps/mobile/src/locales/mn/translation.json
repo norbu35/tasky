@@ -1238,5 +1238,23 @@
     "stepPhotos": "Photos",
     "stepReview": "Review",
     "stepSchedule": "Schedule"
+  },
+  "TaskDetailCustomerScreen": {
+    "title": "",
+    "details": "",
+    "category": "",
+    "date": "",
+    "budget": "",
+    "applicants": "",
+    "noApplicants": "",
+    "photos": "",
+    "noPhotos": "",
+    "location": "",
+    "locationHint": "",
+    "cancelTask": "",
+    "cancelConfirmTitle": "",
+    "cancelConfirmMessage": "",
+    "yesCancel": "",
+    "goBack": ""
   }
 }
