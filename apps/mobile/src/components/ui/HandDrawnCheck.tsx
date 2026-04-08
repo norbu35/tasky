@@ -3,6 +3,7 @@ import { CheckCircle } from 'lucide-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { animationPresets } from '../../design/animations';
+import { cn } from '../../lib/cn';
 
 const { colors } = mobileTheme;
 
@@ -11,6 +12,7 @@ interface HandDrawnCheckProps {
   color?: string;
   animated?: boolean;
   testID?: string;
+  className?: string;
 }
 
 export function HandDrawnCheck({
@@ -18,6 +20,7 @@ export function HandDrawnCheck({
   color = colors.verified,
   animated = true,
   testID,
+  className,
 }: HandDrawnCheckProps) {
   const scale = useSharedValue(animated ? 0 : 1);
 
@@ -37,6 +40,7 @@ export function HandDrawnCheck({
   return (
     <Animated.View
       style={animatedStyle}
+      className={cn(className)}
       testID={testID}
       accessibilityLabel="Success"
       accessibilityRole="image"

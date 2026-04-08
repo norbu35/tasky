@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
 const { colors, spacing, typography } = mobileTheme;
 
@@ -13,11 +14,16 @@ interface TimelineEvent {
 interface TimelineStepperProps {
   events: TimelineEvent[];
   testID?: string;
+  className?: string;
 }
 
-export function TimelineStepper({ events, testID }: TimelineStepperProps) {
+export function TimelineStepper({ events, testID, className }: TimelineStepperProps) {
   return (
-    <View style={styles.container} testID={testID} accessibilityRole="list">
+    <View
+      className={cn('py-sm', className)}
+      testID={testID}
+      accessibilityRole="list"
+    >
       {events.map((event, index) => {
         const isPast = !event.isActive && index < events.findIndex((e) => e.isActive);
         const isFuture = !event.isActive && index > events.findIndex((e) => e.isActive);
@@ -32,22 +38,47 @@ export function TimelineStepper({ events, testID }: TimelineStepperProps) {
         const lineColor = isPast ? colors.verified : colors.chipInactive;
 
         return (
-          <View key={index} style={styles.row}>
-            <View style={styles.timeline}>
-              <View style={[styles.dot, { backgroundColor: dotColor }]} />
-              {!isLast && <View style={[styles.line, { backgroundColor: lineColor }]} />}
+          <View key={index} className="flex-row min-h-[48px]">
+            <View className="w-6 items-center">
+              <View
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  marginTop: spacing.xs,
+                  backgroundColor: dotColor,
+                }}
+              />
+              {!isLast && (
+                <View
+                  style={{
+                    width: 2,
+                    flex: 1,
+                    marginVertical: 2,
+                    backgroundColor: lineColor,
+                  }}
+                />
+              )}
             </View>
-            <View style={styles.content}>
+            <View style={{ flex: 1, paddingLeft: spacing.md, paddingBottom: spacing.lg }}>
               <Text
-                style={[
-                  styles.label,
-                  event.isActive && styles.activeLabel,
-                  isFuture && styles.futureLabel,
-                ]}
+                style={{
+                  fontSize: typography.body,
+                  color: isFuture ? colors.textTertiary : colors.foreground,
+                  fontWeight: event.isActive ? '700' : undefined,
+                }}
               >
                 {event.label}
               </Text>
-              <Text style={styles.timestamp}>{event.timestamp}</Text>
+              <Text
+                style={{
+                  fontSize: typography.caption,
+                  color: colors.textSecondary,
+                  marginTop: spacing.xs / 2,
+                }}
+              >
+                {event.timestamp}
+              </Text>
             </View>
           </View>
         );
@@ -55,48 +86,3 @@ export function TimelineStepper({ events, testID }: TimelineStepperProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: spacing.sm,
-  },
-  row: {
-    flexDirection: 'row',
-    minHeight: 48,
-  },
-  timeline: {
-    width: 24,
-    alignItems: 'center',
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginTop: spacing.xs,
-  },
-  line: {
-    width: 2,
-    flex: 1,
-    marginVertical: 2,
-  },
-  content: {
-    flex: 1,
-    paddingLeft: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  label: {
-    fontSize: typography.body,
-    color: colors.foreground,
-  },
-  activeLabel: {
-    fontWeight: '700',
-  },
-  futureLabel: {
-    color: colors.textTertiary,
-  },
-  timestamp: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.xs / 2,
-  },
-});

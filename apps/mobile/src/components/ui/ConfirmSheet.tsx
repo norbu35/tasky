@@ -6,8 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { overlays } from '../../design/elevations';
 import { Button } from './Button';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 interface ConfirmSheetProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface ConfirmSheetProps {
   onConfirm: () => void;
   isDestructive?: boolean;
   testID?: string;
+  className?: string;
 }
 
 export function ConfirmSheet({
@@ -29,28 +31,40 @@ export function ConfirmSheet({
   onConfirm,
   isDestructive = false,
   testID,
+  className,
 }: ConfirmSheetProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
     <Modal animationType="slide" transparent visible={isOpen} onRequestClose={onClose}>
-      <View style={styles.backdrop}>
+      <View
+        className="flex-1 justify-end"
+        style={{ backgroundColor: overlays.sheet }}
+      >
         <Pressable
           accessibilityRole="button"
           onPress={onClose}
           style={StyleSheet.absoluteFill}
           testID="confirm-sheet-backdrop"
         />
-        <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.xl }]} testID={testID}>
+        <View
+          className={cn('bg-card rounded-tl-lg rounded-tr-lg px-lg py-xl items-center', className)}
+          style={{ paddingBottom: insets.bottom + spacing.xl }}
+          testID={testID}
+        >
           {isDestructive && (
-            <View style={styles.iconContainer}>
+            <View className="mb-md">
               <AlertTriangle size={32} color={colors.danger} />
             </View>
           )}
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
-          <View style={styles.actions}>
+          <Text className="text-title font-sans-bold text-foreground text-center mb-sm">
+            {title}
+          </Text>
+          <Text className="text-body text-muted-foreground text-center mb-xl" style={{ lineHeight: 22 }}>
+            {description}
+          </Text>
+          <View className="self-stretch gap-sm">
             <Button
               label={confirmLabel}
               variant={isDestructive ? 'destructive' : 'default'}
@@ -58,14 +72,14 @@ export function ConfirmSheet({
                 onConfirm();
                 onClose();
               }}
-              style={styles.button}
+              className="self-stretch"
               accessibilityLabel={confirmLabel}
             />
             <Button
               label={t('common.cancel')}
               variant="ghost"
               onPress={onClose}
-              style={styles.button}
+              className="self-stretch"
               accessibilityLabel={t('common.cancel')}
             />
           </View>
@@ -74,43 +88,3 @@ export function ConfirmSheet({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: overlays.sheet,
-  },
-  sheet: {
-    backgroundColor: colors.card,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xl,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    marginBottom: spacing.md,
-  },
-  title: {
-    fontSize: typography.title,
-    fontWeight: '700',
-    color: colors.foreground,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: spacing.xl,
-  },
-  actions: {
-    alignSelf: 'stretch',
-    gap: spacing.sm,
-  },
-  button: {
-    alignSelf: 'stretch',
-  },
-});

@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations, overlays } from '../../design/elevations';
 import { Button } from './Button';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors, spacing, typography } = mobileTheme;
 
 interface PermissionPrimerProps {
   icon: React.ReactNode;
@@ -44,30 +45,68 @@ export function PermissionPrimer({
   className,
 }: PermissionPrimerProps) {
   return (
-    <View style={styles.container} testID={testID} className={className}>
-      <View style={styles.mockBackdrop} />
-      <View style={styles.scrim} />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-        <View style={styles.iconShell}>
-          <View style={styles.iconContainer}>{icon}</View>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{badgeLabel}</Text>
+    <View className={cn('flex-1 justify-end', className)} testID={testID}>
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.muted }]} />
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: overlays.sheet }]} />
+      <View
+        className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
+        style={elevations.card}
+      >
+        <View
+          className="w-10 h-[4px] rounded-full bg-border mb-lg"
+        />
+        <View className="mt-sm mb-lg items-center">
+          <View
+            className="w-24 h-24 rounded-md items-center justify-center bg-muted"
+          >
+            {icon}
+          </View>
+          <View
+            className="absolute -top-2 -right-2 w-8 h-8 rounded-md items-center justify-center bg-accent border-[4px] border-background"
+            style={elevations.card}
+          >
+            <Text style={{ color: colors.primaryDeep, fontSize: 14, fontWeight: '700' }}>
+              {badgeLabel}
+            </Text>
           </View>
         </View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>
+        <Text
+          className="text-center mb-sm"
+          style={{
+            fontSize: 24,
+            fontWeight: '800',
+            color: colors.primaryDeep,
+            letterSpacing: -0.5,
+          }}
+        >
+          {title}
+        </Text>
+        <Text
+          className="text-body text-muted-foreground text-center mb-md"
+          style={{ lineHeight: 24 }}
+        >
           {isDenied && deniedMessage ? deniedMessage : description}
         </Text>
-        {isDenied && settingsHint ? <Text style={styles.settingsHint}>{settingsHint}</Text> : null}
-        <View style={styles.actions}>
+        {isDenied && settingsHint ? (
+          <Text
+            className="text-center mb-xl"
+            style={{
+              fontSize: typography.label,
+              color: colors.textSecondary,
+              lineHeight: 20,
+            }}
+          >
+            {settingsHint}
+          </Text>
+        ) : null}
+        <View className="self-stretch gap-sm">
           {isDenied ? (
             <Button
               testID="permission-continue-button"
               label={continueLabel ?? 'Үргэлжлүүлэх'}
               variant="default"
               onPress={onContinue ?? onSkip}
-              style={styles.grantButton}
+              style={{ alignSelf: 'stretch', minHeight: 56 }}
               accessibilityLabel={continueLabel ?? 'Үргэлжлүүлэх'}
             />
           ) : (
@@ -77,7 +116,7 @@ export function PermissionPrimer({
                 label={allowLabel}
                 variant="default"
                 onPress={onGrant}
-                style={styles.grantButton}
+                style={{ alignSelf: 'stretch', minHeight: 56 }}
                 accessibilityLabel={allowLabel}
               />
               <Button
@@ -90,111 +129,20 @@ export function PermissionPrimer({
             </>
           )}
         </View>
-        {footerNote ? <Text style={styles.footerNote}>{footerNote}</Text> : null}
+        {footerNote ? (
+          <Text
+            className="text-center"
+            style={{
+              marginTop: spacing.lg,
+              fontSize: typography.caption,
+              color: colors.textSecondary,
+              lineHeight: 18,
+            }}
+          >
+            {footerNote}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  mockBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.muted,
-  },
-  scrim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: overlays.sheet,
-  },
-  sheet: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
-    alignItems: 'center',
-    ...elevations.card,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 12,
-    backgroundColor: colors.border,
-    marginBottom: spacing.lg,
-  },
-  iconShell: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.lg,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.muted,
-  },
-  badge: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    width: 32,
-    height: 32,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.accent,
-    borderWidth: 4,
-    borderColor: colors.background,
-    ...elevations.card,
-  },
-  badgeText: {
-    color: colors.primaryDeep,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-    letterSpacing: -0.5,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: spacing.md,
-  },
-  settingsHint: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: spacing.xl,
-  },
-  actions: {
-    alignSelf: 'stretch',
-    gap: spacing.sm,
-  },
-  grantButton: {
-    alignSelf: 'stretch',
-    minHeight: 56,
-    borderRadius: radius.md,
-    backgroundColor: colors.primaryDeep,
-  },
-  footerNote: {
-    marginTop: spacing.lg,
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-});

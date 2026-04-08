@@ -4,10 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { elevations } from '../../design/elevations';
+import { cn } from '../../lib/cn';
 
-const { colors, radius, spacing, typography } = mobileTheme;
+const { colors, spacing, typography } = mobileTheme;
 
-export function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  className?: string;
+}
+
+export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const { i18n } = useTranslation();
 
   const currentLang = i18n.language;
@@ -22,58 +27,51 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      className={cn('flex-row rounded-full border border-border overflow-hidden bg-card', className)}
+      style={elevations.card}
+    >
       <Pressable
-        style={({ pressed }) => [styles.btn, currentLang === 'en' && styles.active, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          { paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+          currentLang === 'en' && { backgroundColor: colors.primary },
+          pressed && { opacity: 0.9 },
+        ]}
+        className="items-center justify-center"
         onPress={() => changeLanguage('en')}
       >
-        <Text style={[styles.text, currentLang === 'en' && styles.activeText]}>English</Text>
+        <Text
+          style={{
+            fontSize: typography.caption,
+            fontWeight: '700',
+            color: currentLang === 'en' ? colors.primaryForeground : colors.foreground,
+          }}
+        >
+          English
+        </Text>
       </Pressable>
 
-      <View style={styles.divider} />
+      <View style={{ width: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
 
       <Pressable
-        style={({ pressed }) => [styles.btn, currentLang === 'mn' && styles.active, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          { paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+          currentLang === 'mn' && { backgroundColor: colors.primary },
+          pressed && { opacity: 0.9 },
+        ]}
+        className="items-center justify-center"
         onPress={() => changeLanguage('mn')}
       >
-        <Text style={[styles.text, currentLang === 'mn' && styles.activeText]}>Монгол</Text>
+        <Text
+          style={{
+            fontSize: typography.caption,
+            fontWeight: '700',
+            color: currentLang === 'mn' ? colors.primaryForeground : colors.foreground,
+          }}
+        >
+          Монгол
+        </Text>
       </Pressable>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: colors.card,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
-    ...elevations.card,
-  },
-  btn: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  active: {
-    backgroundColor: mobileTheme.colors.primary,
-  },
-  pressed: {
-    opacity: 0.9,
-  },
-  divider: {
-    width: StyleSheet.hairlineWidth,
-    backgroundColor: colors.border,
-  },
-  text: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.foreground,
-  },
-  activeText: {
-    color: colors.primaryForeground,
-  },
-});

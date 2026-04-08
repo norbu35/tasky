@@ -1,6 +1,6 @@
 // apps/mobile/src/components/ui/FAB.tsx
 import React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -15,8 +15,9 @@ import { useAuthStore } from '../../store/authStore';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
 import { screenLayout } from '../../design/screenLayout';
+import { cn } from '../../lib/cn';
 
-const { colors, radius } = mobileTheme;
+const { colors } = mobileTheme;
 const { fabSize, fabInsetRight, fabBottom, tabBarHeight, tabBarBottom } = screenLayout.chrome;
 const DRAG_THRESHOLD = 8;
 const SPRING_CONFIG = { damping: 18, stiffness: 220 };
@@ -24,9 +25,10 @@ const SPRING_CONFIG = { damping: 18, stiffness: 220 };
 type FABProps = {
   testID?: string;
   authGuard?: boolean;
+  className?: string;
 };
 
-export function FAB({ testID = 'global-fab', authGuard = true }: FABProps) {
+export function FAB({ testID = 'global-fab', authGuard = true, className }: FABProps) {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
   const insets = useSafeAreaInsets();
@@ -100,25 +102,28 @@ export function FAB({ testID = 'global-fab', authGuard = true }: FABProps) {
 
   return (
     <GestureDetector gesture={composed}>
-      <Animated.View style={[styles.fab, animatedStyle]} testID={testID}>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: fabSize,
+            height: fabSize,
+            borderRadius: fabSize / 2,
+            backgroundColor: colors.primary,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 999,
+            ...elevations.elevated,
+          },
+          animatedStyle,
+        ]}
+        className={cn(className)}
+        testID={testID}
+      >
         <Plus color={colors.primaryForeground} size={28} />
       </Animated.View>
     </GestureDetector>
   );
 }
-
-const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: fabSize,
-    height: fabSize,
-    borderRadius: radius.full,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...elevations.elevated,
-    zIndex: 999,
-  },
-});
