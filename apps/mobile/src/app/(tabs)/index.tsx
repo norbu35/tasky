@@ -81,7 +81,7 @@ function TaskerBrowseScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data, isLoading, isError, isRefetching, refetch } = useTasks() as {
-    data: { data: PublicTask[]; cursor: { next: string | null; prev: string | null } } | undefined;
+    data: { data: PublicTask[]; cursor: { next: string | null; has_more: boolean } } | undefined;
     isLoading: boolean;
     isError: boolean;
     isRefetching: boolean;

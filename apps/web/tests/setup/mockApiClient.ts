@@ -36,7 +36,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
     listCategories: vi.fn().mockResolvedValue({
       data: [baseCategory],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     createTask: vi.fn().mockResolvedValue({
       id: 'task-1',
@@ -75,11 +75,11 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
           created_at: '2026-02-14T00:00:00Z',
         },
       ],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     listMyTasks: vi.fn().mockResolvedValue({
       data: [],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     applyToTask: vi.fn().mockResolvedValue({
       id: 'app-1',
@@ -98,7 +98,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
     listTaskApplications: vi.fn().mockResolvedValue({
       data: [],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     acceptApplication: vi.fn().mockResolvedValue(baseBooking),
     createBookingIntent: vi.fn().mockResolvedValue({
@@ -123,7 +123,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
     listBookings: vi.fn().mockResolvedValue({
       data: [baseBooking],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     getBooking: vi.fn().mockResolvedValue(baseBooking),
     cancelBooking: vi.fn().mockResolvedValue({
@@ -137,17 +137,17 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     submitReview: vi.fn().mockResolvedValue(baseReview),
     getUserReviews: vi.fn().mockResolvedValue({
       data: [baseReview],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     raiseDispute: vi.fn().mockResolvedValue(baseDispute),
     getDispute: vi.fn().mockResolvedValue(baseDispute),
     listConversations: vi.fn().mockResolvedValue({
       data: [baseConversation],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     listMessages: vi.fn().mockResolvedValue({
       data: [baseMessage],
-      cursor: { next: null, prev: null },
+      cursor: { next: null, has_more: false },
     }),
     sendMessage: vi.fn().mockResolvedValue({
       ...baseMessage,
@@ -177,15 +177,15 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
 
     // Admin methods
-    adminSearchUsers: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+    adminSearchUsers: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminBanUser: vi.fn().mockResolvedValue(baseUser),
     adminUnbanUser: vi.fn().mockResolvedValue(baseUser),
     adminListFlaggedMessages: vi
       .fn()
-      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+      .mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminListPendingVerifications: vi
       .fn()
-      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+      .mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminApproveVerification: vi.fn().mockResolvedValue({
       id: 'v-1',
       user_id: 'u-1',
@@ -198,7 +198,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
       status: 'REJECTED',
       submitted_at: '2026-01-01T00:00:00Z',
     }),
-    adminListDisputes: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+    adminListDisputes: vi.fn().mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminGetDispute: vi.fn().mockResolvedValue({
       dispute: baseDispute,
       booking: baseBooking,
@@ -226,7 +226,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
     adminListPendingPayouts: vi
       .fn()
-      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+      .mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminProcessPayout: vi.fn().mockResolvedValue({
       id: 'payout-1',
       user_id: 'user-1',
@@ -239,7 +239,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     }),
     adminListLeadUnlockPrices: vi
       .fn()
-      .mockResolvedValue({ data: [], cursor: { next: null, prev: null } }),
+      .mockResolvedValue({ data: [], cursor: { next: null, has_more: false } }),
     adminCreateLeadUnlockPrice: vi.fn().mockResolvedValue({
       id: 'price-1',
       category_id: 'cat-1',
@@ -258,7 +258,7 @@ export function buildApiClientMock(overrides: Partial<ApiClient> = {}): ApiClien
     adminConciergeAssignTask: vi.fn().mockResolvedValue(baseBooking),
     adminListCategories: vi
       .fn()
-      .mockResolvedValue({ data: [baseCategory], cursor: { next: null, prev: null } }),
+      .mockResolvedValue({ data: [baseCategory], cursor: { next: null, has_more: false } }),
     adminCreateCategory: vi.fn().mockResolvedValue(baseCategory),
     adminUpdateCategory: vi.fn().mockResolvedValue(baseCategory),
     adminListCategorySchemas: vi.fn().mockResolvedValue({ data: [] }),

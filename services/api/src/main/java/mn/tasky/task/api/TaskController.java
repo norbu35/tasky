@@ -5,10 +5,12 @@ import static mn.tasky.common.api.ApiResponseSupport.idempotencyInProgress;
 import static mn.tasky.common.api.ApiResponseSupport.idempotencyReplayMissing;
 import static mn.tasky.common.api.ApiResponseSupport.resolveTraceId;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.IntStream;
 import mn.tasky.auth.application.AuthService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.category.application.CategoryService;
+import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.api.CursorPagination;
 import mn.tasky.common.api.PagedResponse;
 import mn.tasky.common.idempotency.IdempotencyClaim;
@@ -50,6 +53,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +78,7 @@ public class TaskController {
     private final AuthService authService;
     private final BookingService bookingService;
     private final IdempotencyService idempotencyService;
+    private final ObjectMapper objectMapper;
 
     public TaskController(
             TaskService taskService,
@@ -81,13 +86,15 @@ public class TaskController {
             CategoryService categoryService,
             AuthService authService,
             BookingService bookingService,
-            IdempotencyService idempotencyService) {
+            IdempotencyService idempotencyService,
+            ObjectMapper objectMapper) {
         this.taskService = taskService;
         this.taskDraftService = taskDraftService;
         this.categoryService = categoryService;
         this.authService = authService;
         this.bookingService = bookingService;
         this.idempotencyService = idempotencyService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
@@ -124,19 +131,7 @@ public class TaskController {
         double[] fuzzedLocation = fuzzCoordinates(task.locationLat(), task.locationLng());
         response.put("id", task.id());
 
-        categoryService
-                .getCategory(task.categoryId())
-                .ifPresent(cat -> response.put(
-                        "category",
-                        Map.of(
-                                "id",
-                                cat.id(),
-                                "name",
-                                cat.name(),
-                                "name_mn",
-                                cat.nameMn(),
-                                "icon_url",
-                                cat.iconUrl())));
+        categoryService.getCategory(task.categoryId()).ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
 
         authService
                 .getProfile(task.customerId())
@@ -187,6 +182,42 @@ public class TaskController {
         return Math.round(value * 100.0d) / 100.0d;
     }
 
+    private Map<String, Object> toCategoryPayload(CategoryState category) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", category.id());
+        response.put("name", sanitize(category.name()));
+        response.put("name_mn", sanitize(category.nameMn()));
+        response.put("icon_url", sanitize(category.iconUrl()));
+        response.put("is_active", category.isActive());
+        response.put("sort_order", category.sortOrder());
+        response.put("intake_enabled", Boolean.TRUE.equals(category.intakeEnabled()));
+        response.put(
+                "intake_schema_version",
+                category.intakeSchemaVersion() != null ? category.intakeSchemaVersion() : 0);
+        response.put("intake_schema_json", parseJson(category.intakeSchemaJson()));
+        return response;
+    }
+
+    private Object parseJsonOrEmptyObject(String value) {
+        Object parsed = parseJson(value);
+        return parsed != null ? parsed : Map.of();
+    }
+
+    private Object parseJson(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(value, Object.class);
+        } catch (IOException exception) {
+            return null;
+        }
+    }
+
+    private String sanitize(String value) {
+        return value == null ? null : HtmlUtils.htmlEscape(value);
+    }
+
     @GetMapping("/mine")
     public ResponseEntity<?> listMyTasks(
             @AuthenticationPrincipal JwtPrincipal principal,
@@ -228,6 +259,7 @@ public class TaskController {
                 photos.stream().map(photo -> String.valueOf(photo.get("storage_key"))).toList();
         response.put("id", task.id());
         response.put("category_id", task.categoryId());
+        categoryService.getCategory(task.categoryId()).ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
         response.put("customer_id", task.customerId());
         response.put("description", task.description());
         response.put("budget", task.budget());
@@ -236,6 +268,9 @@ public class TaskController {
         response.put("location_text", task.locationText());
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
+        response.put("intake_answers", parseJsonOrEmptyObject(task.intakeAnswersJson()));
+        response.put("intake_schema_version", task.intakeSchemaVersion() != null ? task.intakeSchemaVersion() : 0);
+        response.put("scope_summary_source", task.scopeSummarySource());
         response.put("photos", photos);
         response.put("photo_keys", visiblePhotoKeys);
         response.put("created_at", task.createdAt().toString());

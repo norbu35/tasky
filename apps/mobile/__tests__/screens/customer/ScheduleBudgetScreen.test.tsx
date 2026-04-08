@@ -108,8 +108,8 @@ describe('ScheduleBudgetScreen (SCR-CUST-006)', () => {
     const time = getFutureTimeFrom(date);
     pickDateAndTime(date, time);
 
-    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '1000');
-    expect(screen.getByText('Budget must be at least ₮5,000')).toBeTruthy();
+    fireEvent.changeText(screen.getByTestId('schedule-budget-input'), '19999');
+    expect(screen.getByText('Budget must be at least ₮20,000')).toBeTruthy();
     expect(screen.getByTestId('SCR-CUST-006-next')).toBeDisabled();
   });
 

@@ -71,6 +71,12 @@ class TaskScenarioTests extends IntegrationTestBase {
     @Test
     @DisplayName("SCN-TASK-001: Task-post form loads the active intake schema for the selected category")
     void draftCreationBindsActiveSchemaVersion() {
+        ResponseEntity<Map> categoriesResponse = getWithAuth("/api/v1/categories");
+        assertThat(categoriesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Map firstCategory = (Map) ((List) categoriesResponse.getBody().get("data")).get(0);
+        assertThat(firstCategory)
+                .containsKeys("intake_enabled", "intake_schema_version", "intake_schema_json");
+
         ResponseEntity<Map> resp = postWithAuth("/api/v1/tasks/drafts",
                 Map.of("category_id", categoryId), custToken);
 
@@ -137,17 +143,16 @@ class TaskScenarioTests extends IntegrationTestBase {
     // ── SCN-TASK-005 ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-TASK-005: Budget of 5000 MNT is accepted, 4999 is rejected")
-    void budgetOf1001Accepted() {
-        // @Min(5000) on the DTO — the actual minimum validated by Spring is 5000
-        // The PRD says > 1000 MNT. The current implementation enforces @Min(5000).
-        // This test documents current enforcement: 5000 is accepted, 4999 is rejected.
-        ResponseEntity<Map> resp5000 = postWithAuth("/api/v1/tasks", taskBody(5000), custToken);
-        assertThat(resp5000.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp5000.getBody().get("id")).isNotNull();
+    @DisplayName("SCN-TASK-005: Budget of 20000 MNT is accepted, 19999 is rejected")
+    void budgetOf20000Accepted() {
+        // The QA scenario text still references the older 1000 MNT threshold.
+        // The authoritative product decision now sets the minimum task budget at 20,000 MNT.
+        ResponseEntity<Map> resp20000 = postWithAuth("/api/v1/tasks", taskBody(20000), custToken);
+        assertThat(resp20000.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp20000.getBody().get("id")).isNotNull();
 
-        ResponseEntity<Map> resp4999 = postWithAuth("/api/v1/tasks", taskBody(4999), custToken);
-        assertThat(resp4999.getStatusCode().value()).isBetween(400, 422);
+        ResponseEntity<Map> resp19999 = postWithAuth("/api/v1/tasks", taskBody(19999), custToken);
+        assertThat(resp19999.getStatusCode().value()).isBetween(400, 422);
     }
 
     // ── SCN-TASK-006 ─────────────────────────────────────────────────────────
@@ -189,6 +194,8 @@ class TaskScenarioTests extends IntegrationTestBase {
         List<Map> tasks = (List<Map>) feed.getBody().get("data");
         for (Map task : tasks) {
             assertThat(task.get("status").toString()).isEqualTo("OPEN");
+            Map category = (Map) task.get("category");
+            assertThat(category).containsKeys("intake_enabled", "intake_schema_version");
         }
     }
 
@@ -334,6 +341,9 @@ class TaskScenarioTests extends IntegrationTestBase {
         ResponseEntity<Map> detail = getWithAuth("/api/v1/tasks/" + taskId);
         // Description in the response should contain the scope summary or intake-derived text
         assertThat(detail.getBody()).containsKey("description");
+        assertThat(detail.getBody()).containsEntry("intake_schema_version", CLEANING_SCHEMA_VERSION);
+        assertThat(detail.getBody()).containsKey("scope_summary_source");
+        assertThat(detail.getBody().get("intake_answers")).isEqualTo(CLEANING_INTAKE_ANSWERS);
     }
 
     // ── SCN-TASK-015 ─────────────────────────────────────────────────────────

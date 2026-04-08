@@ -62,12 +62,12 @@ public class VerificationController {
             HttpServletRequest request) {
         if (!Boolean.TRUE.equals(body.consentAccepted())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of(
-                            "code",
-                            "CONSENT_REQUIRED",
-                            "message",
-                            "Consent must be accepted to submit verification.",
-                            "trace_id",
+                        .body(Map.of(
+                                "code",
+                                "CONSENT_REQUIRED",
+                                "message",
+                                "Consent must be accepted to submit verification.",
+                                "trace_id",
                                 resolveTraceId(request)));
         }
         try {
@@ -75,6 +75,8 @@ public class VerificationController {
                     body.idCardFrontKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
             storageKeyPolicy.validateOwnedKey(
                     body.idCardBackKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
+            storageKeyPolicy.validateOwnedKey(
+                    body.selfieKey(), StorageKeyPolicy.Namespace.VERIFICATION, principal.userId());
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
@@ -87,7 +89,11 @@ public class VerificationController {
         }
 
         VerificationSubmitResult result = authService.submitVerification(
-                principal.userId(), body.idCardFrontKey(), body.idCardBackKey(), body.consentPolicyVersion());
+                principal.userId(),
+                body.idCardFrontKey(),
+                body.idCardBackKey(),
+                body.selfieKey(),
+                body.consentPolicyVersion());
 
         return switch (result.outcome()) {
             case VerificationSubmitResult.SUCCESS -> ResponseEntity.ok(toStatusResponse(result.statusResponse()));

@@ -11,6 +11,7 @@ import { elevations } from '../../design/elevations';
 import { mobileTheme } from '../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
+const MIN_REBOOK_BUDGET = 20_000;
 
 function formatDateTime(value: Date): string {
   const y = value.getFullYear();
@@ -55,7 +56,7 @@ export default function RebookScreen() {
   });
 
   const numericBudget = Number(budget);
-  const budgetTooLow = Number.isFinite(numericBudget) && numericBudget <= 1001;
+  const budgetTooLow = !Number.isFinite(numericBudget) || numericBudget < MIN_REBOOK_BUDGET;
 
   const handleSubmit = useCallback(async () => {
     if (budgetTooLow) return;
@@ -174,7 +175,7 @@ export default function RebookScreen() {
         />
         {budgetTooLow ? (
           <Text className="text-caption text-danger mt-xs">
-            {t('customer.bookings.rebookBudgetLow', 'Budget must be above ₮1,001')}
+            {t('customer.bookings.rebookBudgetLow', 'Budget must be at least ₮20,000')}
           </Text>
         ) : null}
       </View>

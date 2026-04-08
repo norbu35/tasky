@@ -720,13 +720,15 @@ public class AuthService {
     /**
      * Submits a tasker verification request.
      *
-     * @param userId   Tasker identifier.
-     * @param frontKey Storage key for front ID image.
-     * @param backKey  Storage key for back ID image.
+     * @param userId              Tasker identifier.
+     * @param frontKey            Storage key for front ID image.
+     * @param backKey             Storage key for back ID image.
+     * @param selfieKey           Storage key for selfie image.
+     * @param consentPolicyVersion Accepted consent policy version.
      * @return Verification submission result with status code and payload when successful.
      */
     public VerificationSubmitResult submitVerification(
-            String userId, String frontKey, String backKey, String consentPolicyVersion) {
+            String userId, String frontKey, String backKey, String selfieKey, String consentPolicyVersion) {
         Optional<AuthUser> userOpt = userDao.findById(userId);
         if (userOpt.isEmpty()) {
             return new VerificationSubmitResult(VerificationSubmitResult.USER_NOT_FOUND, null);
@@ -748,9 +750,20 @@ public class AuthService {
         String id = UUID.randomUUID().toString();
         Instant now = Instant.now();
         verificationDao.insert(
-                id, userId, frontKey, backKey, "PENDING", now, null, null, consentPolicyVersion, now, null);
-        VerificationRequest request =
-                new VerificationRequest(id, userId, frontKey, backKey, "PENDING", now, null, null);
+                id,
+                userId,
+                frontKey,
+                backKey,
+                selfieKey,
+                "PENDING",
+                now,
+                null,
+                null,
+                consentPolicyVersion,
+                now,
+                null);
+        VerificationRequest request = new VerificationRequest(
+                id, userId, frontKey, backKey, selfieKey, "PENDING", now, null, null, consentPolicyVersion, now, null);
         return new VerificationSubmitResult(VerificationSubmitResult.SUCCESS, toVerificationStatus(request));
     }
 
@@ -815,6 +828,7 @@ public class AuthService {
 
         String frontUrl = safeVerificationDownloadUrl(request.idCardFrontKey());
         String backUrl = safeVerificationDownloadUrl(request.idCardBackKey());
+        String selfieUrl = safeVerificationDownloadUrl(request.selfieKey());
 
         return new VerificationDetail(
                 request.id(),
@@ -823,13 +837,14 @@ public class AuthService {
                 name,
                 frontUrl,
                 backUrl,
+                selfieUrl,
                 request.status(),
                 request.adminNotes(),
                 request.submittedAt().toString(),
                 request.reviewedAt() != null ? request.reviewedAt().toString() : null,
-                null,
-                null,
-                null);
+                request.consentPolicyVersion(),
+                request.consentAcceptedAt(),
+                request.danReference());
     }
 
     private String safeVerificationDownloadUrl(String storageKey) {
@@ -888,10 +903,14 @@ public class AuthService {
                 request.userId(),
                 request.idCardFrontKey(),
                 request.idCardBackKey(),
+                request.selfieKey(),
                 status,
                 request.submittedAt(),
                 adminNotes,
-                now);
+                now,
+                request.consentPolicyVersion(),
+                request.consentAcceptedAt(),
+                request.danReference());
         return Optional.of(toVerificationDetail(resolved));
     }
 

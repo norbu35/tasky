@@ -21,6 +21,7 @@ public interface VerificationDao {
             String userId,
             String idCardFrontKey,
             String idCardBackKey,
+            String selfieKey,
             String status,
             Instant submittedAt,
             String adminNotes,
@@ -33,6 +34,7 @@ public interface VerificationDao {
                 required(userId, "userId"),
                 idCardFrontKey,
                 idCardBackKey,
+                selfieKey,
                 status,
                 submittedAt,
                 adminNotes,
@@ -42,10 +44,10 @@ public interface VerificationDao {
                 danReference);
     }
 
-    @SqlUpdate("INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, status,"
+    @SqlUpdate("INSERT INTO verifications (id, user_id, id_card_front_key, id_card_back_key, selfie_key, status,"
             + " submitted_at, admin_notes, reviewed_at,"
             + " consent_policy_version, consent_accepted_at, dan_reference) "
-            + "VALUES (:id, :userId, :idCardFrontKey, :idCardBackKey, :status, "
+            + "VALUES (:id, :userId, :idCardFrontKey, :idCardBackKey, :selfieKey, :status, "
             + ":submittedAt, :adminNotes, :reviewedAt,"
             + " :consentPolicyVersion, :consentAcceptedAt, :danReference)")
     void insert(
@@ -53,6 +55,7 @@ public interface VerificationDao {
             @Bind("userId") UUID userId,
             @Bind("idCardFrontKey") String idCardFrontKey,
             @Bind("idCardBackKey") String idCardBackKey,
+            @Bind("selfieKey") String selfieKey,
             @Bind("status") String status,
             @Bind("submittedAt") Instant submittedAt,
             @Bind("adminNotes") String adminNotes,
@@ -115,7 +118,7 @@ public interface VerificationDao {
         anonymize(required(id, "id"));
     }
 
-    @SqlUpdate("UPDATE verifications SET id_card_front_key = NULL, id_card_back_key = NULL, "
+    @SqlUpdate("UPDATE verifications SET id_card_front_key = NULL, id_card_back_key = NULL, selfie_key = NULL, "
             + "dan_reference = NULL WHERE id = :id")
     void anonymize(@Bind("id") UUID id);
 }

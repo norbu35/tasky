@@ -14,6 +14,8 @@ export type Dispute = components['schemas']['Dispute'];
 export type Conversation = components['schemas']['Conversation'];
 export type Message = components['schemas']['Message'];
 export type BookingScheduleEvent = components['schemas']['BookingScheduleEvent'];
+export type CursorPagination = components['schemas']['CursorPagination'];
+export type VerificationStatus = components['schemas']['VerificationStatus'];
 
 export interface AuthTokens {
   accessToken: string;
@@ -23,10 +25,7 @@ export interface AuthTokens {
 
 export interface CursorPage<T> {
   data: T[];
-  cursor: {
-    next: string | null;
-    prev: string | null;
-  };
+  cursor: CursorPagination;
 }
 
 export interface TaskFilters {
@@ -169,11 +168,7 @@ export interface MobileApiClient {
 
   unregisterDevice(accessToken: string, token: string): Promise<void>;
 
-  getVerificationStatus(accessToken: string): Promise<{
-    status: string;
-    admin_notes?: string;
-    submitted_at?: string;
-  }>;
+  getVerificationStatus(accessToken: string): Promise<VerificationStatus>;
 
   getVerificationUploadUrl(
     accessToken: string,
@@ -182,10 +177,16 @@ export interface MobileApiClient {
 
   submitVerification(
     accessToken: string,
-    payload: { id_card_front_key: string; id_card_back_key: string; selfie_key: string },
-  ): Promise<void>;
+    payload: {
+      id_card_front_key: string;
+      id_card_back_key: string;
+      selfie_key: string;
+      consent_policy_version?: string;
+      consent_accepted?: boolean;
+    },
+  ): Promise<VerificationStatus>;
 
-  flagNoShow(accessToken: string, bookingId: string): Promise<void>;
+  flagNoShow(accessToken: string, bookingId: string): Promise<Booking>;
 
   deleteMyAccount(accessToken: string): Promise<void>;
 
@@ -208,6 +209,7 @@ export interface MobileApiClient {
       event: string;
       timestamp: string;
       actor: string;
+      description?: string;
     }[]
   >;
 }
@@ -222,6 +224,7 @@ export class ApiError extends Error {
 }
 
 const API_PATH_PREFIX = '/api/v1';
+const DEFAULT_VERIFICATION_CONSENT_POLICY_VERSION = 'v1.0';
 
 function normalizeBaseUrl(rawBaseUrl: string): string {
   const parsed = new URL(rawBaseUrl.trim());
@@ -258,6 +261,21 @@ async function readErrorMessage(response: Response): Promise<string> {
     // Fall back to generic response message.
   }
   return `Request failed with status ${response.status}`;
+}
+
+function mapBookingScheduleEventType(eventType: BookingScheduleEvent['event_type']): string {
+  switch (eventType) {
+    case 'REQUESTED':
+      return 'reschedule_requested';
+    case 'ACCEPTED':
+      return 'reschedule_accepted';
+    case 'DECLINED':
+      return 'reschedule_declined';
+    case 'EXPIRED':
+      return 'reschedule_expired';
+    default:
+      return String(eventType).toLowerCase();
+  }
 }
 
 export class HttpMobileApiClient implements MobileApiClient {
@@ -671,16 +689,8 @@ export class HttpMobileApiClient implements MobileApiClient {
     );
   }
 
-  getVerificationStatus(accessToken: string): Promise<{
-    status: string;
-    admin_notes?: string;
-    submitted_at?: string;
-  }> {
-    return this.requestJson<{ status: string; admin_notes?: string; submitted_at?: string }>(
-      '/verification/status',
-      { method: 'GET' },
-      accessToken,
-    );
+  getVerificationStatus(accessToken: string): Promise<VerificationStatus> {
+    return this.requestJson<VerificationStatus>('/verification/status', { method: 'GET' }, accessToken);
   }
 
   getVerificationUploadUrl(
@@ -691,7 +701,7 @@ export class HttpMobileApiClient implements MobileApiClient {
       '/verification/upload-url',
       {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ content_type: payload.content_type }),
       },
       accessToken,
     );
@@ -699,20 +709,33 @@ export class HttpMobileApiClient implements MobileApiClient {
 
   submitVerification(
     accessToken: string,
-    payload: { id_card_front_key: string; id_card_back_key: string; selfie_key: string },
-  ): Promise<void> {
-    return this.requestVoid(
+    payload: {
+      id_card_front_key: string;
+      id_card_back_key: string;
+      selfie_key: string;
+      consent_policy_version?: string;
+      consent_accepted?: boolean;
+    },
+  ): Promise<VerificationStatus> {
+    return this.requestJson<VerificationStatus>(
       '/verification/submit',
       {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          id_card_front_key: payload.id_card_front_key,
+          id_card_back_key: payload.id_card_back_key,
+          selfie_key: payload.selfie_key,
+          consent_policy_version:
+            payload.consent_policy_version ?? DEFAULT_VERIFICATION_CONSENT_POLICY_VERSION,
+          consent_accepted: payload.consent_accepted ?? true,
+        }),
       },
       accessToken,
     );
   }
 
-  flagNoShow(accessToken: string, bookingId: string): Promise<void> {
-    return this.requestVoid(`/bookings/${bookingId}/no-show`, { method: 'POST' }, accessToken);
+  flagNoShow(accessToken: string, bookingId: string): Promise<Booking> {
+    return this.requestJson<Booking>(`/bookings/${bookingId}/no-show/flag`, { method: 'POST' }, accessToken);
   }
 
   deleteMyAccount(accessToken: string): Promise<void> {
@@ -744,16 +767,16 @@ export class HttpMobileApiClient implements MobileApiClient {
     bookingId: string,
     idempotencyKey: string,
   ): Promise<Booking> {
-    return this.requestJson<Booking>(
+    return this.requestJson<{ booking: Booking; tasker_marked_done_at: string }>(
       `/bookings/${bookingId}/mark-done`,
       {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Idempotency-Key': idempotencyKey,
         },
       },
       accessToken,
-    );
+    ).then((response) => response.booking);
   }
 
   getBookingTimeline(
@@ -764,12 +787,20 @@ export class HttpMobileApiClient implements MobileApiClient {
       event: string;
       timestamp: string;
       actor: string;
+      description?: string;
     }[]
   > {
-    return this.requestJson<{ event: string; timestamp: string; actor: string }[]>(
-      `/bookings/${bookingId}/timeline`,
+    return this.requestJson<{ data: BookingScheduleEvent[] }>(
+      `/bookings/${bookingId}/schedule-events`,
       { method: 'GET' },
       accessToken,
+    ).then((response) =>
+      response.data.map((event) => ({
+        event: mapBookingScheduleEventType(event.event_type),
+        timestamp: event.created_at,
+        actor: event.actor_user_id,
+        description: event.reason ?? undefined,
+      })),
     );
   }
 

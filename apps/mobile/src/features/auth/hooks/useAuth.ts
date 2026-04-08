@@ -28,12 +28,11 @@ export function useVerifyOtp() {
       try {
         const profile = await api.getMyProfile(session.accessToken);
         setProfile(profile);
-        router.replace('/(tabs)');
       } catch (e) {
         console.error('Failed to fetch profile after login', e);
-        // Still navigate, profile might be fetched later or retry
-        router.replace('/(tabs)');
+        // Still navigate, profile might be fetched later or retry.
       }
+      router.replace('/(tabs)');
     },
   });
 }
@@ -83,7 +82,7 @@ export function useDevLogin() {
         setProfile(fakeProfile);
         queryClient.setQueryData(['me'], fakeProfile);
         // Seed empty task/feed lists so API-dependent screens render empty state (not error)
-        const emptyPage = { data: [], cursor: { next: null, prev: null } };
+        const emptyPage = { data: [], cursor: { next: null, has_more: false } };
         queryClient.setQueryData(['myTasks'], emptyPage);
         queryClient.setQueryData(['tasks'], emptyPage);
         queryClient.setQueryData(['bookings'], emptyPage);
@@ -111,7 +110,7 @@ export function useDevLogin() {
               intake_schema_version: 0,
             },
           ],
-          cursor: { next: null, prev: null },
+          cursor: { next: null, has_more: false },
         };
         queryClient.setQueryData(['categories'], fakeCategories);
       } else {
@@ -122,6 +121,7 @@ export function useDevLogin() {
           console.error('Failed to fetch profile after dev login', e);
         }
       }
+
       router.replace('/(tabs)');
     },
   });

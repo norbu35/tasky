@@ -32,10 +32,10 @@ describe('Booking Safety Integration', () => {
       getMyProfile: vi.fn().mockResolvedValue(baseProfile),
       listBookings: vi.fn().mockImplementation(async (_token, params) => {
         if (params?.status === 'ASSIGNED')
-          return { data: [activeBooking], cursor: { next: null, prev: null } };
+          return { data: [activeBooking], cursor: { next: null, has_more: false } };
         if (params?.status === 'COMPLETED')
-          return { data: [completedBooking], cursor: { next: null, prev: null } };
-        return { data: [], cursor: { next: null, prev: null } };
+          return { data: [completedBooking], cursor: { next: null, has_more: false } };
+        return { data: [], cursor: { next: null, has_more: false } };
       }),
       cancelBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'CANCELLED' }),
       completeBooking: vi.fn().mockResolvedValue({ ...activeBooking, status: 'COMPLETED' }),
