@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
@@ -9,9 +9,6 @@ import { useBookingDetail } from '../../../../features/bookings/hooks/useBooking
 import { useMarkBookingDone } from '../../../../features/bookings/hooks/useMarkBookingDone';
 import { TaskerCancelSheet } from '../../../../features/bookings/components/TaskerCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
-import { mobileTheme } from '../../../../design/tokenAdapter';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function BookingDetailTaskerScreen() {
   const { t } = useTranslation();
@@ -58,44 +55,54 @@ export default function BookingDetailTaskerScreen() {
       }
     >
       {booking && (
-        <View style={styles.content}>
+        <View className="gap-lg">
           {/* Status */}
           {status && (
-            <View style={styles.section}>
+            <View className="gap-xs">
               <StatusBadge status={status} />
             </View>
           )}
 
           {/* Customer Info */}
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.customerLabel', 'Захиалагч')}</Text>
-            <Text style={styles.customerName}>{booking.customer?.full_name ?? ''}</Text>
+          <View className="gap-xs">
+            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+              {t('tasker.jobs.customerLabel', 'Захиалагч')}
+            </Text>
+            <Text className="text-subtitle font-semibold text-foreground">
+              {booking.customer?.full_name ?? ''}
+            </Text>
           </View>
 
           {/* Task Description */}
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>
+          <View className="gap-xs">
+            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
               {t('tasker.jobs.taskDescription', 'Даалгаврын тайлбар')}
             </Text>
-            <Text style={styles.description}>{booking.task?.description ?? ''}</Text>
+            <Text className="text-body text-foreground leading-[22px]">
+              {booking.task?.description ?? ''}
+            </Text>
           </View>
 
           {(isAssigned || isMarkedDone) && (
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>
+            <View className="gap-xs">
+              <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
                 {t('tasker.jobs.exactAddress', 'Тодорхой хаяг')}
               </Text>
-              <Text style={styles.description}>{booking.task?.location_text ?? ''}</Text>
-              <Text style={styles.noteText}>
+              <Text className="text-body text-foreground leading-[22px]">
+                {booking.task?.location_text ?? ''}
+              </Text>
+              <Text className="text-caption text-textSecondary leading-[20px]">
                 {t('tasker.jobs.exactAddressNote', 'Энэ хаяг зөвхөн танд харагдана')}
               </Text>
             </View>
           )}
 
           {/* Schedule */}
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.schedule', 'Хуваарь')}</Text>
-            <Text style={styles.scheduleText}>
+          <View className="gap-xs">
+            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+              {t('tasker.jobs.schedule', 'Хуваарь')}
+            </Text>
+            <Text className="text-body text-foreground">
               {booking.confirmed_scheduled_at
                 ? new Date(booking.confirmed_scheduled_at).toLocaleString()
                 : ''}
@@ -103,9 +110,11 @@ export default function BookingDetailTaskerScreen() {
           </View>
 
           {/* Budget */}
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('tasker.jobs.budget', 'Төсөв')}</Text>
-            <Text style={styles.priceText}>
+          <View className="gap-xs">
+            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+              {t('tasker.jobs.budget', 'Төсөв')}
+            </Text>
+            <Text className="text-heading font-sans-bold text-secondary">
               {'\u20AE'}
               {booking.price?.toLocaleString() ?? ''}
             </Text>
@@ -113,11 +122,11 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Payment Note */}
           {isAssigned && (
-            <View style={styles.paymentNote}>
-              <Text style={styles.sectionLabel}>
+            <View className="bg-muted rounded-md p-md">
+              <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px] mb-xs">
                 {t('tasker.jobs.paymentNoteHeading', 'Төлбөрийн мэдээлэл')}
               </Text>
-              <Text style={styles.paymentNoteText}>
+              <Text className="text-micro text-mutedForeground leading-[20px]">
                 {t(
                   'tasker.jobs.paymentNote',
                   'Төлбөр нь захиалагчтай шууд тохиролцоно. Tasky нь зуучлагч биш.',
@@ -127,8 +136,8 @@ export default function BookingDetailTaskerScreen() {
           )}
 
           {isMarkedDone && (
-            <View style={styles.awaitingBanner}>
-              <Text style={styles.awaitingText}>
+            <View className="bg-muted rounded-md p-md">
+              <Text className="text-body text-foreground font-semibold">
                 {t('tasker.jobs.awaitingConfirmation', 'Захиалагч баталгаажуулахыг хүлээж байна')}
               </Text>
             </View>
@@ -136,7 +145,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Cancel Button */}
           {isAssigned && (
-            <View style={styles.cancelSection}>
+            <View className="items-center pt-md">
               <Button
                 label={t('tasker.jobs.cancelBooking', 'Захиалга цуцлах')}
                 variant="ghost"
@@ -149,7 +158,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Completed state */}
           {isCompleted && (
-            <View style={styles.section}>
+            <View className="gap-xs">
               <Button
                 label={t('tasker.jobs.leaveReview', 'Leave Review')}
                 variant="outline"
@@ -197,70 +206,3 @@ export default function BookingDetailTaskerScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: spacing.lg,
-  },
-  section: {
-    gap: spacing.xs,
-  },
-  sectionLabel: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.mutedForeground,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  customerName: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.foreground,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.375,
-  },
-  scheduleText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-  },
-  priceText: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.secondary,
-  },
-  paymentNote: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  paymentNoteText: {
-    fontSize: typography.micro,
-    color: colors.mutedForeground,
-    lineHeight: typography.micro * 1.8,
-  },
-  noteText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-  },
-  awaitingBanner: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  awaitingText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    fontWeight: '600',
-  },
-  cancelSection: {
-    alignItems: 'center',
-    paddingTop: spacing.md,
-  },
-  cancelText: {
-    color: colors.danger,
-  },
-});

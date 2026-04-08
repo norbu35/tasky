@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { CircleX, Info, Plus } from 'lucide-react-native';
 import { FormWizardTemplate } from '../../../../components/templates/FormWizardTemplate';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 function parsePhotoKeys(value?: string): string[] {
   if (!value) {
@@ -73,26 +73,37 @@ export default function PhotoUploadScreen() {
           : t('customer.postTask.photosSkip', 'Skip')
       }
     >
-      <View style={styles.progressHeader}>
-        <Text style={styles.progressHint}>
+      <View className="flex-row items-center justify-between gap-sm">
+        <Text className="text-caption text-textSecondary">
           {t('customer.postTask.photosProgressHint', 'Almost done')}
         </Text>
       </View>
-      <Text style={styles.title}>
+      <Text className="text-heading font-sans-bold text-primaryDeep" style={{ lineHeight: 26 }}>
         {t('customer.postTask.photosHeroTitle', 'Show your task workspace')}
       </Text>
-      <Text style={styles.subtitle}>
+      <Text className="text-body text-textSecondary leading-[24px]">
         {t('customer.postTask.photosInstruction', 'Add photos related to your task (up to 3)')}
       </Text>
 
-      <View style={styles.grid} testID="photo-upload-grid">
+      <View className="flex-row flex-wrap gap-sm" testID="photo-upload-grid">
         {slots.map((photoUri, index) =>
           photoUri ? (
-            <View key={`photo-${index}`} style={styles.photoCard}>
-              <Image source={{ uri: photoUri }} style={styles.photo} />
+            <View
+              key={`photo-${index}`}
+              className="rounded-lg overflow-hidden bg-muted"
+              style={{ width: '31.5%', aspectRatio: 1 }}
+            >
+              <Image source={{ uri: photoUri }} style={{ alignSelf: 'stretch', height: '100%' }} />
               <Pressable
                 onPress={() => handleRemovePhoto(index)}
-                style={styles.removeButton}
+                className="absolute items-center justify-center rounded-full"
+                style={{
+                  top: 4,
+                  right: 4,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: `${colors.primaryDeep}99`,
+                }}
                 testID={`photo-upload-remove-${index}`}
                 accessibilityRole="button"
                 accessibilityLabel={t('customer.postTask.removePhoto', 'Remove photo')}
@@ -103,31 +114,39 @@ export default function PhotoUploadScreen() {
           ) : (
             <Pressable
               key={`add-${index}`}
-              style={styles.addCard}
+              className="rounded-lg border-2 border-dashed border-chipInactive bg-muted items-center justify-center gap-xs p-sm"
+              style={{ width: '31.5%', aspectRatio: 1 }}
               onPress={handleAddPhoto}
               testID={`photo-upload-add-${index}`}
               accessibilityRole="button"
               accessibilityLabel={t('common.addPhoto', 'Add Photo')}
             >
-              <View style={styles.addIconWrap}>
+              <View
+                className="w-9 h-9 rounded-full items-center justify-center"
+                style={{ backgroundColor: `${colors.primary}14` }}
+              >
                 <Plus size={20} color={colors.primaryDeep} />
               </View>
-              <Text style={styles.addLabel}>{t('common.addPhoto', 'Add Photo')}</Text>
+              <Text className="text-caption text-primaryDeep font-sans-bold uppercase text-center">
+                {t('common.addPhoto', 'Add Photo')}
+              </Text>
             </Pressable>
           ),
         )}
       </View>
 
-      <View style={styles.helperRow}>
+      <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
-        <Text style={styles.helperText}>
+        <Text className="flex-1 text-caption text-textSecondary">
           {t('customer.postTask.photosOptional', 'Photos are optional — you can skip')}
         </Text>
       </View>
 
-      <View style={styles.tipCard}>
-        <Text style={styles.tipTitle}>{t('customer.postTask.photosTipTitle', 'Photo tip')}</Text>
-        <Text style={styles.tipBody}>
+      <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">
+        <Text className="text-body font-sans-bold text-primaryDeep">
+          {t('customer.postTask.photosTipTitle', 'Photo tip')}
+        </Text>
+        <Text className="text-caption text-primary leading-[20px]">
           {t(
             'customer.postTask.photosTipBody',
             'Natural light and wide shots help Taskers price the work more accurately.',
@@ -137,110 +156,3 @@ export default function PhotoUploadScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  progressHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  progressHint: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  title: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-    lineHeight: typography.heroTitle * 1.22,
-  },
-  subtitle: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.5,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  photoCard: {
-    width: '31.5%',
-    aspectRatio: 1,
-    borderRadius: radius.lg,
-    overflow: 'hidden',
-    backgroundColor: colors.muted,
-  },
-  photo: {
-    alignSelf: 'stretch',
-    height: '100%',
-  },
-  removeButton: {
-    position: 'absolute',
-    top: spacing.xs,
-    right: spacing.xs,
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primaryDeep}99`,
-  },
-  addCard: {
-    width: '31.5%',
-    aspectRatio: 1,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: colors.chipInactive,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-    padding: spacing.sm,
-  },
-  addIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: `${colors.primary}14`,
-  },
-  addLabel: {
-    fontSize: typography.caption,
-    color: colors.primaryDeep,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    textAlign: 'center',
-  },
-  helperRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.xs,
-  },
-  helperText: {
-    flex: 1,
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  tipCard: {
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    backgroundColor: colors.muted,
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  tipTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  tipBody: {
-    fontSize: typography.caption,
-    color: colors.primary,
-    lineHeight: typography.caption * 1.6,
-  },
-});

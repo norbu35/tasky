@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
@@ -12,9 +12,7 @@ import { useTaskDetail } from '../../features/tasks/hooks/useTasks';
 import { ApplicationSentSuccess } from '../../features/tasks/components/ApplicationSentSuccess';
 import { createMobileApiClient } from '../../lib/mobileApiClient';
 import { useAuthStore } from '../../store/authStore';
-import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
 const api = createMobileApiClient();
 
 export default function TaskDetailScreen() {
@@ -106,37 +104,45 @@ export default function TaskDetailScreen() {
         testID="SCR-TASK-002"
       >
         {task && (
-          <View style={styles.content}>
+          <View className="gap-lg">
             {/* Customer info */}
-            <View style={styles.customerSection}>
-              <Text style={styles.customerName}>{task.customer.full_name}</Text>
+            <View className="flex-row items-center gap-sm bg-muted rounded-md p-md">
+              <Text className="text-subtitle font-semibold text-foreground">
+                {task.customer.full_name}
+              </Text>
               {task.customer.rating_avg > 0 && (
-                <Text style={styles.customerRating}>{task.customer.rating_avg.toFixed(1)}</Text>
+                <Text className="text-label font-semibold text-secondary">
+                  {task.customer.rating_avg.toFixed(1)}
+                </Text>
               )}
             </View>
 
             {/* Task description */}
-            <Text style={styles.description}>{task.description}</Text>
+            <Text className="text-body text-foreground leading-[26px]">{task.description}</Text>
 
             {/* Budget */}
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>{t('taskDetails.budget')}</Text>
+            <View className="gap-xs bg-muted rounded-md p-md">
+              <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                {t('taskDetails.budget')}
+              </Text>
               <PriceTag amount={task.budget} size="lg" />
             </View>
 
             {/* Category */}
             {task.category && (
-              <View style={styles.section}>
+              <View className="gap-xs bg-muted rounded-md p-md">
                 <CategoryChip label={task.category.name} isActive />
               </View>
             )}
 
             {/* Location */}
             {task.approximate_location && (
-              <View style={styles.section}>
-                <Text style={styles.sectionLabel}>{t('taskDetails.location')}</Text>
+              <View className="gap-xs bg-muted rounded-md p-md">
+                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                  {t('taskDetails.location')}
+                </Text>
                 <LocationPin text={task.approximate_location} />
-                <Text style={styles.locationNote}>
+                <Text className="text-caption text-textSecondary leading-[20px] mt-xs">
                   {t(
                     'tasker.taskDetail.locationApproximateNote',
                     'Approximate location (exact address shown after booking confirmed)',
@@ -147,9 +153,11 @@ export default function TaskDetailScreen() {
 
             {/* Schedule */}
             {task.scheduled_at && (
-              <View style={styles.section}>
-                <Text style={styles.sectionLabel}>{t('taskDetail.dateTime', 'Date & Time')}</Text>
-                <Text style={styles.scheduleText}>
+              <View className="gap-xs bg-muted rounded-md p-md">
+                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                  {t('taskDetail.dateTime', 'Date & Time')}
+                </Text>
+                <Text className="text-body text-foreground">
                   {new Date(task.scheduled_at).toLocaleDateString('en', {
                     weekday: 'long',
                     month: 'long',
@@ -162,8 +170,8 @@ export default function TaskDetailScreen() {
             )}
 
             {task.photo_urls.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionLabel}>
+              <View className="gap-xs bg-muted rounded-md p-md">
+                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
                   {t('tasker.taskDetail.photosLabel', 'Photos')}
                 </Text>
                 <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
@@ -172,7 +180,7 @@ export default function TaskDetailScreen() {
 
             {/* Application count */}
             {task.application_count > 0 && (
-              <Text style={styles.applicantCount}>
+              <Text className="text-label text-textSecondary mt-sm">
                 {task.application_count} {t('customer.taskDetail.applicants', 'applicants')}
               </Text>
             )}
@@ -191,60 +199,3 @@ export default function TaskDetailScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    gap: spacing.lg,
-  },
-  customerSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  customerName: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.foreground,
-  },
-  customerRating: {
-    fontSize: typography.label,
-    fontWeight: '600',
-    color: colors.secondary,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.foreground,
-    lineHeight: typography.body * 1.6,
-  },
-  section: {
-    gap: spacing.xs,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  sectionLabel: {
-    fontSize: typography.caption,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  scheduleText: {
-    fontSize: typography.body,
-    color: colors.foreground,
-  },
-  locationNote: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.5,
-    marginTop: spacing.xs,
-  },
-  applicantCount: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
-  },
-});

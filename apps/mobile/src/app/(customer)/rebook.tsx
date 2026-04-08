@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { FormWizardTemplate } from '../../components/templates/FormWizardTemplate';
@@ -7,11 +7,10 @@ import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useCreateTask } from '../../features/tasks/hooks/useCreateTask';
 import { useCreateBookingIntent } from '../../features/bookings/hooks/useCreateBookingIntent';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations } from '../../design/elevations';
-import { screenLayout, screenTypography } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 function formatDateTime(value: Date): string {
   const y = value.getFullYear();
@@ -116,53 +115,57 @@ export default function RebookScreen() {
       showBack
     >
       {/* Prefilled Note */}
-      <Text style={styles.prefilledNote}>
+      <Text className="text-caption text-accent italic mb-item">
         {t('customer.bookings.prefilledNote', 'Prefilled from previous booking. You can edit.')}
       </Text>
 
       {/* Tasker Info Card */}
-      <View style={styles.taskerCard}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-section bg-muted rounded-md p-card" style={elevations.soft}>
+        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
           {t('customer.bookings.sectionPreviousTasker', 'Previous Tasker')}
         </Text>
-        <View style={styles.taskerRow}>
+        <View className="flex-row items-center gap-md">
           <ProfileAvatar
             uri={params.taskerAvatar}
             name={params.taskerName}
             size="lg"
             showVerified
           />
-          <View style={styles.taskerInfo}>
-            <Text style={styles.taskerName}>{params.taskerName}</Text>
+          <View className="flex-1">
+            <Text className="text-body font-semibold text-primaryDeep">{params.taskerName}</Text>
           </View>
         </View>
       </View>
 
       {/* Task Details */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-section">
+        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
           {t('customer.bookings.sectionTaskDetails', 'Task Details')}
         </Text>
-        <Text style={styles.categoryName}>{params.categoryName}</Text>
-        <Text style={styles.description}>{params.description}</Text>
-        {params.locationText && <Text style={styles.detailText}>{params.locationText}</Text>}
+        <Text className="text-body font-semibold text-primaryDeep mb-xs">{params.categoryName}</Text>
+        <Text className="text-body text-primaryDeep mb-sm">{params.description}</Text>
+        {params.locationText && (
+          <Text className="text-caption text-textSecondary">{params.locationText}</Text>
+        )}
       </View>
 
       {/* Schedule */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-section">
+        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
           {t('customer.bookings.labelNewSchedule', 'New Schedule')}
         </Text>
-        <Pressable style={styles.datePicker} testID="rebook-screen-date-picker">
-          <Text style={styles.dateText}>{formatDateTime(selectedDate)}</Text>
+        <Pressable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
+          <Text className="text-body text-primaryDeep">{formatDateTime(selectedDate)}</Text>
         </Pressable>
       </View>
 
       {/* Budget */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('customer.bookings.labelBudget', 'Budget')}</Text>
+      <View className="mb-section">
+        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
+          {t('customer.bookings.labelBudget', 'Budget')}
+        </Text>
         <Input
-          style={styles.budgetInput}
+          className="rounded-md bg-muted"
           value={budget}
           onChangeText={setBudget}
           keyboardType="numeric"
@@ -170,7 +173,7 @@ export default function RebookScreen() {
           testID="rebook-screen-budget"
         />
         {budgetTooLow ? (
-          <Text style={styles.errorText}>
+          <Text className="text-caption text-danger mt-xs">
             {t('customer.bookings.rebookBudgetLow', 'Budget must be above ₮1,001')}
           </Text>
         ) : null}
@@ -178,75 +181,3 @@ export default function RebookScreen() {
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  prefilledNote: {
-    fontSize: typography.caption,
-    color: colors.accent,
-    fontStyle: 'italic',
-    marginBottom: screenLayout.body.itemGap,
-  },
-  taskerCard: {
-    marginBottom: screenLayout.body.sectionGap,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: screenLayout.body.cardPadding,
-    ...elevations.soft,
-  },
-  sectionTitle: {
-    fontSize: screenTypography.sectionTitle.fontSize,
-    lineHeight: screenTypography.sectionTitle.lineHeight,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    marginBottom: screenLayout.body.itemGap,
-  },
-  taskerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  taskerInfo: {
-    flex: 1,
-  },
-  taskerName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-  },
-  section: {
-    marginBottom: screenLayout.body.sectionGap,
-  },
-  categoryName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-    marginBottom: spacing.xs,
-  },
-  description: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    marginBottom: spacing.sm,
-  },
-  detailText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  datePicker: {
-    borderRadius: radius.md,
-    padding: screenLayout.body.cardPadding,
-    backgroundColor: colors.muted,
-  },
-  dateText: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-  },
-  budgetInput: {
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  errorText: {
-    fontSize: typography.caption,
-    color: colors.danger,
-    marginTop: spacing.xs,
-  },
-});

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../components/templates/DetailTemplate';
@@ -7,9 +7,6 @@ import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { PriceTag } from '../../../components/ui/PriceTag';
 import { useAcceptApplication } from '../../../features/bookings/hooks/useAcceptApplication';
 import { useConfirmBookingIntent } from '../../../features/bookings/hooks/useConfirmBookingIntent';
-import { mobileTheme } from '../../../design/tokenAdapter';
-
-const { colors, spacing, typography, radius } = mobileTheme;
 
 export default function BookingConfirmScreen() {
   const { t } = useTranslation();
@@ -63,31 +60,36 @@ export default function BookingConfirmScreen() {
       ctaOnPress={handleConfirm}
       ctaLoading={isPending || isConfirmingIntent}
       ctaDisabled={!disclaimerChecked}
-     
     >
       {/* Tasker Info */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('customer.bookings.sectionTasker', 'Tasker')}</Text>
-        <View style={styles.taskerRow}>
+      <View className="mb-xl">
+        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+          {t('customer.bookings.sectionTasker', 'Tasker')}
+        </Text>
+        <View className="flex-row items-center gap-md bg-muted rounded-md p-md">
           <ProfileAvatar
             uri={params.taskerAvatar}
             name={params.taskerName}
             size="lg"
             showVerified
           />
-          <View style={styles.taskerInfo}>
-            <Text style={styles.taskerName}>{params.taskerName}</Text>
-            {params.taskerRating && <Text style={styles.taskerRating}>{params.taskerRating}</Text>}
+          <View className="flex-1">
+            <Text className="text-body font-semibold text-primaryDeep">{params.taskerName}</Text>
+            {params.taskerRating && (
+              <Text className="text-caption text-textSecondary mt-xs">{params.taskerRating}</Text>
+            )}
           </View>
         </View>
       </View>
 
       {/* Task Summary */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('customer.bookings.sectionTask', 'Task')}</Text>
-        <Text style={styles.taskTitle}>{params.taskTitle}</Text>
+      <View className="mb-xl">
+        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+          {t('customer.bookings.sectionTask', 'Task')}
+        </Text>
+        <Text className="text-body text-primaryDeep mb-sm">{params.taskTitle}</Text>
         {params.taskSchedule && (
-          <Text style={styles.detailText}>
+          <Text className="text-caption text-textSecondary mb-sm">
             {new Date(params.taskSchedule).toLocaleDateString()}
           </Text>
         )}
@@ -95,45 +97,53 @@ export default function BookingConfirmScreen() {
       </View>
 
       {/* Payment Note */}
-      <View style={styles.section}>
-        <Text style={styles.paymentNote}>
+      <View className="mb-xl">
+        <Text className="text-caption text-accent italic">
           {t('customer.bookings.paymentNote', 'Payment is arranged directly with the Tasker')}
         </Text>
       </View>
 
       {/* Disclaimer */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
+      <View className="mb-xl">
+        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
           {t('customer.bookings.sectionDisclaimer', 'Liability Disclaimer')}
         </Text>
-        <Text style={styles.disclaimerText}>
+        <Text className="text-caption text-textSecondary leading-[20px] mb-md">
           {t(
             'customer.bookings.disclaimerText',
             'Tasky is a platform connecting Customers and Taskers. Payment is arranged directly between parties. The platform is not a payment intermediary and bears no liability for arrangements made off-platform',
           )}
         </Text>
         <Pressable
-          style={styles.checkboxRow}
+          className="flex-row items-center gap-sm"
           onPress={() => setDisclaimerChecked(!disclaimerChecked)}
           testID="booking-confirm-screen-disclaimer"
           accessibilityRole="checkbox"
           accessibilityState={{ checked: disclaimerChecked }}
         >
-          <View style={[styles.checkbox, disclaimerChecked && styles.checkboxChecked]}>
-            {disclaimerChecked && <Text style={styles.checkmark}>{'✓'}</Text>}
+          <View
+            className={
+              disclaimerChecked
+                ? 'w-6 h-6 rounded-xs border-2 border-primary bg-primary items-center justify-center'
+                : 'w-6 h-6 rounded-xs border-2 border-border items-center justify-center'
+            }
+          >
+            {disclaimerChecked && (
+              <Text className="text-primaryForeground text-[14px] font-bold">{'✓'}</Text>
+            )}
           </View>
-          <Text style={styles.checkboxLabel}>
+          <Text className="text-body text-primaryDeep flex-1">
             {t('customer.bookings.disclaimerAcknowledge', 'I agree to these terms')}
           </Text>
         </Pressable>
       </View>
 
       {/* Calendar Prompt */}
-      <View style={styles.section}>
-        <Text style={styles.calendarPrompt}>
+      <View className="mb-xl">
+        <Text className="text-subtitle font-semibold text-primary mb-sm">
           {t('customer.bookings.calendarPromptTitle', 'Add to calendar?')}
         </Text>
-        <Text style={styles.calendarBody}>
+        <Text className="text-caption text-textSecondary">
           {t(
             'customer.bookings.calendarPromptBody',
             'Add the scheduled time to your calendar for a reminder',
@@ -143,95 +153,3 @@ export default function BookingConfirmScreen() {
     </DetailTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-    marginBottom: spacing.md,
-  },
-  taskerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  taskerInfo: {
-    flex: 1,
-  },
-  taskerName: {
-    fontSize: typography.body,
-    fontWeight: '600',
-    color: colors.primaryDeep,
-  },
-  taskerRating: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  taskTitle: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    marginBottom: spacing.sm,
-  },
-  detailText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  paymentNote: {
-    fontSize: typography.caption,
-    color: colors.accent,
-    fontStyle: 'italic',
-  },
-  disclaimerText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    lineHeight: typography.caption * 1.6,
-    marginBottom: spacing.md,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.xs,
-    borderWidth: 2,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  checkmark: {
-    color: colors.primaryForeground,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  checkboxLabel: {
-    fontSize: typography.body,
-    color: colors.primaryDeep,
-    flex: 1,
-  },
-  calendarPrompt: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
-    marginBottom: spacing.sm,
-  },
-  calendarBody: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-});

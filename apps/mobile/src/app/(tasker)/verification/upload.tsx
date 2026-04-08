@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Camera, ImageIcon } from 'lucide-react-native';
@@ -10,7 +10,7 @@ import { useVerificationUpload } from '../../../features/verification/hooks/useV
 import { mobileTheme } from '../../../design/tokenAdapter';
 import { Button } from '../../../components/ui/Button';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors } = mobileTheme;
 
 const STEPS = ['FRONT', 'BACK', 'SELFIE'] as const;
 type DocumentSide = (typeof STEPS)[number];
@@ -124,27 +124,39 @@ export default function UploadScreen() {
       nextLabel={nextLabel}
       nextDisabled={!hasPhoto}
       nextLoading={isSubmitting}
-     
     >
-      <Text style={styles.stepLabel}>{t(STEP_LABELS[currentSide])}</Text>
+      <Text className="text-caption font-sans-bold text-textSecondary text-center uppercase tracking-[0.8px] mb-lg">
+        {t(STEP_LABELS[currentSide])}
+      </Text>
 
       {currentPhoto ? (
-        <View style={styles.previewContainer}>
-          <Image source={{ uri: currentPhoto }} style={styles.preview} testID="photo-preview" />
+        <View className="items-center mb-lg">
+          <Image
+            source={{ uri: currentPhoto }}
+            className="rounded-md bg-muted"
+            style={{ width: 280, height: 200 }}
+            testID="photo-preview"
+          />
         </View>
       ) : (
-        <View style={styles.placeholderContainer}>
+        <View className="items-center justify-center h-[200px] bg-muted rounded-md mb-lg">
           <Camera size={48} color={colors.muted} />
-          <Text style={styles.placeholderText}>{t('tasker.verification.uploadCapture')}</Text>
+          <Text className="text-body text-textSecondary mt-sm">
+            {t('tasker.verification.uploadCapture')}
+          </Text>
         </View>
       )}
 
       {showReview ? (
-        <View style={styles.reviewContainer} testID="verification-review">
-          <Text style={styles.reviewHeading}>{t('tasker.verification.reviewHeading')}</Text>
-          <Text style={styles.reviewBody}>{t('tasker.verification.reviewDescription')}</Text>
+        <View className="gap-md p-lg rounded-md bg-muted" testID="verification-review">
+          <Text className="text-subtitle font-semibold text-primary">
+            {t('tasker.verification.reviewHeading')}
+          </Text>
+          <Text className="text-body text-textSecondary leading-[26px]">
+            {t('tasker.verification.reviewDescription')}
+          </Text>
 
-          <View style={styles.reviewGrid}>
+          <View className="gap-md">
             {(
               [
                 ['FRONT', 'review-front-thumb', 'retake-front-btn'],
@@ -152,10 +164,11 @@ export default function UploadScreen() {
                 ['SELFIE', 'review-selfie-thumb', 'retake-selfie-btn'],
               ] as const
             ).map(([side, thumbTestID, buttonTestID]) => (
-              <View key={side} style={styles.reviewCard}>
+              <View key={side} className="gap-sm">
                 <Image
                   source={{ uri: photos[side] ?? '' }}
-                  style={styles.reviewThumb}
+                  className="rounded-md bg-muted"
+                  style={{ alignSelf: 'stretch', height: 96 }}
                   testID={thumbTestID}
                 />
                 <Button
@@ -171,108 +184,29 @@ export default function UploadScreen() {
         </View>
       ) : null}
 
-      <View style={styles.captureButtons}>
+      <View className="flex-row gap-md justify-center">
         <Pressable
-          style={styles.captureBtn}
+          className="flex-row items-center gap-sm py-sm px-md rounded-md border border-border bg-card"
           onPress={captureFromCamera}
           testID="capture-camera-btn"
         >
           <Camera size={20} color={colors.primary} />
-          <Text style={styles.captureBtnText}>{t('tasker.verification.uploadCapture')}</Text>
+          <Text className="text-body text-primary">
+            {t('tasker.verification.uploadCapture')}
+          </Text>
         </Pressable>
 
         <Pressable
-          style={styles.captureBtn}
+          className="flex-row items-center gap-sm py-sm px-md rounded-md border border-border bg-card"
           onPress={captureFromGallery}
           testID="capture-gallery-btn"
         >
           <ImageIcon size={20} color={colors.primary} />
-          <Text style={styles.captureBtnText}>{t('tasker.verification.uploadGallery')}</Text>
+          <Text className="text-body text-primary">
+            {t('tasker.verification.uploadGallery')}
+          </Text>
         </Pressable>
       </View>
     </FormWizardTemplate>
   );
 }
-
-const styles = StyleSheet.create({
-  stepLabel: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: spacing.lg,
-  },
-  previewContainer: {
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  preview: {
-    width: 280,
-    height: 200,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  placeholderContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 200,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    marginBottom: spacing.lg,
-  },
-  placeholderText: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
-  },
-  reviewContainer: {
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  reviewHeading: {
-    fontSize: typography.subtitle,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  reviewBody: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-    lineHeight: typography.body * 1.6,
-  },
-  reviewGrid: {
-    gap: spacing.md,
-  },
-  reviewCard: {
-    gap: spacing.sm,
-  },
-  reviewThumb: {
-    alignSelf: 'stretch',
-    height: 96,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-  },
-  captureButtons: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    justifyContent: 'center',
-  },
-  captureBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  captureBtnText: {
-    fontSize: typography.body,
-    color: colors.primary,
-  },
-});
