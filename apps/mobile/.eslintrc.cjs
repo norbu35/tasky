@@ -24,7 +24,7 @@ module.exports = {
                         }
                     ]
                 }],
-                "no-restricted-syntax": ["warn",
+                "no-restricted-syntax": ["error",
                     {
                         selector: "CallExpression[callee.object.name='StyleSheet'][callee.property.name='create']",
                         message: "Screens must use NativeWind className instead of StyleSheet.create. See docs/superpowers/specs/2026-04-08-mobile-ui-centralization-design.md"
