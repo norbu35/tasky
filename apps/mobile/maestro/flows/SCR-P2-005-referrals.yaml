@@ -2,10 +2,13 @@ appId: mn.tasky.mobile
 ---
 # Screen SCR-P2-005: Referral Code & Stats
 # Flow type: smoke test
+# STATUS: BLOCKED — depends on SCR-P2-001 which has no Phase 1 navigation entry point.
+# Referrals are reachable from credits (tasker-credits-referrals), but credits itself is unreachable.
 
 - launchApp
 - runFlow: _support/login-tasker.yaml
 
+# TODO: add navigation to credits then referrals before this assertion
 - extendedWaitUntil:
     visible:
       id: "SCR-P2-001"

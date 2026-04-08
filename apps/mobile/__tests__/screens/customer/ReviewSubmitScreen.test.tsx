@@ -68,7 +68,7 @@ beforeEach(() => {
 describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
   it('has a testID on the screen container', () => {
     render(<ReviewSubmitScreen />);
-    expect(screen.getByTestId('review-submit-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-007')).toBeTruthy();
   });
 
   it('shows task summary with description', () => {
@@ -124,7 +124,7 @@ describe('ReviewSubmitScreen (SCR-CUST-007)', () => {
       isPending: true,
     });
     render(<ReviewSubmitScreen />);
-    expect(screen.getByTestId('review-submit-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-007')).toBeTruthy();
   });
 
   it('navigates to success on successful submit', async () => {

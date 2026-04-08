@@ -3,34 +3,40 @@ appId: mn.tasky.mobile
 # Journey JRN-SHARED-05: Profile Management
 # Source: docs/design/journey-catalog.yaml
 # Covered states: SCR-SHARED-012 (profile), SCR-SHARED-013 (profile edit)
-# Actor: customer or tasker
+# Actor: tasker (only taskers have the (tabs) navigator with profile tab)
 # Flow type: happy path
 # Note: profile/edit.tsx has TODO markers; test navigation only, not deep form validation
+# Note: SCR-SHARED-012-cta = "Edit Profile" CTA from DetailTemplate convention
 
-- launchApp
+- launchApp:
+    clearState: true
 
-- runFlow: _support/login-customer.yaml
+- runFlow: _support/login-tasker.yaml
 
-# Navigate to Profile tab
+# Navigate to Profile tab (tasker (tabs) navigator)
+# tabBarButton with testID="tab-profile" in (tabs)/_layout.tsx
 - tapOn:
     id: "tab-profile"
 
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-012"
-    timeout: 5000
+    timeout: 10000
 
-# Tap Edit Profile
+# Tap Edit Profile CTA (DetailTemplate derives testID as SCR-SHARED-012-cta)
 - tapOn:
-    id: "profile-edit-button"
+    id: "SCR-SHARED-012-cta"
+- waitForAnimationToEnd
 
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-013"
-    timeout: 5000
+    timeout: 10000
 
 # Go back without saving
 - tapOn: "Back"
 
-- assertVisible:
-    id: "SCR-SHARED-012"
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-012"
+    timeout: 5000

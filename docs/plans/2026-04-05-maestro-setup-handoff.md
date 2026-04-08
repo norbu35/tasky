@@ -6,10 +6,12 @@
 
 ## 1. Findings & Context
 
-We started setting up Maestro for E2E testing to catch layout bugs (like Flexbox collapsing issues in React Native that Jest cannot catch). 
-To do this efficiently, we analyzed the design specifications to use as our Single Source of Truth (SSoT):
+We started setting up Maestro for E2E testing to catch layout bugs (like Flexbox collapsing issues in React Native that Jest cannot catch).
+To do this efficiently, we analyzed the design specifications using the repaired authority chain:
 - **User Flows:** `docs/design/journey-catalog.yaml`
-- **Screens & Routes:** `docs/design/screen-inventory.yaml`
+- **Screen Route/State Authority:** `docs/design/screen-specs/SCR-*.yaml`
+- **State Coverage Checklist:** `docs/design/state-matrix.yaml`
+- **Synchronized Summary Only:** `docs/design/screen-inventory.yaml`
 - **Traceability Rules:** `docs/ARCHITECTURE.md` (mandates `TID-*` or `SCR-*` identifiers for testing).
 
 **The Drift We Discovered:**
@@ -20,8 +22,8 @@ To do this efficiently, we analyzed the design specifications to use as our Sing
 
 1. **Installed Maestro:** Maestro CLI is installed locally.
 2. **Wrote Initial Flows:** Translated `JRN-SHARED-01` into an executable Maestro flow at `apps/mobile/maestro/flows/JRN-SHARED-01-onboarding.yaml` and created a smoke test (`smoke-feed.yaml`).
-3. **Fixed Routes:** Ran a script to map the actual Expo Router paths back to `docs/design/screen-inventory.yaml` so the spec reflects reality.
-4. **Injected TestIDs:** Used a script to inject the official `SCR-*` tags into the topmost layout components of each screen in `apps/mobile/src/app/**/*.tsx`. 
+3. **Fixed Routes:** Route and state authority now belong to `docs/design/screen-specs/SCR-*.yaml`; `docs/design/screen-inventory.yaml` is a synchronized summary only.
+4. **Injected TestIDs:** Used a script to inject the official `SCR-*` tags into the topmost layout components of each screen in `apps/mobile/src/app/**/*.tsx`.
 5. **Fixed Type Errors:** Many files ended up with duplicate `testID` props (e.g., `testID="SCR-SHARED-002" testID="login-screen"`). We successfully cleaned up 40+ of these duplicates.
 
 ## 3. What's Left To Be Done
@@ -47,7 +49,27 @@ The files currently failing due to `JSX elements cannot have multiple attributes
 **Action:** Open each file, locate the duplicated `testID` props on the root `ScreenContainer` or `DetailTemplate`, keep the `SCR-*` identifier, and remove the legacy ad-hoc identifier. Then verify with `pnpm --filter @tasky/mobile test`.
 
 ### Step B: Write Maestro Test Specifications
-Once the build is green, the architecture is fully aligned.
-You can now use `docs/design/journey-catalog.yaml` to write the remaining Maestro flow files inside `apps/mobile/maestro/flows/`. 
+Once the build is green, the architecture is aligned enough to continue Maestro authoring.
+You can now use `docs/design/journey-catalog.yaml` plus `docs/design/screen-specs/SCR-*.yaml` to write the remaining Maestro flow files inside `apps/mobile/maestro/flows/`.
+
+## Maestro Coverage Model
+1. **Journey flows:** one Maestro flow per `JRN-*` happy path, plus selected high-risk alternate paths.
+2. **Screen/state coverage:** additional Maestro smoke/state flows for screens or required states not covered by journeys.
+
+Route and state authority for Maestro come from `docs/design/screen-specs/SCR-*.yaml`.
+`docs/design/journey-catalog.yaml` defines flow coverage.
+`docs/design/state-matrix.yaml` defines required state coverage.
+`docs/design/screen-inventory.yaml` is a synchronized summary only.
+
+When a route is needed for implementation or debugging, look it up in the matching `screen-specs/SCR-*.yaml` file first.
+
+Known uncovered families still requiring explicit Maestro planning beyond journey happy paths:
+- Notification Center
+- Legal/help/privacy/stats surfaces
+- B2B surfaces — **not implemented in codebase; defer entirely**
+- Phase 2 monetization screens — **implemented: credits (P2-001..003), referrals (P2-005); P2-004 (task boost) missing**
+- Phase 3 wallet/escrow/subscription/instant match — **implemented: all Phase 3 screens present**
+
+**Implementation status audit (2026-04-05):** See `docs/quality/mobile-implementation-status-2026-04-05.md` for the definitive per-screen and per-journey implementation status derived from static analysis of the full mobile codebase. This supersedes the earlier assumption that only Phase 0-1 was available. Phase 2 is substantially implemented. Phase 3 screens are present. B2B is the only family with zero implementation.
 
 When writing Maestro `.yaml` files, **always use the injected `SCR-*` IDs** (e.g., `- assertVisible: id: "SCR-SHARED-002"`) to ensure the tests remain robust against localization changes and structural redesigns.

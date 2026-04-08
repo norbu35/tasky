@@ -51,11 +51,8 @@ appId: mn.tasky.mobile
 - tapOn:
     id: "review-submit-button"
 
-# Confirm we returned to booking detail or task list
+# Confirm we returned to booking detail (anyOf not supported — assert primary outcome)
 - extendedWaitUntil:
-    anyOf:
-      - visible:
-          id: "SCR-CUST-017"
-      - visible:
-          id: "SCR-CUST-001"
+    visible:
+      id: "SCR-CUST-017"
     timeout: 5000

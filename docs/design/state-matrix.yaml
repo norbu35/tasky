@@ -26,8 +26,6 @@ matrix:
   SCR-SHARED-001:
     default: R
     loading: R
-    error_network: N/A
-    offline: N/A
     note: "Pure client-side splash, no API"
 
   SCR-SHARED-002:
@@ -230,12 +228,12 @@ matrix:
     budget_entry: R
     validation_budget_low: R
     validation_schedule_past: R
-    submitting: R
-    submit_error: R
 
   SCR-CUST-007:
     review: R
     editing_summary: R
+    submitting: R
+    submit_error: R
 
   SCR-CUST-008:
     default: R

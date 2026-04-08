@@ -13,9 +13,8 @@ import { RoleProvider } from '../../src/providers/RoleProvider';
 import { useTasks } from '../../src/features/tasks/hooks/useTasks';
 import { useMyTasks } from '../../src/features/tasks/hooks/useMyTasks';
 import { useMyProfile } from '../../src/features/profile/hooks/useProfile';
-import FeedScreen from '../../src/app/(tabs)/index';
+import HomeTab from '../../src/app/(tabs)/index';
 import TabsLayout from '../../src/app/(tabs)/_layout';
-import TasksScreen from '../../src/app/(tabs)/tasks';
 import MyProfileScreen from '../../src/app/(tabs)/profile';
 
 jest.mock('expo-router', () => {
@@ -134,7 +133,11 @@ describe('Tasker journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <HomeTab />
+        </RoleProvider>,
+      );
 
       expect(screen.getByText('Window cleaning')).toBeTruthy();
       expect(screen.getByTestId('task-card-public-task-1')).toBeTruthy();
@@ -152,7 +155,11 @@ describe('Tasker journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <HomeTab />
+        </RoleProvider>,
+      );
 
       expect(screen.getByText('Window cleaning')).toBeTruthy();
       expect(screen.getByText('Fix broken pipe')).toBeTruthy();
@@ -169,16 +176,8 @@ describe('Tasker journey integration', () => {
         </RoleProvider>,
       );
 
-      expect(screen.getByTestId('tab-index')).toHaveTextContent('FIND WORK');
-      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('MY JOBS');
-    });
-  });
-
-  describe('Hidden tasks screen', () => {
-    it('renders My Tasks text', () => {
-      render(<TasksScreen />);
-
-      expect(screen.getByText(/My Tasks|Миний даалгаврууд/)).toBeTruthy();
+      expect(screen.getByTestId('tab-index')).toHaveTextContent('Browse');
+      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('My Jobs');
     });
   });
 

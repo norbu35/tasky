@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 
-import TasksTabScreen from '../../../src/app/(tabs)/tasks';
+import TasksTabScreen from '../../../src/app/(customer)/tasks/index';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),

@@ -3,6 +3,10 @@ appId: mn.tasky.mobile
 # Screen SCR-P3-003: Escrow Payment Flow
 # Flow type: smoke test
 # Precondition: Logged in as customer; booking eligible for escrow payment exists
+# STATUS: BLOCKED — two reasons:
+#   1. Customer uses Stack navigator; tab-bookings does not exist.
+#   2. Requires backend data: an escrow-eligible booking must exist.
+# Will be enabled when Phase 3 is released with real booking data.
 
 - launchApp
 - runFlow: _support/login-customer.yaml

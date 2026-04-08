@@ -2,16 +2,25 @@ appId: mn.tasky.mobile
 ---
 # Screen SCR-TASK-018: Privacy Policy
 # Flow type: smoke test
+# Note: reachable from login screen footer (no auth required)
 
-- launchApp
-- runFlow: _support/login-customer.yaml
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 30000
+
+# Scroll down to reveal footer links (they are below the sticky action bar)
+- scrollUntilVisible:
+    element:
+      id: "login-footer-privacy"
+    direction: down
+    timeout: 5000
 
 - tapOn:
-    id: "tab-profile"
-- tapOn:
-    id: "profile-settings-button"
-- tapOn:
-    id: "settings-privacy-link"
+    id: "login-footer-privacy"
 
 - extendedWaitUntil:
     visible:

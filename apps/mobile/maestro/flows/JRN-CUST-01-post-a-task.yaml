@@ -5,9 +5,9 @@ appId: mn.tasky.mobile
 # Covered states: SCR-CUST-001..008 (full wizard)
 # Actor: customer
 # Flow type: happy path
-# Note: category/intake/location/schedule have TODOs but happy path navigation works
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-customer.yaml
 
@@ -16,21 +16,22 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-001"
     timeout: 5000
 
-# Tap FAB to post new task
+# Tap empty-state CTA to post new task
+# Note: FAB uses AnimatedPressable (Reanimated) which is unreliable in Maestro — use empty state CTA instead
 - tapOn:
-    id: "my-tasks-fab"
+    id: "my-tasks-feed-empty-cta"
 
-# Step 1: Category selection
+# Step 1: Category selection (SCR-CUST-002)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-002"
-    timeout: 5000
+    timeout: 10000
 
-# Tap first category card in grid
+# Tap first category card in grid (dev seed: dev-cat-001 = Cleaning)
 - tapOn:
-    id: "category-selection-grid"
+    id: "category-item-dev-cat-001"
 
-# Step 2: Intake form
+# Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-003"
@@ -40,32 +41,41 @@ appId: mn.tasky.mobile
     id: "intake-description-input"
 - inputText: "Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин."
 
+# Tap non-interactive header to dismiss keyboard (hideKeyboard fails on RN custom inputs)
 - tapOn:
-    id: "intake-next-button"
+    id: "intake-header"
+# Wait for keyboard dismiss animation to complete before tapping the button
+- waitForAnimationToEnd
+- tapOn:
+    id: "SCR-CUST-003-next"
 
-# Step 3: Photo upload (skip — tap next/continue)
+# Step 3: Photo upload (SCR-CUST-004) — skip photos, tap continue
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-004"
     timeout: 5000
 
 - tapOn:
-    id: "photo-upload-next-button"
+    id: "SCR-CUST-004-next"
 
-# Step 4: Location pin
+# Step 4: Location pin (SCR-CUST-005)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-005"
     timeout: 5000
 
-# Accept current location or use default
+# Tap map to drop a pin (enables Next button)
 - tapOn:
-    id: "location-use-current"
+    id: "location-map"
+
+# Tap quick location chip to set location description (required by review screen)
+- tapOn:
+    id: "location-quick-Home"
 
 - tapOn:
-    id: "location-next-button"
+    id: "SCR-CUST-005-next"
 
-# Step 5: Schedule & budget
+# Step 5: Schedule & budget (SCR-CUST-006)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-006"
@@ -73,25 +83,49 @@ appId: mn.tasky.mobile
 
 - tapOn:
     id: "schedule-budget-input"
-- clearText
+- eraseText: 20
 - inputText: "50000"
 
+# Dismiss keyboard, then select date/time
 - tapOn:
-    id: "schedule-next-button"
+    id: "schedule-header"
+- waitForAnimationToEnd
 
-# Step 6: Review & submit
+# Open date picker and confirm default (tomorrow)
+- tapOn:
+    id: "schedule-date-input"
+- extendedWaitUntil:
+    visible:
+      id: "schedule-ios-picker-card"
+    timeout: 5000
+- tapOn:
+    id: "schedule-picker-confirm"
+- waitForAnimationToEnd
+
+# Open time picker and confirm default (10:00)
+- tapOn:
+    id: "schedule-time-input"
+- extendedWaitUntil:
+    visible:
+      id: "schedule-ios-picker-card"
+    timeout: 5000
+- tapOn:
+    id: "schedule-picker-confirm"
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "SCR-CUST-006-next"
+
+# Step 6: Review & submit (SCR-CUST-007)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-007"
     timeout: 5000
 
-- assertVisible:
-    id: "review-submit-screen"
-
 - tapOn:
-    id: "review-submit-button"
+    id: "SCR-CUST-007-cta"
 
-# Step 7: Success
+# Step 7: Success (SCR-CUST-008)
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-008"

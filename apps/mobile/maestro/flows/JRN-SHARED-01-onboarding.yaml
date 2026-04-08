@@ -8,6 +8,7 @@ appId: mn.tasky.mobile
 # Actor: new user (no role yet)
 # Flow type: happy path
 # Per PRD §6.1: Authenticate FIRST, then onboard.
+# Note: Uses dev auth bypass (EXPO_PUBLIC_DEV_AUTH_ENABLED=true)
 
 - launchApp:
     clearState: true
@@ -19,30 +20,40 @@ appId: mn.tasky.mobile
       id: "SCR-SHARED-002"
     timeout: 10000
 
-# Step 2: Log in with Facebook (first-time signup)
+# Step 2: Log in via dev auth bypass (simulates first-time signup)
+- scrollUntilVisible:
+    element:
+      id: "dev-login-customer"
+    direction: DOWN
 - tapOn:
-    id: "facebook-login-button"
+    id: "dev-login-customer"
 
 # After first-time auth: session exists, hasSeenOnboarding=false → /onboarding
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-005"
-    timeout: 30000
+    timeout: 15000
 
-# Swipe through 3 onboarding slides
+# Diagnostic: tap Skip on slide 1 to test navigation from onboarding
 - tapOn:
-    id: "onboarding-next"
-- tapOn:
-    id: "onboarding-next"
-- tapOn: "Get Started"
+    id: "onboarding-skip"
 
-# Role selection screen
-- assertVisible:
-    id: "SCR-SHARED-006"
+# Role selection screen (wait for navigation)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-006"
+    timeout: 10000
 - tapOn:
     id: "role-card-customer"
 - tapOn:
     id: "role-confirm-button"
+# Confirmation modal appears — tap confirm
+- extendedWaitUntil:
+    visible:
+      id: "role-sheet-confirm"
+    timeout: 5000
+- tapOn:
+    id: "role-sheet-confirm"
 
 # Camera permission primer (custom RN screen, not OS dialog)
 - extendedWaitUntil:

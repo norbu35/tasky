@@ -3,13 +3,63 @@ appId: mn.tasky.mobile
 # _support/login-tasker.yaml
 # Precondition: App is launched and at login screen (SCR-SHARED-002)
 # Postcondition: User is logged in as Tasker and on tasker feed (SCR-TASK-001)
-# Requires: Test device configured with a Facebook test account that has tasker role
+# Uses dev auth bypass (EXPO_PUBLIC_DEV_AUTH_ENABLED=true required)
+# Handles the onboarding flow if clearState cleared hasSeenOnboarding
 
-- assertVisible:
-    id: "SCR-SHARED-002"
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "dev-login-tasker"
+    direction: DOWN
 - tapOn:
-    id: "facebook-login-button"
+    id: "dev-login-tasker"
+
+# If onboarding appears (clearState wiped hasSeenOnboarding), go through it as tasker
+- runFlow:
+    when:
+      visible:
+        id: "SCR-SHARED-005"
+    commands:
+      - tapOn:
+          id: "onboarding-skip"
+      - extendedWaitUntil:
+          visible:
+            id: "SCR-SHARED-006"
+          timeout: 10000
+      - tapOn:
+          id: "role-card-tasker"
+      - tapOn:
+          id: "role-confirm-button"
+      - extendedWaitUntil:
+          visible:
+            id: "role-sheet-confirm"
+          timeout: 5000
+      - tapOn:
+          id: "role-sheet-confirm"
+      - waitForAnimationToEnd
+      - extendedWaitUntil:
+          visible:
+            id: "SCR-SHARED-007"
+          timeout: 15000
+      - tapOn:
+          id: "permission-allow-button"
+      - extendedWaitUntil:
+          visible:
+            id: "SCR-SHARED-008"
+          timeout: 10000
+      - tapOn:
+          id: "permission-allow-button"
+      - extendedWaitUntil:
+          visible:
+            id: "SCR-SHARED-009"
+          timeout: 10000
+      - tapOn:
+          id: "permission-allow-button"
+
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-001"
-    timeout: 30000
+    timeout: 15000

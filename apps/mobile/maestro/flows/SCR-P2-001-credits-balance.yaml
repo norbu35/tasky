@@ -2,10 +2,13 @@ appId: mn.tasky.mobile
 ---
 # Screen SCR-P2-001: Credits Balance & Purchase
 # Flow type: smoke test
+# STATUS: BLOCKED — no Phase 1 navigation entry point to (tasker)/credits.
+# Will be enabled when a credits link is added to a Phase 1 screen (e.g., tasker profile/stats).
 
 - launchApp
 - runFlow: _support/login-tasker.yaml
 
+# TODO: add tap navigation once a credits entry point exists in Phase 1 UI
 - extendedWaitUntil:
     visible:
       id: "SCR-P2-001"
