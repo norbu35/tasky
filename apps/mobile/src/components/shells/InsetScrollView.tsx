@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ScrollView,
-  StyleSheet,
   type ScrollViewProps,
   type StyleProp,
   type ViewStyle,
@@ -12,22 +11,24 @@ import { mobileTheme } from '../../design/tokenAdapter';
 type InsetScrollViewProps = ScrollViewProps & {
   extraBottomInset?: number;
   contentContainerStyle?: StyleProp<ViewStyle>;
+  className?: string;
 };
 
 export function InsetScrollView({
   children,
   contentContainerStyle,
   extraBottomInset = 0,
+  className,
   ...scrollProps
 }: InsetScrollViewProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <ScrollView
-      style={[styles.scrollView, scrollProps.style]}
+      className={className ?? 'flex-1'}
       {...scrollProps}
       contentContainerStyle={[
-        styles.contentContainer,
+        { flexGrow: 1 },
         { paddingBottom: insets.bottom + extraBottomInset + mobileTheme.spacing.lg },
         contentContainerStyle,
       ]}
@@ -36,13 +37,3 @@ export function InsetScrollView({
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-  },
-});
-

@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { type StyleProp, type ViewStyle, View } from 'react-native';
 import {
   SafeAreaView,
   type Edge,
   type SafeAreaViewProps,
 } from 'react-native-safe-area-context';
-import { mobileTheme } from '../../design/tokenAdapter';
+import { cn } from '../../lib/cn';
 
 type ScreenContainerProps = {
   children: React.ReactNode;
@@ -13,6 +13,7 @@ type ScreenContainerProps = {
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   edges?: readonly Edge[];
+  className?: string;
 } & Pick<SafeAreaViewProps, 'mode'>;
 
 export function ScreenContainer({
@@ -22,27 +23,19 @@ export function ScreenContainer({
   contentStyle,
   edges = ['top', 'left', 'right'],
   mode = 'padding',
+  className,
 }: ScreenContainerProps) {
   return (
     <SafeAreaView
-      style={[styles.safeArea, style]}
+      style={style}
+      className={cn('flex-1 bg-background', className)}
       edges={edges}
       mode={mode}
       testID={testID}
     >
-      <View style={[styles.content, contentStyle]}>{children}</View>
+      <View style={contentStyle} className="flex-1 bg-background">
+        {children}
+      </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
-  content: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.background,
-  },
-});
-
