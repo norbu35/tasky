@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,8 +18,9 @@ import { useReschedule } from '../../../../features/bookings/hooks/useReschedule
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { elevations } from '../../../../design/elevations';
+import { cn } from '../../../../lib/cn';
 
-const { colors, spacing, typography, radius } = mobileTheme;
+const { colors, spacing, typography } = mobileTheme;
 
 type RescheduleState = 'request_form' | 'awaiting_response' | 'accepted' | 'declined' | 'expired';
 
@@ -116,71 +117,78 @@ export default function RescheduleScreen() {
   return (
     <ScreenContainer testID="SCR-CUST-020">
       <InsetScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing['2xl'], gap: spacing.lg }}
         showsVerticalScrollIndicator={false}
         extraBottomInset={120}
       >
-          <View style={styles.currentScheduleCard}>
-            <View style={styles.currentScheduleCopy}>
-              <Text style={styles.currentScheduleLabel}>
+          {/* Current schedule card */}
+          <View className="flex-row items-center justify-between bg-muted rounded-lg p-lg">
+            <View className="flex-1 gap-xs">
+              <Text className="text-body text-text-secondary">
                 {t('customer.bookings.sectionCurrentSchedule', 'Одоогийн хуваарь')}
               </Text>
-              <View style={styles.currentScheduleValueRow}>
+              <View className="flex-row items-center gap-sm">
                 <CalendarDays size={16} color={colors.primaryDeep} />
-                <Text style={styles.currentScheduleValue}>{scheduledAtLabel}</Text>
+                <Text className="text-body font-sans-bold text-primary-deep">
+                  {scheduledAtLabel}
+                </Text>
               </View>
             </View>
-            <View style={styles.currentScheduleBadge}>
+            <View className="w-[34px] h-[34px] rounded-md bg-card items-center justify-center">
               <Clock3 size={16} color={colors.secondary} />
             </View>
           </View>
 
-          <View style={styles.stepperRow}>
-            <View style={styles.stepperStep}>
-              <View style={styles.stepperStepActive}>
-                <Text style={styles.stepperStepActiveText}>1</Text>
+          {/* Step indicator */}
+          <View className="flex-row items-center justify-between px-sm">
+            <View className="items-center gap-xs">
+              <View className="w-[32px] h-[32px] rounded-md bg-primary-deep items-center justify-center">
+                <Text className="text-micro font-sans-bold text-primary-foreground">1</Text>
               </View>
-              <Text style={styles.stepperLabelActive}>
+              <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
                 {t('customer.bookings.stepChooseDay', 'Өдөр сонгох')}
               </Text>
             </View>
-            <View style={styles.stepperLine} />
-            <View style={[styles.stepperStep, styles.stepperStepDisabled]}>
-              <View style={styles.stepperStepInactive}>
-                <Text style={styles.stepperStepInactiveText}>2</Text>
+            <View className="flex-1 h-[2px] mx-sm bg-border" />
+            <View className="items-center gap-xs opacity-[0.45]">
+              <View className="w-[32px] h-[32px] rounded-md bg-muted items-center justify-center">
+                <Text className="text-micro font-sans-bold text-primary-deep">2</Text>
               </View>
-              <Text style={styles.stepperLabelInactive}>
+              <Text className="text-caption font-sans-bold text-text-secondary uppercase tracking-wide">
                 {t('customer.bookings.stepConfirm', 'Баталгаажуулах')}
               </Text>
             </View>
           </View>
 
-          <View style={styles.calendarCard}>
-            <View style={styles.calendarHeader}>
-              <Text style={styles.calendarTitle}>{formatMonthTitle(visibleMonth)}</Text>
-              <View style={styles.calendarControls}>
-                <Pressable style={styles.calendarControlButton} accessibilityRole="button">
+          {/* Calendar card */}
+          <View className="bg-muted rounded-lg p-lg gap-lg" style={elevations.soft}>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-subtitle font-sans-bold text-primary-deep">
+                {formatMonthTitle(visibleMonth)}
+              </Text>
+              <View className="flex-row gap-xs">
+                <Pressable className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center" accessibilityRole="button">
                   <ChevronLeftIcon size={18} color={colors.primaryDeep} />
                 </Pressable>
-                <Pressable style={styles.calendarControlButton} accessibilityRole="button">
+                <Pressable className="w-[32px] h-[32px] rounded-sm bg-muted items-center justify-center" accessibilityRole="button">
                   <ChevronRight size={18} color={colors.primaryDeep} />
                 </Pressable>
               </View>
             </View>
 
-            <View style={styles.weekdaysRow}>
+            <View className="flex-row">
               {['Да', 'Мя', 'Лха', 'Пү', 'Ба', 'Бя', 'Ня'].map((day) => (
-                <Text key={day} style={styles.weekdayText}>
+                <Text key={day} className="flex-1 text-center text-micro font-sans-bold text-text-secondary tracking-wide">
                   {day}
                 </Text>
               ))}
             </View>
 
-            <View style={styles.daysGrid}>
+            <View className="flex-row flex-wrap">
               {calendarCells.map((cell, index) => {
                 if (!cell) {
-                  return <View key={`empty-${index}`} style={styles.dayCell} />;
+                  return <View key={`empty-${index}`} className="w-[14.2857%] aspect-square items-center justify-center rounded-sm" />;
                 }
                 const isSelected = sameDay(cell, selectedDateTime);
                 const isTomorrow = sameDay(cell, tomorrow);
@@ -190,23 +198,24 @@ export default function RescheduleScreen() {
                   <Pressable
                     key={cell.toISOString()}
                     onPress={() => updateSelectedDay(cell)}
-                    style={[
-                      styles.dayCell,
-                      isSelected && styles.dayCellSelected,
-                      isPast && styles.dayCellDisabled,
-                    ]}
+                    className={cn(
+                      'w-[14.2857%] aspect-square items-center justify-center rounded-sm',
+                      isSelected && 'bg-primary-deep',
+                      isPast && 'opacity-25',
+                    )}
+                    style={isSelected ? elevations.soft : undefined}
                     testID={isSelected ? 'reschedule-screen-date-picker' : undefined}
                     accessibilityRole="button"
                     accessibilityState={{ selected: isSelected, disabled: isPast }}
                   >
                     <Text
-                      style={[
-                        styles.dayNumber,
-                        isSelected && styles.dayNumberSelected,
-                        isPast && styles.dayNumberDisabled,
-                        isWeekend && !isSelected && styles.dayNumberWeekend,
-                        isTomorrow && !isSelected && styles.dayNumberTomorrow,
-                      ]}
+                      className={cn(
+                        'text-label text-primary-deep font-medium',
+                        isSelected && 'text-primary-foreground font-sans-bold',
+                        isPast && 'text-text-secondary',
+                        isWeekend && !isSelected && 'text-danger',
+                        isTomorrow && !isSelected && 'text-danger',
+                      )}
                     >
                       {cell.getDate()}
                     </Text>
@@ -216,14 +225,15 @@ export default function RescheduleScreen() {
             </View>
           </View>
 
-          <View style={styles.section}>
-            <View style={styles.sectionTitleRow}>
+          {/* Time section */}
+          <View className="gap-md">
+            <View className="flex-row items-center gap-xs">
               <Clock3 size={14} color={colors.primaryDeep} />
-              <Text style={styles.sectionTitle}>
+              <Text className="text-heading font-sans-bold text-primary-deep" style={{ fontWeight: '800' }}>
                 {t('customer.bookings.sectionAvailableTimes', 'Боломжит цагууд')}
               </Text>
             </View>
-            <View style={styles.timeRow}>
+            <View className="flex-row flex-wrap gap-sm">
               {['09:00', '10:00', '11:00', '14:00', '15:00'].map((time) => {
                 const isSelected =
                   formatDateTime(selectedDateTime).endsWith(` ${time}`) ||
@@ -232,11 +242,20 @@ export default function RescheduleScreen() {
                   <Pressable
                     key={time}
                     onPress={() => updateSelectedTime(time)}
-                    style={[styles.timeChip, isSelected && styles.timeChipSelected]}
+                    className={cn(
+                      'min-w-[72px] min-h-[40px] rounded-md bg-muted items-center justify-center px-lg',
+                      isSelected && 'bg-primary-deep',
+                    )}
+                    style={isSelected ? elevations.soft : undefined}
                     accessibilityRole="button"
                     accessibilityState={{ selected: isSelected }}
                   >
-                    <Text style={[styles.timeChipText, isSelected && styles.timeChipTextSelected]}>
+                    <Text
+                      className={cn(
+                        'text-label font-sans-bold text-primary-deep',
+                        isSelected && 'text-primary-foreground',
+                      )}
+                    >
                       {time}
                     </Text>
                   </Pressable>
@@ -245,13 +264,14 @@ export default function RescheduleScreen() {
             </View>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.reasonLabel}>
+          {/* Reason section */}
+          <View className="gap-md">
+            <Text className="text-body font-sans-bold text-primary-deep">
               {t('customer.bookings.labelReason', 'Шалтгаан (заавал биш)')}
             </Text>
-            <View style={styles.reasonInputWrap}>
+            <View className="min-h-[120px] bg-muted rounded-md p-md">
               <Input
-                style={styles.reasonInput}
+                style={{ minHeight: 96, color: colors.primaryDeep, fontSize: typography.body, textAlignVertical: 'top' }}
                 placeholder={t(
                   'customer.bookings.placeholderReason',
                   'Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...',
@@ -265,14 +285,18 @@ export default function RescheduleScreen() {
                 testID="reschedule-screen-reason"
               />
             </View>
-            <Text style={styles.reasonHelper}>
+            <Text className="text-caption text-text-secondary">
               {t('customer.bookings.helperReason', 'Заавал биш')}
             </Text>
           </View>
 
-          <View style={styles.infoTip}>
+          {/* Info tip */}
+          <View className="flex-row gap-sm items-start bg-muted rounded-md p-md">
             <Info size={16} color={colors.primaryDeep} />
-            <Text style={styles.infoTipText}>
+            <Text
+              className="flex-1 text-caption text-primary-deep"
+              style={{ lineHeight: typography.caption * 1.5 }}
+            >
               {t(
                 'customer.bookings.scheduleAuthorityNote',
                 'Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно',
@@ -280,12 +304,13 @@ export default function RescheduleScreen() {
             </Text>
           </View>
 
+          {/* State card */}
           {requestState !== 'request_form' ? (
-            <View style={styles.stateCard}>
-              <View style={styles.stateBadge}>
+            <View className="bg-muted rounded-lg p-lg gap-sm items-start">
+              <View className="w-[40px] h-[40px] rounded-md bg-card items-center justify-center">
                 <CalendarRange size={18} color={colors.secondary} />
               </View>
-              <Text style={styles.stateTitle}>
+              <Text className="text-body font-sans-bold text-primary-deep">
                 {requestState === 'awaiting_response'
                   ? t('customer.bookings.statusAwaiting', 'Хүлээж байна')
                   : requestState === 'accepted'
@@ -294,7 +319,10 @@ export default function RescheduleScreen() {
                       ? t('customer.bookings.statusDeclined', 'Татгалзсан')
                       : t('customer.bookings.statusExpired', 'Хугацаа дууссан')}
               </Text>
-              <Text style={styles.stateMessage}>
+              <Text
+                className="text-label text-text-secondary"
+                style={{ lineHeight: typography.label * 1.5 }}
+              >
                 {requestState === 'awaiting_response'
                   ? t(
                       'customer.bookings.awaitingMessage',
@@ -320,11 +348,11 @@ export default function RescheduleScreen() {
       </InsetScrollView>
 
       <StickyActionBar>
-        <View style={styles.footer}>
+        <View className="pt-md pb-lg px-lg">
           <Pressable
             accessibilityRole="button"
             onPress={() => void handleSubmit()}
-            style={styles.submitButtonWrap}
+            className="rounded-md overflow-hidden"
             testID="reschedule-screen-next"
             disabled={isPending}
           >
@@ -332,9 +360,12 @@ export default function RescheduleScreen() {
               colors={[colors.primaryDeep, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={[styles.submitButton, isPending && styles.submitButtonDisabled]}
+              style={[
+                { minHeight: 56, borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
+                isPending && { opacity: 0.7 },
+              ]}
             >
-              <Text style={styles.submitButtonText}>
+              <Text className="text-body font-sans-bold text-primary-foreground">
                 {t('customer.bookings.ctaSubmitReschedule', 'Хүсэлт илгээх')}
               </Text>
               <ArrowRight size={18} color={colors.primaryForeground} />
@@ -345,307 +376,3 @@ export default function RescheduleScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing['2xl'],
-    gap: spacing.lg,
-  },
-  currentScheduleCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-  },
-  currentScheduleCopy: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  currentScheduleLabel: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-  currentScheduleValueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  currentScheduleValue: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  currentScheduleBadge: {
-    width: 34,
-    height: 34,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepperRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.sm,
-  },
-  stepperStep: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  stepperStepDisabled: {
-    opacity: 0.45,
-  },
-  stepperStepActive: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.md,
-    backgroundColor: colors.primaryDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepperStepActiveText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-  stepperStepInactive: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepperStepInactiveText: {
-    fontSize: typography.micro,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  stepperLabelActive: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
-  },
-  stepperLabelInactive: {
-    fontSize: typography.caption,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    color: colors.textSecondary,
-  },
-  stepperLine: {
-    flex: 1,
-    height: 2,
-    marginHorizontal: spacing.sm,
-    backgroundColor: colors.border,
-  },
-  calendarCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    ...elevations.soft,
-    gap: spacing.lg,
-  },
-  calendarHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  calendarTitle: {
-    fontSize: typography.subtitle,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  calendarControls: {
-    flexDirection: 'row',
-    gap: spacing.xs,
-  },
-  calendarControlButton: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.sm,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weekdaysRow: {
-    flexDirection: 'row',
-  },
-  weekdayText: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: typography.micro,
-    color: colors.textSecondary,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-  },
-  daysGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  dayCell: {
-    width: '14.2857%',
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.sm,
-  },
-  dayCellSelected: {
-    backgroundColor: colors.primaryDeep,
-    ...elevations.soft,
-  },
-  dayCellDisabled: {
-    opacity: 0.25,
-  },
-  dayNumber: {
-    fontSize: typography.label,
-    color: colors.primaryDeep,
-    fontWeight: '500',
-  },
-  dayNumberSelected: {
-    color: colors.primaryForeground,
-    fontWeight: '700',
-  },
-  dayNumberDisabled: {
-    color: colors.textSecondary,
-  },
-  dayNumberWeekend: {
-    color: colors.danger,
-  },
-  dayNumberTomorrow: {
-    color: colors.danger,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '800',
-    color: colors.primaryDeep,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  timeChip: {
-    minWidth: 72,
-    minHeight: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.muted,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  timeChipSelected: {
-    backgroundColor: colors.primaryDeep,
-    ...elevations.soft,
-  },
-  timeChipText: {
-    fontSize: typography.label,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  timeChipTextSelected: {
-    color: colors.primaryForeground,
-  },
-  reasonLabel: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  reasonInputWrap: {
-    minHeight: 120,
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  reasonInput: {
-    minHeight: 96,
-    color: colors.primaryDeep,
-    fontSize: typography.body,
-    textAlignVertical: 'top',
-  },
-  reasonHelper: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-  },
-  infoTip: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    alignItems: 'flex-start',
-    backgroundColor: colors.muted,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  infoTipText: {
-    flex: 1,
-    fontSize: typography.caption,
-    lineHeight: typography.caption * 1.5,
-    color: colors.primaryDeep,
-  },
-  stateCard: {
-    backgroundColor: colors.muted,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    alignItems: 'flex-start',
-  },
-  stateBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stateTitle: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryDeep,
-  },
-  stateMessage: {
-    fontSize: typography.label,
-    color: colors.textSecondary,
-    lineHeight: typography.label * 1.5,
-  },
-  footer: {
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  submitButtonWrap: {
-    borderRadius: radius.md,
-    overflow: 'hidden',
-  },
-  submitButton: {
-    minHeight: 56,
-    borderRadius: radius.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitButtonText: {
-    fontSize: typography.body,
-    fontWeight: '700',
-    color: colors.primaryForeground,
-  },
-});
