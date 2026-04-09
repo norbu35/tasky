@@ -144,6 +144,7 @@ export default function CategorySelectionScreen() {
       pathname: '/(customer)/tasks/new/intake',
       params: {
         categoryId: selectedCategory,
+        categoryName: category?.name ?? '',
         intakeEnabled: category?.intake_enabled ? '1' : '0',
         intakeSchemaVersion: String(category?.intake_schema_version ?? ''),
         intakeSchemaJson: category?.intake_schema_json

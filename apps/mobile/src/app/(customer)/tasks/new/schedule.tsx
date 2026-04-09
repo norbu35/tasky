@@ -62,6 +62,7 @@ export default function ScheduleBudgetScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
+    categoryName?: string;
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
@@ -160,6 +161,7 @@ export default function ScheduleBudgetScreen() {
       pathname: '/(customer)/tasks/new/review',
       params: {
         categoryId: params.categoryId,
+        categoryName: params.categoryName ?? '',
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,
@@ -291,7 +293,7 @@ export default function ScheduleBudgetScreen() {
             invalid={Boolean(budgetError)}
           />
         </FormField>
-        <Text className="text-caption font-semibold text-secondary leading-relaxed">
+        <Text className="text-caption font-semibold text-muted-foreground leading-relaxed">
           {t('ScheduleBudgetScreen.budgetGoldHint')}
         </Text>
       </View>

@@ -1,0 +1,10 @@
+appId: mn.tasky.mobile
+---
+- launchApp:
+    clearState: true
+- runFlow: _support/login-customer.yaml
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-001'
+    timeout: 5000
+- takeScreenshot: SCR-CUST-001

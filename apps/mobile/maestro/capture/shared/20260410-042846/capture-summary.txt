@@ -1,0 +1,25 @@
+=== Visual Audit Capture Summary ===
+Batch:     shared
+Timestamp: 20260410-042846
+Flows dir: maestro/flows/
+Output:    maestro/capture/shared/20260410-042846
+
+Flows to run (5):
+  - JRN-SHARED-05-profile-management.yaml
+  - JRN-SHARED-06-settings-&-account.yaml
+  - SCR-SHARED-016-notification-center.yaml
+  - SCR-INFRA-004-terms-of-service.yaml
+  - SCR-TASK-018-privacy-policy.yaml
+
+--- Results ---
+PASS: JRN-SHARED-05-profile-management.yaml
+PASS: JRN-SHARED-06-settings-&-account.yaml
+PASS: SCR-SHARED-016-notification-center.yaml
+PASS: SCR-INFRA-004-terms-of-service.yaml
+PASS: SCR-TASK-018-privacy-policy.yaml
+
+--- Totals ---
+PASS=5  FAIL=0  SKIP=0
+
+Maestro screenshots: ~/.maestro/tests/ (automatic)
+Capture output dir:  maestro/capture/shared/20260410-042846

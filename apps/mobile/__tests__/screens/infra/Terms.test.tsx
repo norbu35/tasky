@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import TermsScreen from '../../../src/app/(shared)/legal/terms';
 
 jest.mock('react-native-reanimated', () => {
@@ -24,12 +25,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('lucide-react-native', () => {
   const RN = require('react-native');
@@ -42,26 +41,26 @@ jest.mock('lucide-react-native', () => {
 describe('TermsScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetTestI18n();
+    setTestLanguage('mn');
     mockParams = {};
   });
 
-  it('renders Terms of Service title in header', () => {
+  it('renders screen container', () => {
     render(<TermsScreen />);
 
-    expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-004')).toBeTruthy();
   });
 
-  it('shows back button that navigates back', () => {
+  it('renders Mongolian section heading', () => {
     render(<TermsScreen />);
 
-    fireEvent.press(screen.getByTestId('terms-screen-back'));
-    expect(mockBack).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('1. Нөхцөлийг зөвшөөрөх')).toBeTruthy();
   });
 
   it('renders scrollable terms content', () => {
     render(<TermsScreen />);
 
-    expect(screen.getByTestId('terms-screen')).toBeTruthy();
     expect(screen.getByText('1. Нөхцөлийг зөвшөөрөх')).toBeTruthy();
     expect(screen.getByText('Эдгээр нөхцөлийг товчоор')).toBeTruthy();
   });
@@ -71,9 +70,7 @@ describe('TermsScreen', () => {
 
     render(<TermsScreen />);
 
-    expect(screen.getByTestId('terms-screen')).toBeTruthy();
-    expect(screen.getByTestId('SCR-INFRA-004')).toBeTruthy();
-    expect(screen.queryByText('1. Acceptance of Terms')).toBeNull();
+    expect(screen.queryByText('1. Нөхцөлийг зөвшөөрөх')).toBeNull();
   });
 
   it('shows error state and retries from the inline CTA', () => {

@@ -215,6 +215,7 @@ export default function ReviewSubmitScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
+    categoryName?: string;
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
@@ -246,6 +247,7 @@ export default function ReviewSubmitScreen() {
 
   const commonStepParams = {
     categoryId: params.categoryId ?? '',
+    categoryName: params.categoryName ?? '',
     description: params.description ?? '',
     intakeAnswers: JSON.stringify(intakeAnswers),
     intakeSchemaVersion: String(intakeSchemaVersion),
@@ -328,8 +330,16 @@ export default function ReviewSubmitScreen() {
 
       <SectionCard
         label={t('ReviewSubmitScreen.sectionCategory')}
-        value={params.categoryId ?? ''}
-        onEdit={() => router.push('/(customer)/tasks/new/category')}
+        value={params.categoryName ?? params.categoryId ?? ''}
+        onEdit={() =>
+          router.push({
+            pathname: '/(customer)/tasks/new/category',
+            params: {
+              categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
+            },
+          })
+        }
         testID="review-section-category"
         icon={<Sparkles size={16} color={colors.primaryDeep} />}
       />
@@ -340,7 +350,10 @@ export default function ReviewSubmitScreen() {
         onEdit={() =>
           router.push({
             pathname: '/(customer)/tasks/new/intake',
-            params: { categoryId: commonStepParams.categoryId },
+            params: {
+              categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
+            },
           })
         }
         testID="review-section-title"
@@ -355,7 +368,10 @@ export default function ReviewSubmitScreen() {
             onPress={() =>
               router.push({
                 pathname: '/(customer)/tasks/new/intake',
-                params: { categoryId: commonStepParams.categoryId },
+                params: {
+                  categoryId: commonStepParams.categoryId,
+                  categoryName: commonStepParams.categoryName,
+                },
               })
             }
             accessibilityRole="button"
@@ -389,6 +405,7 @@ export default function ReviewSubmitScreen() {
             pathname: '/(customer)/tasks/new/photos',
             params: {
               categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
               description: commonStepParams.description,
               intakeAnswers: commonStepParams.intakeAnswers,
               intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
@@ -406,6 +423,7 @@ export default function ReviewSubmitScreen() {
             pathname: '/(customer)/tasks/new/location',
             params: {
               categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
               description: commonStepParams.description,
               intakeAnswers: commonStepParams.intakeAnswers,
               intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
@@ -428,6 +446,7 @@ export default function ReviewSubmitScreen() {
             pathname: '/(customer)/tasks/new/schedule',
             params: {
               categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
               description: commonStepParams.description,
               intakeAnswers: commonStepParams.intakeAnswers,
               intakeSchemaVersion: commonStepParams.intakeSchemaVersion,
@@ -450,6 +469,7 @@ export default function ReviewSubmitScreen() {
             pathname: '/(customer)/tasks/new/schedule',
             params: {
               categoryId: commonStepParams.categoryId,
+              categoryName: commonStepParams.categoryName,
               description: commonStepParams.description,
               intakeAnswers: commonStepParams.intakeAnswers,
               intakeSchemaVersion: commonStepParams.intakeSchemaVersion,

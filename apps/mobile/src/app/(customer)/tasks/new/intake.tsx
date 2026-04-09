@@ -167,6 +167,7 @@ export default function IntakeFormScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
+    categoryName?: string;
     intakeEnabled?: string;
     intakeSchemaVersion?: string;
     intakeSchemaJson?: string;
@@ -252,6 +253,7 @@ export default function IntakeFormScreen() {
       pathname: '/(customer)/tasks/new/photos',
       params: {
         categoryId: params.categoryId,
+        categoryName: params.categoryName ?? '',
         description,
         intakeAnswers: JSON.stringify(answers),
         intakeSchemaVersion: params.intakeSchemaVersion ?? '',

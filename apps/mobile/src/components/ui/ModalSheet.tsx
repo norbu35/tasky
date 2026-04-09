@@ -56,7 +56,7 @@ export function ModalSheet({
           className={cn('bg-background rounded-tl-lg rounded-tr-lg px-lg py-xl gap-md', className)}
           style={{ paddingBottom: insets.bottom + mobileTheme.spacing.xl }}
         >
-          <View className="self-center w-11 h-[5px] rounded-full bg-border" />
+          <View className="self-center w-11 h-[5px] rounded-full bg-muted" />
           <Text className="text-body font-sans-bold text-foreground">{title}</Text>
           <View className="gap-sm">{children}</View>
           {primaryAction || secondaryAction ? (

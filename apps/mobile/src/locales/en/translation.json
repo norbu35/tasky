@@ -28,7 +28,7 @@
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
       "error": "Login failed. Please try again.",
-      "copyright": "© 2024 Tasky. All rights reserved.",
+      "copyright": "© 2026 Tasky. All rights reserved.",
       "languageSwitcher": "MN/EN"
     },
     "otp": {
@@ -351,7 +351,9 @@
     "success": "Success",
     "uploadSuccess": "Your identity documents have been submitted for review.",
     "uploadFailed": "Upload Failed",
-    "uploadError": "Something went wrong."
+    "uploadError": "Something went wrong.",
+    "verified": "Verified",
+    "pending": "Pending"
   },
   "chat": {
     "back": "← Back",
@@ -1270,7 +1272,7 @@
     "scheduleTime": "Time"
   },
   "TaskPostedSuccessScreen": {
-    "successBadge": "VERIFIED",
+    "successBadge": "POSTED",
     "successTitle": "Task posted successfully!",
     "successBody": "Taskers can now see your task and apply. You will be notified when new applications arrive",
     "successNextLabel": "NEXT STEPS",
@@ -1610,7 +1612,7 @@
     "loginAsTasker": "Login as Tasker",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
-    "copyright": "© 2024 Tasky. All rights reserved."
+    "copyright": "© 2026 Tasky. All rights reserved."
   },
   "Role-select": {
     "heading": "Who are you?",

@@ -7,6 +7,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from '../../lib/cn';
 import { InsetScrollView, ScreenContainer, StickyActionBar } from '../shells';
 
@@ -37,15 +38,25 @@ export function AuthTemplate({
   contentStyle,
   className,
 }: AuthTemplateProps) {
+  const insets = useSafeAreaInsets();
+
   return (
     <ScreenContainer testID={testID} className={className}>
+      {/*
+       * topRightSlot is a sibling of KeyboardAvoidingView so it is never
+       * shifted or clipped by keyboard-avoidance adjustments.
+       * Positioning is explicit: we add the right safe-area inset on top of
+       * the base 16 px margin to guard against landscape / notch devices.
+       */}
+      {topRightSlot ? (
+        <View className="absolute z-20" style={{ top: 12, right: Math.max(insets.right + 16, 24) }}>
+          {topRightSlot}
+        </View>
+      ) : null}
       <KeyboardAvoidingView
         className="flex-1 bg-background"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {topRightSlot ? (
-          <View className="absolute top-xl right-xl z-10">{topRightSlot}</View>
-        ) : null}
         <InsetScrollView
           contentContainerStyle={[
             { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 },

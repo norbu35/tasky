@@ -1,0 +1,11 @@
+appId: mn.tasky.mobile
+---
+# Capture tasker browse screen for visual audit
+- launchApp:
+    clearState: true
+- runFlow: _support/login-tasker.yaml
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-TASK-001'
+    timeout: 15000
+- takeScreenshot: screenshots/SCR-TASK-001-tasker-browse

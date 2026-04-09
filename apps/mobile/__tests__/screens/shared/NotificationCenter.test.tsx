@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useNotifications } from '../../../src/features/notifications/hooks/useNotifications';
 
 const mockPush = jest.fn();
@@ -10,15 +11,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -49,10 +45,12 @@ const mockUseNotifications = useNotifications as jest.MockedFunction<typeof useN
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
-  it('renders the notifications title', () => {
+  it('renders the notification center screen container', () => {
     mockUseNotifications.mockReturnValue({
       data: { data: [], cursor: { next: null, prev: null } },
       isLoading: false,
@@ -64,7 +62,9 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('Мэдэгдлүүд')).toBeTruthy();
+    // Title is rendered by the Expo Router native stack header (not in component tree);
+    // verify the screen container is present via testID instead.
+    expect(screen.getByTestId('SCR-SHARED-016')).toBeTruthy();
   });
 
   it('shows empty state when no notifications exist', () => {
@@ -79,8 +79,8 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    expect(screen.getByText('Мэдэгдэл алга')).toBeTruthy();
-    expect(screen.getByText('Танд одоогоор мэдэгдэл ирээгүй байна')).toBeTruthy();
+    expect(screen.getByText('Мэдэгдэл байхгүй байна')).toBeTruthy();
+    expect(screen.getByText('Та бүх зүйлтэй танилцсан байна')).toBeTruthy();
   });
 
   it('shows a retryable error state when the request fails', () => {
@@ -139,9 +139,20 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     expect(screen.getByTestId('notification-unread-dot-notif-1')).toBeTruthy();
   });
 
-  it('back button pops to the previous screen', () => {
+  it('pressing a notification item navigates to inbox', () => {
     mockUseNotifications.mockReturnValue({
-      data: { data: [], cursor: { next: null, prev: null } },
+      data: {
+        data: [
+          {
+            id: 'notif-nav',
+            title: 'New task',
+            body: 'A new task is available',
+            read: false,
+            created_at: '2026-03-26T10:00:00Z',
+          },
+        ],
+        cursor: { next: null, prev: null },
+      },
       isLoading: false,
       isError: false,
       isRefetching: false,
@@ -151,7 +162,9 @@ describe('NotificationCenterScreen (SCR-SHARED-016)', () => {
     const NotificationCenterScreen = require('../../../src/app/(shared)/notifications').default;
     render(<NotificationCenterScreen />);
 
-    fireEvent.press(screen.getByTestId('notifications-back'));
-    expect(mockBack).toHaveBeenCalled();
+    // Back navigation is now delegated to the Expo Router native stack header;
+    // verify item press navigates to inbox instead.
+    fireEvent.press(screen.getByTestId('notification-item-notif-nav'));
+    expect(mockPush).toHaveBeenCalled();
   });
 });

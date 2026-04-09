@@ -25,6 +25,7 @@ export default function LocationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
+    categoryName?: string;
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
@@ -57,6 +58,7 @@ export default function LocationScreen() {
       pathname: '/(customer)/tasks/new/schedule',
       params: {
         categoryId: params.categoryId,
+        categoryName: params.categoryName ?? '',
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,

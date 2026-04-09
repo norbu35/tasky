@@ -1,0 +1,92 @@
+appId: mn.tasky.mobile
+---
+# Capture auth/onboarding screens for visual audit
+- launchApp:
+    clearState: true
+
+# SCR-SHARED-001 (splash) and SCR-SHARED-002 (login)
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 15000
+- takeScreenshot: screenshots/SCR-SHARED-002-login
+
+# Log in, then capture onboarding screens
+- scrollUntilVisible:
+    element:
+      id: "dev-login-customer"
+    direction: DOWN
+- tapOn:
+    id: "dev-login-customer"
+
+# SCR-SHARED-005 - Onboarding carousel
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-005"
+    timeout: 15000
+- takeScreenshot: screenshots/SCR-SHARED-005-onboarding
+
+- tapOn:
+    id: "onboarding-skip"
+
+# SCR-SHARED-006 - Role select
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-006"
+    timeout: 10000
+- takeScreenshot: screenshots/SCR-SHARED-006-role-select
+
+- tapOn:
+    id: "role-card-customer"
+- tapOn:
+    id: "role-confirm-button"
+- extendedWaitUntil:
+    visible:
+      id: "role-sheet-confirm"
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-SHARED-006-role-confirm-sheet
+- tapOn:
+    id: "role-sheet-confirm"
+
+# SCR-SHARED-007 - Camera permission primer
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-007"
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-SHARED-007-camera-permission
+- tapOn:
+    id: "permission-allow-button"
+- runFlow:
+    when:
+      visible: "Allow"
+    commands:
+      - tapOn: "Allow"
+      - waitForAnimationToEnd
+- waitForAnimationToEnd
+
+# SCR-SHARED-008 - Location permission primer
+- runFlow:
+    when:
+      visible:
+        id: "SCR-SHARED-008"
+    commands:
+      - takeScreenshot: screenshots/SCR-SHARED-008-location-permission
+      - tapOn:
+          id: "permission-allow-button"
+      - runFlow:
+          when:
+            visible: "Allow"
+          commands:
+            - tapOn: "Allow"
+            - waitForAnimationToEnd
+      - waitForAnimationToEnd
+
+# SCR-SHARED-009 - Notifications permission primer
+- runFlow:
+    when:
+      visible:
+        id: "SCR-SHARED-009"
+    commands:
+      - takeScreenshot: screenshots/SCR-SHARED-009-notifications-permission
+      - tapOn:
+          id: "permission-allow-button"

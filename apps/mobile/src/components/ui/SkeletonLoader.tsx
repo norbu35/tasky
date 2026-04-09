@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import type { ViewStyle } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -26,6 +27,7 @@ export function SkeletonLoader({
   style,
   testID,
 }: SkeletonLoaderProps) {
+  const { t } = useTranslation();
   const opacity = useSharedValue(0.4);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export function SkeletonLoader({
       className="bg-muted"
       style={[{ width: width as any, height, borderRadius }, animatedStyle, style]}
       testID={testID}
-      accessibilityLabel="Loading"
+      accessibilityLabel={t('common.loading')}
     />
   );
 }

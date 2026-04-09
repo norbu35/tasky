@@ -15,7 +15,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation();
 
-  const currentLang = i18n.language;
+  const currentLang = (i18n.resolvedLanguage ?? i18n.language).split('-')[0];
 
   const changeLanguage = async (lng: string) => {
     if (lng !== currentLang) {
@@ -50,7 +50,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
             color: currentLang === 'en' ? colors.primaryForeground : colors.foreground,
           }}
         >
-          English
+          {t('LanguageSwitcher.copy1')}
         </Text>
       </Pressable>
 
@@ -72,7 +72,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
             color: currentLang === 'mn' ? colors.primaryForeground : colors.foreground,
           }}
         >
-          {t('LanguageSwitcher.copy1')}
+          {t('LanguageSwitcher.copy2')}
         </Text>
       </Pressable>
     </View>

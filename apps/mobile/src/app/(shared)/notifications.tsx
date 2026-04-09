@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { FlatList, Pressable, RefreshControl, Text, View, type ListRenderItem } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Bell, Briefcase, MessageSquare, ShieldAlert, Star } from 'lucide-react-native';
+import { Bell, Briefcase, MessageSquare, ShieldAlert, Star } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import {
   useNotifications,
@@ -183,20 +183,6 @@ export default function NotificationCenterScreen() {
 
   return (
     <View className="flex-1 bg-background" testID="SCR-SHARED-016">
-      <View className="flex-row items-center gap-md px-lg pt-xl pb-md">
-        <Pressable
-          testID="notifications-back"
-          className="w-10 h-10 rounded-full items-center justify-center bg-card border border-border"
-          onPress={() => router.back()}
-          accessibilityRole="button"
-        >
-          <ArrowLeft size={20} color={colors.foreground} />
-        </Pressable>
-        <Text className="text-title font-bold text-foreground">
-          {t('shared.notifications.title')}
-        </Text>
-      </View>
-
       {isLoading ? (
         <View className="px-lg py-lg gap-sm" testID="notifications-loading">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -230,7 +216,7 @@ export default function NotificationCenterScreen() {
         <EmptyStateTemplate
           testID="notifications-empty"
           title={t('shared.notifications.emptyTitle')}
-          description={t('NotificationCenterScreen.copy1')}
+          description={t('shared.notifications.emptyDescription')}
           icon={<Bell size={32} color={colors.textSecondary} />}
         />
       ) : (

@@ -28,6 +28,7 @@ export default function PhotoUploadScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
+    categoryName?: string;
     description: string;
     intakeAnswers?: string;
     intakeSchemaVersion?: string;
@@ -52,6 +53,7 @@ export default function PhotoUploadScreen() {
       pathname: '/(customer)/tasks/new/location',
       params: {
         categoryId: params.categoryId,
+        categoryName: params.categoryName ?? '',
         description: params.description,
         intakeAnswers: params.intakeAnswers,
         intakeSchemaVersion: params.intakeSchemaVersion,

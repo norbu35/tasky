@@ -1,6 +1,21 @@
 # Changelog
 
+## 2026-04-10
+
+- fix(mobile): visual audit — fix 12 defects across auth/onboarding, customer wizard, tasker, and shared screens; harden shared templates and PermissionPrimer illustration
+- **Mobile Maestro realignment**: Split launch-live flows into deterministic, fixture-required, deferred, and legacy buckets; updated active smoke/full E2E runners to execute only deterministic launch-live journeys; repaired stale selectors in customer/tasker/profile flows; and refreshed mobile verification docs to match the new automation surface.
+- **Frontend scope hardening complete**: Executed all four workstreams of the frontend scope hardening plan:
+  - **Web**: Removed admin payouts/pricing routes and nav, deleted legacy `/verification` route, removed `/customer/booking-payment` alias, moved deferred pages to `apps/web/src/future/`, cleaned escrow/payment/boost copy from launch-live pages and translation files.
+  - **Mobile**: Moved 10 deferred routes (OTP, escrow, instant match, credits, referrals, subscription, wallet, lead unlock, profile polish) to `apps/mobile/src/future/`, deleted thin shells (boost, boost-pay, business, DAN verification), wired real SDK hooks for booking cancel/completion/no-show and review hard-lock navigation.
+  - **Tests**: Removed 14 mobile Jest test files for deferred surfaces, moved 18 Maestro flows to `deferred/` subdirectory, updated `run-e2e.sh` to exclude deferred flows, verified web tests and Playwright specs are clean.
+  - **Docs**: Updated frontend alignment matrix to post-Tranche-4 hardened state, marked all scope hardening actions complete, updated verification matrix and test trust audit to reflect the deferred-surface test removals.
+- **Frontend alignment kickoff**: Added the frontend alignment design/implementation plans plus the route classification/cut manifest, removed the legacy web `/verification` route and stale export, and tightened web scope verification around removed launch-incompatible routes and admin navigation.
+
 ## 2026-04-09
+
+- **Staging and production control surface**: Added private VPS sandbox bootstrap/push/deploy/smoke path, published staging runbook/toggle posture/seed guidance, and added production-readiness plus feature-activation governance docs.
+- **Test-signal pruning**: Retired low-signal Playwright route smoke checks (`smoke.spec.ts`, `auth-guard.spec.ts`) so browser smoke now reflects only customer, tasker, and admin outcome journeys.
+- **Docs realignment**: Rewrote PRD and strategy to center the Phase 1 launch baseline, separate latent capability from launch scope, and remove toggle-only rollout assumptions.
 - **Repository hardening**: Archived stale superpowers docs, removed tracked test-results.json, archived 6 non-canonical Maestro flows, fixed stale references in ARCHITECTURE.md and quality docs.
 - **CI and verification gates**: Removed dead self-verify pipeline from release-gate.yml, made mobile E2E scripts require Maestro (no silent Jest fallback), aligned verification matrix with actual repo state.
 - **Backend test trust**: Closed all 13 untested scenarios across analytics, messaging, notification, and booking domains (104/104 scenarios now covered). Synced registry.
@@ -10,14 +25,18 @@
 - **Mobile auth onboarding routing**: Restored first-login post-auth routing so new mobile sessions enter onboarding before landing in customer/tasker home, with focused auth routing regressions.
 
 ## 2026-04-04
+
 - **Mobile NativeWind foundation + token/shell consolidation**: Completed architecture-first mobile styling migration to shared NativeWind/token boundaries, moved route-level shell ownership to shared containers/action bars, removed most route-local raw input primitives, added lint guardrails for route primitive imports (with OTP exception), stabilized auth/env test behavior, and re-verified mobile suites (`typecheck`, `lint`, full `test`).
 
 ## 2026-04-03
+
 - **Infrastructure & Mobile Navigation**: Remediated Docker Compose environment variables for PgBouncer/Flyway connectivity and standardized mobile application navigation by migrating customer/tasker screen headers to a native Expo Router stack-based configuration.
 
 ## 2026-04-02
+
 - **Booking confirmation sources**: Added API-first booking intents for rebook confirmation (`REBOOK`) with phase-gated instant-match deferment, wired web/mobile source-aware confirmation flows, and updated SDK/test coverage.
 - **Maintenance-mode realignment**: Enforced monorepo architecture boundaries, rehabilitated cleanup-critical deterministic tests, archived superseded greenfield superpowers plans/specs, and ratified the maintenance operating model plus trusted verification gates.
 
 ## 2026-03-28
+
 - **Scaffolding restructure**: Replaced greenfield multi-agent scaffolding with lean maintenance-mode structure. Deleted ~6,000 lines of ticket specs, self-verify pipeline, and agent coordination scripts. Added simple task management (`scripts/task.sh`), rewrote AGENTS.md and CLAUDE.md, simplified CI to 3 parallel jobs.

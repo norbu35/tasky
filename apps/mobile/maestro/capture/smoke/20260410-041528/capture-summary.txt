@@ -1,0 +1,21 @@
+=== Visual Audit Capture Summary ===
+Batch:     smoke
+Timestamp: 20260410-041528
+Flows dir: maestro/flows/
+Output:    maestro/capture/smoke/20260410-041528
+
+Flows to run (3):
+  - smoke.yaml
+  - JRN-CUST-01-post-a-task.yaml
+  - tasker-browse.yaml
+
+--- Results ---
+PASS: smoke.yaml
+PASS: JRN-CUST-01-post-a-task.yaml
+PASS: tasker-browse.yaml
+
+--- Totals ---
+PASS=3  FAIL=0  SKIP=0
+
+Maestro screenshots: ~/.maestro/tests/ (automatic)
+Capture output dir:  maestro/capture/smoke/20260410-041528

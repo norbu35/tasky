@@ -1,0 +1,17 @@
+=== Visual Audit Capture Summary ===
+Batch:     auth
+Timestamp: 20260410-041430
+Flows dir: maestro/flows/
+Output:    maestro/capture/auth/20260410-041430
+
+Flows to run (1):
+  - JRN-SHARED-01-onboarding.yaml
+
+--- Results ---
+FAIL: JRN-SHARED-01-onboarding.yaml
+
+--- Totals ---
+PASS=0  FAIL=1  SKIP=0
+
+Maestro screenshots: ~/.maestro/tests/ (automatic)
+Capture output dir:  maestro/capture/auth/20260410-041430

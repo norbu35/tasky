@@ -52,7 +52,6 @@ export default function LoginScreen() {
       testID="SCR-SHARED-002"
       showLogo
       headline={t('auth.login.title')}
-      subtitle={t('LoginScreen.copy1')}
       topRightSlot={
         <Pressable
           testID="language-switcher"
@@ -174,6 +173,14 @@ export default function LoginScreen() {
           <Zap size={32} color={colors.primaryForeground} />
         </View>
       </View>
+      {/* Subtitle — rendered at screen level with explicit wrap to prevent mid-word break (DEF-007) */}
+      <Text
+        testID="login-subtitle"
+        className="text-body text-center mt-sm leading-relaxed"
+        style={{ color: colors.primary, flexShrink: 1, flexWrap: 'wrap' }}
+      >
+        {t('LoginScreen.copy1')}
+      </Text>
     </AuthTemplate>
   );
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft } from 'lucide-react-native';
+import { Text, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { InsetScrollView, ScreenContainer } from '../../../components/shells';
@@ -214,7 +213,6 @@ function TermsContent() {
 
 export default function TermsScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const params = useLocalSearchParams();
   const [state, setState] = useState<ScreenState>(() => resolveState(params.state));
 
@@ -222,34 +220,8 @@ export default function TermsScreen() {
     setState(resolveState(params.state));
   }, [params.state]);
 
-  const title = t('infra.terms.title');
-
   return (
     <ScreenContainer testID="SCR-INFRA-004">
-      <View className="h-[56px] flex-row items-center justify-between px-md">
-        <Pressable
-          onPress={() => router.back()}
-          className="min-h-[44px] px-xs flex-row items-center gap-xs"
-          hitSlop={spacing.sm}
-          testID="terms-screen-back"
-        >
-          <ChevronLeft size={24} color={colors.primary} />
-          <Text className="text-body font-sans-medium" style={{ color: colors.primaryDeep }}>
-            {t('infra.terms.backLabel')}
-          </Text>
-        </Pressable>
-        <Text
-          className="flex-1 text-subtitle font-sans-semibold text-center mx-sm"
-          style={{ color: colors.primaryDeep }}
-        >
-          {title}
-        </Text>
-        <View
-          style={{ width: spacing['3xl'], height: spacing['3xl'] }}
-          className="justify-center items-center"
-        />
-      </View>
-
       {state === 'loading' ? (
         <TermsLoading />
       ) : state === 'error' ? (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { elevations, overlays } from '../../design/elevations';
 import { Button } from './Button';
@@ -38,16 +39,36 @@ export function PermissionPrimer({
   continueLabel,
   onContinue,
   isDenied = false,
-  allowLabel = 'Зөвшөөрөх',
-  skipLabel = 'Дараа',
+  allowLabel,
+  skipLabel,
   badgeLabel = '✦',
   footerNote,
   className,
 }: PermissionPrimerProps) {
+  const { t } = useTranslation();
+  const resolvedAllowLabel = allowLabel ?? t('common.allow');
+  const resolvedSkipLabel = skipLabel ?? t('common.skip');
+  const resolvedContinueLabel = continueLabel ?? t('common.continue');
+
   return (
     <View className={cn('flex-1 justify-end', className)} testID={testID}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.muted }]} />
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: overlays.sheet }]} />
+      {/* Illustration area — fills upper ~60% with a prominent centred icon */}
+      <View
+        className="absolute left-0 right-0 top-0 bottom-[40%] items-center justify-center"
+        pointerEvents="none"
+      >
+        <View
+          className="w-32 h-32 rounded-full items-center justify-center"
+          style={{
+            backgroundColor: colors.card,
+            ...elevations.elevated,
+          }}
+        >
+          {icon}
+        </View>
+      </View>
       <View
         className="bg-background rounded-tl-lg rounded-tr-lg px-xl pt-md pb-xl items-center"
         style={elevations.card}
@@ -97,28 +118,28 @@ export function PermissionPrimer({
           {isDenied ? (
             <Button
               testID="permission-continue-button"
-              label={continueLabel ?? 'Үргэлжлүүлэх'}
+              label={resolvedContinueLabel}
               variant="default"
               onPress={onContinue ?? onSkip}
               style={{ alignSelf: 'stretch', minHeight: 56 }}
-              accessibilityLabel={continueLabel ?? 'Үргэлжлүүлэх'}
+              accessibilityLabel={resolvedContinueLabel}
             />
           ) : (
             <>
               <Button
                 testID="permission-allow-button"
-                label={allowLabel}
+                label={resolvedAllowLabel}
                 variant="default"
                 onPress={onGrant}
                 style={{ alignSelf: 'stretch', minHeight: 56 }}
-                accessibilityLabel={allowLabel}
+                accessibilityLabel={resolvedAllowLabel}
               />
               <Button
                 testID="permission-skip-button"
-                label={skipLabel}
+                label={resolvedSkipLabel}
                 variant="ghost"
                 onPress={onSkip}
-                accessibilityLabel={skipLabel}
+                accessibilityLabel={resolvedSkipLabel}
               />
             </>
           )}

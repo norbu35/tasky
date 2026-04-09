@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="iPhone 16 Pro - iOS 18.6 - 08C86E73-99CC-4B9F-B0A2-EA3C8077BCA0" tests="1" failures="0" time="72.0">
+    <testcase id="JRN-CUST-01-post-a-task" name="JRN-CUST-01-post-a-task" classname="JRN-CUST-01-post-a-task" time="72.0" status="SUCCESS"/>
+  </testsuite>
+</testsuites>

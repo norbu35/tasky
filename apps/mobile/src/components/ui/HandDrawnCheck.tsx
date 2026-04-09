@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { animationPresets } from '../../design/animations';
@@ -22,6 +23,7 @@ export function HandDrawnCheck({
   testID,
   className,
 }: HandDrawnCheckProps) {
+  const { t } = useTranslation();
   const scale = useSharedValue(animated ? 0 : 1);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function HandDrawnCheck({
       style={animatedStyle}
       className={cn(className)}
       testID={testID}
-      accessibilityLabel="Success"
+      accessibilityLabel={t('common.success')}
       accessibilityRole="image"
     >
       <CheckCircle size={size} color={color} />

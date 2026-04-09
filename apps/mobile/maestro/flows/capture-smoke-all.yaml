@@ -1,0 +1,137 @@
+appId: mn.tasky.mobile
+---
+# Capture flow for smoke batch visual audit — April 2026
+# Captures: SCR-CUST-001..008 and SCR-TASK-001
+
+# === CUSTOMER JOURNEY: Post a Task ===
+- launchApp:
+    clearState: true
+- runFlow: _support/login-customer.yaml
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-001'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-001-my-tasks-empty
+
+# Tap empty-state CTA to post new task
+- tapOn:
+    id: 'my-tasks-feed-empty-cta'
+
+# SCR-CUST-002 - Category selection
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-002'
+    timeout: 10000
+- extendedWaitUntil:
+    visible:
+      id: 'category-selection-grid'
+    timeout: 10000
+- takeScreenshot: screenshots/SCR-CUST-002-category-selection
+
+- tapOn:
+    point: '30%,38%'
+- tapOn:
+    id: 'SCR-CUST-002-next'
+
+# SCR-CUST-003 - Intake form
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-003'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-003-intake-form
+
+- tapOn:
+    id: 'intake-description-input'
+- inputText: 'Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин.'
+- tapOn:
+    id: 'intake-header'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'SCR-CUST-003-next'
+
+# SCR-CUST-004 - Photo upload
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-004'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-004-photo-upload
+
+- tapOn:
+    id: 'SCR-CUST-004-next'
+
+# SCR-CUST-005 - Location
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-005'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-005-location
+
+- tapOn:
+    id: 'location-map'
+- tapOn:
+    id: 'location-text-input'
+- inputText: 'Сүхбаатар дүүрэг, 1-р хороо'
+- hideKeyboard
+- tapOn:
+    id: 'location-map'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'SCR-CUST-005-next'
+
+# SCR-CUST-006 - Schedule & budget
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-006'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-006-schedule-budget
+
+- tapOn:
+    id: 'schedule-budget-input'
+- eraseText: 20
+- inputText: '50000'
+- tapOn:
+    id: 'schedule-header'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'schedule-date-input'
+- extendedWaitUntil:
+    visible:
+      id: 'schedule-ios-picker-card'
+    timeout: 5000
+- tapOn:
+    id: 'schedule-picker-confirm'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'schedule-time-input'
+- extendedWaitUntil:
+    visible:
+      id: 'schedule-ios-picker-card'
+    timeout: 5000
+- tapOn:
+    id: 'schedule-picker-confirm'
+- waitForAnimationToEnd
+- tapOn:
+    id: 'SCR-CUST-006-next'
+
+# SCR-CUST-007 - Review & submit
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-007'
+    timeout: 5000
+- takeScreenshot: screenshots/SCR-CUST-007-review-submit
+
+- tapOn:
+    id: 'SCR-CUST-007-cta'
+
+# SCR-CUST-008 - Success
+- extendedWaitUntil:
+    visible:
+      id: 'SCR-CUST-008'
+    timeout: 10000
+- takeScreenshot: screenshots/SCR-CUST-008-success
+
+- tapOn:
+    id: 'task-posted-success-screen-done'
+- assertVisible:
+    id: 'SCR-CUST-001'
+- takeScreenshot: screenshots/SCR-CUST-001-my-tasks-with-task
