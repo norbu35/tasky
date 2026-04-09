@@ -2,6 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useBookingDetail } from '../../../../src/features/bookings/hooks/useBookingDetail';
 import type { Booking } from '../../../../src/lib/mobileApiClient';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
@@ -11,14 +15,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'booking-123' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -66,6 +66,14 @@ const mockCancelBooking = jest.fn();
 jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
   useCancelBooking: () => ({
     mutate: mockCancelBooking,
+    isPending: false,
+  }),
+}));
+
+const mockFlagNoShow = jest.fn();
+jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
+  useFlagNoShow: () => ({
+    mutate: mockFlagNoShow,
     isPending: false,
   }),
 }));
@@ -149,6 +157,8 @@ const assignedBooking: Booking = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('BookingDetailTasker (SCR-TASK-013)', () => {
@@ -195,7 +205,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.getByText('Ажил дууссан')).toBeTruthy();
+    expect(screen.getByText('Дууссан гэж тэмдэглэх')).toBeTruthy();
   });
 
   it('Mark Done button calls markBookingDone', () => {
@@ -210,7 +220,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    fireEvent.press(screen.getByText('Ажил дууссан'));
+    fireEvent.press(screen.getByText('Дууссан гэж тэмдэглэх'));
     expect(mockMarkBookingDone).toHaveBeenCalled();
   });
 
@@ -306,7 +316,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
     render(<BookingDetailScreen />);
 
     expect(screen.getByText('Захиалагч баталгаажуулахыг хүлээж байна')).toBeTruthy();
-    expect(screen.queryByText('Ажил дууссан')).toBeNull();
+    expect(screen.queryByText('Дууссан гэж тэмдэглэх')).toBeNull();
   });
 
   it('shows completed state without Mark Done button', () => {
@@ -322,7 +332,7 @@ describe('BookingDetailTasker (SCR-TASK-013)', () => {
       require('../../../../src/app/(tasker)/jobs/[bookingId]/index').default;
     render(<BookingDetailScreen />);
 
-    expect(screen.queryByText('Ажил дууссан')).toBeNull();
+    expect(screen.queryByText('Дууссан гэж тэмдэглэх')).toBeNull();
   });
 
   it('shows error state with retry', () => {

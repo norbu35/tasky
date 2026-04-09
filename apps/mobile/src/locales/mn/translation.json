@@ -67,7 +67,7 @@
       "slide3Title": "Аюулгүй, итгэлтэй",
       "slide3Body": "Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг",
       "skip": "Алгасах",
-      "next": "Дараагийх",
+      "next": "Дараагийн",
       "getStarted": "Эхлэх",
       "badge": "БАТАЛГААЖСАН"
     },
@@ -132,7 +132,7 @@
       "remindersBody": "Төлөвлөсөн ажлын цаг дөхөхөд бид танд урьдчилан сануулах болно.",
       "skip": "Дараа"
     },
-    "devBypass": "Хөгжүүлэгчийн орц",
+    "devBypass": "Хөгжүүлэгчийн нэвтрэлт",
     "loginAsCustomer": "Захиалагчаар нэвтрэх",
     "loginAsTasker": "Гүйцэтгэгчээр нэвтрэх"
   },
@@ -158,6 +158,7 @@
     "save": "Хадгалах",
     "delete": "Устгах",
     "done": "Дуусгах",
+    "success": "Амжилттай",
     "back": "Буцах",
     "next": "Дараах",
     "close": "Хаах",
@@ -414,13 +415,13 @@
       "confirmTitle": "Энэ гүйцэтгэгчийг сонгох уу?",
       "count": "{{count}} програм",
       "errorNetwork": "Интернэт холболтоо шалгана уу",
-      "pageTitle": "Нууцлалын бодлого",
+    "pageTitle": "Өргөдөл гаргагчид",
       "taskTitleFallback": "Даалгавар"
     },
     "bookings": {
       "title": "Миний захиалгууд",
       "emptyTitle": "Захиалга байхгүй байна",
-      "emptyDescription": "Анхны захиалгаа үүсгэхийн тулд гүйцэтгэгч зөвшөөрнө үү",
+      "emptyDescription": "Даалгавар нийтэлж, гүйцэтгэгч сонгоорой",
       "confirmTitle": "Захиалга баталгаажуулах",
       "disclaimer": "Tasky таныг бие даасан үйлчилгээ үзүүлэгчидтэй холбодог",
       "confirmButton": "Захиалга баталгаажуулах",
@@ -438,6 +439,9 @@
       "cancelFree": "4-өөс дээш цагийн өмнө цуцалбал шийтгэлгүй",
       "cancelLateWarning": "Ажил эхлэхэд 4-өөс бага цаг үлдсэн үед цуцалж байна. Энэ нь таны найдвартай байдалд нөлөөлнө",
       "cancelConfirm": "Тийм, цуцлах",
+      "cancelError": "Захиалга цуцлахад алдаа гарлаа. Дахин оролдоно уу.",
+      "completeError": "Дуусгалыг баталгаажуулахад алдаа гарлаа. Дахин оролдоно уу.",
+      "noShowError": "Ирээгүй гэж тэмдэглэхэд алдаа гарлаа. Дахин оролдоно уу.",
       "noShowTitle": "Гүйцэтгэгч ирсэнгүй үү?",
       "noShowFlag": "Ирээгүй гэж тэмдэглэх",
       "completionTitle": "Ажил гүйцэтгэгдсэн үү?",
@@ -453,11 +457,11 @@
       "calendarPromptTitle": "Календарьт нэмэх үү?",
       "cancelDetailsPlaceholder": "Дэлгэрэнгүй тайлбар...",
       "cancelPrompt": "Цуцлах шалтгаанаа сонгоно уу",
-      "cancelQuestion": "Захиалга цуцлах уу?",
-      "confirmCompletionTitle": "Ажил дууссан уу?",
+      "cancelQuestion": "Захиалга цуцлах",
+      "confirmCompletionTitle": "Ажил дууссаныг баталгаажуулах уу?",
       "confirmedHeadline": "Захиалга баталгаажлаа!",
       "ctaCancel": "Захиалга цуцлах",
-      "ctaCancelConfirm": "Тийм, цуцлах",
+      "ctaCancelConfirm": "Захиалга цуцлах",
       "ctaConfirm": "Батлах",
       "ctaConfirmComplete": "Дуусгасныг баталгаажуулах",
       "ctaDismiss": "Хаах",
@@ -478,10 +482,11 @@
       "detailTitle": "Захиалгын дэлгэрэнгүй",
       "disclaimerAcknowledge": "Би энэ нөхцлийг зөвшөөрч байна",
       "dispute": "Маргаан үүсгэх",
-      "emptyCta": "Даалгавар оруулах",
+      "emptyCta": "Даалгавар нийтлэх",
       "escrow": "Эскроу",
-      "helpCta": "Оператортой холбогдох",
-      "helpTitle": "Тусламж хэрэгтэй юу?",
+    "helpCta": "Оператортой холбогдох",
+    "helpDescription": "Хэрэв ямар нэгэн өөрчлөлт гарвал эсвэл асуудал мэдрэгдвэл захиалгын мэдээллээ хавсаргаад оператортой холбогдоно уу.",
+    "helpTitle": "Тусламж хэрэгтэй юу?",
       "helperReason": "Заавал биш",
       "labelBudget": "Шинэ төсөв",
       "labelNewSchedule": "Шинэ хуваарь",
@@ -491,7 +496,7 @@
       "noShowFlagTitle": "Tasker ирсэнгүй",
       "noShowFlaggedSuccess": "Үзүүлээгүй дарцаг амжилттай",
       "noShowReminderTitle": "Таскер ирсэн үү?",
-      "pageTitle": "Нууцлалын бодлого",
+      "pageTitle": "Захиалгууд",
       "paymentNote": "Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно",
       "prefilledNote": "Өмнөх захиалгаас урьдчилж бөглөсөн. Та засварлах боломжтой.",
       "providerLabel": "Гүйцэтгэгч",
@@ -546,24 +551,36 @@
       "evidenceDescription": "Нэхэмжлэлийг дэмжих зургуудыг оруулна уу",
       "submit": "Маргаан илгээх",
       "statusTitle": "Маргааны статус",
-      "statusOpen": "Хянагдаж байна",
-      "statusEscalated": "Дээшлүүлэгдсэн",
+      "statusOpen": "Нээлттэй",
+      "statusEscalated": "Мөрдөн шалгаж байна",
       "statusResolved": "Шийдвэрлэгдсэн",
-      "ctaSubmit": "Сэтгэгдэл илгээх",
+      "statusResolvedCustomer": "Хэрэглэгчийн талд шийдэгдсэн",
+      "statusResolvedTasker": "Гүйцэтгэгчийн талд шийдэгдсэн",
+      "statusClosedInsufficient": "Нотлох баримт хангалтгүй — хаагдсан",
+      "ctaSubmit": "Маргаан илгээх",
       "defaultCategory": "Чанарын гомдол",
       "detailBooking": "Захиалгын дугаар",
       "detailReason": "Гомдлын шалтгаан",
       "detailSubmitted": "Илгээсэн огноо",
       "detailType": "Төрөл",
-      "errorToast": "Захиалгын мэдээлэл ачааллахад алдаа гарлаа",
+      "errorToast": "Маргааны мэдээлэл ачааллахад алдаа гарлаа",
       "labelDescription": "Дэлгэрэнгүй тайлбар",
       "labelEvidence": "Нотлох баримт",
-      "labelReason": "Шалтгаан",
+      "labelReason": "Асуудлын шалтгаан",
+      "placeholderDescription": "Асуудлын дэлгэрэнгүй тайлбар...",
       "noEvidence": "Ноотлох баримт байхгүй",
-      "pageTitle": "Нууцлалын бодлого",
-      "resolutionEscalated": "Маргааныг нэмэлт шалгалтад шилжүүлсэн.",
+      "pageTitle": "Маргааны төлөв",
+      "openDescription": "Таны маргаан админы хянаж байна. Шийдвэр гарахад мэдэгдэл авна.",
+      "escalatedDescription": "Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.",
+      "resolvedCustomerDescription": "Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.",
+      "resolvedTaskerDescription": "Маргаан гүйцэтгэгчийн талд шийдэгдлээ.",
+      "closedInsufficientDescription": "Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.",
+      "resolutionEscalated": "Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.",
       "resolutionOpen": "Маргаан одоогоор хянагдаж байна.",
       "resolutionResolvedCustomer": "Маргаан таны талд шийдэгдлээ.",
+      "resolutionResolvedTasker": "Маргаан гүйцэтгэгчийн талд шийдэгдлээ.",
+      "resolutionClosedInsufficient": "Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.",
+      "phase1Note": "Маргаан нь зөвхөн зуучлалын шинжтэй. Мөнгөн нөхөн төлбөр олгогдохгүй.",
       "retry": "Дахин оролдох",
       "sectionBookingRef": "Захиалгын мэдээлэл",
       "sectionEvidence": "Илгээсэн нотлох баримт",
@@ -572,9 +589,11 @@
       "sectionSummary": "Маргааны товч",
       "statusFinal": "Хүлээгдэж байна",
       "timelineAssigned": "Хянагч хуваарилагдсан",
+      "timelineAssignedDesc": "Хянагч таны маргааныг шалгаж байна.",
       "timelineDecision": "Шийдвэр",
       "timelineSubmitted": "Маргаан илгээсэн",
-      "timelineSubmittedDesc": "Системд амжилттай бүртгэгдсэн"
+      "timelineSubmittedDesc": "Системд амжилттай бүртгэгдсэн",
+      "evidenceDeadlineNote": "Нотлох баримт 24 цагийн дотор ирүүлээгүй бол маргаан автоматаар хаагдана"
     },
     "noApplicantRescue": {
       "title": "Одоохондоо өргөдөл байхгүй",
@@ -711,7 +730,7 @@
         "backButton": "Буцах",
         "confirmButton": "Цуцлахыг баталгаажуулах",
         "confirmDanger": "Цуцлах (түдгэлзүүлэх эрсдэлтэй!)",
-        "heading": "Баталгаажуулалт хийж, ажил аваарай!",
+      "heading": "Захиалга цуцлах уу?",
         "reasonEmergency": "Яаралтай нөхцөл байдал",
         "reasonLabel": "Цуцлах шалтгаан",
         "reasonOther": "Бусад",
@@ -721,6 +740,8 @@
         "title": "Гүйцэтгэгч олдсонгүй"
       },
       "cancelBooking": "Захиалга цуцлах",
+      "cancelError": "Захиалга цуцлахад алдаа гарлаа. Дахин оролдоно уу.",
+      "noShowError": "Ирээгүй гэж тэмдэглэхэд алдаа гарлаа. Дахин оролдоно уу.",
       "customerLabel": "Захиалагч",
       "emptyCta": "Даалгавар оруулах",
       "exactAddress": "Тодорхой хаяг",
@@ -838,7 +859,7 @@
       "polishedLabel": "Санал болгосон хувилбар",
       "sourceLabel": "Одоогийн тайлбар",
       "title": "Гүйцэтгэгч олдсонгүй",
-      "toastError": "Маргаан илгээхэд алдаа гарлаа",
+      "toastError": "Сүлжээний алдаа гарлаа",
       "toastSuccess": "Санал болгосон текст хадгалагдлаа",
       "toneLabel": "Хэв маяг"
     },
@@ -971,7 +992,7 @@
       "navTitle": "Сэтгэгдэл бичих"
     },
     "account": {
-      "suspendedTitle": "Бүртгэл түр хааглагдсан",
+      "suspendedTitle": "Бүртгэл түр хаагдсан",
       "suspendedBody": "Таны бүртгэл түр зуур хааглагдсан байна",
       "suspendedExpiry": "Хаалт дуусах: {{date}}",
       "suspendedAppeal": "Гомдол гаргах",
@@ -981,7 +1002,7 @@
       "logout": "Гарах"
     },
     "help": {
-      "title": "Гүйцэтгэгч олдсонгүй"
+      "title": "Захиалга цуцлах уу?"
     },
     "legal": {
       "contact": "Холбоо барих",
@@ -1070,7 +1091,7 @@
     }
   },
   "detail": {
-    "errorMessage": "Мессежүүдийг ачаалж чадсангүй"
+    "errorMessage": "Дэлгэрэнгүйг ачаалж чадсангүй"
   },
   "error": {
     "generic": "Ямар нэг алдаа гарлаа",
@@ -1079,7 +1100,7 @@
   },
   "feed": {
     "emptyTitle": "Одоохондоо энд юу ч алга",
-    "errorMessage": "Мессежүүдийг ачаалж чадсангүй"
+    "errorMessage": "Агуулгыг ачаалж чадсангүй"
   },
   "label": {
     "earlier": "Өмнөх",
@@ -1129,6 +1150,22 @@
     "stepPhotos": "Зураг",
     "stepReview": "Хяналт",
     "stepSchedule": "Хуваарь"
+  },
+  "BookingsListScreen": {
+    "tab": {
+      "active": "Идэвхтэй",
+      "completed": "Дууссан"
+    },
+    "emptyTitle": "Идэвхтэй захиалга алга",
+    "completedEmptyTitle": "Дууссан захиалга алга",
+    "taskerFallback": "Гүйцэтгэгч",
+    "taskFallback": "Даалгавар",
+    "assigned": "Баталгаажсан",
+    "completed": "Дууссан",
+    "cancelled": "Цуцалсан",
+    "noShow": "Ирээгүй",
+    "pending": "Хүлээж байна",
+    "offlineBanner": "Офлайн горим — хуучин мэдээлэл харагдаж байна"
   },
   "TaskDetailCustomerScreen": {
     "title": "Даалгаврын дэлгэрэнгүй",
@@ -1565,7 +1602,7 @@
     "badge": "БАТАЛГААЖСАН",
     "skip": "Алгасах",
     "getStarted": "Эхлэх",
-    "next": "Дараагийх"
+    "next": "Дараагийн"
   },
   "(auth)": {
     "error": "Нэвтэрч чадсангүй. Дахин оролдоно уу.",
@@ -1574,7 +1611,7 @@
     "facebookButton": "Facebook-ээр нэвтрэх",
     "devBypass": "Хөгжүүлэгчийн нэвтрэлт",
     "loginAsCustomer": "Хэрэглэгчээр нэвтэрнэ үү",
-    "loginAsTasker": "Tasker-ээр нэвтэрнэ үү",
+    "loginAsTasker": "Гүйцэтгэгчээр нэвтэрнэ үү",
     "terms": "Үйлчилгээний нөхцөл",
     "privacy": "Нууцлалын бодлого",
     "copyright": "© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан."
@@ -1876,8 +1913,8 @@
   "SettingsScreen.copy1": "Энэ үйлдлийг буцаах боломжгүй. Таны бүх мэдээлэл бүрмөсөн устгагдана.",
   "ReviewHardLockScreen.copy1": "Та үргэлжлүүлэхээсээ өмнө хүлээгдэж буй хяналт шалгалтаа оруулах ёстой.",
   "SessionExpiredScreen.copy1": "Таны нэвтрэх хугацаа дууссан байна. Дахин нэвтэрнэ үү",
-  "ChatDetailScreen.copy1": "Гар утасны STOMP холбогдсон",
-  "ChatDetailScreen.copy2": "Гар утасны STOMP алдаа",
+  "ChatDetailScreen.copy1": "Аюулгүй байдлын үүднээс чат, төлбөрөө Tasky дотор үргэлжлүүлээрэй.",
+  "ChatDetailScreen.copy2": "Захиалга баталгаажаагүй үед утасны дугаар бүү хуваалцаарай.",
   "HomeTab.copy1": "Найдвартай үнэлгээтэй tasker-ууд илүү хурдан ажлаа баталгаажуулдаг.",
   "HomeTab.copy2": "Шүүлтүүрээ өөрчилж, эсвэл дараа дахин шалгана уу",
   "MyProfileScreen.copy1": "Таны мэдээлэл баталгаажсан бөгөөд итгэлцэл нэмэгдүүлэхэд ашиглагдана.",
@@ -1889,6 +1926,9 @@
   "TaskerCreditsPayScreen.copy3": "Энэ бүрхүүл нь зөвхөн демо өгөгдлийг ашигладаг. Төлбөрийн төмөр зам энэ эгнээнд холбогдоогүй байна.",
   "BookingDetailTaskerScreen.copy1": "Төлбөр нь захиалагчтай шууд тохиролцоно. Tasky нь зуучлагч биш.",
   "BookingDetailTaskerScreen.copy2": "Үйлчлүүлэгч байхгүй байсан гэж мэдээлэх. 15+ минут хүлээсний дараа л хэрэглээрэй.",
+  "MyJobsScreen.active": "Идэвхтэй",
+  "MyJobsScreen.completed": "Дууссан",
+  "MyJobsScreen.cancelled": "Цуцлагдсан",
   "MyJobsScreen.copy1": "Даалгавруудад анкет илгээж, эхний ажлаа аваарай",
   "ProfilePolishScreen.copy1": "AI-ийн тусламжтайгаар өөрийн ажлын туршлага, ур чадвараа илүү мэргэжлийн түвшинд харагдуулаарай.",
   "ProfilePolishScreen.copy2": "Өөрийн ажлын туршлагаа бичнэ үү",
@@ -1910,14 +1950,19 @@
   "OnboardingScreen.copy6": "Үнэлгээ, баталгаажуулалтаар хамгаалагдсан нийгэмлэг",
   "TaskDetailScreen.copy1": "Ойролцоогоор байршил (захиалгыг баталгаажуулсны дараа яг хаягийг харуулна)",
   "TaskDetailScreen.copy2": "Баталгаажсан ажилчид болон байнгын шүүмжүүд нь захиалга бүрийн хоёр талыг хамгаалахад тусалдаг.",
-  "LanguageSwitcher.copy1": "Монгол",
+  "LanguageSwitcher.copy1": "Англи",
+  "LanguageSwitcher.copy2": "Монгол",
   "LoginForm.copy1": "Хөгжүүлэгч: Хэрэглэгчээр нэвтэрнэ үү",
   "LoginForm.copy2": "Хөгжүүлэгч: Гүйцэтгэгчээр нэвтэрнэ үү",
-  "ConfirmCompletionSheet.copy1": "Ажил хүлээн зөвшөөрснөөр гүйцэтгэгчид төлбөр олгогдоно",
+  "ConfirmCompletionSheet.copy1": "Баталгаажуулсны дараа та үнэлгээ өгөх боломжтой болно. Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно.",
+  "ConfirmCompletionSheet.confirmLabel": "Баталгаажуулах",
   "CustomerCancelSheet.copy1": "Та энэ захиалгыг торгуулгүйгээр цуцлах боломжтой.",
   "CustomerCancelSheet.copy2": "Та сүүлийн 28 хоногт аль хэдийн 1 зөрчилтэй байна. 2 дахь зөрчил нь зэрэглэлийн бууралт болон торгуулийн шалгалтыг идэвхжүүлж болно.",
   "CustomerCancelSheet.copy3": "Товлосон цаг хүртэл 4 цагаас бага хугацаа үлдлээ. Энэ цуцлалт таны найдвартай байдлын бүртгэлд тэмдэглэгдэнэ.",
   "CustomerCancelSheet.copy4": "Цуцлалтын бодлого: 4+ цагийн өмнө — торгуулгүй. 4 цагийн дотор — найдвартай байдлын зөрчил.",
+  "CustomerCancelSheet.reasonNoTasker": "Гүйцэтгэгч хэрэггүй болсон",
+  "CustomerCancelSheet.reasonSchedule": "Өөр цаг хэрэгтэй",
+  "CustomerCancelSheet.reasonOther": "Бусад",
   "CustomerNoShowSheet.copy1": "Төлөвлөсөн цагаасаа 10 минутын өмнө. Статусыг шинэчилнэ үү.",
   "CustomerNoShowSheet.copy2": "Төлөвлөсөн цагаасаа 15 минутын өмнө. Үзүүлэхгүй гэж дарцаглах уу? Энэ нь захиалгыг цуцалж, админаар хянуулах болно.",
   "CustomerNoShowSheet.copy3": "28 хоногийн дотор 2 ба түүнээс дээш удаа ирээгүй бол анхааруулгыг хянадаг",
@@ -1955,6 +2000,12 @@
   "TaskCancelSheet.copy2": "Хуваарийн хуваарийг 4 цагийн өмнө цуцалбал торгууль хүлээхгүй",
   "TaskCancelSheet.copy3": "28 хоногийн дотор 2 удаа хоцорч цуцлах нь таны зэрэглэлд нөлөөлнө",
   "RescheduleScreen.copy7": "Ня",
+  "RescheduleScreen.placeholderReason": "Цаг өөрчлөх шалтгаан...",
+  "RescheduleScreen.scheduleAuthorityNote": "Цагийн өөрчлөлт зөвхөн нөгөө тал зөвшөөрсний дараа хүчинтэй болно",
+  "RescheduleScreen.awaitingMessage": "Хүсэлт илгээгдлээ. Гүйцэтгэгчийн хариуг хүлээж байна.",
+  "RescheduleScreen.acceptedMessage": "Шинэ цаг баталгаажлаа. Ирэх цагийн сануулга шинэчлэгдлээ.",
+  "RescheduleScreen.declinedMessage": "Хүсэлт татгалзсан. Анхны товлосон цаг хүчинтэй хэвээр.",
+  "RescheduleScreen.expiredMessage": "Хүсэлтийн хугацаа дууссан. Анхны товлосон цаг хүчинтэй хэвээр.",
   "BookingTimelineScreen.copy3": "Цаг өөрчлөх хүсэлт",
   "BookingTimelineScreen.copy4": "Цаг өөрчлөлт зөвшөөрсөн",
   "BookingTimelineScreen.copy5": "Цаг өөрчлөлт татгалзсан",
@@ -2010,5 +2061,7 @@
   "ReviewFormScreen.copy11": "Гүйцэтгэгч",
   "ReviewFormScreen.copy12": "Захиалагч",
   "ReviewFormScreen.copy13": "Хүлээгдэж буй",
-  "TaskDetailsModal.copy1": "Би энэ ажилд туслахад бэлэн байна!"
+  "TaskDetailsModal.copy1": "Би энэ ажилд туслахад бэлэн байна!",
+  "CustomerCancelScreen.cancelError": "Захиалга цуцлахад алдаа гарлаа. Дахин оролдоно уу.",
+  "TaskerCancelScreen.cancelError": "Захиалга цуцлахад алдаа гарлаа. Дахин оролдоно уу."
 }

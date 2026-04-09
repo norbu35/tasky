@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 import BookingDetailScreen from '../../../../src/app/(customer)/bookings/[bookingId]/index';
 
@@ -12,12 +16,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'b-1' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -60,6 +62,7 @@ jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
 
 jest.mock('../../../../src/features/bookings/hooks/useCompleteBooking', () => ({
   useCompleteBooking: () => ({
+    mutate: jest.fn(),
     mutateAsync: jest.fn(),
     isPending: false,
   }),
@@ -67,6 +70,7 @@ jest.mock('../../../../src/features/bookings/hooks/useCompleteBooking', () => ({
 
 jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
   useCancelBooking: () => ({
+    mutate: jest.fn(),
     mutateAsync: jest.fn(),
     isPending: false,
   }),
@@ -74,6 +78,7 @@ jest.mock('../../../../src/features/bookings/hooks/useCancelBooking', () => ({
 
 jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
   useFlagNoShow: () => ({
+    mutate: jest.fn(),
     mutateAsync: jest.fn(),
     isPending: false,
   }),
@@ -81,6 +86,8 @@ jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 const makeBooking = (overrides = {}) => ({
@@ -156,7 +163,7 @@ describe('BookingDetailScreen (SCR-CUST-017)', () => {
       refetch: jest.fn(),
     });
     render(<BookingDetailScreen />);
-    expect(screen.getAllByText('Confirm Complete').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Confirm').length).toBeGreaterThanOrEqual(1);
   });
 
   it('navigates to chat when message CTA is pressed', () => {

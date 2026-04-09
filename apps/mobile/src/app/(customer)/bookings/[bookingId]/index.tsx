@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
@@ -13,6 +13,8 @@ import {
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
+import { useCompleteBooking } from '../../../../features/bookings/hooks/useCompleteBooking';
+import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
   const lower = status.toLowerCase();
@@ -92,6 +94,8 @@ export default function BookingDetailScreen() {
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
+  const completeBooking = useCompleteBooking();
+  const flagNoShow = useFlagNoShow();
   const [showCompletionSheet, setShowCompletionSheet] = useState(false);
   const [showCancelSheet, setShowCancelSheet] = useState(false);
   const [showCompleteSheet, setShowCompleteSheet] = useState(false);
@@ -261,6 +265,18 @@ export default function BookingDetailScreen() {
               </>
             )}
 
+            {status === 'ASSIGNED' && (
+              <Pressable
+                className="py-sm"
+                onPress={() => setShowNoShowSheet(true)}
+                testID="booking-detail-screen-no-show-btn"
+              >
+                <Text className="text-body text-danger font-medium">
+                  {t('customer.bookings.noShowTitle')}
+                </Text>
+              </Pressable>
+            )}
+
             {status === 'TASKER_MARKED_DONE' && (
               <Pressable
                 className="py-sm"
@@ -322,24 +338,47 @@ export default function BookingDetailScreen() {
             testID="SCR-CUST-018"
             isOpen={showCompleteSheet}
             onClose={() => setShowCompleteSheet(false)}
-            title={t('customer.confirmComplete.title')}
+            title={t('customer.bookings.completionTitle')}
             description={t('BookingDetailScreen.copy1')}
-            confirmLabel={t('customer.confirmComplete.confirm')}
+            confirmLabel={t('customer.bookings.completionConfirm')}
             onConfirm={() => {
-              // TODO: wire real completion API
-              setShowCompleteSheet(false);
+              if (!bookingId) return;
+              const idempotencyKey = `complete-${bookingId}-${Date.now()}`;
+              completeBooking.mutate(
+                { bookingId, idempotencyKey },
+                {
+                  onSuccess: () => {
+                    setShowCompleteSheet(false);
+                    refetch();
+                  },
+                  onError: () => {
+                    Alert.alert(t('common.error'), t('customer.bookings.completeError'));
+                  },
+                },
+              );
             }}
           />
           <ConfirmSheet
             testID="SCR-CUST-021"
             isOpen={showNoShowSheet}
             onClose={() => setShowNoShowSheet(false)}
-            title={t('customer.noShow.title')}
+            title={t('customer.bookings.noShowTitle')}
             description={t('BookingDetailScreen.copy2')}
-            confirmLabel={t('customer.noShow.confirm')}
+            confirmLabel={t('customer.bookings.noShowFlag')}
             onConfirm={() => {
-              // TODO: wire real no-show API
-              setShowNoShowSheet(false);
+              if (!bookingId) return;
+              flagNoShow.mutate(
+                { bookingId },
+                {
+                  onSuccess: () => {
+                    setShowNoShowSheet(false);
+                    refetch();
+                  },
+                  onError: () => {
+                    Alert.alert(t('common.error'), t('customer.bookings.noShowError'));
+                  },
+                },
+              );
             }}
             isDestructive
           />

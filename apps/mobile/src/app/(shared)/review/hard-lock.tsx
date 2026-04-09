@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScreenContainer } from '../../../components/shells';
 import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemplate';
@@ -7,16 +7,26 @@ import { ErrorStateTemplate } from '../../../components/templates/ErrorStateTemp
 export default function ReviewHardLockScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { bookingId, role } = useLocalSearchParams<{
+    bookingId?: string;
+    role?: 'customer' | 'tasker';
+  }>();
 
   return (
     <ScreenContainer testID="SCR-SHARED-019">
       <ErrorStateTemplate
         message={t('ReviewHardLockScreen.copy1')}
         onRetry={() => {
-          // TODO: wire real data — navigate to the pending review
-          router.back();
+          if (bookingId) {
+            router.replace({
+              pathname: '/(shared)/review/[bookingId]',
+              params: { bookingId, role: role ?? 'customer' },
+            });
+          } else {
+            router.back();
+          }
         }}
-        retryLabel={t('review.hardLock.reviewNow')}
+        retryLabel={t('shared.review.submit')}
         testID="review-hard-lock"
       />
     </ScreenContainer>

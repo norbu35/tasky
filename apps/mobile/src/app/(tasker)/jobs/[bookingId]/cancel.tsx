@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { Alert, Text, View } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react-native';
 import { ScreenContainer } from '../../../../components/shells';
 import { ModalSheetTemplate } from '../../../../components/templates/ModalSheetTemplate';
 import { Button } from '../../../../components/ui/Button';
+import { useCancelBooking } from '../../../../features/bookings/hooks/useCancelBooking';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
 const { colors } = mobileTheme;
@@ -13,15 +14,24 @@ const { colors } = mobileTheme;
 export default function TaskerCancelBookingScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const [isOpen, setIsOpen] = useState(true);
+  const { mutateAsync: cancelBooking, isPending } = useCancelBooking();
 
-  // TODO: wire real data — check strike policy, submit cancellation with reason
-
-  const handleCancel = () => {
-    // TODO: wire real cancellation API call
-    setIsOpen(false);
-    router.back();
-  };
+  const handleCancel = useCallback(async () => {
+    if (!bookingId) return;
+    try {
+      const idempotencyKey = `cancel-${bookingId}-${Date.now()}`;
+      await cancelBooking({ bookingId, idempotencyKey });
+      setIsOpen(false);
+      router.back();
+    } catch {
+      Alert.alert(
+        t('common.error'),
+        t('tasker.jobs.cancelError'),
+      );
+    }
+  }, [bookingId, cancelBooking, router, t]);
 
   return (
     <ScreenContainer testID="SCR-TASK-015">
@@ -42,7 +52,8 @@ export default function TaskerCancelBookingScreen() {
           <Button
             label={t('tasker.cancelBooking.confirm')}
             variant="destructive"
-            onPress={handleCancel}
+            onPress={() => void handleCancel()}
+            isLoading={isPending}
             className="self-stretch"
           />
           <Button
@@ -52,6 +63,7 @@ export default function TaskerCancelBookingScreen() {
               setIsOpen(false);
               router.back();
             }}
+            disabled={isPending}
             className="self-stretch"
           />
         </View>

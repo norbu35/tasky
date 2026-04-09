@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { DetailTemplate } from '../../../../components/templates/DetailTemplate';
@@ -7,6 +7,7 @@ import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { Button } from '../../../../components/ui/Button';
 import { useBookingDetail } from '../../../../features/bookings/hooks/useBookingDetail';
 import { useMarkBookingDone } from '../../../../features/bookings/hooks/useMarkBookingDone';
+import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
 import { TaskerCancelSheet } from '../../../../features/bookings/components/TaskerCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
 
@@ -16,6 +17,7 @@ export default function BookingDetailTaskerScreen() {
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
   const markDone = useMarkBookingDone();
+  const flagNoShow = useFlagNoShow();
   const [cancelSheetOpen, setCancelSheetOpen] = useState(false);
   const [showNoShowSheet, setShowNoShowSheet] = useState(false);
   const bookingStatus = booking?.status as string | undefined;
@@ -138,9 +140,16 @@ export default function BookingDetailTaskerScreen() {
             </View>
           )}
 
-          {/* Cancel Button */}
+          {/* Cancel & No-Show Buttons */}
           {isAssigned && (
-            <View className="items-center pt-md">
+            <View className="items-center pt-md gap-sm">
+              <Button
+                label={t('tasker.jobs.noShowFlag')}
+                variant="ghost"
+                onPress={() => setShowNoShowSheet(true)}
+                labelClassName="text-danger"
+                testID="booking-detail-tasker-no-show"
+              />
               <Button
                 label={t('tasker.jobs.cancelBooking')}
                 variant="ghost"
@@ -184,12 +193,23 @@ export default function BookingDetailTaskerScreen() {
             testID="SCR-TASK-014"
             isOpen={showNoShowSheet}
             onClose={() => setShowNoShowSheet(false)}
-            title={t('tasker.noShow.title')}
+            title={t('tasker.jobs.noShow.title')}
             description={t('BookingDetailTaskerScreen.copy2')}
-            confirmLabel={t('tasker.noShow.confirm')}
+            confirmLabel={t('tasker.jobs.noShow.flagButton')}
             onConfirm={() => {
-              // TODO: wire real no-show API
-              setShowNoShowSheet(false);
+              if (!bookingId) return;
+              flagNoShow.mutate(
+                { bookingId },
+                {
+                  onSuccess: () => {
+                    setShowNoShowSheet(false);
+                    refetch();
+                  },
+                  onError: () => {
+                    Alert.alert(t('common.error'), t('tasker.jobs.noShowError'));
+                  },
+                },
+              );
             }}
             isDestructive
           />
