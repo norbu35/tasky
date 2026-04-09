@@ -1,7 +1,6 @@
 // apps/mobile/tailwind.config.ts
 import type { Config } from 'tailwindcss';
 import { nativeTokens } from '@tasky/design-tokens';
-import { screenLayout } from './src/design/screenLayout';
 import { screenTypographyPlugin } from './src/design/tailwind-screen-typography';
 
 const config: Config = {
@@ -18,19 +17,19 @@ const config: Config = {
       colors: nativeTokens.colors,
       spacing: {
         ...nativeTokens.spacing,
-        'screen-x': String(screenLayout.insetX),
-        'header-top': String(screenLayout.header.topInset),
-        'header-greeting': String(screenLayout.header.greetingGap),
-        'header-title': String(screenLayout.header.titleGap),
-        'header-bottom': String(screenLayout.header.bottomGap),
-        section: String(screenLayout.body.sectionGap),
-        block: String(screenLayout.body.blockGap),
-        item: String(screenLayout.body.itemGap),
-        micro: String(screenLayout.body.microGap),
-        card: String(screenLayout.body.cardPadding),
-        'action-bar': String(screenLayout.actions.barPadding),
-        'action-buttons': String(screenLayout.actions.buttonGap),
-        'wizard-step': String(screenLayout.wizard.stepIndicatorGap),
+        'screen-x': String(nativeTokens.spacing.lg),
+        'header-top': String(nativeTokens.spacing.xl),
+        'header-greeting': String(nativeTokens.spacing.xs),
+        'header-title': String(nativeTokens.spacing.sm),
+        'header-bottom': String(nativeTokens.spacing.xl),
+        section: String(nativeTokens.spacing.xl),
+        block: String(nativeTokens.spacing.lg),
+        item: String(nativeTokens.spacing.md),
+        micro: String(nativeTokens.spacing.xs),
+        card: String(nativeTokens.spacing.lg),
+        'action-bar': String(nativeTokens.spacing.md),
+        'action-buttons': String(nativeTokens.spacing.sm),
+        'wizard-step': String(nativeTokens.spacing.xs),
       },
       borderRadius: nativeTokens.radius,
       fontFamily: {

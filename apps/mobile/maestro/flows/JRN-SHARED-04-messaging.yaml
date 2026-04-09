@@ -7,13 +7,14 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Precondition: Logged in; at least one conversation exists
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-customer.yaml
 
 # Navigate to Inbox tab
 - tapOn:
-    id: "tab-inbox"
+    point: "62%,93%"
 
 - extendedWaitUntil:
     visible:

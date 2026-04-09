@@ -7,18 +7,20 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Precondition: Logged in as customer; active (assigned) booking exists; tasker marks done
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-customer.yaml
 
 # Step 1: Navigate to Bookings list (SCR-CUST-016)
+- waitForAnimationToEnd
 - tapOn:
-    id: "tab-bookings"
+    point: "33%,93%"
 
 - extendedWaitUntil:
     visible:
       id: "SCR-CUST-016"
-    timeout: 5000
+    timeout: 10000
 
 # Step 2: Open active booking → Booking detail (SCR-CUST-017)
 - tapOn:

@@ -27,9 +27,20 @@ appId: mn.tasky.mobile
       id: "SCR-CUST-002"
     timeout: 10000
 
-# Tap first category card in grid (dev seed: dev-cat-001 = Cleaning)
+# Wait for category grid to load, then tap first real category by visible text
+- extendedWaitUntil:
+    visible:
+      id: "category-selection-grid"
+    timeout: 10000
+
+# Tap first category card — "Cleaning" text is inside an accessibility button
+# so Maestro can't match standalone text. Tap by position within the grid area.
 - tapOn:
-    id: "category-item-dev-cat-001"
+    point: "30%,38%"
+
+# Tap "Continue" to advance (category screen uses select-then-continue pattern)
+- tapOn:
+    id: "SCR-CUST-002-next"
 
 # Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:

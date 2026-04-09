@@ -7,13 +7,14 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Precondition: Logged in as customer; completed booking exists
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-customer.yaml
 
 # Navigate to bookings list
 - tapOn:
-    id: "tab-bookings"
+    point: "38%,93%"
 
 - extendedWaitUntil:
     visible:

@@ -3,7 +3,8 @@ appId: mn.tasky.mobile
 # Journey JRN-B2B-01: Create Business Account
 # Goal: Set up a business account with a location and members
 
-- launchApp
+- launchApp:
+    clearState: true
 
 # Step 1: Tap 'Create account'
 - extendedWaitUntil:

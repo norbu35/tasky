@@ -6,7 +6,8 @@ appId: mn.tasky.mobile
 # Actor: tasker (verified)
 # Flow type: happy path
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-tasker.yaml
 

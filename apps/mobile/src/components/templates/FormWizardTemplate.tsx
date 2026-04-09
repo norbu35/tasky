@@ -25,6 +25,8 @@ export interface FormWizardTemplateProps {
   nextLoading?: boolean;
   showBack?: boolean;
   testID?: string;
+  /** Override the auto-generated testID for the primary action button (defaults to `${testID}-next`). */
+  nextButtonTestID?: string;
   className?: string;
 }
 
@@ -39,11 +41,13 @@ export function FormWizardTemplate({
   nextLoading = false,
   showBack = true,
   testID,
+  nextButtonTestID,
   className,
 }: FormWizardTemplateProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const showBackButton = showBack && onBack && (currentStep > 0 || totalSteps === 1);
+  const effectiveNextTestID = nextButtonTestID ?? (testID ? `${testID}-next` : undefined);
 
   return (
     <ScreenContainer testID={testID} className={className}>
@@ -127,7 +131,7 @@ export function FormWizardTemplate({
                     disabled={nextDisabled}
                     isLoading={nextLoading}
                     style={{ flex: 2 }}
-                    testID={testID ? `${testID}-next` : undefined}
+                    testID={effectiveNextTestID}
                   />
                 </View>
               ) : (
@@ -137,7 +141,7 @@ export function FormWizardTemplate({
                   disabled={nextDisabled}
                   isLoading={nextLoading}
                   style={{ alignSelf: 'stretch' }}
-                  testID={testID ? `${testID}-next` : undefined}
+                  testID={effectiveNextTestID}
                 />
               )}
             </View>

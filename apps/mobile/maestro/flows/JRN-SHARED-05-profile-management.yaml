@@ -16,7 +16,7 @@ appId: mn.tasky.mobile
 # Navigate to Profile tab (tasker (tabs) navigator)
 # tabBarButton with testID="tab-profile" in (tabs)/_layout.tsx
 - tapOn:
-    id: "tab-profile"
+    point: "88%,93%"
 
 - extendedWaitUntil:
     visible:

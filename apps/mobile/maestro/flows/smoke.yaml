@@ -1,4 +1,16 @@
 appId: mn.tasky.mobile
 ---
-- launchApp
-- assertVisible: "Tasky"
+- launchApp:
+    clearState: true
+
+# Dismiss any system "Open in App?" dialog
+- runFlow:
+    when:
+      visible: "Cancel"
+    commands:
+      - tapOn: "Cancel"
+
+- extendedWaitUntil:
+    visible:
+      id: "SCR-SHARED-002"
+    timeout: 15000

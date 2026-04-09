@@ -3,7 +3,8 @@ appId: mn.tasky.mobile
 # Journey JRN-B2B-03: Manage Business Tasks
 # Goal: Review account-scoped tasks and open a task detail
 
-- launchApp
+- launchApp:
+    clearState: true
 
 # Step 1: Open business account tasks
 - extendedWaitUntil:

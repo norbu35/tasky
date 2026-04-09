@@ -79,7 +79,6 @@ function FilterTab({
 }) {
   return (
     <Pressable
-      testID="SCR-CUST-016"
       onPress={onPress}
       className="pb-xs items-start"
       accessibilityRole="button"
@@ -254,7 +253,7 @@ export default function BookingsListScreen() {
   const showOfflineBanner = isError && bookings.length > 0;
 
   return (
-    <ScreenContainer testID="bookings-list-screen">
+    <ScreenContainer testID="SCR-CUST-016">
       <View className="flex-1 bg-background">
         {/* header: screenLayout runtime values → imperative */}
         <View

@@ -3,7 +3,8 @@ appId: mn.tasky.mobile
 # Journey JRN-CUST-09: Purchase Task Boost (Phase 2)
 # Goal: Buy promoted or urgent visibility for an open task
 
-- launchApp
+- launchApp:
+    clearState: true
 
 # Step 1: Tap 'Boost Task'
 - extendedWaitUntil:

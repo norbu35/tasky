@@ -7,27 +7,29 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Note: upload.tsx has TODOs; navigate through screens without actual file upload
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-tasker.yaml
 
-# Verification gate appears when unverified tasker taps Apply
+# Wait for tasker browse screen to confirm login succeeded
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-001"
     timeout: 5000
 
-- tapOn:
-    id: "task-feed"
+# Navigate directly to the verification gate via deep link.
+# The browse feed may be empty in E2E (no seeded tasks), so we cannot rely on
+# tapping a task card → task detail → "Get Verified" CTA.
+# Expo Router resolves tasky://(tasker)/verification to verification/index.tsx (SCR-TASK-003).
+- openLink: "tasky://(tasker)/verification"
 
-- extendedWaitUntil:
-    visible:
-      id: "SCR-TASK-002"
-    timeout: 5000
-
-# Apply — triggers verification gate
-- tapOn:
-    id: "task-detail-apply-button"
+# Dismiss iOS "Open in Tasky?" system dialog
+- runFlow:
+    when:
+      visible: "Open"
+    commands:
+      - tapOn: "Open"
 
 # Verification gate screen
 - extendedWaitUntil:
@@ -35,14 +37,30 @@ appId: mn.tasky.mobile
       id: "SCR-TASK-003"
     timeout: 5000
 
+# Tap the start-verification CTA (testID: verification-gate-cta from VerificationGate component)
 - tapOn:
-    id: "verification-gate-start-button"
+    id: "SCR-TASK-003-cta"
 
 # Consent screen
 - extendedWaitUntil:
     visible:
       id: "SCR-TASK-004"
     timeout: 5000
+
+# Consent CTA is disabled until user scrolls to the bottom of the legal text.
+# The CTA sits in a StickyActionBar (always visible), so we scroll the content
+# until the privacy link at the bottom of the scroll view is visible —
+# this triggers the hasScrolledToEnd state and enables the button.
+- scrollUntilVisible:
+    element:
+      id: "consent-privacy-link"
+    direction: DOWN
+
+# Extra swipe to ensure hasScrolledToEnd triggers
+- swipe:
+    direction: UP
+    duration: 500
+- waitForAnimationToEnd
 
 - assertVisible:
     id: "consent-screen-cta"
@@ -55,15 +73,15 @@ appId: mn.tasky.mobile
       id: "SCR-TASK-005"
     timeout: 5000
 
-# Tap upload ID front (system picker opens — dismiss or mock)
+# Tap camera button to open system camera/picker for ID front
 - tapOn:
-    id: "upload-id-front-button"
-# NOTE: File picker opens; Maestro cannot select files from gallery without OS interaction.
-# If this step fails, document as KNOWN-LIMITATION: file picker requires device setup.
+    id: "capture-camera-btn"
+# NOTE: System camera/file picker opens; Maestro cannot interact with OS-level pickers.
+# If this step fails, document as KNOWN-LIMITATION: camera/file picker requires device setup.
 
-# Navigate to submitted state if picker is skippable
+# Tap the FormWizard "Next" / "Submit" button to advance or submit
 - tapOn:
-    id: "upload-submit-button"
+    id: "SCR-TASK-005-next"
 
 - extendedWaitUntil:
     visible:

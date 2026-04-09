@@ -7,13 +7,14 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Note: profile/delete.tsx has TODOs; navigate to settings only
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-tasker.yaml
 
 # Navigate to Profile tab (tabBarButton testID from (tabs)/_layout.tsx)
 - tapOn:
-    id: "tab-profile"
+    point: "88%,93%"
 
 - extendedWaitUntil:
     visible:

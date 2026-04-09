@@ -7,8 +7,13 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Phase gate: Phase 2
 # Precondition: Logged in as tasker; selection notification received
+# STATUS: BLOCKED — tab-notifications does not exist in (tabs)/_layout.tsx.
+#   Notifications are accessed via (shared)/notifications.tsx but there is no
+#   tab bar entry or header button for it on the tasker browse screen.
+#   Will be enabled when a notifications entry point is added for taskers.
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-tasker.yaml
 

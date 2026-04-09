@@ -8,11 +8,12 @@ appId: mn.tasky.mobile
 #   2. Requires backend data: an escrow-eligible booking must exist.
 # Will be enabled when Phase 3 is released with real booking data.
 
-- launchApp
+- launchApp:
+    clearState: true
 - runFlow: _support/login-customer.yaml
 
 - tapOn:
-    id: "tab-bookings"
+    point: "38%,93%"
 
 - extendedWaitUntil:
     visible:

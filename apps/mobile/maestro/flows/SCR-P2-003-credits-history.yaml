@@ -5,7 +5,8 @@ appId: mn.tasky.mobile
 # STATUS: BLOCKED — depends on SCR-P2-001 which has no Phase 1 navigation entry point.
 # Will be enabled together with SCR-P2-001 when credits navigation is added.
 
-- launchApp
+- launchApp:
+    clearState: true
 - runFlow: _support/login-tasker.yaml
 
 # TODO: add navigation to credits before this assertion

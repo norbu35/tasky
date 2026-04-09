@@ -5,7 +5,8 @@ appId: mn.tasky.mobile
 # STATUS: BLOCKED — no Phase 1 navigation entry point to (tasker)/credits.
 # Will be enabled when a credits link is added to a Phase 1 screen (e.g., tasker profile/stats).
 
-- launchApp
+- launchApp:
+    clearState: true
 - runFlow: _support/login-tasker.yaml
 
 # TODO: add tap navigation once a credits entry point exists in Phase 1 UI

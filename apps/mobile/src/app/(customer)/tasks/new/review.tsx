@@ -315,6 +315,7 @@ export default function ReviewSubmitScreen() {
       nextLoading={isPending}
       nextDisabled={isPending || !hasRequiredPayload}
       testID="SCR-CUST-007"
+      nextButtonTestID="SCR-CUST-007-cta"
     >
       <View className="gap-xs mb-sm">
         <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">

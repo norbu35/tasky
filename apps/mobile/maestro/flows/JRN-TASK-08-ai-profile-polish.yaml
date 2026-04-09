@@ -7,13 +7,14 @@ appId: mn.tasky.mobile
 # Flow type: happy path
 # Precondition: Logged in as tasker
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-tasker.yaml
 
 # Navigate to profile tab → profile view (SCR-SHARED-012)
 - tapOn:
-    id: "tab-profile"
+    point: "88%,93%"
 
 - extendedWaitUntil:
     visible:
@@ -22,7 +23,7 @@ appId: mn.tasky.mobile
 
 # Tap edit → profile edit screen (SCR-SHARED-013)
 - tapOn:
-    id: "profile-edit-button"
+    id: "SCR-SHARED-012-cta"
 
 - extendedWaitUntil:
     visible:

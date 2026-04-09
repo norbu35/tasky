@@ -4,7 +4,8 @@ appId: mn.tasky.mobile
 # Required states: loading_initial, empty, populated, loading_refresh, error_network
 # Flow type: smoke test
 
-- launchApp
+- launchApp:
+    clearState: true
 - runFlow: _support/login-customer.yaml
 
 - tapOn:

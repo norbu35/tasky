@@ -31,6 +31,25 @@ export default function ConsentScreen() {
     }
   };
 
+  const viewportRef = React.useRef(0);
+  const contentRef = React.useRef(0);
+
+  const checkIfContentFits = () => {
+    if (viewportRef.current > 0 && contentRef.current > 0 &&
+        viewportRef.current >= contentRef.current - spacing.lg) {
+      setHasScrolledToEnd(true);
+    }
+  };
+
+  const handleContentSizeChange = (_w: number, contentHeight: number) => {
+    contentRef.current = contentHeight;
+    checkIfContentFits();
+  };
+  const handleLayout = (event: any) => {
+    viewportRef.current = event.nativeEvent.layout.height;
+    checkIfContentFits();
+  };
+
   return (
     <ScreenContainer testID="SCR-TASK-004">
       <View className="min-h-[56px] flex-row items-center justify-between px-md">
@@ -59,6 +78,8 @@ export default function ConsentScreen() {
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        onContentSizeChange={handleContentSizeChange}
+        onLayout={handleLayout}
         testID="consent-scroll"
         extraBottomInset={96}
       >

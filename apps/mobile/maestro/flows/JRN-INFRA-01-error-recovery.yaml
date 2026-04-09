@@ -9,7 +9,8 @@ appId: mn.tasky.mobile
 # Note: SCR testIDs added in Phase 1 Task 2
 
 # --- Part A: Network Error Screen ---
-- launchApp
+- launchApp:
+    clearState: true
 
 # Trigger network error by navigating when network is unavailable
 # (This requires the device to be in airplane mode or the API to be unreachable)

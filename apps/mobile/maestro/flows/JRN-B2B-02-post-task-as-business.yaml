@@ -3,7 +3,8 @@ appId: mn.tasky.mobile
 # Journey JRN-B2B-02: Post Task as Business
 # Goal: Start the standard task-posting flow with business account context
 
-- launchApp
+- launchApp:
+    clearState: true
 
 # Step 1: Tap 'Post Task as Business'
 - extendedWaitUntil:

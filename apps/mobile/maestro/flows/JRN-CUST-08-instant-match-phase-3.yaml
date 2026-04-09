@@ -8,7 +8,8 @@ appId: mn.tasky.mobile
 # Phase gate: Phase 3
 # Precondition: Logged in as customer; task has instant match option enabled
 
-- launchApp
+- launchApp:
+    clearState: true
 
 - runFlow: _support/login-customer.yaml
 

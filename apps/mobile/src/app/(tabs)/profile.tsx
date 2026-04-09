@@ -1,8 +1,7 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pencil, Settings } from 'lucide-react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
@@ -13,10 +12,7 @@ import { useMyProfile } from '../../features/profile/hooks/useProfile';
 import { useRole } from '../../providers/RoleProvider';
 import { useAuthStore } from '../../store/authStore';
 import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
-import { mobileTheme } from '../../design/tokenAdapter';
 import { screenLayout } from '../../design/screenLayout';
-
-const { colors } = mobileTheme;
 
 export default function MyProfileScreen() {
   const session = useAuthStore((state) => state.session);
@@ -38,18 +34,15 @@ function AuthenticatedProfile() {
     <DetailTemplate
       testID="SCR-SHARED-012"
       headerTitle={t('shared.profile.title')}
-      rightActions={[
-        {
-          icon: <Pencil size={22} color={colors.primary} />,
-          onPress: () => router.push('/(shared)/profile/edit'),
-          testID: 'profile-edit-action',
-        },
-        {
-          icon: <Settings size={22} color={colors.primary} />,
-          onPress: () => router.push('/(shared)/profile/settings'),
-          testID: 'profile-settings-action',
-        },
-      ]}
+      insideTabNavigator
+      ctaLabel={t('shared.profile.editProfile')}
+      ctaOnPress={() => router.push('/(shared)/profile/edit')}
+      secondaryCtaLabel={isTasker ? t('shared.profile.viewStats') : t('shared.profile.settings')}
+      secondaryCtaOnPress={() =>
+        isTasker
+          ? router.push('/(tasker)/stats')
+          : router.push('/(shared)/profile/settings')
+      }
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -124,18 +117,7 @@ function AuthenticatedProfile() {
             />
           )}
 
-          {/* Stats Link for Taskers */}
-          {isTasker && (
-            <Pressable
-              onPress={() => router.push('/(tasker)/stats')}
-              className="bg-muted rounded-md py-md px-lg items-center"
-              testID="profile-stats-link"
-            >
-              <Text className="text-body font-semibold text-primary">
-                {t('shared.profile.viewStats')}
-              </Text>
-            </Pressable>
-          )}
+          {/* Stats Link for Taskers — now accessible via secondary CTA */}
         </View>
       )}
     </DetailTemplate>

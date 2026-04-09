@@ -3,11 +3,12 @@ appId: mn.tasky.mobile
 # Screen SCR-TASK-016: Tasker Stats Dashboard
 # Flow type: smoke test
 
-- launchApp
+- launchApp:
+    clearState: true
 - runFlow: _support/login-tasker.yaml
 
 - tapOn:
-    id: "tab-profile"
+    point: "88%,93%"
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:

@@ -3,7 +3,8 @@ appId: mn.tasky.mobile
 # Journey JRN-B2B-04: Business Subscription Billing
 # Goal: View or activate Host Lite / Ops Standard for a business account
 
-- launchApp
+- launchApp:
+    clearState: true
 
 # Step 1: View available plans and current status
 - extendedWaitUntil:
