@@ -1,22 +1,31 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { ResponsiveDetailShell, StatePanel } from '../../components/parity';
-import { Users } from 'lucide-react';
+import { Pencil, Clock, Share2, Users } from 'lucide-react';
 
 export function CustomerNoApplicantRescuePage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const taskId = searchParams.get('taskId');
 
   return (
     <ResponsiveDetailShell
       title={t('customerPages.noApplicantRescue.title', 'No applicants yet')}
       description={t(
         'customerPages.noApplicantRescue.description',
-        'Keep the task visible and help the customer recover when nobody has applied.',
+        'Nobody has applied to your task yet. Try one of the options below to attract Taskers.',
       )}
       primaryAction={
-        <Button type="button" variant="secondary">
-          {t('customerPages.noApplicantRescue.boostVisibility', 'Boost visibility')}
+        <Button
+          type="button"
+          variant="default"
+          onClick={() => navigate(taskId ? `/customer/tasks/${taskId}/edit` : '/customer/tasks')}
+        >
+          <Pencil className="w-4 h-4 mr-2" />
+          {t('customerPages.noApplicantRescue.editTask', 'Edit task details')}
         </Button>
       }
     >
@@ -26,7 +35,7 @@ export function CustomerNoApplicantRescuePage() {
           title={t('customerPages.noApplicantRescue.recoveryTitle', 'Recovery options')}
           description={t(
             'customerPages.noApplicantRescue.recoveryDesc',
-            'Prompt the customer to adjust price, timing, or description.',
+            'Adjust the price, timing, or description to make your task more appealing.',
           )}
           tone="muted"
         />
@@ -34,14 +43,37 @@ export function CustomerNoApplicantRescuePage() {
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
             <CardTitle>
-              {t('customerPages.noApplicantRescue.rescueTitle', 'Rescue options')}
+              {t('customerPages.noApplicantRescue.rescueTitle', 'What you can do')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            {t(
-              'customerPages.noApplicantRescue.rescueDesc',
-              'Keep the task in the queue and suggest a cheaper or more flexible rebook path.',
-            )}
+          <CardContent className="space-y-3">
+            <div className="flex items-start gap-3">
+              <Pencil className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                {t(
+                  'customerPages.noApplicantRescue.tipEdit',
+                  'Edit your task to raise the budget or add more detail.',
+                )}
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                {t(
+                  'customerPages.noApplicantRescue.tipExtend',
+                  'Extend the deadline so more Taskers can see it.',
+                )}
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Share2 className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                {t(
+                  'customerPages.noApplicantRescue.tipShare',
+                  'Share your task link with friends who might know a Tasker.',
+                )}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

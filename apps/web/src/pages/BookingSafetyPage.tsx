@@ -335,7 +335,7 @@ export function BookingSafetyPage() {
             <DialogDescription>
               {t(
                 'bookingSafety.cancelDesc',
-                'Are you sure you want to cancel this booking? This action cannot be undone and may incur cancellation fees.',
+                'Are you sure you want to cancel this booking? This action cannot be undone.',
               )}
             </DialogDescription>
           </DialogHeader>
@@ -364,7 +364,7 @@ export function BookingSafetyPage() {
             <DialogDescription>
               {t(
                 'bookingSafety.completeDesc',
-                'Mark this booking as successfully completed. This will release payment to the Tasker.',
+                'Mark this booking as successfully completed.',
               )}
             </DialogDescription>
           </DialogHeader>

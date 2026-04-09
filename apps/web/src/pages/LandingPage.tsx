@@ -212,7 +212,7 @@ export function LandingPage() {
               <p className="text-lg text-primary-foreground/60 max-w-lg mx-auto lg:mx-0">
                 {t(
                   'landing.heroSubtitle',
-                  'ID-verified workers. Upfront budgets. Dispute protection built in.',
+                  'ID-verified workers. Upfront budgets. Local support when you need it.',
                 )}
               </p>
 
@@ -291,7 +291,7 @@ export function LandingPage() {
                 onClick={() => navigate('/auth')}
               >
                 <img
-                  alt="Apartment cleaning service"
+                  alt={t('landing.featCleaningAlt', 'Apartment cleaning service')}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   src="/images/feat-cleaning.png"
                 />
@@ -333,7 +333,7 @@ export function LandingPage() {
                     </p>
                   </div>
                   <img
-                    alt="Handyman repair work"
+                    alt={t('landing.featRepairAlt', 'Handyman repair work')}
                     className="w-full h-48 object-cover rounded-lg"
                     src="/images/feat-repair.png"
                   />
@@ -395,7 +395,7 @@ export function LandingPage() {
                   </div>
                   <div className="relative h-full flex items-center">
                     <img
-                      alt="Moving service"
+                      alt={t('landing.featMovingAlt', 'Moving service')}
                       className="relative z-10 w-full h-48 md:h-56 object-cover rounded-lg"
                       src="/images/feat-moving.png"
                     />
@@ -469,10 +469,10 @@ export function LandingPage() {
                     },
                     {
                       num: 3,
-                      title: t('landing.cStep3Title', 'Pay securely'),
+                      title: t('landing.cStep3Title', 'Book with confidence'),
                       desc: t(
                         'landing.cStep3Desc',
-                        'Your money is held safely in escrow until the job is completed to your satisfaction.',
+                        'Confirm the right Tasker, keep the exact address private until booking, and use dispute support if something goes wrong.',
                       ),
                       bg: 'bg-verified/10',
                       text: 'text-verified',
@@ -548,10 +548,10 @@ export function LandingPage() {
                     },
                     {
                       num: 3,
-                      title: t('landing.tStep3Title', 'Guaranteed payment'),
+                      title: t('landing.tStep3Title', 'Build trust and repeat work'),
                       desc: t(
                         'landing.tStep3Desc',
-                        'Focus on the work knowing that the customer has already funded the task.',
+                        'Complete jobs well, collect reviews, and grow your reputation during the launch period.',
                       ),
                       bg: 'bg-verified/10',
                       text: 'text-verified',
@@ -700,7 +700,7 @@ export function LandingPage() {
             >
               <img
                 src="/images/promise-handshake.png"
-                alt="Customer and Tasker Shaking Hands"
+                alt={t('landing.promiseImageAlt', 'Customer and tasker shaking hands')}
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -806,7 +806,7 @@ export function LandingPage() {
               <div className="absolute inset-0 bg-primary-deep/20 mix-blend-multiply z-10" />
               <img
                 src="/images/download_app.png"
-                alt="Tasky App Lifestyle"
+                alt={t('landing.appLifestyleAlt', 'Tasky app lifestyle')}
                 className="w-full h-full object-cover"
               />
             </div>

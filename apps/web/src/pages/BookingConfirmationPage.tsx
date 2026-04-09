@@ -3,13 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { Booking } from '../lib/apiClient';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Checkbox } from '../components/ui/checkbox';
 import { useAppContext } from '../context/AppContext';
 import { ScreenFrame } from '../layout/ScreenFrame';
 import { parseError } from '../lib/errorHandling';
 import { createIdempotencyKey } from '../lib/idempotency';
-import { AlertCircle, CheckCircle2, ChevronLeft, CreditCard, ShieldCheck } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ChevronLeft, ClipboardList, ShieldCheck } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Separator } from '../components/ui/separator';
@@ -268,7 +268,7 @@ export function BookingConfirmationPage() {
                 <p className="text-muted-foreground">
                   {t(
                     'bookingConfirmation.trustSafetyDesc',
-                    'Your payment is held securely until the task is completed to your satisfaction.',
+                    'All Taskers are ID-verified. You agree on a fixed price directly with your Tasker before the job begins.',
                   )}
                 </p>
               </div>
@@ -287,34 +287,26 @@ export function BookingConfirmationPage() {
             <Card className="sticky top-6 border-primary/20 shadow-lg">
               <CardHeader className="bg-muted/20 border-b pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <CreditCard className="w-4 h-4" />
+                  <ClipboardList className="w-4 h-4" />
                   {t('bookingConfirmation.summaryTitle', 'Summary')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-muted-foreground">
-                    {t('bookingConfirmation.taskBudget', 'Task Budget')}
+                    {t('bookingConfirmation.taskBudget', 'Agreed Budget')}
                   </span>
                   <span className="font-medium">
                     {task?.budget ? `₮${task.budget.toLocaleString()}` : '—'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center mb-4 text-sm">
-                  <span className="text-muted-foreground">
-                    {t('bookingConfirmation.platformFee', 'Platform Fee (5%)')}
-                  </span>
-                  <span>{task?.budget ? `₮${(task.budget * 0.05).toLocaleString()}` : '—'}</span>
-                </div>
                 <Separator className="my-4" />
-                <div className="flex justify-between items-center mb-6">
-                  <span className="font-semibold text-lg">
-                    {t('bookingConfirmation.total', 'Total')}
-                  </span>
-                  <span className="font-bold text-2xl text-primary">
-                    {task?.budget ? `₮${(task.budget * 1.05).toLocaleString()}` : '—'}
-                  </span>
-                </div>
+                <p className="text-xs text-muted-foreground mb-6">
+                  {t(
+                    'bookingConfirmation.settlementNotice',
+                    'Payment is settled directly between you and the Tasker.',
+                  )}
+                </p>
 
                 <div className="flex items-start space-x-3 mb-6 bg-muted/20 p-3 rounded-md border">
                   <Checkbox
@@ -349,12 +341,6 @@ export function BookingConfirmationPage() {
                     : t('bookingConfirmation.confirmBookingBtn', 'Confirm Booking')}
                 </Button>
               </CardContent>
-              <CardFooter className="justify-center pt-0 pb-4 text-xs text-muted-foreground text-center">
-                {t(
-                  'bookingConfirmation.chargeNotice',
-                  "You won't be charged until the task is done.",
-                )}
-              </CardFooter>
             </Card>
           </div>
         </div>
