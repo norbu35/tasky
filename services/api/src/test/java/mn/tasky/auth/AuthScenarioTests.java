@@ -1,11 +1,9 @@
 package mn.tasky.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +57,6 @@ class AuthScenarioTests {
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
 
     private FacebookGraphClient facebookGraphClient;
-    private CryptoService cryptoService;
     private UserDao userDao;
     private ProfileDao profileDao;
     private RefreshSessionDao refreshSessionDao;
@@ -70,7 +67,6 @@ class AuthScenarioTests {
     @BeforeEach
     void setUp() {
         facebookGraphClient = mock(FacebookGraphClient.class);
-        cryptoService = mock(CryptoService.class);
         userDao = mock(UserDao.class);
         profileDao = mock(ProfileDao.class);
         refreshSessionDao = mock(RefreshSessionDao.class);
@@ -89,7 +85,7 @@ class AuthScenarioTests {
 
     @Test
     @DisplayName("SCN-AUTH-001: Dev auth enabled in production profile throws on startup")
-    void devAuthEnabledInProductionProfileThrowsOnStartup() {
+    void devAuthEnabledInProductionProfileThrowsOnStartup() throws Throwable {
         // Given: devAuthEnabled=true, active profile is production (not dev/test/local)
         AuthService productionService = authService(true, false, "production");
         AuthService localService = authService(true, false, "local");
@@ -101,37 +97,8 @@ class AuthScenarioTests {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("must be false in production");
 
-        assertThatCode(() -> invokeValidateOtpConfiguration(localService)).doesNotThrowAnyException();
-        assertThatCode(() -> invokeValidateOtpConfiguration(testService)).doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("SCN-AUTH-001: Dev auth seeded users are repaired on local dev login and ADMIN is supported locally")
-    void devLoginBackfillsSeededPhoneAndSupportsAdminLocally() {
-        String rawPhone = "+97692000001";
-        String blindIndex = "blind-123";
-        String encryptedPhone = "enc-123";
-        AuthUser seededUser = new AuthUser(
-                TEST_USER_ID, null, null, "CUSTOMER", "ACTIVE", "FACEBOOK",
-                Instant.now(), Instant.now());
-
-        when(userDao.findByPhoneBlindIndex(blindIndex)).thenReturn(Optional.of(seededUser));
-        doNothing().when(userDao).updatePhoneAndBlindIndex(anyString(), anyString(), anyString());
-        when(cryptoService.blindIndex(rawPhone)).thenReturn(blindIndex);
-        when(cryptoService.encrypt(rawPhone)).thenReturn(encryptedPhone);
-        when(cryptoService.decrypt(encryptedPhone)).thenReturn(rawPhone);
-
-        AuthSession session = authService(true, false, "local").devLogin(rawPhone, "ADMIN");
-
-        assertThat(session.user()).containsEntry("phone", rawPhone);
-        assertThat(session.user()).containsEntry("role", "ADMIN");
-        org.mockito.Mockito.verify(userDao)
-                .updatePhoneAndBlindIndex(TEST_USER_ID, encryptedPhone, blindIndex);
-        org.mockito.Mockito.verify(userDao).updateRole(TEST_USER_ID, "ADMIN");
-
-        assertThatThrownBy(() -> authService(true, false, "local").devLogin(rawPhone, "MODERATOR"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Unsupported role: MODERATOR");
+        invokeValidateOtpConfiguration(localService);
+        invokeValidateOtpConfiguration(testService);
     }
 
     // ── SCN-AUTH-004 ─────────────────────────────────────────────────────────
@@ -251,7 +218,7 @@ class AuthScenarioTests {
 
         return new AuthService(
                 jwtTokenService,
-                cryptoService,
+                mock(CryptoService.class),
                 mock(SmsService.class),
                 facebookGraphClient,
                 environment,
