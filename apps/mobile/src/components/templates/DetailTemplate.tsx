@@ -13,18 +13,12 @@ const { colors } = mobileTheme;
 
 export interface DetailTemplateProps {
   children: React.ReactNode;
-  /** @deprecated Title is now set via Stack.Screen options in the layout. */
-  headerTitle?: string;
-  /** @deprecated Back navigation is now handled by the native Stack header. */
-  onBack?: () => void;
   ctaLabel?: string;
   ctaOnPress?: () => void;
   ctaLoading?: boolean;
   ctaDisabled?: boolean;
   secondaryCtaLabel?: string;
   secondaryCtaOnPress?: () => void;
-  /** @deprecated Use rightActions instead. */
-  rightAction?: { icon: React.ReactNode; onPress: () => void };
   /** Multiple header action icons (e.g., edit + settings). Renders as a horizontal row. */
   rightActions?: Array<{ icon: React.ReactNode; onPress: () => void; testID?: string }>;
   isLoading?: boolean;
@@ -52,17 +46,12 @@ function DetailSkeleton() {
 
 export function DetailTemplate({
   children,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  headerTitle: _headerTitle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onBack: _onBack,
   ctaLabel,
   ctaOnPress,
   ctaLoading = false,
   ctaDisabled = false,
   secondaryCtaLabel,
   secondaryCtaOnPress,
-  rightAction,
   rightActions,
   isLoading = false,
   isError = false,
@@ -77,7 +66,7 @@ export function DetailTemplate({
   const [actionBarHeight, setActionBarHeight] = useState(100);
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
-  const effectiveActions = rightActions ?? (rightAction ? [rightAction] : null);
+  const effectiveActions = rightActions ?? null;
 
   const handleActionBarLayout = (event: LayoutChangeEvent) => {
     const height = event.nativeEvent.layout.height;

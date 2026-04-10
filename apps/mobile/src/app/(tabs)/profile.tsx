@@ -34,7 +34,6 @@ function AuthenticatedProfile() {
   return (
     <DetailTemplate
       testID="SCR-SHARED-012"
-      headerTitle={t('shared.profile.title')}
       insideTabNavigator
       isLoading={isLoading}
       isError={isError}
