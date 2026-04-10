@@ -77,8 +77,7 @@ public class CategorySchemaVersionService {
 
     /**
      * Activates a specific schema version for a category.
-     * The current active version (if any) is rolled back, and the target version
-     * becomes ACTIVE and is marked as last_known_good.
+     * The current active version (if any) is rolled back, and the target version becomes ACTIVE.
      *
      * @param categoryId the category ID
      * @param version    the version number to activate
@@ -108,10 +107,6 @@ public class CategorySchemaVersionService {
         // Activate the target version
         schemaVersionDao.updateStatusAndActivatedAt(target.id(), "ACTIVE");
 
-        // Mark as last known good
-        schemaVersionDao.clearLastKnownGood(categoryId);
-        schemaVersionDao.markLastKnownGood(target.id());
-
         // Update the category with the activated schema
         CategoryState category = categoryDao
                 .findById(categoryId)
@@ -126,8 +121,7 @@ public class CategorySchemaVersionService {
                 category.sortOrder(),
                 category.intakeEnabled(),
                 version,
-                target.schemaJson(),
-                version);
+                target.schemaJson());
 
         return schemaVersionDao
                 .findByCategoryIdAndVersion(categoryId, version)
@@ -142,49 +136,6 @@ public class CategorySchemaVersionService {
      */
     public List<CategorySchemaVersion> listVersions(String categoryId) {
         return schemaVersionDao.findByCategoryId(categoryId);
-    }
-
-    /**
-     * Rolls back to the last known good schema version for a category.
-     *
-     * @param categoryId the category ID
-     * @return the reactivated last known good version
-     * @throws IllegalStateException if no last known good version exists
-     */
-    public CategorySchemaVersion rollbackToLastKnownGood(String categoryId) {
-        CategorySchemaVersion lastKnownGood = schemaVersionDao
-                .findLastKnownGoodByCategoryId(categoryId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "No last known good schema version found for category " + categoryId));
-
-        // Deactivate current active version
-        schemaVersionDao
-                .findActiveByCategoryId(categoryId)
-                .ifPresent(active -> schemaVersionDao.updateStatus(active.id(), "ROLLED_BACK"));
-
-        // Reactivate last known good
-        schemaVersionDao.updateStatusAndActivatedAt(lastKnownGood.id(), "ACTIVE");
-
-        // Update category
-        CategoryState category = categoryDao
-                .findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category " + categoryId + " not found."));
-
-        categoryDao.update(
-                category.id(),
-                category.name(),
-                category.nameMn(),
-                category.iconUrl(),
-                category.isActive(),
-                category.sortOrder(),
-                category.intakeEnabled(),
-                lastKnownGood.version(),
-                lastKnownGood.schemaJson(),
-                lastKnownGood.version());
-
-        return schemaVersionDao
-                .findByCategoryIdAndVersion(categoryId, lastKnownGood.version())
-                .orElseThrow(() -> new IllegalStateException("Rolled back version could not be retrieved."));
     }
 
     private void validateSchemaJson(String schemaJson) {
