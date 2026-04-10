@@ -33,36 +33,34 @@ Replace the static chips with the customer's 3 most recent distinct task locatio
 Returns up to 3 entries. Empty array if no task history.
 
 **Query logic:**
-1. Select from `tasks` where `customer_id = :userId`, ordered by `created_at DESC`
-2. Deduplicate by proximity: skip any row whose `location_point` is within 200m of an already-selected row (using `ST_DWithin` with geography cast)
-3. Limit to 3 results
+1. Select from `tasks` where `customer_id = :userId` and `status IN ('OPEN', 'BOOKED', 'COMPLETED')`, ordered by `created_at DESC`, limit 50 candidates
+2. In Java, iterate candidates and keep locations whose lat/lng are >200m from all already-kept locations (Euclidean distance on degrees — adequate at UB's latitude for a 200m threshold)
+3. Stop at 3 accepted results
 
-The deduplication is iterative (each candidate is compared against previously accepted rows), not clustering. This keeps the SQL simple and the result deterministic.
+The deduplication is application-level over a bounded candidate set. This avoids complex recursive SQL while the candidate set is small.
 
 **SQL sketch:**
 ```sql
--- Implemented as application-level filtering over a bounded candidate set:
--- 1. Fetch the 20 most recent tasks for the customer
--- 2. In Java, iterate and keep locations that are >200m from all already-kept locations
--- 3. Stop at 3
-
 SELECT location_lat, location_lng, location_text
 FROM tasks
 WHERE customer_id = :userId
+  AND status IN ('OPEN', 'BOOKED', 'COMPLETED')
   AND location_lat IS NOT NULL
   AND location_lng IS NOT NULL
   AND location_text IS NOT NULL
 ORDER BY created_at DESC
-LIMIT 20
+LIMIT 50
 ```
 
-Application-level dedup avoids complex recursive SQL while the candidate set is small (capped at 20).
+50 candidates (not 20) ensures a customer who repeatedly posts at one address still surfaces their less-frequent locations.
 
 **Placement:** Follows existing pattern — endpoint under `TaskController` since it reads from the `tasks` table and is scoped to the authenticated customer. A new DAO method on `TaskDao`.
 
 ### Mobile: Location Screen Changes
 
 **Data fetching:** Call `GET /tasks/mine/recent-locations` on mount (via a new `useRecentLocations` hook using React Query, key: `['recent-locations']`).
+
+**Cache invalidation:** The `useCreateTask` mutation's `onSuccess` must invalidate `['recent-locations']` alongside the existing `['tasks']` invalidation, so a customer who creates a task and immediately starts another sees the fresh preset.
 
 **When locations exist (1–3 results):**
 - Render tappable chips showing truncated `location_text` (max ~30 chars with ellipsis)
