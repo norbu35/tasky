@@ -8,6 +8,7 @@ import { FormWizardTemplate } from '../../../../components/templates/FormWizardT
 import { Button } from '../../../../components/ui/Button';
 import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
+import { cn } from '../../../../lib/cn';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 
@@ -195,7 +196,7 @@ export default function ScheduleBudgetScreen() {
       </View>
 
       {/* dateCard: shadow → imperative */}
-      <View className="rounded-lg bg-muted gap-lg p-[20px]" style={elevations.soft}>
+      <View className="rounded-lg bg-muted gap-lg p-xl" style={elevations.soft}>
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
           <Text className="text-body font-extrabold text-primary-deep">
@@ -211,28 +212,18 @@ export default function ScheduleBudgetScreen() {
           <View className="flex-row gap-sm">
             <Pressable
               onPress={() => openPicker('date')}
-              style={({ pressed }) => [
-                {
-                  flex: 1,
-                  minHeight: 48,
-                  justifyContent: 'center' as const,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: selectedDate ? colors.primaryDeep : colors.input,
-                  backgroundColor: selectedDate ? colors.primaryDeep : colors.background,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}
+              className="flex-1 min-h-[48px] justify-center rounded-md px-md py-sm"
+              style={({ pressed }) => ({
+                borderWidth: 1,
+                borderColor: selectedDate ? colors.primaryDeep : colors.input,
+                backgroundColor: selectedDate ? colors.primaryDeep : colors.background,
+                opacity: pressed ? 0.85 : 1,
+              })}
               testID="schedule-date-input"
             >
               <Text
-                style={{
-                  color: selectedDate ? colors.primaryForeground : colors.mutedForeground,
-                  fontSize: 16,
-                  fontWeight: selectedDate ? '700' : '500',
-                }}
+                className={cn('text-body', selectedDate ? 'font-sans-bold' : 'font-sans-medium')}
+                style={{ color: selectedDate ? colors.primaryForeground : colors.mutedForeground }}
               >
                 {selectedDate
                   ? formatDateValue(selectedDate)
@@ -242,28 +233,18 @@ export default function ScheduleBudgetScreen() {
 
             <Pressable
               onPress={() => openPicker('time')}
-              style={({ pressed }) => [
-                {
-                  flex: 1,
-                  minHeight: 48,
-                  justifyContent: 'center' as const,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: selectedTime ? colors.primaryDeep : colors.input,
-                  backgroundColor: selectedTime ? colors.primaryDeep : colors.background,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}
+              className="flex-1 min-h-[48px] justify-center rounded-md px-md py-sm"
+              style={({ pressed }) => ({
+                borderWidth: 1,
+                borderColor: selectedTime ? colors.primaryDeep : colors.input,
+                backgroundColor: selectedTime ? colors.primaryDeep : colors.background,
+                opacity: pressed ? 0.85 : 1,
+              })}
               testID="schedule-time-input"
             >
               <Text
-                style={{
-                  color: selectedTime ? colors.primaryForeground : colors.mutedForeground,
-                  fontSize: 16,
-                  fontWeight: selectedTime ? '700' : '500',
-                }}
+                className={cn('text-body', selectedTime ? 'font-sans-bold' : 'font-sans-medium')}
+                style={{ color: selectedTime ? colors.primaryForeground : colors.mutedForeground }}
               >
                 {selectedTime
                   ? formatTimeValue(selectedTime)
@@ -306,8 +287,7 @@ export default function ScheduleBudgetScreen() {
           >
             <View className="gap-xs">
               <Text
-                className="text-label font-bold text-primary-deep uppercase"
-                style={{ letterSpacing: 0.6 }}
+                className="text-label font-bold text-primary-deep uppercase tracking-[0.6px]"
               >
                 {activePicker.mode === 'date'
                   ? t('ScheduleBudgetScreen.scheduleDate')
@@ -323,13 +303,13 @@ export default function ScheduleBudgetScreen() {
                 label={t('common.cancel')}
                 variant="outline"
                 onPress={handlePickerCancel}
-                style={{ flex: 1 }}
+                className="flex-1"
               />
               <Button
                 testID="schedule-picker-confirm"
                 label={t('common.confirm')}
                 onPress={handlePickerConfirm}
-                style={{ flex: 1 }}
+                className="flex-1"
               />
             </View>
             <DateTimePicker
