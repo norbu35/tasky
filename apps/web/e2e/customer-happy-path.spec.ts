@@ -1,13 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { loginThroughDevBypass, mockCategories, mockCreateTask, mockDevSession, nextLocalDateTimeInput } from './support/mockApi';
+import { loginThroughDevAuth, nextLocalDateTimeInput } from './support/mockApi';
 
 test.describe('Customer happy path', () => {
   test('@smoke customer can create a task through the browser wizard', async ({ page }) => {
-    await mockDevSession(page, 'CUSTOMER');
-    await mockCategories(page);
-    await mockCreateTask(page);
-
-    await loginThroughDevBypass(page, 'Customer');
+    await loginThroughDevAuth(page, 'Customer');
     await expect(page).toHaveURL(/\/profile/);
 
     await page.goto('/customer/tasks/new');
