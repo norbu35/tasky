@@ -130,6 +130,9 @@ export default function DisputeRaiseScreen() {
               {t('DisputeRaiseScreen.validationNoEvidence')}
             </Text>
           </View>
+          <Text className="text-caption text-textSecondary mt-sm leading-[20px]">
+            {t('customer.disputes.evidenceDeadlineNote')}
+          </Text>
         </View>
       )}
 

@@ -71,9 +71,7 @@ export function ConfirmCompletionSheet({
             end={{ x: 1, y: 1 }}
             style={[styles.primaryButton, isPending && styles.buttonDisabled]}
           >
-            <Text style={styles.primaryButtonText}>
-              {t('customer.bookings.ctaConfirmComplete')}
-            </Text>
+            <Text style={styles.primaryButtonText}>{t('ConfirmCompletionSheet.confirmLabel')}</Text>
             <ArrowRight size={18} color={colors.primaryForeground} />
           </LinearGradient>
         </Pressable>

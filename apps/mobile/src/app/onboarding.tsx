@@ -145,7 +145,11 @@ export default function OnboardingScreen() {
         className="absolute z-10 flex-row items-center justify-between"
         style={{ top: spacing.lg, left: spacing.lg, right: spacing.lg }}
       >
-        <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
+        <Pressable
+          onPress={() => router.back()}
+          hitSlop={12}
+          accessibilityLabel={t('common.back')}
+        >
           <ArrowLeft size={24} color={colors.primaryDeep} />
         </Pressable>
         {isLastSlide ? (

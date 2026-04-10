@@ -7,8 +7,8 @@ import { useConversations } from '../../../features/chat/hooks/useConversations'
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
 import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
+import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
-import { screenLayout } from '../../../design/screenLayout';
 
 const { colors } = mobileTheme;
 
@@ -59,19 +59,8 @@ export default function ConversationListScreen() {
   }, []);
 
   const listHeader = (
-    <View
-      style={{
-        paddingHorizontal: screenLayout.insetX,
-        paddingTop: screenLayout.header.topInset,
-        paddingBottom: screenLayout.body.itemGap,
-        gap: screenLayout.body.itemGap,
-      }}
-    >
-      <View className="flex-row items-center justify-start">
-        <Text className="text-heading font-sans-bold text-primaryDeep">
-          {t('shared.inbox.title')}
-        </Text>
-      </View>
+    <View className="pb-item gap-item">
+      <ScreenHeader title={t('shared.inbox.title')} />
     </View>
   );
 

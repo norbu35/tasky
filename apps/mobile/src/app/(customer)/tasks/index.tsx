@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
+import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
 import { mobileTheme } from '../../../design/tokenAdapter';
@@ -150,35 +151,31 @@ function Header({
 
   return (
     <View className="px-screen-x pt-header-top pb-header-bottom gap-item">
-      <View className="flex-row items-center justify-between">
-        <View className="flex-1 pr-md gap-header-greeting">
-          <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
-            {t('customer.taskList.greeting')}
-          </Text>
-          <Text className="text-heroTitle font-black text-primaryDeep">
-            {t('customer.taskList.title')}
-          </Text>
-        </View>
-        <Pressable
-          className="w-11 h-11 rounded-full items-center justify-center bg-muted"
-          style={elevations.soft}
-          onPress={onNotificationsPress}
-          testID="my-tasks-notifications"
-          accessibilityRole="button"
-          accessibilityLabel={t('shared.notifications.title')}
-        >
-          <Bell size={20} color={colors.primary} />
-        </Pressable>
-      </View>
+      <ScreenHeader
+        greeting={t('customer.taskList.greeting')}
+        title={t('customer.taskList.title')}
+        rightSlot={
+          <Pressable
+            className="w-11 h-11 rounded-full items-center justify-center bg-muted"
+            style={elevations.soft}
+            onPress={onNotificationsPress}
+            testID="my-tasks-notifications"
+            accessibilityRole="button"
+            accessibilityLabel={t('shared.notifications.title')}
+          >
+            <Bell size={20} color={colors.primary} />
+          </Pressable>
+        }
+      />
 
-      <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
-        <Text className="text-subtitle font-extrabold text-primaryDeep">
-          {t('customer.taskList.heroTitle')}
-        </Text>
-        <Text className="text-body text-textSecondary leading-relaxed">
-          {t('MyTasksListScreen.copy1')}
-        </Text>
-        <View className="flex-row gap-micro">
+        <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
+          <Text className="text-subtitle font-extrabold text-primaryDeep">
+            {t('customer.taskList.heroEyebrow')}
+          </Text>
+          <Text className="text-body text-textSecondary leading-relaxed">
+            {t('customer.taskList.heroTitle')}
+          </Text>
+          <View className="flex-row gap-micro">
           {(
             [
               { key: 'open', label: t('customer.taskList.filterOpen') },

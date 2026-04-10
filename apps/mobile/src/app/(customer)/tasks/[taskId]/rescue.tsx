@@ -33,9 +33,7 @@ export default function NoApplicantRescueScreen() {
         <Button
           label={t('customer.rescue.contactSupport')}
           variant="outline"
-          onPress={() => {
-            // TODO: wire concierge support
-          }}
+          onPress={() => router.push('/(shared)/help')}
           className="self-stretch"
         />
       </View>

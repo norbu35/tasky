@@ -304,7 +304,7 @@ export default function RescheduleScreen() {
                 fontSize: typography.body,
                 textAlignVertical: 'top',
               }}
-              placeholder={t('RescheduleScreen.copy1')}
+              placeholder={t('RescheduleScreen.placeholderReason')}
               placeholderTextColor={colors.chipInactive}
               value={reason}
               onChangeText={setReason}
@@ -326,7 +326,7 @@ export default function RescheduleScreen() {
             className="flex-1 text-caption text-primary-deep"
             style={{ lineHeight: typography.caption * 1.5 }}
           >
-            {t('RescheduleScreen.copy2')}
+            {t('RescheduleScreen.scheduleAuthorityNote')}
           </Text>
         </View>
 
@@ -350,12 +350,12 @@ export default function RescheduleScreen() {
               style={{ lineHeight: typography.label * 1.5 }}
             >
               {requestState === 'awaiting_response'
-                ? t('RescheduleScreen.copy3')
+                ? t('RescheduleScreen.awaitingMessage')
                 : requestState === 'accepted'
-                  ? t('RescheduleScreen.copy4')
+                  ? t('RescheduleScreen.acceptedMessage')
                   : requestState === 'declined'
-                    ? t('RescheduleScreen.copy5')
-                    : t('RescheduleScreen.copy6')}
+                    ? t('RescheduleScreen.declinedMessage')
+                    : t('RescheduleScreen.expiredMessage')}
             </Text>
           </View>
         ) : null}

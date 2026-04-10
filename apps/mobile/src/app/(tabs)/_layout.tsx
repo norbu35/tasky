@@ -85,7 +85,7 @@ export default function TabsLayout() {
           name="index"
           options={{
             title: isCustomer ? t('nav.customer.myTasks') : t('nav.tasker.browse'),
-            tabBarTestID: 'tab-home',
+            tabBarButtonTestID: 'tab-home',
             tabBarIcon: ({ color }) =>
               isCustomer ? (
                 <ListChecks color={color} size={TAB_ICON_SIZE} />
@@ -98,7 +98,7 @@ export default function TabsLayout() {
           name="bookings"
           options={{
             title: isCustomer ? t('nav.customer.bookings') : t('nav.tasker.myJobs'),
-            tabBarTestID: 'tab-bookings',
+            tabBarButtonTestID: 'tab-bookings',
             tabBarIcon: ({ color }) =>
               isCustomer ? (
                 <ClipboardList color={color} size={TAB_ICON_SIZE} />
@@ -111,7 +111,7 @@ export default function TabsLayout() {
           name="inbox"
           options={{
             title: t('nav.inbox'),
-            tabBarTestID: 'tab-inbox',
+            tabBarButtonTestID: 'tab-inbox',
             tabBarIcon: ({ color }) => <MessageSquare color={color} size={TAB_ICON_SIZE} />,
           }}
         />
@@ -119,7 +119,7 @@ export default function TabsLayout() {
           name="profile"
           options={{
             title: t('nav.profile'),
-            tabBarTestID: 'tab-profile',
+            tabBarButtonTestID: 'tab-profile',
             tabBarIcon: ({ color }) => <User color={color} size={TAB_ICON_SIZE} />,
           }}
         />

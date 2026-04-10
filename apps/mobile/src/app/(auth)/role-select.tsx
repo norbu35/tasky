@@ -154,10 +154,10 @@ export default function RoleSelectScreen() {
         }}
       >
         <Text className="text-body" style={{ color: colors.textSecondary, lineHeight: 24 }}>
-          {t(
-            'auth.roleSelection.confirmSheetMessage',
-            `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,
-          )}
+          {t('auth.roleSelection.confirmSheetMessage', {
+            role: roleLabel,
+            defaultValue: `${roleLabel} болохоо баталгаажуулна уу. Тохиргооноос дараа солих боломжтой.`,
+          })}
         </Text>
       </ModalSheet>
     </AuthTemplate>

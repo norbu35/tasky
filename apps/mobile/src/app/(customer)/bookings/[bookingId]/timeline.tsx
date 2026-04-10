@@ -197,7 +197,7 @@ export default function BookingTimelineScreen() {
               <CircleHelp size={18} color={colors.secondary} />
             </View>
             <Text className="text-body text-accent leading-relaxed">
-              {t('BookingTimelineScreen.copy1')}
+              {t('customer.bookings.helpDescription')}
             </Text>
             <Pressable
               accessibilityRole="button"

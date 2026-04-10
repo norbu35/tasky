@@ -55,32 +55,42 @@ function buildStatusMeta(
   t: (key: string) => string,
 ): Record<
   DisputeStatus,
-  { label: string; description: string; badgeStyle: 'warning' | 'success' | 'neutral' | 'danger' }
+  {
+    label: string;
+    description: string;
+    resolutionText: string;
+    badgeStyle: 'warning' | 'success' | 'neutral' | 'danger';
+  }
 > {
   return {
     OPEN: {
-      label: t('DisputeStatusScreen.copy1'),
-      description: t('DisputeStatusScreen.copy2'),
+      label: t('customer.disputes.statusOpen'),
+      description: t('customer.disputes.openDescription'),
+      resolutionText: t('customer.disputes.resolutionOpen'),
       badgeStyle: 'warning',
     },
     ESCALATED: {
-      label: t('DisputeStatusScreen.copy3'),
-      description: t('DisputeStatusScreen.copy4'),
+      label: t('customer.disputes.statusEscalated'),
+      description: t('customer.disputes.escalatedDescription'),
+      resolutionText: t('customer.disputes.resolutionEscalated'),
       badgeStyle: 'warning',
     },
     RESOLVED_CUSTOMER: {
-      label: t('DisputeStatusScreen.copy5'),
-      description: t('DisputeStatusScreen.copy6'),
+      label: t('customer.disputes.statusResolvedCustomer'),
+      description: t('customer.disputes.resolvedCustomerDescription'),
+      resolutionText: t('customer.disputes.resolutionResolvedCustomer'),
       badgeStyle: 'success',
     },
     RESOLVED_TASKER: {
-      label: t('DisputeStatusScreen.copy7'),
-      description: t('DisputeStatusScreen.copy8'),
+      label: t('customer.disputes.statusResolvedTasker'),
+      description: t('customer.disputes.resolvedTaskerDescription'),
+      resolutionText: t('customer.disputes.resolutionResolvedTasker'),
       badgeStyle: 'neutral',
     },
     CLOSED_INSUFFICIENT_EVIDENCE: {
-      label: t('DisputeStatusScreen.copy9'),
-      description: t('DisputeStatusScreen.copy10'),
+      label: t('customer.disputes.statusClosedInsufficient'),
+      description: t('customer.disputes.closedInsufficientDescription'),
+      resolutionText: t('customer.disputes.resolutionClosedInsufficient'),
       badgeStyle: 'danger',
     },
   };
@@ -146,22 +156,6 @@ function getTimelineState(status: DisputeStatus, index: number): TimelineState {
     return status === 'OPEN' || status === 'ESCALATED' ? 'current' : 'done';
   }
   return 'future';
-}
-
-function getResolutionText(status: DisputeStatus, t: (key: string) => string): string {
-  switch (status) {
-    case 'ESCALATED':
-      return t('customer.disputes.resolutionEscalated');
-    case 'RESOLVED_CUSTOMER':
-      return t('customer.disputes.resolutionResolvedCustomer');
-    case 'RESOLVED_TASKER':
-      return t('DisputeStatusScreen.copy11');
-    case 'CLOSED_INSUFFICIENT_EVIDENCE':
-      return t('DisputeStatusScreen.copy12');
-    case 'OPEN':
-    default:
-      return t('customer.disputes.resolutionOpen');
-  }
 }
 
 function getEvidenceLabel(
@@ -238,18 +232,18 @@ export default function DisputeStatusScreen() {
       },
       {
         title: t('customer.disputes.timelineAssigned'),
-        description: t('DisputeStatusScreen.copy13'),
+        description: t('customer.disputes.timelineAssignedDesc'),
         date: submittedAt ? formatMongolianDate(submittedAt, t) : '2024.05.21',
       },
       {
         title: t('customer.disputes.timelineDecision'),
-        description: getResolutionText(status, t),
+        description: meta.resolutionText,
         date: dispute?.resolved_at
           ? formatMongolianDate(parseDate(dispute.resolved_at) ?? new Date(), t)
           : undefined,
       },
     ],
-    [dispute?.resolved_at, status, submittedAt, t],
+    [dispute?.resolved_at, meta.resolutionText, submittedAt, t],
   );
 
   return (
@@ -435,14 +429,18 @@ export default function DisputeStatusScreen() {
                   <AlertTriangle size={22} color={colors.secondary} />
                 </View>
                 <Text className="text-body font-sans-bold text-primary-deep text-center">
-                  {status === 'OPEN'
-                    ? t('customer.disputes.statusOpen')
-                    : t('customer.disputes.statusFinal')}
+                  {meta.label}
                 </Text>
                 <Text className="text-body text-text-secondary text-center leading-normal">
-                  {t('DisputeStatusScreen.copy14')}
+                  {meta.resolutionText}
                 </Text>
               </View>
+            </View>
+
+            <View className="bg-muted rounded-lg p-lg">
+              <Text className="text-body text-text-secondary text-center leading-normal">
+                {t('customer.disputes.phase1Note')}
+              </Text>
             </View>
 
             {/* Evidence card */}

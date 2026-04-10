@@ -241,6 +241,13 @@ export function buildBaseUrl(): string {
   ) {
     return normalizeBaseUrl(maybeGlobal.__TASKY_API_BASE_URL__);
   }
+  const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
+  if (
+    typeof runtimeEnv?.EXPO_PUBLIC_API_BASE_URL === 'string' &&
+    runtimeEnv.EXPO_PUBLIC_API_BASE_URL.trim().length > 0
+  ) {
+    return normalizeBaseUrl(runtimeEnv.EXPO_PUBLIC_API_BASE_URL);
+  }
   return normalizeBaseUrl('http://localhost:8080');
 }
 

@@ -13,7 +13,6 @@ import {
   type CancelType,
 } from '../../../../features/bookings/components/CustomerCancelSheet';
 import { ConfirmSheet } from '../../../../components/ui/ConfirmSheet';
-import { useCompleteBooking } from '../../../../features/bookings/hooks/useCompleteBooking';
 import { useFlagNoShow } from '../../../../features/bookings/hooks/useFlagNoShow';
 
 function mapStatus(status: string): 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show' {
@@ -94,11 +93,9 @@ export default function BookingDetailScreen() {
   const router = useRouter();
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const { data: booking, isLoading, isError, refetch } = useBookingDetail(bookingId);
-  const completeBooking = useCompleteBooking();
   const flagNoShow = useFlagNoShow();
   const [showCompletionSheet, setShowCompletionSheet] = useState(false);
   const [showCancelSheet, setShowCancelSheet] = useState(false);
-  const [showCompleteSheet, setShowCompleteSheet] = useState(false);
   const [showNoShowSheet, setShowNoShowSheet] = useState(false);
 
   const status: string = booking?.status ?? 'ASSIGNED';
@@ -332,30 +329,6 @@ export default function BookingDetailScreen() {
             onCancelled={() => {
               setShowCancelSheet(false);
               router.replace('/(customer)/bookings');
-            }}
-          />
-          <ConfirmSheet
-            testID="SCR-CUST-018"
-            isOpen={showCompleteSheet}
-            onClose={() => setShowCompleteSheet(false)}
-            title={t('customer.bookings.completionTitle')}
-            description={t('BookingDetailScreen.copy1')}
-            confirmLabel={t('customer.bookings.completionConfirm')}
-            onConfirm={() => {
-              if (!bookingId) return;
-              const idempotencyKey = `complete-${bookingId}-${Date.now()}`;
-              completeBooking.mutate(
-                { bookingId, idempotencyKey },
-                {
-                  onSuccess: () => {
-                    setShowCompleteSheet(false);
-                    refetch();
-                  },
-                  onError: () => {
-                    Alert.alert(t('common.error'), t('customer.bookings.completeError'));
-                  },
-                },
-              );
             }}
           />
           <ConfirmSheet

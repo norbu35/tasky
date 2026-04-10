@@ -13,6 +13,7 @@ import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
 import { LocationPin } from '../../components/ui/LocationPin';
 import { TrustBanner } from '../../components/ui/TrustBanner';
+import { ScreenHeader } from '../../components/ui/ScreenHeader';
 import { useTasks } from '../../features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../lib/mobileApiClient';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -132,13 +133,15 @@ function TaskerBrowseScreen() {
   );
 
   const renderItem = useCallback(
-    (task: PublicTask) => (
-      <SplitCard
-        headerContent={<TaskCardHeader task={task} />}
-        bodyContent={<TaskCardBody task={task} />}
-        onPress={() => handleTaskPress(task)}
-        testID={`task-card-${task.id}`}
-      />
+    (task: PublicTask, index: number) => (
+      <View testID={`task-card-index-${index}`}>
+        <SplitCard
+          headerContent={<TaskCardHeader task={task} />}
+          bodyContent={<TaskCardBody task={task} />}
+          onPress={() => handleTaskPress(task)}
+          testID={`task-card-${task.id}`}
+        />
+      </View>
     ),
     [handleTaskPress],
   );
@@ -159,17 +162,7 @@ function TaskerBrowseScreen() {
         onRetry={refetch}
         ListHeaderComponent={
           <View className="gap-md mb-md">
-            <View className="gap-xs">
-              <Text
-                className="text-heading font-sans-extrabold"
-                style={{ color: colors.primaryDeep }}
-              >
-                {t('tasker.browse.title')}
-              </Text>
-              <Text className="text-body" style={{ color: colors.textSecondary }}>
-                {t('tasker.browse.subtitle')}
-              </Text>
-            </View>
+            <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
             <Input
               style={{
                 borderWidth: 0,

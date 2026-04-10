@@ -57,7 +57,7 @@ function ApplicantCard({
             <Star size={12} color={colors.accent} fill={colors.accent} />
             <Text className="text-label font-sans-bold text-foreground">{applicant.rating}</Text>
             <Text className="text-caption text-text-secondary">
-              ({applicant.reviewCount} reviews)
+              ({applicant.reviewCount} {t('applicants.reviews')})
             </Text>
           </View>
         </View>
