@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { FeedListTemplate } from '../../../src/components/templates/FeedListTemplate';
 
 jest.mock('react-native-reanimated', () => {
@@ -19,11 +20,10 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('lucide-react-native', () => {
   const RN = require('react-native');
@@ -51,6 +51,11 @@ const defaultProps = {
 };
 
 describe('FeedListTemplate', () => {
+  beforeEach(() => {
+    resetTestI18n();
+    setTestLanguage('mn');
+  });
+
   it('renders data items via renderItem', () => {
     render(<FeedListTemplate {...defaultProps} />);
 
@@ -86,7 +91,7 @@ describe('FeedListTemplate', () => {
   it('shows default empty title when no emptyTitle prop', () => {
     render(<FeedListTemplate {...defaultProps} data={[]} isEmpty />);
 
-    expect(screen.getByText('Nothing here yet')).toBeTruthy();
+    expect(screen.getByText('Одоохондоо энд юу ч алга')).toBeTruthy();
   });
 
   it('shows error state with retry button when isError=true', () => {
@@ -96,14 +101,15 @@ describe('FeedListTemplate', () => {
     );
 
     expect(screen.getByText('Network error')).toBeTruthy();
-    expect(screen.getByText('Try again')).toBeTruthy();
+    expect(screen.getByText('Дахин оролдох')).toBeTruthy();
   });
 
   it('calls onRetry when retry button pressed', () => {
     const onRetry = jest.fn();
     render(<FeedListTemplate {...defaultProps} isError onRetry={onRetry} />);
 
-    fireEvent.press(screen.getByText('Try again'));
+    expect(screen.getByText('Агуулгыг ачаалж чадсангүй')).toBeTruthy();
+    fireEvent.press(screen.getByText('Дахин оролдох'));
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
@@ -126,6 +132,6 @@ describe('FeedListTemplate', () => {
   it('shows empty state when data array is empty even without isEmpty flag', () => {
     render(<FeedListTemplate {...defaultProps} data={[]} />);
 
-    expect(screen.getByText('Nothing here yet')).toBeTruthy();
+    expect(screen.getByText('Одоохондоо энд юу ч алга')).toBeTruthy();
   });
 });

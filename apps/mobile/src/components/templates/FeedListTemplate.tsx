@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { screenLayout } from '../../design/screenLayout';
 import { animationPresets } from '../../design/animations';
-import { cn } from '../../lib/cn';
+import { ScreenContainer } from '../shells/ScreenContainer';
 import { EmptyStateTemplate } from './EmptyStateTemplate';
 import { ErrorStateTemplate } from './ErrorStateTemplate';
 
@@ -115,10 +115,10 @@ export function FeedListTemplate<T>({
 
   if (isLoading) {
     return (
-      <View className={cn('flex-1 bg-background', className)} testID={testID}>
+      <ScreenContainer className={className} testID={testID}>
         {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
         {ListHeaderComponent}
-        <View className="px-screen-x pt-header-top">
+        <View className="px-screen-x">
           {Array.from({ length: 5 }).map((_, i) => (
             <React.Fragment key={i}>
               {i > 0 && <ItemSeparator />}
@@ -126,13 +126,13 @@ export function FeedListTemplate<T>({
             </React.Fragment>
           ))}
         </View>
-      </View>
+      </ScreenContainer>
     );
   }
 
   if (isError) {
     return (
-      <View className={cn('flex-1 bg-background', className)} testID={testID}>
+      <ScreenContainer className={className} testID={testID}>
         {ListHeaderComponent}
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage')}
@@ -140,13 +140,13 @@ export function FeedListTemplate<T>({
           retryLabel={retryLabel}
           testID={testID ? `${testID}-error` : undefined}
         />
-      </View>
+      </ScreenContainer>
     );
   }
 
   if (isEmpty || data.length === 0) {
     return (
-      <View className={cn('flex-1 bg-background', className)} testID={testID}>
+      <ScreenContainer className={className} testID={testID}>
         {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
         {ListHeaderComponent}
         <EmptyStateTemplate
@@ -156,12 +156,12 @@ export function FeedListTemplate<T>({
           ctaOnPress={emptyCtaOnPress}
           testID={testID ? `${testID}-empty` : undefined}
         />
-      </View>
+      </ScreenContainer>
     );
   }
 
   return (
-    <View className={cn('flex-1 bg-background', className)} testID={testID}>
+    <ScreenContainer className={className} testID={testID}>
       {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
       <FlatList
         style={{ flex: 1 }}
@@ -170,7 +170,6 @@ export function FeedListTemplate<T>({
         keyExtractor={keyExtractor}
         contentContainerStyle={{
           paddingHorizontal: screenLayout.insetX,
-          paddingTop: screenLayout.header.topInset,
           paddingBottom: screenLayout.chrome.contentBottomClearance,
         }}
         ItemSeparatorComponent={ItemSeparator}
@@ -190,6 +189,6 @@ export function FeedListTemplate<T>({
         }
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </ScreenContainer>
   );
 }
