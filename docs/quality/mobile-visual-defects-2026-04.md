@@ -11,11 +11,13 @@
 | Status    | Count  |
 | --------- | ------ |
 | Open      | 0      |
-| Resolved  | 12     |
+| Resolved  | 15     |
 | Deferred  | 4      |
-| **Total** | **16** |
+| **Total** | **19** |
 
 > **Verification run:** 2026-04-10 — unit tests 740/740 passed (100 suites), Maestro smoke 3/3 flows passed, capture batches smoke/auth/shared all pass.
+>
+> **Safe-area hardening run:** 2026-04-10 — DEF-017/018/019 resolved; all screens now backed by `ScreenContainer` or native Stack header.
 
 ---
 
@@ -60,6 +62,18 @@ _Defects isolated to a single screen's composition. Fix only after systemic fixe
 | DEF-014 | shared/20260410-042846/screenshots/SCR-SHARED-012-profile-customer.png    | SCR-SHARED-012         | not-worth-fixing | minor    | screen    | deferred | Profile secondary CTA ("Settings", outline) sits above primary CTA ("Edit Profile", filled). DetailTemplate places secondary above primary by design; the filled primary CTA is still visually dominant. No material usability impact. Deferred as cosmetic-only template design decision.                                             |
 | DEF-015 | _(code review — no screenshot)_                                           | SCR-SHARED-002         | not-worth-fixing | minor    | template  | deferred | **Informational — code reviewer flag:** `AuthTemplate` applies `insets.right` to the `topRightSlot` position. On landscape devices where `ScreenContainer` already insets its children, `insets.right` may double-apply. Impact is cosmetic (extra right margin) and only manifests in landscape. Tracked for awareness; not blocking. |
 | DEF-016 | _(code review — no screenshot)_                                           | SCR-SHARED-007/008/009 | not-worth-fixing | minor    | template  | deferred | **Informational — code reviewer flag:** `PermissionPrimer` accepts an `icon` prop used at two sizes (large hero at top, medium context icon) with no formal size contract or prop types for size variants. Risk is minor; tracked as follow-up to define explicit size enum. Not blocking.                                             |
+
+---
+
+## Safe-Area Hardening Defects — 2026-04-10
+
+_Identified during post-audit safe-area inventory. Root cause: several screens and FeedListTemplate used plain `<View>` roots with no safe-area context, causing headings to render behind the notch._
+
+| DEF-ID  | Screenshot Ref                      | Affected Screen(s)                                                                   | Classification | Severity | Fix Layer | Status   | Notes                                                                                                                                                                                                                                                                                 |
+| ------- | ----------------------------------- | ------------------------------------------------------------------------------------ | -------------- | -------- | --------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DEF-017 | _(static analysis — no screenshot)_ | All FeedListTemplate screens (~5): SCR-CUST-001, SCR-TASK-001, SCR-SHARED-005, inbox | systemic       | major    | template  | resolved | `FeedListTemplate` used a plain `<View>` root with hard-coded `paddingTop: screenLayout.header.topInset` on the FlatList — which did not apply to `ListHeaderComponent`. Fixed by wrapping in `ScreenContainer` and removing the hard-coded top padding.                              |
+| DEF-018 | _(static analysis — no screenshot)_ | SCR-SHARED-011 (chat detail)                                                         | screen-local   | major    | screen    | resolved | Chat detail screen's `KeyboardAvoidingView` was the root element with no safe-area wrapping; custom header used hard-coded `pt-lg` for top padding. Fixed by wrapping in `ScreenContainer` and removing `pt-lg`.                                                                      |
+| DEF-019 | _(static analysis — no screenshot)_ | SCR-INFRA-001, SCR-INFRA-002, SCR-SHARED-015, SCR-SHARED-020, SCR-SHARED-021         | screen-local   | minor    | screen    | resolved | Five centered-content screens (network-error, app-update, profile/delete, account/banned, account/suspended) used plain `<View>` roots with no safe-area wrapping. Fixed by wrapping each in `ScreenContainer`. Visual impact was low (centered layouts), but structurally incorrect. |
 
 ---
 

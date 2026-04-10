@@ -39,8 +39,15 @@
 
 ### 7. Safe-Area / Keyboard Behavior
 
-**Pass:** Content and CTAs are fully visible and tappable when the keyboard is open; notch and home indicator are never occluded by interactive elements.
-**Fail:** Sticky action bar hidden behind keyboard, form field obscured by system chrome, or tappable area cut off by notch.
+**Pass:** All headings and top-of-screen content render below the safe-area boundary on notched devices. No content overlaps the notch or status bar. Content and CTAs are fully visible and tappable when the keyboard is open; notch and home indicator are never occluded by interactive elements.
+**Fail:** Any heading, title, or top-of-screen content renders behind the notch or status bar. Content is obscured by the keyboard without a scroll/avoidance mechanism. Sticky action bar hidden behind keyboard, form field obscured by system chrome, or tappable area cut off by notch.
+
+**Checklist for reviewers:**
+
+- [ ] Does every screen heading/title render below the safe-area boundary at rest (no keyboard open)?
+- [ ] Are all screens backed by `ScreenContainer`, a template that wraps `ScreenContainer`, or a native Stack header?
+- [ ] Is `paddingTop` on `FlatList.contentContainerStyle` or skeleton wrappers hard-coded rather than derived from the safe-area context?
+- [ ] When the keyboard is open, are inputs and sticky CTAs still visible and tappable?
 
 ### 8. Localization Fit
 
