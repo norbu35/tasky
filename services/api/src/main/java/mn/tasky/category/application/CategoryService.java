@@ -104,7 +104,6 @@ public class CategoryService {
                 command.sortOrder(),
                 null,
                 null,
-                null,
                 null);
         categoryDao.insert(
                 created.id(),
@@ -115,8 +114,7 @@ public class CategoryService {
                 created.sortOrder(),
                 created.intakeEnabled(),
                 created.intakeSchemaVersion(),
-                created.intakeSchemaJson(),
-                created.lastKnownGoodSchemaVersion());
+                created.intakeSchemaJson());
         return created;
     }
 
@@ -143,8 +141,7 @@ public class CategoryService {
                 command.sortOrder() != null ? command.sortOrder() : current.sortOrder(),
                 current.intakeEnabled(),
                 current.intakeSchemaVersion(),
-                current.intakeSchemaJson(),
-                current.lastKnownGoodSchemaVersion());
+                current.intakeSchemaJson());
         categoryDao.update(
                 updated.id(),
                 updated.name(),
@@ -154,8 +151,7 @@ public class CategoryService {
                 updated.sortOrder(),
                 updated.intakeEnabled(),
                 updated.intakeSchemaVersion(),
-                updated.intakeSchemaJson(),
-                updated.lastKnownGoodSchemaVersion());
+                updated.intakeSchemaJson());
         return Optional.of(updated);
     }
 
