@@ -150,8 +150,7 @@ function SectionCard({
           </View>
         ) : null}
         <Text
-          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground' : ' text-foreground'}`}
-          style={featured ? { fontSize: 36, fontWeight: '800', lineHeight: 40 } : undefined}
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground text-[36px] font-extrabold leading-[40px]' : ' text-foreground'}`}
         >
           {value}
         </Text>
@@ -196,7 +195,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
             key={`empty-${idx}`}
             className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chip-inactive bg-card"
           >
-            <Text className="text-heading text-text-secondary" style={{ lineHeight: 24 }}>
+            <Text className="text-heading text-text-secondary leading-[24px]">
               +
             </Text>
           </View>

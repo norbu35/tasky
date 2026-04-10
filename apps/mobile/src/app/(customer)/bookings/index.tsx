@@ -114,26 +114,21 @@ function BookingCard({
   return (
     <Pressable
       onPress={onPress}
-      className="bg-card rounded-lg gap-item"
-      style={{
-        padding: screenLayout.body.cardPadding,
-        gap: screenLayout.body.itemGap,
-        ...elevations.soft,
-      }}
+      className="bg-card rounded-lg p-card gap-item"
+      style={elevations.soft}
       testID={`booking-card-${booking.id}`}
     >
       <View
-        className="flex-row items-start justify-between"
-        style={{ gap: screenLayout.body.itemGap }}
+        className="flex-row items-start justify-between gap-item"
       >
-        <View className="flex-row items-center flex-1" style={{ gap: screenLayout.body.itemGap }}>
+        <View className="flex-row items-center flex-1 gap-item">
           <ProfileAvatar
             uri={booking.tasker?.avatar_url}
             name={booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
             size="md"
             showVerified
           />
-          <View className="flex-1" style={{ gap: 2 }}>
+          <View className="flex-1 gap-[2px]">
             <Text className="text-body font-bold text-primary-deep" numberOfLines={1}>
               {booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
             </Text>
@@ -149,8 +144,8 @@ function BookingCard({
           style={{ backgroundColor: statusColors.bg }}
         >
           <Text
-            className="text-micro font-bold uppercase"
-            style={{ color: statusColors.text, letterSpacing: 0.6 }}
+            className="text-micro font-bold uppercase tracking-[0.6px]"
+            style={{ color: statusColors.text }}
           >
             {getBookingStatusLabel(booking.status, t)}
           </Text>
@@ -176,14 +171,14 @@ function LoadingSkeletonCard() {
       <View className="flex-row items-center gap-md">
         <View className="w-10 h-10 rounded-md bg-muted" />
         <View className="flex-1 gap-xs">
-          <View className="h-3 rounded-xs bg-muted" style={{ width: '72%' }} />
-          <View className="h-[10px] rounded-xs bg-muted" style={{ width: '48%' }} />
+          <View className="h-3 rounded-xs bg-muted w-[72%]" />
+          <View className="h-[10px] rounded-xs bg-muted w-[48%]" />
         </View>
         <View className="w-[72px] h-6 rounded-full bg-muted" />
       </View>
       <View className="h-[1px] bg-border opacity-40" />
       <View className="flex-row justify-between items-center">
-        <View className="h-[10px] rounded-xs bg-muted" style={{ width: '42%' }} />
+        <View className="h-[10px] rounded-xs bg-muted w-[42%]" />
         <View className="h-4 w-[72px] rounded-xs bg-muted" />
       </View>
     </View>
@@ -255,14 +250,7 @@ export default function BookingsListScreen() {
   return (
     <ScreenContainer testID="SCR-CUST-016">
       <View className="flex-1 bg-background">
-        {/* header: screenLayout runtime values → imperative */}
-        <View
-          className="flex-row items-center justify-between"
-          style={{
-            paddingTop: screenLayout.body.itemGap,
-            paddingBottom: screenLayout.body.itemGap,
-          }}
-        >
+        <View className="flex-row items-center justify-between py-md">
           <Pressable
             className="w-10 h-10 rounded-md items-center justify-center bg-card"
             accessibilityRole="button"
@@ -280,15 +268,7 @@ export default function BookingsListScreen() {
           </Pressable>
         </View>
 
-        {/* tabRow: screenLayout runtime values → imperative */}
-        <View
-          className="flex-row"
-          style={{
-            gap: screenLayout.body.sectionGap,
-            paddingHorizontal: screenLayout.insetX,
-            marginBottom: screenLayout.body.blockGap,
-          }}
-        >
+        <View className="flex-row gap-section px-screen-x mb-block">
           {TAB_IDS.map((tab) => (
             <FilterTab
               key={tab}
@@ -313,10 +293,7 @@ export default function BookingsListScreen() {
           showsVerticalScrollIndicator={false}
         >
           {showOfflineBanner ? (
-            <View
-              className="bg-muted rounded-md px-md py-sm"
-              style={{ marginBottom: screenLayout.body.itemGap }}
-            >
+            <View className="bg-muted rounded-md px-md py-sm mb-item">
               <Text className="text-label text-text-secondary">
                 {t('BookingsListScreen.offlineBanner')}
               </Text>
@@ -332,7 +309,7 @@ export default function BookingsListScreen() {
           ) : showEmptyState ? (
             <EmptyState onPress={handlePostTask} />
           ) : (
-            <View style={{ gap: screenLayout.body.itemGap }}>
+            <View className="gap-item">
               {filteredBookings.map((booking) => (
                 <BookingCard
                   key={booking.id}
