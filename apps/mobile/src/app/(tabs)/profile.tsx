@@ -1,19 +1,23 @@
 import React from 'react';
-import { Text, View, Pressable } from 'react-native';
+import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { UserPen, Settings, BarChart2, ChevronRight } from 'lucide-react-native';
+import { UserPen, Settings, BarChart2 } from 'lucide-react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
 import { StatCard } from '../../components/ui/StatCard';
 import { RatingStars } from '../../components/ui/RatingStars';
 import { TrustBanner } from '../../components/ui/TrustBanner';
+import { ActionRow } from '../../components/ui/ActionRow';
 import { useMyProfile } from '../../features/profile/hooks/useProfile';
 import { useRole } from '../../providers/RoleProvider';
 import { useAuthStore } from '../../store/authStore';
 import { LoginRequiredCTA } from '../../components/ui/LoginRequiredCTA';
 import { screenLayout } from '../../design/screenLayout';
+import { mobileTheme } from '../../design/tokenAdapter';
+
+const { colors } = mobileTheme;
 
 export default function MyProfileScreen() {
   const session = useAuthStore((state) => state.session);
@@ -53,7 +57,7 @@ function AuthenticatedProfile() {
               size="xl"
               showVerified={isTasker && profile.status === 'VERIFIED'}
             />
-            <Text className="text-[20px] font-semibold text-primary-deep text-center">
+            <Text className="text-title font-sans-semibold text-primary-deep text-center">
               {profile.full_name}
             </Text>
             <View className="px-md py-xs rounded-full bg-secondary">
@@ -103,52 +107,27 @@ function AuthenticatedProfile() {
 
           {/* Action Rows */}
           <View className="bg-muted rounded-md overflow-hidden">
-            <Pressable
+            <ActionRow
               testID="action-row-edit-profile"
+              icon={<UserPen size={20} color={colors.primary} />}
+              label={t('shared.profile.editProfile')}
               onPress={() => router.push('/(shared)/profile/edit')}
-              className="flex-row items-center p-md border-b border-border/50"
-              style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
-            >
-              <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center mr-md">
-                <UserPen size={20} color="#000" />
-              </View>
-              <Text className="flex-1 text-body font-sans-medium text-foreground">
-                {t('shared.profile.editProfile')}
-              </Text>
-              <ChevronRight size={20} color="#9CA3AF" />
-            </Pressable>
-
+            />
             {isTasker && (
-              <Pressable
+              <ActionRow
                 testID="action-row-view-stats"
+                icon={<BarChart2 size={20} color={colors.secondary} />}
+                label={t('shared.profile.viewStats')}
                 onPress={() => router.push('/(tasker)/stats')}
-                className="flex-row items-center p-md border-b border-border/50"
-                style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
-              >
-                <View className="w-10 h-10 rounded-full bg-secondary/10 items-center justify-center mr-md">
-                  <BarChart2 size={20} color="#000" />
-                </View>
-                <Text className="flex-1 text-body font-sans-medium text-foreground">
-                  {t('shared.profile.viewStats')}
-                </Text>
-                <ChevronRight size={20} color="#9CA3AF" />
-              </Pressable>
+              />
             )}
-
-            <Pressable
+            <ActionRow
               testID="action-row-settings"
+              icon={<Settings size={20} color={colors.textSecondary} />}
+              label={t('shared.profile.settings')}
               onPress={() => router.push('/(shared)/profile/settings')}
-              className="flex-row items-center p-md"
-              style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
-            >
-              <View className="w-10 h-10 rounded-full bg-muted-foreground/10 items-center justify-center mr-md">
-                <Settings size={20} color="#000" />
-              </View>
-              <Text className="flex-1 text-body font-sans-medium text-foreground">
-                {t('shared.profile.settings')}
-              </Text>
-              <ChevronRight size={20} color="#9CA3AF" />
-            </Pressable>
+              showDivider={false}
+            />
           </View>
 
           {/* Trust Banner for Taskers */}
