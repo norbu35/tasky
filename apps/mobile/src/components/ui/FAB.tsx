@@ -1,6 +1,6 @@
 // apps/mobile/src/components/ui/FAB.tsx
 import React from 'react';
-import { Dimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -32,7 +32,7 @@ export function FAB({ testID = 'global-fab', authGuard = true, className }: FABP
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
   const insets = useSafeAreaInsets();
-  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   // Default position: bottom-right, above tab bar
   const defaultX = screenWidth - fabSize - fabInsetRight;
