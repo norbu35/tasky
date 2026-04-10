@@ -1228,6 +1228,49 @@ components:
           type: integer
           description: Remaining successful referrals eligible for rewards within monthly cap.
 
+    ReverseGeocodeResponse:
+      type: object
+      required: [ formatted_address, district, approximate_lat, approximate_lng ]
+      properties:
+        formatted_address:
+          type: string
+        district:
+          type: string
+        district_mn:
+          type: string
+          nullable: true
+        approximate_lat:
+          type: number
+          format: double
+        approximate_lng:
+          type: number
+          format: double
+
+    LocationSearchResponse:
+      type: object
+      required: [ results ]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationSearchResult'
+
+    LocationSearchResult:
+      type: object
+      required: [ formatted_address, lat, lng ]
+      properties:
+        formatted_address:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        district:
+          type: string
+          nullable: true
+
   responses:
     BadRequest:
       description: Invalid request parameters or body.
@@ -5015,3 +5058,79 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  /location/reverse-geocode:
+    get:
+      tags: [ Location ]
+      summary: Reverse geocode coordinates to district-level address
+      description: |
+        Returns the nearest UB district name and centroid for the provided
+        coordinates. Used to populate the location label on the task-post form.
+      operationId: reverseGeocode
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+      responses:
+        '200':
+          description: District-level address resolved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReverseGeocodeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /location/search:
+    get:
+      tags: [ Location ]
+      summary: Search locations by name fragment
+      description: |
+        Returns matching UB districts for the query string. Used to power the
+        address auto-complete on the task-post form.
+      operationId: searchLocations
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: bias_lat
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+        - name: bias_lng
+          in: query
+          required: false
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: Search results returned (may be empty).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationSearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
