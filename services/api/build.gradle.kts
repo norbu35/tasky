@@ -246,6 +246,10 @@ tasks.test {
         showStandardStreams = true
     }
     finalizedBy(tasks.jacocoTestReport)
+    // Testcontainers binds mapped ports to localhost. On macOS with a system SOCKS proxy configured,
+    // the JVM routes loopback connections through the proxy, which can't resolve them.
+    // Explicitly exclude loopback addresses so Testcontainers connections bypass the proxy.
+    jvmArgs("-DsocksNonProxyHosts=localhost|127.*|0:0:0:0:0:0:0:1|::1")
 }
 
 tasks.register<Test>("architectureTest") {
