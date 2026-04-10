@@ -8,7 +8,7 @@ appId: mn.tasky.mobile
 # Actor: new user (no role yet)
 # Flow type: happy path
 # Per PRD §6.1: Authenticate FIRST, then onboard.
-# Note: Uses dev auth bypass (EXPO_PUBLIC_DEV_AUTH_ENABLED=true)
+# Note: Uses real backend dev auth (POST /api/v1/auth/dev/login)
 
 - launchApp:
     clearState: true
@@ -20,7 +20,7 @@ appId: mn.tasky.mobile
       id: "SCR-SHARED-002"
     timeout: 10000
 
-# Step 2: Log in via dev auth bypass (simulates first-time signup)
+# Step 2: Log in via real backend dev auth (simulates first-time signup)
 - scrollUntilVisible:
     element:
       id: "dev-login-customer"
