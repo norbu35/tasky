@@ -34,6 +34,7 @@ import mn.tasky.task.dto.ApplyTaskRequest;
 import mn.tasky.task.dto.CreateDraftRequest;
 import mn.tasky.task.dto.CreateTask;
 import mn.tasky.task.dto.CreateTaskRequest;
+import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskAcceptResult;
 import mn.tasky.task.dto.TaskApplicationState;
 import mn.tasky.task.dto.TaskApplicationsListResult;
@@ -200,6 +201,21 @@ public class TaskController {
 
     private String sanitize(String value) {
         return value == null ? null : HtmlUtils.htmlEscape(value);
+    }
+
+    @GetMapping("/mine/recent-locations")
+    public ResponseEntity<?> recentLocations(@AuthenticationPrincipal JwtPrincipal principal) {
+        List<RecentLocation> locations = taskService.recentLocations(principal.userId(), 3);
+
+        List<Map<String, Object>> data = locations.stream().map(loc -> {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("location_lat", loc.locationLat());
+            entry.put("location_lng", loc.locationLng());
+            entry.put("location_text", loc.locationText());
+            return entry;
+        }).toList();
+
+        return ResponseEntity.ok(Map.of("locations", data));
     }
 
     @GetMapping("/mine")
