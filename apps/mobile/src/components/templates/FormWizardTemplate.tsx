@@ -102,7 +102,7 @@ export function FormWizardTemplate({
       {/* Scrollable Form Content + Sticky Bottom Bar */}
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'height' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={0}
       >
         <InsetScrollView
