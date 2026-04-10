@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dto.TaskState;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -329,6 +330,18 @@ public interface TaskDao {
             @Bind("cursorCreatedAt") Instant cursorCreatedAt,
             @Bind("cursorId") UUID cursorId,
             @Bind("limit") int limit);
+
+    @RegisterConstructorMapper(value = RecentLocation.class)
+    @SqlQuery("SELECT location_lat, location_lng, location_text "
+            + "FROM tasks "
+            + "WHERE customer_id = :customerId "
+            + "AND status IN ('OPEN', 'ASSIGNED', 'COMPLETED') "
+            + "AND location_lat IS NOT NULL "
+            + "AND location_lng IS NOT NULL "
+            + "AND location_text IS NOT NULL "
+            + "ORDER BY created_at DESC "
+            + "LIMIT 50")
+    List<RecentLocation> findRecentLocationCandidates(@Bind("customerId") UUID customerId);
 
     default List<TaskState> findByTasker(
             String taskerId, String status, Instant cursorCreatedAt, UUID cursorId, int limit) {
