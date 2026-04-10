@@ -2,11 +2,13 @@ export interface IntakeField {
   name: string;
   label: string;
   label_mn: string;
-  type: 'single_select' | 'multi_select' | 'dropdown' | 'yes_no' | 'numeric_counter';
+  type: 'single_select' | 'multi_select' | 'dropdown' | 'yes_no' | 'numeric_counter' | 'text' | 'textarea';
   required: boolean;
   options?: { value: string; label: string; label_mn: string }[];
   min?: number;
   max?: number;
+  min_length?: number;
+  max_length?: number;
 }
 
 export interface IntakeSchema {
@@ -275,6 +277,72 @@ function NumericCounterField({
   );
 }
 
+function TextField({
+  field,
+  value,
+  onChange,
+  error,
+  locale,
+}: {
+  field: IntakeField;
+  value: unknown;
+  onChange: (name: string, value: unknown) => void;
+  error?: string;
+  locale: 'en' | 'mn';
+}) {
+  const fieldLabel = getLabel(field, locale);
+  return (
+    <div data-field={field.name}>
+      <label htmlFor={field.name}>
+        {fieldLabel}
+        {field.required && <span>*</span>}
+      </label>
+      <input
+        type="text"
+        id={field.name}
+        value={typeof value === 'string' ? value : ''}
+        maxLength={field.max_length}
+        aria-required={field.required ? 'true' : undefined}
+        onChange={(e) => onChange(field.name, e.target.value)}
+      />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function TextareaField({
+  field,
+  value,
+  onChange,
+  error,
+  locale,
+}: {
+  field: IntakeField;
+  value: unknown;
+  onChange: (name: string, value: unknown) => void;
+  error?: string;
+  locale: 'en' | 'mn';
+}) {
+  const fieldLabel = getLabel(field, locale);
+  return (
+    <div data-field={field.name}>
+      <label htmlFor={field.name}>
+        {fieldLabel}
+        {field.required && <span>*</span>}
+      </label>
+      <textarea
+        id={field.name}
+        value={typeof value === 'string' ? value : ''}
+        maxLength={field.max_length}
+        rows={4}
+        aria-required={field.required ? 'true' : undefined}
+        onChange={(e) => onChange(field.name, e.target.value)}
+      />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </div>
+  );
+}
+
 export function IntakeFormRenderer({
   schema,
   values,
@@ -340,6 +408,28 @@ export function IntakeFormRenderer({
           case 'numeric_counter':
             return (
               <NumericCounterField
+                key={field.name}
+                field={field}
+                value={value}
+                onChange={onChange}
+                error={error}
+                locale={locale}
+              />
+            );
+          case 'text':
+            return (
+              <TextField
+                key={field.name}
+                field={field}
+                value={value}
+                onChange={onChange}
+                error={error}
+                locale={locale}
+              />
+            );
+          case 'textarea':
+            return (
+              <TextareaField
                 key={field.name}
                 field={field}
                 value={value}
