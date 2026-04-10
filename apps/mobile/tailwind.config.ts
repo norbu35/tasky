@@ -3,6 +3,17 @@ import type { Config } from 'tailwindcss';
 import { nativeTokens } from '@tasky/design-tokens';
 import { screenTypographyPlugin } from './src/design/tailwind-screen-typography';
 
+function camelToKebab(str: string) {
+  return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+const colorsWithKebab = Object.fromEntries(
+  Object.entries(nativeTokens.colors).flatMap(([key, value]) => [
+    [key, value],
+    [camelToKebab(key), value],
+  ])
+);
+
 const config: Config = {
   content: [
     './src/app/**/*.{ts,tsx}',
@@ -14,7 +25,7 @@ const config: Config = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
-      colors: nativeTokens.colors,
+      colors: colorsWithKebab,
       spacing: {
         ...nativeTokens.spacing,
         'screen-x': String(nativeTokens.spacing.lg),
