@@ -6,6 +6,10 @@ import type { VerificationDetail } from '../../../lib/apiClient';
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, fallback: string) => fallback,
+    i18n: {
+      language: 'en',
+      resolvedLanguage: 'en',
+    },
   }),
 }));
 
@@ -161,15 +165,15 @@ describe('AdminVerificationsPage', () => {
     await screen.findByText('Bold Bat');
 
     // Images should not be visible initially
-    expect(screen.queryByAltText('ID Card Front')).not.toBeInTheDocument();
+    expect(screen.queryByAltText('ID Front')).not.toBeInTheDocument();
 
     // Click the row to expand
     const row = screen.getByTestId('verification-row-v-1');
     fireEvent.click(row);
 
     // Now images should be visible
-    const frontImg = await screen.findByAltText('ID Card Front');
-    const backImg = screen.getByAltText('ID Card Back');
+    const frontImg = await screen.findByAltText('ID Front');
+    const backImg = screen.getByAltText('ID Back');
     const selfieImg = screen.getByAltText('Selfie');
 
     expect(frontImg).toHaveAttribute('src', 'https://cdn.example.test/id-front.jpg');

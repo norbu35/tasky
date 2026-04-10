@@ -156,7 +156,7 @@ describe('AdminLayout', () => {
     });
   });
 
-  it('renders sidebar with all 6 navigation links', () => {
+  it('renders sidebar with only launch-live admin navigation links', () => {
     render(
       <MemoryRouter initialEntries={['/admin/verifications']}>
         <Routes>
@@ -193,6 +193,12 @@ describe('AdminLayout', () => {
       'href',
       '/admin/concierge',
     );
+    expect(within(sidebar).getByRole('link', { name: /moderation/i })).toHaveAttribute(
+      'href',
+      '/admin/moderation',
+    );
+    expect(within(sidebar).queryByRole('link', { name: /payouts/i })).not.toBeInTheDocument();
+    expect(within(sidebar).queryByRole('link', { name: /pricing/i })).not.toBeInTheDocument();
   });
 
   it('highlights active nav item based on route', () => {
