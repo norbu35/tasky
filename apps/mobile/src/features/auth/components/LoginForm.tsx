@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 import { Button, FormField, Input } from '../../../components/ui';
-import { useRequestOtp, useVerifyOtp, useDevLogin } from '../hooks/useAuth';
+import {
+  DEV_LOGIN_CUSTOMER_PHONE,
+  DEV_LOGIN_TASKER_PHONE,
+  useRequestOtp,
+  useVerifyOtp,
+  useDevLogin,
+} from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../../design/tokenAdapter';
 
@@ -31,7 +37,7 @@ export function LoginForm() {
   };
 
   const handleDevLoginAs = (role: 'CUSTOMER' | 'TASKER') => {
-    const phone = role === 'CUSTOMER' ? '+97699999999' : '+97699988888';
+    const phone = role === 'CUSTOMER' ? DEV_LOGIN_CUSTOMER_PHONE : DEV_LOGIN_TASKER_PHONE;
     devLogin.mutate({ phone, role });
   };
 

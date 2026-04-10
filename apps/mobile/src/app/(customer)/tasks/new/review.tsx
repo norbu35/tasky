@@ -259,19 +259,7 @@ export default function ReviewSubmitScreen() {
     budget: params.budget ?? '',
   };
 
-  const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
-  const devAuthEnabled = runtimeEnv?.EXPO_PUBLIC_DEV_AUTH_ENABLED === 'true';
-
   const handleSubmit = async () => {
-    // Dev bypass: skip API call and navigate directly to success screen
-    if (devAuthEnabled) {
-      router.replace({
-        pathname: '/(customer)/tasks/new/success',
-        params: { taskId: 'dev-task-00000000' },
-      });
-      return;
-    }
-
     try {
       setSubmitError(null);
       const locationLat = Number(params.lat);
