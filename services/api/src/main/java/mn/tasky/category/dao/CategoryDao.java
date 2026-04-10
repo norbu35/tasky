@@ -23,8 +23,7 @@ public interface CategoryDao {
             int sortOrder,
             Boolean intakeEnabled,
             Integer intakeSchemaVersion,
-            String intakeSchemaJson,
-            Integer lastKnownGoodSchemaVersion) {
+            String intakeSchemaJson) {
         insert(
                 required(id, "id"),
                 name,
@@ -34,15 +33,14 @@ public interface CategoryDao {
                 sortOrder,
                 intakeEnabled,
                 intakeSchemaVersion,
-                intakeSchemaJson,
-                lastKnownGoodSchemaVersion);
+                intakeSchemaJson);
     }
 
     @SqlUpdate("INSERT INTO categories (id, name, name_mn, icon_url, is_active, sort_order, "
-            + "intake_enabled, intake_schema_version, intake_schema_json, last_known_good_schema_version) "
+            + "intake_enabled, intake_schema_version, intake_schema_json) "
             + "VALUES (:id, :name, :nameMn, :iconUrl, :isActive, :sortOrder, "
             + "COALESCE(:intakeEnabled, true), :intakeSchemaVersion, "
-            + "CAST(:intakeSchemaJson AS jsonb), :lastKnownGoodSchemaVersion)")
+            + "CAST(:intakeSchemaJson AS jsonb))")
     void insert(
             @Bind("id") UUID id,
             @Bind("name") String name,
@@ -52,8 +50,7 @@ public interface CategoryDao {
             @Bind("sortOrder") int sortOrder,
             @Bind("intakeEnabled") Boolean intakeEnabled,
             @Bind("intakeSchemaVersion") Integer intakeSchemaVersion,
-            @Bind("intakeSchemaJson") String intakeSchemaJson,
-            @Bind("lastKnownGoodSchemaVersion") Integer lastKnownGoodSchemaVersion);
+            @Bind("intakeSchemaJson") String intakeSchemaJson);
 
     default Optional<CategoryState> findById(String id) {
         return findById(required(id, "id"));
@@ -115,8 +112,7 @@ public interface CategoryDao {
             int sortOrder,
             Boolean intakeEnabled,
             Integer intakeSchemaVersion,
-            String intakeSchemaJson,
-            Integer lastKnownGoodSchemaVersion) {
+            String intakeSchemaJson) {
         update(
                 required(id, "id"),
                 name,
@@ -126,16 +122,14 @@ public interface CategoryDao {
                 sortOrder,
                 intakeEnabled,
                 intakeSchemaVersion,
-                intakeSchemaJson,
-                lastKnownGoodSchemaVersion);
+                intakeSchemaJson);
     }
 
     @SqlUpdate("UPDATE categories SET name = :name, name_mn = :nameMn, icon_url = :iconUrl, "
             + "is_active = :isActive, sort_order = :sortOrder, "
             + "intake_enabled = COALESCE(:intakeEnabled, intake_enabled), "
             + "intake_schema_version = :intakeSchemaVersion, "
-            + "intake_schema_json = CAST(:intakeSchemaJson AS jsonb), "
-            + "last_known_good_schema_version = :lastKnownGoodSchemaVersion "
+            + "intake_schema_json = CAST(:intakeSchemaJson AS jsonb) "
             + "WHERE id = :id")
     void update(
             @Bind("id") UUID id,
@@ -146,6 +140,5 @@ public interface CategoryDao {
             @Bind("sortOrder") int sortOrder,
             @Bind("intakeEnabled") Boolean intakeEnabled,
             @Bind("intakeSchemaVersion") Integer intakeSchemaVersion,
-            @Bind("intakeSchemaJson") String intakeSchemaJson,
-            @Bind("lastKnownGoodSchemaVersion") Integer lastKnownGoodSchemaVersion);
+            @Bind("intakeSchemaJson") String intakeSchemaJson);
 }

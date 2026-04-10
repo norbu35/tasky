@@ -329,26 +329,31 @@ public class TaskService {
                 // Type-specific validation
                 switch (type) {
                     case "single_select", "dropdown" -> {
-                        if (field.has("options")) {
-                            List<String> options = new ArrayList<>();
+                        if (field.has("options") && field.get("options").isArray()) {
+                            List<String> validValues = new ArrayList<>();
                             for (JsonNode opt : field.get("options")) {
-                                options.add(opt.asText());
+                                if (opt.isObject() && opt.has("value")) {
+                                    validValues.add(opt.get("value").asText());
+                                }
                             }
                             String val = String.valueOf(answerValue);
-                            if (!options.contains(val)) {
+                            if (!validValues.contains(val)) {
                                 errors.add(label + ": '" + val + "' is not a valid option.");
                             }
                         }
                     }
                     case "multi_select" -> {
-                        if (field.has("options") && answerNode != null && answerNode.isArray()) {
-                            List<String> options = new ArrayList<>();
+                        if (field.has("options") && field.get("options").isArray()
+                                && answerNode != null && answerNode.isArray()) {
+                            List<String> validValues = new ArrayList<>();
                             for (JsonNode opt : field.get("options")) {
-                                options.add(opt.asText());
+                                if (opt.isObject() && opt.has("value")) {
+                                    validValues.add(opt.get("value").asText());
+                                }
                             }
                             for (JsonNode selectedNode : answerNode) {
                                 String selected = selectedNode.asText();
-                                if (!options.contains(selected)) {
+                                if (!validValues.contains(selected)) {
                                     errors.add(label + ": '" + selected + "' is not a valid option.");
                                 }
                             }
@@ -387,8 +392,23 @@ public class TaskService {
                             }
                         }
                     }
+                    case "text", "textarea" -> {
+                        String strVal = String.valueOf(answerValue);
+                        if (field.has("max_length")) {
+                            int maxLen = field.get("max_length").asInt();
+                            if (strVal.length() > maxLen) {
+                                errors.add(label + ": value must be at most " + maxLen + " characters.");
+                            }
+                        }
+                        if (field.has("min_length")) {
+                            int minLen = field.get("min_length").asInt();
+                            if (strVal.length() < minLen) {
+                                errors.add(label + ": value must be at least " + minLen + " characters.");
+                            }
+                        }
+                    }
                     default -> {
-                        // no additional validation for text and other types
+                        // no additional validation for unknown types
                     }
                 }
             }

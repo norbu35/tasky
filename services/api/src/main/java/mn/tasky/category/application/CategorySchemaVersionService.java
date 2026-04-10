@@ -12,19 +12,21 @@ import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.audit.AuditEventDao;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Manages the lifecycle of category intake schema versions.
- * Supports creating draft schemas, activating versions, listing versions,
- * and rolling back to the last known good version.
+ * Supports creating draft schemas, activating versions, and listing versions.
  */
 @Service
 public class CategorySchemaVersionService {
 
     private static final Set<String> SUPPORTED_FIELD_TYPES =
-            Set.of("single_select", "multi_select", "dropdown", "yes_no", "numeric_counter");
+            Set.of("single_select", "multi_select", "dropdown", "yes_no", "numeric_counter", "text", "textarea");
 
     private static final Set<String> OPTION_REQUIRED_TYPES = Set.of("single_select", "multi_select", "dropdown");
+
+    private static final Set<String> TEXT_TYPES = Set.of("text", "textarea");
 
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 5;
@@ -77,8 +79,7 @@ public class CategorySchemaVersionService {
 
     /**
      * Activates a specific schema version for a category.
-     * The current active version (if any) is rolled back, and the target version
-     * becomes ACTIVE and is marked as last_known_good.
+     * The current active version (if any) is rolled back, and the target version becomes ACTIVE.
      *
      * @param categoryId the category ID
      * @param version    the version number to activate
@@ -86,6 +87,7 @@ public class CategorySchemaVersionService {
      * @throws IllegalArgumentException if the version does not exist or is already active
      * @throws IllegalStateException    if the version is in an invalid status for activation
      */
+    @Transactional
     public CategorySchemaVersion activate(String categoryId, int version) {
         CategorySchemaVersion target = schemaVersionDao
                 .findByCategoryIdAndVersion(categoryId, version)
@@ -96,8 +98,9 @@ public class CategorySchemaVersionService {
         if ("ACTIVE".equals(status)) {
             throw new IllegalStateException("Schema version " + version + " is already active.");
         }
-        if (!"DRAFT".equals(status) && !"CANARY".equals(status)) {
-            throw new IllegalStateException("Schema version " + version + " cannot be activated from status " + status);
+        if (!"DRAFT".equals(status) && !"CANARY".equals(status) && !"ROLLED_BACK".equals(status)) {
+            throw new IllegalStateException(
+                    "Schema version " + version + " cannot be activated from status " + status);
         }
 
         // Roll back current active version if one exists
@@ -107,10 +110,6 @@ public class CategorySchemaVersionService {
 
         // Activate the target version
         schemaVersionDao.updateStatusAndActivatedAt(target.id(), "ACTIVE");
-
-        // Mark as last known good
-        schemaVersionDao.clearLastKnownGood(categoryId);
-        schemaVersionDao.markLastKnownGood(target.id());
 
         // Update the category with the activated schema
         CategoryState category = categoryDao
@@ -126,8 +125,7 @@ public class CategorySchemaVersionService {
                 category.sortOrder(),
                 category.intakeEnabled(),
                 version,
-                target.schemaJson(),
-                version);
+                target.schemaJson());
 
         return schemaVersionDao
                 .findByCategoryIdAndVersion(categoryId, version)
@@ -142,49 +140,6 @@ public class CategorySchemaVersionService {
      */
     public List<CategorySchemaVersion> listVersions(String categoryId) {
         return schemaVersionDao.findByCategoryId(categoryId);
-    }
-
-    /**
-     * Rolls back to the last known good schema version for a category.
-     *
-     * @param categoryId the category ID
-     * @return the reactivated last known good version
-     * @throws IllegalStateException if no last known good version exists
-     */
-    public CategorySchemaVersion rollbackToLastKnownGood(String categoryId) {
-        CategorySchemaVersion lastKnownGood = schemaVersionDao
-                .findLastKnownGoodByCategoryId(categoryId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "No last known good schema version found for category " + categoryId));
-
-        // Deactivate current active version
-        schemaVersionDao
-                .findActiveByCategoryId(categoryId)
-                .ifPresent(active -> schemaVersionDao.updateStatus(active.id(), "ROLLED_BACK"));
-
-        // Reactivate last known good
-        schemaVersionDao.updateStatusAndActivatedAt(lastKnownGood.id(), "ACTIVE");
-
-        // Update category
-        CategoryState category = categoryDao
-                .findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category " + categoryId + " not found."));
-
-        categoryDao.update(
-                category.id(),
-                category.name(),
-                category.nameMn(),
-                category.iconUrl(),
-                category.isActive(),
-                category.sortOrder(),
-                category.intakeEnabled(),
-                lastKnownGood.version(),
-                lastKnownGood.schemaJson(),
-                lastKnownGood.version());
-
-        return schemaVersionDao
-                .findByCategoryIdAndVersion(categoryId, lastKnownGood.version())
-                .orElseThrow(() -> new IllegalStateException("Rolled back version could not be retrieved."));
     }
 
     private void validateSchemaJson(String schemaJson) {
@@ -218,6 +173,7 @@ public class CategorySchemaVersionService {
 
         String key = requireString(field, "key", index);
         requireString(field, "label", index);
+        requireString(field, "label_mn", index);
 
         String type = requireString(field, "type", index);
         if (!SUPPORTED_FIELD_TYPES.contains(type)) {
@@ -230,10 +186,63 @@ public class CategorySchemaVersionService {
         }
 
         if (OPTION_REQUIRED_TYPES.contains(type)) {
-            JsonNode options = field.get("options");
-            if (options == null || !options.isArray() || options.isEmpty()) {
+            validateOptionsArray(field, key);
+        }
+
+        if (TEXT_TYPES.contains(type)) {
+            validateTextConstraints(field, key);
+        }
+
+        // Reject options on non-option types
+        if (!OPTION_REQUIRED_TYPES.contains(type) && field.has("options")) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' of type '" + type + "' must not have an 'options' property.");
+        }
+    }
+
+    private void validateOptionsArray(JsonNode field, String key) {
+        JsonNode options = field.get("options");
+        if (options == null || !options.isArray() || options.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' must have a non-empty 'options' array.");
+        }
+        for (int i = 0; i < options.size(); i++) {
+            JsonNode opt = options.get(i);
+            if (!opt.isObject()) {
                 throw new IllegalArgumentException(
-                        "Field '" + key + "' of type '" + type + "' must have a non-empty 'options' array.");
+                        "Field '" + key + "' option at index " + i + " must be a JSON object.");
+            }
+            requireOptionString(opt, "value", key, i);
+            requireOptionString(opt, "label", key, i);
+            requireOptionString(opt, "label_mn", key, i);
+        }
+    }
+
+    private void requireOptionString(JsonNode opt, String property, String fieldKey, int optIndex) {
+        JsonNode node = opt.get(property);
+        if (node == null || !node.isTextual() || node.asText().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Field '" + fieldKey + "' option at index " + optIndex
+                            + " must have a non-blank string '" + property + "' property.");
+        }
+    }
+
+    private void validateTextConstraints(JsonNode field, String key) {
+        JsonNode maxLength = field.get("max_length");
+        if (maxLength == null || !maxLength.isInt() || maxLength.asInt() <= 0) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' of type '" + field.get("type").asText()
+                            + "' must have a positive integer 'max_length' property.");
+        }
+        JsonNode minLength = field.get("min_length");
+        if (minLength != null) {
+            if (!minLength.isInt() || minLength.asInt() < 0) {
+                throw new IllegalArgumentException(
+                        "Field '" + key + "': 'min_length' must be a non-negative integer.");
+            }
+            if (minLength.asInt() >= maxLength.asInt()) {
+                throw new IllegalArgumentException(
+                        "Field '" + key + "': 'min_length' must be less than 'max_length'.");
             }
         }
     }

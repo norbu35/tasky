@@ -120,9 +120,9 @@ class RecentLocationsTests extends IntegrationTestBase {
                 "location_text", locationText,
                 "scheduled_at", Instant.now().plus(1, ChronoUnit.DAYS).toString(),
                 "intake_answers", Map.of(
-                        "property_type", "Apartment",
+                        "property_type", "apartment",
                         "size_or_rooms", 2,
-                        "cleaning_type", "Standard",
+                        "cleaning_type", "standard",
                         "supplies_provided", true),
                 "intake_schema_version", 1);
         ResponseEntity<Map> resp = postWithToken("/api/v1/tasks", body);

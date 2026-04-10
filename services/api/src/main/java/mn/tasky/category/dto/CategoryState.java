@@ -11,5 +11,4 @@ public record CategoryState(
         int sortOrder,
         @Nullable Boolean intakeEnabled,
         @Nullable Integer intakeSchemaVersion,
-        @Nullable String intakeSchemaJson,
-        @Nullable Integer lastKnownGoodSchemaVersion) {}
+        @Nullable String intakeSchemaJson) {}

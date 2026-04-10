@@ -38,7 +38,7 @@ public interface CategorySchemaVersionDao {
         return findByCategoryId(required(categoryId, "categoryId"));
     }
 
-    @SqlQuery("SELECT id, category_id, version, schema_json, status, is_last_known_good, "
+    @SqlQuery("SELECT id, category_id, version, schema_json, status, "
             + "created_by, created_at, activated_at "
             + "FROM category_schema_versions WHERE category_id = :categoryId "
             + "ORDER BY version DESC")
@@ -48,7 +48,7 @@ public interface CategorySchemaVersionDao {
         return findByCategoryIdAndVersion(required(categoryId, "categoryId"), version);
     }
 
-    @SqlQuery("SELECT id, category_id, version, schema_json, status, is_last_known_good, "
+    @SqlQuery("SELECT id, category_id, version, schema_json, status, "
             + "created_by, created_at, activated_at "
             + "FROM category_schema_versions WHERE category_id = :categoryId AND version = :version")
     Optional<CategorySchemaVersion> findByCategoryIdAndVersion(
@@ -58,7 +58,7 @@ public interface CategorySchemaVersionDao {
         return findActiveByCategoryId(required(categoryId, "categoryId"));
     }
 
-    @SqlQuery("SELECT id, category_id, version, schema_json, status, is_last_known_good, "
+    @SqlQuery("SELECT id, category_id, version, schema_json, status, "
             + "created_by, created_at, activated_at "
             + "FROM category_schema_versions WHERE category_id = :categoryId AND status = 'ACTIVE' "
             + "LIMIT 1")
@@ -71,36 +71,12 @@ public interface CategorySchemaVersionDao {
     @SqlUpdate("UPDATE category_schema_versions SET status = :status WHERE id = :id")
     void updateStatus(@Bind("id") UUID id, @Bind("status") String status);
 
-    default void clearLastKnownGood(String categoryId) {
-        clearLastKnownGood(required(categoryId, "categoryId"));
-    }
-
-    @SqlUpdate("UPDATE category_schema_versions SET is_last_known_good = false " + "WHERE category_id = :categoryId")
-    void clearLastKnownGood(@Bind("categoryId") UUID categoryId);
-
-    default void markLastKnownGood(String id) {
-        markLastKnownGood(required(id, "id"));
-    }
-
-    @SqlUpdate("UPDATE category_schema_versions SET is_last_known_good = true WHERE id = :id")
-    void markLastKnownGood(@Bind("id") UUID id);
-
     default Optional<Integer> findMaxVersion(String categoryId) {
         return findMaxVersion(required(categoryId, "categoryId"));
     }
 
     @SqlQuery("SELECT MAX(version) FROM category_schema_versions WHERE category_id = :categoryId")
     Optional<Integer> findMaxVersion(@Bind("categoryId") UUID categoryId);
-
-    default Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(String categoryId) {
-        return findLastKnownGoodByCategoryId(required(categoryId, "categoryId"));
-    }
-
-    @SqlQuery("SELECT id, category_id, version, schema_json, status, is_last_known_good, "
-            + "created_by, created_at, activated_at "
-            + "FROM category_schema_versions WHERE category_id = :categoryId AND is_last_known_good = true "
-            + "LIMIT 1")
-    Optional<CategorySchemaVersion> findLastKnownGoodByCategoryId(@Bind("categoryId") UUID categoryId);
 
     default void updateStatusAndActivatedAt(String id, String status) {
         updateStatusAndActivatedAt(required(id, "id"), status);

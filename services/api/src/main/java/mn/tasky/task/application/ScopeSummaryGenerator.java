@@ -65,7 +65,7 @@ public class ScopeSummaryGenerator {
                     continue;
                 }
 
-                String formattedValue = formatValue(value, answersJson, key);
+                String formattedValue = formatValue(value, field, answersJson, key);
                 lines.add(label + ": " + formattedValue);
             }
 
@@ -82,22 +82,42 @@ public class ScopeSummaryGenerator {
         }
     }
 
-    private String formatValue(Object value, String answersJson, String key) {
-        if (value instanceof List<?> listValue) {
-            return listValue.stream().map(String::valueOf).collect(Collectors.joining(", "));
-        }
-        // Check if the raw JSON node is an array (Jackson may deserialize as list already,
-        // but handle the case where ObjectMapper produced something else)
-        try {
-            JsonNode answersNode = objectMapper.readTree(answersJson);
-            JsonNode valueNode = answersNode.get(key);
-            if (valueNode != null && valueNode.isArray()) {
-                return StreamSupport.stream(valueNode.spliterator(), false)
-                        .map(JsonNode::asText)
+    private String formatValue(Object value, JsonNode field, String answersJson, String key) {
+        // For option types, resolve value → label
+        if (field.has("options") && field.get("options").isArray()) {
+            java.util.Map<String, String> valueLabelMap = new java.util.HashMap<>();
+            for (JsonNode opt : field.get("options")) {
+                if (opt.isObject() && opt.has("value") && opt.has("label")) {
+                    valueLabelMap.put(opt.get("value").asText(), opt.get("label").asText());
+                }
+            }
+
+            if (value instanceof List<?> listValue) {
+                return listValue.stream()
+                        .map(v -> valueLabelMap.getOrDefault(String.valueOf(v), String.valueOf(v)))
                         .collect(Collectors.joining(", "));
             }
-        } catch (Exception ignored) {
-            // fall through to toString
+
+            // Check if raw JSON is array (Jackson may produce List or JsonNode array)
+            try {
+                JsonNode answersNode = objectMapper.readTree(answersJson);
+                JsonNode valueNode = answersNode.get(key);
+                if (valueNode != null && valueNode.isArray()) {
+                    return StreamSupport.stream(valueNode.spliterator(), false)
+                            .map(n -> valueLabelMap.getOrDefault(n.asText(), n.asText()))
+                            .collect(Collectors.joining(", "));
+                }
+            } catch (Exception ignored) {
+                // fall through
+            }
+
+            String strVal = String.valueOf(value);
+            return valueLabelMap.getOrDefault(strVal, strVal);
+        }
+
+        // Non-option types: format directly
+        if (value instanceof List<?> listValue) {
+            return listValue.stream().map(String::valueOf).collect(Collectors.joining(", "));
         }
         return String.valueOf(value);
     }

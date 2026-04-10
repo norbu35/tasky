@@ -12,16 +12,32 @@ const DESCRIPTION_MAX_LENGTH = 2000;
 
 // ── Schema types ──────────────────────────────────────────────────────────────
 
-type FieldType = 'single_select' | 'multi_select' | 'yes_no' | 'numeric_counter';
+type FieldType =
+  | 'single_select'
+  | 'multi_select'
+  | 'dropdown'
+  | 'yes_no'
+  | 'numeric_counter'
+  | 'text'
+  | 'textarea';
+
+interface IntakeFieldOption {
+  value: string;
+  label: string;
+  label_mn: string;
+}
 
 interface IntakeField {
   key: string;
   label: string;
+  label_mn: string;
   type: FieldType;
   required: boolean;
-  options?: string[] | null;
+  options?: IntakeFieldOption[] | null;
   min?: number | null;
   max?: number | null;
+  min_length?: number | null;
+  max_length?: number | null;
 }
 
 // ── Parsers ───────────────────────────────────────────────────────────────────
@@ -49,6 +65,12 @@ function parseAnswers(value?: string): Record<string, unknown> {
   }
 }
 
+// ── Locale helper ─────────────────────────────────────────────────────────────
+
+function getFieldLabel(field: { label: string; label_mn: string }, locale: string): string {
+  return locale === 'mn' ? field.label_mn : field.label;
+}
+
 // ── Field renderers ───────────────────────────────────────────────────────────
 
 function ChipGroup({
@@ -57,12 +79,14 @@ function ChipGroup({
   multi,
   onChange,
   testIDPrefix,
+  locale,
 }: {
-  options: string[];
+  options: IntakeFieldOption[];
   value: string | string[] | null;
   multi: boolean;
   onChange: (v: string | string[]) => void;
   testIDPrefix: string;
+  locale: string;
 }) {
   const selected = multi
     ? Array.isArray(value)
@@ -72,23 +96,26 @@ function ChipGroup({
       ? [value]
       : [];
 
-  const toggle = (opt: string) => {
+  const toggle = (optValue: string) => {
     if (multi) {
-      const arr = selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt];
+      const arr = selected.includes(optValue)
+        ? selected.filter((s) => s !== optValue)
+        : [...selected, optValue];
       onChange(arr);
     } else {
-      onChange(opt);
+      onChange(optValue);
     }
   };
 
   return (
     <View className="flex-row flex-wrap gap-sm">
       {options.map((opt) => {
-        const active = selected.includes(opt);
+        const active = selected.includes(opt.value);
+        const displayLabel = locale === 'mn' ? opt.label_mn : opt.label;
         return (
           <Pressable
-            key={opt}
-            onPress={() => toggle(opt)}
+            key={opt.value}
+            onPress={() => toggle(opt.value)}
             className="px-md py-sm rounded-sm justify-center items-center"
             style={[
               { minHeight: 40 },
@@ -97,7 +124,7 @@ function ChipGroup({
                 : { backgroundColor: '#F3F1EC' },
             ]}
             accessibilityRole="button"
-            testID={`intake-${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, '-')}`}
+            testID={`intake-${testIDPrefix}-${opt.value}`}
           >
             <Text
               className={
@@ -106,7 +133,7 @@ function ChipGroup({
                   : 'text-caption font-bold text-text-secondary'
               }
             >
-              {opt}
+              {displayLabel}
             </Text>
           </Pressable>
         );
@@ -163,7 +190,7 @@ function YesNo({
 // ── Main screen ───────────────────────────────────────────────────────────────
 
 export default function IntakeFormScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{
     categoryId: string;
@@ -234,7 +261,23 @@ export default function IntakeFormScreen() {
           } else if (field.max != null && num > field.max) {
             newErrors[field.key] = t('Intake.maximumValue').replace('{{max}}', String(field.max));
           }
+        } else if (field.type === 'text' || field.type === 'textarea') {
+          const strVal = typeof val === 'string' ? val : '';
+          if (!strVal.trim()) {
+            newErrors[field.key] = t('Intake.required');
+          } else if (field.min_length != null && strVal.length < field.min_length) {
+            newErrors[field.key] = t('Intake.minimumLength').replace(
+              '{{min}}',
+              String(field.min_length),
+            );
+          } else if (field.max_length != null && strVal.length > field.max_length) {
+            newErrors[field.key] = t('Intake.maximumLength').replace(
+              '{{max}}',
+              String(field.max_length),
+            );
+          }
         } else {
+          // single_select, dropdown
           if (!val) {
             newErrors[field.key] = t('Intake.required');
           }
@@ -261,20 +304,29 @@ export default function IntakeFormScreen() {
     });
   };
 
+  const locale = i18n.language ?? 'en';
+
   const renderSchemaField = (field: IntakeField) => {
     const error = fieldErrors[field.key];
-    if (field.type === 'single_select' || field.type === 'multi_select') {
+    const fieldLabel = getFieldLabel(field, locale);
+
+    if (
+      field.type === 'single_select' ||
+      field.type === 'multi_select' ||
+      field.type === 'dropdown'
+    ) {
       const val =
         (answers[field.key] as string | string[] | undefined) ??
         (field.type === 'multi_select' ? [] : null);
       return (
-        <FormField key={field.key} label={field.label} errorText={error}>
+        <FormField key={field.key} label={fieldLabel} errorText={error}>
           <ChipGroup
             options={field.options ?? []}
             value={val as string | string[] | null}
             multi={field.type === 'multi_select'}
             onChange={(v) => setField(field.key, v)}
             testIDPrefix={field.key}
+            locale={locale}
           />
         </FormField>
       );
@@ -283,7 +335,7 @@ export default function IntakeFormScreen() {
       const val = answers[field.key];
       const boolVal = val === true ? true : val === false ? false : null;
       return (
-        <FormField key={field.key} label={field.label} errorText={error}>
+        <FormField key={field.key} label={fieldLabel} errorText={error}>
           <YesNo
             value={boolVal}
             onChange={(v) => setField(field.key, v)}
@@ -295,7 +347,7 @@ export default function IntakeFormScreen() {
     if (field.type === 'numeric_counter') {
       const val = answers[field.key];
       return (
-        <FormField key={field.key} label={field.label} errorText={error}>
+        <FormField key={field.key} label={fieldLabel} errorText={error}>
           <Input
             testID={`intake-${field.key}-input`}
             value={val != null ? String(val) : ''}
@@ -306,6 +358,37 @@ export default function IntakeFormScreen() {
             keyboardType="numeric"
             maxLength={3}
             invalid={!!error}
+          />
+        </FormField>
+      );
+    }
+    if (field.type === 'text') {
+      const val = answers[field.key];
+      return (
+        <FormField key={field.key} label={fieldLabel} errorText={error}>
+          <Input
+            testID={`intake-${field.key}-input`}
+            value={val != null ? String(val) : ''}
+            onChangeText={(text: string) => setField(field.key, text)}
+            maxLength={field.max_length ?? 200}
+            invalid={!!error}
+          />
+        </FormField>
+      );
+    }
+    if (field.type === 'textarea') {
+      const val = answers[field.key];
+      return (
+        <FormField key={field.key} label={fieldLabel} errorText={error}>
+          <Input
+            testID={`intake-${field.key}-input`}
+            value={val != null ? String(val) : ''}
+            onChangeText={(text: string) => setField(field.key, text)}
+            multiline
+            numberOfLines={4}
+            maxLength={field.max_length ?? 2000}
+            invalid={!!error}
+            style={{ minHeight: 100, textAlignVertical: 'top' }}
           />
         </FormField>
       );

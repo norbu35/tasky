@@ -33,7 +33,6 @@ ALTER TABLE tasks ADD CONSTRAINT tasks_scope_summary_source_check
 ALTER TABLE categories ADD COLUMN IF NOT EXISTS intake_enabled BOOLEAN NOT NULL DEFAULT true;
 ALTER TABLE categories ADD COLUMN IF NOT EXISTS intake_schema_version INT;
 ALTER TABLE categories ADD COLUMN IF NOT EXISTS intake_schema_json JSONB;
-ALTER TABLE categories ADD COLUMN IF NOT EXISTS last_known_good_schema_version INT;
 
 -- ============================================================
 -- 5. task_applications: replace status enum, add ranking columns
@@ -166,7 +165,6 @@ CREATE TABLE IF NOT EXISTS category_schema_versions (
     version INT NOT NULL,
     schema_json JSONB NOT NULL,
     status TEXT NOT NULL DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'CANARY', 'ACTIVE', 'ROLLED_BACK')),
-    is_last_known_good BOOLEAN NOT NULL DEFAULT false,
     created_by UUID,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     activated_at TIMESTAMPTZ,
