@@ -10,6 +10,9 @@ public record TaskDraftResponse(
         @JsonProperty("intake_answers") String intakeAnswers,
         @JsonProperty("intake_schema_version") int intakeSchemaVersion,
         @JsonProperty("summary_draft") String summaryDraft,
+        @JsonProperty("location_lat") Double locationLat,
+        @JsonProperty("location_lng") Double locationLng,
+        @JsonProperty("location_text") String locationText,
         @JsonProperty("created_at") Instant createdAt,
         @JsonProperty("expires_at") Instant expiresAt) {
 
@@ -21,6 +24,9 @@ public record TaskDraftResponse(
                 draft.intakeAnswersJson(),
                 draft.intakeSchemaVersion(),
                 draft.summaryDraft(),
+                draft.locationLat(),
+                draft.locationLng(),
+                draft.locationText(),
                 draft.createdAt(),
                 draft.expiresAt());
     }

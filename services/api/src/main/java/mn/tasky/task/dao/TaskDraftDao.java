@@ -46,7 +46,8 @@ public interface TaskDraftDao {
     }
 
     @SqlQuery("SELECT id, customer_id, category_id, intake_answers_json, "
-            + "intake_schema_version, summary_draft, created_at, expires_at "
+            + "intake_schema_version, summary_draft, location_lat, location_lng, location_text, "
+            + "created_at, expires_at "
             + "FROM task_drafts WHERE id = :id")
     Optional<TaskDraft> findById(@Bind("id") UUID id);
 

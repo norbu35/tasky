@@ -9,5 +9,8 @@ public record TaskDraft(
         String intakeAnswersJson,
         int intakeSchemaVersion,
         String summaryDraft,
+        Double locationLat,
+        Double locationLng,
+        String locationText,
         Instant createdAt,
         Instant expiresAt) {}
