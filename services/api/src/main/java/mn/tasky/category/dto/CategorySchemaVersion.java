@@ -8,7 +8,6 @@ public record CategorySchemaVersion(
         int version,
         String schemaJson,
         String status,
-        boolean isLastKnownGood,
         String createdBy,
         Instant createdAt,
         Instant activatedAt) {}

@@ -9,7 +9,6 @@ public record SchemaVersionResponse(
         int version,
         @JsonProperty("schema_json") String schemaJson,
         String status,
-        @JsonProperty("is_last_known_good") boolean isLastKnownGood,
         @JsonProperty("created_by") String createdBy,
         @JsonProperty("created_at") Instant createdAt,
         @JsonProperty("activated_at") Instant activatedAt) {}
