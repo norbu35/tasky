@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bolt, Hammer, Leaf, Package, Shirt, Sparkles, Search } from 'lucide-react-native';
@@ -8,10 +8,11 @@ import { FormWizardTemplate } from '../../../../components/templates/FormWizardT
 import { useCategories } from '../../../../features/tasks/hooks/useCategories';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { screenLayout } from '../../../../design/screenLayout';
 import { cn } from '../../../../lib/cn';
 import type { Category } from '../../../../lib/mobileApiClient';
 
-const { colors, radius } = mobileTheme;
+const { colors, spacing, radius } = mobileTheme;
 
 type CategoryVisual = {
   descriptionKey: string;
@@ -85,7 +86,15 @@ function getCategoryVisual(name: string): CategoryVisual {
   };
 }
 
-function CategoryCard({ category, onPress }: { category: Category; onPress: () => void }) {
+function CategoryCard({
+  category,
+  cardWidth,
+  onPress,
+}: {
+  category: Category;
+  cardWidth: number;
+  onPress: () => void;
+}) {
   const { t } = useTranslation();
   const visual = getCategoryVisual(category.name);
   const Icon = visual.icon;
@@ -97,29 +106,60 @@ function CategoryCard({ category, onPress }: { category: Category; onPress: () =
       testID={`category-item-${category.id}`}
       style={({ pressed }) => [
         {
-          width: '47%',
-          minHeight: 163,
-          padding: 20,
+          width: cardWidth,
           borderRadius: radius.md,
-          backgroundColor: colors.muted,
-          justifyContent: 'space-between',
+          backgroundColor: colors.card,
+          overflow: 'hidden',
         },
         pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
       ]}
     >
+      {/* Large image placeholder — icon centered in a colored rectangle */}
       <View
-        className="w-[48px] h-[48px] items-center justify-center"
-        style={{ borderRadius: radius.md, backgroundColor: visual.tone }}
+        style={{
+          width: '100%',
+          aspectRatio: 4 / 3,
+          backgroundColor: visual.tone,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Icon color={visual.tint} size={22} />
+        <Icon color={visual.tint} size={44} />
       </View>
-      <Text className="text-body font-sans-semibold mt-xl" style={{ color: colors.primaryDeep }}>
-        {category.name}
-      </Text>
-      <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
-        {t(visual.descriptionKey)}
-      </Text>
+
+      {/* Card label */}
+      <View style={{ padding: 12, gap: 4 }}>
+        <Text className="text-label font-sans-semibold" style={{ color: colors.primaryDeep }}>
+          {category.name}
+        </Text>
+        <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
+          {t(visual.descriptionKey)}
+        </Text>
+      </View>
     </Pressable>
+  );
+}
+
+function SkeletonCard({ cardWidth }: { cardWidth: number }) {
+  return (
+    <View
+      style={{
+        width: cardWidth,
+        borderRadius: radius.md,
+        backgroundColor: colors.muted,
+        overflow: 'hidden',
+      }}
+    >
+      <View style={{ width: '100%', aspectRatio: 4 / 3, backgroundColor: colors.border }} />
+      <View style={{ padding: 12, gap: 8 }}>
+        <View
+          style={{ height: 14, width: '65%', borderRadius: 4, backgroundColor: colors.border }}
+        />
+        <View
+          style={{ height: 12, width: '90%', borderRadius: 4, backgroundColor: colors.border }}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -128,7 +168,10 @@ export default function CategorySelectionScreen() {
   const router = useRouter();
   const { data, isLoading, isError, refetch } = useCategories();
   const [query, setQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const { width: windowWidth } = useWindowDimensions();
+  // Two columns, separated by spacing.md, inset on both sides by the screen horizontal padding
+  const cardWidth = Math.floor((windowWidth - 2 * screenLayout.insetX - spacing.md) / 2);
 
   const categories = useMemo(() => data?.data ?? [], [data?.data]);
   const filteredCategories = useMemo(() => {
@@ -137,31 +180,40 @@ export default function CategorySelectionScreen() {
     return categories.filter((category) => category.name.toLowerCase().includes(normalizedQuery));
   }, [categories, query]);
 
-  const handleCategorySelect = useCallback(() => {
-    if (!selectedCategory) return;
-    const category = categories.find((c) => c.id === selectedCategory);
-    router.push({
-      pathname: '/(customer)/tasks/new/intake',
-      params: {
-        categoryId: selectedCategory,
-        categoryName: category?.name ?? '',
-        intakeEnabled: category?.intake_enabled ? '1' : '0',
-        intakeSchemaVersion: String(category?.intake_schema_version ?? ''),
-        intakeSchemaJson: category?.intake_schema_json
-          ? JSON.stringify(category.intake_schema_json)
-          : '',
-      },
-    });
-  }, [router, categories, selectedCategory]);
+  // Group into rows of 2 for a reliable 2-column grid on all platforms
+  const categoryRows = useMemo(() => {
+    const rows: Category[][] = [];
+    for (let i = 0; i < filteredCategories.length; i += 2) {
+      rows.push(filteredCategories.slice(i, i + 2));
+    }
+    return rows;
+  }, [filteredCategories]);
+
+  const handleCategorySelect = useCallback(
+    (category: Category) => {
+      router.push({
+        pathname: '/(customer)/tasks/new/intake',
+        params: {
+          categoryId: category.id,
+          categoryName: category.name,
+          intakeEnabled: category.intake_enabled ? '1' : '0',
+          intakeSchemaVersion: String(category.intake_schema_version ?? ''),
+          intakeSchemaJson: category.intake_schema_json
+            ? JSON.stringify(category.intake_schema_json)
+            : '',
+        },
+      });
+    },
+    [router],
+  );
 
   return (
     <FormWizardTemplate
       currentStep={0}
       totalSteps={7}
-      onNext={handleCategorySelect}
+      onNext={() => {}}
       showBack={false}
-      nextLabel={t('common.continue')}
-      nextDisabled={!selectedCategory}
+      hideNext
       testID="SCR-CUST-002"
     >
       {/* Search — flat tonal */}
@@ -196,21 +248,18 @@ export default function CategorySelectionScreen() {
 
       {/* Category grid */}
       {isLoading ? (
-        <View className="gap-md" testID="category-selection-loading">
+        <View style={{ gap: spacing.md }} testID="category-selection-loading">
           <ActivityIndicator color={colors.primary} />
-          <View className="flex-row flex-wrap gap-lg">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <View
-                key={index}
-                style={{
-                  width: '47%',
-                  minHeight: 163,
-                  borderRadius: radius.md,
-                  backgroundColor: colors.muted,
-                }}
-              />
-            ))}
-          </View>
+          {[
+            [0, 1],
+            [2, 3],
+          ].map((pair, rowIdx) => (
+            <View key={rowIdx} style={{ flexDirection: 'row', gap: spacing.md }}>
+              {pair.map((i) => (
+                <SkeletonCard key={i} cardWidth={cardWidth} />
+              ))}
+            </View>
+          ))}
         </View>
       ) : isError ? (
         <View
@@ -247,13 +296,20 @@ export default function CategorySelectionScreen() {
           </Text>
         </View>
       ) : (
-        <View className="flex-row flex-wrap gap-lg" testID="category-selection-grid">
-          {filteredCategories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              onPress={() => setSelectedCategory(category.id)}
-            />
+        <View style={{ gap: spacing.md }} testID="category-selection-grid">
+          {categoryRows.map((row, rowIdx) => (
+            <View key={rowIdx} style={{ flexDirection: 'row', gap: spacing.md }}>
+              {row.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  cardWidth={cardWidth}
+                  onPress={() => handleCategorySelect(category)}
+                />
+              ))}
+              {/* Fill the last row if it has an odd item */}
+              {row.length === 1 && <View style={{ width: cardWidth }} />}
+            </View>
           ))}
         </View>
       )}

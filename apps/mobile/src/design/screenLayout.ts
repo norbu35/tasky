@@ -40,7 +40,7 @@ export const screenLayout = {
 
   chrome: {
     /** Tab bar total height */
-    tabBarHeight: Platform.OS === 'ios' ? 88 : 64,
+    tabBarHeight: Platform.OS === 'ios' ? 96 : 76,
     /** Tab bar bottom offset from screen edge */
     tabBarBottom: 0,
     /** FAB diameter */

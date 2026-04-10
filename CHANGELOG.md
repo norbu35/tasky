@@ -2,6 +2,7 @@
 
 ## 2026-04-10
 
+- **Mobile Android local startup**: Added an Android emulator launcher, documented the one-time AVD setup path, and defaulted local Android API traffic to `10.0.2.2`.
 - fix(mobile): visual audit — fix 12 defects across auth/onboarding, customer wizard, tasker, and shared screens; harden shared templates and PermissionPrimer illustration
 - **Mobile Maestro realignment**: Split launch-live flows into deterministic, fixture-required, deferred, and legacy buckets; updated active smoke/full E2E runners to execute only deterministic launch-live journeys; repaired stale selectors in customer/tasker/profile flows; and refreshed mobile verification docs to match the new automation surface.
 - **Frontend scope hardening complete**: Executed all four workstreams of the frontend scope hardening plan:

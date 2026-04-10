@@ -24,11 +24,13 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (14.0.3):
     - ExpoModulesCore
-  - ExpoLinearGradient (55.0.9):
+  - ExpoLinearGradient (14.0.2):
     - ExpoModulesCore
   - ExpoLinking (7.0.5):
     - ExpoModulesCore
-  - ExpoLocalization (17.0.8):
+  - ExpoLocalization (16.0.1):
+    - ExpoModulesCore
+  - ExpoLocation (18.0.10):
     - ExpoModulesCore
   - ExpoModulesCore (2.2.3):
     - DoubleConversion
@@ -1845,9 +1847,10 @@ DEPENDENCIES:
   - "ExpoHead (from `../../../node_modules/.pnpm/expo-router@4.0.22_0e4ef2c57d3f8af9d552bb68997be32d/node_modules/expo-router/ios`)"
   - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@16.0.6_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babe_4887d7da2af1bf50c37f8ff2c06d69fb/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@14.0.3_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+_1eab293dca8dc06ad3fdeb3c13bccfe7/node_modules/expo-keep-awake/ios`)"
-  - "ExpoLinearGradient (from `../../../node_modules/.pnpm/expo-linear-gradient@55.0.9_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@b_4d910e7662fb1d0798b3e98f01d93a46/node_modules/expo-linear-gradient/ios`)"
+  - "ExpoLinearGradient (from `../../../node_modules/.pnpm/expo-linear-gradient@14.0.2_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@b_c65f8b37588e0e2a867e8144a09341ca/node_modules/expo-linear-gradient/ios`)"
   - "ExpoLinking (from `../../../node_modules/.pnpm/expo-linking@7.0.5_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+core_da06f8c5d3406c133c691329e63e3375/node_modules/expo-linking/ios`)"
-  - "ExpoLocalization (from `../../../node_modules/.pnpm/expo-localization@17.0.8_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babe_a51d28ecc8ae532a574563d57f61cf14/node_modules/expo-localization/ios`)"
+  - "ExpoLocalization (from `../../../node_modules/.pnpm/expo-localization@16.0.1_patch_hash=16a3c566456f81fdf557e50dce31d90f11d3cc73cc605005fba_2d6a49163b6916e93f1cd7ce78276b68/node_modules/expo-localization/ios`)"
+  - "ExpoLocation (from `../../../node_modules/.pnpm/expo-location@18.0.10_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+c_a0f0379aae12e1903525fa0527c22c2f/node_modules/expo-location/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@2.2.3/node_modules/expo-modules-core`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.76.7_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+core@7.29.0__@types+react@18.3.5_react@18.3.1/node_modules/react-native/Libraries/FBLazyVector`)"
   - "fmt (from `../../../node_modules/.pnpm/react-native@0.76.7_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+core@7.29.0__@types+react@18.3.5_react@18.3.1/node_modules/react-native/third-party-podspecs/fmt.podspec`)"
@@ -1967,11 +1970,13 @@ EXTERNAL SOURCES:
   ExpoKeepAwake:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@14.0.3_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+_1eab293dca8dc06ad3fdeb3c13bccfe7/node_modules/expo-keep-awake/ios"
   ExpoLinearGradient:
-    :path: "../../../node_modules/.pnpm/expo-linear-gradient@55.0.9_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@b_4d910e7662fb1d0798b3e98f01d93a46/node_modules/expo-linear-gradient/ios"
+    :path: "../../../node_modules/.pnpm/expo-linear-gradient@14.0.2_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@b_c65f8b37588e0e2a867e8144a09341ca/node_modules/expo-linear-gradient/ios"
   ExpoLinking:
     :path: "../../../node_modules/.pnpm/expo-linking@7.0.5_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+core_da06f8c5d3406c133c691329e63e3375/node_modules/expo-linking/ios"
   ExpoLocalization:
-    :path: "../../../node_modules/.pnpm/expo-localization@17.0.8_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babe_a51d28ecc8ae532a574563d57f61cf14/node_modules/expo-localization/ios"
+    :path: "../../../node_modules/.pnpm/expo-localization@16.0.1_patch_hash=16a3c566456f81fdf557e50dce31d90f11d3cc73cc605005fba_2d6a49163b6916e93f1cd7ce78276b68/node_modules/expo-localization/ios"
+  ExpoLocation:
+    :path: "../../../node_modules/.pnpm/expo-location@18.0.10_expo@52.0.49_@babel+core@7.29.0_@babel+preset-env@7.29.0_@babel+c_a0f0379aae12e1903525fa0527c22c2f/node_modules/expo-location/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@2.2.3/node_modules/expo-modules-core"
   FBLazyVector:
@@ -2134,9 +2139,10 @@ SPEC CHECKSUMS:
   ExpoHead: f3e37901afeb4b1412d1dd8c4fb957bd69087ddf
   ExpoImagePicker: 482b2a6198b365dd18b5a0cb6d4caeec880cb8e1
   ExpoKeepAwake: 2a5f15dd4964cba8002c9a36676319a3394c85c7
-  ExpoLinearGradient: b4e88ded096fc8dd7e8d55e63140562de1db60b3
+  ExpoLinearGradient: ee9efc5acb988b911320e964fab9b4cbdeb198c4
   ExpoLinking: 0381341519ca7180a3a057d20edb1cf6a908aaf4
-  ExpoLocalization: 6ac6f326210f0a3141ef6f58ab8f8f4ed003b485
+  ExpoLocalization: e36b911e04d371c6c6624ef818e56229bf51c498
+  ExpoLocation: ad29273f84077363296657176ea39c3545521720
   ExpoModulesCore: d786e1b76105f52b2a2aef218464e9d05fc1efd4
   FBLazyVector: ca8044c9df513671c85167838b4188791b6f37e1
   Firebase: 99f203d3a114c6ba591f3b32263a9626e450af65

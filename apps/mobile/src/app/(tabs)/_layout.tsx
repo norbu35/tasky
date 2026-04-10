@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { StyleSheet, Pressable, View } from 'react-native';
+import { Platform, StyleSheet, Pressable, View } from 'react-native';
 import {
   Briefcase,
   ClipboardList,
@@ -18,21 +18,26 @@ import { useRole } from '../../providers/RoleProvider';
 const { colors, spacing, radius, typography } = mobileTheme;
 
 const TAB_ICON_SIZE = 24;
+const TAB_BORDER_RADIUS = 24;
 
 // Tab bar style objects — must remain imperative: passed to Tabs screenOptions (not NativeWind-compatible)
 const tabBarStyle = {
   position: 'absolute' as const,
   borderTopWidth: 0,
-  elevation: 0,
   height: screenLayout.chrome.tabBarHeight,
   bottom: screenLayout.chrome.tabBarBottom,
-  paddingBottom: spacing.sm,
-  paddingTop: spacing.sm,
-  backgroundColor: 'transparent',
+  marginHorizontal: spacing.md,
+  paddingBottom: spacing.md,
+  paddingTop: spacing.md,
+  borderRadius: TAB_BORDER_RADIUS,
+  // Android: solid background + elevation shadow
+  backgroundColor: Platform.OS === 'android' ? colors.card : 'transparent',
+  elevation: Platform.OS === 'android' ? 8 : 0,
+  // iOS: shadow rendered against the BlurView background
   shadowColor: colors.foreground,
-  shadowOffset: { width: 0, height: -4 },
-  shadowOpacity: 0.04,
-  shadowRadius: 24,
+  shadowOffset: { width: 0, height: -2 },
+  shadowOpacity: 0.06,
+  shadowRadius: 20,
 };
 
 const tabItemStyle = {
@@ -46,10 +51,6 @@ const tabLabelStyle = {
   fontWeight: '500' as const,
   letterSpacing: 0,
   marginTop: spacing.xs,
-};
-
-const blurBackgroundStyle = {
-  overflow: 'hidden' as const,
 };
 
 export default function TabsLayout() {
@@ -67,13 +68,17 @@ export default function TabsLayout() {
           tabBarStyle: tabBarStyle,
           tabBarItemStyle: tabItemStyle,
           tabBarActiveBackgroundColor: colors.primary,
-          tabBarBackground: () => (
-            <BlurView
-              tint="regular"
-              intensity={80}
-              style={[StyleSheet.absoluteFill, blurBackgroundStyle]}
-            />
-          ),
+          tabBarBackground: () =>
+            Platform.OS === 'ios' ? (
+              <BlurView
+                tint="regular"
+                intensity={80}
+                style={[
+                  StyleSheet.absoluteFill,
+                  { borderRadius: TAB_BORDER_RADIUS, overflow: 'hidden' },
+                ]}
+              />
+            ) : null,
         }}
       >
         <Tabs.Screen

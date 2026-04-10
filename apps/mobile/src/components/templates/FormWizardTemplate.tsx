@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, View, type LayoutChangeEvent } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  View,
+  type LayoutChangeEvent,
+} from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -24,6 +30,8 @@ export interface FormWizardTemplateProps {
   nextDisabled?: boolean;
   nextLoading?: boolean;
   showBack?: boolean;
+  /** Hide the sticky action bar entirely (e.g. when the step advances via item tap). */
+  hideNext?: boolean;
   testID?: string;
   /** Override the auto-generated testID for the primary action button (defaults to `${testID}-next`). */
   nextButtonTestID?: string;
@@ -40,6 +48,7 @@ export function FormWizardTemplate({
   nextDisabled = false,
   nextLoading = false,
   showBack = true,
+  hideNext = false,
   testID,
   nextButtonTestID,
   className,
@@ -102,7 +111,7 @@ export function FormWizardTemplate({
             gap: screenLayout.body.blockGap,
             paddingBottom: screenLayout.body.sectionGap,
           }}
-          extraBottomInset={actionBarHeight}
+          extraBottomInset={hideNext ? 0 : actionBarHeight}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -110,51 +119,53 @@ export function FormWizardTemplate({
         </InsetScrollView>
 
         {/* Sticky Bottom Bar — frosted glass — inside KAV so it rises above keyboard */}
-        <StickyActionBar testID="wizard-bottom-bar">
-          <View onLayout={handleActionBarLayout}>
-            {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
-            <BlurView
-              intensity={40}
-              tint="light"
-              style={{ borderRadius: radius.lg, overflow: 'hidden' }}
-            >
-              <View
-                style={{
-                  paddingTop: screenLayout.actions.barPadding,
-                }}
+        {!hideNext && (
+          <StickyActionBar testID="wizard-bottom-bar">
+            <View onLayout={handleActionBarLayout}>
+              {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
+              <BlurView
+                intensity={40}
+                tint="light"
+                style={{ borderRadius: radius.lg, overflow: 'hidden' }}
               >
-                {showBackButton ? (
-                  <View className="flex-row gap-md">
-                    <Button
-                      label={t('wizard.back')}
-                      variant="outline"
-                      onPress={onBack}
-                      style={{ flex: 1 }}
-                      testID={testID ? `${testID}-back` : undefined}
-                    />
+                <View
+                  style={{
+                    paddingTop: screenLayout.actions.barPadding,
+                  }}
+                >
+                  {showBackButton ? (
+                    <View className="flex-row gap-md">
+                      <Button
+                        label={t('wizard.back')}
+                        variant="outline"
+                        onPress={onBack}
+                        style={{ flex: 1 }}
+                        testID={testID ? `${testID}-back` : undefined}
+                      />
+                      <Button
+                        label={nextLabel ?? t('wizard.next')}
+                        onPress={onNext}
+                        disabled={nextDisabled}
+                        isLoading={nextLoading}
+                        style={{ flex: 2 }}
+                        testID={effectiveNextTestID}
+                      />
+                    </View>
+                  ) : (
                     <Button
                       label={nextLabel ?? t('wizard.next')}
                       onPress={onNext}
                       disabled={nextDisabled}
                       isLoading={nextLoading}
-                      style={{ flex: 2 }}
+                      style={{ alignSelf: 'stretch' }}
                       testID={effectiveNextTestID}
                     />
-                  </View>
-                ) : (
-                  <Button
-                    label={nextLabel ?? t('wizard.next')}
-                    onPress={onNext}
-                    disabled={nextDisabled}
-                    isLoading={nextLoading}
-                    style={{ alignSelf: 'stretch' }}
-                    testID={effectiveNextTestID}
-                  />
-                )}
-              </View>
-            </BlurView>
-          </View>
-        </StickyActionBar>
+                  )}
+                </View>
+              </BlurView>
+            </View>
+          </StickyActionBar>
+        )}
       </KeyboardAvoidingView>
     </ScreenContainer>
   );

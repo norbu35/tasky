@@ -45,6 +45,10 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Tasky uses your location to show nearby tasks and set task location.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Tasky uses your location to show nearby tasks and set task location.</string>
     <key>NSCameraUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSMicrophoneUsageDescription</key>

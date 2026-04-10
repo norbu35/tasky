@@ -1,4 +1,7 @@
-import { createMobileApiClient } from '../../src/lib/mobileApiClient';
+import {
+  createMobileApiClient,
+  resolveDefaultLocalApiBaseUrl,
+} from '../../src/lib/mobileApiClient';
 
 describe('mobileApiClient boundary wiring', () => {
   const runtimeEnv = typeof process !== 'undefined' ? process.env : undefined;
@@ -133,5 +136,9 @@ describe('mobileApiClient boundary wiring', () => {
         headers: expect.any(Headers),
       }),
     );
+  });
+
+  it('uses the Android emulator loopback host for local Android defaults', () => {
+    expect(resolveDefaultLocalApiBaseUrl('android')).toBe('http://10.0.2.2:8080');
   });
 });
