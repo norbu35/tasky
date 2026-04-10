@@ -327,8 +327,7 @@ export default function LocationScreen() {
               {[1, 2, 3].map((i) => (
                 <View
                   key={i}
-                  className="h-8 rounded-full bg-muted"
-                  style={{ width: 100, opacity: 0.5 }}
+                  className="h-8 rounded-full bg-muted w-[100px] opacity-50"
                 />
               ))}
             </View>

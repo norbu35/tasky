@@ -74,7 +74,7 @@ export default function PhotoUploadScreen() {
       <View className="flex-row items-center justify-between gap-sm">
         <Text className="text-caption text-text-secondary">{t('Photos.photosProgressHint')}</Text>
       </View>
-      <Text className="text-heading font-sans-bold text-primary-deep" style={{ lineHeight: 26 }}>
+      <Text className="text-heading font-sans-bold text-primary-deep leading-[26px]">
         {t('Photos.photosHeroTitle')}
       </Text>
       <Text className="text-body text-text-secondary leading-[24px]">
@@ -86,8 +86,7 @@ export default function PhotoUploadScreen() {
           photoUri ? (
             <View
               key={`photo-${index}`}
-              className="rounded-lg overflow-hidden bg-muted"
-              style={{ width: '31.5%', aspectRatio: 1 }}
+              className="rounded-lg overflow-hidden bg-muted w-[31.5%] aspect-square"
             >
               <Image source={{ uri: photoUri }} className="self-stretch h-full" />
               <Pressable
@@ -104,8 +103,7 @@ export default function PhotoUploadScreen() {
           ) : (
             <Pressable
               key={`add-${index}`}
-              className="rounded-lg border-2 border-dashed border-chip-inactive bg-muted items-center justify-center gap-xs p-sm"
-              style={{ width: '31.5%', aspectRatio: 1 }}
+              className="rounded-lg border-2 border-dashed border-chip-inactive bg-muted items-center justify-center gap-xs p-sm w-[31.5%] aspect-square"
               onPress={handleAddPhoto}
               testID={`photo-upload-add-${index}`}
               accessibilityRole="button"

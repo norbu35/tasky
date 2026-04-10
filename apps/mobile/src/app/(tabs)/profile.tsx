@@ -90,7 +90,7 @@ function AuthenticatedProfile() {
             {profile.phone_masked && (
               <View className="flex-row justify-between py-sm">
                 <Text className="text-body text-text-secondary">{t('shared.profile.phone')}</Text>
-                <Text className="text-body text-foreground font-medium">
+                <Text className="text-body text-foreground font-sans-medium">
                   {profile.phone_masked}
                 </Text>
               </View>
@@ -99,7 +99,7 @@ function AuthenticatedProfile() {
               <Text className="text-body text-text-secondary">
                 {t('shared.profile.memberSince')}
               </Text>
-              <Text className="text-body text-foreground font-medium">
+              <Text className="text-body text-foreground font-sans-medium">
                 {new Date(profile.created_at).toLocaleDateString()}
               </Text>
             </View>

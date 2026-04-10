@@ -128,7 +128,7 @@ function CategoryCard({
         <Text className="text-label font-sans-semibold text-primary-deep">
           {category.name}
         </Text>
-        <Text className="text-caption text-text-secondary" style={{ lineHeight: 18 }}>
+        <Text className="text-caption text-text-secondary leading-[18px]">
           {t(visual.descriptionKey)}
         </Text>
       </View>
@@ -233,8 +233,8 @@ export default function CategorySelectionScreen() {
 
       {/* Editorial intro */}
       <Text
-        className="text-label text-text-secondary"
-        style={{ lineHeight: 22, maxWidth: 274 }}
+        className="text-label text-text-secondary leading-[22px]"
+        style={{ maxWidth: 274 }}
       >
         {t('CategorySelectionScreen.intro')}
       </Text>
@@ -262,7 +262,7 @@ export default function CategorySelectionScreen() {
           <Text className="text-body font-sans-bold text-primary-deep">
             {t('CategorySelectionScreen.loadError')}
           </Text>
-          <Text className="text-caption text-text-secondary" style={{ lineHeight: 18 }}>
+          <Text className="text-caption text-text-secondary leading-[18px]">
             {t('CategorySelectionScreen.loadHint')}
           </Text>
           <Pressable
@@ -271,8 +271,7 @@ export default function CategorySelectionScreen() {
             testID="category-selection-retry"
           >
             <Text
-              className="text-caption font-sans-bold"
-              style={{ color: colors.secondaryForeground }}
+              className="text-caption font-sans-bold text-secondary-foreground"
             >
               {t('CategorySelectionScreen.retry')}
             </Text>
@@ -315,8 +314,8 @@ export default function CategorySelectionScreen() {
           {t('CategorySelectionScreen.featuredTitle')}
         </Text>
         <Text
-          className="text-caption text-primary-foreground"
-          style={{ opacity: 0.8, lineHeight: 18, maxWidth: 180 }}
+          className="text-caption text-primary-foreground opacity-80 leading-[18px]"
+          style={{ maxWidth: 180 }}
         >
           {t('CategorySelectionScreen.featuredBody')}
         </Text>

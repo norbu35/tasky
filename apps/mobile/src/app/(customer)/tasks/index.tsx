@@ -162,7 +162,7 @@ function Header({
             <View
               key={key}
               className="flex-1 rounded-md py-sm px-sm"
-              style={{ backgroundColor: `${colors.primary}10`, gap: 2 }}
+              style={{ backgroundColor: `${colors.primary}10` }}
             >
               <Text className="text-subtitle font-extrabold text-primary-deep">{counts[key]}</Text>
               <Text className="text-caption text-text-secondary">{label}</Text>
@@ -293,12 +293,7 @@ export default function MyTasksListScreen() {
       {isLoading ? (
         <View className="flex-1" testID="my-tasks-loading-state">
           {header}
-          <View
-            className="gap-item"
-            style={{
-              paddingTop: screenLayout.body.itemGap,
-            }}
-          >
+          <View className="gap-item pt-item">
             {Array.from({ length: 4 }).map((_, index) => (
               <SkeletonCard key={index} />
             ))}
