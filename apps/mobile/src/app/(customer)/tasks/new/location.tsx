@@ -12,6 +12,7 @@ import { mobileTheme } from '../../../../design/tokenAdapter';
 import { getCurrentLocation } from '../../../../utils/permissions';
 import { HttpMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
+import { useRecentLocations } from '../../../../features/tasks/hooks/useRecentLocations';
 
 const api = new HttpMobileApiClient();
 
@@ -50,6 +51,8 @@ export default function LocationScreen() {
   );
   const [locating, setLocating] = useState(false);
   const [reverseGeocoding, setReverseGeocoding] = useState(false);
+
+  const { data: recentLocations, isLoading: loadingRecent } = useRecentLocations();
 
   const mapRef = useRef<MapView>(null);
   const userEditedText = useRef(false);
@@ -159,12 +162,6 @@ export default function LocationScreen() {
       );
     });
   }, []);
-
-  const quickLocations = [
-    t('LocationScreen.quickLocationHome'),
-    t('LocationScreen.quickLocationWork'),
-    t('LocationScreen.quickLocationSukhbaatar'),
-  ];
 
   const handleNext = () => {
     if (!pin) {
@@ -311,25 +308,57 @@ export default function LocationScreen() {
 
         <View className="gap-sm">
           <Text className="text-body font-bold text-primaryDeep">
-            {t('LocationScreen.quickLocationsLabel')}
+            {t('LocationScreen.recentLocationsLabel')}
           </Text>
-          <View className="flex-row flex-wrap gap-sm">
-            {quickLocations.map((location) => (
-              <Pressable
-                key={location}
-                onPress={() => {
-                userEditedText.current = true;
-                setLocationText(location);
-              }}
-                className="px-md py-sm rounded-full"
-                style={{ backgroundColor: `${colors.primary}12` }}
-                testID={`location-quick-${location}`}
-                accessibilityRole="button"
-              >
-                <Text className="text-caption font-bold text-primaryDeep">{location}</Text>
-              </Pressable>
-            ))}
-          </View>
+          {loadingRecent ? (
+            <View className="flex-row gap-sm">
+              {[1, 2, 3].map((i) => (
+                <View
+                  key={i}
+                  className="h-8 rounded-full bg-muted"
+                  style={{ width: 100, opacity: 0.5 }}
+                />
+              ))}
+            </View>
+          ) : recentLocations && recentLocations.length > 0 ? (
+            <View className="flex-row flex-wrap gap-sm">
+              {recentLocations.map((loc, idx) => (
+                <Pressable
+                  key={idx}
+                  onPress={() => {
+                    const coord = { latitude: loc.location_lat, longitude: loc.location_lng };
+                    setPin(coord);
+                    userEditedText.current = true;
+                    setLocationText(loc.location_text);
+                    mapRef.current?.animateToRegion(
+                      {
+                        ...coord,
+                        latitudeDelta: 0.02,
+                        longitudeDelta: 0.02,
+                      },
+                      600,
+                    );
+                  }}
+                  className="px-md py-sm rounded-full"
+                  style={{ backgroundColor: `${colors.primary}12`, maxWidth: '90%' }}
+                  testID={`location-recent-${idx}`}
+                  accessibilityRole="button"
+                >
+                  <Text
+                    className="text-caption font-bold text-primaryDeep"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {loc.location_text}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <Text className="text-caption text-textSecondary">
+              {t('LocationScreen.noRecentLocations')}
+            </Text>
+          )}
         </View>
 
         <View className="pt-xs">
