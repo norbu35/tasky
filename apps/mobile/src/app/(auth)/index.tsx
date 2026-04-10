@@ -60,18 +60,12 @@ export default function LoginScreen() {
         <Pressable
           testID="language-switcher"
           onPress={toggleLanguage}
-          className="rounded-md px-md bg-background"
-          style={{
-            borderWidth: 1,
-            borderColor: 'rgba(195,198,207,0.2)',
-            paddingVertical: 4,
-          }}
+          className="rounded-md px-md bg-background border border-[rgba(195,198,207,0.2)] py-xs"
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher')}
         >
           <Text
-            className="text-caption font-sans-bold"
-            style={{ color: colors.primaryDeep, letterSpacing: 0.35 }}
+            className="text-caption font-sans-bold text-primary-deep tracking-[0.35px]"
           >
             {t('LoginScreen.copy2')}
           </Text>
@@ -86,7 +80,7 @@ export default function LoginScreen() {
             }}
             disabled={isFacebookLoading}
             isLoading={isFacebookLoading}
-            style={{ minHeight: 56, backgroundColor: colors.primaryDeep }}
+            className="min-h-[56px] bg-primary-deep"
           >
             {!isFacebookLoading ? (
               <View className="flex-row items-center gap-sm">
@@ -101,8 +95,7 @@ export default function LoginScreen() {
           {state === 'error' && errorMessage ? (
             <Text
               testID="login-error"
-              className="text-body text-center"
-              style={{ color: colors.danger }}
+              className="text-body text-center text-danger"
             >
               {errorMessage}
             </Text>
@@ -111,8 +104,7 @@ export default function LoginScreen() {
           {devAuthEnabled ? (
             <View className="gap-sm border-t border-border pt-lg">
               <Text
-                className="text-caption text-center uppercase"
-                style={{ color: colors.textSecondary, letterSpacing: 1 }}
+                className="text-caption text-center uppercase text-text-secondary tracking-[1px]"
               >
                 {t('auth.devBypass')}
               </Text>
@@ -131,7 +123,7 @@ export default function LoginScreen() {
                 disabled={busy}
               />
               {devLogin.error ? (
-                <Text className="text-body text-center" style={{ color: colors.danger }}>
+                <Text className="text-body text-center text-danger">
                   {devLogin.error.message}
                 </Text>
               ) : null}
@@ -146,7 +138,7 @@ export default function LoginScreen() {
             onPress={() => router.push('/(shared)/legal/terms')}
             accessibilityRole="link"
           >
-            <Text className="text-body" style={{ color: colors.textSecondary }}>
+            <Text className="text-body text-text-secondary">
               {t('auth.login.terms')}
             </Text>
           </Pressable>
@@ -155,13 +147,12 @@ export default function LoginScreen() {
             onPress={() => router.push('/(shared)/legal/privacy')}
             accessibilityRole="link"
           >
-            <Text className="text-body" style={{ color: colors.textSecondary }}>
+            <Text className="text-body text-text-secondary">
               {t('auth.login.privacy')}
             </Text>
           </Pressable>
           <Text
-            className="text-body text-center"
-            style={{ color: colors.textSecondary, opacity: 0.6 }}
+            className="text-body text-center text-text-secondary opacity-60"
           >
             {t('auth.login.copyright')}
           </Text>
@@ -171,8 +162,8 @@ export default function LoginScreen() {
       {/* Brand icon — replaces Figma asset */}
       <View className="items-center mb-lg">
         <View
-          className="w-[80px] h-[80px] rounded-sm items-center justify-center"
-          style={{ backgroundColor: colors.primaryDeep, ...elevations.card }}
+          className="w-[80px] h-[80px] rounded-sm items-center justify-center bg-primary-deep"
+          style={{ ...elevations.card }}
         >
           <Zap size={32} color={colors.primaryForeground} />
         </View>
@@ -180,8 +171,7 @@ export default function LoginScreen() {
       {/* Subtitle — rendered at screen level with explicit wrap to prevent mid-word break (DEF-007) */}
       <Text
         testID="login-subtitle"
-        className="text-body text-center mt-sm leading-relaxed"
-        style={{ color: colors.primary, flexShrink: 1, flexWrap: 'wrap' }}
+        className="text-body text-center mt-sm leading-relaxed text-primary shrink flex-wrap"
       >
         {t('LoginScreen.copy1')}
       </Text>

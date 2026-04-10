@@ -128,8 +128,7 @@ export default function NotificationCenterScreen() {
     if (item.type === 'section') {
       return (
         <Text
-          className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm"
-          style={{ letterSpacing: 1.2 }}
+          className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm tracking-[1.2px]"
         >
           {item.label}
         </Text>
@@ -171,8 +170,7 @@ export default function NotificationCenterScreen() {
             </View>
           </View>
           <Text
-            className="mt-xs text-body text-text-secondary"
-            style={{ lineHeight: 22 }}
+            className="mt-xs text-body text-text-secondary leading-[22px]"
             numberOfLines={2}
           >
             {notification.body}
@@ -199,8 +197,7 @@ export default function NotificationCenterScreen() {
             {t('shared.notifications.errorTitle')}
           </Text>
           <Text
-            className="mt-sm text-body text-text-secondary text-center"
-            style={{ lineHeight: 24 }}
+            className="mt-sm text-body text-text-secondary text-center leading-[24px]"
           >
             {t('shared.notifications.errorBody')}
           </Text>
@@ -210,7 +207,7 @@ export default function NotificationCenterScreen() {
             onPress={() => {
               void refetch();
             }}
-            style={{ marginTop: 24, alignSelf: 'stretch' }}
+            className="mt-xl self-stretch"
           />
         </View>
       ) : notifications.length === 0 ? (
@@ -228,8 +225,7 @@ export default function NotificationCenterScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           ListFooterComponent={
             <View
-              className="mt-xl bg-primary-deep rounded-lg p-lg justify-end"
-              style={{ height: 128 }}
+              className="mt-xl bg-primary-deep rounded-lg p-lg justify-end h-[128px]"
             >
               <Text className="text-[18px] font-extrabold text-primary-foreground">
                 {t('shared.notifications.promoBannerTitle')}

@@ -121,13 +121,13 @@ export default function BookingConfirmedScreen() {
         </View>
 
         <View
-          className="self-stretch flex-row rounded-md bg-muted p-lg"
-          style={{ gap: spacing.md, ...elevations.soft }}
+          className="self-stretch flex-row rounded-md bg-muted p-lg gap-md"
+          style={{ ...elevations.soft }}
         >
           <View className="w-[40px] h-[40px] rounded-md items-center justify-center bg-card">
             <CalendarPlus2 size={20} color={colors.primaryDeep} />
           </View>
-          <View className="flex-1" style={{ gap: spacing.xs }}>
+          <View className="flex-1 gap-xs">
             <Text className="text-body font-sans-bold text-primary-deep leading-snug">
               {t('customer.bookings.nextStepsTitle')}
             </Text>
@@ -138,14 +138,14 @@ export default function BookingConfirmedScreen() {
         </View>
 
         <View
-          className="self-stretch flex-row items-center justify-between rounded-md bg-card p-lg"
-          style={{ gap: spacing.md, ...elevations.soft }}
+          className="self-stretch flex-row items-center justify-between rounded-md bg-card p-lg gap-md"
+          style={{ ...elevations.soft }}
         >
-          <View className="flex-row items-center flex-1" style={{ gap: spacing.md }}>
+          <View className="flex-row items-center flex-1 gap-md">
             <View className="w-[48px] h-[48px] rounded-md overflow-hidden bg-muted items-center justify-center">
               <UserRound size={28} color={colors.textSecondary} />
             </View>
-            <View className="flex-1" style={{ gap: spacing.xs / 2 }}>
+            <View className="flex-1 gap-[2px]">
               <Text className="text-micro text-text-secondary">
                 {t('customer.bookings.providerLabel')}
               </Text>
@@ -167,9 +167,8 @@ export default function BookingConfirmedScreen() {
           <Touchable
             accessibilityRole="button"
             onPress={handleCalendar}
-            className="self-stretch flex-row items-center rounded-md bg-muted px-md py-sm"
+            className="self-stretch flex-row items-center rounded-md bg-muted px-md py-sm gap-sm"
             testID="booking-confirmed-screen-calendar"
-            style={{ gap: spacing.sm }}
           >
             <CalendarPlus2 size={18} color={colors.secondary} />
             <Text className="text-label font-sans-bold text-secondary">
@@ -178,7 +177,7 @@ export default function BookingConfirmedScreen() {
           </Touchable>
         ) : null}
 
-        <View className="self-stretch mt-md" style={{ gap: spacing.md }}>
+        <View className="self-stretch mt-md gap-md">
           <Touchable
             accessibilityRole="button"
             onPress={handleViewBooking}
@@ -216,8 +215,7 @@ export default function BookingConfirmedScreen() {
 
       <View
         pointerEvents="none"
-        className="absolute left-0 right-0 bottom-0 h-[80px] bg-background"
-        style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40, opacity: 0.7 }}
+        className="absolute left-0 right-0 bottom-0 h-[80px] bg-background rounded-tl-[40px] rounded-tr-[40px] opacity-70"
       />
     </ScreenContainer>
   );
