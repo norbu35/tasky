@@ -116,13 +116,8 @@ function ChipGroup({
           <Pressable
             key={opt.value}
             onPress={() => toggle(opt.value)}
-            className="px-md py-sm rounded-sm justify-center items-center"
-            style={[
-              { minHeight: 40 },
-              active
-                ? { ...elevations.soft, backgroundColor: '#1B3A5C' }
-                : { backgroundColor: '#F3F1EC' },
-            ]}
+            className={`px-md py-sm rounded-sm justify-center items-center min-h-[40px] ${active ? 'bg-primary-deep' : 'bg-muted'}`}
+            style={active ? elevations.soft : undefined}
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${opt.value}`}
           >
@@ -161,13 +156,8 @@ function YesNo({
           <Pressable
             key={label}
             onPress={() => onChange(opt)}
-            className="px-md py-sm rounded-sm justify-center items-center"
-            style={[
-              { minHeight: 40 },
-              active
-                ? { ...elevations.soft, backgroundColor: '#1B3A5C' }
-                : { backgroundColor: '#F3F1EC' },
-            ]}
+            className={`px-md py-sm rounded-sm justify-center items-center min-h-[40px] ${active ? 'bg-primary-deep' : 'bg-muted'}`}
+            style={active ? elevations.soft : undefined}
             accessibilityRole="button"
             testID={`intake-${testIDPrefix}-${label.toLowerCase()}`}
           >
