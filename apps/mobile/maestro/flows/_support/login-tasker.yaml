@@ -13,6 +13,14 @@ appId: mn.tasky.mobile
     commands:
       - tapOn: "Cancel"
 
+# Dismiss any iOS system permission dialog left over from a prior flow
+- runFlow:
+    when:
+      visible: "Allow"
+    commands:
+      - tapOn: "Allow"
+      - waitForAnimationToEnd
+
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-002"
@@ -53,18 +61,42 @@ appId: mn.tasky.mobile
           timeout: 15000
       - tapOn:
           id: "permission-allow-button"
-      - extendedWaitUntil:
-          visible:
-            id: "SCR-SHARED-008"
-          timeout: 10000
-      - tapOn:
-          id: "permission-allow-button"
-      - extendedWaitUntil:
-          visible:
-            id: "SCR-SHARED-009"
-          timeout: 10000
-      - tapOn:
-          id: "permission-allow-button"
+      - runFlow:
+          when:
+            visible: "Allow"
+          commands:
+            - tapOn: "Allow"
+            - waitForAnimationToEnd
+      - waitForAnimationToEnd
+      # SCR-SHARED-008 only appears if this permission hasn't been granted yet
+      - runFlow:
+          when:
+            visible:
+              id: "SCR-SHARED-008"
+          commands:
+            - tapOn:
+                id: "permission-allow-button"
+            - runFlow:
+                when:
+                  visible: "Allow"
+                commands:
+                  - tapOn: "Allow"
+                  - waitForAnimationToEnd
+            - waitForAnimationToEnd
+      # SCR-SHARED-009 only appears if this permission hasn't been granted yet
+      - runFlow:
+          when:
+            visible:
+              id: "SCR-SHARED-009"
+          commands:
+            - tapOn:
+                id: "permission-allow-button"
+            - runFlow:
+                when:
+                  visible: "Allow"
+                commands:
+                  - tapOn: "Allow"
+                  - waitForAnimationToEnd
 
 - extendedWaitUntil:
     visible:

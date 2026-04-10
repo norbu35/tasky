@@ -9,7 +9,7 @@ appId: mn.tasky.mobile
 - launchApp:
     clearState: true
 
-- runFlow: _support/login-tasker.yaml
+- runFlow: ../_support/login-tasker.yaml
 
 # Tasker feed
 - extendedWaitUntil:

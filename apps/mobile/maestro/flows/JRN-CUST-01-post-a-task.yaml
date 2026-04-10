@@ -13,137 +13,143 @@ appId: mn.tasky.mobile
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-001"
+      id: 'SCR-CUST-001'
     timeout: 5000
 
 # Tap empty-state CTA to post new task
 # Note: FAB uses AnimatedPressable (Reanimated) which is unreliable in Maestro — use empty state CTA instead
 - tapOn:
-    id: "my-tasks-feed-empty-cta"
+    id: 'my-tasks-feed-empty-cta'
 
 # Step 1: Category selection (SCR-CUST-002)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-002"
+      id: 'SCR-CUST-002'
     timeout: 10000
 
 # Wait for category grid to load, then tap first real category by visible text
 - extendedWaitUntil:
     visible:
-      id: "category-selection-grid"
+      id: 'category-selection-grid'
     timeout: 10000
 
 # Tap first category card — "Cleaning" text is inside an accessibility button
 # so Maestro can't match standalone text. Tap by position within the grid area.
 - tapOn:
-    point: "30%,38%"
+    point: '30%,38%'
 
 # Tap "Continue" to advance (category screen uses select-then-continue pattern)
 - tapOn:
-    id: "SCR-CUST-002-next"
+    id: 'SCR-CUST-002-next'
 
 # Step 2: Intake / Task details (SCR-CUST-003)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-003"
+      id: 'SCR-CUST-003'
     timeout: 5000
 
 - tapOn:
-    id: "intake-description-input"
-- inputText: "Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин."
+    id: 'intake-description-input'
+- inputText: 'Гэрийн цэвэрлэгээ хэрэгтэй байна. 3 өрөө байшин.'
 
 # Tap non-interactive header to dismiss keyboard (hideKeyboard fails on RN custom inputs)
 - tapOn:
-    id: "intake-header"
+    id: 'intake-header'
 # Wait for keyboard dismiss animation to complete before tapping the button
 - waitForAnimationToEnd
 - tapOn:
-    id: "SCR-CUST-003-next"
+    id: 'SCR-CUST-003-next'
 
 # Step 3: Photo upload (SCR-CUST-004) — skip photos, tap continue
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-004"
+      id: 'SCR-CUST-004'
     timeout: 5000
 
 - tapOn:
-    id: "SCR-CUST-004-next"
+    id: 'SCR-CUST-004-next'
 
 # Step 4: Location pin (SCR-CUST-005)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-005"
+      id: 'SCR-CUST-005'
     timeout: 5000
 
 # Tap map to drop a pin (enables Next button)
 - tapOn:
-    id: "location-map"
+    id: 'location-map'
 
-# Tap quick location chip to set location description (required by review screen)
+# Fill location description explicitly so the review screen has deterministic text
 - tapOn:
-    id: "location-quick-Home"
+    id: 'location-text-input'
+- inputText: 'Сүхбаатар дүүрэг, 1-р хороо'
+
+- hideKeyboard
+- tapOn:
+    id: 'location-map'
+- waitForAnimationToEnd
 
 - tapOn:
-    id: "SCR-CUST-005-next"
+    id: 'SCR-CUST-005-next'
 
 # Step 5: Schedule & budget (SCR-CUST-006)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-006"
+      id: 'SCR-CUST-006'
     timeout: 5000
 
 - tapOn:
-    id: "schedule-budget-input"
+    id: 'schedule-budget-input'
 - eraseText: 20
-- inputText: "50000"
+- inputText: '50000'
 
 # Dismiss keyboard, then select date/time
 - tapOn:
-    id: "schedule-header"
+    id: 'schedule-header'
 - waitForAnimationToEnd
 
 # Open date picker and confirm default (tomorrow)
 - tapOn:
-    id: "schedule-date-input"
+    id: 'schedule-date-input'
 - extendedWaitUntil:
     visible:
-      id: "schedule-ios-picker-card"
+      id: 'schedule-ios-picker-card'
     timeout: 5000
 - tapOn:
-    id: "schedule-picker-confirm"
+    id: 'schedule-picker-confirm'
 - waitForAnimationToEnd
 
 # Open time picker and confirm default (10:00)
 - tapOn:
-    id: "schedule-time-input"
+    id: 'schedule-time-input'
 - extendedWaitUntil:
     visible:
-      id: "schedule-ios-picker-card"
+      id: 'schedule-ios-picker-card'
     timeout: 5000
 - tapOn:
-    id: "schedule-picker-confirm"
+    id: 'schedule-picker-confirm'
 - waitForAnimationToEnd
 
 - tapOn:
-    id: "SCR-CUST-006-next"
+    id: 'SCR-CUST-006-next'
 
 # Step 6: Review & submit (SCR-CUST-007)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-007"
+      id: 'SCR-CUST-007'
     timeout: 5000
 
 - tapOn:
-    id: "SCR-CUST-007-cta"
+    id: 'SCR-CUST-007-cta'
 
 # Step 7: Success (SCR-CUST-008)
 - extendedWaitUntil:
     visible:
-      id: "SCR-CUST-008"
+      id: 'SCR-CUST-008'
     timeout: 10000
 
 - tapOn:
-    id: "task-posted-success-screen-done"
+    id: 'task-posted-success-screen-done'
 
 - assertVisible:
-    id: "SCR-CUST-001"
+    id: 'SCR-CUST-001'

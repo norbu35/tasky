@@ -8,17 +8,17 @@ appId: mn.tasky.mobile
 - runFlow: _support/login-tasker.yaml
 
 - tapOn:
-    point: "88%,93%"
+    id: 'tab-profile'
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-012"
+      id: 'SCR-SHARED-012'
     timeout: 10000
 # Secondary CTA "View Stats" = SCR-SHARED-012-secondary-cta (DetailTemplate convention)
 - tapOn:
-    id: "SCR-SHARED-012-secondary-cta"
+    id: 'SCR-SHARED-012-secondary-cta'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-TASK-016"
+      id: 'SCR-TASK-016'
     timeout: 5000

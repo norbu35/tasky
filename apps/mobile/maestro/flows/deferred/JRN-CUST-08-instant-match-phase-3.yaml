@@ -11,7 +11,7 @@ appId: mn.tasky.mobile
 - launchApp:
     clearState: true
 
-- runFlow: _support/login-customer.yaml
+- runFlow: ../_support/login-customer.yaml
 
 - extendedWaitUntil:
     visible:

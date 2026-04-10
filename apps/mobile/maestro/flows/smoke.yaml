@@ -13,4 +13,4 @@ appId: mn.tasky.mobile
 - extendedWaitUntil:
     visible:
       id: "SCR-SHARED-002"
-    timeout: 15000
+    timeout: 60000

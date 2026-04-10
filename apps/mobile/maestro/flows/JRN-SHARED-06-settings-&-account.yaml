@@ -2,43 +2,33 @@ appId: mn.tasky.mobile
 ---
 # Journey JRN-SHARED-06: Settings & Account
 # Source: docs/design/journey-catalog.yaml
-# Covered states: SCR-SHARED-014 (settings)
-# Actor: tasker (only taskers have the (tabs) navigator with profile tab)
+# Covered states: SCR-SHARED-012 (profile), SCR-SHARED-014 (settings)
+# Actor: customer
 # Flow type: happy path
-# Note: profile/delete.tsx has TODOs; navigate to settings only
+# Note: customer profile exposes settings as the secondary CTA.
 
 - launchApp:
     clearState: true
 
-- runFlow: _support/login-tasker.yaml
+- runFlow: _support/login-customer.yaml
 
-# Navigate to Profile tab (tabBarButton testID from (tabs)/_layout.tsx)
+# Navigate to Profile tab
 - tapOn:
-    point: "88%,93%"
+    id: 'tab-profile'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-012"
+      id: 'SCR-SHARED-012'
     timeout: 10000
 
-# Settings is accessed via the Stack header right-action button on profile.tsx.
-# rightAction is @deprecated and not rendered by DetailTemplate — navigate via Edit Profile CTA
-# as a proxy to verify profile navigation stack works (SCR-SHARED-014 not directly reachable).
+# Open settings via the profile secondary CTA.
 - tapOn:
-    id: "SCR-SHARED-012-cta"
-- waitForAnimationToEnd
+    id: 'SCR-SHARED-012-secondary-cta'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-013"
+      id: 'SCR-SHARED-014'
     timeout: 10000
-
-- tapOn: "Back"
-
-- extendedWaitUntil:
-    visible:
-      id: "SCR-SHARED-012"
-    timeout: 5000
 
 - assertVisible:
-    id: "SCR-SHARED-012"
+    id: 'SCR-SHARED-014'

@@ -14,29 +14,28 @@ appId: mn.tasky.mobile
 - runFlow: _support/login-tasker.yaml
 
 # Navigate to Profile tab (tasker (tabs) navigator)
-# tabBarButton with testID="tab-profile" in (tabs)/_layout.tsx
 - tapOn:
-    point: "88%,93%"
+    id: 'tab-profile'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-012"
+      id: 'SCR-SHARED-012'
     timeout: 10000
 
 # Tap Edit Profile CTA (DetailTemplate derives testID as SCR-SHARED-012-cta)
 - tapOn:
-    id: "SCR-SHARED-012-cta"
+    id: 'SCR-SHARED-012-cta'
 - waitForAnimationToEnd
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-013"
+      id: 'SCR-SHARED-013'
     timeout: 10000
 
 # Go back without saving
-- tapOn: "Back"
+- tapOn: 'Back'
 
 - extendedWaitUntil:
     visible:
-      id: "SCR-SHARED-012"
+      id: 'SCR-SHARED-012'
     timeout: 5000
