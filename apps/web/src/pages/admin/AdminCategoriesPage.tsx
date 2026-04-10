@@ -183,7 +183,10 @@ function SchemaFormDialog({
             {t('admin.categories.createSchemaTitle', 'Create Schema Version')}
           </DialogTitle>
           <DialogDescription>
-            {t('admin.categories.createSchemaDesc', 'Paste the JSON schema for this category.')}
+            {t(
+              'admin.categories.createSchemaDesc',
+              'Paste the intake schema JSON array. Each field needs: key, label, label_mn, type, required. Option types need options as [{value, label, label_mn}]. Text types need max_length.',
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
@@ -191,10 +194,21 @@ function SchemaFormDialog({
             <Label htmlFor="schema-json">Schema JSON</Label>
             <Textarea
               id="schema-json"
-              rows={8}
+              rows={12}
               value={jsonText}
               onChange={(e) => setJsonText(e.target.value)}
-              placeholder='{"type":"object","properties":{}}'
+              placeholder={`[
+  {
+    "key": "example",
+    "label": "Example field",
+    "label_mn": "Жишээ талбар",
+    "type": "single_select",
+    "required": true,
+    "options": [
+      { "value": "opt1", "label": "Option 1", "label_mn": "Сонголт 1" }
+    ]
+  }
+]`}
             />
             {parseError && <p className="text-sm text-destructive">{parseError}</p>}
           </div>
