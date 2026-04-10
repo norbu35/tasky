@@ -33,7 +33,7 @@ Replace the static chips with the customer's 3 most recent distinct task locatio
 Returns up to 3 entries. Empty array if no task history.
 
 **Query logic:**
-1. Select from `tasks` where `customer_id = :userId` and `status IN ('OPEN', 'BOOKED', 'COMPLETED')`, ordered by `created_at DESC`, limit 50 candidates
+1. Select from `tasks` where `customer_id = :userId` and `status IN ('OPEN', 'ASSIGNED', 'COMPLETED')`, ordered by `created_at DESC`, limit 50 candidates
 2. In Java, iterate candidates and keep locations whose lat/lng are >200m from all already-kept locations (Euclidean distance on degrees — adequate at UB's latitude for a 200m threshold)
 3. Stop at 3 accepted results
 
@@ -44,7 +44,7 @@ The deduplication is application-level over a bounded candidate set. This avoids
 SELECT location_lat, location_lng, location_text
 FROM tasks
 WHERE customer_id = :userId
-  AND status IN ('OPEN', 'BOOKED', 'COMPLETED')
+  AND status IN ('OPEN', 'ASSIGNED', 'COMPLETED')
   AND location_lat IS NOT NULL
   AND location_lng IS NOT NULL
   AND location_text IS NOT NULL
