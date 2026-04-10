@@ -195,7 +195,7 @@ export default function ScheduleBudgetScreen() {
       </View>
 
       {/* dateCard: shadow → imperative */}
-      <View className="rounded-lg bg-muted gap-lg" style={{ padding: 20, ...elevations.soft }}>
+      <View className="rounded-lg bg-muted gap-lg p-[20px]" style={elevations.soft}>
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
           <Text className="text-body font-extrabold text-primary-deep">
