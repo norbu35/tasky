@@ -5,6 +5,7 @@ import { Download } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { openURL } from 'expo-linking';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
 
 const { colors } = mobileTheme;
@@ -34,7 +35,8 @@ export default function AppUpdateScreen() {
   }, [router]);
 
   return (
-    <View className="flex-1 justify-center items-center px-xl bg-background" testID="SCR-INFRA-002">
+    <ScreenContainer testID="SCR-INFRA-002">
+    <View className="flex-1 justify-center items-center px-xl">
       <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
         <Download size={32} color={colors.primary} />
       </View>
@@ -56,5 +58,6 @@ export default function AppUpdateScreen() {
         />
       )}
     </View>
+    </ScreenContainer>
   );
 }

@@ -5,6 +5,7 @@ import { Ban } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 
@@ -13,10 +14,8 @@ export default function BannedAccountScreen() {
   const router = useRouter();
 
   return (
-    <View
-      testID="SCR-SHARED-021"
-      className="flex-1 justify-center items-center px-lg bg-background"
-    >
+    <ScreenContainer testID="SCR-SHARED-021">
+    <View className="flex-1 justify-center items-center px-lg">
       <View
         className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
         style={{ backgroundColor: `${colors.danger}1A` }}
@@ -45,5 +44,6 @@ export default function BannedAccountScreen() {
         testID="banned-logout-button"
       />
     </View>
+    </ScreenContainer>
   );
 }

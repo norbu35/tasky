@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { useDeleteAccount } from '../../../features/profile/hooks/useDeleteAccount';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 
@@ -29,7 +30,8 @@ export default function AccountDeletionScreen() {
   };
 
   return (
-    <View testID="SCR-SHARED-015" className="flex-1 bg-background justify-center">
+    <ScreenContainer testID="SCR-SHARED-015">
+    <View className="flex-1 justify-center">
       <View className="px-lg items-center">
         <View className="w-[72px] h-[72px] rounded-full bg-muted items-center justify-center mb-lg">
           <AlertTriangle size={48} color={colors.danger} />
@@ -113,5 +115,6 @@ export default function AccountDeletionScreen() {
         )}
       </View>
     </View>
+    </ScreenContainer>
   );
 }

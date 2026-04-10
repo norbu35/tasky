@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WifiOff } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { ScreenContainer } from '../../components/shells/ScreenContainer';
 import { Button } from '../../components/ui/Button';
 import { Toast } from '../../components/ui/Toast';
 
@@ -44,7 +45,8 @@ export default function NetworkErrorScreen() {
   }, [router]);
 
   return (
-    <View className="flex-1 justify-center items-center px-xl bg-background" testID="SCR-INFRA-001">
+    <ScreenContainer testID="SCR-INFRA-001">
+    <View className="flex-1 justify-center items-center px-xl">
       <View
         className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
         style={{ backgroundColor: `${colors.danger}1A` }}
@@ -68,5 +70,6 @@ export default function NetworkErrorScreen() {
         </View>
       ) : null}
     </View>
+    </ScreenContainer>
   );
 }

@@ -5,6 +5,7 @@ import { TriangleAlert } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/Button';
 import { mobileTheme } from '../../../design/tokenAdapter';
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 
@@ -21,10 +22,8 @@ export default function SuspendedAccountScreen() {
   const { expiryDate } = useLocalSearchParams<{ expiryDate?: string }>();
 
   return (
-    <View
-      testID="SCR-SHARED-020"
-      className="flex-1 justify-center items-center px-lg bg-background"
-    >
+    <ScreenContainer testID="SCR-SHARED-020">
+    <View className="flex-1 justify-center items-center px-lg">
       <View
         className="w-[72px] h-[72px] rounded-full items-center justify-center mb-lg"
         style={{ backgroundColor: `${colors.danger}1A` }}
@@ -58,5 +57,6 @@ export default function SuspendedAccountScreen() {
         testID="suspended-logout-button"
       />
     </View>
+    </ScreenContainer>
   );
 }
