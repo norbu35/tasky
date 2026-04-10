@@ -86,7 +86,7 @@ Negative:
 
 ## References
 
-- `docs/debates/2026-03-22-monetization-model/MONETIZATION-STRATEGY-ANALYSIS.md`
+- `archive/greenfield-docs/docs/debates/2026-03-22-monetization-model/MONETIZATION-STRATEGY-ANALYSIS.md`
 - `docs/adr/0001-liquidity-first-monetization-deferral.md`
 - PRD Section 7.5 (Monetization Phased)
 - PRD Section 12.4-12.6 (Phase Roadmap)

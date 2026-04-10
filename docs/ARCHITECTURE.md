@@ -162,26 +162,35 @@ Cross-domain communication uses internal Java method calls only — no network h
   `review_avg`, `window_days`, `computed_at`
 * `tasker_badges`: `tasker_id`, `badge_type` (PRO), `assigned_at`, `revoked_at`
 
-#### Wallet Module *(Phase 2+)*
+#### Wallet Module And Deferred Monetization Targets
 
-* `credit_balances`: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`, `total_refunded`, `updated_at`
-* `credit_transactions`: `id`, `tasker_id`, `amount`, `type` (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`,
-  `idempotency_key`, `created_at`
-* `credit_packs`: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
-* `lead_unlock_prices`: `id`, `category_id`, `district_id`, `credits_required`, `effective_from`, `effective_to`,
-  `updated_by`
-* `wallets` *(Phase 3+)*: `user_id (PK)`, `available_balance_mnt`, `pending_balance_mnt`, `updated_at`
-* `ledger_entries` *(Phase 3+)*: `id`, `wallet_id`, `amount`, `type` (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`,
+Current schema evidence in this sweep confirms the escrow-path tables `wallets`, `ledger_entries`, and
+`payout_requests`. The credit, subscription, and B2B entries below are target-model placeholders for later phases;
+they are not all present in current migrations/runtime and must not be read as launch-live schema.
+
+* `credit_balances` *(planned Phase 2 target model)*: `tasker_id (PK)`, `balance`, `total_purchased`, `total_spent`,
+  `total_refunded`, `updated_at`
+* `credit_transactions` *(planned Phase 2 target model)*: `id`, `tasker_id`, `amount`, `type`
+  (PURCHASE, SPEND, REFUND, SIGNUP_BONUS), `reference_id`, `idempotency_key`, `created_at`
+* `credit_packs` *(planned Phase 2 target model)*: `id`, `name`, `credit_count`, `price_mnt`, `is_active`
+* `lead_unlock_prices` *(planned Phase 2 target model)*: `id`, `category_id`, `district_id`, `credits_required`,
+  `effective_from`, `effective_to`, `updated_by`
+* `wallets` *(implemented-gated Phase 3 path)*: `user_id (PK)`, `available_balance_mnt`, `pending_balance_mnt`,
+  `updated_at`
+* `ledger_entries` *(implemented-gated Phase 3 path)*: `id`, `wallet_id`, `amount`, `type`
+  (DEPOSIT, FEE, PAYOUT, REFUND), `reference_id`, `created_at`
+* `payout_requests` *(implemented-gated Phase 3 path)*: `id`, `user_id`, `amount`, `bank_account`, `status`,
+  `requested_at`, `processed_at`, `processed_by`
+* `tasker_subscriptions` *(planned Phase 3 target model)*: `id`, `tasker_id`, `status`, `started_at`, `expires_at`,
+  `plan_code`
+* `business_accounts` *(planned future B2B target model; no current migration/runtime evidence in this sweep)*: `id`,
+  `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`, `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED),
   `created_at`
-* `payout_requests` *(Phase 3+)*: `id`, `user_id`, `amount`, `bank_account`, `status`, `requested_at`, `processed_at`,
-  `processed_by`
-* `tasker_subscriptions` *(Phase 3+)*: `id`, `tasker_id`, `status`, `started_at`, `expires_at`, `plan_code`
-* `business_accounts` *(Phase 2+)*: `id`, `owner_user_id (FK)`, `name`, `plan_code`, `billing_cycle_day`,
-  `status` (TRIAL, ACTIVE, SUSPENDED, CHURNED), `created_at`
-* `business_locations` *(Phase 2+)*: `id`, `business_account_id (FK)`, `label`, `address_text`,
-  `location_point (GEOMETRY)`, `is_active`
-* `business_members` *(Phase 2+)*: `id`, `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER),
-  `joined_at`, UNIQUE(`business_account_id`, `user_id`)
+* `business_locations` *(planned future B2B target model; no current migration/runtime evidence in this sweep)*: `id`,
+  `business_account_id (FK)`, `label`, `address_text`, `location_point (GEOMETRY)`, `is_active`
+* `business_members` *(planned future B2B target model; no current migration/runtime evidence in this sweep)*: `id`,
+  `business_account_id (FK)`, `user_id (FK)`, `role` (OWNER, MANAGER), `joined_at`,
+  UNIQUE(`business_account_id`, `user_id`)
 
 #### Communication Module
 
@@ -210,11 +219,11 @@ Cross-domain communication uses internal Java method calls only — no network h
 * `domain_outbox_events`: `id`, `type`, `payload (JSONB)`, `status` (PENDING, PROCESSING, PROCESSED, FAILED), `attempts`, `last_error`, `available_at`, `created_at`
   — full outbox pattern with retry and scheduling; processed by `DomainEventOutboxProcessor`
 * `feature_toggles`: `id`, `feature_name`, `is_enabled`, `activated_at`, `deactivated_at`, `updated_by`
-  — six toggles are seeded at migration time: `escrow_enabled` (Phase 3+, gated in wallet/payment/payout controllers),
-  `lead_fee_enabled` (Phase 2, seeded for readiness — no code consumer yet), `subscription_enabled` (Phase 3+, seeded
-  for readiness — no code consumer yet), `ai_scope_summary_enabled` (Phase 3+ optional, seeded for readiness — no code
-  consumer yet), `promoted_listings_enabled` (Phase 2, gated in task feed sort and QPay purchase flow),
-  `b2b_enabled` (Phase 2+, gated in business account CRUD and B2B task tagging)
+  — four toggles are currently seeded at migration time: `escrow_enabled` is the only implemented-gated monetization
+  path with confirmed runtime enforcement in this sweep; `lead_fee_enabled`, `subscription_enabled`, and
+  `ai_scope_summary_enabled` are seeded latent capabilities with no confirmed runtime consumer in this sweep.
+  `promoted_listings_enabled` and `b2b_enabled` remain documented future activation gaps; this sweep found no current
+  migration or runtime evidence that they are seeded or live gates.
 
 ### 4.2 Data Flow Patterns
 
@@ -329,8 +338,9 @@ Standardized error response:
       * **Phase 0-1 current behavior**: `GET /tasks/{id}` reveals `location_text` (exact address) to any tasker
         whose booking is in `ASSIGNED`, `PAID`, or `COMPLETED` status. No payment gate exists because Phase 0-1
         uses direct settlement only.
-      * **Phase 2 activation gap**: When `lead_fee_enabled` is turned on, `TaskController.getTask()` must be updated
-        to gate address reveal behind a successful lead-unlock event. This is a required Phase 2 activation work item.
+    * **Phase 2 activation gap**: If `lead_fee_enabled` is activated in a later tranche, `TaskController.getTask()`
+        must be updated to gate address reveal behind a successful lead-unlock event. This is not launch behavior and
+        remains a required activation work item.
   * **OAuth Outage Posture (Phase 0-1)**: Login/signup endpoints fail closed when OAuth provider is down; existing
     already-issued valid tokens remain usable until expiry.
   * **Liability Disclaimer Contract**: applicant accept endpoint rejects requests without
@@ -437,7 +447,9 @@ Query parameters: `cursor` (opaque string), `limit` (default 20, max 100).
 * **Admin Contract**:
     * Admin user search supports exact normalized phone lookup plus name and Facebook ID criteria with cursor pagination.
     * Category management supports intake schema create/update/activate/version/rollback with audit logs.
-    * Feature toggles (lead fee, subscription, escrow) must be runtime-switchable without redeploy and fully audited.
+    * Feature toggles must be runtime-switchable without redeploy and fully audited. Only `escrow_enabled` has
+      confirmed runtime enforcement in the current sweep; the remaining monetization toggles stay dormant until later
+      activation work is verified.
 
 ---
 
@@ -663,9 +675,9 @@ only when mapped to schema, flow, security/ops policy, and test strategy below.
 | No-applicant rescue flow                                          | §4.1 `task_rescue_events`, §4.2 rescue flow                                                                                            |
 | Information controls (contact/address reveal)                     | §5.3 authorization reveal rules, §4.2 monetization/message flow                                                                        |
 | Phase 0-1 direct settlement + legal disclaimer persistence        | §4.1 `bookings.settlement_mode` + disclaimer fields, §4.2 monetization flow, §5.3 liability contract                                   |
-| Phase 2 lead-unlock pricing and debit policy                      | §4.1 `lead_unlock_prices`, `credit_transactions`, §5.7 monetization contract                                                           |
-| Phase 3 subscription and escrow walleting                         | §4.1 wallet + subscription tables, §4.2 monetization flow, §6.1 idempotency                                                            |
-| Phase 2 B2B Lite and Phase 4 alternate rails preparedness         | §4.1 `business_accounts`/`business_locations`/`business_members`, §4.2 monetization flow, §6.2 per-rail telemetry                      |
+| Phase 2 lead-unlock pricing and debit policy                      | §4.1 `lead_unlock_prices`, `credit_transactions`, §5.7 monetization contract; activation gap remains until runtime consumer is confirmed |
+| Phase 3 subscription and escrow walleting                         | §4.1 wallet + subscription tables, §4.2 monetization flow, §6.1 idempotency; escrow is implemented-gated, subscription remains deferred |
+| Phase 2 B2B Lite and Phase 4 alternate rails preparedness         | §4.1 `business_accounts`/`business_locations`/`business_members`, §4.2 monetization flow, §6.2 per-rail telemetry; document as future activation work, not live gating |
 | Mandatory bilateral reviews                                       | §4.1 `booking_reviews` + `review_enforcement_cases`, §4.2 reviews/disputes flow                                                        |
 | Reliability score and Pro badge automation                        | §4.1 `tasker_reliability_scores` + `tasker_badges`, §4.2 reviews/disputes flow, §5.7 trust scoring contract                            |
 | Disputes with evidence                                            | §4.1 `disputes` + `dispute_evidence`, §6.1 idempotency scope                                                                           |

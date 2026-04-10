@@ -13,7 +13,7 @@
 ### Task 1: Record the doc authority contract in a parity report
 
 **Files:**
-- Create: `docs/quality/mobile-doc-authority-audit-2026-04-04.md`
+- Create: `archive/greenfield-docs/docs/quality/mobile-doc-authority-audit-2026-04-04.md`
 - Reference: `docs/PRD.md`
 - Reference: `docs/ARCHITECTURE.md`
 - Reference: `docs/ARCHITECTURE_INDEX.md`
@@ -82,7 +82,7 @@ Check that the report:
 **Step 5: Commit**
 
 ```bash
-git add docs/quality/mobile-doc-authority-audit-2026-04-04.md
+git add archive/greenfield-docs/docs/quality/mobile-doc-authority-audit-2026-04-04.md
 git commit -m "docs(design): record mobile doc authority audit"
 ```
 
@@ -251,8 +251,8 @@ git commit -m "docs(design): align state matrix with screen specs"
 ### Task 4: Rebuild the prompt pack if inventory changes affect generated prompt metadata
 
 **Files:**
-- Modify if regenerated: `docs/design/prompts/screens/SCR-*.yaml`
-- Modify if regenerated: `docs/design/prompts/prompt-manifest.yaml`
+- Modify if regenerated: `archive/greenfield-docs/docs/design/prompts/screens/SCR-*.yaml`
+- Modify if regenerated: `archive/greenfield-docs/docs/design/prompts/prompt-manifest.yaml`
 - Reference: `docs/design/prompts/README.md`
 - Reference: `tooling/scripts/generate-prompts.js`
 
@@ -493,7 +493,7 @@ git commit -m "docs(quality): define mobile maestro authoring rules"
 - Verify: `docs/design/screen-inventory.yaml`
 - Verify: `docs/design/state-matrix.yaml`
 - Verify: `docs/design/screen-specs/`
-- Verify: `docs/design/prompts/screens/`
+- Verify: `archive/greenfield-docs/docs/design/prompts/screens/`
 
 **Step 1: Run route/state parity checks**
 

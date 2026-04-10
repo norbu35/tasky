@@ -31,7 +31,7 @@ Measured per category, weekly and monthly.
 ## 2. Marketplace Funnel
 
 | Stage                          | Metric          | Year 1 Target    |
-|--------------------------------|-----------------|------------------|
+| ------------------------------ | --------------- | ---------------- |
 | Posted → Qualified application | Liquidity Rate  | ≥ 70% within 24h |
 | Posted → Assigned              | Assignment Rate | —                |
 | Posted → Completed             | Completion Rate | ≥ 60%            |
@@ -103,7 +103,7 @@ Use to decide which categories to invest in, drop, or expand.
 ### events table
 
 | Field       | Type      | Notes                           |
-|-------------|-----------|---------------------------------|
+| ----------- | --------- | ------------------------------- |
 | id          | UUID PK   |                                 |
 | event_type  | TEXT      | See types below                 |
 | actor_type  | TEXT      | `user` \| `tasker` \| `system`  |
@@ -142,3 +142,46 @@ Each week, examine:
 4. Highest cancellation rate
 
 Then contact users in that segment. Data shows where; conversations reveal why.
+
+---
+
+## 11. Phase 1 Launch Dashboard
+
+These are the metrics that must be visible before production launch.
+
+| Metric                                   | Why it matters                                             | Target / alert boundary                                                                                       | Owner            |
+| ---------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------- |
+| Category Liquidity Score                 | Primary proof that the marketplace is working.             | Target: `>= 70%` in core categories. Alert if `< 50%` for 7 days with at least 50 posted tasks.               | Founder/operator |
+| Task post → confirmed booking conversion | Detects matching friction before revenue questions matter. | Alert if the 28-day conversion rate drops below `35%`.                                                        | Founder/operator |
+| Booking completion rate                  | Core trust and value-delivery metric.                      | Target: `>= 60%`. Alert if `< 50%` over a 28-day window with at least 50 bookings.                            | Founder/operator |
+| Review completion rate                   | Needed for reputation quality.                             | Alert if `< 70%` over 28 days.                                                                                | Founder/operator |
+| Verification queue turnaround time       | Launch trust depends on supply verification speed.         | Alert if median turnaround exceeds `24h` or p95 exceeds `48h`.                                                | Founder/operator |
+| Dispute resolution time                  | Measures trust-safety response quality.                    | Alert if median time exceeds `48h` or any dispute remains unresolved beyond `72h` without manual note.        | Founder/operator |
+| Repeat booking rate                      | Early signal that the service is habit-forming.            | Track weekly; alert if the rate drops below `15%` after the launch cohort has at least 50 completed bookings. | Founder/operator |
+
+## 12. Operational Alerts
+
+The launch environment must also monitor service health, not just product outcomes.
+
+| Signal                                               | Threshold                                                                                               | Required action                                                                  |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| API health/readiness                                 | `/actuator/health` not `UP` for 2 consecutive checks or readiness group failing for more than 5 minutes | Treat as `SEV-1`; freeze deploys and investigate immediately.                    |
+| HTTP 5xx rate                                        | `> 5%` of requests for 15 minutes on launch-critical routes                                             | Treat as `SEV-1`; roll back unless the cause is isolated and quickly reversible. |
+| Facebook auth failures                               | Sustained auth-provider failures beyond the expected circuit-breaker open/close posture                 | Treat as `SEV-1` if real sign-in is unavailable for launch users.                |
+| Push delivery posture                                | Firebase provider misconfigured or notification fan-out failing for launch-critical booking events      | Treat as `SEV-2`; mitigation required before production confidence can increase. |
+| Payment/payout errors after future escrow activation | Any sustained callback verification or payout-processing failures                                       | Treat as activation-blocking and disable `escrow_enabled` until resolved.        |
+
+## 13. Data Quality Rules
+
+Do not make product or launch decisions from broken telemetry.
+
+1. KPI decisions require at least 50 relevant events in the trailing window.
+2. If any of the core event types are missing or delayed, mark the dashboard as degraded and pause KPI-based decisions:
+   - `task_posted`
+   - `tasker_applied`
+   - `task_assigned`
+   - `task_completed`
+   - `review_left`
+   - `dispute_opened`
+3. If event quality is degraded, use manual operator review temporarily, then repair tracking before resuming automated
+   thresholds.

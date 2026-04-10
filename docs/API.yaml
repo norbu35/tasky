@@ -27,9 +27,13 @@ info:
     Two classes of deferred endpoints exist in this spec:
     - **Implemented and gated** (`wallet`, `payment`, `payout`): endpoints exist in the server and return `503` when
       their feature toggle is disabled. Current toggles: `escrow_enabled` (Phase 3+).
-    - **Not yet implemented** (`credits`, `referrals`, `subscription`, `instant-match`, `/verification/dan/verify`):
-      endpoints are specified here as forward references for Phase 2/3+ implementation. Until then they return `404`.
+    - **Not yet implemented** (`lead-unlock`, `credits`, `referrals`, `subscription`, `business`,
+      `instant-match`, `/verification/dan/verify`): endpoints are specified here as forward references for Phase 2/3+
+      implementation. Until then they return `404`.
       Each such endpoint is annotated with `x-tasky-status: deferred` and `x-tasky-target-phase`.
+    Current launch posture is Phase 1 zero monetization; seeded feature toggles may exist before their runtime
+    consumers are implemented. See `docs/quality/capability-matrix.md` and `docs/quality/launch-baseline-2026-04.md`
+    for current activation status.
   version: 1.3.0
   contact:
     name: Tasky Engineering
@@ -1133,6 +1137,9 @@ components:
         feature_name:
           type: string
           enum: [ lead_fee_enabled, subscription_enabled, escrow_enabled, ai_scope_summary_enabled ]
+          description: Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing
+            names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum
+            because this sweep found no confirmed seeded runtime support for them.
         is_enabled:
           type: boolean
         updated_by:
@@ -2606,7 +2613,7 @@ paths:
       tags: [ Bookings ]
       summary: Tasker accepts lead and unlocks customer contact
       description: |
-        Phase 2+ endpoint.
+        **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
         Selected tasker accepts or declines lead within configured timeout window.
         Accepting spends configured lead-unlock credits and unlocks customer contact details.
         Declining does not spend credits and keeps contact details locked.
@@ -3356,8 +3363,10 @@ paths:
     x-tasky-target-phase: phase_4
     post:
       tags: [ Admin ]
-      summary: Create business account (Phase 4)
-      description: Creates B2B account for recurring scheduling and organization billing.
+      summary: Create business account (future B2B path)
+      description: |
+        **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
+        Creates B2B account for recurring scheduling and organization billing.
       operationId: createBusinessAccount
       security:
         - BearerAuth: [ ]
@@ -4566,6 +4575,8 @@ paths:
                 feature_name:
                   type: string
                   enum: [ lead_fee_enabled, subscription_enabled, escrow_enabled, ai_scope_summary_enabled ]
+                  description: Seeded feature toggle names only; presence in this enum does not imply a confirmed
+                    runtime consumer in the current launch posture.
                 is_enabled:
                   type: boolean
       responses:

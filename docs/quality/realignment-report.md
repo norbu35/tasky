@@ -6,6 +6,8 @@ Date: 2026-04-02
 
 The repository has been realigned from greenfield multi-agent generation workflow to maintenance-and-extension monorepo operation with explicit boundaries, archive hygiene, and trusted verification gates.
 
+The capability matrix at `docs/quality/capability-matrix.md` is now the central audit ledger and working truth artifact for capability status and discrepancies pending canonical rewrites.
+
 ## Structural Realignment Completed
 
 - Runtime service structure consolidated under `services/api`.
@@ -45,6 +47,8 @@ pnpm -r test
   - `docs/maintenance/OPERATING_MODEL.md`
 - Added document taxonomy:
   - `docs/quality/document-taxonomy.md`
+- Added central capability truth artifact:
+  - `docs/quality/capability-matrix.md`
 - Archived superseded plan/spec surfaces:
   - `docs/superpowers/plans/*` -> `archive/greenfield-docs/docs/superpowers/plans/`
   - `docs/superpowers/specs/*` -> `archive/greenfield-docs/docs/superpowers/specs/`

@@ -1,141 +1,87 @@
 # Tasky Business Strategy & Go-To-Market
 
-## Overview
+## 1. Overview
 
-4-phase go-to-market strategy for the Mongolian market. Core philosophy: **prioritize liquidity and trust over immediate
-revenue** to solve the marketplace cold-start problem.
+Tasky is a launch-first marketplace. The current business commitment is the Phase 1 controlled pilot described in `docs/quality/launch-baseline-2026-04.md`. The strategy is to prove trust, liquidity, and operational reliability before expanding into paid rails or adjacent product lines.
 
-Phase numbering in this document follows the current PRD baseline. The zero-monetization launch window is the PRD's combined `Phase 0-1` period; PRD Section 12 further splits that window into Phase 0 and Phase 1 rollout stages.
+Later phases are not automatic next steps. They are conditional paths that require verified implementation status, test coverage, and an explicit rollout decision. The launch team should treat docs, UI shells, and seeded toggles as research signals, not as proof that a later phase is ready.
 
-- `Phase 0-1`: liquidity and trust formation
-- `Phase 2`: soft monetization
-- `Phase 3`: subscription and escrow
-- `Phase 4`: recurring revenue expansion
+## 2. Current Strategy: Phase 1 Controlled Pilot
 
----
+### 2.1 Objective
 
-## Phase 0-1 — Liquidity (0% Commission)
+Build enough trust and liquidity for the marketplace to work without monetization.
 
-**Goal:** Build an initial pool of verified Taskers and real customer demand before any monetization.
-**Revenue:** $0
+### 2.2 What The Pilot Optimizes For
 
-### Supply-Side Acquisition
+1. Verified supply density in a small launch district.
+2. Fast task posting and booking completion.
+3. Founder-assisted exception handling for unmatched or risky cases.
+4. Stable customer and tasker habits around in-app communication.
 
-Target two initial Tasker pools using zero-cost tactics:
+### 2.3 Launch Tactics
 
-- **Pool A — University students:** Market at universities, malls, and markets. Messaging: install the app, turn on push
-  notifications, earn flexible income. Map to "Delivery & Errands" and "Cleaning" categories.
-- **Pool B — Craftsman district ("100 Ail"):** Posters and guerrilla marketing in the building materials district. Map
-  to "Handyman", "Moving & Hauling", "Furniture Assembly", "Painting".
+- Start with a small number of categories where the launch baseline is already live.
+- Focus supply acquisition on verified taskers who can accept jobs quickly.
+- Use Facebook channels and local community distribution where the audience already is.
+- Keep the founder visible in ops so unresolved tasks do not become product failures.
+- Use push notifications and in-app messaging to keep contact inside the platform.
 
-### Demand-Side Acquisition
+### 2.4 What The Pilot Does Not Optimize For
 
-Automatically cross-post new Tasky tasks to relevant local Facebook groups (e.g., UB job boards, community groups). This
-bridges the platform and where the current audience already lives.
+- No launch dependency on monetization conversion.
+- No assumption that lead fees, subscriptions, escrow, referrals, B2B, or instant match are ready just because they are mentioned elsewhere.
+- No strategy that requires toggling latent product lines on without implementation work.
 
-### Market Constraint Strategy
+## 3. Conditional Future Paths
 
-Restrict initial marketing to **6 categories only** to artificially compress the market and maximize the probability
-that a posted task finds a Tasker within minutes.
+The table below separates strategic intent from current verified status.
 
-### Push-Notification Engine
+| Future path | Current verified status | Strategy implication |
+|---|---|---|
+| Phase 2 lead unlock, OTP migration, referrals, DAN fast-path | OTP, referrals, and DAN are deferred; lead fee is partial with no confirmed runtime consumer. | Treat as a build-and-verify program, not a switch to flip. |
+| Phase 3 escrow, wallet, payout processing | Escrow is implemented-gated and must stay off for launch; wallet/payout remain gated behind the launch decision. | Only consider after the launch pilot is stable and the payment path is fully verified. |
+| Subscription products | Deferred in the matrix and API. | Do not plan revenue forecasts around it yet. |
+| B2B Lite and later B2B Managed | Deferred in the matrix and API, with no confirmed runtime evidence. | Keep as a future expansion thesis only. |
+| Promoted listings | Partial, with architecture-to-code discrepancy and no matching backend evidence. | Not activation-ready. |
+| AI scope summary rewrite | Deterministic summaries are launch-live; AI polish has no confirmed runtime consumer. | Keep as optional research, not a launch dependency. |
 
-Because the app sits passively on devices, push notifications act as the supply trigger — mobilizing the latent Tasker
-pool at zero ongoing cost when a task is posted nearby.
+## 4. Operating Principles
 
----
+1. Launch behavior is the only committed product posture today.
+2. A later-phase mention in docs is not a release commitment.
+3. A feature toggle is an operational control, not evidence of product readiness.
+4. If runtime evidence, API contract, and tests do not all line up, the path stays conditional.
+5. Preserve founder control in the pilot until the product shows durable liquidity.
 
-## Phase 2 — Soft Monetization
+## 5. Go-To-Market Sequence
 
-**Goal:** Standardize lead-fee monetization while keeping core matching free.
-**Revenue:** Lead-unlock credits purchased by Taskers.
+### 5.1 Phase 1
 
-- **Core matching remains free:** Taskers browse and apply for free; Customers review applicants for free.
-- **Lead unlock charge point:** Credits are charged only when the selected Tasker accepts and unlocks Customer contact
-  details.
-- **Ramp-up policy:** Unlock credit cost starts low and scales by admin policy as trust and demand stabilize.
-- **Phone auth migration:** SMS OTP becomes primary auth; Phase 0-1 Facebook-only users migrate by verifying phone OTP.
+1. Launch in a constrained district and a constrained category set.
+2. Seed the supply side first, then expand customer acquisition into the same local network.
+3. Keep the booking flow simple: post, apply, confirm, complete, review.
+4. Measure trust outcomes before monetization outcomes.
 
----
+### 5.2 Phase 2 Candidate Work
 
-## Phase 3 — Take Rate (Core Monetization)
+Only start the Phase 2 build when the launch pilot is stable enough to justify the work. The candidate work should be prioritized by verified implementation status:
 
-**Goal:** Sustainable unit economics once users rely on the platform.
+- Implement OTP migration only when the auth path is ready and tested.
+- Implement lead unlock only when address/contact reveal enforcement is verified.
+- Implement referrals only when attribution and fraud controls are verified.
+- Implement DAN only when the backend and fallback flow are verified.
 
-- **Grandfather clause:** Lock Phase 1 & 2 Taskers into a low, eternal commission rate (e.g., 5%). Apply market-standard
-  rates (10–15%) to new Taskers.
-- **Fee split:** Supply side (Taskers) pays the majority for lead generation. Customers pay a smaller "Trust & Safety"
-  fee (3–5%).
-- **Anti-leakage:** On-platform jobs become invaluable via escrow payments, platform insurance, and a robust public
-  review score that directly affects Tasker earnings.
+### 5.3 Phase 3+ Candidate Work
 
----
+Escrow, wallet, payout, and subscription should be treated as separate implementation programs, not as a single "monetization toggle" step. Escrow is currently the only implemented-gated monetization path, but it remains off until the product team explicitly decides to move the pilot forward.
 
-## Phase 4 — Recurring Revenue
+## 6. AI-Assisted Solo Ops
 
-**Goal:** Predictable, non-transactional revenue from high-value users.
+AI is an execution multiplier for the founder, not a product phase:
 
-- **Tasky Plus (Customers):** Monthly subscription waiving Trust & Safety fees and guaranteeing minimum-time matching (<
-  1 hour).
-- **Tasky for Business:** B2B invoicing for offices, restaurants, and retail shops that need recurring temporary hires.
-
----
-
-## Phase 0-1 Management Philosophy
-
-1. **Optimize for liquidity quality first.** North Star metric in the first 6 months is Category Liquidity Score.
-   Revenue remains a lagging indicator.
-2. **Be the concierge.** For the first 30 tasks, personally match, monitor, and intervene to guarantee a 5-star
-   outcome.
-3. **Build the trust moat.** Every feature — identity verification, secure messaging, dispute resolution — builds the
-   trust differential that justifies future commission.
-
----
-
-## AI-Enabled Solo Ops
-
-Use AI as an execution multiplier, not as final authority:
-
-1. **Verification Copilot:** Prioritize queue by SLA risk and suspected fraud signals.
-2. **Dispute Copilot:** Summarize evidence threads and recommend policy-aligned outcomes for founder approval.
-3. **Supply Activation Copilot:** Recommend outreach and push-notification timing by district/category liquidity gaps.
-4. **Retention Copilot:** Generate rebook/referral campaigns for high-intent cohorts.
-5. **Founder Weekly Brief:** Auto-generate one-page report with blockers, risk alerts, and next 3 actions.
-
----
-
-## Facebook Growth Tactics (Phase 0-1 Supplement)
-
-### Supply-Side Cross-Posting
-
-When a Customer posts a task on Tasky, automatically cross-post it to relevant Facebook groups:
-
-> *"New Job Alert: Someone nearby needs a plumber! Budget: 50,000 MNT. See exactly where and apply
-instantly: [Deep_Link]"*
-
-Taskers must download Tasky to access task details. Exact location is revealed after booking, and Customer contact
-details are revealed only after paid lead unlock in Phase 2+.
-
-### Demand-Side Import (Advanced)
-
-A scraper bot monitors targeted Facebook groups for intent posts ("Need my house cleaned today in 13th microdistrict,
-will pay 30k"), parses them via LLM into structured tasks, and auto-imports them onto Tasky. A reply is posted to the
-original Facebook post linking the auto-generated task.
-
-**Technical stack:** Browser automation (Puppeteer/Playwright), rotating residential Mongolian IPs, aged Facebook
-accounts, `gpt-4o-mini` for parsing, a dedicated microservice calling the Tasky API.
-
-**Risks:**
-
-| Risk               | Mitigation                                                                    |
-|--------------------|-------------------------------------------------------------------------------|
-| Account bans       | Pool of 10–20 aged accounts; swap on ban; Mongolian residential IPs           |
-| Spam flags         | Randomize reply text (spintax); throttle to 3–5 cross-posts per group per day |
-| Group admin blocks | Interleave human-like behaviour in automation sessions                        |
-| Data quality       | Mark imported tasks clearly as "Imported from Facebook" in the UI             |
-
-**Recommendation:** Start with supply-side cross-posting first (safer, lower risk). Enable demand-side import only after
-the task map has density.
-
-> **Note:** Demand-side scraping violates Facebook's Terms of Service and must be executed carefully and only in the
-> early liquidity phase.
+1. Verification Copilot: triage the queue by SLA risk and fraud signals.
+2. Dispute Copilot: summarize evidence and draft resolution options.
+3. Supply Activation Copilot: identify district/category gaps and outreach timing.
+4. Retention Copilot: prepare rebook and reactivation messages.
+5. Founder Weekly Brief: generate blockers, risks, and next actions.
