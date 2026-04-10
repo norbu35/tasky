@@ -1,6 +1,7 @@
-import React from 'react';
-import { Pressable, View } from 'react-native';
+import React, { useState } from 'react';
+import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
@@ -74,9 +75,17 @@ export function DetailTemplate({
   className,
 }: DetailTemplateProps) {
   const { t } = useTranslation();
+  const [actionBarHeight, setActionBarHeight] = useState(100);
   const hasBottomBar = !!(ctaLabel && ctaOnPress);
 
   const effectiveActions = rightActions ?? (rightAction ? [rightAction] : null);
+
+  const handleActionBarLayout = (event: LayoutChangeEvent) => {
+    const height = event.nativeEvent.layout.height;
+    if (height > 0) {
+      setActionBarHeight(height);
+    }
+  };
 
   return (
     <ScreenContainer
@@ -124,7 +133,7 @@ export function DetailTemplate({
             },
             hasBottomBar && { paddingBottom: screenLayout.body.sectionGap },
           ]}
-          extraBottomInset={hasBottomBar ? screenLayout.chrome.tabBarHeight : 0}
+          extraBottomInset={hasBottomBar ? actionBarHeight : 0}
           showsVerticalScrollIndicator={false}
         >
           {children}
@@ -137,34 +146,49 @@ export function DetailTemplate({
           testID={testID ? `${testID}-bottom-bar` : undefined}
           insideTabNavigator={insideTabNavigator}
         >
-          {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
-          <BlurView
-            intensity={40}
-            tint="light"
-            style={{
-              padding: screenLayout.actions.barPadding,
-              borderRadius: mobileTheme.radius.lg,
-              overflow: 'hidden',
-            }}
-          >
-            {secondaryCtaLabel && secondaryCtaOnPress && (
-              <Button
-                label={secondaryCtaLabel}
-                variant="outline"
-                onPress={secondaryCtaOnPress}
-                style={{ alignSelf: 'stretch', marginBottom: screenLayout.actions.buttonGap }}
-                testID={testID ? `${testID}-secondary-cta` : undefined}
-              />
-            )}
-            <Button
-              label={ctaLabel}
-              onPress={ctaOnPress}
-              isLoading={ctaLoading}
-              disabled={ctaDisabled}
-              style={{ alignSelf: 'stretch' }}
-              testID={testID ? `${testID}-cta` : undefined}
+          <View onLayout={handleActionBarLayout}>
+            {/* Fade Out Gradient Mask */}
+            <LinearGradient
+              colors={['transparent', colors.background]}
+              style={{
+                position: 'absolute',
+                top: -32,
+                left: -screenLayout.actions.barPadding,
+                right: -screenLayout.actions.barPadding,
+                height: 32,
+                zIndex: -1,
+              }}
+              pointerEvents="none"
             />
-          </BlurView>
+            {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
+            <BlurView
+              intensity={40}
+              tint="light"
+              style={{
+                padding: screenLayout.actions.barPadding,
+                borderRadius: mobileTheme.radius.lg,
+                overflow: 'hidden',
+              }}
+            >
+              {secondaryCtaLabel && secondaryCtaOnPress && (
+                <Button
+                  label={secondaryCtaLabel}
+                  variant="outline"
+                  onPress={secondaryCtaOnPress}
+                  style={{ alignSelf: 'stretch', marginBottom: screenLayout.actions.buttonGap }}
+                  testID={testID ? `${testID}-secondary-cta` : undefined}
+                />
+              )}
+              <Button
+                label={ctaLabel}
+                onPress={ctaOnPress}
+                isLoading={ctaLoading}
+                disabled={ctaDisabled}
+                style={{ alignSelf: 'stretch' }}
+                testID={testID ? `${testID}-cta` : undefined}
+              />
+            </BlurView>
+          </View>
         </StickyActionBar>
       )}
     </ScreenContainer>
