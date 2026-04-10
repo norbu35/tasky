@@ -1297,7 +1297,8 @@
     "quickLocationHome": "Home",
     "quickLocationWork": "Work",
     "quickLocationSukhbaatar": "Sukhbaatar Square",
-    "locationPrivacy": "Taskers see approximate location. Exact address shown after booking confirmation"
+    "locationPrivacy": "Taskers see approximate location. Exact address shown after booking confirmation",
+    "resolvingAddress": "Resolving address..."
   },
   "Photos": {
     "continue": "Continue",

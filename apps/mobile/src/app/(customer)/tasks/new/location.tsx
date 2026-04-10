@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,9 @@ import { FormField } from '../../../../components/ui/FormField';
 import { Input } from '../../../../components/ui/Input';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
+import { getCurrentLocation } from '../../../../utils/permissions';
+import { buildBaseUrl } from '../../../../lib/mobileApiClient';
+import { useAuthStore } from '../../../../store/authStore';
 
 const { colors } = mobileTheme;
 
@@ -23,6 +26,7 @@ function parseCoordinateParam(value?: string): number | null {
 export default function LocationScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const session = useAuthStore((s) => s.session);
   const params = useLocalSearchParams<{
     categoryId: string;
     categoryName?: string;
@@ -42,6 +46,124 @@ export default function LocationScreen() {
       ? { latitude: initialLat, longitude: initialLng }
       : null,
   );
+  const [locating, setLocating] = useState(false);
+  const [reverseGeocoding, setReverseGeocoding] = useState(false);
+
+  const mapRef = useRef<MapView>(null);
+  const userEditedText = useRef(false);
+
+  const handleLocationTextChange = useCallback((text: string) => {
+    userEditedText.current = true;
+    setLocationText(text);
+  }, []);
+
+  // On mount: seed map from device location if no pin from nav params
+  useEffect(() => {
+    if (initialLat !== null && initialLng !== null) {
+      return;
+    }
+    let cancelled = false;
+    getCurrentLocation().then((loc) => {
+      if (cancelled || !loc) return;
+      const coord = { latitude: loc.latitude, longitude: loc.longitude };
+      setPin(coord);
+      mapRef.current?.animateToRegion(
+        {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        600,
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reverse geocode on pin change
+  useEffect(() => {
+    if (!pin) return;
+    if (userEditedText.current) return;
+
+    let cancelled = false;
+    setReverseGeocoding(true);
+
+    const accessToken = session?.accessToken;
+    const baseUrl = buildBaseUrl();
+    const url = new URL('location/reverse-geocode', baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
+    url.searchParams.set('lat', String(pin.latitude));
+    url.searchParams.set('lng', String(pin.longitude));
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    fetch(url.toString(), { method: 'GET', headers })
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json() as Promise<{ formatted_address: string }>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        if (data && !userEditedText.current) {
+          setLocationText(data.formatted_address);
+        }
+      })
+      .catch(() => {
+        // silently ignore geocode failures
+      })
+      .finally(() => {
+        if (!cancelled) setReverseGeocoding(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pin?.latitude, pin?.longitude]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLocate = useCallback(async () => {
+    setLocating(true);
+    try {
+      const loc = await getCurrentLocation();
+      if (!loc) return;
+      const coord = { latitude: loc.latitude, longitude: loc.longitude };
+      setPin(coord);
+      mapRef.current?.animateToRegion(
+        {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        600,
+      );
+    } finally {
+      setLocating(false);
+    }
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    mapRef.current?.getCamera().then((camera) => {
+      if (!camera) return;
+      mapRef.current?.animateCamera(
+        { center: camera.center, zoom: (camera.zoom ?? 12) + 1 },
+        { duration: 300 },
+      );
+    });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    mapRef.current?.getCamera().then((camera) => {
+      if (!camera) return;
+      mapRef.current?.animateCamera(
+        { center: camera.center, zoom: (camera.zoom ?? 12) - 1 },
+        { duration: 300 },
+      );
+    });
+  }, []);
 
   const quickLocations = [
     t('LocationScreen.quickLocationHome'),
@@ -96,6 +218,7 @@ export default function LocationScreen() {
       >
         {/* map: MapView always imperative */}
         <MapView
+          ref={mapRef}
           style={{ alignSelf: 'stretch', height: 280 }}
           initialRegion={{
             ...UB_CENTER,
@@ -137,13 +260,19 @@ export default function LocationScreen() {
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-locate-button"
+            onPress={handleLocate}
           >
-            <LocateFixed size={18} color={colors.primaryDeep} />
+            {locating ? (
+              <ActivityIndicator size="small" color={colors.primaryDeep} />
+            ) : (
+              <LocateFixed size={18} color={colors.primaryDeep} />
+            )}
           </Pressable>
           <Pressable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-zoom-in-button"
+            onPress={handleZoomIn}
           >
             <Plus size={18} color={colors.primaryDeep} />
           </Pressable>
@@ -151,6 +280,7 @@ export default function LocationScreen() {
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
             testID="location-zoom-out-button"
+            onPress={handleZoomOut}
           >
             <Minus size={18} color={colors.primaryDeep} />
           </Pressable>
@@ -160,7 +290,11 @@ export default function LocationScreen() {
       <View className="mt-sm rounded-lg p-lg bg-muted gap-lg" testID="location-current-card">
         <View className="gap-xs">
           <Text className="text-subtitle font-extrabold text-primaryDeep">
-            {pin ? t('LocationScreen.locationPinnedArea') : t('LocationScreen.locationAwaitingPin')}
+            {reverseGeocoding
+              ? t('LocationScreen.resolvingAddress')
+              : pin
+                ? t('LocationScreen.locationPinnedArea')
+                : t('LocationScreen.locationAwaitingPin')}
           </Text>
           <Text className="text-caption text-textSecondary">
             {pin ? t('LocationScreen.pinSet') : t('LocationScreen.tapToPin')}
@@ -174,7 +308,7 @@ export default function LocationScreen() {
           <Input
             testID="location-text-input"
             value={locationText}
-            onChangeText={setLocationText}
+            onChangeText={handleLocationTextChange}
             placeholder={t('LocationScreen.locationPlaceholder')}
             maxLength={500}
           />
