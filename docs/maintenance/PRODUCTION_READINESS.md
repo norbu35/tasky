@@ -43,6 +43,9 @@ Production remains blocked until these are closed:
    - admin ban/unban (`REQ-P1-ADMIN-04`)
    - concierge dispatch backend proof inside `REQ-P1-ADMIN-05`
 4. Live alert routing, dashboard wiring, and incident evidence are not yet proven against a real deployed stack.
+5. The mobile client has no token refresh mechanism. Access tokens expire after 1 hour; without a refresh
+   interceptor, every user session silently breaks — API calls return 401 but the app still shows authenticated UI.
+   See `docs/maintenance/STAGING_RUNBOOK.md` § "Mobile Client Auth Transition" for the implementation checklist.
 
 ## Required Runtime Controls
 

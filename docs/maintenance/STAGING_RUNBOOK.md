@@ -220,6 +220,53 @@ This environment is not sufficient for final launch signoff because it does not 
 
 Those remain responsibilities of a future release-grade staging environment.
 
+## Mobile Client Auth Transition (Dev → Staging/Production)
+
+When `EXPO_PUBLIC_DEV_AUTH_ENABLED=true` (current private sandbox), the mobile app bypasses real
+authentication entirely. The `useDevLogin` hook in
+`apps/mobile/src/features/auth/hooks/useAuth.ts` creates a fake token (`'dev-access-token'`) and
+pre-seeds react-query caches so API-dependent screens render without hitting the backend. This means
+the real auth and networking path is **completely untested** in dev-auth mode.
+
+### What must change before real users
+
+| Item | Dev-auth behavior | Required for staging/production | Status |
+| --- | --- | --- | --- |
+| Access token | Fake string `'dev-access-token'`, never sent to backend | Real JWT from Facebook OAuth or OTP | Exists in non-dev path |
+| Token refresh | Not needed (fake token never expires) | **Must be implemented.** Access tokens expire after 1 hour. Without a refresh interceptor the app silently breaks — API calls return 401 but the session still appears valid in the UI. | **Not implemented** |
+| Session invalidation on 401 | Not needed | App must detect 401 from expired/revoked tokens and either refresh or sign the user out. Currently the zustand session persists indefinitely with no expiry check. | **Not implemented** |
+| `EXPO_PUBLIC_API_BASE_URL` | Unset (defaults to `http://localhost:8080`) | Must point to the staging/production origin | Set per-environment |
+| App Transport Security | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`. | iOS plist is correct; just needs HTTPS origin |
+| react-query cache seeding | Fake empty data seeded for `myTasks`, `tasks`, `bookings`, `conversations`, `categories` | Not used — all queries hit the real backend | N/A |
+| CORS allowed origins | Backend defaults to `http://localhost:5173` | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.) | Configured via `tasky.cors.allowed-origins` |
+
+### Token refresh implementation checklist
+
+This is the highest-priority mobile auth gap. Without it, every user session silently dies after 1 hour.
+
+1. Add a 401-interceptor to `requestJson` / `requestVoid` in `apps/mobile/src/lib/mobileApiClient.ts`:
+   - On 401 response, attempt `POST /api/v1/auth/token/refresh` with the stored `refreshToken`.
+   - On successful refresh, update the zustand session with the new `accessToken` and retry the
+     original request.
+   - On refresh failure (e.g., refresh token also expired), call `signOut()` and navigate to the
+     login screen.
+2. Ensure only one refresh attempt runs at a time (queue concurrent 401s behind a single refresh
+   promise).
+3. Add a test that exercises the refresh-then-retry path.
+
+### Observability gap: JWT 401s invisible in backend logs
+
+The `JwtAuthenticationFilter` rejects expired or invalid tokens by writing directly to the response
+and returning without calling `filterChain.doFilter()`. Because the `RequestObservabilityFilter`
+wraps the filter chain, it still logs the response status — **however**, the filter registration
+order means JWT rejections may not appear in the observability log depending on the Spring Boot
+auto-configuration order.
+
+During the inbox-error investigation (2026-04-10), 401 responses from expired tokens were confirmed
+invisible in `docker logs`. This makes debugging auth failures in staging/production harder. Consider
+adding explicit logging inside the JWT filter for rejected tokens, or verifying the filter
+registration order so the observability filter always wraps the security chain.
+
 ## Pre-Deploy Verification
 
 Run the trusted repo checks before updating the VPS sandbox:

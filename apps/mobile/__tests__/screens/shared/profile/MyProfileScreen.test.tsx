@@ -124,7 +124,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
-    expect(screen.getByText('Профайл засах')).toBeTruthy();
+    expect(screen.getByTestId('action-row-edit-profile')).toBeTruthy();
   });
 
   it('edit profile button navigates to edit screen', () => {
@@ -136,7 +136,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     });
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
-    fireEvent.press(screen.getByTestId('SCR-SHARED-012-cta'));
+    fireEvent.press(screen.getByTestId('action-row-edit-profile'));
     expect(mockPush).toHaveBeenCalledWith('/(shared)/profile/edit');
   });
 

@@ -42,7 +42,7 @@ export const screenLayout = {
     /** Tab bar total height */
     tabBarHeight: Platform.OS === 'ios' ? 88 : 64,
     /** Tab bar bottom offset from screen edge */
-    tabBarBottom: Platform.OS === 'ios' ? spacing.lg : spacing.sm,
+    tabBarBottom: 0,
     /** FAB diameter */
     fabSize: 60,
     /** FAB distance from right edge */

@@ -10,6 +10,7 @@ type ScreenContainerProps = {
   contentStyle?: StyleProp<ViewStyle>;
   edges?: readonly Edge[];
   className?: string;
+  padded?: boolean;
 } & Pick<SafeAreaViewProps, 'mode'>;
 
 export function ScreenContainer({
@@ -19,6 +20,7 @@ export function ScreenContainer({
   contentStyle,
   edges = ['top', 'left', 'right'],
   mode = 'padding',
+  padded = true,
   className,
 }: ScreenContainerProps) {
   return (
@@ -29,7 +31,7 @@ export function ScreenContainer({
       mode={mode}
       testID={testID}
     >
-      <View style={contentStyle} className="flex-1 bg-background">
+      <View style={contentStyle} className={cn('flex-1 bg-background', padded && 'px-screen-x')}>
         {children}
       </View>
     </SafeAreaView>

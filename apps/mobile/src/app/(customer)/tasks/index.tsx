@@ -341,7 +341,6 @@ export default function MyTasksListScreen() {
           ListHeaderComponent={header}
           ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
           contentContainerStyle={{
-            paddingHorizontal: screenLayout.insetX,
             paddingBottom: screenLayout.chrome.contentBottomClearance,
           }}
           refreshControl={

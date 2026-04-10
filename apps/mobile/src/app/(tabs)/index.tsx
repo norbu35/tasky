@@ -8,6 +8,7 @@ import CustomerMyTasks from '../(customer)/tasks/index';
 import { FeedListTemplate } from '../../components/templates/FeedListTemplate';
 import { SplitCard } from '../../components/ui/SplitCard';
 import { FilterBar } from '../../components/ui/FilterBar';
+import { SearchBar } from '../../components/ui/SearchBar';
 import { Input } from '../../components/ui/Input';
 import { PriceTag } from '../../components/ui/PriceTag';
 import { CategoryChip } from '../../components/ui/CategoryChip';
@@ -163,20 +164,10 @@ function TaskerBrowseScreen() {
         ListHeaderComponent={
           <View className="gap-md mb-md">
             <ScreenHeader title={t('tasker.browse.title')} subtitle={t('tasker.browse.subtitle')} />
-            <Input
-              style={{
-                borderWidth: 0,
-                borderRadius: mobileTheme.radius.md,
-                paddingHorizontal: mobileTheme.spacing.md,
-                paddingVertical: mobileTheme.spacing.sm,
-                fontSize: mobileTheme.typography.body,
-                color: colors.foreground,
-                backgroundColor: colors.muted,
-              }}
+            <SearchBar
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder={t('tasker.browse.searchPlaceholder')}
-              placeholderTextColor={colors.textTertiary}
             />
             <TrustBanner title={t('tasker.browse.trustTitle')} description={t('HomeTab.copy1')} />
           </View>

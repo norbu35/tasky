@@ -259,7 +259,6 @@ export default function BookingsListScreen() {
         <View
           className="flex-row items-center justify-between"
           style={{
-            paddingHorizontal: screenLayout.insetX,
             paddingTop: screenLayout.body.itemGap,
             paddingBottom: screenLayout.body.itemGap,
           }}

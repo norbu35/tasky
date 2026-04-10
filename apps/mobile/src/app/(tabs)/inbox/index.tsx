@@ -2,10 +2,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Search } from 'lucide-react-native';
 import { useConversations } from '../../../features/chat/hooks/useConversations';
 import { FeedListTemplate } from '../../../components/templates/FeedListTemplate';
-import { Input } from '../../../components/ui/Input';
+import { SearchBar } from '../../../components/ui/SearchBar';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
@@ -66,21 +65,12 @@ export default function ConversationListScreen() {
 
   const filterBar =
     !isLoading && !isError ? (
-      <View
-        className="flex-row items-center gap-sm bg-card rounded-lg px-md py-sm border border-border"
-        style={elevations.card}
-      >
-        <Search size={18} color={colors.textTertiary} />
-        <Input
-          value={search}
-          onChangeText={setSearch}
-          placeholder={t('shared.inbox.searchPlaceholder')}
-          placeholderTextColor={colors.textTertiary}
-          className="flex-1 text-body text-foreground"
-          style={{ paddingVertical: 2 }}
-          testID="conversation-search-input"
-        />
-      </View>
+      <SearchBar
+        value={search}
+        onChangeText={setSearch}
+        placeholder={t('shared.inbox.searchPlaceholder')}
+        testID="conversation-search-input"
+      />
     ) : null;
 
   const renderItem = useCallback(

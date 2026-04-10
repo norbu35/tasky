@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, SectionList, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
@@ -33,12 +33,33 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
   return (
     <Wrapper
       onPress={row.onPress}
-      className="flex-row items-center py-lg px-lg bg-muted"
+      className={cn(
+        'flex-row items-center p-md border-b border-border/50',
+        !isInteractive && 'bg-transparent'
+      )}
+      style={(state) => {
+        const pressed = isInteractive && (state as any).pressed;
+        return [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }];
+      }}
       testID={testID}
       {...(isInteractive ? { accessibilityRole: 'button' as const } : {})}
     >
-      {row.icon && <View className="mr-md">{row.icon}</View>}
-      <Text className={cn('flex-1 text-body text-primary', row.destructive && 'text-danger')}>
+      {row.icon && (
+        <View
+          className={cn(
+            'w-10 h-10 rounded-full items-center justify-center mr-md',
+            row.destructive ? 'bg-danger/10' : 'bg-primary/10'
+          )}
+        >
+          {row.icon}
+        </View>
+      )}
+      <Text
+        className={cn(
+          'flex-1 text-body font-sans-medium',
+          row.destructive ? 'text-danger' : 'text-foreground'
+        )}
+      >
         {row.label}
       </Text>
       <View className="flex-row items-center">
@@ -48,7 +69,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
           <Text className="text-body text-textSecondary mr-xs">{row.value}</Text>
         ) : null}
         {isInteractive && !row.rightElement && (
-          <ChevronRight size={20} color={colors.textTertiary} className="ml-xs" />
+          <ChevronRight size={20} color="#9CA3AF" />
         )}
       </View>
     </Wrapper>
@@ -56,40 +77,31 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
 }
 
 export function SettingsTemplate({ sections, testID, className }: SettingsTemplateProps) {
-  const sectionListData = sections.map((section, sectionIndex) => ({
-    title: section.title,
-    data: section.rows,
-    key: section.title ?? `section-${sectionIndex}`,
-  }));
-
   return (
-    <SectionList
+    <ScrollView
       className={cn('flex-1 bg-background', className)}
-      sections={sectionListData}
-      initialNumToRender={32}
-      keyExtractor={(item, index) => `${item.label}-${index}`}
-      renderItem={({ item, index, section }) => (
-        <>
-          <SettingsRowItem row={item} testID={testID ? `${testID}-row-${index}` : undefined} />
-          {index < section.data.length - 1 && (
-            <View className="bg-border ml-lg" style={{ height: 1 }} />
-          )}
-        </>
-      )}
-      renderSectionHeader={({ section }) =>
-        section.title ? (
-          <View className="px-lg pt-xl pb-sm">
-            <Text className="text-caption font-bold text-primaryDeep tracking-widest uppercase">
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 64 }}
+      testID={testID}
+    >
+      {sections.map((section, sectionIndex) => (
+        <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
+          {section.title ? (
+            <Text className="text-caption font-bold text-primaryDeep tracking-widest uppercase mb-sm">
               {section.title.toUpperCase()}
             </Text>
+          ) : null}
+          <View className="bg-muted rounded-md overflow-hidden">
+            {section.rows.map((row, rowIndex) => (
+              <SettingsRowItem
+                key={`${row.label}-${rowIndex}`}
+                row={row}
+                testID={testID ? `${testID}-row-${rowIndex}` : undefined}
+              />
+            ))}
           </View>
-        ) : (
-          <View className="h-xl" />
-        )
-      }
-      stickySectionHeadersEnabled={false}
-      showsVerticalScrollIndicator={false}
-      testID={testID}
-    />
+        </View>
+      ))}
+    </ScrollView>
   );
 }

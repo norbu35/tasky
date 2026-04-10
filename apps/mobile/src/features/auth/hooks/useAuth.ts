@@ -88,6 +88,7 @@ export function useDevLogin() {
         queryClient.setQueryData(['myTasks'], emptyPage);
         queryClient.setQueryData(['tasks'], emptyPage);
         queryClient.setQueryData(['bookings'], emptyPage);
+        queryClient.setQueryData(['conversations'], emptyPage);
         // Seed fake categories so the task-creation category screen renders the grid
         const fakeCategories = {
           data: [

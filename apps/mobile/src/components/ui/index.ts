@@ -6,6 +6,7 @@ export * from './ModalSheet';
 export * from './FAB';
 export * from './Card';
 export * from './StatusBadge';
+export * from './SearchBar';
 export * from './CategoryChip';
 export * from './TrustBanner';
 export * from './StatCard';

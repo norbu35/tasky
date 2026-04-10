@@ -248,7 +248,7 @@ export default function DisputeStatusScreen() {
 
   return (
     <ScreenContainer testID="dispute-status-screen">
-      <View className="min-h-[56px] flex-row items-center justify-between px-screen-x pb-micro">
+      <View className="min-h-[56px] flex-row items-center justify-between pb-micro">
         <Pressable
           accessibilityRole="button"
           onPress={() => router.back()}

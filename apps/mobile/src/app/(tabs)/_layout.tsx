@@ -28,10 +28,7 @@ const tabBarStyle = {
   bottom: screenLayout.chrome.tabBarBottom,
   paddingBottom: spacing.sm,
   paddingTop: spacing.sm,
-  paddingHorizontal: spacing.lg,
   backgroundColor: 'transparent',
-  borderTopLeftRadius: radius.md,
-  borderTopRightRadius: radius.md,
   shadowColor: colors.foreground,
   shadowOffset: { width: 0, height: -4 },
   shadowOpacity: 0.04,
@@ -52,8 +49,6 @@ const tabLabelStyle = {
 };
 
 const blurBackgroundStyle = {
-  borderTopLeftRadius: radius.md,
-  borderTopRightRadius: radius.md,
   overflow: 'hidden' as const,
 };
 

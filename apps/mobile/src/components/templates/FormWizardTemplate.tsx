@@ -52,7 +52,7 @@ export function FormWizardTemplate({
   return (
     <ScreenContainer testID={testID} className={className}>
       {/* Step Indicator — bar segments + close button */}
-      <View className="flex-row items-center pt-header-top pb-item px-screen-x gap-md">
+      <View className="flex-row items-center pt-header-top pb-item gap-md">
         <View
           testID="wizard-progress"
           className="flex-1 flex-row items-center gap-wizard-step"
@@ -91,7 +91,6 @@ export function FormWizardTemplate({
         <InsetScrollView
           className="flex-1"
           contentContainerStyle={{
-            paddingHorizontal: screenLayout.insetX,
             gap: screenLayout.body.blockGap,
             paddingBottom: screenLayout.body.sectionGap,
           }}
@@ -113,7 +112,6 @@ export function FormWizardTemplate({
             <View
               style={{
                 paddingTop: screenLayout.actions.barPadding,
-                paddingHorizontal: screenLayout.insetX,
               }}
             >
               {showBackButton ? (

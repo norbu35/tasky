@@ -1,7 +1,8 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { UserPen, Settings, BarChart2, ChevronRight } from 'lucide-react-native';
 import { DetailTemplate } from '../../components/templates/DetailTemplate';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { VerifiedBadge } from '../../components/ui/VerifiedBadge';
@@ -35,14 +36,6 @@ function AuthenticatedProfile() {
       testID="SCR-SHARED-012"
       headerTitle={t('shared.profile.title')}
       insideTabNavigator
-      ctaLabel={t('shared.profile.editProfile')}
-      ctaOnPress={() => router.push('/(shared)/profile/edit')}
-      secondaryCtaLabel={isTasker ? t('shared.profile.viewStats') : t('shared.profile.settings')}
-      secondaryCtaOnPress={() =>
-        isTasker
-          ? router.push('/(tasker)/stats')
-          : router.push('/(shared)/profile/settings')
-      }
       isLoading={isLoading}
       isError={isError}
       onRetry={refetch}
@@ -107,6 +100,56 @@ function AuthenticatedProfile() {
                 {new Date(profile.created_at).toLocaleDateString()}
               </Text>
             </View>
+          </View>
+
+          {/* Action Rows */}
+          <View className="bg-muted rounded-md overflow-hidden">
+            <Pressable
+              testID="action-row-edit-profile"
+              onPress={() => router.push('/(shared)/profile/edit')}
+              className="flex-row items-center p-md border-b border-border/50"
+              style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
+            >
+              <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center mr-md">
+                <UserPen size={20} color="#000" />
+              </View>
+              <Text className="flex-1 text-body font-sans-medium text-foreground">
+                {t('shared.profile.editProfile')}
+              </Text>
+              <ChevronRight size={20} color="#9CA3AF" />
+            </Pressable>
+
+            {isTasker && (
+              <Pressable
+                testID="action-row-view-stats"
+                onPress={() => router.push('/(tasker)/stats')}
+                className="flex-row items-center p-md border-b border-border/50"
+                style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
+              >
+                <View className="w-10 h-10 rounded-full bg-secondary/10 items-center justify-center mr-md">
+                  <BarChart2 size={20} color="#000" />
+                </View>
+                <Text className="flex-1 text-body font-sans-medium text-foreground">
+                  {t('shared.profile.viewStats')}
+                </Text>
+                <ChevronRight size={20} color="#9CA3AF" />
+              </Pressable>
+            )}
+
+            <Pressable
+              testID="action-row-settings"
+              onPress={() => router.push('/(shared)/profile/settings')}
+              className="flex-row items-center p-md"
+              style={({ pressed }) => [pressed && { backgroundColor: 'rgba(0,0,0,0.05)' }]}
+            >
+              <View className="w-10 h-10 rounded-full bg-muted-foreground/10 items-center justify-center mr-md">
+                <Settings size={20} color="#000" />
+              </View>
+              <Text className="flex-1 text-body font-sans-medium text-foreground">
+                {t('shared.profile.settings')}
+              </Text>
+              <ChevronRight size={20} color="#9CA3AF" />
+            </Pressable>
           </View>
 
           {/* Trust Banner for Taskers */}

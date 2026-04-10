@@ -40,7 +40,7 @@ export interface DetailTemplateProps {
 
 function DetailSkeleton() {
   return (
-    <View className="flex-1 px-screen-x pt-header-top gap-block">
+    <View className="flex-1 pt-header-top gap-block">
       {/* Large skeleton block — dynamic size, kept imperative */}
       <View className="bg-muted rounded-md" style={{ height: 200 }} />
       <View className="bg-muted rounded-md" style={{ height: 32, width: '70%' }} />
@@ -121,7 +121,6 @@ export function DetailTemplate({
           contentContainerStyle={[
             {
               paddingTop: screenLayout.header.topInset,
-              paddingHorizontal: screenLayout.insetX,
             },
             hasBottomBar && { paddingBottom: screenLayout.body.sectionGap },
           ]}

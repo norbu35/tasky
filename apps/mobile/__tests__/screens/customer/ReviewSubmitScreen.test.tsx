@@ -64,6 +64,7 @@ beforeEach(() => {
     mutateAsync: mockMutateAsync,
     isPending: false,
   });
+  process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'false';
 });
 
 describe('ReviewSubmitScreen (SCR-CUST-007)', () => {

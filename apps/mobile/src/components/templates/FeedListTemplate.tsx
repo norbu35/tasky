@@ -113,12 +113,18 @@ export function FeedListTemplate<T>({
     );
   }, [isLoadingMore]);
 
+  const combinedHeader = ListHeaderComponent || filterBar ? (
+    <View className="pb-md gap-sm">
+      {ListHeaderComponent}
+      {filterBar}
+    </View>
+  ) : null;
+
   if (isLoading) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
-        {ListHeaderComponent}
-        <View className="px-screen-x">
+        {combinedHeader}
+        <View>
           {Array.from({ length: 5 }).map((_, i) => (
             <React.Fragment key={i}>
               {i > 0 && <ItemSeparator />}
@@ -133,7 +139,7 @@ export function FeedListTemplate<T>({
   if (isError) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {ListHeaderComponent}
+        {combinedHeader}
         <ErrorStateTemplate
           message={errorMessage ?? t('feed.errorMessage')}
           onRetry={onRetry}
@@ -147,8 +153,7 @@ export function FeedListTemplate<T>({
   if (isEmpty || data.length === 0) {
     return (
       <ScreenContainer className={className} testID={testID}>
-        {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
-        {ListHeaderComponent}
+        {combinedHeader}
         <EmptyStateTemplate
           title={emptyTitle ?? t('feed.emptyTitle')}
           description={emptyDescription}
@@ -162,18 +167,16 @@ export function FeedListTemplate<T>({
 
   return (
     <ScreenContainer className={className} testID={testID}>
-      {filterBar ? <View className="shrink-0">{filterBar}</View> : null}
       <FlatList
         style={{ flex: 1 }}
         data={data}
         renderItem={renderListItem}
         keyExtractor={keyExtractor}
         contentContainerStyle={{
-          paddingHorizontal: screenLayout.insetX,
           paddingBottom: screenLayout.chrome.contentBottomClearance,
         }}
         ItemSeparatorComponent={ItemSeparator}
-        ListHeaderComponent={ListHeaderComponent}
+        ListHeaderComponent={combinedHeader}
         ListFooterComponent={renderFooter}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.8}
