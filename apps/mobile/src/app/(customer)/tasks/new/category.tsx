@@ -12,7 +12,7 @@ import { screenLayout } from '../../../../design/screenLayout';
 import { cn } from '../../../../lib/cn';
 import type { Category } from '../../../../lib/mobileApiClient';
 
-const { colors, spacing, radius } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 type CategoryVisual = {
   descriptionKey: string;
@@ -104,13 +104,9 @@ function CategoryCard({
       accessibilityRole="button"
       onPress={onPress}
       testID={`category-item-${category.id}`}
+      className="rounded-md bg-card overflow-hidden"
       style={({ pressed }) => [
-        {
-          width: cardWidth,
-          borderRadius: radius.md,
-          backgroundColor: colors.card,
-          overflow: 'hidden',
-        },
+        { width: cardWidth },
         pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
       ]}
     >
@@ -128,11 +124,11 @@ function CategoryCard({
       </View>
 
       {/* Card label */}
-      <View style={{ padding: 12, gap: 4 }}>
-        <Text className="text-label font-sans-semibold" style={{ color: colors.primaryDeep }}>
+      <View className="p-md gap-xs">
+        <Text className="text-label font-sans-semibold text-primary-deep">
           {category.name}
         </Text>
-        <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
+        <Text className="text-caption text-text-secondary" style={{ lineHeight: 18 }}>
           {t(visual.descriptionKey)}
         </Text>
       </View>
@@ -143,20 +139,18 @@ function CategoryCard({
 function SkeletonCard({ cardWidth }: { cardWidth: number }) {
   return (
     <View
-      style={{
-        width: cardWidth,
-        borderRadius: radius.md,
-        backgroundColor: colors.muted,
-        overflow: 'hidden',
-      }}
+      className="rounded-md bg-muted overflow-hidden"
+      style={{ width: cardWidth }}
     >
       <View style={{ width: '100%', aspectRatio: 4 / 3, backgroundColor: colors.border }} />
-      <View style={{ padding: 12, gap: 8 }}>
+      <View className="p-md gap-sm">
         <View
-          style={{ height: 14, width: '65%', borderRadius: 4, backgroundColor: colors.border }}
+          className="rounded-xs"
+          style={{ height: 14, width: '65%', backgroundColor: colors.border }}
         />
         <View
-          style={{ height: 12, width: '90%', borderRadius: 4, backgroundColor: colors.border }}
+          className="rounded-xs"
+          style={{ height: 12, width: '90%', backgroundColor: colors.border }}
         />
       </View>
     </View>
@@ -218,8 +212,7 @@ export default function CategorySelectionScreen() {
     >
       {/* Search — flat tonal */}
       <View
-        className="flex-row items-center gap-sm px-lg h-[56px]"
-        style={{ borderRadius: radius.sm, backgroundColor: colors.muted }}
+        className="flex-row items-center gap-sm px-lg h-[56px] rounded-sm bg-muted"
       >
         <Search size={18} color={`${colors.textSecondary}99`} />
         <Input
@@ -240,21 +233,21 @@ export default function CategorySelectionScreen() {
 
       {/* Editorial intro */}
       <Text
-        className="text-label"
-        style={{ color: colors.textSecondary, lineHeight: 22, maxWidth: 274 }}
+        className="text-label text-text-secondary"
+        style={{ lineHeight: 22, maxWidth: 274 }}
       >
         {t('CategorySelectionScreen.intro')}
       </Text>
 
       {/* Category grid */}
       {isLoading ? (
-        <View style={{ gap: spacing.md }} testID="category-selection-loading">
+        <View className="gap-md" testID="category-selection-loading">
           <ActivityIndicator color={colors.primary} />
           {[
             [0, 1],
             [2, 3],
           ].map((pair, rowIdx) => (
-            <View key={rowIdx} style={{ flexDirection: 'row', gap: spacing.md }}>
+            <View key={rowIdx} className="flex-row gap-md">
               {pair.map((i) => (
                 <SkeletonCard key={i} cardWidth={cardWidth} />
               ))}
@@ -263,19 +256,18 @@ export default function CategorySelectionScreen() {
         </View>
       ) : isError ? (
         <View
-          className="p-xl gap-sm"
-          style={[{ borderRadius: radius.md, backgroundColor: colors.card }, elevations.soft]}
+          className="p-xl gap-sm rounded-md bg-card"
+          style={elevations.soft}
         >
-          <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
+          <Text className="text-body font-sans-bold text-primary-deep">
             {t('CategorySelectionScreen.loadError')}
           </Text>
-          <Text className="text-caption" style={{ color: colors.textSecondary, lineHeight: 18 }}>
+          <Text className="text-caption text-text-secondary" style={{ lineHeight: 18 }}>
             {t('CategorySelectionScreen.loadHint')}
           </Text>
           <Pressable
             onPress={() => refetch()}
-            className="min-h-[44px] self-start px-md items-center justify-center"
-            style={{ borderRadius: radius.md, backgroundColor: colors.secondary }}
+            className="min-h-[44px] self-start px-md items-center justify-center rounded-md bg-secondary"
             testID="category-selection-retry"
           >
             <Text
@@ -288,17 +280,16 @@ export default function CategorySelectionScreen() {
         </View>
       ) : filteredCategories.length === 0 ? (
         <View
-          className="p-xl gap-sm"
-          style={{ borderRadius: radius.md, backgroundColor: colors.card }}
+          className="p-xl gap-sm rounded-md bg-card"
         >
-          <Text className="text-body font-sans-bold" style={{ color: colors.primaryDeep }}>
+          <Text className="text-body font-sans-bold text-primary-deep">
             {t('CategorySelectionScreen.noCategories')}
           </Text>
         </View>
       ) : (
-        <View style={{ gap: spacing.md }} testID="category-selection-grid">
+        <View className="gap-md" testID="category-selection-grid">
           {categoryRows.map((row, rowIdx) => (
-            <View key={rowIdx} style={{ flexDirection: 'row', gap: spacing.md }}>
+            <View key={rowIdx} className="flex-row gap-md">
               {row.map((category) => (
                 <CategoryCard
                   key={category.id}
@@ -316,18 +307,16 @@ export default function CategorySelectionScreen() {
 
       {/* Featured banner — dark navy */}
       <View
-        className="p-xl overflow-hidden"
-        style={{ borderRadius: radius.md, backgroundColor: colors.primary }}
+        className="p-xl overflow-hidden rounded-md bg-primary"
       >
         <Text
-          className="text-subtitle font-sans-bold mb-xs"
-          style={{ color: colors.primaryForeground }}
+          className="text-subtitle font-sans-bold mb-xs text-primary-foreground"
         >
           {t('CategorySelectionScreen.featuredTitle')}
         </Text>
         <Text
-          className="text-caption"
-          style={{ color: colors.primaryForeground, opacity: 0.8, lineHeight: 18, maxWidth: 180 }}
+          className="text-caption text-primary-foreground"
+          style={{ opacity: 0.8, lineHeight: 18, maxWidth: 180 }}
         >
           {t('CategorySelectionScreen.featuredBody')}
         </Text>
