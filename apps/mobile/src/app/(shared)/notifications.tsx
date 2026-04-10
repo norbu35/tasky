@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { ScreenContainer } from '../../components/shells/ScreenContainer';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 type Row =
   | { type: 'section'; id: string; label: string }
@@ -222,12 +222,12 @@ export default function NotificationCenterScreen() {
           data={rows}
           renderItem={renderRow}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+          contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}
           ListFooterComponent={
             <View
               className="mt-xl bg-primary-deep rounded-lg p-lg justify-end h-[128px]"
             >
-              <Text className="text-[18px] font-extrabold text-primary-foreground">
+              <Text className="text-subtitle font-extrabold text-primary-foreground">
                 {t('shared.notifications.promoBannerTitle')}
               </Text>
               <Text

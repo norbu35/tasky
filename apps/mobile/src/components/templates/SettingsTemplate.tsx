@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react-native';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 
-const { colors } = mobileTheme;
+const { colors, spacing } = mobileTheme;
 
 export interface SettingsRow {
   label: string;
@@ -69,7 +69,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
           <Text className="text-body text-text-secondary mr-xs">{row.value}</Text>
         ) : null}
         {isInteractive && !row.rightElement && (
-          <ChevronRight size={20} color="#9CA3AF" />
+          <ChevronRight size={20} color={colors.navInactive} />
         )}
       </View>
     </Wrapper>
@@ -81,7 +81,11 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
     <ScrollView
       className={cn('flex-1 bg-background', className)}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 64 }}
+      contentContainerStyle={{
+        paddingHorizontal: spacing.lg,
+        paddingTop: spacing.lg,
+        paddingBottom: spacing['2xl'] + spacing.xl
+      }}
       testID={testID}
     >
       {sections.map((section, sectionIndex) => (

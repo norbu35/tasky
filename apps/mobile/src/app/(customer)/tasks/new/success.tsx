@@ -57,8 +57,7 @@ export default function TaskPostedSuccessScreen() {
               style={{ backgroundColor: `${colors.verified}1A` }}
             >
               <Text
-                className="text-caption font-sans-bold text-verified"
-                style={{ letterSpacing: 0.8 }}
+                className="text-caption font-sans-bold text-verified tracking-[0.8px]"
               >
                 {t('TaskPostedSuccessScreen.successBadge')}
               </Text>
@@ -84,8 +83,7 @@ export default function TaskPostedSuccessScreen() {
 
           <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
             <Text
-              className="text-caption font-sans-bold uppercase text-primary-deep mb-xs"
-              style={{ letterSpacing: 0.8 }}
+              className="text-caption font-sans-bold uppercase text-primary-deep mb-xs tracking-[0.8px]"
             >
               {t('TaskPostedSuccessScreen.successNextLabel')}
             </Text>
