@@ -62,26 +62,3 @@ export const screenLayout = {
     stepIndicatorGap: spacing.xs,
   },
 } as const;
-
-export const screenTypography = {
-  greeting: {
-    fontSize: typography.caption,
-    fontWeight: '700' as const,
-    letterSpacing: 0.8,
-    textTransform: 'uppercase' as const,
-  },
-  screenTitle: {
-    fontSize: typography.heroTitle,
-    fontWeight: '900' as const,
-  },
-  sectionTitle: {
-    fontSize: typography.heading,
-    fontWeight: '800' as const,
-    lineHeight: Math.round(typography.heading * 1.25),
-  },
-  cardTitle: {
-    fontSize: typography.body,
-    fontWeight: '700' as const,
-    lineHeight: Math.round(typography.body * 1.35),
-  },
-} as const;
