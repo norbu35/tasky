@@ -31,6 +31,13 @@
             "./assets/fonts/Manrope_700Bold.ttf"
           ]
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Tasky uses your location to show nearby tasks and set task location.",
+          "locationWhenInUsePermission": "Tasky uses your location to show nearby tasks and set task location."
+        }
       ]
     ]
   }
