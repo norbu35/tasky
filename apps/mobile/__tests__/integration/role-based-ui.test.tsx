@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
 import { baseSession, baseProfile, resetStores, setAuthenticated } from './fixtures';
 import { useAppStore } from '../../src/store/appStore';
 import { RoleProvider } from '../../src/providers/RoleProvider';
@@ -39,12 +40,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -92,6 +91,8 @@ const mockUseMyProfile = useMyProfile as jest.MockedFunction<typeof useMyProfile
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('Role-based UI integration', () => {
@@ -105,8 +106,8 @@ describe('Role-based UI integration', () => {
         </RoleProvider>,
       );
 
-      expect(screen.getByTestId('tab-index')).toHaveTextContent('MY TASKS');
-      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('BOOKINGS');
+      expect(screen.getByTestId('tab-index')).toHaveTextContent('My Tasks');
+      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('Bookings');
     });
 
     it('tasker role shows tasker tab labels', () => {
@@ -118,8 +119,8 @@ describe('Role-based UI integration', () => {
         </RoleProvider>,
       );
 
-      expect(screen.getByTestId('tab-index')).toHaveTextContent('FIND WORK');
-      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('MY JOBS');
+      expect(screen.getByTestId('tab-index')).toHaveTextContent('Browse');
+      expect(screen.getByTestId('tab-bookings')).toHaveTextContent('My Jobs');
     });
 
     it('common tabs are consistent across roles', () => {
@@ -130,8 +131,8 @@ describe('Role-based UI integration', () => {
           <TabsLayout />
         </RoleProvider>,
       );
-      expect(screen.getByTestId('tab-inbox')).toHaveTextContent('INBOX');
-      expect(screen.getByTestId('tab-profile')).toHaveTextContent('PROFILE');
+      expect(screen.getByTestId('tab-inbox')).toHaveTextContent('Inbox');
+      expect(screen.getByTestId('tab-profile')).toHaveTextContent('Profile');
       unmount();
 
       // Tasker role
@@ -141,29 +142,27 @@ describe('Role-based UI integration', () => {
           <TabsLayout />
         </RoleProvider>,
       );
-      expect(screen.getByTestId('tab-inbox')).toHaveTextContent('INBOX');
-      expect(screen.getByTestId('tab-profile')).toHaveTextContent('PROFILE');
+      expect(screen.getByTestId('tab-inbox')).toHaveTextContent('Inbox');
+      expect(screen.getByTestId('tab-profile')).toHaveTextContent('Profile');
     });
 
-    it('hidden tasks tab exists in both roles', () => {
-      // Customer role
+    it('shows the global FAB only for customers', () => {
       useAppStore.setState({ currentRole: 'customer' });
       const { unmount } = render(
         <RoleProvider>
           <TabsLayout />
         </RoleProvider>,
       );
-      expect(screen.getByTestId('tab-tasks')).toBeTruthy();
+      expect(screen.getByTestId('global-fab')).toBeTruthy();
       unmount();
 
-      // Tasker role
       useAppStore.setState({ currentRole: 'tasker' });
       render(
         <RoleProvider>
           <TabsLayout />
         </RoleProvider>,
       );
-      expect(screen.getByTestId('tab-tasks')).toBeTruthy();
+      expect(screen.queryByTestId('global-fab')).toBeNull();
     });
   });
 
@@ -183,8 +182,10 @@ describe('Role-based UI integration', () => {
         </RoleProvider>,
       );
 
-      // LoginRequiredCTA renders auth.loginRequired key or its fallback
-      expect(screen.getByText('auth.loginRequired')).toBeTruthy();
+      expect(screen.getByText('Log in to continue')).toBeTruthy();
+      expect(
+        screen.getByText('You need to be logged in to view and edit your profile.'),
+      ).toBeTruthy();
     });
 
     it('shows authenticated content when logged in as customer', () => {

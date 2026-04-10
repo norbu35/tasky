@@ -77,7 +77,9 @@ describe('Navigation phase 1 parity', () => {
   it('routes the customer task success surface through the real app shell', async () => {
     renderApp('/customer/tasks/success');
 
-    expect(await screen.findByRole('heading', { name: 'Task posted successfully' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Task posted successfully' }),
+    ).toBeInTheDocument();
   });
 
   it('routes the customer applicants surface through the real app shell', async () => {
@@ -117,7 +119,9 @@ describe('Navigation phase 1 parity', () => {
 
     cleanup();
 
-    renderApp('/tasker/profile/polish', 'TASKER');
-    expect(await screen.findByRole('heading', { name: 'AI profile polish' })).toBeInTheDocument();
+    renderApp('/tasker/verification', 'TASKER');
+    expect(
+      await screen.findByRole('heading', { name: 'Identity verification' }),
+    ).toBeInTheDocument();
   });
 });

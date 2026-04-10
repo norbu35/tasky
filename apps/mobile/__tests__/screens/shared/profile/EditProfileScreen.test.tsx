@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 const mockPush = jest.fn();
@@ -9,15 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -70,6 +66,8 @@ const MOCK_PROFILE = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseMyProfile.mockReturnValue({
     data: MOCK_PROFILE,
     isLoading: false,
@@ -84,7 +82,7 @@ describe('EditProfileScreen (SCR-SHARED-013)', () => {
     const EditProfileScreen = require('../../../../src/app/(shared)/profile/edit').default;
     render(<EditProfileScreen />);
     expect(screen.getByTestId('SCR-SHARED-013')).toBeTruthy();
-    expect(screen.getByText('Хадгалах')).toBeTruthy();
+    expect(screen.getByText('Өөрчлөлт хадгалах')).toBeTruthy();
   });
 
   it('renders name input pre-filled with current name', () => {

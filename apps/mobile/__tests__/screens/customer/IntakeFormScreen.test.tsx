@@ -48,12 +48,10 @@ jest.mock('expo-router', () => ({
   }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -68,13 +66,16 @@ jest.mock('lucide-react-native', () => {
 });
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('IntakeFormScreen (SCR-CUST-003)', () => {
   it('has a testID on the screen container', () => {
     render(<IntakeFormScreen />);
-    expect(screen.getByTestId('intake-form-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-003')).toBeTruthy();
   });
 
   it('renders the description field label and step header', () => {
@@ -111,14 +112,14 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
 
   it('shows validation error when next pressed with empty description', () => {
     render(<IntakeFormScreen />);
-    fireEvent.press(screen.getByTestId('intake-form-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-003-next'));
     expect(screen.getAllByText('This field is required').length).toBeGreaterThan(0);
   });
 
   it('shows description min-length error when description is too short', () => {
     render(<IntakeFormScreen />);
     fireEvent.changeText(screen.getByTestId('intake-description-input'), 'short');
-    fireEvent.press(screen.getByTestId('intake-form-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-003-next'));
     expect(screen.getByText('Description must be at least 10 characters')).toBeTruthy();
   });
 
@@ -131,7 +132,7 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
     fireEvent.press(screen.getByTestId('intake-cleaning_type-standard'));
     fireEvent.press(screen.getByTestId('intake-supplies_provided-yes'));
 
-    fireEvent.press(screen.getByTestId('intake-form-screen-next'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-003-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/photos',
@@ -146,7 +147,7 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
 
   it('renders as step 2 of 7 wizard', () => {
     render(<IntakeFormScreen />);
-    expect(screen.getByText('Step 2 of 7')).toBeTruthy();
+    expect(screen.getByLabelText('Step 2 of 7')).toBeTruthy();
   });
 
   it('shows a live character counter for the description field', () => {
@@ -158,7 +159,7 @@ describe('IntakeFormScreen (SCR-CUST-003)', () => {
 
   it('back button returns to category selection', () => {
     render(<IntakeFormScreen />);
-    fireEvent.press(screen.getByTestId('intake-form-screen-back'));
+    fireEvent.press(screen.getByTestId('SCR-CUST-003-back'));
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 

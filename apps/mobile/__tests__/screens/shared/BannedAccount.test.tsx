@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
@@ -7,15 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -40,6 +36,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('BannedAccountScreen (SCR-SHARED-021)', () => {
@@ -47,7 +45,7 @@ describe('BannedAccountScreen (SCR-SHARED-021)', () => {
     const BannedScreen = require('../../../src/app/(shared)/account/banned').default;
     render(<BannedScreen />);
 
-    expect(screen.getByText('Бүртгэл хаагдсан')).toBeTruthy();
+    expect(screen.getByText('Бүртгэл хориглогдсон')).toBeTruthy();
     expect(
       screen.getByText(
         'Таны бүртгэл үйлчилгээний нөхцөл зөрчсөний улмаас бүрмөсөн хаагдсан байна. Энэ шийдвэрийг буцаах боломжгүй.',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 const mockBack = jest.fn();
@@ -9,15 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -83,6 +79,8 @@ const MOCK_TASKER_PROFILE = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseRole.mockReturnValue({
     currentRole: 'customer',
     isCustomer: true,
@@ -219,7 +217,7 @@ describe('MyProfileScreen (SCR-SHARED-012)', () => {
     const MyProfileScreen = require('../../../../src/app/(tabs)/profile').default;
     render(<MyProfileScreen />);
 
-    fireEvent.press(screen.getByText('Try again'));
+    fireEvent.press(screen.getByText('Дахин оролдох'));
     expect(refetch).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { Linking } from 'react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 import BookingConfirmedScreen from '../../../../src/app/(customer)/bookings/confirmed';
 
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'booking-1' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -32,6 +31,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   jest.spyOn(Linking, 'canOpenURL').mockResolvedValue(false);
   jest.spyOn(Linking, 'openURL').mockResolvedValue('ok');
 });

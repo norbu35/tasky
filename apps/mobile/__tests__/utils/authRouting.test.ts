@@ -23,7 +23,7 @@ describe('resolvePostAuthHref', () => {
     expect(resolvePostAuthHref(baseSession, false)).toBe('/onboarding');
   });
 
-  it('routes facebook-authenticated users to otp migration after onboarding', () => {
+  it('routes facebook-authenticated users to tabs after onboarding', () => {
     expect(
       resolvePostAuthHref(
         {
@@ -32,11 +32,11 @@ describe('resolvePostAuthHref', () => {
         },
         true,
       ),
-    ).toBe('/(auth)/otp-migration');
+    ).toBe('/(tabs)');
   });
 
-  it('routes returning customers to my tasks', () => {
-    expect(resolvePostAuthHref(baseSession, true)).toBe('/(customer)/tasks');
+  it('routes returning customers to tabs', () => {
+    expect(resolvePostAuthHref(baseSession, true)).toBe('/(tabs)');
   });
 
   it('routes returning taskers to tabs', () => {

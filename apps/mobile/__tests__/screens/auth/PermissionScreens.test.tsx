@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useAppStore } from '../../../src/store/appStore';
 
 import PermissionCameraScreen from '../../../src/app/(auth)/permission-camera';
@@ -12,12 +13,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -59,6 +58,8 @@ jest.mock('../../../src/utils/permissions', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockRequestCameraPermission.mockResolvedValue({ status: 'granted' });
   mockRequestLocationPermission.mockResolvedValue({ status: 'granted' });
   mockRequestNotificationPermission.mockResolvedValue({ status: 'granted' });
@@ -192,14 +193,14 @@ describe('Permission Notifications Screen (SCR-SHARED-009)', () => {
   it('Skip routes customers into the my tasks landing screen', () => {
     render(<PermissionNotificationsScreen />);
     fireEvent.press(screen.getByTestId('permission-skip-button'));
-    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 
   it('final completion marks onboarding done before navigating the customer flow', () => {
     render(<PermissionNotificationsScreen />);
     fireEvent.press(screen.getByTestId('permission-skip-button'));
     expect(useAppStore.getState().hasSeenOnboarding).toBe(true);
-    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 
   it('routes taskers into the task feed after the final primer', () => {

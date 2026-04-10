@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dimensions, FlatList, StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useAppStore } from '../../../src/store/appStore';
 
 import OnboardingScreen from '../../../src/app/onboarding';
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en', changeLanguage: jest.fn() },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -55,6 +54,8 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
 });
 
@@ -117,7 +118,7 @@ describe('OnboardingScreen (SCR-SHARED-005)', () => {
 
   it('shows Next button on first slide', () => {
     render(<OnboardingScreen />);
-    expect(screen.getByTestId('onboarding-next')).toHaveTextContent('Дараагийх');
+    expect(screen.getByTestId('onboarding-next')).toHaveTextContent('Дараагийн');
   });
 
   it('has a testID on the screen container', () => {

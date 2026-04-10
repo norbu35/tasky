@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import LocationScreen from '../../../src/app/(customer)/tasks/new/location';
 
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ categoryId: 'cat-123', description: 'Fix my sink', photos: '[]' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -52,6 +51,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('LocationScreen (SCR-CUST-005)', () => {
@@ -95,7 +96,6 @@ describe('LocationScreen (SCR-CUST-005)', () => {
 
   it('renders as step 4 of 7 wizard', () => {
     render(<LocationScreen />);
-    expect(screen.getByText('Step 4 of 7')).toBeTruthy();
     expect(screen.getByLabelText('Step 4 of 7')).toBeTruthy();
   });
 

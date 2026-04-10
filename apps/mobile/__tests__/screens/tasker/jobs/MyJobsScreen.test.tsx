@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useBookings } from '../../../../src/features/bookings/hooks/useBookings';
 import type { Booking } from '../../../../src/lib/mobileApiClient';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 
@@ -10,14 +11,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -118,6 +115,8 @@ const cancelledBooking: Booking = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('MyJobsScreen (SCR-TASK-012)', () => {
@@ -148,7 +147,7 @@ describe('MyJobsScreen (SCR-TASK-012)', () => {
     const MyJobsScreen = require('../../../../src/app/(tasker)/jobs/index').default;
     render(<MyJobsScreen />);
 
-    expect(screen.getByText('Одоогоор ажил байхгүй байна')).toBeTruthy();
+    expect(screen.getByText('Ажил байхгүй байна')).toBeTruthy();
   });
 
   it('renders active jobs by default with customer name, task title, schedule, and status', () => {

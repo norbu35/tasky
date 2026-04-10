@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 const mockBack = jest.fn();
@@ -9,14 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -32,6 +29,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
@@ -41,7 +40,7 @@ describe('ApplicationSentSuccess (SCR-TASK-011)', () => {
     } = require('../../../src/features/tasks/components/ApplicationSentSuccess');
     render(<ApplicationSentSuccess onBrowseMore={jest.fn()} onViewTask={jest.fn()} />);
 
-    expect(screen.getByText('Анкет амжилттай илгээгдлээ!')).toBeTruthy();
+    expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
   });
 
   it('renders next steps text', () => {

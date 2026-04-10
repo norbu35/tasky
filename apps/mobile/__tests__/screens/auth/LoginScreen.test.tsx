@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import LoginScreen from '../../../src/app/(auth)/index';
 
@@ -15,12 +16,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -60,12 +59,14 @@ jest.mock('../../../src/features/auth/hooks/useAuth', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('LoginScreen (SCR-SHARED-002)', () => {
   it('renders the Figma login title', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
+    expect(screen.getByText('Tasky-д тавтай морилно уу')).toBeTruthy();
   });
 
   it('renders the Figma login subtitle', () => {
@@ -114,7 +115,7 @@ describe('LoginScreen (SCR-SHARED-002)', () => {
     render(<LoginScreen />);
     expect(screen.getByText('Үйлчилгээний нөхцөл')).toBeTruthy();
     expect(screen.getByText('Нууцлалын бодлого')).toBeTruthy();
-    expect(screen.getByText('© 2024 Tasky. Бүх эрх хуулиар хамгаалагдсан.')).toBeTruthy();
+    expect(screen.getByText('© 2026 Tasky. Бүх эрх хуулиар хамгаалагдсан.')).toBeTruthy();
   });
 
   it('renders the Figma section divider', () => {

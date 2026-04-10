@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import TaskPostedSuccessScreen from '../../../src/app/(customer)/tasks/new/success';
 
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -32,6 +31,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
@@ -63,7 +64,7 @@ describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
   it('renders primary and secondary CTAs', () => {
     render(<TaskPostedSuccessScreen />);
     expect(screen.getByText('View Task')).toBeTruthy();
-    expect(screen.getByText('Дуусгах')).toBeTruthy();
+    expect(screen.getByText('Done')).toBeTruthy();
   });
 
   it('CTA navigates to task detail when task id is present', () => {
@@ -75,6 +76,6 @@ describe('TaskPostedSuccessScreen (SCR-CUST-008)', () => {
   it('Done navigates back to task list', () => {
     render(<TaskPostedSuccessScreen />);
     fireEvent.press(screen.getByTestId('task-posted-success-screen-done'));
-    expect(mockReplace).toHaveBeenCalledWith('/(customer)/tasks');
+    expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
   });
 });

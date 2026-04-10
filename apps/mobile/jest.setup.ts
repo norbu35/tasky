@@ -13,4 +13,17 @@ jest.mock('react-native-safe-area-context', () => {
   };
 });
 
+jest.mock(
+  '@react-native-async-storage/async-storage',
+  () => require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+);
+
 jest.mock('expo/virtual/env', () => ({}), { virtual: true });
+
+beforeEach(async () => {
+  const asyncStorageModule = require('@react-native-async-storage/async-storage');
+  const AsyncStorage = asyncStorageModule.default ?? asyncStorageModule;
+  if (typeof AsyncStorage?.clear === 'function') {
+    await AsyncStorage.clear();
+  }
+});

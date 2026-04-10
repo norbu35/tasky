@@ -1,20 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, replace: jest.fn(), back: jest.fn() }),
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -51,6 +47,8 @@ const mockOnDismiss = jest.fn();
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('ReviewReminder (SCR-SHARED-018)', () => {
@@ -58,7 +56,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    expect(screen.getByText('Үнэлгээ өгөхөө мартсан уу?')).toBeTruthy();
+    expect(screen.getByText('Туршлага ямар байсан бэ?')).toBeTruthy();
     expect(screen.getByText('Таны үнэлгээ нийгэмлэгт итгэлцэл бий болгоход тусалдаг')).toBeTruthy();
   });
 
@@ -66,7 +64,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    const cta = screen.getByText('Үнэлгээ өгөх');
+    const cta = screen.getByText('Үнэлгээ үлдээх');
     expect(cta).toBeTruthy();
   });
 
@@ -74,7 +72,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    const laterBtn = screen.getByText('Дараа');
+    const laterBtn = screen.getByText('Дараа нь');
     expect(laterBtn).toBeTruthy();
 
     fireEvent.press(laterBtn);
@@ -85,7 +83,7 @@ describe('ReviewReminder (SCR-SHARED-018)', () => {
     const { ReviewReminder } = require('../../../src/features/review/components/ReviewReminder');
     render(<ReviewReminder isOpen={true} onDismiss={mockOnDismiss} bookingId="booking-123" />);
 
-    fireEvent.press(screen.getByText('Үнэлгээ өгөх'));
+    fireEvent.press(screen.getByText('Үнэлгээ үлдээх'));
 
     expect(mockPush).toHaveBeenCalledWith('/(shared)/review/booking-123');
     expect(mockOnDismiss).toHaveBeenCalled();

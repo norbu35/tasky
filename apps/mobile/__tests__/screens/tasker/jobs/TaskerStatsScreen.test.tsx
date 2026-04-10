@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 
@@ -8,14 +9,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -38,6 +35,8 @@ const mockUseMyStats = useMyStats as jest.MockedFunction<any>;
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('TaskerStatsScreen (SCR-TASK-016)', () => {
@@ -145,8 +144,9 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     const StatsScreen = require('../../../../src/app/(tasker)/stats').default;
     render(<StatsScreen />);
 
-    expect(screen.getByText('Дууссан ажил')).toBeTruthy();
-    expect(screen.getByText('Ерөнхий үнэлгээ')).toBeTruthy();
+    expect(screen.getByText('Ерөнхий үзүүлэлтүүд')).toBeTruthy();
+    expect(screen.getByText('Гүйцэтгэсэн ажлууд')).toBeTruthy();
+    expect(screen.getByText('Дундаж үнэлгээ')).toBeTruthy();
     expect(screen.getByText('Гүйцэтгэлийн хувь')).toBeTruthy();
     expect(screen.getByText('Анкетын амжилт')).toBeTruthy();
     expect(screen.getByText('Цуцлалт (30 хоногт)')).toBeTruthy();
@@ -155,6 +155,7 @@ describe('TaskerStatsScreen (SCR-TASK-016)', () => {
     expect(screen.getByText(/Хүндэтгэлтэй хандлага/)).toBeTruthy();
     expect(screen.getByText(/Цаг баримтлал/)).toBeTruthy();
     expect(screen.getByText('Найдвартай байдал')).toBeTruthy();
+    expect(screen.getByText('Найдвартай байдлын оноо')).toBeTruthy();
     expect(screen.getByText('Pro Badge олдсон!')).toBeTruthy();
     expect(screen.getByText('Идэвхжил')).toBeTruthy();
   });

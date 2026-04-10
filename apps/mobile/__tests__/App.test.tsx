@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { StyleSheet } from 'react-native';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { designTokens } from '../../../packages/design-tokens/tokens';
+import { resetTestI18n } from './test-utils/mockI18n';
 import AuthScreen from '../src/app/(auth)/index';
 import IndexScreen from '../src/app/index';
 import BookingsScreen from '../src/app/(tabs)/bookings';
@@ -56,12 +57,10 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('./test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -301,6 +300,7 @@ function installDefaultHookMocks(): void {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
   resetStores();
   installDefaultHookMocks();
 });
@@ -314,11 +314,10 @@ describe('mobile app structure', () => {
 
     useAuthStore.setState({ session: baseSession });
     render(<IndexScreen />);
-    // baseSession has role=CUSTOMER — redirects to customer tasks
-    expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(customer)/tasks');
+    expect(screen.getByTestId('redirect-target')).toHaveTextContent('/(tabs)');
 
     render(<AuthScreen />);
-    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
+    expect(screen.getByText('Welcome to Tasky')).toBeTruthy();
     expect(parseError(new ApiError(401, 'OTP invalid'))).toBe('OTP invalid');
     expect(parseError(new Error('generic'))).toBe('generic');
   });
@@ -512,10 +511,15 @@ describe('mobile app structure', () => {
       isLoading: false,
     } as unknown as ReturnType<typeof useBookings>);
 
-    render(<BookingsScreen />);
+    render(
+      <RoleProvider>
+        <BookingsScreen />
+      </RoleProvider>,
+    );
 
     expect(screen.getByText('ASSIGNED')).toBeTruthy();
-    expect(screen.getByText('bookingList.taskId: task-123...')).toBeTruthy();
+    expect(screen.getByText('Task')).toBeTruthy();
+    expect(screen.getByText('₮120,000')).toBeTruthy();
   });
 
   it('TID-TASK-083-MOBILE-BOOKING-SAFETY-FLOW validates profile hook wiring and sign-out delegate', () => {

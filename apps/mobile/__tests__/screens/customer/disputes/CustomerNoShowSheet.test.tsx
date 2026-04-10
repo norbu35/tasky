@@ -10,12 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'booking-123' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -60,7 +58,9 @@ jest.mock('../../../../src/features/bookings/hooks/useFlagNoShow', () => ({
 }));
 
 beforeEach(() => {
+  const { resetTestI18n } = require('../../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
 });
 
 describe('CustomerNoShowSheet (SCR-CUST-021)', () => {

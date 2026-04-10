@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useSubmitReview } from '../../../src/features/review/hooks/useSubmitReview';
 
 jest.mock('expo-router', () => ({
@@ -7,15 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'booking-123', role: 'customer', name: 'Bold B.' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -52,6 +48,8 @@ const mockUseSubmitReview = useSubmitReview as jest.MockedFunction<typeof useSub
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseSubmitReview.mockReturnValue({
     mutate: mockMutate,
     isPending: false,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useAuthStore } from '../../../src/store/authStore';
 import { useAppStore } from '../../../src/store/appStore';
 
@@ -13,12 +14,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -68,6 +67,8 @@ function expectRedirectHref(expectedHref: string) {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   useAuthStore.setState({ session: null, profile: null, deviceToken: null });
   useAppStore.setState({ hasSeenOnboarding: true, currentRole: 'customer' });
 });
@@ -82,7 +83,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('renders the Figma splash tagline', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Найдвартай гүйцэтгэгч, хялбар захиалга')).toBeTruthy();
+    expect(screen.getByText('Итгэмжлэгдсэн ажилчид, хялбар захиалга')).toBeTruthy();
   });
 
   it('shows a loading indicator', () => {
@@ -99,7 +100,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
       },
     });
     render(<SplashScreen />);
-    expectRedirectHref('/(customer)/tasks');
+    expectRedirectHref('/(tabs)');
   });
 
   it('redirects authenticated tasker users to task feed', () => {
@@ -113,7 +114,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
     expectRedirectHref('/(tabs)');
   });
 
-  it('redirects Facebook-authenticated users to OTP migration', () => {
+  it('redirects Facebook-authenticated users to the launch tab shell', () => {
     useAuthStore.setState({
       session: {
         ...baseSession,
@@ -121,7 +122,7 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
       },
     });
     render(<SplashScreen />);
-    expectRedirectHref('/(auth)/otp-migration');
+    expectRedirectHref('/(tabs)');
   });
 
   it('redirects unauthenticated users to login', () => {
@@ -132,6 +133,6 @@ describe('SplashScreen (SCR-SHARED-001)', () => {
   it('displays tagline text', () => {
     useAuthStore.setState({ session: null });
     render(<SplashScreen />);
-    expect(screen.getByText('Найдвартай гүйцэтгэгч, хялбар захиалга')).toBeTruthy();
+    expect(screen.getByText('Итгэмжлэгдсэн ажилчид, хялбар захиалга')).toBeTruthy();
   });
 });

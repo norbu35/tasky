@@ -1,14 +1,11 @@
 import React from 'react';
 import { act, render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -51,6 +48,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
@@ -99,7 +98,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
       />,
     );
 
-    fireEvent.press(screen.getByText('Ирээгүй гэж тэмдэглэх'));
+    fireEvent.press(screen.getByTestId('no-show-flag'));
     expect(mockFlagNoShow).toHaveBeenCalledWith({ bookingId: 'booking-123' });
   });
 
@@ -118,7 +117,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
     );
 
     expect(screen.getByText('Хүлээх')).toBeTruthy();
-    fireEvent.press(screen.getByText('Хүлээх'));
+    fireEvent.press(screen.getByTestId('no-show-wait'));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -137,7 +136,7 @@ describe('TaskerNoShowSheet (SCR-TASK-014)', () => {
     );
 
     await act(async () => {
-      fireEvent.press(screen.getByText('Ирээгүй гэж тэмдэглэх'));
+      fireEvent.press(screen.getByTestId('no-show-flag'));
       await Promise.resolve();
     });
     expect(screen.getByText('Ирээгүй тэмдэглэгдлээ')).toBeTruthy();

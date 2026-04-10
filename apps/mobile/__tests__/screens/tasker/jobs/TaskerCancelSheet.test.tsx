@@ -1,14 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -54,6 +51,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockIsPending = false;
 });
 
@@ -71,7 +70,7 @@ describe('TaskerCancelSheet (SCR-TASK-015)', () => {
       />,
     );
 
-    expect(screen.getAllByText('Захиалга цуцлах уу?').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('Захиалга цуцлах уу?')).toBeTruthy();
     expect(
       screen.getByText(
         'Захиалга цуцлагдвал даалгавар дахин нээлттэй болно. Цуцлалт таны найдвартай байдлын үзүүлэлтэд нөлөөлнө.',

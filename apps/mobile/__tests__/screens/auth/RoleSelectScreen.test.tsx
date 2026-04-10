@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useAppStore } from '../../../src/store/appStore';
 
 import RoleSelectScreen from '../../../src/app/(auth)/role-select';
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ replace: mockReplace, push: jest.fn(), back: jest.fn() }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -48,6 +47,8 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
 });
 
@@ -60,18 +61,16 @@ describe('RoleSelectScreen (SCR-SHARED-006)', () => {
 
   it('renders the Figma heading and subtitle', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText('Та хэн бэ?')).toBeTruthy();
-    expect(
-      screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.'),
-    ).toBeTruthy();
+    expect(screen.getByText('Баталгаажуулалт хийж, ажил аваарай!')).toBeTruthy();
+    expect(screen.getByText('Өөрийн дүрийг сонгоно уу. Та дараа нь өөрчлөх боломжтой.')).toBeTruthy();
   });
 
   it('renders customer and tasker cards from Figma', () => {
     render(<RoleSelectScreen />);
-    expect(screen.getByText('Захиалагч')).toBeTruthy();
-    expect(screen.getByText('Даалгавар оруулж, гүйцэтгэгч олох')).toBeTruthy();
-    expect(screen.getByText('Гүйцэтгэгч')).toBeTruthy();
-    expect(screen.getByText('Даалгавар хүлээж аваад орлого олох')).toBeTruthy();
+    expect(screen.getByText('Надад тусламж хэрэгтэй')).toBeTruthy();
+    expect(screen.getByText('Баталгаажсан гүйцэтгэгчдийг ажлын тулд олох')).toBeTruthy();
+    expect(screen.getByText('Би ажиллахыг хүсч байна')).toBeTruthy();
+    expect(screen.getByText('Ойролцоох ажлуудтай нийлүүлэх')).toBeTruthy();
   });
 
   it('selecting customer opens a confirmation sheet before navigation', () => {

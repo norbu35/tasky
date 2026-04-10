@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
 import {
   baseTask,
   repairTask,
@@ -49,12 +50,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -110,6 +109,8 @@ const mockUseMyProfile = useMyProfile as jest.MockedFunction<typeof useMyProfile
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
+  resetTestI18n();
+  setTestLanguage('en');
   useAppStore.setState({ currentRole: 'tasker' });
   mockUseMyTasks.mockReturnValue({
     data: { data: [] },

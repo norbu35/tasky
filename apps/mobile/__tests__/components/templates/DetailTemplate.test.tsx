@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { DetailTemplate } from '../../../src/components/templates/DetailTemplate';
 
 jest.mock('react-native-reanimated', () => {
@@ -18,11 +19,10 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('lucide-react-native', () => {
   const RN = require('react-native');
@@ -33,6 +33,11 @@ jest.mock('lucide-react-native', () => {
 });
 
 describe('DetailTemplate', () => {
+  beforeEach(() => {
+    resetTestI18n();
+    setTestLanguage('mn');
+  });
+
   it('renders children content', () => {
     render(
       <DetailTemplate testID="detail">
@@ -89,7 +94,18 @@ describe('DetailTemplate', () => {
 
     expect(screen.queryByText('Should not appear')).toBeFalsy();
     expect(screen.getByText('Load failed')).toBeTruthy();
-    expect(screen.getByText('Try again')).toBeTruthy();
+    expect(screen.getByText('Дахин оролдох')).toBeTruthy();
+  });
+
+  it('shows translated error fallback when errorMessage is omitted', () => {
+    render(
+      <DetailTemplate isError onRetry={jest.fn()} testID="detail">
+        <Text>Should not appear</Text>
+      </DetailTemplate>,
+    );
+
+    expect(screen.getByText('Дэлгэрэнгүйг ачаалж чадсангүй')).toBeTruthy();
+    expect(screen.getByText('Дахин оролдох')).toBeTruthy();
   });
 
   it('does not show CTA bar when loading', () => {

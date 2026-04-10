@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
@@ -7,22 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (
-      key: string,
-      fallback?: string | Record<string, unknown>,
-      _opts?: Record<string, unknown>,
-    ) => {
-      if (typeof fallback === 'object' && fallback !== null && 'date' in fallback) {
-        return `Suspension ends: ${fallback.date}`;
-      }
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -47,6 +36,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
@@ -70,7 +61,7 @@ describe('SuspendedAccountScreen (SCR-SHARED-020)', () => {
     const SuspendedScreen = require('../../../src/app/(shared)/account/suspended').default;
     render(<SuspendedScreen />);
 
-    expect(screen.getByText('Suspension ends: 2026.04.15')).toBeTruthy();
+    expect(screen.getByText('Хаалт дуусах: 2026.04.15')).toBeTruthy();
   });
 
   it('renders appeal button', () => {

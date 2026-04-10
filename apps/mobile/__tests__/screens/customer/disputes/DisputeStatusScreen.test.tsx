@@ -10,12 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ disputeId: 'dispute-123' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -44,7 +42,10 @@ jest.mock('../../../../src/features/disputes/hooks/useDisputeDetail', () => ({
 }));
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockDisputeData = null;
   mockIsLoading = false;
   mockIsError = false;
@@ -66,7 +67,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('renders status badge for open dispute', () => {
     mockDisputeData = { id: 'dispute-123', status: 'OPEN', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Нээлттэй')).toBeTruthy();
+    expect(screen.getAllByText('Нээлттэй')[0]).toBeTruthy();
   });
 
   it('shows open dispute description', () => {
@@ -80,9 +81,9 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('renders escalated status', () => {
     mockDisputeData = { id: 'dispute-123', status: 'ESCALATED', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Мөрдөн шалгаж байна')).toBeTruthy();
+    expect(screen.getAllByText('Мөрдөн шалгаж байна')[0]).toBeTruthy();
     expect(
-      screen.getByText('Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.'),
+      screen.getAllByText('Маргааныг нэмэлт шалгалтад шилжүүлсэн. Удахгүй хариу өгнө.')[0],
     ).toBeTruthy();
   });
 
@@ -93,7 +94,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Хэрэглэгчийн талд шийдэгдсэн')).toBeTruthy();
+    expect(screen.getAllByText('Хэрэглэгчийн талд шийдэгдсэн')[0]).toBeTruthy();
     expect(
       screen.getByText('Маргаан таны талд шийдэгдлээ. Нөгөө талд зөрчлийн тэмдэглэл хийгдсэн.'),
     ).toBeTruthy();
@@ -102,7 +103,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
   it('renders resolved for tasker status', () => {
     mockDisputeData = { id: 'dispute-123', status: 'RESOLVED_TASKER', reason: 'Poor quality work' };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Гүйцэтгэгчийн талд шийдэгдсэн')).toBeTruthy();
+    expect(screen.getAllByText('Гүйцэтгэгчийн талд шийдэгдсэн')[0]).toBeTruthy();
     expect(screen.getAllByText('Маргаан гүйцэтгэгчийн талд шийдэгдлээ.')[0]).toBeTruthy();
   });
 
@@ -113,7 +114,7 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Нотлох баримт хангалтгүй — хаагдсан')).toBeTruthy();
+    expect(screen.getAllByText('Нотлох баримт хангалтгүй — хаагдсан')[0]).toBeTruthy();
     expect(
       screen.getAllByText('Нотлох баримт 24 цагийн дотор ирүүлээгүй тул маргаан хаагдлаа.')[0],
     ).toBeTruthy();
@@ -146,8 +147,8 @@ describe('DisputeStatusScreen (SCR-CUST-025)', () => {
       reason: 'Poor quality work',
     };
     render(<DisputeStatusScreen />);
-    expect(screen.getByText('Шийдвэр')).toBeTruthy();
-    expect(screen.getByText('Маргаан таны талд шийдэгдлээ.')).toBeTruthy();
+    expect(screen.getAllByText('Шийдвэр')[0]).toBeTruthy();
+    expect(screen.getAllByText('Маргаан таны талд шийдэгдлээ.')[0]).toBeTruthy();
   });
 
   it('shows mediation note', () => {

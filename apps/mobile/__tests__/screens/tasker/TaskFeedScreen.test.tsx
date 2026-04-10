@@ -2,25 +2,18 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useTasks } from '../../../src/features/tasks/hooks/useTasks';
 import type { PublicTask } from '../../../src/lib/mobileApiClient';
+import { RoleProvider } from '../../../src/providers/RoleProvider';
+import { useAppStore } from '../../../src/store/appStore';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (
-      key: string,
-      fallback?: string | Record<string, unknown>,
-      _opts?: Record<string, unknown>,
-    ) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -88,8 +81,24 @@ const secondTask: PublicTask = {
 };
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
+  useAppStore.setState({
+    hasSeenOnboarding: true,
+    currentRole: 'tasker',
+  });
 });
+
+function renderTaskFeed() {
+  const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
+  return render(
+    <RoleProvider>
+      <TaskFeedScreen />
+    </RoleProvider>,
+  );
+}
 
 describe('TaskFeedScreen (SCR-TASK-001)', () => {
   it('renders loading skeleton when isLoading is true', () => {
@@ -101,11 +110,10 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     expect(screen.getByTestId('task-feed')).toBeTruthy();
-    expect(screen.getByText('Даалгаврууд')).toBeTruthy();
+    expect(screen.getByText('Ажил хайх')).toBeTruthy();
   });
 
   it('renders the browse summary header', () => {
@@ -120,8 +128,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     expect(screen.getByText('Шинэ даалгаврууд ойрхон')).toBeTruthy();
   });
@@ -135,10 +142,9 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
-    expect(screen.getByText('Одоогоор даалгавар байхгүй байна')).toBeTruthy();
+    expect(screen.getByText('Ойролцоо ажил байхгүй байна')).toBeTruthy();
   });
 
   it('renders task cards with price and category', () => {
@@ -153,8 +159,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     expect(screen.getByText('Deep clean apartment')).toBeTruthy();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
@@ -174,8 +179,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     const filterBar = screen.getByTestId('task-feed-filter-bar');
     expect(filterBar).toBeTruthy();
@@ -193,10 +197,9 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
-    fireEvent.changeText(screen.getByPlaceholderText('Даалгавар хайх...'), 'sink');
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'sink');
 
     expect(screen.queryByText('Deep clean apartment')).toBeNull();
     expect(screen.getByText('Fix kitchen sink')).toBeTruthy();
@@ -214,8 +217,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     expect(screen.getByText('Баталгаажсан даалгавар гүйцэтгэгч')).toBeTruthy();
   });
@@ -233,8 +235,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: refetchFn,
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     // The FeedListTemplate provides onRefresh which calls refetch
     // We verify the refetch function is wired up
@@ -251,8 +252,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: refetchFn,
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     expect(screen.getByTestId('task-feed-error')).toBeTruthy();
   });
@@ -276,8 +276,7 @@ describe('TaskFeedScreen (SCR-TASK-001)', () => {
       refetch: jest.fn(),
     } as unknown as ReturnType<typeof useTasks>);
 
-    const TaskFeedScreen = require('../../../src/app/(tabs)/index').default;
-    render(<TaskFeedScreen />);
+    renderTaskFeed();
 
     fireEvent.press(screen.getByTestId('task-card-task-1'));
     expect(mockPush).toHaveBeenCalledWith('/task/task-1');

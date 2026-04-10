@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import MyTasksListScreen from '../../../src/app/(customer)/tasks/index';
 
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -37,6 +36,8 @@ jest.mock('../../../src/features/tasks/hooks/useMyTasks', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('MyTasksListScreen (SCR-CUST-001)', () => {
@@ -48,7 +49,7 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByTestId('my-tasks-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-001')).toBeTruthy();
   });
 
   it('renders loading skeleton when loading', () => {
@@ -70,7 +71,9 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
       refetch: jest.fn(),
     });
     render(<MyTasksListScreen />);
-    expect(screen.getByText('Миний даалгаврууд')).toBeTruthy();
+    expect(screen.getByText('My Tasks')).toBeTruthy();
+    expect(screen.getByText('Your workspace')).toBeTruthy();
+    expect(screen.getByText('Track active, assigned, and completed work')).toBeTruthy();
     expect(screen.getByText('No tasks yet')).toBeTruthy();
     expect(screen.getByText('Post your first task and find a trusted tasker')).toBeTruthy();
   });
@@ -107,6 +110,18 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     });
     render(<MyTasksListScreen />);
     expect(screen.getByTestId('my-tasks-feed-empty-cta')).toBeTruthy();
+  });
+
+  it('empty state CTA navigates to category selection', () => {
+    mockUseMyTasks.mockReturnValue({
+      data: { data: [] },
+      isLoading: false,
+      isError: false,
+      refetch: jest.fn(),
+    });
+    render(<MyTasksListScreen />);
+    fireEvent.press(screen.getByTestId('my-tasks-feed-empty-cta'));
+    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new');
   });
 
   it('renders task cards with title and status when populated', () => {
@@ -186,29 +201,6 @@ describe('MyTasksListScreen (SCR-CUST-001)', () => {
     render(<MyTasksListScreen />);
     expect(screen.getByText('1')).toBeTruthy();
     expect(screen.getAllByText('Open').length).toBeGreaterThan(0);
-  });
-
-  it('renders FAB button', () => {
-    mockUseMyTasks.mockReturnValue({
-      data: { data: [] },
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    render(<MyTasksListScreen />);
-    expect(screen.getByTestId('my-tasks-fab')).toBeTruthy();
-  });
-
-  it('FAB navigates to category selection', () => {
-    mockUseMyTasks.mockReturnValue({
-      data: { data: [] },
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    });
-    render(<MyTasksListScreen />);
-    fireEvent.press(screen.getByTestId('my-tasks-fab'));
-    expect(mockPush).toHaveBeenCalledWith('/(customer)/tasks/new');
   });
 
   it('renders error state when API fails', () => {

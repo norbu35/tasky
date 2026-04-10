@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 
@@ -8,15 +9,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -41,33 +37,36 @@ jest.mock('lucide-react-native', () => {
 });
 
 describe('PrivacyPolicyScreen (SCR-TASK-018)', () => {
+  beforeEach(() => {
+    resetTestI18n();
+    setTestLanguage('mn');
+  });
+
   it('renders scrollable content sections', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText(/Data Collection|Мэдээлэл цуглуулах/)).toBeTruthy();
-    expect(screen.getByText(/Data Usage|Мэдээллийн ашиглалт/)).toBeTruthy();
-    expect(screen.getAllByText(/Data Storage|Мэдээлэл хадгалах/).length).toBeGreaterThan(0);
+    expect(screen.getByText('Мэдээлэл цуглуулах')).toBeTruthy();
+    expect(screen.getByText('Мэдээллийн ашиглалт')).toBeTruthy();
+    expect(screen.getAllByText(/Мэдээлэл хадгалах/).length).toBeGreaterThan(0);
   });
 
   it('renders identity verification section', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(
-      screen.getByText(/Identity Verification Data|Таниулах баталгаажуулалтын мэдээлэл/),
-    ).toBeTruthy();
+    expect(screen.getByText('Таниулах баталгаажуулалтын мэдээлэл')).toBeTruthy();
   });
 
   it('renders user rights section', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
-    expect(screen.getByText(/User Rights|Хэрэглэгчийн эрх/)).toBeTruthy();
+    expect(screen.getByText('Хэрэглэгчийн эрх')).toBeTruthy();
   });
 
   it('renders the last updated label and support email card', () => {
     const PrivacyPolicyScreen = require('../../../../src/app/(shared)/legal/privacy').default;
     render(<PrivacyPolicyScreen />);
 
-    expect(screen.getByText(/Updated: 2026.01.01|Сүүлд шинэчлэгдсэн: 2026.01.01/)).toBeTruthy();
+    expect(screen.getByText('Сүүлд шинэчлэгдсэн: 2026.01.01')).toBeTruthy();
     expect(screen.getByText('support@tasky.mn')).toBeTruthy();
   });
 });

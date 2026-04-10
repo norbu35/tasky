@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -7,15 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -40,6 +36,8 @@ jest.mock('lucide-react-native', () => {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('ReviewHardLock (SCR-SHARED-019)', () => {
@@ -47,7 +45,7 @@ describe('ReviewHardLock (SCR-SHARED-019)', () => {
     const { ReviewHardLock } = require('../../../src/features/review/components/ReviewHardLock');
     render(<ReviewHardLock bookingId="booking-123" />);
 
-    expect(screen.getByText('Үнэлгээ өгөх шаардлагатай')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээ шаардлагатай')).toBeTruthy();
     expect(
       screen.getByText(
         'Та үргэлжлүүлэн ашиглахын тулд өмнөх захиалгын үнэлгээгээ өгөх шаардлагатай.',
@@ -68,7 +66,7 @@ describe('ReviewHardLock (SCR-SHARED-019)', () => {
     render(<ReviewHardLock bookingId="booking-123" />);
 
     expect(screen.getByTestId('review-hard-lock')).toBeTruthy();
-    expect(screen.getByText('Үнэлгээ өгөх')).toBeTruthy();
+    expect(screen.getByText('Үнэлгээ илгээх')).toBeTruthy();
   });
 
   it('routes to the shared review screen when the CTA is tapped', () => {

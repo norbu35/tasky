@@ -11,12 +11,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ taskId: 'task-1' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -61,7 +59,10 @@ jest.mock('../../../src/features/tasks/hooks/useCustomerTaskDetail', () => ({
 }));
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
   mockUseCustomerTaskDetail.mockReturnValue({
     task: {
       description: 'Fix my sink',
@@ -107,7 +108,7 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
       refetch: jest.fn(),
     });
     render(<ApplicantsListScreen />);
-    expect(screen.getByText('Loading')).toBeTruthy();
+    expect(screen.getByText('Loading...')).toBeTruthy();
   });
 
   it('renders empty state when no applicants', () => {
@@ -119,7 +120,9 @@ describe('ApplicantsListScreen (SCR-CUST-011)', () => {
     });
     render(<ApplicantsListScreen />);
     expect(screen.getByText('No applicants yet')).toBeTruthy();
-    expect(screen.getByText('Taskers are being notified')).toBeTruthy();
+    expect(
+      screen.getByText('Once taskers apply to your task, they will appear here.'),
+    ).toBeTruthy();
   });
 
   it('renders applicant cards with name and rating', () => {

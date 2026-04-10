@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import AppUpdateScreen from '../../../src/app/(shared)/app-update';
 
 import { openURL as mockOpenURL } from 'expo-linking';
@@ -26,12 +27,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('expo-linking', () => ({
   __esModule: true,
@@ -51,13 +50,15 @@ jest.mock('lucide-react-native', () => {
 describe('AppUpdateScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetTestI18n();
+    setTestLanguage('mn');
     mockParams = {};
   });
 
   it('renders soft update title and body by default', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Шинэ хувилбар гарлаа')).toBeTruthy();
+    expect(screen.getByText('Шинэчлэлт байна')).toBeTruthy();
     expect(
       screen.getByText(
         'Аппын шинэ хувилбар бэлэн болсон байна. Шинэчилж илүү сайн туршлагатай болоорой',
@@ -68,7 +69,7 @@ describe('AppUpdateScreen', () => {
   it('shows dismiss button for soft update', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByText('Дараа нь')).toBeTruthy();
+    expect(screen.getByText('Одоо биш')).toBeTruthy();
     expect(screen.getByText('Шинэчлэх')).toBeTruthy();
   });
 
@@ -82,7 +83,7 @@ describe('AppUpdateScreen', () => {
     expect(
       screen.getByText('Аппыг үргэлжлүүлэн ашиглахын тулд шинэчлэлт хийх шаардлагатай'),
     ).toBeTruthy();
-    expect(screen.queryByText('Дараа нь')).toBeFalsy();
+    expect(screen.queryByText('Одоо биш')).toBeFalsy();
   });
 
   it('update button opens store link', () => {
@@ -95,13 +96,13 @@ describe('AppUpdateScreen', () => {
   it('soft update dismiss goes back', () => {
     render(<AppUpdateScreen />);
 
-    fireEvent.press(screen.getByText('Дараа нь'));
+    fireEvent.press(screen.getByText('Одоо биш'));
     expect(mockBack).toHaveBeenCalled();
   });
 
   it('has correct testID on root container', () => {
     render(<AppUpdateScreen />);
 
-    expect(screen.getByTestId('app-update-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-002')).toBeTruthy();
   });
 });

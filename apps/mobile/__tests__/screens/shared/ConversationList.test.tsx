@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import { useConversations } from '../../../src/features/chat/hooks/useConversations';
 
 jest.mock('expo-router', () => ({
@@ -7,15 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -47,6 +43,8 @@ const mockUseConversations = useConversations as jest.MockedFunction<typeof useC
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('ConversationListScreen (SCR-SHARED-010)', () => {
@@ -77,7 +75,7 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('Мессеж байхгүй')).toBeTruthy();
+    expect(screen.getByText('Харилцаа байхгүй байна')).toBeTruthy();
   });
 
   it('renders conversation rows with name, preview, and timestamp', () => {
@@ -183,8 +181,8 @@ describe('ConversationListScreen (SCR-SHARED-010)', () => {
     const ConversationListScreen = require('../../../src/app/(tabs)/inbox/index').default;
     render(<ConversationListScreen />);
 
-    expect(screen.getByText('Чат')).toBeTruthy();
-    fireEvent.changeText(screen.getByPlaceholderText('Хайх...'), 'Jane');
+    expect(screen.getByText('Мессеж')).toBeTruthy();
+    fireEvent.changeText(screen.getByPlaceholderText('Асуулт хайх...'), 'Jane');
 
     expect(screen.queryByText('John Doe')).toBeNull();
     expect(screen.getByText('Jane Smith')).toBeTruthy();

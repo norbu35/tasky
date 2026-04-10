@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 import RescheduleScreen from '../../../../src/app/(customer)/bookings/[bookingId]/reschedule';
 
@@ -10,12 +14,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ bookingId: 'b-1' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -44,6 +46,8 @@ jest.mock('../../../../src/features/bookings/hooks/useBookingDetail', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseBookingDetail.mockReturnValue({
     data: {
       id: 'b-1',
@@ -76,10 +80,9 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
 
   it('renders reason field', () => {
     render(<RescheduleScreen />);
-    expect(screen.getByText('Шалтгаан (заавал биш)')).toBeTruthy();
-    expect(
-      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
-    ).toBeTruthy();
+    expect(screen.getByText('Шалтгаан')).toBeTruthy();
+    expect(screen.getByText('Заавал биш')).toBeTruthy();
+    expect(screen.getByPlaceholderText('Цаг өөрчлөх шалтгаан...')).toBeTruthy();
   });
 
   it('submit calls reschedule with ISO date', async () => {
@@ -89,7 +92,7 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
     fireEvent.press(screen.getByTestId('reschedule-screen-date-picker'));
     // Fill reason
     fireEvent.changeText(
-      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
+      screen.getByPlaceholderText('Цаг өөрчлөх шалтгаан...'),
       'Schedule conflict',
     );
     // Submit
@@ -111,7 +114,7 @@ describe('RescheduleScreen (SCR-CUST-020)', () => {
     render(<RescheduleScreen />);
 
     fireEvent.changeText(
-      screen.getByPlaceholderText('Яагаад цагаа өөрчлөх болсон талаар бичнэ үү...'),
+      screen.getByPlaceholderText('Цаг өөрчлөх шалтгаан...'),
       'Schedule conflict',
     );
     fireEvent.press(screen.getByTestId('reschedule-screen-next'));

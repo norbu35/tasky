@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 import BookingsListScreen from '../../../../src/app/(customer)/bookings/index';
 
@@ -10,12 +14,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -36,6 +38,8 @@ jest.mock('../../../../src/features/bookings/hooks/useBookings', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('BookingsListScreen (SCR-CUST-016)', () => {
@@ -47,7 +51,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
       refetch: jest.fn(),
     });
     render(<BookingsListScreen />);
-    expect(screen.getByTestId('bookings-list-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-016')).toBeTruthy();
   });
 
   it('renders loading skeleton when loading', () => {
@@ -58,7 +62,7 @@ describe('BookingsListScreen (SCR-CUST-016)', () => {
       refetch: jest.fn(),
     });
     render(<BookingsListScreen />);
-    expect(screen.getByTestId('bookings-list-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-016')).toBeTruthy();
   });
 
   it('renders empty state when no bookings', () => {

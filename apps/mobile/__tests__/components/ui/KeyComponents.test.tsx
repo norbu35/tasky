@@ -121,11 +121,15 @@ describe('FilterBar', () => {
 describe('Primitive NativeWind surface', () => {
   it('Button exposes className passthrough for NativeWind usage', () => {
     render(<Button label="Continue" className="rounded-xl" testID="button-surface" />);
-    expect(screen.getByTestId('button-surface').props.className).toBe('rounded-xl');
+    expect(screen.getByTestId('button-surface').props.className).toEqual(
+      expect.stringContaining('rounded-xl'),
+    );
   });
 
   it('Input exposes className passthrough for NativeWind usage', () => {
     render(<Input className="px-4" testID="input-surface" />);
-    expect(screen.getByTestId('input-surface').props.className).toBe('px-4');
+    expect(screen.getByTestId('input-surface').props.className).toEqual(
+      expect.stringContaining('px-4'),
+    );
   });
 });

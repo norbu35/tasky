@@ -15,7 +15,6 @@ import { TaskerCancelDialog } from '../../src/pages/tasker/TaskerCancelDialog';
 import { TaskerFeedPage } from '../../src/pages/TaskerFeedPage';
 import { TaskerJobsPage } from '../../src/pages/tasker/TaskerJobsPage';
 import { TaskerNoShowDialog } from '../../src/pages/tasker/TaskerNoShowDialog';
-import { TaskerProfilePolishPage } from '../../src/pages/tasker/TaskerProfilePolishPage';
 import { TaskerPrivacyPage } from '../../src/pages/tasker/TaskerPrivacyPage';
 import { TaskerStatsPage } from '../../src/pages/tasker/TaskerStatsPage';
 import { TaskerTaskDetailPage } from '../../src/pages/tasker/TaskerTaskDetailPage';
@@ -27,7 +26,6 @@ import { VerificationPendingPage } from '../../src/pages/tasker/VerificationPend
 import { VerificationRejectedPage } from '../../src/pages/tasker/VerificationRejectedPage';
 import { VerificationSubmittedPage } from '../../src/pages/tasker/VerificationSubmittedPage';
 import { VerificationUploadPage } from '../../src/pages/tasker/VerificationUploadPage';
-import { VerificationPage } from '../../src/pages/VerificationPage';
 
 // The page files above are intentionally direct-component exports for this slice.
 // Keep this file as a smoke baseline around the tasker route family.
@@ -164,9 +162,7 @@ describe('Tasker phase 1 parity', () => {
     });
 
     expect(await screen.findByText('Application sent.')).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Application sent' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Application sent' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back to feed' })).toBeInTheDocument();
   });
 
@@ -208,16 +204,18 @@ describe('Tasker phase 1 parity', () => {
     renderWithProviders(
       <>
         <TaskerTasksPage />
-        <VerificationPage />
+        <VerificationGatePage />
       </>,
       apiClient,
     );
 
     expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: 'Identity Verification' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /identity verification/i }),
+    ).toBeInTheDocument();
   });
 
-  it('renders tasker support and profile polish surfaces', () => {
+  it('renders tasker support and verification surfaces', () => {
     renderWithProviders(
       <>
         <TaskerTaskDetailPage />
@@ -228,7 +226,6 @@ describe('Tasker phase 1 parity', () => {
         <TaskerCancelDialog />
         <TaskerStatsPage />
         <TaskerPrivacyPage />
-        <TaskerProfilePolishPage />
         <VerificationGatePage />
         <VerificationConsentPage />
         <VerificationUploadPage />
@@ -248,10 +245,11 @@ describe('Tasker phase 1 parity', () => {
     expect(screen.getByRole('heading', { name: 'Cancel booking' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tasker stats' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Privacy policy' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'AI profile polish' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Identity verification' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Verification consent' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Upload verification documents' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Upload verification documents' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Verification pending' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Verification approved' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Verification rejected' })).toBeInTheDocument();

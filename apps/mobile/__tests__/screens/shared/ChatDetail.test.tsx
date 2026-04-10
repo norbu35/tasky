@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { useMessages } from '../../../src/features/chat/hooks/useMessages';
 import { useSendMessage } from '../../../src/features/chat/hooks/useSendMessage';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 const mockBack = jest.fn();
 jest.mock('expo-router', () => ({
@@ -9,15 +10,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ id: 'conv-123' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -63,6 +59,8 @@ const mockMutate = jest.fn();
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseSendMessage.mockReturnValue({
     mutate: mockMutate,
     isPending: false,
@@ -225,7 +223,7 @@ describe('ChatDetailScreen (SCR-SHARED-011)', () => {
     render(<ChatDetailScreen />);
 
     expect(screen.getByText('Мессежүүдийг ачаалж чадсангүй')).toBeTruthy();
-    fireEvent.press(screen.getByText('Дахин оролдох'));
+    fireEvent.press(screen.getByTestId('chat-detail-error-retry'));
     expect(refetch).toHaveBeenCalled();
   });
 

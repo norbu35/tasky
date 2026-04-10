@@ -12,21 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ taskId: 'task-1' }),
 }));
 
-const i18nMap: Record<string, string> = {
-  'status.open': 'OPEN',
-  'status.assigned': 'ASSIGNED',
-  'status.completed': 'COMPLETED',
-  'status.cancelled': 'CANCELLED',
-  'status.no_show': 'NO SHOW',
-  'status.tasker_marked_done': 'PENDING CONFIRMATION',
-};
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => i18nMap[key] ?? fb ?? key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -82,7 +71,10 @@ jest.mock('../../../src/features/bookings/hooks/useCancelBooking', () => ({
 }));
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 const makeTask = (overrides: Record<string, any> = {}) => ({
@@ -108,7 +100,7 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
       refetch: jest.fn(),
     });
     render(<TaskDetailCustomerScreen />);
-    expect(screen.getByTestId('task-detail-customer-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-009')).toBeTruthy();
   });
 
   it('renders loading state', () => {
@@ -119,7 +111,7 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
       refetch: jest.fn(),
     });
     render(<TaskDetailCustomerScreen />);
-    expect(screen.getByTestId('task-detail-customer-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-009')).toBeTruthy();
   });
 
   it('renders error state', () => {
@@ -130,7 +122,7 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
       refetch: jest.fn(),
     });
     render(<TaskDetailCustomerScreen />);
-    expect(screen.getByTestId('task-detail-customer-screen-error')).toBeTruthy();
+    expect(screen.getByTestId('SCR-CUST-009-error')).toBeTruthy();
   });
 
   it('renders task info when loaded', () => {
@@ -187,7 +179,7 @@ describe('TaskDetailCustomerScreen (SCR-CUST-009)', () => {
       refetch: jest.fn(),
     });
     render(<TaskDetailCustomerScreen />);
-    expect(screen.getByText('No applicants yet')).toBeTruthy();
+    expect(screen.getByText('No applications yet')).toBeTruthy();
   });
 
   it('shows tasker info when ASSIGNED', () => {

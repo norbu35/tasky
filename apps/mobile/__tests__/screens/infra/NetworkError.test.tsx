@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import NetworkErrorScreen from '../../../src/app/(shared)/network-error';
 const mockBack = jest.fn();
 
@@ -24,12 +25,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockParams,
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -45,6 +44,8 @@ describe('NetworkErrorScreen', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
+    resetTestI18n();
+    setTestLanguage('mn');
     mockParams = {};
   });
 
@@ -56,7 +57,7 @@ describe('NetworkErrorScreen', () => {
   it('renders no connection message by default', () => {
     render(<NetworkErrorScreen />);
 
-    expect(screen.getByText('Интернэт холболтгүй байна')).toBeTruthy();
+    expect(screen.getByText('Интернэт холболт байхгүй байна')).toBeTruthy();
     expect(screen.getByText('Сүлжээний холболтоо шалгаад дахин оролдоно уу')).toBeTruthy();
   });
 
@@ -98,7 +99,7 @@ describe('NetworkErrorScreen', () => {
   it('has correct testID on root container', () => {
     render(<NetworkErrorScreen />);
 
-    expect(screen.getByTestId('network-error-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-001')).toBeTruthy();
   });
 
   it('shows wifi off icon', () => {

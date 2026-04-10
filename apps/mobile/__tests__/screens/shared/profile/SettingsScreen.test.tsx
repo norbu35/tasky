@@ -9,15 +9,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      const fb = typeof fallback === 'string' ? fallback : key;
-      return fb;
-    },
-    i18n: { language: 'en', changeLanguage: jest.fn() },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -58,7 +53,10 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 const mockSwitchRole = jest.fn();
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
   mockUseRole.mockReturnValue({
     currentRole: 'customer',
     isCustomer: true,
@@ -84,7 +82,7 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   it('renders role switch row', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    expect(screen.getByText('Дүр солих')).toBeTruthy();
+    expect(screen.getByText('Үүрэг солих')).toBeTruthy();
   });
 
   it('renders terms of service row', () => {
@@ -114,7 +112,7 @@ describe('SettingsScreen (SCR-SHARED-014)', () => {
   it('tapping role switch shows confirmation', () => {
     const SettingsScreen = require('../../../../src/app/(shared)/profile/settings').default;
     render(<SettingsScreen />);
-    fireEvent.press(screen.getByText('Дүр солих'));
+    fireEvent.press(screen.getByText('Үүрэг солих'));
     expect(screen.getByText('Дүр солих уу?')).toBeTruthy();
   });
 

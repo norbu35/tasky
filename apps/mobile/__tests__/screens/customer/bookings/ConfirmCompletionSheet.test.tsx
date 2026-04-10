@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  resetTestI18n,
+  setTestLanguage,
+} from '../../../test-utils/mockI18n';
 
 import { ConfirmCompletionSheet } from '../../../../src/features/bookings/components/ConfirmCompletionSheet';
 
@@ -11,12 +15,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -62,6 +64,8 @@ jest.mock('../../../../src/features/bookings/hooks/useCompleteBooking', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
@@ -78,12 +82,16 @@ describe('ConfirmCompletionSheet (SCR-CUST-018)', () => {
 
   it('shows "Confirm the work is complete?" prompt', () => {
     render(<ConfirmCompletionSheet {...defaultProps} />);
-    expect(screen.getByText('Ажил дууссан уу?')).toBeTruthy();
+    expect(screen.getByText('Ажил дууссаныг баталгаажуулах уу?')).toBeTruthy();
   });
 
   it('shows description text', () => {
     render(<ConfirmCompletionSheet {...defaultProps} />);
-    expect(screen.getByText('Ажил хүлээн зөвшөөрснөөр гүйцэтгэгчид төлбөр олгогдоно')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Баталгаажуулсны дараа та үнэлгээ өгөх боломжтой болно. Төлбөрийг гүйцэтгэгчтэй шууд тохиролцоно.',
+      ),
+    ).toBeTruthy();
   });
 
   it('Yes/Confirm calls completeBooking', async () => {

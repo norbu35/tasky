@@ -1,8 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
 import { baseTask, baseBooking, resetStores } from './fixtures';
+import { useAppStore } from '../../src/store/appStore';
 import { useTasks } from '../../src/features/tasks/hooks/useTasks';
 import { useBookings } from '../../src/features/bookings/hooks/useBookings';
+import { RoleProvider } from '../../src/providers/RoleProvider';
 import FeedScreen from '../../src/app/(tabs)/index';
 import BookingsScreen from '../../src/app/(tabs)/bookings';
 
@@ -38,12 +41,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -93,10 +94,16 @@ const mockUseBookings = useBookings as jest.MockedFunction<typeof useBookings>;
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 describe('Customer journey integration', () => {
   describe('Task feed', () => {
+    beforeEach(() => {
+      useAppStore.setState({ currentRole: 'tasker' });
+    });
+
     it('renders tasks from hook', () => {
       mockUseTasks.mockReturnValue({
         data: {
@@ -109,7 +116,11 @@ describe('Customer journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <FeedScreen />
+        </RoleProvider>,
+      );
 
       expect(screen.getByText('Window cleaning')).toBeTruthy();
       expect(screen.getByText('Сүхбаатар дүүрэг')).toBeTruthy();
@@ -128,7 +139,11 @@ describe('Customer journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <FeedScreen />
+        </RoleProvider>,
+      );
 
       expect(screen.getByTestId('task-feed-empty')).toBeTruthy();
       expect(screen.queryByTestId('task-card-public-task-1')).toBeNull();
@@ -143,7 +158,11 @@ describe('Customer journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <FeedScreen />
+        </RoleProvider>,
+      );
 
       expect(screen.getByTestId('task-feed')).toBeTruthy();
       // Loading state renders skeleton cards, no task cards
@@ -159,13 +178,21 @@ describe('Customer journey integration', () => {
         refetch: jest.fn(),
       } as unknown as ReturnType<typeof useTasks>);
 
-      render(<FeedScreen />);
+      render(
+        <RoleProvider>
+          <FeedScreen />
+        </RoleProvider>,
+      );
 
       expect(screen.getByTestId('task-feed-error')).toBeTruthy();
     });
   });
 
   describe('Bookings list', () => {
+    beforeEach(() => {
+      useAppStore.setState({ currentRole: 'customer' });
+    });
+
     it('renders bookings', () => {
       mockUseBookings.mockReturnValue({
         data: {
@@ -175,7 +202,11 @@ describe('Customer journey integration', () => {
         isLoading: false,
       } as unknown as ReturnType<typeof useBookings>);
 
-      render(<BookingsScreen />);
+      render(
+        <RoleProvider>
+          <BookingsScreen />
+        </RoleProvider>,
+      );
 
       expect(screen.getByText('ASSIGNED')).toBeTruthy();
     });
@@ -189,9 +220,14 @@ describe('Customer journey integration', () => {
         isLoading: false,
       } as unknown as ReturnType<typeof useBookings>);
 
-      render(<BookingsScreen />);
+      render(
+        <RoleProvider>
+          <BookingsScreen />
+        </RoleProvider>,
+      );
 
-      expect(screen.getByText('bookingList.empty')).toBeTruthy();
+      expect(screen.getByText('No bookings yet')).toBeTruthy();
+      expect(screen.getByText('Post a task and select a Tasker to get started')).toBeTruthy();
     });
   });
 });

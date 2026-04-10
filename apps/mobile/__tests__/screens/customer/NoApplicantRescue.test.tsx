@@ -8,12 +8,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -48,7 +46,10 @@ jest.mock('lucide-react-native', () => {
 });
 
 beforeEach(() => {
+  const { resetTestI18n, setTestLanguage } = require('../../test-utils/mockI18n');
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('NoApplicantRescue (SCR-CUST-026)', () => {
@@ -77,7 +78,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Гүйцэтгэгч олдсонгүй')).toBeTruthy();
+    expect(screen.getByText('Одоохондоо өргөдөл байхгүй')).toBeTruthy();
   });
 
   it('shows adjust budget option', () => {
@@ -91,7 +92,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Төсөв нэмэх')).toBeTruthy();
+    expect(screen.getByText('Үнийг нэмэгдүүлэх')).toBeTruthy();
   });
 
   it('shows adjust schedule option', () => {
@@ -105,7 +106,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    expect(screen.getByText('Цаг өөрчлөх')).toBeTruthy();
+    expect(screen.getByText('Хуваарь өөрчлөх')).toBeTruthy();
   });
 
   it('shows request concierge option', () => {
@@ -158,7 +159,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    fireEvent.press(screen.getByText('Төсөв нэмэх'));
+    fireEvent.press(screen.getByText('Үнийг нэмэгдүүлэх'));
     expect(onAdjustBudget).toHaveBeenCalled();
   });
 
@@ -174,7 +175,7 @@ describe('NoApplicantRescue (SCR-CUST-026)', () => {
         onRequestConcierge={jest.fn()}
       />,
     );
-    fireEvent.press(screen.getByText('Цаг өөрчлөх'));
+    fireEvent.press(screen.getByText('Хуваарь өөрчлөх'));
     expect(onAdjustSchedule).toHaveBeenCalled();
   });
 

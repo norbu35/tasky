@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 
 import TaskerProfileScreen from '../../../src/app/(customer)/taskers/[taskerId]';
 
@@ -11,12 +12,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ taskerId: 'tasker-1' }),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fb?: string) => fb || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -37,6 +36,8 @@ jest.mock('../../../src/features/profile/hooks/useTaskerProfile', () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('en');
 });
 
 const makeProfile = (overrides: Record<string, any> = {}) => ({

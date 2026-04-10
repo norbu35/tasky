@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../test-utils/mockI18n';
 import { useAuthStore } from '../../src/store/authStore';
 import { useAppStore } from '../../src/store/appStore';
 import { baseSession, resetStores, setFirstTimeUser, setAuthenticated } from './fixtures';
@@ -26,12 +27,10 @@ jest.mock('expo-router', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 jest.mock('lucide-react-native', () => {
   const { Text } = require('react-native');
@@ -74,6 +73,8 @@ jest.mock('../../src/features/auth/hooks/useAuth', () => ({
 beforeEach(() => {
   jest.clearAllMocks();
   resetStores();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('Auth flow integration', () => {
@@ -94,7 +95,7 @@ describe('Auth flow integration', () => {
   it('authenticated user is redirected to tabs', () => {
     setAuthenticated();
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
   });
 
   it('onboarding skip navigates to role-select without completing onboarding yet', () => {
@@ -129,7 +130,7 @@ describe('Auth flow integration', () => {
 
   it('login screen renders after auth redirect', () => {
     render(<LoginScreen />);
-    expect(screen.getByText('Tasky-д тавтай морил')).toBeTruthy();
+    expect(screen.getByText('Tasky-д тавтай морилно уу')).toBeTruthy();
     expect(screen.getByText('Facebook-ээр нэвтрэх')).toBeTruthy();
   });
 
@@ -145,6 +146,6 @@ describe('Auth flow integration', () => {
     // Simulate login completing
     useAuthStore.setState({ session: baseSession });
     render(<SplashScreen />);
-    expect(screen.getByTestId('redirect')).toHaveTextContent('/(customer)/tasks');
+    expect(screen.getByTestId('redirect')).toHaveTextContent('/(tabs)');
   });
 });

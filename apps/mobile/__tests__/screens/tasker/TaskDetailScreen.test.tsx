@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import type { PublicTask } from '../../../src/lib/mobileApiClient';
 
 const mockPush = jest.fn();
@@ -12,14 +13,10 @@ jest.mock('expo-router', () => ({
   Stack: { Screen: () => null },
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string | Record<string, unknown>) => {
-      return typeof fallback === 'string' ? fallback : key;
-    },
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 
@@ -119,6 +116,8 @@ const baseTask: PublicTask = {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTestI18n();
+  setTestLanguage('mn');
 });
 
 describe('TaskDetailScreen (SCR-TASK-002)', () => {
@@ -157,7 +156,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     expect(screen.getByText('Bayangol district')).toBeTruthy();
   });
 
-  it('shows "Apply for Task" button when verified', () => {
+  it('shows the apply button when verified', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
       isLoading: false,
@@ -170,10 +169,10 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('tasker.taskDetail.applyButton')).toBeTruthy();
+    expect(screen.getByText('Ажилд өргөдөл гаргах')).toBeTruthy();
   });
 
-  it('shows "Get Verified" when unverified', () => {
+  it('shows the verification CTA when unverified', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
       isLoading: false,
@@ -186,7 +185,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('tasker.taskDetail.getVerified')).toBeTruthy();
+    expect(screen.getByText('Өргөдөл гаргахын тулд баталгаажна уу')).toBeTruthy();
   });
 
   it('navigates to tasker verification when unverified CTA is pressed', () => {
@@ -206,7 +205,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     expect(mockPush).toHaveBeenCalledWith('/(tasker)/verification');
   });
 
-  it('shows "Application Sent" when already applied', () => {
+  it('shows the already-applied state when the tasker has applied', () => {
     mockUseTaskDetail.mockReturnValue({
       task: baseTask,
       isLoading: false,
@@ -219,7 +218,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('tasker.taskDetail.alreadyApplied')).toBeTruthy();
+    expect(screen.getByText('Өргөдөл илгээгдлээ')).toBeTruthy();
   });
 
   it('apply button calls applyToTask and shows success', async () => {
@@ -235,10 +234,10 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    fireEvent.press(screen.getByText('tasker.taskDetail.applyButton'));
+    fireEvent.press(screen.getByText('Ажилд өргөдөл гаргах'));
 
     await waitFor(() => {
-      expect(screen.getByText('Анкет амжилттай илгээгдлээ!')).toBeTruthy();
+      expect(screen.getByText('Өргөдөл илгээгдлээ!')).toBeTruthy();
     });
   });
 
@@ -271,7 +270,7 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('Message')).toBeTruthy();
+    expect(screen.getByText('Зурвас илгээх')).toBeTruthy();
   });
 
   it('renders task photos and approximate location note', () => {
@@ -287,10 +286,10 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('Photos')).toBeTruthy();
+    expect(screen.getByText('Зурагнууд')).toBeTruthy();
     expect(screen.getByTestId('task-detail-photos')).toBeTruthy();
     expect(
-      screen.getByText('Approximate location (exact address shown after booking confirmed)'),
+      screen.getByText('Ойролцоогоор байршил (захиалгыг баталгаажуулсны дараа яг хаягийг харуулна)'),
     ).toBeTruthy();
   });
 
@@ -307,6 +306,6 @@ describe('TaskDetailScreen (SCR-TASK-002)', () => {
     const TaskDetailScreen = require('../../../src/app/task/[id]').default;
     render(<TaskDetailScreen />);
 
-    expect(screen.getByText('Platform trust')).toBeTruthy();
+    expect(screen.getByText('Платформ итгэлцэл')).toBeTruthy();
   });
 });

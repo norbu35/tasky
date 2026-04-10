@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n } from '../../test-utils/mockI18n';
 import { SuccessCelebrationTemplate } from '../../../src/components/templates/SuccessCelebrationTemplate';
 
 jest.mock('react-native-reanimated', () => {
@@ -17,11 +18,10 @@ jest.mock('react-native-reanimated', () => {
   };
 });
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('en');
+});
 
 jest.mock('lucide-react-native', () => {
   const RN = require('react-native');
@@ -41,6 +41,7 @@ const defaultProps = {
 describe('SuccessCelebrationTemplate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetTestI18n();
   });
 
   it('renders headline and body text', () => {

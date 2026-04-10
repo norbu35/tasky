@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
+import { resetTestI18n, setTestLanguage } from '../../test-utils/mockI18n';
 import SessionExpiredScreen from '../../../src/app/(shared)/session-expired';
 import { useAuthStore } from '../../../src/store/authStore';
 
@@ -24,12 +25,10 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({}),
 }));
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, fallback?: string) => fallback || key,
-    i18n: { language: 'en' },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const { createReactI18nextMock } = require('../../test-utils/mockI18n');
+  return createReactI18nextMock('mn');
+});
 
 jest.mock('@gorhom/bottom-sheet', () => {
   const { View } = require('react-native');
@@ -55,6 +54,8 @@ jest.mock('lucide-react-native', () => {
 describe('SessionExpiredScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetTestI18n();
+    setTestLanguage('mn');
     useAuthStore.setState({
       session: {
         accessToken: 'token',
@@ -76,7 +77,7 @@ describe('SessionExpiredScreen', () => {
   it('renders session expired title', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Хугацаа дууссан')).toBeTruthy();
+    expect(screen.getByText('Сесс дууссан')).toBeTruthy();
   });
 
   it('renders session expired body message', () => {
@@ -88,13 +89,13 @@ describe('SessionExpiredScreen', () => {
   it('shows login button', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Дахин нэвтрэх')).toBeTruthy();
+    expect(screen.getByText('Нэвтрэх')).toBeTruthy();
   });
 
   it('login button clears the auth token and navigates to auth screen', () => {
     render(<SessionExpiredScreen />);
 
-    fireEvent.press(screen.getByText('Дахин нэвтрэх'));
+    fireEvent.press(screen.getByText('Нэвтрэх'));
     expect(useAuthStore.getState().session).toBeNull();
     expect(mockReplace).toHaveBeenCalledWith('/(auth)');
   });
@@ -102,13 +103,13 @@ describe('SessionExpiredScreen', () => {
   it('has correct testID on root container', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByTestId('session-expired-screen')).toBeTruthy();
+    expect(screen.getByTestId('SCR-INFRA-003')).toBeTruthy();
   });
 
   it('renders a modal sheet instead of a plain full-screen body', () => {
     render(<SessionExpiredScreen />);
 
-    expect(screen.getByText('Хугацаа дууссан')).toBeTruthy();
-    expect(screen.getByText('Дахин нэвтрэх')).toBeTruthy();
+    expect(screen.getByText('Сесс дууссан')).toBeTruthy();
+    expect(screen.getByText('Нэвтрэх')).toBeTruthy();
   });
 });
