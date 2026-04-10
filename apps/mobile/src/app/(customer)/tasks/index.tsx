@@ -101,7 +101,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
               style={{ backgroundColor: `${colors.primary}10` }}
             >
               <Text
-                className="text-micro font-bold tracking-widest uppercase text-primaryDeep"
+                className="text-micro font-bold tracking-widest uppercase text-primary-deep"
                 numberOfLines={1}
               >
                 {task.category?.name ?? t('customer.taskList.categoryFallback')}
@@ -109,7 +109,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
             </View>
             <StatusBadge status={status} />
           </View>
-          <Text className="font-screen-card-title font-bold text-primaryDeep" numberOfLines={2}>
+          <Text className="font-screen-card-title font-bold text-primary-deep" numberOfLines={2}>
             {task.description ?? t('customer.taskList.noTitle')}
           </Text>
           <Text
@@ -169,10 +169,10 @@ function Header({
       />
 
         <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
-          <Text className="text-subtitle font-extrabold text-primaryDeep">
+          <Text className="text-subtitle font-extrabold text-primary-deep">
             {t('customer.taskList.heroEyebrow')}
           </Text>
-          <Text className="text-body text-textSecondary leading-relaxed">
+          <Text className="text-body text-text-secondary leading-relaxed">
             {t('customer.taskList.heroTitle')}
           </Text>
           <View className="flex-row gap-micro">
@@ -188,8 +188,8 @@ function Header({
               className="flex-1 rounded-md py-sm px-sm"
               style={{ backgroundColor: `${colors.primary}10`, gap: 2 }}
             >
-              <Text className="text-subtitle font-extrabold text-primaryDeep">{counts[key]}</Text>
-              <Text className="text-caption text-textSecondary">{label}</Text>
+              <Text className="text-subtitle font-extrabold text-primary-deep">{counts[key]}</Text>
+              <Text className="text-caption text-text-secondary">{label}</Text>
             </View>
           ))}
         </View>
@@ -213,10 +213,10 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
       >
         <Sparkles size={24} color={colors.primary} />
       </View>
-      <Text className="text-subtitle font-extrabold text-primaryDeep text-center">
+      <Text className="text-subtitle font-extrabold text-primary-deep text-center">
         {t('customer.taskList.emptyTitle')}
       </Text>
-      <Text className="text-body text-textSecondary text-center leading-relaxed">
+      <Text className="text-body text-text-secondary text-center leading-relaxed">
         {t('customer.taskList.emptyDescription')}
       </Text>
       <Pressable
@@ -225,7 +225,7 @@ function EmptyState({ onPostTask }: { onPostTask: () => void }) {
         accessibilityRole="button"
         testID="my-tasks-feed-empty-cta"
       >
-        <Text className="text-body font-bold text-primaryForeground">
+        <Text className="text-body font-bold text-primary-foreground">
           {t('customer.taskList.emptyCta')}
         </Text>
       </Pressable>
@@ -242,10 +242,10 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       style={elevations.soft}
       testID="my-tasks-error-state"
     >
-      <Text className="text-subtitle font-extrabold text-primaryDeep">
+      <Text className="text-subtitle font-extrabold text-primary-deep">
         {t('customer.taskList.errorTitle')}
       </Text>
-      <Text className="text-body text-textSecondary leading-relaxed">
+      <Text className="text-body text-text-secondary leading-relaxed">
         {t('customer.taskList.errorNetwork')}
       </Text>
       <Pressable
@@ -254,7 +254,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         accessibilityRole="button"
         testID="my-tasks-feed-error-cta"
       >
-        <Text className="text-body font-bold text-secondaryForeground">{t('common.tryAgain')}</Text>
+        <Text className="text-body font-bold text-secondary-foreground">{t('common.tryAgain')}</Text>
       </Pressable>
     </View>
   );

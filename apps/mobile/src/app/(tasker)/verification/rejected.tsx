@@ -24,7 +24,7 @@ export default function RejectedScreen() {
       <Text className="text-title font-bold text-danger text-center">
         {t('tasker.verification.rejectedTitle')}
       </Text>
-      <Text className="text-body text-textSecondary text-center mt-sm leading-relaxed">
+      <Text className="text-body text-text-secondary text-center mt-sm leading-relaxed">
         {t('tasker.verification.rejectedBody')}
       </Text>
 

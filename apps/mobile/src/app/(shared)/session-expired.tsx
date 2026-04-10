@@ -41,7 +41,7 @@ export default function SessionExpiredScreen() {
           <View className="w-[72px] h-[72px] rounded-full items-center justify-center bg-muted mb-lg">
             <LogIn size={28} color={colors.primary} />
           </View>
-          <Text className="text-body text-textSecondary text-center leading-6">
+          <Text className="text-body text-text-secondary text-center leading-6">
             {t('SessionExpiredScreen.copy1')}
           </Text>
         </View>

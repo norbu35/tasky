@@ -128,7 +128,7 @@ export default function NotificationCenterScreen() {
     if (item.type === 'section') {
       return (
         <Text
-          className="text-caption font-bold text-textTertiary uppercase mt-lg mb-sm"
+          className="text-caption font-bold text-text-tertiary uppercase mt-lg mb-sm"
           style={{ letterSpacing: 1.2 }}
         >
           {item.label}
@@ -159,7 +159,7 @@ export default function NotificationCenterScreen() {
               {notification.title}
             </Text>
             <View className="flex-row items-center gap-xs">
-              <Text className="text-micro text-textTertiary">
+              <Text className="text-micro text-text-tertiary">
                 {formatRelativeTimestamp(notification.created_at, t)}
               </Text>
               {!notification.read ? (
@@ -171,7 +171,7 @@ export default function NotificationCenterScreen() {
             </View>
           </View>
           <Text
-            className="mt-xs text-body text-textSecondary"
+            className="mt-xs text-body text-text-secondary"
             style={{ lineHeight: 22 }}
             numberOfLines={2}
           >
@@ -199,7 +199,7 @@ export default function NotificationCenterScreen() {
             {t('shared.notifications.errorTitle')}
           </Text>
           <Text
-            className="mt-sm text-body text-textSecondary text-center"
+            className="mt-sm text-body text-text-secondary text-center"
             style={{ lineHeight: 24 }}
           >
             {t('shared.notifications.errorBody')}
@@ -228,10 +228,10 @@ export default function NotificationCenterScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           ListFooterComponent={
             <View
-              className="mt-xl bg-primaryDeep rounded-lg p-lg justify-end"
+              className="mt-xl bg-primary-deep rounded-lg p-lg justify-end"
               style={{ height: 128 }}
             >
-              <Text className="text-[18px] font-extrabold text-primaryForeground">
+              <Text className="text-[18px] font-extrabold text-primary-foreground">
                 {t('shared.notifications.promoBannerTitle')}
               </Text>
               <Text

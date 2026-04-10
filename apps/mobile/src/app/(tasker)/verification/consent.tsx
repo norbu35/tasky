@@ -84,13 +84,13 @@ export default function ConsentScreen() {
         extraBottomInset={96}
       >
         <Text
-          className="text-heading font-display-bold text-primaryDeep"
+          className="text-heading font-display-bold text-primary-deep"
           style={{ lineHeight: typography.heading * 1.2 }}
         >
           {t('tasker.verification.consentTitle')}
         </Text>
         <Text
-          className="text-body text-textSecondary"
+          className="text-body text-text-secondary"
           style={{ lineHeight: typography.body * 1.6 }}
         >
           {t('tasker.verification.consentBody')}

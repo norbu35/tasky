@@ -41,7 +41,7 @@ export default function AppUpdateScreen() {
         <Download size={32} color={colors.primary} />
       </View>
       <Text className="text-title font-bold text-foreground text-center">{title}</Text>
-      <Text className="text-body text-textSecondary text-center mt-sm leading-6">{body}</Text>
+      <Text className="text-body text-text-secondary text-center mt-sm leading-6">{body}</Text>
       <Button
         label={t('infra.appUpdate.softUpdate')}
         onPress={handleUpdate}

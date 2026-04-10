@@ -53,9 +53,9 @@ export function ProfileAvatar({
       ) : (
         <View
           style={{ width: dim, height: dim, borderRadius }}
-          className="bg-subtleViolet items-center justify-center"
+          className="bg-subtle-violet items-center justify-center"
         >
-          <Text style={{ fontSize: dim * 0.35 }} className="font-sans-bold text-primaryDeep">
+          <Text style={{ fontSize: dim * 0.35 }} className="font-sans-bold text-primary-deep">
             {initials}
           </Text>
         </View>

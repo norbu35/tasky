@@ -7,7 +7,7 @@ const chipVariants = cva('px-xl py-sm rounded-full', {
   variants: {
     active: {
       true: 'bg-primary',
-      false: 'bg-chipInactive',
+      false: 'bg-chip-inactive',
     },
   },
   defaultVariants: { active: false },

@@ -122,7 +122,7 @@ export default function TaskDetailScreen() {
 
             {/* Budget */}
             <View className="gap-xs bg-muted rounded-md p-md">
-              <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+              <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
                 {t('taskDetails.budget')}
               </Text>
               <PriceTag amount={task.budget} size="lg" />
@@ -138,11 +138,11 @@ export default function TaskDetailScreen() {
             {/* Location */}
             {task.approximate_location && (
               <View className="gap-xs bg-muted rounded-md p-md">
-                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
                   {t('taskDetails.location')}
                 </Text>
                 <LocationPin text={task.approximate_location} />
-                <Text className="text-caption text-textSecondary leading-[20px] mt-xs">
+                <Text className="text-caption text-text-secondary leading-[20px] mt-xs">
                   {t('TaskDetailScreen.copy1')}
                 </Text>
               </View>
@@ -151,7 +151,7 @@ export default function TaskDetailScreen() {
             {/* Schedule */}
             {task.scheduled_at && (
               <View className="gap-xs bg-muted rounded-md p-md">
-                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
                   {t('taskDetail.dateTime')}
                 </Text>
                 <Text className="text-body text-foreground">
@@ -168,7 +168,7 @@ export default function TaskDetailScreen() {
 
             {task.photo_urls.length > 0 && (
               <View className="gap-xs bg-muted rounded-md p-md">
-                <Text className="text-caption font-semibold text-textSecondary uppercase tracking-[0.5px]">
+                <Text className="text-caption font-semibold text-text-secondary uppercase tracking-[0.5px]">
                   {t('tasker.taskDetail.photosLabel')}
                 </Text>
                 <PhotoGrid photos={task.photo_urls} testID="task-detail-photos" />
@@ -177,7 +177,7 @@ export default function TaskDetailScreen() {
 
             {/* Application count */}
             {task.application_count > 0 && (
-              <Text className="text-label text-textSecondary mt-sm">
+              <Text className="text-label text-text-secondary mt-sm">
                 {task.application_count} {t('TaskDetailCustomerScreen.applicants')}
               </Text>
             )}

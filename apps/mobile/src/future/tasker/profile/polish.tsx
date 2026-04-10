@@ -214,17 +214,17 @@ export default function ProfilePolishScreen() {
               {t('tasker.polish.aiPowered')}
             </Text>
           </View>
-          <Text className="text-heading font-extrabold text-primaryDeep leading-tight">
+          <Text className="text-heading font-extrabold text-primary-deep leading-tight">
             {t('tasker.profilePolish.heroTitle')}
           </Text>
-          <Text className="text-body text-textSecondary leading-relaxed">
+          <Text className="text-body text-text-secondary leading-relaxed">
             {t('ProfilePolishScreen.copy1')}
           </Text>
         </View>
 
         <View className="gap-md">
           <Text
-            className="text-caption font-bold text-textSecondary uppercase"
+            className="text-caption font-bold text-text-secondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
             {t('tasker.profilePolish.sourceLabel')}
@@ -245,7 +245,7 @@ export default function ProfilePolishScreen() {
               numberOfLines={6}
               maxLength={MAX_BIO_LENGTH}
             />
-            <Text className="self-end text-caption text-mutedForeground">
+            <Text className="self-end text-caption text-muted-foreground">
               {`${currentCount}/${MAX_BIO_LENGTH}`}
             </Text>
           </View>
@@ -253,7 +253,7 @@ export default function ProfilePolishScreen() {
 
         <View className="gap-md">
           <Text
-            className="text-caption font-bold text-textSecondary uppercase"
+            className="text-caption font-bold text-text-secondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
             {t('tasker.profilePolish.toneLabel')}
@@ -280,7 +280,7 @@ export default function ProfilePolishScreen() {
 
         <View className="gap-md">
           <Text
-            className="text-caption font-bold text-textSecondary uppercase"
+            className="text-caption font-bold text-text-secondary uppercase"
             style={{ letterSpacing: 0.8 }}
           >
             {t('tasker.profilePolish.polishedLabel')}
@@ -305,7 +305,7 @@ export default function ProfilePolishScreen() {
               {suggestion ? (
                 <Text className="text-body text-foreground leading-relaxed">{suggestion}</Text>
               ) : (
-                <Text className="text-body text-mutedForeground leading-relaxed">
+                <Text className="text-body text-muted-foreground leading-relaxed">
                   {t('ProfilePolishScreen.copy3')}
                 </Text>
               )}

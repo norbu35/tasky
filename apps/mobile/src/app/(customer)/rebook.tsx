@@ -121,7 +121,7 @@ export default function RebookScreen() {
 
       {/* Tasker Info Card */}
       <View className="mb-section bg-muted rounded-md p-card" style={elevations.soft}>
-        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
+        <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.sectionPreviousTasker')}
         </Text>
         <View className="flex-row items-center gap-md">
@@ -132,38 +132,38 @@ export default function RebookScreen() {
             showVerified
           />
           <View className="flex-1">
-            <Text className="text-body font-semibold text-primaryDeep">{params.taskerName}</Text>
+            <Text className="text-body font-semibold text-primary-deep">{params.taskerName}</Text>
           </View>
         </View>
       </View>
 
       {/* Task Details */}
       <View className="mb-section">
-        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
+        <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.sectionTaskDetails')}
         </Text>
-        <Text className="text-body font-semibold text-primaryDeep mb-xs">
+        <Text className="text-body font-semibold text-primary-deep mb-xs">
           {params.categoryName}
         </Text>
-        <Text className="text-body text-primaryDeep mb-sm">{params.description}</Text>
+        <Text className="text-body text-primary-deep mb-sm">{params.description}</Text>
         {params.locationText && (
-          <Text className="text-caption text-textSecondary">{params.locationText}</Text>
+          <Text className="text-caption text-text-secondary">{params.locationText}</Text>
         )}
       </View>
 
       {/* Schedule */}
       <View className="mb-section">
-        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
+        <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.labelNewSchedule')}
         </Text>
         <Pressable className="rounded-md p-card bg-muted" testID="rebook-screen-date-picker">
-          <Text className="text-body text-primaryDeep">{formatDateTime(selectedDate)}</Text>
+          <Text className="text-body text-primary-deep">{formatDateTime(selectedDate)}</Text>
         </Pressable>
       </View>
 
       {/* Budget */}
       <View className="mb-section">
-        <Text className="text-screen-section-title font-sans-bold text-primaryDeep mb-item">
+        <Text className="text-screen-section-title font-sans-bold text-primary-deep mb-item">
           {t('customer.bookings.labelBudget')}
         </Text>
         <Input

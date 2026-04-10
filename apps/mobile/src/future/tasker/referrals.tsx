@@ -13,7 +13,7 @@ export default function TaskerReferralsScreen() {
   return (
     <DetailTemplate testID="SCR-P2-005">
       <View className="gap-lg">
-        <View className="p-lg rounded-lg bg-primaryDeep gap-md">
+        <View className="p-lg rounded-lg bg-primary-deep gap-md">
           <Text
             className="font-extrabold text-card"
             style={{ fontSize: 28, lineHeight: 28 * (17 / 14) }}
@@ -21,7 +21,7 @@ export default function TaskerReferralsScreen() {
             {t('tasker.referrals.heroTitle')}
           </Text>
           <Text
-            className="text-body text-primaryForeground leading-relaxed"
+            className="text-body text-primary-foreground leading-relaxed"
             style={{ opacity: 0.85 }}
           >
             {t('TaskerReferralsScreen.copy1')}
@@ -31,7 +31,7 @@ export default function TaskerReferralsScreen() {
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
           >
             <Text
-              className="text-caption text-primaryForeground uppercase"
+              className="text-caption text-primary-foreground uppercase"
               style={{ letterSpacing: 0.4 }}
             >
               {t('tasker.referrals.codeLabel')}
@@ -56,7 +56,7 @@ export default function TaskerReferralsScreen() {
         </View>
 
         <View className="gap-md">
-          <Text className="text-heading font-bold text-primaryDeep">
+          <Text className="text-heading font-bold text-primary-deep">
             {t('tasker.referrals.howItWorks')}
           </Text>
           <View className="p-lg rounded-lg bg-card">
@@ -82,7 +82,7 @@ export default function TaskerReferralsScreen() {
           <Text className="text-body font-bold text-foreground">
             {t('tasker.referrals.bonusPending')}
           </Text>
-          <Text className="text-label text-textSecondary">{t('TaskerReferralsScreen.copy2')}</Text>
+          <Text className="text-label text-text-secondary">{t('TaskerReferralsScreen.copy2')}</Text>
         </Pressable>
       </View>
     </DetailTemplate>

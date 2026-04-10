@@ -118,19 +118,19 @@ function SectionCard({
   return (
     <View
       testID={testID}
-      className={`rounded-sm p-lg mb-md gap-sm${featured ? ' bg-primaryDeep rounded-lg' : ' bg-muted'}`}
+      className={`rounded-sm p-lg mb-md gap-sm${featured ? ' bg-primary-deep rounded-lg' : ' bg-muted'}`}
       style={featured ? elevations.soft : undefined}
     >
       <View className="flex-row justify-between items-center">
         <Text
-          className={`text-caption font-bold${featured ? ' text-primaryForeground/80' : ' text-textSecondary'}`}
+          className={`text-caption font-bold${featured ? ' text-primary-foreground/80' : ' text-text-secondary'}`}
         >
           {label}
         </Text>
         {onEdit ? (
           <Pressable onPress={onEdit} accessibilityRole="button">
             <Text
-              className={`text-caption font-bold${featured ? ' text-accent' : ' text-primaryDeep'}`}
+              className={`text-caption font-bold${featured ? ' text-accent' : ' text-primary-deep'}`}
             >
               {t('ReviewSubmitScreen.edit')}
             </Text>
@@ -150,7 +150,7 @@ function SectionCard({
           </View>
         ) : null}
         <Text
-          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primaryForeground' : ' text-foreground'}`}
+          className={`flex-1 text-body font-bold leading-snug${featured ? ' text-primary-foreground' : ' text-foreground'}`}
           style={featured ? { fontSize: 36, fontWeight: '800', lineHeight: 40 } : undefined}
         >
           {value}
@@ -168,11 +168,11 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
   return (
     <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-photos">
       <View className="flex-row justify-between items-center">
-        <Text className="text-caption font-bold text-textSecondary">
+        <Text className="text-caption font-bold text-text-secondary">
           {t('ReviewSubmitScreen.sectionPhotos')} {photos.length > 0 ? `(${photos.length})` : ''}
         </Text>
         <Pressable onPress={onEdit} accessibilityRole="button">
-          <Text className="text-caption font-bold text-primaryDeep">
+          <Text className="text-caption font-bold text-primary-deep">
             {t('ReviewSubmitScreen.edit')}
           </Text>
         </Pressable>
@@ -187,16 +187,16 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
             {isImageUri(photo) ? (
               <Image source={{ uri: photo }} className="self-stretch h-full" />
             ) : (
-              <Text className="text-caption font-bold text-primaryDeep">{String(index + 1)}</Text>
+              <Text className="text-caption font-bold text-primary-deep">{String(index + 1)}</Text>
             )}
           </View>
         ))}
         {Array.from({ length: Math.max(0, 3 - slots.length) }).map((_, idx) => (
           <View
             key={`empty-${idx}`}
-            className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chipInactive bg-card"
+            className="w-32 h-32 rounded-md overflow-hidden items-center justify-center border-2 border-dashed border-chip-inactive bg-card"
           >
-            <Text className="text-heading text-textSecondary" style={{ lineHeight: 24 }}>
+            <Text className="text-heading text-text-secondary" style={{ lineHeight: 24 }}>
               +
             </Text>
           </View>
@@ -204,7 +204,7 @@ function PhotosCard({ photos, onEdit }: { photos: string[]; onEdit: () => void }
       </View>
 
       {photos.length === 0 ? (
-        <Text className="text-caption text-textSecondary">{t('ReviewSubmitScreen.noPhotos')}</Text>
+        <Text className="text-caption text-text-secondary">{t('ReviewSubmitScreen.noPhotos')}</Text>
       ) : null}
     </View>
   );
@@ -320,10 +320,10 @@ export default function ReviewSubmitScreen() {
       nextButtonTestID="SCR-CUST-007-cta"
     >
       <View className="gap-xs mb-sm">
-        <Text className="text-caption font-bold text-textSecondary uppercase tracking-widest">
+        <Text className="text-caption font-bold text-text-secondary uppercase tracking-widest">
           {t('ReviewSubmitScreen.finalStep')}
         </Text>
-        <Text className="text-heading font-extrabold text-primaryDeep">
+        <Text className="text-heading font-extrabold text-primary-deep">
           {t('ReviewSubmitScreen.reviewTitle')}
         </Text>
       </View>
@@ -361,7 +361,7 @@ export default function ReviewSubmitScreen() {
 
       <View className="bg-muted rounded-sm p-lg mb-md gap-sm" testID="review-section-description">
         <View className="flex-row justify-between items-center">
-          <Text className="text-caption font-bold text-textSecondary">
+          <Text className="text-caption font-bold text-text-secondary">
             {t('ReviewSubmitScreen.sectionDetails')}
           </Text>
           <Pressable
@@ -376,7 +376,7 @@ export default function ReviewSubmitScreen() {
             }
             accessibilityRole="button"
           >
-            <Text className="text-caption font-bold text-primaryDeep">
+            <Text className="text-caption font-bold text-primary-deep">
               {t('ReviewSubmitScreen.edit')}
             </Text>
           </Pressable>
@@ -487,7 +487,7 @@ export default function ReviewSubmitScreen() {
 
       <View className="rounded-md bg-muted p-md flex-row items-start gap-sm mb-sm">
         <CircleAlert size={16} color={colors.accent} />
-        <Text className="flex-1 text-caption leading-relaxed text-textSecondary">
+        <Text className="flex-1 text-caption leading-relaxed text-text-secondary">
           {t('ReviewSubmitScreen.reviewGuidance')}
         </Text>
       </View>

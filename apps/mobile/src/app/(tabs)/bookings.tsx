@@ -43,7 +43,7 @@ function BookingCardHeader({ booking, isCustomer }: { booking: BookingItem; isCu
     <View className="flex-row items-center justify-between">
       <StatusBadge status={mapStatus(booking.status)} />
       {counterpartyName && (
-        <Text className="text-label font-sans-medium text-textSecondary" numberOfLines={1}>
+        <Text className="text-label font-sans-medium text-text-secondary" numberOfLines={1}>
           {counterpartyName}
         </Text>
       )}
@@ -63,11 +63,11 @@ function BookingCardBody({ booking }: { booking: BookingItem }) {
 
   return (
     <View className="gap-sm">
-      <Text className="font-screen-card-title text-primaryDeep" numberOfLines={2}>
+      <Text className="font-screen-card-title text-primary-deep" numberOfLines={2}>
         {description}
       </Text>
       <View className="flex-row items-center justify-between">
-        <Text className="text-caption text-textSecondary">{date}</Text>
+        <Text className="text-caption text-text-secondary">{date}</Text>
         <Text className="text-subtitle font-sans-bold text-secondary">
           {formatMoney(booking.price)}
         </Text>

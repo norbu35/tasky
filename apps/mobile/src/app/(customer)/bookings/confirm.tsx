@@ -64,7 +64,7 @@ export default function BookingConfirmScreen() {
     >
       {/* Tasker Info */}
       <View className="mb-xl">
-        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+        <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.bookings.sectionTasker')}
         </Text>
         <View className="flex-row items-center gap-md bg-muted rounded-md p-md">
@@ -75,9 +75,9 @@ export default function BookingConfirmScreen() {
             showVerified
           />
           <View className="flex-1">
-            <Text className="text-body font-semibold text-primaryDeep">{params.taskerName}</Text>
+            <Text className="text-body font-semibold text-primary-deep">{params.taskerName}</Text>
             {params.taskerRating && (
-              <Text className="text-caption text-textSecondary mt-xs">{params.taskerRating}</Text>
+              <Text className="text-caption text-text-secondary mt-xs">{params.taskerRating}</Text>
             )}
           </View>
         </View>
@@ -85,12 +85,12 @@ export default function BookingConfirmScreen() {
 
       {/* Task Summary */}
       <View className="mb-xl">
-        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+        <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.bookings.sectionTask')}
         </Text>
-        <Text className="text-body text-primaryDeep mb-sm">{params.taskTitle}</Text>
+        <Text className="text-body text-primary-deep mb-sm">{params.taskTitle}</Text>
         {params.taskSchedule && (
-          <Text className="text-caption text-textSecondary mb-sm">
+          <Text className="text-caption text-text-secondary mb-sm">
             {new Date(params.taskSchedule).toLocaleDateString()}
           </Text>
         )}
@@ -106,10 +106,10 @@ export default function BookingConfirmScreen() {
 
       {/* Disclaimer */}
       <View className="mb-xl">
-        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+        <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.bookings.sectionDisclaimer')}
         </Text>
-        <Text className="text-caption text-textSecondary leading-[20px] mb-md">
+        <Text className="text-caption text-text-secondary leading-[20px] mb-md">
           {t('BookingConfirmScreen.copy1')}
         </Text>
         <Pressable
@@ -127,10 +127,10 @@ export default function BookingConfirmScreen() {
             }
           >
             {disclaimerChecked && (
-              <Text className="text-primaryForeground text-[14px] font-bold">{'✓'}</Text>
+              <Text className="text-primary-foreground text-[14px] font-bold">{'✓'}</Text>
             )}
           </View>
-          <Text className="text-body text-primaryDeep flex-1">
+          <Text className="text-body text-primary-deep flex-1">
             {t('customer.bookings.disclaimerAcknowledge')}
           </Text>
         </Pressable>
@@ -141,7 +141,7 @@ export default function BookingConfirmScreen() {
         <Text className="text-subtitle font-semibold text-primary mb-sm">
           {t('customer.bookings.calendarPromptTitle')}
         </Text>
-        <Text className="text-caption text-textSecondary">{t('BookingConfirmScreen.copy2')}</Text>
+        <Text className="text-caption text-text-secondary">{t('BookingConfirmScreen.copy2')}</Text>
       </View>
     </DetailTemplate>
   );

@@ -73,7 +73,7 @@ export function FormWizardTemplate({
               key={i}
               className={cn(
                 'flex-1 rounded-md',
-                i <= currentStep ? 'bg-primary' : 'bg-chipInactive',
+                i <= currentStep ? 'bg-primary' : 'bg-chip-inactive',
               )}
               style={{ height: BAR_HEIGHT }}
             />

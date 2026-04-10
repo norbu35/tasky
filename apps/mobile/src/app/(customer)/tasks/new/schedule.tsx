@@ -186,10 +186,10 @@ export default function ScheduleBudgetScreen() {
       nextDisabled={!canContinue}
     >
       <View className="gap-sm" testID="schedule-header">
-        <Text className="text-heading font-extrabold text-primaryDeep">
+        <Text className="text-heading font-extrabold text-primary-deep">
           {t('ScheduleBudgetScreen.schedulePageTitle')}
         </Text>
-        <Text className="text-body text-textSecondary leading-relaxed">
+        <Text className="text-body text-text-secondary leading-relaxed">
           {t('ScheduleBudgetScreen.scheduleInstruction')}
         </Text>
       </View>
@@ -198,7 +198,7 @@ export default function ScheduleBudgetScreen() {
       <View className="rounded-lg bg-muted gap-lg" style={{ padding: 20, ...elevations.soft }}>
         <View className="flex-row items-center gap-sm">
           <CalendarDays size={18} color={colors.primary} />
-          <Text className="text-body font-extrabold text-primaryDeep">
+          <Text className="text-body font-extrabold text-primary-deep">
             {t('ScheduleBudgetScreen.scheduleLabel')}
           </Text>
         </View>
@@ -306,14 +306,14 @@ export default function ScheduleBudgetScreen() {
           >
             <View className="gap-xs">
               <Text
-                className="text-label font-bold text-primaryDeep uppercase"
+                className="text-label font-bold text-primary-deep uppercase"
                 style={{ letterSpacing: 0.6 }}
               >
                 {activePicker.mode === 'date'
                   ? t('ScheduleBudgetScreen.scheduleDate')
                   : t('ScheduleBudgetScreen.scheduleTime')}
               </Text>
-              <Text className="text-caption text-textSecondary">
+              <Text className="text-caption text-text-secondary">
                 {t('ScheduleBudgetScreen.schedulePickerHint')}
               </Text>
             </View>

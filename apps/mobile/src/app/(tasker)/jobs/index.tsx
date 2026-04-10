@@ -16,7 +16,7 @@ function BookingCardHeader({ booking }: { booking: Booking }) {
   return (
     <View testID="SCR-TASK-012" className="flex-row items-center justify-between">
       <Text
-        className="text-body font-semibold text-primaryForeground flex-1 mr-sm"
+        className="text-body font-semibold text-primary-foreground flex-1 mr-sm"
         numberOfLines={1}
       >
         {customerName}
@@ -37,7 +37,7 @@ function BookingCardBody({ booking }: { booking: Booking }) {
       <Text className="text-body font-medium text-foreground" numberOfLines={2}>
         {taskTitle}
       </Text>
-      <Text className="text-micro text-mutedForeground">{scheduledDate}</Text>
+      <Text className="text-micro text-muted-foreground">{scheduledDate}</Text>
     </View>
   );
 }

@@ -19,10 +19,10 @@ export default function NoApplicantRescueScreen() {
     <DetailTemplate testID="SCR-CUST-026">
       <View className="items-center py-xl gap-lg">
         <Lightbulb size={48} color={colors.secondary} />
-        <Text className="text-heading font-semibold text-primaryDeep text-center">
+        <Text className="text-heading font-semibold text-primary-deep text-center">
           {t('customer.rescue.headline')}
         </Text>
-        <Text className="text-body text-mutedForeground text-center leading-6">
+        <Text className="text-body text-muted-foreground text-center leading-6">
           {t('customer.rescue.body')}
         </Text>
         <Button

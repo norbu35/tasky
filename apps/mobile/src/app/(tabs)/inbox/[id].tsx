@@ -143,7 +143,7 @@ export default function ChatDetailScreen() {
             </Text>
             <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
               <View className="w-2 h-2 rounded-full bg-verified" />
-              <Text className="text-micro text-mutedForeground">{t('shared.inbox.online')}</Text>
+              <Text className="text-micro text-muted-foreground">{t('shared.inbox.online')}</Text>
             </View>
           </View>
           <View className="w-10 items-end">
@@ -184,7 +184,7 @@ export default function ChatDetailScreen() {
           </Text>
           <View className="flex-row items-center gap-xs" style={{ marginTop: 2 }}>
             <View className="w-2 h-2 rounded-full bg-verified" />
-            <Text className="text-micro text-mutedForeground">{t('shared.inbox.online')}</Text>
+            <Text className="text-micro text-muted-foreground">{t('shared.inbox.online')}</Text>
           </View>
         </View>
         <View className="w-10 items-end">
@@ -202,7 +202,7 @@ export default function ChatDetailScreen() {
         </View>
         <View className="flex-1" style={{ gap: 2 }}>
           <Text
-            className="text-micro font-bold text-mutedForeground uppercase"
+            className="text-micro font-bold text-muted-foreground uppercase"
             style={{ letterSpacing: 0.8 }}
           >
             {activeTask.title}
@@ -284,7 +284,7 @@ export default function ChatDetailScreen() {
           onPress={handleSend}
           disabled={draft.trim().length === 0 || isPending}
         >
-          <Text className="text-primaryForeground font-bold text-body">{t('chat.send')}</Text>
+          <Text className="text-primary-foreground font-bold text-body">{t('chat.send')}</Text>
         </Pressable>
       </View>
       </KeyboardAvoidingView>

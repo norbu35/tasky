@@ -102,8 +102,8 @@ function ChipGroup({
             <Text
               className={
                 active
-                  ? 'text-caption font-bold text-primaryForeground'
-                  : 'text-caption font-bold text-textSecondary'
+                  ? 'text-caption font-bold text-primary-foreground'
+                  : 'text-caption font-bold text-text-secondary'
               }
             >
               {opt}
@@ -147,8 +147,8 @@ function YesNo({
             <Text
               className={
                 active
-                  ? 'text-caption font-bold text-primaryForeground'
-                  : 'text-caption font-bold text-textSecondary'
+                  ? 'text-caption font-bold text-primary-foreground'
+                  : 'text-caption font-bold text-text-secondary'
               }
             >
               {label}
@@ -323,10 +323,10 @@ export default function IntakeFormScreen() {
       testID="SCR-CUST-003"
     >
       <View className="gap-sm pt-sm" testID="intake-header">
-        <Text className="text-heading font-extrabold text-primaryDeep">
+        <Text className="text-heading font-extrabold text-primary-deep">
           {t('Intake.intakePageTitle')}
         </Text>
-        <Text className="text-body text-textSecondary leading-relaxed">
+        <Text className="text-body text-text-secondary leading-relaxed">
           {t('Intake.intakeInstruction')}
         </Text>
       </View>
@@ -347,7 +347,7 @@ export default function IntakeFormScreen() {
           style={{ minHeight: 160, textAlignVertical: 'top' }}
         />
         <View className="flex-row justify-end">
-          <Text className="text-caption font-bold text-mutedForeground">
+          <Text className="text-caption font-bold text-muted-foreground">
             {`${description.length} / ${DESCRIPTION_MAX_LENGTH}`}
           </Text>
         </View>

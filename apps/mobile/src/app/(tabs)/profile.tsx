@@ -54,11 +54,11 @@ function AuthenticatedProfile() {
               size="xl"
               showVerified={isTasker && profile.status === 'VERIFIED'}
             />
-            <Text className="text-[20px] font-semibold text-primaryDeep text-center">
+            <Text className="text-[20px] font-semibold text-primary-deep text-center">
               {profile.full_name}
             </Text>
             <View className="px-md py-xs rounded-full bg-secondary">
-              <Text className="text-caption font-semibold text-secondaryForeground">
+              <Text className="text-caption font-semibold text-secondary-foreground">
                 {isTasker ? t('shared.profile.roleTasker') : t('shared.profile.roleCustomer')}
               </Text>
             </View>
@@ -81,19 +81,19 @@ function AuthenticatedProfile() {
 
           {/* Info Section */}
           <View className="bg-muted rounded-md p-lg gap-md">
-            <Text className="text-subtitle font-sans-bold text-primaryDeep">
+            <Text className="text-subtitle font-sans-bold text-primary-deep">
               {t('shared.profile.aboutMe')}
             </Text>
             {profile.phone_masked && (
               <View className="flex-row justify-between py-sm">
-                <Text className="text-body text-textSecondary">{t('shared.profile.phone')}</Text>
+                <Text className="text-body text-text-secondary">{t('shared.profile.phone')}</Text>
                 <Text className="text-body text-foreground font-medium">
                   {profile.phone_masked}
                 </Text>
               </View>
             )}
             <View className="flex-row justify-between py-sm">
-              <Text className="text-body text-textSecondary">
+              <Text className="text-body text-text-secondary">
                 {t('shared.profile.memberSince')}
               </Text>
               <Text className="text-body text-foreground font-medium">

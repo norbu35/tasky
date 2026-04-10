@@ -32,7 +32,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row justify-between gap-md">
       <Text
-        className="flex-1 text-label font-bold text-textSecondary uppercase"
+        className="flex-1 text-label font-bold text-text-secondary uppercase"
         style={{ letterSpacing: 0.4 }}
       >
         {label}
@@ -134,11 +134,11 @@ export default function TaskDetailCustomerScreen() {
                     | 'no_show'
                 }
               />
-              <Text className="text-heading font-bold text-primaryDeep leading-tight">
+              <Text className="text-heading font-bold text-primary-deep leading-tight">
                 {task.description}
               </Text>
               <Text
-                className="text-caption font-bold text-textSecondary uppercase"
+                className="text-caption font-bold text-text-secondary uppercase"
                 style={{ letterSpacing: 0.8 }}
               >
                 {t('TaskDetailCustomerScreen.sectionDetails')}
@@ -157,7 +157,7 @@ export default function TaskDetailCustomerScreen() {
             </View>
 
             {/* budgetCard: shadow → imperative */}
-            <View className="bg-primaryDeep rounded-lg p-lg gap-sm" style={elevations.soft}>
+            <View className="bg-primary-deep rounded-lg p-lg gap-sm" style={elevations.soft}>
               <View className="flex-row items-center justify-between">
                 <Text
                   className="text-caption font-bold uppercase"
@@ -169,7 +169,7 @@ export default function TaskDetailCustomerScreen() {
                   className="px-sm py-xs rounded-full"
                   style={{ backgroundColor: `${colors.primaryForeground}1A` }}
                 >
-                  <Text className="text-micro font-bold text-primaryForeground">
+                  <Text className="text-micro font-bold text-primary-foreground">
                     {Number((task as any)?.applicant_count ?? 0)}{' '}
                     {t('TaskDetailCustomerScreen.applicants')}
                   </Text>
@@ -189,7 +189,7 @@ export default function TaskDetailCustomerScreen() {
                   {t('TaskDetailCustomerScreen.applicants')}
                 </Text>
                 <Text
-                  className="text-caption font-extrabold text-center text-primaryDeep"
+                  className="text-caption font-extrabold text-center text-primary-deep"
                   style={{
                     minWidth: 28,
                     paddingHorizontal: 8,
@@ -202,11 +202,11 @@ export default function TaskDetailCustomerScreen() {
                 </Text>
               </View>
               {hasApplicants ? (
-                <Text className="text-body text-textSecondary leading-relaxed">
+                <Text className="text-body text-text-secondary leading-relaxed">
                   {t('TaskDetailCustomerScreen.applicationsReceived')}
                 </Text>
               ) : (
-                <Text className="text-body text-textSecondary leading-relaxed">
+                <Text className="text-body text-text-secondary leading-relaxed">
                   {t('TaskDetailCustomerScreen.noApplicants')}
                 </Text>
               )}
@@ -218,7 +218,7 @@ export default function TaskDetailCustomerScreen() {
                   {t('TaskDetailCustomerScreen.photos')}
                 </Text>
                 <Text
-                  className="text-caption font-extrabold text-center text-primaryDeep"
+                  className="text-caption font-extrabold text-center text-primary-deep"
                   style={{
                     minWidth: 28,
                     paddingHorizontal: 8,
@@ -242,11 +242,11 @@ export default function TaskDetailCustomerScreen() {
                         backgroundColor: `${colors.primary}12`,
                       }}
                     >
-                      <Text className="text-body font-extrabold text-primaryDeep">{index + 1}</Text>
+                      <Text className="text-body font-extrabold text-primary-deep">{index + 1}</Text>
                     </View>
                   ))
                 ) : (
-                  <Text className="text-body text-textSecondary leading-relaxed">
+                  <Text className="text-body text-text-secondary leading-relaxed">
                     {t('TaskDetailCustomerScreen.noPhotos')}
                   </Text>
                 )}
@@ -260,11 +260,11 @@ export default function TaskDetailCustomerScreen() {
             >
               <View className="flex-row items-center gap-sm">
                 <MapPin size={16} color={colors.primaryDeep} />
-                <Text className="flex-1 text-body font-bold text-primaryDeep">
+                <Text className="flex-1 text-body font-bold text-primary-deep">
                   {(task as any).location_text ?? ''}
                 </Text>
               </View>
-              <Text className="text-caption text-textSecondary leading-relaxed">
+              <Text className="text-caption text-text-secondary leading-relaxed">
                 {t('TaskDetailCustomerScreen.locationNote')}
               </Text>
             </View>
@@ -294,7 +294,7 @@ export default function TaskDetailCustomerScreen() {
                         {tasker.rating_avg ?? 0}
                       </Text>
                     </View>
-                    <Text className="text-caption text-textSecondary">
+                    <Text className="text-caption text-text-secondary">
                       {t('TaskDetailCustomerScreen.assignedTasker')}
                     </Text>
                   </View>
@@ -307,10 +307,10 @@ export default function TaskDetailCustomerScreen() {
                 className="p-lg rounded-lg gap-xs"
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
-                <Text className="text-body font-extrabold text-primaryDeep">
+                <Text className="text-body font-extrabold text-primary-deep">
                   {t('TaskDetailCustomerScreen.completedTitle')}
                 </Text>
-                <Text className="text-caption text-textSecondary">
+                <Text className="text-caption text-text-secondary">
                   {t('TaskDetailCustomerScreen.completedBody')}
                 </Text>
               </View>
@@ -321,10 +321,10 @@ export default function TaskDetailCustomerScreen() {
                 className="p-lg rounded-lg gap-xs"
                 style={{ backgroundColor: `${colors.muted}80` }}
               >
-                <Text className="text-body font-extrabold text-primaryDeep">
+                <Text className="text-body font-extrabold text-primary-deep">
                   {t('TaskDetailCustomerScreen.cancelledTitle')}
                 </Text>
-                <Text className="text-caption text-textSecondary">
+                <Text className="text-caption text-text-secondary">
                   {t('TaskDetailCustomerScreen.cancelledBody')}
                 </Text>
               </View>

@@ -85,11 +85,11 @@ function FilterTab({
       accessibilityState={{ selected: active }}
     >
       <Text
-        className={`text-label font-semibold${active ? ' text-primaryDeep' : ' text-textSecondary'}`}
+        className={`text-label font-semibold${active ? ' text-primary-deep' : ' text-text-secondary'}`}
       >
         {label}
       </Text>
-      {active ? <View className="mt-xs w-12 h-1 rounded-full bg-primaryDeep" /> : null}
+      {active ? <View className="mt-xs w-12 h-1 rounded-full bg-primary-deep" /> : null}
     </Pressable>
   );
 }
@@ -134,10 +134,10 @@ function BookingCard({
             showVerified
           />
           <View className="flex-1" style={{ gap: 2 }}>
-            <Text className="text-body font-bold text-primaryDeep" numberOfLines={1}>
+            <Text className="text-body font-bold text-primary-deep" numberOfLines={1}>
               {booking.tasker?.full_name ?? t('BookingsListScreen.taskerFallback')}
             </Text>
-            <Text className="text-caption text-textSecondary" numberOfLines={1}>
+            <Text className="text-caption text-text-secondary" numberOfLines={1}>
               {booking.task?.description ?? t('BookingsListScreen.taskFallback')}
             </Text>
           </View>
@@ -162,7 +162,7 @@ function BookingCard({
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-xs flex-1">
           <CalendarDays size={14} color={colors.textSecondary} />
-          <Text className="text-caption text-textSecondary flex-1">{schedule ?? '—'}</Text>
+          <Text className="text-caption text-text-secondary flex-1">{schedule ?? '—'}</Text>
         </View>
         <PriceTag amount={booking.task?.budget ?? 0} size="sm" />
       </View>
@@ -197,10 +197,10 @@ function EmptyState({ onPress }: { onPress: () => void }) {
       <View className="w-16 h-16 rounded-lg items-center justify-center bg-muted">
         <ClipboardList size={28} color={colors.secondary} />
       </View>
-      <Text className="text-title font-bold text-primaryDeep text-center">
+      <Text className="text-title font-bold text-primary-deep text-center">
         {t('customer.bookings.emptyTitle')}
       </Text>
-      <Text className="text-body text-textSecondary text-center leading-relaxed">
+      <Text className="text-body text-text-secondary text-center leading-relaxed">
         {t('customer.bookings.emptyDescription')}
       </Text>
       <Pressable
@@ -208,7 +208,7 @@ function EmptyState({ onPress }: { onPress: () => void }) {
         className="min-h-[48px] px-xl rounded-md bg-secondary items-center justify-center"
         testID="bookings-empty-cta"
       >
-        <Text className="text-label font-bold text-secondaryForeground">
+        <Text className="text-label font-bold text-secondary-foreground">
           {t('customer.bookings.emptyCta')}
         </Text>
       </Pressable>
@@ -269,7 +269,7 @@ export default function BookingsListScreen() {
           >
             <Menu size={22} color={colors.primaryDeep} />
           </Pressable>
-          <Text className="flex-1 mx-md text-subtitle font-bold text-primaryDeep">
+          <Text className="flex-1 mx-md text-subtitle font-bold text-primary-deep">
             {t('customer.bookings.pageTitle')}
           </Text>
           <Pressable
@@ -317,7 +317,7 @@ export default function BookingsListScreen() {
               className="bg-muted rounded-md px-md py-sm"
               style={{ marginBottom: screenLayout.body.itemGap }}
             >
-              <Text className="text-label text-textSecondary">
+              <Text className="text-label text-text-secondary">
                 {t('BookingsListScreen.offlineBanner')}
               </Text>
             </View>
@@ -343,7 +343,7 @@ export default function BookingsListScreen() {
               ))}
               {filteredBookings.length === 0 ? (
                 <View className="items-center py-2xl">
-                  <Text className="text-body text-textSecondary text-center">
+                  <Text className="text-body text-text-secondary text-center">
                     {activeTab === 'active'
                       ? t('BookingsListScreen.emptyTitle')
                       : t('BookingsListScreen.completedEmptyTitle')}

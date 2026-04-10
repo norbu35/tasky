@@ -24,7 +24,7 @@ describe('CategoryChip', () => {
   it('applies inactive cva classes by default', () => {
     render(<CategoryChip label="Cleaning" testID="chip" />);
     const el = screen.getByTestId('chip');
-    expect(el.props.className).toContain('bg-chipInactive');
+    expect(el.props.className).toContain('bg-chip-inactive');
   });
 
   it('applies active text cva classes when isActive is true', () => {

@@ -20,7 +20,7 @@ export default function PendingScreen() {
       <Text className="text-title font-bold text-foreground text-center">
         {t('tasker.verification.pendingTitle')}
       </Text>
-      <Text className="text-body text-textSecondary text-center mt-sm leading-relaxed">
+      <Text className="text-body text-text-secondary text-center mt-sm leading-relaxed">
         {t('tasker.verification.pendingBody')}
       </Text>
       <Text className="text-body text-accent text-center mt-md font-medium">

@@ -20,43 +20,43 @@ export default function SubscriptionScreen() {
         contentContainerClassName="p-xl gap-lg"
         testID="subscription-screen"
       >
-        <Text className="text-heading font-bold text-primaryDeep">
+        <Text className="text-heading font-bold text-primary-deep">
           {t('tasker.subscription.title')}
         </Text>
-        <Text className="text-title font-semibold text-primaryDeep">
+        <Text className="text-title font-semibold text-primary-deep">
           {t('tasker.subscription.heroTitle')}
         </Text>
 
         {isLockedDemo ? (
           <View className="bg-muted rounded-lg p-xl gap-sm" testID="subscription-screen-locked">
-            <Text className="text-title font-bold text-primaryDeep">
+            <Text className="text-title font-bold text-primary-deep">
               {t('tasker.subscription.ineligibleTitle')}
             </Text>
-            <Text className="text-body text-textSecondary leading-relaxed">
+            <Text className="text-body text-text-secondary leading-relaxed">
               {t('tasker.subscription.ineligibleDesc')}
             </Text>
           </View>
         ) : (
           <>
             <View className="bg-muted rounded-lg p-xl gap-sm">
-              <Text className="text-title font-bold text-primaryDeep">
+              <Text className="text-title font-bold text-primary-deep">
                 {t('tasker.subscription.planStandard')}
               </Text>
-              <Text className="text-body text-textSecondary leading-relaxed">
+              <Text className="text-body text-text-secondary leading-relaxed">
                 {t('tasker.subscription.planStandardDesc')}
               </Text>
             </View>
             <View className="bg-muted rounded-lg p-xl gap-sm">
-              <Text className="text-title font-bold text-primaryDeep">
+              <Text className="text-title font-bold text-primary-deep">
                 {t('tasker.subscription.planPremium')}
               </Text>
-              <Text className="text-body text-textSecondary leading-relaxed">
+              <Text className="text-body text-text-secondary leading-relaxed">
                 {t('tasker.subscription.heroDescription')}
               </Text>
             </View>
             {status === 'active' ? (
-              <View className="self-start bg-trustMuted rounded-lg px-lg py-sm">
-                <Text className="text-body font-bold text-trustForeground">
+              <View className="self-start bg-trust-muted rounded-lg px-lg py-sm">
+                <Text className="text-body font-bold text-trust-foreground">
                   {t('tasker.subscription.activeLabel')}
                 </Text>
               </View>
@@ -73,10 +73,10 @@ export default function SubscriptionScreen() {
 
       {status === 'confirming' ? (
         <View className="p-xl gap-md bg-background" testID="subscription-confirm-sheet">
-          <Text className="text-title font-bold text-primaryDeep">
+          <Text className="text-title font-bold text-primary-deep">
             {t('tasker.subscription.confirmTitle')}
           </Text>
-          <Text className="text-body text-textSecondary leading-relaxed">
+          <Text className="text-body text-text-secondary leading-relaxed">
             {t('tasker.subscription.confirmBody')}
           </Text>
           <Button

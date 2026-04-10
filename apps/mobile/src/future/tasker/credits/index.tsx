@@ -16,8 +16,8 @@ export default function TaskerCreditsIndexScreen() {
   return (
     <DetailTemplate testID="SCR-P2-001">
       <View className="gap-lg">
-        <View className="p-lg rounded-lg bg-primaryDeep gap-xs">
-          <Text className="text-label text-primaryForeground opacity-80">
+        <View className="p-lg rounded-lg bg-primary-deep gap-xs">
+          <Text className="text-label text-primary-foreground opacity-80">
             {t('tasker.credits.availableBalance')}
           </Text>
           <Text
@@ -26,7 +26,7 @@ export default function TaskerCreditsIndexScreen() {
           >
             {balanceText}
           </Text>
-          <Text className="text-body text-primaryForeground opacity-70">
+          <Text className="text-body text-primary-foreground opacity-70">
             {t('tasker.credits.enoughForTwoTasks')}
           </Text>
         </View>
@@ -44,7 +44,7 @@ export default function TaskerCreditsIndexScreen() {
         />
 
         <View className="gap-md">
-          <Text className="text-heading font-bold text-primaryDeep">
+          <Text className="text-heading font-bold text-primary-deep">
             {t('tasker.credits.quickActions')}
           </Text>
           <View className="flex-row gap-sm">
@@ -68,12 +68,12 @@ export default function TaskerCreditsIndexScreen() {
             testID="tasker-credits-referrals"
           >
             <Text className="text-label font-bold text-primary">{t('tasker.referrals.title')}</Text>
-            <Text className="text-body text-textSecondary">{t('tasker.referrals.inviteBody')}</Text>
+            <Text className="text-body text-text-secondary">{t('tasker.referrals.inviteBody')}</Text>
           </Pressable>
         </View>
 
         <View className="gap-md">
-          <Text className="text-heading font-bold text-primaryDeep">
+          <Text className="text-heading font-bold text-primary-deep">
             {t('tasker.credits.currentSnapshot')}
           </Text>
           <View className="p-lg rounded-lg bg-card">

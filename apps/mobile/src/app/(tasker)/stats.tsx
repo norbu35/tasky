@@ -45,22 +45,22 @@ export default function TaskerStatsScreen() {
       {data && (
         <View className="gap-lg">
           <View
-            className="bg-primaryDeep rounded-lg gap-xs"
+            className="bg-primary-deep rounded-lg gap-xs"
             style={{ padding: spacing.xl }}
             testID="tasker-stats-hero"
           >
-            <Text className="text-label text-primaryForeground opacity-90">
+            <Text className="text-label text-primary-foreground opacity-90">
               {t('tasker.stats.heroLabel')}
             </Text>
             <Text className="text-heroTitle font-bold text-secondary">
               {formatRating(averageRating)}
             </Text>
-            <Text className="text-caption text-primaryForeground">
+            <Text className="text-caption text-primary-foreground">
               {t('tasker.stats.heroMeta')}
             </Text>
           </View>
 
-          <Text className="text-heading font-bold text-primaryDeep">
+          <Text className="text-heading font-bold text-primary-deep">
             {t('tasker.stats.sectionHeading')}
           </Text>
 
@@ -87,7 +87,7 @@ export default function TaskerStatsScreen() {
           </View>
 
           <View className="gap-xs pt-md">
-            <Text className="text-subtitle font-semibold text-primaryDeep">
+            <Text className="text-subtitle font-semibold text-primary-deep">
               {t('tasker.stats.ratingBreakdown')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
@@ -102,7 +102,7 @@ export default function TaskerStatsScreen() {
           </View>
 
           <View className="gap-xs pt-md">
-            <Text className="text-subtitle font-semibold text-primaryDeep">
+            <Text className="text-subtitle font-semibold text-primary-deep">
               {t('tasker.stats.reliabilityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">
@@ -114,7 +114,7 @@ export default function TaskerStatsScreen() {
           </View>
 
           <View className="gap-xs pt-md">
-            <Text className="text-subtitle font-semibold text-primaryDeep">
+            <Text className="text-subtitle font-semibold text-primary-deep">
               {t('tasker.stats.activityHeading')}
             </Text>
             <Text className="text-body text-foreground leading-relaxed">

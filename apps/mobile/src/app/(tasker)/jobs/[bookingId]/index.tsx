@@ -65,7 +65,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Customer Info */}
           <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
               {t('tasker.jobs.customerLabel')}
             </Text>
             <Text className="text-subtitle font-semibold text-foreground">
@@ -75,7 +75,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Task Description */}
           <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
               {t('tasker.jobs.taskDescription')}
             </Text>
             <Text className="text-body text-foreground leading-[22px]">
@@ -85,13 +85,13 @@ export default function BookingDetailTaskerScreen() {
 
           {(isAssigned || isMarkedDone) && (
             <View className="gap-xs">
-              <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+              <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
                 {t('tasker.jobs.exactAddress')}
               </Text>
               <Text className="text-body text-foreground leading-[22px]">
                 {booking.task?.location_text ?? ''}
               </Text>
-              <Text className="text-caption text-textSecondary leading-[20px]">
+              <Text className="text-caption text-text-secondary leading-[20px]">
                 {t('tasker.jobs.exactAddressNote')}
               </Text>
             </View>
@@ -99,7 +99,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Schedule */}
           <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
               {t('tasker.jobs.schedule')}
             </Text>
             <Text className="text-body text-foreground">
@@ -111,7 +111,7 @@ export default function BookingDetailTaskerScreen() {
 
           {/* Budget */}
           <View className="gap-xs">
-            <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px]">
+            <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px]">
               {t('tasker.jobs.budget')}
             </Text>
             <Text className="text-heading font-sans-bold text-secondary">
@@ -123,10 +123,10 @@ export default function BookingDetailTaskerScreen() {
           {/* Payment Note */}
           {isAssigned && (
             <View className="bg-muted rounded-md p-md">
-              <Text className="text-micro font-sans-bold text-mutedForeground uppercase tracking-[0.5px] mb-xs">
+              <Text className="text-micro font-sans-bold text-muted-foreground uppercase tracking-[0.5px] mb-xs">
                 {t('tasker.jobs.paymentNoteHeading')}
               </Text>
-              <Text className="text-micro text-mutedForeground leading-[20px]">
+              <Text className="text-micro text-muted-foreground leading-[20px]">
                 {t('BookingDetailTaskerScreen.copy1')}
               </Text>
             </View>
