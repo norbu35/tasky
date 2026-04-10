@@ -9,6 +9,7 @@
 .gradle/
 build/
 /bin/
+services/api/bin/
 *.class
 
 # Python cache
