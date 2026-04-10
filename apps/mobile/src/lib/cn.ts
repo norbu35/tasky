@@ -11,6 +11,11 @@ const twMerge = extendTailwindMerge({
           font: ['sans', 'sans-medium', 'sans-semibold', 'sans-bold', 'display', 'display-bold'],
         },
       ],
+      'font-size': [
+        {
+          text: ['hero-title', 'heading', 'title', 'subtitle', 'body', 'label', 'caption', 'micro', 'nav-label'],
+        },
+      ],
       gap: [
         {
           gap: [
