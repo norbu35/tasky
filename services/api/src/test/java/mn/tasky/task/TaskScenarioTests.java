@@ -49,10 +49,11 @@ class TaskScenarioTests extends IntegrationTestBase {
     private String taskerToken;
     private String categoryId;
     // The Cleaning category schema has 4 required questions (version 1)
+    // Values must match the structured option `value` fields in V11 seed schema (snake_case)
     private static final Map<String, Object> CLEANING_INTAKE_ANSWERS = Map.of(
-            "property_type", "Apartment",
+            "property_type", "apartment",
             "size_or_rooms", 2,
-            "cleaning_type", "Standard",
+            "cleaning_type", "standard",
             "supplies_provided", true);
     private static final int CLEANING_SCHEMA_VERSION = 1;
 
