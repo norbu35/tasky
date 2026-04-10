@@ -42,13 +42,11 @@ import {
   TaskerFeedPage,
   TaskerJobsPage,
   TaskerPrivacyPage,
-  TaskerProfilePolishPage,
   TaskerStatsPage,
   TaskerTaskDetailPage,
   TaskerTasksPage,
   TermsPage,
   LandingPage,
-  VerificationPage,
   VerificationApprovedPage,
   VerificationConsentPage,
   VerificationGatePage,
@@ -66,8 +64,6 @@ import {
   AdminFeaturesPage,
   AdminConciergePage,
   AdminModerationPage,
-  AdminPayoutsPage,
-  AdminLeadPricingPage,
 } from '../pages/admin';
 import { ProtectedRoute, RoleGuard } from './RouteGuards';
 import { AdminRoute } from './AdminRoute';
@@ -206,16 +202,6 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
         path="/customer/booking-confirmation"
-      />
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleGuard role="CUSTOMER">
-              <BookingConfirmationPage />
-            </RoleGuard>
-          </ProtectedRoute>
-        }
-        path="/customer/booking-payment"
       />
       <Route
         element={
@@ -406,26 +392,6 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
         path="/tasker/privacy"
-      />
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleGuard role="TASKER">
-              <TaskerProfilePolishPage />
-            </RoleGuard>
-          </ProtectedRoute>
-        }
-        path="/tasker/profile/polish"
-      />
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleGuard role="TASKER">
-              <VerificationPage />
-            </RoleGuard>
-          </ProtectedRoute>
-        }
-        path="/verification"
       />
       <Route
         element={
@@ -630,8 +596,6 @@ export function AppRoutes() {
         <Route path="features" element={<AdminFeaturesPage />} />
         <Route path="concierge" element={<AdminConciergePage />} />
         <Route path="moderation" element={<AdminModerationPage />} />
-        <Route path="payouts" element={<AdminPayoutsPage />} />
-        <Route path="pricing" element={<AdminLeadPricingPage />} />
       </Route>
       <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>

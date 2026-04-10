@@ -1,23 +1,33 @@
 import { expect, test } from '@playwright/test';
+import { loginThroughDevBypass, mockCategories, mockDevSession, mockTaskApplication, mockTaskFeed } from './support/mockApi';
 
-test.describe('Tasker happy path — route gating', () => {
-  test('tasker feed is gated behind auth', async ({ page }) => {
+test.describe('Tasker happy path', () => {
+  test('@smoke tasker can browse and apply to a task', async ({ page }) => {
+    await mockDevSession(page, 'TASKER');
+    await mockCategories(page);
+    await mockTaskFeed(page);
+    await mockTaskApplication(page);
+
+    await loginThroughDevBypass(page, 'Tasker');
+    await expect(page).toHaveURL(/\/profile/);
+
     await page.goto('/tasker/feed');
-    await expect(page).toHaveURL(/\/auth/);
-  });
+    await expect(page.getByRole('heading', { name: 'Open task feed' })).toBeVisible();
+    await expect(page.getByText('Window cleaning for a two-bedroom apartment')).toBeVisible();
 
-  test('tasker verification is gated behind auth', async ({ page }) => {
-    await page.goto('/tasker/verification');
-    await expect(page).toHaveURL(/\/auth/);
-  });
+    await page
+      .getByLabel('Application message')
+      .fill('I can handle this tomorrow morning and bring my own supplies.');
 
-  test('tasker jobs route is gated behind auth', async ({ page }) => {
-    await page.goto('/tasker/jobs');
-    await expect(page).toHaveURL(/\/auth/);
-  });
+    const applyResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/tasks/public-task-1/applications') &&
+        response.request().method() === 'POST',
+    );
 
-  test('tasker stats route is gated behind auth', async ({ page }) => {
-    await page.goto('/tasker/stats');
-    await expect(page).toHaveURL(/\/auth/);
+    await page.getByRole('button', { name: 'Apply to task' }).click();
+    await applyResponse;
+
+    await expect(page.getByRole('heading', { name: 'Application sent' })).toBeVisible();
   });
 });

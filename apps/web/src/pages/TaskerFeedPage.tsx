@@ -15,6 +15,8 @@ import { useTranslation } from 'react-i18next';
 export function TaskerFeedPage() {
   const { apiClient, session, trackClientEvent } = useAppContext();
   const { t, i18n } = useTranslation();
+  const isMongolian = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn');
+  const locale = isMongolian ? 'mn-MN' : 'en-US';
 
   const [filters, setFilters] = useState<{
     categoryId: string;
@@ -81,7 +83,9 @@ export function TaskerFeedPage() {
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Page header */}
         <div className="mb-4">
-          <h1 className="text-2xl font-display font-bold tracking-tight">Open task feed</h1>
+          <h1 className="text-2xl font-display font-bold tracking-tight">
+            {t('taskerFeed.title', 'Open task feed')}
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t(
               'taskerFeed.subtitle',
@@ -116,7 +120,7 @@ export function TaskerFeedPage() {
                   : 'bg-card text-muted-foreground border-border hover:border-primary/50'
               }`}
             >
-              {i18n.resolvedLanguage === 'mn' ? c.name_mn : c.name}
+              {isMongolian ? c.name_mn : c.name}
             </button>
           ))}
         </div>
@@ -135,13 +139,20 @@ export function TaskerFeedPage() {
         {sentTaskId ? (
           <Card className="border-primary/30 bg-primary/5 shadow-sm">
             <CardHeader className="space-y-2">
-              <CardTitle className="text-2xl font-semibold">Application sent</CardTitle>
+              <CardTitle className="text-2xl font-semibold">
+                {t('taskerPages.applicationSent.title', 'Application sent')}
+              </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Your application is waiting for the customer to review.
+                {t(
+                  'taskerPages.applicationSent.description',
+                  'Your application has been sent to the customer and is waiting for review.',
+                )}
               </p>
             </CardHeader>
             <CardContent className="pt-0">
-              <p className="text-sm text-muted-foreground">Application sent.</p>
+              <p className="text-sm text-muted-foreground">
+                {t('taskerPages.applicationSent.sentDesc', 'Application sent.')}
+              </p>
             </CardContent>
             <CardFooter className="justify-end">
               <Button
@@ -152,7 +163,7 @@ export function TaskerFeedPage() {
                   setActionMessage(null);
                 }}
               >
-                Back to feed
+                {t('taskerPages.applicationSent.backToFeed', 'Back to feed')}
               </Button>
             </CardFooter>
           </Card>
@@ -200,7 +211,7 @@ export function TaskerFeedPage() {
                     </div>
                     <div className="text-right whitespace-nowrap">
                       <div className="text-2xl font-display font-bold text-foreground">
-                        {task.budget.toLocaleString('en-US')}{' '}
+                        {task.budget.toLocaleString(locale)}{' '}
                         <span className="text-sm font-normal text-muted-foreground">MNT</span>
                       </div>
                     </div>

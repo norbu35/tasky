@@ -14,12 +14,22 @@ const resources = {
   },
 };
 
+const normalizeLanguage = (language: string | undefined): 'en' | 'mn' => {
+  const baseLanguage = language?.toLowerCase().split('-')[0];
+  return baseLanguage === 'en' || baseLanguage === 'mn' ? baseLanguage : 'mn';
+};
+
+const fallbackLanguage = normalizeLanguage(import.meta.env.VITE_DEFAULT_LOCALE as string | undefined);
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: import.meta.env.VITE_DEFAULT_LOCALE || 'mn', // Default to Mongolian or ENV
+    supportedLngs: ['en', 'mn'],
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
+    fallbackLng: fallbackLanguage,
     detection: {
       // order: User toggle (localStorage) -> Browser settings (navigator)
       order: ['localStorage', 'navigator'],

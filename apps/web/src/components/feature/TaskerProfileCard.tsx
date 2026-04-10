@@ -1,4 +1,5 @@
 import { Star, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { VerificationBadge } from './VerificationBadge';
 import { cn } from '../../lib/utils';
 
@@ -25,6 +26,7 @@ export function TaskerProfileCard({
   onMessage,
   className,
 }: TaskerProfileCardProps) {
+  const { t } = useTranslation();
   const initials = name
     .split(' ')
     .map((w) => w[0])
@@ -57,14 +59,18 @@ export function TaskerProfileCard({
             <div className="flex items-center gap-1.5 mt-0.5">
               <Star size={12} className="text-accent fill-accent" />
               <span className="text-sm font-bold text-foreground">{rating}</span>
-              <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
+              <span className="text-xs text-muted-foreground">
+                {t('customerPages.taskerProfile.reviews', '({{count}} reviews)', {
+                  count: reviewCount,
+                })}
+              </span>
             </div>
           </div>
         </div>
         {isPro && (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-trust text-trust-muted text-[10px] font-bold uppercase">
             <ShieldCheck size={12} />
-            Verified
+            {t('customerPages.taskerProfile.verifiedTasker', 'Verified Tasker')}
           </span>
         )}
       </div>
@@ -74,7 +80,7 @@ export function TaskerProfileCard({
           onClick={onMessage}
           className="w-full py-3 rounded-lg border border-muted-foreground/30 text-sm font-bold text-primary-deep hover:bg-muted transition-colors"
         >
-          Message Tasker
+          {t('customerPages.taskerProfile.messageTasker', 'Message tasker')}
         </button>
       )}
     </div>

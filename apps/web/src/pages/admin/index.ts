@@ -6,5 +6,3 @@ export { AdminCategoriesPage } from './AdminCategoriesPage';
 export { AdminFeaturesPage } from './AdminFeaturesPage';
 export { AdminConciergePage } from './AdminConciergePage';
 export { AdminModerationPage } from './AdminModerationPage';
-export { AdminPayoutsPage } from './AdminPayoutsPage';
-export { AdminLeadPricingPage } from './AdminLeadPricingPage';

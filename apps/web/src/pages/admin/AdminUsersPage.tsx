@@ -17,10 +17,10 @@ import {
   DialogTitle,
 } from '../../components/ui/dialog';
 
-function formatTimestamp(iso: string): string {
+function formatTimestamp(iso: string, locale: string): string {
   try {
     const date = new Date(iso);
-    return date.toLocaleString('en-US', {
+    return date.toLocaleString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -33,8 +33,11 @@ function formatTimestamp(iso: string): string {
 }
 
 export function AdminUsersPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { apiClient, session } = useAppContext();
+  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
+    ? 'mn-MN'
+    : 'en-US';
 
   // ── Search state ─────────────────────────────────────────────────
   const [phone, setPhone] = useState('');
@@ -223,7 +226,7 @@ export function AdminUsersPage() {
                       <td className="px-4 py-3">{user.phone ?? '—'}</td>
                       <td className="px-4 py-3">{user.role}</td>
                       <td className="px-4 py-3">{user.status}</td>
-                      <td className="px-4 py-3">{formatTimestamp(user.created_at)}</td>
+                      <td className="px-4 py-3">{formatTimestamp(user.created_at, locale)}</td>
                       <td className="px-4 py-3">
                         {user.status === 'BANNED' ? (
                           <Button variant="outline" size="sm" onClick={() => handleUnban(user.id)}>
@@ -288,7 +291,7 @@ export function AdminUsersPage() {
                     <p className="text-sm">{msg.content}</p>
                     <p className="text-xs text-muted-foreground">
                       {t('admin.users.sender', 'Sender')}: {msg.sender_id} &middot;{' '}
-                      {formatTimestamp(msg.created_at)}
+                      {formatTimestamp(msg.created_at, locale)}
                     </p>
                   </CardContent>
                 </Card>

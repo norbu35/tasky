@@ -52,8 +52,11 @@ function computeSla(submittedAt: string, now: Date, t: TFunction): SlaInfo {
 // ── Component ────────────────────────────────────────────────────────
 
 export function AdminVerificationsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { apiClient, session } = useAppContext();
+  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
+    ? 'mn-MN'
+    : 'en-US';
 
   const [verifications, setVerifications] = useState<VerificationDetail[]>([]);
   const [loading, setLoading] = useState(true);
@@ -241,7 +244,7 @@ export function AdminVerificationsPage() {
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {t('admin.verifications.submittedAt', 'Submitted:')}{' '}
-                    {new Date(v.submitted_at).toLocaleString()}
+                    {new Date(v.submitted_at).toLocaleString(locale)}
                   </p>
                 </div>
 
@@ -265,7 +268,7 @@ export function AdminVerificationsPage() {
                         </p>
                         <img
                           src={v.id_card_front_url}
-                          alt="ID Card Front"
+                          alt={t('admin.verifications.idFront', 'ID Front')}
                           className="rounded-lg border object-cover w-full max-h-48"
                         />
                       </div>
@@ -275,7 +278,7 @@ export function AdminVerificationsPage() {
                         </p>
                         <img
                           src={v.id_card_back_url}
-                          alt="ID Card Back"
+                          alt={t('admin.verifications.idBack', 'ID Back')}
                           className="rounded-lg border object-cover w-full max-h-48"
                         />
                       </div>
@@ -286,7 +289,7 @@ export function AdminVerificationsPage() {
                           </p>
                           <img
                             src={v.selfie_url}
-                            alt="Selfie"
+                            alt={t('admin.verifications.selfie', 'Selfie')}
                             className="rounded-lg border object-cover w-full max-h-48"
                           />
                         </div>

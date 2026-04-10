@@ -14,6 +14,17 @@ import { useTranslation } from 'react-i18next';
 
 function TaskCard({ task }: { task: Task }) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
+    ? 'mn-MN'
+    : 'en-US';
+  const statusLabelMap: Record<string, string> = {
+    OPEN: t('customerDashboard.statusOpen', 'Open'),
+    ASSIGNED: t('customerDashboard.statusAssigned', 'Assigned'),
+    COMPLETED: t('customerDashboard.statusCompleted', 'Completed'),
+    CANCELLED: t('customerDashboard.statusCancelled', 'Cancelled'),
+    NO_SHOW: t('customerDashboard.statusNoShow', 'No-show'),
+  };
 
   return (
     <Card
@@ -23,7 +34,7 @@ function TaskCard({ task }: { task: Task }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <Badge variant={task.status === 'OPEN' ? 'default' : 'secondary'} className="text-xs">
-            {task.status}
+            {statusLabelMap[task.status] ?? task.status}
           </Badge>
         </div>
         <p className="text-sm font-semibold truncate">{task.description}</p>
@@ -33,9 +44,9 @@ function TaskCard({ task }: { task: Task }) {
         </div>
       </div>
       <div className="text-right flex-shrink-0">
-        <div className="text-sm font-bold">₮{task.budget.toLocaleString()}</div>
+        <div className="text-sm font-bold">₮{task.budget.toLocaleString(locale)}</div>
         <div className="text-xs text-muted-foreground">
-          {new Date(task.scheduled_at).toLocaleDateString()}
+          {new Date(task.scheduled_at).toLocaleDateString(locale)}
         </div>
       </div>
     </Card>
@@ -45,7 +56,10 @@ function TaskCard({ task }: { task: Task }) {
 export function CustomerDashboardPage() {
   const { apiClient, session, profile } = useAppContext();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = (i18n.resolvedLanguage ?? i18n.language).toLowerCase().startsWith('mn')
+    ? 'mn-MN'
+    : 'en-US';
 
   const {
     data: tasksPage,
@@ -75,7 +89,7 @@ export function CustomerDashboardPage() {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {new Date().toLocaleDateString('en-US', {
+              {new Date().toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',

@@ -1,31 +1,34 @@
 import { expect, test } from '@playwright/test';
+import { loginThroughDevBypass, mockCategories, mockCreateTask, mockDevSession, nextLocalDateTimeInput } from './support/mockApi';
 
-test.describe('Customer happy path — landing to login gate', () => {
-  test('landing page shows call-to-action buttons', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Get Started' })).toBeVisible();
-  });
+test.describe('Customer happy path', () => {
+  test('@smoke customer can create a task through the browser wizard', async ({ page }) => {
+    await mockDevSession(page, 'CUSTOMER');
+    await mockCategories(page);
+    await mockCreateTask(page);
 
-  test('Get Started navigates to auth page', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Get Started' }).click();
-    await expect(page).toHaveURL(/\/auth/);
-  });
+    await loginThroughDevBypass(page, 'Customer');
+    await expect(page).toHaveURL(/\/profile/);
 
-  test('Login button navigates to auth page', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page).toHaveURL(/\/auth/);
-  });
-
-  test('customer task creation route is gated', async ({ page }) => {
     await page.goto('/customer/tasks/new');
-    await expect(page).toHaveURL(/\/auth/);
-  });
+    await expect(page.getByRole('heading', { name: 'Create task' })).toBeVisible();
+    await expect(page.locator('#task-category')).toHaveValue('cat-cleaning');
 
-  test('customer bookings route is gated', async ({ page }) => {
-    await page.goto('/customer/bookings');
-    await expect(page).toHaveURL(/\/auth/);
+    await page.getByLabel('Description').fill('Deep clean a two-bedroom apartment');
+    await page.getByLabel('Scheduled at').fill(nextLocalDateTimeInput(24));
+    await page
+      .getByLabel('Address description')
+      .fill('HUD, 15-r khoroo, Olimpiin khotkhon');
+
+    const createTaskResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes('/api/v1/tasks') && response.request().method() === 'POST',
+    );
+
+    await page.getByRole('button', { name: 'Create task' }).click();
+    await createTaskResponse;
+
+    await expect(page.getByText('Task posted successfully')).toBeVisible();
+    await expect(page.getByText(/Task ID: task-1/)).toBeVisible();
   });
 });

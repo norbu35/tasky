@@ -17,10 +17,6 @@ export default function CustomerLayout() {
         name="tasks/[taskId]/applicants"
         options={{ title: t('TaskDetailCustomerScreen.applicants') }}
       />
-      <Stack.Screen
-        name="tasks/[taskId]/instant-match"
-        options={{ title: t('matching.instantMatch.pageTitle') }}
-      />
       {/* Booking flows */}
       <Stack.Screen name="bookings/index" options={{ headerShown: false }} />
       <Stack.Screen
@@ -49,10 +45,6 @@ export default function CustomerLayout() {
           ...modalStackScreenOptions,
           title: t('customer.bookings.reschedule'),
         }}
-      />
-      <Stack.Screen
-        name="bookings/[bookingId]/escrow"
-        options={{ title: t('customer.bookings.escrow') }}
       />
       {/* Tasker public profile */}
       <Stack.Screen

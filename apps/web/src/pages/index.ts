@@ -41,7 +41,6 @@ export { CustomerNoApplicantRescuePage } from './customer/CustomerNoApplicantRes
 export { CustomerRebookPage } from './customer/CustomerRebookPage';
 export * from './TaskerTasksPage';
 export * from './LandingPage';
-export { VerificationPage } from './VerificationPage';
 export { TaskerTaskDetailPage } from './tasker/TaskerTaskDetailPage';
 export { TaskerApplicationSentPage } from './tasker/TaskerApplicationSentPage';
 export { VerificationGatePage } from './tasker/VerificationGatePage';
@@ -57,4 +56,3 @@ export { TaskerNoShowDialog } from './tasker/TaskerNoShowDialog';
 export { TaskerCancelDialog } from './tasker/TaskerCancelDialog';
 export { TaskerStatsPage } from './tasker/TaskerStatsPage';
 export { TaskerPrivacyPage } from './tasker/TaskerPrivacyPage';
-export { TaskerProfilePolishPage } from './tasker/TaskerProfilePolishPage';

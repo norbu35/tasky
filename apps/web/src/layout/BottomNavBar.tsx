@@ -28,7 +28,7 @@ export function BottomNavBar() {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 backdrop-blur-md md:hidden"
-      aria-label="Bottom navigation"
+      aria-label={t('nav.bottomNavigation', 'Bottom navigation')}
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around px-2 py-2">
         {tabs.map(({ to, icon: Icon, label, fallback }) => (

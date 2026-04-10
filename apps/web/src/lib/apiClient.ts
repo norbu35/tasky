@@ -409,13 +409,34 @@ function resolveApiUrl(baseUrl: string, path: string): URL {
   return new URL(relativePath, normalizedBase);
 }
 
-function buildBaseUrl(): string {
+function inferRuntimeOrigin(): string | null {
+  const maybeLocation = globalThis.location;
+  if (
+    maybeLocation &&
+    typeof maybeLocation.origin === 'string' &&
+    maybeLocation.origin.length > 0 &&
+    maybeLocation.origin !== 'null'
+  ) {
+    return maybeLocation.origin;
+  }
+  return null;
+}
+
+export function buildBaseUrl(): string {
   const configured = import.meta.env.VITE_API_BASE_URL;
   const rawBaseUrl =
     typeof configured === 'string' && configured.trim().length > 0
       ? configured
-      : 'http://localhost:8080';
+      : (inferRuntimeOrigin() ?? 'http://localhost:8080');
   return normalizeBaseUrl(rawBaseUrl);
+}
+
+export function buildSocketBaseUrl(): string {
+  const socketUrl = new URL(buildBaseUrl());
+  socketUrl.pathname = '/ws';
+  socketUrl.search = '';
+  socketUrl.hash = '';
+  return socketUrl.toString().replace(/\/$/, '');
 }
 
 async function readErrorMessage(response: Response): Promise<string> {

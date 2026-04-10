@@ -203,7 +203,7 @@ export function AuthPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary-deep/95 via-primary/90 to-primary-deep/95 z-0" />
         <img
           src="/images/auth-bg.png"
-          alt="Premium abstract interior"
+          alt={t('auth.heroImageAlt', 'Premium abstract interior')}
           className="absolute inset-0 w-full h-full object-cover z-[-1] opacity-60 mix-blend-overlay"
         />
 
@@ -243,7 +243,10 @@ export function AuthPage() {
           <p>{t('auth.copyright', '© 2026 Tasky Network')}</p>
           <div className="flex items-center gap-4">
             <p className="hidden sm:block aria-hidden">
-              SDK Binding: {contractLoaded ? 'Verified' : 'Offline'}
+              {t('auth.sdkBindingLabel', 'SDK Binding')}:{' '}
+              {contractLoaded
+                ? t('auth.sdkBindingVerified', 'Verified')
+                : t('auth.sdkBindingOffline', 'Offline')}
             </p>
             <LanguageSwitcher />
           </div>
@@ -266,7 +269,7 @@ export function AuthPage() {
           >
             <Card className="border-none shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] overflow-hidden backdrop-blur-3xl bg-white/90 ring-1 ring-black/5">
               <CardHeader className="space-y-3 pb-8 pt-10 px-10 border-b border-border/40 bg-gradient-to-b from-muted/50 to-transparent">
-                <h1 className="sr-only">Facebook Login</h1>
+                <h1 className="sr-only">{t('auth.facebookLoginTitle', 'Facebook login')}</h1>
                 <CardTitle className="text-3xl font-display font-bold tracking-tight">
                   {t('auth.welcomeBack', 'Welcome back')}
                 </CardTitle>
@@ -295,7 +298,7 @@ export function AuthPage() {
                   disabled={loading || !facebookReady || facebookOutage}
                   onClick={handleFacebookLogin}
                   type="button"
-                  aria-label="Continue with Facebook"
+                  aria-label={t('auth.continueFacebook', 'Continue with Facebook')}
                 >
                   {loading ? (
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />

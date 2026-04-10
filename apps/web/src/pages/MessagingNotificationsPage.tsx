@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type Conversation, type Message } from '../lib/apiClient';
+import { buildSocketBaseUrl, type Conversation, type Message } from '../lib/apiClient';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { useAppContext } from '../context/AppContext';
@@ -76,9 +76,7 @@ export function MessagingNotificationsPage() {
       }
 
       // Minimal STOMP client setup to listen for live updates
-      const url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
-      // SockJS fallback approach since Spring configures SockJS typically
-      const socketUrl = `${url.replace('/api/v1', '')}/ws`;
+      const socketUrl = buildSocketBaseUrl();
 
       const client = new Client({
         webSocketFactory: () => new SockJS(socketUrl),

@@ -12,9 +12,5 @@ export function resolvePostAuthHref(
     return '/onboarding';
   }
 
-  if (session.user.primary_auth === 'FACEBOOK') {
-    return '/(auth)/otp-migration';
-  }
-
   return '/(tabs)';
 }
