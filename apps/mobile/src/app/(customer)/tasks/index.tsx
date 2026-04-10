@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Bell, Hammer, Leaf, Package, Sparkles, Wrench, Zap } from 'lucide-react-native';
+import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
@@ -70,7 +70,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const Icon = visual.Icon;
 
   return (
-    <View className="bg-muted rounded-lg p-0.5">
+    <View className="bg-muted rounded-lg p-0.5 mx-screen-x">
       <Pressable
         testID={`task-card-${task.id}`}
         accessibilityRole="button"
@@ -97,7 +97,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
         <View className="flex-1 gap-micro min-w-0">
           <View className="flex-row items-center justify-between gap-micro">
             <View
-              className="flex-1 self-start px-sm py-xs rounded-full"
+              className="self-start px-sm py-xs rounded-full shrink"
               style={{ backgroundColor: `${colors.primary}10` }}
             >
               <Text
@@ -127,7 +127,7 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
 
 function SkeletonCard() {
   return (
-    <View className="bg-muted rounded-lg p-0.5">
+    <View className="bg-muted rounded-lg p-0.5 mx-screen-x">
       <View className="bg-card rounded-md p-lg flex-row gap-md items-start" style={elevations.soft}>
         <View className="w-24 h-24 rounded-md bg-muted shrink-0" />
         <View className="flex-1 gap-sm pt-sm">
@@ -168,14 +168,14 @@ function Header({
         }
       />
 
-        <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
-          <Text className="text-subtitle font-extrabold text-primary-deep">
-            {t('customer.taskList.heroEyebrow')}
-          </Text>
-          <Text className="text-body text-text-secondary leading-relaxed">
-            {t('customer.taskList.heroTitle')}
-          </Text>
-          <View className="flex-row gap-micro">
+      <View className="rounded-lg p-card gap-item bg-card" style={elevations.soft}>
+        <Text className="text-subtitle font-extrabold text-primary-deep">
+          {t('customer.taskList.heroEyebrow')}
+        </Text>
+        <Text className="text-body text-text-secondary leading-relaxed">
+          {t('customer.taskList.heroTitle')}
+        </Text>
+        <View className="flex-row gap-micro">
           {(
             [
               { key: 'open', label: t('customer.taskList.filterOpen') },
@@ -254,7 +254,9 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         accessibilityRole="button"
         testID="my-tasks-feed-error-cta"
       >
-        <Text className="text-body font-bold text-secondary-foreground">{t('common.tryAgain')}</Text>
+        <Text className="text-body font-bold text-secondary-foreground">
+          {t('common.tryAgain')}
+        </Text>
       </Pressable>
     </View>
   );
@@ -308,15 +310,16 @@ export default function MyTasksListScreen() {
     [counts, handleNotificationsPress],
   );
 
+  const fabSize = screenLayout.chrome.fabSize;
+
   return (
-    <ScreenContainer testID="SCR-CUST-001">
+    <ScreenContainer testID="SCR-CUST-001" padded={false}>
       {isLoading ? (
         <View className="flex-1" testID="my-tasks-loading-state">
           {header}
           <View
             className="gap-item"
             style={{
-              paddingHorizontal: screenLayout.insetX,
               paddingTop: screenLayout.body.itemGap,
             }}
           >
@@ -331,30 +334,56 @@ export default function MyTasksListScreen() {
           <ErrorState onRetry={refetch} />
         </View>
       ) : (
-        <FlatList
-          className="flex-1"
-          data={tasks}
-          keyExtractor={(task) => task.id}
-          renderItem={({ item }) => (
-            <TaskCard task={item} onPress={() => handleTaskPress(item.id)} />
+        <>
+          <FlatList
+            className="flex-1"
+            data={tasks}
+            keyExtractor={(task) => task.id}
+            renderItem={({ item }) => (
+              <TaskCard task={item} onPress={() => handleTaskPress(item.id)} />
+            )}
+            ListHeaderComponent={header}
+            ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
+            contentContainerStyle={{
+              paddingBottom: screenLayout.chrome.contentBottomClearance,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={Boolean(isFetching && !isLoading)}
+                onRefresh={refetch}
+                tintColor={colors.primary}
+                colors={[colors.primary]}
+              />
+            }
+            ItemSeparatorComponent={() => <View className="h-md" />}
+            showsVerticalScrollIndicator={false}
+            testID="my-tasks-feed"
+          />
+          {tasks.length > 0 && (
+            <Pressable
+              testID="my-tasks-feed-fab"
+              onPress={handleFabPress}
+              accessibilityRole="button"
+              accessibilityLabel="Post new task"
+              style={[
+                {
+                  position: 'absolute',
+                  right: screenLayout.chrome.fabInsetRight,
+                  bottom: screenLayout.chrome.contentBottomClearance,
+                  width: fabSize,
+                  height: fabSize,
+                  borderRadius: fabSize / 2,
+                  backgroundColor: colors.primary,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+                elevations.elevated,
+              ]}
+            >
+              <Plus color={colors.primaryForeground} size={28} />
+            </Pressable>
           )}
-          ListHeaderComponent={header}
-          ListEmptyComponent={<EmptyState onPostTask={handleFabPress} />}
-          contentContainerStyle={{
-            paddingBottom: screenLayout.chrome.contentBottomClearance,
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={Boolean(isFetching && !isLoading)}
-              onRefresh={refetch}
-              tintColor={colors.primary}
-              colors={[colors.primary]}
-            />
-          }
-          ItemSeparatorComponent={() => <View className="h-md" />}
-          showsVerticalScrollIndicator={false}
-          testID="my-tasks-feed"
-        />
+        </>
       )}
     </ScreenContainer>
   );
