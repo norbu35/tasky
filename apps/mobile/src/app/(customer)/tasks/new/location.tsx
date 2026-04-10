@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import MapView, { Marker, UrlTile } from 'react-native-maps';
+import MapView, { Marker, Region, UrlTile } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LocateFixed, Minus, Navigation, Plus } from 'lucide-react-native';
@@ -51,6 +51,11 @@ export default function LocationScreen() {
   );
   const [locating, setLocating] = useState(false);
   const [reverseGeocoding, setReverseGeocoding] = useState(false);
+  const currentRegion = useRef<Region>({
+    ...UB_CENTER,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  });
 
   const { data: recentLocations, isLoading: loadingRecent } = useRecentLocations();
 
@@ -97,7 +102,16 @@ export default function LocationScreen() {
 
     const accessToken = session?.accessToken ?? undefined;
 
-    (api as unknown as { requestJson: <T>(path: string, init: RequestInit, accessToken?: string, query?: Record<string, string | number | undefined>) => Promise<T> })
+    (
+      api as unknown as {
+        requestJson: <T>(
+          path: string,
+          init: RequestInit,
+          accessToken?: string,
+          query?: Record<string, string | number | undefined>,
+        ) => Promise<T>;
+      }
+    )
       .requestJson<{ formatted_address: string }>(
         '/location/reverse-geocode',
         { method: 'GET' },
@@ -144,23 +158,19 @@ export default function LocationScreen() {
   }, []);
 
   const handleZoomIn = useCallback(() => {
-    mapRef.current?.getCamera().then((camera) => {
-      if (!camera) return;
-      mapRef.current?.animateCamera(
-        { center: camera.center, zoom: (camera.zoom ?? 12) + 1 },
-        { duration: 300 },
-      );
-    });
+    const r = currentRegion.current;
+    mapRef.current?.animateToRegion(
+      { ...r, latitudeDelta: r.latitudeDelta / 2, longitudeDelta: r.longitudeDelta / 2 },
+      300,
+    );
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    mapRef.current?.getCamera().then((camera) => {
-      if (!camera) return;
-      mapRef.current?.animateCamera(
-        { center: camera.center, zoom: (camera.zoom ?? 12) - 1 },
-        { duration: 300 },
-      );
-    });
+    const r = currentRegion.current;
+    mapRef.current?.animateToRegion(
+      { ...r, latitudeDelta: r.latitudeDelta * 2, longitudeDelta: r.longitudeDelta * 2 },
+      300,
+    );
   }, []);
 
   const handleNext = () => {
@@ -219,6 +229,9 @@ export default function LocationScreen() {
           }}
           onPress={(e) => {
             setPin(e.nativeEvent.coordinate);
+          }}
+          onRegionChangeComplete={(region) => {
+            currentRegion.current = region;
           }}
           testID="location-map"
         >
