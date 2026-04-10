@@ -4,7 +4,6 @@ import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
@@ -113,19 +112,6 @@ export function FormWizardTemplate({
         {/* Sticky Bottom Bar — frosted glass — inside KAV so it rises above keyboard */}
         <StickyActionBar testID="wizard-bottom-bar">
           <View onLayout={handleActionBarLayout}>
-            {/* Fade Out Gradient Mask */}
-            <LinearGradient
-              colors={['transparent', colors.background]}
-              style={{
-                position: 'absolute',
-                top: -32,
-                left: -screenLayout.actions.barPadding,
-                right: -screenLayout.actions.barPadding,
-                height: 32,
-                zIndex: -1,
-              }}
-              pointerEvents="none"
-            />
             {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
             <BlurView
               intensity={40}

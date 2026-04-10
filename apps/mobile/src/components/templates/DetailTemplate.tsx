@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Pressable, View, type LayoutChangeEvent } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import { mobileTheme } from '../../design/tokenAdapter';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
@@ -147,19 +146,6 @@ export function DetailTemplate({
           insideTabNavigator={insideTabNavigator}
         >
           <View onLayout={handleActionBarLayout}>
-            {/* Fade Out Gradient Mask */}
-            <LinearGradient
-              colors={['transparent', colors.background]}
-              style={{
-                position: 'absolute',
-                top: -32,
-                left: -screenLayout.actions.barPadding,
-                right: -screenLayout.actions.barPadding,
-                height: 32,
-                zIndex: -1,
-              }}
-              pointerEvents="none"
-            />
             {/* BlurView does not reliably accept className in NativeWind v4 — kept imperative */}
             <BlurView
               intensity={40}
