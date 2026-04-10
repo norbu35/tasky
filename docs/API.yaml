@@ -651,6 +651,17 @@ components:
         summary_draft:
           type: string
           nullable: true
+        location_lat:
+          type: number
+          format: double
+          nullable: true
+        location_lng:
+          type: number
+          format: double
+          nullable: true
+        location_text:
+          type: string
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -1895,19 +1906,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [ category_id, intake_answers, intake_schema_version ]
+              required: [ category_id ]
               properties:
                 category_id:
                   type: string
                   format: uuid
-                intake_answers:
-                  type: object
-                  additionalProperties: true
-                intake_schema_version:
-                  type: integer
-                summary_draft:
-                  type: string
-                  nullable: true
       responses:
         '201':
           description: Draft created.
@@ -1974,6 +1977,18 @@ paths:
                 summary_draft:
                   type: string
                   nullable: true
+                location_lat:
+                  type: number
+                  format: double
+                  nullable: true
+                location_lng:
+                  type: number
+                  format: double
+                  nullable: true
+                location_text:
+                  type: string
+                  nullable: true
+                  maxLength: 500
       responses:
         '200':
           description: Draft updated.

@@ -648,7 +648,7 @@ export interface paths {
         put?: never;
         /**
          * Tasker accepts lead and unlocks customer contact
-         * @description Phase 2+ endpoint.
+         * @description **Not yet implemented — Phase 2+ forward reference. Returns 404 until implemented.**
          *     Selected tasker accepts or declines lead within configured timeout window.
          *     Accepting spends configured lead-unlock credits and unlocks customer contact details.
          *     Declining does not spend credits and keeps contact details locked.
@@ -1010,8 +1010,9 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Create business account (Phase 4)
-         * @description Creates B2B account for recurring scheduling and organization billing.
+         * Create business account (future B2B path)
+         * @description **Not yet implemented — future B2B forward reference. Returns 404 until implemented.**
+         *     Creates B2B account for recurring scheduling and organization billing.
          */
         post: operations["createBusinessAccount"];
         delete?: never;
@@ -1810,6 +1811,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/location/reverse-geocode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reverse geocode coordinates to district-level address
+         * @description Returns the nearest UB district name and centroid for the provided
+         *     coordinates. Used to populate the location label on the task-post form.
+         */
+        get: operations["reverseGeocode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/location/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search locations by name fragment
+         * @description Returns matching UB districts for the query string. Used to power the
+         *     address auto-complete on the task-post form.
+         */
+        get: operations["searchLocations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2060,7 +2103,7 @@ export interface components {
             /** Format: uuid */
             category_id: string;
             description: string;
-            /** @description Fixed budget in MNT. Must be greater than 1,000 MNT. */
+            /** @description Fixed budget in MNT. Must be at least ₮5,000. */
             budget: number;
             /** Format: double */
             location_lat: number;
@@ -2110,6 +2153,11 @@ export interface components {
             };
             intake_schema_version: number;
             summary_draft?: string | null;
+            /** Format: double */
+            location_lat?: number | null;
+            /** Format: double */
+            location_lng?: number | null;
+            location_text?: string | null;
             /** Format: date-time */
             created_at: string;
             /** Format: date-time */
@@ -2371,7 +2419,10 @@ export interface components {
             created_at: string;
         };
         FeatureToggle: {
-            /** @enum {string} */
+            /**
+             * @description Seeded feature toggle names; current runtime consumer status varies by toggle. Future-facing names such as `promoted_listings_enabled` and `b2b_enabled` are not part of the current API toggle enum because this sweep found no confirmed seeded runtime support for them.
+             * @enum {string}
+             */
             feature_name: "lead_fee_enabled" | "subscription_enabled" | "escrow_enabled" | "ai_scope_summary_enabled";
             is_enabled: boolean;
             /** Format: uuid */
@@ -2422,6 +2473,26 @@ export interface components {
             successful_referrals_this_month: number;
             /** @description Remaining successful referrals eligible for rewards within monthly cap. */
             remaining_reward_capacity_this_month?: number;
+        };
+        ReverseGeocodeResponse: {
+            formatted_address: string;
+            district: string;
+            district_mn?: string | null;
+            /** Format: double */
+            approximate_lat: number;
+            /** Format: double */
+            approximate_lng: number;
+        };
+        LocationSearchResponse: {
+            results: components["schemas"]["LocationSearchResult"][];
+        };
+        LocationSearchResult: {
+            formatted_address: string;
+            /** Format: double */
+            lat: number;
+            /** Format: double */
+            lng: number;
+            district?: string | null;
         };
     };
     responses: {
@@ -3060,11 +3131,6 @@ export interface operations {
                 "application/json": {
                     /** Format: uuid */
                     category_id: string;
-                    intake_answers: {
-                        [key: string]: unknown;
-                    };
-                    intake_schema_version: number;
-                    summary_draft?: string | null;
                 };
             };
         };
@@ -3140,6 +3206,11 @@ export interface operations {
                         [key: string]: unknown;
                     };
                     summary_draft?: string | null;
+                    /** Format: double */
+                    location_lat?: number | null;
+                    /** Format: double */
+                    location_lng?: number | null;
+                    location_text?: string | null;
                 };
             };
         };
@@ -5596,7 +5667,10 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @enum {string} */
+                    /**
+                     * @description Seeded feature toggle names only; presence in this enum does not imply a confirmed runtime consumer in the current launch posture.
+                     * @enum {string}
+                     */
                     feature_name: "lead_fee_enabled" | "subscription_enabled" | "escrow_enabled" | "ai_scope_summary_enabled";
                     is_enabled: boolean;
                 };
@@ -5977,6 +6051,55 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+        };
+    };
+    reverseGeocode: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description District-level address resolved. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReverseGeocodeResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    searchLocations: {
+        parameters: {
+            query: {
+                q: string;
+                bias_lat?: number;
+                bias_lng?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Search results returned (may be empty). */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationSearchResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
         };
     };
 }
