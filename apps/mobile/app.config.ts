@@ -1,0 +1,50 @@
+import { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'Tasky',
+  slug: 'tasky',
+  version: '0.1.0',
+  orientation: 'portrait',
+  scheme: 'tasky',
+  ios: {
+    bundleIdentifier: 'mn.tasky.mobile',
+  },
+  android: {
+    package: 'mn.tasky.mobile',
+    config: {
+      googleMaps: {
+        apiKey: process.env.GOOGLE_MAPS_API_KEY ?? '',
+      },
+    },
+  },
+  web: {
+    bundler: 'metro',
+  },
+  userInterfaceStyle: 'light',
+  assetBundlePatterns: ['**/*'],
+  plugins: [
+    [
+      'expo-font',
+      {
+        fonts: [
+          './assets/fonts/PlusJakartaSans_400Regular.ttf',
+          './assets/fonts/PlusJakartaSans_500Medium.ttf',
+          './assets/fonts/PlusJakartaSans_600SemiBold.ttf',
+          './assets/fonts/PlusJakartaSans_700Bold.ttf',
+          './assets/fonts/Manrope_600SemiBold.ttf',
+          './assets/fonts/Manrope_700Bold.ttf',
+        ],
+      },
+    ],
+    [
+      'expo-location',
+      {
+        locationAlwaysAndWhenInUsePermission:
+          'Tasky uses your location to show nearby tasks and set task location.',
+        locationWhenInUsePermission:
+          'Tasky uses your location to show nearby tasks and set task location.',
+      },
+    ],
+  ],
+});
