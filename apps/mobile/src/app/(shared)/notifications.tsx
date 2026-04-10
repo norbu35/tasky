@@ -10,6 +10,7 @@ import {
 import { EmptyStateTemplate } from '../../components/templates/EmptyStateTemplate';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
+import { ScreenContainer } from '../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 
@@ -182,7 +183,7 @@ export default function NotificationCenterScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background" testID="SCR-SHARED-016">
+    <ScreenContainer edges={['left', 'right']} testID="SCR-SHARED-016">
       {isLoading ? (
         <View className="px-lg py-lg gap-sm" testID="notifications-loading">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -252,6 +253,6 @@ export default function NotificationCenterScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
-    </View>
+    </ScreenContainer>
   );
 }
