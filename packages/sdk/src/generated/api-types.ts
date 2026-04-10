@@ -416,6 +416,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tasks/mine/recent-locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recent distinct task locations
+         * @description Returns up to 3 of the authenticated customer's most recent distinct task
+         *     locations, deduplicated by proximity (~200 m). Used to populate location
+         *     presets in the task creation wizard.
+         */
+        get: operations["listMyRecentLocations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tasks/{id}": {
         parameters: {
             query?: never;
@@ -2099,6 +2121,20 @@ export interface components {
             /** Format: date-time */
             updated_at?: string;
         };
+        RecentLocation: {
+            /**
+             * Format: double
+             * @description Latitude of the task location.
+             */
+            location_lat: number;
+            /**
+             * Format: double
+             * @description Longitude of the task location.
+             */
+            location_lng: number;
+            /** @description Human-readable location description. */
+            location_text: string;
+        };
         CreateTaskRequest: {
             /** Format: uuid */
             category_id: string;
@@ -3353,6 +3389,29 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    listMyRecentLocations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of recent distinct locations (may be empty). */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        locations: components["schemas"]["RecentLocation"][];
+                    };
+                };
+            };
             401: components["responses"]["Unauthorized"];
         };
     };

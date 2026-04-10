@@ -552,6 +552,22 @@ components:
           type: string
           format: date-time
 
+    RecentLocation:
+      type: object
+      required: [location_lat, location_lng, location_text]
+      properties:
+        location_lat:
+          type: number
+          format: double
+          description: Latitude of the task location.
+        location_lng:
+          type: number
+          format: double
+          description: Longitude of the task location.
+        location_text:
+          type: string
+          description: Human-readable location description.
+
     CreateTaskRequest:
       type: object
       required: [ category_id, description, budget, location_lat, location_lng, location_text, scheduled_at, intake_answers, intake_schema_version ]
@@ -2169,6 +2185,34 @@ paths:
                     $ref: '#/components/schemas/CursorPagination'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /tasks/mine/recent-locations:
+    get:
+      tags: [Tasks]
+      summary: Recent distinct task locations
+      description: |
+        Returns up to 3 of the authenticated customer's most recent distinct task
+        locations, deduplicated by proximity (~200 m). Used to populate location
+        presets in the task creation wizard.
+      operationId: listMyRecentLocations
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of recent distinct locations (may be empty).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [locations]
+                properties:
+                  locations:
+                    type: array
+                    maxItems: 3
+                    items:
+                      $ref: '#/components/schemas/RecentLocation'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
