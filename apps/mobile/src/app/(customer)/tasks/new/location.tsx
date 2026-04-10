@@ -215,8 +215,8 @@ export default function LocationScreen() {
 
       {/* mapShell: overflow hidden, shadow → imperative */}
       <View
-        className="rounded-lg overflow-hidden bg-muted"
-        style={{ minHeight: 280, ...elevations.soft }}
+        className="rounded-lg overflow-hidden bg-muted min-h-[280px]"
+        style={elevations.soft}
       >
         {/* map: MapView always imperative */}
         <MapView
@@ -246,8 +246,7 @@ export default function LocationScreen() {
         {/* mapOverlay: absolute position → imperative */}
         <View
           pointerEvents="none"
-          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
-          className="items-center justify-center gap-xs"
+          className="absolute inset-0 items-center justify-center gap-xs"
         >
           <View className="px-lg py-sm rounded-md bg-primary-deep">
             <Text className="text-label font-bold text-primary-foreground">
@@ -260,7 +259,7 @@ export default function LocationScreen() {
         </View>
 
         {/* mapControls: absolute position → imperative */}
-        <View style={{ position: 'absolute', right: 12, bottom: 12 }} className="gap-sm">
+        <View className="absolute right-3 bottom-3 gap-sm">
           <Pressable
             className="w-[42px] h-[42px] rounded-sm items-center justify-center bg-card border border-border"
             accessibilityRole="button"
