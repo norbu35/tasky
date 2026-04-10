@@ -204,7 +204,18 @@ public class TaskController {
     }
 
     @GetMapping("/mine/recent-locations")
-    public ResponseEntity<?> recentLocations(@AuthenticationPrincipal JwtPrincipal principal) {
+    public ResponseEntity<?> recentLocations(
+            @AuthenticationPrincipal JwtPrincipal principal, HttpServletRequest request) {
+        if (!"CUSTOMER".equals(principal.role())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "code",
+                            "FORBIDDEN",
+                            "message",
+                            "Only customers can view recent locations.",
+                            "trace_id",
+                            resolveTraceId(request)));
+        }
         List<RecentLocation> locations = taskService.recentLocations(principal.userId(), 3);
 
         List<Map<String, Object>> data = locations.stream().map(loc -> {

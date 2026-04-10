@@ -89,21 +89,28 @@ class RecentLocationsTests extends IntegrationTestBase {
     @Test
     @DisplayName("Excludes cancelled tasks")
     void excludesCancelledTasks() {
-        createTask(47.9133, 106.8684, "Cancelled location");
+        // Create a task and verify it appears
+        String taskId = createTask(47.9133, 106.8684, "Cancelled location");
         ResponseEntity<Map> beforeCancel = getWithToken("/api/v1/tasks/mine/recent-locations");
         List<Map> beforeLocations = (List<Map>) beforeCancel.getBody().get("locations");
         assertThat(beforeLocations).hasSize(1);
 
+        // Cancel the task
+        postWithToken("/api/v1/tasks/" + taskId + "/cancel", Map.of());
+
+        // Create a second task at a different location (this one stays OPEN)
         createTask(47.9322, 106.9856, "Active location");
 
         ResponseEntity<Map> resp = getWithToken("/api/v1/tasks/mine/recent-locations");
         List<Map> locations = (List<Map>) resp.getBody().get("locations");
-        assertThat(locations).hasSize(2);
+        // Cancelled task excluded, only the active one remains
+        assertThat(locations).hasSize(1);
+        assertThat((String) locations.get(0).get("location_text")).isEqualTo("Active location");
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
-    private void createTask(double lat, double lng, String locationText) {
+    private String createTask(double lat, double lng, String locationText) {
         Map body = Map.of(
                 "category_id", categoryId,
                 "description", "Test task for recent locations feature",
@@ -120,6 +127,7 @@ class RecentLocationsTests extends IntegrationTestBase {
                 "intake_schema_version", 1);
         ResponseEntity<Map> resp = postWithToken("/api/v1/tasks", body);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        return resp.getBody().get("id").toString();
     }
 
     private String devLogin(String phone, String role) {
