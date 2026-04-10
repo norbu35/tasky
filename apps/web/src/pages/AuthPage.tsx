@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
 
-type DevRole = 'CUSTOMER' | 'TASKER';
+type DevRole = 'CUSTOMER' | 'TASKER' | 'ADMIN';
 
 type FacebookAuthResponse = {
   accessToken: string;
@@ -183,8 +183,9 @@ export function AuthPage() {
   const handleDevLogin = async (role: DevRole): Promise<void> => {
     setLoading(true);
     try {
-      const devPhone = role === 'TASKER' ? '+97611111111' : '+97622222222';
-      const session = await apiClient.devLogin(devPhone, role);
+      const devPhone =
+        role === 'ADMIN' ? '+97692000003' : role === 'TASKER' ? '+97692000002' : '+97692000001';
+      const session = await apiClient.devLogin(devPhone, role as 'CUSTOMER' | 'TASKER');
       setSession(session);
       setProfile(null);
       await refreshProfile();
@@ -355,7 +356,7 @@ export function AuthPage() {
               <div className="flex items-center gap-4">
                 <div className="h-px bg-border flex-1" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {t('auth.devBypass', 'Developer Bypass')}
+                  {t('auth.devLogin', 'Local dev login')}
                 </span>
                 <div className="h-px bg-border flex-1" />
               </div>
@@ -377,6 +378,15 @@ export function AuthPage() {
                 >
                   <Wrench className="w-5 h-5 text-muted-foreground" />
                   <span className="text-xs">{t('auth.loginAsTasker', 'Tasker')}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="h-auto py-3 flex-col gap-2 rounded-xl border border-border hover:border-secondary hover:bg-secondary/5"
+                  onClick={() => handleDevLogin('ADMIN')}
+                  disabled={loading}
+                >
+                  <Shield className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs">{t('auth.loginAsAdmin', 'Admin')}</span>
                 </Button>
               </div>
             </motion.div>

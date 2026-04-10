@@ -3,7 +3,7 @@ appId: mn.tasky.mobile
 # _support/login-tasker.yaml
 # Precondition: App is launched and at login screen (SCR-SHARED-002)
 # Postcondition: User is logged in as Tasker and on tasker feed (SCR-TASK-001)
-# Uses dev auth bypass (EXPO_PUBLIC_DEV_AUTH_ENABLED=true required)
+# Uses real backend dev auth (POST /api/v1/auth/dev/login)
 # Handles the onboarding flow if clearState cleared hasSeenOnboarding
 
 # Dismiss any system "Open in App?" dialog left over from prior deep-link flows

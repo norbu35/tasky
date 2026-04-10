@@ -85,23 +85,20 @@ class AuthScenarioTests {
 
     @Test
     @DisplayName("SCN-AUTH-001: Dev auth enabled in production profile throws on startup")
-    void devAuthEnabledInProductionProfileThrowsOnStartup() {
+    void devAuthEnabledInProductionProfileThrowsOnStartup() throws Throwable {
         // Given: devAuthEnabled=true, active profile is production (not dev/test/local)
-        AuthService service = authService(true, false, "production");
+        AuthService productionService = authService(true, false, "production");
+        AuthService localService = authService(true, false, "local");
+        AuthService testService = authService(true, false, "test");
 
         // When/Then: startup validation throws
         // validateOtpConfiguration is package-private; invoke via reflection
-        assertThatThrownBy(() -> {
-            try {
-                var m = AuthService.class.getDeclaredMethod("validateOtpConfiguration");
-                m.setAccessible(true);
-                m.invoke(service);
-            } catch (java.lang.reflect.InvocationTargetException e) {
-                throw e.getCause();
-            }
-        })
+        assertThatThrownBy(() -> invokeValidateOtpConfiguration(productionService))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("must be false in production");
+
+        invokeValidateOtpConfiguration(localService);
+        invokeValidateOtpConfiguration(testService);
     }
 
     // ── SCN-AUTH-004 ─────────────────────────────────────────────────────────
@@ -247,5 +244,15 @@ class AuthScenarioTests {
     /** Convenience overload: no active profiles (production-like). */
     private AuthService authService(boolean devAuthEnabled, boolean otpEnabled) {
         return authService(devAuthEnabled, otpEnabled, new String[0]);
+    }
+
+    private void invokeValidateOtpConfiguration(AuthService service) throws Throwable {
+        try {
+            var method = AuthService.class.getDeclaredMethod("validateOtpConfiguration");
+            method.setAccessible(true);
+            method.invoke(service);
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 }

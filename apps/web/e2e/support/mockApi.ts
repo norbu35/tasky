@@ -1,38 +1,8 @@
 import type { Page, Route } from '@playwright/test';
-import type { Category, Profile, PublicTask, Task, User, VerificationDetail } from '../../src/lib/apiClient';
-
-type DevRole = 'CUSTOMER' | 'TASKER' | 'ADMIN';
+import type { Category, PublicTask, Task, VerificationDetail } from '../../src/lib/apiClient';
 
 const PLACEHOLDER_IMAGE =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+XbNQAAAAASUVORK5CYII=';
-
-function buildUser(role: DevRole): User {
-  return {
-    id: `${role.toLowerCase()}-user-1`,
-    phone: '+97699001122',
-    facebook_id: `fb-${role.toLowerCase()}-1`,
-    primary_auth: 'PHONE_OTP',
-    role,
-    status: 'VERIFIED',
-    created_at: '2026-02-14T00:00:00Z',
-  };
-}
-
-function buildProfile(role: DevRole): Profile {
-  return {
-    id: `${role.toLowerCase()}-user-1`,
-    phone_masked: '+97699****22',
-    role,
-    status: 'VERIFIED',
-    full_name:
-      role === 'ADMIN' ? 'Admin Operator' : role === 'TASKER' ? 'Verified Tasker' : 'Test Customer',
-    avatar_url: null,
-    rating_avg: role === 'TASKER' ? 4.8 : 0,
-    completed_tasks: role === 'TASKER' ? 19 : 2,
-    is_pro: role === 'TASKER',
-    created_at: '2026-02-14T00:00:00Z',
-  };
-}
 
 export function buildCategory(): Category {
   return {
@@ -114,32 +84,7 @@ async function fulfillJson(route: Route, payload: unknown, status = 200): Promis
   });
 }
 
-export async function mockAuthBootstrap(page: Page): Promise<void> {
-  await page.route('**/api/v1/auth/facebook/status', async (route) => {
-    await fulfillJson(route, { available: true });
-  });
-}
-
-export async function mockDevSession(page: Page, role: DevRole): Promise<void> {
-  const user = buildUser(role);
-  const profile = buildProfile(role);
-
-  await mockAuthBootstrap(page);
-
-  await page.route('**/api/v1/auth/dev/login', async (route) => {
-    await fulfillJson(route, {
-      access_token: 'e2e-access-token',
-      refresh_token: 'e2e-refresh-token',
-      user,
-    });
-  });
-
-  await page.route('**/api/v1/users/me', async (route) => {
-    await fulfillJson(route, profile);
-  });
-}
-
-export async function loginThroughDevBypass(page: Page, buttonName: string): Promise<void> {
+export async function loginThroughDevAuth(page: Page, buttonName: string): Promise<void> {
   await page.goto('/auth');
   await page.getByRole('button', { name: buttonName }).click();
 }
@@ -194,26 +139,6 @@ export async function mockTaskApplication(page: Page, taskId = 'public-task-1'):
       message: 'I can handle this tomorrow morning.',
       status: 'PENDING',
       created_at: '2026-02-14T00:00:00Z',
-    });
-  });
-}
-
-export async function mockPendingVerifications(
-  page: Page,
-  verifications: VerificationDetail[] = [buildPendingVerification()],
-): Promise<void> {
-  await page.route('**/api/v1/admin/verifications/pending', async (route) => {
-    await fulfillJson(route, verifications);
-  });
-}
-
-export async function mockApproveVerification(page: Page, verificationId = 'verification-1'): Promise<void> {
-  await page.route(`**/api/v1/admin/verifications/${verificationId}/approve`, async (route) => {
-    await fulfillJson(route, {
-      ...buildPendingVerification(),
-      id: verificationId,
-      status: 'APPROVED',
-      reviewed_at: '2026-02-14T01:00:00Z',
     });
   });
 }

@@ -14,6 +14,11 @@ management:
       export:
         enabled: true
 
+spring:
+  flyway:
+    placeholders:
+      tasky_blind_index_key: "dGVzdC1ibGluZC1pbmRleC1zZWNyZXQtMzJieXRlcyE="
+
 tasky:
   otp:
     enabled: true

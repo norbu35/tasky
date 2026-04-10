@@ -57,14 +57,13 @@ docker compose up -d postgres minio minio-bootstrap
 curl http://127.0.0.1:8080/actuator/health
 ```
 
-## Local Auth Bypass (Testing)
+## Local Dev Auth
 
-For local testing, dev auth is only allowed in the `local` or `test` Spring profiles.
+Dev auth is enabled by default in the `local` profile and issues real JWT sessions via the backend.
 
-- Backend dev auth requires `SPRING_PROFILES_ACTIVE=local` (or `test`) plus `TASKY_DEV_AUTH_ENABLED=true`.
-- Web login shows `Developer quick login` buttons only when `VITE_DEV_AUTH_ENABLED=true`.
-- Mobile login shows the same buttons only when `EXPO_PUBLIC_DEV_AUTH_ENABLED=true`.
-- Buttons call `POST /api/v1/auth/dev/login` and issue a normal JWT session without SMS OTP.
+- Backend: `TASKY_DEV_AUTH_ENABLED` defaults to `true` in `application-local.yml` and `docker-compose.yml`.
+- Web/mobile quick-login buttons call `POST /api/v1/auth/dev/login` against the real backend.
+- Seeded personas (see `V19__seed_test_data.sql`) are loginable by phone: customer `+97692000001`, tasker `+97693000001`, admin `+97694000001`.
 - Production safety gate: app startup fails outside `local`/`test` if dev auth is enabled.
 
 ## Maintenance Mode

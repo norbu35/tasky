@@ -19,9 +19,9 @@ The product rule does not change:
 | Control                              | Required value       | Why                                                      |
 | ------------------------------------ | -------------------- | -------------------------------------------------------- |
 | `SPRING_PROFILES_ACTIVE`             | `local`              | Required if dev-auth is enabled                          |
-| `TASKY_DEV_AUTH_ENABLED`             | `true`               | Explicit test bypass for this private sandbox            |
-| `VITE_DEV_AUTH_ENABLED`              | `true`               | Web quick-login enabled intentionally                    |
-| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`               | Mobile local simulator/dev workflow uses the same bypass |
+| `TASKY_DEV_AUTH_ENABLED`             | `true`               | Enables real backend dev auth endpoint                   |
+| `VITE_DEV_AUTH_ENABLED`              | `true`               | Web quick-login buttons (calls real backend)             |
+| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`               | Mobile quick-login buttons (calls real backend)          |
 | `TASKY_FEATURE_MONETIZATION_ENABLED` | `false`              | Phase 1 remains zero-monetization                        |
 | `TASKY_OTP_ENABLED`                  | `false`              | OTP remains out of launch scope                          |
 | `TASKY_PUSH_PROVIDER`                | `logging` by default | Safe sandbox default                                     |
@@ -29,8 +29,7 @@ The product rule does not change:
 Additional rules:
 
 - `TASKY_OTP_TEST_CODE` remains unset
-- `TASKY_FACEBOOK_APP_ID` and `TASKY_FACEBOOK_APP_SECRET` are optional in this sandbox because OAuth is intentionally
-  bypassed
+- `TASKY_FACEBOOK_APP_ID` and `TASKY_FACEBOOK_APP_SECRET` are optional in this sandbox (dev auth provides local login)
 
 ### Future release staging
 

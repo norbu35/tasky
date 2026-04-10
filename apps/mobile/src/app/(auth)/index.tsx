@@ -3,7 +3,11 @@ import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Zap } from 'lucide-react-native';
-import { useDevLogin } from '../../features/auth/hooks/useAuth';
+import {
+  DEV_LOGIN_CUSTOMER_PHONE,
+  DEV_LOGIN_TASKER_PHONE,
+  useDevLogin,
+} from '../../features/auth/hooks/useAuth';
 import { AuthTemplate } from '../../components/templates/AuthTemplate';
 import { Button } from '../../components/ui/Button';
 import { mobileTheme } from '../../design/tokenAdapter';
@@ -39,7 +43,7 @@ export default function LoginScreen() {
   };
 
   const handleDevLoginAs = (role: 'CUSTOMER' | 'TASKER') => {
-    const phone = role === 'CUSTOMER' ? '+97699999999' : '+97699988888';
+    const phone = role === 'CUSTOMER' ? DEV_LOGIN_CUSTOMER_PHONE : DEV_LOGIN_TASKER_PHONE;
     devLogin.mutate({ phone, role });
   };
 

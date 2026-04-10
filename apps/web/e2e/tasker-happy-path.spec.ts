@@ -1,14 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { loginThroughDevBypass, mockCategories, mockDevSession, mockTaskApplication, mockTaskFeed } from './support/mockApi';
+import { loginThroughDevAuth } from './support/mockApi';
 
 test.describe('Tasker happy path', () => {
   test('@smoke tasker can browse and apply to a task', async ({ page }) => {
-    await mockDevSession(page, 'TASKER');
-    await mockCategories(page);
-    await mockTaskFeed(page);
-    await mockTaskApplication(page);
-
-    await loginThroughDevBypass(page, 'Tasker');
+    await loginThroughDevAuth(page, 'Tasker');
     await expect(page).toHaveURL(/\/profile/);
 
     await page.goto('/tasker/feed');

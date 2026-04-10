@@ -21,6 +21,8 @@ spring:
     # Migration owner: separate from the runtime app user to preserve least-privilege
     user: ${POSTGRES_USER:tasky}
     password: ${POSTGRES_PASSWORD:tasky}
+    placeholders:
+      tasky_blind_index_key: ${TASKY_BLIND_INDEX_KEY:}
   messages:
     basename: i18n/messages
     encoding: UTF-8

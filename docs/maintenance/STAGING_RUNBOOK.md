@@ -72,9 +72,9 @@ After the tunnel is up:
 | Setting                              | Required value | Why                                                                                  |
 | ------------------------------------ | -------------- | ------------------------------------------------------------------------------------ |
 | `SPRING_PROFILES_ACTIVE`             | `local`        | `tasky.dev-auth.enabled` is only allowed in `local` or `test`                        |
-| `TASKY_DEV_AUTH_ENABLED`             | `true`         | Explicit test bypass for this private sandbox                                        |
-| `VITE_DEV_AUTH_ENABLED`              | `true`         | Web quick-login is part of the sandbox workflow                                      |
-| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`         | Mobile local simulator workflow uses the same bypass                                 |
+| `TASKY_DEV_AUTH_ENABLED`             | `true`         | Enables real backend dev auth endpoint for this private sandbox                      |
+| `VITE_DEV_AUTH_ENABLED`              | `true`         | Web quick-login buttons (calls real backend)                                         |
+| `EXPO_PUBLIC_DEV_AUTH_ENABLED`       | `true`         | Mobile quick-login buttons (calls real backend)                                      |
 | `TASKY_OTP_ENABLED`                  | `false`        | OTP is out of Phase 1 launch scope and the repo has no production-ready SMS provider |
 | `TASKY_FEATURE_MONETIZATION_ENABLED` | `false`        | Phase 1 remains zero-monetization                                                    |
 | `TASKY_PUSH_PROVIDER`                | `logging`      | Safe sandbox default                                                                 |
@@ -222,22 +222,18 @@ Those remain responsibilities of a future release-grade staging environment.
 
 ## Mobile Client Auth Transition (Dev → Staging/Production)
 
-When `EXPO_PUBLIC_DEV_AUTH_ENABLED=true` (current private sandbox), the mobile app bypasses real
-authentication entirely. The `useDevLogin` hook in
-`apps/mobile/src/features/auth/hooks/useAuth.ts` creates a fake token (`'dev-access-token'`) and
-pre-seeds react-query caches so API-dependent screens render without hitting the backend. This means
-the real auth and networking path is **completely untested** in dev-auth mode.
+Dev auth now calls the real backend (`POST /api/v1/auth/dev/login`) and returns real JWT sessions.
+Fake tokens and react-query cache seeding have been removed.
 
 ### What must change before real users
 
 | Item | Dev-auth behavior | Required for staging/production | Status |
 | --- | --- | --- | --- |
-| Access token | Fake string `'dev-access-token'`, never sent to backend | Real JWT from Facebook OAuth or OTP | Exists in non-dev path |
-| Token refresh | Not needed (fake token never expires) | **Must be implemented.** Access tokens expire after 1 hour. Without a refresh interceptor the app silently breaks — API calls return 401 but the session still appears valid in the UI. | **Not implemented** |
-| Session invalidation on 401 | Not needed | App must detect 401 from expired/revoked tokens and either refresh or sign the user out. Currently the zustand session persists indefinitely with no expiry check. | **Not implemented** |
+| Access token | Real JWT from backend dev-login endpoint | Real JWT from Facebook OAuth or OTP | **Done** (dev-login returns real JWTs) |
+| Token refresh | Access tokens expire after configured TTL | **Must be implemented.** Without a refresh interceptor the app silently breaks after token expiry. | **Not implemented** |
+| Session invalidation on 401 | Not needed in local sandbox | App must detect 401 from expired/revoked tokens and either refresh or sign the user out. | **Not implemented** |
 | `EXPO_PUBLIC_API_BASE_URL` | Unset (defaults to `http://localhost:8080`) | Must point to the staging/production origin | Set per-environment |
 | App Transport Security | `NSAllowsLocalNetworking: true` covers localhost | Production URLs **must use HTTPS**. `NSAllowsArbitraryLoads` is `false`. | iOS plist is correct; just needs HTTPS origin |
-| react-query cache seeding | Fake empty data seeded for `myTasks`, `tasks`, `bookings`, `conversations`, `categories` | Not used — all queries hit the real backend | N/A |
 | CORS allowed origins | Backend defaults to `http://localhost:5173` | Must include the production web origin. (Not relevant for native mobile, but relevant for web client.) | Configured via `tasky.cors.allowed-origins` |
 
 ### Token refresh implementation checklist

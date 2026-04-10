@@ -11,7 +11,7 @@ spring:
 
 tasky:
   dev-auth:
-    enabled: ${TASKY_DEV_AUTH_ENABLED:false}
+    enabled: ${TASKY_DEV_AUTH_ENABLED:true}
   auth:
     otp-test-code: ${TASKY_OTP_TEST_CODE:}
   facebook:

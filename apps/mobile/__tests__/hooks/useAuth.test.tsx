@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
 
+const mockDevLogin = jest.fn();
+const mockGetMyProfile = jest.fn();
+
 const mockRouter = {
   replace: jest.fn(),
   push: jest.fn(),
@@ -28,6 +31,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     multiRemove: jest.fn(() => Promise.resolve()),
     multiMerge: jest.fn(() => Promise.resolve()),
   },
+}));
+
+jest.mock('../../src/lib/mobileApiClient', () => ({
+  createMobileApiClient: () => ({
+    devLogin: mockDevLogin,
+    getMyProfile: mockGetMyProfile,
+  }),
 }));
 
 type DevLoginMutation = {
@@ -56,32 +66,38 @@ function createWrapper(queryClient: QueryClient) {
 }
 
 describe('useDevLogin', () => {
-  const originalDevAuth = globalThis.process?.env?.EXPO_PUBLIC_DEV_AUTH_ENABLED;
-
   beforeEach(() => {
     jest.clearAllMocks();
     latestMutation = null;
-    if (globalThis.process) {
-      globalThis.process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = 'true';
-    }
+    mockDevLogin.mockResolvedValue({
+      accessToken: 'dev-access-token',
+      refreshToken: 'dev-refresh-token',
+      user: {
+        id: 'customer-1',
+        phone: '+97692000001',
+        primary_auth: 'PHONE_OTP',
+        role: 'CUSTOMER',
+        status: 'ACTIVE',
+        created_at: '2026-02-14T00:00:00Z',
+      },
+    });
+    mockGetMyProfile.mockResolvedValue({
+      id: 'customer-1',
+      phone_masked: '+97692****01',
+      role: 'CUSTOMER',
+      status: 'ACTIVE',
+      full_name: 'Test Customer',
+      avatar_url: null,
+      rating_avg: 4.7,
+      completed_tasks: 12,
+      is_pro: false,
+      created_at: '2026-02-14T00:00:00Z',
+    });
     useAuthStore.setState({ session: null, profile: null, deviceToken: null });
     useAppStore.setState({ hasSeenOnboarding: false, currentRole: 'customer' });
   });
 
-  afterAll(() => {
-    if (!globalThis.process) {
-      return;
-    }
-
-    if (originalDevAuth === undefined) {
-      delete globalThis.process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED;
-      return;
-    }
-
-    globalThis.process.env.EXPO_PUBLIC_DEV_AUTH_ENABLED = originalDevAuth;
-  });
-
-  it('routes first-time dev logins to onboarding instead of tabs', async () => {
+  it('routes first-time dev logins to onboarding instead of tabs and fetches the real profile', async () => {
     const queryClient = new QueryClient();
 
     render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
@@ -92,12 +108,15 @@ describe('useDevLogin', () => {
 
     await act(async () => {
       await latestMutation?.mutateAsync({
-        phone: '+97699999999',
+        phone: '+97692000001',
         role: 'CUSTOMER',
       });
     });
 
+    expect(mockDevLogin).toHaveBeenCalledWith('+97692000001', 'CUSTOMER');
+    expect(mockGetMyProfile).toHaveBeenCalledWith('dev-access-token');
     expect(useAuthStore.getState().session?.user.role).toBe('CUSTOMER');
+    expect(useAuthStore.getState().profile?.full_name).toBe('Test Customer');
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
   });
