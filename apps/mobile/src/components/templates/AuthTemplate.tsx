@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   Text,
   View,
+  type LayoutChangeEvent,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -39,6 +40,14 @@ export function AuthTemplate({
   className,
 }: AuthTemplateProps) {
   const insets = useSafeAreaInsets();
+  const [actionBarHeight, setActionBarHeight] = useState(210);
+
+  const handleActionBarLayout = (event: LayoutChangeEvent) => {
+    const height = event.nativeEvent.layout.height;
+    if (height > 0) {
+      setActionBarHeight(height);
+    }
+  };
 
   return (
     <ScreenContainer testID={testID} className={className}>
@@ -64,7 +73,7 @@ export function AuthTemplate({
           ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          extraBottomInset={bottomSlot ? 210 : 0}
+          extraBottomInset={bottomSlot ? actionBarHeight : 0}
         >
           {/* Logo / Branding */}
           {showLogo && (
@@ -102,7 +111,11 @@ export function AuthTemplate({
             <View className="px-xl pb-lg items-center gap-md">{footerSlot}</View>
           ) : null}
         </InsetScrollView>
-        {bottomSlot ? <StickyActionBar>{bottomSlot}</StickyActionBar> : null}
+        {bottomSlot ? (
+          <StickyActionBar>
+            <View onLayout={handleActionBarLayout}>{bottomSlot}</View>
+          </StickyActionBar>
+        ) : null}
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
