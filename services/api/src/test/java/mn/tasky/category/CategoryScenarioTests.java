@@ -2,9 +2,6 @@ package mn.tasky.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,32 +24,53 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-008.
+ * Domain-unit tests for category management scenarios SCN-CATEGORY-001 through SCN-CATEGORY-011.
  */
 class CategoryScenarioTests {
 
-    // Three valid required fields — minimal passing schema
+    // Three valid required fields — minimal passing schema (new contract with label_mn + structured options)
     private static final String VALID_3_FIELD_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"b\",\"label\":\"B\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"c\",\"label\":\"C\",\"type\":\"yes_no\",\"required\":true}]";
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
     private static final String TOO_FEW_FIELDS_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"b\",\"label\":\"B\",\"type\":\"yes_no\",\"required\":true}]";
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
     private static final String TOO_MANY_FIELDS_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"b\",\"label\":\"B\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"c\",\"label\":\"C\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"d\",\"label\":\"D\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"e\",\"label\":\"E\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"f\",\"label\":\"F\",\"type\":\"yes_no\",\"required\":true}]";
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"d\",\"label\":\"D\",\"label_mn\":\"D_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"e\",\"label\":\"E\",\"label_mn\":\"E_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"f\",\"label\":\"F\",\"label_mn\":\"F_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
     private static final String UNSUPPORTED_TYPE_SCHEMA =
-            "[{\"key\":\"a\",\"label\":\"A\",\"type\":\"free_text\",\"required\":true},"
-            + "{\"key\":\"b\",\"label\":\"B\",\"type\":\"yes_no\",\"required\":true},"
-            + "{\"key\":\"c\",\"label\":\"C\",\"type\":\"yes_no\",\"required\":true}]";
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"free_text\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+
+    private static final String MISSING_LABEL_MN_SCHEMA =
+            "[{\"key\":\"a\",\"label\":\"A\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+
+    private static final String VALID_TEXT_TEXTAREA_SCHEMA =
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true,\"max_length\":200},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"textarea\",\"required\":false,\"max_length\":2000},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+
+    private static final String TEXT_MISSING_MAX_LENGTH_SCHEMA =
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"text\",\"required\":true},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
+
+    private static final String INVALID_OPTIONS_SCHEMA =
+            "[{\"key\":\"a\",\"label\":\"A\",\"label_mn\":\"A_mn\",\"type\":\"single_select\",\"required\":true,"
+            + "\"options\":[{\"value\":\"x\",\"label\":\"X\"}]},"
+            + "{\"key\":\"b\",\"label\":\"B\",\"label_mn\":\"B_mn\",\"type\":\"yes_no\",\"required\":true},"
+            + "{\"key\":\"c\",\"label\":\"C\",\"label_mn\":\"C_mn\",\"type\":\"yes_no\",\"required\":true}]";
 
     private CategoryDao categoryDao;
     private CategorySchemaVersionDao schemaVersionDao;
@@ -73,12 +91,12 @@ class CategoryScenarioTests {
 
     private CategoryState activeCategory() {
         return new CategoryState(CAT_ID, "Test", "Тест", "https://example.com/icon.png",
-                true, 1, true, 1, VALID_3_FIELD_SCHEMA, 1);
+                true, 1, true, 1, VALID_3_FIELD_SCHEMA);
     }
 
-    private CategorySchemaVersion schemaVersion(int version, String status, boolean lastKnownGood) {
+    private CategorySchemaVersion schemaVersion(int version, String status) {
         return new CategorySchemaVersion(UUID.randomUUID().toString(), CAT_ID, version,
-                VALID_3_FIELD_SCHEMA, status, lastKnownGood, ADMIN_ID, Instant.now(), null);
+                VALID_3_FIELD_SCHEMA, status, ADMIN_ID, Instant.now(), null);
     }
 
     // ── SCN-CATEGORY-001 ─────────────────────────────────────────────────────
@@ -86,7 +104,6 @@ class CategoryScenarioTests {
     @Test
     @DisplayName("SCN-CATEGORY-001: Admin can add a new service category")
     void adminCanAddNewCategory() {
-        // createCategory() builds the CategoryState itself and calls insert(void)
         CategoryState result = categoryService.createCategory(
                 new CreateCategory("Test", "Тест", "https://example.com/icon.png", 1));
 
@@ -117,8 +134,6 @@ class CategoryScenarioTests {
     @Test
     @DisplayName("SCN-CATEGORY-003: Schema lint rejects activation candidates with fewer than 3 required questions")
     void schemaWithTooFewFieldsRejected() {
-        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
-
         assertThatThrownBy(() ->
                 schemaVersionService.createVersion(CAT_ID, TOO_FEW_FIELDS_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -130,8 +145,6 @@ class CategoryScenarioTests {
     @Test
     @DisplayName("SCN-CATEGORY-004: Schema lint rejects activation candidates with more than 5 required questions")
     void schemaWithTooManyFieldsRejected() {
-        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
-
         assertThatThrownBy(() ->
                 schemaVersionService.createVersion(CAT_ID, TOO_MANY_FIELDS_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -143,8 +156,6 @@ class CategoryScenarioTests {
     @Test
     @DisplayName("SCN-CATEGORY-005: Schema lint rejects unsupported field types")
     void schemaWithUnsupportedFieldTypeRejected() {
-        when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
-
         assertThatThrownBy(() ->
                 schemaVersionService.createVersion(CAT_ID, UNSUPPORTED_TYPE_SCHEMA, ADMIN_ID))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -154,60 +165,81 @@ class CategoryScenarioTests {
     // ── SCN-CATEGORY-006 ─────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-006: Canary activation publishes a new schema version without rebinding existing drafts")
-    void canaryActivationDoesNotRebindExistingDrafts() {
-        // When a new schema version is activated, drafts bound to the old version
-        // are not touched. This is enforced by the draft service (uses intakeSchemaVersion
-        // bound at creation time). This test verifies the schema service completes activation
-        // without modifying draft records.
-        CategorySchemaVersion draft = schemaVersion(2, "DRAFT", false);
-        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 2))
-                .thenReturn(Optional.of(draft));
+    @DisplayName("SCN-CATEGORY-006: Admin can activate a schema version, including from ROLLED_BACK status")
+    void activationFromRolledBackStatusSucceeds() {
+        CategorySchemaVersion rolledBack = schemaVersion(1, "ROLLED_BACK");
+        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1))
+                .thenReturn(Optional.of(rolledBack));
         when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
         when(schemaVersionDao.findActiveByCategoryId(CAT_ID))
-                .thenReturn(Optional.of(schemaVersion(1, "ACTIVE", true)));
-        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 2))
-                .thenReturn(Optional.of(draft));
+                .thenReturn(Optional.of(schemaVersion(2, "ACTIVE")));
 
-        schemaVersionService.activate(CAT_ID, 2);
+        schemaVersionService.activate(CAT_ID, 1);
 
-        // Version 2 is activated
-        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(draft.id()), eq("ACTIVE"));
-        // No draft records are touched (draft table is not accessed by activate())
+        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(rolledBack.id()), eq("ACTIVE"));
     }
 
-    // ── SCN-CATEGORY-007 ─────────────────────────────────────────────────────
+    // ── SCN-CATEGORY-007 (new) ──────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-007: Rollback restores the last-known-good schema version")
-    void rollbackRestoresLastKnownGoodVersion() {
-        CategorySchemaVersion active = schemaVersion(2, "ACTIVE", false);
-        CategorySchemaVersion lkg = schemaVersion(1, "ACTIVE", true);
+    @DisplayName("SCN-CATEGORY-007: Schema with missing label_mn is rejected")
+    void schemaWithMissingLabelMnRejected() {
+        assertThatThrownBy(() ->
+                schemaVersionService.createVersion(CAT_ID, MISSING_LABEL_MN_SCHEMA, ADMIN_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("label_mn");
+    }
 
-        when(schemaVersionDao.findLastKnownGoodByCategoryId(CAT_ID)).thenReturn(Optional.of(lkg));
-        when(schemaVersionDao.findActiveByCategoryId(CAT_ID)).thenReturn(Optional.of(active));
+    // ── SCN-CATEGORY-008 (new) ──────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-008: Schema with text and textarea field types is accepted")
+    void schemaWithTextAndTextareaTypesAccepted() {
+        when(schemaVersionDao.findMaxVersion(CAT_ID)).thenReturn(Optional.of(0));
+        when(schemaVersionDao.findByCategoryIdAndVersion(eq(CAT_ID), eq(1)))
+                .thenReturn(Optional.of(schemaVersion(1, "DRAFT")));
+
+        CategorySchemaVersion result = schemaVersionService.createVersion(
+                CAT_ID, VALID_TEXT_TEXTAREA_SCHEMA, ADMIN_ID);
+
+        assertThat(result).isNotNull();
+    }
+
+    // ── SCN-CATEGORY-009 ────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-009: Text field without max_length is rejected")
+    void textFieldWithoutMaxLengthRejected() {
+        assertThatThrownBy(() ->
+                schemaVersionService.createVersion(CAT_ID, TEXT_MISSING_MAX_LENGTH_SCHEMA, ADMIN_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("max_length");
+    }
+
+    // ── SCN-CATEGORY-010 ────────────────────────────────────────────────
+
+    @Test
+    @DisplayName("SCN-CATEGORY-010: Activation from ROLLED_BACK status succeeds")
+    void activateFromRolledBackStatus() {
+        CategorySchemaVersion target = schemaVersion(1, "ROLLED_BACK");
+        when(schemaVersionDao.findByCategoryIdAndVersion(CAT_ID, 1))
+                .thenReturn(Optional.of(target));
         when(categoryDao.findById(CAT_ID)).thenReturn(Optional.of(activeCategory()));
-        when(schemaVersionDao.findByCategoryIdAndVersion(eq(CAT_ID), eq(lkg.version())))
-                .thenReturn(Optional.of(lkg));
+        when(schemaVersionDao.findActiveByCategoryId(CAT_ID)).thenReturn(Optional.empty());
 
-        CategorySchemaVersion restored = schemaVersionService.rollbackToLastKnownGood(CAT_ID);
+        schemaVersionService.activate(CAT_ID, 1);
 
-        assertThat(restored.version()).isEqualTo(lkg.version());
-        // Previous active version deactivated
-        verify(schemaVersionDao).updateStatus(eq(active.id()), eq("ROLLED_BACK"));
-        // LKG version reactivated
-        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(lkg.id()), eq("ACTIVE"));
+        verify(schemaVersionDao).updateStatusAndActivatedAt(eq(target.id()), eq("ACTIVE"));
     }
 
-    // ── SCN-CATEGORY-008 ─────────────────────────────────────────────────────
+    // ── SCN-CATEGORY-011 ────────────────────────────────────────────────
 
     @Test
-    @DisplayName("SCN-CATEGORY-008: Rollback without a last-known-good schema fails with NO_FALLBACK")
-    void rollbackWithoutLastKnownGoodFails() {
-        when(schemaVersionDao.findLastKnownGoodByCategoryId(CAT_ID)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> schemaVersionService.rollbackToLastKnownGood(CAT_ID))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageMatching("(?i).*(last known good|no fallback|NO_FALLBACK|no last-known).*");
+    @DisplayName("SCN-CATEGORY-011: Option objects missing label_mn are rejected")
+    void optionWithMissingLabelMnRejected() {
+        assertThatThrownBy(() ->
+                schemaVersionService.createVersion(CAT_ID, INVALID_OPTIONS_SCHEMA, ADMIN_ID))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("label_mn");
     }
 }
