@@ -12,6 +12,7 @@ import mn.tasky.category.dto.CategorySchemaVersion;
 import mn.tasky.category.dto.CategoryState;
 import mn.tasky.common.audit.AuditEventDao;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Manages the lifecycle of category intake schema versions.
@@ -21,9 +22,11 @@ import org.springframework.stereotype.Service;
 public class CategorySchemaVersionService {
 
     private static final Set<String> SUPPORTED_FIELD_TYPES =
-            Set.of("single_select", "multi_select", "dropdown", "yes_no", "numeric_counter");
+            Set.of("single_select", "multi_select", "dropdown", "yes_no", "numeric_counter", "text", "textarea");
 
     private static final Set<String> OPTION_REQUIRED_TYPES = Set.of("single_select", "multi_select", "dropdown");
+
+    private static final Set<String> TEXT_TYPES = Set.of("text", "textarea");
 
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 5;
@@ -84,6 +87,7 @@ public class CategorySchemaVersionService {
      * @throws IllegalArgumentException if the version does not exist or is already active
      * @throws IllegalStateException    if the version is in an invalid status for activation
      */
+    @Transactional
     public CategorySchemaVersion activate(String categoryId, int version) {
         CategorySchemaVersion target = schemaVersionDao
                 .findByCategoryIdAndVersion(categoryId, version)
@@ -94,8 +98,9 @@ public class CategorySchemaVersionService {
         if ("ACTIVE".equals(status)) {
             throw new IllegalStateException("Schema version " + version + " is already active.");
         }
-        if (!"DRAFT".equals(status) && !"CANARY".equals(status)) {
-            throw new IllegalStateException("Schema version " + version + " cannot be activated from status " + status);
+        if (!"DRAFT".equals(status) && !"CANARY".equals(status) && !"ROLLED_BACK".equals(status)) {
+            throw new IllegalStateException(
+                    "Schema version " + version + " cannot be activated from status " + status);
         }
 
         // Roll back current active version if one exists
@@ -168,6 +173,7 @@ public class CategorySchemaVersionService {
 
         String key = requireString(field, "key", index);
         requireString(field, "label", index);
+        requireString(field, "label_mn", index);
 
         String type = requireString(field, "type", index);
         if (!SUPPORTED_FIELD_TYPES.contains(type)) {
@@ -180,10 +186,63 @@ public class CategorySchemaVersionService {
         }
 
         if (OPTION_REQUIRED_TYPES.contains(type)) {
-            JsonNode options = field.get("options");
-            if (options == null || !options.isArray() || options.isEmpty()) {
+            validateOptionsArray(field, key);
+        }
+
+        if (TEXT_TYPES.contains(type)) {
+            validateTextConstraints(field, key);
+        }
+
+        // Reject options on non-option types
+        if (!OPTION_REQUIRED_TYPES.contains(type) && field.has("options")) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' of type '" + type + "' must not have an 'options' property.");
+        }
+    }
+
+    private void validateOptionsArray(JsonNode field, String key) {
+        JsonNode options = field.get("options");
+        if (options == null || !options.isArray() || options.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' must have a non-empty 'options' array.");
+        }
+        for (int i = 0; i < options.size(); i++) {
+            JsonNode opt = options.get(i);
+            if (!opt.isObject()) {
                 throw new IllegalArgumentException(
-                        "Field '" + key + "' of type '" + type + "' must have a non-empty 'options' array.");
+                        "Field '" + key + "' option at index " + i + " must be a JSON object.");
+            }
+            requireOptionString(opt, "value", key, i);
+            requireOptionString(opt, "label", key, i);
+            requireOptionString(opt, "label_mn", key, i);
+        }
+    }
+
+    private void requireOptionString(JsonNode opt, String property, String fieldKey, int optIndex) {
+        JsonNode node = opt.get(property);
+        if (node == null || !node.isTextual() || node.asText().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Field '" + fieldKey + "' option at index " + optIndex
+                            + " must have a non-blank string '" + property + "' property.");
+        }
+    }
+
+    private void validateTextConstraints(JsonNode field, String key) {
+        JsonNode maxLength = field.get("max_length");
+        if (maxLength == null || !maxLength.isInt() || maxLength.asInt() <= 0) {
+            throw new IllegalArgumentException(
+                    "Field '" + key + "' of type '" + field.get("type").asText()
+                            + "' must have a positive integer 'max_length' property.");
+        }
+        JsonNode minLength = field.get("min_length");
+        if (minLength != null) {
+            if (!minLength.isInt() || minLength.asInt() < 0) {
+                throw new IllegalArgumentException(
+                        "Field '" + key + "': 'min_length' must be a non-negative integer.");
+            }
+            if (minLength.asInt() >= maxLength.asInt()) {
+                throw new IllegalArgumentException(
+                        "Field '" + key + "': 'min_length' must be less than 'max_length'.");
             }
         }
     }
