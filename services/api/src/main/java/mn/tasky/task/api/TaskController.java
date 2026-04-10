@@ -791,7 +791,8 @@ public class TaskController {
             TaskDraft updated =
                     taskDraftService.updateDraft(id, principal.userId(),
                             body.intakeAnswers() != null ? body.intakeAnswers().toString() : null,
-                            body.summaryDraft());
+                            body.summaryDraft(),
+                            body.locationLat(), body.locationLng(), body.locationText());
             return ResponseEntity.ok(TaskDraftResponse.from(updated));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
