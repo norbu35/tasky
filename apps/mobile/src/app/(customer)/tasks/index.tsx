@@ -3,7 +3,7 @@ import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Bell, Hammer, Leaf, Package, Plus, Sparkles, Wrench, Zap } from 'lucide-react-native';
-import { StatusBadge } from '../../../components/ui/StatusBadge';
+import { ListItemCard, PriceTag, StatusBadge } from '../../../components/ui';
 import { ScreenHeader } from '../../../components/ui/ScreenHeader';
 import { useMyTasks } from '../../../features/tasks/hooks/useMyTasks';
 import { elevations } from '../../../design/elevations';
@@ -31,10 +31,6 @@ function mapStatus(status: string): TaskState {
   if (lower === 'cancelled') return 'cancelled';
   if (lower === 'no_show') return 'no_show';
   return 'open';
-}
-
-function formatMoney(amount?: number | null) {
-  return `₮${(amount ?? 0).toLocaleString('en-US')}`;
 }
 
 function getTaskVisual(categoryName: string | null | undefined, t: (key: string) => string) {
@@ -70,38 +66,26 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
   const Icon = visual.Icon;
 
   return (
-    <View className="bg-muted rounded-lg p-0.5 mx-screen-x">
-      <Pressable
+    <View className="mx-screen-x">
+      <ListItemCard
         testID={`task-card-${task.id}`}
-        accessibilityRole="button"
         onPress={onPress}
-        style={({ pressed }) => [
-          {
-            borderRadius: 12,
-            backgroundColor: colors.card,
-            padding: 16,
-            flexDirection: 'row' as const,
-            gap: 12,
-            alignItems: 'flex-start' as const,
-            ...elevations.soft,
-          },
-          pressed && { opacity: 0.92 },
-        ]}
-      >
-        <View
-          className="w-24 h-24 rounded-md items-center justify-center shrink-0"
-          style={{ backgroundColor: visual.tone }}
-        >
-          <Icon color={visual.tint} size={28} />
-        </View>
-        <View className="flex-1 gap-micro min-w-0">
-          <View className="flex-row items-center justify-between gap-micro">
+        icon={
+          <View
+            className="w-12 h-12 rounded-md items-center justify-center"
+            style={{ backgroundColor: visual.tone }}
+          >
+            <Icon color={visual.tint} size={24} />
+          </View>
+        }
+        badge={
+          <View className="flex-row items-center justify-between gap-sm">
             <View
               className="self-start px-sm py-xs rounded-full shrink"
               style={{ backgroundColor: `${colors.primary}10` }}
             >
               <Text
-                className="text-micro font-bold tracking-widest uppercase text-primary-deep"
+                className="text-micro font-sans-bold tracking-widest uppercase text-primary-deep"
                 numberOfLines={1}
               >
                 {task.category?.name ?? t('customer.taskList.categoryFallback')}
@@ -109,31 +93,23 @@ function TaskCard({ task, onPress }: { task: TaskLike; onPress: () => void }) {
             </View>
             <StatusBadge status={status} />
           </View>
-          <Text className="font-screen-card-title font-bold text-primary-deep" numberOfLines={2}>
-            {task.description ?? t('customer.taskList.noTitle')}
-          </Text>
-          <Text
-            className="text-subtitle font-extrabold text-secondary"
-            numberOfLines={1}
-            accessibilityLabel={`${(task.budget ?? 0).toLocaleString('en-US')} tugrik`}
-          >
-            {formatMoney(task.budget)}
-          </Text>
-        </View>
-      </Pressable>
+        }
+        title={task.description ?? t('customer.taskList.noTitle')}
+        trailing={<PriceTag amount={task.budget ?? 0} size="sm" />}
+      />
     </View>
   );
 }
 
 function SkeletonCard() {
   return (
-    <View className="bg-muted rounded-lg p-0.5 mx-screen-x">
-      <View className="bg-card rounded-md p-lg flex-row gap-md items-start" style={elevations.soft}>
-        <View className="w-24 h-24 rounded-md bg-muted shrink-0" />
-        <View className="flex-1 gap-sm pt-sm">
-          <View className="h-2.5 rounded-full bg-muted w-[45%]" />
-          <View className="h-4 rounded-full bg-muted w-[92%]" />
-          <View className="h-3 rounded-full bg-muted w-[72%]" />
+    <View className="mx-screen-x">
+      <View className="bg-card rounded-lg p-lg flex-row gap-md items-start" style={elevations.soft}>
+        <View className="w-12 h-12 rounded-md bg-muted shrink-0" />
+        <View className="flex-1 gap-sm pt-xs">
+          <View className="h-2.5 rounded-full bg-muted w-2/5" />
+          <View className="h-4 rounded-full bg-muted w-11/12" />
+          <View className="h-3 rounded-full bg-muted w-3/4" />
         </View>
       </View>
     </View>
@@ -175,7 +151,7 @@ function Header({
         <Text className="text-body text-text-secondary leading-relaxed">
           {t('customer.taskList.heroTitle')}
         </Text>
-        <View className="flex-row gap-micro">
+        <View className="flex-row gap-sm">
           {(
             [
               { key: 'open', label: t('customer.taskList.filterOpen') },
@@ -355,7 +331,7 @@ export default function MyTasksListScreen() {
                 colors={[colors.primary]}
               />
             }
-            ItemSeparatorComponent={() => <View className="h-md" />}
+            ItemSeparatorComponent={() => <View className="h-item" />}
             showsVerticalScrollIndicator={false}
             testID="my-tasks-feed"
           />
