@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
+import { ScrollView, StyleSheet, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mobileTheme } from '../../design/tokenAdapter';
 
@@ -18,14 +18,22 @@ export function InsetScrollView({
 }: InsetScrollViewProps) {
   const insets = useSafeAreaInsets();
 
+  const flattenedStyle = StyleSheet.flatten(contentContainerStyle) || {};
+  const customPaddingBottom = typeof flattenedStyle.paddingBottom === 'number' 
+    ? flattenedStyle.paddingBottom 
+    : 0;
+
+  // Omit paddingBottom from the rest to prevent overriding
+  const { paddingBottom: _, ...restStyle } = flattenedStyle;
+
   return (
     <ScrollView
       className={className ?? 'flex-1'}
       {...scrollProps}
       contentContainerStyle={[
         { flexGrow: 1 },
-        { paddingBottom: insets.bottom + extraBottomInset + mobileTheme.spacing.lg },
-        contentContainerStyle,
+        restStyle,
+        { paddingBottom: insets.bottom + extraBottomInset + mobileTheme.spacing.lg + customPaddingBottom },
       ]}
     >
       {children}
