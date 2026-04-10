@@ -1,0 +1,5 @@
+{
+  "*.{ts,tsx}": ["prettier --write", "eslint --no-error-on-unmatched-pattern"],
+  "*.{json,yaml,yml,md,css}": ["prettier --write"],
+  "*.java": ["./gradlew spotlessApply -x test"]
+}

@@ -2,6 +2,11 @@
   "name": "tasky-monorepo",
   "private": true,
   "packageManager": "pnpm@10.29.2",
+  "pnpm": {
+    "patchedDependencies": {
+      "expo-localization@16.0.1": "patches/expo-localization@16.0.1.patch"
+    }
+  },
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
@@ -12,6 +17,11 @@
     "sdk:generate": "pnpm --filter @tasky/sdk generate",
     "sdk:drift": "bash tooling/scripts/validate-sdk-contract-drift.sh",
     "generated:verify": "pnpm sdk:generate && pnpm --filter @tasky/design-tokens build && pnpm -r typecheck",
-    "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs"
+    "workspace:boundaries": "node tooling/scripts/validate-workspace-boundaries.mjs",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
   }
 }

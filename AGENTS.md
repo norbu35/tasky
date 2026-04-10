@@ -40,10 +40,12 @@ A tranche should be a **vertical slice** deliverable in one PR. It touches one f
 **Depends on:** tranche-name (optional)
 
 ## Description
+
 2-5 sentences: what the user wants, what needs to change, which layers are involved.
 Reference specific endpoints, tables, or screens when possible.
 
 ## Done When
+
 - Each criterion is concrete and testable
 - Mention specific endpoints, validation rules, or UI behaviors
 - Include contract updates (API.yaml, SDK regen) if endpoints change
@@ -54,9 +56,14 @@ Reference specific endpoints, tables, or screens when possible.
 
 **Dependencies:** list explicit plan-tranche dependencies and required verification gates.
 
+## Codebase Context
+
+`repomix-output.xml` at the repo root contains a full snapshot of the codebase. When you need broad repo context (e.g. understanding cross-cutting concerns, finding usage patterns, or orienting in unfamiliar areas), read this file instead of globbing/grepping across many files. It is regenerated automatically after every commit via a husky post-commit hook.
+
 ## Before Starting Any Task
 
 Read these files first:
+
 - `docs/ARCHITECTURE.md` — system design, domain packages, persistence patterns
 - `docs/API.yaml` — skim the OpenAPI spec for the area you're working in
 - The relevant domain package under `services/api/src/main/java/mn/tasky/` — understand existing patterns before adding code
@@ -81,6 +88,7 @@ Read these files first:
 ## API-First Development
 
 For any endpoint change:
+
 1. Update `docs/API.yaml` first
 2. Run `pnpm sdk:generate` to regenerate the TypeScript SDK
 3. Then implement the backend and frontend changes
@@ -89,6 +97,7 @@ For any endpoint change:
 ## Task Queue Status
 
 The greenfield task queue is archived:
+
 - `archive/legacy-task-system/tasks/`
 - `archive/legacy-task-system/task.sh`
 
@@ -109,6 +118,7 @@ Do not use `scripts/task.sh` for active maintenance work.
 ## PR Description
 
 Every PR must include:
+
 - What the task asked for
 - What you changed (files, endpoints, schemas)
 - How you verified it (which tests you wrote/updated)
@@ -150,11 +160,11 @@ The backend uses a scenario-based test framework. Read this section fully before
 
 ### Quality gates
 
-| Gate | Command | Blocks |
-|---|---|---|
-| Smoke | `./gradlew gateSmoke` | Merge to main — all Critical scenarios must be covered |
-| Regression | `./gradlew gateRegression` | Deploy — all High scenarios + JaCoCo 80% + API contract valid |
-| Full (nightly) | `./gradlew gateFull` | Alerts on mutation floor violations |
+| Gate           | Command                    | Blocks                                                        |
+| -------------- | -------------------------- | ------------------------------------------------------------- |
+| Smoke          | `./gradlew gateSmoke`      | Merge to main — all Critical scenarios must be covered        |
+| Regression     | `./gradlew gateRegression` | Deploy — all High scenarios + JaCoCo 80% + API contract valid |
+| Full (nightly) | `./gradlew gateFull`       | Alerts on mutation floor violations                           |
 
 ### Frontend testing
 
@@ -186,6 +196,7 @@ type(scope): imperative summary
 Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`, `security`
 
 AI commits must include:
+
 ```
 Co-Authored-By: Pi <noreply@pi.dev>
 ```
@@ -202,52 +213,52 @@ scope focused on primary user flows. A future agent should implement these as a 
 
 ### Tasker Verification & KYC (SCR-TASK-003–010)
 
-| SCR-ID | Screen name | Figma node |
-|---|---|---|
-| SCR-TASK-003 | Verification Gate | 2:48043 |
-| SCR-TASK-004 | Verification — Consent | 2:48173 |
-| SCR-TASK-005 | Verification — ID Upload | 2:48121 |
-| SCR-TASK-006 | Verification — DAN Fast-Path | 2:48235 |
-| SCR-TASK-007 | Verification — Pending | 2:48291 |
-| SCR-TASK-008 | Verification — Approved | 2:48725 |
-| SCR-TASK-009 | Verification — Rejected | 2:48378 |
-| SCR-TASK-010 | Verification Submitted — Success | 2:48440 |
+| SCR-ID       | Screen name                      | Figma node |
+| ------------ | -------------------------------- | ---------- |
+| SCR-TASK-003 | Verification Gate                | 2:48043    |
+| SCR-TASK-004 | Verification — Consent           | 2:48173    |
+| SCR-TASK-005 | Verification — ID Upload         | 2:48121    |
+| SCR-TASK-006 | Verification — DAN Fast-Path     | 2:48235    |
+| SCR-TASK-007 | Verification — Pending           | 2:48291    |
+| SCR-TASK-008 | Verification — Approved          | 2:48725    |
+| SCR-TASK-009 | Verification — Rejected          | 2:48378    |
+| SCR-TASK-010 | Verification Submitted — Success | 2:48440    |
 
 ### Credits & Payments — Phase 2 (SCR-P2-001–005)
 
-| SCR-ID | Screen name | Figma node |
-|---|---|---|
-| SCR-P2-001 | Credits — Balance & Purchase | 2:47102 |
-| SCR-P2-002 | Credits — QPay Payment | 2:47256 |
-| SCR-P2-003 | Credits — Transaction History | 2:47304 |
-| SCR-P2-004 | Credits — Low Balance Alert | 2:47446 |
-| SCR-P2-005 | Referral — My Code & Stats | 2:47511 |
+| SCR-ID     | Screen name                   | Figma node |
+| ---------- | ----------------------------- | ---------- |
+| SCR-P2-001 | Credits — Balance & Purchase  | 2:47102    |
+| SCR-P2-002 | Credits — QPay Payment        | 2:47256    |
+| SCR-P2-003 | Credits — Transaction History | 2:47304    |
+| SCR-P2-004 | Credits — Low Balance Alert   | 2:47446    |
+| SCR-P2-005 | Referral — My Code & Stats    | 2:47511    |
 
 ### Wallet, Escrow & Pro — Phase 3 (SCR-P3-001–005)
 
-| SCR-ID | Screen name | Figma node |
-|---|---|---|
-| SCR-P3-001 | Wallet — Balance & Payouts | 2:47635 |
-| SCR-P3-002 | Wallet — Request Payout | 2:47760 |
-| SCR-P3-003 | Escrow — Payment Flow | 2:47831 |
-| SCR-P3-004 | Subscription — Tasker Pro | 2:47888 |
-| SCR-P3-005 | Instant Match — Tasker | 2:47950 |
+| SCR-ID     | Screen name                | Figma node |
+| ---------- | -------------------------- | ---------- |
+| SCR-P3-001 | Wallet — Balance & Payouts | 2:47635    |
+| SCR-P3-002 | Wallet — Request Payout    | 2:47760    |
+| SCR-P3-003 | Escrow — Payment Flow      | 2:47831    |
+| SCR-P3-004 | Subscription — Tasker Pro  | 2:47888    |
+| SCR-P3-005 | Instant Match — Tasker     | 2:47950    |
 
 ### Not Yet Spec'd (specs must be written before implementation)
 
-| SCR-ID | Screen name | Figma node |
-|---|---|---|
-| SCR-CUST-028 | Task Boost Options | 2:49248 |
-| SCR-CUST-029 | Task Boost Payment | 2:49373 |
-| SCR-TASK-019 | AI Profile Polish | 2:49423 |
-| SCR-B2B-001 | Business Accounts List | 2:49485 |
-| SCR-B2B-002 | Business Account Editor | 2:49562 |
-| SCR-B2B-003 | Business Location Editor | 2:49723 |
-| SCR-B2B-004 | Business Members | 2:49805 |
-| SCR-B2B-005 | Post Task as Business | 2:50052 |
-| SCR-B2B-006 | Business Tasks | 2:49919 |
-| SCR-B2B-007 | Business Subscription Billing | 2:50106 |
+| SCR-ID       | Screen name                   | Figma node |
+| ------------ | ----------------------------- | ---------- |
+| SCR-CUST-028 | Task Boost Options            | 2:49248    |
+| SCR-CUST-029 | Task Boost Payment            | 2:49373    |
+| SCR-TASK-019 | AI Profile Polish             | 2:49423    |
+| SCR-B2B-001  | Business Accounts List        | 2:49485    |
+| SCR-B2B-002  | Business Account Editor       | 2:49562    |
+| SCR-B2B-003  | Business Location Editor      | 2:49723    |
+| SCR-B2B-004  | Business Members              | 2:49805    |
+| SCR-B2B-005  | Post Task as Business         | 2:50052    |
+| SCR-B2B-006  | Business Tasks                | 2:49919    |
+| SCR-B2B-007  | Business Subscription Billing | 2:50106    |
 
-To pick up this work: read the design spec, review each SCR-*.yaml in `docs/design/screen-specs/`,
+To pick up this work: read the design spec, review each SCR-\*.yaml in `docs/design/screen-specs/`,
 and follow the three-source workflow described in the spec. B2B and unspec'd screens need
 `docs/design/screen-specs/` entries written first (see `docs/design/prompts/generation-tracker.md`).

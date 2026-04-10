@@ -1,0 +1,17 @@
+msg=$(cat "$1")
+
+# Enforce: type(scope): summary
+# Types from AGENTS.md: feat, fix, refactor, test, docs, chore, perf, security
+# Also allow Merge commits and Revert commits
+if echo "$msg" | head -1 | grep -qE '^(Merge|Revert) '; then
+  exit 0
+fi
+
+if ! echo "$msg" | head -1 | grep -qE '^(feat|fix|refactor|test|docs|chore|perf|security)\(.+\): .+'; then
+  echo "ERROR: Commit message must match: type(scope): summary"
+  echo "  Types: feat, fix, refactor, test, docs, chore, perf, security"
+  echo "  Example: feat(auth): add SMS OTP login flow"
+  echo ""
+  echo "  Got: $msg"
+  exit 1
+fi

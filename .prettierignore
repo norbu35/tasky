@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+coverage
+.expo
+.gradle
+android
+ios
+playwright-report
+test-results
+packages/sdk/src/generated
+repomix-output.xml
+apps/mobile/repomix-output.xml
+apps/web/repomix-output.xml
+pnpm-lock.yaml

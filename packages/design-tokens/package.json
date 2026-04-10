@@ -18,9 +18,16 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "pnpm run clean && tsc -p tsconfig.json"
+    "build": "pnpm run clean && tsc -p tsconfig.json",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\""
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "8.56.0",
+    "@typescript-eslint/parser": "8.56.0",
+    "eslint": "9.39.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.0.0"
   }
 }

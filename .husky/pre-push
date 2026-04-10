@@ -1,0 +1,15 @@
+echo "Running pre-push checks..."
+
+# TypeScript typecheck across all workspaces
+pnpm -r typecheck || exit 1
+
+# Workspace dependency boundary validation
+pnpm workspace:boundaries || exit 1
+
+# Migration safety
+python3 tooling/scripts/validate-migrations.py || exit 1
+
+# OpenAPI contract validation
+./gradlew openApiValidate -q || exit 1
+
+echo "All pre-push checks passed."
