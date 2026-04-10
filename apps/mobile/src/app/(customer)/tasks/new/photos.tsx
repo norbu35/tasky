@@ -72,12 +72,12 @@ export default function PhotoUploadScreen() {
       nextLabel={photos.length > 0 ? t('common.continue') : t('Photos.photosSkip')}
     >
       <View className="flex-row items-center justify-between gap-sm">
-        <Text className="text-caption text-textSecondary">{t('Photos.photosProgressHint')}</Text>
+        <Text className="text-caption text-text-secondary">{t('Photos.photosProgressHint')}</Text>
       </View>
-      <Text className="text-heading font-sans-bold text-primaryDeep" style={{ lineHeight: 26 }}>
+      <Text className="text-heading font-sans-bold text-primary-deep" style={{ lineHeight: 26 }}>
         {t('Photos.photosHeroTitle')}
       </Text>
-      <Text className="text-body text-textSecondary leading-[24px]">
+      <Text className="text-body text-text-secondary leading-[24px]">
         {t('Photos.photosInstruction')}
       </Text>
 
@@ -110,7 +110,7 @@ export default function PhotoUploadScreen() {
           ) : (
             <Pressable
               key={`add-${index}`}
-              className="rounded-lg border-2 border-dashed border-chipInactive bg-muted items-center justify-center gap-xs p-sm"
+              className="rounded-lg border-2 border-dashed border-chip-inactive bg-muted items-center justify-center gap-xs p-sm"
               style={{ width: '31.5%', aspectRatio: 1 }}
               onPress={handleAddPhoto}
               testID={`photo-upload-add-${index}`}
@@ -123,7 +123,7 @@ export default function PhotoUploadScreen() {
               >
                 <Plus size={20} color={colors.primaryDeep} />
               </View>
-              <Text className="text-caption text-primaryDeep font-sans-bold uppercase text-center">
+              <Text className="text-caption text-primary-deep font-sans-bold uppercase text-center">
                 {t('Photos.addPhoto')}
               </Text>
             </Pressable>
@@ -133,11 +133,11 @@ export default function PhotoUploadScreen() {
 
       <View className="flex-row items-center gap-sm px-xs">
         <Info size={16} color={colors.secondary} />
-        <Text className="flex-1 text-caption text-textSecondary">{t('Photos.photosOptional')}</Text>
+        <Text className="flex-1 text-caption text-text-secondary">{t('Photos.photosOptional')}</Text>
       </View>
 
       <View className="rounded-lg p-lg bg-muted gap-sm mt-xs">
-        <Text className="text-body font-sans-bold text-primaryDeep">
+        <Text className="text-body font-sans-bold text-primary-deep">
           {t('Photos.photosTipTitle')}
         </Text>
         <Text className="text-caption text-primary leading-[20px]">

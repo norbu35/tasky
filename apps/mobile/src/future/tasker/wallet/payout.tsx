@@ -17,7 +17,7 @@ export default function WalletPayoutScreen() {
   if (state === 'submitted') {
     return (
       <View testID="SCR-P3-002" className="flex-1 items-center justify-center bg-background">
-        <Text className="text-heading font-display-bold text-primaryDeep">
+        <Text className="text-heading font-display-bold text-primary-deep">
           {t('tasker.wallet.payoutSuccess')}
         </Text>
       </View>
@@ -30,10 +30,10 @@ export default function WalletPayoutScreen() {
       contentContainerStyle={{ padding: 24, gap: 16 }}
       testID="wallet-payout-screen"
     >
-      <Text className="text-heading font-display-bold text-primaryDeep">
+      <Text className="text-heading font-display-bold text-primary-deep">
         {t('tasker.wallet.payoutTitle')}
       </Text>
-      <Text className="text-body text-textSecondary">{t('tasker.wallet.payoutBalance')}</Text>
+      <Text className="text-body text-text-secondary">{t('tasker.wallet.payoutBalance')}</Text>
       <Input value={amount} onChangeText={setAmount} placeholder="₮0" />
       {showError ? (
         <Text className="text-danger text-label">{t('tasker.wallet.payoutMinError')}</Text>

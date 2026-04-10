@@ -86,7 +86,7 @@ export default function TaskerCreditsPayScreen() {
           <Text className="text-subtitle font-bold text-foreground">
             {t('tasker.credits.notes')}
           </Text>
-          <Text className="text-body text-textSecondary leading-relaxed">
+          <Text className="text-body text-text-secondary leading-relaxed">
             {t('TaskerCreditsPayScreen.copy3')}
           </Text>
         </View>

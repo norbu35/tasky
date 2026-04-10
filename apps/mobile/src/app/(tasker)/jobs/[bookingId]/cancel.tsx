@@ -46,7 +46,7 @@ export default function TaskerCancelBookingScreen() {
       >
         <View className="items-center gap-lg">
           <AlertTriangle size={32} color={colors.danger} />
-          <Text className="text-body text-mutedForeground text-center leading-6">
+          <Text className="text-body text-muted-foreground text-center leading-6">
             {t('tasker.cancelBooking.warning')}
           </Text>
           <Button

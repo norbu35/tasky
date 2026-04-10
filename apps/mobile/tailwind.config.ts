@@ -8,9 +8,8 @@ function camelToKebab(str: string) {
 }
 
 const colorsWithKebab = Object.fromEntries(
-  Object.entries(nativeTokens.colors).flatMap(([key, value]) => [
-    [key, value],
-    [camelToKebab(key), value],
+  Object.entries(nativeTokens.colors).map(([key, value]) => [
+    camelToKebab(key), value,
   ])
 );
 

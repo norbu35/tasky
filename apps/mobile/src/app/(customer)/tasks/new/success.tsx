@@ -68,13 +68,13 @@ export default function TaskPostedSuccessScreen() {
             </Text>
           </View>
           <Text
-            className="text-heading font-display-bold text-primaryDeep text-center"
+            className="text-heading font-display-bold text-primary-deep text-center"
             style={{ lineHeight: typography.heading * 1.25 }}
           >
             {t('TaskPostedSuccessScreen.successTitle')}
           </Text>
           <Text
-            className="text-body text-textSecondary text-center"
+            className="text-body text-text-secondary text-center"
             style={{ lineHeight: typography.body * 1.6 }}
           >
             {t('TaskPostedSuccessScreen.successBody')}
@@ -88,22 +88,22 @@ export default function TaskPostedSuccessScreen() {
 
         <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
           <Text
-            className="text-caption font-sans-bold uppercase text-primaryDeep mb-xs"
+            className="text-caption font-sans-bold uppercase text-primary-deep mb-xs"
             style={{ letterSpacing: 0.8 }}
           >
             {t('TaskPostedSuccessScreen.successNextLabel')}
           </Text>
-          <Text className="text-body font-sans-bold text-primaryDeep">
+          <Text className="text-body font-sans-bold text-primary-deep">
             {t('TaskPostedSuccessScreen.successNextTitle')}
           </Text>
           <Text
-            className="text-caption text-textSecondary"
+            className="text-caption text-text-secondary"
             style={{ lineHeight: typography.caption * 1.6 }}
           >
             {t('TaskPostedSuccessScreen.successNext1')}
           </Text>
           <Text
-            className="text-caption text-textSecondary"
+            className="text-caption text-text-secondary"
             style={{ lineHeight: typography.caption * 1.6 }}
           >
             {t('TaskPostedSuccessScreen.successNext2')}

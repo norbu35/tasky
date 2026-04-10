@@ -75,15 +75,15 @@ export default function DisputeRaiseScreen() {
       showBack={currentStep > 0}
     >
       <View className="mb-xl">
-        <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+        <Text className="text-heading font-sans-bold text-primary-deep mb-md">
           {t('customer.disputes.sectionBookingRef')}
         </Text>
-        <Text className="text-body text-primaryDeep">{bookingId}</Text>
+        <Text className="text-body text-primary-deep">{bookingId}</Text>
       </View>
 
       {currentStep === 0 && (
         <View>
-          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+          <Text className="text-heading font-sans-bold text-primary-deep mb-md">
             {t('customer.disputes.labelReason')}
           </Text>
           <View className="gap-sm">
@@ -92,7 +92,7 @@ export default function DisputeRaiseScreen() {
                 key={reason}
                 className={
                   selectedReason === reason
-                    ? 'rounded-md p-md bg-card border-[1.5px] border-primaryDeep'
+                    ? 'rounded-md p-md bg-card border-[1.5px] border-primary-deep'
                     : 'rounded-md p-md bg-muted border-[1.5px] border-transparent'
                 }
                 onPress={() => setSelectedReason(reason)}
@@ -102,7 +102,7 @@ export default function DisputeRaiseScreen() {
                   className={
                     selectedReason === reason
                       ? 'text-body text-accent font-semibold'
-                      : 'text-body text-primaryDeep'
+                      : 'text-body text-primary-deep'
                   }
                 >
                   {reason}
@@ -115,7 +115,7 @@ export default function DisputeRaiseScreen() {
 
       {currentStep === 1 && (
         <View>
-          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+          <Text className="text-heading font-sans-bold text-primary-deep mb-md">
             {t('customer.disputes.labelEvidence')}
           </Text>
           <PhotoGrid
@@ -126,11 +126,11 @@ export default function DisputeRaiseScreen() {
             testID="dispute-evidence-photos"
           />
           <View className="bg-muted rounded-md p-md mt-md">
-            <Text className="text-caption text-textSecondary leading-[20px]">
+            <Text className="text-caption text-text-secondary leading-[20px]">
               {t('DisputeRaiseScreen.validationNoEvidence')}
             </Text>
           </View>
-          <Text className="text-caption text-textSecondary mt-sm leading-[20px]">
+          <Text className="text-caption text-text-secondary mt-sm leading-[20px]">
             {t('customer.disputes.evidenceDeadlineNote')}
           </Text>
         </View>
@@ -138,11 +138,11 @@ export default function DisputeRaiseScreen() {
 
       {currentStep === 2 && (
         <View>
-          <Text className="text-heading font-sans-bold text-primaryDeep mb-md">
+          <Text className="text-heading font-sans-bold text-primary-deep mb-md">
             {t('customer.disputes.labelDescription')}
           </Text>
           <Input
-            className="border border-border rounded-md p-md text-body text-primaryDeep bg-card"
+            className="border border-border rounded-md p-md text-body text-primary-deep bg-card"
             style={{ minHeight: 120, textAlignVertical: 'top' }}
             placeholder={t('customer.disputes.placeholderDescription')}
             placeholderTextColor={colors.textTertiary}
@@ -153,7 +153,7 @@ export default function DisputeRaiseScreen() {
             numberOfLines={5}
             testID="dispute-description-input"
           />
-          <Text className="text-caption text-textSecondary mt-sm">
+          <Text className="text-caption text-text-secondary mt-sm">
             {t('DisputeRaiseScreen.validationNoEvidence')}
           </Text>
         </View>

@@ -126,7 +126,7 @@ export default function UploadScreen() {
       nextDisabled={!hasPhoto}
       nextLoading={isSubmitting}
     >
-      <Text className="text-caption font-sans-bold text-textSecondary text-center uppercase tracking-[0.8px] mb-lg">
+      <Text className="text-caption font-sans-bold text-text-secondary text-center uppercase tracking-[0.8px] mb-lg">
         {t(STEP_LABELS[currentSide])}
       </Text>
 
@@ -142,7 +142,7 @@ export default function UploadScreen() {
       ) : (
         <View className="items-center justify-center h-[200px] bg-muted rounded-md mb-lg">
           <Camera size={48} color={colors.muted} />
-          <Text className="text-body text-textSecondary mt-sm">
+          <Text className="text-body text-text-secondary mt-sm">
             {t('tasker.verification.uploadCapture')}
           </Text>
         </View>
@@ -153,7 +153,7 @@ export default function UploadScreen() {
           <Text className="text-subtitle font-semibold text-primary">
             {t('tasker.verification.reviewHeading')}
           </Text>
-          <Text className="text-body text-textSecondary leading-[26px]">
+          <Text className="text-body text-text-secondary leading-[26px]">
             {t('tasker.verification.reviewDescription')}
           </Text>
 

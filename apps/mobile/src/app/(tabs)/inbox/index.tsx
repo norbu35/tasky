@@ -90,21 +90,21 @@ export default function ConversationListScreen() {
           <View className="flex-1">
             <View className="flex-row justify-between items-center">
               <Text
-                className={`text-body font-semibold flex-1 mr-sm ${isUnread ? 'text-primaryDeep font-bold' : 'text-foreground'}`}
+                className={`text-body font-semibold flex-1 mr-sm ${isUnread ? 'text-primary-deep font-bold' : 'text-foreground'}`}
                 numberOfLines={1}
               >
                 {title}
               </Text>
               {item.last_message_at && (
                 <Text
-                  className={`text-micro ${isUnread ? 'text-primaryDeep font-bold' : 'text-mutedForeground'}`}
+                  className={`text-micro ${isUnread ? 'text-primary-deep font-bold' : 'text-muted-foreground'}`}
                 >
                   {formatTimestamp(item.last_message_at)}
                 </Text>
               )}
             </View>
             {item.last_message_preview && (
-              <Text className="text-label text-mutedForeground mt-[2px]" numberOfLines={1}>
+              <Text className="text-label text-muted-foreground mt-[2px]" numberOfLines={1}>
                 {item.last_message_preview}
               </Text>
             )}

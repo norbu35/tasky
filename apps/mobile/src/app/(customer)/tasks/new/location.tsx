@@ -195,10 +195,10 @@ export default function LocationScreen() {
       nextDisabled={!pin}
     >
       <View className="gap-sm">
-        <Text className="text-heading font-extrabold text-primaryDeep">
+        <Text className="text-heading font-extrabold text-primary-deep">
           {t('LocationScreen.locationPageTitle')}
         </Text>
-        <Text className="text-body text-textSecondary leading-relaxed">
+        <Text className="text-body text-text-secondary leading-relaxed">
           {t('LocationScreen.locationInstruction')}
         </Text>
       </View>
@@ -236,8 +236,8 @@ export default function LocationScreen() {
           style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
           className="items-center justify-center gap-xs"
         >
-          <View className="px-lg py-sm rounded-md bg-primaryDeep">
-            <Text className="text-label font-bold text-primaryForeground">
+          <View className="px-lg py-sm rounded-md bg-primary-deep">
+            <Text className="text-label font-bold text-primary-foreground">
               {t('LocationScreen.pickHere')}
             </Text>
           </View>
@@ -281,14 +281,14 @@ export default function LocationScreen() {
 
       <View className="mt-sm rounded-lg p-lg bg-muted gap-lg" testID="location-current-card">
         <View className="gap-xs">
-          <Text className="text-subtitle font-extrabold text-primaryDeep">
+          <Text className="text-subtitle font-extrabold text-primary-deep">
             {reverseGeocoding
               ? t('LocationScreen.resolvingAddress')
               : pin
                 ? t('LocationScreen.locationPinnedArea')
                 : t('LocationScreen.locationAwaitingPin')}
           </Text>
-          <Text className="text-caption text-textSecondary">
+          <Text className="text-caption text-text-secondary">
             {pin ? t('LocationScreen.pinSet') : t('LocationScreen.tapToPin')}
           </Text>
         </View>
@@ -307,7 +307,7 @@ export default function LocationScreen() {
         </FormField>
 
         <View className="gap-sm">
-          <Text className="text-body font-bold text-primaryDeep">
+          <Text className="text-body font-bold text-primary-deep">
             {t('LocationScreen.recentLocationsLabel')}
           </Text>
           {loadingRecent ? (
@@ -345,7 +345,7 @@ export default function LocationScreen() {
                   accessibilityRole="button"
                 >
                   <Text
-                    className="text-caption font-bold text-primaryDeep"
+                    className="text-caption font-bold text-primary-deep"
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
@@ -355,14 +355,14 @@ export default function LocationScreen() {
               ))}
             </View>
           ) : (
-            <Text className="text-caption text-textSecondary">
+            <Text className="text-caption text-text-secondary">
               {t('LocationScreen.noRecentLocations')}
             </Text>
           )}
         </View>
 
         <View className="pt-xs">
-          <Text className="text-caption text-textSecondary leading-relaxed">
+          <Text className="text-caption text-text-secondary leading-relaxed">
             {t('LocationScreen.locationPrivacy')}
           </Text>
         </View>

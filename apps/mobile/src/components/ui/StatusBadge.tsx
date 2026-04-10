@@ -9,8 +9,8 @@ type StatusType = 'open' | 'assigned' | 'completed' | 'cancelled' | 'no_show';
 const badgeVariants = cva('self-start px-md py-xs rounded-full', {
   variants: {
     status: {
-      open: 'bg-statusOpen',
-      assigned: 'bg-statusAssigned',
+      open: 'bg-status-open',
+      assigned: 'bg-status-assigned',
       completed: 'bg-verified',
       cancelled: 'bg-muted',
       no_show: 'bg-danger',
@@ -21,9 +21,9 @@ const badgeVariants = cva('self-start px-md py-xs rounded-full', {
 const textVariants = cva('text-micro font-sans-bold uppercase tracking-widest', {
   variants: {
     status: {
-      open: 'text-statusOpenForeground',
-      assigned: 'text-statusAssignedForeground',
-      completed: 'text-verifiedForeground',
+      open: 'text-status-open-foreground',
+      assigned: 'text-status-assigned-foreground',
+      completed: 'text-verified-foreground',
       cancelled: 'text-muted-foreground',
       no_show: 'text-danger-foreground',
     },

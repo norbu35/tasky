@@ -66,7 +66,7 @@ function SettingsRowItem({ row, testID }: { row: SettingsRow; testID?: string })
         {row.rightElement ? (
           row.rightElement
         ) : row.value ? (
-          <Text className="text-body text-textSecondary mr-xs">{row.value}</Text>
+          <Text className="text-body text-text-secondary mr-xs">{row.value}</Text>
         ) : null}
         {isInteractive && !row.rightElement && (
           <ChevronRight size={20} color="#9CA3AF" />
@@ -87,7 +87,7 @@ export function SettingsTemplate({ sections, testID, className }: SettingsTempla
       {sections.map((section, sectionIndex) => (
         <View key={section.title ?? `section-${sectionIndex}`} className="mb-xl">
           {section.title ? (
-            <Text className="text-caption font-bold text-primaryDeep tracking-widest uppercase mb-sm">
+            <Text className="text-caption font-bold text-primary-deep tracking-widest uppercase mb-sm">
               {section.title.toUpperCase()}
             </Text>
           ) : null}

@@ -35,8 +35,8 @@ export function ReviewCard({
     >
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-[12px]">
-          <View className="w-[32px] h-[32px] rounded-full bg-subtleViolet items-center justify-center">
-            <Text className="text-caption font-sans-bold text-textSecondary">
+          <View className="w-[32px] h-[32px] rounded-full bg-subtle-violet items-center justify-center">
+            <Text className="text-caption font-sans-bold text-text-secondary">
               {reviewerInitials}
             </Text>
           </View>
@@ -54,7 +54,7 @@ export function ReviewCard({
         </View>
       </View>
       <Text className="text-label text-muted-foreground leading-[19px] italic">{comment}</Text>
-      <Text className="text-micro font-sans-semibold text-textTertiary uppercase tracking-[1px]">
+      <Text className="text-micro font-sans-semibold text-text-tertiary uppercase tracking-[1px]">
         {timeAgo}
       </Text>
     </View>

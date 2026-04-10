@@ -53,8 +53,8 @@ export default function TaskerCreditsHistoryScreen() {
         />
       ) : (
         <View className="gap-lg">
-          <View className="p-lg rounded-lg bg-primaryDeep gap-xs">
-            <Text className="text-label text-primaryForeground opacity-80">
+          <View className="p-lg rounded-lg bg-primary-deep gap-xs">
+            <Text className="text-label text-primary-foreground opacity-80">
               {t('tasker.credits.thisMonth')}
             </Text>
             <Text
@@ -63,7 +63,7 @@ export default function TaskerCreditsHistoryScreen() {
             >
               +12,400 ₮
             </Text>
-            <Text className="text-body text-primaryForeground opacity-70">
+            <Text className="text-body text-primary-foreground opacity-70">
               {t('tasker.credits.netMovement')}
             </Text>
           </View>
@@ -81,8 +81,8 @@ export default function TaskerCreditsHistoryScreen() {
                   </Text>
                   <Text className="text-body font-bold text-primary">{transaction.amount}</Text>
                 </View>
-                <Text className="text-label text-textSecondary">{transaction.subtitle}</Text>
-                <Text className="text-caption text-textTertiary">{transaction.timestamp}</Text>
+                <Text className="text-label text-text-secondary">{transaction.subtitle}</Text>
+                <Text className="text-caption text-text-tertiary">{transaction.timestamp}</Text>
               </View>
             ))}
           </View>

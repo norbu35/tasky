@@ -25,7 +25,7 @@ export default function BannedAccountScreen() {
       <Text className="text-title font-bold text-foreground text-center mb-md">
         {t('shared.account.bannedTitle')}
       </Text>
-      <Text className="text-body text-textSecondary text-center leading-6">
+      <Text className="text-body text-text-secondary text-center leading-6">
         {t('BannedAccountScreen.copy1')}
       </Text>
       <Button

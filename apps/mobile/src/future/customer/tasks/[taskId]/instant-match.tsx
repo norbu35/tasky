@@ -144,8 +144,8 @@ export default function CustomerInstantMatchScreen() {
     <DetailTemplate testID="SCR-CUST-027" onBack={onBack}>
       <View className="gap-lg" style={{ minHeight: 480 }}>
         <View className="gap-sm">
-          <Text className="text-heading font-bold text-primaryDeep">{heroTitle}</Text>
-          <Text className="text-body text-textSecondary leading-relaxed">{heroSubtitle}</Text>
+          <Text className="text-heading font-bold text-primary-deep">{heroTitle}</Text>
+          <Text className="text-body text-text-secondary leading-relaxed">{heroSubtitle}</Text>
         </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
@@ -186,7 +186,7 @@ export default function CustomerInstantMatchScreen() {
               }}
             />
             <View className="w-14 h-14 rounded-lg bg-primary items-center justify-center">
-              <View className="w-[14px] h-[14px] rounded-full bg-primaryForeground" />
+              <View className="w-[14px] h-[14px] rounded-full bg-primary-foreground" />
             </View>
           </View>
         )}
@@ -203,12 +203,12 @@ export default function CustomerInstantMatchScreen() {
               name={matchState === 'matched_awaiting_accept' ? matchedTaskerName : 'Tasky'}
             />
             <View className="flex-1 gap-xs">
-              <Text className="text-body font-bold text-primaryDeep">
+              <Text className="text-body font-bold text-primary-deep">
                 {matchState === 'matched_awaiting_accept'
                   ? t('matching.instantMatch.sampleTaskerName', matchedTaskerName)
                   : t('matching.instantMatch.previewName')}
               </Text>
-              <Text className="text-caption text-textSecondary">
+              <Text className="text-caption text-text-secondary">
                 {matchState === 'matched_awaiting_accept'
                   ? t('matching.instantMatch.verifiedTasker')
                   : t('matching.instantMatch.previewMeta')}
@@ -218,26 +218,26 @@ export default function CustomerInstantMatchScreen() {
 
           <View className="flex-row items-center justify-between">
             <Text
-              className="text-caption text-textSecondary uppercase"
+              className="text-caption text-text-secondary uppercase"
               style={{ letterSpacing: 0.5 }}
             >
               {t('matching.instantMatch.taskLabel')}
             </Text>
             <PriceTag amount={summaryBudget} size="sm" />
           </View>
-          <Text className="text-subtitle font-bold text-primaryDeep">{summaryTitle}</Text>
-          <Text className="text-caption text-textSecondary">{summaryLocation}</Text>
+          <Text className="text-subtitle font-bold text-primary-deep">{summaryTitle}</Text>
+          <Text className="text-caption text-text-secondary">{summaryLocation}</Text>
         </View>
 
         {(matchState === 'matching_spinner' || matchState === 'tasker_declined_retry') && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
-            <Text className="text-body text-primaryDeep text-center leading-relaxed">
+            <Text className="text-body text-primary-deep text-center leading-relaxed">
               {matchState === 'tasker_declined_retry'
                 ? t('CustomerInstantMatchScreen.copy3')
                 : t('CustomerInstantMatchScreen.copy4')}
             </Text>
             {matchState === 'tasker_declined_retry' && (
-              <Text className="text-label text-textSecondary text-center">
+              <Text className="text-label text-text-secondary text-center">
                 {t('CustomerInstantMatchScreen.copy5', {
                   count: declines,
                 })}
@@ -248,10 +248,10 @@ export default function CustomerInstantMatchScreen() {
 
         {matchState === 'matched_awaiting_accept' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
-            <Text className="text-body text-primaryDeep text-center leading-relaxed">
+            <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('matching.instantMatch.matchedStatus')}
             </Text>
-            <Text className="text-label text-textSecondary text-center">
+            <Text className="text-label text-text-secondary text-center">
               {t('matching.instantMatch.countdownLabel')}
               {t('CustomerInstantMatchScreen.copy6')}
             </Text>
@@ -266,10 +266,10 @@ export default function CustomerInstantMatchScreen() {
 
         {matchState === 'fallback_to_open' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
-            <Text className="text-body text-primaryDeep text-center leading-relaxed">
+            <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('CustomerInstantMatchScreen.copy7')}
             </Text>
-            <Text className="text-label text-textSecondary text-center">
+            <Text className="text-label text-text-secondary text-center">
               {t('CustomerInstantMatchScreen.copy8')}
             </Text>
             <Button
@@ -283,7 +283,7 @@ export default function CustomerInstantMatchScreen() {
         {matchState === 'error_no_eligible' && (
           <View className="bg-muted rounded-lg p-xl gap-md items-center">
             <Toast variant="error" message={t('matching.instantMatch.noEligibleTitle')} />
-            <Text className="text-body text-primaryDeep text-center leading-relaxed">
+            <Text className="text-body text-primary-deep text-center leading-relaxed">
               {t('CustomerInstantMatchScreen.copy9')}
             </Text>
             <Button

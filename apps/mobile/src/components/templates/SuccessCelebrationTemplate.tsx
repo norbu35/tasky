@@ -71,7 +71,7 @@ export function SuccessCelebrationTemplate({
       >
         <AnimatedCheckmark />
 
-        <Text className="text-heading font-semibold text-primaryDeep text-center">{headline}</Text>
+        <Text className="text-heading font-semibold text-primary-deep text-center">{headline}</Text>
         <Text className="text-body text-primary text-center mt-md leading-relaxed">{body}</Text>
 
         {nextSteps && nextSteps.length > 0 && (

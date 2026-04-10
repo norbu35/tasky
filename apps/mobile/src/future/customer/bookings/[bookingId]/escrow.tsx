@@ -38,10 +38,10 @@ export default function EscrowScreen() {
         contentContainerStyle={{ padding: 24, gap: 16 }}
       >
         <View className="bg-muted rounded-lg p-xl gap-md" testID="booking-escrow-screen-error">
-          <Text className="text-title font-sans-bold text-primaryDeep">
+          <Text className="text-title font-sans-bold text-primary-deep">
             {t('customer.bookings.escrowFlow.paymentFailed')}
           </Text>
-          <Text className="text-body text-textSecondary leading-[24px]">
+          <Text className="text-body text-text-secondary leading-[24px]">
             {t('customer.bookings.escrowFlow.errorDescription')}
           </Text>
         </View>
@@ -57,13 +57,13 @@ export default function EscrowScreen() {
         testID="booking-escrow-screen"
       >
         <View className="bg-muted rounded-lg p-xl gap-md">
-          <Text className="text-title font-sans-bold text-primaryDeep">
+          <Text className="text-title font-sans-bold text-primary-deep">
             {t('customer.bookings.escrowFlow.paymentConfirmed')}
           </Text>
-          <Text className="text-body font-sans-bold text-primaryDeep">
+          <Text className="text-body font-sans-bold text-primary-deep">
             {t('customer.bookings.escrowFlow.escrowSuccess')}
           </Text>
-          <Text className="text-body text-textSecondary leading-[24px]">
+          <Text className="text-body text-text-secondary leading-[24px]">
             {t('customer.bookings.escrowFlow.escrowHeldDescription')}
           </Text>
         </View>
@@ -78,26 +78,26 @@ export default function EscrowScreen() {
       testID="booking-escrow-screen"
     >
       <View testID="escrow-screen">
-        <Text className="text-heading font-sans-bold text-primaryDeep mb-lg">
+        <Text className="text-heading font-sans-bold text-primary-deep mb-lg">
           {t('customer.bookings.escrowFlow.title')}
         </Text>
         <View className="bg-muted rounded-lg p-xl gap-md" style={elevations.soft}>
-          <Text className="text-title font-sans-bold text-primaryDeep">
+          <Text className="text-title font-sans-bold text-primary-deep">
             {t('customer.bookings.escrowFlow.optInTitle')}
           </Text>
-          <Text className="text-body text-textSecondary leading-[24px]">
+          <Text className="text-body text-text-secondary leading-[24px]">
             {t('customer.bookings.escrowFlow.optInDescription')}
           </Text>
         </View>
 
         <View className="bg-muted rounded-lg p-lg gap-sm mt-lg">
-          <Text className="text-body text-primaryDeep font-medium">
+          <Text className="text-body text-primary-deep font-medium">
             {t('customer.bookings.escrowFlow.featureProtection')}
           </Text>
-          <Text className="text-body text-primaryDeep font-medium">
+          <Text className="text-body text-primary-deep font-medium">
             {t('customer.bookings.escrowFlow.featureDispute')}
           </Text>
-          <Text className="text-body text-primaryDeep font-medium">
+          <Text className="text-body text-primary-deep font-medium">
             {t('customer.bookings.escrowFlow.featureAutoTransfer')}
           </Text>
         </View>
@@ -115,10 +115,10 @@ export default function EscrowScreen() {
             className="bg-muted rounded-lg p-xl gap-md mt-lg"
             testID="booking-escrow-confirm-sheet"
           >
-            <Text className="text-title font-sans-bold text-primaryDeep">
+            <Text className="text-title font-sans-bold text-primary-deep">
               {t('customer.bookings.escrowFlow.confirmTitle')}
             </Text>
-            <Text className="text-body text-textSecondary leading-[24px]">
+            <Text className="text-body text-text-secondary leading-[24px]">
               {t('customer.bookings.escrowFlow.sheetDescription')}
             </Text>
             <Button
@@ -127,7 +127,7 @@ export default function EscrowScreen() {
               testID="booking-escrow-confirm"
             />
             <Pressable onPress={() => setState('shell')}>
-              <Text className="text-body text-textSecondary text-center">
+              <Text className="text-body text-text-secondary text-center">
                 {t('customer.bookings.escrowFlow.cancelText')}
               </Text>
             </Pressable>

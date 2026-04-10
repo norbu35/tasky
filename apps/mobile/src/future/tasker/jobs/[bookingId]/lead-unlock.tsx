@@ -19,10 +19,10 @@ export default function LeadUnlockScreen() {
     <DetailTemplate testID="SCR-TASK-017">
       <View className="items-center py-xl gap-lg">
         <Unlock size={48} color={colors.primary} />
-        <Text className="text-heading font-semibold text-primaryDeep text-center">
+        <Text className="text-heading font-semibold text-primary-deep text-center">
           {t('tasker.leadUnlock.headline')}
         </Text>
-        <Text className="text-body text-mutedForeground text-center leading-6">
+        <Text className="text-body text-muted-foreground text-center leading-6">
           {t('tasker.leadUnlock.body')}
         </Text>
         <Button

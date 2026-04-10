@@ -88,17 +88,17 @@ function TimelineEventRow({
       </View>
       <View className="flex-1 gap-xs">
         <Text
-          className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-textSecondary'}`}
+          className={`text-micro font-bold${isActive ? ' text-secondary' : ' text-text-secondary'}`}
         >
           {formatTimestamp(event.timestamp)}
         </Text>
         <Text
-          className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primaryDeep'}`}
+          className={`text-body font-bold${isActive ? ' text-secondary' : ' text-primary-deep'}`}
         >
           {getEventLabel(event.event, t)}
         </Text>
         {event.description ? (
-          <Text className="text-caption text-textSecondary leading-relaxed">
+          <Text className="text-caption text-text-secondary leading-relaxed">
             {event.description}
           </Text>
         ) : null}
@@ -155,12 +155,12 @@ export default function BookingTimelineScreen() {
                 )}
               </Text>
               <Text
-                className="text-title font-bold text-primaryDeep leading-tight"
+                className="text-title font-bold text-primary-deep leading-tight"
                 numberOfLines={2}
               >
                 {booking?.task?.description ?? t('customer.bookings.timelineFallbackTitle')}
               </Text>
-              <Text className="text-caption text-textSecondary" numberOfLines={1}>
+              <Text className="text-caption text-text-secondary" numberOfLines={1}>
                 {booking?.tasker?.full_name
                   ? `${booking.tasker.full_name} (${t('customer.bookings.timelineTasker')})`
                   : t('customer.bookings.timelineTaskerFallback')}
@@ -189,9 +189,9 @@ export default function BookingTimelineScreen() {
             ))}
           </View>
 
-          <View className="bg-primaryDeep rounded-lg p-lg gap-md">
+          <View className="bg-primary-deep rounded-lg p-lg gap-md">
             <View className="flex-row items-center justify-between">
-              <Text className="text-title font-bold text-primaryForeground">
+              <Text className="text-title font-bold text-primary-foreground">
                 {t('customer.bookings.helpTitle')}
               </Text>
               <CircleHelp size={18} color={colors.secondary} />
@@ -205,7 +205,7 @@ export default function BookingTimelineScreen() {
               className="min-h-[48px] rounded-md bg-secondary items-center justify-center px-lg"
               testID="booking-timeline-help-cta"
             >
-              <Text className="text-label font-bold text-secondaryForeground">
+              <Text className="text-label font-bold text-secondary-foreground">
                 {t('customer.bookings.helpCta')}
               </Text>
             </Pressable>
@@ -218,7 +218,7 @@ export default function BookingTimelineScreen() {
               className="bg-danger rounded-md p-md"
               testID="booking-timeline-error"
             >
-              <Text className="text-label font-semibold text-dangerForeground">
+              <Text className="text-label font-semibold text-danger-foreground">
                 {t('BookingTimelineScreen.copy2')}
               </Text>
             </Pressable>

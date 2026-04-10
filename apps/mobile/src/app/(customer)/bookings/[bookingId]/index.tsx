@@ -179,7 +179,7 @@ export default function BookingDetailScreen() {
 
           {/* Tasker Info */}
           <View className="mb-xl">
-            <Text className="text-heading font-bold text-primaryDeep mb-md">
+            <Text className="text-heading font-bold text-primary-deep mb-md">
               {t('customer.bookings.sectionTasker')}
             </Text>
             <Pressable
@@ -194,7 +194,7 @@ export default function BookingDetailScreen() {
                 showVerified
               />
               <View className="flex-1">
-                <Text className="text-body font-semibold text-primaryDeep">
+                <Text className="text-body font-semibold text-primary-deep">
                   {booking.tasker?.full_name}
                 </Text>
               </View>
@@ -203,17 +203,17 @@ export default function BookingDetailScreen() {
 
           {/* Task Summary */}
           <View className="mb-xl">
-            <Text className="text-heading font-bold text-primaryDeep mb-md">
+            <Text className="text-heading font-bold text-primary-deep mb-md">
               {t('customer.bookings.sectionTaskSummary')}
             </Text>
-            <Text className="text-body text-primaryDeep mb-sm">{booking.task?.description}</Text>
+            <Text className="text-body text-primary-deep mb-sm">{booking.task?.description}</Text>
             {booking.task?.location_text && (
-              <Text className="text-caption text-textSecondary mb-sm">
+              <Text className="text-caption text-text-secondary mb-sm">
                 {booking.task.location_text}
               </Text>
             )}
             {booking.task?.scheduled_at && (
-              <Text className="text-caption text-textSecondary mb-sm">
+              <Text className="text-caption text-text-secondary mb-sm">
                 {new Date(booking.task.scheduled_at).toLocaleDateString()}
               </Text>
             )}

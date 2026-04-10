@@ -22,7 +22,7 @@ export function LocationPin({ text, compact = false, testID, className }: Locati
     >
       <MapPin size={compact ? 14 : 16} color={colors.accent} />
       <Text
-        className={cn('text-label text-textSecondary shrink', compact && 'text-caption')}
+        className={cn('text-label text-text-secondary shrink', compact && 'text-caption')}
         numberOfLines={compact ? 1 : undefined}
       >
         {text}

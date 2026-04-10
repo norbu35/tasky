@@ -77,14 +77,14 @@ export function AuthTemplate({
         >
           {/* Logo / Branding */}
           {showLogo && (
-            <Text className="text-hero-title font-display-bold text-primaryDeep text-center mb-2xl">
+            <Text className="text-hero-title font-display-bold text-primary-deep text-center mb-2xl">
               Tasky
             </Text>
           )}
 
           {/* Headline */}
           {headline && (
-            <Text className="text-heading font-semibold text-primaryDeep text-center">
+            <Text className="text-heading font-semibold text-primary-deep text-center">
               {headline}
             </Text>
           )}
@@ -101,7 +101,7 @@ export function AuthTemplate({
 
           {/* Trust Message */}
           {trustMessage && (
-            <Text className="text-caption text-textTertiary text-center mt-2xl leading-relaxed">
+            <Text className="text-caption text-text-tertiary text-center mt-2xl leading-relaxed">
               {trustMessage}
             </Text>
           )}
