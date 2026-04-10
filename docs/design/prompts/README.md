@@ -2,6 +2,11 @@
 
 Context-managed prompt generation system for producing Stitch AI design screens from the Tasky design spec.
 
+Historical note: the committed prompt-output pack was archived to
+`archive/greenfield-docs/docs/design/prompts/` on 2026-04-09. The live `docs/` tree now keeps only this README,
+`global-context.yaml`, and the tracker note; regenerate prompt outputs locally when needed instead of restoring them as
+active docs.
+
 ## Architecture: 3-Tier Context Model
 
 ```
@@ -10,10 +15,10 @@ Context-managed prompt generation system for producing Stitch AI design screens 
 │  global-context.yaml (~140 lines)       │  Brand, tokens, components, rules
 ├─────────────────────────────────────────┤
 │  Tier 2: JOURNEY CONTEXT                │  Shared across screens in a flow
-│  journeys/JRN-*.yaml (~30 files)        │  Navigation, sequence, role
+│  archived journeys/JRN-*.yaml           │  Historical committed prompt outputs
 ├─────────────────────────────────────────┤
 │  Tier 3: SCREEN PROMPTS                 │  Per-screen generation prompt
-│  screens/SCR-*.yaml (91 files)          │  Layout, components, states, copy
+│  archived screens/SCR-*.yaml            │  Historical committed prompt outputs
 └─────────────────────────────────────────┘
 ```
 
@@ -80,7 +85,8 @@ Generate screens by group for visual consistency within each flow:
 6. **phase_2** — Credits, payments, referrals (5 screens)
 7. **phase_3** — Wallet, escrow, subscription, instant match (5 screens)
 
-Within each group, generate in the order listed in `prompt-manifest.yaml`.
+Within each group, generate in the order previously captured in the archived `prompt-manifest.yaml` file if you need
+the historical committed sequence.
 
 ### Journey Context for Flow Consistency
 
@@ -97,9 +103,9 @@ The `context_refs` field in each screen YAML lists which files to compose.
 | Path | Count | Description |
 |------|-------|-------------|
 | `global-context.yaml` | 1 | Brand, tokens, component vocabulary |
-| `journeys/JRN-*.yaml` | 30 | Per-journey flow context |
-| `screens/SCR-*.yaml` | 91 | Per-screen Stitch prompts |
-| `prompt-manifest.yaml` | 1 | Master index with generation order |
+| `archive/greenfield-docs/docs/design/prompts/journeys/JRN-*.yaml` | 30 | Archived per-journey prompt context |
+| `archive/greenfield-docs/docs/design/prompts/screens/SCR-*.yaml` | 91 | Archived per-screen Stitch prompts |
+| `archive/greenfield-docs/docs/design/prompts/prompt-manifest.yaml` | 1 | Archived generation order manifest |
 
 ## Regenerating Prompts
 
@@ -109,4 +115,8 @@ If screen specs change, re-run the generation script:
 node tooling/scripts/generate-prompts.js
 ```
 
-This reads `docs/design/screen-specs/SCR-*.yaml` + `journey-catalog.yaml` + `screen-inventory.yaml` and regenerates all prompt files.
+This reads `docs/design/screen-specs/SCR-*.yaml` + `journey-catalog.yaml` + `screen-inventory.yaml` and regenerates
+prompt files locally.
+
+Treat regenerated prompt files as local/generated artifacts unless there is a deliberate reason to re-archive a new
+prompt pack.

@@ -1,8 +1,12 @@
 # Stitch Screen Generation Tracker
 
+Historical note: the prompt-output pack referenced by this tracker was archived to
+`archive/greenfield-docs/docs/design/prompts/` on 2026-04-09. Keep this file only as a design-generation audit trail,
+not as an active authority source.
+
 > Track generation status for the current 91-screen mobile pack in Stitch project "Tasky Mobile v2" (ID: `15920227283524999360`).
 >
-> Scope boundary: this tracker now covers customer/tasker marketplace surfaces plus AI Profile Polish, boost checkout, and B2B account-management/billing through Phase 3. It does not yet include Phase 4 Tasky Plus or Family Plan customer-subscription screens. See `docs/design/evaluation-report.md`.
+> Scope boundary: this tracker now covers customer/tasker marketplace surfaces plus AI Profile Polish, boost checkout, and B2B account-management/billing through Phase 3. It does not yet include Phase 4 Tasky Plus or Family Plan customer-subscription screens. See `archive/greenfield-docs/docs/design/evaluation-report.md`.
 
 | Status | Count |
 |--------|-------|
@@ -159,6 +163,6 @@
 ## Notes
 
 - Generate in order: Shared → Infrastructure → Customer → Tasker → B2B → Phase 2 → Phase 3
-- Each screen's `stitch_prompt` is in `docs/design/prompts/screens/SCR-*.yaml`
+- Each screen's archived `stitch_prompt` snapshot is in `archive/greenfield-docs/docs/design/prompts/screens/SCR-*.yaml`
 - Prepend `global-context.yaml` for consistent styling across all screens
 - Use journey files for flow consistency within a user journey
