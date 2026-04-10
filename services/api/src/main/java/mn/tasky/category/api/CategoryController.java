@@ -205,7 +205,6 @@ public class CategoryController {
                 sv.version(),
                 sv.schemaJson(),
                 sv.status(),
-                sv.isLastKnownGood(),
                 sv.createdBy(),
                 sv.createdAt(),
                 sv.activatedAt());
