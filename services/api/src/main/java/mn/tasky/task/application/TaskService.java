@@ -33,6 +33,7 @@ import mn.tasky.notification.application.NotificationService;
 import mn.tasky.review.application.ReviewEnforcementService;
 import mn.tasky.task.dao.TaskApplicationDao;
 import mn.tasky.task.dao.TaskDao;
+import mn.tasky.task.dto.RecentLocation;
 import mn.tasky.task.dao.TaskDraftDao;
 import mn.tasky.task.dao.TaskPhotoDao;
 import mn.tasky.task.dto.CreateTask;
@@ -613,6 +614,32 @@ public class TaskService {
         String nextCursor = hasMore ? encodeCursor(pageData.getLast()) : null;
 
         return new TaskPage(List.copyOf(pageData), nextCursor, hasMore);
+    }
+
+    /**
+     * Returns up to {@code maxResults} distinct recent task locations for the given customer.
+     * Locations within ~200 m of an already-selected location are skipped (Euclidean approximation).
+     */
+    public List<RecentLocation> recentLocations(String userId, int maxResults) {
+        List<RecentLocation> candidates = taskDao.findRecentLocationCandidates(UUID.fromString(userId));
+        List<RecentLocation> accepted = new ArrayList<>();
+        for (RecentLocation c : candidates) {
+            if (accepted.size() >= maxResults) break;
+            boolean tooClose = accepted.stream().anyMatch(a -> isWithin200m(a, c));
+            if (!tooClose) {
+                accepted.add(c);
+            }
+        }
+        return accepted;
+    }
+
+    private static boolean isWithin200m(RecentLocation a, RecentLocation b) {
+        // At UB latitude (~47.9°), 1° lat ≈ 111 km, 1° lng ≈ 74 km.
+        // 200 m ≈ 0.0018° lat, 0.0027° lng. Use squared Euclidean as threshold.
+        double dLat = a.locationLat() - b.locationLat();
+        double dLng = a.locationLng() - b.locationLng();
+        // Threshold: (0.002)^2 = 0.000004 — roughly 200 m at UB latitude
+        return (dLat * dLat + dLng * dLng) < 0.000004;
     }
 
     private String normalizeMyTasksRole(String role) {
