@@ -10,8 +10,10 @@ import { Input } from '../../../../components/ui/Input';
 import { elevations } from '../../../../design/elevations';
 import { mobileTheme } from '../../../../design/tokenAdapter';
 import { getCurrentLocation } from '../../../../utils/permissions';
-import { buildBaseUrl } from '../../../../lib/mobileApiClient';
+import { HttpMobileApiClient } from '../../../../lib/mobileApiClient';
 import { useAuthStore } from '../../../../store/authStore';
+
+const api = new HttpMobileApiClient();
 
 const { colors } = mobileTheme;
 
@@ -90,25 +92,18 @@ export default function LocationScreen() {
     let cancelled = false;
     setReverseGeocoding(true);
 
-    const accessToken = session?.accessToken;
-    const baseUrl = buildBaseUrl();
-    const url = new URL('location/reverse-geocode', baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
-    url.searchParams.set('lat', String(pin.latitude));
-    url.searchParams.set('lng', String(pin.longitude));
+    const accessToken = session?.accessToken ?? undefined;
 
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-
-    fetch(url.toString(), { method: 'GET', headers })
-      .then((res) => {
-        if (!res.ok) return null;
-        return res.json() as Promise<{ formatted_address: string }>;
-      })
+    (api as unknown as { requestJson: <T>(path: string, init: RequestInit, accessToken?: string, query?: Record<string, string | number | undefined>) => Promise<T> })
+      .requestJson<{ formatted_address: string }>(
+        '/location/reverse-geocode',
+        { method: 'GET' },
+        accessToken,
+        { lat: pin.latitude, lng: pin.longitude },
+      )
       .then((data) => {
         if (cancelled) return;
-        if (data && !userEditedText.current) {
+        if (!userEditedText.current) {
           setLocationText(data.formatted_address);
         }
       })
@@ -122,7 +117,7 @@ export default function LocationScreen() {
     return () => {
       cancelled = true;
     };
-  }, [pin?.latitude, pin?.longitude]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pin?.latitude, pin?.longitude, session]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLocate = useCallback(async () => {
     setLocating(true);
@@ -322,7 +317,10 @@ export default function LocationScreen() {
             {quickLocations.map((location) => (
               <Pressable
                 key={location}
-                onPress={() => setLocationText(location)}
+                onPress={() => {
+                userEditedText.current = true;
+                setLocationText(location);
+              }}
                 className="px-md py-sm rounded-full"
                 style={{ backgroundColor: `${colors.primary}12` }}
                 testID={`location-quick-${location}`}
