@@ -1293,10 +1293,8 @@
     "locationDescriptionLabel": "Location description",
     "locationHelper": "Provide details helpful for the Tasker",
     "locationPlaceholder": "e.g., Behind State Dept Store, 5th floor",
-    "quickLocationsLabel": "Popular locations",
-    "quickLocationHome": "Home",
-    "quickLocationWork": "Work",
-    "quickLocationSukhbaatar": "Sukhbaatar Square",
+    "recentLocationsLabel": "Recent locations",
+    "noRecentLocations": "Your recent locations will appear here after your first task.",
     "locationPrivacy": "Taskers see approximate location. Exact address shown after booking confirmation",
     "resolvingAddress": "Resolving address..."
   },

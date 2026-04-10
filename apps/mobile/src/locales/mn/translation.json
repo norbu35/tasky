@@ -1297,10 +1297,8 @@
     "locationDescriptionLabel": "Байршлын тодорхойлолт",
     "locationHelper": "Tasker-д хэрэгтэй дэлгэрэнгүй мэдээллийг өгнө үү",
     "locationPlaceholder": "Жишээ нь: Улсын их дэлгүүрийн ард 5 давхар",
-    "quickLocationsLabel": "Алдартай газрууд",
-    "quickLocationHome": "Гэр",
-    "quickLocationWork": "Ажил",
-    "quickLocationSukhbaatar": "Сүхбаатарын талбай",
+    "recentLocationsLabel": "Сүүлийн байршлууд",
+    "noRecentLocations": "Анхны даалгавар үүсгэсний дараа сүүлийн байршлууд энд харагдана.",
     "locationPrivacy": "Ажиллагчид ойролцоогоор байршлыг хардаг. Захиалгыг баталгаажуулсны дараа яг хаягийг харуулна",
     "resolvingAddress": "Хаягийг тодорхойлж байна..."
   },
