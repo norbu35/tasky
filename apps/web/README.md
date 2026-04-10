@@ -62,7 +62,6 @@ src/
 | TaskerFeedPage | `/tasker/feed` | Tasker task feed |
 | TaskerTasksPage | `/tasker/tasks` | Tasker's accepted tasks |
 | ProfilePage | `/profile` | User profile |
-| VerificationPage | `/verification` | Tasker verification |
 | MessagingNotificationsPage | `/messages` | Chat and notifications |
 | RestrictedAccountPage | `/restricted` | Account restriction notice |
 | Admin pages | `/admin/*` | Admin dashboard |

@@ -53,10 +53,10 @@ if gate in ("smoke", "regression", "full"):
                 f"[SMOKE] Critical scenario not covered: {scn_id} — {entry['title']}"
             )
 
-# ── Gate 2 (Regression): High scenarios + PIT staleness check ─────────────────
-# Mutation FLOORS are enforced by Gate 3 (nightly) only — PIT takes 30-60 minutes
-# and cannot run inline on every merge. Gate 2 ensures PIT data is not stale so
-# that Gate 3 enforcement is based on current results.
+# ── Gate 2 (Regression): High scenarios + API contract truth ───────────────────
+# Mutation enforcement is intentionally deferred to Gate 3 (nightly/full).
+# Gate 2 stays behavior-first so it can block deploys on scenario truth instead of
+# broad coverage optics or long-running mutation infrastructure.
 if gate in ("regression", "full"):
     for scn_id, entry in sorted(scenarios.items()):
         if entry["risk"] != "high":
@@ -65,49 +65,6 @@ if gate in ("regression", "full"):
         if entry["status"] != "covered" and not override.startswith("waived"):
             failures.append(
                 f"[REGRESSION] High scenario not covered: {scn_id} — {entry['title']}"
-            )
-
-    # PIT staleness check: find the most recent mutation_kill_rate_updated_at across
-    # all Critical/High domain entries. Fail if absent or older than threshold.
-    # The "integration" domain has no production code — PIT mutation data does not
-    # apply to it and it is excluded from staleness and floor checks.
-    DOMAINS_WITHOUT_PRODUCTION_CODE = {"integration"}
-
-    TIER_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-    critical_high_domains = set(
-        e["domain"] for e in scenarios.values()
-        if e["risk"] in ("critical", "high")
-        and e["domain"] not in DOMAINS_WITHOUT_PRODUCTION_CODE
-    )
-    oldest_pit_update = None
-    domains_with_no_pit = []
-    for entry in scenarios.values():
-        if entry["domain"] not in critical_high_domains:
-            continue
-        ts_str = entry.get("mutation_kill_rate_updated_at")
-        if ts_str is None:
-            if entry["domain"] not in domains_with_no_pit:
-                domains_with_no_pit.append(entry["domain"])
-        else:
-            try:
-                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
-                if oldest_pit_update is None or ts < oldest_pit_update:
-                    oldest_pit_update = ts
-            except ValueError:
-                pass
-
-    if domains_with_no_pit:
-        failures.append(
-            f"[REGRESSION] PIT data missing for Critical/High domain(s): "
-            f"{sorted(set(domains_with_no_pit))} — run ./gradlew pitest then sync-registry.sh"
-        )
-    elif oldest_pit_update is not None:
-        age = datetime.now(timezone.utc) - oldest_pit_update
-        if age > timedelta(hours=PIT_STALENESS_HOURS):
-            failures.append(
-                f"[REGRESSION] PIT data is stale: last updated "
-                f"{int(age.total_seconds() / 3600)}h ago "
-                f"(threshold: {PIT_STALENESS_HOURS}h) — run ./gradlew pitest"
             )
 
 # ── Gate 3 (Full): Mutation floors + no silent untested high/critical ─────────

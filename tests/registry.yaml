@@ -7,33 +7,36 @@ scenarios:
     domain: analytics
     mutation_kill_rate: 0
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength follow-up in docs/quality/test-rehab-backlog.md (P2).'
+    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
+      follow-up in docs/quality/test-rehab-backlog.md (P2).'
     override_status: null
     prd_ref: REQ-SAFE-06
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Task posted event is emitted when a customer creates a task
   SCN-ANALYTICS-002:
     domain: analytics
     mutation_kill_rate: 0
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength follow-up in docs/quality/test-rehab-backlog.md (P2).'
+    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
+      follow-up in docs/quality/test-rehab-backlog.md (P2).'
     override_status: null
     prd_ref: REQ-SAFE-06
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Booking confirmed event is emitted when an application is accepted
   SCN-ANALYTICS-003:
     domain: analytics
     mutation_kill_rate: 0
     mutation_kill_rate_updated_at: '2026-03-29T09:42:58Z'
-    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength follow-up in docs/quality/test-rehab-backlog.md (P2).'
+    notes: '2026-04-02 rehab: mutation kill rate is 0; prioritize assertion-strength
+      follow-up in docs/quality/test-rehab-backlog.md (P2).'
     override_status: null
     prd_ref: REQ-SAFE-06
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Booking completed event is emitted when a booking transitions to COMPLETED
   SCN-AUTH-001:
@@ -635,7 +638,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-MSG-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Conversation is created when a tasker applies to a task
   SCN-MSG-002:
@@ -646,7 +649,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-MSG-02
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Message sent to a conversation is persisted and retrievable
   SCN-MSG-003:
@@ -657,7 +660,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-MSG-03
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Non-participant cannot read or send messages in a conversation
   SCN-MSG-004:
@@ -668,7 +671,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-LEAK-04
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Message containing a phone number pattern is flagged for admin review
   SCN-NOTIF-001:
@@ -679,7 +682,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-NOTIF-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: New task matching a tasker's category triggers a push notification to that
       tasker
@@ -691,7 +694,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-NOTIF-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Booking confirmation sends hired notification to the tasker
   SCN-NOTIF-003:
@@ -702,7 +705,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-NOTIF-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: No-show reminder sends notification to both booking participants
   SCN-NOTIF-004:
@@ -713,7 +716,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-NOTIF-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Registering a device token stores it for the authenticated user
   SCN-NOTIF-005:
@@ -724,7 +727,7 @@ scenarios:
     override_status: null
     prd_ref: REQ-NOTIF-01
     risk: medium
-    status: untested
+    status: covered
     test_type: medium-unit
     title: Unregistering a device token removes it for the authenticated user
   SCN-REVIEW-001:

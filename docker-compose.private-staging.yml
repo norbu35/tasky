@@ -1,0 +1,164 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tasky-server:private-staging
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      POSTGRES_HOST: pgbouncer
+      POSTGRES_PORT: 5432
+      FLYWAY_HOST: postgres
+      FLYWAY_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-tasky}
+      POSTGRES_USER: ${POSTGRES_USER:-tasky}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tasky}
+      APP_DB_USER: ${APP_DB_USER:-tasky_app}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-tasky_app}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-tasky-private-staging}
+      TASKY_JWT_SECRET: ${TASKY_JWT_SECRET}
+      TASKY_ENCRYPTION_KEY: ${TASKY_ENCRYPTION_KEY}
+      TASKY_BLIND_INDEX_KEY: ${TASKY_BLIND_INDEX_KEY}
+      TASKY_QPAY_WEBHOOK_SECRET: ${TASKY_QPAY_WEBHOOK_SECRET}
+      TASKY_CORS_ALLOWED_ORIGINS: ${TASKY_CORS_ALLOWED_ORIGINS:-http://127.0.0.1:${STAGING_HTTP_PORT:-8080},http://localhost:${STAGING_HTTP_PORT:-8080}}
+      TASKY_WEBSOCKET_ALLOWED_ORIGINS: ${TASKY_WEBSOCKET_ALLOWED_ORIGINS:-http://127.0.0.1:${STAGING_HTTP_PORT:-8080},http://localhost:${STAGING_HTTP_PORT:-8080}}
+      TASKY_DEV_AUTH_ENABLED: ${TASKY_DEV_AUTH_ENABLED:-true}
+      TASKY_OTP_ENABLED: ${TASKY_OTP_ENABLED:-false}
+      TASKY_OTP_TEST_CODE: ""
+      TASKY_FEATURE_MONETIZATION_ENABLED: ${TASKY_FEATURE_MONETIZATION_ENABLED:-false}
+      TASKY_PUSH_PROVIDER: ${TASKY_PUSH_PROVIDER:-logging}
+      TASKY_FACEBOOK_APP_ID: ${TASKY_FACEBOOK_APP_ID:-}
+      TASKY_FACEBOOK_APP_SECRET: ${TASKY_FACEBOOK_APP_SECRET:-}
+      TASKY_FACEBOOK_GRAPH_API_BASE_URL: ${TASKY_FACEBOOK_GRAPH_API_BASE_URL:-https://graph.facebook.com}
+      HIKARI_MAX_POOL: ${HIKARI_MAX_POOL:-5}
+      HIKARI_MIN_IDLE: ${HIKARI_MIN_IDLE:-2}
+      TASKY_STORAGE_UPLOAD_TTL_SECONDS: ${TASKY_STORAGE_UPLOAD_TTL_SECONDS:-900}
+      TASKY_STORAGE_DOWNLOAD_TTL_SECONDS: ${TASKY_STORAGE_DOWNLOAD_TTL_SECONDS:-3600}
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-bootstrap:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+        VITE_DEV_AUTH_ENABLED: ${VITE_DEV_AUTH_ENABLED:-true}
+        VITE_FACEBOOK_APP_ID: ${VITE_FACEBOOK_APP_ID:-}
+    image: tasky-web:private-staging
+    restart: unless-stopped
+    environment:
+      TASKY_BACKEND_UPSTREAM: app:8080
+    depends_on:
+      app:
+        condition: service_started
+    ports:
+      - "127.0.0.1:${STAGING_HTTP_PORT:-8080}:80"
+
+  postgres:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "log_min_duration_statement=200"
+      - "-c"
+      - "autovacuum_naptime=30s"
+      - "-c"
+      - "autovacuum_vacuum_scale_factor=0.05"
+      - "-c"
+      - "autovacuum_analyze_scale_factor=0.02"
+      - "-c"
+      - "password_encryption=md5"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tasky}
+      POSTGRES_USER: ${POSTGRES_USER:-tasky}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tasky}
+      POSTGRES_HOST_AUTH_METHOD: md5
+    volumes:
+      - private_staging_postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/10-init-db.sql:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-tasky} -d ${POSTGRES_DB:-tasky}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${APP_DB_USER:-tasky_app}
+      DB_PASSWORD: ${APP_DB_PASSWORD:-tasky_app}
+      DB_NAME: ${POSTGRES_DB:-tasky}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_DEFAULT_POOL_SIZE: 20
+      PGBOUNCER_MAX_CLIENT_CONN: 100
+      PGBOUNCER_MIN_POOL_SIZE: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -p 5432 -U ${APP_DB_USER:-tasky_app} -d ${POSTGRES_DB:-tasky}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - private_staging_minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "ls /data >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  minio-bootstrap:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set tasky http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin};
+      mc mb --ignore-existing tasky/${MINIO_BUCKET:-tasky-private-staging};
+      mc anonymous set none tasky/${MINIO_BUCKET:-tasky-private-staging};
+      "
+
+volumes:
+  private_staging_postgres_data:
+  private_staging_minio_data:

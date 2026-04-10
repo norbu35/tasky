@@ -15,8 +15,8 @@
     "test:unit": "vitest run --reporter verbose",
     "test:coverage": "vitest run --reporter verbose --coverage",
     "test:mutation": "stryker run",
-    "test:e2e:smoke": "pnpm run build && playwright install chromium && playwright test --grep @smoke --project=chromium",
-    "test:e2e": "pnpm run build && playwright install chromium && playwright test"
+    "test:e2e:smoke": "VITE_DEV_AUTH_ENABLED=true pnpm run build && playwright install chromium && playwright test --grep @smoke --project=chromium",
+    "test:e2e": "VITE_DEV_AUTH_ENABLED=true pnpm run build && playwright install chromium && playwright test"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

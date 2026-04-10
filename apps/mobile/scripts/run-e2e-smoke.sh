@@ -8,4 +8,13 @@ if ! command -v maestro >/dev/null 2>&1; then
   exit 1
 fi
 
-maestro test maestro/flows/smoke.yaml
+SMOKE_FLOWS=(
+  "maestro/flows/smoke.yaml"
+  "maestro/flows/JRN-CUST-01-post-a-task.yaml"
+  "maestro/flows/tasker-browse.yaml"
+)
+
+for flow in "${SMOKE_FLOWS[@]}"; do
+  echo "Running Maestro smoke flow: ${flow}"
+  maestro test "${flow}"
+done

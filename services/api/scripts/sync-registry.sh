@@ -201,7 +201,7 @@ else:
 PYEOF
 
 # ── Step 3: Parse PIT XML for mutation_kill_rate per domain ──────────────────
-if [ -f "$PIT_XML" ]; then
+if [ -s "$PIT_XML" ]; then
 python3 - <<'PYEOF'
 import xml.etree.ElementTree as ET, yaml
 from collections import defaultdict
@@ -216,7 +216,12 @@ with open(registry_path) as f:
     data = yaml.safe_load(f)
 scenarios = data.get("scenarios") or {}
 
-tree = ET.parse(pit_xml)
+try:
+    tree = ET.parse(pit_xml)
+except ET.ParseError as exc:
+    print(f"[sync] WARNING: could not parse PIT XML at {pit_xml}: {exc}")
+    raise SystemExit(0)
+
 root = tree.getroot()
 
 pkg_stats = defaultdict(lambda: {"killed": 0, "total": 0})

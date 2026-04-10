@@ -1,4 +1,8 @@
 :80 {
+    @backend {
+        path /api/* /actuator /actuator/* /ws /ws/*
+    }
+    reverse_proxy @backend {$TASKY_BACKEND_UPSTREAM:app:8080}
     root * /srv
     encode zstd gzip
     try_files {path} /index.html
