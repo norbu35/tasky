@@ -25,8 +25,7 @@ function TaskCardHeader({ task }: { task: PublicTask }) {
   return (
     <View className="flex-row items-center justify-between">
       <Text
-        className="text-label font-sans-semibold flex-1 mr-sm"
-        style={{ color: colors.primaryForeground }}
+        className="text-label font-sans-semibold flex-1 mr-sm text-primary-foreground"
         numberOfLines={1}
       >
         {task.customer.full_name}
@@ -40,8 +39,7 @@ function TaskCardBody({ task }: { task: PublicTask }) {
   return (
     <View className="gap-sm">
       <Text
-        className="text-body font-sans-medium"
-        style={{ color: colors.foreground, lineHeight: undefined }}
+        className="text-body font-sans-medium text-foreground"
         numberOfLines={2}
       >
         {task.description}
@@ -52,7 +50,7 @@ function TaskCardBody({ task }: { task: PublicTask }) {
         {task.scheduled_at && (
           <View className="flex-row items-center gap-xs">
             <Clock size={14} color={colors.textSecondary} />
-            <Text className="text-caption" style={{ color: colors.textSecondary }}>
+            <Text className="text-caption text-text-secondary">
               {new Date(task.scheduled_at).toLocaleDateString('en', {
                 month: 'short',
                 day: 'numeric',
