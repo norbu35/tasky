@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Manages the lifecycle of category intake schema versions.
- * Supports creating draft schemas, activating versions, listing versions,
- * and rolling back to the last known good version.
+ * Supports creating draft schemas, activating versions, and listing versions.
  */
 @Service
 public class CategorySchemaVersionService {
