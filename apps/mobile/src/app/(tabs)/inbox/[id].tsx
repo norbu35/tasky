@@ -18,6 +18,7 @@ import { Input } from '../../../components/ui/Input';
 import { ProfileAvatar } from '../../../components/ui/ProfileAvatar';
 import { useAuthStore } from '../../../store/authStore';
 import { elevations, mobileTheme } from '../../../design/tokenAdapter';
+import { ScreenContainer } from '../../../components/shells/ScreenContainer';
 
 const { colors } = mobileTheme;
 
@@ -112,21 +113,23 @@ export default function ChatDetailScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-background" testID="chat-loading">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <ScreenContainer testID="chat-loading">
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </ScreenContainer>
     );
   }
 
   if (isError) {
     return (
-      <KeyboardAvoidingView
-        className="flex-1 bg-background"
-        testID="SCR-SHARED-011"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
-        <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
+      <ScreenContainer testID="SCR-SHARED-011">
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+        <View className="flex-row items-center justify-between pb-md px-lg bg-card">
           <Pressable
             onPress={() => router.back()}
             className="w-10 h-10 justify-center items-center"
@@ -155,18 +158,19 @@ export default function ChatDetailScreen() {
           }}
           testID="chat-detail-error"
         />
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScreenContainer>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background"
-      testID="SCR-SHARED-011"
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <View className="flex-row items-center justify-between pt-lg pb-md px-lg bg-card">
+    <ScreenContainer testID="SCR-SHARED-011">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+      <View className="flex-row items-center justify-between pb-md px-lg bg-card">
         <Pressable
           onPress={() => router.back()}
           className="w-10 h-10 justify-center items-center"
@@ -283,6 +287,7 @@ export default function ChatDetailScreen() {
           <Text className="text-primaryForeground font-bold text-body">{t('chat.send')}</Text>
         </Pressable>
       </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </ScreenContainer>
   );
 }
