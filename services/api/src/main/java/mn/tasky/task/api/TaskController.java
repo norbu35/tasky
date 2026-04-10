@@ -11,13 +11,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import mn.tasky.auth.application.AuthService;
+import mn.tasky.location.application.LocationService;
 import mn.tasky.booking.application.BookingService;
 import mn.tasky.category.application.CategoryService;
 import mn.tasky.category.dto.CategoryState;
@@ -69,9 +69,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class TaskController {
 
-    private static final double MAX_PUBLIC_OFFSET_METERS = 500.0d;
-    private static final SecureRandom LOCATION_FUZZ_RANDOM = new SecureRandom();
-
     private final TaskService taskService;
     private final TaskDraftService taskDraftService;
     private final CategoryService categoryService;
@@ -79,6 +76,7 @@ public class TaskController {
     private final BookingService bookingService;
     private final IdempotencyService idempotencyService;
     private final ObjectMapper objectMapper;
+    private final LocationService locationService;
 
     public TaskController(
             TaskService taskService,
@@ -87,7 +85,8 @@ public class TaskController {
             AuthService authService,
             BookingService bookingService,
             IdempotencyService idempotencyService,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            LocationService locationService) {
         this.taskService = taskService;
         this.taskDraftService = taskDraftService;
         this.categoryService = categoryService;
@@ -95,6 +94,7 @@ public class TaskController {
         this.bookingService = bookingService;
         this.idempotencyService = idempotencyService;
         this.objectMapper = objectMapper;
+        this.locationService = locationService;
     }
 
     @GetMapping
@@ -128,7 +128,7 @@ public class TaskController {
 
     private Map<String, Object> toPublicTaskResponse(TaskState task) {
         Map<String, Object> response = new LinkedHashMap<>();
-        double[] fuzzedLocation = fuzzCoordinates(task.locationLat(), task.locationLng());
+        var approx = locationService.reverseGeocode(task.locationLat(), task.locationLng());
         response.put("id", task.id());
 
         categoryService.getCategory(task.categoryId()).ifPresent(cat -> response.put("category", toCategoryPayload(cat)));
@@ -149,9 +149,9 @@ public class TaskController {
 
         response.put("description", task.description());
         response.put("budget", task.budget());
-        response.put("approximate_location", "Ulaanbaatar, Mongolia (Fuzzed)");
-        response.put("approximate_lat", fuzzedLocation[0]);
-        response.put("approximate_lng", fuzzedLocation[1]);
+        response.put("approximate_location", approx.formattedAddress());
+        response.put("approximate_lat", approx.approximateLat());
+        response.put("approximate_lng", approx.approximateLng());
         response.put("status", task.status());
         response.put("scheduled_at", task.scheduledAt().toString());
         List<String> photoKeys = task.photoKeys() == null ? List.of() : task.photoKeys();
@@ -162,24 +162,8 @@ public class TaskController {
         return response;
     }
 
-    private double[] fuzzCoordinates(double lat, double lng) {
-        double angle = LOCATION_FUZZ_RANDOM.nextDouble() * Math.PI * 2;
-        double distanceMeters = LOCATION_FUZZ_RANDOM.nextDouble() * MAX_PUBLIC_OFFSET_METERS;
-        double latOffset = (distanceMeters * Math.cos(angle)) / 111_320.0d;
-        double lngOffset =
-                (distanceMeters * Math.sin(angle)) / (111_320.0d * Math.max(0.1d, Math.cos(Math.toRadians(lat))));
-
-        double fuzzedLat = roundToTwoDecimals(lat + latOffset);
-        double fuzzedLng = roundToTwoDecimals(lng + lngOffset);
-        return new double[] {fuzzedLat, fuzzedLng};
-    }
-
     private int taskApplicationCount(String taskId) {
         return taskService.countApplications(taskId);
-    }
-
-    private double roundToTwoDecimals(double value) {
-        return Math.round(value * 100.0d) / 100.0d;
     }
 
     private Map<String, Object> toCategoryPayload(CategoryState category) {
