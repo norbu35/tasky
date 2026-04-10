@@ -89,17 +89,11 @@ export default function PhotoUploadScreen() {
               className="rounded-lg overflow-hidden bg-muted"
               style={{ width: '31.5%', aspectRatio: 1 }}
             >
-              <Image source={{ uri: photoUri }} style={{ alignSelf: 'stretch', height: '100%' }} />
+              <Image source={{ uri: photoUri }} className="self-stretch h-full" />
               <Pressable
                 onPress={() => handleRemovePhoto(index)}
-                className="absolute items-center justify-center rounded-full"
-                style={{
-                  top: 4,
-                  right: 4,
-                  width: 24,
-                  height: 24,
-                  backgroundColor: `${colors.primaryDeep}99`,
-                }}
+                className="absolute top-1 right-1 w-6 h-6 items-center justify-center rounded-full"
+                style={{ backgroundColor: `${colors.primaryDeep}99` }}
                 testID={`photo-upload-remove-${index}`}
                 accessibilityRole="button"
                 accessibilityLabel={t('Photos.removePhoto')}
