@@ -66,7 +66,7 @@ public class AuthService {
     private static final ModerationPolicy DEFAULT_MODERATION_POLICY =
             new ModerationPolicy(30, 3, 7, 14, 180, true, Instant.EPOCH);
 
-    private static final Set<String> DEV_AUTH_ALLOWED_ROLES = Set.of("CUSTOMER", "TASKER");
+    private static final Set<String> DEV_AUTH_ALLOWED_ROLES = Set.of("CUSTOMER", "TASKER", "ADMIN");
     private static final Set<String> NON_PROD_PROFILES = Set.of("dev", "test", "local");
     private static final Set<String> DEV_AUTH_ALLOWED_PROFILES = Set.of("local", "test");
     private static final Map<String, String> AVATAR_EXTENSION_BY_CONTENT_TYPE =
@@ -213,7 +213,22 @@ public class AuthService {
         Optional<AuthUser> existing = userDao.findByPhoneBlindIndex(blindIndex);
 
         if (existing.isPresent()) {
-            return existing.get();
+            AuthUser user = existing.get();
+            if (!StringUtils.hasText(user.phone())) {
+                String encryptedPhone = cryptoService.encrypt(phone);
+                Instant now = Instant.now();
+                userDao.updatePhoneAndBlindIndex(user.id(), encryptedPhone, blindIndex);
+                return new AuthUser(
+                        user.id(),
+                        encryptedPhone,
+                        user.facebookId(),
+                        user.role(),
+                        user.status(),
+                        user.primaryAuth(),
+                        user.createdAt(),
+                        now);
+            }
+            return user;
         }
 
         String id = UUID.randomUUID().toString();
