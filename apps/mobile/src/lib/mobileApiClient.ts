@@ -1,4 +1,5 @@
 import type { components } from '@tasky/sdk';
+import { Platform } from 'react-native';
 
 export type User = components['schemas']['User'];
 export type Profile = components['schemas']['Profile'];
@@ -32,6 +33,12 @@ export interface TaskFilters {
   lat?: number;
   lng?: number;
   radiusKm?: number;
+}
+
+export interface RecentLocation {
+  location_lat: number;
+  location_lng: number;
+  location_text: string;
 }
 
 export interface BookingFilters {
@@ -193,6 +200,8 @@ export interface MobileApiClient {
 
   listMyTasks(accessToken: string): Promise<CursorPage<Task>>;
 
+  listRecentLocations(accessToken: string): Promise<{ locations: RecentLocation[] }>;
+
   markBookingDone(accessToken: string, bookingId: string, idempotencyKey: string): Promise<Booking>;
 
   getBookingTimeline(
@@ -218,6 +227,11 @@ export class ApiError extends Error {
 }
 
 const API_PATH_PREFIX = '/api/v1';
+
+export function resolveDefaultLocalApiBaseUrl(platform: string): string {
+  // Android emulators reach services on the host machine through 10.0.2.2, not localhost.
+  return platform === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
+}
 
 function normalizeBaseUrl(rawBaseUrl: string): string {
   const parsed = new URL(rawBaseUrl.trim());
@@ -248,7 +262,7 @@ export function buildBaseUrl(): string {
   ) {
     return normalizeBaseUrl(runtimeEnv.EXPO_PUBLIC_API_BASE_URL);
   }
-  return normalizeBaseUrl('http://localhost:8080');
+  return normalizeBaseUrl(resolveDefaultLocalApiBaseUrl(Platform.OS));
 }
 
 async function readErrorMessage(response: Response): Promise<string> {
@@ -752,6 +766,14 @@ export class HttpMobileApiClient implements MobileApiClient {
     return this.requestJson<CursorPage<Task>>('/tasks/mine', { method: 'GET' }, accessToken, {
       limit: 100,
     });
+  }
+
+  listRecentLocations(accessToken: string): Promise<{ locations: RecentLocation[] }> {
+    return this.requestJson<{ locations: RecentLocation[] }>(
+      '/tasks/mine/recent-locations',
+      { method: 'GET' },
+      accessToken,
+    );
   }
 
   markBookingDone(
