@@ -19,6 +19,9 @@ __pycache__/
 # Logs
 *.log
 
+# Generated codebase snapshots
+repomix-output.xml
+
 # JavaScript workspace
 node_modules/
 apps/*/node_modules/
@@ -48,5 +51,4 @@ research/market-data/unegui/*
 !research/market-data/unegui/.gitkeep
 
 # Git worktrees
-.worktrees/
 .worktrees/
