@@ -27,6 +27,7 @@ import mn.tasky.common.idempotency.IdempotencyDao;
 import mn.tasky.common.outbox.OutboxEventDao;
 import mn.tasky.dispute.dao.DisputeDao;
 import mn.tasky.dispute.dao.DisputeEvidenceDao;
+import mn.tasky.location.dao.DistrictGeoDao;
 import mn.tasky.messaging.dao.ConversationDao;
 import mn.tasky.messaging.dao.MessageDao;
 import mn.tasky.notification.dao.DeviceTokenDao;
@@ -249,6 +250,12 @@ public class JdbiConfig {
     @Bean
     public TaskerServiceAreaDao taskerServiceAreaDao(Jdbi jdbi) {
         return jdbi.onDemand(TaskerServiceAreaDao.class);
+    }
+
+    // Location DAOs
+    @Bean
+    public DistrictGeoDao districtGeoDao(Jdbi jdbi) {
+        return jdbi.onDemand(DistrictGeoDao.class);
     }
 
     // Dispute DAOs
