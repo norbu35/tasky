@@ -40,74 +40,71 @@ export default function TaskPostedSuccessScreen() {
     <ScreenContainer testID="SCR-CUST-008">
       <InsetScrollView
         className="flex-1"
-        contentContainerStyle={{
-          paddingHorizontal: spacing.lg,
-          paddingTop: spacing.lg,
-          paddingBottom: spacing['2xl'],
-          gap: spacing['2xl'],
-        }}
+        contentContainerStyle={{ paddingBottom: spacing['2xl'] }}
         extraBottomInset={120}
         showsVerticalScrollIndicator={false}
       >
-        <View className="items-center gap-md pt-lg">
-          <Animated.View
-            className="w-24 h-24 rounded-full items-center justify-center"
-            style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
-          >
-            <CheckCircle2 size={50} color={colors.verified} />
-          </Animated.View>
-          <View
-            className="px-md py-xs rounded-full"
-            style={{ backgroundColor: `${colors.verified}1A` }}
-          >
-            <Text
-              className="text-caption font-sans-bold"
-              style={{ letterSpacing: 0.8, color: colors.verified }}
+        <View className="px-lg pt-lg gap-2xl">
+          <View className="items-center gap-md pt-lg">
+            <Animated.View
+              className="w-24 h-24 rounded-full items-center justify-center"
+              style={[{ backgroundColor: `${colors.verified}1A` }, animatedCheckStyle]}
             >
-              {t('TaskPostedSuccessScreen.successBadge')}
+              <CheckCircle2 size={50} color={colors.verified} />
+            </Animated.View>
+            <View
+              className="px-md py-xs rounded-full"
+              style={{ backgroundColor: `${colors.verified}1A` }}
+            >
+              <Text
+                className="text-caption font-sans-bold text-verified"
+                style={{ letterSpacing: 0.8 }}
+              >
+                {t('TaskPostedSuccessScreen.successBadge')}
+              </Text>
+            </View>
+            <Text
+              className="text-heading font-display-bold text-primary-deep text-center"
+              style={{ lineHeight: typography.heading * 1.25 }}
+            >
+              {t('TaskPostedSuccessScreen.successTitle')}
+            </Text>
+            <Text
+              className="text-body text-text-secondary text-center"
+              style={{ lineHeight: typography.body * 1.6 }}
+            >
+              {t('TaskPostedSuccessScreen.successBody')}
+            </Text>
+            <View className="flex-row gap-sm mt-sm">
+              <View className="w-2 h-2 rounded-xs bg-primary" />
+              <View className="w-2 h-2 rounded-xs bg-secondary" />
+              <View className="w-2 h-2 rounded-xs bg-verified" />
+            </View>
+          </View>
+
+          <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
+            <Text
+              className="text-caption font-sans-bold uppercase text-primary-deep mb-xs"
+              style={{ letterSpacing: 0.8 }}
+            >
+              {t('TaskPostedSuccessScreen.successNextLabel')}
+            </Text>
+            <Text className="text-body font-sans-bold text-primary-deep">
+              {t('TaskPostedSuccessScreen.successNextTitle')}
+            </Text>
+            <Text
+              className="text-caption text-text-secondary"
+              style={{ lineHeight: typography.caption * 1.6 }}
+            >
+              {t('TaskPostedSuccessScreen.successNext1')}
+            </Text>
+            <Text
+              className="text-caption text-text-secondary"
+              style={{ lineHeight: typography.caption * 1.6 }}
+            >
+              {t('TaskPostedSuccessScreen.successNext2')}
             </Text>
           </View>
-          <Text
-            className="text-heading font-display-bold text-primary-deep text-center"
-            style={{ lineHeight: typography.heading * 1.25 }}
-          >
-            {t('TaskPostedSuccessScreen.successTitle')}
-          </Text>
-          <Text
-            className="text-body text-text-secondary text-center"
-            style={{ lineHeight: typography.body * 1.6 }}
-          >
-            {t('TaskPostedSuccessScreen.successBody')}
-          </Text>
-          <View className="flex-row gap-sm mt-sm">
-            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.primary }} />
-            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.secondary }} />
-            <View className="w-2 h-2 rounded-xs" style={{ backgroundColor: colors.verified }} />
-          </View>
-        </View>
-
-        <View className="rounded-md bg-muted p-2xl gap-sm" style={elevations.soft}>
-          <Text
-            className="text-caption font-sans-bold uppercase text-primary-deep mb-xs"
-            style={{ letterSpacing: 0.8 }}
-          >
-            {t('TaskPostedSuccessScreen.successNextLabel')}
-          </Text>
-          <Text className="text-body font-sans-bold text-primary-deep">
-            {t('TaskPostedSuccessScreen.successNextTitle')}
-          </Text>
-          <Text
-            className="text-caption text-text-secondary"
-            style={{ lineHeight: typography.caption * 1.6 }}
-          >
-            {t('TaskPostedSuccessScreen.successNext1')}
-          </Text>
-          <Text
-            className="text-caption text-text-secondary"
-            style={{ lineHeight: typography.caption * 1.6 }}
-          >
-            {t('TaskPostedSuccessScreen.successNext2')}
-          </Text>
         </View>
       </InsetScrollView>
 
