@@ -1,28 +1,35 @@
+# Dependabot paused — re-enable when project goes live.
+# Each PR triggers quality-gates (6 jobs), burning CI minutes on a pre-launch repo.
+#
+# To re-enable: uncomment the updates block below.
+
 version: 2
-updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-    groups:
-      minor-and-patch:
-        update-types: [minor, patch]
-    labels: [dependencies, auto]
-    open-pull-requests-limit: 10
-
-  - package-ecosystem: gradle
-    directory: /services/api
-    schedule:
-      interval: weekly
-      day: monday
-    labels: [dependencies, auto]
-    open-pull-requests-limit: 5
-
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-    labels: [ci, auto]
-    open-pull-requests-limit: 5
+updates: []
+# --- Paused configuration ---
+# updates:
+#   - package-ecosystem: npm
+#     directory: /
+#     schedule:
+#       interval: weekly
+#       day: monday
+#     groups:
+#       minor-and-patch:
+#         update-types: [minor, patch]
+#     labels: [dependencies, auto]
+#     open-pull-requests-limit: 10
+#
+#   - package-ecosystem: gradle
+#     directory: /services/api
+#     schedule:
+#       interval: weekly
+#       day: monday
+#     labels: [dependencies, auto]
+#     open-pull-requests-limit: 5
+#
+#   - package-ecosystem: github-actions
+#     directory: /
+#     schedule:
+#       interval: weekly
+#       day: monday
+#     labels: [ci, auto]
+#     open-pull-requests-limit: 5
