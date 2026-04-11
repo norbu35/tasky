@@ -50,7 +50,7 @@ jobs:
         run: docker build -t tasky-server:nightly .
 
       - name: Scan regression container image
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: tasky-server:nightly
           format: table
