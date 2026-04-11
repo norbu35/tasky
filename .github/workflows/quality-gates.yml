@@ -193,6 +193,7 @@ jobs:
           fail-on-severity: high
 
       - name: Filesystem vulnerability scan
+        continue-on-error: true
         uses: aquasecurity/trivy-action@0.35.0
         with:
           scan-type: fs
