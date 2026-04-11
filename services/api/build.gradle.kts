@@ -29,7 +29,7 @@ repositories {
     mavenCentral()
 }
 
-val jdbiVersion = "3.47.0"
+val jdbiVersion = "3.52.1"
 val testcontainersVersion = "1.21.4"
 val jjwtVersion = "0.12.6"
 
