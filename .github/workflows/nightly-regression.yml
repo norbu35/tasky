@@ -2,7 +2,7 @@ name: nightly-regression
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -18,18 +18,16 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '20'
+          cache: 'pnpm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
@@ -59,7 +57,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: os,library
           severity: HIGH,CRITICAL
-          exit-code: "1"
+          exit-code: '1'
 
   web-e2e-regression:
     runs-on: ubuntu-latest
@@ -72,12 +70,10 @@ jobs:
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
@@ -93,7 +89,7 @@ jobs:
     permissions:
       contents: read
     env:
-      CI: "1"
+      CI: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,17 +98,15 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
