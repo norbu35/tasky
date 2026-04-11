@@ -36,7 +36,7 @@ export function PhotoGrid({
           <Image source={{ uri }} className="w-full h-full" />
           {index === maxPhotos - 1 && remainingCount > 0 && (
             <View
-              style={StyleSheet.absoluteFillObject}
+              style={StyleSheet.absoluteFill}
               className="bg-[rgba(16,38,56,0.5)] items-center justify-center"
             >
               <Text className="text-heading font-sans-bold text-primary-foreground">

@@ -5,7 +5,11 @@
   "engines": {
     "node": "20.x"
   },
-  "pnpm": {},
+  "pnpm": {
+    "overrides": {
+      "@react-native/babel-plugin-codegen": "0.85.0"
+    }
+  },
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
