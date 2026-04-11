@@ -8,11 +8,17 @@ const mockApiClient: Partial<ApiClient> = {
   adminUpdateFeatureToggle: vi.fn(),
 };
 
+// Stable reference required for React 19: new object per call causes
+// useCallback([apiClient, session]) to see a changed session dep every
+// render, re-triggering the effect and keeping the component in a
+// loading loop. Return the same object each time.
+const mockContextValue = {
+  apiClient: mockApiClient,
+  session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
+};
+
 vi.mock('../../../context/AppContext', () => ({
-  useAppContext: vi.fn(() => ({
-    apiClient: mockApiClient,
-    session: { accessToken: 'test-token', refreshToken: 'rt', user: { id: '1', role: 'ADMIN' } },
-  })),
+  useAppContext: vi.fn(() => mockContextValue),
 }));
 
 // ── Mock sonner toast ────────────────────────────────────────────────
