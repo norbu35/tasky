@@ -24,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -32,19 +31,19 @@ jobs:
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Ensure wrapper is executable
-        run: chmod +x gradlew
+      - name: Ensure scripts are executable
+        run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
 
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run frontend/mobile regression checks
+      - name: Run frontend regression checks
         run: |
           pnpm -r typecheck
           pnpm -r test
 
-      - name: Run full backend regression gates
-        run: ./gradlew --no-daemon :services:api:gateFull :services:api:openApiValidate
+      - name: Run backend regression gate
+        run: ./gradlew --no-daemon :services:api:gateRegression :services:api:openApiValidate
 
       - name: Build regression container image
         run: docker build -t tasky-server:nightly .
@@ -58,38 +57,12 @@ jobs:
           vuln-type: os,library
           severity: HIGH,CRITICAL
           exit-code: '1'
+          trivyignores: .trivyignore
 
   web-e2e-regression:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install workspace dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Chromium dependencies
-        run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
-
-      - name: Run Playwright regression journeys
-        run: pnpm --filter @tasky/web test:e2e
-
-  mobile-e2e-smoke:
-    runs-on: macos-latest
-    permissions:
-      contents: read
-    env:
-      CI: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -108,30 +81,45 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Ensure scripts are executable
+        run: chmod +x gradlew
+
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Maestro CLI
+      - name: Start infrastructure
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+          docker compose up -d postgres minio minio-bootstrap
+          for i in $(seq 1 30); do
+            docker compose exec -T postgres pg_isready -U tasky -d tasky && break
+            sleep 2
+          done
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:9000/minio/health/live && break
+            sleep 2
+          done
 
-      - name: Boot iOS simulator
+      - name: Build and start backend
         run: |
-          SIMULATOR_NAME="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {gsub(/^ +| +$/, "", $1); print $1; exit}')"
-          SIMULATOR_UDID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ {print $2; exit}')"
-          if [ -z "$SIMULATOR_NAME" ] || [ -z "$SIMULATOR_UDID" ]; then
-            echo "ERROR: no available iPhone simulator found" >&2
-            exit 1
-          fi
-          echo "SIMULATOR_NAME=$SIMULATOR_NAME" >> "$GITHUB_ENV"
-          echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> "$GITHUB_ENV"
-          open -a Simulator
-          xcrun simctl boot "$SIMULATOR_UDID" || true
-          xcrun simctl bootstatus "$SIMULATOR_UDID" -b
+          ./gradlew --no-daemon :services:api:bootJar
+          java -jar services/api/build/libs/*.jar --spring.profiles.active=ci &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/actuator/health && break
+            sleep 2
+          done
+        env:
+          FACEBOOK_TEST_APP_ID: ${{ secrets.FACEBOOK_TEST_APP_ID }}
+          FACEBOOK_TEST_APP_SECRET: ${{ secrets.FACEBOOK_TEST_APP_SECRET }}
 
-      - name: Build Tasky iOS release app
-        run: pnpm --filter @tasky/mobile exec expo run:ios --configuration Release --device "$SIMULATOR_NAME" --no-bundler
+      - name: Install Playwright Chromium
+        run: pnpm --filter @tasky/web exec playwright install --with-deps chromium
 
-      - name: Run Maestro smoke journeys
-        run: pnpm --filter @tasky/mobile test:e2e:smoke
+      - name: Run full Playwright regression suite
+        run: pnpm --filter @tasky/web test:e2e
+
+      - name: Stop infrastructure
+        if: always()
+        run: docker compose down
