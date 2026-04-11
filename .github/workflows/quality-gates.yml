@@ -25,7 +25,7 @@ jobs:
           node-version: '22'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -79,7 +79,7 @@ jobs:
           node-version: '22'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -113,7 +113,7 @@ jobs:
           node-version: '22'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
@@ -181,7 +181,7 @@ jobs:
           node-version: '22'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Gradle cache
         uses: gradle/actions/setup-gradle@v3
