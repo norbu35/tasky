@@ -1,0 +1,47 @@
+# CI profile — used by E2E jobs (e2e-web, e2e-android, e2e-ios)
+# Expects: docker-compose Postgres on localhost:5432, MinIO on localhost:9000
+# Expects: FACEBOOK_TEST_APP_ID and FACEBOOK_TEST_APP_SECRET from GitHub secrets
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tasky
+    username: tasky_app
+    password: tasky_app
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/tasky
+    user: tasky
+    password: tasky
+
+tasky:
+  dev-auth:
+    enabled: true
+
+  facebook:
+    app-id: ${FACEBOOK_TEST_APP_ID:}
+    app-secret: ${FACEBOOK_TEST_APP_SECRET:}
+
+  auth:
+    jwt-secret: ci-test-jwt-secret-32-chars-minimum!!
+    encryption-key: MDEyMzQ1Njc4OUFCQ0RFRjAxMjM0NTY3ODlBQkNERUY=
+    blind-index-key: RkVEQ0JBOTg3NjU0MzIxMEZFRENCQTk4NzY1NDMyMTA=
+
+  qpay:
+    webhook-secret: ci-test-qpay-secret
+
+  storage:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: tasky-local
+    upload-ttl-seconds: 900
+    download-ttl-seconds: 3600
+
+  cors:
+    allowed-origins: http://localhost:4173,http://localhost:5173
+
+  push:
+    provider: logging
+
+  feature:
+    monetization-enabled: false
