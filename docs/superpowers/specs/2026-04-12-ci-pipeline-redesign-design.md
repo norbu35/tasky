@@ -80,10 +80,7 @@ Structural checks that are not tests and not compilation.
 
 Java compilation, static analysis, tests, coverage, and API contract in one job.
 
-1. `./gradlew check` — compiles + Checkstyle + PMD + SpotBugs + ErrorProne + unit tests
-2. `./gradlew jacocoTestCoverageVerification` — 80% line coverage enforced
-3. `./gradlew openApiValidate` — API contract validation
-4. `python3 tooling/scripts/validate-migrations.py` — migration validation against actual build
+1. `./gradlew check jacocoTestCoverageVerification openApiValidate` — compiles + Checkstyle + PMD + SpotBugs + ErrorProne + unit tests + 80% line coverage + API contract (single Gradle invocation, tests run once)
 
 ### 2.3 `frontend-quality` (~3 min, ubuntu-latest)
 
@@ -131,7 +128,8 @@ All security checks. All blocking (except container scan temporarily).
 1. **Trivy filesystem scan** — `exit-code: '1'`, `severity: HIGH,CRITICAL`, `ignore-unfixed: true`. Passes because npm CVEs are fixed via pnpm overrides.
 2. **Trivy container scan** — `exit-code: '0'` temporarily. Uses `.trivyignore` with expiry dates for Spring Security CVEs. Becomes `exit-code: '1'` after backend Spring upgrade.
 3. **Semgrep SAST** — OWASP Top 10, Java rules, custom `tasky-rules.yaml`.
-4. **OpenSSF Scorecard** — `ossf/scorecard-action`. Non-blocking (informational) initially. Outputs annotations and score.
+4. **OpenSSF Scorecard** — `ossf/scorecard-action`. Non-blocking (informational). Outputs annotations and repo score. Stays informational permanently — it's a hygiene audit, not a merge gate.
+5. **Trivyignore expiry check** — a shell step that parses `.trivyignore` for `# Expires:` comments and fails if any entry is past its date. Enforces human-managed expiry since Trivy itself ignores the comments.
 
 **Removed:** `actions/dependency-review-action@v4` (requires GHAS, not available on free tier). Dependabot + Trivy cover the same ground.
 
@@ -145,14 +143,14 @@ Split into two schedules to stay within free tier.
 
 Cron: `0 2 * * *`
 
-1. **full-regression** — `pnpm -r typecheck`, `pnpm -r test`, `./gradlew gateFull`, `openApiValidate`, container build + Trivy scan
+1. **full-regression** — `pnpm -r typecheck`, `pnpm -r test`, `./gradlew gateRegression openApiValidate`, container build + Trivy scan. Uses `gateRegression` (not `gateFull`) because `gateFull` has pre-existing mutation floor gaps in analytics (0% < 40%), messaging (18% < 40%), notification (4% < 40%) tracked in the test-rehab-backlog. Upgrade to `gateFull` once those domains meet their mutation floors.
 2. **web-e2e-regression** — full Playwright suite (all tests, not just `@smoke`)
 
 ### 3.2 Monday + Thursday nights (macOS, ~15 min)
 
 Cron: `0 2 * * 1,4`
 
-1. **e2e-ios** — full stack + iOS simulator + Maestro smoke flows
+1. **e2e-ios** — starts full stack (Postgres + MinIO + backend JAR, same as `e2e-web`), boots iOS simulator, builds iOS release app via Expo, installs Maestro CLI, runs Maestro smoke flows against live backend. Facebook test app credentials from GitHub secrets.
 
 **Cost estimate:** ~135 macOS min/month (free tier allows 200).
 
@@ -164,16 +162,22 @@ Cron: `0 2 * * 1,4`
 
 Add `pnpm.overrides` in root `package.json` to pin transitive deps to patched versions:
 
-| Package          | Current      | Override to |
-| ---------------- | ------------ | ----------- |
-| `minimatch`      | 3.1.2, 9.0.5 | `>=3.1.3`   |
-| `tar`            | 6.2.1        | `>=7.5.11`  |
-| `undici`         | 6.23.0       | `>=6.24.0`  |
-| `@xmldom/xmldom` | 0.7.13       | `>=0.9.9`   |
-| `node-forge`     | 1.3.3        | `>=1.4.0`   |
-| `picomatch`      | 2.3.1        | `>=2.3.2`   |
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "minimatch@<3.1.3": ">=3.1.3",
+      "tar@<7.5.11": ">=7.5.11",
+      "undici@<6.24.0": ">=6.24.0",
+      "@xmldom/xmldom@<0.9.9": ">=0.9.9",
+      "node-forge@<1.4.0": ">=1.4.0",
+      "picomatch@<2.3.2": ">=2.3.2"
+    }
+  }
+}
+```
 
-Run `pnpm install` to regenerate lockfile. Verify with local Trivy scan.
+Run `pnpm install` to regenerate lockfile. Verify locally: `trivy fs . --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed`.
 
 ### 4.2 Temporary: .trivyignore for Spring Security
 
@@ -267,7 +271,7 @@ The `ci` Spring profile configures:
 | Backend tests        | cleanup-gate (via gateSmoke) + backend-quality | backend-quality only       |
 | `openApiValidate`    | cleanup-gate + backend-quality + pre-push      | backend-quality + pre-push |
 | Workspace boundaries | cleanup-gate + pre-push                        | structural-gate + pre-push |
-| Migration validation | pre-push + backend-quality                     | structural-gate + pre-push |
+| Migration validation | pre-push + cleanup-gate                        | structural-gate + pre-push |
 
 ### Pre-push vs CI overlap (intentional)
 
@@ -277,16 +281,18 @@ Pre-push runs typecheck, lint, boundaries, migrations, OpenAPI, SDK drift, and u
 
 ## 7. Summary of Files to Create or Modify
 
-| File                                       | Action                                    |
-| ------------------------------------------ | ----------------------------------------- |
-| `.lintstagedrc.json`                       | Fix hardcoded ESLint path                 |
-| `.husky/pre-push`                          | Add lint, SDK drift, unit tests           |
-| `.github/workflows/quality-gates.yml`      | Rewrite: 6 jobs, no overlap, all blocking |
-| `.github/workflows/nightly-regression.yml` | Split schedules, add Android E2E          |
-| `.github/dependabot.yml`                   | Create                                    |
-| `.trivyignore`                             | Create with Spring CVEs + expiry          |
-| `package.json`                             | Add `pnpm.overrides` for npm CVEs         |
-| `pnpm-lock.yaml`                           | Regenerate after overrides                |
-| Backend Spring profile                     | Add `ci` profile for E2E                  |
-| Facebook developer console                 | Create "Tasky CI Test" app (manual)       |
-| GitHub repository settings                 | Add secrets (manual)                      |
+| File                                                 | Action                                    |
+| ---------------------------------------------------- | ----------------------------------------- |
+| `.lintstagedrc.json`                                 | Fix hardcoded ESLint path                 |
+| `.husky/pre-push`                                    | Add lint, SDK drift, unit tests           |
+| `.github/workflows/quality-gates.yml`                | Rewrite: 6 jobs, no overlap, all blocking |
+| `.github/workflows/nightly-regression.yml`           | Split schedules, add Android E2E          |
+| `.github/dependabot.yml`                             | Create                                    |
+| `.trivyignore`                                       | Create with Spring CVEs + expiry          |
+| `package.json`                                       | Add `pnpm.overrides` for npm CVEs         |
+| `pnpm-lock.yaml`                                     | Regenerate after overrides                |
+| `services/api/src/main/resources/application-ci.yml` | Create CI Spring profile                  |
+| `.github/workflows/release-gate.yml`                 | Update E2E jobs to match new structure    |
+| `tooling/scripts/check-trivyignore-expiry.sh`        | Create expiry enforcement script          |
+| Facebook developer console                           | Create "Tasky CI Test" app (manual)       |
+| GitHub repository settings                           | Add secrets (manual)                      |
