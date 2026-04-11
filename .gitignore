@@ -5,8 +5,22 @@
 !.idea/codeStyles
 .vscode/
 
-# Serena (AI agent config — project.yml and memories/ are intentionally tracked)
+# Serena (AI agent config — project.yml is intentionally tracked)
 .serena/project.local.yml
+.serena/cache/
+.serena/memories/
+
+# Claude Code local state
+.claude/
+
+# Misc local files
+.ignore
+postflight.json
+
+# Generated audit / analysis snapshots (session artifacts)
+docs/DEPENDENCY_VERSION_MATRIX.md
+docs/MAINTENANCE_AUDIT_*.md
+docs/QUALITY_GATES_AUDIT.md
 
 # Gradle
 .gradle/
