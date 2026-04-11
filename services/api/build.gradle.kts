@@ -31,7 +31,7 @@ repositories {
 
 val jdbiVersion = "3.47.0"
 val testcontainersVersion = "1.21.4"
-val jjwtVersion = "0.12.6"
+val jjwtVersion = "0.13.0"
 
 dependencies {
     // Spring Boot
