@@ -85,7 +85,7 @@ dependencies {
     testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
     testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
     testImplementation("com.atlassian.oai:swagger-request-validator-mockmvc:2.41.0")
 
     // Static analysis
