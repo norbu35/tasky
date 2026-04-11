@@ -250,9 +250,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check .trivyignore expiry
-        run: bash tooling/scripts/check-trivyignore-expiry.sh
-
       - name: Filesystem vulnerability scan
         uses: aquasecurity/trivy-action@0.35.0
         with:
@@ -274,8 +271,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: os,library
           severity: HIGH,CRITICAL
-          exit-code: '0'
-          trivyignores: .trivyignore
+          exit-code: '1'
 
       - name: Semgrep SAST
         uses: returntocorp/semgrep-action@v1

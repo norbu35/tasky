@@ -3,9 +3,9 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     java
-    id("org.springframework.boot") version "3.4.2"
+    id("org.springframework.boot") version "3.5.13"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.openapi.generator") version "7.12.0"
+    id("org.openapi.generator") version "7.21.0"
     jacoco
     checkstyle
     pmd
@@ -29,9 +29,9 @@ repositories {
     mavenCentral()
 }
 
-val jdbiVersion = "3.47.0"
+val jdbiVersion = "3.52.1"
 val testcontainersVersion = "1.21.4"
-val jjwtVersion = "0.12.6"
+val jjwtVersion = "0.13.0"
 
 dependencies {
     // Spring Boot
@@ -51,8 +51,8 @@ dependencies {
     implementation("org.jdbi:jdbi3-spring5:$jdbiVersion")
 
     // ShedLock — distributed scheduler locks
-    implementation("net.javacrumbs.shedlock:shedlock-spring:5.16.0")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.16.0")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.7.0")
 
     // Database
     runtimeOnly("org.postgresql:postgresql")
@@ -85,8 +85,8 @@ dependencies {
     testImplementation("org.testcontainers:jdbc:$testcontainersVersion")
     testImplementation("org.testcontainers:database-commons:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
-    testImplementation("com.atlassian.oai:swagger-request-validator-mockmvc:2.41.0")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
+    testImplementation("com.atlassian.oai:swagger-request-validator-mockmvc:2.46.1")
 
     // Static analysis
     errorprone("com.google.errorprone:error_prone_core:2.36.0")
