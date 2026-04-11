@@ -1,3 +1,5 @@
+process.env.TZ = 'Asia/Ulaanbaatar';
+
 module.exports = {
     preset: "jest-expo",
     watchman: false,
