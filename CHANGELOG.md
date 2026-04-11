@@ -2,6 +2,7 @@
 
 ## 2026-04-11
 
+- chore: upgrade frontend safe dependencies (Playwright 1.59, testing-library, postcss, openapi-typescript 7.13, react-query 5.97)
 - **Repo dead-code cleanup**: Removed an unreferenced web feature component bundle, trimmed unused web/core dependencies and internal helper exports, and fixed locale-safe district geocoding normalization.
 
 ## 2026-04-10

@@ -19,7 +19,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.28.0",
+    "@tanstack/react-query": "^5.97.0",
     "@tasky/sdk": "workspace:*",
     "zod": "^3.22.4"
   },
@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.73",
-    "@typescript-eslint/eslint-plugin": "8.56.0",
-    "@typescript-eslint/parser": "8.56.0",
+    "@typescript-eslint/eslint-plugin": "8.58.1",
+    "@typescript-eslint/parser": "8.58.1",
     "eslint": "9.39.2",
     "prettier": "^3.8.1",
     "typescript": "5.9.2"
