@@ -5,7 +5,7 @@ plugins {
     java
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.openapi.generator") version "7.12.0"
+    id("org.openapi.generator") version "7.21.0"
     jacoco
     checkstyle
     pmd
