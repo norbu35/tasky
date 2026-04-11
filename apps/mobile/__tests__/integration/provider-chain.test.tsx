@@ -1,12 +1,13 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { render, screen } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
 import { RoleProvider, useRole } from '../../src/providers/RoleProvider';
 import { NotificationProvider, useNotificationContext } from '../../src/store/NotificationContext';
 import { baseSession, baseProfile, resetStores } from './fixtures';
+import { createTestQueryClient } from '../test-utils/queryClient';
 
 jest.mock('expo-router', () => {
   const React = require('react');
@@ -111,9 +112,7 @@ beforeEach(() => {
 
 describe('provider-chain', () => {
   it('QueryClient + RoleProvider compose correctly', () => {
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
+    const queryClient = createTestQueryClient();
 
     function RoleConsumer() {
       const { currentRole, isCustomer } = useRole();
@@ -135,6 +134,8 @@ describe('provider-chain', () => {
 
     expect(screen.getByTestId('role')).toHaveTextContent('customer');
     expect(screen.getByTestId('is-customer')).toHaveTextContent('true');
+
+    queryClient.clear();
   });
 
   it('NotificationProvider provides context with default null values', () => {

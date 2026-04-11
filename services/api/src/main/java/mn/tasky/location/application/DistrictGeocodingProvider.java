@@ -1,5 +1,6 @@
 package mn.tasky.location.application;
 
+import java.util.Locale;
 import java.util.List;
 import mn.tasky.location.dao.DistrictGeoDao;
 import mn.tasky.location.dao.DistrictGeoDao.DistrictCentroid;
@@ -37,9 +38,9 @@ public class DistrictGeocodingProvider implements GeocodingProvider {
     @Override
     public List<LocationSearchResult> search(String query, Double biasLat, Double biasLng) {
         List<DistrictCentroid> districts = districtGeoDao.findAllCentroids();
-        String q = query.toLowerCase();
+        String q = query.toLowerCase(Locale.ROOT);
         return districts.stream()
-                .filter(d -> d.name().toLowerCase().contains(q)
+                .filter(d -> d.name().toLowerCase(Locale.ROOT).contains(q)
                         || d.nameMn().contains(query))
                 .map(d -> new LocationSearchResult(
                         d.name() + ", Ulaanbaatar",

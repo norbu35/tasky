@@ -10,9 +10,7 @@ describe('NativeWind configuration', () => {
       devDependencies?: Record<string, string>;
     };
     const babelSource = readFileSync(resolve(process.cwd(), 'babel.config.js'), 'utf8');
-    const appConfig = JSON.parse(readFileSync(resolve(process.cwd(), 'app.json'), 'utf8')) as {
-      expo?: { plugins?: (string | [string, Record<string, unknown>])[] };
-    };
+    const appConfigSource = readFileSync(resolve(process.cwd(), 'app.config.ts'), 'utf8');
     const tsconfig = JSON.parse(readFileSync(resolve(process.cwd(), 'tsconfig.json'), 'utf8')) as {
       include?: string[];
     };
@@ -36,8 +34,7 @@ describe('NativeWind configuration', () => {
     expect(globalCssSource).toContain('@tailwind utilities;');
     expect(nativewindEnvSource).toContain('nativewind/types');
     expect(tsconfig.include).toContain('nativewind-env.d.ts');
-    expect(
-      appConfig.expo?.plugins?.some((entry) => Array.isArray(entry) && entry[0] === 'expo-font'),
-    ).toBe(true);
+    expect(appConfigSource).toContain("'expo-font'");
+    expect(appConfigSource).toContain("'expo-location'");
   });
 });

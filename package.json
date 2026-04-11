@@ -2,6 +2,9 @@
   "name": "tasky-monorepo",
   "private": true,
   "packageManager": "pnpm@10.29.2",
+  "engines": {
+    "node": "20.x"
+  },
   "pnpm": {},
   "scripts": {
     "build": "pnpm -r build",

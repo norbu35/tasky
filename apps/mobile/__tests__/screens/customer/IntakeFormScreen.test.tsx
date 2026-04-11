@@ -11,13 +11,20 @@ const mockCleaningSchema = JSON.stringify([
   {
     key: 'property_type',
     label: 'Property type',
+    label_mn: 'Property type',
     type: 'single_select',
     required: true,
-    options: ['Apartment', 'Ger', 'Office', 'House'],
+    options: [
+      { value: 'apartment', label: 'Apartment', label_mn: 'Apartment' },
+      { value: 'ger', label: 'Ger', label_mn: 'Ger' },
+      { value: 'office', label: 'Office', label_mn: 'Office' },
+      { value: 'house', label: 'House', label_mn: 'House' },
+    ],
   },
   {
     key: 'size_or_rooms',
     label: 'Number of rooms',
+    label_mn: 'Number of rooms',
     type: 'numeric_counter',
     required: true,
     min: 1,
@@ -26,13 +33,28 @@ const mockCleaningSchema = JSON.stringify([
   {
     key: 'cleaning_type',
     label: 'Cleaning type',
+    label_mn: 'Cleaning type',
     type: 'single_select',
     required: true,
-    options: ['Standard', 'Deep Clean', 'Move-in/Move-out', 'Post-Renovation'],
+    options: [
+      { value: 'standard', label: 'Standard', label_mn: 'Standard' },
+      { value: 'deep-clean', label: 'Deep Clean', label_mn: 'Deep Clean' },
+      {
+        value: 'move-in-move-out',
+        label: 'Move-in/Move-out',
+        label_mn: 'Move-in/Move-out',
+      },
+      {
+        value: 'post-renovation',
+        label: 'Post-Renovation',
+        label_mn: 'Post-Renovation',
+      },
+    ],
   },
   {
     key: 'supplies_provided',
     label: 'Supplies provided by customer',
+    label_mn: 'Supplies provided by customer',
     type: 'yes_no',
     required: true,
   },

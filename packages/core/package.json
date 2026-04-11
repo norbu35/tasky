@@ -19,12 +19,9 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@swc/helpers": "^0.5.11",
     "@tanstack/react-query": "^5.28.0",
     "@tasky/sdk": "workspace:*",
-    "sockjs-client": "^1.6.1",
-    "zod": "^3.22.4",
-    "zustand": "^4.5.2"
+    "zod": "^3.22.4"
   },
   "peerDependencies": {
     "react": "^18.2.0"

@@ -5,6 +5,9 @@
 !.idea/codeStyles
 .vscode/
 
+# Serena (AI agent config — project.yml and memories/ are intentionally tracked)
+.serena/project.local.yml
+
 # Gradle
 .gradle/
 build/

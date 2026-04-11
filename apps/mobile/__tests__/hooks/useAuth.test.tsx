@@ -3,6 +3,7 @@ import { act, render, waitFor } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAppStore } from '../../src/store/appStore';
 import { useAuthStore } from '../../src/store/authStore';
+import { createTestQueryClient } from '../test-utils/queryClient';
 
 const mockDevLogin = jest.fn();
 const mockGetMyProfile = jest.fn();
@@ -98,7 +99,7 @@ describe('useDevLogin', () => {
   });
 
   it('routes first-time dev logins to onboarding instead of tabs and fetches the real profile', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = createTestQueryClient();
 
     render(<DevLoginHarness />, { wrapper: createWrapper(queryClient) });
 
@@ -119,5 +120,7 @@ describe('useDevLogin', () => {
     expect(useAuthStore.getState().profile?.full_name).toBe('Test Customer');
     expect(useAppStore.getState().currentRole).toBe('customer');
     expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding');
+
+    queryClient.clear();
   });
 });

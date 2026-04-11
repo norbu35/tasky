@@ -56,10 +56,6 @@ Reference specific endpoints, tables, or screens when possible.
 
 **Dependencies:** list explicit plan-tranche dependencies and required verification gates.
 
-## Codebase Context
-
-`repomix-output.xml` at the repo root contains a full snapshot of the codebase. When you need broad repo context (e.g. understanding cross-cutting concerns, finding usage patterns, or orienting in unfamiliar areas), read this file instead of globbing/grepping across many files. It is regenerated automatically after every commit via a husky post-commit hook.
-
 ## Before Starting Any Task
 
 Read these files first:

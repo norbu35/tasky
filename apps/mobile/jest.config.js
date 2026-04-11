@@ -1,5 +1,6 @@
 module.exports = {
     preset: "jest-expo",
+    watchman: false,
     setupFilesAfterEnv: [
         "@testing-library/jest-native/extend-expect",
         "<rootDir>/jest.setup.ts",

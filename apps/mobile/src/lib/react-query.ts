@@ -1,5 +1,7 @@
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
 
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
@@ -13,8 +15,13 @@ export const queryClient = new QueryClient({
   }),
   defaultOptions: {
     queries: {
-      retry: 2,
+      retry: isTestEnvironment ? false : 2,
       staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: isTestEnvironment ? Infinity : undefined,
+    },
+    mutations: {
+      retry: isTestEnvironment ? false : 0,
+      gcTime: isTestEnvironment ? Infinity : undefined,
     },
   },
 });

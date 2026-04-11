@@ -70,7 +70,7 @@ import { AdminRoute } from './AdminRoute';
 import { AdminLayout } from '../layout/AdminLayout';
 import { isRestrictedUser } from '../lib/userAccess';
 
-export function HomeRedirect() {
+function HomeRedirect() {
   const { session, profile } = useAppContext();
 
   if (!session) {

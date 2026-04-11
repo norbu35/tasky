@@ -83,7 +83,7 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     expect(screen.getByText('Moving')).toBeTruthy();
   });
 
-  it('selecting a category enables continue and navigates to intake with category params', () => {
+  it('selecting a category navigates directly to intake with category params', () => {
     mockUseCategories.mockReturnValue({
       data: {
         data: [
@@ -95,7 +95,6 @@ describe('CategorySelectionScreen (SCR-CUST-002)', () => {
     });
     render(<CategorySelectionScreen />);
     fireEvent.press(screen.getByTestId('category-item-cat-1'));
-    fireEvent.press(screen.getByTestId('SCR-CUST-002-next'));
     expect(mockPush).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/(customer)/tasks/new/intake',

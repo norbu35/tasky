@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-04-11
+
+- **Repo dead-code cleanup**: Removed an unreferenced web feature component bundle, trimmed unused web/core dependencies and internal helper exports, and fixed locale-safe district geocoding normalization.
+
 ## 2026-04-10
 
 - **Mobile Android local startup**: Added an Android emulator launcher, documented the one-time AVD setup path, and defaulted local Android API traffic to `10.0.2.2`.
