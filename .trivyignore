@@ -1,0 +1,8 @@
+# Spring Security — blocked until backend Spring Boot upgrade
+# Expires: 2026-05-15
+CVE-2025-41232
+CVE-2026-22732
+CVE-2025-41248
+CVE-2025-22228
+CVE-2025-22235
+CVE-2025-41249
