@@ -12,9 +12,9 @@ import {
   Smartphone,
   BadgeCheck,
   Banknote,
-  Facebook,
-  Twitter,
-  Instagram,
+  Globe,
+  MessageCircle,
+  Camera,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { LanguageSwitcher } from '../layout/LanguageSwitcher';
@@ -874,19 +874,19 @@ export function LandingPage() {
                 href="#"
                 className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                <Facebook className="w-4 h-4" />
+                <Globe className="w-4 h-4" />
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                <Twitter className="w-4 h-4" />
+                <MessageCircle className="w-4 h-4" />
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                <Instagram className="w-4 h-4" />
+                <Camera className="w-4 h-4" />
               </a>
             </div>
           </div>
