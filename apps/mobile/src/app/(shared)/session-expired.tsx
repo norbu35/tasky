@@ -25,7 +25,7 @@ export default function SessionExpiredScreen() {
       style={{ position: 'relative', zIndex: 30 }}
       testID="SCR-INFRA-003"
     >
-      <View style={StyleSheet.absoluteFillObject} className="bg-[rgba(16,38,56,0.35)]" />
+      <View style={StyleSheet.absoluteFill} className="bg-[rgba(16,38,56,0.35)]" />
       <ModalSheet
         visible
         title={t('infra.sessionExpired.title')}

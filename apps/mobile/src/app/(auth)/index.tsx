@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Zap } from 'lucide-react-native';
+import { LogIn, Zap } from 'lucide-react-native';
 import {
   DEV_LOGIN_CUSTOMER_PHONE,
   DEV_LOGIN_TASKER_PHONE,
@@ -64,9 +64,7 @@ export default function LoginScreen() {
           accessibilityRole="button"
           accessibilityLabel={t('auth.login.languageSwitcher')}
         >
-          <Text
-            className="text-caption font-sans-bold text-primary-deep tracking-[0.35px]"
-          >
+          <Text className="text-caption font-sans-bold text-primary-deep tracking-[0.35px]">
             {t('LoginScreen.copy2')}
           </Text>
         </Pressable>
@@ -84,7 +82,7 @@ export default function LoginScreen() {
           >
             {!isFacebookLoading ? (
               <View className="flex-row items-center gap-sm">
-                <Facebook size={20} color={colors.primaryForeground} />
+                <LogIn size={20} color={colors.primaryForeground} />
                 <Text className="text-label font-sans-bold text-primary-foreground">
                   {t('auth.login.facebookButton')}
                 </Text>
@@ -93,19 +91,14 @@ export default function LoginScreen() {
           </Button>
 
           {state === 'error' && errorMessage ? (
-            <Text
-              testID="login-error"
-              className="text-body text-center text-danger"
-            >
+            <Text testID="login-error" className="text-body text-center text-danger">
               {errorMessage}
             </Text>
           ) : null}
 
           {devAuthEnabled ? (
             <View className="gap-sm border-t border-border pt-lg">
-              <Text
-                className="text-caption text-center uppercase text-text-secondary tracking-[1px]"
-              >
+              <Text className="text-caption text-center uppercase text-text-secondary tracking-[1px]">
                 {t('auth.devBypass')}
               </Text>
               <Button
@@ -123,9 +116,7 @@ export default function LoginScreen() {
                 disabled={busy}
               />
               {devLogin.error ? (
-                <Text className="text-body text-center text-danger">
-                  {devLogin.error.message}
-                </Text>
+                <Text className="text-body text-center text-danger">{devLogin.error.message}</Text>
               ) : null}
             </View>
           ) : null}
@@ -138,22 +129,16 @@ export default function LoginScreen() {
             onPress={() => router.push('/(shared)/legal/terms')}
             accessibilityRole="link"
           >
-            <Text className="text-body text-text-secondary">
-              {t('auth.login.terms')}
-            </Text>
+            <Text className="text-body text-text-secondary">{t('auth.login.terms')}</Text>
           </Pressable>
           <Pressable
             testID="login-footer-privacy"
             onPress={() => router.push('/(shared)/legal/privacy')}
             accessibilityRole="link"
           >
-            <Text className="text-body text-text-secondary">
-              {t('auth.login.privacy')}
-            </Text>
+            <Text className="text-body text-text-secondary">{t('auth.login.privacy')}</Text>
           </Pressable>
-          <Text
-            className="text-body text-center text-text-secondary opacity-60"
-          >
+          <Text className="text-body text-center text-text-secondary opacity-60">
             {t('auth.login.copyright')}
           </Text>
         </View>

@@ -52,8 +52,8 @@ export function PermissionPrimer({
 
   return (
     <View className={cn('flex-1 justify-end', className)} testID={testID}>
-      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.muted }]} />
-      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: overlays.sheet }]} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.muted }]} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: overlays.sheet }]} />
       {/* Illustration area — fills upper ~60% with a prominent centred icon */}
       <View
         className="absolute left-0 right-0 top-0 bottom-[40%] items-center justify-center"
