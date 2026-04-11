@@ -1,15 +1,25 @@
 echo "Running pre-push checks..."
 
-# TypeScript typecheck across all workspaces
+# === Structural checks (~15s) ===
+
 pnpm -r typecheck || exit 1
 
-# Workspace dependency boundary validation
 pnpm workspace:boundaries || exit 1
 
-# Migration safety
 python3 tooling/scripts/validate-migrations.py || exit 1
 
-# OpenAPI contract validation
 ./gradlew openApiValidate -q || exit 1
+
+# === Lint + SDK drift (~13s) ===
+
+pnpm -r lint || exit 1
+
+pnpm sdk:drift || exit 1
+
+# === Frontend unit tests (~23s) ===
+
+pnpm --filter @tasky/web test:unit || exit 1
+
+pnpm --filter @tasky/mobile test:unit || exit 1
 
 echo "All pre-push checks passed."
