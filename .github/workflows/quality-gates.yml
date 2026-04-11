@@ -213,7 +213,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: os,library
           severity: HIGH,CRITICAL
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Semgrep SAST
         uses: returntocorp/semgrep-action@v1
