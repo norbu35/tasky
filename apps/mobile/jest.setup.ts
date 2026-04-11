@@ -1,3 +1,36 @@
+jest.mock('react-native-reanimated', () => require('./__tests__/test-utils/reanimated-mock.js'));
+
+jest.mock('react-native-worklets', () => {
+  const noopFn = jest.fn((val: unknown) => val);
+  return {
+    makeShareableCloneRecursive: noopFn,
+    makeShareable: noopFn,
+    createSerializable: noopFn,
+    createWorklet: jest.fn((fn: unknown) => fn),
+    isWorklet: jest.fn(() => false),
+    workletFactory: jest.fn(),
+    getValueUnpackerCode: jest.fn(() => ''),
+    WorkletsError: class WorkletsError extends Error {},
+    WorkletsHostObject: jest.fn(),
+    NativeWorklets: {
+      makeShareableClone: jest.fn(),
+      scheduleOnUI: jest.fn(),
+      scheduleOnJS: jest.fn(),
+      registerSensor: jest.fn(),
+      unregisterSensor: jest.fn(),
+      registerEventHandler: jest.fn(),
+      unregisterEventHandler: jest.fn(),
+      getViewProp: jest.fn(),
+      enableLayoutAnimations: jest.fn(),
+      configureProps: jest.fn(),
+      subscribeForKeyboardEvents: jest.fn(),
+      unsubscribeFromKeyboardEvents: jest.fn(),
+      jsiConfigureProps: jest.fn(),
+      install: jest.fn(() => true),
+    },
+  };
+});
+
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   const { View } = require('react-native');
@@ -13,9 +46,8 @@ jest.mock('react-native-safe-area-context', () => {
   };
 });
 
-jest.mock(
-  '@react-native-async-storage/async-storage',
-  () => require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest'),
 );
 
 jest.mock('expo/virtual/env', () => ({}), { virtual: true });
