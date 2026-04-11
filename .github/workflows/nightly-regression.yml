@@ -29,7 +29,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure scripts are executable
         run: chmod +x gradlew tooling/scripts/*.sh tooling/scripts/*.py
@@ -82,7 +82,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure scripts are executable
         run: chmod +x gradlew

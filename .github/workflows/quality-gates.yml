@@ -57,7 +57,7 @@ jobs:
           java-version: '21'
 
       - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure gradlew is executable
         run: chmod +x gradlew
@@ -116,7 +116,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure scripts are executable
         run: chmod +x gradlew
@@ -184,7 +184,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Ensure scripts are executable
         run: chmod +x gradlew
